@@ -1,0 +1,4405 @@
+{
+  "createdAt": "2026-10-26T18:52:51.314652+00:00",
+  "liveVds": false,
+  "runs": [
+    {
+      "version": "R62",
+      "case": "crash",
+      "players": 80,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": false,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": false,
+        "noUnacked": false,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "cleanShutdown": false,
+        "relogin24of24": true
+      },
+      "latency": {
+        "move": {
+          "n": 1757,
+          "p50": 115,
+          "p95": 3161,
+          "p99": 8232,
+          "max": 14566,
+          "over300": 459,
+          "over500": 347,
+          "over1000": 247
+        },
+        "use_potion": {
+          "n": 193,
+          "p50": 326,
+          "p95": 4820,
+          "p99": 10285,
+          "max": 14608,
+          "over300": 108,
+          "over500": 53,
+          "over1000": 36
+        },
+        "attack": {
+          "n": 885,
+          "p50": 138,
+          "p95": 6654,
+          "p99": 13395,
+          "max": 17506,
+          "over300": 334,
+          "over500": 291,
+          "over1000": 227
+        },
+        "claim_rewards": {
+          "n": 43,
+          "p50": 2123,
+          "p95": 11861,
+          "p99": 14957,
+          "max": 14957,
+          "over300": 36,
+          "over500": 35,
+          "over1000": 27
+        },
+        "collect": {
+          "n": 17,
+          "p50": 1338,
+          "p95": 14152,
+          "p99": 14152,
+          "max": 14152,
+          "over300": 14,
+          "over500": 13,
+          "over1000": 11
+        },
+        "heartbeat": {
+          "n": 231,
+          "p50": 104,
+          "p95": 2104,
+          "p99": 6885,
+          "max": 14620,
+          "over300": 68,
+          "over500": 57,
+          "over1000": 34
+        },
+        "respawn": {
+          "n": 2,
+          "p50": 232,
+          "p95": 416,
+          "p99": 416,
+          "max": 416,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 34,
+        "p50": 5286.648531000003,
+        "p95": 11796.168327,
+        "p99": 17506.535431999997,
+        "max": 17506.535431999997
+      },
+      "allRewards": {
+        "n": 28,
+        "p50": 4928.747988999996,
+        "p95": 9710.585104000005,
+        "p99": 17506.535431999997,
+        "max": 17506.535431999997
+      },
+      "disconnects": 18,
+      "unacked": 11,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "d6ab7a2c-6531-4a8c-8003-5e0f0e7812bb"
+          },
+          {
+            "channel": 2,
+            "incarnation": "ffb40d9d-bfd3-4021-93b1-d7d4ea165c77"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a58731e0-81ee-4b03-aff7-55bfe5297745"
+          },
+          {
+            "channel": 4,
+            "incarnation": "de45024c-4bf3-4e13-9cbc-e6c249367515"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "d6ab7a2c-6531-4a8c-8003-5e0f0e7812bb"
+          },
+          {
+            "channel": 2,
+            "incarnation": "ffb40d9d-bfd3-4021-93b1-d7d4ea165c77"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a58731e0-81ee-4b03-aff7-55bfe5297745"
+          },
+          {
+            "channel": 4,
+            "incarnation": "de45024c-4bf3-4e13-9cbc-e6c249367515"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 24,
+        "passed": 24,
+        "sameIncarnations": true,
+        "unfinishedRewards": 667,
+        "defeats": 1057,
+        "duplicateKeys": 0,
+        "records": [
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:1",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:27",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:51",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:76",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:2",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "respawns": [
+              {
+                "before": {
+                  "area": "forest",
+                  "x": 2792,
+                  "y": 2025,
+                  "hp": 0,
+                  "respawn_at_ms": 1793038962679
+                },
+                "result": {
+                  "type": "action",
+                  "body": {
+                    "ok": true,
+                    "hp": 100,
+                    "maxHp": 100,
+                    "hpRevision": 420,
+                    "area": "forest",
+                    "x": 2700,
+                    "y": 2025
+                  },
+                  "status": 200,
+                  "sequence": 29
+                }
+              }
+            ],
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:28",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:52",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:77",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "respawns": [
+              {
+                "before": {
+                  "area": "forest",
+                  "x": 2792,
+                  "y": 2025,
+                  "hp": 0,
+                  "respawn_at_ms": 1793038962688
+                },
+                "result": {
+                  "type": "action",
+                  "body": {
+                    "ok": true,
+                    "hp": 100,
+                    "maxHp": 100,
+                    "hpRevision": 520,
+                    "area": "forest",
+                    "x": 2700,
+                    "y": 2025
+                  },
+                  "status": 200,
+                  "sequence": 29
+                }
+              }
+            ],
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:29",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:53",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:3",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:42",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:67",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:78",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:17",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:43",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:68",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:92",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:18",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:44",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:69",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:93",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:19",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "f4f87780-c4cd-4045-938f-688c8872bc05:94",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          }
+        ]
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.6734524158550029,
+        "maxRssBytes": 2883833856
+      },
+      "faults": [
+        {
+          "at": 1793038968511,
+          "code": "permanent_actor_fenced",
+          "message": "permanent_actor_fenced",
+          "stack": "Error: permanent_actor_fenced\n    at kernelError (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/contract.mjs:13:58)\n    at PermanentCoordinator.assertAvailable (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/permanent-coordinator.mjs:25:54)\n    at ChannelOwnership.admissionGuard (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/coordinator.mjs:88:102)\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/ownership.mjs:233:25\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/guild-state.mjs:16:261\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/market-state.mjs:20:261\n    at Object.atomic (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/world-state.mjs:35:49)\n    at work (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/reward-group-commit-r53.mjs:48:37)\n    at withPreparedStatements477 (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:98:20)\n    at prepared (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/reward-group-commit-r53.mjs:49:26)",
+          "context": {
+            "channel": 3,
+            "hasBridge": false,
+            "lastSeenAgeMs": null,
+            "mirrorRemainingMs": 26041,
+            "centralRemainingMs": 26041,
+            "persistedPresence": true
+          }
+        },
+        {
+          "at": 1793038968718,
+          "code": "permanent_actor_fenced",
+          "message": "permanent_actor_fenced",
+          "stack": "Error: permanent_actor_fenced\n    at kernelError (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/contract.mjs:13:58)\n    at PermanentCoordinator.assertAvailable (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/permanent-coordinator.mjs:25:54)\n    at ChannelOwnership.admissionGuard (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/coordinator.mjs:88:102)\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/ownership.mjs:233:25\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/guild-state.mjs:16:261\n    at file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/market-state.mjs:20:261\n    at Object.atomic (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/world-state.mjs:35:49)\n    at work (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/reward-group-commit-r53.mjs:48:37)\n    at withPreparedStatements477 (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:98:20)\n    at prepared (file:///workspace/ccre/r62_independent_delivery/trees/R62/working/core511-source/scripts/core511/reward-group-commit-r53.mjs:49:26)",
+          "context": {
+            "channel": 1,
+            "hasBridge": false,
+            "lastSeenAgeMs": null,
+            "mirrorRemainingMs": 25836,
+            "centralRemainingMs": 25836,
+            "persistedPresence": true
+          }
+        }
+      ],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 11,
+        "use_potion:checkpoint_snapshot_conflict": 2,
+        "attack:shared_prepare_actor_rejected": 5,
+        "attack:Yaratığın vuruşu önce gerçekleşti; yeniden doğmayı bekliyorsun.": 1,
+        "use_potion:Can iksirin yok.": 3,
+        "attack:checkpoint_snapshot_conflict": 1,
+        "collect:loot_expired": 1,
+        "collect:Ganimet artık burada değil.": 1
+      },
+      "status": "FAIL",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "relogin24of24": true
+      },
+      "userAcceptancePassed": false,
+      "folder": "R62/crash-80-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/workspace/ccre/r62_independent_delivery/trees/R62",
+      "rewardObservationPending": [
+        {
+          "intent": "82074eb9-d21b-4536-8546-0dba42fc892a",
+          "targets": 164,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "1b1099af-2d14-4a8c-87d7-9530ca905e07",
+          "targets": 235,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "43fa1872-f924-4142-838e-f11fee00b6a6",
+          "targets": 129,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "8607a434-a64c-4c55-8ce0-f1878d2da6bd",
+          "targets": 150,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "6d2ac756-a412-4fa3-89c9-f6db2ac2111d",
+          "targets": 157,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "662b27e9-09f6-40de-896a-acb13c39428a",
+          "targets": 64,
+          "clientSeen": true,
+          "durabilityObserved": false
+        }
+      ],
+      "rawLegacyPlayers": 80,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 20
+        },
+        {
+          "channel": "channel-2",
+          "players": 20
+        },
+        {
+          "channel": "channel-3",
+          "players": 20
+        },
+        {
+          "channel": "channel-4",
+          "players": 20
+        }
+      ],
+      "validatedTotalPlayers": 80,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "crash",
+      "players": 80,
+      "repeat": 2,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": false,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "relogin24of24": true
+      },
+      "latency": {
+        "move": {
+          "n": 2216,
+          "p50": 93,
+          "p95": 1457,
+          "p99": 4443,
+          "max": 7744,
+          "over300": 482,
+          "over500": 311,
+          "over1000": 185
+        },
+        "use_potion": {
+          "n": 173,
+          "p50": 357,
+          "p95": 3909,
+          "p99": 9806,
+          "max": 10280,
+          "over300": 113,
+          "over500": 55,
+          "over1000": 23
+        },
+        "attack": {
+          "n": 1047,
+          "p50": 109,
+          "p95": 4180,
+          "p99": 12948,
+          "max": 17182,
+          "over300": 289,
+          "over500": 238,
+          "over1000": 164
+        },
+        "claim_rewards": {
+          "n": 41,
+          "p50": 4880,
+          "p95": 12152,
+          "p99": 15047,
+          "max": 15047,
+          "over300": 32,
+          "over500": 30,
+          "over1000": 30
+        },
+        "collect": {
+          "n": 15,
+          "p50": 1493,
+          "p95": 7955,
+          "p99": 7955,
+          "max": 7955,
+          "over300": 9,
+          "over500": 8,
+          "over1000": 8
+        },
+        "heartbeat": {
+          "n": 230,
+          "p50": 125,
+          "p95": 6516,
+          "p99": 11229,
+          "max": 12178,
+          "over300": 52,
+          "over500": 43,
+          "over1000": 38
+        },
+        "respawn": {
+          "n": 1,
+          "p50": 198,
+          "p95": 198,
+          "p99": 198,
+          "max": 198,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 38,
+        "p50": 5587.813598000001,
+        "p95": 16333.35508400001,
+        "p99": 17182.157370999994,
+        "max": 17182.157370999994
+      },
+      "allRewards": {
+        "n": 23,
+        "p50": 3567.5780669999986,
+        "p95": 15523.058083999997,
+        "p99": 16333.35508400001,
+        "max": 16333.35508400001
+      },
+      "disconnects": 23,
+      "unacked": 8,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "4bef6e9c-2108-42a7-9c3b-2a42c0afd47d"
+          },
+          {
+            "channel": 2,
+            "incarnation": "69e36940-2360-41a2-b558-3faef1a69a4c"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a45afe0a-13ea-479b-b903-32cc5b20ea97"
+          },
+          {
+            "channel": 4,
+            "incarnation": "e9c10956-76f7-4fd0-a050-8631ce4027ef"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "4bef6e9c-2108-42a7-9c3b-2a42c0afd47d"
+          },
+          {
+            "channel": 2,
+            "incarnation": "69e36940-2360-41a2-b558-3faef1a69a4c"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a45afe0a-13ea-479b-b903-32cc5b20ea97"
+          },
+          {
+            "channel": 4,
+            "incarnation": "e9c10956-76f7-4fd0-a050-8631ce4027ef"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 24,
+        "passed": 24,
+        "sameIncarnations": true,
+        "unfinishedRewards": 1290,
+        "defeats": 1787,
+        "duplicateKeys": 0,
+        "records": [
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:1",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "respawns": [
+              {
+                "before": {
+                  "area": "forest",
+                  "x": 2792,
+                  "y": 2025,
+                  "hp": 0,
+                  "respawn_at_ms": 1793039497142
+                },
+                "result": {
+                  "type": "action",
+                  "body": {
+                    "ok": true,
+                    "hp": 100,
+                    "maxHp": 100,
+                    "hpRevision": 477,
+                    "area": "forest",
+                    "x": 2700,
+                    "y": 2025
+                  },
+                  "status": 200,
+                  "sequence": 34
+                }
+              }
+            ],
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:27",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:51",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:76",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:28",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:2",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:52",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:77",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:29",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:3",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:53",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:78",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:42",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:17",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:67",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:92",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:43",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:18",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:68",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:93",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:44",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:19",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:69",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "bd979686-1380-4e0a-9524-b41047d9e27f:94",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          }
+        ]
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.6628220424788095,
+        "maxRssBytes": 2808864768
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 9,
+        "attack:checkpoint_snapshot_conflict": 1,
+        "attack:Yaratığın vuruşu önce gerçekleşti; yeniden doğmayı bekliyorsun.": 1,
+        "collect:checkpoint_snapshot_conflict": 1,
+        "use_potion:Can iksirin yok.": 1,
+        "collect:loot_expired": 1
+      },
+      "status": "FAIL",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "relogin24of24": true
+      },
+      "userAcceptancePassed": false,
+      "folder": "R62/crash-80-2",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [
+        {
+          "intent": "82e903ac-4810-4df8-8fcf-b541370bd167",
+          "targets": 138,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "bd1d5db5-d6e9-49c9-a300-d36f5f0fafe9",
+          "targets": 141,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "eb9688fc-9532-45b8-9631-86003a6f08ef",
+          "targets": 95,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "628aef1e-bbf8-4353-b643-40f6aaaeb4f1",
+          "targets": 43,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "ed4c11b7-456c-4d02-8137-1b9d2023636a",
+          "targets": 245,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "d9cc12a4-b127-4457-8713-428798fc11e9",
+          "targets": 123,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "f7889d88-1e2b-4454-a027-250d30827f89",
+          "targets": 165,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "4c9a55a7-6c7d-4b19-90cd-4f33d869bc21",
+          "targets": 74,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "55151246-b2a4-4cd8-94af-e7da01cdad98",
+          "targets": 146,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "3dc29983-1bf5-4cf1-ad48-0217ba49ad7c",
+          "targets": 33,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "c7a8017d-6824-4124-baf9-d258c4ab2025",
+          "targets": 49,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "20334a4c-0ab1-4b2f-9dd1-823a1e721bf9",
+          "targets": 139,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "7edabeef-f93d-4b60-87ed-ad48d53e0803",
+          "targets": 65,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "57a0a26c-efde-4d4c-aafc-91bb3cc47311",
+          "targets": 103,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "26b80fcd-dc4a-4c3b-9084-83aae1419e1d",
+          "targets": 79,
+          "clientSeen": true,
+          "durabilityObserved": false
+        }
+      ],
+      "rawLegacyPlayers": 80,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 20
+        },
+        {
+          "channel": "channel-2",
+          "players": 20
+        },
+        {
+          "channel": "channel-3",
+          "players": 20
+        },
+        {
+          "channel": "channel-4",
+          "players": 20
+        }
+      ],
+      "validatedTotalPlayers": 80,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "crash",
+      "players": 80,
+      "repeat": 3,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": false,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "relogin24of24": true
+      },
+      "latency": {
+        "move": {
+          "n": 2272,
+          "p50": 85,
+          "p95": 1608,
+          "p99": 8027,
+          "max": 10653,
+          "over300": 302,
+          "over500": 235,
+          "over1000": 166
+        },
+        "use_potion": {
+          "n": 181,
+          "p50": 248,
+          "p95": 2596,
+          "p99": 9829,
+          "max": 10356,
+          "over300": 78,
+          "over500": 38,
+          "over1000": 24
+        },
+        "attack": {
+          "n": 1052,
+          "p50": 90,
+          "p95": 4755,
+          "p99": 10569,
+          "max": 16098,
+          "over300": 226,
+          "over500": 190,
+          "over1000": 153
+        },
+        "claim_rewards": {
+          "n": 40,
+          "p50": 2533,
+          "p95": 10580,
+          "p99": 14499,
+          "max": 14499,
+          "over300": 32,
+          "over500": 32,
+          "over1000": 26
+        },
+        "collect": {
+          "n": 13,
+          "p50": 241,
+          "p95": 14785,
+          "p99": 14785,
+          "max": 14785,
+          "over300": 6,
+          "over500": 5,
+          "over1000": 4
+        },
+        "heartbeat": {
+          "n": 212,
+          "p50": 136,
+          "p95": 2347,
+          "p99": 9817,
+          "max": 9852,
+          "over300": 36,
+          "over500": 29,
+          "over1000": 28
+        }
+      },
+      "durableDeath": {
+        "n": 31,
+        "p50": 4880.082162999999,
+        "p95": 11499.749467000001,
+        "p99": 16098.113525,
+        "max": 16098.113525
+      },
+      "allRewards": {
+        "n": 23,
+        "p50": 3810.5396709999986,
+        "p95": 11499.749467000001,
+        "p99": 16098.113525,
+        "max": 16098.113525
+      },
+      "disconnects": 23,
+      "unacked": 7,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "cee49222-51b7-406c-b40c-c1f1acf28917"
+          },
+          {
+            "channel": 2,
+            "incarnation": "174e18ee-23d6-4c81-a37c-97585b20b292"
+          },
+          {
+            "channel": 3,
+            "incarnation": "bfcba283-7b54-4109-930e-c0e8fc89373c"
+          },
+          {
+            "channel": 4,
+            "incarnation": "b8ab4816-fe5a-4642-b230-bfd0d5c99a55"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "cee49222-51b7-406c-b40c-c1f1acf28917"
+          },
+          {
+            "channel": 2,
+            "incarnation": "174e18ee-23d6-4c81-a37c-97585b20b292"
+          },
+          {
+            "channel": 3,
+            "incarnation": "bfcba283-7b54-4109-930e-c0e8fc89373c"
+          },
+          {
+            "channel": 4,
+            "incarnation": "b8ab4816-fe5a-4642-b230-bfd0d5c99a55"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 24,
+        "passed": 24,
+        "sameIncarnations": true,
+        "unfinishedRewards": 589,
+        "defeats": 943,
+        "duplicateKeys": 0,
+        "records": [
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:1",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:27",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:51",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:76",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:2",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:28",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:52",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:77",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:3",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:29",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:53",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:78",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:17",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:42",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:67",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:92",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:18",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:43",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:68",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:93",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:19",
+            "channel": 1,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:69",
+            "channel": 3,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:44",
+            "channel": 2,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          },
+          {
+            "actor": "1226b85d-dc75-4bd3-b193-b5feba813a17:94",
+            "channel": 4,
+            "connected": true,
+            "move200": true,
+            "openAfter12s": true,
+            "attempts": 1,
+            "moveStatus": 200,
+            "moveCode": null
+          }
+        ]
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.6664062385196468,
+        "maxRssBytes": 2784665600
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 5,
+        "attack:checkpoint_snapshot_conflict": 2,
+        "attack:shared_prepare_actor_rejected": 1,
+        "collect:Ganimet artık burada değil.": 1
+      },
+      "status": "FAIL",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "relogin24of24": true
+      },
+      "userAcceptancePassed": false,
+      "folder": "R62/crash-80-3",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [
+        {
+          "intent": "ad3a6d84-a5e1-4543-a457-fa25bad698c6",
+          "targets": 188,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "c61ec04e-e03d-4455-94e3-be2bec514520",
+          "targets": 39,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "552fd4d5-550f-4fb1-842d-c23153ad1e31",
+          "targets": 48,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "a5d74ac0-b235-4a50-9315-2bfa365562d3",
+          "targets": 39,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "91ab3e13-7364-4bc9-9719-fab7dfafa1c9",
+          "targets": 162,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "4d2f4308-4a6d-45a8-a503-0437cbdbf1e3",
+          "targets": 45,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "27db9719-3612-4a69-a159-1f2b0bb8f1f1",
+          "targets": 149,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "6b5e5a43-40a2-4668-a743-70ddee133fcd",
+          "targets": 179,
+          "clientSeen": true,
+          "durabilityObserved": false
+        }
+      ],
+      "rawLegacyPlayers": 80,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 20
+        },
+        {
+          "channel": "channel-2",
+          "players": 20
+        },
+        {
+          "channel": "channel-3",
+          "players": 20
+        },
+        {
+          "channel": "channel-4",
+          "players": 20
+        }
+      ],
+      "validatedTotalPlayers": 80,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "plain",
+      "players": 80,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 3282,
+          "p50": 83,
+          "p95": 1230,
+          "p99": 3521,
+          "max": 5619,
+          "over300": 561,
+          "over500": 401,
+          "over1000": 206
+        },
+        "use_potion": {
+          "n": 220,
+          "p50": 349,
+          "p95": 3456,
+          "p99": 5548,
+          "max": 5660,
+          "over300": 124,
+          "over500": 74,
+          "over1000": 46
+        },
+        "attack": {
+          "n": 1593,
+          "p50": 92,
+          "p95": 2648,
+          "p99": 5085,
+          "max": 7807,
+          "over300": 445,
+          "over500": 357,
+          "over1000": 215
+        },
+        "claim_rewards": {
+          "n": 145,
+          "p50": 1167,
+          "p95": 3789,
+          "p99": 6148,
+          "max": 6575,
+          "over300": 134,
+          "over500": 121,
+          "over1000": 88
+        },
+        "collect": {
+          "n": 37,
+          "p50": 759,
+          "p95": 3520,
+          "p99": 4187,
+          "max": 4187,
+          "over300": 28,
+          "over500": 25,
+          "over1000": 16
+        },
+        "heartbeat": {
+          "n": 302,
+          "p50": 131,
+          "p95": 1282,
+          "p99": 2891,
+          "max": 6576,
+          "over300": 68,
+          "over500": 58,
+          "over1000": 26
+        }
+      },
+      "durableDeath": {
+        "n": 50,
+        "p50": 2182.694352000006,
+        "p95": 5972.315990999996,
+        "p99": 7807.0007900000055,
+        "max": 7807.0007900000055
+      },
+      "allRewards": {
+        "n": 38,
+        "p50": 1713.7443510000012,
+        "p95": 15216.800833000001,
+        "p99": 16889.714491,
+        "max": 16889.714491
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "011674bf-695b-4b45-a585-196ad9efc205"
+          },
+          {
+            "channel": 2,
+            "incarnation": "67cf0072-ca16-4707-8bd6-202dd9487590"
+          },
+          {
+            "channel": 3,
+            "incarnation": "8a5914ae-8c54-4608-8dee-1b5b2afa0ca4"
+          },
+          {
+            "channel": 4,
+            "incarnation": "13241262-7d3b-47b6-acbd-3b7bcad51f66"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "011674bf-695b-4b45-a585-196ad9efc205"
+          },
+          {
+            "channel": 2,
+            "incarnation": "67cf0072-ca16-4707-8bd6-202dd9487590"
+          },
+          {
+            "channel": 3,
+            "incarnation": "8a5914ae-8c54-4608-8dee-1b5b2afa0ca4"
+          },
+          {
+            "channel": 4,
+            "incarnation": "13241262-7d3b-47b6-acbd-3b7bcad51f66"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 1084,
+        "defeats": 2380,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.8279248628197922,
+        "maxRssBytes": 3023417344
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 7,
+        "collect:loot_expired": 6
+      },
+      "status": "FAIL",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": false,
+      "folder": "R62/plain-80-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [
+        {
+          "intent": "cedcd94b-7e38-481c-8d3e-b53febbf6f6a",
+          "targets": 211,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "9acfd910-0c15-4f1c-917c-253f813f7fdf",
+          "targets": 181,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "2973082b-fa3c-44bf-b2b2-c617939045d5",
+          "targets": 188,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "5f29a954-ae6e-44af-935b-86698c50d44f",
+          "targets": 215,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "9a55dc42-cac9-48f9-84a2-2eb45cc8b4ae",
+          "targets": 167,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "4d4562fe-c41c-421e-b3e3-03afb4524c5e",
+          "targets": 135,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "afa56050-6fde-4383-ae75-bc1bb4c4f5f0",
+          "targets": 138,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "3a0195b4-6ca1-488b-b881-45aa62b5194b",
+          "targets": 146,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "4add0b6a-810f-4da6-ab7b-f1bfb502b839",
+          "targets": 146,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "be94e883-6f7f-4c79-8936-7f5a37d85c21",
+          "targets": 202,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "08a6a4f8-d18b-4395-a0aa-2b60069dc7f0",
+          "targets": 65,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "88fab96b-92bc-4b17-863e-d06ddaceb006",
+          "targets": 54,
+          "clientSeen": true,
+          "durabilityObserved": false
+        }
+      ],
+      "rawLegacyPlayers": 80,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 20
+        },
+        {
+          "channel": "channel-2",
+          "players": 20
+        },
+        {
+          "channel": "channel-3",
+          "players": 20
+        },
+        {
+          "channel": "channel-4",
+          "players": 20
+        }
+      ],
+      "validatedTotalPlayers": 80,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "plain",
+      "players": 80,
+      "repeat": 2,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 3135,
+          "p50": 78,
+          "p95": 1259,
+          "p99": 3456,
+          "max": 4919,
+          "over300": 502,
+          "over500": 344,
+          "over1000": 204
+        },
+        "use_potion": {
+          "n": 229,
+          "p50": 350,
+          "p95": 3255,
+          "p99": 5284,
+          "max": 7393,
+          "over300": 128,
+          "over500": 80,
+          "over1000": 54
+        },
+        "attack": {
+          "n": 1532,
+          "p50": 102,
+          "p95": 3311,
+          "p99": 5200,
+          "max": 6714,
+          "over300": 421,
+          "over500": 347,
+          "over1000": 221
+        },
+        "claim_rewards": {
+          "n": 154,
+          "p50": 1494,
+          "p95": 5577,
+          "p99": 7263,
+          "max": 7274,
+          "over300": 136,
+          "over500": 126,
+          "over1000": 94
+        },
+        "collect": {
+          "n": 30,
+          "p50": 283,
+          "p95": 3953,
+          "p99": 4897,
+          "max": 4897,
+          "over300": 14,
+          "over500": 10,
+          "over1000": 5
+        },
+        "heartbeat": {
+          "n": 296,
+          "p50": 117,
+          "p95": 1489,
+          "p99": 4463,
+          "max": 4500,
+          "over300": 89,
+          "over500": 69,
+          "over1000": 36
+        }
+      },
+      "durableDeath": {
+        "n": 52,
+        "p50": 2554.3629109999965,
+        "p95": 6617.657267999995,
+        "p99": 7391.5537509999995,
+        "max": 7391.5537509999995
+      },
+      "allRewards": {
+        "n": 32,
+        "p50": 1557.4022289999994,
+        "p95": 13050.996958000003,
+        "p99": 21208.347511,
+        "max": 21208.347511
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "7dc0769f-6e5f-4f9e-b03c-6b1c7737d8a9"
+          },
+          {
+            "channel": 2,
+            "incarnation": "76017962-2cdd-4ec5-9de9-2913385dea69"
+          },
+          {
+            "channel": 3,
+            "incarnation": "8bf99bed-2bc3-479a-ab6c-2e560a3f9ae1"
+          },
+          {
+            "channel": 4,
+            "incarnation": "023cbb64-22f1-403f-8340-505b5b18e988"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "7dc0769f-6e5f-4f9e-b03c-6b1c7737d8a9"
+          },
+          {
+            "channel": 2,
+            "incarnation": "76017962-2cdd-4ec5-9de9-2913385dea69"
+          },
+          {
+            "channel": 3,
+            "incarnation": "8bf99bed-2bc3-479a-ab6c-2e560a3f9ae1"
+          },
+          {
+            "channel": 4,
+            "incarnation": "023cbb64-22f1-403f-8340-505b5b18e988"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 2071,
+        "defeats": 3423,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.8114375543348966,
+        "maxRssBytes": 2945679360
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 8,
+        "collect:loot_expired": 3
+      },
+      "status": "FAIL",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": false,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": false,
+      "folder": "R62/plain-80-2",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [
+        {
+          "intent": "1f7e27fe-a23b-4877-9cad-6b0b1b4913d1",
+          "targets": 208,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "1f3cc435-7d6a-4571-87a8-feb87a45a9cb",
+          "targets": 212,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "25aa8b76-b4d1-492f-b813-620362e64e4b",
+          "targets": 208,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "ee48ce81-9a75-4369-a41d-4327c15940da",
+          "targets": 169,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "36c41f38-892a-4ca0-8bd0-ede254226049",
+          "targets": 101,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "f79040bf-9433-4a29-b3aa-be12011c2b5f",
+          "targets": 146,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "b3ef0853-ccdb-4a35-a4a1-10e090f74ec8",
+          "targets": 271,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "de44e8c8-459e-4a78-a6bf-7ce8b67f416d",
+          "targets": 100,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "5d801a5e-036d-4ee6-9b33-d677a6958898",
+          "targets": 67,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "677eb7fc-f38c-498b-83c9-1a752cf56ea2",
+          "targets": 147,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "e2f4d997-9f47-4180-b9d0-ec59e6086563",
+          "targets": 249,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "307edf0b-1cc8-44f1-b4e4-b234437275b7",
+          "targets": 57,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "8934aaa0-41e9-4fd0-aadc-ee917b3e108f",
+          "targets": 55,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "a550486c-5674-414d-b4a4-19681b2d5ed3",
+          "targets": 222,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "8a3f141b-dfa2-40dc-94ab-6c38da8d6b84",
+          "targets": 131,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "128692ef-977a-4769-be80-13871669de1e",
+          "targets": 60,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "809b81df-51ce-4070-995d-fe2a47efc845",
+          "targets": 213,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "cf8c2a37-9c23-4ecd-a3d3-5b6020aa4734",
+          "targets": 252,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "f50e2b4d-c57a-43b9-9ca2-b4ddae67a966",
+          "targets": 167,
+          "clientSeen": true,
+          "durabilityObserved": false
+        },
+        {
+          "intent": "686de3e7-b046-48cc-8e46-40dadbc0ffc6",
+          "targets": 56,
+          "clientSeen": true,
+          "durabilityObserved": false
+        }
+      ],
+      "rawLegacyPlayers": 80,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 20
+        },
+        {
+          "channel": "channel-2",
+          "players": 20
+        },
+        {
+          "channel": "channel-3",
+          "players": 20
+        },
+        {
+          "channel": "channel-4",
+          "players": 20
+        }
+      ],
+      "validatedTotalPlayers": 80,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R61",
+      "case": "matrix",
+      "players": 30,
+      "repeat": 1,
+      "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 145,
+          "p50": 36,
+          "p95": 90,
+          "p99": 91,
+          "max": 91,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 100,
+          "p50": 84,
+          "p95": 135,
+          "p99": 138,
+          "max": 204,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 1654,
+          "p50": 31,
+          "p95": 57,
+          "p99": 138,
+          "max": 300,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 39,
+          "p50": 86,
+          "p95": 179,
+          "p99": 224,
+          "max": 224,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 150,
+          "p50": 30,
+          "p95": 50,
+          "p99": 56,
+          "max": 56,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 26,
+          "p50": 79,
+          "p95": 118,
+          "p99": 128,
+          "max": 128,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 30,
+        "p50": 109.80010600000242,
+        "p95": 298.6328319999957,
+        "p99": 300.4599309999976,
+        "max": 300.4599309999976
+      },
+      "allRewards": {
+        "n": 30,
+        "p50": 109.80010600000242,
+        "p95": 298.6328319999957,
+        "p99": 300.4599309999976,
+        "max": 300.4599309999976
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "dcb87b9a-4003-45a8-baaf-1ed2f4b4328d"
+          },
+          {
+            "channel": 2,
+            "incarnation": "7e39414c-6306-402a-8dec-b8632b3f6b11"
+          },
+          {
+            "channel": 3,
+            "incarnation": "c805e205-83ad-4ab0-a98f-b458cb5c5497"
+          },
+          {
+            "channel": 4,
+            "incarnation": "c5f890df-53f4-4dbf-9c29-0760d3647a46"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "dcb87b9a-4003-45a8-baaf-1ed2f4b4328d"
+          },
+          {
+            "channel": 2,
+            "incarnation": "7e39414c-6306-402a-8dec-b8632b3f6b11"
+          },
+          {
+            "channel": 3,
+            "incarnation": "c805e205-83ad-4ab0-a98f-b458cb5c5497"
+          },
+          {
+            "channel": 4,
+            "incarnation": "c5f890df-53f4-4dbf-9c29-0760d3647a46"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 133,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.24241215097738977,
+        "maxRssBytes": 1789444096
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 13
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R61/matrix-30-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R61",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 32,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 7
+        },
+        {
+          "channel": "channel-2",
+          "players": 8
+        },
+        {
+          "channel": "channel-3",
+          "players": 8
+        },
+        {
+          "channel": "channel-4",
+          "players": 7
+        }
+      ],
+      "validatedTotalPlayers": 30,
+      "artifactImportSummary": {
+        "uniqueFiles": 987,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "matrix",
+      "players": 30,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 149,
+          "p50": 36,
+          "p95": 65,
+          "p99": 65,
+          "max": 65,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 105,
+          "p50": 87,
+          "p95": 147,
+          "p99": 151,
+          "max": 181,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 1651,
+          "p50": 31,
+          "p95": 55,
+          "p99": 95,
+          "max": 211,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 43,
+          "p50": 90,
+          "p95": 118,
+          "p99": 165,
+          "max": 165,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 150,
+          "p50": 38,
+          "p95": 56,
+          "p99": 59,
+          "max": 59,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 28,
+          "p50": 85,
+          "p95": 188,
+          "p99": 339,
+          "max": 339,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 33,
+        "p50": 108.53963800000201,
+        "p95": 241.93332799999916,
+        "p99": 334.0188990000024,
+        "max": 334.0188990000024
+      },
+      "allRewards": {
+        "n": 32,
+        "p50": 107.58287999999447,
+        "p95": 241.93332799999916,
+        "p99": 334.0188990000024,
+        "max": 334.0188990000024
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "aa9d3599-1abf-44b6-8caf-f5d38305edda"
+          },
+          {
+            "channel": 2,
+            "incarnation": "7690b588-4b24-4f12-a099-38e976ffb319"
+          },
+          {
+            "channel": 3,
+            "incarnation": "76a34646-242a-4c51-8241-736176563178"
+          },
+          {
+            "channel": 4,
+            "incarnation": "8fae806e-cc9e-4872-b2fb-6f2cc0f6d957"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "aa9d3599-1abf-44b6-8caf-f5d38305edda"
+          },
+          {
+            "channel": 2,
+            "incarnation": "7690b588-4b24-4f12-a099-38e976ffb319"
+          },
+          {
+            "channel": 3,
+            "incarnation": "76a34646-242a-4c51-8241-736176563178"
+          },
+          {
+            "channel": 4,
+            "incarnation": "8fae806e-cc9e-4872-b2fb-6f2cc0f6d957"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 157,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.24957816167326952,
+        "maxRssBytes": 1812451328
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 13
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R62/matrix-30-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 32,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 7
+        },
+        {
+          "channel": "channel-2",
+          "players": 8
+        },
+        {
+          "channel": "channel-3",
+          "players": 8
+        },
+        {
+          "channel": "channel-4",
+          "players": 7
+        }
+      ],
+      "validatedTotalPlayers": 30,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R61",
+      "case": "matrix",
+      "players": 50,
+      "repeat": 1,
+      "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 205,
+          "p50": 49,
+          "p95": 148,
+          "p99": 157,
+          "max": 184,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 173,
+          "p50": 92,
+          "p95": 186,
+          "p99": 206,
+          "max": 270,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 2828,
+          "p50": 34,
+          "p95": 61,
+          "p99": 165,
+          "max": 320,
+          "over300": 3,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 42,
+          "p50": 89,
+          "p95": 241,
+          "p99": 309,
+          "max": 309,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 250,
+          "p50": 30,
+          "p95": 78,
+          "p99": 81,
+          "max": 82,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 31,
+          "p50": 78,
+          "p95": 237,
+          "p99": 252,
+          "max": 252,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 36,
+        "p50": 122.59539800000493,
+        "p95": 272.13240099999894,
+        "p99": 319.169863000001,
+        "max": 319.169863000001
+      },
+      "allRewards": {
+        "n": 36,
+        "p50": 122.59539800000493,
+        "p95": 272.13240099999894,
+        "p99": 319.169863000001,
+        "max": 319.169863000001
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "0bcab35f-0432-40b7-a758-c901c96bff32"
+          },
+          {
+            "channel": 2,
+            "incarnation": "445b951e-a8a2-4c41-8185-e92bbc2179d3"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a00dc4e1-35b3-4639-905e-f86bf2d94ebb"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4a93c3c8-8d4d-4423-aaf4-0d0d9983ea53"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "0bcab35f-0432-40b7-a758-c901c96bff32"
+          },
+          {
+            "channel": 2,
+            "incarnation": "445b951e-a8a2-4c41-8185-e92bbc2179d3"
+          },
+          {
+            "channel": 3,
+            "incarnation": "a00dc4e1-35b3-4639-905e-f86bf2d94ebb"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4a93c3c8-8d4d-4423-aaf4-0d0d9983ea53"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 99,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.35193306519326284,
+        "maxRssBytes": 2295111680
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 12
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R61/matrix-50-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R61",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 52,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 12
+        },
+        {
+          "channel": "channel-2",
+          "players": 13
+        },
+        {
+          "channel": "channel-3",
+          "players": 13
+        },
+        {
+          "channel": "channel-4",
+          "players": 12
+        }
+      ],
+      "validatedTotalPlayers": 50,
+      "artifactImportSummary": {
+        "uniqueFiles": 987,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "matrix",
+      "players": 50,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 200,
+          "p50": 36,
+          "p95": 73,
+          "p99": 90,
+          "max": 115,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 174,
+          "p50": 88,
+          "p95": 167,
+          "p99": 188,
+          "max": 291,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 2816,
+          "p50": 31,
+          "p95": 59,
+          "p99": 197,
+          "max": 326,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 49,
+          "p50": 93,
+          "p95": 328,
+          "p99": 376,
+          "max": 376,
+          "over300": 3,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 250,
+          "p50": 49,
+          "p95": 76,
+          "p99": 103,
+          "max": 145,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 33,
+          "p50": 84,
+          "p95": 527,
+          "p99": 527,
+          "max": 527,
+          "over300": 4,
+          "over500": 2,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 44,
+        "p50": 145.13209600000118,
+        "p95": 325.56853299999784,
+        "p99": 489.15554500000144,
+        "max": 489.15554500000144
+      },
+      "allRewards": {
+        "n": 44,
+        "p50": 145.13209600000118,
+        "p95": 325.56853299999784,
+        "p99": 489.15554500000144,
+        "max": 489.15554500000144
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "3a8a093c-6657-458e-bf51-b3510c034252"
+          },
+          {
+            "channel": 2,
+            "incarnation": "29fa129c-ee18-4db2-81de-3d5026cedb09"
+          },
+          {
+            "channel": 3,
+            "incarnation": "d6642be9-23ba-446d-aae7-43320eb0f767"
+          },
+          {
+            "channel": 4,
+            "incarnation": "007ac602-86dd-458e-9918-7421c51977d5"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "3a8a093c-6657-458e-bf51-b3510c034252"
+          },
+          {
+            "channel": 2,
+            "incarnation": "29fa129c-ee18-4db2-81de-3d5026cedb09"
+          },
+          {
+            "channel": 3,
+            "incarnation": "d6642be9-23ba-446d-aae7-43320eb0f767"
+          },
+          {
+            "channel": 4,
+            "incarnation": "007ac602-86dd-458e-9918-7421c51977d5"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 188,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.34466172273537776,
+        "maxRssBytes": 2352390144
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 14
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R62/matrix-50-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 52,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 12
+        },
+        {
+          "channel": "channel-2",
+          "players": 13
+        },
+        {
+          "channel": "channel-3",
+          "players": 13
+        },
+        {
+          "channel": "channel-4",
+          "players": 12
+        }
+      ],
+      "validatedTotalPlayers": 50,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R61",
+      "case": "matrix",
+      "players": 70,
+      "repeat": 1,
+      "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 267,
+          "p50": 49,
+          "p95": 111,
+          "p99": 119,
+          "max": 124,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 245,
+          "p50": 90,
+          "p95": 260,
+          "p99": 270,
+          "max": 324,
+          "over300": 1,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 3992,
+          "p50": 30,
+          "p95": 64,
+          "p99": 192,
+          "max": 325,
+          "over300": 8,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 46,
+          "p50": 80,
+          "p95": 137,
+          "p99": 176,
+          "max": 176,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 350,
+          "p50": 34,
+          "p95": 53,
+          "p99": 88,
+          "max": 88,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 32,
+          "p50": 79,
+          "p95": 154,
+          "p99": 165,
+          "max": 165,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 39,
+        "p50": 127.51064600000245,
+        "p95": 309.60827999999856,
+        "p99": 425.1179860000011,
+        "max": 425.1179860000011
+      },
+      "allRewards": {
+        "n": 39,
+        "p50": 127.51064600000245,
+        "p95": 309.60827999999856,
+        "p99": 425.1179860000011,
+        "max": 425.1179860000011
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "b24a6a69-08c7-473d-a0ba-adc8b6c27d34"
+          },
+          {
+            "channel": 2,
+            "incarnation": "9b93b949-1a28-4127-a86e-28c8905645b8"
+          },
+          {
+            "channel": 3,
+            "incarnation": "2e2ce736-f395-4641-92ae-bf4547de7b3c"
+          },
+          {
+            "channel": 4,
+            "incarnation": "41a944e3-ce46-4544-b56c-c68d409f32a1"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "b24a6a69-08c7-473d-a0ba-adc8b6c27d34"
+          },
+          {
+            "channel": 2,
+            "incarnation": "9b93b949-1a28-4127-a86e-28c8905645b8"
+          },
+          {
+            "channel": 3,
+            "incarnation": "2e2ce736-f395-4641-92ae-bf4547de7b3c"
+          },
+          {
+            "channel": 4,
+            "incarnation": "41a944e3-ce46-4544-b56c-c68d409f32a1"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 118,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.4230347487051025,
+        "maxRssBytes": 2368819200
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 13
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R61/matrix-70-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R61",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 72,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 17
+        },
+        {
+          "channel": "channel-2",
+          "players": 18
+        },
+        {
+          "channel": "channel-3",
+          "players": 18
+        },
+        {
+          "channel": "channel-4",
+          "players": 17
+        }
+      ],
+      "validatedTotalPlayers": 70,
+      "artifactImportSummary": {
+        "uniqueFiles": 987,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "matrix",
+      "players": 70,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 250,
+          "p50": 59,
+          "p95": 202,
+          "p99": 221,
+          "max": 221,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 244,
+          "p50": 93,
+          "p95": 320,
+          "p99": 389,
+          "max": 447,
+          "over300": 13,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 3965,
+          "p50": 36,
+          "p95": 65,
+          "p99": 165,
+          "max": 491,
+          "over300": 12,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 43,
+          "p50": 96,
+          "p95": 317,
+          "p99": 317,
+          "max": 317,
+          "over300": 4,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 350,
+          "p50": 44,
+          "p95": 71,
+          "p99": 94,
+          "max": 95,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 22,
+          "p50": 79,
+          "p95": 136,
+          "p99": 142,
+          "max": 142,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 41,
+        "p50": 147.61717700000008,
+        "p95": 327.2434140000005,
+        "p99": 540.8565339999914,
+        "max": 540.8565339999914
+      },
+      "allRewards": {
+        "n": 41,
+        "p50": 147.61717700000008,
+        "p95": 327.2434140000005,
+        "p99": 540.8565339999914,
+        "max": 540.8565339999914
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "50c8291d-2274-421a-a854-c52e5e917564"
+          },
+          {
+            "channel": 2,
+            "incarnation": "08f509a8-1946-4983-afa7-896335fb1c70"
+          },
+          {
+            "channel": 3,
+            "incarnation": "7f59d830-40bb-439c-88e4-ba9375bfa817"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4e9c6a05-85ff-4ca4-8cfe-8ba5ea99d0a0"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "50c8291d-2274-421a-a854-c52e5e917564"
+          },
+          {
+            "channel": 2,
+            "incarnation": "08f509a8-1946-4983-afa7-896335fb1c70"
+          },
+          {
+            "channel": 3,
+            "incarnation": "7f59d830-40bb-439c-88e4-ba9375bfa817"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4e9c6a05-85ff-4ca4-8cfe-8ba5ea99d0a0"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 178,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.40679187378985027,
+        "maxRssBytes": 2474151936
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 15
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R62/matrix-70-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 72,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 17
+        },
+        {
+          "channel": "channel-2",
+          "players": 18
+        },
+        {
+          "channel": "channel-3",
+          "players": 18
+        },
+        {
+          "channel": "channel-4",
+          "players": 17
+        }
+      ],
+      "validatedTotalPlayers": 70,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R61",
+      "case": "matrix",
+      "players": 100,
+      "repeat": 1,
+      "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 346,
+          "p50": 114,
+          "p95": 248,
+          "p99": 302,
+          "max": 371,
+          "over300": 4,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 348,
+          "p50": 91,
+          "p95": 414,
+          "p99": 484,
+          "max": 500,
+          "over300": 71,
+          "over500": 0,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 5709,
+          "p50": 33,
+          "p95": 78,
+          "p99": 213,
+          "max": 385,
+          "over300": 10,
+          "over500": 0,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 46,
+          "p50": 98,
+          "p95": 208,
+          "p99": 231,
+          "max": 231,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 500,
+          "p50": 49,
+          "p95": 76,
+          "p99": 81,
+          "max": 89,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 26,
+          "p50": 79,
+          "p95": 120,
+          "p99": 161,
+          "max": 161,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 42,
+        "p50": 152.3591649999944,
+        "p95": 330.55447600000116,
+        "p99": 486.4563940000007,
+        "max": 486.4563940000007
+      },
+      "allRewards": {
+        "n": 42,
+        "p50": 152.3591649999944,
+        "p95": 330.55447600000116,
+        "p99": 486.4563940000007,
+        "max": 486.4563940000007
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "192d2776-5f6a-485b-8dfe-be7f0b85b7ed"
+          },
+          {
+            "channel": 2,
+            "incarnation": "33192274-4370-4d40-864a-acdce4001046"
+          },
+          {
+            "channel": 3,
+            "incarnation": "f19b348a-b1ff-4b74-b215-e3c64eff7555"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4042f5f9-43d1-41cd-bc57-b95fe2b6ad6d"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "192d2776-5f6a-485b-8dfe-be7f0b85b7ed"
+          },
+          {
+            "channel": 2,
+            "incarnation": "33192274-4370-4d40-864a-acdce4001046"
+          },
+          {
+            "channel": 3,
+            "incarnation": "f19b348a-b1ff-4b74-b215-e3c64eff7555"
+          },
+          {
+            "channel": 4,
+            "incarnation": "4042f5f9-43d1-41cd-bc57-b95fe2b6ad6d"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 179,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.48094883447435854,
+        "maxRssBytes": 2511114240
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 16
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R61/matrix-100-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R61",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 100,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 25
+        },
+        {
+          "channel": "channel-2",
+          "players": 25
+        },
+        {
+          "channel": "channel-3",
+          "players": 25
+        },
+        {
+          "channel": "channel-4",
+          "players": 25
+        }
+      ],
+      "validatedTotalPlayers": 100,
+      "artifactImportSummary": {
+        "uniqueFiles": 987,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    },
+    {
+      "version": "R62",
+      "case": "matrix",
+      "players": 100,
+      "repeat": 1,
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "checks": {
+        "exitZero": true,
+        "sourceUnchanged": true,
+        "testFilesUnchanged": true,
+        "completed": true,
+        "population": true,
+        "driverInverse": true,
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noFaults": true,
+        "noUnacked": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true,
+        "cleanShutdown": true,
+        "noDisconnects": true
+      },
+      "latency": {
+        "move": {
+          "n": 352,
+          "p50": 131,
+          "p95": 285,
+          "p99": 427,
+          "max": 444,
+          "over300": 15,
+          "over500": 0,
+          "over1000": 0
+        },
+        "use_potion": {
+          "n": 345,
+          "p50": 100,
+          "p95": 481,
+          "p99": 574,
+          "max": 633,
+          "over300": 84,
+          "over500": 11,
+          "over1000": 0
+        },
+        "attack": {
+          "n": 5717,
+          "p50": 39,
+          "p95": 75,
+          "p99": 289,
+          "max": 529,
+          "over300": 45,
+          "over500": 2,
+          "over1000": 0
+        },
+        "claim_rewards": {
+          "n": 52,
+          "p50": 84,
+          "p95": 182,
+          "p99": 240,
+          "max": 240,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "heartbeat": {
+          "n": 500,
+          "p50": 54,
+          "p95": 80,
+          "p99": 110,
+          "max": 111,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        },
+        "collect": {
+          "n": 23,
+          "p50": 92,
+          "p95": 171,
+          "p99": 180,
+          "max": 180,
+          "over300": 0,
+          "over500": 0,
+          "over1000": 0
+        }
+      },
+      "durableDeath": {
+        "n": 42,
+        "p50": 152.62724399998842,
+        "p95": 406.7111479999985,
+        "p99": 528.926152,
+        "max": 528.926152
+      },
+      "allRewards": {
+        "n": 42,
+        "p50": 152.62724399998842,
+        "p95": 406.7111479999985,
+        "p99": 528.926152,
+        "max": 528.926152
+      },
+      "disconnects": 0,
+      "unacked": 0,
+      "childExitCount": 0,
+      "channels": {
+        "before": [
+          {
+            "channel": 1,
+            "incarnation": "21c12e6f-faa3-4ad9-94ab-f5aaa0ec5da8"
+          },
+          {
+            "channel": 2,
+            "incarnation": "3b797386-6326-48ea-9e3a-5e583bb1c9cf"
+          },
+          {
+            "channel": 3,
+            "incarnation": "124c8e16-7a30-4bf7-9f5c-cb867d9ba2e5"
+          },
+          {
+            "channel": 4,
+            "incarnation": "f5f1e63a-e110-4fbd-8a86-c4d2d11263b9"
+          }
+        ],
+        "after": [
+          {
+            "channel": 1,
+            "incarnation": "21c12e6f-faa3-4ad9-94ab-f5aaa0ec5da8"
+          },
+          {
+            "channel": 2,
+            "incarnation": "3b797386-6326-48ea-9e3a-5e583bb1c9cf"
+          },
+          {
+            "channel": 3,
+            "incarnation": "124c8e16-7a30-4bf7-9f5c-cb867d9ba2e5"
+          },
+          {
+            "channel": 4,
+            "incarnation": "f5f1e63a-e110-4fbd-8a86-c4d2d11263b9"
+          }
+        ]
+      },
+      "acceptance": {
+        "affected": 0,
+        "passed": 0,
+        "unfinishedRewards": 0,
+        "defeats": 207,
+        "duplicateKeys": 0,
+        "records": []
+      },
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.48350431779320413,
+        "maxRssBytes": 2540933120
+      },
+      "faults": [],
+      "actionRejections": {
+        "attack:basic_attack_cadence": 15
+      },
+      "status": "PASS",
+      "userAcceptanceChecks": {
+        "noChildExit": true,
+        "sameFourIncarnations": true,
+        "noUnfinishedRewards": true,
+        "noDuplicateKeys": true
+      },
+      "userAcceptancePassed": true,
+      "folder": "R62/matrix-100-1",
+      "cpuMax": "400000 100000",
+      "memoryMax": "34359738368",
+      "sourceUnchanged": true,
+      "sourceTree": "/tmp/col-r62-independent-svlsbiyy/R62",
+      "rewardObservationPending": [],
+      "rawLegacyPlayers": 100,
+      "populationByChannel": [
+        {
+          "channel": "channel-1",
+          "players": 25
+        },
+        {
+          "channel": "channel-2",
+          "players": 25
+        },
+        {
+          "channel": "channel-3",
+          "players": 25
+        },
+        {
+          "channel": "channel-4",
+          "players": 25
+        }
+      ],
+      "validatedTotalPlayers": 100,
+      "artifactImportSummary": {
+        "uniqueFiles": 988,
+        "outsideTree": 192,
+        "outsideTreeScope": "only test-created /tmp/col-r11-native-fixture-* runtime files; no historical workspace imports",
+        "originalWorkspaceImport": false
+      }
+    }
+  ],
+  "additionalDiagnostic": {
+    "version": "R61",
+    "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+    "folder": "runs/R61/plain-diagnostic-2",
+    "standardAcceptance": {
+      "affected": 0,
+      "passed": 0,
+      "unfinishedRewards": 1216,
+      "defeats": 2439,
+      "duplicateKeys": 0,
+      "records": []
+    },
+    "diagnostic": {
+      "purpose": "Original plain-case acceptance is saved unchanged before this diagnostic. Observe idle drain, then send only client claims that the original timer left unsent; no attacks or SQL writes.",
+      "before": {
+        "elapsedMs": 0.43730600000708364,
+        "unfinishedRewards": 1216,
+        "clientQueuedTargets": 1010,
+        "uniqueUnfinishedQueuedTargets": 974
+      },
+      "records": [
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:2",
+          "targets": 1
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:76",
+          "targets": 1
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:79",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:51",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:79",
+          "targets": 2
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:8",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:51",
+          "targets": 9
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:8",
+          "targets": 4
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:83",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:90",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:90",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:90",
+          "targets": 5
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:27",
+          "targets": 8
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:55",
+          "targets": 3
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:58",
+          "targets": 3
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:62",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:62",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:62",
+          "targets": 8
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 4,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:94",
+          "targets": 8
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:11",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:15",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:15",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 1,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:15",
+          "targets": 5
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:30",
+          "targets": 8
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 2,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:36",
+          "targets": 3
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:65",
+          "targets": 4
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 10
+        },
+        {
+          "channel": 3,
+          "actor": "5d2e0be2-605d-46ba-802f-5b0836bc0555:68",
+          "targets": 8
+        }
+      ],
+      "failures": [],
+      "afterIdle15s": {
+        "elapsedMs": 15004.932071000003,
+        "unfinishedRewards": 1162,
+        "clientQueuedTargets": 1010,
+        "uniqueUnfinishedQueuedTargets": 920
+      },
+      "afterClientClaims": {
+        "elapsedMs": 38151.00455700001,
+        "unfinishedRewards": 200,
+        "clientQueuedTargets": 0,
+        "uniqueUnfinishedQueuedTargets": 0
+      },
+      "claimFail": 0,
+      "claimProcessed": {
+        "zero": 46,
+        "positive": 204,
+        "missing": 0
+      },
+      "noNewCombatInputs": true
+    },
+    "originalAllRewards": {
+      "n": 34,
+      "p50": 2072.6242319999947,
+      "p95": 13207.674728999998,
+      "p99": 22926.220519999995,
+      "max": 22926.220519999995
+    },
+    "meaning": "Same extreme workload also leaves unfinished rewards on R61. Sending queued client claims reduces but does not eliminate the backlog. Do not reclassify the five standard R62 FAIL runs as PASS."
+  }
+}

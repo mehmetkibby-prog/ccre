@@ -1,0 +1,149 @@
+[
+  {
+    "path": "website/BUILD.json",
+    "R61": "4331587d3ca7fe159e72b08846db4dc963f30aa9f6d5f09b607c681122f95aa3",
+    "R62": "bc16a38646ab2f1deb0fcc48a0adf74dea6db6c8d746f631a88af23b0d884395",
+    "bytesR61": 6308,
+    "bytesR62": 6738
+  },
+  {
+    "path": "website/package/site_install.py",
+    "R61": "47b7f29242cff0193427b4168584a0fe69a34ea69fbd04b180b547860d85f0f7",
+    "R62": "61a22c70b2408d37b3339b1d01e453be41e940a0fb05fb09669fa889de60b387",
+    "bytesR61": 22234,
+    "bytesR62": 22216
+  },
+  {
+    "path": "website/public/site-assets/starter-pet.webp",
+    "R61": null,
+    "R62": "5eee1be8bb0de44b516ab097b3aa085bf2e66cae00da5838759ab07f9ba75265",
+    "bytesR61": null,
+    "bytesR62": 62530
+  },
+  {
+    "path": "website/src/prereg.html",
+    "R61": "ec06b3d80bbe612a0ba7f632707d213ee09fbe12c11d91ddcc32cce2ad16d0ca",
+    "R62": "366f5eb79c92faf6e99f9fa78fad9545f1ad669e818b3dc0d94b55ff2ade4f4a",
+    "bytesR61": 14963,
+    "bytesR62": 16160
+  },
+  {
+    "path": "website/src/site.css",
+    "R61": "19584c6cc62cd2be98358242700d732fade6449358de0d8cd9107dbdf67650fd",
+    "R62": "ce5da1537803277df487e5a09bffec8977599149e2197f74deba204650deae28",
+    "bytesR61": 48971,
+    "bytesR62": 50652
+  },
+  {
+    "path": "working/core511-source/scripts/core511/action-writer.mjs",
+    "R61": "55b7efe658b11d910fb4b351301208bf50a93d5cb420a8d011f3f2c30e9a672c",
+    "R62": "2c23fbe3f4498ee9473ff020d701da58e35fc9450308321d9168c26254761586",
+    "bytesR61": 8984,
+    "bytesR62": 8999
+  },
+  {
+    "path": "working/core511-source/scripts/core511/adventure-service.mjs",
+    "R61": "d00b6bffe9dc118e393c4a11408fbbac89cfb99012d1d316e6f70427d1286b49",
+    "R62": "5e23c001a17ca2528f558b30f53c5d308863299aabf3a96d58d3e0042f507732",
+    "bytesR61": 28363,
+    "bytesR62": 28385
+  },
+  {
+    "path": "working/core511-source/scripts/core511/azrail-r62.mjs",
+    "R61": null,
+    "R62": "cb93b7299eefaf4980911a5e0c0b867d13c231233d645ec515fed67dec76c1dc",
+    "bytesR61": null,
+    "bytesR62": 1554
+  },
+  {
+    "path": "working/core511-source/scripts/core511/compose-native-http.mjs",
+    "R61": "a8e1646f376113cff49927e4b75a917c621c10f16bc254fe8a8251525efe139c",
+    "R62": "0cf782c4623f2e63b5a7993fb99d51489bfd18d214db03da8691455af8556be7",
+    "bytesR61": 4777,
+    "bytesR62": 4958
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/client/auth-portal-core511-0f0e6524ee433608.js",
+    "R61": null,
+    "R62": "0f0e6524ee4336088686f00755c1ff3fba02eb898b6a6bdf9345df6ac179e968",
+    "bytesR61": null,
+    "bytesR62": 72292
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/client/azrail-chest-r62.webp",
+    "R61": null,
+    "R62": "cdce27c63bad79895e37dcdfbcb5ce4e022d3f23101a5661c9623661c70cf584",
+    "bytesR61": null,
+    "bytesR62": 4726
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/client/core511-gameplay-r62-a97877c1988dff73.js",
+    "R61": null,
+    "R62": "a97877c1988dff73c1ef8378d03a91858dccdd6245866d43b4909097b965c8fb",
+    "bytesR61": null,
+    "bytesR62": 76049
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/client/core511-tower-r62-d25862551937995b.js",
+    "R61": null,
+    "R62": "d25862551937995b0ef9c5cc5da2d8c729740974fec8b9dc4b8c08dc787f52f4",
+    "bytesR61": null,
+    "bytesR62": 130043
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/client/game-client-core511-4b42be76aa93f01c.js",
+    "R61": null,
+    "R62": "4b42be76aa93f01cc149c428a291b00d048cadd60bc30e84276499d91f516372",
+    "bytesR61": null,
+    "bytesR62": 1612113
+  },
+  {
+    "path": "working/core511-source/scripts/core511/generated/native-client-proof.json",
+    "R61": "fc684e864af345b385c20326c3f6e567a8933df2f7fa0b3d737745dc73d29113",
+    "R62": "0424a89d23f752012f9e0a89b2bd6125e6b28abde5372b31aa746a44b83668dc",
+    "bytesR61": 282900,
+    "bytesR62": 287620
+  },
+  {
+    "path": "working/core511-source/scripts/core511/mount-client-r49.mjs",
+    "R61": "aac8496a7b4ef18efd8a3299941d7e0ce4d4c12bed8b80aefd14ff6fd1eaf738",
+    "R62": "9eee9a9e95bb39acb5967d5b02ab9d98f58c9317dae0b0edce7213126f3a0acd",
+    "bytesR61": 25148,
+    "bytesR62": 25345
+  },
+  {
+    "path": "working/core511-source/scripts/core511/native-http-bindings.mjs",
+    "R61": "fa57647efe2f62b11d434e2af60e0265cd59660b8e47c46a6b0611118cef1341",
+    "R62": "0dd4551ad716af4612c5fb7465405a69a7e915bcf400fa6bb621ec0236ff3dd9",
+    "bytesR61": 14529,
+    "bytesR62": 14746
+  },
+  {
+    "path": "working/core511-source/scripts/core511/patch-azrail-market-r62.mjs",
+    "R61": null,
+    "R62": "260cd2075746d08ac12c1e7d5e4b77bd449c0548359e806bf1e72ee2969d81da",
+    "bytesR61": null,
+    "bytesR62": 814
+  },
+  {
+    "path": "working/core511-source/scripts/core511/patch-responsive-bot-r62.mjs",
+    "R61": null,
+    "R62": "6ead29813a683ccca0f517871b3208a2507dc9fb923658ff17d40784b1731660",
+    "bytesR61": null,
+    "bytesR62": 2148
+  },
+  {
+    "path": "working/core511-source/scripts/core511/polish-client-r62.mjs",
+    "R61": null,
+    "R62": "a31ca0bb5b7ba0879c4669faabbec910fb9419506dc0426b7e7613f73bbbcf16",
+    "bytesR61": null,
+    "bytesR62": 4880
+  },
+  {
+    "path": "working/core511-source/scripts/core511/tower-rules.mjs",
+    "R61": "c741ac950c433dbf94ad3a891708b3d989c630c80f54393b4ad8a26f5032a0a5",
+    "R62": "10af9e76593fec3c9b0138a3260d8bf737574d4c40fdde3a5392e9457163bb8a",
+    "bytesR61": 13702,
+    "bytesR62": 13818
+  }
+]
