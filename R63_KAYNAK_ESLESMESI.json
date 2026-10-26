@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+  "unchangedGameplayPayloadFiles": 23,
+  "changedInnerFiles": [
+    "__main__.py",
+    "patch.json"
+  ],
+  "websiteSHA256": "a0966e7801a0cdfe060e094006d8896374438acfc22bd874be6f6e11d37fe20b",
+  "readOnlyR46ProofSHA256": "183db8524aa9e17714e9d7bf8331f5f33eaf546af070380f49402cc7b1caa80f",
+  "oldArchiveSHA256": "81d5f5b082399367f6ef32dadf57a289e46ca3cfc08e8a87fc078224de8fa119",
+  "r63ArchiveSHA256": "8730b6cceb41a80467bfb3a1167dfc43d288c4d81d7b64e24396564ce49fac22",
+  "bytes": 46583121,
+  "liveDeployment": false
+}

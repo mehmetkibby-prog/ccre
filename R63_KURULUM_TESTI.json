@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "componentHashes": {
+    "__main__.py": "b951a9a41f7ee51d7ffd938a7298b174ac8006699415cdf2b10d26631342afd1",
+    "GAME_R63.zip": "029ea4de3e16378f33a8741f17966e37237166172030b14686edf31dbd23e00a",
+    "SITE_R62.zip": "a0966e7801a0cdfe060e094006d8896374438acfc22bd874be6f6e11d37fe20b",
+    "CORE511_R46.zip": "183db8524aa9e17714e9d7bf8331f5f33eaf546af070380f49402cc7b1caa80f"
+  },
+  "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+  "checks": [
+    "no external proof archive present",
+    "bundled proof passed through wrapper",
+    "real game check/apply and R63 state marker",
+    "repeat apply idempotent",
+    "flags/all five off/on",
+    "existing R61 startup preserved",
+    "rollback preserves current SQLite bytes and inode"
+  ],
+  "rootSimulatedByFakeroot": true,
+  "serviceHealthMocked": true,
+  "websiteInstaller": "previous unchanged component tests; wrapper game-only exercised here",
+  "liveDeployment": false
+}

@@ -1,0 +1,38 @@
+{
+  "R63_KURULUM_KANITLARI.zip": {
+    "bytes": 15000,
+    "sha256": "a242088abb52adf14c0b4bda1a2b6b58e4dfaa44873a7a9bb8d2e527ca764ddc"
+  },
+  "R63_KURULUM_TESTI.json": {
+    "bytes": 983,
+    "sha256": "8257ac675ba3ef307ead808dc585e5fd2fa0970a152e0bc692e159f4e3b16d1d"
+  },
+  "CORE511_R63.zip": {
+    "bytes": 46583121,
+    "sha256": "8730b6cceb41a80467bfb3a1167dfc43d288c4d81d7b64e24396564ce49fac22"
+  },
+  "R63_KAYNAK_ESLESMESI.json": {
+    "bytes": 623,
+    "sha256": "3f58c051f3490e97d6346cca7793c53583f2ed5f12d87cdb1225fa149afcae99"
+  },
+  "CORE511_R63.zip.sha256": {
+    "bytes": 82,
+    "sha256": "d04012d2b099f06eeb33ae04ad271fbf15d6174fbc8fb5cbb87d1d435b65607d"
+  },
+  "README.md": {
+    "bytes": 1457,
+    "sha256": "6f2fb10cf912fd642eb87e62228db3f4a2a4254d9221fde30343ac91e0b0a078"
+  },
+  "R63_SURUM_NOTU.md": {
+    "bytes": 1183,
+    "sha256": "8f1738b82da579952e03f04bb7ab3f6128a4f239277cc9c96ca00ca68fcd3805"
+  },
+  "R63_KURULUM_KANITLARI.zip.sha256": {
+    "bytes": 92,
+    "sha256": "9054ce62f631625f87392353f0f44664ea0d06f3c441f2e039f89728e610173b"
+  },
+  "KURULUM.md": {
+    "bytes": 1575,
+    "sha256": "5144beda9bd09479645a4fc87b0e01e3b07039a482a1f41b041ac7cecc27322c"
+  }
+}
