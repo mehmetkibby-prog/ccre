@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "installerRevision": "r63-r61-r62-update-modes-3",
+  "archiveSHA256": "b0db7b3c6fb0cba3d39f1c7ee2522d7547d943286cc70c82e4dc5e8dd3ac13e6",
+  "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+  "gameplayPayloadUnchanged": true,
+  "testsPassed": 26,
+  "groups": {
+    "updatePolicySQLite": 10,
+    "realSignedClientAndNativeEarlyAccess": 11,
+    "combinedInstallerRollback": 3,
+    "realFileDatabaseInstallRollback": 2
+  },
+  "testedRoundtrips": [
+    {
+      "status": "PASS",
+      "mode": "maintenance",
+      "base": "R61",
+      "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+      "checks": [
+        "read-only check",
+        "automatic rollback after injected health failure",
+        "apply and R63 marker",
+        "idempotent existing R63",
+        "feature switch off/on",
+        "rollback preserves current game database",
+        "entire accounts database unchanged including launch_access and mode",
+        "real empty-server checks before and after stop"
+      ],
+      "serviceHealthAndSignedCentralMocked": true,
+      "rootSimulatedByFakeroot": true,
+      "actualZipNodeSQLiteBackupAndRollback": true,
+      "liveDeployment": false
+    },
+    {
+      "status": "PASS",
+      "mode": "closed",
+      "base": "R62",
+      "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+      "checks": [
+        "read-only check",
+        "automatic rollback after injected health failure",
+        "apply and R63 marker",
+        "idempotent existing R63",
+        "feature switch off/on",
+        "rollback preserves current game database",
+        "entire accounts database unchanged including launch_access and mode",
+        "real empty-server checks before and after stop"
+      ],
+      "serviceHealthAndSignedCentralMocked": true,
+      "rootSimulatedByFakeroot": true,
+      "actualZipNodeSQLiteBackupAndRollback": true,
+      "liveDeployment": false
+    }
+  ],
+  "originalR63SHA256": "8730b6cceb41a80467bfb3a1167dfc43d288c4d81d7b64e24396564ce49fac22",
+  "permissionsPreserved": true,
+  "supportedLaunchModes": [
+    "maintenance",
+    "closed"
+  ],
+  "scheduledOpeningModeRefused": true,
+  "limitations": [
+    "Local test fixtures; service health/systemd simulated with fakeroot.",
+    "Native central policy/client signing tested against a local HTTP verifier; no production accounts service contacted.",
+    "Available native fixture omits original production media.",
+    "No live VDS deployment."
+  ]
+}

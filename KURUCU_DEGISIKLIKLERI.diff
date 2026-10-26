@@ -1,0 +1,266 @@
+--- original-r63/installer.py
++++ fixed-r63/installer.py
+@@ -1,4 +1,4 @@
+-"""R61 nearby audio over exact R60; verified backup and current-DB rollback."""
++"""R63 installer: maintenance or manual preregistration; preserve launch policy."""
+ import argparse
+ import contextlib
+ import datetime
+@@ -26,6 +26,29 @@
+ CORE = 'core511-source/scripts/core511/'
+ OPS = 'core511-source/scripts/delivery511/install-operations.mjs'
+ PANEL = '/api/realm/maintenance/panel511'
++# Installer-only, authenticated reads. Never changes the owner's launch mode,
++# early-access allowlist, registration dates or automatic opening schedule.
++UPDATE_POLICY_JS = """
++import fs from 'node:fs';
++import {pathToFileURL} from 'node:url';
++const [root,g,a,rev,expected]=process.argv.slice(1),revision=Number(rev);
++const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),game=read(g);
++const {maintenanceClient}=await import(pathToFileURL(root+'/core511-source/scripts/delivery511/maintenance-client.mjs'));
++const client=maintenanceClient({gameConfig:game,accountsConfig:read(a),manifest:read(game.realm.manifestFile)});
++const p=await client.policy();
++if(!Number.isSafeInteger(revision)||revision<1||p.revision!==revision||expected&&p.phase!==expected)
++ throw Error('update_policy_changed');
++if(p.phase==='maintenance'){
++ if(!Number.isSafeInteger(p.deadlineMs)||p.deadlineMs>Date.now())throw Error('maintenance_not_drained');
++}else if(p.phase==='waiting'){
++ const {settings,status}=await client.admin({resource:'launch',method:'GET'});
++ if(settings?.mode!=='closed'||settings.enabled!==1||settings.revision!==revision||status?.phase!=='waiting'||status.revision!==revision)
++  throw Error('manual_preregistration_required');
++ const latest=await client.policy();
++ if(latest.phase!=='waiting'||latest.revision!==revision)throw Error('update_policy_changed');
++}else throw Error('maintenance_or_manual_preregistration_required');
++process.stdout.write(JSON.stringify({phase:p.phase,revision}));
++"""
+ DELIVERY = 'core511-source/scripts/delivery511/'
+ PATCH_FILES = []  # Set only from the verified package metadata in main().
+ LIVE_CONFIG_FILE = None
+@@ -320,6 +343,9 @@
+     Authenticated loot preview uses the actual Sis profile and scoped Sinsi exemption.
+     """
+     require(not read_view, 'R62_runtime_read_view_yasak')
++    # A selected base omits unchanged gameplay files. Client verification still
++    # uses the complete, pinned package asset list on every repeat verification.
++    spec = dict(spec, changes=spec.get('packageChanges', spec['changes']))
+     policy = spec.get('runtimeActivation', {})
+     require(policy.get('from') == 'R61' and policy.get('to') == 'R63_RECOVERY' and
+             policy.get('clientRevision') == 1 and policy.get('embeddedProofSha256') == R61_READONLY_PROOF_SHA256,
+@@ -443,7 +469,8 @@
+     for r in spec['changes']:
+         if not r['path'].startswith(generated_prefix):continue
+         name=r['path'][len(generated_prefix):]
+-        require('/' not in name and name.endswith(('.js','.webp')) and all(v is None for v in r['beforeByBase'].values()),'R62_yeni_claim_asset_kapsami')
++        require('/' not in name and name.endswith(('.js','.webp')) and
++                r['beforeByBase'] == {'R61': None, 'R62': r['after']}, 'R62_yeni_claim_asset_kapsami')
+         data=archive.read('payload/'+r['path'])
+         require(len(data)==r['bytes'] and digest(data)==r['after'] and (name.endswith('.webp') or name.endswith('-'+digest(data)[:16]+'.js')),'R62_yeni_asset_SHA256')
+         require(name in asset_proofs and asset_proofs[name]['sha256']==digest(data) and asset_proofs[name]['bytes']==len(data),'R62_asset_kaniti_uyusmazligi')
+@@ -652,17 +679,30 @@
+         require(accounts_env.get(b'CORE_CONFIG_FILE') == str(self.accounts).encode(), 'hesap_servisi_ayari_uyusmuyor')
+ 
+ 
++    def pin_update_policy(self, phase, revision):
++        require(phase in ('maintenance', 'waiting') and type(revision) is int and revision > 0,
++                'bakim_veya_elle_kapali_on_kayit_gerekli')
++        previous = getattr(self, '_update_policy', None)
++        require(previous is None or previous == (phase, revision), 'guncelleme_sirasinda_oyun_durumu_degisti')
++        self._update_policy = (phase, revision)
++
+     def central(self, revision):
+-        # Authenticated, read-only maintenance assertion. No admin/open calls.
+-        js = "import fs from 'node:fs';import {pathToFileURL} from 'node:url';const [root,g,a,rev]=process.argv.slice(1);const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));const game=read(g);const {maintenanceClient}=await import(pathToFileURL(root+'/core511-source/scripts/delivery511/maintenance-client.mjs'));await maintenanceClient({gameConfig:game,accountsConfig:read(a),manifest:read(game.realm.manifestFile)}).assert(Number(rev));"
+-        command([str(self.node), '--input-type=module', '-e', js, str(self.root), str(self.config_file), str(self.accounts), str(revision)])
++        expected = getattr(self, '_update_policy', ('', None))[0]
++        reply = command([str(self.node), '--input-type=module', '-e', UPDATE_POLICY_JS,
++                         str(self.root), str(self.config_file), str(self.accounts), str(revision), expected])
++        policy = json.loads(reply)
++        require(policy.get('revision') == revision, 'merkezi_oyun_durumu_degisti')
++        self.pin_update_policy(policy.get('phase'), policy.get('revision'))
+ 
+     def offline_maintenance(self):
+         require(prop(self.accounts_unit, 'ActiveState') in ('inactive','failed'), 'hesap_servisi_durmali')
+         file = Path(self.accounts_config['database']).resolve()
+         with contextlib.closing(sqlite3.connect(file.as_uri() + '?mode=ro', uri=True, timeout=3)) as db:
+-            row = db.execute('SELECT mode,revision,maintenance_deadline_ms FROM launch_settings WHERE id=1').fetchone()
+-        require(row and row[0] == 'maintenance' and row[2] <= int(time.time()*1000), 'merkezi_bakim_karari_yok')
++            row = db.execute('SELECT mode,revision,maintenance_deadline_ms,enabled FROM launch_settings WHERE id=1').fetchone()
++        maintenance = row and row[0] == 'maintenance' and type(row[2]) is int and row[2] <= int(time.time()*1000)
++        preregistration = row and row[0] == 'closed' and row[3] == 1
++        require(maintenance or preregistration, 'merkezi_bakim_veya_elle_kapali_on_kayit_karari_yok')
++        self.pin_update_policy('maintenance' if maintenance else 'waiting', row[1])
+         return row[1]
+ 
+     def wait_central(self, revision):
+@@ -681,6 +721,11 @@
+         require(prop(self.unit, 'ActiveState') == 'inactive', 'oyun_servisi_durmadi')
+         service(self.accounts_unit, 'stop')
+         require(prop(self.accounts_unit, 'ActiveState') == 'inactive', 'hesap_servisi_durmadi')
++        # Waiting can admit explicitly authorized testers. Recheck after both
++        # services stop so no admission or admin-mode change can race a write.
++        self.offline_maintenance()
++        self.empty()
++        self.same_database()
+ 
+     def start_services(self, revision):
+         service(self.accounts_unit, 'start')
+@@ -696,16 +741,25 @@
+             counts = [db.execute('SELECT COUNT(*) FROM game_presence WHERE expires_at_ms>?', (int(time.time()*1000),)).fetchone()[0],
+                       db.execute('SELECT COUNT(*) FROM players WHERE last_seen>?', (int(time.time())-40,)).fetchone()[0],
+                       db.execute('SELECT COUNT(*) FROM kernel511_admissions').fetchone()[0]]
+-        require(counts == [0, 0, 0], 'aktif_oyuncu_veya_admin_var_panelden_bakima_alip_45_saniye_bekleyin')
++        require(counts == [0, 0, 0], 'aktif_oyuncu_veya_admin_var_oyundan_cikip_45_saniye_bekleyin')
+ 
+     def maintenance(self, revision=None):
+         panel = local(self.port, PANEL)
+-        require(panel.get('phase') == 'maintenance' and panel.get('jobsEnabled') is False and
+-                panel.get('approvedRevision') is None and not panel.get('configurationPaused') and
+-                not panel.get('configurationResuming'), 'once_admin_panelinden_bakima_alin')
++        phase = panel.get('phase')
++        require(phase in ('maintenance', 'waiting') and not panel.get('configurationPaused') and
++                not panel.get('configurationResuming'), 'panelden_bakim_veya_elle_kapali_on_kayit_secin')
+         current = panel.get('revision')
+         require(type(current) is int and (revision is None or current == revision), 'bakim_karari_degisti')
++        if phase == 'maintenance':
++            require(panel.get('jobsEnabled') is False and panel.get('approvedRevision') is None,
++                    'bakim_henuz_tamamlanmadi')
++        else:
++            require(type(panel.get('jobsEnabled')) is bool and
++                    panel.get('approvedRevision') in (None, current) and
++                    (panel.get('jobsEnabled') is False or panel.get('approvedRevision') == current),
++                    'on_kayit_cekirdek_durumu_uyusmuyor')
+         require(not panel.get('manualReset'), 'dunya_sifirlama_suruyor')
++        self.pin_update_policy(phase, current)
+         self.central(current)
+         self.empty()
+         self.same_database()
+@@ -730,9 +784,9 @@
+         raise Refused('dort_kanal_saglik_kontrolu_basarisiz')
+ 
+ def select_base(live, spec, runtime=None):
+-    """Four exact byte-pinned R50/R51/R52/R53 source bases; no filename-only compatibility."""
++    """Exact released R61 or R62 bytes; never trust only a version marker."""
+     bases = spec.get('bases')
+-    require(isinstance(bases, list) and {b.get('name') for b in bases} == {'R61'} and len(bases) == 1,
++    require(isinstance(bases, list) and {b.get('name') for b in bases} == {'R61', 'R62'} and len(bases) == 2,
+             'desteklenen_taban_listesi_gecersiz')
+     current = core_identity(live.root / CORE)
+     targets = []
+@@ -740,19 +794,22 @@
+         changes = []
+         for row in spec['changes']:
+             expected = row['beforeByBase']
+-            require(set(expected) == {'R61'}, 'paket_taban_SHA_listesi_gecersiz')
++            require(set(expected) == {'R61', 'R62'}, 'paket_taban_SHA_listesi_gecersiz')
+             if expected[base['name']] != row['after']:
+                 changes.append(dict(row, before=expected[base['name']]))
+-        selected = dict(spec, installedBase=base['name'], beforeCore=base['beforeCore'],
++        selected = dict(spec, packageChanges=spec['changes'], installedBase=base['name'], beforeCore=base['beforeCore'],
+                         baseFiles=base['baseFiles'], changes=changes)
+         if runtime:
+-            selected = dict(selected, runtimeCoreRows=runtime['coreRows'], runtimeBeforeCoreRows=runtime['beforeCoreRows'], _runtimePlan=runtime)
++            before_rows = runtime['coreRows'] if base['name'] == 'R62' else runtime['beforeCoreRows']
++            selected = dict(selected, runtimeCoreRows=runtime['coreRows'], runtimeBeforeCoreRows=before_rows, _runtimePlan=runtime)
+         selected = resolve_core_identity(live, selected)
+         if current == selected['beforeCore']:
++            require(runtime is not None and runtime['already'] == (base['name'] == 'R62'),
++                    'kaynak_ve_istemci_tabanlari_uyusmuyor')
+             return selected
+         if current == selected['afterCore']:
+             targets.append(selected)
+-    require(bool(targets), 'kod_dogrulanmis_R61_ile_ayni_degil')
++    require(bool(targets), 'kod_dogrulanmis_R61_veya_R62_ile_ayni_degil:' + current)
+     require(len({t['afterCore'] for t in targets}) == 1, 'paket_hedef_kimligi_uyusmuyor')
+     return targets[0]  # Already installed: only verify; never apply baseline bytes.
+ 
+@@ -766,7 +823,7 @@
+ def prepare(live, archive, spec):
+     spec = resolve_core_identity(live, spec)
+     root, state = live.root, live.state
+-    require(core_identity(root / CORE) == spec['beforeCore'], 'kod_dogrulanmis_R61_ile_ayni_degil')
++    require(core_identity(root / CORE) == spec['beforeCore'], 'kod_dogrulanmis_taban_ile_ayni_degil')
+     # A stale release manifest cannot authorize older bytes over live R23.
+     for name, row in spec['baseFiles'].items():
+         target = member(root, name)
+@@ -795,11 +852,15 @@
+         updates[target] = data
+     runtime = spec.get('_runtimePlan')
+     if runtime:
+-        require(not runtime['already'], 'runtime_zaten_yenilenmis_yarim_kurulum_icin_geri_alin')
+-        for target, data in runtime['updates'].items():
+-            if target.exists():
+-                regular(target, allow_hardlinks=True)
+-            updates[target] = data
++        if runtime['already']:
++            # R62 already contains the byte-identical R63 client. Its complete
++            # inverse/runtime proof was verified above; no HTTP/media rewrite.
++            require(spec['installedBase'] == 'R62', 'runtime_ve_kaynak_tabani_uyusmuyor')
++        else:
++            for target, data in runtime['updates'].items():
++                if target.exists():
++                    regular(target, allow_hardlinks=True)
++                updates[target] = data
+     operations = member(root, OPS)
+     regular(operations)  # This metadata-bound source file will be replaced.
+     require(digest(canonical_operations(operations.read_bytes(), spec)) == spec['baseFiles'][OPS]['sha256'], 'kurucu_kodu_degismis')
+@@ -1206,7 +1267,7 @@
+             record.pop('approvedConfigHashes',None)
+             record.pop('approvedStartupHashes',None)
+             atomic(directory/'journal.json',encoded(record))
+-            print('Anahtar değişikliği başarısız; önceki ayarlar geri yüklendi. OYUN BAKIMDA.',file=sys.stderr)
++            print('Anahtar değişikliği başarısız; önceki ayarlar geri yüklendi. BAKIM / ÖN KAYIT AYARINIZ KORUNDU.',file=sys.stderr)
+             raise
+         row['after'] = digest(after)
+         startup_row['after'] = digest(startup_after)
+@@ -1240,12 +1301,12 @@
+     parser = argparse.ArgumentParser(description='R63_RECOVERY: yerinde güncelleme, doğrulanmış geçici DB yedeği, oyun yalnız panelden açılır.')
+     flags = parser.add_mutually_exclusive_group(required=True)
+     flags.add_argument('--check', action='store_true', help='Yalnız oku; servis/dosya değiştirmez.')
+-    flags.add_argument('--apply', action='store_true', help='Bakımda, boş sunucuda yerinde güncelle.')
++    flags.add_argument('--apply', action='store_true', help='Bakım veya elle kapalı ön kayıt modunda, boş sunucuda güncelle.')
+     flags.add_argument('--flags', action='store_true', help='Mevcut R63_RECOVERY ortam anahtarlarını gösterir.')
+-    flags.add_argument('--set-flag', action='append', metavar='AD=DEGER', help='Bakımda anahtar değiştirir; birden fazla verilebilir.')
++    flags.add_argument('--set-flag', action='append', metavar='AD=DEGER', help='Bakım veya elle kapalı ön kayıtta anahtar değiştirir; birden fazla verilebilir.')
+     flags.add_argument('--rollback', metavar='YEDEK_DIZINI', help='Bu R63_RECOVERY yamasını geri al; güncel DB korunur.')
+     flags.add_argument('--rollback-latest', action='store_true', help='Son R63_RECOVERY kurulumunu tek komutla geri al; güncel DB korunur.')
+-    parser.add_argument('--base-package', help='Mevcut, değiştirilmemiş CORE511_R46.zip yolu; yalnız istemci doğrulaması için okunur. Sunucu tabanı birebir doğrulanmış R60 olmalıdır.')
++    parser.add_argument('--base-package', help='Mevcut, değiştirilmemiş CORE511_R46.zip yolu; yalnız istemci doğrulaması için okunur. Sunucu tabanı birebir doğrulanmış R61 veya R62 olmalıdır.')
+     args = parser.parse_args()
+     BASE_ARCHIVE = args.base_package
+     if args.apply:
+@@ -1294,7 +1355,7 @@
+                 record['status'] = 'rolled_back'
+                 atomic(directory / 'journal.json', encoded(record))
+                 remove_own_database_backup(directory, record)
+-                print('R63_RECOVERY geri alındı. Önceki doğrulanmış kod ve güncel DB korundu. OYUN BAKIMDA.')
++                print('R63_RECOVERY geri alındı. Önceki doğrulanmış kod ve güncel DB korundu. BAKIM / ÖN KAYIT AYARINIZ KORUNDU.')
+                 return
+         live.active_binding()
+         revision = live.maintenance()
+@@ -1314,7 +1375,7 @@
+                     require(record['status'] == 'installed', 'yarim_kurulum_var_once_rollback:' + str(directory))
+                     live.ready(revision)
+                     remove_own_database_backup(directory, record)
+-            print('R63_RECOVERY zaten kurulu. Yeni işlem yapılmadı; oyun bakımda.')
++            print('R63_RECOVERY zaten kurulu. Yeni işlem yapılmadı; oyun durumu korundu.')
+             return
+         print(spec['installedBase'] + ' taban dosyaları ve canlı manifest doğrulanıyor...', file=sys.stderr, flush=True)
+         updates = prepare(live, archive, spec)
+@@ -1324,7 +1385,7 @@
+             require(v.f_bavail*v.f_frsize > required, 'kucuk_yama_icin_bos_alan_yetersiz')
+         db_bytes = database_space(live, STATE.parent)
+         if args.check:
+-            print(json.dumps({'uygun': True, 'taban': spec['installedBase'], 'dosyaSayisi': len(updates), 'yazilacakBayt': sum(map(len, updates.values())), 'bakim': True, 'kaliciSchema': 'sema-ve-veri-degisikligi-yok', 'kurucuDBYazimi': False, 'geriAlmaDBYazimi': True, 'geciciDBYedegiBayt': db_bytes, 'kurulumDakikalari': 'her-dakika-ortak-yedek-kilidi', 'saatKisiti': False, 'DBYedegiSureSiniriSaniye': 1200, 'yerindeKurulum': True, 'beforeCore': spec['beforeCore'], 'afterCore': spec['afterCore'], 'manifesttenKimligeEklenenler': spec['liveIdentityFiles'], 'httpRuntimeDegisikligi': True, 'istemciDegisikligi': True, 'oncekiIstemciNamespace': runtime['oldNamespace'], 'yeniIstemciNamespace': runtime['namespace'], 'kopyalanmayanMedyaBagi': runtime['hardlinks']}, ensure_ascii=False))
++            print(json.dumps({'uygun': True, 'taban': spec['installedBase'], 'dosyaSayisi': len(updates), 'yazilacakBayt': sum(map(len, updates.values())), 'bakim': live._update_policy[0] == 'maintenance', 'onKayit': live._update_policy[0] == 'waiting', 'kaliciSchema': 'sema-ve-veri-degisikligi-yok', 'kurucuDBYazimi': False, 'geriAlmaDBYazimi': True, 'geciciDBYedegiBayt': db_bytes, 'kurulumDakikalari': 'her-dakika-ortak-yedek-kilidi', 'saatKisiti': False, 'DBYedegiSureSiniriSaniye': 1200, 'yerindeKurulum': True, 'beforeCore': spec['beforeCore'], 'afterCore': spec['afterCore'], 'manifesttenKimligeEklenenler': spec['liveIdentityFiles'], 'httpRuntimeDegisikligi': True, 'istemciDegisikligi': True, 'oncekiIstemciNamespace': runtime['oldNamespace'], 'yeniIstemciNamespace': runtime['namespace'], 'kopyalanmayanMedyaBagi': runtime['hardlinks']}, ensure_ascii=False))
+             return
+         with install_lock(), scheduled_backup_lock(live):
+             # A scheduled backup may have taken time. Revalidate the live
+@@ -1384,7 +1445,7 @@
+             # Cleanup is outside the install try: a disk/permission failure here
+             # must not revert a verified installation. --apply retries cleanup.
+             remove_own_database_backup(directory, record)
+-            print('R63_RECOVERY kuruldu. Dört kanal sağlıklı. Kurulum DB yedeği silindi; günlük yedekler korundu. OYUN BAKIMDA; yalnız panelden açın.\nPanel: https://r1.coreoflife.net/admin/oyun-durumu\nGeri alma: python3 /root/CORE511_R63.zip --game-only --rollback-latest')
++            print('R63_RECOVERY kuruldu. Dört kanal sağlıklı. Kurulum DB yedeği silindi; günlük yedekler korundu. BAKIM / ÖN KAYIT AYARINIZ KORUNDU; oyunu yalnız panelden açın.\nPanel: https://r1.coreoflife.net/admin/oyun-durumu\nGeri alma: python3 /root/CORE511_R63_DUZELTILMIS.zip --game-only --rollback-latest')
+ 
+ if __name__ == '__main__':
+     signal.signal(signal.SIGTERM, lambda *_: (_ for _ in ()).throw(Refused('islem_durduruldu')))
