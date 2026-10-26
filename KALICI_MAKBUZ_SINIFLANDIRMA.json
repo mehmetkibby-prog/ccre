@@ -1,0 +1,44 @@
+[
+  {
+    "version": "R56",
+    "pending": 544,
+    "matchedDeathReceipt": 544,
+    "completedClaimContradictions": 0,
+    "eagerOutcomes": {
+      "small_group_eager_partial": 65,
+      "large_group_slice_exhausted": 479
+    },
+    "eagerCompletedPerReceipt": {
+      "16": 65,
+      "4": 479
+    }
+  },
+  {
+    "version": "R61",
+    "pending": 429,
+    "matchedDeathReceipt": 429,
+    "completedClaimContradictions": 0,
+    "eagerOutcomes": {
+      "large_group_slice_exhausted": 385,
+      "small_group_eager_partial": 44
+    },
+    "eagerCompletedPerReceipt": {
+      "4": 385,
+      "16": 44
+    }
+  },
+  {
+    "version": "R62",
+    "pending": 616,
+    "matchedDeathReceipt": 616,
+    "completedClaimContradictions": 0,
+    "eagerOutcomes": {
+      "large_group_slice_exhausted": 523,
+      "small_group_eager_partial": 93
+    },
+    "eagerCompletedPerReceipt": {
+      "4": 523,
+      "16": 93
+    }
+  }
+]

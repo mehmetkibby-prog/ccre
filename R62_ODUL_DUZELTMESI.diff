@@ -1,0 +1,185 @@
+--- R62/abandoned-normal.mjs
++++ R62/abandoned-normal.mjs
+@@ -1,3 +1,4 @@
++import {rewardRecoveryR62,RECOVERY_TARGETS_R62,RECOVERY_PRIORITY_AGE_S_R62} from './reward-recovery-r62.mjs';
+ import {mountRewardResult} from './mounts-rewards.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {performance} from 'node:perf_hooks';
+@@ -47,7 +48,7 @@
+   const targets=entry.normalTargets??[target],started=performance.now();let actors=[],previous=new Map(),executing=false;
+   try{return await c.serial(async()=>{
+    if(this.world.row?.peer.incarnation!==peer.incarnation||this.held||c.recoveringWorld)return {handled:true,deferred:true};
+-   demand(Array.isArray(targets)&&targets.length>0&&targets.length<=6,'abandoned_target_count');
++   demand(Array.isArray(targets)&&targets.length>0&&targets.length<=(rewardRecoveryR62?RECOVERY_TARGETS_R62:6),'abandoned_target_count');
+    const nowMs=c.clock();if(!targets.every(t=>ordinaryDue(c.database.sqlite,t,nowMs)))return false;
+    actors=[...new Set(targets.flatMap(t=>abandonedActors(c.database.sqlite,t,nowMs)))].sort();
+    if(!actors.length)return {handled:true,deferred:true};if(actors.length>100)return false;
+@@ -58,13 +59,21 @@
+    // Expected rejection must happen before any freeze RPC or world writer
+    // sequence is reserved. The permanent coordinator still rechecks atomically.
+    c.permanent.assertAvailable(actors);
+-   const result=await c.permanent[rewardRecoverySchedulerR52?'durablePlayersWhenIdle':'durablePlayers'](actors,async locked=>{
++   // An aged durable reward must not starve behind perpetual AI/checkpoints.
++   // The oldest target triggers promotion even alongside younger eligible
++   // targets, so a stream of new deaths cannot keep an old debt idle forever.
++   // Promote to the existing draining freeze, never bypass owner/epoch fences.
++   const priority=rewardRecoveryR62&&entry.recoveryR62===true&&targets.some(t=>{
++    const d=prepareCached477(c.database.sqlite,'SELECT defeated_at FROM normal_defeats WHERE monster_id=? AND spawn_round=?').get(t.id,t.spawnRound);
++    return d&&d.defeated_at<=Math.floor(nowMs/1000)-RECOVERY_PRIORITY_AGE_S_R62;
++   });
++   const result=await c.permanent[rewardRecoverySchedulerR52&&!priority?'durablePlayersWhenIdle':'durablePlayers'](actors,async locked=>{
+     executing=true;
+     const payload={target,targets,actors,cycle:entry.cycle,nowMs:c.clock(),seed:OperationRandom.seed(),token:randomUUID()},key='abandoned-normal:'+payload.token;
+     this.held={peer,payload,key,locked};
+     try{const ack=await this.world.row.control.request('player_job_execute',{key,kind:'abandoned_normal',payload});demand(ack.key===key&&ack.result,'abandoned_ack');return ack.result;}finally{this.held=null;}
+    });
+-   this.record({targets:targets.length,actors:actors.length,holdAndRefreshMs:performance.now()-started,awarded:Boolean(result.result?.awarded),deferred:Boolean(result.deferred),...(rewardRecoverySchedulerR52?{idleScheduled:true,code:result.code??null}:{}),global:false});return rewardRecoverySchedulerR52&&result.deferred?{handled:true,...result}:true;
++   this.record({targets:targets.length,actors:actors.length,holdAndRefreshMs:performance.now()-started,awarded:Boolean(result.result?.awarded),deferred:Boolean(result.deferred),...(rewardRecoverySchedulerR52?{idleScheduled:!priority,priority,code:result.code??null}:{}),global:false});return rewardRecoverySchedulerR52&&result.deferred?{handled:true,...result}:true;
+   });}catch(error){
+    // PermanentCoordinator owns unknown freeze/commit/refresh recovery. Do not
+    // additionally reject heartbeat_due and kill the otherwise healthy world.
+@@ -84,7 +93,7 @@
+ export function runAbandonedNormal(writer,sql,payload,context){
+  demand(r37Options.abandonedLocal&&context.peer.channel===0&&context.peer.role==='world'&&writer.abandonedNormal?.assertHeld(sql,payload,context),'abandoned_owner');
+  const {target,actors,nowMs}=payload,targets=payload.targets??[target];
+- demand(Array.isArray(targets)&&targets.length>0&&targets.length<=6,'abandoned_target_count');
++ demand(Array.isArray(targets)&&targets.length>0&&targets.length<=(rewardRecoveryR62?RECOVERY_TARGETS_R62:6),'abandoned_target_count');
+  // Only ordinary native normal rewards use this path. Special catalogs retain
+  // their existing world owner. A changed roster is retried without any write.
+  if(!targets.every(t=>ordinaryDue(sql,t,nowMs))||JSON.stringify([...new Set(targets.flatMap(t=>abandonedActors(sql,t,nowMs)))].sort())!==JSON.stringify(actors))return {deferred:true};
+--- R62/heartbeat-jobs.mjs
++++ R62/heartbeat-jobs.mjs
+@@ -1,3 +1,5 @@
++import {r37Options} from './r37-options.mjs';
++import {rewardRecoveryR62} from './reward-recovery-r62.mjs';
+ import {AbandonedNormal} from './abandoned-normal.mjs';
+ import {demand} from './contract.mjs';
+ import {canonicalAttack} from './attack-writer.mjs';
+@@ -13,8 +15,15 @@
+  async due(peer,{nowMs,cycle}){
+   demand(this.world.row?.peer.incarnation===peer.incarnation&&!this.held,'heartbeat_job_process_fenced');const snapshot=[];
+   for(const [id,row]of this.pending){const owner=this.core.writer.owners.get(id);if(!owner?.admitted||owner.epoch!==row.epoch||row.cycle!==cycle){this.pending.delete(id);continue;}snapshot.push(row);}
+-  if(!snapshot.length)return null;
+-  let selected=(await this.core.reader.query('kernel511_heartbeat_due',{entries:snapshot,cycle,nowMs})).rows,localHandled=false;
++  // The durable defeat ledger is the wake-up source. No browser heartbeat,
++  // old owner epoch or reconnect is required to retain an unpaid obligation.
++  let recovery=null;
++  if(rewardRecoveryR62&&r37Options.abandonedLocal){
++   const entry=(await this.core.reader.query('kernel511_normal_recovery_r62',{cycle,nowMs})).rows;
++   if(entry){const result=await this.abandoned.run(peer,entry);recovery={recoveryOnlyR62:true,retryAfterMs:result?.deferred?250:50};}
++  }
++  if(!snapshot.length)return recovery;
++  let selected=(await this.core.reader.query('kernel511_heartbeat_due',{entries:snapshot,cycle,nowMs,...(rewardRecoveryR62&&r37Options.abandonedLocal?{skipOrdinaryR62:true}:{})})).rows,localHandled=false;
+   if(selected?.normalTarget){
+    const result=await this.abandoned.run(peer,selected);localHandled=Boolean(result);
+    if(localHandled){
+@@ -28,7 +37,7 @@
+   // A selected native task can consume only its own descriptor. Other arena
+   // queues/forfeits must remain pending even if their actor never sends again.
+   if(!localHandled)for(const row of snapshot)if((!selected||row.actor===selected.actor)&&this.pending.get(row.actor)===row)this.pending.delete(row.actor);
+-  if(selected)this.held={entry:selected,incarnation:peer.incarnation};return selected;
++  if(selected)this.held={entry:selected,incarnation:peer.incarnation};return selected??recovery;
+  }
+  assertHeld(sql,entry,context){
+   demand(this.held?.incarnation===context.peer.incarnation&&canonicalAttack(this.held.entry)===canonicalAttack(entry),'heartbeat_job_not_selected');
+--- R62/heartbeat-maintenance-reader.mjs
++++ R62/heartbeat-maintenance-reader.mjs
+@@ -1,3 +1,4 @@
++import {rewardRecoveryR62,RECOVERY_TARGETS_R62} from './reward-recovery-r62.mjs';
+ import {r37Options} from './r37-options.mjs';
+ import {createAttackWriterRules} from './generated/attack-writer-rules.mjs';
+ import {nativeAtomicStatements} from './retaliation-writer.mjs';
+@@ -10,7 +11,29 @@
+ // scan serves a batch of recent authenticated heartbeats.
+ export class HeartbeatMaintenanceReader {
+  constructor(sql){this.sql=sql;this.rules=createAttackWriterRules({globals:{}});}
+- due(entries,{cycle,nowMs,skipAbandoned=false}){
++ // Normal-local recovery must not consume the special catalog/global path.
++ nonlocalNormalR62(db,settings){
++  const target=this.sql.prepare(`SELECT d.monster_id AS id,d.spawn_round AS spawnRound
++   FROM normal_defeats d LEFT JOIN monsters m ON m.id=d.monster_id
++   WHERE d.rewards_completed_at=0
++   AND (m.id IS NULL OR m.channel<=0 OR m.is_boss<>0 OR m.is_stone<>0 OR d.loot_source_key IN ('adventure.catalog','event.catalog'))
++   AND EXISTS(SELECT 1 FROM monster_participants mp JOIN players p ON p.id=mp.player_id
++    WHERE mp.monster_id=d.monster_id AND mp.spawn_round=d.spawn_round
++    AND NOT EXISTS(SELECT 1 FROM normal_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id))
++   ORDER BY d.defeated_at,d.monster_id LIMIT 1`).get();
++  return target?this.rules.readPendingNormal511(db,settings,undefined,target):null;
++ }
++ recoveryDueR62({cycle,nowMs}){
++  demand(rewardRecoveryR62&&Number.isSafeInteger(cycle)&&Number.isSafeInteger(nowMs),'reward_recovery_scan');
++  const sql=this.sql;sql.exec('BEGIN');try{
++   if(sql.prepare('SELECT cycle FROM world_state WHERE id=1').get().cycle!==cycle)return null;
++   if(this.recoveryCycleR62!==cycle){this.recoveryCycleR62=cycle;this.recoveryCursorR62=null;}
++   const next=nextRewardTargetsR52(sql,{nowMs,grace:Number(process.env.CORE511_REWARD_GRACE_S??20),cursor:this.recoveryCursorR62,limit:RECOVERY_TARGETS_R62});
++   this.recoveryCursorR62=next.cursor;
++   return next.targets.length?{cycle,nowMs,recoveryR62:true,normalTarget:next.targets[0],normalTargets:next.targets}:null;
++  }finally{sql.exec('ROLLBACK');}
++ }
++ due(entries,{cycle,nowMs,skipAbandoned=false,skipOrdinaryR62=false}){
+   demand(Array.isArray(entries)&&entries.length<=100&&Number.isSafeInteger(cycle)&&Number.isSafeInteger(nowMs),'heartbeat_maintenance_scan');
+   const sql=this.sql,db=nativeAtomicStatements(sql),rules=this.rules;sql.exec('BEGIN');
+   try{
+@@ -20,7 +43,7 @@
+    if(!valid.length)return null;
+    // A fresh normal defeat is normally claimed by its own client (claim_rewards)
+    // within a second. Only abandoned rewards justify a global world freeze.
+-   const normal=skipAbandoned?null:rules.readPendingNormal511(db,settings),grace=Number(process.env.CORE511_REWARD_GRACE_S??20);
++   const normal=skipAbandoned?null:rewardRecoveryR62&&skipOrdinaryR62?this.nonlocalNormalR62(db,settings):rules.readPendingNormal511(db,settings),grace=Number(process.env.CORE511_REWARD_GRACE_S??20);
+    const normalDue=Boolean(normal)&&!(grace>0&&(sql.prepare('SELECT defeated_at FROM normal_defeats WHERE monster_id=? AND spawn_round=?').get(normal.monster_id,normal.spawn_round)?.defeated_at??0)>Math.floor(nowMs/1000)-grace);
+    for(const [reason,due]of [['pending_boss',()=>rules.readPendingBoss511(db,settings)],['pending_sinsi',()=>rules.readPendingSinsi511(db,settings)],['abandoned_normal',()=>normalDue],['pending_drop',()=>rules.readPendingDrops511(db,settings).length]])if(due()){
+     const m=reason==='abandoned_normal'&&r37Options.abandonedLocal?sql.prepare('SELECT channel,is_boss,is_stone FROM monsters WHERE id=?').get(normal.monster_id):null;
+--- R62/read-worker.mjs
++++ R62/read-worker.mjs
+@@ -60,6 +60,7 @@
+    else if(workerData.actorBundles===true&&message.name==='kernel511_guild_step')rows=guildSync.step(message.params);
+    else if(workerData.actorBundles===true&&message.name==='kernel511_guild_war_due')rows=guildWarDue(sqlite,message.params[0]);
+    else if(workerData.actorBundles===true&&message.name==='kernel511_dungeon_lifecycle_due')rows=dungeonLifecycleDue(sqlite,message.params[0]);
++   else if(workerData.actorBundles===true&&message.name==='kernel511_normal_recovery_r62')rows=heartbeat.recoveryDueR62(message.params);
+    else if(workerData.actorBundles===true&&message.name==='kernel511_heartbeat_due')rows=heartbeat.due(message.params.entries,message.params);
+    else{const query=queries.get(message.name);demand(query&&Array.isArray(message.params),'unknown_read_worker_query');rows=query.all(...message.params);}
+    const bytes=JSON.stringify(rows);demand(Buffer.byteLength(bytes)<=4*1024*1024,'read_worker_result_too_large');
+--- R62/reward-recovery-r52.mjs
++++ R62/reward-recovery-r52.mjs
+@@ -19,7 +19,8 @@
+ // One three-field cursor per reader, rather than an ever-growing skipped-actor
+ // set. Completed/deleted targets disappear naturally; wrap keeps older busy
+ // recipients eligible on later visits. The pending index already exists.
+-export function nextRewardTargetsR52(sql,{nowMs,grace,cursor=null}){
++export function nextRewardTargetsR52(sql,{nowMs,grace,cursor=null,limit=6}){
++ if(limit!==6&&limit!==16)throw Error('reward_recovery_target_limit');
+  const base=`SELECT d.monster_id AS id,d.spawn_round AS spawnRound,d.defeated_at AS defeatedAt,m.channel AS channel
+   FROM normal_defeats d JOIN monsters m ON m.id=d.monster_id
+   WHERE d.rewards_completed_at=0 AND d.defeated_at<=? AND m.channel>0 AND m.is_boss=0 AND m.is_stone=0
+@@ -27,7 +28,7 @@
+   AND EXISTS(SELECT 1 FROM monster_participants mp JOIN players p ON p.id=mp.player_id
+     WHERE mp.monster_id=d.monster_id AND mp.spawn_round=d.spawn_round
+     AND NOT EXISTS(SELECT 1 FROM normal_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id))`;
+- const end=' ORDER BY d.defeated_at,d.monster_id,d.spawn_round LIMIT 6',cutoff=Math.floor(nowMs/1000)-grace;
++ const end=' ORDER BY d.defeated_at,d.monster_id,d.spawn_round LIMIT '+limit,cutoff=Math.floor(nowMs/1000)-grace;
+  let rows=cursor?prepareCached477(sql,base+' AND (d.defeated_at,d.monster_id,d.spawn_round)>(?,?,?)'+end).all(cutoff,cursor.defeatedAt,cursor.id,cursor.spawnRound):[];
+  if(!rows.length)rows=prepareCached477(sql,base+end).all(cutoff);
+  // Do not accidentally make a local batch span independent monster channels.
+--- R62/reward-recovery-r62.mjs
++++ R62/reward-recovery-r62.mjs
+@@ -0,0 +1,4 @@
++// Immutable per process; installation enables the repaired recovery scheduler.
++export const rewardRecoveryR62=process.env.CORE511_R62_REWARD_RECOVERY==='1';
++export const RECOVERY_TARGETS_R62=16;
++export const RECOVERY_PRIORITY_AGE_S_R62=45;
+--- R62/shared-world-jobs.mjs
++++ R62/shared-world-jobs.mjs
+@@ -1,3 +1,4 @@
++import {rewardRecoveryR62} from './reward-recovery-r62.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {OperationRandom} from './operation-random.mjs';
+ import {demand} from './contract.mjs';
+@@ -13,7 +14,7 @@
+   const r=this.runtime,key='world-upkeep:'+this.incarnation+':'+(++this.serial),ack=await r.writer.submit({key,kind:'world_upkeep',payload:{nowMs,cycle:r.initial.world.cycle}});r.setWorld(ack.result.worldPoint);
+   const state=r.initial.world,now=Math.floor(nowMs/1000);let mode=state.reset_at&&state.reset_at<=now?'reset':!state.reset_at&&state.guardian_reward_at<=now?'guardian':null;
+   if(!mode&&(await r.request('guild_war_due',{nowMs})).due)mode='guild_timeout';
+-  let heartbeatJob=null;if(!mode){await r.request('world_player_jobs',{nowMs,cycle:state.cycle});heartbeatJob=await r.request('heartbeat_due',{nowMs,cycle:state.cycle});if(heartbeatJob)mode='heartbeat';}
++  let heartbeatJob=null;if(!mode){await r.request('world_player_jobs',{nowMs,cycle:state.cycle});heartbeatJob=await r.request('heartbeat_due',{nowMs,cycle:state.cycle});if(rewardRecoveryR62&&heartbeatJob?.recoveryOnlyR62){demand([50,250].includes(heartbeatJob.retryAfterMs),'reward_recovery_retry_bound');this.nextAt=Math.min(this.nextAt,Date.now()+heartbeatJob.retryAfterMs);heartbeatJob=null;}if(heartbeatJob)mode='heartbeat';}
+   if(!mode&&(await r.request('dungeon_lifecycle_due',{nowMs})).due)mode='dungeon_cleanup';
+   if(!mode){await this.cleanup(nowMs);return;}
+   this.blocked=true;if(r.lifecycle.pending)await r.lifecycle.pending;

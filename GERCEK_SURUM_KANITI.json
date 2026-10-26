@@ -1,0 +1,26 @@
+[
+  {
+    "version": "R56",
+    "originalArchive": "CORE511_R56_PERFORMANCE.zip",
+    "archiveSHA256": "f8f93aa99cb77d047c7d483d9d2cb3ba0a22e898f7e97536e1fa53f1c2f7036f",
+    "patchAfterCore": "7cfdab81bc01db8e4f2c2b7ad89df5064da06965454df7d532b64f1e707f959b",
+    "measuredSourceCore": "7cfdab81bc01db8e4f2c2b7ad89df5064da06965454df7d532b64f1e707f959b",
+    "match": true
+  },
+  {
+    "version": "R61",
+    "originalArchive": "CORE511_R61_AUDIO.zip",
+    "archiveSHA256": "e1a771a8cdce73209e0f3e8062c1a03357c3aadea377b759959cef666c4b08e0",
+    "patchAfterCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+    "measuredSourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+    "match": true
+  },
+  {
+    "version": "R62",
+    "originalArchive": "CORE511_R62_POLISH_TEST.zip",
+    "archiveSHA256": "7e65ac51e2bf1584a1b82fe323609845f8c81b43d75f0df2ab6a7af098102050",
+    "patchAfterCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+    "measuredSourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+    "match": true
+  }
+]

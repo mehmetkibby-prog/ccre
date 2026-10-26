@@ -1,0 +1,226 @@
+{
+  "BASELINE_KARSILASTIRMA.json": {
+    "bytes": 2454,
+    "sha256": "bf83ea015bb9828a5291df349bb64d19d8cc4b290437d31ee8a00e5826940f8e"
+  },
+  "CORE511_R56_KAYNAK.zip": {
+    "bytes": 67561446,
+    "sha256": "a5f3d03eb4306861685fcd4e394a79c1260551c2ab3a4a0c85e158b8d470308d"
+  },
+  "CORE511_R56_KAYNAK.zip.sha256": {
+    "bytes": 89,
+    "sha256": "a58f1da3e430f8204c7c8a574ad68a9453ebd0a559aabe5384c3c98e3ba03c98"
+  },
+  "CORE511_R61_KAYNAK.zip": {
+    "bytes": 72865890,
+    "sha256": "591db592f4137feb3f3018ffb2ecf050b38ad25c759b31d047997533164bb46a"
+  },
+  "CORE511_R61_KAYNAK.zip.sha256": {
+    "bytes": 89,
+    "sha256": "d79e0ee502af59ecbf723985a54a39a786d5a228ab009c6f15488c07deb7385b"
+  },
+  "CORE511_R62.zip": {
+    "bytes": 46581975,
+    "sha256": "81d5f5b082399367f6ef32dadf57a289e46ca3cfc08e8a87fc078224de8fa119"
+  },
+  "CORE511_R62.zip.sha256": {
+    "bytes": 82,
+    "sha256": "cdc827050c022bfecc5dab7a2550adbeb2b775925581b83f43178ee28a747d87"
+  },
+  "CORE511_R62_BASE_KAYNAK.zip": {
+    "bytes": 73424882,
+    "sha256": "310784a3f4efc9e97c5af9e119627713de6febcb8b06a7456fd60118948156e9"
+  },
+  "CORE511_R62_BASE_KAYNAK.zip.sha256": {
+    "bytes": 94,
+    "sha256": "79a0a8ecc1678c192bb1ee434c2c5aaa512b3a50286ed5dc3b8a147117b1a972"
+  },
+  "CORE511_R62_KAYNAK.zip": {
+    "bytes": 73394362,
+    "sha256": "710db48c21d2856e4faf4707d2a61bbe854ffefc71067f3ee45d7e7dfbf8e5fa"
+  },
+  "CORE511_R62_KAYNAK.zip.sha256": {
+    "bytes": 89,
+    "sha256": "72c36dd7c2d2c30dcf6677601ab8c0a086801ab10f25877d76e68f6caab81f21"
+  },
+  "DEGISIKLIKLER.md": {
+    "bytes": 2302,
+    "sha256": "f182cf3699f6c513af587828925797a7166cbfe2f9ed8bb2356cc35d0bc0a755"
+  },
+  "GERCEK_SURUM_KANITI.json": {
+    "bytes": 1125,
+    "sha256": "28fdde85319556991b175889dadc107e113fe9bb572e2afc77f104e3255dbbfe"
+  },
+  "KALICI_MAKBUZ_SINIFLANDIRMA.json": {
+    "bytes": 912,
+    "sha256": "852a0d24c60b4f9c8b39faf5249b1db0cc767cc60a996a6bfd47c0faf0479c6c"
+  },
+  "KANIT_accept-crash-1.zip": {
+    "bytes": 17508520,
+    "sha256": "1d9ee24cce2f95fca3320448726c8ebb08b210e8d73c5d9b0b79a45854e1b87e"
+  },
+  "KANIT_accept-crash-1.zip.sha256": {
+    "bytes": 91,
+    "sha256": "ef7bf9ffe2bd4fbc9b8316fb4d567fbe9c8a81dec9b00ae8fa7ee3c125a8887d"
+  },
+  "KANIT_accept-crash-2.zip": {
+    "bytes": 26307945,
+    "sha256": "57e774aae941f5bdc44406ccae07221713396441de1db85f54eff549dde47d7b"
+  },
+  "KANIT_accept-crash-2.zip.sha256": {
+    "bytes": 91,
+    "sha256": "86c9e4cd2be68424d0919441abfaf7c9cdd3ec369d807583fd200bf296743a3e"
+  },
+  "KANIT_accept-crash-3.zip": {
+    "bytes": 19110823,
+    "sha256": "279a610c4bed4f931109507fbf5b64aff7ff98acd9a2d1d17b21baa44160e61b"
+  },
+  "KANIT_accept-crash-3.zip.sha256": {
+    "bytes": 91,
+    "sha256": "12c94ed8539ddd625131bcae8a068dff35deead38fcb6b84aa5242c27d6f1cf3"
+  },
+  "KANIT_accept-matrix-1.zip": {
+    "bytes": 301666,
+    "sha256": "910b2355f0811b1e3b04de4f380dcc4bc9aea84f7a68c8fdb1e4e6d5583a95d5"
+  },
+  "KANIT_accept-matrix-1.zip.sha256": {
+    "bytes": 92,
+    "sha256": "6008aec95ed1b9596819775cc33be52988c2daeb118f5e1268a273bee6e3e8a8"
+  },
+  "KANIT_accept-matrix-2.zip": {
+    "bytes": 295952,
+    "sha256": "c926ae18827337b6ec26d4084bc9f1dd7da285a18316d763c55fe8fd0ae5d86f"
+  },
+  "KANIT_accept-matrix-2.zip.sha256": {
+    "bytes": 92,
+    "sha256": "0602d8f30427868032988e4c165b6dd0fb46a413da4e7159331d1d1d514ae48f"
+  },
+  "KANIT_accept-plain-1.zip": {
+    "bytes": 15643325,
+    "sha256": "239f8c994ca7087e5abb52f0eba113b79c9dfdb0c009818666fe2857c39744dd"
+  },
+  "KANIT_accept-plain-1.zip.sha256": {
+    "bytes": 91,
+    "sha256": "a7e69d345a38e52a8980727741dc42954faa987822c0287b253923dbca2a4ce5"
+  },
+  "KANIT_accept-plain-2.zip": {
+    "bytes": 17018635,
+    "sha256": "b222c54fe2fb658bc407029250e09e9bce6b096c7aefcfb5a912dd2f0954952e"
+  },
+  "KANIT_accept-plain-2.zip.sha256": {
+    "bytes": 91,
+    "sha256": "dbdbbe3da10bca856c49510c401a65e09f09ed72b1553cb3b3b88d5d7211784c"
+  },
+  "KANIT_baseline-R56-crash.zip": {
+    "bytes": 33163254,
+    "sha256": "cdd066b1f5e9e79017d4ae67241e91c53512f39e03ac31e73a7c7a481c0f5595"
+  },
+  "KANIT_baseline-R56-crash.zip.sha256": {
+    "bytes": 95,
+    "sha256": "5218633823800f229371021fa3baa18289641d7c4d035e0d026f5f77eb2feae1"
+  },
+  "KANIT_baseline-R61-crash.zip": {
+    "bytes": 34790593,
+    "sha256": "31135aa6fd8cbfac88ff714e3ff82530325cf69fbf6b9dc01a606eff58b5e166"
+  },
+  "KANIT_baseline-R61-crash.zip.sha256": {
+    "bytes": 95,
+    "sha256": "e40d8d235892a11451a4502bba1b6ab8faa93229a0619fcb6e0794b136751da4"
+  },
+  "KANIT_baseline-R62-crash.zip": {
+    "bytes": 38907269,
+    "sha256": "453cc39f2a0aa4c3c4745b361abab67a88a6f18ff548ebdf2668f9baaf24ad76"
+  },
+  "KANIT_baseline-R62-crash.zip.sha256": {
+    "bytes": 95,
+    "sha256": "5d8d41a88bcb977d4b6674f5843aa90ab44dbb0027ea5e33d4b4b4b204e98259"
+  },
+  "KANIT_baseline-R62-matrix.zip": {
+    "bytes": 297113,
+    "sha256": "b7942fc47c7a866e5ba6003a9557f508c3fa04c8b2faca3fc4c692ab9deb9259"
+  },
+  "KANIT_baseline-R62-matrix.zip.sha256": {
+    "bytes": 96,
+    "sha256": "4202dda14c8357088985b31159218bdd5ba9a866a9ec26016c41ffdd56e97194"
+  },
+  "KANIT_observer-failed-plain-1.zip": {
+    "bytes": 169917,
+    "sha256": "e9b1683edb7300b22709e7116cd5cde089ebef8b39b549195d9c032acd33debb"
+  },
+  "KANIT_observer-failed-plain-1.zip.sha256": {
+    "bytes": 100,
+    "sha256": "053e973cc75661072e3b4d7707817c58e9c759c1d3855b59044c1f1394ae55fc"
+  },
+  "KAYNAK_PAKET_KANITI.json": {
+    "bytes": 1578,
+    "sha256": "05e7adee11d7b44307c471cea990029542bd16a19d2dfad39359f3f719ad2a9d"
+  },
+  "KOMUTLAR.md": {
+    "bytes": 2952,
+    "sha256": "1394fda565456b715968ea756dbd472b04c91f190ae04359d77213d9c1f7892e"
+  },
+  "KURTARMA_INCELEME_KANITLARI.zip": {
+    "bytes": 50031,
+    "sha256": "808c22f04234367bd6a586efe234beb5ee629fe1101c927f456408524793bd69"
+  },
+  "KURTARMA_INCELEME_KANITLARI.zip.sha256": {
+    "bytes": 98,
+    "sha256": "22531b09e273a7ea62791d94b510f13ed11d70f9460365c9ffaaf28084c5269b"
+  },
+  "KURULUM.md": {
+    "bytes": 1628,
+    "sha256": "bed38d136d9a469f50e174714ca4a98d069bf6dcc8d354200a0b9568bb9db12d"
+  },
+  "OLCUM_GOZLEMCILERI.zip": {
+    "bytes": 10435,
+    "sha256": "bd3cdfa9f5bb61436b30f4f9b87640a1d4de5bd9436938ccbe9de17f2db485fe"
+  },
+  "OLCUM_GOZLEMCILERI.zip.sha256": {
+    "bytes": 89,
+    "sha256": "d5af1c1e501c20e17f51bc2af22c85a2c08699bd5dee0717c9c941cc9c3423f6"
+  },
+  "R56_KALAN_ODULLER_120SN.csv": {
+    "bytes": 1500575,
+    "sha256": "b348f5abbc39dc9b9f3d3847702e6bc28710371f5ce7a3e49842c056728d27c3"
+  },
+  "R61_KALAN_ODULLER_120SN.csv": {
+    "bytes": 1348767,
+    "sha256": "6e4dbae5bd48ad9df681f81a2ea1f4bd2f35224fae3b598ee7df099261a3c466"
+  },
+  "R61_R62_TAM.diff": {
+    "bytes": 1960539,
+    "sha256": "b00dd112c3913246c8ed0fc14d6551571c330668bd51b16a44de127b27eb9309"
+  },
+  "R61_R62_TAM.diff.json": {
+    "bytes": 4617,
+    "sha256": "e1f670c23140c5061b0ba330a14fadea1dcb929d10cffbc4d9ffd92a558212c0"
+  },
+  "R62_KALAN_ODULLER_120SN.csv": {
+    "bytes": 1900119,
+    "sha256": "51fda7a052da589c7f04b22acb03d6848781df68aa2fc06e893dad6151b8b718"
+  },
+  "R62_ODUL_DUZELTMESI.diff": {
+    "bytes": 15399,
+    "sha256": "cde576844381a82fa6aafdca82ad95c0026806517f4f458f3c6b836ad8f2f43c"
+  },
+  "R62_ODUL_DUZELTMESI.diff.json": {
+    "bytes": 1486,
+    "sha256": "a3be6a5381cc10f5bed963a8433c69ec60822c46844a6e791f30fbaddfa6e8ea"
+  },
+  "README.md": {
+    "bytes": 4346,
+    "sha256": "13064ab9ded0153bcd84a2ef80aac5e227d09b962743e47a303170af50f776d7"
+  },
+  "TESLIM.md": {
+    "bytes": 4346,
+    "sha256": "13064ab9ded0153bcd84a2ef80aac5e227d09b962743e47a303170af50f776d7"
+  },
+  "TEST_SONUCLARI.json": {
+    "bytes": 42859,
+    "sha256": "094e8f66a785a2d931bafc635086d14d20b6c0472f0f6d7ffa185e9c01bfcab2"
+  },
+  "TEST_SONUCLARI.md": {
+    "bytes": 14368,
+    "sha256": "de457e298cc1687ef47af06fdb5fbd6f446d31a65f77bf9627246dd68dcee197"
+  }
+}

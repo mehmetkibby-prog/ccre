@@ -1,0 +1,37 @@
+[
+  {
+    "path": "abandoned-normal.mjs",
+    "beforeSHA256": "0b21b2f69bcea0fcc208bd9f9deb9c86d91987e44b90ed8e2d51ac538ae48cdf",
+    "afterSHA256": "03c13749a10e5b1389094f13bc1843af46934407eaf2e7dfc2ffdf3a071c0ad3"
+  },
+  {
+    "path": "heartbeat-jobs.mjs",
+    "beforeSHA256": "5d68297f6bbe44e85b1ba34e3cdb00a6557c119a54cb277aaa9e2c27bbd9ffa4",
+    "afterSHA256": "a8523899a99fb7f33359952b8ccbb49e632e7c56e13736fbc5fe19840448a600"
+  },
+  {
+    "path": "heartbeat-maintenance-reader.mjs",
+    "beforeSHA256": "1647b825b8792b9552228b49001335307df54693bdb795806ad321f55a054caa",
+    "afterSHA256": "e44b248e293058f422b379618b945ced88e12a3d5902b02982c4047a5fdf74b2"
+  },
+  {
+    "path": "read-worker.mjs",
+    "beforeSHA256": "8ad8d9760ac20f7d25df785f63f4c8df9b889f589aeb28f1287f054bbcbc7639",
+    "afterSHA256": "3c7e0f59ce91fceb7c7a1604f794cf67489ccea9d3473d948e6cee263ee2afa7"
+  },
+  {
+    "path": "reward-recovery-r52.mjs",
+    "beforeSHA256": "0ae705f9b36b55e582e19be18f987e51f38bf84025f433629da075977a8f2dfe",
+    "afterSHA256": "417c7e9d5ebd483b87662a7fa02fc256c1ac57fe293935423bf37ddf651f1c41"
+  },
+  {
+    "path": "reward-recovery-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "d35e452a9854e53a87e8bb10e05246ec283fab88a47e77ad022662dbb9c3328e"
+  },
+  {
+    "path": "shared-world-jobs.mjs",
+    "beforeSHA256": "05bf0221856f3c5e6929e5c7e504ba2d45e70f571170ad4dd1d1b4a4d18d4914",
+    "afterSHA256": "5f11dd1ca878456980d9cc20318644036b2a45721ab7b791c14cc57b917aae50"
+  }
+]

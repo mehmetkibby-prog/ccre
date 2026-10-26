@@ -1,0 +1,117 @@
+[
+  {
+    "path": "abandoned-normal.mjs",
+    "beforeSHA256": "0b21b2f69bcea0fcc208bd9f9deb9c86d91987e44b90ed8e2d51ac538ae48cdf",
+    "afterSHA256": "03c13749a10e5b1389094f13bc1843af46934407eaf2e7dfc2ffdf3a071c0ad3"
+  },
+  {
+    "path": "action-writer.mjs",
+    "beforeSHA256": "55b7efe658b11d910fb4b351301208bf50a93d5cb420a8d011f3f2c30e9a672c",
+    "afterSHA256": "2c23fbe3f4498ee9473ff020d701da58e35fc9450308321d9168c26254761586"
+  },
+  {
+    "path": "adventure-service.mjs",
+    "beforeSHA256": "d00b6bffe9dc118e393c4a11408fbbac89cfb99012d1d316e6f70427d1286b49",
+    "afterSHA256": "5e23c001a17ca2528f558b30f53c5d308863299aabf3a96d58d3e0042f507732"
+  },
+  {
+    "path": "azrail-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "cb93b7299eefaf4980911a5e0c0b867d13c231233d645ec515fed67dec76c1dc"
+  },
+  {
+    "path": "compose-native-http.mjs",
+    "beforeSHA256": "a8e1646f376113cff49927e4b75a917c621c10f16bc254fe8a8251525efe139c",
+    "afterSHA256": "0cf782c4623f2e63b5a7993fb99d51489bfd18d214db03da8691455af8556be7"
+  },
+  {
+    "path": "generated/client/auth-portal-core511-0f0e6524ee433608.js",
+    "beforeSHA256": null,
+    "afterSHA256": "0f0e6524ee4336088686f00755c1ff3fba02eb898b6a6bdf9345df6ac179e968"
+  },
+  {
+    "path": "generated/client/azrail-chest-r62.webp",
+    "beforeSHA256": null,
+    "afterSHA256": "cdce27c63bad79895e37dcdfbcb5ce4e022d3f23101a5661c9623661c70cf584"
+  },
+  {
+    "path": "generated/client/core511-gameplay-r62-a97877c1988dff73.js",
+    "beforeSHA256": null,
+    "afterSHA256": "a97877c1988dff73c1ef8378d03a91858dccdd6245866d43b4909097b965c8fb"
+  },
+  {
+    "path": "generated/client/core511-tower-r62-d25862551937995b.js",
+    "beforeSHA256": null,
+    "afterSHA256": "d25862551937995b0ef9c5cc5da2d8c729740974fec8b9dc4b8c08dc787f52f4"
+  },
+  {
+    "path": "generated/client/game-client-core511-4b42be76aa93f01c.js",
+    "beforeSHA256": null,
+    "afterSHA256": "4b42be76aa93f01cc149c428a291b00d048cadd60bc30e84276499d91f516372"
+  },
+  {
+    "path": "generated/native-client-proof.json",
+    "beforeSHA256": "fc684e864af345b385c20326c3f6e567a8933df2f7fa0b3d737745dc73d29113",
+    "afterSHA256": "0424a89d23f752012f9e0a89b2bd6125e6b28abde5372b31aa746a44b83668dc"
+  },
+  {
+    "path": "heartbeat-jobs.mjs",
+    "beforeSHA256": "5d68297f6bbe44e85b1ba34e3cdb00a6557c119a54cb277aaa9e2c27bbd9ffa4",
+    "afterSHA256": "a8523899a99fb7f33359952b8ccbb49e632e7c56e13736fbc5fe19840448a600"
+  },
+  {
+    "path": "heartbeat-maintenance-reader.mjs",
+    "beforeSHA256": "1647b825b8792b9552228b49001335307df54693bdb795806ad321f55a054caa",
+    "afterSHA256": "e44b248e293058f422b379618b945ced88e12a3d5902b02982c4047a5fdf74b2"
+  },
+  {
+    "path": "mount-client-r49.mjs",
+    "beforeSHA256": "aac8496a7b4ef18efd8a3299941d7e0ce4d4c12bed8b80aefd14ff6fd1eaf738",
+    "afterSHA256": "9eee9a9e95bb39acb5967d5b02ab9d98f58c9317dae0b0edce7213126f3a0acd"
+  },
+  {
+    "path": "native-http-bindings.mjs",
+    "beforeSHA256": "fa57647efe2f62b11d434e2af60e0265cd59660b8e47c46a6b0611118cef1341",
+    "afterSHA256": "0dd4551ad716af4612c5fb7465405a69a7e915bcf400fa6bb621ec0236ff3dd9"
+  },
+  {
+    "path": "patch-azrail-market-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "260cd2075746d08ac12c1e7d5e4b77bd449c0548359e806bf1e72ee2969d81da"
+  },
+  {
+    "path": "patch-responsive-bot-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "6ead29813a683ccca0f517871b3208a2507dc9fb923658ff17d40784b1731660"
+  },
+  {
+    "path": "polish-client-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "a31ca0bb5b7ba0879c4669faabbec910fb9419506dc0426b7e7613f73bbbcf16"
+  },
+  {
+    "path": "read-worker.mjs",
+    "beforeSHA256": "8ad8d9760ac20f7d25df785f63f4c8df9b889f589aeb28f1287f054bbcbc7639",
+    "afterSHA256": "3c7e0f59ce91fceb7c7a1604f794cf67489ccea9d3473d948e6cee263ee2afa7"
+  },
+  {
+    "path": "reward-recovery-r52.mjs",
+    "beforeSHA256": "0ae705f9b36b55e582e19be18f987e51f38bf84025f433629da075977a8f2dfe",
+    "afterSHA256": "417c7e9d5ebd483b87662a7fa02fc256c1ac57fe293935423bf37ddf651f1c41"
+  },
+  {
+    "path": "reward-recovery-r62.mjs",
+    "beforeSHA256": null,
+    "afterSHA256": "d35e452a9854e53a87e8bb10e05246ec283fab88a47e77ad022662dbb9c3328e"
+  },
+  {
+    "path": "shared-world-jobs.mjs",
+    "beforeSHA256": "05bf0221856f3c5e6929e5c7e504ba2d45e70f571170ad4dd1d1b4a4d18d4914",
+    "afterSHA256": "5f11dd1ca878456980d9cc20318644036b2a45721ab7b791c14cc57b917aae50"
+  },
+  {
+    "path": "tower-rules.mjs",
+    "beforeSHA256": "c741ac950c433dbf94ad3a891708b3d989c630c80f54393b4ad8a26f5032a0a5",
+    "afterSHA256": "10af9e76593fec3c9b0138a3260d8bf737574d4c40fdde3a5392e9457163bb8a"
+  }
+]

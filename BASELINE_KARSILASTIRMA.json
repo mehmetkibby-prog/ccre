@@ -1,0 +1,114 @@
+[
+  {
+    "version": "R56",
+    "sourceCore": "7cfdab81bc01db8e4f2c2b7ad89df5064da06965454df7d532b64f1e707f959b",
+    "pending": [
+      864,
+      969,
+      837,
+      544
+    ],
+    "actualElapsedMs": [
+      91.96885699999984,
+      32525.821595,
+      62535.627605,
+      122488.87519699999
+    ],
+    "totalDefeats": 1351,
+    "recipientCounts": {
+      "fault_injected_then_relogged": 1084,
+      "ordinary_recipient": 3335
+    },
+    "paths": {
+      "attack-command + recovery-scheduler + worker": 35,
+      "attack-command + worker": 507,
+      "attack-command": 2
+    },
+    "lastObservedErrors": {
+      "reward_recovery_busy": 35,
+      "no_error_observed": 509
+    },
+    "missingPathRecords": 0,
+    "childExit": 0,
+    "duplicateKeys": 0,
+    "relogin": [
+      24,
+      24
+    ]
+  },
+  {
+    "version": "R61",
+    "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+    "pending": [
+      1007,
+      870,
+      732,
+      429
+    ],
+    "actualElapsedMs": [
+      113.45529100000567,
+      33182.427046,
+      63180.323468999995,
+      123129.22781299999
+    ],
+    "totalDefeats": 1349,
+    "recipientCounts": {
+      "fault_injected_then_relogged": 926,
+      "ordinary_recipient": 2642,
+      "currently_fenced": 408
+    },
+    "paths": {
+      "attack-command + recovery-scheduler + worker": 24,
+      "attack-command + worker": 404,
+      "attack-command": 1
+    },
+    "lastObservedErrors": {
+      "reward_recovery_busy": 24,
+      "no_error_observed": 405
+    },
+    "missingPathRecords": 0,
+    "childExit": 0,
+    "duplicateKeys": 0,
+    "relogin": [
+      24,
+      24
+    ]
+  },
+  {
+    "version": "R62",
+    "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+    "pending": [
+      797,
+      1046,
+      916,
+      616
+    ],
+    "actualElapsedMs": [
+      85.25108699999691,
+      32958.40290199999,
+      62937.291935999994,
+      122930.27249399999
+    ],
+    "totalDefeats": 1513,
+    "recipientCounts": {
+      "fault_injected_then_relogged": 1564,
+      "ordinary_recipient": 4054
+    },
+    "paths": {
+      "attack-command + recovery-scheduler + worker": 31,
+      "attack-command + worker": 524,
+      "attack-command": 61
+    },
+    "lastObservedErrors": {
+      "reward_recovery_busy": 31,
+      "no_error_observed": 585
+    },
+    "missingPathRecords": 0,
+    "childExit": 0,
+    "duplicateKeys": 0,
+    "relogin": [
+      24,
+      24
+    ]
+  }
+]

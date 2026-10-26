@@ -1,0 +1,1756 @@
+[
+  {
+    "run": "baseline-R56-crash",
+    "sourceCore": "7cfdab81bc01db8e4f2c2b7ad89df5064da06965454df7d532b64f1e707f959b",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "FAIL",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": false,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": false,
+      "noUnacked": false,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "cleanShutdown": false,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      864,
+      969,
+      837,
+      544
+    ],
+    "actualSnapshotElapsedMs": [
+      91.96885699999984,
+      32525.821595,
+      62535.627605,
+      122488.87519699999
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 1351,
+    "unacked": 2,
+    "pendingClients": [],
+    "faultCodes": [
+      "permanent_actor_fenced"
+    ],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R56-crash/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R56-crash/command.sh",
+    "allRewards": {
+      "n": 28,
+      "p50": 3374.894840000001,
+      "p95": 12991.679666000011,
+      "p99": 15247.903003000007,
+      "max": 15247.903003000007
+    },
+    "latency": {
+      "move": {
+        "n": 2438,
+        "p50": 73,
+        "p95": 1795,
+        "p99": 4426,
+        "max": 6529,
+        "over300": 434,
+        "over500": 319,
+        "over1000": 214
+      },
+      "use_potion": {
+        "n": 188,
+        "p50": 355,
+        "p95": 2924,
+        "p99": 6899,
+        "max": 16407,
+        "over300": 113,
+        "over500": 54,
+        "over1000": 31
+      },
+      "attack": {
+        "n": 1069,
+        "p50": 67,
+        "p95": 4317,
+        "p99": 12146,
+        "max": 17175,
+        "over300": 219,
+        "over500": 190,
+        "over1000": 134
+      },
+      "claim_rewards": {
+        "n": 42,
+        "p50": 3028,
+        "p95": 11332,
+        "p99": 15576,
+        "max": 15576,
+        "over300": 38,
+        "over500": 31,
+        "over1000": 27
+      },
+      "collect": {
+        "n": 26,
+        "p50": 1053,
+        "p95": 4830,
+        "p99": 8584,
+        "max": 8584,
+        "over300": 17,
+        "over500": 16,
+        "over1000": 14
+      },
+      "heartbeat": {
+        "n": 242,
+        "p50": 93,
+        "p95": 5019,
+        "p99": 9788,
+        "max": 11298,
+        "over300": 52,
+        "over500": 50,
+        "over1000": 43
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 122,
+    "pendingSql": 544,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "baseline-R61-crash",
+    "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "FAIL",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": false,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      1007,
+      870,
+      732,
+      429
+    ],
+    "actualSnapshotElapsedMs": [
+      113.45529100000567,
+      33182.427046,
+      63180.323468999995,
+      123129.22781299999
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 1349,
+    "unacked": 9,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R61-crash/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R61-crash/command.sh",
+    "allRewards": {
+      "n": 24,
+      "p50": 4883.146107999997,
+      "p95": 26229.120323000003,
+      "p99": 36970.610952999996,
+      "max": 36970.610952999996
+    },
+    "latency": {
+      "move": {
+        "n": 2045,
+        "p50": 90,
+        "p95": 2629,
+        "p99": 6035,
+        "max": 10023,
+        "over300": 404,
+        "over500": 305,
+        "over1000": 230
+      },
+      "use_potion": {
+        "n": 176,
+        "p50": 290,
+        "p95": 4540,
+        "p99": 11666,
+        "max": 11895,
+        "over300": 86,
+        "over500": 46,
+        "over1000": 31
+      },
+      "attack": {
+        "n": 979,
+        "p50": 107,
+        "p95": 5532,
+        "p99": 16801,
+        "max": 27349,
+        "over300": 295,
+        "over500": 258,
+        "over1000": 195
+      },
+      "claim_rewards": {
+        "n": 44,
+        "p50": 4010,
+        "p95": 14090,
+        "p99": 17781,
+        "max": 17781,
+        "over300": 36,
+        "over500": 33,
+        "over1000": 31
+      },
+      "collect": {
+        "n": 16,
+        "p50": 348,
+        "p95": 12368,
+        "p99": 12368,
+        "max": 12368,
+        "over300": 10,
+        "over500": 8,
+        "over1000": 5
+      },
+      "heartbeat": {
+        "n": 222,
+        "p50": 98,
+        "p95": 2371,
+        "p99": 10081,
+        "max": 11167,
+        "over300": 36,
+        "over500": 31,
+        "over1000": 25
+      },
+      "respawn": {
+        "n": 1,
+        "p50": 173,
+        "p95": 173,
+        "p99": 173,
+        "max": 173,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 123,
+    "pendingSql": 429,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "baseline-R62-crash",
+    "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "FAIL",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": false,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": false,
+      "noUnacked": false,
+      "noUnfinishedRewards": false,
+      "noDuplicateKeys": true,
+      "cleanShutdown": false,
+      "drain120Complete": false,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      797,
+      1046,
+      916,
+      616
+    ],
+    "actualSnapshotElapsedMs": [
+      85.25108699999691,
+      32958.40290199999,
+      62937.291935999994,
+      122930.27249399999
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 1513,
+    "unacked": 4,
+    "pendingClients": [],
+    "faultCodes": [
+      "permanent_actor_fenced",
+      "permanent_actor_fenced"
+    ],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R62-crash/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R62-crash/command.sh",
+    "allRewards": {
+      "n": 28,
+      "p50": 4784.347428000001,
+      "p95": 22040.445932999995,
+      "p99": 29169.84341,
+      "max": 29169.84341
+    },
+    "latency": {
+      "move": {
+        "n": 2127,
+        "p50": 102,
+        "p95": 2463,
+        "p99": 6322,
+        "max": 14762,
+        "over300": 500,
+        "over500": 359,
+        "over1000": 255
+      },
+      "use_potion": {
+        "n": 185,
+        "p50": 353,
+        "p95": 3373,
+        "p99": 7787,
+        "max": 17781,
+        "over300": 124,
+        "over500": 52,
+        "over1000": 36
+      },
+      "attack": {
+        "n": 1038,
+        "p50": 106,
+        "p95": 5796,
+        "p99": 17335,
+        "max": 22040,
+        "over300": 349,
+        "over500": 307,
+        "over1000": 232
+      },
+      "claim_rewards": {
+        "n": 46,
+        "p50": 3206,
+        "p95": 15761,
+        "p99": 23214,
+        "max": 23214,
+        "over300": 39,
+        "over500": 39,
+        "over1000": 36
+      },
+      "collect": {
+        "n": 17,
+        "p50": 325,
+        "p95": 8020,
+        "p99": 8020,
+        "max": 8020,
+        "over300": 10,
+        "over500": 8,
+        "over1000": 7
+      },
+      "heartbeat": {
+        "n": 236,
+        "p50": 89,
+        "p95": 4524,
+        "p99": 14364,
+        "max": 18286,
+        "over300": 61,
+        "over500": 50,
+        "over1000": 31
+      },
+      "respawn": {
+        "n": 3,
+        "p50": 209,
+        "p95": 251,
+        "p99": 251,
+        "max": 251,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 122,
+    "pendingSql": 616,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-crash-1",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": false,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      564,
+      215,
+      0,
+      0
+    ],
+    "actualSnapshotElapsedMs": [
+      98.66484700000728,
+      32347.247889000006,
+      62323.332952,
+      122323.859677
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 966,
+    "unacked": 2,
+    "pendingClients": [
+      {
+        "actor": "1b7a1015-ddd4-43e8-8eb3-8ecfac888d02:53",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "1b7a1015-ddd4-43e8-8eb3-8ecfac888d02:53",
+            "channel": 3,
+            "action": "move",
+            "sequence": 36,
+            "ageMs": 156511.25476699998,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "1b7a1015-ddd4-43e8-8eb3-8ecfac888d02:68",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "1b7a1015-ddd4-43e8-8eb3-8ecfac888d02:68",
+            "channel": 3,
+            "action": "attack",
+            "sequence": 29,
+            "ageMs": 146770.100528,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      }
+    ],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-1/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-1/command.sh",
+    "allRewards": {
+      "n": 24,
+      "p50": 5094.932098999998,
+      "p95": 18492.060618999996,
+      "p99": 34161.06144799999,
+      "max": 34161.06144799999
+    },
+    "latency": {
+      "move": {
+        "n": 2395,
+        "p50": 82,
+        "p95": 1378,
+        "p99": 4554,
+        "max": 8319,
+        "over300": 394,
+        "over500": 282,
+        "over1000": 194
+      },
+      "use_potion": {
+        "n": 186,
+        "p50": 340,
+        "p95": 8688,
+        "p99": 12628,
+        "max": 13618,
+        "over300": 122,
+        "over500": 48,
+        "over1000": 38
+      },
+      "attack": {
+        "n": 1129,
+        "p50": 93,
+        "p95": 4349,
+        "p99": 11108,
+        "max": 18492,
+        "over300": 283,
+        "over500": 250,
+        "over1000": 164
+      },
+      "claim_rewards": {
+        "n": 38,
+        "p50": 4013,
+        "p95": 9304,
+        "p99": 14611,
+        "max": 14611,
+        "over300": 32,
+        "over500": 27,
+        "over1000": 25
+      },
+      "collect": {
+        "n": 14,
+        "p50": 216,
+        "p95": 3849,
+        "p99": 3849,
+        "max": 3849,
+        "over300": 6,
+        "over500": 6,
+        "over1000": 4
+      },
+      "heartbeat": {
+        "n": 238,
+        "p50": 136,
+        "p95": 7901,
+        "p99": 10942,
+        "max": 11700,
+        "over300": 59,
+        "over500": 49,
+        "over1000": 45
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 40,
+    "pendingSql": 0,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-crash-2",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": false,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": false,
+      "noUnacked": false,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": false,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      951,
+      791,
+      106,
+      0
+    ],
+    "actualSnapshotElapsedMs": [
+      108.98782999999821,
+      33654.75509599999,
+      63568.20066700001,
+      123530.886112
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 1445,
+    "unacked": 7,
+    "pendingClients": [
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:27",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:27",
+            "channel": 2,
+            "action": "attack",
+            "sequence": 17,
+            "ageMs": 157632.53038100002,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:42",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:42",
+            "channel": 2,
+            "action": "move",
+            "sequence": 56,
+            "ageMs": 147636.681043,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:43",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:43",
+            "channel": 2,
+            "action": "attack",
+            "sequence": 27,
+            "ageMs": 147741.2863,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:68",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:68",
+            "channel": 3,
+            "action": "use_potion",
+            "sequence": 25,
+            "ageMs": 147568.224469,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:93",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:93",
+            "channel": 4,
+            "action": "attack",
+            "sequence": 28,
+            "ageMs": 147394.67982100003,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:44",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:44",
+            "channel": 2,
+            "action": "attack",
+            "sequence": 28,
+            "ageMs": 147741.276542,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "654ab693-325e-4538-892c-a58853ee2220:94",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "654ab693-325e-4538-892c-a58853ee2220:94",
+            "channel": 4,
+            "action": "attack",
+            "sequence": 29,
+            "ageMs": 147394.65716899998,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      }
+    ],
+    "faultCodes": [
+      "permanent_actor_fenced"
+    ],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-2/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-2/command.sh",
+    "allRewards": {
+      "n": 26,
+      "p50": 3200.223716999997,
+      "p95": 20408.165225000004,
+      "p99": 29385.686159000004,
+      "max": 29385.686159000004
+    },
+    "latency": {
+      "move": {
+        "n": 2128,
+        "p50": 111,
+        "p95": 2550,
+        "p99": 4883,
+        "max": 13846,
+        "over300": 539,
+        "over500": 374,
+        "over1000": 277
+      },
+      "use_potion": {
+        "n": 194,
+        "p50": 349,
+        "p95": 4211,
+        "p99": 18076,
+        "max": 18076,
+        "over300": 122,
+        "over500": 59,
+        "over1000": 31
+      },
+      "attack": {
+        "n": 1111,
+        "p50": 181,
+        "p95": 4277,
+        "p99": 14953,
+        "max": 20408,
+        "over300": 384,
+        "over500": 320,
+        "over1000": 230
+      },
+      "claim_rewards": {
+        "n": 45,
+        "p50": 2359,
+        "p95": 13170,
+        "p99": 18472,
+        "max": 18472,
+        "over300": 38,
+        "over500": 33,
+        "over1000": 29
+      },
+      "collect": {
+        "n": 20,
+        "p50": 586,
+        "p95": 8072,
+        "p99": 20991,
+        "max": 20991,
+        "over300": 11,
+        "over500": 11,
+        "over1000": 8
+      },
+      "heartbeat": {
+        "n": 245,
+        "p50": 118,
+        "p95": 3047,
+        "p99": 4628,
+        "max": 17597,
+        "over300": 51,
+        "over500": 45,
+        "over1000": 41
+      },
+      "respawn": {
+        "n": 2,
+        "p50": 192,
+        "p95": 246,
+        "p99": 246,
+        "max": 246,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 68,
+    "pendingSql": 0,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-crash-3",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "FAIL",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": false,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "drain120Complete": true,
+      "relogin24of24": true
+    },
+    "unfinished": [
+      527,
+      476,
+      0,
+      0
+    ],
+    "actualSnapshotElapsedMs": [
+      112.01027499999327,
+      32168.072125000006,
+      62106.572441,
+      122103.366071
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 24,
+    "reloginAffected": 24,
+    "defeats": 901,
+    "unacked": 7,
+    "pendingClients": [
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:28",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:28",
+            "channel": 2,
+            "action": "move",
+            "sequence": 41,
+            "ageMs": 156762.20516,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:3",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:3",
+            "channel": 1,
+            "action": "move",
+            "sequence": 35,
+            "ageMs": 155581.465119,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:42",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:42",
+            "channel": 2,
+            "action": "move",
+            "sequence": 60,
+            "ageMs": 146002.997079,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:92",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:92",
+            "channel": 4,
+            "action": "move",
+            "sequence": 66,
+            "ageMs": 146372.88326600002,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:43",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:43",
+            "channel": 2,
+            "action": "attack",
+            "sequence": 31,
+            "ageMs": 146002.9922,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:44",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:44",
+            "channel": 2,
+            "action": "attack",
+            "sequence": 31,
+            "ageMs": 146002.98174100003,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      },
+      {
+        "actor": "83c31f50-14ed-4640-812f-f03047f39812:19",
+        "readyState": 3,
+        "affected": true,
+        "requests": [
+          {
+            "actor": "83c31f50-14ed-4640-812f-f03047f39812:19",
+            "channel": 1,
+            "action": "attack",
+            "sequence": 29,
+            "ageMs": 146372.86623500002,
+            "measured": true,
+            "wireAttempts": 1
+          }
+        ],
+        "legacyPending": 1
+      }
+    ],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-3/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-crash-3/command.sh",
+    "allRewards": {
+      "n": 32,
+      "p50": 4654.123384999999,
+      "p95": 22135.769793000007,
+      "p99": 23085.996474000007,
+      "max": 23085.996474000007
+    },
+    "latency": {
+      "move": {
+        "n": 2546,
+        "p50": 91,
+        "p95": 1328,
+        "p99": 4561,
+        "max": 7746,
+        "over300": 471,
+        "over500": 292,
+        "over1000": 155
+      },
+      "use_potion": {
+        "n": 192,
+        "p50": 343,
+        "p95": 1879,
+        "p99": 4707,
+        "max": 7610,
+        "over300": 118,
+        "over500": 50,
+        "over1000": 17
+      },
+      "attack": {
+        "n": 1199,
+        "p50": 91,
+        "p95": 3967,
+        "p99": 12529,
+        "max": 23086,
+        "over300": 280,
+        "over500": 226,
+        "over1000": 142
+      },
+      "claim_rewards": {
+        "n": 36,
+        "p50": 1308,
+        "p95": 10068,
+        "p99": 11906,
+        "max": 11906,
+        "over300": 29,
+        "over500": 24,
+        "over1000": 21
+      },
+      "collect": {
+        "n": 19,
+        "p50": 396,
+        "p95": 5411,
+        "p99": 5411,
+        "max": 5411,
+        "over300": 12,
+        "over500": 9,
+        "over1000": 7
+      },
+      "heartbeat": {
+        "n": 236,
+        "p50": 119,
+        "p95": 4316,
+        "p99": 7623,
+        "max": 10642,
+        "over300": 43,
+        "over500": 29,
+        "over1000": 25
+      },
+      "respawn": {
+        "n": 1,
+        "p50": 290,
+        "p95": 290,
+        "p99": 290,
+        "max": 290,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 54,
+    "pendingSql": 0,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-plain-1",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "drain120Complete": true,
+      "noDisconnects": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "PASS",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "drain120Complete": true,
+      "noDisconnects": true
+    },
+    "unfinished": [
+      1020,
+      879,
+      238,
+      0
+    ],
+    "actualSnapshotElapsedMs": [
+      165.56518199999118,
+      30112.80129199999,
+      60031.151033999995,
+      120000.73607300001
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 0,
+    "reloginAffected": 0,
+    "defeats": 2433,
+    "unacked": 0,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-plain-1/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-plain-1/command.sh",
+    "allRewards": {
+      "n": 28,
+      "p50": 3570.7847139999976,
+      "p95": 21388.251249,
+      "p99": 22157.342902000004,
+      "max": 22157.342902000004
+    },
+    "latency": {
+      "move": {
+        "n": 2987,
+        "p50": 91,
+        "p95": 1389,
+        "p99": 3956,
+        "max": 5733,
+        "over300": 550,
+        "over500": 351,
+        "over1000": 208
+      },
+      "use_potion": {
+        "n": 217,
+        "p50": 375,
+        "p95": 3455,
+        "p99": 5276,
+        "max": 7958,
+        "over300": 129,
+        "over500": 82,
+        "over1000": 52
+      },
+      "attack": {
+        "n": 1492,
+        "p50": 112,
+        "p95": 3853,
+        "p99": 5430,
+        "max": 8606,
+        "over300": 400,
+        "over500": 329,
+        "over1000": 211
+      },
+      "claim_rewards": {
+        "n": 121,
+        "p50": 1556,
+        "p95": 5147,
+        "p99": 7014,
+        "max": 8854,
+        "over300": 113,
+        "over500": 108,
+        "over1000": 89
+      },
+      "collect": {
+        "n": 29,
+        "p50": 689,
+        "p95": 4179,
+        "p99": 4829,
+        "max": 4829,
+        "over300": 24,
+        "over500": 19,
+        "over1000": 13
+      },
+      "heartbeat": {
+        "n": 296,
+        "p50": 90,
+        "p95": 1634,
+        "p99": 3922,
+        "max": 5940,
+        "over300": 81,
+        "over500": 70,
+        "over1000": 46
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 70,
+    "pendingSql": 0,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-plain-2",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "drain120Complete": true,
+      "noDisconnects": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "PASS",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "drain120Complete": true,
+      "noDisconnects": true
+    },
+    "unfinished": [
+      1043,
+      1201,
+      546,
+      0
+    ],
+    "actualSnapshotElapsedMs": [
+      146.12217899999814,
+      30175.092298000003,
+      60072.32871100001,
+      120001.115857
+    ],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 0,
+    "reloginAffected": 0,
+    "defeats": 2720,
+    "unacked": 0,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-plain-2/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-plain-2/command.sh",
+    "allRewards": {
+      "n": 33,
+      "p50": 2947.731728999999,
+      "p95": 14799.346995,
+      "p99": 15933.432743999998,
+      "max": 15933.432743999998
+    },
+    "latency": {
+      "move": {
+        "n": 3173,
+        "p50": 83,
+        "p95": 1182,
+        "p99": 3482,
+        "max": 5234,
+        "over300": 558,
+        "over500": 386,
+        "over1000": 198
+      },
+      "use_potion": {
+        "n": 225,
+        "p50": 371,
+        "p95": 3827,
+        "p99": 5062,
+        "max": 5878,
+        "over300": 134,
+        "over500": 73,
+        "over1000": 54
+      },
+      "attack": {
+        "n": 1530,
+        "p50": 103,
+        "p95": 3029,
+        "p99": 5142,
+        "max": 7123,
+        "over300": 404,
+        "over500": 328,
+        "over1000": 228
+      },
+      "claim_rewards": {
+        "n": 124,
+        "p50": 1595,
+        "p95": 4582,
+        "p99": 5353,
+        "max": 6549,
+        "over300": 116,
+        "over500": 110,
+        "over1000": 85
+      },
+      "collect": {
+        "n": 35,
+        "p50": 1129,
+        "p95": 3947,
+        "p99": 4074,
+        "max": 4074,
+        "over300": 30,
+        "over500": 27,
+        "over1000": 19
+      },
+      "heartbeat": {
+        "n": 300,
+        "p50": 83,
+        "p95": 1754,
+        "p99": 3143,
+        "max": 4148,
+        "over300": 87,
+        "over500": 55,
+        "over1000": 34
+      }
+    },
+    "players": 80,
+    "sqliteIntegrity": "ok",
+    "latestRewardTimestampSecondsAfterStop": 83,
+    "pendingSql": 0,
+    "markedCompleteButUnpaid": 0
+  },
+  {
+    "run": "accept-matrix-1",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "noDisconnects": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "PASS",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "noDisconnects": true
+    },
+    "unfinished": [],
+    "actualSnapshotElapsedMs": [],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 0,
+    "reloginAffected": 0,
+    "defeats": 229,
+    "unacked": 0,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-matrix-1/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-matrix-1/command.sh",
+    "allRewards": {
+      "n": 46,
+      "p50": 218.92624600000272,
+      "p95": 864.950514000011,
+      "p99": 912.7030180000002,
+      "max": 912.7030180000002
+    },
+    "latency": {
+      "move": {
+        "n": 331,
+        "p50": 129,
+        "p95": 286,
+        "p99": 297,
+        "max": 580,
+        "over300": 2,
+        "over500": 2,
+        "over1000": 0
+      },
+      "use_potion": {
+        "n": 354,
+        "p50": 102,
+        "p95": 549,
+        "p99": 669,
+        "max": 718,
+        "over300": 84,
+        "over500": 23,
+        "over1000": 0
+      },
+      "attack": {
+        "n": 5670,
+        "p50": 40,
+        "p95": 99,
+        "p99": 375,
+        "max": 919,
+        "over300": 93,
+        "over500": 28,
+        "over1000": 0
+      },
+      "claim_rewards": {
+        "n": 36,
+        "p50": 99,
+        "p95": 180,
+        "p99": 319,
+        "max": 319,
+        "over300": 1,
+        "over500": 0,
+        "over1000": 0
+      },
+      "heartbeat": {
+        "n": 500,
+        "p50": 63,
+        "p95": 108,
+        "p99": 115,
+        "max": 139,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "collect": {
+        "n": 24,
+        "p50": 108,
+        "p95": 194,
+        "p99": 795,
+        "max": 795,
+        "over300": 1,
+        "over500": 1,
+        "over1000": 0
+      }
+    },
+    "players": 100,
+    "normal100LatencyTargetMs": 520,
+    "normal100MeetsLatencyTarget": false
+  },
+  {
+    "run": "accept-matrix-2",
+    "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "noDisconnects": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "PASS",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "noDisconnects": true
+    },
+    "unfinished": [],
+    "actualSnapshotElapsedMs": [],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 0,
+    "reloginAffected": 0,
+    "defeats": 184,
+    "unacked": 0,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-matrix-2/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/accept-matrix-2/command.sh",
+    "allRewards": {
+      "n": 43,
+      "p50": 151.72517400000652,
+      "p95": 321.551148999999,
+      "p99": 623.5712339999991,
+      "max": 623.5712339999991
+    },
+    "latency": {
+      "move": {
+        "n": 352,
+        "p50": 104,
+        "p95": 250,
+        "p99": 256,
+        "max": 278,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "use_potion": {
+        "n": 349,
+        "p50": 93,
+        "p95": 381,
+        "p99": 509,
+        "max": 511,
+        "over300": 67,
+        "over500": 5,
+        "over1000": 0
+      },
+      "attack": {
+        "n": 5731,
+        "p50": 39,
+        "p95": 78,
+        "p99": 228,
+        "max": 590,
+        "over300": 23,
+        "over500": 1,
+        "over1000": 0
+      },
+      "claim_rewards": {
+        "n": 50,
+        "p50": 95,
+        "p95": 176,
+        "p99": 283,
+        "max": 283,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "heartbeat": {
+        "n": 500,
+        "p50": 55,
+        "p95": 82,
+        "p99": 83,
+        "max": 85,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "collect": {
+        "n": 20,
+        "p50": 86,
+        "p95": 163,
+        "p99": 171,
+        "max": 171,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 100,
+    "normal100LatencyTargetMs": 520,
+    "normal100MeetsLatencyTarget": true
+  },
+  {
+    "run": "baseline-R62-matrix",
+    "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+    "requestedChecks": {
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "noDisconnects": true
+    },
+    "requestedAcceptance": "PASS",
+    "strictRunnerStatus": "PASS",
+    "strictChecks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "noDisconnects": true
+    },
+    "unfinished": [],
+    "actualSnapshotElapsedMs": [],
+    "duplicateKeys": 0,
+    "childExit": 0,
+    "reloginPassed": 0,
+    "reloginAffected": 0,
+    "defeats": 188,
+    "unacked": 0,
+    "pendingClients": [],
+    "faultCodes": [],
+    "shutdownHostClosed": true,
+    "shutdownCleanupErrors": [],
+    "summaryFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R62-matrix/summary.json",
+    "commandFile": "/workspace/ccre/r62_reward_recovery_work/evidence/baseline-R62-matrix/command.sh",
+    "allRewards": {
+      "n": 46,
+      "p50": 173.8877369999973,
+      "p95": 286.50926000000254,
+      "p99": 430.78781900000104,
+      "max": 430.78781900000104
+    },
+    "latency": {
+      "move": {
+        "n": 352,
+        "p50": 93,
+        "p95": 194,
+        "p99": 198,
+        "max": 206,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "use_potion": {
+        "n": 356,
+        "p50": 96,
+        "p95": 385,
+        "p99": 416,
+        "max": 500,
+        "over300": 59,
+        "over500": 0,
+        "over1000": 0
+      },
+      "attack": {
+        "n": 5737,
+        "p50": 39,
+        "p95": 80,
+        "p99": 221,
+        "max": 431,
+        "over300": 4,
+        "over500": 0,
+        "over1000": 0
+      },
+      "claim_rewards": {
+        "n": 53,
+        "p50": 85,
+        "p95": 179,
+        "p99": 234,
+        "max": 234,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "heartbeat": {
+        "n": 500,
+        "p50": 57,
+        "p95": 91,
+        "p99": 100,
+        "max": 102,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "collect": {
+        "n": 24,
+        "p50": 89,
+        "p95": 138,
+        "p99": 139,
+        "max": 139,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "players": 100,
+    "normal100LatencyTargetMs": 520,
+    "normal100MeetsLatencyTarget": true
+  }
+]

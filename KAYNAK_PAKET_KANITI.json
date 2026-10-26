@@ -1,0 +1,50 @@
+{
+  "archives": [
+    {
+      "source": "R56",
+      "archive": "CORE511_R56_KAYNAK.zip",
+      "bytes": 67561446,
+      "sha256": "a5f3d03eb4306861685fcd4e394a79c1260551c2ab3a4a0c85e158b8d470308d",
+      "sourceCore": "7cfdab81bc01db8e4f2c2b7ad89df5064da06965454df7d532b64f1e707f959b",
+      "files": 3441
+    },
+    {
+      "source": "R61",
+      "archive": "CORE511_R61_KAYNAK.zip",
+      "bytes": 72865890,
+      "sha256": "591db592f4137feb3f3018ffb2ecf050b38ad25c759b31d047997533164bb46a",
+      "sourceCore": "cdaffd0d1297c1ef49248bffb39226e966f1195148a808a480dee36bee5961a9",
+      "files": 3527
+    },
+    {
+      "source": "R62",
+      "archive": "CORE511_R62_BASE_KAYNAK.zip",
+      "bytes": 73424882,
+      "sha256": "310784a3f4efc9e97c5af9e119627713de6febcb8b06a7456fd60118948156e9",
+      "sourceCore": "1957760ba0a499db494d7a06daee6cedd925c77704cca6baedbf837c35b7def4",
+      "files": 3537
+    },
+    {
+      "source": "R62_FIX",
+      "archive": "CORE511_R62_KAYNAK.zip",
+      "bytes": 73394362,
+      "sha256": "710db48c21d2856e4faf4707d2a61bbe854ffefc71067f3ee45d7e7dfbf8e5fa",
+      "sourceCore": "1f5a1448de970e13651817789e539a063ddc6dc0ce0cd0f21ce487470e83859d",
+      "files": 3539
+    }
+  ],
+  "extractedTests": {
+    "status": "PASS",
+    "independentlyExtractedTree": "/tmp/r62-recovery-extract-alvbimk6/R62",
+    "tests": [
+      {
+        "test": "recovery-tests/recovery.test.mjs",
+        "exit": 0
+      },
+      {
+        "test": "working/core511-source/scripts/core511/tests/heartbeat-maintenance.test.mjs",
+        "exit": 0
+      }
+    ]
+  }
+}
