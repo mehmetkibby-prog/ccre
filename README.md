@@ -15,3 +15,5 @@ python3 -u CORE511_R64.zip --apply
 ```
 
 Ön kayıt modu açık kalabilir. Bu GitHub yüklemesi canlı VDS'ye kurulum yapmaz. Özel depoda indirme için yetkili GitHub hesabıyla giriş gerekir.
+
+27 Ekim düzeltmesi: ilk R64 paketindeki statik dosya izinleri onarıldı. Önceki Drive kopyası aynı dosyadır ve yerinde izin onarımı gerekir; bu GitHub paketi düzeltilmiş kurucudur.

@@ -39,3 +39,6 @@ YouTube iframe adresi/CSP/tıklamayla yükleme ve kapatılma test edildi; YouTub
 Eski `native-realm-startup` test dosyasındaki iki çıplak ticket isteği, R63'ün zorunlu kanal seçimi nedeniyle 409 verdi. Yeni açılış testi gerçek giriş ekranındaki gibi `character {channel:1}` kullanılarak geçirildi; bu eski testleri geçmiş gibi raporlamıyoruz. Oyun kaynak kodu bu nedenle değiştirilmedi.
 
 Kanıtlar: `evidence/site-access.json`, `evidence/updater-roundtrip.json`, `evidence/updater-roundtrip.log`, `evidence/native-game-boot.log`, `evidence/bundle.log`, `site/evidence/admin-control.json`, `site/evidence/r64-site-install.log`.
+
+## 27 Ekim — site erişim izni düzeltmesi
+İlk R64 kurulumunda umask 077 nedeniyle yeni statik alt dizinler 0700 oluştu; Caddy ayrı kullanıcıyla CSS/JS okuyamadı. İlk testler Caddy'yi dosya sahibiyle çalıştırdığı için hata kaçmıştı. Kurucu artık doğrulanmış genel site dizinlerini 0755, genel dosyaları 0644 yapar; tekrar kurulum da mevcut izinleri onarır. Özel kurulum kayıtları 0700 kalır. Üretimdeki umask 077 ile ilk kurulum/tekrar onarım, POSIX diğer kullanıcı okuma-geçiş izinleri ve Caddy CSS/JS 200 yanıtları test edildi.
