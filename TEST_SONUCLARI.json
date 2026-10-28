@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "cleanupTests": 12,
+  "integration": {
+    "passed": true,
+    "testsRun": 3,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real installed R67 fixture, SQLite, native account service, cleanup files. Systemd, game health and apt/journalctl/df simulated."
+  },
+  "package": {
+    "sha256": "8a77e28c34eb900f55b0350b52539944eeb9841420d7409e4cc9cf133f4b87ad",
+    "bytes": 109261,
+    "file": "CORE511_R67_DISK_TEMIZLIK.zip"
+  },
+  "liveDeployment": false,
+  "scope": "Root Docker tests, real files and SQLite/native account service; service control/health and apt/journalctl/df simulated. No live deletion."
+}
