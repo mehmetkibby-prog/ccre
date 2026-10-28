@@ -1,0 +1,135 @@
+{
+  "status": "PASS",
+  "liveDeployment": false,
+  "package": {
+    "sha256": "f1f85572dd45d8247aa92b9714c11340ab62c0a47e290c3ec7eb5b48d53fbbfe",
+    "bytes": 113362,
+    "file": "CORE511_R67_DB_KUCULT.zip"
+  },
+  "engine": {
+    "passed": 10,
+    "log": "engine-test.log",
+    "includes": [
+      "WAL and DELETE journal mode",
+      "all rows and hidden rowids",
+      "schema, indexes, views, triggers, generated columns and autoincrement counter",
+      "inode/uid/gid/mode",
+      "open writer exclusion",
+      "corrupt/mismatched snapshot rejection",
+      "symlink/hardlink rejection",
+      "real SIGKILL during SQLite backup, SQLite recovery and retry",
+      "real game fixture schema"
+    ]
+  },
+  "integration": {
+    "passed": true,
+    "testsRun": 8,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real SQLite and exact R67 release fixture, native account registration. Systemd/game health/disk-full guard simulated."
+  },
+  "nativeGame": {
+    "scope": "Real native realm admission, HTTP routes, SQLite and four WS game processes; signed central authorization is fixture transport; no live access",
+    "source": "/workspace/ccre/r67_entry_work",
+    "runs": [
+      {
+        "count": 3,
+        "presenceMs": {
+          "p50": 36,
+          "p95": 36,
+          "max": 36
+        },
+        "firstJoin": {
+          "ok": 3,
+          "failures": [],
+          "ms": {
+            "p50": 111,
+            "p95": 136,
+            "max": 136
+          }
+        },
+        "connected": 3,
+        "roles": [
+          {
+            "role": "arkanist",
+            "n": 1
+          },
+          {
+            "role": "avci",
+            "n": 1
+          },
+          {
+            "role": "muhafiz",
+            "n": 1
+          }
+        ],
+        "travel": {
+          "ok": 3,
+          "ms": {
+            "p50": 91,
+            "p95": 128,
+            "max": 128
+          },
+          "errors": []
+        },
+        "starter": {
+          "ok": 3,
+          "errors": [],
+          "localDates": {
+            "registration_at": 1789938000000,
+            "opens_at": 1790179200000,
+            "public_opens_at": 0
+          }
+        },
+        "reconnected": 3,
+        "reconnectMs": {
+          "p50": 59,
+          "p95": 88,
+          "max": 88
+        },
+        "duplicatePlayers": 0,
+        "faults": [],
+        "status": "PASS"
+      }
+    ]
+  },
+  "nativeCompaction": {
+    "before": {
+      "logicalBytes": 36622336,
+      "freeBytes": 33820672,
+      "pageSize": 4096
+    },
+    "after": {
+      "logicalBytes": 2945024,
+      "freeBytes": 151552,
+      "pageSize": 4096
+    },
+    "recordsSchemaRowidsEqual": true,
+    "fileIdentityEqual": true,
+    "tableCount": 219,
+    "scope": "Isolated native R67 game DB before startup"
+  },
+  "limitations": [
+    "Local fixtures, not live VDS.",
+    "Systemd/game-health hooks simulated in installer integration; native game behavior separately exercised with four real channel processes and three players.",
+    "No 50-player benchmark repeated for compaction.",
+    "This artifact does not remove daily backups, reset backups or legacy releases.",
+    "Final reclaimed space depends on the VDS database and concurrent disk usage."
+  ],
+  "preserved": [
+    "all game records and implicit rowids",
+    "game schema, indices, triggers and stored counters",
+    "game DB inode and permissions",
+    "account process/config/database",
+    "launch policy and owner changes",
+    "daily/reset backups"
+  ],
+  "operations": [
+    "guard and stop game services only",
+    "exclusive SQLite ownership and scheduled-backup lock",
+    "private copy with disposable indexes for rowid preservation",
+    "VACUUM INTO and complete logical verification",
+    "SQLite backup into existing game inode and offline WAL checkpoint",
+    "health verification and original realm gate restoration"
+  ]
+}
