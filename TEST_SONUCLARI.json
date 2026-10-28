@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "package": {
+    "sha256": "ff93db41d36def34c04fd543a6890928896763caf39d4a3060a636d34ec53664",
+    "bytes": 1148903,
+    "originalSHA256": "18e7319f699cb4551560c7579a7203ab181def48ad48ac43331e9033a95584a3",
+    "gamePayloadUnchanged": true
+  },
+  "retentionCases": 12,
+  "installerCases": {
+    "passed": true,
+    "testsRun": 12,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real R66 files, SQLite and native registration; simulated systemd/game health and disk capacity; real deletion fixtures."
+  },
+  "liveDeployment": false,
+  "scope": "Local tests. Files, SQLite, native registrations and deletions real; systemd, game health and insufficient disk state simulated. No VDS filesystem access."
+}
