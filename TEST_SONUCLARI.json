@@ -1,0 +1,837 @@
+{
+  "status": "PASS",
+  "scope": "R67 combined entry latency and onboarding update; local validation, no live VDS deployment",
+  "safety": {
+    "passed": 44,
+    "cases": {
+      "entry wakes the existing collection timer; older writes remain FIFO and every ACK waits for WAL fsync": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "one failed entry SQL job rolls back only its savepoint; the next entry remains usable": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry fsync failure sends no successful ACK and keeps native fail-closed recovery": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry cannot bypass an external reward writer; ordinary jobs and the barrier retain FIFO order": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry context is database-specific and expires before detached descendants run": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry burst still uses bounded groups and yields between them": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "IPC replay shares result, rejects changed content and retains retired sequence fencing after cache eviction": {
+        "passed": true,
+        "evidence": "coordinator-final.log"
+      },
+      "four native channel runtimes: HTTP auth, movement, rare-operation fence, channel4 transfer, reconnect, logout and ban": {
+        "passed": true,
+        "evidence": "coordinator-final.log"
+      },
+      "new character, normalized name, weapon, starter ledger and admission survive actual SIGKILL on both COMMIT sides": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "original entry auth retains cookie digest, Origin, CSRF, instance, version, ban, bot and realm predicates": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native live presence never resurrects replaced, removed, expired-security or retired ownership sessions": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native join and starter ledger share admission COMMIT and fsync; duplicate admission does not rerun rewards": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "lethal incoming native damage commits when join rejects, without admission or starter reward": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native character creation matches original name, role, spawn, weapon and grant rows in one admission transaction": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native character restrictions and failed ownership commit cannot leave a partial character or starter grant": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "fresh native join rebalance after logout reads the current shared control before its original combat rejection": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "fresh join reads a local guardian control applied after its old resident logged out": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "local transfer reads guardian control applied by another resident after the source freeze drained": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native fresh join keeps local control locked through durable admission and the actual resident installation ACK": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "separate FIFO transactions share one fsync; each ACK waits and a later COMMIT waits for the next fsync": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "failed native WAL fsync releases no successful ACK and retains fail-closed recovery": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "actual grouped SIGKILL before_commit keeps receipt/state atomic and retry pays once": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "actual grouped SIGKILL before_fsync keeps receipt/state atomic and retry pays once": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "actual grouped SIGKILL after_fsync keeps receipt/state atomic and retry pays once": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "actual grouped SIGKILL after_ack keeps receipt/state atomic and retry pays once": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native AFK controls preserve time-credit limits and guards while refreshing the current owner": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "native realm grant cannot replace an authenticated WS lease after SQL presence expiry": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native expired realm session replacement retires ownership in the grant COMMIT and replays one receipt": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native realm grant waits for pending authenticated presence before applying the original denial": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native realm grant source SIGKILL before COMMIT keeps grant and owner retirement atomic": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native realm grant source SIGKILL after COMMIT keeps grant and owner retirement atomic": {
+        "passed": true,
+        "evidence": "current-contract.log"
+      },
+      "native session patch alters only one non-accounts batch and reverses to the exact original bundle": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "original session SQL, bans, missing accounts, accounts guard and realm lifetime retain exact parity": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "unowned tower reconnect cannot silently move an active run to a different chosen channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "unowned mist reconnect cannot silently move an active run to a different chosen channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry settles expired run before applying the explicit new channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry settles cycle run before applying the explicit new channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "entry settles dead run before applying the explicit new channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "fresh offline admission honors explicit channel 1 despite stale combat lock": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "fresh offline admission honors explicit channel 2 despite stale combat lock": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "fresh offline admission honors explicit channel 3 despite stale combat lock": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "fresh offline admission honors explicit channel 4 despite stale combat lock": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "recent reconnect cannot escape genuine combat by selecting another channel": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      },
+      "ordinary admission and starter grant acknowledge only after durable commit and never duplicate the grant": {
+        "passed": true,
+        "evidence": "safety-tests.log"
+      }
+    },
+    "legacyTestFailuresReproducedOnR66": 7
+  },
+  "installer": {
+    "passed": true,
+    "testsRun": 8,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real R66 files, SQLite and native registration; systemd/game health simulated.",
+    "details": [
+      {
+        "test": "success+idempotency+rollback",
+        "newAccountsRetained": 10
+      },
+      {
+        "test": "failed health",
+        "newAccountsRetained": 7
+      },
+      {
+        "test": "scheduled update",
+        "newAccountsRetained": 8
+      },
+      {
+        "test": "owner policy change rollback",
+        "newAccountsRetained": 6
+      },
+      {
+        "test": "reset and player rejection",
+        "mutations": 0
+      },
+      {
+        "test": "interrupted selection recovery",
+        "newAccountsRetained": 7
+      },
+      {
+        "test": "exact changed files and uid 65534 read/import under umask077",
+        "files": [
+          "core511-source/scripts/core511/coordinator.mjs",
+          "core511-source/scripts/core511/entry-write-window-r67.mjs",
+          "core511-source/scripts/core511/first-steps-anchor-r67.mjs",
+          "core511-source/scripts/core511/generated/client/core511-first-steps-r67-4b2c5be1d2da48d8.js",
+          "core511-source/scripts/core511/generated/client/game-client-core511-r67-95554fa6d3f0727f.js",
+          "core511-source/scripts/core511/generated/native-client-proof.json",
+          "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+          "core511-source/scripts/core511/reward-group-commit-r53.mjs",
+          "core511-source/scripts/delivery511/install-operations.mjs",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-mount-68d89c19066517d7.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-r55-a9b449d1de148a36.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-r58-4f88992ba49f968d.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-r66-2d71c96186ebc647.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-089ecd7425615cab.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-26b36cbe0f097a4b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-2960d2eddd429b89.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-5d97850bca96bd02.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-7a5d920f9b242293.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-8b75f268d094a334.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-e422940c8dd67f84.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/admin-client-core511-tower-fea158a9331cd77f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-06f858c5b9a9c5b7.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-0cb36e7e2131e948.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-0f0e6524ee433608.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-1327c58a8b279fa7.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-1bd770df7c9ac450.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-3f6f1f364807cf86.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-466b1c35366a9228.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-46f7b05b3126bd78.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-48fee479632971f3.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-4ac65fde00c1b6ad.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-4f1809880185c8ba.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-544d863b68a44358.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-5613640e224c448a.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-6ba6111eb64d342f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-6db9f584c0fe7526.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-8aee3ee860205a58.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-8e0053963ceae635.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-9505870824ed70f2.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-c73b7a58800fd2fa.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-cba4fe4242ff9f4a.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-db0847ffa825905d.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-dbcfa63db52a6fd4.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-e17a9b1b8ee7c16f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-f12dbe4ef1880d94.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/auth-portal-core511-fa52ad8a5808dfb9.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/azrail-chest-r62.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/belt-sovereign-r31-f3138cadeb98a508.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/belt-wisdom-r31-a70147254c262b28.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/boss-event-r29-c146e47142399631.jpg",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/castle-map-r59.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-admin-nav-r66-712de6ba4040fcaa.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-afk-admin-r32-abb1bb7ecdb247a0.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-afk-r32-94273dc1b6b50e04.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-belt-r31-cf8d0676c9ed605b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-castle-admin-r59-100832b6836a087b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-claim-r50-55137f395b664a58.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-first-steps-r67-4b2c5be1d2da48d8.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r55-2aa54e8c49104b83.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r58-0bf78c73f3c66c8e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r59-28ab7af900ed2acb.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r60-6a8cf0b17c2d291b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r61-cbda071a3435dca0.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-gameplay-r62-a97877c1988dff73.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-motion-admin-r34-85bc86838e29a3fd.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-mount-r49-8f31247cdb5ff270.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r40-9f5f284069ff5cd9.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r40-icons-d8553ea731a56b89.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r41-bag-b5492e12d6a6356c.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r43-materials-0c10ea33dc2cc813.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r43-native-motion-3e954c4d2e260fb5.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r43-playback-4a2ea50b4c602f9e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r43-remote-324e28351f88423e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r43-ui-d5b46c3741f4dc3f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r44-options-44e56fe000b9615e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r44-playback-eafffc79ae09a6a0.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r44-remote-e805b5dbafb81553.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r45-options-5bcd9f07a40e0cde.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r45-playback-74929bd3b765fd70.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r45-remote-2b00a6f6852203bb.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r46-options-b963adacbf1535db.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r49-mount-boar-ffcf523b093ed895.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r49-mount-stag-22c4bc4ebea78f88.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-r49-mount-wolf-7f1a7c86a82e1ad9.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-03c17a08a07307f5.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-0cc61a7954f91869.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-0fd926810ba551cc.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-82aad0eddc05ec97.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-883a5a8eb2d26522.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-a9fea4efdcb8795b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-d995c3e218f7de6e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-e71ee32c620d5d9c.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-r59-452c294fa63f2c02.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-r60-93f5eafdb8fed403.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-tower-r62-d25862551937995b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-1131bd5e929d762d.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-4744fba7c4e82e6a.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-56e6285d06611c3a.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-5dda17a16428eb33.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-a33590dbdc3d2471.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-a41d98ef44614573.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-aa935bdb3e6bd8ea.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-ada59ecc1cc72895.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-d78d0fe646eb3b04.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-ec59822b3102eed7.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-eef779dbd19520ab.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-f4cb97c87256787f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/core511-transport-r59-823c80078bca5438.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-175b36dc319ebabf.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-19059e4691f31505.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-1d95714ad2c262ff.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-523abd1b22f77083.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-5422c10d9b97da3e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-687e168b70369a3e.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-7745f5f689c9c02b.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-8157ed046436808d.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-84800e83d43aebc7.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-868af9961897e862.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-a17540effc0e1c93.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-b4da60762a22c761.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-bb2169ce63d26941.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-c03c215f6b74a4e5.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-c319bdc7c26a73cf.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-d06b5d88b64ced7f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-d1966ca3eb09ce44.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-d35a5765091a8a02.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-deab4a2db886e8b6.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-e06361842ac68ac0.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-e3ffadcfa8797a18.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-f01650de27194d12.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-fb45acef70d1b333.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/game-client-core511-r67-95554fa6d3f0727f.js",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/mist-enemies-r28-12bf61b21ddfc6fa.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/mist-map-r28-4571c1332b66c295.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/mount-materials-r60.webp",
+          "http-runtime/dist-vds/client/assets/core511-b944ec0283c11da5/tower-enemies-r28-e2cc29228f5c4301.webp",
+          "http-runtime/dist-vds/server/fixture-client-manifest.json",
+          "http-runtime/dist-vds/server/index.js",
+          "release-manifest.json"
+        ]
+      }
+    ]
+  },
+  "browser": {
+    "scope": "Actual unchanged R66/R67 tutorial component extracted by AST; real Chromium, shipped CSS; controlled HUD layout changes; no game API.",
+    "cases": [
+      {
+        "version": "r66",
+        "case": "delayed HUD row shifts same-size button after old 250ms timer",
+        "before": {
+          "target": {
+            "top": 287.7015686035156,
+            "bottom": 327.6015625,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 337.59375,
+            "bottom": 397.578125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "143px"
+        },
+        "after": {
+          "target": {
+            "top": 340.90155029296875,
+            "bottom": 380.8015441894531,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 337.59375,
+            "bottom": 397.578125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": true,
+          "targeted": true,
+          "arrow": "143px"
+        }
+      },
+      {
+        "version": "r67",
+        "case": "delayed HUD row shifts same-size button after old 250ms timer",
+        "before": {
+          "target": {
+            "top": 287.7015686035156,
+            "bottom": 327.6015625,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 337.59375,
+            "bottom": 397.578125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "100.75px"
+        },
+        "after": {
+          "target": {
+            "top": 340.90155029296875,
+            "bottom": 380.8015441894531,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 390.796875,
+            "bottom": 450.78125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "100.75px"
+        }
+      },
+      {
+        "version": "r67",
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "state": {
+          "target": {
+            "top": 340.90155029296875,
+            "bottom": 380.8015441894531,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 390.796875,
+            "bottom": 450.78125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "100.75px"
+        }
+      },
+      {
+        "version": "r67",
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "state": {
+          "target": {
+            "top": 340.90155029296875,
+            "bottom": 380.8015441894531,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 270.890625,
+            "bottom": 330.875,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "100.75px"
+        }
+      },
+      {
+        "version": "r67",
+        "viewport": {
+          "width": 1024,
+          "height": 600
+        },
+        "state": {
+          "target": {
+            "top": 340.90155029296875,
+            "bottom": 380.8015441894531,
+            "left": 19,
+            "right": 218.5
+          },
+          "hint": {
+            "top": 390.796875,
+            "bottom": 450.78125,
+            "left": 12,
+            "right": 312
+          },
+          "overlap": false,
+          "targeted": true,
+          "arrow": "100.75px"
+        }
+      }
+    ],
+    "errors": [],
+    "lifecycle": {
+      "lateLayout": true,
+      "clickWorks": true,
+      "targetReplacement": true,
+      "hiddenDuplicate": true,
+      "responsive": true,
+      "secondStep": true,
+      "completionCleansUp": true
+    },
+    "status": "PASS"
+  },
+  "browserNative": {
+    "desktop": "PASS",
+    "mobile": "PASS"
+  },
+  "entryComparison": {
+    "r66-final-baseline": {
+      "count": 50,
+      "presenceMs": {
+        "p50": 242,
+        "p95": 247,
+        "max": 247
+      },
+      "firstJoin": {
+        "ok": 50,
+        "failures": [],
+        "ms": {
+          "p50": 854,
+          "p95": 1642,
+          "max": 1716
+        }
+      },
+      "connected": 50,
+      "roles": [
+        {
+          "role": "arkanist",
+          "n": 16
+        },
+        {
+          "role": "avci",
+          "n": 17
+        },
+        {
+          "role": "muhafiz",
+          "n": 17
+        }
+      ],
+      "travel": {
+        "ok": 50,
+        "ms": {
+          "p50": 392,
+          "p95": 547,
+          "max": 548
+        },
+        "errors": []
+      },
+      "starter": {
+        "ok": 50,
+        "errors": [],
+        "localDates": {
+          "registration_at": 1789938000000,
+          "opens_at": 1790179200000,
+          "public_opens_at": 0
+        }
+      },
+      "reconnected": 50,
+      "reconnectMs": {
+        "p50": 781,
+        "p95": 1485,
+        "max": 1547
+      },
+      "duplicatePlayers": 0,
+      "faults": [],
+      "status": "PASS"
+    },
+    "r67-final-candidate": {
+      "count": 50,
+      "presenceMs": {
+        "p50": 238,
+        "p95": 243,
+        "max": 243
+      },
+      "firstJoin": {
+        "ok": 50,
+        "failures": [],
+        "ms": {
+          "p50": 724,
+          "p95": 1368,
+          "max": 1422
+        }
+      },
+      "connected": 50,
+      "roles": [
+        {
+          "role": "arkanist",
+          "n": 16
+        },
+        {
+          "role": "avci",
+          "n": 17
+        },
+        {
+          "role": "muhafiz",
+          "n": 17
+        }
+      ],
+      "travel": {
+        "ok": 50,
+        "ms": {
+          "p50": 396,
+          "p95": 596,
+          "max": 596
+        },
+        "errors": []
+      },
+      "starter": {
+        "ok": 50,
+        "errors": [],
+        "localDates": {
+          "registration_at": 1789938000000,
+          "opens_at": 1790179200000,
+          "public_opens_at": 0
+        }
+      },
+      "reconnected": 50,
+      "reconnectMs": {
+        "p50": 684,
+        "p95": 1313,
+        "max": 1370
+      },
+      "duplicatePlayers": 0,
+      "faults": [],
+      "status": "PASS"
+    }
+  },
+  "combat": {
+    "version": "R67",
+    "case": "matrix",
+    "players": 50,
+    "repeat": 1,
+    "sourceCore": "790a70d9d21b407e4fc9f0fd6ad5272f76636ea0221605385b9d9459610220f5",
+    "checks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "noDisconnects": true
+    },
+    "latency": {
+      "move": {
+        "n": 295,
+        "p50": 37,
+        "p95": 112,
+        "p99": 150,
+        "max": 210,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "use_potion": {
+        "n": 243,
+        "p50": 86,
+        "p95": 156,
+        "p99": 158,
+        "max": 296,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "attack": {
+        "n": 4248,
+        "p50": 32,
+        "p95": 65,
+        "p99": 198,
+        "max": 502,
+        "over300": 24,
+        "over500": 2,
+        "over1000": 0
+      },
+      "claim_rewards": {
+        "n": 95,
+        "p50": 78,
+        "p95": 247,
+        "p99": 398,
+        "max": 398,
+        "over300": 4,
+        "over500": 0,
+        "over1000": 0
+      },
+      "heartbeat": {
+        "n": 400,
+        "p50": 35,
+        "p95": 72,
+        "p99": 79,
+        "max": 348,
+        "over300": 1,
+        "over500": 0,
+        "over1000": 0
+      },
+      "collect": {
+        "n": 69,
+        "p50": 75,
+        "p95": 119,
+        "p99": 133,
+        "max": 133,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "durableDeath": {
+      "n": 78,
+      "p50": 126.55316700000549,
+      "p95": 367.6673770000052,
+      "p99": 602.9137180000107,
+      "max": 602.9137180000107
+    },
+    "allRewards": {
+      "n": 76,
+      "p50": 126.52945700001146,
+      "p95": 367.6673770000052,
+      "p99": 602.9137180000107,
+      "max": 602.9137180000107
+    },
+    "disconnects": 0,
+    "unacked": 0,
+    "childExitCount": 0,
+    "channels": {
+      "before": [
+        {
+          "channel": 1,
+          "incarnation": "a6fefa01-14e0-4bae-99fb-bcf25c1f0a9b"
+        },
+        {
+          "channel": 2,
+          "incarnation": "eae49cf8-311c-4541-9db1-bf15f80e6f9c"
+        },
+        {
+          "channel": 3,
+          "incarnation": "16ea7c22-b3c9-4561-b6ce-2f91317bf803"
+        },
+        {
+          "channel": 4,
+          "incarnation": "b92562ab-62e0-4c10-a99c-5eb11c0556ec"
+        }
+      ],
+      "after": [
+        {
+          "channel": 1,
+          "incarnation": "a6fefa01-14e0-4bae-99fb-bcf25c1f0a9b"
+        },
+        {
+          "channel": 2,
+          "incarnation": "eae49cf8-311c-4541-9db1-bf15f80e6f9c"
+        },
+        {
+          "channel": 3,
+          "incarnation": "16ea7c22-b3c9-4561-b6ce-2f91317bf803"
+        },
+        {
+          "channel": 4,
+          "incarnation": "b92562ab-62e0-4c10-a99c-5eb11c0556ec"
+        }
+      ]
+    },
+    "acceptance": {
+      "affected": 0,
+      "passed": 0,
+      "unfinishedRewards": 0,
+      "defeats": 326,
+      "duplicateKeys": 0,
+      "records": []
+    },
+    "resources": {
+      "cpuBudget": 4,
+      "totalCpuFraction": 0.3221420327021757,
+      "maxRssBytes": 2337320960
+    },
+    "faults": [],
+    "actionRejections": {
+      "attack:basic_attack_cadence": 25,
+      "use_potion:Canın zaten dolu.": 8
+    },
+    "status": "PASS"
+  },
+  "sourceFiles": [
+    "generated/native-client-proof.json",
+    "coordinator.mjs",
+    "reward-group-commit-r53.mjs",
+    "generated/native-http-composition-proof.json",
+    "first-steps-anchor-r67.mjs",
+    "entry-write-window-r67.mjs",
+    "generated/client/core511-first-steps-r67-525006f922521fde.js",
+    "generated/client/game-client-core511-r67-6bed7e102778aff4.js"
+  ],
+  "package": {
+    "file": "CORE511_R67_TOPLU.zip",
+    "bytes": 1143449,
+    "sha256": "18e7319f699cb4551560c7579a7203ab181def48ad48ac43331e9033a95584a3",
+    "baseCore": "683b61389c5ea79208d9c9562145577f00073f6585f6a5fa166c0578559e9e8c",
+    "payloadFiles": [
+      "core511-source/scripts/core511/coordinator.mjs",
+      "core511-source/scripts/core511/reward-group-commit-r53.mjs",
+      "core511-source/scripts/core511/entry-write-window-r67.mjs",
+      "core511-source/scripts/core511/first-steps-anchor-r67.mjs",
+      "core511-source/scripts/core511/generated/native-client-proof.json",
+      "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "core511-source/scripts/core511/generated/client/game-client-core511-r67-6bed7e102778aff4.js",
+      "core511-source/scripts/core511/generated/client/core511-first-steps-r67-525006f922521fde.js",
+      "http-runtime/dist-vds/server/index.js"
+    ]
+  }
+}
