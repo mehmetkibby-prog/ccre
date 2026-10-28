@@ -1,0 +1,38 @@
+Final voices: Piper Turkish fettah and fahrettin, sherpa-onnx 1.13.8.
+Two distinct synthesized speakers; no voice cloning. Original model cards follow.
+
+# Model card for fettah (medium)
+
+* Language: tr_TR (Turkish, Turkey)
+* Speakers: 1
+* Quality: medium
+* Samplerate: 22,050Hz
+
+## Dataset
+
+* URL: https://github.com/NabuCasa/voice-datasets
+* License: CC0
+
+## Training
+
+Finetuned from U.S. English lessac voice (medium quality).
+
+
+# Model card for fahrettin (medium)
+
+* Language: tr_TR (Turkish, Turkey)
+* Speakers: 1
+* Quality: medium
+* Samplerate: 22,050Hz
+
+## Dataset
+
+* URL: https://github.com/NabuCasa/voice-datasets
+* License: CC0
+
+## Training
+
+Finetuned from U.S. English lessac voice (medium quality).
+
+
+Instrumental music and transition effects: original synthesis for this video.

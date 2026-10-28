@@ -1,0 +1,247 @@
+{
+  "status": "PASS",
+  "videos": [
+    {
+      "status": "PASS",
+      "file": "CORE_OF_LIFE_TURKCE_TANITIM.mp4",
+      "sha256": "9a363c88e99cfcc91d44fe678b8ce28403226c2b17a1c6182165a20a63cebb6a",
+      "bytes": 26989790,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "frames": 1312,
+      "duration": 43.733333,
+      "videoCodec": "H.264",
+      "audioCodec": "AAC",
+      "audioChannels": 2,
+      "fullDecode": true,
+      "faststart": true,
+      "mobileSeeks": [
+        {
+          "time": 3,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 21.27179,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 30.27179,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 40.733333,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 1.5,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        }
+      ],
+      "limits": "Local decode and mobile Chromium checks; no live social-media upload and no human listening test.",
+      "browserErrors": []
+    },
+    {
+      "status": "PASS",
+      "file": "CORE_OF_LIFE_TELEFON_ONIZLEME.mp4",
+      "sha256": "fa8e7a9878300c2c7536ab140ad126c60427e58c5c7edac5d37aa05589c31178",
+      "bytes": 4165210,
+      "width": 540,
+      "height": 960,
+      "fps": 30,
+      "frames": 1312,
+      "duration": 43.733333,
+      "videoCodec": "H.264",
+      "audioCodec": "AAC",
+      "audioChannels": 2,
+      "fullDecode": true,
+      "faststart": true,
+      "mobileSeeks": [
+        {
+          "time": 3,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 21.27179,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 30.27179,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 40.733333,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 1.5,
+          "error": null,
+          "width": 540,
+          "height": 960
+        }
+      ],
+      "limits": "Local decode and mobile Chromium checks; no live social-media upload and no human listening test.",
+      "browserErrors": []
+    }
+  ],
+  "render": {
+    "info": {
+      "width": 1080,
+      "height": 1920,
+      "duration": 43.733333333333334,
+      "fps": 30,
+      "estimated": false,
+      "lines": [
+        {
+          "id": "01",
+          "scene": "wide",
+          "start": 0.85,
+          "end": 2.47646
+        },
+        {
+          "id": "02",
+          "scene": "traveller",
+          "start": 2.47646,
+          "end": 6.70225
+        },
+        {
+          "id": "03",
+          "scene": "guardian",
+          "start": 6.70225,
+          "end": 9.47652
+        },
+        {
+          "id": "04",
+          "scene": "guardian",
+          "start": 9.47652,
+          "end": 13.17408
+        },
+        {
+          "id": "05",
+          "scene": "traveller",
+          "start": 13.17408,
+          "end": 15.62946
+        },
+        {
+          "id": "06",
+          "scene": "wide",
+          "start": 15.62946,
+          "end": 17.27179
+        },
+        {
+          "id": "07",
+          "scene": "fishing",
+          "start": 17.27179,
+          "end": 20.27179
+        },
+        {
+          "id": "08",
+          "scene": "dungeon",
+          "start": 20.27179,
+          "end": 23.27179
+        },
+        {
+          "id": "09",
+          "scene": "arena",
+          "start": 23.27179,
+          "end": 26.27179
+        },
+        {
+          "id": "10",
+          "scene": "guild",
+          "start": 26.27179,
+          "end": 29.27179
+        },
+        {
+          "id": "11",
+          "scene": "castle",
+          "start": 29.27179,
+          "end": 32.27179
+        },
+        {
+          "id": "12",
+          "scene": "wide",
+          "start": 32.27179,
+          "end": 35.04198
+        },
+        {
+          "id": "13",
+          "scene": "prereg",
+          "start": 35.04198,
+          "end": 38.15114
+        },
+        {
+          "id": "14",
+          "scene": "end",
+          "start": 38.15114,
+          "end": 39.21312
+        },
+        {
+          "id": "15",
+          "scene": "end",
+          "start": 39.21312,
+          "end": 43.72579
+        }
+      ],
+      "kind": "Turkish voiced motion-illustration advertisement; generated character artwork, authentic game assets, camera/atmosphere animation. Not live gameplay footage. No phoneme-level lip sync."
+    },
+    "errors": [],
+    "bad": [],
+    "layout": []
+  },
+  "speechCheck": {
+    "model": "Whisper base, Turkish, local ONNX",
+    "scope": "Automatic transcription check; not a human listening test. Recognition can miss names or inflections.",
+    "segments": [
+      {
+        "range": [
+          0.85,
+          17.27
+        ],
+        "expected": "Yeni bir oyun arıyorum. Telefonda da, bilgisayarda da oynayayım. Üstelik indirmeden! Tam sana göre bir dünya biliyorum. Core of Life! Tarayıcını aç, maceraya katıl. Oynamak tamamen ücretsiz! Peki, bu dünyada bizi ne bekliyor? Gel, göstereyim!",
+        "recognized": "Yeni bir oyun arıyorum. Telefon da da, bilgisayarda da oynayayım. Üstelik indirmeden. Tam sana göre bir dünya biliyorum. Call of Life. Tarayıcına aç, macera yakatı. Oynamaktan hemen lücretsiz. Peki, bu dünyada bizi ne bekliyor? Gel, göstereyim.",
+        "seconds": 2.62
+      },
+      {
+        "range": [
+          17.27,
+          32.27
+        ],
+        "expected": "Oltanı al, balık tut. Zindanların derinliklerinde hazineleri keşfet. Arenada gücünü göster. Loncanla omuz omuza savaş. Lonca şatosunu ele geçir, zaferini yaz.",
+        "recognized": "Altına ağır balık tut Zindanların derinliklerinde hazineleri keşfet Arayna'da gücünü göster Lawn canlı omuz omuzla savaş Lawn caşa tosunu ele geçir, zaferini yaz",
+        "seconds": 1.89
+      },
+      {
+        "range": [
+          32.27,
+          43.73
+        ],
+        "expected": "Tamam, ben varım! Ne zaman başlıyoruz? Ön kaydını şimdi yap, başlangıç hediyeni kaçırma. Core of Life. 30 Ekim. Cuma akşamı. Saat 20.00'de!",
+        "recognized": "Tamam ben varım ne zaman başlıyoruz? Ön kaydını şimdi yap başlangıç hediyeini kaçırma. Korov, Dave, 30 ekim, Cumakşama, saat 20 de.",
+        "seconds": 1.44
+      }
+    ]
+  },
+  "visualReview": "Dialogue framing, five feature scenes, preregistration and end-card frames inspected.",
+  "style": "Voiced animated illustrations; no phoneme-level lip sync; not live gameplay.",
+  "date": "2026-10-30 Friday 20:00 Europe/Istanbul",
+  "limitations": "Automated Turkish transcription has residual proper-name/inflection errors. Not a human listening test; no social-platform upload test."
+}
