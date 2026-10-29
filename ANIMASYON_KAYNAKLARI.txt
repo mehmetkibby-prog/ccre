@@ -1,0 +1,6 @@
+Character motion: OpenTalker/SadTalker, https://github.com/OpenTalker/SadTalker
+Current project license Apache 2.0. Packaged SadTalker V0.0.2 safetensors.
+Face restoration: TencentARC/GFPGAN, https://github.com/TencentARC/GFPGAN
+GFPGANv1.4, deterministic noise for temporal consistency.
+Fictional character images: generated for this project. No real-person likeness
+or voice cloning. World/item imagery supplied by the game's existing assets.

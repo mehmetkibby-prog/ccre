@@ -1,0 +1,279 @@
+{
+  "status": "PASS",
+  "videos": [
+    {
+      "status": "PASS",
+      "file": "CORE_OF_LIFE_HAREKETLI_TANITIM.mp4",
+      "sha256": "905ad068ac47e3dec9fbfdecaf518d2f685c61e4fb160258f17b618bfbab6fa1",
+      "bytes": 25216104,
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "frames": 1312,
+      "duration": 43.733333,
+      "videoCodec": "H.264",
+      "audioCodec": "AAC",
+      "audioChannels": 2,
+      "fullDecode": true,
+      "faststart": true,
+      "mobileSeeks": [
+        {
+          "time": 3,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 21.27179,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 30.27179,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 40.733333,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "time": 1.5,
+          "error": null,
+          "width": 1080,
+          "height": 1920
+        }
+      ],
+      "limits": "Local decode and mobile Chromium checks; no live social-media upload and no human listening test.",
+      "browserErrors": []
+    },
+    {
+      "status": "PASS",
+      "file": "CORE_OF_LIFE_HAREKETLI_ONIZLEME.mp4",
+      "sha256": "da35a1db217d39b57c739f3a60b4617218d71a5daf34c11b2a63102094055533",
+      "bytes": 4433457,
+      "width": 540,
+      "height": 960,
+      "fps": 30,
+      "frames": 1312,
+      "duration": 43.733333,
+      "videoCodec": "H.264",
+      "audioCodec": "AAC",
+      "audioChannels": 2,
+      "fullDecode": true,
+      "faststart": true,
+      "mobileSeeks": [
+        {
+          "time": 3,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 21.27179,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 30.27179,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 40.733333,
+          "error": null,
+          "width": 540,
+          "height": 960
+        },
+        {
+          "time": 1.5,
+          "error": null,
+          "width": 540,
+          "height": 960
+        }
+      ],
+      "limits": "Local decode and mobile Chromium checks; no live social-media upload and no human listening test.",
+      "browserErrors": []
+    }
+  ],
+  "render": {
+    "info": {
+      "width": 1080,
+      "height": 1920,
+      "duration": 43.733333333333334,
+      "fps": 30,
+      "estimated": false,
+      "lines": [
+        {
+          "id": "01",
+          "scene": "traveller",
+          "start": 0.85,
+          "end": 2.47646
+        },
+        {
+          "id": "02",
+          "scene": "traveller",
+          "start": 2.47646,
+          "end": 6.70225
+        },
+        {
+          "id": "03",
+          "scene": "guardian",
+          "start": 6.70225,
+          "end": 9.47652
+        },
+        {
+          "id": "04",
+          "scene": "guardian",
+          "start": 9.47652,
+          "end": 13.17408
+        },
+        {
+          "id": "05",
+          "scene": "traveller",
+          "start": 13.17408,
+          "end": 15.62946
+        },
+        {
+          "id": "06",
+          "scene": "guardian",
+          "start": 15.62946,
+          "end": 17.27179
+        },
+        {
+          "id": "07",
+          "scene": "fishing",
+          "start": 17.27179,
+          "end": 20.27179
+        },
+        {
+          "id": "08",
+          "scene": "dungeon",
+          "start": 20.27179,
+          "end": 23.27179
+        },
+        {
+          "id": "09",
+          "scene": "arena",
+          "start": 23.27179,
+          "end": 26.27179
+        },
+        {
+          "id": "10",
+          "scene": "guild",
+          "start": 26.27179,
+          "end": 29.27179
+        },
+        {
+          "id": "11",
+          "scene": "castle",
+          "start": 29.27179,
+          "end": 32.27179
+        },
+        {
+          "id": "12",
+          "scene": "traveller",
+          "start": 32.27179,
+          "end": 35.04198
+        },
+        {
+          "id": "13",
+          "scene": "prereg",
+          "start": 35.04198,
+          "end": 38.15114
+        },
+        {
+          "id": "14",
+          "scene": "end",
+          "start": 38.15114,
+          "end": 39.21312
+        },
+        {
+          "id": "15",
+          "scene": "end",
+          "start": 39.21312,
+          "end": 43.72579
+        }
+      ],
+      "kind": "Turkish synthetic dialogue with audio-driven mouth, eye and head animation; illustrated game-asset feature montage. Not full-body animation or live gameplay."
+    },
+    "errors": [],
+    "bad": [],
+    "layout": []
+  },
+  "faceMotion": {
+    "status": "PASS",
+    "enhanced": true,
+    "shots": [
+      {
+        "id": "traveller-intro",
+        "frames": 168,
+        "fps": 25.0,
+        "faceMotionMean": 5.794456526376414,
+        "staticBackgroundMean": 0.14898787878787878,
+        "verifiedActualFaceMotion": true
+      },
+      {
+        "id": "guardian-answer",
+        "frames": 69,
+        "fps": 25.0,
+        "faceMotionMean": 7.07970096810926,
+        "staticBackgroundMean": 0.40420833333333334,
+        "verifiedActualFaceMotion": true
+      },
+      {
+        "id": "guardian-free",
+        "frames": 92,
+        "fps": 25.0,
+        "faceMotionMean": 3.2219385669566973,
+        "staticBackgroundMean": 0.29192824074074075,
+        "verifiedActualFaceMotion": true
+      },
+      {
+        "id": "traveller-question",
+        "frames": 61,
+        "fps": 25.0,
+        "faceMotionMean": 4.425759768840211,
+        "staticBackgroundMean": 0.39139722222222223,
+        "verifiedActualFaceMotion": true
+      },
+      {
+        "id": "guardian-invitation",
+        "frames": 41,
+        "fps": 25.0,
+        "faceMotionMean": 6.199564982316556,
+        "staticBackgroundMean": 0.6568385416666667,
+        "verifiedActualFaceMotion": true
+      },
+      {
+        "id": "traveller-launch",
+        "frames": 69,
+        "fps": 25.0,
+        "faceMotionMean": 6.868840951353509,
+        "staticBackgroundMean": 0.3641782051282052,
+        "verifiedActualFaceMotion": true
+      }
+    ],
+    "method": "Compare changing face crop against static background, plus contact-sheet review. Native 12.5 Hz animation with motion-compensated intermediate frames; final 30 fps edit."
+  },
+  "visualReview": {
+    "enhancedFaceContactSheets": 6,
+    "observations": [
+      "Inspected all six final enhanced face contact sheets, including open/closed mouth states, blinking and head turns.",
+      "Fictional identities remain consistent; no severe facial corruption observed in the sampled frames.",
+      "Inspected final traveller and guardian vertical composition frames, plus unchanged features and launch-card layout. Captions fit."
+    ],
+    "status": "PASS",
+    "finalEncodedMobileReview": "Both final H.264 videos viewed in mobile Chromium screenshots. Face detail, subtitle legibility, portrait framing and colour remain acceptable.",
+    "limitations": "Sampled visual frame review and automated playback; no human listening session. Face/head animation with fixed torso and hands."
+  },
+  "speechSource": "Unchanged measured two-speaker Turkish dialogue and audio mix from the first edit.",
+  "method": "SadTalker audio-driven facial/head animation, GFPGAN restoration, motion-compensated intermediate face frames.",
+  "limits": "Face/head animation; fixed torso and hands. Features montage uses game assets; not live gameplay. No human listening test or actual social-platform upload test."
+}
