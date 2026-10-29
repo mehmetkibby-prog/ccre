@@ -1,3 +1,9 @@
+# R71 — Kule, Sis ve zindan eşzamanlama düzeltmeleri
+
+[R71 paketi](R71/CORE511_R71_TOPLU.zip?raw=true) · [Kurulum](R71/KURULUM.md) · [Test kapsamı ve sonuçlar](R71/SONUC.md)
+
+R70 üzerine uygulanır. Hareket akışının harita geçişinde eski odada kalması, sefer ödülünün tüm kanalları bekletmesi, grup zindanı giriş/kayıt çakışması ve çizim duraklamasından dönüş düzeltilir. Sis düşman adları kırmızıdır. Yerel testler tamamlanmıştır; canlı VDS’ye kurulmamıştır.
+
 # Core of Life · R70
 
 [Güncellemeyi doğrudan indir](https://github.com/mehmetkibby-prog/ccre/raw/refs/heads/r70-oyun-20261029/R70/CORE511_R70_TOPLU.zip)

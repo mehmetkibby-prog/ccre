@@ -1,0 +1,674 @@
+{
+  "release": "R71_GAMEPLAY",
+  "status": "PASS",
+  "builtAtUTC": "2026-10-29T16:51:18.548494+00:00",
+  "archive": {
+    "file": "CORE511_R71_TOPLU.zip",
+    "bytes": 1187961,
+    "sha256": "5b8524e02ef3a360afe297447c1924577012823778a368611a7faa04b5806247",
+    "baseCore": "e53d55ad871ae5933c3f1ffaee2ba22acd1024a45eafd9556a90b566219f2c73",
+    "targetCore": "42dc758ec96cf0636a0fa592d660f2dc5a3eb934ae2cc9c2f25e88e52d46a1dc",
+    "files": [
+      "core511-source/scripts/core511/attack-loop.mjs",
+      "core511-source/scripts/core511/attack-writer.mjs",
+      "core511-source/scripts/core511/channel-motion.mjs",
+      "core511-source/scripts/core511/channel-runtime.mjs",
+      "core511-source/scripts/core511/coordinator.mjs",
+      "core511-source/scripts/core511/dungeon-freeze-scope-r71.mjs",
+      "core511-source/scripts/core511/dungeon-motion-resume-r71.mjs",
+      "core511-source/scripts/core511/generated/client/game-client-core511-r71-efdc48cbecfa0289.js",
+      "core511-source/scripts/core511/generated/native-client-proof.json",
+      "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "core511-source/scripts/core511/instance-reward-scope-r71.mjs",
+      "core511-source/scripts/core511/joined-checkpoint-r53.mjs",
+      "core511-source/scripts/core511/local-reward-scope.mjs",
+      "core511-source/scripts/core511/permanent-coordinator.mjs",
+      "http-runtime/dist-vds/server/index.js"
+    ]
+  },
+  "checks": {
+    "installerAndPayloadMatchTestedBytes": true,
+    "codeOnlyR70ToR71": true,
+    "archiveSHA256": true,
+    "R70Immutable": true,
+    "instancesBrowserHealthy": true,
+    "dungeonsBrowserHealthy": true,
+    "instanceScopeDoesNotRejectTravel": true,
+    "all28InstanceKillsUseLocalDurableJoin": true,
+    "instancePeerDeathUnder350msInjectedNetwork": true,
+    "actualCanvasName_party": true,
+    "actualCanvasName_enemy": true,
+    "actualCanvasName_gold-enemy": true,
+    "allThreeDungeonRunsComplete": true,
+    "dungeonContinuousWalkNoFreezeOrBackward": true,
+    "groupDungeonWalkP95Under200msInjectedNetwork": true,
+    "groupDeathDisplaySkewUnder100ms": true,
+    "50PlayersAllChecks": true,
+    "scoped-unit-final.log": true,
+    "mist-name-color-unit.log": true,
+    "instance-rewards-process2.log": true,
+    "dungeon-native-current-final.log": true,
+    "dungeon-return-channel-final.log": true,
+    "nativeRegressionsClassifiedAndReplaced": true,
+    "installer14Cases": true,
+    "exactClientInverseToR70": true
+  },
+  "liveServerDeployed": false,
+  "scope": "Native local account/HTTP/world/four-channel processes and two independent Chromium processes, same IP. Not measured on production VDS, Edge or Firefox.",
+  "network": "Ordered 20ms one-way plus 40ms every seventh WebSocket chunk.",
+  "instanceWalk": [
+    {
+      "sender": "real-1",
+      "ownFrames": 12142,
+      "peerFrames": 5799,
+      "phases": {
+        "bazaar": {
+          "n": 209,
+          "delayMedianMs": 39.98,
+          "delayP95Ms": 86.28,
+          "maxBehindPx": 30.49,
+          "medianBehindPx": 10.47,
+          "first": {
+            "delay": 43.0,
+            "distance": 9.174982500000056,
+            "at": 1793291561094,
+            "sampleAge": null
+          }
+        },
+        "tower-walk": {
+          "n": 492,
+          "delayMedianMs": 55.66,
+          "delayP95Ms": 118.8,
+          "maxBehindPx": 41.33,
+          "medianBehindPx": 15.29,
+          "first": {
+            "delay": 33.0,
+            "distance": 4.573715000000107,
+            "at": 1793291570979,
+            "sampleAge": null
+          }
+        },
+        "tower-after-kills": {
+          "n": 244,
+          "delayMedianMs": 48.85,
+          "delayP95Ms": 117.33,
+          "maxBehindPx": 36.73,
+          "medianBehindPx": 13.78,
+          "first": {
+            "delay": -1943.0355650381298,
+            "distance": -269.2997245258015,
+            "at": 1793291593529,
+            "sampleAge": null
+          }
+        },
+        "mist-walk": {
+          "n": 364,
+          "delayMedianMs": 37.86,
+          "delayP95Ms": 77.81,
+          "maxBehindPx": 27.55,
+          "medianBehindPx": 10.25,
+          "first": {
+            "delay": 35.0,
+            "distance": 4.573714999999538,
+            "at": 1793291605745,
+            "sampleAge": null
+          }
+        },
+        "gold-mist-walk": {
+          "n": 370,
+          "delayMedianMs": 41.53,
+          "delayP95Ms": 81.08,
+          "maxBehindPx": 27.55,
+          "medianBehindPx": 11.74,
+          "first": {
+            "delay": 33.0,
+            "distance": 4.5737150000015845,
+            "at": 1793291634198,
+            "sampleAge": null
+          }
+        }
+      }
+    },
+    {
+      "sender": "2033878a-3a6e-4f3c-a4a9-eb054844dd2d",
+      "ownFrames": 11724,
+      "peerFrames": 5929,
+      "phases": {
+        "bazaar": {
+          "n": 168,
+          "delayMedianMs": 60.0,
+          "delayP95Ms": 131.42,
+          "maxBehindPx": 40.48,
+          "medianBehindPx": 16.37,
+          "first": {
+            "delay": 40.0,
+            "distance": 9.174982500000056,
+            "at": 1793291563706,
+            "sampleAge": null
+          }
+        },
+        "tower-walk": {
+          "n": 347,
+          "delayMedianMs": 45.35,
+          "delayP95Ms": 124.9,
+          "maxBehindPx": 41.3,
+          "medianBehindPx": 12.52,
+          "first": {
+            "delay": 33.0,
+            "distance": 4.601267499999722,
+            "at": 1793291573611,
+            "sampleAge": null
+          }
+        },
+        "tower-combat": {
+          "n": 78,
+          "delayMedianMs": 52.88,
+          "delayP95Ms": 1515.03,
+          "maxBehindPx": 431.66,
+          "medianBehindPx": 13.78,
+          "first": {
+            "delay": -1362.865608769699,
+            "distance": -190.02755249999916,
+            "at": 1793291589727,
+            "sampleAge": null
+          }
+        },
+        "tower-after-kills": {
+          "n": 174,
+          "delayMedianMs": 74.57,
+          "delayP95Ms": 115.65,
+          "maxBehindPx": 36.76,
+          "medianBehindPx": 20.56,
+          "first": {
+            "delay": 34.0,
+            "distance": 9.202535000000353,
+            "at": 1793291596147,
+            "sampleAge": null
+          }
+        },
+        "mist-walk": {
+          "n": 258,
+          "delayMedianMs": 71.99,
+          "delayP95Ms": 115.3,
+          "maxBehindPx": 36.73,
+          "medianBehindPx": 19.72,
+          "first": {
+            "delay": 29.0,
+            "distance": 4.601267499999267,
+            "at": 1793291608393,
+            "sampleAge": null
+          }
+        },
+        "mist-combat": {
+          "n": 267,
+          "delayMedianMs": 85.87,
+          "delayP95Ms": 408.37,
+          "maxBehindPx": 782.06,
+          "medianBehindPx": 22.95,
+          "first": {
+            "delay": 3040.9672498166583,
+            "distance": 397.38621500000045,
+            "at": 1793291619960,
+            "sampleAge": null
+          }
+        },
+        "gold-mist-walk": {
+          "n": 260,
+          "delayMedianMs": 59.91,
+          "delayP95Ms": 112.89,
+          "maxBehindPx": 34.28,
+          "medianBehindPx": 16.31,
+          "first": {
+            "delay": 34.0,
+            "distance": 4.546162500000037,
+            "at": 1793291636809,
+            "sampleAge": null
+          }
+        },
+        "gold-mist-combat": {
+          "n": 239,
+          "delayMedianMs": 108.57,
+          "delayP95Ms": 1385.73,
+          "maxBehindPx": 839.32,
+          "medianBehindPx": 30.11,
+          "first": {
+            "delay": 2919.877651973407,
+            "distance": 392.7849475000053,
+            "at": 1793291648475,
+            "sampleAge": null
+          }
+        }
+      }
+    }
+  ],
+  "instanceKillPeerDisplayMs": {
+    "n": 28,
+    "max": 250
+  },
+  "dungeonMovement": {
+    "status": "PASS",
+    "source": "dungeon-final-jitter",
+    "directions": [
+      {
+        "group-dungeon-walk": {
+          "n": 504,
+          "medianMs": 50.55,
+          "p95Ms": 164.61,
+          "maxMs": 371.23
+        },
+        "group-render-resume": {
+          "n": 50,
+          "medianMs": -19.34,
+          "p95Ms": 184.96,
+          "maxMs": 217.51
+        },
+        "group-combat-stage-1": {
+          "n": 409,
+          "medianMs": 45.26,
+          "p95Ms": 89.06,
+          "maxMs": 201.27
+        },
+        "group-combat-stage-2": {
+          "n": 289,
+          "medianMs": 56.4,
+          "p95Ms": 188.41,
+          "maxMs": 3146.8
+        },
+        "group-combat-stage-3": {
+          "n": 173,
+          "medianMs": 52.48,
+          "p95Ms": 193.39,
+          "maxMs": 287.09
+        }
+      },
+      {
+        "group-dungeon-walk": {
+          "n": 394,
+          "medianMs": 53.76,
+          "p95Ms": 115.06,
+          "maxMs": 247.07
+        }
+      }
+    ],
+    "ownMovement": [
+      {
+        "group-dungeon-walk": {
+          "movingFrames": 396,
+          "minimumForwardPxPerSec": 141.73,
+          "maxFrameGapMs": 67,
+          "zeroOrBackwardFrames": 0
+        },
+        "solo-dungeon-walk": {
+          "movingFrames": 473,
+          "minimumForwardPxPerSec": 166.38,
+          "maxFrameGapMs": 36,
+          "zeroOrBackwardFrames": 0
+        }
+      },
+      {
+        "group-dungeon-walk": {
+          "movingFrames": 302,
+          "minimumForwardPxPerSec": 166.88,
+          "maxFrameGapMs": 63,
+          "zeroOrBackwardFrames": 0
+        },
+        "solo-dungeon-walk": {
+          "movingFrames": 324,
+          "minimumForwardPxPerSec": 113.23,
+          "maxFrameGapMs": 34,
+          "zeroOrBackwardFrames": 0
+        }
+      }
+    ],
+    "completion": [
+      {
+        "mode": "group",
+        "status": "complete",
+        "stage": 3,
+        "enemies": 0,
+        "hp": 100,
+        "damage": 240000,
+        "ms": 35271
+      },
+      {
+        "mode": "solo-0",
+        "status": "complete",
+        "stage": 3,
+        "enemies": 0,
+        "hp": 100,
+        "damage": 60000,
+        "ms": 14232
+      },
+      {
+        "mode": "solo-1",
+        "status": "complete",
+        "stage": 3,
+        "enemies": 0,
+        "hp": 100,
+        "damage": 60000,
+        "ms": 14412
+      }
+    ],
+    "resume": {
+      "own": {
+        "travel": 90.02567999999997,
+        "epoch": 0,
+        "error": {
+          "x": 25.084472262640837,
+          "y": 0
+        },
+        "x": 1626.1745049999977,
+        "y": 1190,
+        "remote": {
+          "x": 1536.1488249999977,
+          "y": 1190,
+          "targetX": 1536.1488249999977,
+          "targetY": 1190,
+          "vx": 0,
+          "vy": 0,
+          "sampleAt": 0,
+          "area": "dungeon",
+          "travel": 0
+        }
+      },
+      "canonical": {
+        "id": "real-1",
+        "gmInvisible": false,
+        "visibilityRevision": 0,
+        "name": "Birinci",
+        "role": "avci",
+        "ready": true,
+        "x": 1618.5307999999977,
+        "y": 1190,
+        "hp": 100,
+        "maxHp": 100,
+        "damage": 0,
+        "seen": 1793291764762,
+        "cooldowns": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "appearance": {
+          "premiumBuff": {
+            "attack": 0,
+            "hp": 0,
+            "pumpkin": false,
+            "pumpkinUntil": 0,
+            "monsters": 0,
+            "rationUntil": 0,
+            "radiant": false,
+            "essence": 0
+          },
+          "talismanColor": 0,
+          "rank": {
+            "tier": 0,
+            "arenaWings": false,
+            "bonuses": {
+              "hp": 0,
+              "defense": 0,
+              "pve": 0,
+              "pvp": 0
+            },
+            "cosmetics": {}
+          },
+          "weaponSkin": false,
+          "costume": false,
+          "level": 50,
+          "coreWings": false,
+          "wings": false,
+          "weapon": "white",
+          "armor": "white",
+          "evolution": 0
+        },
+        "moveTarget": null,
+        "direction": {
+          "x": 1,
+          "y": 0
+        },
+        "specialization": "",
+        "skillFour": 5,
+        "cadences": [
+          650,
+          10000,
+          12000,
+          24000
+        ],
+        "inputSequence": 1793291736883,
+        "velocity": {
+          "x": 275.52500000000003,
+          "y": 0
+        }
+      },
+      "at": 1793291764897
+    },
+    "faults": [],
+    "errors": [],
+    "groupDeathDisplaySkew": {
+      "n": 20,
+      "medianMs": 3,
+      "p95Ms": 49,
+      "maxMs": 51
+    }
+  },
+  "combat50": {
+    "version": "R71",
+    "case": "matrix",
+    "players": 50,
+    "repeat": 1,
+    "sourceCore": "d1a99129880df584fc0fc6b742b8af8117dc1d3db9632db12b28fd7bd8ff5db9",
+    "checks": {
+      "exitZero": true,
+      "sourceUnchanged": true,
+      "testFilesUnchanged": true,
+      "completed": true,
+      "population": true,
+      "driverInverse": true,
+      "noChildExit": true,
+      "sameFourIncarnations": true,
+      "noFaults": true,
+      "noUnacked": true,
+      "noUnfinishedRewards": true,
+      "noDuplicateKeys": true,
+      "cleanShutdown": true,
+      "noDisconnects": true
+    },
+    "latency": {
+      "move": {
+        "n": 295,
+        "p50": 33,
+        "p95": 69,
+        "p99": 96,
+        "max": 113,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "use_potion": {
+        "n": 254,
+        "p50": 85,
+        "p95": 188,
+        "p99": 209,
+        "max": 342,
+        "over300": 1,
+        "over500": 0,
+        "over1000": 0
+      },
+      "attack": {
+        "n": 4172,
+        "p50": 31,
+        "p95": 61,
+        "p99": 157,
+        "max": 372,
+        "over300": 8,
+        "over500": 0,
+        "over1000": 0
+      },
+      "claim_rewards": {
+        "n": 92,
+        "p50": 81,
+        "p95": 195,
+        "p99": 297,
+        "max": 297,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      },
+      "heartbeat": {
+        "n": 400,
+        "p50": 35,
+        "p95": 132,
+        "p99": 253,
+        "max": 320,
+        "over300": 3,
+        "over500": 0,
+        "over1000": 0
+      },
+      "collect": {
+        "n": 60,
+        "p50": 80,
+        "p95": 192,
+        "p99": 292,
+        "max": 292,
+        "over300": 0,
+        "over500": 0,
+        "over1000": 0
+      }
+    },
+    "durableDeath": {
+      "n": 73,
+      "p50": 138.72178800000256,
+      "p95": 322.5518349999911,
+      "p99": 400.7850380000018,
+      "max": 400.7850380000018
+    },
+    "allRewards": {
+      "n": 73,
+      "p50": 138.72178800000256,
+      "p95": 322.5518349999911,
+      "p99": 400.7850380000018,
+      "max": 400.7850380000018
+    },
+    "disconnects": 0,
+    "unacked": 0,
+    "childExitCount": 0,
+    "channels": {
+      "before": [
+        {
+          "channel": 1,
+          "incarnation": "fca54660-30aa-49f9-bfe6-d265f05f4b06"
+        },
+        {
+          "channel": 2,
+          "incarnation": "8d281b33-8074-4f57-a218-ef490e923e7c"
+        },
+        {
+          "channel": 3,
+          "incarnation": "fc2d9060-4fc3-41b0-b81d-a517c55ea0df"
+        },
+        {
+          "channel": 4,
+          "incarnation": "1652be09-9272-4efa-b354-05b46378e427"
+        }
+      ],
+      "after": [
+        {
+          "channel": 1,
+          "incarnation": "fca54660-30aa-49f9-bfe6-d265f05f4b06"
+        },
+        {
+          "channel": 2,
+          "incarnation": "8d281b33-8074-4f57-a218-ef490e923e7c"
+        },
+        {
+          "channel": 3,
+          "incarnation": "fc2d9060-4fc3-41b0-b81d-a517c55ea0df"
+        },
+        {
+          "channel": 4,
+          "incarnation": "1652be09-9272-4efa-b354-05b46378e427"
+        }
+      ]
+    },
+    "acceptance": {
+      "affected": 0,
+      "passed": 0,
+      "unfinishedRewards": 0,
+      "defeats": 337,
+      "duplicateKeys": 0,
+      "records": []
+    },
+    "resources": {
+      "cpuBudget": 4,
+      "totalCpuFraction": 0.32167636859646925,
+      "maxRssBytes": 2390835200
+    },
+    "faults": [],
+    "actionRejections": {
+      "attack:basic_attack_cadence": 30,
+      "use_potion:Canın zaten dolu.": 6
+    },
+    "status": "PASS"
+  },
+  "tests": [
+    {
+      "passed": 24,
+      "log": "scoped-unit-final.log",
+      "sha256": "9a7b6b85ada2888fff8ed9a533884daa67adba04901085affc99099fd24ba5cd"
+    },
+    {
+      "passed": 6,
+      "log": "mist-name-color-unit.log",
+      "sha256": "f4d795fc2957031bc82f62c31fd6ce55e412e548799418b8dddba6c1ba8a220b"
+    },
+    {
+      "passed": 6,
+      "log": "instance-rewards-process2.log",
+      "sha256": "2bfac9963f484d9adbbfa167252ce3441b5b42301df7d479c629449a3637d44c"
+    },
+    {
+      "passed": 10,
+      "log": "dungeon-native-current-final.log",
+      "sha256": "d0b9034cc522d0f32409ef1475993cbd1b69b886edb168935aceea34b0c07757"
+    },
+    {
+      "passed": 1,
+      "log": "dungeon-return-channel-final.log",
+      "sha256": "9030df84cc87115e13a51134a68df71866eeb7a283d7d0ef9a1cceafd39d22ce"
+    }
+  ],
+  "nativeRegression": {
+    "passedOriginal": 39,
+    "updatedCurrentFixturesPassed": 11,
+    "effectiveCasesPassed": 50,
+    "legacyFailuresPreserved": "Original 10 obsolete V510/schema fixture failures reproduced unchanged in R70; updated fixture uses installed tower/bag schema and R70 rules. One old return test omitted current dungeon channel; explicit wrong/correct channel test passes. No game rule was weakened to satisfy a test."
+  },
+  "installer": {
+    "passed": true,
+    "testsRun": 14,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real R70 files, SQLite/native registration; simulated systemd/game health/capacity. Isolated install, deletion, rollback, interruption recovery."
+  },
+  "client": {
+    "file": "game-client-core511-r71-efdc48cbecfa0289.js",
+    "sha256": "efdc48cbecfa028930b8fe8eebdf9a144e1fd165adc9923f1a4a4368871e8b95",
+    "inverseToR70": true
+  },
+  "limits": [
+    "50-player load has native clients; browser rendering is measured separately.",
+    "Dungeon positional time estimate is not valid across floor teleports; a raw 3.15s equivalent sample is a 3ms skew at a floor spawn, not a movement stall.",
+    "Internet RTT, live disk performance, device rendering and untested paths are not guaranteed by local tests."
+  ],
+  "evidenceSHA256": {
+    "instance-final-jitter-v3/report.json": "e5bf1f37a3dac43d50d5f3ec1675f6cc344a53c21a4be176bec5ac537516b615",
+    "dungeon-final-jitter/report.json": "39b6698a00ad1e0921b6b50a1eef6f9123c3bb2fee91d7cfa035caa3114d15bf",
+    "combat-50/source.json": "d31633e7ce07253581ab5d2ef1a6f45c5351c6a2806b0c35f8c5e1c31208b261",
+    "native-regression-final.log": "b0e9de85311fc5e06d2703284a01f590a310d7b37dbd90cfa96c4855a6d8cc57",
+    "legacy-dungeon-r70-baseline.log": "6adcf29faf3cb4755a0d82b2ba709fd5486aa011a39283862d08993cf3451a74",
+    "installer-final.log": "ce0d1e11249982c3d8dbc8d97902730e274f64bf60ea15e25e30ff15a747fb8c",
+    "dungeon-return-channel-final.log": "9030df84cc87115e13a51134a68df71866eeb7a283d7d0ef9a1cceafd39d22ce",
+    "dungeon-native-current-final.log": "d0b9034cc522d0f32409ef1475993cbd1b69b886edb168935aceea34b0c07757"
+  }
+}

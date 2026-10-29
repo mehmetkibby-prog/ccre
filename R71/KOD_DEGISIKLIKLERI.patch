@@ -1,0 +1,241 @@
+--- a/channel-motion.mjs
++++ b/channel-motion.mjs
+@@ -31,8 +31,22 @@
+   if(resident?.epoch!==identity.epoch||resident.state!=='active')return deny('resident_epoch');
+   if(actor?.epoch!==identity.epoch)return deny('actor_epoch');if(!actor.accepting||actor.quiescer)return deny('actor_inactive');
+   if((actor.suspended||actor.externalHold)&&!(this.heldEnabled&&this.held(id)))return deny('held_disabled');
+-  if(this.blocked(id))return deny('blocked');if(scopeOf(row,this.channel.world.cycle)!==entry.scope)return deny('entry_scope');
++  if(this.blocked(id))return deny('blocked');
++  if(scopeOf(row,this.channel.world.cycle)!==entry.scope)this.rebaseScope(entry,row,this.clock());
+   return row;
++ }
++ // A committed in-channel teleport (tower floor, mist, dungeon return) keeps
++ // the socket but changes its world scope. Rebase from the AUTHENTICATED
++ // resident row, never from a cosmetic payload. Retire every old-scope sample
++ // and sequence cache; old packets still fail scope/revision validation below.
++ rebaseScope(entry,row,now){
++  const id=row.id;entry.scope=scopeOf(row,this.channel.world.cycle);
++  entry.floor=row.position_revision;entry.authority=null;
++  entry.player={connectionId:entry.streamId,motionSequence:0,motionHpFloor:row.hp_revision};
++  entry.viewport=null;entry.cameraSettlesAt=now+1500;entry.sentMotions.clear();
++  this.pending.delete(id);this.heldPending.delete(id);this.frames.clear();
++  for(const peer of this.entries.values())peer.sentMotions.delete(id);
++  this.sync(entry,row,now);
+  }
+  // Diagnostic classification runs only after the pinned native validator has
+  // refused a sample. It grants no budget and never changes validation/state.
+--- a/local-reward-scope.mjs
++++ b/local-reward-scope.mjs
+@@ -2,6 +2,7 @@
+ import {localClaimTargets,nativeClaimPrefix} from './claim-chunks.mjs';
+ import {kernelError} from './contract.mjs';
+ import {isAdventureArea} from './adventure-maps.mjs';
++import {instanceRewardAreaR71,assertInstanceRewardScopeR71} from './instance-reward-scope-r71.mjs';
+ import {prepareCached477} from './writer-statements.mjs';
+ import {requestGuardCache} from './r50-writer-options.mjs';
+ import {completedClaimProofR56} from './completed-claims-r56.mjs';
+@@ -24,13 +25,14 @@
+   if(input?.action!=='claim_rewards'||!normalized||JSON.stringify(normalized)!==JSON.stringify(targets))fail();
+  }
+  const player=prepareCached477(sql,'SELECT area,channel,arena_match_id FROM players WHERE id=?').get(actor);
+- if(!player||player.channel!==peer.channel||player.arena_match_id||player.area==='arena'||isAdventureArea(player.area))fail();
++ if(!player||player.channel!==peer.channel||player.arena_match_id||player.area==='arena'||isAdventureArea(player.area)&&!instanceRewardAreaR71(player.area))fail();
+  if(completedR56!==undefined&&(completedR56!==true||code!==LOCAL_CLAIM_REJECTED||!completedClaimProofR56(sql,targets)))fail();
+  for(const target of targets){
+   const id=target?.id,round=target?.spawnRound;
+   if(typeof id!=='string'||!Number.isSafeInteger(round)||id==='dunya-bosu-1'||id.startsWith('sinsi-tasi-'))fail();
+   const m=prepareCached477(sql,'SELECT channel,area,is_boss,is_stone FROM monsters WHERE id=?').get(id);
+   if(!m||m.channel!==peer.channel||m.is_boss||m.is_stone||m.area!==player.area)fail();
++  assertInstanceRewardScopeR71(sql,{actor,player,target,fail});
+   if(!completedR56)for(const row of prepareCached477(sql,'SELECT player_id FROM monster_participants WHERE monster_id=? AND spawn_round=?').all(id,round))if(!permitted.has(row.player_id))fail();
+  }
+  // The unchanged native normal claim selects only completed_at=0. With the
+--- a/channel-runtime.mjs
++++ b/channel-runtime.mjs
+@@ -33,6 +33,7 @@
+ import {AfkChannel} from './afk-channel.mjs';
+ import {AFK_ACTIONS,afkCheckEnabled} from './afk-policy.mjs';
+ import {isAdventureArea} from './adventure-maps.mjs';
++import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
+ import {performance} from 'node:perf_hooks';
+ import {ResidentChannel} from './resident-channel.mjs';
+ import {ResidentServices} from './resident-services.mjs';
+@@ -179,7 +180,7 @@
+   if(process.env.CORE511_LOCAL_KILL==='0')return null;
+   const c=this.channel,raw=result?.boundary,b=raw&&{...raw,targets:Array.isArray(raw.targets)?[...new Set(raw.targets)]:raw.targets},limit=r35Options.localAoe?10:1,killer=c.view.player(id);
+   if(!result?.durable||b?.reason!=='defeat'||!Array.isArray(b.targets)||!b.targets.length||b.targets.length>limit||b.players?.length||!killer)return null;
+-  if(killer.arena_match_id||killer.instance_id||killer.arenaMatchId||killer.instanceId||killer.area==='arena'||isAdventureArea(killer.area))return null;
++  if(killer.arena_match_id||killer.instance_id||killer.arenaMatchId||killer.instanceId||killer.area==='arena'||isAdventureArea(killer.area)&&!instanceRewardAreaR71(killer.area))return null;
+   const ids=[],targets=[],add=pid=>{if(ids.includes(pid))return true;const group=this.localGroup(pid);if(!group)return false;for(const m of group)if(!ids.includes(m))ids.push(m);return true;};
+   if(!add(id))return null;
+   for(const target of b.targets){
+@@ -242,7 +243,7 @@
+  localClaim(id,input){
+   if(process.env.CORE511_LOCAL_CLAIM==='0')return null;
+   const c=this.channel,player=c.view.player(id);
+-  if(!player||player.arena_match_id||player.area==='arena'||isAdventureArea(player.area)||!Array.isArray(input.rewardTargets))return null;
++  if(!player||player.arena_match_id||player.area==='arena'||isAdventureArea(player.area)&&!instanceRewardAreaR71(player.area)||!Array.isArray(input.rewardTargets))return null;
+   const nativeLimit=r37Options.claimChunks&&input.rewardTargets.length>100,targets=nativeLimit?nativeClaimPrefix(input.rewardTargets):localClaimTargets(input.rewardTargets,r37Options.claimChunks?100:10);if(!targets)return null;
+   if(c.completedClaimHintsR56?.has(c.world.cycle,targets)&&targets.every(t=>{const m=c.view.monster(t.id);return m&&m.channel===this.peer.channel&&!m.is_boss&&!m.is_stone&&m.area===player.area&&!this.forceShared.has(t.id+':'+t.spawnRound);})){return {ids:[id],targets,completedR56:true,...(nativeLimit?{nativeLimit:true}:{})};}
+   const ids=[],add=pid=>{if(ids.includes(pid))return true;const group=this.localGroup(pid);if(!group)return false;for(const m of group)if(!ids.includes(m))ids.push(m);return true;};
+--- a/attack-loop.mjs
++++ b/attack-loop.mjs
+@@ -8,6 +8,7 @@
+ import {DEFER_INPUT} from './fixed-loop.mjs';
+ import {demand} from './contract.mjs';
+ import {captureLocalDeaths,publishLocalDeaths} from './local-deaths.mjs';
++import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
+ const localDeathAreas=new Set(['forest','frozen','black','ancient','sanctum']);
+ 
+ // Only the channel's trusted context/footprint providers may construct frames
+@@ -41,7 +42,7 @@
+   const death=local?.targets?.length===1?{target:{...local.targets[0]},before:this.memory.view?.monster?.(local.targets[0].id),scope:{area:context.player.area,channel:context.player.channel,cycle:context.player.world_cycle,version:context.player.realtime_scope_version},actors:ids.map(id=>({id,p:kernel.players.get(id),epoch:kernel.players.get(id).epoch,owner:kernel.state.owners.get(id)}))}:null;
+   const deaths=local?.targets?.length>1?captureLocalDeaths(this,local.targets,context.player,ids,kernel):null;
+   const key='attack:'+this.incarnation+':'+(++this.serial);
+-  if(memoryCombatR53&&local&&result.boundary.reason==='defeat'&&local.targets.every(t=>{const m=this.memory.view.monster(t.id);return m&&!m.is_boss&&!m.is_stone&&localDeathAreas.has(m.area);}))return joinedDeathR53(this,{batchAttacksR57:batchPlanR57?this.takeBatchR57(batchPlanR57):[],id,input,now,receivedAtMs,kernel,local,ids,lease,seed,key,replyR54:result.boundary.replyR54});
++  if(memoryCombatR53&&local&&result.boundary.reason==='defeat'&&local.targets.every(t=>{const m=this.memory.view.monster(t.id);return m&&!m.is_boss&&!m.is_stone&&(localDeathAreas.has(m.area)||instanceRewardAreaR71(m.area));}))return joinedDeathR53(this,{batchAttacksR57:batchPlanR57?this.takeBatchR57(batchPlanR57):[],id,input,now,receivedAtMs,kernel,local,ids,lease,seed,key,replyR54:result.boundary.replyR54});
+   let barrier;
+   try{
+    barrier=kernel.durableGroup(ids,async()=>{
+--- a/attack-writer.mjs
++++ b/attack-writer.mjs
+@@ -15,6 +15,7 @@
+ import {compactCombatResult} from './bounded-combat-output.mjs';
+ import {actorFrameConflict} from './actor-frame-rejection.mjs';
+ import {isMistArea} from './adventure-maps.mjs';
++import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
+ import {prepareCached477} from './writer-statements.mjs';
+ import {createAttackWriterRules} from './generated/attack-writer-rules.mjs';
+ import {nativeAtomicStatements} from './retaliation-writer.mjs';
+@@ -109,7 +110,7 @@
+   rewardBudgetR56=localRewardBudgetR57(payload,frame.player.area,killedIds,rewardBudgetR56);
+   if(eagerNormalRewardsR53)for(const hit of result.body?.hits??[])if(hit.killed){
+    const m=prepareCached477(sqlite,'SELECT area,channel,is_boss,is_stone FROM monsters WHERE id=?').get(hit.id);
+-   if(m&&m.channel>0&&!m.is_boss&&!m.is_stone&&['forest','frozen','black','ancient','sanctum'].includes(m.area)){
++   if(m&&m.channel>0&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||payload.localScope?.kind==='kill'&&instanceRewardAreaR71(m.area))){
+     if(rewardBudgetR56--<=0)continue;
+     const awarded=sync(rules.awardPendingNormalRewards(db,settings,Math.floor(nowMs/1000),{id:hit.id,spawn_round:hit.spawnRound}));
+     // Native eligibility deliberately returns null for an unknown loot source
+--- a/joined-checkpoint-r53.mjs
++++ b/joined-checkpoint-r53.mjs
+@@ -9,6 +9,7 @@
+ import {localMixedTargetLimitR51} from './r51-options.mjs';
+ import {unpackCheckpointR54} from './checkpoint-wire-r54.mjs';
+ import {compactJoinedAckR57} from './joined-ack-r57.mjs';
++import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
+ 
+ // Called inside the attack's existing owner/resource/write-audit transaction.
+ // Only a private, locally created checkpoint rejection may become not_executed.
+@@ -22,7 +23,7 @@
+   demand(Array.isArray(actors)&&actors.length>0&&actors.length<=25&&new Set(actors.map(a=>a.actor)).size===actors.length&&actors.some(a=>a.actor===context.actor),'checkpoint_join_actors');
+   demand(targets.size>0&&targets.size<=(payload.localScope.kind==='mixed'?localMixedTargetLimitR51:10)&&journal&&journal.bossParticipants?.length===0&&journal.monsters.every(r=>targets.has(r.current.id)&&!r.current.is_boss&&!r.current.is_stone)&&journal.participants.every(r=>targets.has(r.current.monster_id)&&held.has('player:'+r.current.player_id))&&journal.combatEvents.every(r=>targets.has(r.target_id)&&held.has('player:'+r.player_id)),'checkpoint_join_journal');
+   const monstersR56=readResourceMonstersR56(sql,payload.localScope.targets.map(t=>t.id),'join');
+-  for(const t of payload.localScope.targets){const m=monstersR56?monstersR56.get(t.id):sql.prepare('SELECT area,channel,spawn_round,is_boss,is_stone FROM monsters WHERE id=?').get(t.id);demand(m&&m.channel===context.peer.channel&&m.spawn_round===t.spawnRound&&!m.is_boss&&!m.is_stone&&['forest','frozen','black','ancient','sanctum'].includes(m.area)&&held.has('monster:'+t.id),'checkpoint_join_monster');}
++  for(const t of payload.localScope.targets){const m=monstersR56?monstersR56.get(t.id):sql.prepare('SELECT area,channel,spawn_round,is_boss,is_stone FROM monsters WHERE id=?').get(t.id);demand(m&&m.channel===context.peer.channel&&m.spawn_round===t.spawnRound&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||payload.localScope.kind==='kill'&&instanceRewardAreaR71(m.area))&&held.has('monster:'+t.id),'checkpoint_join_monster');}
+   const saved=[];sql.exec('SAVEPOINT core511_join_r53');
+   try{
+    for(const row of actors){
+--- a/coordinator.mjs
++++ b/coordinator.mjs
+@@ -1,3 +1,4 @@
++import {dungeonFreezeActorsR71} from './dungeon-freeze-scope-r71.mjs';
+ import {castleEnabled,CASTLE_CHANNEL,CASTLE_AREA} from './castle-model-r59.mjs';
+ import {withEntryWritesR67} from './entry-write-window-r67.mjs';
+ import {residentCapacityR59,channelAdmissionR59,castleResumeR59} from './castle-capacity-r59.mjs';
+@@ -83,7 +84,7 @@
+   this.processes=new Map();this.sessions=new Map();this.revisions=new Map();this.transitions=new Map();this.transferGroups=new Set();this.entryReads=new Map();this.tail=Promise.resolve();this.closed=false;
+   this.budget=new ConnectionBudget({now:clock});
+   this.actorIsolation=new ActorIsolation(this);
+-  this.permanent=new PermanentCoordinator({authority:this.authority,endpointFor:(ch,inc)=>this.endpoint(ch,inc),durable:()=>this.writer.durableExternal?this.writer.durableExternal():this.writer.worldState?this.writer.worldState.syncExternal():this.database.durableAfterCommit(),onFault:(row,error)=>this.onFault({actor:row.id,error}),recoverRejectedFreeze:(held,error)=>this.actorIsolation.rejectFreeze(held,error),availabilityCheck:ids=>this.actorIsolation.assertAvailable(ids)});
++  this.permanent=new PermanentCoordinator({relatedActors:ids=>dungeonFreezeActorsR71(this.database.sqlite,ids),authority:this.authority,endpointFor:(ch,inc)=>this.endpoint(ch,inc),durable:()=>this.writer.durableExternal?this.writer.durableExternal():this.writer.worldState?this.writer.worldState.syncExternal():this.database.durableAfterCommit(),onFault:(row,error)=>this.onFault({actor:row.id,error}),recoverRejectedFreeze:(held,error)=>this.actorIsolation.rejectFreeze(held,error),availabilityCheck:ids=>this.actorIsolation.assertAvailable(ids)});
+   this.authority.commandGuard=(sql,peer,request)=>{this.globalWorld?.guardActor();this.sharedWorld?.combat.guard(peer,request);this.permanent.guard(sql,peer,request);const ids=[request.playerId,...(request.payload?.resources??[]).filter(k=>k.startsWith('player:')).map(k=>k.slice(7))];for(const id of ids){const held=this.transitions.get(id);if(held&&!this.sharedWorld?.combat.allows(id,peer,request))demandFence((held.phase==='freezing'||held.phase==='releasing')&&held.owner.channel===peer.channel&&held.owner.incarnation===peer.incarnation&&(id!==request.playerId||held.owner.epoch===request.epoch),'transition_actor_fenced',()=>({operation:request.operation,phase:held.phase,actor:id,session:this.sessions.get(id)?.identity.session,connection:this.sessions.get(id)?.session.gamePresence?.instanceId,channel:peer.channel,incarnation:peer.incarnation,requestEpoch:request.epoch,ownerEpoch:held.owner.epoch,sequence:request.sequence,leaseKind:'transition'}));}return true;};
+   const commandGuard=this.authority.commandGuard;this.authority.commandGuard=(sql,peer,request)=>{this.actorIsolation.guard(peer,request);return commandGuard(sql,peer,request);};
+   this.authority.admissionGuard=ids=>{this.actorIsolation.assertAvailable(ids);return this.permanent.assertAvailable(ids);};
+--- a/permanent-coordinator.mjs
++++ b/permanent-coordinator.mjs
+@@ -7,9 +7,9 @@
+ // parent supplies endpoint references created with the channel; callers cannot
+ // provide a socket, channel, epoch, or SQL. No lease expires on a timeout.
+ export class PermanentCoordinator {
+- constructor({authority,endpointFor,durable,onFault=()=>{},recoverRejectedFreeze=null,availabilityCheck=null}){
++ constructor({authority,endpointFor,durable,onFault=()=>{},recoverRejectedFreeze=null,availabilityCheck=null,relatedActors=ids=>ids}){
+   demand(authority&&typeof endpointFor==='function'&&typeof durable==='function','permanent_dependencies');
+-  Object.assign(this,{authority,endpointFor,durable,onFault,recoverRejectedFreeze,availabilityCheck});this.entries=new Map();this.tail=Promise.resolve();this.closed=false;
++  Object.assign(this,{authority,endpointFor,durable,onFault,recoverRejectedFreeze,availabilityCheck,relatedActors});this.entries=new Map();this.tail=Promise.resolve();this.closed=false;
+  }
+  guard(sql,peer,request){
+   const ids=new Set([request.playerId,...(request.payload?.resources??[]).filter(k=>typeof k==='string'&&k.startsWith('player:')).map(k=>k.slice(7))]);
+@@ -39,6 +39,8 @@
+   const held=[];let value,rejected=null,ownershipHold=null;
+   try{
+    while(this.sharedCombat?.terminal)await this.sharedCombat.terminalIdle();
++   const requested=ids;ids=this.relatedActors(ids);
++   demand(Array.isArray(ids)&&ids.length<=100&&requested.every(id=>ids.includes(id))&&ids.every(id=>typeof id==='string'&&id.length>0&&id.length<=160),'permanent_related_scope');
+    this.assertAvailable(ids);
+    for(const id of [...new Set(ids)].sort()){
+     const owner=this.authority.owner(id),admission=this.authority.admission(id),simulation=this.authority.simulation?.(id),heldOwner=admission??simulation;
+--- /dev/null
++++ b/instance-reward-scope-r71.mjs
+@@ -0,0 +1,23 @@
++import {adventureArea} from './adventure-maps.mjs';
++import {prepareCached477} from './writer-statements.mjs';
++
++// These encounters use the ordinary per-monster defeat/claim ledger. Castle,
++// arena and the separate DungeonEngine never enter this path.
++export function instanceRewardAreaR71(area){
++ const kind=adventureArea(area)?.kind;
++ return kind==='tower'||kind==='mist';
++}
++
++// Read CURRENT SQL under the writer transaction, before checkpoints or native
++// reward writes. The caller still leases every participant and its party.
++export function assertInstanceRewardScopeR71(sql,{actor,player,target,fail}){
++ if(!instanceRewardAreaR71(player.area))return;
++ const row=prepareCached477(sql,`SELECT r.id,r.kind,r.area,r.channel,r.cycle,r.status,
++  m.area AS monster_area,m.profile,
++  EXISTS(SELECT 1 FROM adventure_members a WHERE a.player_id=? AND a.run_id=r.id AND a.departed=0) AS member
++  FROM adventure_monsters m JOIN adventure_runs r ON r.id=m.run_id WHERE m.id=?`).get(actor,target.id);
++ const area=adventureArea(player.area);
++ if(!row||row.status!=='active'||!row.member||row.area!==player.area||row.monster_area!==player.area||row.channel!==player.channel||row.kind!==area.kind||row.id.replaceAll('-','')!==area.run||row.cycle!==prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get()?.cycle)fail();
++ let profile;try{profile=JSON.parse(row.profile);}catch{fail();}
++ if(profile?.runId!==row.id||profile.feature!==row.kind)fail();
++}
+--- /dev/null
++++ b/dungeon-freeze-scope-r71.mjs
+@@ -0,0 +1,12 @@
++import {demand} from './contract.mjs';
++import {prepareCached477} from './writer-statements.mjs';
++// A room checkpoint needs every live/passive room member. Resolve the CURRENT
++// durable membership after the previous shared terminal has finished, before
++// quiescing anyone. Party membership or client-supplied IDs cannot broaden it.
++export function dungeonFreezeActorsR71(sql, ids) {
++ const result = new Set(ids);
++ const members = prepareCached477(sql, 'SELECT b.player_id FROM dungeon_members a JOIN dungeon_members b ON b.run_id=a.run_id WHERE a.player_id=?');
++ for (const id of ids) for (const row of members.all(id)) result.add(row.player_id);
++ demand(result.size <= 100, 'permanent_dungeon_scope_capacity');
++ return [...result];
++}
+--- /dev/null
++++ b/dungeon-motion-resume-r71.mjs
+@@ -0,0 +1,21 @@
++// Rendering may pause independently of the authoritative room/socket. Never
++// replay the missing wall time as fresh movement or slowly chase an old image.
++// Wait for a recent room snapshot, then rebuild presentation only. Inputs,
++// attack sequences, effects, rewards and the authoritative room are untouched.
++export function resumeDungeonMotionR71(client, now, Motion) {
++ const prior = client.motionFrameAtR71;
++ client.motionFrameAtR71 = now;
++ if (Number.isFinite(prior) && now - prior > 200) client.motionResumeR71 = true;
++ if (!client.motionResumeR71 || !client.run || now - client.received < 0 || now - client.received > 250) return false;
++ client.motionResumeR71 = false;
++ for (const row of [...client.run.members, ...client.run.enemies]) {
++  const motion = new Motion(row.x, row.y);
++  motion.epoch = row.positionEpoch ?? 0;
++  motion.accept(row.x, row.y, row.velocity ?? {x:0,y:0}, 0,
++   row.id === client.playerId, client.run.mode === 'solo' && row.skin === 'solo', client.received);
++  client.motion.set(row.id, motion);
++  client.shown.set(row.id, motion);
++  client.walking.set(row.id, false);
++ }
++ return true;
++}
