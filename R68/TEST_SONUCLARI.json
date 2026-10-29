@@ -1,0 +1,76 @@
+{
+  "status": "PASS_FOR_CHANGE_SCOPE",
+  "date": "2026-10-29",
+  "artifact": {
+    "file": "CORE511_R68_TOPLU.zip",
+    "bytes": 1207318,
+    "sha256": "729d2a9cfbfdf654111e5400649cecdb3ee6d5357a7db3b87cee3c574e4120f1",
+    "baseCore": "ea155ddbb66cfdcafe8847d1d8cae17e981936bcf6e29cf291ad9ed0a039ef48",
+    "targetCore": "c3359799e5b29a00c60ecbc6b23c22e52e39c7eb469cf1e4c6d969cb48a89d29",
+    "files": [
+      "core511-source/scripts/core511/azrail-r62.mjs",
+      "core511-source/scripts/core511/tower-rules.mjs",
+      "core511-source/scripts/core511/mount-client-r49.mjs",
+      "core511-source/scripts/core511/polish-client-r62.mjs",
+      "core511-source/scripts/core511/launch-ui-r68.mjs",
+      "core511-source/scripts/core511/generated/native-client-proof.json",
+      "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "core511-source/scripts/core511/generated/client/game-client-core511-r68-bb8cdac0ab671593.js",
+      "core511-source/scripts/core511/generated/client/core511-gameplay-r68-93b78b42f35a38e1.js",
+      "core511-source/scripts/core511/generated/client/core511-tower-r68-09143f938b291bba.js",
+      "http-runtime/dist-vds/server/index.js"
+    ]
+  },
+  "packageIntegrity": {
+    "zipCRC": true,
+    "allPayloadsMatchTestedWorkingFiles": true,
+    "installerModulesMatch": true
+  },
+  "browsers": {
+    "native": "PASS",
+    "profiles": [
+      "desktop 1440x1000",
+      "touch 844x390"
+    ],
+    "allEightRaritiesOpaqueAndCardClassLevelVisible": true,
+    "privateChestRedBothProfiles": true,
+    "nativeThreeStepMountCompleted": true,
+    "errors": []
+  },
+  "timingRegression": {
+    "R67VisualTargetRejectedPCAndMobile": true,
+    "R68ThreeStepsAcceptedPCAndMobile": true,
+    "componentViewports": [
+      "1440x1000",
+      "412x915"
+    ],
+    "testedPanelTypeRarityCombinationsPerViewport": 40
+  },
+  "focusedServiceTests": {
+    "chestAndLocalNotice": {
+      "passed": 5,
+      "failed": 0
+    },
+    "mountAtomicityReplayEligibility": {
+      "passed": 7,
+      "failed": 0
+    }
+  },
+  "installer": {
+    "passed": true,
+    "testsRun": 12,
+    "failures": 0,
+    "errors": 0,
+    "scope": "Real R67 files, SQLite and native registration; simulated systemd/game health/disk capacity. Real isolated deletion, install, and rollback."
+  },
+  "limits": [
+    "Local isolated tests; no live VDS installation.",
+    "Some unchanged legacy media assets are absent from the local browser cache.",
+    "Two old R49 material-cap assertions fail unchanged on R67 too; R68 does not change these caps. The full historical suite is not claimed passing."
+  ],
+  "unchangedMountServerModulesChecked": [
+    "mounts-service.mjs",
+    "mount-http-r49.mjs",
+    "mounts-model.mjs"
+  ]
+}
