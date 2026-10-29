@@ -1,0 +1,232 @@
+{
+  "status": "PASS_FOR_CHANGE_SCOPE",
+  "date": "2026-10-29",
+  "package": {
+    "file": "CORE511_R69_TOPLU.zip",
+    "bytes": 1638349,
+    "sha256": "ac10e297dccddeb0683f03eb08ccdb7183876a68588a2492186e55129a1a1b71",
+    "baseCore": "c3359799e5b29a00c60ecbc6b23c22e52e39c7eb469cf1e4c6d969cb48a89d29",
+    "targetCore": "7be13da8798b97237726c568beede00df5a70c4c7e882a991fcc93130975fbe6",
+    "files": [
+      "core511-source/scripts/core511/tests/r20-queued-movement-server.test.mjs",
+      "core511-source/scripts/core511/tests/adventure-r19.test.mjs",
+      "core511-source/scripts/core511/tests/mist-integration-r19.test.mjs",
+      "core511-source/scripts/core511/heartbeat-maintenance-reader.mjs",
+      "core511-source/scripts/core511/channel-connections.mjs",
+      "core511-source/scripts/core511/client-transport.mjs",
+      "core511-source/scripts/core511/adventure-service.mjs",
+      "core511-source/scripts/core511/polish-client-r62.mjs",
+      "core511-source/scripts/core511/tower-material-icons-r40.mjs",
+      "core511-source/scripts/core511/tower-client.mjs",
+      "core511-source/scripts/core511/generated/native-client-proof.json",
+      "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "core511-source/scripts/core511/generated/client/core511-tower-art-r69-db590592a52dc7dd.js",
+      "core511-source/scripts/core511/generated/client/core511-gameplay-r69-ec0e405322bc1d3b.js",
+      "core511-source/scripts/core511/generated/client/core511-transport-r69-5934fc88485f309d.js",
+      "core511-source/scripts/core511/generated/client/core511-tower-r69-113bf845d357351f.js",
+      "core511-source/scripts/core511/generated/client/core511-r40-icons-r69-16445e30a5872c06.js",
+      "core511-source/scripts/core511/generated/client/core511-r43-ui-r69-2cbb3cbf17d4e556.js",
+      "core511-source/scripts/core511/generated/client/game-client-core511-r69-c4c0efca60d06513.js",
+      "http-runtime/dist-vds/server/index.js"
+    ]
+  },
+  "rootCause": {
+    "baselineReproduced": true,
+    "nativeError": "Provided value cannot be bound to SQLite parameter 2.",
+    "source": "heartbeat-maintenance-reader.mjs nonlocalNormalR62: spawnRound passed to native selector expecting spawn_round",
+    "effect": "Read-worker exception propagates to world jobs, process recovery and temporary global entry gate closure",
+    "fix": "Map persisted spawn_round explicitly; native reward rules unchanged",
+    "liveIncidentConfirmed": false
+  },
+  "sameIpAndCombat": {
+    "mist": {
+      "status": "PASS",
+      "browsers": 2,
+      "sameIp": "198.51.100.25",
+      "combatOperations": 75,
+      "rewardsConfirmed": null,
+      "secondAccountJoinedDuringCombat": true,
+      "secondAccountTravel": 200,
+      "secondAccountMovement": {
+        "before": {
+          "x": 2700,
+          "y": 2025
+        },
+        "after": {
+          "x": 2823.9862500000004,
+          "y": 2025
+        }
+      },
+      "gateSamples": 1322,
+      "gateFailures": 0,
+      "runtimeFaults": 0,
+      "browserErrors": 0,
+      "durationSeconds": 133.5,
+      "ordinaryAttackStatus202IsProvisional": false
+    },
+    "forest": {
+      "status": "PASS",
+      "browsers": 2,
+      "sameIp": "198.51.100.25",
+      "combatOperations": 75,
+      "rewardsConfirmed": 75,
+      "secondAccountJoinedDuringCombat": true,
+      "secondAccountTravel": 200,
+      "secondAccountMovement": {
+        "before": {
+          "x": 2700,
+          "y": 2025
+        },
+        "after": {
+          "x": 2709.174982499997,
+          "y": 2025
+        }
+      },
+      "gateSamples": 1168,
+      "gateFailures": 0,
+      "runtimeFaults": 0,
+      "browserErrors": 0,
+      "durationSeconds": 118.0,
+      "ordinaryAttackStatus202IsProvisional": true
+    }
+  },
+  "purchase": [
+    {
+      "profile": "desktop1440x1000",
+      "successes": 45,
+      "limitStatus": 429,
+      "subsequentClicksBlockedLocally": 12,
+      "extraRequests": 0,
+      "movementAfterLimit": {
+        "before": {
+          "x": 1121.875,
+          "y": 1359.375,
+          "position_revision": 1
+        },
+        "after": {
+          "x": 1323.9174825,
+          "y": 1359.375,
+          "position_revision": 6
+        }
+      },
+      "reconnectAfterWorldReset": 200,
+      "browserErrors": 0,
+      "serverFaults": 0,
+      "gateFailures": 0
+    },
+    {
+      "profile": "mobile touch 844x390",
+      "successes": 45,
+      "limitStatus": 429,
+      "subsequentClicksBlockedLocally": 12,
+      "extraRequests": 0,
+      "movementAfterLimit": {
+        "before": {
+          "x": 1121.875,
+          "y": 1359.375,
+          "position_revision": 1
+        },
+        "after": {
+          "x": 1314.7424999999985,
+          "y": 1359.375,
+          "position_revision": 6
+        }
+      },
+      "reconnectAfterWorldReset": 200,
+      "browserErrors": 0,
+      "serverFaults": 0,
+      "gateFailures": 0
+    }
+  ],
+  "nativeUi": {
+    "profiles": 2,
+    "allSixNewTowerIconsDecodedPerProfile": true,
+    "allEightItemRaritiesOpaquePerProfile": true,
+    "inventoryClassAndRequiredLevelPreserved": true,
+    "privateRedChestNoticePreserved": true,
+    "nativeThreeStepMountCompletion": true,
+    "browserErrors": [],
+    "faults": [],
+    "unrelatedLegacyAssetsMissingFromFixtureCache": 14
+  },
+  "tests": {
+    "r69Targeted": {
+      "passed": 5,
+      "failed": 0
+    },
+    "orderedMovementCurrentHandshake": {
+      "passed": 14,
+      "failed": 0
+    },
+    "additionalClientEntrySecurityPrediction": {
+      "passed": 30,
+      "legacyHandshakeAssertionsFailed": 14,
+      "sameFailuresOnUnchangedR68": true
+    },
+    "focusedGameplay": {
+      "passed": 50,
+      "legacyOwnInterpolationAndAckOrderFailed": 2,
+      "sameFailuresOnUnchangedR68": true
+    },
+    "historicSuiteAllPassingClaimed": false
+  },
+  "installer": {
+    "lifecycleAndRetention": {
+      "passed": true,
+      "testsRun": 12,
+      "failures": 0,
+      "errors": 0,
+      "scope": "Real R68 files, SQLite/native registration; simulated systemd/game health/capacity. Isolated install, deletion, rollback, interruption recovery."
+    },
+    "finalCodeAndClientGraphRoundtrip": {
+      "passed": true,
+      "testsRun": 2,
+      "failures": 0,
+      "errors": 0,
+      "scope": "Real R68 files, SQLite/native registration; simulated systemd/game health/capacity. Isolated install, deletion, rollback, interruption recovery.",
+      "package": {
+        "file": "CORE511_R69_TOPLU.zip",
+        "bytes": 1637548,
+        "sha256": "54296fdc564e49636ba49ac1fe2cef00a8f2ab59ba7173b6e8a2e631247695be",
+        "baseCore": "c3359799e5b29a00c60ecbc6b23c22e52e39c7eb469cf1e4c6d969cb48a89d29",
+        "targetCore": "7be13da8798b97237726c568beede00df5a70c4c7e882a991fcc93130975fbe6",
+        "files": [
+          "core511-source/scripts/core511/tests/r20-queued-movement-server.test.mjs",
+          "core511-source/scripts/core511/tests/adventure-r19.test.mjs",
+          "core511-source/scripts/core511/tests/mist-integration-r19.test.mjs",
+          "core511-source/scripts/core511/heartbeat-maintenance-reader.mjs",
+          "core511-source/scripts/core511/channel-connections.mjs",
+          "core511-source/scripts/core511/client-transport.mjs",
+          "core511-source/scripts/core511/adventure-service.mjs",
+          "core511-source/scripts/core511/polish-client-r62.mjs",
+          "core511-source/scripts/core511/tower-material-icons-r40.mjs",
+          "core511-source/scripts/core511/tower-client.mjs",
+          "core511-source/scripts/core511/generated/native-client-proof.json",
+          "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+          "core511-source/scripts/core511/generated/client/core511-tower-art-r69-db590592a52dc7dd.js",
+          "core511-source/scripts/core511/generated/client/core511-gameplay-r69-ec0e405322bc1d3b.js",
+          "core511-source/scripts/core511/generated/client/core511-transport-r69-5934fc88485f309d.js",
+          "core511-source/scripts/core511/generated/client/core511-tower-r69-113bf845d357351f.js",
+          "core511-source/scripts/core511/generated/client/core511-r40-icons-r69-16445e30a5872c06.js",
+          "core511-source/scripts/core511/generated/client/core511-r43-ui-r69-2cbb3cbf17d4e556.js",
+          "core511-source/scripts/core511/generated/client/game-client-core511-r69-c4c0efca60d06513.js",
+          "http-runtime/dist-vds/server/index.js"
+        ]
+      }
+    }
+  },
+  "integrity": {
+    "zipCRC": true,
+    "testedCodeAndPayloadUnchanged": true,
+    "payloadMatchesWorkingFiles": true,
+    "installerModuleHashes": true,
+    "onlyReleaseNotesChangedAfterFinalInstallerTest": true
+  },
+  "limits": [
+    "Local isolated native HTTP, SQLite, game/world processes and Chromium; no live VDS access or deployment.",
+    "Signed central authorization and launch responses are controlled fixture transport, not public accounts-service browser login.",
+    "Two separate Chromium profiles share the same supplied network IP; mobile is touch emulation, not a physical device.",
+    "One-hit test uses 1HP monsters and trusted player relocation; actual game-owned attack/reward/entry routes and periodic security renewal run unchanged.",
+    "Some unrelated legacy images are absent from local static cache. No universal zero-bug or production capacity guarantee."
+  ]
+}
