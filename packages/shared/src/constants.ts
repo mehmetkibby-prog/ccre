@@ -1,0 +1,21 @@
+/** Simülasyon ve ağ sabitleri. Oyun dengesi değerleri burada değil, content/ ve config içinde. */
+export const TICK_HZ = 20;
+export const TICK_MS = 1000 / TICK_HZ;
+export const INPUT_DT = 0.05; // her hareket komutu 50 ms'lik yürüyüştür
+export const TILE = 64; // dünya birimi
+export const PLAYER_RADIUS = 14;
+export const VIEW_HALF_W = 1250; // AOI yarı genişlik (dünya birimi)
+export const VIEW_HALF_H = 900;
+export const GRID_CELL = 512;
+export const DIR_STEPS = 64; // joystick yön çözünürlüğü
+export const NO_DIR = 255;
+export const LOOT_TTL_MS = 30_000;
+export const LOOT_OWNER_ONLY_MS = 5_000;
+export const LOOT_PICKUP_RANGE = 280;
+export const CHAT_MAX = 140;
+export const NAME_MIN = 2;
+export const NAME_MAX = 18;
+export const BAG_EQUIP_CAP = 35;
+export const RESPAWN_DELAY_MS = 5_000;
+export const COMBAT_LOCK_MS = 6_000;
+export const PARTY_XP_RANGE = 2400;

@@ -1,0 +1,314 @@
+import { mulberry32, smoothNoise, noise2, type Rng } from './rng.ts';
+import { TILE } from './constants.ts';
+import { MAPS, type MapDef, type Region } from './content/maps.ts';
+import { MONSTERS } from './content/monsters.ts';
+
+export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND = 5, SNOW = 6, ICE = 7, ASH = 8, STONE = 9, DEEP = 10, PLANK = 11 }
+
+export type PropKind =
+  | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
+  | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
+  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay';
+
+export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
+export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number }
+
+export interface MapLayout {
+  def: MapDef;
+  w: number; h: number;
+  ground: Uint8Array;
+  blocked: Uint8Array;
+  props: Prop[];
+  spawn: { x: number; y: number };
+  spawnPoints: SpawnPoint[];
+  npcs: { id: string; x: number; y: number }[];
+}
+
+function idx(l: { w: number }, x: number, y: number) { return y * l.w + x; }
+
+function blockRect(l: MapLayout, tx: number, ty: number, w: number, h: number) {
+  for (let y = ty; y < ty + h; y++) for (let x = tx; x < tx + w; x++) if (x >= 0 && y >= 0 && x < l.w && y < l.h) l.blocked[idx(l, x, y)] = 1;
+}
+function isFree(l: MapLayout, tx: number, ty: number, w = 1, h = 1) {
+  for (let y = ty; y < ty + h; y++) for (let x = tx; x < tx + w; x++) {
+    if (x < 1 || y < 1 || x >= l.w - 1 || y >= l.h - 1) return false;
+    if (l.blocked[idx(l, x, y)]) return false;
+  }
+  return true;
+}
+const tc = (t: number) => t * TILE + TILE / 2;
+
+function carvePath(l: MapLayout, rng: Rng, x0: number, y0: number, x1: number, y1: number, width: number, g: G, protect: Uint8Array) {
+  let x = x0, y = y0;
+  let guard = 0;
+  while ((Math.abs(x - x1) > 1 || Math.abs(y - y1) > 1) && guard++ < 4000) {
+    const dx = Math.sign(x1 - x), dy = Math.sign(y1 - y);
+    const r = rng();
+    if (r < 0.7) { if (Math.abs(x1 - x) >= Math.abs(y1 - y)) x += dx; else y += dy; }
+    else if (r < 0.85) y += rng() < 0.5 ? 1 : -1;
+    else x += rng() < 0.5 ? 1 : -1;
+    x = Math.max(2, Math.min(l.w - 3, x)); y = Math.max(2, Math.min(l.h - 3, y));
+    for (let oy = -width; oy <= width; oy++) for (let ox = -width; ox <= width; ox++) {
+      if (ox * ox + oy * oy > width * width + 1) continue;
+      const px = x + ox, py = y + oy;
+      if (px < 1 || py < 1 || px >= l.w - 1 || py >= l.h - 1) continue;
+      const i = idx(l, px, py);
+      if (l.ground[i] !== G.WATER && l.ground[i] !== G.DEEP) l.ground[i] = g;
+      protect[i] = 1;
+    }
+  }
+}
+
+function genVillage(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  const cx = 28, cy = 22;
+  const protect = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const n = smoothNoise(x, y, 6, 3);
+    l.ground[idx(l, x, y)] = n > 0.62 ? G.LUSH : G.GRASS;
+  }
+  // meydan
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const d = ((x - cx) / 10.5) ** 2 + ((y - cy) / 8) ** 2;
+    if (d < 1) { l.ground[idx(l, x, y)] = G.COBBLE; protect[idx(l, x, y)] = 1; }
+  }
+  // yollar
+  const road = (x0: number, y0: number, x1: number, y1: number) => {
+    for (let y = Math.min(y0, y1); y <= Math.max(y0, y1); y++) for (let x = Math.min(x0, x1); x <= Math.max(x0, x1); x++) {
+      l.ground[idx(l, x, y)] = G.COBBLE; protect[idx(l, x, y)] = 1;
+    }
+  };
+  road(cx - 1, 3, cx + 1, cy); road(cx - 1, cy, cx + 1, h - 4); road(3, cy - 1, cx, cy + 1); road(cx, cy - 1, w - 4, cy + 1);
+  // göl köşesi
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const d = ((x - 9) / 5.5) ** 2 + ((y - 37) / 3.6) ** 2 + (smoothNoise(x, y, 3, 9) - 0.5) * 0.5;
+    if (d < 1) { l.ground[idx(l, x, y)] = d < 0.45 ? G.DEEP : G.WATER; l.blocked[idx(l, x, y)] = 1; }
+    else if (d < 1.5 && l.ground[idx(l, x, y)] !== G.COBBLE) l.ground[idx(l, x, y)] = G.SAND;
+  }
+  // çeşme
+  blockRect(l, cx - 1, cy - 1, 2, 2);
+  l.props.push({ k: 'fountain', x: cx * TILE, y: cy * TILE, v: 0, s: 1 });
+  // evler: [tx, ty, roofVariant]
+  const houses: [number, number, number][] = [
+    [14, 10, 0], [21, 9, 1], [34, 9, 2], [41, 10, 3], [13, 26, 1], [36, 27, 0], [42, 26, 2], [20, 33, 3], [33, 34, 1], [8, 18, 2], [47, 16, 0],
+  ];
+  for (const [tx, ty, v] of houses) {
+    blockRect(l, tx, ty, 4, 3);
+    l.props.push({ k: 'house', x: (tx + 2) * TILE, y: (ty + 3) * TILE, v, s: 1 });
+    for (let x = tx - 1; x <= tx + 4; x++) protect[idx(l, x, ty + 3)] = 1;
+  }
+  // tezgâhlar
+  const stalls: [number, number, number][] = [[22, 17, 0], [25, 16, 1], [31, 16, 2], [34, 17, 3], [22, 27, 2], [34, 27, 0]];
+  for (const [tx, ty, v] of stalls) { blockRect(l, tx, ty, 2, 1); l.props.push({ k: 'stall', x: (tx + 1) * TILE, y: (ty + 1) * TILE, v, s: 1 }); }
+  // demirci örsü, depo sandıkları
+  blockRect(l, 15, 13, 1, 1); l.props.push({ k: 'anvil', x: 15.5 * TILE, y: 14 * TILE, v: 0, s: 1 });
+  for (const [x, y] of [[40, 13], [41, 13], [40.5, 12.4]] as const) l.props.push({ k: 'crate', x: x * TILE, y: y * TILE + TILE, v: 0, s: 1 });
+  blockRect(l, 40, 12, 2, 1);
+  l.props.push({ k: 'barrel', x: 42.6 * TILE, y: 13.9 * TILE, v: 0, s: 1 });
+  l.props.push({ k: 'barrel', x: 19.3 * TILE, y: 13.9 * TILE, v: 1, s: 1 });
+  l.props.push({ k: 'well', x: 44 * TILE, y: 33 * TILE, v: 0, s: 1 }); blockRect(l, 43, 32, 2, 1);
+  l.props.push({ k: 'portalstone', x: 31 * TILE, y: 25 * TILE, v: 0, s: 1 });
+  l.props.push({ k: 'hay', x: 47 * TILE, y: 22 * TILE, v: 0, s: 1 }); blockRect(l, 46, 21, 2, 1);
+  l.props.push({ k: 'tent', x: 39.5 * TILE, y: 33 * TILE, v: 0, s: 1 }); blockRect(l, 38, 31, 3, 2);
+  for (const [x, y] of [[26, 8], [30, 8], [26, 36], [30, 36], [10, 21], [10, 25], [46, 21], [46, 25], [20, 21], [36, 23]] as const) {
+    l.props.push({ k: 'lamp', x: x * TILE, y: y * TILE, v: 0, s: 1 });
+  }
+  for (const [x, y] of [[25, 12], [31, 12]] as const) l.props.push({ k: 'banner', x: x * TILE, y: y * TILE, v: 0, s: 1 });
+  // sınır ağaçları
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const edge = Math.min(x, y, w - 1 - x, h - 1 - y);
+    const i = idx(l, x, y);
+    if (protect[i] && edge > 1) continue;
+    if (edge <= 1) l.blocked[i] = 1;
+    if (edge <= 2 && (x + y) % 2 === 0 && !l.ground[i]) {
+      l.props.push({ k: rng() < 0.3 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 20, y: tc(y) + (rng() - 0.5) * 16, v: (rng() * 4) | 0, s: 0.9 + rng() * 0.35 });
+      l.blocked[i] = 1;
+    }
+  }
+  // süs
+  for (let n = 0; n < 220; n++) {
+    const x = 3 + ((rng() * (w - 6)) | 0), y = 3 + ((rng() * (h - 6)) | 0);
+    const i = idx(l, x, y);
+    if (protect[i] || l.blocked[i] || l.ground[i] === G.SAND || l.ground[i] === G.WATER) continue;
+    const r = rng();
+    if (r < 0.5) l.props.push({ k: 'flowers', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 5) | 0, s: 1 });
+    else if (r < 0.75) l.props.push({ k: 'grasstuft', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 3) | 0, s: 1 });
+    else if (r < 0.88 && isFree(l, x, y)) { l.props.push({ k: 'bush', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+    else if (isFree(l, x, y)) { l.props.push({ k: 'tree', x: tc(x), y: tc(y), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+  }
+  for (let n = 0; n < 16; n++) {
+    const x = 6 + ((rng() * 8) | 0), y = 33 + ((rng() * 8) | 0);
+    if (l.ground[idx(l, x, y)] === G.WATER) l.props.push({ k: 'lily', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 1 });
+  }
+  // çit
+  for (let x = 12; x <= 20; x++) if (!protect[idx(l, x, 39)]) { l.props.push({ k: 'fence', x: tc(x), y: tc(39), v: 0, s: 1 }); l.blocked[idx(l, x, 39)] = 1; }
+  l.spawn = { x: tc(cx), y: tc(cy + 3) };
+}
+
+function genWild(l: MapLayout, rng: Rng) {
+  const { w, h, def } = l;
+  const theme = def.theme;
+  const seed = def.seed;
+  const base = theme === 'frozen' ? G.SNOW : theme === 'black' ? G.ASH : G.GRASS;
+  const alt = theme === 'frozen' ? G.ICE : theme === 'black' ? G.STONE : G.LUSH;
+  const path = theme === 'frozen' ? G.STONE : theme === 'black' ? G.STONE : G.DIRT;
+  const protect = new Uint8Array(w * h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const n = smoothNoise(x, y, 7, seed);
+    l.ground[idx(l, x, y)] = n > 0.66 ? alt : base;
+  }
+  const sx = 6, sy = (h / 2) | 0;
+  l.spawn = { x: tc(sx), y: tc(sy) };
+  // spawn çevresi açık
+  for (let y = sy - 4; y <= sy + 4; y++) for (let x = 2; x <= sx + 5; x++) { protect[idx(l, x, y)] = 1; l.ground[idx(l, x, y)] = path; }
+  // patikalar: spawn → uzak noktalar
+  const targets: [number, number][] = [[w - 8, 8], [w - 8, h - 8], [w / 2, 6], [w / 2, h - 6], [w - 6, h / 2]];
+  for (const [tx, ty] of targets) carvePath(l, rng, sx + 3, sy, tx | 0, ty | 0, 1, path, protect);
+  // su birikintileri
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y);
+    if (protect[i]) continue;
+    const n = smoothNoise(x, y, 9, seed + 77);
+    if (n > (theme === 'black' ? 0.8 : 0.78)) {
+      l.ground[i] = theme === 'frozen' ? G.ICE : theme === 'black' ? G.DEEP : G.WATER;
+      if (theme !== 'frozen') l.blocked[i] = 1;
+    }
+  }
+  // sınır ve ağaç kümeleri
+  const treeKind = theme === 'frozen' ? 'snowpine' : theme === 'black' ? 'deadtree' : 'tree';
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y);
+    const edge = Math.min(x, y, w - 1 - x, h - 1 - y);
+    if (edge <= 1) l.blocked[i] = 1;
+    if (protect[i] || l.ground[i] === G.WATER || l.ground[i] === G.DEEP) continue;
+    const dense = smoothNoise(x, y, 5, seed + 13);
+    const isEdge = edge <= 3;
+    const want = isEdge ? rng() < 0.7 : dense > 0.68 ? rng() < 0.45 : rng() < 0.018;
+    if (want && (x + y * 3) % 2 === 0) {
+      const k: PropKind = theme === 'forest' && rng() < 0.35 ? 'pine' : treeKind;
+      l.props.push({ k, x: tc(x) + (rng() - 0.5) * 24, y: tc(y) + (rng() - 0.5) * 18, v: (rng() * 4) | 0, s: 0.85 + rng() * 0.45 });
+      l.blocked[i] = 1;
+    }
+  }
+  // kayalar ve süs
+  const count = (w * h) / 9;
+  for (let n = 0; n < count; n++) {
+    const x = 2 + ((rng() * (w - 4)) | 0), y = 2 + ((rng() * (h - 4)) | 0);
+    const i = idx(l, x, y);
+    if (l.blocked[i] || l.ground[i] === G.WATER) continue;
+    const r = rng();
+    const px = tc(x) + (rng() - 0.5) * 44, py = tc(y) + (rng() - 0.5) * 44;
+    if (r < 0.035 && !protect[i]) { l.props.push({ k: 'rock', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.8 + rng() * 0.5 }); l.blocked[i] = 1; }
+    else if (r < 0.06 && !protect[i] && theme === 'black') { l.props.push({ k: 'crystal', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.8 + rng() * 0.5 }); l.blocked[i] = 1; }
+    else if (r < 0.06 && !protect[i] && theme === 'frozen') { l.props.push({ k: 'icecrystal', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.8 + rng() * 0.5 }); l.blocked[i] = 1; }
+    else if (r < 0.08 && theme === 'forest' && !protect[i]) { l.props.push({ k: 'log', x: tc(x), y: tc(y), v: (rng() * 2) | 0, s: 1 }); l.blocked[i] = 1; }
+    else if (r < 0.1 && theme !== 'frozen') l.props.push({ k: theme === 'black' ? 'bones' : 'mushroom', x: px, y: py, v: (rng() * 3) | 0, s: 1 });
+    else if (r < 0.14 && !protect[i] && isFree(l, x, y)) { l.props.push({ k: theme === 'black' ? 'stump' : 'bush', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.8 + rng() * 0.4 }); l.blocked[i] = 1; }
+    else if (r < 0.45 && theme === 'forest') l.props.push({ k: rng() < 0.5 ? 'flowers' : 'grasstuft', x: px, y: py, v: (rng() * 5) | 0, s: 1 });
+    else if (r < 0.3 && theme === 'frozen') l.props.push({ k: 'grasstuft', x: px, y: py, v: 3, s: 1 });
+  }
+  // su kenarı sazlık
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+    if (l.ground[idx(l, x, y)] !== G.WATER) continue;
+    if (noise2(x, y, seed) < 0.12) l.props.push({ k: 'lily', x: tc(x), y: tc(y), v: (noise2(y, x, 5) * 3) | 0, s: 1 });
+    if (noise2(x, y, seed + 1) < 0.15 && l.ground[idx(l, x + 1, y)] !== G.WATER) l.props.push({ k: 'reeds', x: tc(x) + 30, y: tc(y), v: 0, s: 1 });
+  }
+  l.props.push({ k: 'portalstone', x: l.spawn.x - 70, y: l.spawn.y - 30, v: theme === 'frozen' ? 1 : theme === 'black' ? 2 : 0, s: 1 });
+  // canavar noktaları
+  placeSpawns(l, rng);
+}
+
+function genLake(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y);
+    const d = ((x - 32) / 22) ** 2 + ((y - 18) / 12) ** 2 + (smoothNoise(x, y, 4, 31) - 0.5) * 0.35;
+    if (d < 0.55) { l.ground[i] = G.DEEP; l.blocked[i] = 1; }
+    else if (d < 1) { l.ground[i] = G.WATER; l.blocked[i] = 1; }
+    else if (d < 1.35) l.ground[i] = G.SAND;
+    else l.ground[i] = smoothNoise(x, y, 6, 2) > 0.6 ? G.LUSH : G.GRASS;
+    const edge = Math.min(x, y, w - 1 - x, h - 1 - y);
+    if (edge <= 1) l.blocked[i] = 1;
+  }
+  // iskele
+  for (let y = 26; y <= 31; y++) for (let x = 30; x <= 31; x++) { l.ground[idx(l, x, y)] = G.PLANK; l.blocked[idx(l, x, y)] = 0; }
+  l.props.push({ k: 'dock', x: 31 * TILE, y: 26 * TILE, v: 0, s: 1 });
+  l.props.push({ k: 'waterfall', x: 32 * TILE, y: 4 * TILE, v: 0, s: 1 });
+  blockRect(l, 27, 0, 10, 6);
+  for (let n = 0; n < 160; n++) {
+    const x = 2 + ((rng() * (w - 4)) | 0), y = 2 + ((rng() * (h - 4)) | 0);
+    const i = idx(l, x, y);
+    const g = l.ground[i];
+    if (l.blocked[i]) { if (g === G.WATER && rng() < 0.2) l.props.push({ k: 'lily', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 1 }); continue; }
+    if (g === G.SAND) { if (rng() < 0.25) l.props.push({ k: 'reeds', x: tc(x), y: tc(y), v: 0, s: 1 }); continue; }
+    const edge = Math.min(x, y, w - 1 - x, h - 1 - y);
+    if (edge < 4 && rng() < 0.8) { l.props.push({ k: rng() < 0.3 ? 'pine' : 'tree', x: tc(x), y: tc(y), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+    else l.props.push({ k: rng() < 0.6 ? 'flowers' : 'grasstuft', x: tc(x), y: tc(y), v: (rng() * 5) | 0, s: 1 });
+  }
+  l.props.push({ k: 'portalstone', x: 24 * TILE, y: 40 * TILE, v: 0, s: 1 });
+  l.props.push({ k: 'barrel', x: 33 * TILE, y: 35 * TILE, v: 0, s: 1 });
+  l.spawn = { x: tc(30), y: tc(40) };
+}
+
+function regionOf(l: MapLayout, x: number, y: number): Region {
+  const d = Math.hypot(x - l.spawn.x, y - l.spawn.y) / (Math.hypot(l.w, l.h) * TILE);
+  return d < 0.33 ? 'near' : d < 0.6 ? 'mid' : 'far';
+}
+
+function placeSpawns(l: MapLayout, rng: Rng) {
+  const mdefs = new Map(MONSTERS.map((m) => [m.id, m] as const));
+  for (const g of l.def.spawns) {
+    const md = mdefs.get(g.monster);
+    let placed = 0, tries = 0;
+    // küçük sürüler halinde yerleştir
+    while (placed < g.count && tries++ < g.count * 200) {
+      const tx = 3 + ((rng() * (l.w - 6)) | 0), ty = 3 + ((rng() * (l.h - 6)) | 0);
+      if (!isFree(l, tx, ty)) continue;
+      const x = tc(tx), y = tc(ty);
+      if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 700) continue;
+      if (g.region !== 'any' && regionOf(l, x, y) !== g.region) continue;
+      const pack = md?.boss ? 1 : 1 + ((rng() * 3) | 0);
+      for (let k = 0; k < pack && placed < g.count; k++) {
+        const ox = k === 0 ? 0 : ((rng() - 0.5) * 3) | 0, oy = k === 0 ? 0 : ((rng() - 0.5) * 3) | 0;
+        if (!isFree(l, tx + ox, ty + oy)) continue;
+        const tot = g.variants[0] + g.variants[1] + g.variants[2];
+        const r = rng() * tot;
+        const variant = (r < g.variants[0] ? 0 : r < g.variants[0] + g.variants[1] ? 1 : 2) as 0 | 1 | 2;
+        const level = g.level[0] + ((rng() * (g.level[1] - g.level[0] + 1)) | 0);
+        l.spawnPoints.push({ monster: g.monster, level, variant, x: tc(tx + ox), y: tc(ty + oy) });
+        placed++;
+      }
+    }
+  }
+}
+
+const cache = new Map<string, MapLayout>();
+export function getLayout(mapId: string): MapLayout {
+  const c = cache.get(mapId);
+  if (c) return c;
+  const def = MAPS[mapId];
+  if (!def) throw new Error('unknown map ' + mapId);
+  const l: MapLayout = {
+    def, w: def.w, h: def.h,
+    ground: new Uint8Array(def.w * def.h), blocked: new Uint8Array(def.w * def.h),
+    props: [], spawn: { x: 0, y: 0 }, spawnPoints: [], npcs: [],
+  };
+  const rng = mulberry32(def.seed);
+  if (def.theme === 'village') genVillage(l, rng);
+  else if (def.theme === 'lake') genLake(l, rng);
+  else genWild(l, rng);
+  for (const n of def.npcs) {
+    l.npcs.push({ id: n.id, x: n.tx * TILE + TILE / 2, y: n.ty * TILE + TILE / 2 });
+    l.blocked[idx(l, n.tx, n.ty)] = 1;
+  }
+  l.props.sort((a, b) => a.y - b.y);
+  cache.set(mapId, l);
+  return l;
+}
+
+/** Dünya koordinatında engel var mı? Harita dışı engeldir. */
+export function isBlockedAt(l: MapLayout, x: number, y: number): boolean {
+  const tx = Math.floor(x / TILE), ty = Math.floor(y / TILE);
+  if (tx < 0 || ty < 0 || tx >= l.w || ty >= l.h) return true;
+  return l.blocked[ty * l.w + tx] === 1;
+}

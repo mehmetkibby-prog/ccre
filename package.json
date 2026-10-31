@@ -1,0 +1,29 @@
+{
+  "name": "coreoflife",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "packages/server",
+    "packages/client"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build -w @col/client && npm run build -w @col/server",
+    "start": "node packages/server/dist/main.js",
+    "test": "vitest run",
+    "typecheck": "tsc -p packages/shared && tsc -p packages/server --noEmit && tsc -p packages/client --noEmit",
+    "db:migrate": "tsx packages/server/src/db/migrate.ts",
+    "loadtest": "tsx scripts/loadtest.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "@types/ws": "^8.5.13",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
