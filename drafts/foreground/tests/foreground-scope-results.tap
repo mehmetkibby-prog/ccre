@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: historical participants, cross-channel parties and offline peers form one deterministic superset
+ok 1 - historical participants, cross-channel parties and offline peers form one deterministic superset
+  ---
+  duration_ms: 3.73236
+  type: 'test'
+  ...
+# Subtest: Sinsi requests can name another channel; actual history, not requester room, determines recipients
+ok 2 - Sinsi requests can name another channel; actual history, not requester room, determines recipients
+  ---
+  duration_ms: 1.497246
+  type: 'test'
+  ...
+# Subtest: passive dungeon recipients include every room member before any hold
+ok 3 - passive dungeon recipients include every room member before any hold
+  ---
+  duration_ms: 1.999289
+  type: 'test'
+  ...
+# Subtest: mixed, oversized, lab, alive/unrecorded and special claimant inputs retain original broad path
+ok 4 - mixed, oversized, lab, alive/unrecorded and special claimant inputs retain original broad path
+  ---
+  duration_ms: 1.505599
+  type: 'test'
+  ...
+# Subtest: recipient and related-room capacities are bounded without silently truncating eligibility
+ok 5 - recipient and related-room capacities are bounded without silently truncating eligibility
+  ---
+  duration_ms: 3.343566
+  type: 'test'
+  ...
+# Subtest: a second read sees current party membership and reset cycle; no cached eligibility survives a wait
+ok 6 - a second read sees current party membership and reset cycle; no cached eligibility survives a wait
+  ---
+  duration_ms: 1.392259
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20.920216

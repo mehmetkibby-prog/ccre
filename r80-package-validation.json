@@ -1,0 +1,11 @@
+{
+  "archive": "CORE511_R80_TOPLU.zip",
+  "bytes": 165075,
+  "sha256": "21a3b001edd4adc2f2bca5734efb6d9cc937e3c005214047d383c3e14e98ed54",
+  "moduleManifestEntries": 8,
+  "productionFiles": 6,
+  "foregroundDraftIncluded": false,
+  "zipCrcPassed": true,
+  "zipappHelpPassed": true,
+  "moduleAndPayloadByteComparisonPassed": true
+}

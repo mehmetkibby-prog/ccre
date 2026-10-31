@@ -1,0 +1,104 @@
+# Core of Life R80 — yapılan değişiklikler ve doğrulama sınırları
+
+Tarih: 31 Ekim 2026. Hedef: kurulu R79_GAMEPLAY. Paket türü: yerinde kod deltası.
+
+## Sonuç
+
+İki somut neden için düzeltme hazırlandı: hızlı ödül tekrarlarının genel dünya bakımını gereksiz sık çalıştırması ve checkpoint işçisinin geçici bir arızadan sonra kalıcı olarak ana bağlantının otomatik checkpoint yolunda kalması. Ayrıca paneldeki yükü kayıt/işçi beklemesinden ayıracak salt okunur tanılama eklendi.
+
+Bu çalışma canlı VDS'ye kurulmadı. Hedefli testler yerel dosyalar, gerçek SQLite veritabanları ve gerçek Node Worker işçileri üzerinde çalıştı. Kurulum testlerinde systemd ve merkezi HTTP uçları benzetildi. Güncel kaynakların bir bölümü arşivlerde eksik olduğu için tam oyunun uçtan uca açılışı ve gerçek oyuncularla 10/30 kişilik kapasite karşılaştırması bu ortamda yapılmış sayılmıyor. Kurucu canlıya uygulanırsa o makinenin kaynak kimliklerini ve yeni sürümün dört kanalını yeniden doğrular.
+
+## 1. Genel bakım işlerinin gereksiz tekrarını ayırma
+
+R79 SharedWorldJobs, ödül tekrarını 50 ms veya 250 ms sonrasına alırken world_upkeep, guild_war_due, world_player_jobs ve dungeon_lifecycle_due işlerini de tekrar çalıştırıyordu. R80 bu genel bakım işlerine ayrı bir 1 saniyelik zaman sınırı veriyor. Ödül taraması mevcut 50/250/1000 ms davranışını sürdürüyor. Gecikmiş zaman aralıkları art arda telafi edilerek yeni bir yük patlaması oluşturulmuyor.
+
+Aynı R79 ve R80 modüllerinin doğrudan içe aktarıldığı, saat ve I/O kontrollü testte:
+
+- 10 saniye boyunca 50 ms tekrar: genel işlerin her biri R79'da 200, R80'de 10 çağrı. Ödül taraması her iki sürümde 200 çağrı.
+- 10 saniye boyunca 250 ms tekrar: genel işlerin her biri R79'da 40, R80'de 10 çağrı. Ödül taraması her iki sürümde 40 çağrı.
+- Normal 1 saniyelik durumda davranış değişmiyor. Reset/guardian, abort, drain, temizlik, hata iletimi ve dünya geçişi sınırları hedefli testlerde korunuyor.
+
+Bunlar çağrı sayısı sonuçlarıdır. Canlı CPU'nun 20 kat düşeceğini veya paneldeki yüzde 40'ın belirli bir değere ineceğini kanıtlamaz. Gerçek etki, bu tekrar yolunun canlı oyunda ne sıklıkta oluştuğuna bağlıdır.
+
+Değişen dosya: core511-source/scripts/core511/shared-world-jobs.mjs.
+
+## 2. Checkpoint işçisinin kontrollü toparlanması
+
+R79'daki güvenli fallback otomatik checkpoint'i yeniden açıyor, fakat geçici neden ortadan kalktıktan sonra ayrı işçiye dönmüyordu. R80 yalnız bilinen geçici nedenlerde yeniden dener: checkpoint-backlog, checkpoint-timeout, worker-start-timeout, worker-exit.
+
+Varsayılan bekleme 30, 60, 120, 240 ve 300 saniyedir; istikrarlı 60 saniyelik hazır durum görülmedikçe en fazla beş yeniden başlatma denemesi vardır. Önceki thread'in gerçekten çıktığı doğrulanmadan yeni işçi oluşturulmaz. Uzun süren bir okuyucu WAL'ı tutuyorsa tek bekleme işçisi, 30–300 saniyelik aralarla PASSIVE checkpoint yoklaması yapar. İki ayrı başarılı tam geçiş görülmeden ana ve ödül bağlantılarında otomatik checkpoint tekrar kapatılmaz.
+
+Bilinmeyen SQLite/bozuk protokol/sürüm/yapılandırma hatalarında kör tekrar yapılmaz. Kapanış yeniden deneme zamanlayıcılarını kapatır. Normal 1 saniyelik checkpoint, 10 saniyelik işlem zaman aşımı, 5 saniyelik başlangıç sınırı ve 16.384 sayfalık backlog sınırı değişmedi. Ödül ACK'sinin kalıcı diske yazımı beklemesi korunur.
+
+Gerçek SQLite testinde üretimdeki 16.384 sayfa sınırı düşürülmeden yaklaşık 68 MiB WAL, okuyucu kilidi, ayrı ödül işçisi, gerçek NORMAL + async WAL fsync, worker crash/timeout ve kapanış yarışları denendi. Testlerde süreleri kısaltmak için retry gecikmeleri kontrol edildi; üretim sınırları yukarıdaki değerlerdir.
+
+Canlıya yapılan tek salt okunur sağlık isteğinde R79 checkpoint ready=true ve pendingPages=0 görüldü. Dolayısıyla bu fallback durumunun o anda canlı lag'in nedeni olduğu iddia edilmiyor. Bu düzeltme, kaynak kodunda doğrulanan toparlanma eksikliğini giderir.
+
+Değişen dosyalar:
+- core511-source/scripts/core511/checkpoint-runtime-r79.mjs
+- native510-bb3a6cc689c6/vds-server/src/wal-checkpoint.mjs
+
+## 3. Yüzde 40 yükün anlamı ve yeni tanılama
+
+Mevcut paneldeki ana işlem yüzdesi son yaklaşık 2 saniyelik event-loop utilization değeridir. VDS'nin toplam CPU kullanım yüzdesi veya oyuncu kapasitesinin doluluk oranı değildir. Bu nedenle 10 oyuncuda yüzde 40 görülmesinden 30 oyuncuda yüzde 120 olacağı sonucu çıkarılamaz. Sabit bakım maliyeti, işlerin çakışması, aynı boss'a katılım, kalıcı kayıt kuyruğu ve sunucu dışındaki disk/CPU paylaşımı farklı şekillerde ölçeklenebilir.
+
+R80 /api/vds-health yanıtına updateVersion=R80_GAMEPLAY ve runtimeDiagnosticsR80 ekler:
+
+- main.eventLoopBusyPercent: güncel 2 saniyelik ana olay döngüsü doluluğu. Eksik, eski veya geleceğe ait örnek canlı yüzde gibi sunulmaz.
+- main.eventLoopDelayMs: son yaklaşık 2 saniyelik örnekteki maksimum olay döngüsü gecikme fazlası; ortalama gecikme veya oyuncu pingi değildir.
+- main.cpu: Node işleminin bütün thread'leri için son en fazla 300 saniyelik örnek ortalaması/maksimumu. Bir çekirdek yüzde 100'dür; değer 100'ü aşabilir. Mevcut temel ölçer 0,1 çekirdeğe yuvarladığı için bu alanın çözünürlüğü yaklaşık 10 yüzde puanıdır. Daha hassas aralık CPU farkı için beraberindeki /proc ölçüm aracı kullanılır.
+- writerLane: çalışan dış ödül işinin geçen süresi, toplam yazma kuyruğu, en eski sıranın yaşı ve tamamlanan dış iş ölçüleri. Kuyruk 256 öğeyi aşarsa alt küme sayısı hesaplamak için tüm kuyruk taranmaz; queuedExternal null kalırken toplam queuedWrites tamdır.
+- walSync: aktif flush var mı, sonraki flush'a kaç çağrı kaldı, yaşam boyu flush'a alınmış çağrı sayısı, tamamlanmış flush süreleri. queuedForNextFlush, sürmekte olan flush'ın içindeki çağrıları kapsamaz. meanMs/maxMs önceki flush arkasında geçirilen beklemeyi kapsamaz; flush başladıktan sonraki dosya hazırlığı, libuv ve callback zamanını kapsar. Bunlar saf disk fsync süresi veya oyuncu sayısı değildir.
+- mainCommits: ana bağlantının COMMIT duvar zamanı. Ödül işçisinin veya asenkron flush'ın tamamını temsil etmez.
+- rewardWorker: tamamlanan işlerin ölçüleri ve şu anda bekleyen iş var mı bilgisi. Eski maxWorkerMs, o an sürmekte olan işin güncel gecikmesi sayılmaz.
+- checkpointR79.retryR80 / recoveryProbe: yeni toparlanmanın durumu. Eski alan adı uyumluluk için korunur.
+
+Alanlar sabit enum, sayı ve boolean listesinden oluşturulur. Oyuncu kimliği, SQL, token, dosya yolu veya ham hata metni eklenmez. Tanılama yeni SQL sorgusu, kanal IPC'si ya da profiler başlatmaz; gözlemci hatası ana sağlık hesabını bozmaz. Tek yazıcı FIFO sırası ve işlem hatasının kimliği hedefli testlerle korunmuştur.
+
+Değişen dosyalar:
+- core511-source/scripts/core511/writer-lane-r533.mjs
+- core511-source/scripts/core511/runtime-health-r80.mjs (yeni)
+- core511-source/scripts/core511/native-http-bindings.mjs
+
+## 4. Yerinde kurucu
+
+R80, kurulu R79'un 1.163 kaynak kaydından oluşturulan tam beklenen kimliği esas alır. Yerel inceleme klasöründe eksik kaynak bulunması, bu kimlik listesinin daraltılmasına neden olmaz. Kapsam dışı dosya veya hash farkında kurucu durur. R79 HTTP/istemci, mevcut Node binary/LICENSE/bağlantısı ve hesap servisi bağları ayrıca korunur.
+
+Kurulum, tüm sürümü başka dizine kopyalamaz. Değişecek küçük kod dosyalarının geri alma kopyaları ve SQLite üzerinden doğrulanmış geçici DB yedeği alınır. Yarım dosya yazıları kaynak ağacının dışında, aynı dosya sistemindeki özel bir staging dizininde tutulur; rename/fsync ile değiştirilir. Aktif işlem journal'ı her aşamayı kaydeder. Kurtarmadan önce bütün dosyalar beklenen önce/sonra hash ve izin değerleriyle denetlenir. Dışarıdan değişen dosyanın üzerine yazılmaz.
+
+Geri alma kodu ve STATE kaydını geri çevirir, güncel oyun DB'sini eski yedekle değiştirmez. Sağlık doğrulandıktan sonraki temizlik hatası sağlıklı R80'i otomatik olarak geri almaz; --recover temizliği tamamlar. Günlük yedekle aynı kilit ve kurulum kilidi birlikte kullanılır; keyfî saat yasakları eklenmez. Hesap servisi durdurulmaz. Oyun yalnız yönetim panelindeki seçimle açılır.
+
+Kurucu testlerinde gerçek küçük SQLite dosyaları, WAL'da henüz ana DB dosyasına geçmemiş commit, quick_check, dosya/inode/izin kontrolü, atomik delta ve süreç kesintileri kullanılmıştır. systemd ve merkezi HTTP çağrıları benzetimdir; VDS disk hızı testi değildir. Hem yeni sürüm hem geri alınan sürüm başlatılamazsa kurtarma durumu korunur. Başlatma korumasını yazma hatası, oyun servislerini durdurma girişimini atlamamalıdır; bu çift hata yolu ayrıca sınanır.
+
+## 5. Boss/Sinsi ön plan ödül taslağı — aktif pakette yok
+
+İlk inceleme, foreground claim_rewards yolunda ilgisiz kanalları da bekleten geniş shared_hold davranışını gösterdi. Yalnız uygun sanctum/Sinsi taleplerini gerçek alıcılarla sınırlandıran bir taslak yazıldı. Requester, tarihî katılımcılar, güncel parti ve gerekli dungeon oda üyeleri kapsama giriyor. Çevrimdışı ve başka kanaldaki ödül alıcıları korunuyor. Native ödül SQL'i, receipt, owner/epoch ve diske yazım zinciri korunuyor.
+
+Taslağın 17 hedefli testi geçti: gerçek alıcı seçimi, bridge ve gerçek native boss/Sinsi ödül SQL'i; tekrar ödeme, replay, rollback, offline/cross-channel alıcılar ve durability dahil. On owner'lı bridge örneğinde sekiz ilgisiz owner tutulmadı. Bu bir canlı gecikme ölçümü değildir.
+
+Ancak güncel action-writer.mjs ile nonlethal-rewards-r56.mjs ve diğer geçişli bağımlılıkların tamamı mevcut arşivlerde bulunamadı. Sekiz tam kanal testi hazırlanmış olsa da çalıştırılmış sayılmıyor. Gerçek GameWriter wrapper'ının bütün yan etkileri eksik kaynakla varsayılmadı. Bu yüzden aşağıdaki dört dosya kurulum payload'ında YOKTUR:
+
+- reward-actor-scope-r80.mjs
+- shared-combat-bridge.mjs
+- shared-combat-channel.mjs
+- scoped-reward-maintenance-r79.mjs
+
+Gerekli action-writer.mjs: 9.134 byte, SHA-256 4f712838c458cec8fee90947ab8efec60d217e8763ad54e443caf90afb82eac6. Farklı hashli eski dosya onun yerine kullanılmadı. Kaynak dışa aktarıcı 42 eksik dosyayı sabit R79 kimlikleriyle toplar; bu altı dosyalık R80'in ardından da aynı eksik dosyaların kimliği geçerlidir. Üretim verileri toplanmaz.
+
+Taslağın kalan doğrulaması tamamlanmadan boss/Sinsi donmasının bu paketle tamamen giderildiği söylenemez. Kaynak kanalın canavar lane'leri ve shared world serialization gibi korunması gereken başka beklemeler de vardır. İstemci hareket tahminini sınırsız uzatarak sunucu gecikmesini gizleyen bir değişiklik yapılmadı. UI subscriber hatasının protokol hatası gibi yorumlanması ve ana yazıcıdaki başka iş türlerinin yükü ayrıca açık inceleme konularıdır.
+
+## 6. Hedefli test özeti
+
+- Genel bakım/ödül zamanlaması: 30/30.
+- Gerçek SQLite/checkpoint işçisi ve dayanıklılık: 10/10.
+- Tanılama ve gerçek SQLite tek yazıcı sırası: 12/12.
+- Kaynaktan aynen alınan health metodunun gerçek yeni helper ile izole bağlantısı: 3/3. Bu, tam NativeHttpBindings bağımlılık ağının veya sunucu açılışının testi değildir.
+- Yerinde kurulum/geri alma/kimlik/kilit kapıları: 46/46. İçinde 17 süreç kesme aşaması vardır; bağımsız tekrar edilen 7 test bu 46'nın alt kümesidir.
+
+Aktif üretim değişiklikleri ve kurucu için toplam 101 hedefli test geçti. Foreground taslağının 17 testi bu sayıya dahil değildir. Araç testleri ayrıca raporlanır. Ham sonuçlar ve SHA değerleri R80_KANIT.json, installer-evidence.json ve checkpoint-evidence.json içindedir.
+
+## 7. Canlı kabul ölçütü
+
+Kurulum komutları KURULUM.md içindedir. Sonrasında normal oyuncularla benzer saat ve etkinlikte 30 saniyelik ölçüm alınmalı; oyuncu sayısı, kanal dağılımı, boss/Sinsi anı ve istemci takılma zamanı birlikte değerlendirilmelidir. Düşük CPU tek başına iyi oyun gecikmesi demek değildir. Kuyruk yaşı/fsync beklemesi yükselirken ELU düşük kalabilir; toplam CPU düşükken ana thread sınırı görülebilir.
+
+İyileşme iddiası, aynı senaryo için önce/sonra kayıtlarıyla kurulmalıdır. Bu paketin kaynakta düzelttiği iki mekanizma ve hedefli testleri somuttur; canlı gecikmenin tamamen bittiği veya 30 oyuncuda sorun olmayacağı henüz ölçülmüş bir sonuç değildir.

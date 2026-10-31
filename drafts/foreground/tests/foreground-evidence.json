@@ -1,0 +1,67 @@
+{
+  "status": "NOT_RELEASE_APPROVED",
+  "tests": [
+    {
+      "file": "foreground-scope.mjs",
+      "exitCode": 0,
+      "tests": 6
+    },
+    {
+      "file": "foreground-bridge.mjs",
+      "exitCode": 0,
+      "tests": 6
+    },
+    {
+      "file": "foreground-native-reward.mjs",
+      "exitCode": 0,
+      "tests": 5
+    }
+  ],
+  "passedTests": 17,
+  "pendingTests": {
+    "file": "foreground-channel.pending.mjs",
+    "count": 8,
+    "reason": "SharedCombatChannel import requires unrecovered current nonlethal-rewards-r56.mjs; no stubs accepted"
+  },
+  "blockers": [
+    "R79 action-writer.mjs expected sha256 4f712838c458cec8fee90947ab8efec60d217e8763ad54e443caf90afb82eac6 /9134 bytes unavailable; full claimant wrapper not validated",
+    "Current SharedCombatChannel dependency graph incomplete; actual channel hold tests not run"
+  ],
+  "scope": {
+    "claimantAreas": [
+      "sanctum",
+      "sinsi"
+    ],
+    "targets": "<=10 normalized dunya-bosu-1 or sinsi-tasi-* with durable defeat, no loadlab round",
+    "recipients": "requester + R79 historical participants + all their current party members + R71 dungeon room expansion; cap100",
+    "fallback": "all existing shared behavior for ineligible/uncertain requests",
+    "preserved": "signed world lease, source durableGroup, ownership/epoch/sequence, native reward SQL, receipt protocol, commit/fsync ACK, global reset ordering",
+    "limitation": "Same source monster-lane reservation and shared world serialization remain; this narrows unrelated actor/mailbox holds only"
+  },
+  "files": [
+    {
+      "path": "core511-source/scripts/core511/reward-actor-scope-r80.mjs",
+      "originalSha256": null,
+      "r80Sha256": "6b230d814059eb91cc95b6df790c9d5044379a1bbcd85bbb6d0cc8333b45a418"
+    },
+    {
+      "path": "core511-source/scripts/core511/shared-combat-bridge.mjs",
+      "originalSha256": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+      "r80Sha256": "4a7b7061986960690b90586690625db70cb0b207dc8772e68cfcc0c558a5a29f"
+    },
+    {
+      "path": "core511-source/scripts/core511/shared-combat-channel.mjs",
+      "originalSha256": "47c6a500f78d18c6e68d3c8e966baff3e4c618157775ba351dd6bbcada9d6793",
+      "r80Sha256": "b073c419c22cd6ff2a4039695c829e19a1f8a821e09f12c3cdb43b37aa3cf2e1"
+    },
+    {
+      "path": "core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs",
+      "originalSha256": "a9bd92ad0fd63e3f6e790a216df32667140c4fd704309ba263ea6577c5147320",
+      "r80Sha256": "ffceb26b302f72515493ae73f7d604f905a317ff4df716e06160cc810d916155"
+    }
+  ],
+  "independentReview": {
+    "reviewer": "/root/client_perf/foreground_review",
+    "result": "No demonstrated duplicate-payment, ownership/epoch bypass or early barrier-release defect found in narrow patch. Missing exact action-writer and incomplete SharedCombatChannel imports remain decisive release blockers. Existing all-area monster lane reservation remains; no general-lag-removal claim."
+  }
+}

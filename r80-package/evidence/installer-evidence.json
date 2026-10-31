@@ -1,0 +1,205 @@
+{
+  "schema": "core511-r80-installer-evidence-v1",
+  "generatedAtUtc": "2026-10-31T05:16:31.034697+00:00",
+  "version": "R80_GAMEPLAY",
+  "sourceVersion": "R79_GAMEPLAY",
+  "liveServicesAccessed": false,
+  "repositoryModified": false,
+  "scope": "Isolated filesystem, actual SQLite backup API and flock, atomic code/STATE journals, and existing pinned Node; no production install or capacity result.",
+  "modules": [
+    {
+      "path": "r80-package/modules/installer.py",
+      "sha256": "bb3d35af888779c614d264ea4b373dbfd325343602f08cc90590ccf5dcffa477",
+      "bytes": 42799
+    },
+    {
+      "path": "r80-package/modules/storage.py",
+      "sha256": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735",
+      "bytes": 5021
+    },
+    {
+      "path": "r80-package/modules/central.mjs",
+      "sha256": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+      "bytes": 2943
+    },
+    {
+      "path": "r80-package/modules/r63_support.py",
+      "sha256": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+      "bytes": 92632
+    },
+    {
+      "path": "r80-package/modules/client_stage.py",
+      "sha256": "71dc1ab81b42823708d50fef6a604d1c7b4b49e5a8077324338e5048dc96c6f3",
+      "bytes": 3836
+    },
+    {
+      "path": "r80-package/modules/retention.py",
+      "sha256": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+      "bytes": 9989
+    },
+    {
+      "path": "r80-package/modules/runtime_stage.py",
+      "sha256": "3b8389592504e539990bc71335c8a04bef988755a152619fb42f0c53be41e01a",
+      "bytes": 2909
+    },
+    {
+      "path": "r80-package/modules/inplace_stage.py",
+      "sha256": "e271ef83561fdd065e71db75ea47d446f32ad62a0a8f28630fa3c43a68e669ad",
+      "bytes": 8022
+    }
+  ],
+  "entrypoint": {
+    "path": "r80-package/__main__.py",
+    "sha256": "5b975e2f3f11050b550bbfda28d80176120f4c5444edc0f93f5842dd77d1ce76",
+    "bytes": 1015
+  },
+  "tests": [
+    {
+      "path": "r80-tests/installer-fixture.py",
+      "sha256": "860d1aa1df805f956475f8a25dec919556f4c0769e388d02266d2429c6cdabaa",
+      "bytes": 14480
+    },
+    {
+      "path": "r80-tests/installer-inplace.test.py",
+      "sha256": "8755a4116b77550a24a32bc424c9b5ee21e2f0c78b6ed58b29d992698c6bda22",
+      "bytes": 15082
+    },
+    {
+      "path": "r80-tests/installer-gates.test.py",
+      "sha256": "580ff08306d9ed3e3a82dcf9cbbdf091f31b979df7d94fcce17215f8edc9f1e1",
+      "bytes": 14864
+    }
+  ],
+  "groups": [
+    {
+      "name": "inplace-and-recovery",
+      "command": "python3 /workspace/scratch/68fd588af980/r80-tests/installer-inplace.test.py",
+      "path": "r80-tests/installer-results.txt",
+      "sha256": "0a68ca47ca04ed067630447df6ceb2d39945b3ab45054a898161024dcb50669d",
+      "bytes": 8518,
+      "passed": 27,
+      "failed": 0,
+      "elapsedSeconds": 3.744
+    },
+    {
+      "name": "cli-locks-faults-runtime-and-payload",
+      "command": "python3 /workspace/scratch/68fd588af980/r80-tests/installer-gates.test.py",
+      "path": "r80-tests/installer-gates-results.txt",
+      "sha256": "021f16b9be0d28001e5e44342d52eca714d0d462555de897be99a5a6fad9835c",
+      "bytes": 4550,
+      "passed": 19,
+      "failed": 0,
+      "elapsedSeconds": 1.607
+    }
+  ],
+  "totalTestsPassed": 46,
+  "totalTestsFailed": 0,
+  "crashPhaseSubcases": {
+    "apply": [
+      "preparing",
+      "prepared",
+      "gating",
+      "stopping",
+      "database-backup",
+      "writing",
+      "selected",
+      "starting",
+      "validated",
+      "complete"
+    ],
+    "manualRollback": [
+      "gating-rollback",
+      "rollback-stopping",
+      "rollback-backup",
+      "rolling-back",
+      "rollback-starting",
+      "rolled-back-validated",
+      "rolled_back"
+    ],
+    "count": 17,
+    "mechanism": "fork + os._exit(77), then reload durable journal in parent and recover twice"
+  },
+  "additionalCrashWindows": [
+    "partial added file committed before next file",
+    "partial temporary replacement outside core tree",
+    "STATE rename before next journal phase",
+    "SQLite verified attempt journal before main journal update",
+    "manual rollback partial SQLite backup",
+    "manual rollback verified SQLite backup before main journal update"
+  ],
+  "measuredAssertions": [
+    "Apply and code rollback retain game DB device/inode, account DB device/inode, release root, game config bytes, dropin bytes and Node bytes.",
+    "No release clone, retention cleanup, runtime replacement or accounts-service stop/start occurs.",
+    "After health failure, committed game progress 10 -> 20 and a newly inserted account survive automatic code rollback.",
+    "Manual code rollback takes a fresh current SQLite backup and preserves committed values 66, 88 and 99.",
+    "A dead writer leaves committed value 71 in WAL while immutable main DB still has value 10; the actual SQLite backup API copies value 71.",
+    "Injected quick_check failure precedes every code replacement; original R79 code remains intact.",
+    "Actual nonblocking flock observes both install.lock and the native daily .backup.lock held during backup; contention reaches no service stop.",
+    "A valid nested DB layout with a different native dataRoot, mismatched backup service environment/config, and an environment change during lock wait are refused before service stop.",
+    "Native backup binding is checked against manifest dataRoot, backup service Environment, config.database, config SHA and unit-file SHAs.",
+    "Startup health failure plus guard ENOSPC or daemon-reload failure still attempts all game/RT stops and preserves the original health exception.",
+    "An RT stop error does not skip attempting main-game stop; accounts service remains untouched.",
+    "Unknown file hash, changed STATE, changed DB inode, symlink targets and wrong backup identity are refused without overwriting unknown data.",
+    "Cleanup failure leaves validated R80 for recover completion; owner policy changes and active admissions are preserved during validated completion.",
+    "R80 health requires its version marker and available read-only diagnostics; R79 rollback does not require R80-only fields.",
+    "Actual shipped Node v22.23.4, SQLite 3.53.4, node/license SHA, exact bin/node symlink and executable modes validate; no runtime payload is accepted."
+  ],
+  "fixtureBoundaries": [
+    "No real systemd daemon, VDS, production HTTP or account authority was accessed.",
+    "Systemctl state/commands, central policy RPC, accounts PID/identity and runtime process binding use explicit local fixtures.",
+    "Production verify_release invokes the existing Node verifyPackage; fixture tests substitute a full-file SHA/mode verifier and actual r63 core identity. The complete live release package has not been exercised here.",
+    "SQLite files are small synthetic databases. Full-size live backup duration, available disk space, Linux service permissions and cold-start health timing remain deployment preflight conditions.",
+    "The real pinned Node executable/license and exact current six-file production plan/payload are separately exercised.",
+    "These tests establish installer control flow and persistence boundaries, not a server throughput/CPU or player-count forecast."
+  ],
+  "intentionalSafeStops": [
+    "Custom backup EnvironmentFile or relevant PassEnvironment/UnsetEnvironment overrides are refused because the stock daily mutex binding cannot be proven.",
+    "Manual edits outside known before/after code hashes or changed STATE/config/dropin/DB identity require reconciliation; recover does not overwrite them.",
+    "An interrupted SQLite copy with no durable verification metadata is retained in its private attempt directory, never restored or silently deleted; a later attempt may require additional disk space.",
+    "If service stop itself fails, every recorded game/RT unit is attempted and the triggering error is preserved; successful OS shutdown cannot be guaranteed by a failed systemctl call."
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "pythonSqlite": "3.53.1",
+    "platform": "Linux",
+    "node": "v22.23.4",
+    "nodeSqlite": "3.53.4"
+  },
+  "productionPlan": {
+    "path": "r80-package/update.json",
+    "sha256": "fc34702e5cad968139694608effe1feb3c3a00329f9a358a959660d460d9f7f9",
+    "bytes": 195081,
+    "baseCoreSHA256": "0a49e21b27dba009bf3ab90b87ca3e3ebbd182cbf98e60f7bac767385b3c070a",
+    "baseCoreRows": 1163,
+    "deltaFiles": 6,
+    "payloadBytes": 50509,
+    "clientChanges": false,
+    "runtimePayload": false
+  },
+  "sourcesForBackupBinding": [
+    "r79-audit/native510-bb3a6cc689c6/vds-server/src/backup.mjs",
+    "r79-audit/native510-bb3a6cc689c6/vds-server/src/realm-deployment-files.mjs",
+    "r79-audit/native510-bb3a6cc689c6/vds-server/src/realm-manifest.mjs",
+    "r80-package/modules/r63_support.py"
+  ],
+  "independentReview": {
+    "agent": "/root/client_perf",
+    "productionCodeModified": false,
+    "status": "no remaining shipping blocker in the reviewed scope",
+    "installerSHA256Verified": "bb3d35af888779c614d264ea4b373dbfd325343602f08cc90590ccf5dcffa477",
+    "regressionSubsetRerunPassed": 7,
+    "subsetNote": "These are seven of the 46 tests, not seven additional unique tests.",
+    "originalGuardEnospcReproductionAfterFix": {
+      "originalHealthExceptionPreserved": true,
+      "gameState": "inactive",
+      "rtState": "inactive",
+      "mainGameStopAttempts": 2,
+      "gameProgress": 10,
+      "subsequentRecover": "R79 active; ACTIVE removed; same DB progress 10"
+    },
+    "findingsClosed": [
+      "Native backup data-root lock binding",
+      "Guard-write/reload failure could skip game stop; RT stop failure could skip main game stop"
+    ]
+  }
+}

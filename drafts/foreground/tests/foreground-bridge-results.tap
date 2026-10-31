@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: real bridge with ten owners holds one foreign recipient, leaving eight bystanders unheld
+ok 1 - real bridge with ten owners holds one foreign recipient, leaving eight bystanders unheld
+  ---
+  duration_ms: 5.878569
+  type: 'test'
+  ...
+# Subtest: non-claim/mixed actions preserve the original all-nine-bystander hold
+ok 2 - non-claim/mixed actions preserve the original all-nine-bystander hold
+  ---
+  duration_ms: 2.647893
+  type: 'test'
+  ...
+# Subtest: offline rewards still enter resources; passive dungeon owners and their room peers stay held
+ok 3 - offline rewards still enter resources; passive dungeon owners and their room peers stay held
+  ---
+  duration_ms: 2.455344
+  type: 'test'
+  ...
+# Subtest: party membership changing during drain aborts before command and resumes every started hold
+ok 4 - party membership changing during drain aborts before command and resumes every started hold
+  ---
+  duration_ms: 2.215234
+  type: 'test'
+  ...
+# Subtest: pre-SQL guard binds input, actor resources and reset cycle, including extra offline writes
+ok 5 - pre-SQL guard binds input, actor resources and reset cycle, including extra offline writes
+  ---
+  duration_ms: 3.128543
+  type: 'test'
+  ...
+# Subtest: foreign epoch drift remains fenced; native boss deletion is allowed only inside validated write scope
+ok 6 - foreign epoch drift remains fenced; native boss deletion is allowed only inside validated write scope
+  ---
+  duration_ms: 2.497617
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 28.195922

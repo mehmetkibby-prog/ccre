@@ -1,0 +1,15 @@
+R80 bağımsız inceleme özeti — 31 Ekim 2026
+
+Kurucu:
+İncelenen installer.py SHA256 bb3d35af888779c614d264ea4b373dbfd325343602f08cc90590ccf5dcffa477.
+İlk incelemede iki somut sorun bulundu ve giderildi:
+1. Gerçek günlük yedek CORE_DATA_ROOT/backups kilidi ile kurucunun database.parent/backups kilidi aynı veri kökü/config/servis kimliğine bağlandı. Kilit beklemesinden sonra tekrar doğrulanıyor.
+2. Sağlık kontrolü başarısızlığından sonra koruma dosyasını yazma veya daemon-reload da hata verse oyun servislerini durdurma deneniyor. Bir unit'in stop hatası diğerinin stop girişimini atlamıyor.
+Bağımsız ENOSPC tekrarında düzeltilmiş kod ana/RT oyunu durdurdu, asıl health hatasını korudu; recover R79'u yeniden açtı ve DB test ilerlemesi 10 korundu. İlgili 7 mevcut regresyon yeniden 7/7 geçti; bu 7, ana 46 test üzerine yeni ayrı test olarak sayılmadı.
+Kurucu değerlendirmesi tamamlandı; doğrulanan kapsamda açık sevk engeli bulunmadı. Gerçek systemd/merkezi HTTP ve tam oyun açılışı bu ortamda benzetimdir/çalıştırılmadı.
+
+Tanılama:
+Sayısal/boolean/enum whitelist, FIFO ve hata kimliği, CPU penceresi/hassasiyeti, flush bekleme kapsamı ve bounded queue scan incelendi. 12/12 test geçti. Yeni alanda ham hata, SQL, owner, token, path sızıntısı saptanmadı. Tam NativeHttpBindings import zinciriyle server açılışı çalıştırılmış sayılmaz.
+
+Foreground boss/Sinsi taslağı:
+17 hedefli test geçen taslak bağımsız incelendi; yeni çift ödeme/owner-epoch/erkenrelease sorunu bulunmadı. Ancak gerçek action-writer ve kanal bağımlılıkları eksik olduğundan sevk onayı yok. Aktif R80 payload'ı bu dört taslak dosyayı içermez. 8 kanal testi çalıştırılmamıştır.

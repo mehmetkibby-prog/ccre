@@ -1,0 +1,80 @@
+{
+  "component": "R80 checkpoint recovery",
+  "runtime": {
+    "node": "22.23.4",
+    "sqlite": "3.53.4"
+  },
+  "changed_files": [
+    {
+      "path": "core511-source/scripts/core511/checkpoint-runtime-r79.mjs",
+      "before_sha256": "cd4add6ea79ab5b4713105ba25a3f79e8f247170520635bba4ba8daa4bdc85f8",
+      "after_sha256": "3943e0593e1bffeff63040195c8c6d1ff00b1ac1df53a9a0a4e71d2dd27b4960",
+      "before_bytes": 3993,
+      "after_bytes": 9350
+    },
+    {
+      "path": "native510-bb3a6cc689c6/vds-server/src/wal-checkpoint.mjs",
+      "before_sha256": "f185be8fe05f05994cdccbb6666f29d358724987d7fa290e4674f5ba75577cfa",
+      "after_sha256": "049ca592fe8ff68dc0d76479f8df7c8328b4dacb9b34d6cf05bdf3d5f29ee630",
+      "before_bytes": 8034,
+      "after_bytes": 11496
+    }
+  ],
+  "tests": {
+    "passed": 10,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "report": "checkpoint-results.tap",
+    "report_sha256": "fa4829793a41d6e5e2230587e0e83533f68138411a713cbdf03bf06a06896b52",
+    "names": [
+      "production backlog threshold: pinned reader retains one standby worker; both connections recover safely",
+      "repeated actual worker exits obey bounded exponential retry and never overlap",
+      "unclassified real SQLite worker error stays in safe fallback without blind retry",
+      "checkpoint timeout retries remain automatic until a replacement actually proves ready",
+      "shutdown cancels a scheduled retry",
+      "shutdown racing a pending exit proof cannot start a new worker",
+      "shutdown during a real reader-blocked probe leaves no retry or disabled autocheckpoint",
+      "a refused worker-exit proof prevents replacement and retains safe fallback",
+      "unsupported SQLite safety gate remains closed and runtime cannot spoof its version",
+      "production LocalDatabase NORMAL plus real async WAL fsync remains durable across recovery"
+    ]
+  },
+  "production_defaults": {
+    "checkpoint_interval_ms": 1000,
+    "checkpoint_deadline_ms": 10000,
+    "startup_deadline_ms": 5000,
+    "max_pending_pages": 16384,
+    "retry_delay_ms": [
+      30000,
+      60000,
+      120000,
+      240000,
+      300000
+    ],
+    "max_retries_until_stable": 5,
+    "stable_reset_ms": 60000,
+    "probe_initial_ms": 30000,
+    "probe_max_ms": 300000,
+    "complete_probes_before_ready": 2
+  },
+  "retry_reasons": [
+    "checkpoint-backlog",
+    "checkpoint-timeout",
+    "worker-start-timeout",
+    "worker-exit"
+  ],
+  "safety": {
+    "no_parallel_checkpoint_worker": true,
+    "old_exit_required": true,
+    "automatic_checkpoint_enabled_during_retry_and_probe": true,
+    "production_backlog_threshold_tested_without_reduction": true,
+    "separate_reward_worker_shared_flag_tested": true,
+    "real_normal_mode_async_fsync_tested": true,
+    "shutdown_retries_disabled": true,
+    "unknown_sqlite_errors_not_retried": true
+  },
+  "live_vds_actions": false,
+  "database_schema_changes": false,
+  "test_scope": "Isolated real SQLite files/Worker threads; controlled retry delays for short tests; not a live-VDS benchmark"
+}

@@ -1,0 +1,251 @@
+--- /dev/null
++++ b/core511-source/scripts/core511/reward-actor-scope-r80.mjs
+@@ -0,0 +1,54 @@
++import {prepareCached477} from './writer-statements.mjs';
++import {normalizeClaimTargets} from './claim-chunks.mjs';
++import {dungeonFreezeActorsR71} from './dungeon-freeze-scope-r71.mjs';
++
++// The same recipient superset serves background delivery and foreground
++// claims. Keep native eligibility/reward SQL authoritative: historical paid
++// participants and whole current parties are deliberately included here.
++export function scopedRewardActorsR79(sql,target){
++ let actors;
++ if(target.kind==='drops')actors=target.rows.map(row=>row.owner);
++ else if(target.kind==='boss')actors=prepareCached477(sql,`SELECT bp.player_id AS id FROM boss_participants bp JOIN players p ON p.id=bp.player_id
++  WHERE bp.boss_round=? AND bp.total_damage>0 UNION SELECT mp.player_id AS id FROM monster_participants mp JOIN players p ON p.id=mp.player_id
++  WHERE mp.spawn_round=? AND (mp.monster_id='dunya-bosu-1' OR EXISTS(SELECT 1 FROM loadlab_boss_rounds_v1 lab WHERE lab.monster_id=mp.monster_id AND lab.boss_round=mp.spawn_round))`).all(target.round,target.round).map(row=>row.id);
++ else actors=prepareCached477(sql,`SELECT mp.player_id AS id FROM monster_participants mp JOIN players p ON p.id=mp.player_id
++   WHERE mp.monster_id=? AND mp.spawn_round=?`).all(target.id,target.round).map(row=>row.id);
++ const ids=new Set(actors);
++ if(target.kind!=='drops')for(const id of actors)for(const row of prepareCached477(sql,`SELECT team.player_id AS id FROM party_members mine JOIN party_members team ON team.party_id=mine.party_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?`).all(id))ids.add(row.id);
++ return [...ids].filter(id=>prepareCached477(sql,'SELECT 1 FROM players WHERE id=?').get(id)).sort();
++}
++
++// A bounded, explicitly audited native claim only. Mixed/oversized requests,
++// load-lab targets, living/unrecorded rounds and other native actions retain
++// the existing all-owner path. Normalization is the native shared definition.
++export function foregroundClaimTargetsR80(input){
++ if(input?.action!=='claim_rewards'||!Array.isArray(input.rewardTargets)||!input.rewardTargets.length||input.rewardTargets.length>10)return null;
++ const targets=normalizeClaimTargets(input.rewardTargets);
++ return targets.length&&targets.every(t=>Number.isSafeInteger(t.spawnRound)&&(t.id==='dunya-bosu-1'||t.id.startsWith('sinsi-tasi-')))?targets:null;
++}
++
++// These callers stay on the parent native writer. The ordinary-map reward
++// worker has a separate guard envelope; expanding to it needs an equivalent
++// scope/write-set fence in that protocol, not just a wider area allowlist.
++const claimantAreas=new Set(['sanctum','sinsi']);
++export function foregroundClaimScopeR80(sql,input,actor,channel){
++ const targets=foregroundClaimTargetsR80(input);if(!targets)return null;
++ const player=prepareCached477(sql,'SELECT area,channel,arena_match_id FROM players WHERE id=?').get(actor);
++ if(!player||player.channel!==channel||player.arena_match_id||!claimantAreas.has(player.area))return null;
++ const actors=new Set([actor]);
++ for(const target of targets){
++  const boss=target.id==='dunya-bosu-1';
++  // A recorded death makes the historic contribution set immutable. Without
++  // this prerequisite another channel could create a new terminal reward
++  // while only the initially selected recipients were draining.
++  if(boss){
++   if(!prepareCached477(sql,'SELECT 1 FROM boss_defeats WHERE boss_round=?').get(target.spawnRound)||prepareCached477(sql,'SELECT 1 FROM loadlab_boss_rounds_v1 WHERE boss_round=?').get(target.spawnRound))return null;
++  }else if(!prepareCached477(sql,'SELECT 1 FROM sinsi_defeats WHERE monster_id=? AND spawn_round=?').get(target.id,target.spawnRound))return null;
++  for(const id of scopedRewardActorsR79(sql,boss?{kind:'boss',round:target.spawnRound}:{kind:'sinsi',id:target.id,round:target.spawnRound}))actors.add(id);
++  if(actors.size>100)return null;
++ }
++ let expanded;
++ try{expanded=dungeonFreezeActorsR71(sql,[...actors]);}catch(error){if(error?.code==='permanent_dungeon_scope_capacity')return null;throw error;}
++ if(expanded.some(id=>!prepareCached477(sql,'SELECT 1 FROM players WHERE id=?').get(id)))return null;
++ return {cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,targets,actors:expanded.sort()};
++}
+--- a/core511-source/scripts/core511/shared-combat-bridge.mjs
++++ b/core511-source/scripts/core511/shared-combat-bridge.mjs
+@@ -11,6 +11,7 @@
+ import {recoveryWatchdog} from './r47-options.mjs';
+ import {captureReturnSessions,rehomeWorldActors} from './global-return.mjs';
+ import {coldSettlementResources} from './settlement-resources.mjs';
++import {foregroundClaimScopeR80,foregroundClaimTargetsR80} from './reward-actor-scope-r80.mjs';
+ 
+ // Private parent pipe. HP and contribution proposals live only in the world
+ // owner; this book retains authority until the source confirms local promotion.
+@@ -80,10 +81,31 @@
+   const held={row,token:randomUUID(),phase:'freezing',channels:[],sourcePlayers,sessions:captureReturnSessions(this.core)};if(retiredActorIsolation)held.abortOwners=captureSharedAbortOwners(this.core);held.stoppedCandidates=captureStoppedR533(this.core,sourcePlayers);held.stopped=new Map();this.terminal=held;row.terminal=held;
+   try{
+    const channels=[...this.core.processes.values()].filter(c=>c.online);demand(channels.length===4,'shared_terminal_channels');
++   // Keep the same signed world lease, source durable barrier, native command
++   // and receipt. Only an audited, completed boss/stone claim may select fewer
++   // resident holds. Drain shared contributions before deriving its SQL scope.
++   if(actorFaultIsolation&&sourcePlayers.length===1&&foregroundClaimTargetsR80(payload.foregroundClaimR80)){
++    await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});
++    const scope=foregroundClaimScopeR80(this.core.database.sqlite,payload.foregroundClaimR80,row.source.actor,peer.channel);
++    if(scope)held.foregroundClaimR80={scope,input:JSON.stringify(payload.foregroundClaimR80)};
++   }
++   if(held.foregroundClaimR80){
++    const selected=held.foregroundClaimR80.only=new Map(channels.map(c=>[c.peer.channel,[]]));
++    for(const id of held.foregroundClaimR80.scope.actors){
++     const stopped=held.stoppedCandidates.get(id);
++     if(stopped){selected.get(stopped.peer.channel).push({id,epoch:stopped.epoch});continue;}
++     const live=this.core.authority.admission(id)||this.core.authority.simulation?.(id);if(!live)continue;
++     const owner=this.core.authority.owner(id),channel=channels.find(c=>c.peer.channel===owner?.channel&&c.peer.incarnation===owner.incarnation);
++     demand(channel&&owner.epoch===live.epoch&&owner.channel===live.channel,'shared_claim_owner_fenced');
++     selected.get(channel.peer.channel).push({id,epoch:owner.epoch});
++    }
++   }
+    const holds=channels.map(async channel=>{
+     const freezes=[...this.core.permanent.entries.values()].filter(e=>e.phase==='freezing'&&e.owner?.channel===channel.peer.channel&&e.owner?.incarnation===channel.peer.incarnation).map(e=>({id:e.id,epoch:e.owner.epoch,token:e.token}));
+     for(const e of this.core.transitions.values())if(e.phase==='freezing'&&e.owner.channel===channel.peer.channel&&e.owner.incarnation===channel.peer.incarnation)freezes.push(e.request);
+-    const answer=await channel.control.request('shared_hold',{token:held.token,except:channel.peer.channel===peer.channel?sourcePlayers:[],freezes,stopped:[...held.stoppedCandidates.values()].filter(p=>p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation)});demand(answer.token===held.token&&answer.channel===channel.peer.channel&&answer.incarnation===channel.peer.incarnation&&Array.isArray(answer.actors),'shared_hold_ack');held.channels.push({channel,answer});
++    const only=held.foregroundClaimR80?.only.get(channel.peer.channel),except=channel.peer.channel===peer.channel?sourcePlayers:[];
++    const answer=await channel.control.request('shared_hold',{token:held.token,except,freezes,...(only?{only}:{}),stopped:[...held.stoppedCandidates.values()].filter(p=>p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation&&(!only||only.some(a=>a.id===p.actor&&a.epoch===p.epoch)))});demand(answer.token===held.token&&answer.channel===channel.peer.channel&&answer.incarnation===channel.peer.incarnation&&Array.isArray(answer.actors),'shared_hold_ack');held.channels.push({channel,answer});
++    if(only&&!answer.aborted){const reported=[...answer.actors,...(answer.stoppedActors??[]).map(a=>({id:a.actor,epoch:a.epoch})),...except];demand(answer.actors.every(a=>only.some(p=>p.id===a.id&&p.epoch===a.epoch))&&only.every(p=>reported.some(a=>a.id===p.id&&a.epoch===p.epoch)),'shared_claim_hold_scope');}
+    });
+    if(actorFaultIsolation){
+     // Join every started hold before deciding whether pre-commit preparation
+@@ -107,11 +129,13 @@
+     demand(p&&p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation&&actor.epoch===p.epoch&&actor.token===p.token&&actor.finalSequence===p.finalSequence&&stoppedOwnerMatchesR533(this.core,p),'shared_stopped_actor_proof');held.stopped.set(p.actor,p);
+    }
+    await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});held.phase='frozen';
+-   return {prepared:true,players:[...held.channels.flatMap(c=>c.answer.actors.map(a=>a.id)),...held.stopped.keys()],...(held.stopped.size?{stoppedPlayers:[...held.stopped.keys()]}:{})};
++   if(held.foregroundClaimR80&&!this.claimScopeCurrent(held)){await this.abortTerminal(row);return {prepared:false,rejected:true};}
++   return {prepared:true,players:held.foregroundClaimR80?held.foregroundClaimR80.scope.actors.filter(id=>!sourcePlayers.some(p=>p.id===id)):[...held.channels.flatMap(c=>c.answer.actors.map(a=>a.id)),...held.stopped.keys()],...(held.stopped.size?{stoppedPlayers:[...held.stopped.keys()]}:{})};
+   }catch(error){this.fail(error,{error:error,requestMethod:'shared_prepare'});throw error;}
+  }
+  assertWrite(sql,payload,context){
+   const held=this.terminal,row=held?.row;demand(held?.phase==='frozen'&&row.source.actor===context.actor&&row.source.epoch===context.epoch&&row.source.incarnation===context.peer.incarnation&&payload.sharedLease===row.proof,'shared_terminal_writer_fenced');
++  this.assertClaimCommand(held,payload,'native_action');
+   for(const p of held.stopped?.values()??[])demand(stoppedOwnerMatchesR533(this.core,p,sql),'shared_stopped_actor_changed');
+   for(const {channel,answer}of held.channels)for(const actor of answer.actors){const current=this.core.authority.owner(actor.id,sql);demand(current?.channel===channel.peer.channel&&current.incarnation===channel.peer.incarnation&&current.epoch===actor.epoch&&current.sequence===actor.sequence,'shared_terminal_actor_changed');}
+   return true;
+@@ -130,7 +154,24 @@
+   // every unauthorized write. Earlier work must drain while phase=freezing.
+   for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);await this.terminalIdle();this.core.process(peer);}
+  }
+- guard(peer,request){const held=this.blocking(peer,request);if(held){const context=this.conflict('reject',peer,request,held);try{demand(false,'shared_terminal_actor_fenced');}catch(error){error.context=context;throw error;}}return true;}
++ claimScopeCurrent(held){const claim=held.foregroundClaimR80;return !claim||JSON.stringify(foregroundClaimScopeR80(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
++ assertClaimCommand(held,payload,operation){
++  const claim=held?.foregroundClaimR80;if(!claim)return;
++  const actors=new Set(claim.scope.actors),resources=payload.resources??[],ids=resources.filter(k=>k.startsWith('player:')).map(k=>k.slice(7));
++  demand(operation==='native_action'&&JSON.stringify(payload.input)===claim.input&&ids.every(id=>actors.has(id))&&claim.scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
++ }
++ guard(peer,request){
++  const active=this.terminal;
++  if(active?.foregroundClaimR80&&request.payload?.sharedLease===active.row.proof){
++   this.assertClaimCommand(active,request.payload,request.operation);
++   // The first guard runs before any native SQL/RNG and its rejection is
++   // certified only after the existing writer ROLLBACK. The post-write guard
++   // still checks every actual player write, but cannot reread participants
++   // which the successful native boss award legitimately deletes.
++   if(!this.core.writer.playerWrites.active)demand(this.claimScopeCurrent(active),'shared_terminal_actor_fenced');
++  }
++  const held=this.blocking(peer,request);if(held){const context=this.conflict('reject',peer,request,held);try{demand(false,'shared_terminal_actor_fenced');}catch(error){error.context=context;throw error;}}return true;
++ }
+  ownsStatus(peer,request){
+   const h=this.terminal,r=h?.row,q=r?.commandRequest;
+   return Boolean(h?.phase==='frozen'&&q&&r.source.channel===peer.channel&&r.source.incarnation===peer.incarnation&&q.operationId===request.operationId&&q.playerId===request.playerId&&q.epoch===request.epoch&&q.sequence===request.sequence&&q.operation===request.operation);
+--- a/core511-source/scripts/core511/shared-combat-channel.mjs
++++ b/core511-source/scripts/core511/shared-combat-channel.mjs
+@@ -14,6 +14,7 @@
+ import {sharedNeeds} from './generated/shared-lease-selection.mjs';
+ import {heartbeatRestFrame} from './heartbeat-writer.mjs';
+ import {RetaliationMemory} from './retaliation-memory.mjs';
++import {foregroundClaimTargetsR80} from './reward-actor-scope-r80.mjs';
+ 
+ const empty=()=>({monsters:[],participants:[],bossParticipants:[],combatEvents:[]});
+ const key=(kind,p)=>JSON.stringify(kind==='participants'?[p.monster_id,p.spawn_round,p.player_id]:[p.boss_round,p.player_id]);
+@@ -65,7 +66,7 @@
+  ownsMonster(id){return this.planning?.lease.keys.includes('monster:'+id)===true;}
+  scope(row,extra={}){return {actor:row.actor,epoch:row.epoch,id:row.id,proof:row.proof,...extra};}
+  hasShared(keys){return keys.some(key=>key.startsWith('monster:')&&this.channel.view.monster(key.slice(8))?.channel===0);}
+- read(context,{keys,seed,kind,plan,payload,commit,apply=null,response=value=>value.result,type='action',after=async()=>{},reply=true}){
++ read(context,{keys,seed,kind,plan,payload,commit,prepare=()=>({}),apply=null,response=value=>value.result,type='action',after=async()=>{},reply=true}){
+   if(this.runtime.sharedPaused&&!context.kernel.players.get(context.id)?.quiescer)return DEFER_INPUT;
+   const c=this.channel,{id,kernel}=context,row={id:randomUUID(),actor:id,epoch:c.owners.get(id).epoch,ids:[id],phase:'waiting',lease:null};this.pending.set(id,row);
+   row.completion=kernel.durableGroup([id],async()=>{
+@@ -74,7 +75,7 @@
+     keys=[...new Set([...keys,...grant.snapshot.monsters.map(m=>'monster:'+m.id),...[...c.view.monsters.values()].filter(m=>m.channel===c.peer.channel&&m.area===c.view.player(id).area).map(m=>'monster:'+m.id)])];while(!(row.lease=c.lanes.acquire(keys,row.id)))await c.lanes.available(keys);row.phase='executing';
+     this.planning=row;let result;try{const rng=new OperationRandom(seed);result=plan(()=>rng.roll());demand(!result.deferred,'shared_read_plan_changed');}finally{this.planning=null;}
+     if(result.durable){
+-     await drainCombatCheckpoints(c,[id]);row.prepareStarted=true;const prepared=await this.runtime.request('shared_prepare',this.scope(row,{players:[id]}));if(actorFaultIsolation&&prepared?.prepared===false&&prepared.rejected===true)return await this.rejectedPreparation(row);demand(prepared.prepared,'shared_read_prepare');
++     await drainCombatCheckpoints(c,[id]);row.prepareStarted=true;const prepared=await this.runtime.request('shared_prepare',this.scope(row,{players:[id],...prepare()}));if(actorFaultIsolation&&prepared?.prepared===false&&prepared.rejected===true)return await this.rejectedPreparation(row);demand(prepared.prepared,'shared_read_prepare');
+      const ack=await c.writer.submit({actor:id,key:'shared:'+row.id,kind,payload:{...payload(),seed,resources:[...row.lease.keys,...prepared.players.map(pid=>'player:'+pid)],sharedLease:row.proof}});demand(ack.key==='shared:'+row.id&&ack.result,'shared_read_ack');c.lanes.assert(row.lease);const value=this.residentResult(ack.result,prepared);if(apply)await apply(value);else{await c.applyCommit(value);c.checkpoints.hydrate(c.view.player(id));c.encounters.hydrateCommitted(id,value.engagement);}result={result:response(value),events:value.events};await this.runtime.request('shared_finish',this.scope(row,{changes:empty()}));
+     }else{await this.runtime.request('shared_finish',this.scope(row,{changes:empty()}));c.lanes.assert(row.lease);commit(result);}
+     for(const event of result.events??[])c.ports.publish(...event);await this.runtime.request('shared_complete',this.scope(row));c.lanes.release(row.lease);this.pending.delete(id);await after();return result;
+@@ -85,9 +86,11 @@
+   const c=this.channel,{id,input,now,receivedAtMs=now}=context;
+   // Native collection, party membership and arena admission can affect other
+   // actors. Cached room membership is not authority for their cold SQL reads.
+-  // Reuse the accepted-input FIFO and existing all-owner cold barrier; all
+-  // foreign residents reload the committed native rows before release.
++  // Reuse the accepted-input FIFO and native cold barrier. The parent may
++  // derive a bounded recipient scope for audited boss/stone claims only;
++  // every held foreign resident refreshes its committed rows before release.
+   return this.read(context,{keys:['player:'+id],seed:OperationRandom.seed(),kind:'native_action',plan:()=>({durable:true}),
++   prepare:()=>foregroundClaimTargetsR80(input)?{foregroundClaimR80:input}:{},
+    payload:()=>({input,nowMs:now,receivedAtMs,expected:{player:c.frames.frame(id),settings:c.settings}}),
+    apply:async value=>{await c.applyCommit({...value,players:value.players.filter(p=>p.id===id)});c.checkpoints.hydrate(c.view.player(id));c.encounters.hydrateCommitted(id,value.encounters.find(([pid])=>pid===id)?.[1]??null);}
+   });
+@@ -186,11 +189,13 @@
+   await r.control(payload.bundle.owner.passive===1?'admit_passive':'admit',payload);await c.kernel.quiesce(identity.actor,identity.epoch);const p=c.kernel.players.get(identity.actor);p.externalHold=token;
+   h.actors.push({id:identity.actor,epoch:identity.epoch,p,lease,borrowed:false,quiesced:true,suspended:Boolean(global)});if(global)global.actors.push({id:identity.actor,epoch:identity.epoch});return {token,id:identity.actor,epoch:identity.epoch,admitted:true};
+  }
+- async hold({token,except,freezes=[],stopped=[]}){
+-  demand(!this.held&&typeof token==='string'&&Array.isArray(except),'shared_hold_scope');const c=this.channel,h={token,actors:[],stoppedActors:[],phase:'reserving',except};if(actorFaultIsolation)h.interrupted=new Promise(resolve=>h.interrupt=resolve);this.held=h;
++ async hold({token,except,freezes=[],stopped=[],only=null}){
++  demand(!this.held&&typeof token==='string'&&Array.isArray(except),'shared_hold_scope');const c=this.channel;
++  demand(only===null||Array.isArray(only)&&new Set(only.map(a=>a.id)).size===only.length&&only.every(a=>typeof a.id==='string'&&Number.isSafeInteger(a.epoch)&&c.owners.get(a.id)?.epoch===a.epoch),'shared_hold_selected_scope');
++  const h={token,actors:[],stoppedActors:[],phase:'reserving',except,only};if(actorFaultIsolation)h.interrupted=new Promise(resolve=>h.interrupt=resolve);this.held=h;
+   try{
+-   await this.runtime.flushPresence();await this.runtime.mailbox.hold(token,[...c.owners.keys()]);if(this.runtime.sharedPending)await this.runtime.sharedPending;
+-   for(const [id,owner]of c.owners){if(except.some(p=>p.id===id&&p.epoch===owner.epoch))continue;
++   await this.runtime.flushPresence();await this.runtime.mailbox.hold(token,only?only.map(a=>a.id):[...c.owners.keys()]);if(this.runtime.sharedPending)await this.runtime.sharedPending;
++   for(const [id,owner]of c.owners){if(only&&!only.some(p=>p.id===id&&p.epoch===owner.epoch)||except.some(p=>p.id===id&&p.epoch===owner.epoch))continue;
+     const skip=stopped.find(p=>p.actor===id&&p.epoch===owner.epoch);if(skip&&stoppedChannelProofR533(c,skip)){h.stoppedActors.push({actor:id,epoch:skip.epoch,token:skip.token,finalSequence:skip.finalSequence});continue;}
+     const p=c.kernel.players.get(id);let lease=null,borrowed=false,coldRequest=null;
+     for(;;){
+@@ -225,7 +230,7 @@
+     }
+     const entry={id,epoch:owner.epoch,p,suspended:p.suspended,...(actorFaultIsolation?{externalHold:p.externalHold}:{}),lease,borrowed,cold:coldRequest};h.actors.push(entry);p.externalHold=token;p.suspended=true;
+    }
+-   h.phase='draining';await drainCombatCheckpoints(c,h.actors.map(a=>a.id));h.phase='held';
++   h.phase='draining';if(!only||h.actors.length)await drainCombatCheckpoints(c,h.actors.map(a=>a.id));h.phase='held';
+    return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,...(h.stoppedActors.length?{stoppedActors:h.stoppedActors}:{}),actors:h.actors.map(a=>({id:a.id,epoch:a.epoch,sequence:c.writer.finalSequence(a.id),rates:c.owners.get(a.id).passive===1?null:this.runtime.rates.snapshot(c.identities.get(a.id))}))};
+   }catch(error){
+    const rejected=actorFaultIsolation&&actorRejection(error);
+@@ -237,7 +242,7 @@
+   }
+  }
+  pendingActor(id,epoch){
+-  const h=this.held;if(!actorFaultIsolation||h?.phase!=='reserving'||h.except.some(a=>a.id===id&&a.epoch===epoch))return;
++  const h=this.held;if(!actorFaultIsolation||h?.phase!=='reserving'||h.except.some(a=>a.id===id&&a.epoch===epoch)||h.only&&!h.only.some(a=>a.id===id&&a.epoch===epoch))return;
+   const q=retiredActorIsolation&&this.channel.quarantines?.entries.get(id),proof=q&&actorRejection(q.error),quarantined=q?.epoch===epoch&&proof?.actor===id&&proof.epoch===epoch;
+   if(!quarantined&&!this.runtime.commandRecovery?.hasActor(id,{confirmedOnly:true}))return;
+   // Only reservation can be cancelled. No entered shared command is undone.
+--- a/core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs
++++ b/core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs
+@@ -1,3 +1,5 @@
++import {scopedRewardActorsR79} from './reward-actor-scope-r80.mjs';
++export {scopedRewardActorsR79} from './reward-actor-scope-r80.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {OperationRandom} from './operation-random.mjs';
+ import {createAttackWriterRules} from './generated/attack-writer-rules.mjs';
+@@ -23,23 +25,6 @@
+  return null;
+ }
+ 
+-export function scopedRewardActorsR79(sql,target){
+- let actors;
+- if(target.kind==='drops')actors=target.rows.map(row=>row.owner);
+- else if(target.kind==='boss')actors=prepareCached477(sql,`SELECT bp.player_id AS id FROM boss_participants bp JOIN players p ON p.id=bp.player_id
+-  WHERE bp.boss_round=? AND bp.total_damage>0 UNION SELECT mp.player_id AS id FROM monster_participants mp JOIN players p ON p.id=mp.player_id
+-  WHERE mp.spawn_round=? AND (mp.monster_id='dunya-bosu-1' OR EXISTS(SELECT 1 FROM loadlab_boss_rounds_v1 lab WHERE lab.monster_id=mp.monster_id AND lab.boss_round=mp.spawn_round))`).all(target.round,target.round).map(row=>row.id);
+- else{
+-  actors=prepareCached477(sql,`SELECT mp.player_id AS id FROM monster_participants mp JOIN players p ON p.id=mp.player_id
+-   WHERE mp.monster_id=? AND mp.spawn_round=?`).all(target.id,target.round).map(row=>row.id);
+- }
+- // All historical participants, not only unpaid loot owners, plus their
+- // parties cover native XP repair/sharing, including offline recipients.
+- // Native reward/XP receipt eligibility is unchanged during delivery.
+- const ids=new Set(actors);
+- if(target.kind!=='drops')for(const id of actors)for(const row of prepareCached477(sql,`SELECT team.player_id AS id FROM party_members mine JOIN party_members team ON team.party_id=mine.party_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?`).all(id))ids.add(row.id);
+- return [...ids].filter(id=>prepareCached477(sql,'SELECT 1 FROM players WHERE id=?').get(id)).sort();
+-}
+ 
+ export class ScopedRewardMaintenanceR79 {
+  constructor(world){this.world=world;this.core=world.core;this.held=null;this.trace=[];this.core.writer.scopedRewardsR79=this;}

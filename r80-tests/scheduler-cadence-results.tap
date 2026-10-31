@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: ordinary one-second maintenance is unchanged without a reward backlog
+ok 1 - ordinary one-second maintenance is unchanged without a reward backlog
+  ---
+  duration_ms: 5.294833
+  type: 'test'
+  ...
+# Subtest: 50 ms scoped reward retries preserve reward progress without multiplying ordinary maintenance
+ok 2 - 50 ms scoped reward retries preserve reward progress without multiplying ordinary maintenance
+  ---
+  duration_ms: 13.542986
+  type: 'test'
+  ...
+# Subtest: 50 ms normal reward recovery preserve reward progress without multiplying ordinary maintenance
+ok 3 - 50 ms normal reward recovery preserve reward progress without multiplying ordinary maintenance
+  ---
+  duration_ms: 6.300811
+  type: 'test'
+  ...
+# Subtest: 250 ms deferred normal recovery preserve reward progress without multiplying ordinary maintenance
+ok 4 - 250 ms deferred normal recovery preserve reward progress without multiplying ordinary maintenance
+  ---
+  duration_ms: 1.800581
+  type: 'test'
+  ...
+# Subtest: 1000 ms deferred scoped rewards preserve reward progress without multiplying ordinary maintenance
+ok 5 - 1000 ms deferred scoped rewards preserve reward progress without multiplying ordinary maintenance
+  ---
+  duration_ms: 1.392439
+  type: 'test'
+  ...
+# Subtest: a deferred reward at 50 ms cannot postpone maintenance due at 1000 ms
+ok 6 - a deferred reward at 50 ms cannot postpone maintenance due at 1000 ms
+  ---
+  duration_ms: 0.522954
+  type: 'test'
+  ...
+# Subtest: slow work does not replay missed maintenance intervals in a burst
+ok 7 - slow work does not replay missed maintenance intervals in a burst
+  ---
+  duration_ms: 0.54029
+  type: 'test'
+  ...
+# Subtest: a backward clock jump does not duplicate work or create a catch-up burst
+ok 8 - a backward clock jump does not duplicate work or create a catch-up burst
+  ---
+  duration_ms: 0.414312
+  type: 'test'
+  ...
+# Subtest: pending reward I/O prevents overlapping scheduler work
+ok 9 - pending reward I/O prevents overlapping scheduler work
+  ---
+  duration_ms: 7.48677
+  type: 'test'
+  ...
+# Subtest: drain waits for accepted reward work and prevents new ticks
+ok 10 - drain waits for accepted reward work and prevents new ticks
+  ---
+  duration_ms: 0.899359
+  type: 'test'
+  ...
+# Subtest: cleanup keeps its own 30-second boundary during fast rewards
+ok 11 - cleanup keeps its own 30-second boundary during fast rewards
+  ---
+  duration_ms: 13.039491
+  type: 'test'
+  ...
+# Subtest: deferred cleanup retries once per second during fast rewards
+ok 12 - deferred cleanup retries once per second during fast rewards
+  ---
+  duration_ms: 1.34682
+  type: 'test'
+  ...
+# Subtest: upkeep failure stops the run before reward work and preserves failure state
+ok 13 - upkeep failure stops the run before reward work and preserves failure state
+  ---
+  duration_ms: 0.738478
+  type: 'test'
+  ...
+# Subtest: fast reward failure is not hidden by the maintenance cadence
+ok 14 - fast reward failure is not hidden by the maintenance cadence
+  ---
+  duration_ms: 0.315533
+  type: 'test'
+  ...
+# Subtest: invalid retry remains rejected: scoped_reward_retry_bound
+ok 15 - invalid retry remains rejected: scoped_reward_retry_bound
+  ---
+  duration_ms: 0.319189
+  type: 'test'
+  ...
+# Subtest: invalid retry remains rejected: reward_recovery_retry_bound
+ok 16 - invalid retry remains rejected: reward_recovery_retry_bound
+  ---
+  duration_ms: 1.595153
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64.526893

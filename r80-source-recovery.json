@@ -1,0 +1,353 @@
+{
+  "recovered": [
+    {
+      "path": "abandoned-normal.mjs",
+      "archive": "r64-inspect.zip!GAME_R64.zip!modules/r63-verification.zip",
+      "member": "payload/core511-source/scripts/core511/abandoned-normal.mjs"
+    },
+    {
+      "path": "read-worker.mjs",
+      "archive": "r64-inspect.zip!GAME_R64.zip!modules/r63-verification.zip",
+      "member": "payload/core511-source/scripts/core511/read-worker.mjs"
+    },
+    {
+      "path": "reward-recovery-r52.mjs",
+      "archive": "r64-inspect.zip!GAME_R64.zip!modules/r63-verification.zip",
+      "member": "payload/core511-source/scripts/core511/reward-recovery-r52.mjs"
+    },
+    {
+      "path": "reward-recovery-r62.mjs",
+      "archive": "r64-inspect.zip!GAME_R64.zip!modules/r63-verification.zip",
+      "member": "payload/core511-source/scripts/core511/reward-recovery-r62.mjs"
+    },
+    {
+      "path": "entry-write-window-r67.mjs",
+      "archive": "CORE511_R67_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/entry-write-window-r67.mjs"
+    },
+    {
+      "path": "first-steps-anchor-r67.mjs",
+      "archive": "CORE511_R67_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/first-steps-anchor-r67.mjs"
+    },
+    {
+      "path": "generated/client/core511-first-steps-r67-525006f922521fde.js",
+      "archive": "CORE511_R67_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/first-steps-anchor-r67.mjs"
+    },
+    {
+      "path": "generated/client/game-client-core511-r67-6bed7e102778aff4.js",
+      "archive": "CORE511_R67_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/game-client-core511-r67-6bed7e102778aff4.js"
+    },
+    {
+      "path": "generated/client/core511-gameplay-r69-ec0e405322bc1d3b.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-gameplay-r69-ec0e405322bc1d3b.js"
+    },
+    {
+      "path": "generated/client/core511-r40-icons-r69-16445e30a5872c06.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-r40-icons-r69-16445e30a5872c06.js"
+    },
+    {
+      "path": "generated/client/core511-r43-ui-r69-2cbb3cbf17d4e556.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-r43-ui-r69-2cbb3cbf17d4e556.js"
+    },
+    {
+      "path": "generated/client/core511-tower-art-r69-db590592a52dc7dd.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-tower-art-r69-db590592a52dc7dd.js"
+    },
+    {
+      "path": "generated/client/core511-tower-r69-113bf845d357351f.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-tower-r69-113bf845d357351f.js"
+    },
+    {
+      "path": "generated/client/core511-transport-r69-5934fc88485f309d.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-transport-r69-5934fc88485f309d.js"
+    },
+    {
+      "path": "generated/client/game-client-core511-r69-c4c0efca60d06513.js",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/game-client-core511-r69-c4c0efca60d06513.js"
+    },
+    {
+      "path": "polish-client-r62.mjs",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/polish-client-r62.mjs"
+    },
+    {
+      "path": "tests/adventure-r19.test.mjs",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tests/adventure-r19.test.mjs"
+    },
+    {
+      "path": "tests/mist-integration-r19.test.mjs",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tests/mist-integration-r19.test.mjs"
+    },
+    {
+      "path": "tower-client.mjs",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tower-client.mjs"
+    },
+    {
+      "path": "tower-material-icons-r40.mjs",
+      "archive": "CORE511_R69_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tower-material-icons-r40.mjs"
+    },
+    {
+      "path": "adventure-channel.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/adventure-channel.mjs"
+    },
+    {
+      "path": "adventure-client.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/adventure-client.mjs"
+    },
+    {
+      "path": "adventure-schema.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/adventure-schema.mjs"
+    },
+    {
+      "path": "client-presentation-options.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/client-presentation-options.mjs"
+    },
+    {
+      "path": "generated/client/admin-client-core511-r70-5a63a308e7bfabda.js",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/admin-client-core511-r70-5a63a308e7bfabda.js"
+    },
+    {
+      "path": "generated/client/core511-quests-r70-2792b663bdaba7a3.js",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-quests-r70-2792b663bdaba7a3.js"
+    },
+    {
+      "path": "generated/client/core511-tower-r70-ab4e75a98abe2e49.js",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-tower-r70-ab4e75a98abe2e49.js"
+    },
+    {
+      "path": "generated/client/core511-transport-r70-dae42bd4459f9608.js",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-transport-r70-dae42bd4459f9608.js"
+    },
+    {
+      "path": "generated/client/game-client-core511-r70-acc4856781dba977.js",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/game-client-core511-r70-acc4856781dba977.js"
+    },
+    {
+      "path": "mist-reward-popup-r70.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/mist-reward-popup-r70.mjs"
+    },
+    {
+      "path": "quest-config-r70.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/quest-config-r70.mjs"
+    },
+    {
+      "path": "quest-objectives-r70.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/quest-objectives-r70.mjs"
+    },
+    {
+      "path": "quests-admin-r70.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/quests-admin-r70.mjs"
+    },
+    {
+      "path": "r44-client.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/r44-client.mjs"
+    },
+    {
+      "path": "r45-client.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/r45-client.mjs"
+    },
+    {
+      "path": "r46-client.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/r46-client.mjs"
+    },
+    {
+      "path": "remote-playback-r44.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/remote-playback-r44.mjs"
+    },
+    {
+      "path": "tests/r20-queued-movement-server.test.mjs",
+      "archive": "CORE511_R70_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tests/r20-queued-movement-server.test.mjs"
+    },
+    {
+      "path": "attack-loop.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/attack-loop.mjs"
+    },
+    {
+      "path": "attack-writer.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/attack-writer.mjs"
+    },
+    {
+      "path": "channel-motion.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/channel-motion.mjs"
+    },
+    {
+      "path": "dungeon-freeze-scope-r71.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/dungeon-freeze-scope-r71.mjs"
+    },
+    {
+      "path": "dungeon-motion-resume-r71.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/dungeon-motion-resume-r71.mjs"
+    },
+    {
+      "path": "generated/client/game-client-core511-r71-efdc48cbecfa0289.js",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/game-client-core511-r71-efdc48cbecfa0289.js"
+    },
+    {
+      "path": "instance-reward-scope-r71.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/instance-reward-scope-r71.mjs"
+    },
+    {
+      "path": "joined-checkpoint-r53.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/joined-checkpoint-r53.mjs"
+    },
+    {
+      "path": "local-reward-scope.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/local-reward-scope.mjs"
+    },
+    {
+      "path": "permanent-coordinator.mjs",
+      "archive": "CORE511_R71_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/permanent-coordinator.mjs"
+    },
+    {
+      "path": "admin-navigation-r66.mjs",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/admin-navigation-r66.mjs"
+    },
+    {
+      "path": "generated/client/core511-admin-nav-r66-712de6ba4040fcaa.js",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/admin-navigation-r66.mjs"
+    },
+    {
+      "path": "admin-settings-r65.mjs",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/admin-settings-r65.mjs"
+    },
+    {
+      "path": "generated/client/admin-client-core511-r66-2d71c96186ebc647.js",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/admin-client-core511-r66-2d71c96186ebc647.js"
+    },
+    {
+      "path": "ipc-read-parts.mjs",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/ipc-read-parts.mjs"
+    },
+    {
+      "path": "patch-admin-saves-r66.mjs",
+      "archive": "CORE511_R66_TOPLU_DUZELTILMIS.zip!PANEL_R66.zip",
+      "member": "payload/core511-source/scripts/core511/patch-admin-saves-r66.mjs"
+    },
+    {
+      "path": "azrail-r62.mjs",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/azrail-r62.mjs"
+    },
+    {
+      "path": "generated/client/core511-gameplay-r68-93b78b42f35a38e1.js",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-gameplay-r68-93b78b42f35a38e1.js"
+    },
+    {
+      "path": "generated/client/core511-tower-r68-09143f938b291bba.js",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/core511-tower-r68-09143f938b291bba.js"
+    },
+    {
+      "path": "generated/client/game-client-core511-r68-bb8cdac0ab671593.js",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/generated/client/game-client-core511-r68-bb8cdac0ab671593.js"
+    },
+    {
+      "path": "launch-ui-r68.mjs",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/launch-ui-r68.mjs"
+    },
+    {
+      "path": "mount-client-r49.mjs",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/mount-client-r49.mjs"
+    },
+    {
+      "path": "tower-rules.mjs",
+      "archive": "CORE511_R68_TOPLU.zip",
+      "member": "payload/core511-source/scripts/core511/tower-rules.mjs"
+    }
+  ],
+  "missing": [
+    "action-writer.mjs",
+    "adventure-service.mjs",
+    "afk-channel.mjs",
+    "afk-client.mjs",
+    "afk-service.mjs",
+    "compose-native-http.mjs",
+    "dungeon-projection.mjs",
+    "extract-reward-services.mjs",
+    "generated/native-http-services-proof.json",
+    "generated/native-http-services.mjs",
+    "generated/reward-services-proof.json",
+    "generated/reward-services.mjs",
+    "native-configuration.mjs",
+    "native-presence-lease.mjs",
+    "native-presence.mjs",
+    "player-jobs.mjs",
+    "remote-movement.mjs",
+    "remote-playback-r45.mjs",
+    "resident-world-transition.mjs",
+    "tests/process-cold-upkeep.test.mjs",
+    "nonlethal-rewards-r56.mjs",
+    "patch-admin-settings-r65.mjs",
+    "action-conflict-log-r65.mjs",
+    "dungeon-peer-motion-r72.mjs",
+    "generated/client/core511-transport-r72-2def200d709afcba.js",
+    "generated/client/game-client-core511-r72-10f67c795498b37b.js",
+    "patch-guild-voice-renew-r72.mjs",
+    "patch-trade-idle-r72.mjs",
+    "remote-playback-r72.mjs",
+    "generated/client/game-client-core511-r73-be706e266c9b01a4.js",
+    "peer-pose-r73.mjs",
+    "generated/client/game-client-core511-r75-b69215a7f9a7341d.js",
+    "peer-pose-r75.mjs",
+    "daily-monster-rewards-r76.mjs",
+    "generated/client/game-client-core511-r76-63da43f1e5d71be7.js",
+    "generated/enchantment-settings-r76-proof.json",
+    "monster-ranking-r76.mjs",
+    "native-admin-player-r76.mjs",
+    "tests/enchantment-settings-r76.test.mjs",
+    "generated/client/admin-client-core511-r77-cd330aeddc742cd8.js",
+    "generated/client/core511-afk-r77-669a59aad349230a.js",
+    "generated/client/game-client-core511-r77-b2743163841c6721.js"
+  ]
+}

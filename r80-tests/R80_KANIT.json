@@ -1,0 +1,219 @@
+{
+  "version": "R80_GAMEPLAY",
+  "sourceVersion": "R79_GAMEPLAY",
+  "dateUtc": "2026-10-31",
+  "status": "TARGETED_TESTS_PASSED_LIVE_VALIDATION_PENDING",
+  "productionFiles": {
+    "core511-source/scripts/core511/shared-world-jobs.mjs": {
+      "before": "85b58bb289c54f6a75d954214ac8674a8421eecb23ea3e3e8f13ece41ad59403",
+      "after": "8bab0b173cb9486f1906863417fc5e4c09ca7de933318606d50c619d72b07d72",
+      "bytes": 6188
+    },
+    "core511-source/scripts/core511/checkpoint-runtime-r79.mjs": {
+      "before": "cd4add6ea79ab5b4713105ba25a3f79e8f247170520635bba4ba8daa4bdc85f8",
+      "after": "3943e0593e1bffeff63040195c8c6d1ff00b1ac1df53a9a0a4e71d2dd27b4960",
+      "bytes": 9350
+    },
+    "native510-bb3a6cc689c6/vds-server/src/wal-checkpoint.mjs": {
+      "before": "f185be8fe05f05994cdccbb6666f29d358724987d7fa290e4674f5ba75577cfa",
+      "after": "049ca592fe8ff68dc0d76479f8df7c8328b4dacb9b34d6cf05bdf3d5f29ee630",
+      "bytes": 11496
+    },
+    "core511-source/scripts/core511/writer-lane-r533.mjs": {
+      "before": "66fb3d82fb3109a014940230f2e0a0b81867fc6f34de7a40fcc67692431ab785",
+      "after": "e87fc32b831222b25196edc0819583ecb50c17b26c499b36b9378cd7fb207ed7",
+      "bytes": 3953
+    },
+    "core511-source/scripts/core511/runtime-health-r80.mjs": {
+      "before": null,
+      "after": "32e4b16929b737d9acfadcc1c74c4512944a158f5d46679e65af7a4d929dbc29",
+      "bytes": 4428
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "bb5f892a586321c4d872d3a2e8275a4c57cfd1040f901368c36c848bef99b3dd",
+      "after": "2342dbbcd208adc11778969b75001e8b4985c0a100abd0435cab80813a7d824c",
+      "bytes": 15094
+    }
+  },
+  "productionDeltaBytes": 50509,
+  "r79BaseRows": 1163,
+  "r79CoreSHA256": "0a49e21b27dba009bf3ab90b87ca3e3ebbd182cbf98e60f7bac767385b3c070a",
+  "testGroups": [
+    {
+      "group": "scheduler",
+      "passed": 30,
+      "failed": 0,
+      "logs": [
+        {
+          "path": "r80-tests/scheduler-cadence-results.tap",
+          "sha256": "e43bc5cf2f3a5a32e1e5b1c2b4b0b7bd87d51dc73ea13fb53eee2a9ca721e855",
+          "passed": 16
+        },
+        {
+          "path": "r80-tests/scheduler-transition-results.tap",
+          "sha256": "8afc35ad40f9fa4c97501dc5feeaef163ff4dfeedfc81f23aab7feeebf234c5c",
+          "passed": 12
+        },
+        {
+          "path": "r80-tests/scheduler-baseline-results.tap",
+          "sha256": "e936847e1e98ff94658d82926fd45b9d172f1af92a41af8d1eae0437f9029468",
+          "passed": 2
+        }
+      ]
+    },
+    {
+      "group": "checkpoint",
+      "passed": 10,
+      "failed": 0,
+      "logs": [
+        {
+          "path": "r80-tests/checkpoint-results.tap",
+          "sha256": "fa4829793a41d6e5e2230587e0e83533f68138411a713cbdf03bf06a06896b52",
+          "passed": 10
+        }
+      ]
+    },
+    {
+      "group": "runtime_diagnostics",
+      "passed": 12,
+      "failed": 0,
+      "logs": [
+        {
+          "path": "r80-tests/runtime-health-results.tap",
+          "sha256": "7faa46ca1891fc3da78a3ac9e7416d214cd4983d33d4bc4891be79d7b67480b4",
+          "passed": 12
+        }
+      ]
+    },
+    {
+      "group": "installer",
+      "passed": 46,
+      "failed": 0,
+      "logs": [
+        {
+          "path": "r80-tests/installer-results.txt",
+          "sha256": "0a68ca47ca04ed067630447df6ceb2d39945b3ab45054a898161024dcb50669d",
+          "passed": 27
+        },
+        {
+          "path": "r80-tests/installer-gates-results.txt",
+          "sha256": "021f16b9be0d28001e5e44342d52eca714d0d462555de897be99a5a6fad9835c",
+          "passed": 19
+        }
+      ]
+    },
+    {
+      "group": "exact_health_method_integration",
+      "passed": 3,
+      "failed": 0,
+      "logs": [
+        {
+          "path": "r80-tests/runtime-health-http-results.tap",
+          "sha256": "e0daebac18a43bfaa8aa8ecba888909c0cfbb99d2b13c31bb3466660b7533187",
+          "passed": 3
+        }
+      ],
+      "scope": "Exact method source with actual helper and sampler; isolated host/core fixture, not full module or server boot"
+    }
+  ],
+  "passedProductionAndInstallerTests": 101,
+  "installerCrashPhaseSubcases": 17,
+  "independentRecheckTestsAlreadyIncluded": 7,
+  "runtime": {
+    "node": "v22.23.4",
+    "sqlite": "3.53.4",
+    "source": "R79 shipped binary verified in installer tests"
+  },
+  "beforeAfterCallCounts": [
+    {
+      "simulatedSeconds": 10,
+      "rewardRetryMs": 50,
+      "R79OrdinaryCallsEach": 200,
+      "R80OrdinaryCallsEach": 10,
+      "rewardCallsBoth": 200
+    },
+    {
+      "simulatedSeconds": 10,
+      "rewardRetryMs": 250,
+      "R79OrdinaryCallsEach": 40,
+      "R80OrdinaryCallsEach": 10,
+      "rewardCallsBoth": 40
+    }
+  ],
+  "beforeAfterIsLiveCpuOrLatencyMeasurement": false,
+  "liveReadOnlyObservation": {
+    "endpoint": "https://r1.coreoflife.net/api/vds-health",
+    "scope": "One GET during this session, not a repeated load test",
+    "httpStatus": 200,
+    "checkpointReady": true,
+    "checkpointPendingPages": 0,
+    "nodeVersion": "v22.23.4",
+    "sqliteVersion": "3.53.4",
+    "onlineByChannel": [
+      2,
+      0,
+      0,
+      1
+    ],
+    "isCurrentLiveLagDiagnosis": false
+  },
+  "notPerformed": [
+    "live deployment",
+    "live service restart",
+    "live database write",
+    "complete current-source game server boot",
+    "live 10-versus-30-player capacity test"
+  ],
+  "foregroundDraft": {
+    "includedInInstallPayload": false,
+    "targetedPassed": 17,
+    "channelTestsPreparedButNotRun": 8,
+    "status": "NOT_RELEASE_APPROVED",
+    "reason": "Missing exact current action-writer and channel/GameWriter dependency sources"
+  },
+  "supportingEvidence": {
+    "checkpoint-evidence.json": "878ad0bc8276d46ee78f84bcac1a0cc5b917250ed3adb8b083042c2c817ee7ae",
+    "installer-evidence.json": "7a858517ae39dd1d07550fde29c68b134c011d1b525fd18ebd7d97f44578ed16",
+    "foreground-evidence.json": "e0d337c099eb1ebf714d006fcee1ce875f01882afa96f6be4854d67cdbac69bb",
+    "INCELEME_OZETI.txt": "60cf5994bc5acec1b1428781a1ad345f6a6a3ccf8188f8c317f78a7284ece16b"
+  },
+  "limits": [
+    "Scheduler tests use real modules with controlled clock/IO.",
+    "Checkpoint tests use real SQLite and Worker threads with controlled retry timing.",
+    "Installer uses real files/SQLite but simulated systemd/accounts HTTP/full verifyPackage.",
+    "Full current NativeHttpBindings generated import chain is not available locally.",
+    "The startup health check must validate the actual VDS after installation."
+  ],
+  "readOnlyToolTests": [
+    {
+      "group": "source_export",
+      "passed": 4,
+      "failed": 0,
+      "path": "r80-tests/source-export-results.txt",
+      "sha256": "134ffda48449a81907a108cc60f74628f25539a213427691cdd3d4e8dc2b5b28"
+    },
+    {
+      "group": "live_measurement_collector",
+      "passed": 16,
+      "failed": 0,
+      "path": "r80-tests/runtime-collector-results.txt",
+      "sha256": "d7e18a97a3f92a7e847661fe6df90c1b94edf87a7348850cb8180c0c92aa00f0"
+    }
+  ],
+  "readOnlyTools": {
+    "r80-tools/CORE511_R80_CANLI_OLCUM.py": {
+      "bytes": 26986,
+      "sha256": "a0930e8cccae742026d63a0db526ffe3d4b298092e6c6c228a473efa6f604cb0"
+    },
+    "r80-tools/CORE511_R79_EKSIK_KAYNAK.py": {
+      "bytes": 10963,
+      "sha256": "7d5b8c71e85003fbcdd6a45786366d51e73829e6ad48287542879deb7769f74f"
+    }
+  },
+  "sourceExport": {
+    "fileCount": 42,
+    "uncompressedSourceBytes": 9846424,
+    "expectedR79HashesRequired": true,
+    "includesDatabasesOrLiveConfiguration": false
+  }
+}

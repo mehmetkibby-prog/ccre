@@ -1,0 +1,9 @@
+test_existing_output_and_release_tree_are_never_overwritten (__main__.SourceExportTests.test_existing_output_and_release_tree_are_never_overwritten) ... ok
+test_only_verified_code_is_exported_without_mutating_source (__main__.SourceExportTests.test_only_verified_code_is_exported_without_mutating_source) ... ok
+test_symlink_is_rejected_even_with_matching_content (__main__.SourceExportTests.test_symlink_is_rejected_even_with_matching_content) ... ok
+test_wrong_hash_creates_no_output (__main__.SourceExportTests.test_wrong_hash_creates_no_output) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.011s
+
+OK

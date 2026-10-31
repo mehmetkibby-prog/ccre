@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: boss: real SQL keeps cross-channel/offline XP, exactly-once native claims and durable receipt replay
+ok 1 - boss: real SQL keeps cross-channel/offline XP, exactly-once native claims and durable receipt replay
+  ---
+  duration_ms: 57.942911
+  type: 'test'
+  ...
+# Subtest: sinsi: real SQL keeps cross-channel/offline XP, exactly-once native claims and durable receipt replay
+ok 2 - sinsi: real SQL keeps cross-channel/offline XP, exactly-once native claims and durable receipt replay
+  ---
+  duration_ms: 25.150443
+  type: 'test'
+  ...
+# Subtest: native reward changes and receipt roll back together, then exact retry pays once
+ok 3 - native reward changes and receipt roll back together, then exact retry pays once
+  ---
+  duration_ms: 26.752196
+  type: 'test'
+  ...
+# Subtest: successful native award does not acknowledge before the original durableAfterCommit boundary
+ok 4 - successful native award does not acknowledge before the original durableAfterCommit boundary
+  ---
+  duration_ms: 23.47176
+  type: 'test'
+  ...
+# Subtest: new command from a stale epoch cannot execute reward SQL or create a receipt
+ok 5 - new command from a stale epoch cannot execute reward SQL or create a receipt
+  ---
+  duration_ms: 14.748948
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 154.828884
