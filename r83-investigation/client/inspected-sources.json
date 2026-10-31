@@ -1,0 +1,37 @@
+[
+  {
+    "path": "r82-work/core511-source/scripts/core511/generated/client/game-client-core511-r82-b75bd56f90806564.js",
+    "sha256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+    "bytes": 1633081
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/generated/client/core511-transport-r79-715e78ecd9021ea8.js",
+    "sha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "bytes": 586152
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/movement-prediction.mjs",
+    "sha256": "b8c3c4f43b4ed2e0363a8e7c0fb84881c25475cdf3f24ed942752dc8684504eb",
+    "bytes": 7209
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/client-transport.mjs",
+    "sha256": "56b276e559beb3ea9938efdaa964a002f3dd14f8b4d876a2bab007555e0fecbc",
+    "bytes": 38838
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/fixed-loop.mjs",
+    "sha256": "5ac89b33e95122ac5100e08856836cc306b925bb956aa20ed0395ecd2ab4a22e",
+    "bytes": 14479
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/world-projection.mjs",
+    "sha256": "c70b82b621d853acee73cc6d8a1d3c819faca247aa591afe5ac7f2551ca7ffd8",
+    "bytes": 17661
+  },
+  {
+    "path": "r82-work/core511-source/scripts/core511/heartbeat-loop.mjs",
+    "sha256": "8b3430df7d2ac04e6f18f3e3e631331f1e871dc6d6d14bdbfd579048eed3eac3",
+    "bytes": 4406
+  }
+]

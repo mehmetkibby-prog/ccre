@@ -1,0 +1,23 @@
+{
+  "testCommand": [
+    "r79-audit/runtime/node-v22.23.4-linux-x64/bin/node",
+    "r83-tests/periodic-read-batch.test.mjs"
+  ],
+  "exitCode": 0,
+  "syntaxExitCode": 0,
+  "summary": [
+    "# tests 14",
+    "# pass 14",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0"
+  ],
+  "source": "r83-investigation/periodic/snapshot-read-queue.mjs",
+  "sourceSha256": "9f339b7568e5a5a8caba36ed9a0adca72d6f0df8846c8802dae4b17eb80a883c",
+  "fullReadWorkerTested": false,
+  "reason": "Exact current adventure-service and other modules unavailable locally; older substitutes not used.",
+  "inclusionRecommendation": "exclude unconditional 8ms candidate: write-heavy ColdReadCache throughput regression",
+  "throughputEvidence": "r83-tests/periodic-read-cache-benchmark.json",
+  "productionR83Included": false,
+  "inclusionDecision": "Parent accepted exclusion; keep as investigation only and do not count candidate tests toward production R83 validation."
+}

@@ -1,0 +1,169 @@
+R83 INDEPENDENT SAFETY REVIEW
+Reviewer: client/movement investigation agent
+Date: 2026-10-31
+
+Decision
+--------
+No correctness blocker found in the two heartbeat scheduling-tail substitutions.
+No correctness blocker found in the proposed completed-actor read batching change,
+but that candidate is EXCLUDED from urgent R83. A subsequent real SQLite and
+actual ColdReadCache benchmark found total processing 1.97 to 2.48 times slower
+for the tested write-heavy workloads because more snapshots invalidate shared
+cached reads. This outweighs its completed-reply latency benefit for the urgent
+release. The parent restored the R82 snapshot-read-queue unchanged.
+No client production asset change is justified by the reproduced issue.
+
+Reviewed candidate files
+------------------------
+r83-investigation/server/heartbeat-loop.mjs
+r83-investigation/server/shared-combat-channel.mjs
+r83-investigation/periodic/snapshot-read-queue.mjs
+
+Comparison base is the exact corresponding R82 files beneath:
+r82-work/core511-source/scripts/core511/
+
+1. Completed actor snapshot batching
+-----------------------------------
+The candidate still groups only contiguous kernel511_actor_world messages and
+keeps the maximum at four. It checks a monotonic elapsed-time budget after a
+complete actor read. Once the 8 ms budget has been spent it returns the unstarted
+tail to the FRONT of the queue, commits the current read transaction, and publishes
+its separate buffered replies. It never splits inside one actor read or posts a
+successful partial actor result.
+
+The actual read-worker path was reviewed, not inferred from the queue unit tests:
+
+- Worker SQLite is opened readOnly and query_only. readActorWorldBundle performs
+  ownership, incarnation, epoch, admission and account checks inside its complete
+  read transaction. The change neither moves nor removes any check.
+- readActorBundle and the native world projection remain within the same actor
+  transaction. The snapshot queue only changes the boundary BETWEEN complete
+  actor projections.
+- Coordinator.load and the read_actor RPC request one actor at a time. The R44
+  feature flag already allows nonbatched snapshots and the old grouping limit
+  already separates a fifth actor, so cross-actor atomicity is not a contract.
+- ColdReadCache.begin checks SQLite data_version, schema_version and total_changes
+  for a snapshot token. ColdWorldReader invokes it at actor/projection boundaries
+  and refreshes NativeGameServices when that token changes. A new regression uses
+  the actual ColdReadCache and real WAL SQLite to confirm the next split snapshot
+  sees a committed write and discards old cached query results.
+- Unstarted requests are restored ahead of newly arrived requests. Actor order,
+  nonactor query/control boundaries and close order are preserved; a cursor query
+  is not replayed or moved into the actor snapshot group.
+- Replies are still withheld until the appropriate COMMIT. If that COMMIT fails,
+  the processed group receives failures and the unread tail remains queued. If a
+  read throws before a split, the original current-group failure behavior remains.
+  The actual readMessage usually catches an individual read error into its reply;
+  this reply remains buffered until the group transaction commits.
+- ReadWorker task ids, pending limits, BoundedReadQueue admission, timeout policy,
+  worker incarnation, timeout termination and no-replay recovery were not changed.
+  More frequent boundaries can change latency and therefore exposure to the same
+  existing deadlines; the numerical deadlines and failure semantics are unchanged.
+
+Soft-budget limitation (explicitly reproduced)
+--------------------------------------------
+This is not an 8 ms response deadline and cannot preempt a slow actor read. With
+actor A taking 2 ms and actor B then taking 500 ms, A and B both reply at 502 ms.
+The queue cannot release A while B is inside their shared snapshot. The change
+prevents starting actor C after B has exhausted the budget; C no longer adds its
+own further 500 ms to A's completed result. A single actor's own expensive native
+projection and any unrelated bottleneck outside this queue remain possible.
+
+There is no claim that every 0.5 second pause has this one cause or that the
+candidate bounds every response. The 13:45 report lacks a captured live trace.
+
+2. Heartbeat scheduling tail
+---------------------------
+The local candidate stops awaiting maintenance() only AFTER the native heartbeat
+writer ACK, authoritative applyCommit refresh, checkpoint/encounter hydration,
+event publication and resource lease release. The shared candidate does the same
+through the heartbeat-specific after callback, AFTER shared_finish/shared_complete
+and resource release. Generic SharedCombatChannel.read still awaits its after
+callback, so other action types retain their existing contract.
+
+The detached maintenance operation is an enqueue of a background descriptor, not
+the gameplay commit. Ordinary nonterminal heartbeat already used this asynchronous
+contract in R82. Rest regeneration, retaliation/death, respawn and other gameplay
+cannot bypass their unchanged writer/refresh barriers with this patch.
+
+Task lifetime and rejection
+---------------------------
+- maintenance() synchronously captures actor id, current owner epoch, world cycle,
+  time, counter and a new object containing scalar heartbeat fields. Later player
+  mutation or owner replacement cannot mutate that captured descriptor.
+- The resulting promise is entered into HeartbeatLoop.pending immediately, and
+  its rejection is observed. It is not a fire-and-forget unhandled promise.
+- The four existing expected scheduling errors retain their preexisting retry
+  behavior. Unexpected errors still call the channel onFatal path and reject a
+  drain that was already waiting for the task.
+- ResidentChannel.drain and ResidentControl.freeze/group freeze first quiesce
+  accepted gameplay then call the runtime mode drain, which awaits heartbeat.drain.
+  That prevents normal owner detach/freeze from forgetting outstanding scheduling
+  tasks merely because the actor's gameplay barrier has cleared sooner.
+- Shared pending-row removal remains after shared_complete; only the scheduling
+  descriptor wait is removed from the gameplay completion. Unknown writer outcome
+  still fences the resource and actor, and does not release movement.
+- The receiver checks owner epoch/channel/incarnation and preserves an equal/newer
+  counter when it already has a pending descriptor. This is not represented here
+  as a persistent counter high-water mark after the descriptor has been consumed.
+
+Later death/area changes
+-----------------------
+The maintenance reader validates owner epoch, cycle and time but is NOT a full
+HP/area fingerprint validator. Inspection of generated nativeHeartbeatMaintenance
+shows that this background path does not apply descriptor HP or respawn values,
+does not publish nativeHeartbeatPublication, and does not perform the core
+heartbeat gameplay transaction again. It selects existing SQL-guarded arena and
+reward maintenance using the descriptor, with existing world freeze/recheck and
+native writer fencing. No new stale-death mutation was demonstrated. This exact
+asynchronous maintenance contract already exists for the nonterminal path.
+
+3. Validation performed independently
+-------------------------------------
+Runtime: r79-audit/runtime/node-v22.23.4-linux-x64/bin/node (v22.23.4)
+Tests are executed directly, not with node --test.
+
+- r83-tests/periodic-read-batch.test.mjs: 14 passed, 0 failed.
+  Includes real SQLite WAL snapshot tests, FIFO, partial commit failure,
+  per-message error buffering, close ordering, and no replay.
+- r83-tests/server-heartbeat-tail.test.mjs: 22 passed, 0 failed.
+  Includes old-source reproductions, actual FixedLoop local/shared barriers,
+  mandatory writer/refresh fences, unknown outcomes, scheduling errors,
+  quiesce/drain lifecycle, captured descriptor and supersession.
+- r83-tests/client-read-batch-review.test.mjs: 2 passed, 0 failed.
+  Adds the 2 ms then 500 ms soft-budget limit and actual ColdReadCache WAL test.
+- Previously completed r83-tests/client-heartbeat-wait.test.mjs: 3 passed,
+  0 failed. This imports the unchanged shipped client transport and actual
+  FixedLoop/server components. Controlled 900 ms scheduling latency causes
+  300 ms displayed movement stall on the old path and no displayed stall on the
+  candidate in all three covered local/shared heartbeat paths.
+
+Validation scope
+----------------
+The native gameplay writer, authoritative refresh, scheduler and WebSocket ports
+in the heartbeat integration are deliberately controlled ports. Movement execution
+ACKs the submitted canonical endpoint so the experiment isolates the waiting
+defect. It is not a full live-network, combat balance, collision, native SQLite
+writer or target VDS load test. The snapshot regression uses actual SQLite and
+actual queue/cache classes, but not the whole read-worker/native game projection:
+the available R82 baseline has known missing source files, and no older modules
+were substituted to claim that integration passed.
+
+Desktop and mobile scope
+------------------------
+The reproduced blocking mechanism is in the same shipped Core511Transport and
+OwnPrediction used for desktop keyboard input and mobile controls; it does not
+depend on a mobile-only rendering or touch path. The actual transported input
+therefore exhibits the same 600 ms outstanding-prediction cap regardless of input
+device. No live PC session or browser was exercised in this offline proof, and
+the user's PC report alone is not used as proof of a specific server event.
+
+Safe packaging recommendation
+-----------------------------
+Preserve the client prediction cap, action ordering whitelist, authoritative
+position revision guard and R82 respawn fix. Package the narrow heartbeat server
+changes; keep the R82 snapshot read queue. The reader candidate's cache-churn
+performance regression is recorded in r83-tests/periodic-read-cache-benchmark.json
+and disqualifies that candidate from urgent R83 despite passing correctness tests.
+The reproducible claim is removal of avoidable trailing waits, not proof that all
+possible causes of lag have been eliminated.

@@ -1,0 +1,284 @@
+[
+  {
+    "atTR": "2026-10-31T14:01:57.743168+03:00",
+    "http": 200,
+    "networkHttpMs": 491.4,
+    "version": "R82_GAMEPLAY",
+    "ready": true,
+    "runtime": {
+      "protocol": "runtime-diagnostics-r80-v1",
+      "available": true,
+      "measuredAtMs": 1793444517655,
+      "scope": "server-process-and-durable-write-wait-not-player-ping",
+      "main": {
+        "status": "live",
+        "sampleSeconds": 2,
+        "sampledAtMs": 1793444516456,
+        "eventLoopBusyPercent": 28.32,
+        "eventLoopDelayMs": 14.2,
+        "cpu": {
+          "scope": "process-all-threads-one-core-is-100-percent",
+          "windowSeconds": 300,
+          "resolutionPercentPoints": 10,
+          "sampleCount": 150,
+          "meanPercent": 90,
+          "maxPercent": 150
+        }
+      },
+      "writerLane": {
+        "protocol": "single-writer-lane-v1",
+        "externalBusy": false,
+        "externalAgeMs": null,
+        "queuedWrites": 0,
+        "queuedExternal": 0,
+        "oldestQueuedAgeMs": null,
+        "nativeWrites": 0,
+        "completedExternal": 1331,
+        "maxExternalMs": 893.49
+      },
+      "walSync": {
+        "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+        "ready": true,
+        "fallback": false,
+        "running": false,
+        "queuedForNextFlush": 0,
+        "pumpedCallsTotal": 86228,
+        "syncs": 85784,
+        "meanMs": 1.23,
+        "maxMs": 129.46,
+        "totalMs": 105508,
+        "errors": 0,
+        "reopened": 0
+      },
+      "mainCommits": {
+        "scope": "main-connection-SQLite-COMMIT-wall-time",
+        "slowCommits": 0,
+        "lastCommitMs": 0.13,
+        "maxCommitMs": 16.58,
+        "lastSlowAtMs": null
+      },
+      "rewardWorker": {
+        "scope": "completed-worker-jobs-not-current-job-latency",
+        "pending": false,
+        "jobs": 517,
+        "fallbacks": 800,
+        "replays": 0,
+        "rollbacks": 0,
+        "restarts": 0,
+        "maxWorkerMs": 103.59,
+        "maxPreflightMs": 127.13,
+        "maxReadyWaitMs": 891.78
+      }
+    },
+    "channels": [
+      {
+        "channel": 1,
+        "ready": true,
+        "online": 7
+      },
+      {
+        "channel": 2,
+        "ready": true,
+        "online": 1
+      },
+      {
+        "channel": 3,
+        "ready": true,
+        "online": 0
+      },
+      {
+        "channel": 4,
+        "ready": true,
+        "online": 0
+      }
+    ]
+  },
+  {
+    "atTR": "2026-10-31T14:01:59.907326+03:00",
+    "http": 200,
+    "networkHttpMs": 163.8,
+    "version": "R82_GAMEPLAY",
+    "ready": true,
+    "runtime": {
+      "protocol": "runtime-diagnostics-r80-v1",
+      "available": true,
+      "measuredAtMs": 1793444519820,
+      "scope": "server-process-and-durable-write-wait-not-player-ping",
+      "main": {
+        "status": "live",
+        "sampleSeconds": 2,
+        "sampledAtMs": 1793444518457,
+        "eventLoopBusyPercent": 31.16,
+        "eventLoopDelayMs": 24.2,
+        "cpu": {
+          "scope": "process-all-threads-one-core-is-100-percent",
+          "windowSeconds": 300,
+          "resolutionPercentPoints": 10,
+          "sampleCount": 150,
+          "meanPercent": 90,
+          "maxPercent": 150
+        }
+      },
+      "writerLane": {
+        "protocol": "single-writer-lane-v1",
+        "externalBusy": false,
+        "externalAgeMs": null,
+        "queuedWrites": 0,
+        "queuedExternal": 0,
+        "oldestQueuedAgeMs": null,
+        "nativeWrites": 0,
+        "completedExternal": 1333,
+        "maxExternalMs": 893.49
+      },
+      "walSync": {
+        "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+        "ready": true,
+        "fallback": false,
+        "running": false,
+        "queuedForNextFlush": 0,
+        "pumpedCallsTotal": 86300,
+        "syncs": 85856,
+        "meanMs": 1.23,
+        "maxMs": 129.46,
+        "totalMs": 105577,
+        "errors": 0,
+        "reopened": 0
+      },
+      "mainCommits": {
+        "scope": "main-connection-SQLite-COMMIT-wall-time",
+        "slowCommits": 0,
+        "lastCommitMs": 0.07,
+        "maxCommitMs": 16.58,
+        "lastSlowAtMs": null
+      },
+      "rewardWorker": {
+        "scope": "completed-worker-jobs-not-current-job-latency",
+        "pending": false,
+        "jobs": 517,
+        "fallbacks": 802,
+        "replays": 0,
+        "rollbacks": 0,
+        "restarts": 0,
+        "maxWorkerMs": 103.59,
+        "maxPreflightMs": 127.13,
+        "maxReadyWaitMs": 891.78
+      }
+    },
+    "channels": [
+      {
+        "channel": 1,
+        "ready": true,
+        "online": 7
+      },
+      {
+        "channel": 2,
+        "ready": true,
+        "online": 1
+      },
+      {
+        "channel": 3,
+        "ready": true,
+        "online": 0
+      },
+      {
+        "channel": 4,
+        "ready": true,
+        "online": 0
+      }
+    ]
+  },
+  {
+    "atTR": "2026-10-31T14:02:02.087564+03:00",
+    "http": 200,
+    "networkHttpMs": 179.9,
+    "version": "R82_GAMEPLAY",
+    "ready": true,
+    "runtime": {
+      "protocol": "runtime-diagnostics-r80-v1",
+      "available": true,
+      "measuredAtMs": 1793444521985,
+      "scope": "server-process-and-durable-write-wait-not-player-ping",
+      "main": {
+        "status": "live",
+        "sampleSeconds": 2,
+        "sampledAtMs": 1793444520460,
+        "eventLoopBusyPercent": 28.65,
+        "eventLoopDelayMs": 5.1,
+        "cpu": {
+          "scope": "process-all-threads-one-core-is-100-percent",
+          "windowSeconds": 300,
+          "resolutionPercentPoints": 10,
+          "sampleCount": 150,
+          "meanPercent": 80,
+          "maxPercent": 150
+        }
+      },
+      "writerLane": {
+        "protocol": "single-writer-lane-v1",
+        "externalBusy": false,
+        "externalAgeMs": null,
+        "queuedWrites": 0,
+        "queuedExternal": 0,
+        "oldestQueuedAgeMs": null,
+        "nativeWrites": 0,
+        "completedExternal": 1333,
+        "maxExternalMs": 893.49
+      },
+      "walSync": {
+        "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+        "ready": true,
+        "fallback": false,
+        "running": false,
+        "queuedForNextFlush": 0,
+        "pumpedCallsTotal": 86374,
+        "syncs": 85930,
+        "meanMs": 1.23,
+        "maxMs": 129.46,
+        "totalMs": 105686,
+        "errors": 0,
+        "reopened": 0
+      },
+      "mainCommits": {
+        "scope": "main-connection-SQLite-COMMIT-wall-time",
+        "slowCommits": 0,
+        "lastCommitMs": 0.12,
+        "maxCommitMs": 16.58,
+        "lastSlowAtMs": null
+      },
+      "rewardWorker": {
+        "scope": "completed-worker-jobs-not-current-job-latency",
+        "pending": false,
+        "jobs": 517,
+        "fallbacks": 802,
+        "replays": 0,
+        "rollbacks": 0,
+        "restarts": 0,
+        "maxWorkerMs": 103.59,
+        "maxPreflightMs": 127.13,
+        "maxReadyWaitMs": 891.78
+      }
+    },
+    "channels": [
+      {
+        "channel": 1,
+        "ready": true,
+        "online": 7
+      },
+      {
+        "channel": 2,
+        "ready": true,
+        "online": 1
+      },
+      {
+        "channel": 3,
+        "ready": true,
+        "online": 0
+      },
+      {
+        "channel": 4,
+        "ready": true,
+        "online": 0
+      }
+    ]
+  }
+]

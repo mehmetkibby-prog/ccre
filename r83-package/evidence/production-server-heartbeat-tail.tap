@@ -1,0 +1,146 @@
+TAP version 13
+# Subtest: R82 reproduction: local heartbeat retains actor barrier after COMMIT/refresh/lease release solely for background enqueue
+ok 1 - R82 reproduction: local heartbeat retains actor barrier after COMMIT/refresh/lease release solely for background enqueue
+  ---
+  duration_ms: 24.43449
+  type: 'test'
+  ...
+# Subtest: R82 reproduction: shared heartbeat retains actor barrier after COMMIT/refresh/lease release solely for background enqueue
+ok 2 - R82 reproduction: shared heartbeat retains actor barrier after COMMIT/refresh/lease release solely for background enqueue
+  ---
+  duration_ms: 10.947005
+  type: 'test'
+  ...
+# Subtest: candidate: local heartbeat ACK releases movement while only background descriptor remains pending
+ok 3 - candidate: local heartbeat ACK releases movement while only background descriptor remains pending
+  ---
+  duration_ms: 2.9388
+  type: 'test'
+  ...
+# Subtest: candidate: shared heartbeat ACK releases movement while only background descriptor remains pending
+ok 4 - candidate: shared heartbeat ACK releases movement while only background descriptor remains pending
+  ---
+  duration_ms: 7.83104
+  type: 'test'
+  ...
+# Subtest: candidate: local writer ACK and authoritative refresh remain mandatory movement barriers
+ok 5 - candidate: local writer ACK and authoritative refresh remain mandatory movement barriers
+  ---
+  duration_ms: 2.094412
+  type: 'test'
+  ...
+# Subtest: candidate: shared writer ACK and authoritative refresh remain mandatory movement barriers
+ok 6 - candidate: shared writer ACK and authoritative refresh remain mandatory movement barriers
+  ---
+  duration_ms: 1.808223
+  type: 'test'
+  ...
+# Subtest: candidate: local unknown native writer failure still fences actor and resource lane
+ok 7 - candidate: local unknown native writer failure still fences actor and resource lane
+  ---
+  duration_ms: 1.218017
+  type: 'test'
+  ...
+# Subtest: candidate: shared unknown native writer failure still fences actor and resource lane
+ok 8 - candidate: shared unknown native writer failure still fences actor and resource lane
+  ---
+  duration_ms: 1.380762
+  type: 'test'
+  ...
+# Subtest: candidate: shared heartbeat whose re-plan is nonterminal also stops waiting on maintenance descriptor
+ok 9 - candidate: shared heartbeat whose re-plan is nonterminal also stops waiting on maintenance descriptor
+  ---
+  duration_ms: 4.575525
+  type: 'test'
+  ...
+# Subtest: candidate: ordinary nonterminal heartbeat behavior remains memory-only and already asynchronous
+ok 10 - candidate: ordinary nonterminal heartbeat behavior remains memory-only and already asynchronous
+  ---
+  duration_ms: 1.256045
+  type: 'test'
+  ...
+{"event":"core511_fault","at":"2026-10-31T11:11:39.743Z","code":"heartbeat_schedule_fenced","actorRef":"6b37ea78c3d63aea6eff9979","stack":[{"file":"server-heartbeat-tail.test.mjs","line":61,"column":64}]}
+# Subtest: candidate: expected descriptor rejection heartbeat_schedule_fenced remains retryable and not a gameplay failure
+ok 11 - candidate: expected descriptor rejection heartbeat_schedule_fenced remains retryable and not a gameplay failure
+  ---
+  duration_ms: 2.526701
+  type: 'test'
+  ...
+{"event":"core511_fault","at":"2026-10-31T11:11:39.745Z","code":"heartbeat_schedule_capacity","actorRef":"6b37ea78c3d63aea6eff9979","stack":[{"file":"server-heartbeat-tail.test.mjs","line":61,"column":64}]}
+# Subtest: candidate: expected descriptor rejection heartbeat_schedule_capacity remains retryable and not a gameplay failure
+ok 12 - candidate: expected descriptor rejection heartbeat_schedule_capacity remains retryable and not a gameplay failure
+  ---
+  duration_ms: 1.001863
+  type: 'test'
+  ...
+{"event":"core511_fault","at":"2026-10-31T11:11:39.746Z","code":"heartbeat_world_required","actorRef":"6b37ea78c3d63aea6eff9979","stack":[{"file":"server-heartbeat-tail.test.mjs","line":61,"column":64}]}
+# Subtest: candidate: expected descriptor rejection heartbeat_world_required remains retryable and not a gameplay failure
+ok 13 - candidate: expected descriptor rejection heartbeat_world_required remains retryable and not a gameplay failure
+  ---
+  duration_ms: 0.983986
+  type: 'test'
+  ...
+{"event":"core511_fault","at":"2026-10-31T11:11:39.747Z","code":"ipc_backpressure","actorRef":"6b37ea78c3d63aea6eff9979","stack":[{"file":"server-heartbeat-tail.test.mjs","line":61,"column":64}]}
+# Subtest: candidate: expected descriptor rejection ipc_backpressure remains retryable and not a gameplay failure
+ok 14 - candidate: expected descriptor rejection ipc_backpressure remains retryable and not a gameplay failure
+  ---
+  duration_ms: 0.869655
+  type: 'test'
+  ...
+# Subtest: candidate: local unexpected schedule exception still reports onFatal and rejects background drain
+ok 15 - candidate: local unexpected schedule exception still reports onFatal and rejects background drain
+  ---
+  duration_ms: 1.054953
+  type: 'test'
+  ...
+# Subtest: candidate: shared unexpected schedule exception still reports onFatal and rejects background drain
+ok 16 - candidate: shared unexpected schedule exception still reports onFatal and rejects background drain
+  ---
+  duration_ms: 1.105749
+  type: 'test'
+  ...
+# Subtest: candidate: local quiesce can finish after gameplay but lifecycle drain still waits before owner detach
+ok 17 - candidate: local quiesce can finish after gameplay but lifecycle drain still waits before owner detach
+  ---
+  duration_ms: 0.995563
+  type: 'test'
+  ...
+# Subtest: candidate: shared quiesce can finish after gameplay but lifecycle drain still waits before owner detach
+ok 18 - candidate: shared quiesce can finish after gameplay but lifecycle drain still waits before owner detach
+  ---
+  duration_ms: 1.041272
+  type: 'test'
+  ...
+# Subtest: candidate: immutable descriptor captures original actor epoch and heartbeat row before caller can detach or replace state
+ok 19 - candidate: immutable descriptor captures original actor epoch and heartbeat row before caller can detach or replace state
+  ---
+  duration_ms: 0.73324
+  type: 'test'
+  ...
+# Subtest: candidate: later heartbeat can proceed with separate captured counter while first schedule is pending
+ok 20 - candidate: later heartbeat can proceed with separate captured counter while first schedule is pending
+  ---
+  duration_ms: 2.248464
+  type: 'test'
+  ...
+# Subtest: source-exact descriptor selector keeps newest counter and rejects retired epoch
+ok 21 - source-exact descriptor selector keeps newest counter and rejects retired epoch
+  ---
+  duration_ms: 0.473771
+  type: 'test'
+  ...
+# Subtest: patch is exactly two scheduling-tail substitutions, preserving full source and helper hashes
+ok 22 - patch is exactly two scheduling-tail substitutions, preserving full source and helper hashes
+  ---
+  duration_ms: 0.355373
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77.463352

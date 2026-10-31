@@ -1,0 +1,84 @@
+R83 client movement investigation
+================================
+
+Scope
+-----
+Actual R82 game asset b75bd56f90806564 still imports actual R79 transport
+715e78ecd9021ea8. No client production code was changed in this investigation.
+All inspected source hashes are in inspected-sources.json.
+
+Verified mechanism
+------------------
+OwnPrediction.advance limits outstanding speculative movement to 0.6 seconds.
+This is an intentional safety bound. Core511Transport.movementEligible allows
+one complementary movement only beside ordinary attack(ability 0), claim_rewards
+or collect. It cannot admit movement beside heartbeat, skills, and transitions.
+The server negotiates exactly the same predicate. Widening only the client would
+violate the protocol; increasing the speculation budget would hide server wait
+and increase corrections. Neither was done.
+
+The actual game sends heartbeat every five seconds (tl = 5e3). It can also send
+a maintenance heartbeat for overdue visible lifecycle state. Ordinary local
+nonterminal heartbeat is already synchronous and schedules maintenance without
+waiting. Durable heartbeat and shared heartbeat await that background scheduling
+RPC AFTER completing actual gameplay, checkpointing/refresh and resource release.
+This holds the actor's FixedLoop barrier and the browser's heartbeat command slot.
+
+Source locations
+----------------
+core511/client-transport.mjs: movementEligible, predictFrame, pump
+core511/movement-prediction.mjs: advance
+core511/channel-connections.mjs: allowsFollowingMovement, ordered ingress
+core511/heartbeat-loop.mjs: durableGroup callback trailing await this.maintenance
+core511/shared-combat-channel.mjs: heartbeat after callback and read await after
+generated/client/game-client-core511-r82-b75bd56f90806564.js:
+  tl = 5e3; zp2 heartbeat callback; heartbeat interval effect
+
+Reproduction and regression
+---------------------------
+Command:
+  r79-audit/runtime/node-v22.23.4-linux-x64/bin/node r83-tests/client-heartbeat-wait.test.mjs
+
+3 tests pass. Actual shipped Core511Transport and prediction execute against the
+actual FixedLoop, HeartbeatLoop and SharedCombatChannel through controlled ports.
+The background scheduler is deliberately held for 900 ms, after the fixture's
+actual-gameplay completion port has resolved. Simulated ticks are 50 ms apart.
+
+Cases: local durable heartbeat; shared durable heartbeat; shared plan becoming
+nonterminal after authoritative shared state acquisition.
+
+For every case:
+  R82: heartbeat reply 900 ms; first move sent 900 ms; 300 ms stationary display.
+  Draft: heartbeat reply 50 ms; first move sent 50 ms; zero stationary display.
+  Client prediction maximum remains bounded; draft maximum observed 200 ms.
+  Exactly one heartbeat input; same native writer call count (1/1/0).
+  No actor faults in these controlled cases.
+
+The server draft changes only the background maintenance await at the two call
+sites. The server agent separately owns durability, shutdown/drain and failure
+tests. Client test uses their server-heartbeat-fixture.mjs module.
+
+Limits
+------
+This is not live VDS evidence, a 100-player benchmark, or proof of the reported
+13:45:36 incident. The move execution fixture acknowledges submitted endpoints
+to isolate command scheduling, not native collision/speed/SQLite rules. Native
+writer, refresh and IPC are controlled test ports. Shared class pure helper
+exports are sourced exactly to avoid missing native writer transitive modules;
+the helper module's documented scope applies.
+
+Investigated but NOT changed
+---------------------------
+OwnPrediction.bind snaps on a newer position revision lacking its matching move
+receipt. Ordinary FixedLoop carries movement result and updated world together;
+actual client processes every prediction result before receiveWorld. Thus normal
+acknowledged movement does not lose history. Full applyCommit reads all actor
+bundles before synchronously installing them. No actual normal-running source
+ordering bug was proved here; weakening the revision guard would risk ignoring
+real teleport, death or control relocations.
+
+Evidence
+--------
+heartbeat-client-evidence.json: exact per-frame positions and counts.
+heartbeat-client-integration.tap: passing test output.
+inspected-sources.json: source hashes.

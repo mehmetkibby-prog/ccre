@@ -1,0 +1,144 @@
+R83 candidate: complete-read budget for SnapshotReadQueue
+
+STATUS
+EXCLUDED FROM PRODUCTION R83 by parent review after throughput follow-up below.
+The draft passes
+correctness tests but can significantly reduce throughput when background
+writers invalidate the shared read cache between the new partial snapshots.
+The unconditional 8 ms policy will not ship in the urgent R83 update based on
+the initial synthetic response-latency result alone.
+No production baseline, installed game, database or deployment was modified.
+No live incident root cause was proven.
+
+CURRENT DEFECT
+The R82 SnapshotReadQueue removes up to four already queued actor-world reads
+from its FIFO and runs them in a single read-only SQLite transaction. It buffers
+every response until all four reads and COMMIT finish. An actor whose complete
+refresh finished first remains blocked behind later unrelated actor reads.
+ChannelRuntime.applyCommit awaits such refresh results while durable actor work
+is held. A low main event-loop CPU/delay and an empty writer queue therefore do
+not exclude this wait.
+
+The batching path is enabled by default in r44-options.mjs (readSnapshotBatch).
+The actual read-worker.mjs constructs SnapshotReadQueue with readMessage.
+readMessage checks ownership, size limits and serializes a result before posting.
+readActorWorldBundle encapsulates each actor's ownership check, player/combat
+bundle and cold world projection in one WAL read snapshot. The disabled batching
+path already runs each actor-world read in its own complete transaction; the
+API supplies no atomic multi-actor read identifier or cross-actor output bundle.
+
+CANDIDATE CHANGE
+Replace only core511-source/scripts/core511/snapshot-read-queue.mjs with the
+candidate in this directory. Preserve batching maximum of four, but check an
+8 ms monotonic batching budget after each completed read. When spent, return
+unstarted tail requests to the front of the FIFO, COMMIT the completed portion,
+then publish those buffered responses. This never interrupts a read, changes SQL,
+publishes before COMMIT, reorders messages, retries an operation or caches data.
+
+The clock is performance.now by default, independent of displayed time zones or
+wall-clock corrections. clock/batchBudgetMs constructor arguments are used for
+deterministic tests; the actual worker passes neither and receives defaults.
+
+CORRECTNESS AND LIMITS
+- Each actor read remains internally one consistent read-only snapshot.
+- Fast groups retain up to four reads in a shared snapshot.
+- Slow groups may use more snapshots; this was already a supported behavior
+  with readSnapshotBatch disabled. This changes which fresh snapshot an unread
+  actor begins on, not the content/guard semantics within its snapshot.
+- Requests arriving during an awaited read remain behind all earlier unstarted
+  requests. Other message types remain grouping/FIFO boundaries.
+- A thrown read/COMMIT error fails the current started group with rollback, as
+  before; unstarted requests moved back to the FIFO are not falsely failed or
+  replayed. An already committed earlier partial batch remains successful.
+- readMessage's existing caught per-message errors are buffered until COMMIT.
+- ReadWorker timeout timers, incarnation fences, result-size guard and outer
+  BoundedReadQueue limits are unchanged. Returning an unstarted request to the
+  inner queue does not create a new ID or reset its existing timeout.
+- This queue does not own restart or close lifecycles. Tests prove close-control
+  FIFO, not a full ReadWorker thread restart. The exact full worker cannot be
+  imported locally because current adventure-service and other modules are
+  missing (see r81-baseline-verification.json). Older substitutes were not used.
+- This does not speed up one expensive read itself, a lone unbatched read,
+  native write/fsync, server/client network latency or client rendering.
+- Therefore this cannot promise to fix all observed lag, especially single-
+  actor pauses where no other actor-world read was queued.
+
+TARGETED EVIDENCE
+r83-tests/periodic-read-batch.test.mjs: 14 passing named tests, including an
+actual-class R82/R83 comparison and real SQLite WAL/read-only tests. Coverage:
+completed A waiting on blocked B, fast batches, maximum four, arrivals during
+await, non-actor boundary, exact budget boundary, unsplit expensive read,
+COMMIT/read failures, partial-batch errors, caught individual errors, control
+close ordering, cross-read snapshot continuity and fresh post-COMMIT snapshots.
+
+Controlled benchmark (three runs each): four own-read waits of 12/160/160/160ms
+are injected, identical before/after. First reply median R82 493.549ms; candidate
+12.374ms. All four replies remain ordered and exactly once, with the same bodies.
+These numbers demonstrate avoidable queue waiting under controlled conditions.
+They are NOT actual SQL timings, live VDS gains or measured player latency.
+See r83-tests/periodic-read-batch-benchmark.json for each run and source hashes.
+
+SOURCE IDENTITIES
+Before bytes 1609 SHA256:
+d86844aec6feaa84dafcf2dedccea13b0cab1921c87d2c9c6b911c2d3518b4cd
+Candidate bytes 2185 SHA256:
+9f339b7568e5a5a8caba36ed9a0adca72d6f0df8846c8802dae4b17eb80a883c
+
+OTHER PATHS INVESTIGATED, NOT CHANGED
+Heartbeat durable branch awaits descriptor-only maintenance after committing
+and publishing gameplay. Parent's server agent now owns that fix/tests.
+
+RewardWorkerR533.stats.fallbacks counts normal candidate scope fallback, not
+worker failure. safeScope fails when any permanent entry/native writer exists,
+resources exceed the permitted shape/size, or an alive resource monster is
+special/shared/outside forest-frozen-ancient. Removing the permanent guard based
+only on unrelated actor identity could overlap raw synchronous native SQL with
+external worker writes. No safe narrowing was proven, so it remains unchanged.
+
+FixedLoop awaits bounded local EgressSlices scheduling, not TCP receipt. A
+socket's network drain is not awaited by the tick. No output-flow patch proposed.
+
+Actor progress reuse draft from R82 remains excluded: exact current
+adventure-service is absent, and full projection can read that service in normal
+areas. No unsupported assumption about XP independence is made.
+
+THROUGHPUT FOLLOW-UP: EXCLUDED FROM PRODUCTION R83
+Root review correctly identified a cache-invalidation amplification risk.
+ColdReadCache.begin reads data_version/schema_version/total_changes and clears
+every cached query row when the token changes. Every commit on another SQLite
+connection changes data_version, even a write to an unrelated table. A resumed
+actor can perform that write after its earlier reply. Previously up to four
+reads shared one snapshot/cache generation; splitting can reload shared data
+once per actor. ColdWorldReader also calls NativeGameServices.refresh when its
+token changes, which adds unmeasured work in the full application.
+
+Actual class + real SQLite benchmark:
+r83-tests/periodic-read-cache-benchmark.mjs
+r83-tests/periodic-read-cache-benchmark.json
+24 distinct actor reads per run, 3 runs each, alternating baseline/candidate
+order. Tests use the actual R82 ColdReadCache, two native SQLite connections,
+WAL, read-only reader, real queries, row copying and JSON size checking. A
+writer commit after every published reply represents resumed gameplay. Every
+result is below the existing 4 MiB limit. Shared row counts below are fixture
+sizes, not claims about the user's live database.
+
+Scenario                        Total median ms R82 -> draft   Resets
+96 shared rows, quiet                 4.058 ->   4.366          1 -> 1
+96 rows, writer after reply           5.623 ->   6.151          6 -> 6
+96 rows + injected 12ms read wait   305.833 -> 309.183          6 -> 24
+2000 rows, writer after reply        90.920 -> 178.994          6 -> 15-19
+8000 rows, quiet                    220.103 -> 207.172          1 -> 1
+8000 rows, writer after reply       327.386 -> 812.564          6 -> 24
+
+Only the explicitly named 12 ms scenario injects delay. All other costs come
+from actual SQLite/cache/JSON work plus setImmediate yields. Small fast groups
+retain their six shared snapshots. The medium and large write-heavy fixtures
+show about 1.97x and 2.48x total duration, with SQL executions increasing from
+30 to 39-43 or 48. This is a material regression despite faster first replies.
+
+The full NativeGameServices.refresh body was not executed because current
+AdventureService source is absent. That extra invalidation cost may worsen the
+tradeoff. A minimum-two-read or cost-aware alternative needs a separate proof
+and validation; no such change was made here. The original candidate remains
+as investigation evidence only. Its 14 correctness tests must not be counted
+as tests of the shipped R83 fix if the candidate is excluded.

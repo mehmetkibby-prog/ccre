@@ -1,0 +1,14 @@
+{
+  "archive": "/workspace/scratch/68fd588af980/CORE511_R83_TOPLU.zip",
+  "bytes": 163744,
+  "sha256": "cf016d26bcdbc74991f726c48cb71794fc93d93a4987db17eb399c9fb9521974",
+  "productionFiles": 3,
+  "newProductionFiles": 0,
+  "payloadBytes": 51450,
+  "sourceVersion": "R82_GAMEPLAY",
+  "targetVersion": "R83_GAMEPLAY",
+  "baseCoreRows": 1166,
+  "nativeRuntimePayload": false,
+  "clientPayload": false,
+  "databaseChanges": false
+}

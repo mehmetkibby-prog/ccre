@@ -1,0 +1,92 @@
+{
+  "version": "R83_GAMEPLAY",
+  "sourceVersion": "R82_GAMEPLAY",
+  "recordedUtc": "2026-10-31T11:11:36.618545+00:00",
+  "scope": "Real R83 Python installer; actual filesystem, SQLite, backup API, locks, atomic overlay, journals and crash recovery. OS services/account HTTP and full external release verification use isolated fixtures.",
+  "passedTests": 68,
+  "failedTests": 0,
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "r83-tests/installer-inplace.test.py"
+      ],
+      "passed": 34,
+      "exitCode": 0,
+      "seconds": 4.898,
+      "outputFile": "r83-tests/installer-inplace-results.txt",
+      "outputSHA256": "3bdd5c2d7a3877c7f3056c2453fe7d78bcb29e6ec2eff15582ed3d95a5b69340"
+    },
+    {
+      "command": [
+        "python3",
+        "r83-tests/installer-gates.test.py"
+      ],
+      "passed": 34,
+      "exitCode": 0,
+      "seconds": 1.768,
+      "outputFile": "r83-tests/installer-gates-results.txt",
+      "outputSHA256": "58f85f7411de0ebd48d9ac36e5721ba99998348c206f00bfc5303cc1141c34be"
+    }
+  ],
+  "durableCrashPhaseSubcases": {
+    "apply": 10,
+    "manualRollback": 7,
+    "includedInTestCount": true
+  },
+  "preservedBehavior": [
+    "Exact R82 source and R83 destination, full 1166-row production base identity.",
+    "Exactly three existing server files; before hashes mandatory, no new production paths, no client plan or client/runtime/database payload.",
+    "All existing fixture paths verified after apply and rollback; crash after the third server replacement restores source code and preserves client assets.",
+    "Correct R83 health version and available runtimeDiagnosticsR80 required before target validation.",
+    "R82 recovery journal cannot be adopted by R83; unrelated active update cannot be overwritten.",
+    "Real install/daily-backup flock and matching backup environment/data-root gates.",
+    "Real SQLite backup, quick_check and WAL preservation; current DB progress remains after code-only rollback.",
+    "Accounts service never stopped/restarted, inode and service identity retained.",
+    "Maintenance/registration policy and empty online/admission gates; no automatic opening.",
+    "Pinned R80 native WAL and unchanged Node 22.23.4 / SQLite 3.53.4 runtime; the R82 HTTP entry remains byte-identical at its exact pinned SHA256.",
+    "Unchanged client assets, HTTP, SSR/HTML/manifest references and asset inodes/modes/owners; recovery rederives exactly three server files plus two identity metadata files and rejects injected asset paths, links, backup slots, hashes and directories.",
+    "Validated/rollback crash recovery, guard fencing, cleanup failure and fresh rollback backup behavior."
+  ],
+  "actualPayloadLoaderTest": {
+    "productionFiles": {
+      "core511-source/scripts/core511/heartbeat-loop.mjs": {
+        "before": "8b3430df7d2ac04e6f18f3e3e631331f1e871dc6d6d14bdbfd579048eed3eac3",
+        "after": "8179bd52c92899b5f0c34d269a9392d74ba53bb3d4a34d388c5db3170b21c21b",
+        "bytes": 4405
+      },
+      "core511-source/scripts/core511/shared-combat-channel.mjs": {
+        "before": "47c6a500f78d18c6e68d3c8e966baff3e4c618157775ba351dd6bbcada9d6793",
+        "after": "b931c89ce9568b62d8f6a02f147a7d9d39b31f7a2364ca89bc81296c205808ad",
+        "bytes": 31951
+      },
+      "core511-source/scripts/core511/native-http-bindings.mjs": {
+        "before": "175e683bbcb71da93a8bab9166ae9f5753e85963000488eb8671a2d850ea12a0",
+        "after": "63732cba846952bc7d71b82f04bb6c592fabec38ddcd87952a704889008a16cb",
+        "bytes": 15094
+      }
+    },
+    "baseCoreSHA256": "7c5ae6d88decda07ae8ab6ad1dca23c16d105a2242ba21ef95172efdd9b15bc7",
+    "baseRows": 1166,
+    "fullGameplayExecution": false
+  },
+  "moduleSHA256": {
+    "central.mjs": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+    "client_stage.py": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42",
+    "inplace_stage.py": "71a7619eeb2829a697fd40785b799bd07655ef1fa7a236c99e98c05bad897df8",
+    "installer.py": "91e310c98be094c4895af5290fc93c590ce617727123b6498781ff8c6ae56218",
+    "r63_support.py": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+    "retention.py": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+    "runtime_stage.py": "b9f1de0431ab7e11c5ac9d58a9f9c0fa2ad5a981c7923f83604279292fa9ba9a",
+    "storage.py": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735"
+  },
+  "testSHA256": {
+    "installer-fixture.py": "1634a0419d55fbe9bd2fa474a1dd099ecdfcc06fbd1a300ebf2d6e17c209533c",
+    "installer-gates.test.py": "8e495fa5c0b016560694226da80bfbd38768a78a096a17d32b62883ff69f0bf5",
+    "installer-inplace.test.py": "0b65ef4e6f938b36dd677bf7250b3d3910b7ad1778879d1bdd17ddc2a40bbb0e",
+    "installer-run.py": "6fcdfc9d01577afa79b8c827e9a24083d2cecc98709f38b5df01a651da34ca0a"
+  },
+  "buildScriptSHA256": "58e7e2734ec67bac840cbb2fe7557c89e1df0e27fe13aaa729e8547984361b2f",
+  "updateManifestSHA256": "48a10668e96ac47fb7bf1129236fd8305e556a25b8f3522dbed9b8e5604d3ec2",
+  "liveDeploymentPerformed": false
+}

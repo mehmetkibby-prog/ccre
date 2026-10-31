@@ -1,0 +1,79 @@
+{
+  "version": "R83_GAMEPLAY",
+  "sourceVersion": "R82_GAMEPLAY",
+  "recordedUTC": "2026-10-31T11:14:02.644148+00:00",
+  "productionFiles": {
+    "core511-source/scripts/core511/heartbeat-loop.mjs": {
+      "before": "8b3430df7d2ac04e6f18f3e3e631331f1e871dc6d6d14bdbfd579048eed3eac3",
+      "after": "8179bd52c92899b5f0c34d269a9392d74ba53bb3d4a34d388c5db3170b21c21b",
+      "bytes": 4405
+    },
+    "core511-source/scripts/core511/shared-combat-channel.mjs": {
+      "before": "47c6a500f78d18c6e68d3c8e966baff3e4c618157775ba351dd6bbcada9d6793",
+      "after": "b931c89ce9568b62d8f6a02f147a7d9d39b31f7a2364ca89bc81296c205808ad",
+      "bytes": 31951
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "175e683bbcb71da93a8bab9166ae9f5753e85963000488eb8671a2d850ea12a0",
+      "after": "63732cba846952bc7d71b82f04bb6c592fabec38ddcd87952a704889008a16cb",
+      "bytes": 15094
+    }
+  },
+  "sourceIdentity": {
+    "verifiedAvailableSourceFiles": 1124,
+    "changedFiles": 3,
+    "missingPinnedFiles": 42,
+    "sourceCoreSHA256": "7c5ae6d88decda07ae8ab6ad1dca23c16d105a2242ba21ef95172efdd9b15bc7",
+    "targetCoreSHA256": "dddf16515a7061a88b9aa1543b3c692fcc5383f09602e34e31c04c8c7625d172",
+    "sourceRows": 1166,
+    "targetRows": 1166
+  },
+  "passedTests": 93,
+  "failedTests": 0,
+  "gameplayTests": 25,
+  "installerTests": 68,
+  "testScope": {
+    "gameplay": "actual shipped client transport/prediction and relevant actual server classes; native write, refresh, schedule and socket delivery are controlled ports; source-exact pure helpers isolated to avoid unavailable imports",
+    "installer": "actual filesystem, SQLite backup/WAL, locks, journals and recovery; OS services, accounts HTTP and full external release verification use isolated fixtures",
+    "fullLiveGameServerRun": false,
+    "vdsDeployedByThisWork": false,
+    "reportedIncidentCauseProven": false
+  },
+  "invariantChecks": [
+    "Gameplay native writer ACK and authoritative refresh still hold actor barrier.",
+    "Unknown gameplay write outcome remains fenced; no forced successful reply.",
+    "Background scheduling tasks remain tracked and lifecycle drains still wait.",
+    "Shared complete/resource release still precede finished heartbeat reply.",
+    "Client 600ms prediction limit, admission and command ordering unchanged.",
+    "Snapshot read queue retained byte-for-byte from R82.",
+    "Only three existing server files and two generated identity metadata paths are written.",
+    "No DB schema/player mutation, old DB restore, account-service restart or client/runtime replacement."
+  ],
+  "controlledReproduction": {
+    "backgroundDescriptorDelayMs": 900,
+    "r82HeartbeatReplyMs": 900,
+    "r83HeartbeatReplyMs": 50,
+    "r82StationaryPresentationMs": 300,
+    "r83StationaryPresentationMs": 0,
+    "cases": 3,
+    "liveBenchmark": false
+  },
+  "excludedInvestigation": {
+    "snapshotReadBatchBudget": "Not shipped: cache invalidation raised total workload time by approximately 1.97 and 2.48 times in two controlled write-heavy actual ColdReadCache/SQLite fixtures.",
+    "excludedTestsCountedIn93": false
+  },
+  "evidenceFiles": {
+    "installer-evidence.json": "cb07dfe19aa5d180942f33784dba9182c56ed71263bc08c16a79f365a839aded",
+    "installer-inplace-results.txt": "3bdd5c2d7a3877c7f3056c2453fe7d78bcb29e6ec2eff15582ed3d95a5b69340",
+    "installer-gates-results.txt": "58f85f7411de0ebd48d9ac36e5721ba99998348c206f00bfc5303cc1141c34be",
+    "production-gameplay-evidence.json": "2f5d7f96536347f40e83e76f54fe273d29c7b7640681e824b7c56be95ff7fe46",
+    "production-server-heartbeat-tail.tap": "294e919465bf86382b944361f25ce103ee25091d892346e62643c4e099603885",
+    "production-client-heartbeat-wait.tap": "1864fec02c83b02b3f207a96b2646a727ab3b8bb4b08d2d467e78a106c868cfa",
+    "heartbeat-tail-source-proof.json": "8eeb974e3a38caa9d96c0e5af138feb17aeabc3af13a7ab7f6036f01c8c60332",
+    "heartbeat-client-evidence.json": "685a8a5d1359fc919afc19411083fba0f95d5fee04e4e7a2b4fd5624ad2593ba",
+    "independent-safety-review.txt": "a364bd1099524fbef3c498eec3ee23e1a799b2384a26f817ca1fa0f96d005a94",
+    "installer-independent-review.txt": "73d7b2f6d3d3a77bb131866485b414273d7aa5af72eb6c3ef26a449f9c6e3557",
+    "reader-candidate-excluded.txt": "cd74f278f93ac005289993f6e2f805b50b87695f27d738ce0dcf98870dbfba7a",
+    "source-verification.json": "074f2f8e7eb5157ee415e8a3606e177312fed345288004d4c6765cc7e4931474"
+  }
+}

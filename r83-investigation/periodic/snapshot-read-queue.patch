@@ -1,0 +1,33 @@
+--- a/core511-source/scripts/core511/snapshot-read-queue.mjs
++++ b/core511-source/scripts/core511/snapshot-read-queue.mjs
+@@ -2,8 +2,8 @@
+ // SQLite WAL snapshot. Other messages are FIFO boundaries; replies stay separate.
+ // Admission, ownership checks, result limits and worker timeouts are unchanged.
+ export class SnapshotReadQueue {
+- constructor({begin,commit,rollback,read,post,turn=()=>new Promise(resolve=>setImmediate(resolve))}){
+-  Object.assign(this,{begin,commit,rollback,read,post,turn});this.queue=[];this.running=null;
++ constructor({begin,commit,rollback,read,post,turn=()=>new Promise(resolve=>setImmediate(resolve)),clock=()=>performance.now(),batchBudgetMs=8}){
++  Object.assign(this,{begin,commit,rollback,read,post,turn,clock,batchBudgetMs});this.queue=[];this.running=null;
+  }
+  push(message){this.queue.push(message);return this.start();}
+  start(){
+@@ -19,8 +19,17 @@
+    if(group.length===1){try{await this.read(group[0]);}catch(error){this.failure(group[0],error);}continue;}
+    const replies=[];let opened=false,error=null;
+    try{
+-    this.begin();opened=true;
+-    for(const message of group)await this.read(message,{insideTransaction:true,post:reply=>replies.push(reply)});
++    this.begin();opened=true;const started=this.clock();
++    for(let index=0;index<group.length;index++){
++     await this.read(group[index],{insideTransaction:true,post:reply=>replies.push(reply)});
++     // A completed actor refresh must not wait behind several more expensive
++     // actors merely to share a read transaction. Finish at this complete-read
++     // boundary, never inside ownership validation/SQL. Unstarted requests
++     // retain FIFO ahead of messages that arrived while the read was running.
++     if(index+1<group.length&&this.clock()-started>=this.batchBudgetMs){
++      this.queue.unshift(...group.splice(index+1));break;
++     }
++    }
+     this.commit();opened=false;
+    }catch(failure){error=failure;if(opened)try{this.rollback();}catch{}}
+    if(error)for(const message of group)this.failure(message,error);

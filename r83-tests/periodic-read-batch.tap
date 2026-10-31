@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: actual R82 queue withholds completed A behind blocked unrelated B; bounded queue publishes A first
+ok 1 - actual R82 queue withholds completed A behind blocked unrelated B; bounded queue publishes A first
+  ---
+  duration_ms: 4.843957
+  type: 'test'
+  ...
+# Subtest: fast reads retain one snapshot and only publish after its commit
+ok 2 - fast reads retain one snapshot and only publish after its commit
+  ---
+  duration_ms: 2.277837
+  type: 'test'
+  ...
+# Subtest: batch maximum remains four and the fifth request is read exactly once
+ok 3 - batch maximum remains four and the fifth request is read exactly once
+  ---
+  duration_ms: 0.9994
+  type: 'test'
+  ...
+# Subtest: unstarted tail stays ahead of messages arriving during an awaited read
+ok 4 - unstarted tail stays ahead of messages arriving during an awaited read
+  ---
+  duration_ms: 0.949304
+  type: 'test'
+  ...
+# Subtest: non-actor message is an unchanged FIFO grouping boundary
+ok 5 - non-actor message is an unchanged FIFO grouping boundary
+  ---
+  duration_ms: 0.510887
+  type: 'test'
+  ...
+# Subtest: budget is checked at a complete read boundary including the exact threshold
+ok 6 - budget is checked at a complete read boundary including the exact threshold
+  ---
+  duration_ms: 0.642634
+  type: 'test'
+  ...
+# Subtest: a single expensive read is never split or replied to speculatively
+ok 7 - a single expensive read is never split or replied to speculatively
+  ---
+  duration_ms: 0.720781
+  type: 'test'
+  ...
+# Subtest: COMMIT failure publishes only failure for processed actor and preserves unread requests
+ok 8 - COMMIT failure publishes only failure for processed actor and preserves unread requests
+  ---
+  duration_ms: 0.868012
+  type: 'test'
+  ...
+# Subtest: read error retains original all-current-batch failure without replay or premature success
+ok 9 - read error retains original all-current-batch failure without replay or premature success
+  ---
+  duration_ms: 0.927962
+  type: 'test'
+  ...
+# Subtest: later read failure cannot retract an already committed partial batch
+ok 10 - later read failure cannot retract an already committed partial batch
+  ---
+  duration_ms: 1.588253
+  type: 'test'
+  ...
+# Subtest: per-message error reply remains buffered until commit as in actual readMessage
+ok 11 - per-message error reply remains buffered until commit as in actual readMessage
+  ---
+  duration_ms: 0.667371
+  type: 'test'
+  ...
+# Subtest: close control stays after every earlier actor even after repeated partial batches
+ok 12 - close control stays after every earlier actor even after repeated partial batches
+  ---
+  duration_ms: 0.624928
+  type: 'test'
+  ...
+# Subtest: real SQLite keeps complete individual reads and a fast batch on one WAL snapshot
+ok 13 - real SQLite keeps complete individual reads and a fast batch on one WAL snapshot
+  ---
+  duration_ms: 6.965881
+  type: 'test'
+  ...
+# Subtest: real SQLite starts a fresh snapshot only after committed partial batch, with no actor replay
+ok 14 - real SQLite starts a fresh snapshot only after committed partial batch, with no actor replay
+  ---
+  duration_ms: 5.015625
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32.979959

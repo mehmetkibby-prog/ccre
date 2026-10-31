@@ -1,0 +1,106 @@
+R83 INDEPENDENT INSTALLER REVIEW
+Date: 2026-10-31
+Reviewer: client/movement investigation agent
+
+Result: no new blocking issue found in the final server-only installer code.
+This is an independent source review and package-payload inspection. It is not
+an installation on the user's VDS. Lifecycle/fault injection suites are owned
+by the installer investigator and reported separately.
+
+Final validation evidence
+-------------------------
+The installer investigator's final three-file build passed 68 tests: 34 lifecycle
+and crash recovery tests plus 34 gate/runtime tests, zero failures. I independently
+matched the module hashes and both complete output-file hashes against
+r83-tests/installer-evidence.json. Those hashes match the source reviewed here.
+The fixture uses real Python installer code, filesystem, SQLite backup/WAL,
+locking, journals and atomic overlay; service/account HTTP and complete external
+release verification are isolated fixture ports. It does not claim live deployment.
+
+Reviewed in full
+---------------
+r83-package/modules/installer.py
+r83-package/modules/inplace_stage.py
+r83-package/modules/runtime_stage.py
+r83-package/__main__.py
+r83-package/RUNTIME.json
+
+Also reviewed the exact R82-to-R83 diffs and critical inherited backup helpers
+in r83-package/modules/r63_support.py. The inherited storage.py, r63_support.py,
+central.mjs, retention.py and client_stage.py are byte-for-byte R82 copies.
+
+Payload scope
+-------------
+The inspected final update.json names exactly these existing production files:
+
+  core511-source/scripts/core511/heartbeat-loop.mjs
+  core511-source/scripts/core511/shared-combat-channel.mjs
+  core511-source/scripts/core511/native-http-bindings.mjs
+
+All three inspected payloads match the plan's SHA-256 and byte length. The third
+file changes only health updateVersion from R82_GAMEPLAY to R83_GAMEPLAY.
+snapshot-read-queue.mjs is excluded. No client, HTTP entry bundle, SQLite file,
+schema, account data or runtime binary is a production payload.
+
+validate_scope requires the exact path set, R82_GAMEPLAY source and R83_GAMEPLAY
+destination, before hashes for every file, clientChanges:false, no client plan,
+no schemaMigration and the pinned existing R82 HTTP entry SHA-256:
+286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662
+
+prepare_updates adds only install-operations.mjs candidate identity and
+release-manifest.json identity metadata. Its complete expanded delta has five
+existing paths; client_stage is retained in the package module list for inherited
+packaging compatibility but is never invoked by R83 prepare_updates.
+
+Startup and database protections retained
+-----------------------------------------
+- Actual live release root, service command/configuration, original core identity,
+  complete release manifest, R82 HTTP identity, inherited SQL timing/checkpoint
+  modules and pinned Node runtime are validated before applying the delta.
+- The installer permits application only in the existing closed/preregistration
+  or completed-maintenance states and requires no active presence, recent players
+  or admissions. It does not silently authorize opening the game.
+- Account service identity and database descriptor are tracked throughout. The
+  service wrapper explicitly forbids stopping the accounts service.
+- Installation mutex and actual configured daily-backup mutex are both held.
+  The environment/configuration binding is rechecked after waiting for the lock.
+- The game service is stopped and every process holding its database inode must
+  be gone before code overlay. Guards prevent ordinary service restart while a
+  partial active update is journaled.
+- The backup opens the live game database mode=ro and uses SQLite's backup API,
+  including committed WAL. It verifies quick_check and fsyncs a private backup.
+  That backup is a precaution; neither apply nor rollback copies it over the live
+  database. No database inode replacement or migration is in the reviewed call path.
+- Code writes use fsynced temporary files and same-filesystem atomic replacement,
+  rechecking the before hash immediately before replacement. An unexpected edited
+  destination, parent symlink or code backup hash causes refusal.
+- Four ready channels, durable state, expected realm DB identity, pinned runtime,
+  and R83 diagnostics/version must pass before the update can finish.
+- On failure, gameplay is fenced/stopped even if guard creation fails. Recovery
+  restores only original code and prior STATE metadata, then verifies the restored
+  release and health. Account service/data and the current game DB are preserved.
+
+Recovery scope
+--------------
+validate_expanded_record reconstructs the expected five entries using the exact
+payload and original release manifest/install-operations bytes, obtained either
+from their known live before hash or indexed verified code backup. The journal
+cannot supply an extra path, asset hardlink, different backup slot, or new cleanup
+directory. Original and target core identities must match the recomputed plan.
+
+The recovery record must belong to this R83 package/plan, source root, services,
+database descriptor, configuration and startup drop-in. A partial R82 record is
+not adopted. RuntimePlan permits validation only; it contains no runtime delta.
+
+Manual rollback after gameplay has progressed takes a new precautionary database
+backup and preserves current database contents. It never restores an old DB copy.
+Validated completion/cleanup failures remain resumable instead of unnecessarily
+rolling back already healthy code. Cleanup removes only the private backup whose
+inode/size were recorded; incomplete unverified backups are not silently restored.
+
+Scope of confidence
+-------------------
+The source and payload checks support the narrow patch and preservation claims.
+They do not establish live-VDS filesystem space, service state, load, final public
+download integrity or live gameplay behavior. Those are checked by the installer's
+preflight/health gates or by subsequent operational observation.

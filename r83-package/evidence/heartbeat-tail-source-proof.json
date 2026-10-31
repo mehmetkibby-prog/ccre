@@ -1,0 +1,27 @@
+{
+  "files": [
+    {
+      "path": "heartbeat-loop.mjs",
+      "beforeSha256": "8b3430df7d2ac04e6f18f3e3e631331f1e871dc6d6d14bdbfd579048eed3eac3",
+      "afterSha256": "8179bd52c92899b5f0c34d269a9392d74ba53bb3d4a34d388c5db3170b21c21b",
+      "beforeBytes": 4406,
+      "afterBytes": 4405,
+      "old": "c.lanes.release(lease);await this.maintenance(id,now,counter);return ack;",
+      "replacement": "c.lanes.release(lease);void this.maintenance(id,now,counter);return ack;"
+    },
+    {
+      "path": "shared-combat-channel.mjs",
+      "beforeSha256": "47c6a500f78d18c6e68d3c8e966baff3e4c618157775ba351dd6bbcada9d6793",
+      "afterSha256": "b931c89ce9568b62d8f6a02f147a7d9d39b31f7a2364ca89bc81296c205808ad",
+      "beforeBytes": 31943,
+      "afterBytes": 31951,
+      "old": "after:()=>loop.maintenance(id,now,counter)",
+      "replacement": "after:()=>{void loop.maintenance(id,now,counter);}"
+    }
+  ],
+  "pureImportExports": {
+    "heartbeatRestFrame": "4874aeb008330e9e2b7a9ed63fd9713c9771e499aa4fb7e02774c0a38d79afd1",
+    "attackRandom": "05eb028a0cde24d76d8efc264fd9f70b36c04f34c3fd5a1084f74930128d6961"
+  },
+  "method": "full source-exact HeartbeatLoop and SharedCombatChannel classes; only two actual pure helper exports isolated to avoid unavailable transitive native writer modules; real FixedLoop, ResourceLanes, ResidentState, HeartbeatMemory; controlled IPC/native writer and refresh ports"
+}

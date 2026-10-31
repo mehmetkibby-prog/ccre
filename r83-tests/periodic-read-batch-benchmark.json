@@ -1,0 +1,191 @@
+{
+  "scope": "controlled readonly actor refresh queue waits, not live VDS measurements",
+  "node": "v22.23.4",
+  "injectedOwnReadWaitMs": [
+    12,
+    160,
+    160,
+    160
+  ],
+  "runs": 3,
+  "firstReplyMedianMs": {
+    "before": 493.549,
+    "candidate": 12.374
+  },
+  "before": [
+    {
+      "firstReplyMs": 494.64,
+      "totalMs": 495.325,
+      "groupTransactions": 1,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 494.64
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 494.662
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 494.668
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 494.673
+        }
+      ]
+    },
+    {
+      "firstReplyMs": 493.541,
+      "totalMs": 493.732,
+      "groupTransactions": 1,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 493.541
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.561
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.685
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.693
+        }
+      ]
+    },
+    {
+      "firstReplyMs": 493.549,
+      "totalMs": 493.746,
+      "groupTransactions": 1,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 493.549
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.554
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.555
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.556
+        }
+      ]
+    }
+  ],
+  "candidate": [
+    {
+      "firstReplyMs": 12.613,
+      "totalMs": 494.65,
+      "groupTransactions": 3,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 12.613
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 173.399
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 333.916
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 494.583
+        }
+      ]
+    },
+    {
+      "firstReplyMs": 12.374,
+      "totalMs": 496.852,
+      "groupTransactions": 3,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 12.374
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 172.817
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 333.258
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 496.789
+        }
+      ]
+    },
+    {
+      "firstReplyMs": 12.311,
+      "totalMs": 493.972,
+      "groupTransactions": 3,
+      "replies": [
+        {
+          "id": 0,
+          "ownReadWaitMs": 12,
+          "deliveredMs": 12.311
+        },
+        {
+          "id": 1,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 172.75
+        },
+        {
+          "id": 2,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 333.349
+        },
+        {
+          "id": 3,
+          "ownReadWaitMs": 160,
+          "deliveredMs": 493.787
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "before": {
+      "path": "r82-work/core511-source/scripts/core511/snapshot-read-queue.mjs",
+      "sha256": "d86844aec6feaa84dafcf2dedccea13b0cab1921c87d2c9c6b911c2d3518b4cd"
+    },
+    "candidate": {
+      "path": "r83-investigation/periodic/snapshot-read-queue.mjs",
+      "sha256": "9f339b7568e5a5a8caba36ed9a0adca72d6f0df8846c8802dae4b17eb80a883c"
+    }
+  }
+}

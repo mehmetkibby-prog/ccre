@@ -1,0 +1,975 @@
+{
+  "scope": "controlled latency fixture; not live VDS or native SQLite movement benchmark",
+  "unchangedTransportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+  "cases": [
+    {
+      "name": "local durable",
+      "before": {
+        "fixed": false,
+        "shared": false,
+        "sharedDurable": true,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 900,
+        "heartbeatResultMs": 900,
+        "stationaryPresentationMs": 300,
+        "finalX": 190,
+        "maxPendingMs": 600,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 100,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 150,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 200,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 250,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 300,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 350,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 400,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 450,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 500,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 550,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 650,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 700,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 750,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 800,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 850,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 900,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 950,
+            "x": 165,
+            "pendingMs": 300,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 170,
+            "pendingMs": 350,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 175,
+            "pendingMs": 400,
+            "activeAction": null
+          },
+          {
+            "atMs": 1100,
+            "x": 180,
+            "pendingMs": 450,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1150,
+            "x": 185,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 190,
+            "pendingMs": 200,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 1,
+        "fatals": []
+      },
+      "after": {
+        "fixed": true,
+        "shared": false,
+        "sharedDurable": true,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 50,
+        "heartbeatResultMs": 50,
+        "stationaryPresentationMs": 0,
+        "finalX": 220,
+        "maxPendingMs": 200,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 650,
+            "x": 165,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 700,
+            "x": 170,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 750,
+            "x": 175,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 800,
+            "x": 180,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 850,
+            "x": 185,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 900,
+            "x": 190,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 950,
+            "x": 195,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 200,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 205,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1100,
+            "x": 210,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 1150,
+            "x": 215,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 220,
+            "pendingMs": 150,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 1,
+        "fatals": []
+      }
+    },
+    {
+      "name": "shared durable",
+      "before": {
+        "fixed": false,
+        "shared": true,
+        "sharedDurable": true,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 900,
+        "heartbeatResultMs": 900,
+        "stationaryPresentationMs": 300,
+        "finalX": 190,
+        "maxPendingMs": 600,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 100,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 150,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 200,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 250,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 300,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 350,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 400,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 450,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 500,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 550,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 650,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 700,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 750,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 800,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 850,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 900,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 950,
+            "x": 165,
+            "pendingMs": 300,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 170,
+            "pendingMs": 350,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 175,
+            "pendingMs": 400,
+            "activeAction": null
+          },
+          {
+            "atMs": 1100,
+            "x": 180,
+            "pendingMs": 450,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1150,
+            "x": 185,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 190,
+            "pendingMs": 200,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 1,
+        "fatals": []
+      },
+      "after": {
+        "fixed": true,
+        "shared": true,
+        "sharedDurable": true,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 50,
+        "heartbeatResultMs": 50,
+        "stationaryPresentationMs": 0,
+        "finalX": 220,
+        "maxPendingMs": 200,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 650,
+            "x": 165,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 700,
+            "x": 170,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 750,
+            "x": 175,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 800,
+            "x": 180,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 850,
+            "x": 185,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 900,
+            "x": 190,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 950,
+            "x": 195,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 200,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 205,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1100,
+            "x": 210,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 1150,
+            "x": 215,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 220,
+            "pendingMs": 150,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 1,
+        "fatals": []
+      }
+    },
+    {
+      "name": "shared becomes nonterminal",
+      "before": {
+        "fixed": false,
+        "shared": true,
+        "sharedDurable": false,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 900,
+        "heartbeatResultMs": 900,
+        "stationaryPresentationMs": 300,
+        "finalX": 190,
+        "maxPendingMs": 600,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 100,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 150,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 200,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 250,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 300,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 350,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 400,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 450,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 500,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 550,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 650,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 700,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 750,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 800,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 850,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "heartbeat"
+          },
+          {
+            "atMs": 900,
+            "x": 160,
+            "pendingMs": 600,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 950,
+            "x": 165,
+            "pendingMs": 300,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 170,
+            "pendingMs": 350,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 175,
+            "pendingMs": 400,
+            "activeAction": null
+          },
+          {
+            "atMs": 1100,
+            "x": 180,
+            "pendingMs": 450,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1150,
+            "x": 185,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 190,
+            "pendingMs": 200,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 0,
+        "fatals": []
+      },
+      "after": {
+        "fixed": true,
+        "shared": true,
+        "sharedDurable": false,
+        "controlledBackgroundHoldMs": 900,
+        "firstMoveWireMs": 50,
+        "heartbeatResultMs": 50,
+        "stationaryPresentationMs": 0,
+        "finalX": 220,
+        "maxPendingMs": 200,
+        "samples": [
+          {
+            "atMs": 50,
+            "x": 105,
+            "pendingMs": 50,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 100,
+            "x": 110,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 150,
+            "x": 115,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 200,
+            "x": 120,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 250,
+            "x": 125,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 300,
+            "x": 130,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 350,
+            "x": 135,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 400,
+            "x": 140,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 450,
+            "x": 145,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 500,
+            "x": 150,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 550,
+            "x": 155,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 600,
+            "x": 160,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 650,
+            "x": 165,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 700,
+            "x": 170,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 750,
+            "x": 175,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 800,
+            "x": 180,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 850,
+            "x": 185,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 900,
+            "x": 190,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 950,
+            "x": 195,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1000,
+            "x": 200,
+            "pendingMs": 150,
+            "activeAction": null
+          },
+          {
+            "atMs": 1050,
+            "x": 205,
+            "pendingMs": 200,
+            "activeAction": "move"
+          },
+          {
+            "atMs": 1100,
+            "x": 210,
+            "pendingMs": 50,
+            "activeAction": null
+          },
+          {
+            "atMs": 1150,
+            "x": 215,
+            "pendingMs": 100,
+            "activeAction": null
+          },
+          {
+            "atMs": 1200,
+            "x": 220,
+            "pendingMs": 150,
+            "activeAction": null
+          }
+        ],
+        "heartbeatWireCount": 1,
+        "nativeRequests": 0,
+        "fatals": []
+      }
+    }
+  ]
+}
