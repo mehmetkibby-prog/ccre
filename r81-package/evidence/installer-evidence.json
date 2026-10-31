@@ -1,0 +1,81 @@
+{
+  "version": "R81_GAMEPLAY",
+  "sourceVersion": "R80_GAMEPLAY",
+  "recordedUtc": "2026-10-31T07:47:40.452179+00:00",
+  "scope": "Real installer logic exercised in isolated filesystem/SQLite fixtures; OS service calls, account HTTP and full external release verification are substituted. Not a live VDS or full gameplay test.",
+  "passedTests": 56,
+  "failedTests": 0,
+  "runs": [
+    {
+      "command": "python3 r81-tests/installer-inplace.test.py",
+      "passed": 27,
+      "exitCode": 0,
+      "seconds": 3.737,
+      "outputFile": "r81-tests/installer-inplace-results.txt",
+      "outputSHA256": "aa0590b6a2d90d9f3a444ed5e92beec276041ce699322f4b8e81d99bddd32a1f"
+    },
+    {
+      "command": "python3 r81-tests/installer-gates.test.py",
+      "passed": 29,
+      "exitCode": 0,
+      "seconds": 1.523,
+      "outputFile": "r81-tests/installer-gates-results.txt",
+      "outputSHA256": "54d1ee08746fe3f6c65956927a26d083d39676b3b424e0c719b385f0fca54b2c"
+    }
+  ],
+  "durableCrashPhaseSubcases": {
+    "apply": 10,
+    "manualRollback": 7,
+    "includedInTestCount": true
+  },
+  "preservedBehavior": [
+    "R80 source identity gate",
+    "exact two existing gameplay/health paths required; no other production file allowed",
+    "health payload builder checks exact single version-literal change",
+    "R80 native checkpoint identity unchanged",
+    "R79-pinned Node22.23.4/SQLite3.53.4 unchanged",
+    "strict R81 target health with unchanged runtimeDiagnosticsR80 protocol",
+    "45-second active player/admin gate",
+    "maintenance/pre-registration policy gate",
+    "install and matching daily-backup file locks",
+    "SQLite backup API and quick_check",
+    "current database inode and post-backup progress preserved on rollback",
+    "accounts service never stopped or restarted",
+    "unknown source/state/backup identity blocks overwrite",
+    "startup failure fence and retryable recovery",
+    "idempotent completed apply/recovery"
+  ],
+  "actualPayloadLoaderTest": {
+    "productionFiles": {
+      "core511-source/scripts/core511/abandoned-normal.mjs": {
+        "before": "03c13749a10e5b1389094f13bc1843af46934407eaf2e7dfc2ffdf3a071c0ad3",
+        "after": "d37a6d296f0dfeb456ba3a11a219b215987a6f75380e9c8470f84a43dd4f8832",
+        "bytes": 11145
+      },
+      "core511-source/scripts/core511/native-http-bindings.mjs": {
+        "before": "2342dbbcd208adc11778969b75001e8b4985c0a100abd0435cab80813a7d824c",
+        "after": "dc4fbcd3ab7855e532011f4cbb90bd286dbace65e1513a13d9ef3e08d4593bc1",
+        "bytes": 15094
+      }
+    },
+    "baseCoreSHA256": "53a23474e88c2d68c4c799f36a1b7d6ab67052a516c63d97edf71711f25c6579",
+    "fullGameplayExecution": false
+  },
+  "moduleSHA256": {
+    "central.mjs": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+    "client_stage.py": "71dc1ab81b42823708d50fef6a604d1c7b4b49e5a8077324338e5048dc96c6f3",
+    "inplace_stage.py": "e7ab253aa82514c232b1e437fddc1346e744621c5a57fc589ec1aff0e2ffb0bd",
+    "installer.py": "c4d2f6498a8b1ddd134c46ef6653403403f53b21aa382bd45a756c6d0370bf43",
+    "r63_support.py": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+    "retention.py": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+    "runtime_stage.py": "fd65949cf054b0e5f44b03f31e3d48ec40c9bc3b0233f7e5638ba4c5f64d1bff",
+    "storage.py": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735"
+  },
+  "testSHA256": {
+    "installer-fixture.py": "27509e41f484cc3fc2cfb8e7050fd8a0696446fd7e95e6e792288a6c9e3230bd",
+    "installer-inplace.test.py": "d7f5e3b6bd4f48256474abf20a8fbae153fe055eab24ec467a95a65c15ad63da",
+    "installer-gates.test.py": "e2fa731a4fedd3cf0f267dac3c8694c57b45c05e2bc9f09912c1f604b6d73e3c"
+  },
+  "buildScriptSHA256": "4f58c74f3315e719a6e7b5d1c5dc529c7ec5772afac6ad9b4d28e45ff816be8f",
+  "liveDeploymentPerformed": false
+}

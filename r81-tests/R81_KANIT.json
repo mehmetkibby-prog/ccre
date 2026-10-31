@@ -1,0 +1,97 @@
+{
+  "version": "R81_GAMEPLAY",
+  "sourceVersion": "R80_GAMEPLAY",
+  "recordedUtc": "2026-10-31T07:50:12.922166+00:00",
+  "productionFiles": {
+    "core511-source/scripts/core511/abandoned-normal.mjs": {
+      "before": "03c13749a10e5b1389094f13bc1843af46934407eaf2e7dfc2ffdf3a071c0ad3",
+      "after": "d37a6d296f0dfeb456ba3a11a219b215987a6f75380e9c8470f84a43dd4f8832",
+      "bytes": 11145
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "2342dbbcd208adc11778969b75001e8b4985c0a100abd0435cab80813a7d824c",
+      "after": "dc4fbcd3ab7855e532011f4cbb90bd286dbace65e1513a13d9ef3e08d4593bc1",
+      "bytes": 15094
+    }
+  },
+  "baseCoreSHA256": "53a23474e88c2d68c4c799f36a1b7d6ab67052a516c63d97edf71711f25c6579",
+  "tests": {
+    "passed": 73,
+    "failed": 0,
+    "skipped": 0,
+    "installer": 56,
+    "actorQuery": 12,
+    "preparedCacheRegression": 2,
+    "exactHealthMethod": 3,
+    "runs": [
+      {
+        "output": "abandoned-r81.tap",
+        "passed": 12,
+        "failed": 0,
+        "sha256": "95a1d3d880c4639dfdc0d516ea6c4a0a408fe4d44be861290807fecda6e4685d"
+      },
+      {
+        "output": "prepared-cache-regression.tap",
+        "passed": 2,
+        "failed": 0,
+        "sha256": "b49ba6defe3a97fce692bc17a732a742da3e7b46c70d6fc01eb85cba39c46b2b"
+      },
+      {
+        "output": "runtime-health-http.tap",
+        "passed": 3,
+        "failed": 0,
+        "sha256": "95a4e60399f62163e066528723a128ccd87a3b799ee49fb6515f3b317b7854eb"
+      }
+    ],
+    "adversarialFixtureCountIncludedInActorQueryTests": 120,
+    "applyAndRollbackCrashSubcasesIncludedInInstallerTests": 17
+  },
+  "profile": {
+    "sha256": "c441df6c19c715fdfdedfd40b6a4a144189739bc3557ed98d0a01ce50860f71f",
+    "samples": 28091,
+    "seconds": 60.616099,
+    "startupInspectorSeconds": 0.61673,
+    "abandonedActorsSeconds": 10.314541,
+    "abandonedActorsPercentPostStartupNonidle": 42.55928299497989
+  },
+  "benchmark": {
+    "scope": "isolated synthetic in-memory SQLite benchmark; not a live-server forecast",
+    "runtime": "v22.23.4",
+    "sqlite": "3.53.4",
+    "heavyFixture": {
+      "players": 600,
+      "currentParticipants": 16,
+      "partyMembers": 20,
+      "historicalParticipants": 30000,
+      "historicalNormalClaims": 15000,
+      "historicalXpClaims": 10000,
+      "historicalSinsiClaims": 6000,
+      "extraColumns": 100,
+      "payloadBytesPerExtraColumn": 256,
+      "largeJsonColumnsPerPlayer": 3,
+      "largeJsonItemsPerColumn": 100
+    },
+    "heavyCachedOldMedianMs": 92.89031679999998,
+    "heavyCachedNewMedianMs": 0.2555693999999676,
+    "heavyMeasuredCallsPerVariant": 30,
+    "liveCPUForecast": false
+  },
+  "review": {
+    "unchangedOrdinaryDueAndAllDownstreamFreezeWriterCode": true,
+    "independentGameplayReview": "passed, including MATERIALIZED addition",
+    "healthChange": "exact version literal only; strict startup gate retained",
+    "resultCaching": false
+  },
+  "limits": [
+    "No live deployment performed",
+    "73 targeted tests are not complete game startup or capacity validation",
+    "42 exact-current source modules remain unavailable locally; no older substitute used",
+    "Live database query plan was not obtained; broad join plan reproduced on synthetic indexed data",
+    "Main CPU profile does not measure client render cadence or channel movement delays",
+    "Temporary SQLite materialization is per statement, not a retained player/result cache"
+  ],
+  "runtimeUnchanged": true,
+  "clientUnchanged": true,
+  "databaseSchemaUnchanged": true,
+  "liveDeploymentPerformed": false
+}

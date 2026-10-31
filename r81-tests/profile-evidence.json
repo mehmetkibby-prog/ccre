@@ -1,0 +1,228 @@
+{
+  "scope": "Main-process sampled stack wall attribution; not exact CPU accounting or call counts",
+  "inputSha256": "c441df6c19c715fdfdedfd40b6a4a144189739bc3557ed98d0a01ce50860f71f",
+  "inputBytes": 1237575,
+  "nodes": 5233,
+  "samples": 28091,
+  "profileSpanSeconds": 60.618149,
+  "sampledSeconds": 60.616099,
+  "startupInspectorSecondsExcludedFromActiveDenominator": 0.61673,
+  "postStartupSampledSeconds": 59.999369,
+  "postStartupNonidleSeconds": 24.235702,
+  "postStartupNonidlePercent": 40.393261469133115,
+  "categories": {
+    "nonidle": {
+      "sampledSeconds": 24.852432,
+      "percentWholeProfile": 40.99972187256722,
+      "percentPostStartupNonidle": null
+    },
+    "idle": {
+      "sampledSeconds": 35.763667,
+      "percentWholeProfile": 59.00027812743278,
+      "percentPostStartupNonidle": null
+    },
+    "abandonedNormalAnyFrame": {
+      "sampledSeconds": 11.171823,
+      "percentWholeProfile": 18.430455249190484,
+      "percentPostStartupNonidle": 46.09655210317407
+    },
+    "abandonedActors_native_prepare": {
+      "sampledSeconds": 5.490381,
+      "percentWholeProfile": 9.057628403305861,
+      "percentPostStartupNonidle": 22.654103437977575
+    },
+    "abandonedActors": {
+      "sampledSeconds": 10.314541,
+      "percentWholeProfile": 17.016174201510395,
+      "percentPostStartupNonidle": 42.55928299497989
+    },
+    "abandonedActors_native_all": {
+      "sampledSeconds": 4.725279,
+      "percentWholeProfile": 7.79541916743933,
+      "percentPostStartupNonidle": 19.497182297422206
+    }
+  },
+  "tenSecondBinsAfterStartup": [
+    {
+      "sampledUs": 10.0,
+      "nonidle": 4.23702,
+      "idle": 5.76298,
+      "abandonedNormalAnyFrame": 1.884462,
+      "abandonedActors_native_prepare": 0.911406,
+      "abandonedActors": 1.732412,
+      "abandonedActors_native_all": 0.808358
+    },
+    {
+      "sampledUs": 10.0,
+      "nonidle": 4.168128,
+      "idle": 5.831872,
+      "abandonedNormalAnyFrame": 1.887218,
+      "abandonedActors_native_prepare": 0.966632,
+      "abandonedActors": 1.745423,
+      "abandonedActors_native_all": 0.770365
+    },
+    {
+      "sampledUs": 10.0,
+      "nonidle": 3.973984,
+      "abandonedActors": 1.734445,
+      "abandonedNormalAnyFrame": 1.875982,
+      "abandonedActors_native_all": 0.753565,
+      "idle": 6.026016,
+      "abandonedActors_native_prepare": 0.968239
+    },
+    {
+      "sampledUs": 10.0,
+      "abandonedActors_native_prepare": 0.884595,
+      "nonidle": 3.889351,
+      "abandonedActors": 1.69153,
+      "abandonedNormalAnyFrame": 1.819798,
+      "abandonedActors_native_all": 0.777503,
+      "idle": 6.110649
+    },
+    {
+      "sampledUs": 10.0,
+      "nonidle": 3.889613,
+      "idle": 6.110387,
+      "abandonedNormalAnyFrame": 1.850296,
+      "abandonedActors_native_prepare": 0.882717,
+      "abandonedActors": 1.698341,
+      "abandonedActors_native_all": 0.796641
+    },
+    {
+      "sampledUs": 9.999369,
+      "idle": 5.921763,
+      "nonidle": 4.077606,
+      "abandonedNormalAnyFrame": 1.854067,
+      "abandonedActors_native_prepare": 0.876792,
+      "abandonedActors": 1.71239,
+      "abandonedActors_native_all": 0.818847
+    }
+  ],
+  "topSelf": [
+    {
+      "function": "(idle)",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 35.763667
+    },
+    {
+      "function": "prepare",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 6.186057
+    },
+    {
+      "function": "all",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 4.98565
+    },
+    {
+      "function": "(program)",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 1.168949
+    },
+    {
+      "function": "get",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.818451
+    },
+    {
+      "function": "(garbage collector)",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.794241
+    },
+    {
+      "function": "exec",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.716182
+    },
+    {
+      "function": "post",
+      "url": "node:inspector",
+      "lineZeroBased": 117,
+      "sampledSeconds": 0.61673
+    },
+    {
+      "function": "run",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.58966
+    },
+    {
+      "function": "",
+      "url": "vds-server/src/writer-sql-timing477.mjs",
+      "lineZeroBased": 82,
+      "sampledSeconds": 0.523874
+    },
+    {
+      "function": "framed",
+      "url": "scripts/core511/reliable-stream.mjs",
+      "lineZeroBased": 24,
+      "sampledSeconds": 0.440986
+    },
+    {
+      "function": "writeBuffer",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.419054
+    },
+    {
+      "function": "_propagate",
+      "url": "node:internal/async_local_storage/async_hooks",
+      "lineZeroBased": 63,
+      "sampledSeconds": 0.246151
+    },
+    {
+      "function": "",
+      "url": "scripts/core511/reliable-stream.mjs",
+      "lineZeroBased": 49,
+      "sampledSeconds": 0.212558
+    },
+    {
+      "function": "nextTick",
+      "url": "node:internal/process/task_queues",
+      "lineZeroBased": 110,
+      "sampledSeconds": 0.134602
+    },
+    {
+      "function": "createAttackWriterRules",
+      "url": "core511/generated/attack-writer-rules.mjs",
+      "lineZeroBased": 70,
+      "sampledSeconds": 0.119522
+    },
+    {
+      "function": "runMicrotasks",
+      "url": "",
+      "lineZeroBased": -1,
+      "sampledSeconds": 0.116971
+    },
+    {
+      "function": "parseChannelMessages",
+      "url": "node:internal/child_process/serialization",
+      "lineZeroBased": 60,
+      "sampledSeconds": 0.115018
+    },
+    {
+      "function": "run",
+      "url": "scripts/core511/coordinator.mjs",
+      "lineZeroBased": 55,
+      "sampledSeconds": 0.106397
+    },
+    {
+      "function": "writeChannelMessage",
+      "url": "node:internal/child_process/serialization",
+      "lineZeroBased": 108,
+      "sampledSeconds": 0.09625
+    }
+  ],
+  "limitations": [
+    "Different window from the earlier /proc measurement",
+    "No live query plan, channel profile or browser render trace in this file",
+    "The first inspector sample is separately identified, not discarded from the raw profile"
+  ]
+}

@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: reused immutable facade rereads current values, rollback and recreated schema; outside scope remains native
+ok 1 - reused immutable facade rereads current values, rollback and recreated schema; outside scope remains native
+  ---
+  duration_ms: 11.044803
+  type: 'test'
+  ...
+# Subtest: recursive use of the same facade retains native reentrant statement fencing and large-binding fallback
+ok 2 - recursive use of the same facade retains native reentrant statement fencing and large-binding fallback
+  ---
+  duration_ms: 1.71348
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22.259886

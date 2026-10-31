@@ -1,0 +1,10 @@
+{
+  "archive": "/workspace/scratch/68fd588af980/CORE511_R81_TOPLU.zip",
+  "bytes": 139829,
+  "sha256": "46340f6459f85ccb07287e79b26efad52e2b0de052e8d878154e9fca681f2e21",
+  "productionFiles": 2,
+  "payloadBytes": 26239,
+  "sourceVersion": "R80_GAMEPLAY",
+  "targetVersion": "R81_GAMEPLAY",
+  "nativeRuntimeOrClientPayload": false
+}

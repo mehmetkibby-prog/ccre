@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: same unpaid loot owners and eligible XP allies, with a wide player schema
+ok 1 - same unpaid loot owners and eligible XP allies, with a wide player schema
+  ---
+  duration_ms: 10.505661
+  type: 'test'
+  ...
+# Subtest: XP, sinsi, boss and loadlab historical claims retain their exact eligibility rules
+ok 2 - XP, sinsi, boss and loadlab historical claims retain their exact eligibility rules
+  ---
+  duration_ms: 10.373098
+  type: 'test'
+  ...
+# Subtest: death, location, channel, arena and exact distance boundaries are unchanged
+ok 3 - death, location, channel, arena and exact distance boundaries are unchanged
+  ---
+  duration_ms: 13.533914
+  type: 'test'
+  ...
+# Subtest: each recency source and a changing current time are read freshly
+ok 4 - each recency source and a changing current time are read freshly
+  ---
+  duration_ms: 6.430407
+  type: 'test'
+  ...
+# Subtest: target identity, spawn round, sorted deduplication and overlapping parties are preserved
+ok 5 - target identity, spawn round, sorted deduplication and overlapping parties are preserved
+  ---
+  duration_ms: 2.889895
+  type: 'test'
+  ...
+# Subtest: compiled statements are reused outside the writer scope without retaining row results
+ok 6 - compiled statements are reused outside the writer scope without retaining row results
+  ---
+  duration_ms: 3.624638
+  type: 'test'
+  ...
+# Subtest: synchronous nesting leaves the outer writer transaction and current rows authoritative
+ok 7 - synchronous nesting leaves the outer writer transaction and current rows authoritative
+  ---
+  duration_ms: 1.109594
+  type: 'test'
+  ...
+# Subtest: main/TEMP schema changes, rollback and external schema changes invalidate safely
+ok 8 - main/TEMP schema changes, rollback and external schema changes invalidate safely
+  ---
+  duration_ms: 32.40166
+  type: 'test'
+  ...
+# Subtest: SQL failure unwinds the scope and later calls still use current schema and rows
+ok 9 - SQL failure unwinds the scope and later calls still use current schema and rows
+  ---
+  duration_ms: 2.240251
+  type: 'test'
+  ...
+# Subtest: real writer-side roster recheck rejects a changed roster before any reward service
+ok 10 - real writer-side roster recheck rejects a changed roster before any reward service
+  ---
+  duration_ms: 1.559249
+  type: 'test'
+  ...
+# Subtest: 600 players and historical claims keep identical actors with a target-scoped materialized source relation
+ok 11 - 600 players and historical claims keep identical actors with a target-scoped materialized source relation
+  ---
+  duration_ms: 409.756249
+  type: 'test'
+  ...
+# Subtest: seeded mixed histories match the original SQL across 120 adversarial fixtures
+ok 12 - seeded mixed histories match the original SQL across 120 adversarial fixtures
+  ---
+  duration_ms: 197.401222
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 705.713577

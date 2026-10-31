@@ -1,0 +1,383 @@
+{
+  "scope": "isolated synthetic in-memory SQLite benchmark; not a live-server forecast",
+  "runtime": "v22.23.4",
+  "sqlite": "3.53.4",
+  "iterationsPerRound": 200,
+  "rounds": 5,
+  "rows": [
+    {
+      "mode": "preflight",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 0,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.256504955,
+        "trialsMsPerCall": [
+          0.256504955,
+          0.2567731950000001,
+          0.26843583499999996,
+          0.20935491499999984,
+          0.24540421999999978
+        ],
+        "compiledInMeasuredCalls": 1000
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.01321959000000021,
+        "trialsMsPerCall": [
+          0.01471678499999996,
+          0.013674069999999858,
+          0.012709524999999928,
+          0.013215330000000166,
+          0.01321959000000021
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 19.403397155282118
+    },
+    {
+      "mode": "preflight",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 100,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.45140393500000014,
+        "trialsMsPerCall": [
+          0.43950399500000004,
+          0.4481327500000003,
+          0.46883351000000006,
+          0.45140393500000014,
+          0.48863953500000035
+        ],
+        "compiledInMeasuredCalls": 1000
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.014484489999999824,
+        "trialsMsPerCall": [
+          0.021049339999999573,
+          0.015976324999999746,
+          0.014484489999999824,
+          0.012841869999999745,
+          0.012819484999999986
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 31.164641281812866
+    },
+    {
+      "mode": "preflight",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 300,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.989806165,
+        "trialsMsPerCall": [
+          0.9435482549999995,
+          0.989806165,
+          0.9506017350000002,
+          0.9987058250000007,
+          1.0182047350000005
+        ],
+        "compiledInMeasuredCalls": 1000
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.01735635000000002,
+        "trialsMsPerCall": [
+          0.01735635000000002,
+          0.017481535000000575,
+          0.01597702500000082,
+          0.019590650000000095,
+          0.015394599999999627
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 57.02847459287228
+    },
+    {
+      "mode": "already-inside-prepared-writer-scope",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 0,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.013775870000000624,
+        "trialsMsPerCall": [
+          0.013775870000000624,
+          0.014074620000000095,
+          0.014021839999999201,
+          0.01213320500000009,
+          0.01066400499999986
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.012143969999999626,
+        "trialsMsPerCall": [
+          0.012143969999999626,
+          0.013689345000000231,
+          0.010333954999999832,
+          0.012622645000000147,
+          0.011213079999999992
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 1.1343794492246808
+    },
+    {
+      "mode": "already-inside-prepared-writer-scope",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 100,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.013579580000000533,
+        "trialsMsPerCall": [
+          0.012866205000000264,
+          0.014010974999999917,
+          0.013579580000000533,
+          0.01180426500000067,
+          0.014136815000000524
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.01051657999999975,
+        "trialsMsPerCall": [
+          0.01243015499999956,
+          0.017580484999999726,
+          0.01051657999999975,
+          0.009814680000000636,
+          0.010237215000000788
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 1.2912543811772321
+    },
+    {
+      "mode": "already-inside-prepared-writer-scope",
+      "fixture": {
+        "players": 2,
+        "participants": 1,
+        "partyMembers": 2,
+        "eligibilityColumns": 10,
+        "extraColumns": 300,
+        "payloadBytesPerExtraColumn": 256
+      },
+      "baseline": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.01299250000000029,
+        "trialsMsPerCall": [
+          0.013367155000000821,
+          0.01299250000000029,
+          0.012198459999999613,
+          0.012563354999999774,
+          0.013774369999999862
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "changed": {
+        "iterationsPerRound": 200,
+        "rounds": 5,
+        "warmupCalls": 10,
+        "medianMsPerCall": 0.013173614999999472,
+        "trialsMsPerCall": [
+          0.013173614999999472,
+          0.011882180000000062,
+          0.011712274999999862,
+          0.01340791999999965,
+          0.013759699999999384
+        ],
+        "compiledInMeasuredCalls": 0
+      },
+      "ratio": 0.9862516856611349
+    },
+    {
+      "mode": "already-inside-prepared-writer-scope-heavy-history",
+      "fixture": {
+        "players": 600,
+        "currentParticipants": 16,
+        "partyMembers": 20,
+        "historicalParticipants": 30000,
+        "historicalNormalClaims": 15000,
+        "historicalXpClaims": 10000,
+        "historicalSinsiClaims": 6000,
+        "extraColumns": 100,
+        "payloadBytesPerExtraColumn": 256,
+        "largeJsonColumnsPerPlayer": 3,
+        "largeJsonItemsPerColumn": 100
+      },
+      "baseline": {
+        "iterationsPerRound": 10,
+        "rounds": 3,
+        "warmupCalls": 2,
+        "medianMsPerCall": 92.89031679999998,
+        "trialsMsPerCall": [
+          90.3314182,
+          92.89031679999998,
+          99.15809429999999
+        ],
+        "compiledInMeasuredCalls": 0,
+        "explain": {
+          "scope": "synthetic fixture query plan; live schema/index statistics were not retrieved",
+          "queryPlan": [
+            "MERGE (UNION)",
+            "LEFT",
+            "MATERIALIZE life",
+            "SCAN CONSTANT ROW",
+            "SCAN life",
+            "SEARCH mp USING COVERING INDEX sqlite_autoindex_monster_participants_1 (monster_id=? AND spawn_round=?)",
+            "CORRELATED SCALAR SUBQUERY 2",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_normal_reward_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "SEARCH p USING COVERING INDEX sqlite_autoindex_players_1 (id=?)",
+            "USE TEMP B-TREE FOR ORDER BY",
+            "RIGHT",
+            "SCAN ally USING INDEX sqlite_autoindex_players_1",
+            "BLOOM FILTER ON p (arena_match_id=? AND channel=? AND area=?)",
+            "SEARCH p USING AUTOMATIC PARTIAL COVERING INDEX (arena_match_id=? AND channel=? AND area=?)",
+            "SEARCH mine USING INDEX sqlite_autoindex_party_members_1 (player_id=?)",
+            "SCAN life",
+            "SEARCH mp USING COVERING INDEX sqlite_autoindex_monster_participants_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 2",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_normal_reward_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "SEARCH team USING COVERING INDEX party_members_party (party_id=? AND player_id=?)",
+            "SCAN life",
+            "CORRELATED SCALAR SUBQUERY 4",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_monster_xp_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 5",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_sinsi_reward_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 7",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_boss_reward_claims_1 (boss_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 6",
+            "SEARCH lab USING INTEGER PRIMARY KEY (rowid=?)",
+            "SCAN life"
+          ],
+          "playersTableColumnOrdinalsRead": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "unusedPlayerColumnReads": []
+        }
+      },
+      "changed": {
+        "iterationsPerRound": 10,
+        "rounds": 3,
+        "warmupCalls": 2,
+        "medianMsPerCall": 0.2555693999999676,
+        "trialsMsPerCall": [
+          0.2555693999999676,
+          0.34641470000005936,
+          0.24844569999995655
+        ],
+        "compiledInMeasuredCalls": 0,
+        "explain": {
+          "scope": "synthetic fixture query plan; live schema/index statistics were not retrieved",
+          "queryPlan": [
+            "MERGE (UNION)",
+            "LEFT",
+            "MATERIALIZE sources",
+            "MATERIALIZE life",
+            "SCAN CONSTANT ROW",
+            "SCAN life",
+            "SEARCH mp USING COVERING INDEX sqlite_autoindex_monster_participants_1 (monster_id=? AND spawn_round=?)",
+            "CORRELATED SCALAR SUBQUERY 2",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_normal_reward_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "SEARCH p USING INDEX sqlite_autoindex_players_1 (id=?)",
+            "SCAN sources",
+            "USE TEMP B-TREE FOR ORDER BY",
+            "RIGHT",
+            "SCAN ally USING INDEX sqlite_autoindex_players_1",
+            "SEARCH team USING INDEX sqlite_autoindex_party_members_1 (player_id=?)",
+            "SEARCH mine USING COVERING INDEX party_members_party (party_id=?)",
+            "SCAN life",
+            "SCAN life",
+            "BLOOM FILTER ON source (id=? AND arena_match_id=? AND channel=? AND area=?)",
+            "SEARCH source USING AUTOMATIC PARTIAL COVERING INDEX (id=? AND arena_match_id=? AND channel=? AND area=?)",
+            "CORRELATED SCALAR SUBQUERY 4",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_monster_xp_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 5",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_sinsi_reward_claims_1 (monster_id=? AND spawn_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 7",
+            "SEARCH r USING COVERING INDEX sqlite_autoindex_boss_reward_claims_1 (boss_round=? AND player_id=?)",
+            "CORRELATED SCALAR SUBQUERY 6",
+            "SEARCH lab USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          "playersTableColumnOrdinalsRead": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "unusedPlayerColumnReads": []
+        }
+      },
+      "ratio": 363.4641580721783
+    }
+  ]
+}
