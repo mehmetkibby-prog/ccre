@@ -7,6 +7,7 @@ import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
 import type { Fx3D } from '../g3d/fx3d.ts';
 import { sfx } from './audio.ts';
+import { OFFLINE } from '../mode.ts';
 
 export interface Sample { t: number; x: number; y: number }
 export interface CEnt {
@@ -61,7 +62,8 @@ export class Game {
   // ───────── bağlantı ─────────
   start() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${proto}://${location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`);
+    const url = `${proto}://${location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`;
+    const ws: WebSocket = OFFLINE ? (window as unknown as { __colCreateSocket: (u: string) => WebSocket }).__colCreateSocket(url) : new WebSocket(url);
     ws.binaryType = 'arraybuffer';
     this.ws = ws;
     let closedReason = '';

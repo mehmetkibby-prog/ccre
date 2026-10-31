@@ -3,3 +3,5 @@ dist
 .env
 *.log
 reports/*.json
+teslim/
+packages/client/dist-offline

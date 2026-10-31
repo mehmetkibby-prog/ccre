@@ -8,6 +8,7 @@ import { GameScreen } from './ui/GameScreen.tsx';
 import { createHumanoid, animateHumanoid, LOOKS } from './g3d/humanoid.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
+import { OFFLINE } from './mode.ts';
 
 type Screen = { s: 'loading' } | { s: 'auth' } | { s: 'chars' } | { s: 'channels'; charId: number } | { s: 'game'; ticket: string; charId: number; channel: number };
 interface Me { account: { id: number; username: string; role: string }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
@@ -55,6 +56,7 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
       <MenuBackdrop />
       <div style={{ zIndex: 1 }}>
         <div className="logo">Core of Life<small>YAŞAM ÇEKİRDEĞİ</small></div>
+        {OFFLINE && <div className="frame auth" style={{ padding: '12px 16px', marginBottom: 12, fontSize: 13 }}><b className="title">Test sürümü</b><div className="muted" style={{ marginTop: 4 }}>Oyun sunucusu bu sürümde tarayıcının içinde çalışır. Hesabın ve karakterin yalnız bu cihazda saklanır. Köyde ve ormanda gördüğün diğer oyuncular test botlarıdır.</div></div>}
         <form className="frame auth" onSubmit={submit}>
           <div className="tabs">
             <button type="button" className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş</button>
