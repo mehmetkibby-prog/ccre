@@ -16,6 +16,8 @@ const CHANNELS = Number(arg('channels', '2'));
 const VILLAGE = Number(arg('village', '0.25')); // köyde kalabalık oluşturan oran
 const RAMP_MS = Number(arg('ramp', '20')) * 1000;
 const OUT = arg('out', '');
+const OFFSET = Number(arg('offset', '0'));
+const QUIET = process.argv.includes('--quiet');
 
 const stats = { connected: 0, failed: 0, snapshots: 0, bytes: 0, kills: 0, loot: 0, deaths: 0, gaps: [] as number[], rtts: [] as number[], errors: new Map<string, number>(), kicked: 0, closed: 0 };
 const err = (k: string) => stats.errors.set(k, (stats.errors.get(k) ?? 0) + 1);
@@ -28,6 +30,7 @@ async function api(path: string, body: unknown, token?: string) {
 }
 
 async function bot(i: number) {
+  i += OFFSET;
   const user = `bot${i}`;
   let token: string;
   try { token = (await api('/api/login', { username: user, password: 'botpass123' })).token; }
@@ -129,7 +132,7 @@ async function main() {
     };
     stats.bytes = 0;
     report.push(row);
-    console.log(JSON.stringify(row));
+    if (!QUIET) console.log(JSON.stringify(row));
   }, 5000);
   await new Promise((r) => setTimeout(r, DURATION));
   clearInterval(iv);

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pool } from './pool.ts';
 
 export async function migrate(): Promise<string[]> {
-  const dir = new URL('./migrations/', import.meta.url).pathname;
+  const dir = fs.existsSync(new URL('./migrations/', import.meta.url).pathname) ? new URL('./migrations/', import.meta.url).pathname : new URL('./db/migrations/', import.meta.url).pathname;
   await pool.query('CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())');
   const done = new Set((await pool.query('SELECT name FROM schema_migrations')).rows.map((r) => r.name));
   const applied: string[] = [];

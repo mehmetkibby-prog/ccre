@@ -15,7 +15,7 @@ export const config = {
   saveIntervalMs: num('SAVE_INTERVAL_MS', 15_000),
   sessionDays: num('SESSION_DAYS', 30),
   devMode: env.NODE_ENV !== 'production',
-  staticDir: env.STATIC_DIR ?? new URL('../../client/dist', import.meta.url).pathname,
+  staticDir: env.STATIC_DIR ?? new URL('../../client/dist', import.meta.url).pathname.replace(/\/$/, ''),
   /** Yalnız ayrı test ortamı: IP başına giriş/kayıt sınırlarını kapatır. Canlıda asla açma. */
   loadTestMode: env.LOADTEST === '1',
   wsMaxBuffered: num('WS_MAX_BUFFERED', 256 * 1024),

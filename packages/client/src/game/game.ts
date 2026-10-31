@@ -1,0 +1,496 @@
+import {
+  readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
+  MONSTERS, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
+} from '@col/shared';
+import { store, notify, pushChat, pushLoot, reqId } from './store.ts';
+import { Input } from './input.ts';
+import { Renderer3D } from '../g3d/renderer3d.ts';
+import type { Fx3D } from '../g3d/fx3d.ts';
+import { sfx } from './audio.ts';
+
+export interface Sample { t: number; x: number; y: number }
+export interface CEnt {
+  id: number; kind: number;
+  x: number; y: number; samples: Sample[];
+  dir: number; anim: number; animStart: number;
+  hp: number; maxHp: number; flags: number; level: number;
+  name: string; cls: number; variant: number; tpl: number; weapon: number; guild: string;
+  icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
+  hurtUntil: number; spawnAt: number; deadAt: number;
+}
+
+const INTERP_MS = 110;
+const seqDiff = (a: number, b: number) => ((a - b + 0x8000) & 0xffff) - 0x8000;
+
+export class Game {
+  ws: WebSocket | null = null;
+  layout!: MapLayout;
+  ents = new Map<number, CEnt>();
+  selfId = 0;
+  charId = 0;
+  cls: ClassId = 'guardian';
+  // kendi karakter tahmini
+  px = 0; py = 0; // tahmin edilen
+  dx = 0; dy = 0; // ekranda gösterilen
+  sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; lastMoveAt = 0; selfFlags = 0;
+  seq = 0;
+  pending: { seq: number; dir: number }[] = [];
+  serverOffset: number | null = null;
+  input = new Input();
+  fx: Fx3D;
+  renderer: Renderer3D;
+  targetId = 0;
+  moveTarget: { x: number; y: number } | null = null;
+  interactNpc: string | null = null;
+  autoAttack = false;
+  lastAttackSent = 0;
+  inputAcc = 0;
+  lastFrame = 0;
+  raf = 0;
+  frames = 0; fpsAt = 0;
+  stopped = false;
+  hoverId = 0;
+  pingSent = 0;
+
+  constructor(public canvas: HTMLCanvasElement, overlay: HTMLCanvasElement, private ticket: string, private onClose: (reason: string) => void) {
+    this.renderer = new Renderer3D(this, canvas, overlay);
+    this.fx = this.renderer.fx;
+    this.setMap('bazaar', 0, 0);
+  }
+
+  // ───────── bağlantı ─────────
+  start() {
+    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${proto}://${location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`);
+    ws.binaryType = 'arraybuffer';
+    this.ws = ws;
+    let closedReason = '';
+    ws.onopen = () => store.set({ connected: true, status: '' });
+    ws.onmessage = (e) => {
+      if (typeof e.data === 'string') this.onJson(JSON.parse(e.data), (r) => (closedReason = r));
+      else this.onSnapshot(e.data as ArrayBuffer);
+    };
+    ws.onclose = () => { store.set({ connected: false }); if (!this.stopped) this.onClose(closedReason || 'Bağlantı koptu.'); this.stop(); };
+    this.input.attach();
+    this.input.onKey = (code, down, e) => this.onKey(code, down, e);
+    this.lastFrame = performance.now();
+    const loop = (t: number) => { if (this.stopped) return; this.frame(t); this.raf = requestAnimationFrame(loop); };
+    this.raf = requestAnimationFrame(loop);
+    setInterval(() => { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.send({ t: 'ping', c: this.pingSent }); } }, 3000);
+  }
+  stop() {
+    if (this.stopped) return;
+    this.stopped = true;
+    cancelAnimationFrame(this.raf);
+    this.input.detach();
+    try { this.ws?.close(); } catch { /* */ }
+  }
+  send(c: ClientCmd) { if (this.ws?.readyState === 1) this.ws.send(JSON.stringify(c)); }
+
+  setMap(id: string, x: number, y: number) {
+    this.layout = getLayout(id);
+    this.ents.clear();
+    this.px = this.dx = x || this.layout.spawn.x; this.py = this.dy = y || this.layout.spawn.y;
+    this.pending = [];
+    this.targetId = 0; this.moveTarget = null; this.autoAttack = false;
+    this.renderer.setLayout(this.layout);
+    store.set({ map: id, target: null });
+    sfx.setZone(MAPS[id]?.theme ?? 'village');
+  }
+
+  private onJson(m: any, setReason: (r: string) => void) {
+    switch (m.t) {
+      case 'welcome':
+        this.selfId = m.entityId;
+        this.setMap(m.map, m.x, m.y);
+        store.set({ entityId: m.entityId, channel: m.channel, worldHealth: m.worldHealth, online: m.online });
+        this.fx.shapes.push({ kind: 'teleport', x: m.x, y: m.y, r: 0, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '' });
+        break;
+      case 'char': this.charId = m.id; this.cls = m.cls; store.set({ char: { id: m.id, name: m.name, cls: m.cls, role: m.role } }); break;
+      case 'self': store.set((s) => ({ self: { ...(s.self ?? ({} as any)), ...strip(m) } })); break;
+      case 'map': {
+        const same = m.map === this.layout.def.id;
+        if (same) { this.px = this.dx = m.x; this.py = this.dy = m.y; this.pending = []; }
+        else { this.setMap(m.map, m.x, m.y); notify(MAPS[m.map]?.name ?? m.map, 'zone'); }
+        this.fx.shapes.push({ kind: 'teleport', x: m.x, y: m.y, r: 0, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '' });
+        sfx.play('teleport');
+        store.set({ panel: null, npc: null, confirmTravel: null });
+        break;
+      }
+      case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
+      case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
+      case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
+      case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
+      case 'gain': {
+        if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
+        if (m.essence) this.fx.text(m.x + 18, m.y, 1.2, `+${m.essence} Öz`, '#8ff4ff', 13, 1200);
+        break;
+      }
+      case 'loot': pushLoot(m.name, m.rarity); sfx.play('loot'); break;
+      case 'dead': store.set({ dead: { killer: m.killer, lost: m.lost, at: Date.now(), respawnIn: m.respawnIn, town: m.town } }); this.autoAttack = false; sfx.play('death'); break;
+      case 'respawned': store.set({ dead: null }); break;
+      case 'state': if (!m.dead) store.set({ dead: null }); break;
+      case 'cd': store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until } })); break;
+      case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
+      case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;
+      case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
+      case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
+      case 'shop': break;
+      case 'pong': store.set({ ping: Date.now() - m.c }); break;
+      case 'kicked': setReason(m.text); break;
+      case 'fatal': setReason(m.text); break;
+    }
+  }
+
+  // ───────── snapshot ─────────
+  private onSnapshot(buf: ArrayBuffer) {
+    const reset = new Uint8Array(buf, 0, 1)[0] === 2;
+    const s: Snapshot = readSnapshot(buf);
+    const now = performance.now();
+    const off = s.t - now;
+    if (this.serverOffset === null || off > this.serverOffset) this.serverOffset = off;
+    else this.serverOffset += (off - this.serverOffset) * 0.02;
+    if (reset) this.ents.clear();
+    // kendi durumum + uzlaştırma
+    this.reconcile(s);
+    const wasDead = (this.selfFlags & EFlag.DEAD) !== 0;
+    this.selfFlags = s.sflags;
+    const st = store.get();
+    if (st.hp !== s.shp || st.maxHp !== s.smaxHp) store.set({ hp: s.shp, maxHp: s.smaxHp });
+    if (wasDead && !(s.sflags & EFlag.DEAD) && st.dead) store.set({ dead: null });
+    for (const sp of s.spawns) {
+      const e: CEnt = {
+        id: sp.id, kind: sp.kind, x: sp.x, y: sp.y, samples: [{ t: s.t, x: sp.x, y: sp.y }], dir: 'dir' in sp ? sp.dir : 0, anim: 'anim' in sp ? sp.anim : 0, animStart: now,
+        hp: 'hp' in sp ? sp.hp : 0, maxHp: 'maxHp' in sp ? sp.maxHp : 0, flags: 'flags' in sp ? sp.flags : 0, level: 'level' in sp ? sp.level : 0,
+        name: sp.kind === Kind.PLAYER ? sp.name : sp.kind === Kind.MONSTER ? MONSTERS[sp.tpl]?.name ?? '?' : '', cls: sp.kind === Kind.PLAYER ? sp.cls : 0,
+        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
+        icon: sp.kind === Kind.LOOT ? sp.icon : '', rarity: sp.kind === Kind.LOOT ? sp.rarity : 0, owner: sp.kind === Kind.LOOT ? sp.owner : 0,
+        ttlEnd: sp.kind === Kind.LOOT ? now + sp.ttl : 0, label: sp.kind === Kind.LOOT ? sp.label : '', hurtUntil: 0, spawnAt: now, deadAt: 0,
+      };
+      if (sp.kind === Kind.LOOT) { this.fx.burst(sp.x, sp.y, 0.4, 10, RAR_COLORS[sp.rarity], 2.2, 600, 0.18); if (sp.owner === this.charId && sp.rarity >= 2) sfx.play('drop'); }
+      this.ents.set(sp.id, e);
+    }
+    for (const u of s.updates) {
+      const e = this.ents.get(u.id);
+      if (!e) continue;
+      if (u.x !== undefined) { e.samples.push({ t: s.t, x: u.x, y: u.y! }); if (e.samples.length > 8) e.samples.shift(); }
+      if (u.hp !== undefined) e.hp = u.hp;
+      if (u.maxHp !== undefined) e.maxHp = u.maxHp;
+      if (u.flags !== undefined) e.flags = u.flags;
+      if (u.level !== undefined) e.level = u.level;
+      if (u.dir !== undefined) {
+        e.dir = u.dir;
+        if (u.anim !== e.anim || (u.anim === Anim.ATTACK && now - e.animStart > 300)) { e.anim = u.anim!; e.animStart = now; }
+      }
+    }
+    for (const id of s.removes) { this.ents.delete(id); if (id === this.targetId) this.setTarget(0); }
+    for (const ev of s.events) this.onEvent(ev, now);
+    // hedef bilgisini güncelle
+    if (this.targetId) {
+      const t = this.ents.get(this.targetId);
+      const st2 = store.get().target;
+      if (t && st2 && (st2.hp !== t.hp || st2.maxHp !== t.maxHp)) store.set({ target: { ...st2, hp: t.hp, maxHp: t.maxHp, level: t.level } });
+    }
+  }
+
+  private reconcile(s: Snapshot) {
+    this.pending = this.pending.filter((p) => seqDiff(p.seq, s.ack) > 0);
+    const pos = { x: s.sx, y: s.sy };
+    const speed = this.speed();
+    for (const p of this.pending) stepMove(this.layout, pos, p.dir, speed);
+    const err = Math.hypot(pos.x - this.px, pos.y - this.py);
+    this.px = pos.x; this.py = pos.y;
+    if (err > 220) { this.dx = this.px; this.dy = this.py; }
+  }
+
+  speed() { return store.get().self?.combat?.speed ?? CLASSES[this.cls].speed; }
+
+  private onEvent(ev: Snapshot['events'][number], now: number) {
+    const st = store.get().settings;
+    switch (ev.e) {
+      case Ev.DAMAGE: {
+        const t = ev.tgt === this.selfId ? null : this.ents.get(ev.tgt);
+        const pos = ev.tgt === this.selfId ? { x: this.dx, y: this.dy } : t ? this.entPos(t) : null;
+        if (!pos) break;
+        if (t) t.hurtUntil = now + 140;
+        const mine = ev.src === this.selfId, onMe = ev.tgt === this.selfId;
+        if (!st.showDamage && !mine && !onMe) break;
+        if (ev.flags & DmgFlag.BLOCK) { this.fx.text(pos.x, pos.y, 2.0, 'Blok', '#cfe3ff', 15); break; }
+        const crit = (ev.flags & DmgFlag.CRIT) !== 0;
+        const color = onMe ? '#ff5a5a' : crit ? '#ffcf3d' : mine ? '#ffffff' : '#d8d8d8';
+        this.fx.text(pos.x, pos.y, 2.0, crit ? `${ev.amount}!` : String(ev.amount), color, crit ? 28 : onMe ? 19 : 18, crit ? 1100 : 850);
+        if (mine || onMe) { this.fx.burst(pos.x, pos.y, 1.1, crit ? 16 : 7, onMe ? '#ff5040' : crit ? '#ffd84a' : '#ffe8c0', crit ? 4.5 : 3, 420, 0.16); sfx.play(crit ? 'crit' : 'hit'); }
+        if (onMe) this.renderer.shake(crit ? 6 : 3);
+        break;
+      }
+      case Ev.HEAL: {
+        const pos = ev.tgt === this.selfId ? { x: this.dx, y: this.dy } : (() => { const t = this.ents.get(ev.tgt); return t ? this.entPos(t) : null; })();
+        if (pos) { this.fx.text(pos.x, pos.y, 2.1, `+${ev.amount}`, '#6dff9a', 18); this.fx.burst(pos.x, pos.y, 0.6, 14, '#8dffb0', 1.2, 900, 0.2, 1.5); }
+        if (ev.tgt === this.selfId) sfx.play('heal');
+        break;
+      }
+      case Ev.CAST: {
+        const isSelf = ev.src === this.selfId;
+        const src = isSelf ? null : this.ents.get(ev.src);
+        const sp = isSelf ? { x: this.dx, y: this.dy } : src ? this.entPos(src) : null;
+        if (!sp) break;
+        if (isSelf) { this.selfAnim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; this.selfAnimStart = now; this.sdir = Math.round(Math.atan2(ev.y - this.dy, ev.x - this.dx) / (Math.PI * 2) * 256) & 255; }
+        else if (src) { src.anim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; }
+        const clsIdx = isSelf ? CLASS_IDS.indexOf(this.cls) : src?.kind === Kind.PLAYER ? src.cls : -1;
+        if (ev.skill === 9) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 420, kind: 'ice', color: '#8fe6ff' }); break; }
+        if (clsIdx === 1 && (ev.skill === 0 || ev.skill === 2 || ev.skill === 3)) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); if (isSelf) sfx.play('bow'); }
+        else if (clsIdx === 2 && ev.skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 260, kind: 'orb', color: '#7cf3ff' }); this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); if (isSelf) sfx.play('magic'); }
+        else if (clsIdx === 0 && ev.skill === 0) { this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 46, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 220, color: '#ffffff' }); if (isSelf) sfx.play('swing'); }
+        else if (ev.skill > 0 && isSelf) sfx.play('skill');
+        if (clsIdx === 0 && ev.skill === 1) this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 70, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 300, color: '#ffd27a' });
+        break;
+      }
+      case Ev.DEATH: {
+        const e = this.ents.get(ev.id);
+        if (e) { e.deadAt = now; const p = this.entPos(e); this.fx.burst(p.x, p.y, 0.8, 26, e.kind === Kind.MONSTER ? '#9ffff0' : '#ff8a8a', 3, 900, 0.22, -1); if (ev.killer === this.selfId) sfx.play('kill'); }
+        if (ev.id === this.targetId) { this.autoAttack = false; this.setTarget(0); }
+        break;
+      }
+      case Ev.FX: {
+        const sh = { x: ev.x, y: ev.y, r: ev.r, r2: 0, a: 0, t0: now, dur: ev.ms, color: '#ff4d5a' };
+        if (ev.fx === FxKind.TELEGRAPH_CIRCLE) this.fx.shapes.push({ kind: 'circle', ...sh });
+        else if (ev.fx === FxKind.TELEGRAPH_RING) this.fx.shapes.push({ kind: 'ring', ...sh, r2: ev.a });
+        else if (ev.fx === FxKind.TELEGRAPH_LINE) this.fx.shapes.push({ kind: 'line', ...sh, a: ev.a / 1000, r2: 70 });
+        else if (ev.fx === FxKind.AOE_BLAST) {
+          const col = this.cls === 'arcanist' ? '#b28bff' : this.cls === 'hunter' ? '#9dff6a' : '#ffd27a';
+          this.fx.shapes.push({ kind: 'blast', ...sh, color: col });
+          this.fx.burst(ev.x, ev.y, 0.3, 40, col, 5, 700, 0.25); this.fx.light(ev.x, ev.y, 1.2, col, 6, 500);
+          sfx.play('boom');
+        } else if (ev.fx === FxKind.HEAL_WAVE) this.fx.shapes.push({ kind: 'heal', ...sh });
+        else if (ev.fx === FxKind.SHIELD) this.fx.shapes.push({ kind: 'shield', ...sh, follow: ev.a === (this.selfId & 0xffff) ? this.selfId : undefined });
+        else if (ev.fx === FxKind.TELEPORT) this.fx.shapes.push({ kind: 'teleport', ...sh });
+        else if (ev.fx === FxKind.PICKUP) this.fx.burst(ev.x, ev.y, 0.4, 12, '#fff6c2', 2, 500, 0.15, 2);
+        break;
+      }
+      case Ev.LEVELUP: {
+        const isSelf = ev.id === this.selfId;
+        const e = isSelf ? null : this.ents.get(ev.id);
+        const p = isSelf ? { x: this.dx, y: this.dy } : e ? this.entPos(e) : null;
+        if (!p) break;
+        this.fx.shapes.push({ kind: 'pillar', x: p.x, y: p.y, r: 34, r2: 0, a: 0, t0: now, dur: 1400, color: 'rgba(255,220,100,0.9)' });
+        this.fx.burst(p.x, p.y, 1.0, 60, '#ffe680', 4, 1300, 0.24, 1); this.fx.light(p.x, p.y, 2, '#ffd860', 8, 1200);
+        if (isSelf) { this.fx.text(p.x, p.y, 2.8, `Seviye ${ev.level}!`, '#ffe680', 30, 2000); sfx.play('levelup'); notify(`Tebrikler! Seviye ${ev.level} oldun.`, 'ok'); }
+        break;
+      }
+    }
+  }
+
+  // ───────── çerçeve ─────────
+  entPos(e: CEnt): { x: number; y: number } { return { x: e.x, y: e.y }; }
+
+  private interpolate(now: number) {
+    const rt = (this.serverOffset ?? 0) + now - INTERP_MS;
+    for (const e of this.ents.values()) {
+      const s = e.samples;
+      if (s.length === 1 || e.kind === Kind.LOOT) { e.x = s[s.length - 1].x; e.y = s[s.length - 1].y; continue; }
+      let i = s.length - 1;
+      while (i > 0 && s[i - 1].t > rt) i--;
+      if (i === 0) { e.x = s[0].x; e.y = s[0].y; continue; }
+      const a = s[i - 1], b = s[i];
+      if (rt >= b.t) {
+        // ekstrapolasyon yok: son bilinen konumda bekle (ışınlanma titremesi olmasın)
+        e.x = b.x; e.y = b.y;
+      } else {
+        const k = (rt - a.t) / Math.max(1, b.t - a.t);
+        if (Math.hypot(b.x - a.x, b.y - a.y) > 300) { e.x = b.x; e.y = b.y; }
+        else { e.x = a.x + (b.x - a.x) * k; e.y = a.y + (b.y - a.y) * k; }
+      }
+      while (s.length > 2 && s[1].t < rt - 200) s.shift();
+    }
+  }
+
+  private frame(t: number) {
+    const dt = Math.min(100, t - this.lastFrame);
+    this.lastFrame = t;
+    this.inputAcc += dt;
+    let n = 0;
+    while (this.inputAcc >= 50 && n < 4) { this.inputTick(); this.inputAcc -= 50; n++; }
+    if (this.inputAcc > 200) this.inputAcc = 0;
+    // görüntülenen konumu tahmine yumuşakça yaklaştır
+    const k = 1 - Math.pow(0.0005, dt / 1000);
+    const ex = this.px - this.dx, ey = this.py - this.dy;
+    if (Math.hypot(ex, ey) < 0.5) { this.dx = this.px; this.dy = this.py; }
+    else { this.dx += ex * Math.min(1, k * 1.6 + 0.35); this.dy += ey * Math.min(1, k * 1.6 + 0.35); }
+    this.interpolate(t);
+    this.renderer.draw(t, dt);
+    this.frames++;
+    if (t - this.fpsAt > 1000) { store.set({ fps: Math.round(this.frames * 1000 / (t - this.fpsAt)) }); this.frames = 0; this.fpsAt = t; }
+  }
+
+  private selfRange() { return classSkill(this.cls, 0)!.range; }
+
+  private inputTick() {
+    const st = store.get();
+    const dead = (this.selfFlags & EFlag.DEAD) !== 0;
+    if (dead || !this.ws || this.ws.readyState !== 1) return;
+    const mv = this.input.moveVector();
+    let dir = NO_DIR;
+    if (mv.x || mv.y) { dir = dirIndexFromVector(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
+    // saldırı: basılı tutma veya otomatik hedef
+    const wantAttack = this.input.attackHeld || this.autoAttack;
+    if (wantAttack && dir === NO_DIR) {
+      let t = this.targetId ? this.ents.get(this.targetId) : undefined;
+      if (!t || t.hp <= 0 || t.deadAt) { const nt = this.nearestEnemy(700); if (nt) { this.setTarget(nt.id); t = nt; } }
+      if (t) {
+        const d = Math.hypot(t.x - this.px, t.y - this.py);
+        const range = this.selfRange();
+        if (d > range - 8) { dir = dirIndexFromVector(t.x - this.px, t.y - this.py); }
+        else {
+          const cd = attackCooldown(650, st.self?.combat?.atkSpeed ?? 0);
+          const now = performance.now();
+          if (now - this.lastAttackSent >= cd - 20) { this.lastAttackSent = now; this.send({ t: 'attack', id: t.id }); }
+          this.sdir = Math.round(Math.atan2(t.y - this.py, t.x - this.px) / (Math.PI * 2) * 256) & 255;
+        }
+      }
+    } else if (dir === NO_DIR && this.moveTarget) {
+      const d = Math.hypot(this.moveTarget.x - this.px, this.moveTarget.y - this.py);
+      if (d < 12) this.moveTarget = null;
+      else dir = dirIndexFromVector(this.moveTarget.x - this.px, this.moveTarget.y - this.py);
+      if (this.interactNpc) {
+        const npc = this.layout.npcs.find((n) => n.id === this.interactNpc);
+        if (npc && Math.hypot(npc.x - this.px, npc.y - this.py) < 170) { this.send({ t: 'npc', id: npc.id }); this.interactNpc = null; this.moveTarget = null; dir = NO_DIR; }
+      }
+    }
+    // kendi ganimetini otomatik al (5 sn sonra sunucu da toplar; yakında elle de)
+    if (dir !== NO_DIR) {
+      const ox = this.px, oy = this.py;
+      this.seq = (this.seq + 1) & 0xffff;
+      this.ws.send(encodeMove(this.seq, dir));
+      this.pending.push({ seq: this.seq, dir });
+      if (this.pending.length > 60) this.pending.shift();
+      const pos = { x: this.px, y: this.py };
+      stepMove(this.layout, pos, dir, this.speed());
+      this.px = pos.x; this.py = pos.y;
+      if (pos.x !== ox || pos.y !== oy) { this.lastMoveAt = performance.now(); this.sdir = Math.round(Math.atan2(pos.y - oy, pos.x - ox) / (Math.PI * 2) * 256) & 255; }
+      else if (this.moveTarget) this.moveTarget = null; // engel: dur
+    }
+  }
+
+  nearestEnemy(maxD: number): CEnt | null {
+    let best: CEnt | null = null, bd = maxD;
+    const pvp = MAPS[this.layout.def.id]?.pvp;
+    for (const e of this.ents.values()) {
+      if (e.hp <= 0 || e.deadAt) continue;
+      if (e.kind !== Kind.MONSTER && !(pvp && e.kind === Kind.PLAYER)) continue;
+      const d = Math.hypot(e.x - this.px, e.y - this.py);
+      if (d < bd) { bd = d; best = e; }
+    }
+    return best;
+  }
+
+  setTarget(id: number) {
+    this.targetId = id;
+    const e = id ? this.ents.get(id) : null;
+    if (!e) { store.set({ target: null }); return; }
+    store.set({ target: { id, name: e.name, level: e.level, hp: e.hp, maxHp: e.maxHp, kind: e.kind, variant: e.variant, boss: e.kind === Kind.MONSTER && !!MONSTERS[e.tpl]?.boss } });
+  }
+
+  // ───────── eylemler ─────────
+  attackPressed(down: boolean) {
+    this.input.attackHeld = down;
+    if (down) {
+      const t = this.targetId ? this.ents.get(this.targetId) : null;
+      if (!t || t.hp <= 0) { const nt = this.nearestEnemy(700); if (nt) this.setTarget(nt.id); }
+      this.autoAttack = true;
+      this.moveTarget = null;
+    }
+  }
+  useSkill(s: number) {
+    const sk = classSkill(this.cls, s, store.get().self?.spec ?? null);
+    if (!sk) return notify('Bu beceri henüz açılmadı.', 'error');
+    const lvl = store.get().self?.level ?? 1;
+    if (lvl < sk.unlock) return notify(`${sk.name} ${sk.unlock}. seviyede açılır.`, 'error');
+    const cdEnd = store.get().cooldowns[s] ?? 0;
+    if (performance.now() < cdEnd - 50) return;
+    let t = this.targetId ? this.ents.get(this.targetId) : undefined;
+    if ((!t || t.hp <= 0) && sk.kind !== 'buff' && sk.kind !== 'heal') { const nt = this.nearestEnemy(sk.range + 100); if (nt) { this.setTarget(nt.id); t = nt; } }
+    if (sk.kind !== 'buff' && sk.kind !== 'heal' && !t && sk.kind !== 'aoe') return notify('Önce bir hedef seç.', 'error');
+    this.send({ t: 'skill', s, id: t?.id, x: Math.round(t?.x ?? this.px), y: Math.round(t?.y ?? this.py) });
+  }
+  pickupNearby() {
+    let best: CEnt | null = null, bd = LOOT_PICKUP_RANGE;
+    for (const e of this.ents.values()) if (e.kind === Kind.LOOT && e.owner === this.charId) { const d = Math.hypot(e.x - this.px, e.y - this.py); if (d < bd) { bd = d; best = e; } }
+    if (best) this.send({ t: 'pickup', id: best.id });
+    else notify('Yakında toplanacak ganimet yok.', 'info');
+  }
+  potion() { this.send({ t: 'potion' }); }
+  travel(map: string, confirm = false) { this.send({ t: 'travel', map, req: reqId(), confirm }); }
+
+  /** Ekran tıklaması: hedef seç, NPC ile konuş, ganimet al veya yürü. */
+  clickScreen(sx: number, sy: number) {
+    const hit = this.renderer.pickScreen(sx, sy);
+    const { x: wx, y: wy } = this.renderer.screenToWorld(sx, sy);
+    if (hit?.type === 'loot') {
+      const e = hit.e!;
+      if (e.owner !== this.charId) { notify('Bu ganimet sana ait değil.', 'error'); return; }
+      if (Math.hypot(e.x - this.px, e.y - this.py) <= LOOT_PICKUP_RANGE) this.send({ t: 'pickup', id: e.id });
+      else this.moveTarget = { x: e.x, y: e.y };
+      return;
+    }
+    if (hit?.type === 'ent') {
+      this.setTarget(hit.e!.id);
+      if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.moveTarget = null; }
+      return;
+    }
+    if (hit?.type === 'npc') {
+      const npc = this.layout.npcs.find((n) => n.id === hit.npc)!;
+      if (Math.hypot(npc.x - this.px, npc.y - this.py) < 170) this.send({ t: 'npc', id: npc.id });
+      else { this.interactNpc = npc.id; this.moveTarget = { x: npc.x, y: npc.y + 40 }; }
+      return;
+    }
+    this.autoAttack = false;
+    this.moveTarget = { x: wx, y: wy };
+    this.renderer.clickMark(wx, wy);
+  }
+  pick(wx: number, wy: number): { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null {
+    let best: { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null = null, bd = 1e9;
+    for (const e of this.ents.values()) {
+      if (e.deadAt && e.kind !== Kind.LOOT) continue;
+      const cy = e.kind === Kind.LOOT ? e.y - 8 : e.y - 28;
+      const r = e.kind === Kind.LOOT ? 30 : 36;
+      const d = Math.hypot(e.x - wx, cy - wy);
+      if (d < r && d < bd) { bd = d; best = { type: e.kind === Kind.LOOT ? 'loot' : 'ent', e }; }
+    }
+    if (best) return best;
+    for (const n of this.layout.npcs) { const d = Math.hypot(n.x - wx, n.y - 30 - wy); if (d < 40 && d < bd) { bd = d; best = { type: 'npc', npc: n.id }; } }
+    return best;
+  }
+
+  cycleTarget() {
+    const list = [...this.ents.values()].filter((e) => e.kind === Kind.MONSTER && e.hp > 0 && !e.deadAt).sort((a, b) => Math.hypot(a.x - this.px, a.y - this.py) - Math.hypot(b.x - this.px, b.y - this.py)).slice(0, 8);
+    if (!list.length) return;
+    const i = list.findIndex((e) => e.id === this.targetId);
+    this.setTarget(list[(i + 1) % list.length].id);
+  }
+
+  private onKey(code: string, down: boolean, e: KeyboardEvent) {
+    if (code === 'Space' || code === 'Digit1') { this.attackPressed(down); return; }
+    if (!down) return;
+    const toggle = (p: any) => store.set((s) => ({ panel: s.panel === p ? null : p }));
+    switch (code) {
+      case 'Digit2': this.useSkill(1); break;
+      case 'Digit3': this.useSkill(2); break;
+      case 'Digit4': this.useSkill(3); break;
+      case 'KeyQ': case 'Digit5': this.potion(); break;
+      case 'KeyZ': case 'KeyF': this.pickupNearby(); break;
+      case 'Tab': this.cycleTarget(); break;
+      case 'KeyI': case 'KeyB': toggle('inventory'); break;
+      case 'KeyC': toggle('character'); break;
+      case 'KeyK': toggle('skills'); break;
+      case 'KeyM': toggle('map'); break;
+      case 'KeyT': toggle('teleport'); break;
+      case 'Escape': if (store.get().panel) store.set({ panel: null, npc: null }); else { this.setTarget(0); this.autoAttack = false; } break;
+      case 'Enter': e.preventDefault(); store.set({ chatOpen: true, unread: 0 }); setTimeout(() => (document.getElementById('chat-input') as HTMLInputElement | null)?.focus(), 0); break;
+    }
+  }
+}
+
+export const RAR_COLORS = ['#f2f0ea', '#5fa8ff', '#ffa53d', '#ff4d5a', '#ffd84a', '#7cf3ff', '#c58bff', '#3ef09a'];
+export const RARITY_IDS = RARITIES;
+function strip(m: any) { const { t, ...rest } = m; return rest; }
+export { TILE };
