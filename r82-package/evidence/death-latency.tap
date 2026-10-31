@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: asynchronous phase time is separate from CPU and each completed hold is accounted once
+ok 1 - asynchronous phase time is separate from CPU and each completed hold is accounted once
+  ---
+  duration_ms: 1.510886
+  type: 'test'
+  ...
+# Subtest: currently waiting callbacks expose counts and oldest phase age without pretending a final sample exists
+ok 2 - currently waiting callbacks expose counts and oldest phase age without pretending a final sample exists
+  ---
+  duration_ms: 0.509524
+  type: 'test'
+  ...
+# Subtest: invalid or backward clocks and phase order discard observations without affecting the caller
+ok 3 - invalid or backward clocks and phase order discard observations without affecting the caller
+  ---
+  duration_ms: 0.424357
+  type: 'test'
+  ...
+# Subtest: active callbacks, recent observations and slow history all stay bounded
+ok 4 - active callbacks, recent observations and slow history all stay bounded
+  ---
+  duration_ms: 1.523806
+  type: 'test'
+  ...
+# Subtest: public diagnostics whitelist scalars and bounded rows and keep missing data null
+ok 5 - public diagnostics whitelist scalars and bounded rows and keep missing data null
+  ---
+  duration_ms: 0.408513
+  type: 'test'
+  ...
+# Subtest: authenticated admin formatter emits death timing only for a fresh channel snapshot
+ok 6 - authenticated admin formatter emits death timing only for a fresh channel snapshot
+  ---
+  duration_ms: 0.685648
+  type: 'test'
+  ...
+# Subtest: actual joined-death callback records writer and refresh waits without releasing the actor early
+ok 7 - actual joined-death callback records writer and refresh waits without releasing the actor early
+  ---
+  duration_ms: 13.424669
+  type: 'test'
+  ...
+# Subtest: actual joined-death failure is counted as failure and retains the original lease fence
+ok 8 - actual joined-death failure is counted as failure and retains the original lease fence
+  ---
+  duration_ms: 1.482493
+  type: 'test'
+  ...
+# Subtest: a proven pre-execution rejection is counted separately and retains normal safe cancellation
+ok 9 - a proven pre-execution rejection is counted separately and retains normal safe cancellation
+  ---
+  duration_ms: 1.20006
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26.21089

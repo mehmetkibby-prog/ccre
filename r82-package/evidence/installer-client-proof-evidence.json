@@ -1,0 +1,34 @@
+{
+  "version": "R82_GAMEPLAY",
+  "sourceVersion": "R81_GAMEPLAY",
+  "client": {
+    "oldNamespace": "core511-ef15c9c67ad1ae14",
+    "namespace": "core511-022e5be3a720e972",
+    "oldName": "game-client-core511-r79-51fbce3bd7351cf0.js",
+    "name": "game-client-core511-r82-b75bd56f90806564.js",
+    "generatedNames": [
+      "game-client-core511-r82-b75bd56f90806564.js"
+    ]
+  },
+  "oldGameSHA256": "51fbce3bd7351cf064f8828a7fd9fdcb9d1611510b59120154ae5b8cb926bb3c",
+  "newGameSHA256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+  "oldHTTP_SHA256": "9aa47af0b1be2cf7c2431eba5fad03a05769ff721e2099478540350a52fa4536",
+  "newHTTP_SHA256": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+  "HTTPBytes": 2229879,
+  "namespaceReplacements": 351,
+  "gameNameReplacements": 2,
+  "HTTPExactInverse": true,
+  "oldGameUnchanged": true,
+  "nativeRecomposition": false,
+  "generatedMetadata": {
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "38e76c0850daf30e6893ec7f9602068ac2ae4c60eae6cefd617db83eb93cf25e",
+      "after": "5b9bb228b9e59fbb514d43d4937656a5d7c8f987604ec8f502901bcdd542298b"
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "564b2f8f3b972ac5d701bd1da75adb5d5e4ecf9df795f3ad9465b2da205380c4",
+      "after": "05506c2d696a082063f090238a36b869d2ff5d4143e123203fb203d9b3582b09"
+    }
+  },
+  "liveDeploymentPerformed": false
+}

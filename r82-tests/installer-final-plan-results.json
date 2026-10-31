@@ -1,0 +1,63 @@
+{
+  "version": "R82_GAMEPLAY",
+  "sourceVersion": "R81_GAMEPLAY",
+  "baseRows": 1164,
+  "baseCoreSHA256": "0fdd34be8b14f326166d24469c3b3c0a2e2a9ba84db839402598baa5e60ff0e8",
+  "productionFiles": {
+    "core511-source/scripts/core511/combat-checkpoint.mjs": {
+      "before": "5e649e37a3e84886d79c79a7d5a72d8c005db760775b21e6e398352a31ed180d",
+      "after": "8c9bd58e79ae7b51818711060c70f629fec3f10a827d3bbfcb7efeb767a5ffce",
+      "bytes": 20312
+    },
+    "core511-source/scripts/core511/attack-commit-r53.mjs": {
+      "before": "f06c062637fdebd56334978f6d1d06f299bd502224dc12e9c1fddc9c4a47b522",
+      "after": "e1b3415482b540fdaaf52bb34374fa3a34faeb20653576d87b81e57c1b325613",
+      "bytes": 7322
+    },
+    "core511-source/scripts/core511/death-latency-r82.mjs": {
+      "before": null,
+      "after": "7fe0871c6a9d2115c1d10579cad508beb2694d5afa01afadda0b08e685dc4a25",
+      "bytes": 5350
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "1f8204a4190f3eb12581b7bc0472d6ca2b71917d56845b71cbaaf18d75691db3",
+      "after": "fb0d87b04baecb121765a2f737ae8178d05974dbd5435c024a9baa2e3e690179",
+      "bytes": 48442
+    },
+    "core511-source/scripts/core511/admin-diagnostics.mjs": {
+      "before": "e388a8f1406d276e8b2e14e9f7bb4ab4168059b0253bad4f4e5540c97d89b3b1",
+      "after": "327e6310a9c97ef7c05b00150d257901cc05d6dfde891b16996def41db5087ab",
+      "bytes": 3373
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "dc4fbcd3ab7855e532011f4cbb90bd286dbace65e1513a13d9ef3e08d4593bc1",
+      "after": "175e683bbcb71da93a8bab9166ae9f5753e85963000488eb8671a2d850ea12a0",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/reward-reply-r54.mjs": {
+      "before": "96ce2306d9d4daa597fd7719779a7d851e0b8d2df0d53122d9b1535c90a5f178",
+      "after": "7204aaf8b813727582dc5e99565cc390bc2d0d23a181f8a06665df883cdd2f41",
+      "bytes": 2839
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "38e76c0850daf30e6893ec7f9602068ac2ae4c60eae6cefd617db83eb93cf25e",
+      "after": "5b9bb228b9e59fbb514d43d4937656a5d7c8f987604ec8f502901bcdd542298b",
+      "bytes": 339773
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "564b2f8f3b972ac5d701bd1da75adb5d5e4ecf9df795f3ad9465b2da205380c4",
+      "after": "05506c2d696a082063f090238a36b869d2ff5d4143e123203fb203d9b3582b09",
+      "bytes": 154267
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r82-b75bd56f90806564.js": {
+      "before": null,
+      "after": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+      "bytes": 1633081
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "9aa47af0b1be2cf7c2431eba5fad03a05769ff721e2099478540350a52fa4536",
+      "after": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+      "bytes": 2229879
+    }
+  }
+}

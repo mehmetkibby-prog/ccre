@@ -1,0 +1,89 @@
+  (0, R.useEffect)(() => {
+    if (!Ea2 || !Db || wb > 0) {
+      wb > 0 && ce2.current && !le2.current && (ce2.current = false);
+      return;
+    }
+    ce2.current = true;
+    Sr2.current?.stop();
+    wr2.current?.stop();
+    if (colArenaWaiting498(F2.current, g2.current, wb) || le2.current) return;
+    const coreR82 = kernel511(Kt()), instanceR82 = Kt(), epochR82 = coreR82.epoch;
+    const worldR82 = F2.current, idR82 = g2.current;
+    const playerR82 = worldR82?.players.find((player) => player.id === idR82);
+    if (!playerR82 || !Number.isSafeInteger(playerR82.hp_revision) || !Number.isFinite(playerR82.respawn_at_ms)) return;
+    const lifeR82 = { area: worldR82.area, channel: worldR82.channel, cycle: worldR82.world.cycle,
+      arena: worldR82.arenaMatch?.id ?? "", revision: playerR82.hp_revision, deadline: playerR82.respawn_at_ms };
+    const tokenR82 = {};
+    let cancelledR82 = false, timerR82 = 0, runningR82 = false, refreshR82 = null, refreshTimerR82 = 0, wakeRefreshR82 = null;
+    const releaseR82 = () => { if (le2.current === tokenR82) le2.current = false; };
+    const deadR82 = () => {
+      if (cancelledR82 || Kt() !== instanceR82 || g2.current !== idR82 || kernel511(Kt()) !== coreR82 || coreR82.playerId !== idR82 || coreR82.epoch !== epochR82 || D2.current !== lifeR82.revision || !Number.isFinite(w2.current) || w2.current > 0) return false;
+      const world = F2.current, player = world?.players.find((row) => row.id === idR82);
+      return !!player && Number.isFinite(player.hp) && player.hp <= 0 && player.hp_revision === lifeR82.revision && player.respawn_at_ms === lifeR82.deadline &&
+        player.area === lifeR82.area && world.area === lifeR82.area && world.channel === lifeR82.channel && world.world.cycle === lifeR82.cycle &&
+        (world.arenaMatch?.id ?? "") === lifeR82.arena && !colArenaWaiting498(world, idR82, player.hp);
+    };
+    const syncR82 = async () => {
+      if (cancelledR82) return;
+      if (!refreshR82) {
+        const task = Promise.resolve().then(() => cancelledR82 ? void 0 : J(true)).catch(() => void 0);
+        refreshR82 = task;
+        task.finally(() => { if (refreshR82 === task) refreshR82 = null; });
+      }
+      try {
+        await Promise.race([refreshR82, new Promise((resolve) => {
+          wakeRefreshR82 = resolve;
+          refreshTimerR82 = window.setTimeout(resolve, 3500);
+        })]);
+      } finally {
+        window.clearTimeout(refreshTimerR82);
+        refreshTimerR82 = 0;
+        wakeRefreshR82 = null;
+      }
+    };
+    const scheduleR82 = (delay) => {
+      if (runningR82 || !deadR82() || le2.current && le2.current !== tokenR82) return;
+      window.clearTimeout(timerR82);
+      le2.current = tokenR82;
+      timerR82 = window.setTimeout(() => void attemptR82(), delay);
+    };
+    const attemptR82 = async () => {
+      timerR82 = 0;
+      if (runningR82 || le2.current !== tokenR82 || !deadR82()) { releaseR82(); return; }
+      runningR82 = true;
+      let arenaWaitR82 = false;
+      try {
+        // An HTTP timeout does not cancel an already accepted socket command.
+        // Let that exact command settle before queuing another respawn.
+        const pending = [coreR82.active, coreR82.movementBehind, ...coreR82.queue].some((row) => row?.payload?.action === "respawn");
+        if (!pending) {
+          try {
+            const reply = await Q(`/api/action`, { action: `respawn` });
+            const valid = reply && Number.isSafeInteger(reply.hpRevision) && reply.hpRevision > lifeR82.revision &&
+              Number.isFinite(reply.hp) && reply.hp > 0 && Number.isFinite(reply.maxHp) && reply.maxHp >= reply.hp &&
+              Number.isFinite(reply.x) && Number.isFinite(reply.y) && typeof reply.area === "string" && reply.area.length > 0;
+            if (deadR82() && valid && fm2({ hp: reply.hp, maxHp: reply.maxHp, hpRevision: reply.hpRevision, area: reply.area, x: reply.x, y: reply.y }))
+              Zp2(reply.x, reply.y, reply.area === `war` ? `#ff5368` : reply.area === `arena` ? `#8fdcff` : `#8bffc0`, 45, 190);
+          } catch (error) {
+            arenaWaitR82 = error?.payload?.code === "arena_waiting_for_round498";
+          } finally { releaseR82(); }
+        } else releaseR82();
+        // A stale/skipped/malformed success is not evidence of resurrection.
+        // Reconcile, then retry only this still-current authoritative death.
+        await syncR82();
+      } finally {
+        runningR82 = false;
+        releaseR82();
+        if (!arenaWaitR82) scheduleR82(900);
+      }
+    };
+    const nowR82 = xp2();
+    scheduleR82(Math.max(120, Number(Eb || nowR82 + 2600) - nowR82 + 80));
+    return () => {
+      cancelledR82 = true;
+      window.clearTimeout(timerR82);
+      window.clearTimeout(refreshTimerR82);
+      wakeRefreshR82?.();
+      releaseR82();
+    };
+  }, [Zp2, fm2, Ea2, wb, Db, Eb, Nv2, J, xp2, U2?.area, U2?.channel, U2?.world.cycle, U2?.arenaMatch?.id, U2?.arenaMatch?.mode, X2?.hp_revision, Bo2, g2.current, Kt(), kernel511(Kt()), kernel511(Kt()).epoch, kernel511(Kt()).playerId]);

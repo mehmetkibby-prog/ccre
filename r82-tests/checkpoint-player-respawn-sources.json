@@ -1,0 +1,42 @@
+[
+  {
+    "file": "generated/attack-writer-rules.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e"
+  },
+  {
+    "file": "generated/attack-rules.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "bbcf5271678ef11e54b3cf7eb0db7c6a775a0ce3d75a7f8bc9b8169ba3a66de9"
+  },
+  {
+    "file": "action-loop.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "40839c2bcaa926b3c58269a36a3aa4dae43c2286fd3f2b1891e8ee7484ae1f5a"
+  },
+  {
+    "file": "actor-checkpoint.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "5f4ea1fd4cc4fc0b48bb06679cf636efe70b8c6a2ff7d36c5b7a38a9ad9e4a46"
+  },
+  {
+    "file": "retaliation-loop.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "70db1b7305220acfb41cd2b333aacc97e29c924e93544122c5e3dc1aa5acfa13"
+  },
+  {
+    "file": "heartbeat-memory.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "5f29c97ea4e04df6a45f54e8bd15ef7464b73bc4a67f543d76f6b1f5a1b004de"
+  },
+  {
+    "file": "generated/rest-regeneration-rules.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "c302dd65213d5971856cf9f89421e60a2a439f08bb266478b744eb5384470ee9"
+  },
+  {
+    "file": "resident-channel.mjs",
+    "unchangedR81toR82": true,
+    "r81Sha256": "3014ca58458dc7a0d3aba6b895cee37c7e48d8adcad48a7ac059eb1dd4332366"
+  }
+]

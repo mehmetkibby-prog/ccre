@@ -1,0 +1,65 @@
+test_actual_backup_environment_mismatch_is_refused_before_daily_lock (__main__.CliAndFailureTests.test_actual_backup_environment_mismatch_is_refused_before_daily_lock) ... ok
+test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding (__main__.CliAndFailureTests.test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding) ... ok
+test_backup_unit_environment_change_while_waiting_is_refused_before_stop (__main__.CliAndFailureTests.test_backup_unit_environment_change_while_waiting_is_refused_before_stop) ... ok
+test_check_is_read_only_and_apply_holds_both_actual_flock_files (__main__.CliAndFailureTests.test_check_is_read_only_and_apply_holds_both_actual_flock_files) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds (__main__.CliAndFailureTests.test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_failed_validated_recovery_is_fenced_and_can_restart_later (__main__.CliAndFailureTests.test_failed_validated_recovery_is_fenced_and_can_restart_later) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_health_failure_plus_guard_enospc_still_stops_all_game_units (__main__.CliAndFailureTests.test_health_failure_plus_guard_enospc_still_stops_all_game_units) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_held_daily_backup_lock_times_out_without_stopping_services (__main__.CliAndFailureTests.test_held_daily_backup_lock_times_out_without_stopping_services) ... ok
+test_held_install_lock_prevents_any_service_stop (__main__.CliAndFailureTests.test_held_install_lock_prevents_any_service_stop) ... ok
+test_open_game_database_fd_prevents_overlay_until_closed (__main__.CliAndFailureTests.test_open_game_database_fd_prevents_overlay_until_closed) ... ok
+test_quick_check_failure_happens_before_any_code_replacement (__main__.CliAndFailureTests.test_quick_check_failure_happens_before_any_code_replacement) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+ok
+test_recovery_health_failure_and_guard_reload_error_preserve_original_exception (__main__.CliAndFailureTests.test_recovery_health_failure_and_guard_reload_error_preserve_original_exception) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_rt_stop_error_does_not_skip_main_game_stop (__main__.CliAndFailureTests.test_rt_stop_error_does_not_skip_main_game_stop) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_sqlite_api_backup_includes_committed_wal_from_dead_writer (__main__.CliAndFailureTests.test_sqlite_api_backup_includes_committed_wal_from_dead_writer) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_unlisted_zip_payload_is_refused (__main__.CliAndFailureTests.test_unlisted_zip_payload_is_refused) ... ok
+test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping (__main__.CliAndFailureTests.test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping) ... ok
+test_active_admission_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_active_admission_is_refused_before_any_stop) ... ok
+test_active_presence_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_active_presence_is_refused_before_any_stop) ... ok
+test_changed_r80_checkpoint_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_changed_r80_checkpoint_is_refused_before_any_stop) ... ok
+test_every_reviewed_gameplay_file_is_required (__main__.R82SpecificBoundaryTests.test_every_reviewed_gameplay_file_is_required) ... ok
+test_exact_reviewed_gameplay_scope_rejects_unknown_and_native_paths (__main__.R82SpecificBoundaryTests.test_exact_reviewed_gameplay_scope_rejects_unknown_and_native_paths) ... ok
+test_existing_source_requires_before_hash_and_only_new_helpers_allow_null (__main__.R82SpecificBoundaryTests.test_existing_source_requires_before_hash_and_only_new_helpers_allow_null) ... ok
+test_open_policy_is_not_silently_changed_by_installer (__main__.R82SpecificBoundaryTests.test_open_policy_is_not_silently_changed_by_installer) ... ok
+test_payload_hash_mismatch_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_payload_hash_mismatch_is_refused_before_any_stop) ... ok
+test_plan_requires_r81_source_and_r82_destination (__main__.R82SpecificBoundaryTests.test_plan_requires_r81_source_and_r82_destination) ... ok
+test_r80_state_is_rejected_before_any_service_stop (__main__.R82SpecificBoundaryTests.test_r80_state_is_rejected_before_any_service_stop) ... ok
+test_recent_player_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_recent_player_is_refused_before_any_stop) ... ok
+test_unexpected_existing_new_helper_is_refused_before_any_stop (__main__.R82SpecificBoundaryTests.test_unexpected_existing_new_helper_is_refused_before_any_stop) ... ok
+test_real_shipped_node_license_symlink_versions_without_runtime_payload (__main__.ExistingPinnedNodeTests.test_real_shipped_node_license_symlink_versions_without_runtime_payload) ... ok
+test_r82_health_requires_own_version_and_available_diagnostics_but_r81_does_not (__main__.HealthVersionGateTests.test_r82_health_requires_own_version_and_available_diagnostics_but_r81_does_not) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 2.695s
+
+OK

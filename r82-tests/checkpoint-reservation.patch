@@ -1,0 +1,56 @@
+--- a/core511-source/scripts/core511/combat-checkpoint.mjs
++++ b/core511-source/scripts/core511/combat-checkpoint.mjs
+@@ -109,17 +109,26 @@
+   const payload={};for(const kind of Object.keys(specs)){const base=this.base.get(kind);payload[kind]=[...this.current.get(kind)].filter(([id,row])=>!same(kind,base.get(id)??null,row)).map(([id,row])=>({base:base.get(id)??null,current:row}));}payload.combatEvents=[...this.events];return payload;
+  }
+  reserveR54(targets){
++  demand(!this.failure,'combat_checkpoint_fenced');
+   demand(rewardAsyncReplyR54&&Array.isArray(targets)&&targets.length>0&&targets.length<=localMixedTargetLimitR51&&new Set(targets).size===targets.length&&targets.every(id=>!this.reservedR53.has(id)),'combat_join_pending');
+-  const token={ids:new Set(targets),pending:this.pending};for(const id of token.ids)this.reservedR53.add(id);return token;
++  // A captured checkpoint is immutable. Only a snapshot containing one of
++  // these targets must ACK before their joined death can capture its base.
++  // Reserve synchronously so every later flush excludes the dying targets.
++  // An unknown scope retains the old full wait; it is never treated as empty.
++  const scope=this.pendingTargetsR54,pending=this.pending&&(!(scope instanceof Set)||targets.some(id=>scope.has(id)))?this.pending:null;
++  const token={ids:new Set(targets),pending};for(const id of token.ids)this.reservedR53.add(id);return token;
+  }
+  cancelReservationR54(token){
+   demand(rewardAsyncReplyR54&&token&&!token.payload&&[...token.ids].every(id=>this.reservedR53.has(id)),'combat_join_changed');
+   for(const id of token.ids)this.reservedR53.delete(id);
+  }
+  captureR53(targets,{reservationR54=null}={}){
++  // A skipped unrelated checkpoint can fail while actor journals are awaited.
++  // Its fatal fence still applies before any new defeat request is submitted.
++  demand(!this.failure,'combat_checkpoint_fenced');
+   const reserved=rewardAsyncReplyR54&&reservationR54;
+   demand(Array.isArray(targets)&&targets.length>0&&targets.length<=localMixedTargetLimitR51&&(reserved?
+-   !reserved.payload&&reserved.ids.size===targets.length&&targets.every(id=>reserved.ids.has(id)&&this.reservedR53.has(id)&&!this.pendingTargetsR54?.has(id)):
++   !reserved.payload&&reserved.ids.size===targets.length&&targets.every(id=>reserved.ids.has(id)&&this.reservedR53.has(id))&&(!this.pending||this.pendingTargetsR54 instanceof Set&&targets.every(id=>!this.pendingTargetsR54.has(id))):
+    !this.pending&&targets.every(id=>!this.reservedR53.has(id))),'combat_join_pending');
+   const ids=new Set(targets),all=this.snapshot(),payload={monsters:all.monsters.filter(r=>ids.has(r.current.id)),participants:all.participants.filter(r=>ids.has(r.current.monster_id)),bossParticipants:[],combatEvents:all.combatEvents.filter(r=>ids.has(r.target_id))};
+   // Bound the joined IPC/receipt as strictly as an existing journal chunk.
+@@ -132,6 +141,10 @@
+  finishR53(token,{committed=false,result=null}={}){
+   demand([...token.ids].every(id=>this.reservedR53.has(id)),'combat_join_changed');
+   if(committed){
++   // Do not publish/retire a joined death after the channel journal failed,
++   // even if its independent writer ACK arrived afterwards. Keep the lease
++   // and reservation for the existing unknown-COMMIT recovery path.
++   demand(!this.failure,'combat_checkpoint_fenced');
+    this.acknowledgeDeadlineR531(token.payload);
+    for(const kind of Object.keys(specs))for(const {current}of token.payload[kind])this.base.get(kind).set(key(kind,current),current);
+    const sent=new Set(token.payload.combatEvents);this.events=this.events.filter(e=>!sent.has(e));
+@@ -159,9 +172,10 @@
+    if(!checkpointBatches)return this.submit(event);
+    const batches=combatCheckpointBatches(payload,id=>this.current.get('monsters').get(key('monsters',{id})));
+    if(batches.length===1)return this.submit(event);
+-   // Keep the single checkpoint lane pending through EVERY durable ACK. Death,
+-   // respawn, drain and reward paths already await this lane. Each independent
+-   // monster group retains one operation key/sequence and the existing ledger.
++   // Keep the single checkpoint lane pending through EVERY durable ACK. An
++   // overlapping joined death still waits for this whole snapshot; disjoint
++   // reservations never retire a chunk's pending scope early. Each monster
++   // group retains one operation key/sequence and the existing ledger.
+    if(rewardGroupCommitR53&&this.submitBatch){
+     for(let offset=0;offset<batches.length;offset+=8){
+      const commands=batches.slice(offset,offset+8).map((part,index)=>({...event,key:event.key+':'+(offset+index),payload:part})),acks=await this.submitBatch(commands);

@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: actual native player respawn rejects an early request and accepts a new request when due
+ok 1 - actual native player respawn rejects an early request and accepts a new request when due
+  ---
+  duration_ms: 5.928048
+  type: 'test'
+  ...
+# Subtest: actual native rune_v2 respawn intentionally changes area before its action response is delivered
+ok 2 - actual native rune_v2 respawn intentionally changes area before its action response is delivered
+  ---
+  duration_ms: 2.445528
+  type: 'test'
+  ...
+# Subtest: actual native respawn does not silently revive a missing death timer or an active arena team round
+ok 3 - actual native respawn does not silently revive a missing death timer or an active arena team round
+  ---
+  duration_ms: 1.382453
+  type: 'test'
+  ...
+# Subtest: actual dead heartbeat leaves HP revision and death timer unchanged while alive post-respawn damage can supersede the reply
+ok 4 - actual dead heartbeat leaves HP revision and death timer unchanged while alive post-respawn damage can supersede the reply
+  ---
+  duration_ms: 1.532839
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23.551706

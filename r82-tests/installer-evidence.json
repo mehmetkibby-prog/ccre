@@ -1,0 +1,145 @@
+{
+  "version": "R82_GAMEPLAY",
+  "sourceVersion": "R81_GAMEPLAY",
+  "recordedUtc": "2026-10-31T09:48:35.152567+00:00",
+  "scope": "Real R82 Python installer; actual filesystem, SQLite, backup API, locks, atomic overlay, journals and crash recovery. OS services/account HTTP and full external release verification use isolated fixtures.",
+  "passedTests": 73,
+  "failedTests": 0,
+  "runs": [
+    {
+      "command": [
+        "python3",
+        "r82-tests/installer-inplace.test.py"
+      ],
+      "passed": 29,
+      "exitCode": 0,
+      "seconds": 8.09,
+      "outputFile": "r82-tests/installer-inplace-results.txt",
+      "outputSHA256": "97df99a84a8de714fa76b2c1cfdc0dc65754181735bb0df2107546b301f5e9c9"
+    },
+    {
+      "command": [
+        "python3",
+        "r82-tests/installer-gates.test.py"
+      ],
+      "passed": 31,
+      "exitCode": 0,
+      "seconds": 2.644,
+      "outputFile": "r82-tests/installer-gates-results.txt",
+      "outputSHA256": "066b999e1e3206d469317ad1828dd6cdde191b5f61db29f76659b10017de8d9e"
+    },
+    {
+      "command": [
+        "python3",
+        "r82-tests/installer-client.test.py"
+      ],
+      "passed": 13,
+      "exitCode": 0,
+      "seconds": 1.242,
+      "outputFile": "r82-tests/installer-client-results.txt",
+      "outputSHA256": "7dd2214014e08b1deedbb6213557d0ddfec00b2f2761bda5a8cf48d60e52e5e6"
+    }
+  ],
+  "durableCrashPhaseSubcases": {
+    "apply": 10,
+    "manualRollback": 7,
+    "includedInTestCount": true
+  },
+  "preservedBehavior": [
+    "Exact R81 source and R82 destination, full 1164-row production base identity.",
+    "Exact reviewed production path scope and explicit before:null only for new helper/generated client files.",
+    "All updated/new fixture paths verified after apply and rollback; crash after new helper insertion removes helper on recovery.",
+    "Correct R82 health version and available runtimeDiagnosticsR80 required before target validation.",
+    "R81 recovery journal cannot be adopted by R82; unrelated active update cannot be overwritten.",
+    "Real install/daily-backup flock and matching backup environment/data-root gates.",
+    "Real SQLite backup, quick_check and WAL preservation; current DB progress remains after code-only rollback.",
+    "Accounts service never stopped/restarted, inode and service identity retained.",
+    "Maintenance/registration policy and empty online/admission gates; no automatic opening.",
+    "Pinned R80 native WAL and unchanged Node 22.23.4 / SQLite 3.53.4 runtime; HTTP differs from pinned R79 only by exact immutable client references.",
+    "Immutable client graph closure from verified live rows; journaled atomic hardlinks, unchanged old asset bytes/inodes/modes/owners, and deterministic exact expanded path/new-directory recovery scope.",
+    "Validated/rollback crash recovery, guard fencing, cleanup failure and fresh rollback backup behavior."
+  ],
+  "actualPayloadLoaderTest": {
+    "productionFiles": {
+      "core511-source/scripts/core511/combat-checkpoint.mjs": {
+        "before": "5e649e37a3e84886d79c79a7d5a72d8c005db760775b21e6e398352a31ed180d",
+        "after": "8c9bd58e79ae7b51818711060c70f629fec3f10a827d3bbfcb7efeb767a5ffce",
+        "bytes": 20312
+      },
+      "core511-source/scripts/core511/attack-commit-r53.mjs": {
+        "before": "f06c062637fdebd56334978f6d1d06f299bd502224dc12e9c1fddc9c4a47b522",
+        "after": "e1b3415482b540fdaaf52bb34374fa3a34faeb20653576d87b81e57c1b325613",
+        "bytes": 7322
+      },
+      "core511-source/scripts/core511/death-latency-r82.mjs": {
+        "before": null,
+        "after": "7fe0871c6a9d2115c1d10579cad508beb2694d5afa01afadda0b08e685dc4a25",
+        "bytes": 5350
+      },
+      "core511-source/scripts/core511/channel-runtime.mjs": {
+        "before": "1f8204a4190f3eb12581b7bc0472d6ca2b71917d56845b71cbaaf18d75691db3",
+        "after": "fb0d87b04baecb121765a2f737ae8178d05974dbd5435c024a9baa2e3e690179",
+        "bytes": 48442
+      },
+      "core511-source/scripts/core511/admin-diagnostics.mjs": {
+        "before": "e388a8f1406d276e8b2e14e9f7bb4ab4168059b0253bad4f4e5540c97d89b3b1",
+        "after": "327e6310a9c97ef7c05b00150d257901cc05d6dfde891b16996def41db5087ab",
+        "bytes": 3373
+      },
+      "core511-source/scripts/core511/native-http-bindings.mjs": {
+        "before": "dc4fbcd3ab7855e532011f4cbb90bd286dbace65e1513a13d9ef3e08d4593bc1",
+        "after": "175e683bbcb71da93a8bab9166ae9f5753e85963000488eb8671a2d850ea12a0",
+        "bytes": 15094
+      },
+      "core511-source/scripts/core511/reward-reply-r54.mjs": {
+        "before": "96ce2306d9d4daa597fd7719779a7d851e0b8d2df0d53122d9b1535c90a5f178",
+        "after": "7204aaf8b813727582dc5e99565cc390bc2d0d23a181f8a06665df883cdd2f41",
+        "bytes": 2839
+      },
+      "core511-source/scripts/core511/generated/native-client-proof.json": {
+        "before": "38e76c0850daf30e6893ec7f9602068ac2ae4c60eae6cefd617db83eb93cf25e",
+        "after": "5b9bb228b9e59fbb514d43d4937656a5d7c8f987604ec8f502901bcdd542298b",
+        "bytes": 339773
+      },
+      "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+        "before": "564b2f8f3b972ac5d701bd1da75adb5d5e4ecf9df795f3ad9465b2da205380c4",
+        "after": "05506c2d696a082063f090238a36b869d2ff5d4143e123203fb203d9b3582b09",
+        "bytes": 154267
+      },
+      "core511-source/scripts/core511/generated/client/game-client-core511-r82-b75bd56f90806564.js": {
+        "before": null,
+        "after": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+        "bytes": 1633081
+      },
+      "http-runtime/dist-vds/server/index.js": {
+        "before": "9aa47af0b1be2cf7c2431eba5fad03a05769ff721e2099478540350a52fa4536",
+        "after": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+        "bytes": 2229879
+      }
+    },
+    "baseCoreSHA256": "0fdd34be8b14f326166d24469c3b3c0a2e2a9ba84db839402598baa5e60ff0e8",
+    "baseRows": 1164,
+    "fullGameplayExecution": false
+  },
+  "moduleSHA256": {
+    "central.mjs": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+    "client_stage.py": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42",
+    "inplace_stage.py": "a7161ea90af232db9b3aace21cbcc7c98e9f819e160794f1eabf5dda7f4fc1ee",
+    "installer.py": "680a31e140eefb60dde742cbd0f71282bf2d5b9b66d3c900254ceca2831e168f",
+    "r63_support.py": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+    "retention.py": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+    "runtime_stage.py": "fd65949cf054b0e5f44b03f31e3d48ec40c9bc3b0233f7e5638ba4c5f64d1bff",
+    "storage.py": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735"
+  },
+  "testSHA256": {
+    "installer-client-proof.py": "8b97cefae42cdd2f8de38da155ddc5928e0efd94e680a8be00aaa0a7cb6327dd",
+    "installer-client.test.py": "28c14fcf4e95806c1bf4e270c0510da34f5f8ee12f956b7e040da56456f09ce8",
+    "installer-fixture.py": "0dbc0b9ccdf03f4b249f528fbfcd6afeef31ecab181be0b463c78ce524ee2c87",
+    "installer-gates.test.py": "1587762c9142ef148f7c8db0dc3f9cb9871f1a580ad85b10bdc17828b073a0df",
+    "installer-inplace.test.py": "bf133cded13c1565afea06e9c682b9cb28f1437acf0e352d8de701f2956d8515",
+    "installer-run.py": "16186e85d153dd99e8d71f8f74203c7b85189373d06f6c4ffb47831415dd22e8"
+  },
+  "buildScriptSHA256": "65e99eb241c40ed3e7db35b609461a1cc1429002beb9aec04f74c7258aef0e6e",
+  "updateManifestSHA256": "9d014cdef4d2845b29184b42ce55f0c14199f064a48b94a9a1bebfab92233929",
+  "liveDeploymentPerformed": false
+}

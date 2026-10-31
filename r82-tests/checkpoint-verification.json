@@ -1,0 +1,33 @@
+{
+  "productionFile": "/workspace/scratch/68fd588af980/r82-work/core511-source/scripts/core511/combat-checkpoint.mjs",
+  "baselineSHA256": "5e649e37a3e84886d79c79a7d5a72d8c005db760775b21e6e398352a31ed180d",
+  "patchedSHA256": "8c9bd58e79ae7b51818711060c70f629fec3f10a827d3bbfcb7efeb767a5ffce",
+  "namedTests": {
+    "reservation": {
+      "tests": 24,
+      "pass": 24,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "batches": {
+      "tests": 5,
+      "pass": 5,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    },
+    "sqlite": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0
+    }
+  },
+  "blockedExistingSuite": {
+    "file": "r82-work/core511-source/scripts/core511/tests/system-writer.test.mjs",
+    "reason": "ERR_MODULE_NOT_FOUND: nonlethal-rewards-r56.mjs imported from completed-claims-r56.mjs",
+    "notStubbed": true
+  }
+}

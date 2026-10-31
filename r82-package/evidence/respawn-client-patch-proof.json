@@ -1,0 +1,15 @@
+{
+  "scope": "one automatic player respawn React effect only",
+  "oldName": "game-client-core511-r79-51fbce3bd7351cf0.js",
+  "oldSha256": "51fbce3bd7351cf064f8828a7fd9fdcb9d1611510b59120154ae5b8cb926bb3c",
+  "newName": "game-client-core511-r82-b75bd56f90806564.js",
+  "newSha256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+  "oldBytes": 1630755,
+  "newBytes": 1633081,
+  "oldEffectSha256": "0266ffc8a9315000c888ffb14368b8a282b12fd2202404a4c2daf5c4638927c3",
+  "newEffectSha256": "7840c8dc14ed24c21952ca1f5f89860e3323dc12dfc4d8f7a0667ddea72c37ea",
+  "oldEffectStartLine": 14473,
+  "exactInverse": true,
+  "oldBundleUnchanged": true,
+  "note": "Client control-flow tests use exact bundle effect bodies and controlled hooks/clock; this is not full browser or live VDS reproduction."
+}

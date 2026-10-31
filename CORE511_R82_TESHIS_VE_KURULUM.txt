@@ -1,0 +1,365 @@
+CORE OF LIFE — R82 TEŞHİS, DÜZELTME VE KURULUM NOTU
+Tarih: 31 Ekim 2026
+Kaynak sürüm: R81_GAMEPLAY
+Hedef sürüm: R82_GAMEPLAY
+
+1. SON DURUM VE AÇIK KALAN CANLI SORUN
+
+R82 kurulum paketi hazırlandı ve 147 adlandırılmış test geçti. Bu çalışma
+ortamından canlı VDS'ye kurulum yapılmadı. Son salt okunur sağlık kontrolünde
+oyun hâlâ R81_GAMEPLAY çalıştırıyordu.
+
+Kullanıcı iki belirti bildirdi:
+- Canavar keserken ve bazen düz koşarken karakterin kısa süre durması; başka
+  oyuncuların da hafif lag bildirmesi.
+- Oyuncu öldükten sonra “Yere düştün / Yaşam çekirdeği seni tekrar çağırıyor”
+  ekranında kalması. Tam sayfa yenilemesi de bu canlı karakteri düzeltmedi.
+
+Kodda hareket beklemesini uzatan bir kayıt bağımlılığı ve yeniden doğmayı
+kilitleyebilen istemci hataları doğrulandı ve düzeltildi. Ancak tam yenilemeden
+sonra da ölü kalan mevcut karakterin kesin nedeni henüz doğrulanmadı. Güncel
+ölüm kaydı ve sunucu yanıtı görülmeden bu karakterin kesin düzeldiği söylenemez.
+Salt okunur ölüm durumu çıktısı istendi; bu not hazırlanırken alınmamıştı.
+
+Bu paket bir oyuncunun canını SQL ile değiştirmez, veri onarımı/otomatik zorla
+diriltme içermez, bilinmeyen yazma sonucunun korumasını kaldırmaz. Bu sınır,
+doğrulanmış istemci ve performans düzeltmelerinin yapılmasına engel değildir.
+
+2. CANAVAR ÖLÜMÜNDEKİ GEREKSİZ BEKLEME
+
+R81 combat-checkpoint.mjs içindeki reserveR54(), yeni öldürülen canavarın
+hedefleriyle ilgisiz olsa bile mevcut bütün kontrol noktası isteğini bir
+bağımlılık olarak döndürüyordu. joinedDeathR53 bu isteğin yanıtını beklerken
+etkilenen oyuncuların hareketini de korumalı işlem sırası içinde tutuyordu.
+
+R82, mevcut kayıt anlık görüntüsünün hedef kümesi biliniyor ve yeni hedeflerle
+ayrık ise bu gereksiz JavaScript beklemesini kaldırır. Aynı hedef, kesişen hedef
+ve bilinmeyen hedef kapsamı beklemeye devam eder. Rezervasyon ilk await'ten önce
+yapılır; daha sonra başlayan kayıtlar ayrılmış hedefleri zaten dışarıda tutar.
+
+Kayıt hatası rezervasyondan önce, oyuncu kayıtları beklendikten sonra ve ölüm
+sonucu yayımlanmadan önce tekrar denetlenir. Oyuncunun kendi kontrol noktası,
+aynı canavarın önceki kaydı, ölüm işleminin kendi kalıcı ACK'i, kaynak kilitleri,
+tek yazıcı sırası ve makbuzun tek kez uygulanması korunur.
+
+Kontrollü testte ilgisiz kayıt yanıtına 500 ms ve ölümün kendi yanıtına 15 ms
+gecikme eklendi. Üçer koşunun ortanca beklemeleri:
+
+  İlgisiz hedef: R81 517.865 ms -> R82 15.654 ms
+  Aynı hedef:   R81 516.970 ms -> R82 516.849 ms
+
+Bunlar yapay gecikmeli test sonuçlarıdır; canlı VDS'nin ölçülen iyileşmesi veya
+tüm yarım saniyelik duraksamaların kaynağının kanıtı değildir. Ortak disk/WAL,
+oyuncunun kendi kaydı, ağ, çizim ve başka işlem sıraları hâlâ bekletebilir.
+
+Kaynak: combat-checkpoint.mjs; checkpoint-reservation.test.mjs;
+checkpoint-batches.test.mjs; checkpoint-sqlite.test.mjs;
+checkpoint-wait-benchmark.json; checkpoint-safety-review.txt.
+
+3. OYUNCUNUN YENİDEN DOĞMA İSTEMCİSİ
+
+Dağıtılmış R79 istemcisinin yeniden doğma effect'i gerçek dosyadan çıkarılarak
+kontrollü zaman/yanıtlarla çalıştırıldı. R81 de bu istemciyi kullanıyordu.
+
+Doğrulanan hata A: Kanal veya dünya döngüsü değişirken gelen yanıt eski kapsam
+diye atlanabiliyor; buna karşın “işlem sürüyor” işareti temizlenmiyor. Effect
+bağımlılıkları bu iki alanı izlemiyordu. Testte yanıtın ardından 60 saniye
+geçmesine rağmen karakter ölü, işaret açık, yeni deneme ve yenileme sayısı sıfırdı.
+
+Doğrulanan hata B: Başarılı yanıt mevcut HP revizyonu korumasınca eski bulunup
+uygulanmazsa yeni veri alma veya yeniden deneme planlanmıyordu. İşaretin ref
+içinde değişmesi tek başına effect'i tekrar çalıştırmıyordu.
+
+Doğrulanan hata C: İlk deneme için sunucudan gelen respawn_at_ms ile telefonun
+ham Date.now() değeri karşılaştırılıyordu. Cihazın saati 120 saniye gerideyse
+normal 2.68 saniyelik ilk bekleme 122.68 saniyeye çıkıyordu. R82, oyunun zaten
+kullandığı xp2() sunucu saati tahmininden tek okuma yapar. -120/0/+120 saniyelik
+cihaz farklarında aynı sunucu süresi için bekleme artık 2.68 saniyedir. Gerçekten
+gelecekteki sunucu süresi korunur; sunucu doğrulaması yine son kararı verir.
+
+Yeni effect:
+- Gerçek transport nesnesi, game instance, core.playerId, kullanıcı/player ID,
+  epoch, alan/kanal/döngü, arena, ölüm HP revizyonu ve ölüm zamanına bağlanır.
+- Her effect kendi token'ına sahiptir; eski callback yeni effect'in işaretini
+  temizleyemez veya yeni ölüm için eski yanıtı uygulayamaz.
+- Başarılı ama eski/atlanmış yanıt sonrası mevcut J(true) yoluyla güncel veri
+  alır. Aynı hâlen geçerli ölüm sürüyorsa 900 ms sonra tekrar kontrol eder.
+- Güncel HP revizyonu koruması ve arena bekleme kuralı değişmez. Eksik 200
+  yanıtından HP, konum veya HP revizyonu uydurulmaz.
+- HTTP gözlemcisi 8 saniyede zaman aşımına uğrasa bile transport'un daha önce
+  kabul ettiği respawn isteğini tekrar kuyruğa eklemez. Gerçek transport testi
+  30 saniyede yalnız bir gönderilmiş istek ve boş ek kuyruk doğruladı.
+- Aynı effect içinde tek bekleyen güncelleme paylaşılır; güncellemeyi gözleme
+  süresi 3.5 saniye ile sınırlıdır. Sunucu işlemi iptal edilmiş sayılmaz.
+
+Bu düzeltmeler yalnız otomatik oyuncu yeniden doğma effect'ini değiştirir.
+İstemcinin hareket, savaş, genel transport veya HP uygulama fonksiyonu yeniden
+yazılmadı. Eski R79 dosyası aynen korunur; yeni dosya yeni hash adıyla yayımlanır.
+
+Kaynak: respawn-client-effect.txt; respawn-client-build.mjs;
+respawn-client.test.mjs; respawn-client-patch-proof.json;
+respawn-client-findings.txt; r82-investigation/client/respawn-effect-repro.mjs.
+
+4. YENİLEMEDEN SONRA DA ÖLÜ KALMA: NE BİLİNİYOR?
+
+Tam sayfa yenilemesi eski bellekteki busy ref'ini temizler. Yeni sayfada HP
+revizyonu ref'i 0, son dirilme ref'i -1 başlar. Gerçek native yanıt şeklinde
+ölüm revizyonu N -> dirilme revizyonu N+1 olduğunda hem eski hem yeni istemci
+kontrollü fresh-mount testinde doğmaktadır. Dolayısıyla mevcut karakterin tam
+yenilemeyle de düzelmemesi yalnız eski ref yarışına bağlanamaz.
+
+Sunucuda oyuncu yeniden doğması istemciden action:'respawn' isteği ister.
+Sunucunun otomatik respawn tick'i canavarları işler. Ölü oyuncu heartbeat'i
+kendiliğinden diriltmez ve ölüyken HP revizyonunu artırmaz.
+
+Gerçek native SQL üzerinde doğrulanan durumlar:
+- Normal ölüm süresinden önce istek 409, süre dolunca 200 döner.
+- Başarı HP'yi geri getirir, HP revizyonunu artırır ve respawn_at_ms'i sıfırlar.
+- Sonraki tekrar istek karakteri ikinci kez diriltmez.
+- hp<=0 iken ölüm zamanı 0/boş ise mevcut kural 409 verir.
+- Gelecekteki süre, aktif takım arena turu veya bazı eksik arena durumları
+  yeniden doğmayı bekletebilir/reddedebilir.
+- Başarılı yanıt {ok,hp,maxHp,hpRevision,area,x,y} içerir. Kapsam değişimi veya
+  yayımlanan olay, action promise çözülmeden önce görülebilir.
+- rune_v2 ve guild_castle gibi yerlerde normal yeniden doğma alanı bazaar
+  olabilir. Sunucu tarafından verilen alan korunmalıdır.
+
+Normal öldürücü olmayan retaliation/PvP belleği canı sıfıra indirmeden önce
+terminal yazıcıya geçer. Kalıcı ölüm yolu pozitif ölüm zamanı yazar. Oyuncu
+kontrol noktası respawn_at_ms'i yazamaz. İncelenen kaynakta meşru normal ölümün
+kendiliğinden kalıcı sıfır ölüm zamanına dönüştüğü bir yol kanıtlanmadı.
+
+Canlı ayırım için gerekenler: hp, max_hp, hp_revision, respawn_at_ms, alan,
+kanal ve aynı andaki sunucu zamanı; gerekirse respawn yanıtının hata kodu veya
+kabul edilmiş isteğin bekleme durumu. Genel “kanallar hazır” cevabı bunları
+tek başına açıklamaz. Bu veriler olmadan SQL ile can/süre değiştirmek teşhis
+yerine geçmez.
+
+5. GEÇİCİ “ÖLÜM SONUCU KAYDEDİLİYOR” YAZISI
+
+Geçici 202 yanıtı bir genel bildirime dönüşüyor; sonuç kesinleşse de bildirim
+yaklaşık 3.6 saniye kalabiliyor veya geç gelen callback ile yeniden görünebiliyordu.
+R82 yalnız bu geçici body.message alanını kaldırır. combatPending, combatPhase,
+provisionalHits, doğrulanmış HP, killed:false ve ödül alanları korunur.
+
+Bu bir durum yazısı düzeltmesidir. Ödüller erken verilmez, sahte ölüm sonucu
+gösterilmez ve bu metnin kaldırılması tek başına hareket gecikmesini çözmez.
+
+6. YENİ BEKLEME ÖLÇÜMÜ
+
+Mevcut yönetici oturumuyla https://r1.coreoflife.net/api/admin?load=1
+cevabının kanal satırlarında kernel511.deathWaitR82 bulunur.
+
+Bu ölçüm yerel canavar ölüm callback'inin beklemesini üçe ayırır:
+- checkpoint: etkilenen oyuncu/uygun hedef kayıtlarının hazırlanması/beklenmesi;
+- writer: ölüm isteğinin yazıcıya gönderilmesinden ACK'ine kadar geçen süre;
+- refresh: kesinleşen sonucun karakter verisine uygulanması/yayımlanması.
+
+active, oldestActiveMs ve aşama sayıları sürmekte olan callback'leri gösterir.
+Son 128 biten callback'in p95/maksimumları ve son 16 adet >=100 ms olay tutulur.
+Başarı, kanıtlı ret ve hata sayıları ayrıdır. Yeni timer, SQL yazımı, oyuncu ID'si,
+session, SQL metni veya ham hata verisi eklenmez. Eksik/eski veri null kalır.
+Ölçüm süreç yeniden başladığında sıfırlanır.
+
+Bu alan önceden kuyrukta geçen süreyi, oyuncunun ağ gidiş-dönüşünü, tarayıcı
+çizimini veya diğer eylemlerin bütün kilitlerini ölçmez. Hatalı callback bitince
+active azalabilir; bu, bilinmeyen işlem için tutulan güvenlik korumasının
+kaldırıldığı anlamına gelmez. writer süresi yalnız disk süresi değildir; sıra,
+işleme, kalıcılık ve yanıt teslimini kapsar. Toplamlar tamamlanmış hatalı/ret
+callback'lerini de içerir; sonuç türü birlikte okunmalıdır.
+
+7. CPU / “30 KİŞİ OLUNCA NE OLUR?” SORUSUNUN SINIRI
+
+Paylaşılan ölçümlerde R80 ana thread CPU ortalaması %40.768, R81'de %24.17 idi.
+Bu yaklaşık %40.7 göreli düşüştür; eşit oyuncu ve iş yükü koşullarıyla kontrollü
+kapasite testi yapılmadığı için aynı ölçekte performans garantisi değildir.
+
+Yönetim panelinin “Ana işlem” yüzdesi event-loop kullanımına dayanır; tek başına
+VDS'nin toplam CPU'su, bütün Node thread'lerinin CPU'su veya oyuncu başına sabit
+maliyet değildir. Bu nedenle 10 kişide görülen değeri üçle çarparak 30 kişinin
+sunucuyu bitireceği sonucuna varılamaz. Ana thread beklemeleri, iş türü, kanal
+dağılımı, kalıcı yazma ve istemci davranışı birlikte değerlendirilmelidir.
+
+31 Ekim 2026 09:33:54 UTC salt okunur /api/vds-health örneği:
+- R81_GAMEPLAY, çekirdek hazır, dört kanal hazır.
+- Ana event-loop kullanımı %36.87; bu örnekte loop gecikmesi 12.3 ms.
+- Yazıcı kuyruğu bu anda 0; WAL hata sayısı 0.
+- Bütün Node thread'lerinin 300 saniyelik CPU ortalaması bir çekirdek ölçeğinde
+  %100, maksimumu %180 idi; bu “VDS toplam CPU %100” anlamına gelmez.
+
+Önceki kısa örneklerde kuyruk ve WAL beklemesinin sıfır görünmesi, aradaki
+asenkron beklemeleri dışlamaz. maxReadyWaitMs=852.83 gibi ömür boyu maksimumlar
+güncel takılmanın süresi olarak kullanılmadı. FPS 60 ve 150 ms görüntü duraklama
+kaydı da bütün istemci/ağ sorunlarını dışlamaz. Sağlık online sayıları tutulan
+admission kayıtları olabilir; aktif kullanıcı sayısıyla birebir eşit sayılmadı.
+
+Bu çalışma canlı sunucuda 30 oyunculuk yük testi yapmadı ve kapasite garantisi
+vermez. R81'in önceki ana CPU düzeltmesi R82'de aynen korunur.
+
+8. YAYINA ALINMAYAN XP / İLERLEME HIZLANDIRMASI
+
+Rütbe XP/sayaçları ve battle-pass XP değişimlerinin tam karakter okuması
+başlatabildiği doğrulandı. Hızlı tazeleme taslağı oyuncu rank projeksiyonuyla
+eşitlik testlerinden geçti. Ancak ColdWorldReader her normal dünya görüntüsünde
+de adventure511 bölümünü hesaplıyor; exact-current adventure-service.mjs mevcut
+yerel kaynaklar arasında eksik. Bu bölümün ilerleme alanlarına bağımlılığı tam
+doğrulanamadığından taslak üretim paketine alınmadı.
+
+actor-section-reuse-r52.mjs R81 ile bayt düzeyinde aynıdır. Taslak testlerinin
+16 başarısı aşağıdaki 147 yayımlama testine eklenmedi. Eski modül üretim koduna
+ikame edilmedi. Taslak yalnız r82-investigation/progress-draft altında tutulur.
+
+9. TEST SONUÇLARI VE SINIRLARI
+
+  Kontrol noktası rezervasyonu / sırası / SQLite: 32 geçti
+  Gerçek native oyuncu yeniden doğma davranışı:    4 geçti
+  Sınırlı ölüm bekleme ölçümü:                     9 geçti
+  Geçici bildirim semantiği:                      2 geçti
+  İstemci effect / gerçek transport yolları:     27 geçti
+  Kurucu / kurtarma / değişmez istemci grafiği:   73 geçti
+  TOPLAM:                                      147 geçti, 0 başarısız
+
+Kontrol noktası testleri gerçek CombatCheckpoints, ActorCheckpoints,
+FixedLoop, ResourceLanes, ResidentState ve joinedDeathR53 kodunu çalıştırır.
+SQLite testleri gerçek LocalDatabase, asenkron WAL, SystemWriter,
+OrderedSystemClient ve receipt authority kullanır. Terminal ödül SQL'i dar
+bir test fixture'ıdır; tam native ganimet/XP mekanizması çalıştırılmış sayılmaz.
+
+İstemci testleri dağıtılan gerçek fonksiyon gövdelerini kontrollü hook/saat ve
+yanıtlarla çalıştırır; önemli timeout/admission testleri değişmemiş gerçek
+Core511Transport'u kullanır. Bütün tarayıcının çizim testi değildir.
+
+Kurucu testleri gerçek dosya, SQLite, yedek, WAL, flock, atomik değişim ve
+kalıcı journal/kurtarma kodunu çalıştırır. systemd ve hesap HTTP hizmetleri
+kontrollü fixture'larla temsil edilir. 17 crash-phase alt senaryosu toplam
+test sayısının içindedir; ayrıca sayılmadı. Eski istemci içeriği/inode/izin/sahip,
+yeni graph başvuruları, kesilen hardlink işlemi, değiştirilmiş journal yolu,
+yanlış kaynak/sürüm, sağlık başarısızlığı ve güncel DB'yi koruyan geri alma
+denetlendi. Final ZIP gerçek kurucu yükleyicisiyle açılarak tekrar doğrulandı.
+
+Yerel ağaçta 42 exact-current modül eksiktir. Tam sunucu/oyun entegrasyonu ve
+canlıda yeniden doğma/kapasite sonucu bu yüzden doğrulanmış sayılmaz. Tüm 1164
+taban kaynak kaydı pakette korunur; kurucu canlıdaki tam kimliği denetler.
+
+10. PAKET KİMLİĞİ
+
+Dosya: CORE511_R82_TOPLU.zip
+Boyut: 1,225,461 bayt
+SHA-256:
+30ee51d4a45949b2a3bbbce49e846b430a5892f31ebffbfb38e9782ce8c15d81
+
+R81 kaynak kimliği (1164 satır):
+0fdd34be8b14f326166d24469c3b3c0a2e2a9ba84db839402598baa5e60ff0e8
+R82 kaynak kimliği (1166 satır):
+7c5ae6d88decda07ae8ab6ad1dca23c16d105a2242ba21ef95172efdd9b15bc7
+
+11 üretim payload dosyası, toplam 4,459,732 bayt. Yeni kaynaklar yalnız
+death-latency-r82.mjs ve yeni hash adlı oyun istemcisidir. Kalan değişiklikler
+mevcut dosyaların doğrulanmış önce/sonra hash'lerine bağlıdır.
+
+Yeni istemci: game-client-core511-r82-b75bd56f90806564.js
+İstemci SHA-256:
+b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607
+Yeni istemci dizini: core511-022e5be3a720e972
+HTTP SHA-256:
+286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662
+
+HTTP değişimi tam 351 sürüm dizini ve 2 oyun dosyası adı değişimidir; ters
+değiştirme sabitlenmiş R79 HTTP baytlarını geri üretir. HTTP oyun kuralı/yetki
+gövdeleri yeniden derlenmedi. Yeni istemci grafiği doğrulanmış canlı manifestten
+türetilir; yeni hardlink ve başvuru değişimleri kurtarma journal'ına dahildir.
+
+11. KURULUM
+
+Bu paket yalnız doğrulanmış R81_GAMEPLAY üzerine kurulabilir.
+
+1) Yönetim panelinde bakım veya ön kayıt durumunu kaydet; işlemin tamamlanmasını
+   bekle. Oyuncular ve oyun içindeki yönetici çıksın. Son çıkıştan sonra en az
+   45 saniye bekle.
+2) CORE511_R82_TOPLU.zip ve CORE511_R82_TOPLU.sha256 dosyalarını VDS'de /root/
+   dizinine yükle. Drive kullanılıyorsa yeni R82 ZIP için yeni paylaşım linki
+   gerekir; eski R81 arşivi bu SHA-256 denetimini geçmez.
+3) Şunu çalıştır:
+
+cd /root &&
+sha256sum -c CORE511_R82_TOPLU.sha256 &&
+python3 -u /root/CORE511_R82_TOPLU.zip --check &&
+python3 -u /root/CORE511_R82_TOPLU.zip --apply
+
+Sadece ZIP yüklendiyse doğrulama satırı yerine şu kullanılabilir:
+
+printf '%s\n' '30ee51d4a45949b2a3bbbce49e846b430a5892f31ebffbfb38e9782ce8c15d81  /root/CORE511_R82_TOPLU.zip' | sha256sum -c -
+
+Her adım başarıyla tamamlanmalı. --check oyun servisini durdurmadan ön koşulları
+denetler. Oyuncu/admission, sürüm, dosya veya bakım durumu uyuşmazsa kurulum
+başlamaz. Başarılı son mesaj R82 TAMAMLANDI olur. Dört kanalın sağlık kontrolü
+ve R82 sürüm etiketi doğrulanır. Oyunu ardından yönetim panelinden açabilirsin.
+
+Kurulumdan sonra oyuncular sayfayı tamamen yeniden yüklemeli. Açık eski sekme
+eski istemciyi çalıştırmaya devam edebilir. Kurucu oyunu kendiliğinden açmaz.
+Hesap servisini yeniden başlatmaz; mevcut DB ve oyuncu ilerlemesi korunur.
+
+Yalnız yarım kalmış aynı R82 kurulumu için:
+python3 -u /root/CORE511_R82_TOPLU.zip --recover
+
+Tamamlanmış R82'yi geri almak gerekirse önce bakım/ön kayıt ve boş oyun koşulları
+yeniden sağlanır, sonra:
+python3 -u /root/CORE511_R82_TOPLU.zip --rollback-latest
+
+Geri alma R81 kodunu getirir ve GÜNCEL veritabanını korur; eski DB yedeğini canlı
+DB'nin üzerine yazmaz. Geri alma sonrası da istemciler sayfayı yeniden yüklemeli.
+Farklı paketin yarım işlem kaydı aynı R82 paketiyle sahiplenilmez.
+
+12. KALICI ÖLÜM DURUMU İÇİN SALT OKUNUR KONTROL
+
+Sunucudaki mevcut karakterin neden ölü kaldığını ayırmak için VDS'de:
+
+python3 - <<'PY'
+import json, sqlite3, time
+from pathlib import Path
+s = json.loads(Path('/var/lib/core511/state.json').read_text())
+p = Path(s['prior']['database']).resolve(strict=True)
+d = sqlite3.connect(p.as_uri() + '?mode=ro', uri=True, timeout=2)
+d.row_factory = sqlite3.Row
+d.execute('PRAGMA query_only=ON')
+limit = time.monotonic() + 3
+d.set_progress_handler(lambda: int(time.monotonic() > limit), 10000)
+d.execute('BEGIN')
+now = int(time.time() * 1000)
+print('SURUM:', s.get('r64Deployment', {}).get('version'))
+print('SUNUCU_ZAMANI_MS:', now)
+rows = d.execute('''
+SELECT name, area, channel, hp, max_hp, hp_revision,
+       respawn_at_ms, last_seen
+FROM players WHERE hp <= 0
+ORDER BY last_seen DESC LIMIT 8
+''').fetchall()
+if not rows:
+    print('Veritabaninda olu karakter kaydi yok.')
+for row in rows:
+    r = dict(row)
+    at = r['respawn_at_ms']
+    r['dirilme_durumu'] = (
+        'OLUM_ZAMANI_YOK' if not at or at <= 0
+        else 'VAKTI_GELDI' if at <= now else 'VAKTI_GELMEDI'
+    )
+    r['kalan_saniye'] = round((at-now)/1000, 1) if at and at > 0 else None
+    print(json.dumps(r, ensure_ascii=False))
+d.close()
+PY
+
+Çıktı karakterin satırıyla birlikte değerlendirilmelidir. VAKTI_GELDI ise
+sonraki ayırıcı bilgi isteğin tam ret/pending durumudur. OLUM_ZAMANI_YOK ise
+ölüm kaydı ve bunu oluşturan yol ayrıca incelenmelidir. Veritabanında ölü kayıt
+olmaması, ekrandaki/resident durumla kalıcı verinin ayrışması ihtimalini gündeme
+getirir. Bu komut veri değiştirmez ve servis yeniden başlatmaz.
+
+13. CODEX İÇİN İŞİ DEVAM ETTİRME NOTU
+
+Paketin update.json dosyası üretim dosyaları ve hash'ler için yetkilidir.
+evidence/R82_KANIT.json 147 testin kapsamını, log hash'lerini ve canlı doğrulama
+sınırlarını içerir. r82-tests, r82-investigation ve r82-build.py tekrar üretim
+ve inceleme için tutulmuştur. Eski R81 CPU düzeltmesini veya R80 kayıt işçisini
+geri alma. İlerleme taslağını eksik adventure projeksiyonunu doğrulamadan yayına
+alma. Önce canlı ölüm durumu/yanıtı ayrımını çöz; canı istemcide uydurarak veya
+sonucu bilinmeyen server işlemini iptal ederek ekranı kapatma.

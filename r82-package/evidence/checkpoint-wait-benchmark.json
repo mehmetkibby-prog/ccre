@@ -1,0 +1,86 @@
+{
+  "scope": "controlled ACK-delay fixture, not live VDS",
+  "modules": "actual CombatCheckpoints, ActorCheckpoints, ResidentState, joinedDeathR53, FixedLoop and ResourceLanes; controlled writer/refresh ports",
+  "checkpointDelayMs": 500,
+  "deathAckDelayMs": 15,
+  "repetitions": 3,
+  "node": "v22.23.4",
+  "rows": [
+    {
+      "version": "R81",
+      "pendingTarget": "other",
+      "medianBarrierMs": 517.865,
+      "samples": [
+        {
+          "barrierMs": 519.359,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 516.612,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 517.865,
+          "submittedBeforeCheckpointAck": false
+        }
+      ]
+    },
+    {
+      "version": "R81",
+      "pendingTarget": "dying",
+      "medianBarrierMs": 516.97,
+      "samples": [
+        {
+          "barrierMs": 516.97,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 516.956,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 517.081,
+          "submittedBeforeCheckpointAck": false
+        }
+      ]
+    },
+    {
+      "version": "R82",
+      "pendingTarget": "other",
+      "medianBarrierMs": 15.654,
+      "samples": [
+        {
+          "barrierMs": 16.923,
+          "submittedBeforeCheckpointAck": true
+        },
+        {
+          "barrierMs": 15.654,
+          "submittedBeforeCheckpointAck": true
+        },
+        {
+          "barrierMs": 15.614,
+          "submittedBeforeCheckpointAck": true
+        }
+      ]
+    },
+    {
+      "version": "R82",
+      "pendingTarget": "dying",
+      "medianBarrierMs": 516.849,
+      "samples": [
+        {
+          "barrierMs": 516.91,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 515.602,
+          "submittedBeforeCheckpointAck": false
+        },
+        {
+          "barrierMs": 516.849,
+          "submittedBeforeCheckpointAck": false
+        }
+      ]
+    }
+  ]
+}

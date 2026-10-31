@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: reservation same target preserves the required checkpoint dependency
+ok 1 - reservation same target preserves the required checkpoint dependency
+  ---
+  duration_ms: 4.608703
+  type: 'test'
+  ...
+# Subtest: reservation disjoint target preserves the required checkpoint dependency
+ok 2 - reservation disjoint target preserves the required checkpoint dependency
+  ---
+  duration_ms: 1.825178
+  type: 'test'
+  ...
+# Subtest: reservation mixed snapshot overlap preserves the required checkpoint dependency
+ok 3 - reservation mixed snapshot overlap preserves the required checkpoint dependency
+  ---
+  duration_ms: 0.691638
+  type: 'test'
+  ...
+# Subtest: reservation mixed death overlap preserves the required checkpoint dependency
+ok 4 - reservation mixed death overlap preserves the required checkpoint dependency
+  ---
+  duration_ms: 0.662373
+  type: 'test'
+  ...
+# Subtest: unknown checkpoint scope undefined waits and cannot capture early
+ok 5 - unknown checkpoint scope undefined waits and cannot capture early
+  ---
+  duration_ms: 0.614972
+  type: 'test'
+  ...
+# Subtest: unknown checkpoint scope null waits and cannot capture early
+ok 6 - unknown checkpoint scope null waits and cannot capture early
+  ---
+  duration_ms: 0.2204
+  type: 'test'
+  ...
+# Subtest: unknown checkpoint scope  waits and cannot capture early
+ok 7 - unknown checkpoint scope  waits and cannot capture early
+  ---
+  duration_ms: 0.468954
+  type: 'test'
+  ...
+# Subtest: unknown checkpoint scope [object Object] waits and cannot capture early
+ok 8 - unknown checkpoint scope [object Object] waits and cannot capture early
+  ---
+  duration_ms: 0.539209
+  type: 'test'
+  ...
+# Subtest: participant-only and event-only pending snapshots fence their real target
+ok 9 - participant-only and event-only pending snapshots fence their real target
+  ---
+  duration_ms: 1.03369
+  type: 'test'
+  ...
+# Subtest: reservation validation, cancellation and capture cancellation preserve future flush eligibility
+ok 10 - reservation validation, cancellation and capture cancellation preserve future flush eligibility
+  ---
+  duration_ms: 6.315294
+  type: 'test'
+  ...
+# Subtest: future flush excludes all reserved target rows and cannot overwrite its committed death
+ok 11 - future flush excludes all reserved target rows and cannot overwrite its committed death
+  ---
+  duration_ms: 1.462184
+  type: 'test'
+  ...
+# Subtest: R81 regression control uses actual joined death and FixedLoop barrier
+ok 12 - R81 regression control uses actual joined death and FixedLoop barrier
+  ---
+  duration_ms: 8.075685
+  type: 'test'
+  ...
+# Subtest: R82 disjoint fix uses actual joined death and FixedLoop barrier
+ok 13 - R82 disjoint fix uses actual joined death and FixedLoop barrier
+  ---
+  duration_ms: 0.961313
+  type: 'test'
+  ...
+# Subtest: same-target checkpoint retains the whole party barrier until its ACK
+ok 14 - same-target checkpoint retains the whole party barrier until its ACK
+  ---
+  duration_ms: 1.248553
+  type: 'test'
+  ...
+# Subtest: same-target ACK rebases joined capture while retaining newer in-memory damage and contributions
+ok 15 - same-target ACK rebases joined capture while retaining newer in-memory damage and contributions
+  ---
+  duration_ms: 0.427792
+  type: 'test'
+  ...
+# Subtest: party actor checkpoints still ACK, while a new unrelated flush during that wait cannot extend it
+ok 16 - party actor checkpoints still ACK, while a new unrelated flush during that wait cannot extend it
+  ---
+  duration_ms: 2.441091
+  type: 'test'
+  ...
+# Subtest: death ACK alone releases success; neither submission nor unrelated ACK publishes a speculative death
+ok 17 - death ACK alone releases success; neither submission nor unrelated ACK publishes a speculative death
+  ---
+  duration_ms: 1.191027
+  type: 'test'
+  ...
+# Subtest: unrelated checkpoint failure during actor await forbids a death request and retains unknown fences
+ok 18 - unrelated checkpoint failure during actor await forbids a death request and retains unknown fences
+  ---
+  duration_ms: 1.655053
+  type: 'test'
+  ...
+# Subtest: unrelated checkpoint failure after death submit but before its ACK prevents publication and reservation retirement
+ok 19 - unrelated checkpoint failure after death submit but before its ACK prevents publication and reservation retirement
+  ---
+  duration_ms: 2.694613
+  type: 'test'
+  ...
+# Subtest: failure after an independently durable death still calls onFatal once and fences future journal work
+ok 20 - failure after an independently durable death still calls onFatal once and fences future journal work
+  ---
+  duration_ms: 1.553149
+  type: 'test'
+  ...
+# Subtest: same-target failure propagates its original error without a new death request
+ok 21 - same-target failure propagates its original error without a new death request
+  ---
+  duration_ms: 0.978588
+  type: 'test'
+  ...
+# Subtest: onFatal callback throwing cannot erase the original journal failure fence
+ok 22 - onFatal callback throwing cannot erase the original journal failure fence
+  ---
+  duration_ms: 0.464787
+  type: 'test'
+  ...
+# Subtest: proven pre-execution actor rejection cancels a disjoint reservation without publishing rewards
+ok 23 - proven pre-execution actor rejection cancels a disjoint reservation without publishing rewards
+  ---
+  duration_ms: 1.341693
+  type: 'test'
+  ...
+# Subtest: unknown death write rejection retains leases and reservations instead of retrying or duplicating rewards
+ok 24 - unknown death write rejection retains leases and reservations instead of retrying or duplicating rewards
+  ---
+  duration_ms: 1.049785
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 50.226766

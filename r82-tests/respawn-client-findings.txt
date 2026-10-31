@@ -1,0 +1,155 @@
+R82 AUTOMATIC PLAYER RESPAWN: CLIENT FINDINGS AND VALIDATION
+
+Production change
+Only the automatic player-respawn React effect was replaced in a NEW immutable
+game bundle. No client-wide transport, combat, movement, health-revision or
+server authority function was changed. The old content-addressed R79 file is
+byte-for-byte preserved.
+
+Old: game-client-core511-r79-51fbce3bd7351cf0.js
+SHA-256: 51fbce3bd7351cf064f8828a7fd9fdcb9d1611510b59120154ae5b8cb926bb3c
+New: game-client-core511-r82-b75bd56f90806564.js
+SHA-256: b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607
+New bytes: 1633081
+Exact inverse proof: r82-tests/respawn-client-patch-proof.json
+Reproducible builder: r82-tests/respawn-client-build.mjs
+Effect source: r82-tests/respawn-client-effect.txt
+
+Confirmed original client failure mechanisms
+The exact shipped R79 effect begins at line 14473. It observes area but omits
+channel and world cycle from its React dependencies. If channel or cycle changes
+while the respawn request is in flight and the character remains dead, the
+effect does not restart. The success callback discards the old-scope reply with
+an early return, leaving the busy ref true and no retry timer. Controlled runs
+with each scope change separately remain dead+busy with one request, zero
+refreshes and zero scheduled retries 60 seconds after the reply.
+
+Independently, a successful response rejected by the existing fm2 health
+revision guard leaves the character dead with no refresh or retry. The busy
+ref is false in this case, but changing a ref alone does not rerun an effect.
+
+These are proven client control-flow failures under controlled timing. They do
+not prove that either exact interleaving occurred in the user's live session.
+
+New effect stages and existing authority it uses
+1. Capture the existing game-instance ID, player ID, Core511Transport object and
+   its already-existing owner epoch; world area/channel/cycle and arena ID;
+   current authoritative death hp_revision and respawn_at_ms. No epoch or
+   additional authorization field is invented in the respawn response.
+2. Own the pending effect with a private object stored in the existing busy
+   ref. All other existing accesses treat the ref as truthy/falsy or clear it
+   on authoritative resurrection, so the token is compatible with them.
+3. Run only while that exact lifecycle remains dead, including the latest
+   client HP/revision refs. A newer life, scope, owner epoch, transport, player
+   or game instance retires old work. The actual transport.playerId must also
+   equal the captured UI player ID; both it and epoch are React dependencies.
+   Team-arena round waiting remains intact.
+4. Before sending Q('/api/action', {action:'respawn'}), inspect the existing
+   transport active slot, movementBehind slot and bounded queue. If any holds
+   a respawn command, issue no new respawn request. Do not cancel or replay
+   that already accepted request.
+5. Accept only numeric finite positive HP/maxHP, finite coordinates, a supplied
+   nonempty area and an integer hpRevision newer than the captured death. Pass
+   those exact supplied values to the unchanged fm2 guard. No fallback HP,
+   maxHP, coordinates or synthetic revision is created from a malformed 200.
+6. Release only this effect's token in settlement/cleanup. An old async
+   callback cannot clear the ownership token of a newer effect.
+7. Reconcile through existing J(true), including skipped/stale/malformed
+   successes. Wait at most 3500 ms per observation; reuse one outstanding J
+   promise within the effect. Do not start concurrent duplicate snapshot reads
+   for a still-pending same-effect refresh.
+8. After reconciliation, retry after 900 ms only if the same authoritative death
+   is still current and the server has not requested arena round waiting.
+   Cleanup cancels timers, releases only its own token and wakes its bounded
+   refresh wait; canceled callbacks cannot schedule new retries.
+9. Calculate the initial deadline wait from one reading of the existing xp2()
+   server-clock callback, which uses snapshot.serverTimeMs plus elapsed local
+   time. Preserve the fallback 2680 ms delay for a zero timer and the 120 ms
+   minimum for an already due deadline. Server-side cooldown validation stays
+   authoritative. Add xp2 to the effect dependency array.
+
+HTTP observer timeout versus accepted input
+The shipped Q function has an 8 second observer deadline. Its browserRequest
+AbortSignal rejects that observer; it does not cancel the already accepted
+Core511Transport command. This distinction is retained.
+
+The test runs the actual shipped Q and browserRequest function bodies against
+the actual unchanged Core511Transport implementation. After the 8 second timeout,
+the original accepted respawn stays in core.active. Over 30 seconds the new effect
+sends exactly one wire input, leaves queue length 0, and never replaces the
+accepted sequence. It waits for that command's existing result/recovery path.
+Thus a permanently unresolved server command can still require server-side
+recovery; this client fix does not bypass that authoritative uncertainty.
+
+Validation
+27 named tests pass by direct Node 22.23.4 invocation:
+  r79-audit/runtime/node-v22.23.4-linux-x64/bin/node
+      r82-tests/respawn-client.test.mjs
+The new complete bundle also passes node --check.
+
+Tests cover exact inverse bytes, old/new channel and cycle races, stale success,
+native cross-area replies, existing transport epoch fencing, replacement
+transport with unchanged epoch, new instance/player, temporary transport/UI
+owner mismatch, a mid-flight owner change before React renders, actual transport
+admission and its subsequent render, a second death before an
+old response, same-deadline death-revision change, live authority before the
+reply, newer live refs before the old world image, timer cancellation and late
+old errors, team arena waiting, malformed 200, ordinary errors, rejected or
+hanging refreshes, authoritative refresh confirming life, and duplicate pending
+respawn prevention with the actual shipped transport. The actual shipped xp2
+callback is tested under device clock skew of -120 seconds, zero, and +120
+seconds; all three now wait the same 2680 ms for the same server deadline.
+
+These are source-exact isolated client tests with controlled hooks, clocks and
+external ports. They are not a complete browser rendering test or a live VDS
+reproduction. Separate server-agent native SQL tests validate the actual
+respawn transaction and response shape.
+
+Admission and transition review
+Core511Transport starts without a playerId. Its actual open(ticket) assigns
+playerId from the ticket before receiving ready; ready assigns owner epoch and
+emits status online. The existing game subscription calls React connection
+state setters on that status; each world frame also runs the existing snapshot
+callback, which updates F2 and ca2. Joining sets the UI player ID and entered
+state only after the transport replacement finishes. Thus no new admission
+protocol is needed: an initial temporary owner mismatch schedules no command,
+and normal admission/world renders expose the changed playerId/epoch dependencies.
+A test runs the real unmodified transport open/ready/subscribe path and proves
+that admission resumes a previously mismatched dead effect. The server clock
+reference is also set from snapshotAtMs/serverTime before ca2 installs the world.
+
+The consolidated review checked every busy-ref use in the shipped bundle, the
+actual join/admission path, snapshot ordering, the unchanged fm2 guard, effect
+cleanup and async settlement, authoritative deadline handling, and the transport
+pending-input lifetime. No additional production edits were required beyond
+this single effect. A temporary ownership mismatch with no subsequent authority
+or connection event still cannot authorize a command; the fix does not invent
+an owner or bypass transport admission.
+
+Fresh page reload: checked separately; remaining unknown
+On a new page the HP revision ref starts at 0 and the last-respawn ref starts
+at -1. After a dead snapshot at revision N, a real native 200 response at revision
+N+1 passes the old and new fm2 guards. Both clients succeed in that controlled
+fresh-mount test. The old in-memory busy-token race cannot itself survive an
+actual full page reload.
+
+The user's report that a full page refresh still leaves the character dead
+therefore needs the current durable player fields and exact rejection/pending
+state. The remaining unknown is whether the live actor has a valid due death
+deadline, a zero/inconsistent deadline, deliberate arena waiting, an operation
+rejection such as an owner/session fence, or an accepted request still awaiting
+the server's authoritative result/refresh. Global server health cannot decide
+these player-specific conditions.
+
+Two concrete independent wait cases were also tested:
+- hp 0 plus respawn_at_ms 0 schedules the first request after 2.68 seconds, then
+  a native 409 is retried every 900 ms. Neither client invents resurrection.
+- The old first timer used raw Date.now(). A local clock 120 seconds behind the
+  server delayed its first request 122.68 seconds; a clock 120 seconds ahead
+  attempted after only 120 ms. The new server-clock calculation makes both
+  cases wait the correct 2.68 seconds. A genuinely future durable deadline
+  remains enforced. The user's actual device clock/death deadline has not
+  been measured, so this is another demonstrated path, not a live attribution.
+
+No client telemetry or extra recovery endpoint was added. No live player HP,
+database, server process or session was modified by these tests.

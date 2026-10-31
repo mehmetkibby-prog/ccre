@@ -1,0 +1,86 @@
+R82 COMBAT CHECKPOINT RESERVATION REVIEW
+
+Production change
+  core511-source/scripts/core511/combat-checkpoint.mjs only.
+  reserveR54 no longer adds a captured checkpoint as a death dependency when
+  that immutable checkpoint has a known, disjoint target set. A missing,
+  null or non-Set scope retains the full prior wait. Same-target and mixed
+  overlap retain the whole checkpoint wait, including all batches.
+
+Why this is safe within the existing protocol
+  Reservation happens synchronously before the first actor-journal await.
+  Every subsequently captured flush already filters reserved monster IDs,
+  contribution rows and combat events. The existing capture/finish path
+  operates only on those reserved IDs and does not hydrate unrelated state.
+  Actor checkpoints, target leases, own death request ACK, receipt replay,
+  checkpoint row/byte bounds and writer sequence checks are unchanged.
+  No death, XP, drop or reward is fabricated before an acknowledged commit.
+
+Failure handling added
+  reserve rejects an already failed journal.
+  capture rechecks failure after the existing actor checkpoints are awaited.
+  committed finish rechecks failure before advancing the monster journal or
+  retiring its reservation. If an unrelated checkpoint fails after death
+  submission, the existing unknown-COMMIT path keeps the actor/target fenced.
+  Known not-executed actor rejection still cancels the reservation safely.
+  Cleanup finish with committed=false remains permitted after a failure.
+  A later unrelated failure does not undo a previously durable independent
+  death, but still calls the existing fatal path and blocks future journals.
+
+Race review
+  1. Existing overlap: await all captured checkpoint ACKs, then capture the
+     new durable base and any newer resident changes.
+  2. Existing disjoint snapshot: do not add an unrelated checkpoint await;
+     request still waits for every affected actor journal and its own ACK.
+  3. A flush starts while actor journals wait: reserved targets are absent;
+     it neither overwrites the target nor extends that actor wait.
+  4. Checkpoint fails while actor journals wait: no death request submitted.
+  5. Checkpoint fails after death submission, before death ACK: no success
+     published by the joined finish; reservation and unknown lease retained.
+  6. Checkpoint fails after independent death completion: fatal channel state
+     blocks further work; durable death is not retried or rolled back.
+  7. A batch ACKs only its early chunks: pending scope remains the entire
+     snapshot until every chunk ACKs; no premature overlap release.
+
+Verification
+  Pinned runtime: r79-audit/runtime/node-v22.23.4-linux-x64/bin/node
+  Run directly (do not substitute node --test in this environment):
+    node r82-tests/checkpoint-reservation.test.mjs  (24 named tests)
+    node r82-tests/checkpoint-batches.test.mjs      (5 named tests)
+    node r82-tests/checkpoint-sqlite.test.mjs       (3 named tests)
+  All 32 pass; none skipped or cancelled. Individual TAP logs and a SHA256
+  verification JSON are beside this note. The suite uses actual shipped
+  CombatCheckpoints, ActorCheckpoints, ResidentState, ResourceLanes,
+  joinedDeathR53 and FixedLoop rather than copying their algorithms.
+
+  SQLite tests use actual shipped native LocalDatabase with async WAL
+  durability, actual actor/combat checkpoint SQL handlers, SystemWriter,
+  OrderedSystemClient, and receipt/process authority. Terminal SQL is an
+  explicitly small fixture that sets one monster HP to zero and inserts one
+  test award. It is not the full native attack/loot/XP handler. Verified:
+  own WAL ACK precedes publication, same-target checkpoint ACK precedes death,
+  unrelated transported ACK does not block death, repeated request replays
+  exactly once, and a stale checkpoint cannot resurrect the dead monster.
+
+Controlled latency comparison
+  checkpoint-wait-benchmark.mjs delays a checkpoint ACK by 500 ms and the
+  independent death ACK by 15 ms. Three samples per case:
+    R81 disjoint median actor barrier: 517.865 ms
+    R82 disjoint median actor barrier:  15.654 ms
+    R81 overlap median actor barrier:  516.970 ms
+    R82 overlap median actor barrier:  516.849 ms
+  This proves removal of the unnecessary dependency in a controlled fixture.
+  These values are not live VDS performance, a capacity estimate, or a promise
+  that every user-visible pause is removed. Full results are in the JSON.
+
+Limits and retained risks
+  The supplied source tree lacks nonlethal-rewards-r56.mjs and other current
+  native attack dependencies. The existing broad system-writer.test.mjs
+  cannot import; it was not made to pass with substitute modules. Full native
+  party loot/XP, death/reconnect recovery and gameplay behavior remain
+  unverified here and require the complete matching source tree to test.
+  No installer, database schema, production reward handler, native durability
+  implementation or live service was modified by this subtask.
+  Same-target ACK latency, own actor checkpoint latency, the death write/ACK,
+  a shared slow storage path, client rendering and network delays remain.
+  drainTargetsR531 and global drains intentionally retain existing behavior.

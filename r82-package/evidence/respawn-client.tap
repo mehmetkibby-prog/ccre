@@ -1,0 +1,172 @@
+TAP version 13
+# Subtest: only one effect changed; exact inverse restores immutable R79 bytes
+ok 1 - only one effect changed; exact inverse restores immutable R79 bytes
+  ---
+  duration_ms: 6.945159
+  type: 'test'
+  ...
+# Subtest: old channel scope race sticks; new effect ignores old response and schedules current death
+ok 2 - old channel scope race sticks; new effect ignores old response and schedules current death
+  ---
+  duration_ms: 4.007211
+  type: 'test'
+  ...
+# Subtest: old cycle scope race sticks; new effect ignores old response and schedules current death
+ok 3 - old cycle scope race sticks; new effect ignores old response and schedules current death
+  ---
+  duration_ms: 2.922054
+  type: 'test'
+  ...
+# Subtest: stale success retains revision guard, refreshes and retries the same dead lifecycle
+ok 4 - stale success retains revision guard, refreshes and retries the same dead lifecycle
+  ---
+  duration_ms: 2.064818
+  type: 'test'
+  ...
+# Subtest: normal and native cross-area respawn apply only supplied authoritative HP and coordinates
+ok 5 - normal and native cross-area respawn apply only supplied authoritative HP and coordinates
+  ---
+  duration_ms: 4.801763
+  type: 'test'
+  ...
+# Subtest: same channel/cycle rebind uses existing transport epoch; no epoch is invented in the response
+ok 6 - same channel/cycle rebind uses existing transport epoch; no epoch is invented in the response
+  ---
+  duration_ms: 1.130566
+  type: 'test'
+  ...
+# Subtest: replacement transport with identical epoch and scope still retires the old effect
+ok 7 - replacement transport with identical epoch and scope still retires the old effect
+  ---
+  duration_ms: 1.16001
+  type: 'test'
+  ...
+# Subtest: new game instance and different player identity discard stale responses
+ok 8 - new game instance and different player identity discard stale responses
+  ---
+  duration_ms: 2.529985
+  type: 'test'
+  ...
+# Subtest: a temporary transport/UI owner mismatch starts no request and resumes when the actual owner matches
+ok 9 - a temporary transport/UI owner mismatch starts no request and resumes when the actual owner matches
+  ---
+  duration_ms: 0.949734
+  type: 'test'
+  ...
+# Subtest: a transport owner change during a request cannot apply the old response, even before React renders
+ok 10 - a transport owner change during a request cannot apply the old response, even before React renders
+  ---
+  duration_ms: 1.699009
+  type: 'test'
+  ...
+# Subtest: actual transport admission publishes a render after installing owner identity and epoch
+ok 11 - actual transport admission publishes a render after installing owner identity and epoch
+  ---
+  duration_ms: 2.893561
+  type: 'test'
+  ...
+# Subtest: a second death before an old success cannot resurrect the newer life
+ok 12 - a second death before an old success cannot resurrect the newer life
+  ---
+  duration_ms: 1.591247
+  type: 'test'
+  ...
+# Subtest: death revision dependency restarts even when timer and HP remain identical
+ok 13 - death revision dependency restarts even when timer and HP remain identical
+  ---
+  duration_ms: 1.139179
+  type: 'test'
+  ...
+# Subtest: healthy authority arriving before the request result cancels obsolete work
+ok 14 - healthy authority arriving before the request result cancels obsolete work
+  ---
+  duration_ms: 0.777957
+  type: 'test'
+  ...
+# Subtest: newer live HP revision held outside the older world image also blocks retries
+ok 15 - newer live HP revision held outside the older world image also blocks retries
+  ---
+  duration_ms: 1.067081
+  type: 'test'
+  ...
+# Subtest: cleanup cancels the timer; late rejected old request cannot clear a newer token
+ok 16 - cleanup cancels the timer; late rejected old request cannot clear a newer token
+  ---
+  duration_ms: 1.690606
+  type: 'test'
+  ...
+# Subtest: active team arena waits, including authoritative arena-wait response
+ok 17 - active team arena waits, including authoritative arena-wait response
+  ---
+  duration_ms: 2.87309
+  type: 'test'
+  ...
+# Subtest: malformed 200 replies never manufacture HP or a health revision
+ok 18 - malformed 200 replies never manufacture HP or a health revision
+  ---
+  duration_ms: 9.190257
+  type: 'test'
+  ...
+# Subtest: ordinary errors retry once after refresh; refresh rejection cannot strand the attempt
+ok 19 - ordinary errors retry once after refresh; refresh rejection cannot strand the attempt
+  ---
+  duration_ms: 1.151347
+  type: 'test'
+  ...
+# Subtest: hanging refresh is bounded, shared within the effect and cancelled safely
+ok 20 - hanging refresh is bounded, shared within the effect and cancelled safely
+  ---
+  duration_ms: 1.157086
+  type: 'test'
+  ...
+# Subtest: successful refresh confirming life ends retries even when request reply was skipped
+ok 21 - successful refresh confirming life ends retries even when request reply was skipped
+  ---
+  duration_ms: 1.009955
+  type: 'test'
+  ...
+# Subtest: actual shipped Q timeout leaves one accepted transport respawn and the new effect does not duplicate it
+ok 22 - actual shipped Q timeout leaves one accepted transport respawn and the new effect does not duplicate it
+  ---
+  duration_ms: 19.987604
+  type: 'test'
+  ...
+# Subtest: fresh page state accepts the native death-revision-plus-one response in both clients
+ok 23 - fresh page state accepts the native death-revision-plus-one response in both clients
+  ---
+  duration_ms: 1.227181
+  type: 'test'
+  ...
+# Subtest: zero death deadline plus native409 is retried but never fabricated into a resurrection
+ok 24 - zero death deadline plus native409 is retried but never fabricated into a resurrection
+  ---
+  duration_ms: 1.628944
+  type: 'test'
+  ...
+# Subtest: future authoritative deadline remains enforced with a normal clock
+ok 25 - future authoritative deadline remains enforced with a normal clock
+  ---
+  duration_ms: 1.899299
+  type: 'test'
+  ...
+# Subtest: actual existing xp2 server clock fixes both -120s and +120s device skew and keeps the normal delay
+ok 26 - actual existing xp2 server clock fixes both -120s and +120s device skew and keeps the normal delay
+  ---
+  duration_ms: 6.627983
+  type: 'test'
+  ...
+# Subtest: one server-clock read preserves the zero-deadline fallback and past-deadline minimum
+ok 27 - one server-clock read preserves the zero-deadline fallback and past-deadline minimum
+  ---
+  duration_ms: 1.291868
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 99.254993
