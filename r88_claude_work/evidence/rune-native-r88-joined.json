@@ -1,0 +1,75 @@
+{
+  "source": "/workspace/ccre/r87_stability_work/working",
+  "firstStatus": 202,
+  "attackAckMs": 119.27312999999958,
+  "afterAttack": {
+    "monster_id": "rune-v2-tide-c4-1",
+    "spawn_round": 17,
+    "defeated_at": 1793564311,
+    "x": 2700,
+    "y": 2025,
+    "xp_reward": 180,
+    "essence_min": 2,
+    "essence_span": 3,
+    "loot_source_key": "rune_v2.tide",
+    "loot_profile_revision": 0,
+    "loot_profile_json": "{\"version\":1,\"key\":\"rune_v2.tide\",\"runeLoot\":{\"rune_defense\":{\"chance\":3,\"min\":1,\"max\":1},\"rune_attack\":{\"chance\":3,\"min\":1,\"max\":1},\"rune_hp\":{\"chance\":3,\"min\":1,\"max\":1},\"essence\":{\"chance\":100,\"min\":5,\"max\":10},\"gems\":{\"chance\":10,\"min\":1,\"max\":3},\"potions\":{\"chance\":5,\"min\":1,\"max\":1},\"red\":{\"chance\":1,\"min\":1,\"max\":1},\"orange\":{\"chance\":2,\"min\":1,\"max\":1},\"blue\":{\"chance\":3,\"min\":1,\"max\":1},\"white\":{\"chance\":0,\"min\":1,\"max\":1},\"purple\":{\"chance\":0,\"min\":1,\"max\":1},\"stone_dust\":{\"chance\":2,\"min\":1,\"max\":2},\"stone_book\":{\"chance\":1,\"min\":1,\"max\":1},\"evolution_scroll\":{\"chance\":0.2,\"min\":1,\"max\":1},\"pearl\":{\"chance\":0,\"min\":1,\"max\":1},\"weathered_iron\":{\"chance\":0,\"min\":1,\"max\":1},\"wing\":{\"chance\":0,\"min\":1,\"max\":1},\"infinite\":{\"chance\":0,\"min\":1,\"max\":1},\"pet\":{\"chance\":0,\"min\":1,\"max\":1},\"emerald\":{\"chance\":0.05,\"min\":1,\"max\":1}},\"runePurple498\":0.5}",
+    "events_snapshot": "{\"forge491\":null,\"cauldron488\":null,\"highLevelBalance487\":{\"version\":1,\"enabled\":false,\"area\":\"rune_v2\",\"rule\":{\"fromLevel\":65,\"xpPercent\":100,\"itemPercent\":100},\"materialLevel498\":1},\"materials\":{\"strong_branch\":{\"chance\":1,\"min\":1,\"max\":1},\"strong_crystal\":{\"chance\":1,\"min\":1,\"max\":1},\"desert_plant\":{\"chance\":1,\"min\":1,\"max\":1},\"master_scroll\":{\"chance\":1,\"min\":1,\"max\":1}},\"loot\":0,\"xp\":0,\"essence\":0,\"chest\":0,\"moonlight\":0,\"halloween\":0}",
+    "rewards_completed_at": 1793564311,
+    "pearls_retired": 0
+  },
+  "finalDefeat": {
+    "monster_id": "rune-v2-tide-c4-1",
+    "spawn_round": 17,
+    "defeated_at": 1793564311,
+    "x": 2700,
+    "y": 2025,
+    "xp_reward": 180,
+    "essence_min": 2,
+    "essence_span": 3,
+    "loot_source_key": "rune_v2.tide",
+    "loot_profile_revision": 0,
+    "loot_profile_json": "{\"version\":1,\"key\":\"rune_v2.tide\",\"runeLoot\":{\"rune_defense\":{\"chance\":3,\"min\":1,\"max\":1},\"rune_attack\":{\"chance\":3,\"min\":1,\"max\":1},\"rune_hp\":{\"chance\":3,\"min\":1,\"max\":1},\"essence\":{\"chance\":100,\"min\":5,\"max\":10},\"gems\":{\"chance\":10,\"min\":1,\"max\":3},\"potions\":{\"chance\":5,\"min\":1,\"max\":1},\"red\":{\"chance\":1,\"min\":1,\"max\":1},\"orange\":{\"chance\":2,\"min\":1,\"max\":1},\"blue\":{\"chance\":3,\"min\":1,\"max\":1},\"white\":{\"chance\":0,\"min\":1,\"max\":1},\"purple\":{\"chance\":0,\"min\":1,\"max\":1},\"stone_dust\":{\"chance\":2,\"min\":1,\"max\":2},\"stone_book\":{\"chance\":1,\"min\":1,\"max\":1},\"evolution_scroll\":{\"chance\":0.2,\"min\":1,\"max\":1},\"pearl\":{\"chance\":0,\"min\":1,\"max\":1},\"weathered_iron\":{\"chance\":0,\"min\":1,\"max\":1},\"wing\":{\"chance\":0,\"min\":1,\"max\":1},\"infinite\":{\"chance\":0,\"min\":1,\"max\":1},\"pet\":{\"chance\":0,\"min\":1,\"max\":1},\"emerald\":{\"chance\":0.05,\"min\":1,\"max\":1}},\"runePurple498\":0.5}",
+    "events_snapshot": "{\"forge491\":null,\"cauldron488\":null,\"highLevelBalance487\":{\"version\":1,\"enabled\":false,\"area\":\"rune_v2\",\"rule\":{\"fromLevel\":65,\"xpPercent\":100,\"itemPercent\":100},\"materialLevel498\":1},\"materials\":{\"strong_branch\":{\"chance\":1,\"min\":1,\"max\":1},\"strong_crystal\":{\"chance\":1,\"min\":1,\"max\":1},\"desert_plant\":{\"chance\":1,\"min\":1,\"max\":1},\"master_scroll\":{\"chance\":1,\"min\":1,\"max\":1}},\"loot\":0,\"xp\":0,\"essence\":0,\"chest\":0,\"moonlight\":0,\"halloween\":0}",
+    "rewards_completed_at": 1793564311,
+    "pearls_retired": 0
+  },
+  "rewardClaims": 1,
+  "calls": [
+    {
+      "operation": "attack",
+      "action": "attack",
+      "joined": true,
+      "ms": 65.07687799999985,
+      "status": 200
+    },
+    {
+      "operation": "native_action",
+      "action": "claim_rewards",
+      "joined": false,
+      "ms": 11.219898000000285,
+      "status": 200
+    },
+    {
+      "operation": "native_action",
+      "action": "claim_rewards",
+      "joined": false,
+      "ms": 9.950748999999632,
+      "status": 200
+    }
+  ],
+  "observerMove": {
+    "type": "action",
+    "status": 200,
+    "data": {
+      "ok": true,
+      "x": 2703,
+      "y": 2025,
+      "area": "rune_v2",
+      "positionRevision": 1
+    },
+    "sequence": 1
+  },
+  "faults": 0,
+  "passed": true
+}

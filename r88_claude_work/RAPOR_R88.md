@@ -36,6 +36,29 @@ Bütün ölçümler bu ortamda, 4 CPU'lu yerel makinede yapıldı. Test üretici
    - Tek bir sıcak nokta yok. 8 çekirdekte 4 kanal süreci kendi çekirdeğini alırsa oturmuş 50 oyuncu yükü sığar. Diğer süreçlerle CPU paylaşımı bu payı daraltır.
    - Oyun sırasında geç yüklenen modül yok. Profildeki loader örnekleri yalnız süreç açılışında görülüyor.
 
+## 1b. Rün Sahili (65 seviye) — kullanıcının özel şikâyeti
+
+Yeni test: `tests/native-rune50-claude.mjs`, 50 oyuncu, 60 sn.
+- Herkes 65. seviye, rütbe 1, `rune_v2` alanında.
+- Kanal başına gerçek 20 sıradan katalog canavarı var (4 tür × 5 yer, 30 sn yeniden doğma). Oyuncular 8 doğma noktasında, noktada ~3 kişi; aynı canavarı paylaşıyorlar, öldürmeler ortak.
+- İlk dalgada canavar canı 1500. Böylece ilk saniyelerde 16 sıradan Rün öldürmesi oluyor; yeniden doğanlar gerçek katalog canıyla geliyor.
+- Üretici kopyası `tests/runtime-rune/`; orijinal üretici değişmedi.
+
+Bulunanlar:
+
+1. **R87'de Rün öldürmesi geçici 202 cevabı almıyordu.**
+   - `reward-reply-r54.mjs` alan listesi ve `attack-memory.mjs` içindeki `previewAllowedR54` yalnız forest/frozen/ancient kabul ediyordu.
+   - Bu yüzden R86'nın öldürme sırasında hareket izni Rün'de hiç açılmıyordu. Öldüren oyuncu hem saldırı cevabını hem hareketini ödül diske yazılana kadar bekliyordu.
+2. **Rün'de iksir ≈870–970 ms sürüyor.**
+   - `scoped` potion drain'i yalnız `normalPlayerR53` / `normalMonsterR53` alanlarında açık. Rün'de her iksirde kanaldaki bütün savaş günlükleri boşaltılıyor.
+   - Donmaların neredeyse tamamı iksir sırasında.
+3. **Kırılgan nokta (bilgi için).**
+   - `generated/attack-rules.mjs:7447`, `rune_v2` alanındaki her hedef için `__colRuneV2.monster(target).respawnSeconds` okuyor. Katalogda olmayan bir canavar Rün alanına düşerse kanal süreci çöküp yeniden başlıyor (testimde ilk denemede görüldü).
+   - Gerçek katalogda bu olmuyor. Yönetici ya da etkinlikle Rün'e farklı kimlikli canavar konursa risk var. Değiştirilmedi.
+4. **Yerel toplama reddi oyuncuyu 60 sn paylaşılan yola zorluyor.**
+   - `local_collect_requires_shared` reddi `forceSharedActor(id,60000)` çağırıyor. Bu sürede oyuncunun bütün öldürmeleri paylaşılan bariyerden geçiyor ve oyuncu askıya alınıyor.
+   - Testimde sahte ganimetler bu yüzden bütün oyuncuları askıya aldı (kurulum hatası, düzeltildi). Gerçek oyunda da bir red oyuncuyu 1 dakika yavaş yola sokar. İncelenmeli, değiştirilmedi.
+
 ## 2. Yapılan değişiklik (R88)
 
 Tek mantıksal değişiklik: **sıradan haritada iksir dayanıklı yazılırken oyuncu yürüyebilir.** R86'nın öldürme sırasında hareket mekanizması aynen yeniden kullanıldı.
@@ -49,6 +72,9 @@ Tek mantıksal değişiklik: **sıradan haritada iksir dayanıklı yazılırken 
 | `fixed-loop.mjs` | `settled()` içinde `lastApplied=Math.max(...)`. İzinli hareket cevabı, daha eski ve ertelenmiş iksir cevabından önce yerleşebilir; sayaç geri gitmez. |
 | `channel-connections.mjs`, `client-transport.mjs` | Bekleyen `use_potion` arkasından bir hareket paketi gönderilebilir. Sunucu ve istemci kuralları birbirinin aynısı. |
 | İstemci grafiği | `prepare_client_r88.py`: yeni `core511-transport-r88-f2a907c787e721a0.js` (tek satır), yeni `game-client-core511-r88-aa6aed7dd8933fa4.js` (yalnız ulaşım dosyası adı değişti). İsim alanı `core511-cf3191131d993da1`. HTTP'de 351 isim alanı + 2 istemci adı değişti; ters dönüşüm eşitliği doğrulandı. Eski dosyalar korunuyor. |
+| `reward-reply-r54.mjs`, `attack-memory.mjs` | **Rün:** tam sıradan Rün türü (`ordinaryRuneRewardR87`; boss `is_boss=0` olabildiği için bayrağa güvenilmez) geçici 202 cevabı alır. Böylece R86 öldürme hareket izni Rün'de de açılır. İstemci doğrulayıcısı alandan bağımsız; istemcide değişiklik yok. |
+| `death-movement-r86.mjs` | **Rün:** öldürme ve iksir izni `rune_v2` alanında da açılır (`motionArea`). |
+| `action-loop.mjs` | **Rün:** iksir, yalnız temas ettiği sıradan Rün canavarlarının günlüklerini boşaltır (ormandaki `scoped` davranışın aynısı). Boss/taş/summon ve diğer durumlarda tam boşaltma sürer. |
 | `tools/setup_local.py` | `vendor/node_modules → native-node_modules` bağlantısı. Olmadan `@livekit/protocol → @bufbuild/protobuf` çözülemiyordu. |
 
 Değişmeyenler:
@@ -57,7 +83,7 @@ Değişmeyenler:
 - Tahmin sınırı (600 ms) aynı.
 - Vuruş vadesi, checkpoint gecikmesi, kapsam ve sahiplik kontrolleri kaldırılmadı.
 
-**Kapatma:** `CORE511_R88_ACTION_MOVEMENT=0`, sunucu tarafındaki izni kapatır. İstemci yine iksirin arkasından hareket gönderir; sunucu bunu eskisi gibi iksir bitene kadar bekletir.
+**Kapatma:** Rün kısmı `CORE511_R88_RUNE_MOVEMENT=0` ile ayrıca kapatılır. `CORE511_R88_ACTION_MOVEMENT=0`, sunucu tarafındaki izni kapatır. İstemci yine iksirin arkasından hareket gönderir; sunucu bunu eskisi gibi iksir bitene kadar bekletir.
 
 **Bilinen yan etki:** iksir yazılırken bağlantı kopup yeniden bağlanılırsa (≈ yazma süresi kadar bir pencere), istemci o iksir isteğini `command_outcome_unknown` olarak görebilir. Dayanıklı sonuç ve HP yine doğru yazılır ve dünya güncellemesiyle gelir.
 
@@ -68,7 +94,7 @@ Kimlikler:
 | | SHA |
 |---|---|
 | Çekirdek R87 | `e2226a62…db22` |
-| Çekirdek R88 (istemci grafiği dahil) | `4ace1b93e4e2c0eec9523cccd12186c66ef832e252210968d69b891e4b7a9961` |
+| Çekirdek R88 (istemci grafiği + Rün dahil) | `2ae7776372715640f1f71453d4130fd7f09aa69c3c05247637f05d2f44c436f1` |
 | HTTP | `c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973` |
 | Ingress (değişmedi) | `325bd1ca…ec9` |
 
@@ -80,6 +106,20 @@ Kimlikler:
 | crowd 50×60 | R88 | 52 | 248 | 2 / 5 kare | 49 / 242 kare |
 | crowd 50×180 | R87 | 74 | 499 | — | — |
 | crowd 50×180 | R88 | 132 | 617 | — | — |
+
+**Rün Sahili (50×60, ortak katalog canavarları, 16 öldürme):**
+
+| Sürüm | Donma | Kısılan kare | Toplam donma süresi | En uzun donma | İksir p50 | Hata/fault |
+|---|---|---|---|---|---|---|
+| R87 | 46 | 412 | 21,8 sn | 781 ms | 872 ms | 0/0 |
+| R88 (yalnız izinler) | 44 | 253 | 13,2 sn | 479 ms | 967 ms | 0/0 |
+| R88 (+ Rün iksir daraltma) | 35 | 177 | 8,6 sn | 462 ms | 770 ms | 0/0 |
+
+- Rün öldürmeleri artık 202 alıyor (16/16) ve R86 izni açılıyor (8 grup/kanal).
+- Otomatik iksir defteri 50/50 doğru (şarj düşümü = iyileşme = 900.000).
+- 2 oyuncuda iksir sayısı 65; bu, Rün ganimet tablosundaki %5 iksir düşmesi.
+- Donmaların hepsi ilk 10 saniyede (giriş iksiri + ilk öldürmeler).
+- `rune-native-r88.test.mjs` (R87 Rün testinin R88 kopyası): ilk cevap 202, birleşik öldürme commit'i 72 ms, ödül aynı commit'te tamamlandı, tekrar talep tek kayıt, gözlemci hareketi 200.
 
 **Yorum:**
 - R88 iksir kaynaklı donmayı neredeyse tamamen kaldırıyor.
@@ -94,6 +134,7 @@ Hepsinde hata, fault, iptal ve ACK'sız komut 0; ekonomi ve iksir defteri kontro
 - `r87 tests/settings-cache.test.mjs`, `attack-secondary/native-economy.test.mjs`: 3/3.
 - `r86 death-movement.test.mjs`, `death-movement-secondary.test.mjs`, `death-movement-sections.test.mjs`, `core511/tests/potion-refresh.test.mjs`: 15/15. Kopyalar `r88_claude_work/tests/` içinde, R87 ağacına yönlendirildi.
 - `r86 potion-ten-native.test.mjs` (10 iksir ↔ seri iyileşme/şarj eşitliği, replay, 10. SQL hatasında toplu geri alma): 1/1.
+- Rün değişikliğinden sonra hepsi yeniden: 19/19 ve `rune-native-r88.test.mjs`: 1/1.
 
 **Yazılmayan test:** iksir sırasında hareketi uçtan uca doğrulayan özel bir birim testi yazılmadı. Kanıt yük testlerindeki `actionGroups`, `moves` ve `preservedPositions` metrikleri. Örneğin midjoin R88: 2 grup, 13 aktör.
 
@@ -108,8 +149,9 @@ Hepsinde hata, fault, iptal ve ACK'sız komut 0; ekonomi ve iksir defteri kontro
 ## 6. Doğrulanamayanlar
 
 - Canlı VDS, gerçek WAN/TLS/Caddy, gerçek tarayıcıda 50 oyuncu ve FPS.
-- Rün Sahili 50 oyuncu, Sis Yarığı, solo/grup zindan, kule, Etkinlik Adası.
-  - R88 izni yalnız `forest/frozen/ancient` alanlarında açılır; diğer alanlarda davranış değişmedi.
+- Sis Yarığı, solo/grup zindan, kule, Etkinlik Adası.
+  - R88 izni yalnız `forest/frozen/ancient/rune_v2` alanlarında açılır; diğer alanlarda davranış değişmedi.
+- Rün boss'u ve dalga saldırısı altında yük testi yapılmadı; bunlar yine eski (dayanıklı) yoldan geçiyor.
 - R88 için kurulum ZIP'i ve geri alma testi.
 - İki tarayıcıda diğer oyuncunun hareket akıcılığı.
 
@@ -129,9 +171,10 @@ Hepsinde hata, fault, iptal ve ACK'sız komut 0; ekonomi ve iksir defteri kontro
 python3 tools/setup_local.py                # Node 22.23.4 resmi arşivi + SHA, vendor bağlantıları
 export R85_RUNTIME_TREE=/workspace/ccre/r87_stability_work/working
 export R85_EXPECT_INGRESS_SHA=325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9
-export R85_EXPECT_CORE_SHA=4ace1b93e4e2c0eec9523cccd12186c66ef832e252210968d69b891e4b7a9961
+export R85_EXPECT_CORE_SHA=2ae7776372715640f1f71453d4130fd7f09aa69c3c05247637f05d2f44c436f1
 R85_RUNTIME_LABEL=r88-check python3 r87_stability_work/tests/run.py /workspace/ccre/r88_claude_work/tests/native-midjoin-claude.mjs 50 60
 R85_RUNTIME_LABEL=r88-check python3 r87_stability_work/tests/run.py /workspace/ccre/r88_claude_work/tests/native-crowd50-claude.mjs 50 60
+R85_RUNTIME_LABEL=r88-check python3 r87_stability_work/tests/run.py /workspace/ccre/r88_claude_work/tests/native-rune50-claude.mjs 50 60
 ```
 
 Analiz: `python3 r88_claude_work/analyze_caps.py <json>`. Donmaları saniyeye ve o anda bekleyen komuta göre gruplar.

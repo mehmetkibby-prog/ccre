@@ -16,6 +16,13 @@ import {potionJoinTargetsR56} from './potion-join-r56.mjs';
 import {soloCollectJoinR85} from './collect-join-r85.mjs';
 import {actorRejection} from './actor-rejection.mjs';
 import {beginActionMovementR88,stopDeathMovementR86,rebaseDeathCheckpointR86} from './death-movement-r86.mjs';
+import {ordinaryRuneRewardR87} from './rune-reward-scope-r87.mjs';
+import {memoryCombatR53 as memoryCombatForRuneR88} from './r53-options.mjs';
+// R88: a Rune V2 potion drains only the journals of the exact ordinary species
+// it is engaged with (as ordinary maps already do), not every monster on the
+// channel. Boss/stone/summons and any other footprint keep the full drain.
+const runeScopeR88=process.env.CORE511_R88_RUNE_MOVEMENT!=='0';
+const runePotionPlayerR88=p=>Boolean(runeScopeR88&&memoryCombatForRuneR88&&p&&p.area==='rune_v2'&&!p.arena_match_id&&!p.instance_id&&!p.instanceId);
 
 // Public-map ground pickup reads the owned drop and actor/party inventories; it
 // neither settles retaliation nor reads/writes monster contribution journals.
@@ -66,7 +73,7 @@ export class ActionLoop {
      if(Buffer.byteLength(JSON.stringify(actorsR56.map(t=>({actor:t.id,epoch:t.entry.epoch,payload:t.payload}))))>224*1024){cancelR56();await Promise.all(ids.map(actor=>this.checkpoints.drain(actor)));}
     }else await Promise.all(ids.map(actor=>this.checkpoints.drain(actor)));
     stageEndR51('action.'+labelR56+'.actorDrain',phaseR56);phaseR56=stageStartR51();
-    const scoped=scopedPotionCheckpointR531&&input.action==='use_potion'&&ids.length===1&&normalPlayerR53(kernel.state.read('players',id))&&footprint.resources.every(key=>key.startsWith('monster:')&&normalMonsterR53(kernel.state.read('monsters',key.slice(8))));
+    const scoped=scopedPotionCheckpointR531&&input.action==='use_potion'&&ids.length===1&&(normalPlayerR53(kernel.state.read('players',id))||runePotionPlayerR88(kernel.state.read('players',id)))&&footprint.resources.every(key=>key.startsWith('monster:')&&(normalMonsterR53(kernel.state.read('monsters',key.slice(8)))||runeScopeR88&&ordinaryRuneRewardR87(kernel.state.read('monsters',key.slice(8)))));
     const claimTargetsR56=joinedTargetsR56??claimDrainTargetsR56({input,footprint,ids,kernel});
     const castleTravel=castleEnabled()&&ids.length===1&&footprint.resources.every(key=>key==='player:'+id)&&['respawn','castle_enter_r59','castle_leave_r59'].includes(input.action)&&[CASTLE_AREA,'bazaar'].includes(kernel.state.read('players',id)?.area);
     if(castleTravel||collectWithoutCombatDrainR79({id,input,footprint,ids,kernel})){/* No monster/history settlement. Periodic/exit journal remains active. */}else if(claimTargetsR56)await this.combatCheckpoints.drainTargetsR531(claimTargetsR56);

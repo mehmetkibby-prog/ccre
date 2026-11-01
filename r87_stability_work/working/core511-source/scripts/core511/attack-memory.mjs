@@ -10,6 +10,9 @@ import {createMixedParticipantMapR52} from './mixed-participants-r52.mjs';
 import {rewardAsyncReplyR54} from './r54-options.mjs';
 import {previewDeathR54} from './reward-reply-r54.mjs';
 import {resourceFairnessR61,captureResourceWaitR61,sealResourceWaitR61} from './attack-resource-fairness-r61.mjs';
+import {ordinaryRuneRewardR87} from './rune-reward-scope-r87.mjs';
+// R88: exact ordinary Rune V2 species may take the provisional lethal reply.
+const runePreviewR88=process.env.CORE511_R88_RUNE_MOVEMENT!=='0';
 
 const response={json:(body,{status=200}={})=>({body,status})};
 const durable=Symbol('attack-requires-durable-owner');
@@ -62,7 +65,7 @@ export class AttackMemory {
  hitPlan(plan){return {...plan,hitStatements:[null,null],beforeHealthIndex:0,healthResultIndex:1,xpResultIndex:-1};}
  commitHits(guard,plans){
   const accepted=this.reservePreview(guard);if(!accepted)return {guard:{results:[]},results:[]};
-  let terminalR54=null;const previewAllowedR54=rewardAsyncReplyR54&&plans.length<=512&&plans.every(p=>['forest','frozen','ancient'].includes(p.target.area)&&!p.target.is_boss&&!p.target.is_stone&&p.target.channel>0);
+  let terminalR54=null;const previewAllowedR54=rewardAsyncReplyR54&&plans.length<=512&&plans.every(p=>(['forest','frozen','ancient'].includes(p.target.area)||runePreviewR88&&ordinaryRuneRewardR87(p.target))&&!p.target.is_boss&&!p.target.is_stone&&p.target.channel>0);
   // Acquire/check every target before any part of a multi-target attack changes.
   for(const plan of plans){
    const current=this.monster(plan.target.id);if(!current||current.hp<=0||current.spawn_round!==plan.target.spawn_round)continue;

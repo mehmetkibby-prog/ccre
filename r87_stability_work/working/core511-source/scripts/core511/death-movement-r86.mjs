@@ -4,6 +4,12 @@ import {deathBatchPreviewR86} from './death-batch-single-r57.mjs';
 const permits=new WeakMap(),groups=new WeakSet(),replies=new WeakSet();
 const motionFields=new Set(['x','y','movement_checked_at_ms','movement_debt_ms','position_revision','motion_stream_id','motion_sequence','last_movement_at_ms']);
 const ordinary=new Set(['forest','frozen','ancient']);
+// R88: Rune V2 joins the bounded motion permit. A kill permit is only reachable
+// from joinedDeathR53, which admits rune_v2 targets solely through the exact
+// ordinary-species check (ordinaryRuneRewardR87: never the boss, stones or
+// summons). Boss waves change HP and are rejected by sameOther as before.
+const runeMotionR88=process.env.CORE511_R88_RUNE_MOVEMENT!=='0';
+const motionArea=area=>ordinary.has(area)||runeMotionR88&&area==='rune_v2';
 const basic=input=>input?.action==='attack'&&Math.min(3,Math.max(0,Math.floor(Number(input.ability)||0)))===0;
 const sameOther=(a,b)=>a&&b&&Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>motionFields.has(k)||k==='last_seen'||Object.is(a[k],b[k]));
 const scopeSame=(a,b)=>['id','account_id','area','channel','arena_match_id','realtime_scope_version','cycle','instanceId','instance_id'].every(k=>Object.is(a[k],b[k]));
@@ -22,7 +28,7 @@ export function beginDeathMovementR86(loop,{kernel,id,input,ids,lease,preview,en
  for(const d of descriptors){
   const p=kernel.players.get(d.id),owner=kernel.state.owners.get(d.id),row=kernel.state.read('players',d.id),checkpoint=loop.checkpoints.entries.get(d.id);
   const captured=checkpoint?.joinedR53?.payload.current,clean=checkpoint&&!checkpoint.pending&&!checkpoint.joinedR53&&!loop.checkpoints.changed(d.id)&&Object.keys(checkpoint.base).every(k=>Object.is(checkpoint.base[k],row?.[k]));
-  if(!ids.includes(d.id)||!p?.barrier||p.suspended||p.externalHold||p.quiescer||!p.accepting||owner?.state!=='active'||owner.epoch!==p.epoch||!ordinary.has(row?.area)||row.hp<=0||row.arena_match_id||row.instance_id||row.instanceId||!checkpoint||checkpoint.pending||!captured&&!clean||captured&&!['id','account_id','area','channel','arena_match_id','realtime_scope_version'].every(k=>Object.is(captured[k],row[k]))||!lease.keys.includes('player:'+d.id)){metric(kernel,'blockedEligibility');return null;}
+  if(!ids.includes(d.id)||!p?.barrier||p.suspended||p.externalHold||p.quiescer||!p.accepting||owner?.state!=='active'||owner.epoch!==p.epoch||!motionArea(row?.area)||row.hp<=0||row.arena_match_id||row.instance_id||row.instanceId||!checkpoint||checkpoint.pending||!captured&&!clean||captured&&!['id','account_id','area','channel','arena_match_id','realtime_scope_version'].every(k=>Object.is(captured[k],row[k]))||!lease.keys.includes('player:'+d.id)){metric(kernel,'blockedEligibility');return null;}
   if(d.entry){if(p.deferred.length!==1||p.deferred[0].sequence!==d.entry.sequence||p.lastApplied>=d.entry.sequence)return null;}
   else if(p.deferred.length)return null;
   if(!acceptDeathPreviewR54(d.preview,lease))return null;
@@ -48,7 +54,7 @@ export function beginActionMovementR88(loop,{kernel,ids,lease}){
  for(const id of ids){
   const p=kernel.players.get(id),owner=kernel.state.owners.get(id),row=kernel.state.read('players',id),checkpoint=loop.checkpoints.entries.get(id);
   const captured=checkpoint?.joinedR53?.payload.current,clean=checkpoint&&!checkpoint.pending&&!checkpoint.joinedR53&&!loop.checkpoints.changed(id)&&Object.keys(checkpoint.base).every(k=>Object.is(checkpoint.base[k],row?.[k]));
-  if(!p?.barrier||permits.has(p)||p.suspended||p.externalHold||p.quiescer||!p.accepting||owner?.state!=='active'||owner.epoch!==p.epoch||!ordinary.has(row?.area)||row.hp<=0||row.arena_match_id||row.instance_id||row.instanceId||!checkpoint||checkpoint.pending||!captured&&!clean||captured&&!['id','account_id','area','channel','arena_match_id','realtime_scope_version'].every(k=>Object.is(captured[k],row[k]))||!lease.keys.includes('player:'+id)){metric(kernel,'actionBlockedEligibility');continue;}
+  if(!p?.barrier||permits.has(p)||p.suspended||p.externalHold||p.quiescer||!p.accepting||owner?.state!=='active'||owner.epoch!==p.epoch||!motionArea(row?.area)||row.hp<=0||row.arena_match_id||row.instance_id||row.instanceId||!checkpoint||checkpoint.pending||!captured&&!clean||captured&&!['id','account_id','area','channel','arena_match_id','realtime_scope_version'].every(k=>Object.is(captured[k],row[k]))||!lease.keys.includes('player:'+id)){metric(kernel,'actionBlockedEligibility');continue;}
   actors.push({id,p,owner,row,checkpoint,barrier:p.barrier,epoch:p.epoch,deferredAt:p.deferred.length});
  }
  if(!actors.length)return null;
