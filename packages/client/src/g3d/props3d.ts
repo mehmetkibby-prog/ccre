@@ -50,8 +50,8 @@ const B: Partial<Record<PropKind, Builder>> = {
       tips.push([bx, y0 + by + 0.3, bz]);
     }
     const leaves: THREE.BufferGeometry[] = [];
-    for (const [x, y, z] of tips) leaves.push(leafCluster(r, x, y, z, 1.3 + r() * 0.3, 16, 1.75));
-    leaves.push(leafCluster(r, 0, H + 0.3, 0, 1.8, 24, 1.9));
+    for (const [x, y, z] of tips) leaves.push(leafCluster(r, x, y, z, 1.25 + r() * 0.3, 20, 1.3));
+    leaves.push(leafCluster(r, 0, H + 0.3, 0, 1.75, 30, 1.4));
     const res = group(parts);
     res.push({ geo: merge(leaves), mat: v === 2 ? 'leaves_autumn' : 'leaves' });
     return res;
@@ -324,14 +324,14 @@ function pineModel(v: number, snow: boolean): Part[] {
   const parts: { g: THREE.BufferGeometry; m: string }[] = [{ g: at(cyl(0.08, 0.3, H, 8, 1.4), 0, H / 2, 0), m: 'bark' }];
   const cards: THREE.BufferGeometry[] = [];
   const cores: THREE.BufferGeometry[] = [];
-  const tiers = 8;
+  const tiers = 10;
   for (let t = 0; t < tiers; t++) {
     const k = t / tiers;
     const y = 1.2 + k * (H - 1.3);
     const len = 2.2 * (1 - k) + 0.35;
     // koyu iç koni: yoğunluk hissi
-    if (t % 2 === 0) cores.push(at(new THREE.ConeGeometry(len * 0.7, len * 0.9, 9, 1, true), 0, y + len * 0.2, 0));
-    const n = 7;
+    if (t % 2 === 0) cores.push(at(new THREE.ConeGeometry(len * 0.45, len * 0.8, 9, 1, true), 0, y + len * 0.2, 0));
+    const n = 8;
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + t * 0.7 + r() * 0.4;
       const droop = 0.35 + r() * 0.2;
@@ -408,7 +408,7 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
       const im = new THREE.InstancedMesh(part.geo, mat(part.mat), list.length);
       list.forEach((p, i) => {
         const rot = fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
-        const scale = (k === 'tree' || k === 'pine' || k === 'snowpine' || k === 'deadtree') ? p.s * 1.15 : k === 'rock' ? p.s * 1.1 : p.s;
+        const scale = (k === 'tree' || k === 'pine' || k === 'snowpine' || k === 'deadtree') ? p.s * 0.8 : k === 'rock' ? p.s * 1.1 : p.s;
         const wy = k === 'lily' || k === 'dock' ? -0.2 : heightAt(p.x, p.y) - 0.03;
         pos.set(p.x * U, wy, p.y * U);
         e.set(0, rot, 0); q.setFromEuler(e); s.setScalar(scale);

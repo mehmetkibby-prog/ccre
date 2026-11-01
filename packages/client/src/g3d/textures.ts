@@ -313,10 +313,10 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
   const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
   if (kind === 'broad') {
     // yumuşak yaprak kütlesi: dar renk aralığı, damar çizgisi yok, hafif bulanık kenar
-    ctx.filter = 'blur(0.7px)';
-    for (let i = 0; i < 170; i++) {
-      const x = 18 + rnd() * (S - 36), y = 18 + rnd() * (S - 36), a = rnd() * Math.PI * 2, l = 12 + rnd() * 10;
-      const g = 92 + rnd() * 34, yellow = rnd() < 0.08 ? 1 : 0;
+    ctx.filter = 'blur(0.5px)';
+    for (let i = 0; i < 320; i++) {
+      const x = 14 + rnd() * (S - 28), y = 14 + rnd() * (S - 28), a = rnd() * Math.PI * 2, l = 7 + rnd() * 6;
+      const g = 128 + rnd() * 40, yellow = rnd() < 0.1 ? 1 : 0;
       ctx.save(); ctx.translate(x, y); ctx.rotate(a);
       const grd = ctx.createLinearGradient(-l * 0.5, 0, l * 0.5, 0);
       grd.addColorStop(0, `rgb(${g * (0.52 + yellow * 0.25)},${g},${g * 0.34})`); grd.addColorStop(1, `rgb(${g * (0.46 + yellow * 0.25)},${g * 0.88},${g * 0.3})`);
@@ -330,8 +330,8 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
     ctx.filter = 'blur(0.5px)';
     for (let i = 0; i < 300; i++) {
       const y = 10 + rnd() * (S - 20), side = rnd() < 0.5 ? -1 : 1, l = (S - y) * 0.16 + 16 + rnd() * 18;
-      const g = 70 + rnd() * 30;
-      ctx.strokeStyle = `rgb(${g * 0.45},${g},${g * 0.6})`; ctx.lineWidth = 1.9;
+      const g = 105 + rnd() * 35;
+      ctx.strokeStyle = `rgb(${g * 0.5},${g},${g * 0.62})`; ctx.lineWidth = 1.9;
       ctx.beginPath(); ctx.moveTo(S / 2, y); ctx.lineTo(S / 2 + side * l, y + l * 0.5); ctx.stroke();
     }
     ctx.filter = 'none';

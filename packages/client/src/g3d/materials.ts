@@ -104,13 +104,13 @@ export function mat(key: string): THREE.Material {
   switch (key) {
     case 'bark': m = texMat('bark', { color: 0xc8b8a8 }); break;
     case 'bark_dead': m = texMat('bark', { color: 0x6a6070 }); break;
-    case 'leaves': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0x8ea068 }), 0.09, 5); break;
-    case 'leaves_autumn': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xf0b070 }), 0.09, 5); break;
-    case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0x7e9a80 }), 0.05, 7); break;
+    case 'leaves': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xbdd28a }), 0.09, 5); break;
+    case 'leaves_autumn': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xffcc88 }), 0.09, 5); break;
+    case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xa8c49c }), 0.05, 7); break;
     case 'needles_snow': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xb8d8d0 }), 0.04, 7); break;
-    case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0x86a062 }), 0.05, 1.2); break;
+    case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb2cc82 }), 0.05, 1.2); break;
     case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.95, color: 0x9aaa70 }), 0.12, 0.6); break;
-    case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x2a4630, roughness: 0.95, side: THREE.DoubleSide }); break;
+    case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x35553a, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'pine_core_snow': m = new THREE.MeshStandardMaterial({ color: 0x3a5a52, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'snow': m = new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.7 }); break;
     case 'rock': m = texMat('rock', { color: 0xffffff }); break;

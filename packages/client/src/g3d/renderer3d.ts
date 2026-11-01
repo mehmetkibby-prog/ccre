@@ -24,17 +24,18 @@ import { store } from '../game/store.ts';
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 const THEME = {
-  village: { fog: 0x9aa498, top: 0x6f8fb4, sky: 0xb4c4d4, ground: 0x4e4434, sun: 0xffdcb0, sunI: 3.3, hemi: 0.6, exp: 1.08, near: 40, far: 120 },
-  forest: { fog: 0x6c7a68, top: 0x5f7a92, sky: 0xa8b8b0, ground: 0x3a3626, sun: 0xffd8a4, sunI: 3.0, hemi: 0.58, exp: 1.1, near: 32, far: 105 },
-  lake: { fog: 0x93a4aa, top: 0x6a8cb0, sky: 0xbccad6, ground: 0x4a4636, sun: 0xffe0b8, sunI: 3.2, hemi: 0.6, exp: 1.08, near: 40, far: 125 },
-  frozen: { fog: 0xaeb8c0, top: 0x8296ac, sky: 0xd0d8e0, ground: 0x6a7480, sun: 0xe6ecff, sunI: 2.7, hemi: 0.65, exp: 1.0, near: 30, far: 100 },
-  black: { fog: 0x1e1820, top: 0x2a2030, sky: 0x4a3a50, ground: 0x181216, sun: 0xff9a70, sunI: 1.9, hemi: 0.26, exp: 1.05, near: 24, far: 85 },
-  ancient: { fog: 0x7e7a62, top: 0x6a7a8a, sky: 0xb8b498, ground: 0x3e3a28, sun: 0xffd8a8, sunI: 2.9, hemi: 0.58, exp: 1.08, near: 32, far: 105 },
+  // Aydınlık, sıcak gündüz: güçlü gök ışığı (gölgeler kararmasın), açık sis ve gökyüzü
+  village: { fog: 0xc4d2d8, top: 0x7aa6d6, sky: 0xd8e6f2, ground: 0x8a7c62, sun: 0xfff0d8, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 55, far: 140 },
+  forest: { fog: 0xb8ccc4, top: 0x78a2cc, sky: 0xd2e2ea, ground: 0x7a7258, sun: 0xffeccc, sunI: 3.5, hemi: 1.15, exp: 1.25, near: 48, far: 125 },
+  lake: { fog: 0xc6d6de, top: 0x78a6d8, sky: 0xdae8f4, ground: 0x857a62, sun: 0xfff0dc, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 55, far: 145 },
+  frozen: { fog: 0xd4dee6, top: 0x8eaed0, sky: 0xe6eef6, ground: 0x9aa6b2, sun: 0xf4f6ff, sunI: 3.1, hemi: 1.1, exp: 1.12, near: 45, far: 120 },
+  black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 40, far: 110 },
+  ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 48, far: 125 },
 } as const;
 
 /** Renk düzenleme: hafif doygunluk düşüşü, kontrast, sıcak ışık / soğuk gölge, kenar karartma. */
 const GradeShader = {
-  uniforms: { tDiffuse: { value: null }, uSat: { value: 0.9 }, uCon: { value: 1.05 }, uVig: { value: 0.26 } },
+  uniforms: { tDiffuse: { value: null }, uSat: { value: 1.04 }, uCon: { value: 1.0 }, uVig: { value: 0.1 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: `uniform sampler2D tDiffuse; uniform float uSat; uniform float uCon; uniform float uVig; varying vec2 vUv;
     void main(){
