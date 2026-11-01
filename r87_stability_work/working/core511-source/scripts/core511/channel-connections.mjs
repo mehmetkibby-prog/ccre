@@ -12,7 +12,7 @@ const presenceErrors=new Set(['presence_owner_fenced','session_epoch_fenced','ow
 const leaseErrors=new Set(['connection_lease_owner','connection_lease_expired']);
 const MOVEMENT_PIPELINE='queued-movement-v1',ORDERED_MOVEMENT='ordered-movement-v2';
 const MOTION='validated-motion-v1',BOT_CHALLENGE='bot-challenge-v1';
-const allowsFollowingMovement=payload=>payload.action==='attack'&&Number(payload.ability??0)===0||payload.action==='claim_rewards'||payload.action==='collect';
+const allowsFollowingMovement=payload=>payload.action==='attack'&&Number(payload.ability??0)===0||payload.action==='claim_rewards'||payload.action==='collect'||payload.action==='use_potion';
 // Trusted ingress identities live beside socket records, never in a client's
 // JSON payload. A queued input retains the exact connection that accepted it.
 export class MistLootConnections {

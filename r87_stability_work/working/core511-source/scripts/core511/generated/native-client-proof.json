@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r87-aaf06f246f8a616a.js",
+  "name": "game-client-core511-r88-aa6aed7dd8933fa4.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -241,11 +241,11 @@
       "scope": "Same-UUID transport recovery notification only after successful active game-presence claim; lease, authentication, bot checks and entry decisions unchanged."
     }
   },
-  "transportSourceSha256": "56b276e559beb3ea9938efdaa964a002f3dd14f8b4d876a2bab007555e0fecbc",
-  "bridgeSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+  "transportSourceSha256": "90f463116287bfb3f81e574494c8e96e8d30cdb1d9fc6fb2a8095af9ed8884b0",
+  "bridgeSha256": "f2a907c787e721a0b0ec9fd2ec32e625e4f8e1dc6607fe10bc4feb37144d52bd",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
-  "bridge": "core511-transport-r79-715e78ecd9021ea8.js",
+  "patchedSha256": "aa6aed7dd8933fa463f8a9e4e2df7f53ca6af9412977bb3c632a35ebc67256bd",
+  "bridge": "core511-transport-r88-f2a907c787e721a0.js",
   "edits": [
     {
       "start": 0,
@@ -4416,5 +4416,23 @@
     ],
     "inverseEqual": true,
     "scope": "Bounded asynchronous wings chroma processing and indexed previous-entity lookup; identical pixels and first-match lookup semantics."
+  },
+  "r88Movement": {
+    "oldGame": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "oldGameSha256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
+    "game": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "gameSha256": "aa6aed7dd8933fa463f8a9e4e2df7f53ca6af9412977bb3c632a35ebc67256bd",
+    "oldBridge": "core511-transport-r79-715e78ecd9021ea8.js",
+    "oldBridgeSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "bridge": "core511-transport-r88-f2a907c787e721a0.js",
+    "bridgeSha256": "f2a907c787e721a0b0ec9fd2ec32e625e4f8e1dc6607fe10bc4feb37144d52bd",
+    "edit": {
+      "before": "var mayPipelineMovement = (payload) => payload?.action === \"attack\" && Number(payload.ability ?? 0) === 0 || [\"claim_rewards\", \"collect\"].includes(payload?.action);",
+      "after": "var mayPipelineMovement = (payload) => payload?.action === \"attack\" && Number(payload.ability ?? 0) === 0 || [\"claim_rewards\", \"collect\", \"use_potion\"].includes(payload?.action);",
+      "count": 1
+    },
+    "inverseEqual": true,
+    "transportSourceSha256": "90f463116287bfb3f81e574494c8e96e8d30cdb1d9fc6fb2a8095af9ed8884b0",
+    "scope": "R88: a pending use_potion may be followed by one pipelined movement batch (server allowsFollowingMovement mirrors it); no other client change."
   }
 }

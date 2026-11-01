@@ -51,6 +51,10 @@ def main():
         working = ROOT/f'r{version}_stability_work/working'
         link(ROOT/'vendor/native-node_modules', working/'native510-bb3a6cc689c6/node_modules')
         link(ROOT/'vendor/build-node_modules', working/'deps/build/node_modules')
+    # Packages vendored under native-node_modules resolve their own peer
+    # dependencies (e.g. @livekit/protocol -> @bufbuild/protobuf) only through
+    # an ancestor node_modules directory.
+    link(ROOT/'vendor/native-node_modules', ROOT/'vendor/node_modules')
     build = ROOT/'r87_stability_work/working/deps/build'
     for name in ('core511-build-deps', 'col-perf-r11-dependencies'):
         link(build, Path('/tmp')/name)

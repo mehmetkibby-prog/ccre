@@ -15,6 +15,7 @@ import {claimActorJoinR56} from './r56-options.mjs';
 import {potionJoinTargetsR56} from './potion-join-r56.mjs';
 import {soloCollectJoinR85} from './collect-join-r85.mjs';
 import {actorRejection} from './actor-rejection.mjs';
+import {beginActionMovementR88,stopDeathMovementR86,rebaseDeathCheckpointR86} from './death-movement-r86.mjs';
 
 // Public-map ground pickup reads the owned drop and actor/party inventories; it
 // neither settles retaliation nor reads/writes monster contribution journals.
@@ -55,6 +56,7 @@ export class ActionLoop {
   const cancelR56=()=>{for(const t of actorsR56)if(t.entry.joinedR53===t)this.checkpoints.finishR53(t);actorsR56.length=0;};
   const labelR56=input.action==='claim_rewards'?'claim':input.action==='use_potion'?'potion':input.action==='collect'?'collect':'other';
   stageRecordR51('action.'+labelR56+'.inputWait',Math.max(0,now-receivedAtMs));
+  let motionR88=null;
   try{kernel.durableGroup(ids,async()=>{
    const totalR56=stageStartR51();let phaseR56=totalR56;
    try{
@@ -70,21 +72,26 @@ export class ActionLoop {
     if(castleTravel||collectWithoutCombatDrainR79({id,input,footprint,ids,kernel})){/* No monster/history settlement. Periodic/exit journal remains active. */}else if(claimTargetsR56)await this.combatCheckpoints.drainTargetsR531(claimTargetsR56);
     else if(scoped)await this.combatCheckpoints.drainTargetsR531(footprint.resources.map(key=>key.slice(8)));else await this.combatCheckpoints.drain();this.lanes.assert(lease);
     stageEndR51('action.'+labelR56+'.combatDrain',phaseR56);phaseR56=stageStartR51();
-    const expected=this.frameFor(id,input,now),ack=await this.submit({actor:id,key,kind:'native_action',payload:{...(actorsR56.length?{claimActorsR56:actorsR56.map(t=>({actor:t.id,epoch:t.entry.epoch,payload:t.payload}))}:{}),...(footprint.localScope?{localScope:footprint.localScope}:{}),...(lootAction?{lootConnection:lootConnection&&this.connectionFor?.(id,input)===lootConnection?lootConnection:null}:{}),input,nowMs:now,receivedAtMs,seed,expected,resources:lease.keys}});
+    const expected=this.frameFor(id,input,now);
+    // R88: a potion only changes HP/charges. Keep its actors walking while the
+    // writer commits; the expected image above is captured first.
+    if(input.action==='use_potion')motionR88=beginActionMovementR88(this,{kernel,ids,lease});
+    const ack=await this.submit({actor:id,key,kind:'native_action',payload:{...(actorsR56.length?{claimActorsR56:actorsR56.map(t=>({actor:t.id,epoch:t.entry.epoch,payload:t.payload}))}:{}),...(footprint.localScope?{localScope:footprint.localScope}:{}),...(lootAction?{lootConnection:lootConnection&&this.connectionFor?.(id,input)===lootConnection?lootConnection:null}:{}),input,nowMs:now,receivedAtMs,seed,expected,resources:lease.keys}});
     stageEndR51('action.'+labelR56+'.writerAck',phaseR56);phaseR56=stageStartR51();
+    stopDeathMovementR86(motionR88);
     demand(ack.key===key&&ack.result,'action_ack_mismatch');this.lanes.assert(lease);
     if(footprint.localScope?.completedR56&&ack.result.result?.status===200)stageRecordR51('action.claim.completedScope',0);
     if(actorsR56.length){
      if(ack.result.r56ClaimRejected){demand(ids.includes(ack.result.r56ClaimRejected)&&ack.result.result?.status===409&&ack.result.result.body?.not_executed===true,'claim_join_rejection');cancelR56();}
      else{demand(Array.isArray(ack.result.claimActorsR56)&&ack.result.claimActorsR56.length===actorsR56.length,'claim_join_ack');for(const t of actorsR56){const saved=ack.result.claimActorsR56.find(row=>row.id===t.id);demand(saved,'claim_join_ack');this.checkpoints.finishR53(t,saved);}actorsR56.length=0;}
     }
-    demand(ack.result.players.every(p=>!kernel.players.has(p.id)||ids.includes(p.id)),'action_unlocked_recipient');const refreshStarted=performance.now();await this.committed(ack.result,{id,input});if(input.action==='collect')collectTime(ack.result.collectLight?'refreshLightCandidate':'refreshFull',performance.now()-refreshStarted);
+    demand(ack.result.players.every(p=>!kernel.players.has(p.id)||ids.includes(p.id)),'action_unlocked_recipient');const refreshStarted=performance.now();await this.committed(ack.result,{id,input,...(motionR88?{deathMotionR86:motionR88}:{})});if(input.action==='collect')collectTime(ack.result.collectLight?'refreshLightCandidate':'refreshFull',performance.now()-refreshStarted);
     stageEndR51('action.'+labelR56+'.refresh',phaseR56);
-    for(const player of ack.result.players)if(kernel.players.has(player.id))this.checkpoints.hydrateCommitted(player);
+    for(const player of ack.result.players)if(kernel.players.has(player.id)&&!rebaseDeathCheckpointR86(motionR88,this.checkpoints,player))this.checkpoints.hydrateCommitted(player);
     for(const [actor,entry]of ack.result.encounters)if(kernel.players.has(actor))this.checkpoints.encounters?.hydrateCommitted(actor,entry);
     for(const event of ack.result.events)this.publish(...event);this.lanes.release(lease);return ack;
    }catch(error){if(actorRejection(error))cancelR56();if(lease.state==='held')this.lanes.reject(lease,error);if(footprint.localScope&&error?.code==='local_claim_requires_shared')this.localRejected?.(footprint.localScope.targets,id);if(footprint.localScope&&error?.code==='local_collect_requires_shared')this.localCollectRejected?.(id);throw error;}
-   finally{stageEndR51('action.'+labelR56+'.heldTotal',totalR56);}
+   finally{stopDeathMovementR86(motionR88);stageEndR51('action.'+labelR56+'.heldTotal',totalR56);}
   },{replyTo:id,emitReceipt:false,ackResult:ack=>({type:'action',...ack.result.result})});}catch(error){if(lease.state==='held')this.lanes.reject(lease,error);throw error;}
   return {type:'action'};
  }

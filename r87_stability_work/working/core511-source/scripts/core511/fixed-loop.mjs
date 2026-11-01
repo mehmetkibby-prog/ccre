@@ -28,7 +28,9 @@ export class FixedLoop {
   demand(!this.players.has(id)&&(passive||this.activeCount<residentCapacityR59(this.state.channel)),'channel_full');
   this.state.assertOwner(id,epoch);this.players.set(id,{epoch,passive,lastAccepted:0,lastApplied:0,queue:[],results:[],settled:[],deferred:[],barrier:null,accepting:!passive,suspended:false,quiescer:null});
  }
- settled(p,result){p.lastApplied=result.sequence;p.settled.push(result);if(p.settled.length>64)p.settled.shift();}
+ // R88: a permitted move may settle before an older deferred potion result.
+ // lastApplied never moves backwards; the pending result still settles once.
+ settled(p,result){p.lastApplied=Math.max(p.lastApplied,result.sequence);p.settled.push(result);if(p.settled.length>64)p.settled.shift();}
  replayResults(id){return [...(this.players.get(id)?.settled??[])];}
  enqueue(id,{sequence,epoch,kind,payload}) {
   demand(!this.failure&&!this.stopped,'kernel_unavailable');

@@ -1,4 +1,4 @@
-import {deathMovementPermitR86,mergeDeathBundleR86} from './death-movement-r86.mjs';
+import {deathMovementPermitR86,mergeDeathBundleR86,mergeDeathRowR86} from './death-movement-r86.mjs';
 import {ordinaryPotionBatchR61} from './potion-batch-channel-r61.mjs';
 import {residentCapacityR59,channelAdmissionR59,castleResumeR59} from './castle-capacity-r59.mjs';
 import {CompletedClaimHintsR56} from './completed-claims-r56.mjs';
@@ -130,10 +130,15 @@ export class ResidentChannel {
   if(context?.input?.action==='collect'&&this.ports.collectRefresh?.(result,context))return;
   const sectionRefresh=this.ports.actorSectionRefreshR52?.(result,context);if(sectionRefresh===true||(sectionRefresh&&typeof sectionRefresh.then==='function'&&await sectionRefresh))return;
   const changed=result.players??[result.player];demand(changed.every(p=>p&&typeof p.id==='string'),'resident_commit_actor');
-  if(context&&this.ports.potionRefresh&&canRefreshPotion(this.view.player(context.id),result,context)){
+  // R88: a potion that ran under the movement permit carries the resident's
+  // newer motion suffix; the merged row (or the unmodified SQL row when the
+  // R86 compatibility proof fails) is what the shortcut compares and installs.
+  const potionRow=context?.deathMotionR86&&context.input?.action==='use_potion'&&result.players?.length===1?mergeDeathRowR86(context.deathMotionR86,result.players[0],{cycle:this.world.cycle}):result.players?.[0];
+  const potionResult=potionRow===result.players?.[0]?result:{...result,players:[potionRow]};
+  if(context&&this.ports.potionRefresh&&canRefreshPotion(this.view.player(context.id),potionResult,context)){
    const id=context.id,owner=this.owners.get(id),actor=this.kernel.players.get(id);
    demand(owner&&actor?.barrier&&actor.epoch===owner.epoch&&this.lanes.busy(['player:'+id]),'potion_refresh_not_fenced');this.state.assertOwner(id,owner.epoch);
-   if(this.ports.potionRefresh(result.players[0])===true){this.view.setPlayer(this.presence.merge(result.players[0],owner.epoch));this.view.setEngagement(id,result.encounters[0][1]);return;}
+   if(this.ports.potionRefresh(potionRow)===true){this.view.setPlayer(this.presence.merge(potionRow,owner.epoch));this.view.setEngagement(id,result.encounters[0][1]);return;}
   }
   // Native rewards can legitimately include recently disconnected party
   // members. Their durable rows remain in the writer; only current residents

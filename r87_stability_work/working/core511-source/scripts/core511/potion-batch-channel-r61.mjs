@@ -7,6 +7,7 @@ import {normalPlayerR53} from './r53-options.mjs';
 import {potionJoinTargetsR56} from './potion-join-r56.mjs';
 import {olderGroupWaitingR57} from './group-fairness-r57.mjs';
 import {demand} from './contract.mjs';
+import {beginActionMovementR88,stopDeathMovementR86,rebaseDeathCheckpointR86} from './death-movement-r86.mjs';
 
 const plans=new WeakSet(),areas=new Set(['forest','frozen','black','ancient']);
 export const POTION_BATCH_EXTRA_LIMIT_R61=POTION_BATCH_LIMIT_R86-1;
@@ -78,26 +79,29 @@ export function ordinaryPotionBatchR61(channel,context){
  const key='action:'+actions.incarnation+':'+(++actions.serial),targets=[...new Set([...(plan.source.targets??[]),...plan.entries.flatMap(e=>e.targets)])];
  for(const e of entries)stageRecordR51('action.potion.inputWait',Math.max(0,context.now-e.payload.receivedAtMs));
  const metric=kernel.metrics;metric.potionBatchesR61=(metric.potionBatchesR61??0)+1;metric.potionBatchInputsR61=(metric.potionBatchInputsR61??0)+entries.length-1;
+ let motionR88=null;
  try{kernel.durableGroup(plan.ids,async()=>{
   const total=stageStartR51();let phase=total;
   try{
    await actions.combatCheckpoints.drainTargetsR531(targets);actions.lanes.assert(lease);
    stageEndR51('action.potion.combatDrain',phase);phase=stageStartR51();
+   motionR88=beginActionMovementR88(actions,{kernel,ids:plan.ids,lease});
    const ack=await actions.submit({actor:context.id,key,kind:'native_action',payload});
    stageEndR51('action.potion.writerAck',phase);phase=stageStartR51();
+   stopDeathMovementR86(motionR88);
    demand(ack.key===key&&ack.result,'potion_batch_ack');actions.lanes.assert(lease);
    const parts=ack.result.potionBatchResultsR61;
    demand(Array.isArray(parts)&&parts.length===entries.length&&parts.every((r,i)=>r.actor===entries[i].actor&&r.sequence===entries[i].sequence&&r.value?.result&&r.value.players?.length===1&&r.value.players[0].id===r.actor&&r.value.encounters?.length===1&&r.value.encounters[0][0]===r.actor),'potion_batch_ack');
    if(ack.result.cancelActorsR61){demand(JSON.stringify(ack.result.cancelActorsR61)===JSON.stringify(plan.ids)&&parts.every(r=>r.value.r56ClaimRejected===r.actor&&r.value.result.status===409&&r.value.result.body?.not_executed===true),'potion_batch_cancel_ack');cancel();}
    else{for(const t of tokens){const value=parts.find(r=>r.actor===t.id).value;demand(Array.isArray(value.claimActorsR56)&&value.claimActorsR56.length===1&&value.claimActorsR56[0].id===t.id,'potion_batch_join_ack');actions.checkpoints.finishR53(t,value.claimActorsR56[0]);}tokens.length=0;}
    for(const [i,r]of parts.entries()){
-    await actions.committed(r.value,{id:r.actor,input:entries[i].payload.input});
-    actions.checkpoints.hydrateCommitted(r.value.players[0]);actions.checkpoints.encounters?.hydrateCommitted(r.actor,r.value.encounters[0][1]);
+    await actions.committed(r.value,{id:r.actor,input:entries[i].payload.input,...(motionR88?{deathMotionR86:motionR88}:{})});
+    if(!rebaseDeathCheckpointR86(motionR88,actions.checkpoints,r.value.players[0]))actions.checkpoints.hydrateCommitted(r.value.players[0]);actions.checkpoints.encounters?.hydrateCommitted(r.actor,r.value.encounters[0][1]);
    }
    stageEndR51('action.potion.refresh',phase);
    for(const event of ack.result.events)actions.publish(...event);actions.lanes.release(lease);return ack;
   }catch(error){if(actorRejection(error))cancel();if(lease.state==='held')actions.lanes.reject(lease,error);throw error;}
-  finally{stageEndR51('action.potion.heldTotal',total);}
+  finally{stopDeathMovementR86(motionR88);stageEndR51('action.potion.heldTotal',total);}
  },{emitReceipt:false,groupAckResult:(ack,prior,actor)=>{
   const row=ack.result.potionBatchResultsR61.find(r=>r.actor===actor&&r.sequence===prior.sequence);demand(row,'potion_batch_reply');return {type:'action',...row.value.result};
  }});}catch(error){if(lease.state==='held')actions.lanes.reject(lease,error);throw error;}

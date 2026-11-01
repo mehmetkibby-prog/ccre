@@ -1,9 +1,9 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "source": "dist-vds/server/index.js",
-  "clientAssetNamespace": "core511-27dfe29036d78e12",
+  "clientAssetNamespace": "core511-cf3191131d993da1",
   "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
-  "generatedSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+  "generatedSha256": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
   "patches": [
     {
       "name": "patchNativeAdmin",
@@ -1871,5 +1871,17 @@
     "namespaceReplacements": 351,
     "gameNameReplacements": 2,
     "scope": "Immutable R87 game client references only; native HTTP routes unchanged."
+  },
+  "r88Movement": {
+    "oldNamespace": "core511-27dfe29036d78e12",
+    "namespace": "core511-cf3191131d993da1",
+    "oldName": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "name": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "sourceSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+    "generatedSha256": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Immutable R88 game client/transport references only; native HTTP routes unchanged."
   }
 }

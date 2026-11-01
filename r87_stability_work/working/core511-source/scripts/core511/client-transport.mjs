@@ -5,7 +5,7 @@ import {NATIVE_ACTIONS} from './generated/action-names.mjs';
 import {readR40Options} from './r40-client.mjs';
 export const CLIENT_PROTOCOL='coreoflife-kernel-v1';
 const QUEUED_MOVEMENT='queued-movement-v1',ORDERED_MOVEMENT='ordered-movement-v2',MOTION='validated-motion-v1',BOT_CHALLENGE='bot-challenge-v1';
-const mayPipelineMovement=payload=>payload?.action==='attack'&&Number(payload.ability??0)===0||['claim_rewards','collect'].includes(payload?.action);
+const mayPipelineMovement=payload=>payload?.action==='attack'&&Number(payload.ability??0)===0||['claim_rewards','collect','use_potion'].includes(payload?.action);
 const hot=new Set([...NATIVE_ACTIONS,'move','attack','pvp_attack','cast_support456','heartbeat','afk_answer','afk_recover']);
 const response=(body,status=200,headers={})=>Response.json(body,{status,headers:{'cache-control':'no-store',...headers}});
 const failure=(code,status=503)=>Object.assign(Error(code),{code,status});

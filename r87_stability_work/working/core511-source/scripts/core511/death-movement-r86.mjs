@@ -33,10 +33,34 @@ export function beginDeathMovementR86(loop,{kernel,id,input,ids,lease,preview,en
  for(const actor of actors){permits.set(actor.p,{group,actor});if(actor.entry){const prior=actor.p.deferred.shift();demand(prior.sequence===actor.entry.sequence,'death_motion_secondary_sequence');const reply={...actor.preview,sequence:prior.sequence};kernel.settled(actor.p,reply);actor.p.results.push(reply);metric(kernel,'secondaryPreviews');}}
  metric(kernel,'groups');metric(kernel,'eligibleActors',actors.length);return group;
 }
+// R88: the identical bounded permit for an ordinary potion commit. A potion
+// never relocates, kills or controls its actor; the writer request has already
+// captured the immutable pre-command row. While it commits only motion fields
+// may change (sameOther/scopeSame/engagement/overdue guards in
+// runDeathMovementR86 are unchanged). The potion's own reply stays deferred
+// until its durable ACK; each actor's existing deferred count is recorded so
+// later replies cannot overtake an unrelated pending result. The committed row
+// is merged and the checkpoint rebased exactly like the R86 kill path.
+export const actionMovementR88=process.env.CORE511_R88_ACTION_MOVEMENT!=='0';
+export function beginActionMovementR88(loop,{kernel,ids,lease}){
+ if(!actionMovementR88)return null;
+ const actors=[];
+ for(const id of ids){
+  const p=kernel.players.get(id),owner=kernel.state.owners.get(id),row=kernel.state.read('players',id),checkpoint=loop.checkpoints.entries.get(id);
+  const captured=checkpoint?.joinedR53?.payload.current,clean=checkpoint&&!checkpoint.pending&&!checkpoint.joinedR53&&!loop.checkpoints.changed(id)&&Object.keys(checkpoint.base).every(k=>Object.is(checkpoint.base[k],row?.[k]));
+  if(!p?.barrier||permits.has(p)||p.suspended||p.externalHold||p.quiescer||!p.accepting||owner?.state!=='active'||owner.epoch!==p.epoch||!ordinary.has(row?.area)||row.hp<=0||row.arena_match_id||row.instance_id||row.instanceId||!checkpoint||checkpoint.pending||!captured&&!clean||captured&&!['id','account_id','area','channel','arena_match_id','realtime_scope_version'].every(k=>Object.is(captured[k],row[k]))||!lease.keys.includes('player:'+id)){metric(kernel,'actionBlockedEligibility');continue;}
+  actors.push({id,p,owner,row,checkpoint,barrier:p.barrier,epoch:p.epoch,deferredAt:p.deferred.length});
+ }
+ if(!actors.length)return null;
+ loop.lanes.assert(lease);
+ const group={loop,kernel,lease,actors,active:true,savedRows:new Map(),rejected:new Set(),kind:'action'};groups.add(group);
+ for(const actor of actors)permits.set(actor.p,{group,actor});
+ metric(kernel,'actionGroups');metric(kernel,'actionEligibleActors',actors.length);return group;
+}
 export function deathMovementPermitR86(kernel,id){
  const p=kernel.players.get(id),permit=p&&permits.get(p);if(!permit)return null;
  const {group,actor}=permit;
- if(!group.active||group.kernel!==kernel||p!==actor.p||p.barrier!==actor.barrier||p.epoch!==actor.epoch||p.suspended||p.externalHold||p.quiescer||!p.accepting||p.deferred.length||kernel.failure||kernel.state.owners.get(id)!==actor.owner||actor.owner.state!=='active'||group.lease.state!=='held'||!group.loop.lanes.owns(group.lease,'player:'+id))return null;
+ if(!group.active||group.kernel!==kernel||p!==actor.p||p.barrier!==actor.barrier||p.epoch!==actor.epoch||p.suspended||p.externalHold||p.quiescer||!p.accepting||p.deferred.length!==(actor.deferredAt??0)||kernel.failure||kernel.state.owners.get(id)!==actor.owner||actor.owner.state!=='active'||group.lease.state!=='held'||!group.loop.lanes.owns(group.lease,'player:'+id))return null;
  return permit;
 }
 export const mayProcessDeathMovementR86=(kernel,id,p,phase)=>phase==='movement'&&p.queue[0]?.kind==='movement'&&p.queue[0]?.payload?.action==='move'&&!!deathMovementPermitR86(kernel,id);
@@ -57,7 +81,7 @@ export function runDeathMovementR86(movement,context,permit){
 }
 export function stopDeathMovementR86(group){if(!group)return;demand(groups.has(group),'death_motion_group');group.active=false;for(const {p}of group.actors)if(permits.get(p)?.group===group)permits.delete(p);}
 export function rejectDeathMovementR86(group,now){if(!group)return;for(const actor of group.actors)rejectActor(group,actor,now);}
-function rejectActor(group,actor,now){if(group.rejected.has(actor.id))return;group.rejected.add(actor.id);rejectDeathPreviewR54(group.loop,actor.preview,actor.id,actor.input,now);}
+function rejectActor(group,actor,now){if(group.rejected.has(actor.id)||!actor.preview)return;group.rejected.add(actor.id);rejectDeathPreviewR54(group.loop,actor.preview,actor.id,actor.input,now);}
 export function validateDeathResultsR86(group,value){
  if(!group)return;demand(groups.has(group),'death_motion_group');
  const entries=group.actors.filter(a=>a.entry).map(a=>a.entry),rows=value.batchResultsR57;
