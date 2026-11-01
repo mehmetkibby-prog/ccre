@@ -1,0 +1,59 @@
+Core of Life / CORE511 projemin gecikme ve donma araştırmasını devral.
+
+GÜNCEL DURUM: R84'ü VDS'ye kurdum. R84'ü yeniden kurma. Eklediğim
+CORE511_CODEX_DEVIR_R84.zip geliştirme/devir arşividir; güncelleme kurucusu
+olarak çalıştırma. Önce içindeki CORE511_CODEX_DEVIR_R84.txt dosyasını oku.
+Eski belgelerin "R84 kurulmadı" veya "canlı son R81" ifadeleri tarihsel;
+bu mesajdaki kurulum durumunu esas al. Gerçek canlı kimliği erişimin varsa
+salt okunur doğrula; erişimin yoksa varmış gibi davranma.
+
+Mevcut doğrulanmış kısmi R79–R84 kaynakları, kurucular, testler, kanıtlar ve orijinal paketler devir
+arşivinde. Kaynak tar arşivini ve R85 inceleme ZIP'ini aynı yerel çalışma
+köküne aç; göreli dizin yapısını koru. Sabit Node runtime'ını r79-inspect.zip
+arşivinden yalnız dosya çıkararak edin; eski installer'ı çalıştırma.
+Dosya hash kontrollerini kaldırma ve sürümleri birbirine karıştırma.
+
+Şikâyetler: Telefon ve PC'de hareketin durması; canavar keserken kısa
+takılmalar; bazen ölü kalıp yeniden doğamama; zamanla artan lag; F5 sonrası
+kanal seçiminde kalma. R84'ün kurulması bu şikâyetlerin sona erdiğini
+kanıtlamaz. Tek tek varsayımsal güncelleme yerine kök nedenleri birlikte
+araştırıp doğrulanmış bir paket istiyorum.
+
+R84 giriş ve kurtarma yarışlarını düzeltir. İlk shared_command_outcome_unknown
+yazma/ACK arızası çözülmüş sayılmadı. global_world_busy ve game_instance_expired
+sonraki belirtiler olabilir. 31 Ekim 2026 12:33:24–12:33:47 UTC aralığındaki
+özgün core511_fault veya yeni lag olayının öncesi/sonrası gereklidir.
+
+42 tam eşleşen güncel kaynak dosyası eksik. Önce missing-pinned-manifest.json
+ve salt okunur CORE511_TANI_ARACI.zip ile bu kaynakları, kurulu kimlikleri
+ve olay ölçümlerini tamamla. Çıktı CORE511_TANI_<UTCtimestamp>.zip olmalı.
+Eski sürüm modülleriyle eksikleri doldurma; VDS'de DB veya ayarları değiştirme.
+
+R85 kurulabilir paket değil. İstemcide saldırı/otomatik ganimet/otomatik
+iksir/heartbeat komutlarının gözlemci timeout'u sonrası çoğalmasına yönelik
+son aday ve writer/freeze/recovery adayları hazırlanmış. Doğru son adayları
+r85-investigation/root-verification.json, movement/combined-client-candidate.json,
+writer/candidate-pins.json ve source-recovery/writer-review-final.json belirler.
+56 istemci kontrolü ve 62+18 writer test yürütmesi var; bunlar tam oyun veya
+canlı kapasite testi değil. İlk gerçek server ACK gecikmesi devam ettiğinde
+hareket durması aday istemcide de sürüyor. Bu sınırı saklama.
+
+Tam kaynak geldikten sonra gerçek native writer/receipt/respawn/economy,
+geç/kayıp ACK, süreç çökmesi, recovery ve yeniden giriş senaryolarını izole
+staging'de doğrula. Hareket+savaş+ganimet+ölüm/dirilme ile pazar/takas/artı
+basma/lonca/kale/zindan/admin/periyodik işleri birlikte incele. Karma yük ve
+gerçek PC/mobil tarayıcı testlerini tamamlamadan adayları canlı kurulum
+paketi diye sunma. 1/10/30/50 kademelerini ve belgelerdeki mevcut kapasite/
+gecikme hedeflerini koru; ortalama CPU'yu kapasite kanıtı sayma.
+
+R80 foreground, R82 actor-progress ve R83 8 ms reader taslakları üretime
+alınmadı. R83 reader taslağında 1,97–2,48 kat kötüleşme ölçülmüştü; otomatik
+birleştirme. 600 ms prediction sınırını büyüterek lag'i gizleme. Belirsiz
+mutasyonu tekrar oynatma; owner/epoch/receipt/durable ACK korumalarını bozma.
+
+Hesaplar, karakterler, eşyalar ve tüm ilerleme korunacak. Geri alma eski
+kod + GÜNCEL DB olacak; eski DB'yi geri yükleme. Oyun açma/bakım yalnız admin
+panelinden yapılacak. Bütün terminal komutlarını kopyalanabilir kod bloğunda
+ver. Ne doğrulandı, ne eksik ve ne canlıda ölçüldü açık yaz; kısa ilerleme
+güncellemeleri ver. Sonuçta son baytlara bağlı test kanıtı, değişiklik özeti,
+kurulum/geri alma yönergesi ve tek doğrulanmış güncelleme paketi istiyorum.

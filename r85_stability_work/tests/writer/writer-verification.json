@@ -1,0 +1,78 @@
+{
+  "scope": "R85 integrated writer/recovery; isolated real native SQLite with four OS channel owners and one world owner; no live service/browser/capacity claim",
+  "productionPins": "tests/writer/writer-production-pins.json",
+  "productionPinsSHA256": "e37438a83b1db0b7e93a87b99a56833bb45d5a3efcc7fd6374739dc633f47991",
+  "changedFiles": 12,
+  "reviewedFrozenCandidateManifestSHA256": "c0bd10b3692105c260927b3025bbb83423eda2721ecb630adf31f0e7dc7f2f88",
+  "results": [
+    {
+      "log": "tests/writer/final-focused.tap",
+      "sha256": "68a458f799779bed4706075b447cca91bcfd3127f9d6d24040f5dcece1ada061",
+      "tests": 80,
+      "pass": 80,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "log": "tests/writer/pending-freeze-cleanup.tap",
+      "sha256": "3c6a19c767ce73629ec5da3053c84007ebd9824e442476ccf2b5871aacc1e080",
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    {
+      "log": "tests/writer/final-native.tap",
+      "sha256": "5c3b17e18907637c5a84f70c025b88d10a7b3fe51307dd6989c944969f55bc6f",
+      "tests": 9,
+      "pass": 9,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0
+    }
+  ],
+  "additionalNativeFindings": [
+    {
+      "problem": "Original command remaining in unknown registry lost operationId/sequence/original digest in post-write audit and was rejected after native work",
+      "fix": "Retain validated original sequence/key/payload; audit actual SQL resource union separately; same policy for offline preflight",
+      "before": "tests/writer/native-refine.tap",
+      "after": "tests/writer/final-native.tap"
+    },
+    {
+      "problem": "Pending freeze rejection removed quiescer but kept accepting=false and cold traffic hold; receipt and ready succeeded yet next input got actor_draining",
+      "fix": "Authenticated parent pre-command cancellation retains exact pending actor fence; wait original barrier, normal durable checkpoint/current-image refresh/resume, remove parent fence only after same-owner ACK",
+      "before": "tests/writer/native-pending-next-input.tap",
+      "after": "tests/writer/final-native.tap"
+    }
+  ],
+  "nativeCases": [
+    "ordinary native rejection releases frozen actor",
+    "SIGKILL before native donation COMMIT preserves rollback and fresh receipt once",
+    "SIGKILL after native donation COMMIT preserves one native receipt",
+    "shared failed hold recovers real owners while sibling ACK withheld",
+    "post-COMMIT shared ACK loss resolves durable receipt once without restart",
+    "pending original/cold freeze/healthy peer release/next input success",
+    "two pending originals with changed identities/payload/resources/foreign pending actor rejected",
+    "native writer identity verified against main session",
+    "native accepted potion commits after socket security expiry"
+  ],
+  "fixtureAdaptations": [
+    "tests/runtime/run.py pins Node v22.23.4 and current release flags; runtime loader verifies current WAL/timing bytes, seeds missing fixture-only schema, and allows declared missing TypeScript declarations",
+    "Initial native tests select explicit R84 character channel instead of obsolete automatic ticket admission",
+    "Inherited proof fixture supplies explicit original endpoint ports; it has no native pending barrier. Real pending cleanup validated by new dedicated 6-case suite and native process case",
+    "Guild donation fixture missing built guild-village chunk resolved by runtime loader to hash-verified erased native TypeScript; production sources untouched"
+  ],
+  "commands": [
+    "node --test --test-concurrency=1 tests/writer/freeze-*.test.mjs tests/writer/shared-*.test.mjs tests/writer/writer-*.test.mjs",
+    "node --test tests/writer/pending-freeze-cleanup.test.mjs",
+    "python3 tests/runtime/run.py --test --test-concurrency=1 tests/writer/native-recovery-r85.test.mjs tests/writer/native-writer-identity-process.test.mjs tests/writer/native-permanent-process.test.mjs"
+  ],
+  "patchSHA256": "c52af8309f6c9340bed8101831643568222c1de5025f2c115d59856002062cf5",
+  "sharedOwnership": [
+    "shared-combat-bridge.mjs includes reward-agent foreground scope and post-native refresh proof integration",
+    "ownership.mjs includes reward-agent exact private completed-rollback proof handling",
+    "player-write-scope.mjs includes reward-agent pre-COMMIT shared refresh audit"
+  ]
+}

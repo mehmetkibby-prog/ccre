@@ -1,0 +1,24 @@
+test_archive_encoding_is_sorted_fixed_metadata_and_byte_deterministic (__main__.FinalEvidenceTests.test_archive_encoding_is_sorted_fixed_metadata_and_byte_deterministic) ... ok
+test_changed_builder_after_tests_is_rejected (__main__.FinalEvidenceTests.test_changed_builder_after_tests_is_rejected) ... ok
+test_changed_installer_after_tests_is_rejected (__main__.FinalEvidenceTests.test_changed_installer_after_tests_is_rejected) ... ok
+test_changed_test_after_evidence_is_rejected (__main__.FinalEvidenceTests.test_changed_test_after_evidence_is_rejected) ... ok
+test_failure_zero_pass_skips_and_different_production_are_rejected (__main__.FinalEvidenceTests.test_failure_zero_pass_skips_and_different_production_are_rejected) ... ok
+test_matching_final_evidence_is_accepted (__main__.FinalEvidenceTests.test_matching_final_evidence_is_accepted) ... ok
+test_missing_final_evidence_refuses_archive_before_package_output (__main__.FinalEvidenceTests.test_missing_final_evidence_refuses_archive_before_package_output) ... ok
+test_deleted_old_game_is_rejected (__main__.LocalScopeTests.test_deleted_old_game_is_rejected) ... ok
+test_exact_delta_leaves_missing_current_source_absent (__main__.LocalScopeTests.test_exact_delta_leaves_missing_current_source_absent) ... ok
+test_extra_target_file_is_rejected (__main__.LocalScopeTests.test_extra_target_file_is_rejected) ... ok
+test_modified_baseline_is_rejected (__main__.LocalScopeTests.test_modified_baseline_is_rejected) ... ok
+test_modified_native_runtime_is_rejected (__main__.LocalScopeTests.test_modified_native_runtime_is_rejected) ... ok
+test_modified_old_client_is_rejected (__main__.LocalScopeTests.test_modified_old_client_is_rejected) ... ok
+test_reconstructed_missing_source_is_rejected (__main__.LocalScopeTests.test_reconstructed_missing_source_is_rejected) ... ok
+test_symlink_even_with_same_bytes_is_rejected (__main__.LocalScopeTests.test_symlink_even_with_same_bytes_is_rejected) ... ok
+test_unchanged_required_payload_is_rejected (__main__.LocalScopeTests.test_unchanged_required_payload_is_rejected) ... ok
+test_actual_shipped_r83_overlay_rederives_complete_source_identity (__main__.SourceIdentityTests.test_actual_shipped_r83_overlay_rederives_complete_source_identity) ... ok
+test_changed_source_archive_is_rejected_before_import_or_staging (__main__.SourceIdentityTests.test_changed_source_archive_is_rejected_before_import_or_staging) ... ok
+test_optimized_python_cannot_disable_build_assertions (__main__.SourceIdentityTests.test_optimized_python_cannot_disable_build_assertions) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.368s
+
+OK

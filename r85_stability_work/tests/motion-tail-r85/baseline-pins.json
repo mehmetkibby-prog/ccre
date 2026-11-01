@@ -1,0 +1,11 @@
+{
+  "actor-section-reuse-r52.mjs": "9d8cd3dd8c4931e3164e8913d1626d4e11f91b559286add6d90bedf4e905a79e",
+  "death-preview-batch-r85.mjs": null,
+  "death-batch-single-r57.mjs": "d76b4b45d09370862618c7502e2d9daed9efadf486a9d3b598e0c2d87450f6b6",
+  "movement-tail-r85.mjs": null,
+  "resident-channel.mjs": "3014ca58458dc7a0d3aba6b895cee37c7e48d8adcad48a7ac059eb1dd4332366",
+  "attack-commit-r53.mjs": "e1b3415482b540fdaaf52bb34374fa3a34faeb20653576d87b81e57c1b325613",
+  "tick-slices-r53.mjs": "1a27aad0a39dd4369d612bd7223b0658956097a5d85b456327c0b6ddfcc9d461",
+  "fixed-loop.mjs": "5ac89b33e95122ac5100e08856836cc306b925bb956aa20ed0395ecd2ab4a22e",
+  "attack-memory.mjs": "3d66012cc4f5eb5bff840b7b4c81fc3d14891319e48473fcab8421a73f62b031"
+}

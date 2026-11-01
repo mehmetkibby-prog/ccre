@@ -1,0 +1,32 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793517552906,"backupName":"before-pearl-reset-1793517552906-7e9bb0b1-23d2-4364-b2e3-272c033192c9.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:19:29.704Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":360122,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fd700708de6bfa0a72b2a4d7"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:19:29.704Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":360128,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d4e9c98fa843f0372561a514"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:19:29.704Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":360134,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f63aee4617b9ee53cfaf9af2"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:19:29.704Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":360146,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a54c1c355ce3016f4c0b11db"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:19:29.724Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":360111,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"abff1f42ce9f60beb858afec"}
+# Subtest: five native independent lethal heads keep economy, all replies and one exact durable batch replay
+not ok 1 - five native independent lethal heads keep economy, all replies and one exact durable batch replay
+  ---
+  duration_ms: 18415.893301
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/independent-deaths-r85/native-process.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: 'Test timed out'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    until (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/helpers.mjs:18:145)
+    async TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/tests/independent-deaths-r85/native-process.test.mjs:33:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19366.975654

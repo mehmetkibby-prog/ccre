@@ -1,0 +1,52 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793558457757,"backupName":"before-pearl-reset-1793558457757-6a66cdb3-4367-4a34-9033-4ab2501a4979.sqlite"}
+# Subtest: ten native independent kills equal ten serial seeded attacks and replay every durable result
+ok 1 - ten native independent kills equal ten serial seeded attacks and replay every durable result
+  ---
+  duration_ms: 2633.021701
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793558457411,"backupName":"before-pearl-reset-1793558457411-f2a8c8dd-1613-4be2-9de8-0827d21a6505.sqlite"}
+# {"event":"core511_fault","at":"2026-11-01T18:41:02.147Z","code":"actor_command_outcome_pending","channel":4,"source":"channel","operation":"attack","requestEpoch":1,"sequence":1,"actorRef":"a7a95d80c26f247801591274","stack":[]}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.061Z","action":"shutdown_abort","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}]}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.062Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":1,"pid":407566,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"a6a81006420b74bb01a0fcaa"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.062Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":2,"pid":407572,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"4ea792f713f92626c9746b38"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.063Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":3,"pid":407582,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"dc521446a02d092901f1cf6b"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.063Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":4,"pid":407588,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"a37690b12a837a07c56797da"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T18:41:15.063Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":0,"pid":407555,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"28593bccc77704b6ac461caf"}
+# Subtest: Rune V2 ordinary native death, reward claim replay and second player movement
+not ok 2 - Rune V2 ordinary native death, reward claim replay and second player movement
+  ---
+  duration_ms: 19213.977858
+  type: 'test'
+  location: '/workspace/ccre/r87_stability_work/tests/rune-native.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'Test timed out'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    until (file:///workspace/ccre/r87_stability_work/working/core511-source/scripts/core511/tests/helpers.mjs:18:145)
+    async TestContext.<anonymous> (file:///workspace/ccre/r87_stability_work/tests/rune-native.test.mjs:20:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: real WAL settings reread preserves unrelated-commit identity and invalidates edits/rollback
+ok 3 - real WAL settings reread preserves unrelated-commit identity and invalidates edits/rollback
+  ---
+  duration_ms: 4.727028
+  type: 'test'
+  ...
+# Subtest: static profile reuse isolates mutation, keys/settings, malformed/oversize and exceptions
+ok 4 - static profile reuse isolates mutation, keys/settings, malformed/oversize and exceptions
+  ---
+  duration_ms: 1.222151
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 3
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20122.303626

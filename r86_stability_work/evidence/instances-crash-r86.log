@@ -1,0 +1,24 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793550100127,"backupName":"before-pearl-reset-1793550100127-dd613c09-2bd5-4c77-b65d-993d29347c35.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+ok 1 - native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1790.067905
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793550101887,"backupName":"before-pearl-reset-1793550101887-cb89d55e-c2ed-4326-9559-573db39bd5e5.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+ok 2 - native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1733.442045
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3949.170213

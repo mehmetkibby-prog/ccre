@@ -1,0 +1,17 @@
+{
+  "sourceSha256": "ded7e65dc5c422d5a13f7daac397d44dbd86b3f2ad224b4ba34ad0e49721b8e0",
+  "patchedSha256": "52041b8f7e3cbbbd5676523f4f8f616a0ca704c64012346b0616c3c7e85d1c7c",
+  "edits": [
+    {
+      "from": "const s=db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{},gear=questClassItem438(item,p.role);",
+      "to": "const s={...(db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{}),...(db.prepare('SELECT * FROM combat_settings WHERE id=1').get()??{})},gear=questClassItem438(item,p.role);",
+      "count": 1
+    },
+    {
+      "from": "questEnchantments438(item.kind,db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{},random)",
+      "to": "questEnchantments438(item.kind,{...(db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{}),...(db.prepare('SELECT * FROM combat_settings WHERE id=1').get()??{})},random)",
+      "count": 1
+    }
+  ],
+  "scope": "Quest class/general equipment and cauldron class rewards read saved combat tiers in addition to existing game power settings; no stored gear rewrite."
+}

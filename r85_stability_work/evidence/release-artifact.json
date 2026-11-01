@@ -1,0 +1,13 @@
+{
+  "name": "CORE511_R85_TOPLU.zip",
+  "bytes": 1401298,
+  "sha256": "465eae779b9af525155d1fda328902dbdccab2bc6a7ac000dbe0c48960c39927",
+  "targetCoreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "sourceCoreSHA256": "a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365",
+  "productionFiles": 46,
+  "members": 63,
+  "bootstrapHelpPassed": true,
+  "liveDeployment": false,
+  "gatePath": "evidence/final-release-gate-mitigation-r85.json",
+  "assessmentKind": "verified-functional-mitigation"
+}

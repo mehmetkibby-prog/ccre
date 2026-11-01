@@ -1,0 +1,44 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793553208429,"backupName":"before-pearl-reset-1793553208429-e8b5f8f5-80dd-4818-9765-8fdf0b3c9aa4.sqlite"}
+# Subtest: pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+not ok 1 - pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+  ---
+  duration_ms: 1664.848038
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-retaliation.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: 'result.events is not iterable'
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    AttackLoop.attack (file:///workspace/ccre/r86_stability_work/working/core511-source/scripts/core511/attack-loop.mjs:29:49)
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-retaliation.test.mjs:40:24)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553210018,"backupName":"before-pearl-reset-1793553210018-a02262f3-e40b-495e-9b56-a2898e59c435.sqlite"}
+# Subtest: terminal native retaliation retains its real barrier and leaves the original attack head queued
+ok 2 - terminal native retaliation retains its real barrier and leaves the original attack head queued
+  ---
+  duration_ms: 1577.59989
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553211601,"backupName":"before-pearl-reset-1793553211601-767d4e21-0185-4c98-98f7-7d7f278bc237.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553213091,"backupName":"before-pearl-reset-1793553213091-b5967c71-4271-435f-8c2e-80665e32d864.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553214545,"backupName":"before-pearl-reset-1793553214545-d9fb2b67-8818-434c-9f94-5e5c822a2114.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553215951,"backupName":"before-pearl-reset-1793553215951-2707d07c-7c98-42d7-a11c-8aebcbfac9db.sqlite"}
+# Subtest: ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+ok 3 - ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+  ---
+  duration_ms: 5974.241334
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 2
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9647.660313

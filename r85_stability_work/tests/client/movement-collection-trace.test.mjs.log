@@ -1,0 +1,83 @@
+[
+  {
+    "scenario": "healthy serial ACK 40 ms",
+    "samePrediction": true,
+    "sameDisplayedPositions": true,
+    "baseline": {
+      "durationMs": 6000,
+      "maxQueue": 0,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 80,
+      "movementCommands": 30,
+      "collectionCommands": 51,
+      "finalX": 700,
+      "unchangedMs": 0,
+      "longestUnchangedMs": 0
+    },
+    "candidate": {
+      "durationMs": 6000,
+      "maxQueue": 0,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 80,
+      "movementCommands": 30,
+      "collectionCommands": 51,
+      "finalX": 700,
+      "unchangedMs": 0,
+      "longestUnchangedMs": 0
+    }
+  },
+  {
+    "scenario": "each serial durable result held 300 ms",
+    "samePrediction": true,
+    "sameDisplayedPositions": true,
+    "baseline": {
+      "durationMs": 6000,
+      "maxQueue": 32,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 600,
+      "movementCommands": 11,
+      "collectionCommands": 11,
+      "finalX": 404,
+      "unchangedMs": 2960,
+      "longestUnchangedMs": 560
+    },
+    "candidate": {
+      "durationMs": 6000,
+      "maxQueue": 1,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 600,
+      "movementCommands": 11,
+      "collectionCommands": 11,
+      "finalX": 404,
+      "unchangedMs": 2960,
+      "longestUnchangedMs": 560
+    }
+  },
+  {
+    "scenario": "first collect held 5000 ms then serial ACKs 40 ms",
+    "samePrediction": false,
+    "sameDisplayedPositions": true,
+    "baseline": {
+      "durationMs": 7000,
+      "maxQueue": 32,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 5040,
+      "movementCommands": 11,
+      "collectionCommands": 41,
+      "finalX": 352,
+      "unchangedMs": 4480,
+      "longestUnchangedMs": 4420
+    },
+    "candidate": {
+      "durationMs": 7000,
+      "maxQueue": 1,
+      "firstMovementWireMs": 20,
+      "firstMovementAckMs": 5040,
+      "movementCommands": 11,
+      "collectionCommands": 19,
+      "finalX": 352,
+      "unchangedMs": 4480,
+      "longestUnchangedMs": 4420
+    }
+  }
+]

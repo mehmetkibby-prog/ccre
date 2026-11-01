@@ -1,0 +1,250 @@
+{
+  "status": "reviewed-integrated-local",
+  "liveDeploymentPerformed": false,
+  "coreBefore": "cde14bc4fbc53a57a7afc1dbd6c5be6b061787e97d63504b6ac25ee810792e79",
+  "coreAfter": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+  "files": [
+    {
+      "name": "adventure-channel.mjs",
+      "before": {
+        "path": "candidates/integrated-before-final/adventure-channel.mjs",
+        "bytes": 10307,
+        "sha256": "452af5eb132fda60e4cb6500772fa0d5aeb4dffe012f1bb90a07351e28e947c4"
+      },
+      "after": {
+        "path": "candidates/adventure-scheduler-r85/adventure-channel.mjs",
+        "bytes": 10502,
+        "sha256": "d06f6cadc996a03ccded2a8c82bb8aa4a2e7aeb8ea39bd41d2d6894ec3301b0d"
+      }
+    },
+    {
+      "name": "loot-profile-cache-r61.mjs",
+      "before": {
+        "path": "candidates/integrated-before-final/loot-profile-cache-r61.mjs",
+        "bytes": 2192,
+        "sha256": "89f5e370c893ad40e2e2a0d1f1de84d9979a6f0278a5ef121a7dcfba796851e7"
+      },
+      "after": {
+        "path": "candidates/loot-pure-r85/loot-profile-cache-r61.mjs",
+        "bytes": 6049,
+        "sha256": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc"
+      }
+    },
+    {
+      "name": "generated/loot-profile-cache-r61-proof.json",
+      "before": {
+        "path": "candidates/integrated-before-final/generated/loot-profile-cache-r61-proof.json",
+        "bytes": 1420,
+        "sha256": "3ada7b5e29bd11078d7a326f66dfb97af59360b87d8781b9a0dc805ff5b58149"
+      },
+      "after": {
+        "path": "candidates/loot-pure-r85/loot-profile-cache-r61-proof.json",
+        "bytes": 1643,
+        "sha256": "90a0392d4f2b38cbc2eec8a3304926d890b33b585d72eef84af2748c0bbb29f3"
+      }
+    }
+  ],
+  "evidencePins": [
+    {
+      "path": "evidence/adventure-scheduler-independent-review-r85.json",
+      "bytes": 3446,
+      "sha256": "874949f2dbf511c2739a5a3990140ec100571821224665579798997b50de4dfd"
+    },
+    {
+      "path": "candidates/adventure-scheduler-r85/adventure-channel.mjs",
+      "bytes": 10502,
+      "sha256": "d06f6cadc996a03ccded2a8c82bb8aa4a2e7aeb8ea39bd41d2d6894ec3301b0d"
+    },
+    {
+      "path": "candidates/adventure-scheduler-r85/baseline-adventure-channel.mjs",
+      "bytes": 10307,
+      "sha256": "452af5eb132fda60e4cb6500772fa0d5aeb4dffe012f1bb90a07351e28e947c4"
+    },
+    {
+      "path": "tests/instances/adventure-scheduler-r85.test.mjs",
+      "bytes": 11348,
+      "sha256": "ae1667e3a439c4f758422298bfd96a61fcdbddb88b58543049f84805c7b74184"
+    },
+    {
+      "path": "tests/instances/adventure-scheduler-r85.tap",
+      "bytes": 5667,
+      "sha256": "4a00fe0180726af4212d079c4aa048cfa55319f1bfd50dbe29cdfbda3cd5f303"
+    },
+    {
+      "path": "evidence/adventure-scheduler-r85.json",
+      "bytes": 2370,
+      "sha256": "af76e59b2092059af8e3cc3aff7169cfd86b9cad8bb7f5f34cd6fcda0221d3dc"
+    },
+    {
+      "path": "evidence/loot-pure-independent-review-r85.json",
+      "bytes": 4773,
+      "sha256": "5a6a94b3b9b7cddb92b22e0e0b3b05da0b8ce73bfa881fd7200a2de3e992376f"
+    },
+    {
+      "path": "candidates/loot-pure-r85/loot-profile-cache-r61.mjs",
+      "bytes": 6049,
+      "sha256": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc"
+    },
+    {
+      "path": "evidence/loot-pure-r85-verification.json",
+      "bytes": 9913,
+      "sha256": "e53084c8ccd10793b40dd9fd86e9f1bfd3452f0059e430e6ad9a9fb1a94175c5"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache.test.mjs",
+      "bytes": 6060,
+      "sha256": "540fc37c3493e86bc8c8ba73236acd7b6ad4064d19717daee815ed126cb63659"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache-final-v2.tap",
+      "bytes": 1655,
+      "sha256": "2454d54c62f9dadea66f58063fd3f9363ea45eb83b424a98e171af6e2151af7e"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-candidate-final.tap",
+      "bytes": 3605,
+      "sha256": "c7ef1e5091161179dadb731c19510d577a842b8f0baf9dd2415bcfce086fedef"
+    },
+    {
+      "path": "evidence/loot-pure-r85-baseline.json",
+      "bytes": 8667,
+      "sha256": "2b1358223414a1a6f4fbd1f13967e6c1c465e426efaec26f12273a57579d2d7f"
+    },
+    {
+      "path": "evidence/loot-pure-r85-candidate.json",
+      "bytes": 8788,
+      "sha256": "3c23a9d0643dd68d7634dea249693e49831bd88c4ed1478b8f5e722831198ebf"
+    },
+    {
+      "path": "evidence/loot-pure-r85-cost-baseline.json",
+      "bytes": 637,
+      "sha256": "77759253b436227cf3e8931062f12f4d29382b737926e9df7fe2be631a771077"
+    },
+    {
+      "path": "evidence/loot-pure-r85-cost-candidate.json",
+      "bytes": 636,
+      "sha256": "2f5e2f3a6a896e5abc983b86e37f20ea0b00573b9332033a86562c0180fd7845"
+    },
+    {
+      "path": "candidates/loot-pure-r85/loot-profile-cache-r61-proof.json",
+      "bytes": 1643,
+      "sha256": "90a0392d4f2b38cbc2eec8a3304926d890b33b585d72eef84af2748c0bbb29f3"
+    },
+    {
+      "path": "tests/loot-pure-r85/loader.mjs",
+      "bytes": 2694,
+      "sha256": "7139d9c9c50ef121f2a541bc5950d863d8f2af03d965ac62668c8badf0fd649c"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-process.test.mjs",
+      "bytes": 8987,
+      "sha256": "15473e7445e159e88f9901b4e971b1bc802645b3f20c098d851606528cc00df1"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-pure-cost.mjs",
+      "bytes": 3166,
+      "sha256": "54d90635a33da3776fd0124968f46977434f4bb82442aec5133a9320d80419a5"
+    },
+    {
+      "path": "tests/loot-pure-r85/register.mjs",
+      "bytes": 281,
+      "sha256": "00a196da0784f58f5c4d0f7e98f346e991db86f8b8e798135a7b700aa1fa7c81"
+    },
+    {
+      "path": "tests/loot-pure-r85/worker-observer.mjs",
+      "bytes": 406,
+      "sha256": "964e982bc4396e3c3210ffd06cbe0e332054ae1575be4789c442c6568cee628d"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-input.json",
+      "bytes": 14785,
+      "sha256": "d268ceb6b14c38c3ad53fc4ac3dc9323912e4b408c8ad7b5499b6d9724d04f6b"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache-01.tap",
+      "bytes": 1405,
+      "sha256": "716bdbfa359c789a7e78cd194a5158670e73f58bfe05dd6c5ed9a08a130adf0a"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache-02.tap",
+      "bytes": 1406,
+      "sha256": "c141f1cb55a3398521c1cc6bc32d64b113d4f745f0ebd492e2fbc1f7398ec2d8"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache-03.tap",
+      "bytes": 1406,
+      "sha256": "b50d9fe0ef835ebf391f7dab1343cb9f22e68c292d7c58f560227013c9697f83"
+    },
+    {
+      "path": "tests/loot-pure-r85/cache-final.tap",
+      "bytes": 1405,
+      "sha256": "440cc86e304a82dfd3696ca4f97b1a198d970819e08cfcefde99350c70dad4bf"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-baseline-01.tap",
+      "bytes": 3605,
+      "sha256": "2c19750e816877d96768d2c8fc81298f2815f8d9e2818b4319d535515ac24234"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-baseline-02.tap",
+      "bytes": 3605,
+      "sha256": "d1e4497e4cb2a52128df982acabf3890f389052f67a72533b4ce791daebad412"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-candidate-01.tap",
+      "bytes": 3605,
+      "sha256": "cf8939528edd94b80705c2e5e7ce8baca48fc0cec879fc7f87d77cdb2d17bc4e"
+    },
+    {
+      "path": "tests/loot-pure-r85/native-candidate-02.tap",
+      "bytes": 3605,
+      "sha256": "6f2d2b005988b9bdfc86a454d18921e3f57c06c34e8e22d5e7bf700b71634958"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-baseline-01.log",
+      "bytes": 1270,
+      "sha256": "9e9f56f42fbbf39aed049bd2dd295efeaeb748787737a5176297e33bb3f3ac59"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-baseline-02.log",
+      "bytes": 592,
+      "sha256": "c0036d4908f8e3ce1569f9bf186a248bf309af760bfd8c6037164b3aa22d7640"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-baseline-03.log",
+      "bytes": 9060,
+      "sha256": "990c570226b84b69d9efe5875d7008471a61f83001f86a25be17d584a833b9dd"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-baseline-04.log",
+      "bytes": 592,
+      "sha256": "2bddc0b54d6e1a982158dc218f05e594ca95eb8ac4263bfa2e7090e9d33ce67e"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-candidate-01.log",
+      "bytes": 591,
+      "sha256": "bb71a945f76c9d2747357e302aa7f8bd77f1fae4b0567ed1bb6f0c6af74b345a"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-candidate-02.log",
+      "bytes": 593,
+      "sha256": "36dd37f9e247c5d78ff5b1489fbb3a6b55c3f7ca6d92532a3cfdab8f68f0144c"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-candidate-03.log",
+      "bytes": 9060,
+      "sha256": "990c570226b84b69d9efe5875d7008471a61f83001f86a25be17d584a833b9dd"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-candidate-04.log",
+      "bytes": 594,
+      "sha256": "c42284e417485ff6b5d6f954de1a51149f2c3c9fafd4c01a3d5ae448fa07a846"
+    },
+    {
+      "path": "tests/loot-pure-r85/cost-candidate-05.log",
+      "bytes": 591,
+      "sha256": "bdc5391add8e5bb8389a977e85a9e223851625f4e555e3e0ee3baa18e69f5ffe"
+    }
+  ],
+  "excluded": "Fresh frame self-comparison candidate excluded: estimated small saving, extra reflection complexity."
+}

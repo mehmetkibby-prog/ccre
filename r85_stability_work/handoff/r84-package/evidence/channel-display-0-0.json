@@ -1,0 +1,123 @@
+{
+  "status": "PASS",
+  "recordedAt": "2026-10-31T13:02:15.080Z",
+  "node": "v22.23.4",
+  "featureEnvironment": {
+    "v504": "0",
+    "v510": "0"
+  },
+  "sourcePins": {
+    "source": "/workspace/scratch/68fd588af980/r83-work/core511-source/scripts/core511/native-bootstrap.mjs",
+    "sourceSha256": "5310063cb758defe9974fb420c53e0fd511005d1e2c944b34653c3dd38a1ef21",
+    "candidateSha256": "414ceef1ac133b2fa1a3e0975f58da0dc40994db1ac420ea684cd2b65637ed88",
+    "status": "isolated candidate; not a release and not incident-cause proof",
+    "coordinatorSha256": "572be6427d228e2d2cfd849d8e3318aa3c01638d799d7bd75e2c9365090ac17f",
+    "serialMethodSha256": "f121088120eedbad96ead310d316a2ec8c4b7ea82ef6f7ead8627dfcb2f4b75e",
+    "admissionMethodSha256": "65b48c507d380b903d57bd86b64711a9e8c6c549be572e8b0bee51ecdc5452ba",
+    "httpBundleSha256": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+    "httpRouteSha256": "4a3095d67a02cf580d99cffd4718265c74577cf944744fb7606721309b440d85",
+    "errorResponseSha256": "b7731074a1e2df4451503e91080d54dd460062f57f86e79f3edddd3f85ead2ba"
+  },
+  "exactExtractedMethods": {
+    "serial": "serial(work,{duringGlobal=false}={}){if(this.stopping)return Promise.reject(kernelError('coordinator_stopping'));const queued=stageStartR51();const next=this.tail.then(async()=>{stageEndR51('coordinator.queue',queued);const terminal=stageStartR51();await this.sharedWorld?.combat.terminalIdle();stageEndR51('coordinator.terminalWait',terminal);demand(!this.closed,'coordinator_closed');demand(duringGlobal||!this.globalWorld?.held&&!this.recoveringWorld,'global_world_busy');return this.nativeRealmSecurity.inCoordinator(()=>this.nativeGuildAuth.inCoordinator(work));});this.tail=next.catch(()=>{});return observeStageR51('coordinator.total',queued,next);}",
+    "admission": "admission(id,db=this.database.sqlite){return prepareServerStatement(db,'SELECT * FROM kernel511_admissions WHERE player_id=?',{legacyCached:true}).get(opaqueId(id))??null;}",
+    "route": "async function GET$24(request) {\n\ttry {\n\t\tconst auth504=await requireGameSession(request);\n\t\treturn Response.json(await db().core511Bootstrap.channels(auth504));\n\t} catch (error) {\n\t\tif (error instanceof AuthRequestError) return authErrorResponse(error);\n\t\treturn errorResponse(error);\n\t}\n}",
+    "errorResponse": "function errorResponse(error) {\n\tconst message = error instanceof Error ? error.message : \"Beklenmeyen dünya hatası.\";\n\tif (message.includes(\"channel_full\")) return Response.json({\n\t\tcode: \"channel_full\",\n\t\terror: \"Kanal dolu. Boş bir kanal seç veya yer açılmasını bekle.\"\n\t}, { status: 409 });\n\treturn Response.json({ error: message }, { status: 500 });\n}"
+  },
+  "scope": "Isolated current-source NativeBootstrap, real SQLite, actual SharedCombatBridge and auth-context wrappers; controlled missing completions. Full game, network authentication and deployment not run.",
+  "limitations": [
+    "Demonstrates a reachable display queue dependency, not proof of the reported incident cause.",
+    "Does not unblock actual ticket, join, transfer, gameplay or a network/authentication wait.",
+    "Advisory view reads committed SQLite state; it is not an admission grant or a durable flush acknowledgement.",
+    "Candidate is isolated, not a release or production deployment."
+  ],
+  "results": [
+    {
+      "name": "idle outputs and exact slots remain identical; disconnected admissions count, passive/recent rows do not",
+      "passed": true,
+      "elapsedMs": 6.798,
+      "details": {
+        "online": [
+          2,
+          1,
+          0,
+          1
+        ],
+        "candidateSerialCalls": 0
+      }
+    },
+    {
+      "name": "actual GET and presence-display read block behind held cold callback; candidate reads committed view without joining tail",
+      "passed": true,
+      "elapsedMs": 85.765,
+      "details": {
+        "originalUnsettledAfterMs": 80,
+        "candidateElapsedMs": 2.015,
+        "candidateSerialCalls": 1,
+        "baselineCompletedOnlyAfterControlledRelease": true
+      }
+    },
+    {
+      "name": "actual SharedCombatBridge terminalIdle blocks baseline; candidate read does not release or alter terminal",
+      "passed": true,
+      "elapsedMs": 83.366,
+      "details": {
+        "originalUnsettledAfterMs": 80,
+        "candidateElapsedMs": 0.562,
+        "originalTerminalWaiters": 1,
+        "candidateTerminalUntouched": true
+      }
+    },
+    {
+      "name": "closed, stopping, wrong binding and global recovery fail promptly before any display SELECT",
+      "passed": true,
+      "elapsedMs": 3.535,
+      "details": {
+        "guardScenarios": [
+          "closed",
+          "stopping",
+          "wrong_binding",
+          "recovering_world",
+          "global_hold",
+          "global_recovery"
+        ],
+        "missingAccountRejected": true
+      }
+    },
+    {
+      "name": "uncommitted admissions are not exposed; caller retains transaction and rollback authority",
+      "passed": true,
+      "elapsedMs": 0.823,
+      "details": {
+        "uncommittedReadsRejected": 2,
+        "transactionNotCommittedOrRolledBackByDisplay": true
+      }
+    },
+    {
+      "name": "account ownership, death, lock, reconnect and lab recommendations retain exact original semantics",
+      "passed": true,
+      "elapsedMs": 2.562,
+      "details": {
+        "exactComparisons": 11
+      }
+    },
+    {
+      "name": "capacity, fourth-channel castle exception and invalid counts preserve baseline outcomes",
+      "passed": true,
+      "elapsedMs": 14.224,
+      "details": {
+        "countAndCastleScenarios": 8
+      }
+    },
+    {
+      "name": "actual GET route still awaits authentication before display; display failure does not grant entry",
+      "passed": true,
+      "elapsedMs": 11.89,
+      "details": {
+        "authenticationAwaitPreserved": true,
+        "noAdmissionWrites": true,
+        "existingBusyResponseStatus": 500
+      }
+    }
+  ]
+}

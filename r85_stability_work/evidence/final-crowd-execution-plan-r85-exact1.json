@@ -1,0 +1,294 @@
+{
+  "preparedAtUTC": "2026-11-01T07:53:47.733200+00:00",
+  "status": "final-harness-frozen-awaiting-coordinator-admission-go",
+  "liveTouched": false,
+  "loadStartedByPlan": false,
+  "harnessChangedByPlan": false,
+  "finalSourceNotYetFrozen": false,
+  "proposedLabel": "r85-final-exact",
+  "stages": [
+    {
+      "players": 1,
+      "durationSeconds": 30,
+      "channelActors": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "generatorProcesses": 1,
+      "argv": [
+        "python3",
+        "tests/runtime/run.py",
+        "tests/runtime/native-mixed-load-realistic.mjs",
+        "1",
+        "30"
+      ],
+      "environment": {
+        "R85_RUNTIME_TREE": "/workspace/ccre/r85_stability_work/working",
+        "R85_EXPECT_CORE_SHA": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+        "R85_EXPECT_INGRESS_SHA": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+        "R85_RUNTIME_LABEL": "r85-final-exact"
+      },
+      "log": "evidence/native-mixed-load-r85-final-exact-1.log",
+      "raw": "evidence/native-mixed-load-r85-final-exact-1.json",
+      "summary": "evidence/native-mixed-load-r85-final-exact-1-summary.json",
+      "existingArtifacts": []
+    },
+    {
+      "players": 10,
+      "durationSeconds": 30,
+      "channelActors": [
+        3,
+        3,
+        2,
+        2
+      ],
+      "generatorProcesses": 4,
+      "argv": [
+        "python3",
+        "tests/runtime/run.py",
+        "tests/runtime/native-mixed-load-realistic.mjs",
+        "10",
+        "30"
+      ],
+      "environment": {
+        "R85_RUNTIME_TREE": "/workspace/ccre/r85_stability_work/working",
+        "R85_EXPECT_CORE_SHA": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+        "R85_EXPECT_INGRESS_SHA": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+        "R85_RUNTIME_LABEL": "r85-final-exact"
+      },
+      "log": "evidence/native-mixed-load-r85-final-exact-10.log",
+      "raw": "evidence/native-mixed-load-r85-final-exact-10.json",
+      "summary": "evidence/native-mixed-load-r85-final-exact-10-summary.json",
+      "existingArtifacts": []
+    },
+    {
+      "players": 30,
+      "durationSeconds": 60,
+      "channelActors": [
+        8,
+        8,
+        7,
+        7
+      ],
+      "generatorProcesses": 4,
+      "argv": [
+        "python3",
+        "tests/runtime/run.py",
+        "tests/runtime/native-mixed-load-realistic.mjs",
+        "30",
+        "60"
+      ],
+      "environment": {
+        "R85_RUNTIME_TREE": "/workspace/ccre/r85_stability_work/working",
+        "R85_EXPECT_CORE_SHA": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+        "R85_EXPECT_INGRESS_SHA": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+        "R85_RUNTIME_LABEL": "r85-final-exact"
+      },
+      "log": "evidence/native-mixed-load-r85-final-exact-30.log",
+      "raw": "evidence/native-mixed-load-r85-final-exact-30.json",
+      "summary": "evidence/native-mixed-load-r85-final-exact-30-summary.json",
+      "existingArtifacts": []
+    },
+    {
+      "players": 50,
+      "durationSeconds": 60,
+      "channelActors": [
+        13,
+        13,
+        12,
+        12
+      ],
+      "generatorProcesses": 4,
+      "argv": [
+        "python3",
+        "tests/runtime/run.py",
+        "tests/runtime/native-mixed-load-realistic.mjs",
+        "50",
+        "60"
+      ],
+      "environment": {
+        "R85_RUNTIME_TREE": "/workspace/ccre/r85_stability_work/working",
+        "R85_EXPECT_CORE_SHA": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+        "R85_EXPECT_INGRESS_SHA": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+        "R85_RUNTIME_LABEL": "r85-final-exact"
+      },
+      "log": "evidence/native-mixed-load-r85-final-exact-50.log",
+      "raw": "evidence/native-mixed-load-r85-final-exact-50.json",
+      "summary": "evidence/native-mixed-load-r85-final-exact-50-summary.json",
+      "existingArtifacts": []
+    },
+    {
+      "players": 100,
+      "durationSeconds": 180,
+      "channelActors": [
+        25,
+        25,
+        25,
+        25
+      ],
+      "generatorProcesses": 4,
+      "argv": [
+        "python3",
+        "tests/runtime/run.py",
+        "tests/runtime/native-mixed-load-realistic.mjs",
+        "100",
+        "180"
+      ],
+      "environment": {
+        "R85_RUNTIME_TREE": "/workspace/ccre/r85_stability_work/working",
+        "R85_EXPECT_CORE_SHA": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+        "R85_EXPECT_INGRESS_SHA": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+        "R85_RUNTIME_LABEL": "r85-final-exact"
+      },
+      "log": "evidence/native-mixed-load-r85-final-exact-100.log",
+      "raw": "evidence/native-mixed-load-r85-final-exact-100.json",
+      "summary": "evidence/native-mixed-load-r85-final-exact-100-summary.json",
+      "existingArtifacts": []
+    }
+  ],
+  "preconditions": [
+    "Coordinator confirms all production changes and functional/installer checks frozen, and assigns sole heavy slot. No overlapping native test or CPU profile.",
+    "Use exact frozen572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356 core and325bd1ca ingress. No production byte changes during all five stages.",
+    "Use a fresh label if ANY planned log/raw/summary already exists. Never overwrite a failed or prior proof.",
+    "Perform one authorized R85_ADMISSION_ONLY=1 one-actor run first; it must verify real native auth, TCP handshake, image projection, setup queue drain and initial automatic-potion health/stock. It is not a timed capacity stage.",
+    "Freeze the same parent, generator, runner and fixture-loader pins for all five timed stages. No artificial combat warmup, sampled cutoff, extra transform loader or increased prediction limit.",
+    "After each stage inspect raw/summarized safety and performance gates before the next stage; preserve failures and stop scaling for diagnosis. Final crowd is last after all fixes."
+  ],
+  "admissionOnly": {
+    "argv": [
+      "python3",
+      "tests/runtime/run.py",
+      "tests/runtime/native-mixed-load-realistic.mjs",
+      "1",
+      "30"
+    ],
+    "environmentAdditions": {
+      "R85_ADMISSION_ONLY": "1",
+      "R85_RUNTIME_LABEL": "r85-final-exact-admission"
+    },
+    "scope": "No beginLoad/gameplay window; nominal30s argument unused."
+  },
+  "gates": {
+    "economyAndAuthority": "All actors exact durable initial kill receipts, seeded materials, native automatic HP charge and unchanged manual stock; no faults, errors, cancellation, undrained slots or source mutation.",
+    "wireResponseMaxMs": 300,
+    "wireMeaning": "Additional diagnostic gate specified for this task. Attack202 is provisional; wire response maxima do not replace historical durable completion input measurements.",
+    "prediction": "Zero actual600ms OwnPrediction cap episodes and zero requested input lost to that cap; unchanged production bound. Movement ACK gaps are protocol observations, not rendered FPS or visual stall duration.",
+    "historicalCoreLoopMaxMs": {
+      "main": 200,
+      "world": 200,
+      "channels": 150,
+      "reader": 150
+    },
+    "historicalLocal300Meaning": "Older local300 is event-loop pause only, never wire ACK. Report separately; the stricter core150/200 numerical checks remain.",
+    "mainEluMaxWindowMean": 0.5,
+    "gameOwnerRssLimitBytes": 3221225472,
+    "cpuFractionOfObserved4CoreBudgetMax": 1,
+    "samples": "Full windows include startup/firstkill/GC/OS/potion samples. After10s/20s summaries are diagnostics only.",
+    "generatorSaturation": "Report every child CPU cores, ELU, max pause, input frame gap and peak RSS; aggregate CPU is summed CPUms over one common window. Saturation qualifies interpretation and triggers diagnosis; it cannot excuse a failed gate."
+  },
+  "measurement": {
+    "channelCapacity": 25,
+    "hundredActorPlacement": "4channels \u00d725; native admission capacity guard retained.",
+    "topology": "Up to4separate clientOSchildren \u2192main archived/pinned ingress authorization andTCPpipe \u21924native channelOSlisteners, plusworld/writer. Parent native measurement ends only after ALL children suspend/drain.",
+    "resourceAccounting": "Native owner CPU/ELU/RSS excludes client generators; clients and server still compete in the same4CPU quota. Sum clientCPUms/commonwholewindow; do not add child durations.",
+    "host": {
+      "cpuQuota": "400000/100000 =4cores",
+      "memoryLimitBytes": 34359738368,
+      "recentNativeOwnerPeakRssBytes": 1573502976,
+      "recentRssContext": "Observed matched50 diagnostic only, not predicted100 memory."
+    },
+    "userReportedTarget": "8vCPU/8GB; no direct hardware capacity extrapolation or liveVDS acceptance claim."
+  },
+  "comparability": [
+    "Old isolated45123633/8c4ecf20 comparison uses1300ms basic attack and35percent/manualpotion. New variant uses current650ms equipment-speed formula, native deadline correction,50percent/500ms automatic charge potion and up to4generators; it is a distinct workload, not an equal-workload A/B performance attribution.",
+    "20Hz frame generator differs from browserRAF; actualtransport retains5Hz movement,20Hzpreview,600mscap and new variant matches maxdt250ms. No canvas/DOM or fullgame asset rendering.",
+    "Two arranged initial kill lives/material drops plus natural respawns and visible loot; no complete boss/trade/admin/dungeon/arena historical suite.",
+    "Main ingress topology follows installed startup; delivery bytes originate from pinned archived ingress plus approvednoDelay delta, not independently verified liveR84 delivery.",
+    "Caddy/TLS/WAN absent.100players180s is bounded evidence, never an indefinite production capacity guarantee."
+  ],
+  "reporting": {
+    "progress": "15s aggregate progress messages; final per-stage ACKquantiles/max, all capactors, queueage/depth, memory, loop,CPU and perprocess generator resources.",
+    "finalSummary": [
+      "python3",
+      "tests/runtime/final-crowd-summary.py",
+      "r85-final-exact",
+      "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+      "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9"
+    ],
+    "finalPass": "Only all five stages, identical harness+delivery pins, exact finalsource, and every safety/performance gate may set passed=true. No final-release gate while incomplete/blocked."
+  },
+  "pins": [
+    {
+      "path": "tests/runtime/native-mixed-load-realistic.mjs",
+      "bytes": 27667,
+      "sha256": "ef7d2c1dafc495238fed219d911c8e37309091543c3a1237ff5e8ed1399c7231"
+    },
+    {
+      "path": "tests/runtime/native-mixed-generator-realistic.mjs",
+      "bytes": 18805,
+      "sha256": "fa0cba414a83e5d7f93e5f8f4a1b5ba49548efc84529ce8de95da883997ccf0e"
+    },
+    {
+      "path": "tests/runtime/run.py",
+      "bytes": 1573,
+      "sha256": "6f5c407e9261191e9d8ae3fdd7328a17cf16bd71f4207e24d18de0b425ac3ca8"
+    },
+    {
+      "path": "tests/runtime/r84-fixture-loader.mjs",
+      "bytes": 3634,
+      "sha256": "8f44fb9d5da3c6d8640c72baf14d4a8f24b1cc1685d07cfef01b04f42f1cf08e"
+    },
+    {
+      "path": "tests/runtime/register-r84-fixture.mjs",
+      "bytes": 102,
+      "sha256": "fd0c0b5c89319b2b4fa7818986c3273de10bbb8fef8dc722619ecc2931b9e90f"
+    },
+    {
+      "path": "tests/runtime/summarize-mixed-load.py",
+      "bytes": 5822,
+      "sha256": "245da8bf1b191fb049e0c05aea28eb810bd164d10474149299137a43b017b576"
+    },
+    {
+      "path": "tests/runtime/final-crowd-summary.py",
+      "bytes": 10476,
+      "sha256": "5c77371248138abc33357e783836ba070f1387ae365d11ca21c1989159c9e768"
+    },
+    {
+      "path": "evidence/performance-metric-provenance-r85.json",
+      "bytes": 4309,
+      "sha256": "6102bf598bab725f4b2756559af4b2e2939a8e44490395bbe6276e2c5f0bd4f9"
+    },
+    {
+      "path": "working/core511-source/scripts/core511/contract.mjs",
+      "bytes": 1205,
+      "sha256": "f3304bcacb605006cfd9c2caf4345780468ad89736482ac6a4aed3f2ad83e103"
+    },
+    {
+      "path": "working/core511-source/scripts/core511/tests/native-realm-startup-fixture.mjs",
+      "bytes": 2765,
+      "sha256": "f110b87439cafbefdee0a3eba8b69face0b51a1e4f052e40e8596bfb8122f7af"
+    },
+    {
+      "path": "tests/runtime/potion-ledger-fixture.mjs",
+      "bytes": 810,
+      "sha256": "bd4cb15699a5ea0f40c7e779aa2486aeea8421e2df89ad4f280ac3652723f120"
+    }
+  ],
+  "fixtureAccountingCorrection": {
+    "path": "evidence/realistic-generator-potion-ledger-review-r85.json",
+    "bytes": 2116,
+    "sha256": "2990203a78c2abb630f2684eacfb37a46fbf64097f83c72e2a79214ba26f69f7"
+  },
+  "finalCoreSHA256": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+  "functionalGate": {
+    "instances": {
+      "path": "evidence/instances-r85-final-candidate.json",
+      "bytes": 5642,
+      "sha256": "589df694a7de159a5fae83c104f1557daa73b9163bdcbed76a158204e230ea93"
+    },
+    "passed": true,
+    "checks": 8
+  }
+}

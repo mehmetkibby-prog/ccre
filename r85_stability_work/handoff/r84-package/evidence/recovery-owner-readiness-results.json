@@ -1,0 +1,3983 @@
+{
+  "status": "PASS",
+  "passed": 16,
+  "total": 16,
+  "scope": "Four focused schedules across original/guarded and watchdog0/1. Exact current callbacks/methods; process, boot, exit fence and durability ports controlled. Not live VDS evidence.",
+  "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+  "harnessSha256": "63e84d3d8f8ead7b2e5f50a748ff60a5a24b97a79953781311883c0cdc911f6c",
+  "caseDistinctions": {
+    "channel-exit": "Actual current exited callback and requestRecovery while CH2 boot is pending. Original loses new CH1 fault; guard rejects completion.",
+    "channel-exit-at-jobs": "Actual channel exit while independent world enable_jobs ACK is pending. Exercises second guard after await.",
+    "world-exit": "Actual world exited callback during later channel boot. Original startJobs already rejects; negative control preserved by guard.",
+    "channel-replaced": "Controlled healthy same-channel newer-row substitution. Defensive generation check, not proof of reachable concurrent boot."
+  },
+  "runs": [
+    {
+      "name": "channel-exit/original/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-original-watchdog1.json",
+      "evidenceSha256": "d28ab8f3b605e3946424e285d18c36c19917fbffde7218d55e3d6020018e299d",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": true,
+        "mode": "channel-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-exit",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit/original/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-original-watchdog0.json",
+      "evidenceSha256": "206de74889730550875ef556505b5d96071e10023f9719233c2d05a5d1b1afcb",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": false,
+        "mode": "channel-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-exit",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit/guarded/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-guarded-watchdog1.json",
+      "evidenceSha256": "5de00ad27d0553d02c44986dd6f88cf839c8f4d9d8f4118bde6c3373c4a3196b",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": true,
+        "mode": "channel-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": true,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-exit",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit/guarded/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-guarded-watchdog0.json",
+      "evidenceSha256": "7cff2aa59ea41bbb58c9ce0144c107c56fa35e47c134228ebf199a3918883b89",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": false,
+        "mode": "channel-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-exit",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit-at-jobs/original/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-at-jobs-original-watchdog1.json",
+      "evidenceSha256": "f8160bbcca790fbfe65c31d09d114891898266a3e47884379845b5e7d420795e",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": true,
+        "mode": "channel-exit-at-jobs",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "inject_CH1_exit_before_world_enable_jobs_ACK",
+            "new-channel-1-1"
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit-at-jobs/original/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-at-jobs-original-watchdog0.json",
+      "evidenceSha256": "b3f158ec6060558dd262a33f67a5fac21866e72c66c35d88e8f11d3c95ebb584",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": false,
+        "mode": "channel-exit-at-jobs",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            false
+          ],
+          [
+            "inject_CH1_exit_before_world_enable_jobs_ACK",
+            "new-channel-1-1"
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channelFault",
+            null
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit-at-jobs/guarded/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-at-jobs-guarded-watchdog1.json",
+      "evidenceSha256": "0183c45a6e550a4a1b31cc632ef119772358c1de502e93f3aa255d743b9d488c",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": true,
+        "mode": "channel-exit-at-jobs",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": true,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "inject_CH1_exit_before_world_enable_jobs_ACK",
+            "new-channel-1-1"
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-exit-at-jobs/guarded/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-exit-at-jobs-guarded-watchdog0.json",
+      "evidenceSha256": "c305e37df0d581c0c3c65b85fb791df7fc9c57500e29afa8ca561531b1983dd5",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": false,
+        "mode": "channel-exit-at-jobs",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "exited",
+            "exited": true,
+            "online": false
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": false,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "inject_CH1_exit_before_world_enable_jobs_ACK",
+            "new-channel-1-1"
+          ],
+          [
+            "actual_exit_fence_port",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "channel_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "channel_exited",
+            "channel": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "world-exit/original/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-world-exit-original-watchdog1.json",
+      "evidenceSha256": "d199807a576c6bd8b8c47750c0c6f5099f8247b52682adc3b093a13afa450356",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": true,
+        "mode": "world-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "world_jobs_unavailable",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": true,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "world-exit",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "world_control_closed"
+          ],
+          [
+            "world_exit_fence_port",
+            "new-world-1"
+          ],
+          [
+            "world_readiness_rejected",
+            "world_exited"
+          ],
+          [
+            "world_exit_event",
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "world_jobs_unavailable"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "world_exited",
+            "channel": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "world-exit/original/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-world-exit-original-watchdog0.json",
+      "evidenceSha256": "d9e947f3f19b80f770b44345b9024a291af7d06f8000b8549d80b7100e5ce598",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": false,
+        "mode": "world-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "world_jobs_unavailable",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "world-exit",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "world_control_closed"
+          ],
+          [
+            "world_exit_fence_port",
+            "new-world-1"
+          ],
+          [
+            "world_readiness_rejected",
+            "world_exited"
+          ],
+          [
+            "world_exit_event",
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "world_jobs_unavailable"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "world_exited",
+            "channel": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "world-exit/guarded/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-world-exit-guarded-watchdog1.json",
+      "evidenceSha256": "f3ba16a14e67f75a9cf6ef0ae024d62be4c632dbc6d901b8eb7d0c3eff78a6cd",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": true,
+        "mode": "world-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_world_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": true,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "world-exit",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "world_control_closed"
+          ],
+          [
+            "world_exit_fence_port",
+            "new-world-1"
+          ],
+          [
+            "world_readiness_rejected",
+            "world_exited"
+          ],
+          [
+            "world_exit_event",
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_world_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "world_exited",
+            "channel": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "world-exit/guarded/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-world-exit-guarded-watchdog0.json",
+      "evidenceSha256": "5bef23088392de85952dfa1f690d2216d3a12c5c6c1edc2631960f3547ef1075",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": false,
+        "mode": "world-exit",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_world_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "world-exit",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "world_control_closed"
+          ],
+          [
+            "world_exit_fence_port",
+            "new-world-1"
+          ],
+          [
+            "world_readiness_rejected",
+            "world_exited"
+          ],
+          [
+            "world_exit_event",
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_world_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "world_exited",
+            "channel": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-replaced/original/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-replaced-original-watchdog1.json",
+      "evidenceSha256": "60cc18ee09e83e99c79ea1ef7db261fe6fe0b6a689eb0ed5c052c5e77afe2f7e",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": true,
+        "mode": "channel-replaced",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1-replacement",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 200,
+          "ready": true,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-replaced",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "controlled_newer_row_substitution",
+            "new-channel-1-1-replacement"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-replaced/original/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-replaced-original-watchdog0.json",
+      "evidenceSha256": "8484c5597e0ccb6ae6725e29e4e55178eea928924d3832b31ce757860660a016",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": false,
+        "watchdog": false,
+        "mode": "channel-replaced",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "resolved",
+        "recoveryError": null,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1-replacement",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 200,
+          "ready": true,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-replaced",
+            "new-channel-1-1",
+            true,
+            null
+          ],
+          [
+            "controlled_newer_row_substitution",
+            "new-channel-1-1-replacement"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "enable_jobs",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-replaced/guarded/watchdog=1",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-replaced-guarded-watchdog1.json",
+      "evidenceSha256": "55653f06e76aa48fdf55df19860a87f61384c39a95ff111bfe244c21edbeabe1",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": true,
+        "mode": "channel-replaced",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": true,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1-replacement",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "durableExternal"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-replaced",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "controlled_newer_row_substitution",
+            "new-channel-1-1-replacement"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      }
+    },
+    {
+      "name": "channel-replaced/guarded/watchdog=0",
+      "passed": true,
+      "evidence": "r84-investigation/shared/pre-ready-replacement-channel-replaced-guarded-watchdog0.json",
+      "evidenceSha256": "79cc3f30e3c1e014bd6ae1c197b6b88674566240daa4b03de3e41eba8a848320",
+      "result": {
+        "scope": "controlled replacement exit while later channels boot; actual frozen/current GlobalWorldCoordinator, SharedCombatBridge, channel/world exited callbacks, channel requestRecovery and world startJobs/health bodies; OS boot/fence/durability ports mocked; newer-row substitution is a defensive identity guard test, not proof of reachable concurrent boot",
+        "candidate": true,
+        "watchdog": false,
+        "mode": "channel-replaced",
+        "sourcePins": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "process-supervisor.mjs": "73be00d30dc72637a56e78f878b95608a58673afde9347efe87b8dbf9ff73c69",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidateSha256": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+        "endedSourceSha256": "b1ad79bf0cb4add7d5b93bc3045828b503bab77938c8401b22c4da348427d6ac",
+        "worldEndedSourceSha256": "f409858ce48181c8aa5ddcde12a6c33f368523f58ce408a30090e0eae3258392",
+        "healthSourceSha256": "391223dc86e1dbd16139ee9375072a18c930a3fa6b28f20640ecde0316227154",
+        "exitInjected": true,
+        "recoveryResult": "rejected",
+        "recoveryError": "global_recovery_channel_changed",
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "globalRetryScheduled": false,
+        "channelRetryScheduled": false,
+        "worldRetryScheduled": false,
+        "recoveryPasses": 1,
+        "healthTriggeredRecovery": false,
+        "worldBoots": 1,
+        "channelBoots": 4,
+        "channels": [
+          {
+            "channel": 1,
+            "incarnation": "new-channel-1-1-replacement",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 2,
+            "incarnation": "new-channel-1-2",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 3,
+            "incarnation": "new-channel-1-3",
+            "state": "running",
+            "exited": false,
+            "online": true
+          },
+          {
+            "channel": 4,
+            "incarnation": "new-channel-1-4",
+            "state": "running",
+            "exited": false,
+            "online": true
+          }
+        ],
+        "health": {
+          "status": 503,
+          "ready": false,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "trace": [
+          [
+            "actual_exit_fence_port",
+            1,
+            "old-channel-1"
+          ],
+          [
+            "readiness_rejected",
+            1,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            1,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            2,
+            "old-channel-2"
+          ],
+          [
+            "readiness_rejected",
+            2,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            2,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            3,
+            "old-channel-3"
+          ],
+          [
+            "readiness_rejected",
+            3,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            3,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "actual_exit_fence_port",
+            4,
+            "old-channel-4"
+          ],
+          [
+            "readiness_rejected",
+            4,
+            "channel_exited"
+          ],
+          [
+            "exit_event",
+            4,
+            {
+              "code": 1,
+              "signal": null
+            }
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_terminated",
+            "old-world"
+          ],
+          [
+            "world_boot",
+            1
+          ],
+          [
+            "channel_boot",
+            1,
+            "new-channel-1-1"
+          ],
+          [
+            "inject_while_booting_CH2",
+            "channel-replaced",
+            "new-channel-1-1",
+            true,
+            false
+          ],
+          [
+            "controlled_newer_row_substitution",
+            "new-channel-1-1-replacement"
+          ],
+          [
+            "channel_boot",
+            2,
+            "new-channel-1-2"
+          ],
+          [
+            "channel_boot",
+            3,
+            "new-channel-1-3"
+          ],
+          [
+            "channel_boot",
+            4,
+            "new-channel-1-4"
+          ],
+          [
+            "channelFault",
+            "global_recovery_channel_changed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      }
+    }
+  ]
+}

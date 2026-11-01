@@ -1,0 +1,1016 @@
+{
+  "diagnosticOnly": true,
+  "stageTimingEnabled": true,
+  "sourceMutated": false,
+  "sync": {
+    "safeScope": {
+      "count": 59,
+      "totalMs": 6.0129090000064025,
+      "maxMs": 0.779726999999184
+    },
+    "envelope": {
+      "count": 59,
+      "totalMs": 2.23442500001147,
+      "maxMs": 0.12802999999985332
+    },
+    "publishCommitted": {
+      "count": 59,
+      "totalMs": 9.404716000008193,
+      "maxMs": 0.32968600000458537
+    }
+  },
+  "stages": {
+    "enabled": true,
+    "scope": "process-local elapsed wall; nested stages overlap; samples are last 512, not full-run percentiles",
+    "stages": {
+      "control.world_state": {
+        "count": 175,
+        "totalMs": 318.8598500000289,
+        "maxMs": 12.698781000000963,
+        "sampleCount": 175,
+        "p50": 0.8318159999998898,
+        "p95": 5.281560999999783,
+        "p99": 11.847804000000906
+      },
+      "control.activate": {
+        "count": 5,
+        "totalMs": 3.641913999999815,
+        "maxMs": 1.529617000000144,
+        "sampleCount": 5,
+        "p50": 0.4783640000005107,
+        "p95": 1.529617000000144,
+        "p99": 1.529617000000144
+      },
+      "rewardWorker.startup": {
+        "count": 1,
+        "totalMs": 1001.1509809999998,
+        "maxMs": 1001.1509809999998,
+        "sampleCount": 1,
+        "p50": 1001.1509809999998,
+        "p95": 1001.1509809999998,
+        "p99": 1001.1509809999998
+      },
+      "rewardWorker.readyWait": {
+        "count": 63,
+        "totalMs": 1001.4752729999755,
+        "maxMs": 1000.2924479999992,
+        "sampleCount": 63,
+        "p50": 0.017682999998214655,
+        "p95": 0.025858000000880565,
+        "p99": 1000.2924479999992
+      },
+      "coordinator.queue": {
+        "count": 149,
+        "totalMs": 2.0437509999828762,
+        "maxMs": 0.8670290000009118,
+        "sampleCount": 149,
+        "p50": 0.005691000000297208,
+        "p95": 0.02404499999829568,
+        "p99": 0.17107000000032713
+      },
+      "coordinator.terminalWait": {
+        "count": 149,
+        "totalMs": 0.7856760000122449,
+        "maxMs": 0.2276850000016566,
+        "sampleCount": 149,
+        "p50": 0.0028050000000803266,
+        "p95": 0.0086860000010347,
+        "p99": 0.03285200000391342
+      },
+      "coordinator.total": {
+        "count": 149,
+        "totalMs": 2015.0609419999682,
+        "maxMs": 138.71682300000248,
+        "sampleCount": 149,
+        "p50": 5.420211999997264,
+        "p95": 38.09125900000072,
+        "p99": 53.84850800000095
+      },
+      "control.market_state": {
+        "count": 4,
+        "totalMs": 2.1094739999998637,
+        "maxMs": 0.6566079999993235,
+        "sampleCount": 4,
+        "p50": 0.4950860000008106,
+        "p95": 0.6566079999993235,
+        "p99": 0.6566079999993235
+      },
+      "control.shared_world": {
+        "count": 4,
+        "totalMs": 3.483589999999822,
+        "maxMs": 1.0314269999998942,
+        "sampleCount": 4,
+        "p50": 0.7966589999996359,
+        "p95": 1.0314269999998942,
+        "p99": 1.0314269999998942
+      },
+      "writer.other.queueMs": {
+        "count": 97,
+        "totalMs": 597.8129469999867,
+        "maxMs": 208.76222899999993,
+        "sampleCount": 97,
+        "p50": 2.2856099999989965,
+        "p95": 14.740612999994482,
+        "p99": 208.76222899999993
+      },
+      "writer.other.jobMs": {
+        "count": 97,
+        "totalMs": 126.23628899996766,
+        "maxMs": 7.793646000000081,
+        "sampleCount": 97,
+        "p50": 1.036526000003505,
+        "p95": 3.0368930000004184,
+        "p99": 7.793646000000081
+      },
+      "writer.other.commitMs": {
+        "count": 97,
+        "totalMs": 6.23171899999852,
+        "maxMs": 0.6572470000028261,
+        "sampleCount": 97,
+        "p50": 0.045344000005570706,
+        "p95": 0.1525549999996656,
+        "p99": 0.6572470000028261
+      },
+      "writer.other.durableMs": {
+        "count": 97,
+        "totalMs": 156.744979999954,
+        "maxMs": 22.797669999999925,
+        "sampleCount": 97,
+        "p50": 0.3149779999948805,
+        "p95": 13.58187999999791,
+        "p99": 22.797669999999925
+      },
+      "writer.other.fsyncWaitMs": {
+        "count": 97,
+        "totalMs": 75.8867240000036,
+        "maxMs": 11.84402499999851,
+        "sampleCount": 97,
+        "p50": 0.1338690000011411,
+        "p95": 4.162879999999859,
+        "p99": 11.84402499999851
+      },
+      "control.maintenance": {
+        "count": 4,
+        "totalMs": 2.662175000001298,
+        "maxMs": 0.8454000000001543,
+        "sampleCount": 4,
+        "p50": 0.5827090000002499,
+        "p95": 0.8454000000001543,
+        "p99": 0.8454000000001543
+      },
+      "control.enable_jobs": {
+        "count": 2,
+        "totalMs": 1.171227999999246,
+        "maxMs": 0.6927539999996952,
+        "sampleCount": 2,
+        "p50": 0.47847399999955087,
+        "p95": 0.6927539999996952,
+        "p99": 0.6927539999996952
+      },
+      "control.afk_check": {
+        "count": 52,
+        "totalMs": 44.10968000000139,
+        "maxMs": 4.420631999999387,
+        "sampleCount": 52,
+        "p50": 0.5390169999991485,
+        "p95": 4.354056999998647,
+        "p99": 4.420631999999387
+      },
+      "control.admit": {
+        "count": 50,
+        "totalMs": 341.0303309999945,
+        "maxMs": 18.302859999999782,
+        "sampleCount": 50,
+        "p50": 5.735049000000799,
+        "p95": 11.42899099999886,
+        "p99": 18.302859999999782
+      },
+      "control.engagements": {
+        "count": 50,
+        "totalMs": 48.468295000007856,
+        "maxMs": 4.6375370000005205,
+        "sampleCount": 50,
+        "p50": 0.6805120000008174,
+        "p95": 2.5084179999994376,
+        "p99": 4.6375370000005205
+      },
+      "writer.actor_checkpoint.queueMs": {
+        "count": 956,
+        "totalMs": 10725.756281000022,
+        "maxMs": 253.0214820000001,
+        "sampleCount": 512,
+        "p50": 5.189063000005262,
+        "p95": 35.04386999999406,
+        "p99": 50.63111299999946
+      },
+      "writer.actor_checkpoint.jobMs": {
+        "count": 956,
+        "totalMs": 1602.6089769999562,
+        "maxMs": 14.488937999998598,
+        "sampleCount": 512,
+        "p50": 1.1752449999985402,
+        "p95": 3.5423569999984466,
+        "p99": 5.975419999995211
+      },
+      "writer.actor_checkpoint.commitMs": {
+        "count": 956,
+        "totalMs": 130.48551299978863,
+        "maxMs": 0.7268690000055358,
+        "sampleCount": 512,
+        "p50": 0.13069499999983236,
+        "p95": 0.20554399999673478,
+        "p99": 0.24371500000415836
+      },
+      "writer.actor_checkpoint.durableMs": {
+        "count": 956,
+        "totalMs": 3532.9940000001843,
+        "maxMs": 48.93864399999802,
+        "sampleCount": 512,
+        "p50": 1.0752180000054068,
+        "p95": 16.44504600000073,
+        "p99": 29.36887000000206
+      },
+      "writer.actor_checkpoint.fsyncWaitMs": {
+        "count": 956,
+        "totalMs": 1224.9839640001119,
+        "maxMs": 25.064212000001135,
+        "sampleCount": 512,
+        "p50": 0.1612810000005993,
+        "p95": 6.878916000001482,
+        "p99": 17.02444000000105
+      },
+      "control.metrics": {
+        "count": 10,
+        "totalMs": 47.44516699999622,
+        "maxMs": 6.691027000000759,
+        "sampleCount": 10,
+        "p50": 4.093435000000682,
+        "p95": 6.691027000000759,
+        "p99": 6.691027000000759
+      },
+      "control.load_measure": {
+        "count": 10,
+        "totalMs": 71.25096700001268,
+        "maxMs": 8.019630000000689,
+        "sampleCount": 10,
+        "p50": 6.892896000004839,
+        "p95": 8.019630000000689,
+        "p99": 8.019630000000689
+      },
+      "writer.combat_checkpoint.queueMs": {
+        "count": 87,
+        "totalMs": 476.31336999999803,
+        "maxMs": 78.37635900000168,
+        "sampleCount": 87,
+        "p50": 2.3630839999968885,
+        "p95": 21.076773999999205,
+        "p99": 78.37635900000168
+      },
+      "writer.combat_checkpoint.jobMs": {
+        "count": 87,
+        "totalMs": 201.7002739999607,
+        "maxMs": 6.764544000001479,
+        "sampleCount": 87,
+        "p50": 2.011919000000489,
+        "p95": 4.188603999999032,
+        "p99": 6.764544000001479
+      },
+      "writer.combat_checkpoint.commitMs": {
+        "count": 87,
+        "totalMs": 11.456408000058218,
+        "maxMs": 0.7268690000055358,
+        "sampleCount": 87,
+        "p50": 0.11131899999963935,
+        "p95": 0.20609499999955005,
+        "p99": 0.7268690000055358
+      },
+      "writer.combat_checkpoint.durableMs": {
+        "count": 87,
+        "totalMs": 217.6934000000074,
+        "maxMs": 32.23463300000003,
+        "sampleCount": 87,
+        "p50": 0.8081789999996545,
+        "p95": 9.955316999999923,
+        "p99": 32.23463300000003
+      },
+      "writer.combat_checkpoint.fsyncWaitMs": {
+        "count": 87,
+        "totalMs": 74.43336399998407,
+        "maxMs": 17.87695899999926,
+        "sampleCount": 87,
+        "p50": 0.17988600000171573,
+        "p95": 3.0973849999973027,
+        "p99": 17.87695899999926
+      },
+      "writer.native_action.queueMs": {
+        "count": 258,
+        "totalMs": 16879.48944499999,
+        "maxMs": 192.6695120000004,
+        "sampleCount": 258,
+        "p50": 56.88185800000065,
+        "p95": 159.44663799999762,
+        "p99": 188.11295299999983
+      },
+      "writer.native_action.jobMs": {
+        "count": 258,
+        "totalMs": 863.4969129999718,
+        "maxMs": 43.58035799999925,
+        "sampleCount": 258,
+        "p50": 2.442410999999993,
+        "p95": 6.534193999999843,
+        "p99": 20.824572999999873
+      },
+      "writer.native_action.commitMs": {
+        "count": 258,
+        "totalMs": 33.26374800006124,
+        "maxMs": 0.36697600000115926,
+        "sampleCount": 258,
+        "p50": 0.11875199999849428,
+        "p95": 0.195956000003207,
+        "p99": 0.36697600000115926
+      },
+      "writer.native_action.durableMs": {
+        "count": 258,
+        "totalMs": 2837.072279,
+        "maxMs": 65.002117,
+        "sampleCount": 258,
+        "p50": 10.670115000000806,
+        "p95": 26.411395999999513,
+        "p99": 38.85496199999761
+      },
+      "writer.native_action.fsyncWaitMs": {
+        "count": 258,
+        "totalMs": 1338.9092809999802,
+        "maxMs": 23.919214000001375,
+        "sampleCount": 258,
+        "p50": 2.049859999999171,
+        "p95": 11.415366000001086,
+        "p99": 23.919214000001375
+      },
+      "rewardWorker.preflight": {
+        "count": 59,
+        "totalMs": 77.73258199997326,
+        "maxMs": 5.685720999998011,
+        "sampleCount": 59,
+        "p50": 0.9424399999988964,
+        "p95": 4.311314000000493,
+        "p99": 5.685720999998011
+      },
+      "rewardWorker.job": {
+        "count": 59,
+        "totalMs": 1308.3586499999838,
+        "maxMs": 150.5812969999988,
+        "sampleCount": 59,
+        "p50": 14.671527999998943,
+        "p95": 63.944821999999476,
+        "p99": 150.5812969999988
+      },
+      "control.sessions_r53": {
+        "count": 28,
+        "totalMs": 190.6581000000042,
+        "maxMs": 16.16079699999682,
+        "sampleCount": 28,
+        "p50": 4.397601999997278,
+        "p95": 15.858251000001474,
+        "p99": 16.16079699999682
+      },
+      "control.cleanup_execute": {
+        "count": 49,
+        "totalMs": 239.64034499999252,
+        "maxMs": 12.362636999998358,
+        "sampleCount": 49,
+        "p50": 4.372065000003204,
+        "p95": 7.3883569999961765,
+        "p99": 12.362636999998358
+      },
+      "control.disable_jobs": {
+        "count": 1,
+        "totalMs": 0.9854800000030082,
+        "maxMs": 0.9854800000030082,
+        "sampleCount": 1,
+        "p50": 0.9854800000030082,
+        "p95": 0.9854800000030082,
+        "p99": 0.9854800000030082
+      },
+      "control.prepare_stop": {
+        "count": 4,
+        "totalMs": 303.46121099999436,
+        "maxMs": 77.33289399999921,
+        "sampleCount": 4,
+        "p50": 77.10472800000571,
+        "p95": 77.33289399999921,
+        "p99": 77.33289399999921
+      },
+      "control.quiesce_process": {
+        "count": 6,
+        "totalMs": 4.785647999997309,
+        "maxMs": 1.212455000000773,
+        "sampleCount": 6,
+        "p50": 0.6779559999995399,
+        "p95": 1.212455000000773,
+        "p99": 1.212455000000773
+      },
+      "control.global_snapshot": {
+        "count": 4,
+        "totalMs": 9.283671000004688,
+        "maxMs": 5.019746000005398,
+        "sampleCount": 4,
+        "p50": 1.1541159999978845,
+        "p95": 5.019746000005398,
+        "p99": 5.019746000005398
+      }
+    }
+  },
+  "spans": [
+    {
+      "startEpochMs": 1793546281895.4092,
+      "elapsedMs": 153.5014169999995,
+      "workerMs": 150.5812969999988,
+      "operation": "attack",
+      "batch": 10,
+      "resources": 20,
+      "queue": 15,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282050.569,
+      "elapsedMs": 13.924654000000373,
+      "workerMs": 11.387635000000955,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 14,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282071.348,
+      "elapsedMs": 41.33041400000002,
+      "workerMs": 39.79939699999886,
+      "operation": "attack",
+      "batch": 5,
+      "resources": 10,
+      "queue": 12,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282137.69,
+      "elapsedMs": 65.42252300000109,
+      "workerMs": 63.944821999999476,
+      "operation": "attack",
+      "batch": 10,
+      "resources": 20,
+      "queue": 9,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282206.4817,
+      "elapsedMs": 20.292030000000523,
+      "workerMs": 19.422033999999258,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 8,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282237.7922,
+      "elapsedMs": 27.90216700000019,
+      "workerMs": 26.433311999999205,
+      "operation": "attack",
+      "batch": 4,
+      "resources": 8,
+      "queue": 4,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282267.3323,
+      "elapsedMs": 16.87372299999879,
+      "workerMs": 15.90464299999985,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 3,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282286.7534,
+      "elapsedMs": 44.13077599999997,
+      "workerMs": 41.49399000000085,
+      "operation": "attack",
+      "batch": 7,
+      "resources": 14,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282334.3308,
+      "elapsedMs": 11.540941999999632,
+      "workerMs": 10.83256800000163,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546282349.132,
+      "elapsedMs": 46.531810000000405,
+      "workerMs": 44.669191000000865,
+      "operation": "attack",
+      "batch": 8,
+      "resources": 16,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546291884.2239,
+      "elapsedMs": 70.35291700000016,
+      "workerMs": 68.98956900000121,
+      "operation": "attack",
+      "batch": 10,
+      "resources": 20,
+      "queue": 3,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546291956.4507,
+      "elapsedMs": 16.112699999997858,
+      "workerMs": 15.210033999999723,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546291974.0303,
+      "elapsedMs": 31.406631000001653,
+      "workerMs": 30.578582999998616,
+      "operation": "attack",
+      "batch": 5,
+      "resources": 10,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292008.295,
+      "elapsedMs": 11.62785299999814,
+      "workerMs": 10.835502000001725,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292020.815,
+      "elapsedMs": 10.068276999998488,
+      "workerMs": 9.509784000001673,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292031.8667,
+      "elapsedMs": 14.889395000001969,
+      "workerMs": 13.312098999998852,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 7,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292047.6438,
+      "elapsedMs": 10.781870999999228,
+      "workerMs": 10.258112999999867,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292059.6467,
+      "elapsedMs": 7.956893999999011,
+      "workerMs": 7.486926999998104,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 5,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292069.5898,
+      "elapsedMs": 56.35844200000065,
+      "workerMs": 53.56490399999893,
+      "operation": "attack",
+      "batch": 10,
+      "resources": 20,
+      "queue": 5,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292128.1758,
+      "elapsedMs": 64.71179699999993,
+      "workerMs": 59.81344700000045,
+      "operation": "attack",
+      "batch": 10,
+      "resources": 20,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292200.7256,
+      "elapsedMs": 20.997565000001487,
+      "workerMs": 20.12673899999936,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 5,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292227.7944,
+      "elapsedMs": 17.984565999999177,
+      "workerMs": 12.47431300000244,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 4,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292263.5015,
+      "elapsedMs": 13.301959000000352,
+      "workerMs": 10.814001999999164,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 4,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292277.7795,
+      "elapsedMs": 17.246968999999808,
+      "workerMs": 10.034465000000637,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 3,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292296.062,
+      "elapsedMs": 9.381655000001047,
+      "workerMs": 8.836727000001702,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292306.3206,
+      "elapsedMs": 9.449754000001121,
+      "workerMs": 8.270931000002747,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546292341.3813,
+      "elapsedMs": 17.59940700000152,
+      "workerMs": 14.55985900000087,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546303988.688,
+      "elapsedMs": 21.434331000004022,
+      "workerMs": 20.15400399999635,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304048.8977,
+      "elapsedMs": 12.545498999999836,
+      "workerMs": 11.73959399999876,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304307.1167,
+      "elapsedMs": 25.418139000001247,
+      "workerMs": 23.007187000002887,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304550.4563,
+      "elapsedMs": 37.75144,
+      "workerMs": 25.36313599999994,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304643.5662,
+      "elapsedMs": 30.65868700000283,
+      "workerMs": 29.374426999995194,
+      "operation": "attack",
+      "batch": 3,
+      "resources": 6,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304675.981,
+      "elapsedMs": 12.876166000001831,
+      "workerMs": 10.91657600000326,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304702.7595,
+      "elapsedMs": 16.06861000000208,
+      "workerMs": 14.671527999998943,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304725.41,
+      "elapsedMs": 10.861523999999918,
+      "workerMs": 10.28848399999697,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304737.1743,
+      "elapsedMs": 10.534303000000364,
+      "workerMs": 10.005044999998063,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304752.2322,
+      "elapsedMs": 16.031958999999915,
+      "workerMs": 15.359123000002,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 4,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304769.1272,
+      "elapsedMs": 10.554560999997193,
+      "workerMs": 10.095443999998679,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 3,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304781.7864,
+      "elapsedMs": 15.334155999997165,
+      "workerMs": 14.666610000000219,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546304798.1353,
+      "elapsedMs": 25.02270000000135,
+      "workerMs": 24.319996999998693,
+      "operation": "attack",
+      "batch": 3,
+      "resources": 6,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546305099.9353,
+      "elapsedMs": 25.372559999996156,
+      "workerMs": 24.40035799999896,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546305340.6943,
+      "elapsedMs": 16.066610000001674,
+      "workerMs": 11.666405999996641,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 8,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546305461.129,
+      "elapsedMs": 14.065026000003854,
+      "workerMs": 12.157663999998476,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546305476.4575,
+      "elapsedMs": 10.918630999993184,
+      "workerMs": 10.309944000000542,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 7,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546305488.3354,
+      "elapsedMs": 12.083262000000104,
+      "workerMs": 11.371255999998539,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546306295.0771,
+      "elapsedMs": 31.634758000000147,
+      "workerMs": 30.781340000001364,
+      "operation": "attack",
+      "batch": 3,
+      "resources": 6,
+      "queue": 3,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546306930.8638,
+      "elapsedMs": 13.039688999997452,
+      "workerMs": 11.835373999994772,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546306991.8975,
+      "elapsedMs": 18.879696999996668,
+      "workerMs": 15.357269000000088,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 6,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546307011.8318,
+      "elapsedMs": 11.11412100000598,
+      "workerMs": 8.978938000000198,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 5,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546307551.1196,
+      "elapsedMs": 14.238260999998602,
+      "workerMs": 12.53363199999876,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308252.2483,
+      "elapsedMs": 26.882722000002104,
+      "workerMs": 23.291466999995464,
+      "operation": "attack",
+      "batch": 3,
+      "resources": 6,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308383.7598,
+      "elapsedMs": 16.389304000003904,
+      "workerMs": 15.363115000000107,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 4,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308844.603,
+      "elapsedMs": 25.522895999994944,
+      "workerMs": 22.567974999998114,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308939.3125,
+      "elapsedMs": 13.873484999996435,
+      "workerMs": 12.700934000000416,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 2,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308954.2468,
+      "elapsedMs": 17.635713000003307,
+      "workerMs": 14.688567000004696,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 1,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546308973.132,
+      "elapsedMs": 15.780398000002606,
+      "workerMs": 15.169263999996474,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546309007.2593,
+      "elapsedMs": 25.492113000000245,
+      "workerMs": 22.82633000000351,
+      "operation": "attack",
+      "batch": 2,
+      "resources": 4,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546309427.123,
+      "elapsedMs": 16.628592000000936,
+      "workerMs": 14.232826999999816,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    },
+    {
+      "startEpochMs": 1793546309449.2524,
+      "elapsedMs": 9.579634000001533,
+      "workerMs": 9.019948000001023,
+      "operation": "attack",
+      "batch": 1,
+      "resources": 2,
+      "queue": 0,
+      "error": null
+    }
+  ]
+}

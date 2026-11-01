@@ -1,0 +1,296 @@
+test_actual_reviewed_r85_plan_and_payload_load_without_node_payload (__main__.ActualPayloadTests.test_actual_reviewed_r85_plan_and_payload_load_without_node_payload) ... ok
+test_actual_backup_environment_mismatch_is_refused_before_daily_lock (__main__.CliAndFailureTests.test_actual_backup_environment_mismatch_is_refused_before_daily_lock) ... FAIL
+test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding (__main__.CliAndFailureTests.test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding) ... FAIL
+test_backup_unit_environment_change_while_waiting_is_refused_before_stop (__main__.CliAndFailureTests.test_backup_unit_environment_change_while_waiting_is_refused_before_stop) ... FAIL
+test_check_is_read_only_and_apply_holds_both_actual_flock_files (__main__.CliAndFailureTests.test_check_is_read_only_and_apply_holds_both_actual_flock_files) ... ERROR
+test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds (__main__.CliAndFailureTests.test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds) ... FAIL
+test_failed_validated_recovery_is_fenced_and_can_restart_later (__main__.CliAndFailureTests.test_failed_validated_recovery_is_fenced_and_can_restart_later) ... ERROR
+test_health_failure_plus_guard_enospc_still_stops_all_game_units (__main__.CliAndFailureTests.test_health_failure_plus_guard_enospc_still_stops_all_game_units) ... FAIL
+test_held_daily_backup_lock_times_out_without_stopping_services (__main__.CliAndFailureTests.test_held_daily_backup_lock_times_out_without_stopping_services) ... FAIL
+test_held_install_lock_prevents_any_service_stop (__main__.CliAndFailureTests.test_held_install_lock_prevents_any_service_stop) ... ERROR
+test_open_game_database_fd_prevents_overlay_until_closed (__main__.CliAndFailureTests.test_open_game_database_fd_prevents_overlay_until_closed) ... FAIL
+test_quick_check_failure_happens_before_any_code_replacement (__main__.CliAndFailureTests.test_quick_check_failure_happens_before_any_code_replacement) ... FAIL
+test_recovery_health_failure_and_guard_reload_error_preserve_original_exception (__main__.CliAndFailureTests.test_recovery_health_failure_and_guard_reload_error_preserve_original_exception) ... ERROR
+test_rt_stop_error_does_not_skip_main_game_stop (__main__.CliAndFailureTests.test_rt_stop_error_does_not_skip_main_game_stop) ... FAIL
+test_sqlite_api_backup_includes_committed_wal_from_dead_writer (__main__.CliAndFailureTests.test_sqlite_api_backup_includes_committed_wal_from_dead_writer) ... ERROR
+test_unlisted_zip_payload_is_refused (__main__.CliAndFailureTests.test_unlisted_zip_payload_is_refused) ... FAIL
+test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping (__main__.CliAndFailureTests.test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping) ... FAIL
+test_real_shipped_node_license_symlink_versions_without_runtime_payload (__main__.ExistingPinnedNodeTests.test_real_shipped_node_license_symlink_versions_without_runtime_payload) ... ERROR
+test_r85_health_requires_own_version_and_available_diagnostics_but_r84_does_not (__main__.HealthVersionGateTests.test_r85_health_requires_own_version_and_available_diagnostics_but_r84_does_not) ... ok
+test_active_admission_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_active_admission_is_refused_before_any_stop) ... ok
+test_active_presence_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_active_presence_is_refused_before_any_stop) ... ok
+test_changed_r80_checkpoint_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_changed_r80_checkpoint_is_refused_before_any_stop) ... ok
+test_client_changes_cannot_be_turned_off (__main__.R85SpecificBoundaryTests.test_client_changes_cannot_be_turned_off) ... ok
+test_client_identity_cannot_be_unreviewed (__main__.R85SpecificBoundaryTests.test_client_identity_cannot_be_unreviewed) ... ok
+test_correctly_hashed_http_payload_cannot_add_route_logic (__main__.R85SpecificBoundaryTests.test_correctly_hashed_http_payload_cannot_add_route_logic) ... ok
+test_every_reviewed_gameplay_file_is_required (__main__.R85SpecificBoundaryTests.test_every_reviewed_gameplay_file_is_required) ... ok
+test_exact_reviewed_gameplay_scope_rejects_unknown_and_native_paths (__main__.R85SpecificBoundaryTests.test_exact_reviewed_gameplay_scope_rejects_unknown_and_native_paths) ... ok
+test_existing_source_requires_before_hash_and_only_new_helpers_allow_null (__main__.R85SpecificBoundaryTests.test_existing_source_requires_before_hash_and_only_new_helpers_allow_null) ... ok
+test_http_source_pin_is_checked_before_any_stop (__main__.R85SpecificBoundaryTests.test_http_source_pin_is_checked_before_any_stop) ... ok
+test_missing_existing_server_file_is_refused_before_stop (__main__.R85SpecificBoundaryTests.test_missing_existing_server_file_is_refused_before_stop) ... ok
+test_open_policy_is_not_silently_changed_by_installer (__main__.R85SpecificBoundaryTests.test_open_policy_is_not_silently_changed_by_installer) ... ok
+test_payload_hash_mismatch_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_payload_hash_mismatch_is_refused_before_any_stop) ... FAIL
+test_plan_requires_r84_source_and_r85_destination (__main__.R85SpecificBoundaryTests.test_plan_requires_r84_source_and_r85_destination) ... ok
+test_r82_state_is_rejected_before_any_service_stop (__main__.R85SpecificBoundaryTests.test_r82_state_is_rejected_before_any_service_stop) ... ok
+test_recent_player_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_recent_player_is_refused_before_any_stop) ... ok
+test_source_core_identity_is_pinned (__main__.R85SpecificBoundaryTests.test_source_core_identity_is_pinned) ... ok
+test_unexpected_existing_new_helper_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_unexpected_existing_new_helper_is_refused_before_any_stop) ... ok
+
+======================================================================
+ERROR: test_check_is_read_only_and_apply_holds_both_actual_flock_files (__main__.CliAndFailureTests.test_check_is_read_only_and_apply_holds_both_actual_flock_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 17, in test_check_is_read_only_and_apply_holds_both_actual_flock_files
+    self.main('--check')
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 14, in main
+    def main(self,flag):return I.main([flag,'--archive',str(self.archive)])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/installer.py", line 644, in main
+    require(os.geteuid()==0,'Root olarak çalıştırın');require(a.archive,'Güncelleme paketi gerekli')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Root olarak çalıştırın
+
+======================================================================
+ERROR: test_failed_validated_recovery_is_fenced_and_can_restart_later (__main__.CliAndFailureTests.test_failed_validated_recovery_is_fenced_and_can_restart_later)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 80, in test_failed_validated_recovery_is_fenced_and_can_restart_later
+    with self.assertRaises(OSError):self.main('--apply')
+                                    ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 14, in main
+    def main(self,flag):return I.main([flag,'--archive',str(self.archive)])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/installer.py", line 644, in main
+    require(os.geteuid()==0,'Root olarak çalıştırın');require(a.archive,'Güncelleme paketi gerekli')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Root olarak çalıştırın
+
+======================================================================
+ERROR: test_held_install_lock_prevents_any_service_stop (__main__.CliAndFailureTests.test_held_install_lock_prevents_any_service_stop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 33, in test_held_install_lock_prevents_any_service_stop
+    with self.assertRaises(BlockingIOError):self.main('--apply')
+                                            ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 14, in main
+    def main(self,flag):return I.main([flag,'--archive',str(self.archive)])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/installer.py", line 644, in main
+    require(os.geteuid()==0,'Root olarak çalıştırın');require(a.archive,'Güncelleme paketi gerekli')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Root olarak çalıştırın
+
+======================================================================
+ERROR: test_recovery_health_failure_and_guard_reload_error_preserve_original_exception (__main__.CliAndFailureTests.test_recovery_health_failure_and_guard_reload_error_preserve_original_exception)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 100, in test_recovery_health_failure_and_guard_reload_error_preserve_original_exception
+    with self.assertRaises(OSError):self.main('--apply')
+                                    ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 14, in main
+    def main(self,flag):return I.main([flag,'--archive',str(self.archive)])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/installer.py", line 644, in main
+    require(os.geteuid()==0,'Root olarak çalıştırın');require(a.archive,'Güncelleme paketi gerekli')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Root olarak çalıştırın
+
+======================================================================
+ERROR: test_sqlite_api_backup_includes_committed_wal_from_dead_writer (__main__.CliAndFailureTests.test_sqlite_api_backup_includes_committed_wal_from_dead_writer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 145, in test_sqlite_api_backup_includes_committed_wal_from_dead_writer
+    with patch.object(I.old,'backup_database',check):self.main('--apply')
+                                                     ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 14, in main
+    def main(self,flag):return I.main([flag,'--archive',str(self.archive)])
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/installer.py", line 644, in main
+    require(os.geteuid()==0,'Root olarak çalıştırın');require(a.archive,'Güncelleme paketi gerekli')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/ccre/r85_stability_work/r85-package/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Root olarak çalıştırın
+
+======================================================================
+ERROR: test_real_shipped_node_license_symlink_versions_without_runtime_payload (__main__.ExistingPinnedNodeTests.test_real_shipped_node_license_symlink_versions_without_runtime_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 248, in test_real_shipped_node_license_symlink_versions_without_runtime_payload
+    target=root/name;target.parent.mkdir(parents=True,exist_ok=True);os.link(base/name,target)
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/ccre/r85_stability_work/r79-audit/runtime/node-v22.23.4-linux-x64/bin/node' -> '/workspace/ccre/r85_stability_work/r85-runtime-test-dfeodsd0/runtime/node-v22.23.4-linux-x64/bin/node'
+
+======================================================================
+FAIL: test_actual_backup_environment_mismatch_is_refused_before_daily_lock (__main__.CliAndFailureTests.test_actual_backup_environment_mismatch_is_refused_before_daily_lock)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 54, in test_actual_backup_environment_mismatch_is_refused_before_daily_lock
+    with self.assertRaisesRegex(RuntimeError,'aynı veri dizini kilidini'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "aynı veri dizini kilidini" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding (__main__.CliAndFailureTests.test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 68, in test_backup_environment_file_and_wrong_database_cannot_hide_lock_binding
+    with self.assertRaisesRegex(RuntimeError,'EnvironmentFile'):self.main('--check')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "EnvironmentFile" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_backup_unit_environment_change_while_waiting_is_refused_before_stop (__main__.CliAndFailureTests.test_backup_unit_environment_change_while_waiting_is_refused_before_stop)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 64, in test_backup_unit_environment_change_while_waiting_is_refused_before_stop
+    with self.assertRaisesRegex(RuntimeError,'aynı veri dizini kilidini'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "aynı veri dizini kilidini" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds (__main__.CliAndFailureTests.test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 74, in test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds
+    with self.assertRaisesRegex(RuntimeError,'health failure'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "health failure" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_health_failure_plus_guard_enospc_still_stops_all_game_units (__main__.CliAndFailureTests.test_health_failure_plus_guard_enospc_still_stops_all_game_units)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 93, in test_health_failure_plus_guard_enospc_still_stops_all_game_units
+    with self.assertRaisesRegex(RuntimeError,'injected health failure'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "injected health failure" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_held_daily_backup_lock_times_out_without_stopping_services (__main__.CliAndFailureTests.test_held_daily_backup_lock_times_out_without_stopping_services)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 39, in test_held_daily_backup_lock_times_out_without_stopping_services
+    with self.assertRaisesRegex(Exception,'gunluk_yedek_bekleme'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "gunluk_yedek_bekleme" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_open_game_database_fd_prevents_overlay_until_closed (__main__.CliAndFailureTests.test_open_game_database_fd_prevents_overlay_until_closed)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 131, in test_open_game_database_fd_prevents_overlay_until_closed
+    with self.assertRaisesRegex(RuntimeError,'açık tutan süreç'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "açık tutan süreç" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_quick_check_failure_happens_before_any_code_replacement (__main__.CliAndFailureTests.test_quick_check_failure_happens_before_any_code_replacement)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 126, in test_quick_check_failure_happens_before_any_code_replacement
+    with self.assertRaisesRegex(RuntimeError,'quick_check failure'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "quick_check failure" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_rt_stop_error_does_not_skip_main_game_stop (__main__.CliAndFailureTests.test_rt_stop_error_does_not_skip_main_game_stop)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 119, in test_rt_stop_error_does_not_skip_main_game_stop
+    with self.assertRaisesRegex(RuntimeError,'injected health failure'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "injected health failure" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_unlisted_zip_payload_is_refused (__main__.CliAndFailureTests.test_unlisted_zip_payload_is_refused)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 149, in test_unlisted_zip_payload_is_refused
+    with self.assertRaisesRegex(RuntimeError,'delta dosya listesi'):self.main('--check')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "delta dosya listesi" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping (__main__.CliAndFailureTests.test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 48, in test_valid_nested_database_layout_refuses_wrong_daily_mutex_before_stopping
+    with self.assertRaisesRegex(RuntimeError,'dataRoot ile veritabanı'):self.main('--apply')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "dataRoot ile veritabanı" does not match "Root olarak çalıştırın"
+
+======================================================================
+FAIL: test_payload_hash_mismatch_is_refused_before_any_stop (__main__.R85SpecificBoundaryTests.test_payload_hash_mismatch_is_refused_before_any_stop)
+----------------------------------------------------------------------
+RuntimeError: Root olarak çalıştırın
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/installer/installer-gates.test.py", line 211, in test_payload_hash_mismatch_is_refused_before_any_stop
+    with self.assertRaisesRegex(RuntimeError,'bütünlüğü'):I.main(['--check','--archive',str(archive)])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "bütünlüğü" does not match "Root olarak çalıştırın"
+
+----------------------------------------------------------------------
+Ran 37 tests in 0.252s
+
+FAILED (failures=12, errors=6)

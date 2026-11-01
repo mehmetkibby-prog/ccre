@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: 12 queued external jobs use 3 bounded drains instead of 12 and publish in FIFO order
+ok 1 - 12 queued external jobs use 3 bounded drains instead of 12 and publish in FIFO order
+  ---
+  duration_ms: 5.818759
+  type: 'test'
+  ...
+# Subtest: a 4ms synchronous invocation consumes the continuation budget
+ok 2 - a 4ms synchronous invocation consumes the continuation budget
+  ---
+  duration_ms: 1.055331
+  type: 'test'
+  ...
+# Subtest: main atomic FIFO entry is never crossed and later preflight is fresh
+ok 3 - main atomic FIFO entry is never crossed and later preflight is fresh
+  ---
+  duration_ms: 0.715416
+  type: 'test'
+  ...
+# Subtest: cold/freeze idle waiter retains the original one-job boundary
+ok 4 - cold/freeze idle waiter retains the original one-job boundary
+  ---
+  duration_ms: 0.595442
+  type: 'test'
+  ...
+# Subtest: idle requested by the durable publication callback stops the next job
+ok 5 - idle requested by the durable publication callback stops the next job
+  ---
+  duration_ms: 1.848493
+  type: 'test'
+  ...
+# Subtest: maintenance/closed state observed at ACK prevents an inline successor
+ok 6 - maintenance/closed state observed at ACK prevents an inline successor
+  ---
+  duration_ms: 0.758066
+  type: 'test'
+  ...
+# Subtest: legacy native write waits for current ACK and prevents continuation
+ok 7 - legacy native write waits for current ACK and prevents continuation
+  ---
+  duration_ms: 0.753949
+  type: 'test'
+  ...
+# Subtest: rejected work preserves later queued job and yields a scheduler turn
+ok 8 - rejected work preserves later queued job and yields a scheduler turn
+  ---
+  duration_ms: 0.667587
+  type: 'test'
+  ...
+# Subtest: an awaited worker yields to I/O and future callbacks see current preflight state
+ok 9 - an awaited worker yields to I/O and future callbacks see current preflight state
+  ---
+  duration_ms: 0.718683
+  type: 'test'
+  ...
+# Subtest: durable native DB atomic FIFO and rollback remain identical under actual group wrapper
+ok 10 - durable native DB atomic FIFO and rollback remain identical under actual group wrapper
+  ---
+  duration_ms: 7.157088
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 238.203765

@@ -1,0 +1,788 @@
+{
+  "referenceFileSha256": "4843d1cddd7faebafb1b3ba66e72593516cb4b9aaaba805f9409bf7c43545dd7",
+  "cases": [
+    {
+      "seed": "0000000000000000000000000000000000000000000000000000000000000000",
+      "operations": [
+        {
+          "method": "bytes",
+          "args": [
+            1
+          ],
+          "expected": "b8"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1578437750
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "bb30c9cd-6c5e-465c-aeaa-effc1aed9c47"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.521111
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 87
+        },
+        {
+          "method": "bytes",
+          "args": [
+            6
+          ],
+          "expected": "199554b95d1f"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1428075815
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "25c89479-4ca1-42de-99a7-46b058d478a0"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.208936
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -45
+        },
+        {
+          "method": "bytes",
+          "args": [
+            11
+          ],
+          "expected": "5e12a676935fcebb71c65d"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1580283118
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "7a2aa399-deaf-4454-88a9-98058cd7ad41"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.555631
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -217
+        },
+        {
+          "method": "bytes",
+          "args": [
+            16
+          ],
+          "expected": "86a8ebabe1278779a6b0273d80c1372b"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1706585033
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "d4a5c874-fbcd-445c-92cc-ec258252207b"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.844148
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -874
+        },
+        {
+          "method": "bytes",
+          "args": [
+            21
+          ],
+          "expected": "c87d753246486677baabc404832dabad044f76a32b"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 644141635
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "45d110f6-7ed7-4bae-82cb-bbc03b412597"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.766955
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 435
+        },
+        {
+          "method": "bytes",
+          "args": [
+            26
+          ],
+          "expected": "33fbef288bf5617d100c19af0906e41e5e28f2189f09244fa408"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1308286356
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "cd49a087-7190-4be2-ad5f-32510689f2c8"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.40699
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -280
+        },
+        {
+          "method": "bytes",
+          "args": [
+            31
+          ],
+          "expected": "8598f57d716a956defa48dd82c1bd53666a10dbad4a52fe1dff7e3e6b11b2d"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1732838668
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "f5e25cf3-88de-4107-822b-e6311283b0ca"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.883825
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 691
+        },
+        {
+          "method": "bytes",
+          "args": [
+            5
+          ],
+          "expected": "3c03d9424d"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1775432547
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "2ddfb9bc-4610-46a8-83a6-e15c6c134be3"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.184124
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 695
+        }
+      ]
+    },
+    {
+      "seed": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "operations": [
+        {
+          "method": "bytes",
+          "args": [
+            1
+          ],
+          "expected": "1c"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1751512892
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "4fe46af5-ce6d-4df8-8429-7c23577b51cb"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.247165
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -990
+        },
+        {
+          "method": "bytes",
+          "args": [
+            6
+          ],
+          "expected": "79e66aa7fad3"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1531755894
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "52b229ca-b1db-45e9-b266-5f87961e9dfe"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.201338
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 540
+        },
+        {
+          "method": "bytes",
+          "args": [
+            11
+          ],
+          "expected": "09024a2fbaa8ce7bdb6f7d"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1672439797
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "74c12e63-1fab-415e-8044-7bb6924a27f9"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.244895
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -889
+        },
+        {
+          "method": "bytes",
+          "args": [
+            16
+          ],
+          "expected": "fbe3e6131ac0a0785ab64de3b6b0ed06"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 279065815
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "ae760128-3db8-4c29-b716-7406ba764dbe"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.518139
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -632
+        },
+        {
+          "method": "bytes",
+          "args": [
+            21
+          ],
+          "expected": "876a9785c682f8b0700c7b5cdb297bb34aedcc8a71"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 18064982
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "9c738e0e-2797-4c2d-aa43-7c8092107cbe"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.421196
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 622
+        },
+        {
+          "method": "bytes",
+          "args": [
+            26
+          ],
+          "expected": "7060dbe5428155fe0b8e850fe5db4e48730e7a4f18a1f7bbade0"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1650036518
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "53765bdb-9891-4a88-9707-d0dade966de6"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.18587
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -56
+        },
+        {
+          "method": "bytes",
+          "args": [
+            31
+          ],
+          "expected": "4ee9f23f557bfc52537cebef8099d7fd21fbb814bb42b96ff92ea55ec7e895"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1891654638
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "6c923651-7e08-497c-942b-0b5d6fe0db05"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.767878
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -990
+        },
+        {
+          "method": "bytes",
+          "args": [
+            5
+          ],
+          "expected": "b67c48e600"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 611554999
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "c281a8b6-f9cd-49ad-b045-1c49627b0581"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.369016
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -501
+        }
+      ]
+    },
+    {
+      "seed": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "operations": [
+        {
+          "method": "bytes",
+          "args": [
+            1
+          ],
+          "expected": "65"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 911587969
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "6c93e23c-d255-4728-b0ea-827800798a6c"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.314818
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 936
+        },
+        {
+          "method": "bytes",
+          "args": [
+            6
+          ],
+          "expected": "9a22a7deac68"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 674067866
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "28957289-4ff0-49bc-b815-b7b2ec8d63a1"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.357075
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -898
+        },
+        {
+          "method": "bytes",
+          "args": [
+            11
+          ],
+          "expected": "e98f0eb6e76b47b9808713"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 233640438
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "bf2e09c3-b6e2-4429-96c7-adcf010b9f55"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.659586
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 41
+        },
+        {
+          "method": "bytes",
+          "args": [
+            16
+          ],
+          "expected": "d49fd5b6ea910fe33c0435c18cf2b9e6"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 2033733117
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "c51d7528-ed32-4be1-9903-fba028f1ae9f"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.001011
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 672
+        },
+        {
+          "method": "bytes",
+          "args": [
+            21
+          ],
+          "expected": "1452ce41adcd66ef04d7cb64ed610cdaf403561de9"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1679228322
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "a89407ac-3aae-41a9-8c5e-07876ac30c33"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.701748
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -934
+        },
+        {
+          "method": "bytes",
+          "args": [
+            26
+          ],
+          "expected": "9004def9125be66e5da779fefd3e6d4322838bd39688e8bbdea7"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1106793443
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "0df64911-d509-429a-9acd-daa4d495340f"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.620539
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -849
+        },
+        {
+          "method": "bytes",
+          "args": [
+            31
+          ],
+          "expected": "ec056b9e63220fe063d7fe1e4ebf12cd4ace805f240f5885995c5a053ac3c6"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 1825954452
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "5ab86f95-bde9-45ad-a62f-2546155b75fd"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.471151
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": -89
+        },
+        {
+          "method": "bytes",
+          "args": [
+            5
+          ],
+          "expected": "076e7b6783"
+        },
+        {
+          "method": "integer",
+          "args": [
+            2147483649
+          ],
+          "expected": 914926212
+        },
+        {
+          "method": "uuid",
+          "args": [],
+          "expected": "609d7a9d-41b3-4381-84d0-9661a9e81485"
+        },
+        {
+          "method": "roll",
+          "args": [],
+          "expected": 0.640431
+        },
+        {
+          "method": "integer",
+          "args": [
+            -1000,
+            1000
+          ],
+          "expected": 66
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793547757238,"backupName":"before-pearl-reset-1793547757238-b008508d-3202-4be0-b759-e48f1c025011.sqlite"}
+# Subtest: ten native independent kills equal ten serial seeded attacks and replay every durable result
+ok 1 - ten native independent kills equal ten serial seeded attacks and replay every durable result
+  ---
+  duration_ms: 2479.631207
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3223.766147

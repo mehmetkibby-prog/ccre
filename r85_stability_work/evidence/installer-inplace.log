@@ -1,0 +1,159 @@
+test_each_durable_apply_phase_recovers_idempotently (__main__.CrashPhaseTests.test_each_durable_apply_phase_recovers_idempotently) ... ok
+test_each_durable_manual_rollback_phase_recovers_idempotently (__main__.CrashPhaseTests.test_each_durable_manual_rollback_phase_recovers_idempotently) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_account_service_call_rejected_by_real_service_guard (__main__.InstallerTests.test_account_service_call_rejected_by_real_service_guard) ... ok
+test_accounts_restart_is_tolerated_only_for_recovery_identity (__main__.InstallerTests.test_accounts_restart_is_tolerated_only_for_recovery_identity) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change (__main__.InstallerTests.test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_before_hash_gate_refuses_unknown_source_without_stopping (__main__.InstallerTests.test_before_hash_gate_refuses_unknown_source_without_stopping) ... ok
+test_changed_database_inode_refuses_code_rollback (__main__.InstallerTests.test_changed_database_inode_refuses_code_rollback) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_cleanup_failure_does_not_rollback_validated_r85_and_recover_finishes (__main__.InstallerTests.test_cleanup_failure_does_not_rollback_validated_r85_and_recover_finishes) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_completed_backup_recovery_does_not_repeat_backup (__main__.InstallerTests.test_completed_backup_recovery_does_not_repeat_backup) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_crash_after_third_existing_file_replaces_only_code_and_recovers (__main__.InstallerTests.test_crash_after_third_existing_file_replaces_only_code_and_recovers) ... ok
+test_expanded_scope_contains_exact_payload_client_graph_and_identity_metadata (__main__.InstallerTests.test_expanded_scope_contains_exact_payload_client_graph_and_identity_metadata) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_guard_enable_disable_idempotent_and_unknown_guard_refused (__main__.InstallerTests.test_guard_enable_disable_idempotent_and_unknown_guard_refused) ... ok
+test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account (__main__.InstallerTests.test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_journal_cannot_include_owner_directory_for_cleanup (__main__.InstallerTests.test_journal_cannot_include_owner_directory_for_cleanup) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_journal_cannot_inject_an_asset_hardlink (__main__.InstallerTests.test_journal_cannot_inject_an_asset_hardlink) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_journal_cannot_redirect_server_backup_to_client_asset (__main__.InstallerTests.test_journal_cannot_redirect_server_backup_to_client_asset) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_journal_metadata_delta_and_backup_slot_are_rederived (__main__.InstallerTests.test_journal_metadata_delta_and_backup_slot_are_rederived) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_manual_rollback_backup_crash_retries_before_code_change (__main__.InstallerTests.test_manual_rollback_backup_crash_retries_before_code_change) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_manual_rollback_takes_fresh_backup_and_preserves_current_database (__main__.InstallerTests.test_manual_rollback_takes_fresh_backup_and_preserves_current_database) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_new_file_parent_symlink_and_broken_target_are_refused (__main__.InstallerTests.test_new_file_parent_symlink_and_broken_target_are_refused) ... ok
+test_other_active_update_record_is_never_overwritten (__main__.InstallerTests.test_other_active_update_record_is_never_overwritten) ... ok
+test_partial_gameplay_file_after_killed_writer_recovers_without_old_database (__main__.InstallerTests.test_partial_gameplay_file_after_killed_writer_recovers_without_old_database) ... ok
+test_partial_temp_after_killed_writer_is_outside_source_and_recoverable (__main__.InstallerTests.test_partial_temp_after_killed_writer_is_outside_source_and_recoverable) ... ok
+test_r84_journal_cannot_be_adopted_by_r85_recovery (__main__.InstallerTests.test_r84_journal_cannot_be_adopted_by_r85_recovery) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_rollback_requires_completed_maintenance_before_creating_active (__main__.InstallerTests.test_rollback_requires_completed_maintenance_before_creating_active) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_runtime_payload_is_rejected (__main__.InstallerTests.test_runtime_payload_is_rejected) ... ok
+test_state_selected_before_journal_persist_recovers (__main__.InstallerTests.test_state_selected_before_journal_persist_recovers) ... ok
+test_unknown_manual_file_blocks_all_restore_writes (__main__.InstallerTests.test_unknown_manual_file_blocks_all_restore_writes) ... ok
+test_unknown_manual_state_blocks_before_file_writes (__main__.InstallerTests.test_unknown_manual_state_blocks_before_file_writes) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_unknown_own_backup_inode_blocks_cleanup_without_rolling_back_r85 (__main__.InstallerTests.test_unknown_own_backup_inode_blocks_cleanup_without_rolling_back_r85) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_unverified_backup_file_is_never_restored_or_silently_deleted (__main__.InstallerTests.test_unverified_backup_file_is_never_restored_or_silently_deleted) ... ok
+test_validated_recover_respects_new_owner_policy_and_online_players (__main__.InstallerTests.test_validated_recover_respects_new_owner_policy_and_online_players) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_verified_backup_metadata_is_recovered_from_attempt_journal (__main__.InstallerTests.test_verified_backup_metadata_is_recovered_from_attempt_journal) ... ok
+test_wrong_native_scope_or_http_before_metadata_is_refused (__main__.InstallerTests.test_wrong_native_scope_or_http_before_metadata_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 8.321s
+
+OK

@@ -1,0 +1,25 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "dist-vds/server/index.js",
+  "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "bodies": [
+    {
+      "name": "publishGuildEjections",
+      "start": 1502901,
+      "end": 1503453,
+      "sha256": "95705334f0fc2a16be324a25f55180122bce8ce30bfd11d651a1d2a857a88e2b"
+    },
+    {
+      "name": "POST$19",
+      "start": 1760665,
+      "end": 1761727,
+      "sha256": "3b98ec7b838912c17fd1ecd6f70beec5969163ad97b54a29bbd2d851db3fc242"
+    }
+  ],
+  "generatedSha256": "d466f9b64fb83d269937489dcfa9943c8814b0d3f8659faedda7b861f746fc9e",
+  "edits": [
+    "Inject original db and room publisher instead of dynamic module imports",
+    "Remove async/await and Promise join for synchronous atomic event recording",
+    "Bind native Date.now to the accepted operation clock; retain native field mapping and original cycle query"
+  ]
+}

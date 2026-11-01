@@ -1,0 +1,55 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "lib/rest-regeneration.ts",
+  "sourceSha256": "e4efd4b7eff0e882ffa1ba495978b5fd370f69523155876be87e42193176a85d",
+  "declarations": [
+    {
+      "start": 178,
+      "end": 353,
+      "sha256": "57eb94f088aeef1bb6a332c610d0ece22401fc53e41f3d08da1f7f622d6f6944"
+    },
+    {
+      "start": 354,
+      "end": 644,
+      "sha256": "46b82e23d2992c045ae92799247fe287342941ba38fa90d2591d8c8a647472c9"
+    },
+    {
+      "start": 645,
+      "end": 760,
+      "sha256": "c8a46e40c2e741315bc7a6c7a32c70f214318278ca5ab4a503965e9c40ce0137"
+    },
+    {
+      "start": 768,
+      "end": 1113,
+      "sha256": "3b00fc3822393a0e8034f12130e58a5d1309fab4bcfdb6f869c5293b624d11d6"
+    }
+  ],
+  "sqlSha256": "42885abbb1e979d0bacff8bb6672a81ea8ce74c2930fd92fed94e4635173cf00",
+  "generatedSha256": "c302dd65213d5971856cf9f89421e60a2a439f08bb266478b744eb5384470ee9",
+  "fields": [
+    "hp",
+    "max_hp",
+    "last_seen",
+    "last_movement_at_ms",
+    "last_monster_hit_at",
+    "attack_one_at",
+    "attack_two_at",
+    "attack_three_at",
+    "attack_four_at",
+    "last_regen_at",
+    "hp_revision"
+  ],
+  "parameters": [
+    1,
+    3,
+    5,
+    4
+  ],
+  "writes": [
+    "last_seen",
+    "hp",
+    "hp_revision",
+    "last_regen_at"
+  ],
+  "adaptation": "Only native numeric expressions compiled to direct Map row operations; no gameplay constant, condition, rounding domain or update order changed. SQL assignments all read the prior row."
+}

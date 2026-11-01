@@ -1,0 +1,21 @@
+{
+  "base": "installed R85 47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "candidate": "bea25ddb76add89767a6f67d1d057f83cc1cf006554ce056abf7949dc1945163",
+  "changes": [
+    "Private secondary batch self-comparison elimination",
+    "Bounded pure string event configuration reuse across rule factories",
+    "Trusted independent-death motion lane; certified fast refresh retains newer motion and actual SQL checkpoint base",
+    "Native health release marker R86_GAMEPLAY"
+  ],
+  "functional": "13 focused movement/secondary/proof guards plus existing native primary/economy tests; final installer/instances checks pending",
+  "load": "One unchanged 50-player30-second diagnostic check; if zero errors, faults, cancellations, clipped movement and cap episodes, two fresh50-player180-second checks on the same final source",
+  "required": [
+    "All native workload and economy assertions pass",
+    "Zero cumulative prediction-cap episodes and clipped movement",
+    "No unresolved/cancelled inputs, errors or owner faults",
+    "Both180s all-wire p99 <=150ms; every startup and >300ms observation retained"
+  ],
+  "additional": "A player entering an already active map must be examined separately; admission-only-before-load does not test that report.",
+  "limits": "Local4CPU environment; no live VDS, full rendering or universal zero-lag guarantee. Earlier failed R85 trials remain unchanged.",
+  "runner": "tests/run.py points COL_CORE511_BASE at the selected R86 native tree; R86 behavior uses default-on, no enabling flag in runner"
+}

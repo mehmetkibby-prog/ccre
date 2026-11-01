@@ -1,0 +1,131 @@
+{
+  "scope": "Small native parity diagnostic, not a 50-player acceptance test. Timings include instrumentation overhead. SQL parameters omitted. Nested SQL calls counted only at outermost SQLite API boundary.",
+  "coreSHA256": "7fc97cb869cf504e36fdd610e5850ffaace9084e3d839802481d05d284840e5b",
+  "sourceUnchanged": true,
+  "nativeEconomicsParityPassed": true,
+  "batchSize": 10,
+  "batchCommandMs": 73.79894699999977,
+  "sqlByMethod": {
+    "prepare": {
+      "milliseconds": 22.23815500000137,
+      "calls": 179
+    },
+    "all": {
+      "milliseconds": 5.843305000003511,
+      "calls": 294
+    },
+    "run": {
+      "milliseconds": 3.6921189999984563,
+      "calls": 133
+    },
+    "get": {
+      "milliseconds": 4.348741999998765,
+      "calls": 623
+    },
+    "exec": {
+      "milliseconds": 0.8191020000003846,
+      "calls": 57
+    }
+  },
+  "outsideMeasuredSQLMs": 36.857523999997284,
+  "topSQL": [
+    {
+      "method": "prepare",
+      "sql": "WITH RECURSIVE reward_input(seen_since,xp_amount) AS (SELECT ?,?), sources AS MATERIALIZED (\n      SELECT p.id,p.hp,p.last_seen,p.movement_checked_at_ms,p.last_monster_hit_at,p.area,p.channel,p.arena_match_id,p.x,p.y FROM monster_participants mp JOIN players p ON p.id=mp.player_id\n      JOIN monster_xp_claims c ON c.monster_id=mp.monster_id AND c.spawn_round=mp.spawn_round AND c.player_id=mp.player_id WHERE c.claim_token=?  AND NOT EXISTS(SELECT 1 FROM normal_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id)\n    AND NOT EXISTS(SELECT 1 FROM sinsi_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id)\n    AND NOT EXISTS(SELECT 1 FROM boss_reward_claims r WHERE (mp.monster_id='dunya-bosu-1' OR EXISTS(SELECT 1 FROM loadlab_boss_rounds_v1 lab_round WHERE lab_round.monster_id=mp.monster_id AND lab_round.boss_round=mp.spawn_round)) AND r.boss_round=mp.spawn_round AND r.player_id=mp.player_id)\n    ),peers AS (\n    SELECT source.id AS source_id,ally.id AS ally_id FROM sources source\n    JOIN party_members mine ON mine.player_id=source.id\n    JOIN party_members team ON team.party_id=mine.party_id AND team.player_id<>source.id\n    CROSS JOIN players ally ON ally.id=team.player_id\n    WHERE 1=1 AND source.hp>0 AND MAX(source.last_seen,CAST(source.movement_checked_at_ms/1000 AS INTEGER),CAST(source.last_monster_hit_at/1000 AS INTEGER))>=(SELECT seen_since FROM reward_input) AND ally.hp>0 AND MAX(ally.last_seen,CAST(ally.movement_checked_at_ms/1000 AS INTEGER),CAST(ally.last_monster_hit_at/1000 AS INTEGER))>=(SELECT seen_since FROM reward_input)\n    AND ally.area=source.area AND ally.channel=source.channel AND ally.arena_match_id=source.arena_match_id\n    AND (ally.x-source.x)*(ally.x-source.x)+(ally.y-source.y)*(ally.y-source.y)<=5760000),\n    buckets AS (SELECT s.id,COALESCE('party:'||pm.party_id,'solo:'||s.id) AS bucket FROM sources s LEFT JOIN party_members pm ON pm.player_id=s.id WHERE pm.party_id IS NULL OR(s.hp>0 AND MAX(s.last_seen,CAST(s.movement_checked_at_ms/1000 AS INTEGER),CAST(s.last_monster_hit_at/1000 AS INTEGER))>=(SELECT seen_since FROM reward_input))),\n    recipients AS(SELECT bucket,id AS player_id FROM buckets UNION SELECT b.bucket,p.ally_id FROM peers p JOIN buckets b ON b.id=p.source_id),\n    ranked AS(SELECT bucket,player_id,COUNT(*) OVER(PARTITION BY bucket) AS member_count,ROW_NUMBER() OVER(PARTITION BY bucket ORDER BY player_id) AS member_rank FROM recipients),\n    amounts AS(SELECT player_id,SUM(CAST((SELECT xp_amount FROM reward_input)*(100+2*(MIN(5,member_count)-1))/100 AS INTEGER)) AS amount FROM ranked GROUP BY player_id),\n    boosted AS MATERIALIZED(SELECT p.id,ROUND(a.amount*(1+COALESCE((SELECT CASE s.active_level WHEN 1 THEN .05 WHEN 2 THEN .07 WHEN 3 THEN .15 ELSE 0 END FROM guild_skills s JOIN guild_members m ON m.guild_id=s.guild_id WHERE m.player_id=p.id AND s.active_until>unixepoch()*1000),0))*(CASE WHEN p.xp_ring_until>? THEN 1.25 ELSE 1 END)*(CASE WHEN EXISTS(SELECT 1 FROM player_pets WHERE player_id=p.id AND acquired_at+604800>unixepoch() AND equipped=1 AND kind='dog') THEN 1.2 WHEN EXISTS(SELECT 1 FROM player_pets WHERE player_id=p.id AND acquired_at+604800>unixepoch() AND equipped=1 AND kind IN ('bird','monkey')) THEN 1.1 ELSE 1 END)*(1+(COALESCE((SELECT CASE i.item_name WHEN 'Bilgelik Kemeri' THEN 20 ELSE 0 END FROM player_items i WHERE i.player_id=p.id AND i.kind='belt' AND i.equipped=1 AND i.rarity='crafted' AND i.power=0 AND i.role='all' AND i.enchantments='[]' AND i.expires_at_ms=0 AND i.premium_origin=0 LIMIT 1),0))/100.0)*(CASE WHEN p.halloween_candy_until>unixepoch()*1000 THEN 1.25 ELSE 1 END)*(CASE WHEN p.arena_exp_until>unixepoch()*1000 THEN 1.2 ELSE 1 END)*(CASE WHEN p.pumpkin_enabled499=1 AND p.pumpkin_until499>CAST(ROUND((julianday('now')-2440587.5)*86400000) AS INTEGER) THEN 1.25 WHEN p.radiant_enabled=1 AND p.radiant_until>unixepoch()*1000 THEN 1.2 WHEN EXISTS(SELECT 1 FROM player_items WHERE player_id=p.id AND kind='costume' AND equipped=1) THEN 1.2 ELSE 1 END)) AS amount FROM amounts a JOIN players p ON p.id=a.player_id),\n    curve(level,total_xp,next_cost) AS(SELECT 1,0,CAST(json_extract((SELECT xp_curve_json FROM game_settings WHERE id=1),'$[0]') AS INTEGER)\n    UNION ALL SELECT level+1,total_xp+next_cost,COALESCE(CAST(json_extract((SELECT xp_curve_json FROM game_settings WHERE id=1),'$['||level||']') AS INTEGER),0) FROM curve WHERE level<65)\n    UPDATE players SET quest_kills438=MIN(1000000000,quest_kills438+1),battle_pass_xp=CASE WHEN players.area<>'afk' AND (CASE WHEN level>=65 AND rank_tier>0 THEN ROUND((SELECT amount FROM boosted WHERE id=players.id)*(CASE WHEN players.wisdom_until>unixepoch()*1000 THEN 1.25 ELSE 1 END)) ELSE (SELECT amount FROM boosted WHERE id=players.id) END)>0 AND EXISTS(SELECT 1 FROM battle_pass_settings WHERE id=1 AND enabled=1 AND season_id<>'' AND starts_at<=(((SELECT seen_since FROM reward_input)+30)*1000) AND ends_at>(((SELECT seen_since FROM reward_input)+30)*1000)) THEN MIN((SELECT xp_cap FROM battle_pass_settings WHERE id=1),(CASE WHEN players.battle_pass_season=(SELECT season_id FROM battle_pass_settings WHERE id=1) THEN players.battle_pass_xp ELSE 0 END)+CAST((CASE WHEN level>=65 AND rank_tier>0 THEN ROUND((SELECT amount FROM boosted WHERE id=players.id)*(CASE WHEN players.wisdom_until>unixepoch()*1000 THEN 1.25 ELSE 1 END)) ELSE (SELECT amount FROM boosted WHERE id=players.id) END) AS INTEGER)) ELSE players.battle_pass_xp END,battle_pass_season=CASE WHEN players.area<>'afk' AND (CASE WHEN level>=65 AND rank_tier>0 THEN ROUND((SELECT amount FROM boosted WHERE id=players.id)*(CASE WHEN players.wisdom_until>unixepoch()*1000 THEN 1.25 ELSE 1 END)) ELSE (SELECT amount FROM boosted WHERE id=players.id) END)>0 AND EXISTS(SELECT 1 FROM battle_pass_settings WHERE id=1 AND enabled=1 AND season_id<>'' AND starts_at<=(((SELECT seen_since FROM reward_input)+30)*1000) AND ends_at>(((SELECT seen_since FROM reward_input)+30)*1000)) THEN (SELECT season_id FROM battle_pass_settings WHERE id=1) ELSE players.battle_pass_season END,rank_xp=CASE WHEN level>=65 AND rank_tier>0 THEN MIN(9000000000000,rank_xp+ROUND((SELECT amount FROM boosted WHERE id=players.id)*(CASE WHEN players.wisdom_until>unixepoch()*1000 THEN 1.25 ELSE 1 END))) ELSE rank_xp END,xp=CASE WHEN level>=(CASE WHEN (SELECT expansion65_enabled FROM game_settings WHERE id=1)=1 OR (players.is_gm=1 AND players.id=(SELECT expansion65_preview_player_id FROM game_settings WHERE id=1)) THEN 65 ELSE 50 END) THEN xp ELSE MIN((SELECT total_xp FROM curve WHERE level=(CASE WHEN (SELECT expansion65_enabled FROM game_settings WHERE id=1)=1 OR (players.is_gm=1 AND players.id=(SELECT expansion65_preview_player_id FROM game_settings WHERE id=1)) THEN 65 ELSE 50 END)),xp+(SELECT amount FROM boosted WHERE id=players.id)) END,level=MAX(level,COALESCE((SELECT MAX(level) FROM curve WHERE level<=(CASE WHEN (SELECT expansion65_enabled FROM game_settings WHERE id=1)=1 OR (players.is_gm=1 AND players.id=(SELECT expansion65_preview_player_id FROM game_settings WHERE id=1)) THEN 65 ELSE 50 END) AND total_xp<=xp+(SELECT amount FROM boosted WHERE id=players.id)),1))\n    WHERE id IN(SELECT player_id FROM monster_xp_claims WHERE claim_token=?) AND id IN(SELECT id FROM boosted) RETURNING id,xp,level,rank_xp",
+      "calls": 1,
+      "totalMs": 6.026111000000128,
+      "maxMs": 6.026111000000128
+    },
+    {
+      "method": "prepare",
+      "sql": "UPDATE players SET quest_kills438=kernel511_reward_value_r54('quest_kills438',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),battle_pass_xp=kernel511_reward_value_r54('battle_pass_xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),battle_pass_season=kernel511_reward_value_r54('battle_pass_season',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),rank_xp=kernel511_reward_value_r54('rank_xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),xp=kernel511_reward_value_r54('xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),level=kernel511_reward_value_r54('level',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438) WHERE id IN(SELECT player_id FROM monster_xp_claims WHERE claim_token=?) AND id IN(SELECT value FROM json_each(?)) RETURNING id,xp,level,rank_xp",
+      "calls": 1,
+      "totalMs": 4.146571000000222,
+      "maxMs": 4.146571000000222
+    },
+    {
+      "method": "prepare",
+      "sql": "UPDATE players SET last_seen=MAX(last_seen,?) WHERE id=? AND EXISTS(\n   SELECT 1 FROM kernel511_channel_owners o\n   JOIN kernel511_admissions a ON a.player_id=o.player_id AND a.channel=o.channel AND a.epoch=o.epoch\n   JOIN kernel511_channel_processes p ON p.channel=o.channel AND p.incarnation=o.incarnation AND p.online=1\n   WHERE o.player_id=players.id AND o.state='active' AND o.channel=? AND o.incarnation=? AND o.epoch=?)",
+      "calls": 1,
+      "totalMs": 2.9542460000002393,
+      "maxMs": 2.9542460000002393
+    },
+    {
+      "method": "prepare",
+      "sql": "INSERT OR IGNORE INTO normal_reward_claims\n         (monster_id, spawn_round, player_id, claim_token, awarded_at)\n       SELECT mp.monster_id, mp.spawn_round, mp.player_id, ?, ?\n       FROM monster_participants mp JOIN players p ON p.id = mp.player_id\n       WHERE mp.monster_id = ? AND mp.spawn_round = ?",
+      "calls": 1,
+      "totalMs": 2.043113999999605,
+      "maxMs": 2.043113999999605
+    },
+    {
+      "method": "all",
+      "sql": "UPDATE players SET quest_kills438=kernel511_reward_value_r54('quest_kills438',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),battle_pass_xp=kernel511_reward_value_r54('battle_pass_xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),battle_pass_season=kernel511_reward_value_r54('battle_pass_season',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),rank_xp=kernel511_reward_value_r54('rank_xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),xp=kernel511_reward_value_r54('xp',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438),level=kernel511_reward_value_r54('level',id,xp,level,rank_xp,rank_tier,wisdom_until,is_gm,area,battle_pass_xp,battle_pass_season,quest_kills438) WHERE id IN(SELECT player_id FROM monster_xp_claims WHERE claim_token=?) AND id IN(SELECT value FROM json_each(?)) RETURNING id,xp,level,rank_xp",
+      "calls": 10,
+      "totalMs": 1.6915879999996832,
+      "maxMs": 0.36385900000004767
+    },
+    {
+      "method": "run",
+      "sql": "INSERT OR IGNORE INTO normal_reward_claims\n         (monster_id, spawn_round, player_id, claim_token, awarded_at)\n       SELECT mp.monster_id, mp.spawn_round, mp.player_id, ?, ?\n       FROM monster_participants mp JOIN players p ON p.id = mp.player_id\n       WHERE mp.monster_id = ? AND mp.spawn_round = ?",
+      "calls": 10,
+      "totalMs": 0.8717940000001363,
+      "maxMs": 0.18029599999999846
+    },
+    {
+      "method": "get",
+      "sql": "SELECT * FROM players WHERE id=?",
+      "calls": 20,
+      "totalMs": 0.8547360000006847,
+      "maxMs": 0.07310600000027989
+    },
+    {
+      "method": "all",
+      "sql": "SELECT 'main' scope,name,sql FROM main.sqlite_schema WHERE type='trigger' UNION ALL SELECT 'temp',name,sql FROM temp.sqlite_schema WHERE type='trigger'",
+      "calls": 1,
+      "totalMs": 0.714835000000221,
+      "maxMs": 0.714835000000221
+    },
+    {
+      "method": "prepare",
+      "sql": "UPDATE player_items SET enchantments=CASE\n  WHEN EXISTS(SELECT 1 FROM json_each(enchantments) WHERE json_extract(value,'$.kind')='evolution_kills')\n  THEN json_set(enchantments,(SELECT '$['||key||'].value' FROM json_each(enchantments) WHERE json_extract(value,'$.kind')='evolution_kills' LIMIT 1),\n    MIN(1000000000,COALESCE((SELECT json_extract(value,'$.value') FROM json_each(enchantments) WHERE json_extract(value,'$.kind')='evolution_kills' LIMIT 1),0)+1))\n  ELSE json_insert(enchantments,'$[#]',json_object('kind','evolution_kills','value',1)) END\n  WHERE id=? AND player_id=? AND kind='weapon' AND equipped=1\n  AND EXISTS(SELECT 1 FROM monsters WHERE id=? AND spawn_round=? AND hp>0 AND hp<=? AND is_stone=0)",
+      "calls": 1,
+      "totalMs": 0.6803509999999733,
+      "maxMs": 0.6803509999999733
+    },
+    {
+      "method": "run",
+      "sql": "INSERT OR IGNORE INTO monster_xp_claims(monster_id,spawn_round,player_id,claim_token,awarded_at) SELECT ?,?,value,?,? FROM json_each(?)",
+      "calls": 20,
+      "totalMs": 0.667355999999927,
+      "maxMs": 0.20290899999963585
+    },
+    {
+      "method": "run",
+      "sql": "WITH drops(drop_row) AS (SELECT value FROM json_each(?))\n     INSERT OR IGNORE INTO world_drops\n       (id, owner_id, monster_id, kind, item_name, rarity, power, amount, role, enchantments,\n        x, y, expires_at, collectible_at)\n     SELECT\n       CAST(json_extract(drop_row, '$[0]') AS TEXT),\n       CAST(json_extract(drop_row, '$[1]') AS TEXT),\n       CAST(json_extract(drop_row, '$[2]') AS TEXT),\n       CAST(json_extract(drop_row, '$[3]') AS TEXT),\n       json_extract(drop_row, '$[4]'),\n       CAST(json_extract(drop_row, '$[5]') AS TEXT),\n       CAST(json_extract(drop_row, '$[6]') AS INTEGER),\n       CAST(json_extract(drop_row, '$[7]') AS INTEGER),\n       json_extract(drop_row, '$[8]'),\n       CAST(json_extract(drop_row, '$[9]') AS TEXT),\n       CAST(json_extract(drop_row, '$[10]') AS REAL),\n       CAST(json_extract(drop_row, '$[11]') AS REAL),\n       CAST(json_extract(drop_row, '$[12]') AS INTEGER),\n       CAST(json_extract(drop_row, '$[13]') AS INTEGER)\n     FROM drops\n     WHERE EXISTS (SELECT 1 FROM normal_reward_claims claim\n       WHERE claim.monster_id = ? AND claim.spawn_round = ?\n         AND claim.player_id = CAST(json_extract(drop_row, '$[1]') AS TEXT) AND claim.claim_token = ?)",
+      "calls": 10,
+      "totalMs": 0.6668339999991986,
+      "maxMs": 0.08356499999990774
+    },
+    {
+      "method": "prepare",
+      "sql": "WITH reward_input(seen_since,xp_amount) AS (SELECT ?,?), sources AS (\n      SELECT p.* FROM monster_participants mp JOIN players p ON p.id=mp.player_id\n      WHERE mp.monster_id=? AND mp.spawn_round=?\n      AND (? IS NULL OR EXISTS(SELECT 1 FROM monsters m WHERE m.id=mp.monster_id AND m.spawn_round=mp.spawn_round AND m.hp>0 AND m.hp<=?))\n      AND NOT EXISTS(SELECT 1 FROM monster_xp_claims c WHERE c.monster_id=mp.monster_id AND c.spawn_round=mp.spawn_round AND c.player_id=mp.player_id)\n       AND NOT EXISTS(SELECT 1 FROM normal_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id)\n    AND NOT EXISTS(SELECT 1 FROM sinsi_reward_claims r WHERE r.monster_id=mp.monster_id AND r.spawn_round=mp.spawn_round AND r.player_id=mp.player_id)\n    AND NOT EXISTS(SELECT 1 FROM boss_reward_claims r WHERE (mp.monster_id='dunya-bosu-1' OR EXISTS(SELECT 1 FROM loadlab_boss_rounds_v1 lab_round WHERE lab_round.monster_id=mp.monster_id AND lab_round.boss_round=mp.spawn_round)) AND r.boss_round=mp.spawn_round AND r.player_id=mp.player_id)\n    ),peers AS (\n    SELECT source.id AS source_id,ally.id AS ally_id FROM sources source\n    JOIN party_members mine ON mine.player_id=source.id\n    JOIN party_members team ON team.party_id=mine.party_id AND team.player_id<>source.id\n    JOIN players ally ON ally.id=team.player_id\n    WHERE 1=1 AND source.hp>0 AND MAX(source.last_seen,CAST(source.movement_checked_at_ms/1000 AS INTEGER),CAST(source.last_monster_hit_at/1000 AS INTEGER))>=(SELECT seen_since FROM reward_input) AND ally.hp>0 AND MAX(ally.last_seen,CAST(ally.movement_checked_at_ms/1000 AS INTEGER),CAST(ally.last_monster_hit_at/1000 AS INTEGER))>=(SELECT seen_since FROM reward_input)\n    AND ally.area=source.area AND ally.channel=source.channel AND ally.arena_match_id=source.arena_match_id\n    AND (ally.x-source.x)*(ally.x-source.x)+(ally.y-source.y)*(ally.y-source.y)<=5760000)\n    INSERT OR IGNORE INTO monster_xp_claims(monster_id,spawn_round,player_id,claim_token,awarded_at)\n    SELECT ?,?,id,?,? FROM(SELECT id FROM sources UNION SELECT ally_id FROM peers)",
+      "calls": 1,
+      "totalMs": 0.6457849999997052,
+      "maxMs": 0.6457849999997052
+    },
+    {
+      "method": "all",
+      "sql": "UPDATE players SET attack_one_at = MAX(attack_one_at, ?) + ?,\n           combat_lock_until_ms = MAX(combat_lock_until_ms, ?)\n         WHERE id = ? AND hp > 0 AND stun_until_ms <= ? AND attack_one_at <= ?\n           AND area = ? AND channel = ? AND arena_match_id = ? AND realtime_scope_version = ?\n         RETURNING attack_one_at AS reserved_until",
+      "calls": 10,
+      "totalMs": 0.5149019999989832,
+      "maxMs": 0.0729870000000119
+    },
+    {
+      "method": "get",
+      "sql": "SELECT stat_attack,stat_defense,stat_hp,stat_revision,arena_wings_equipped,arena_wings_expires_at_ms,rune_attack_level,rune_defense_level,rune_hp_level,rank_tier,id, name, role, is_gm, x, y, hp, max_hp, hp_revision, respawn_at_ms, essence, contribution, xp, level, gems, potions, set_hp,set_pve,set_pvp,set_resistance,set_speed,set_attack,\n        specialization,skill_four,attack_four_at,special_guard_until_ms,jewelry_attack,jewelry_defense,jewelry_cast_speed,jewelry_pvp,(COALESCE((SELECT CASE i.item_name WHEN 'H\u00fck\u00fcmdar Kemeri' THEN 10 ELSE 0 END FROM player_items i WHERE i.player_id=players.id AND i.kind='belt' AND i.equipped=1 AND i.rarity='crafted' AND i.power=0 AND i.role='all' AND i.enchantments='[]' AND i.expires_at_ms=0 AND i.premium_origin=0 LIMIT 1),0)) AS belt_pvp_r31,jewelry_resist,jewelry_earring_enchantments,jewelry_bracelet_enchantments,halloween_candy_until,skill_one, skill_two, skill_three, has_rod, rod_equipped, fish_sokan, fish_levrek, fish_zargana, pearls, stone_dust,\n        xp_ring_until, drop_charm_until, (SELECT equipped FROM player_items WHERE player_id=players.id AND kind='costume' LIMIT 1) AS costume_equipped, has_wings, wings_equipped, (SELECT equipped FROM dungeon_wings WHERE player_id=players.id) AS core_wings, area, channel, arena_match_id, last_seen,\n        combat_lock_until_ms, realtime_scope_version, weapon_skin_enabled,\n        COALESCE((SELECT reset_at FROM world_state WHERE id = 1), 0) AS reset_at,\n        COALESCE((SELECT cycle FROM world_state WHERE id = 1), 1) AS world_cycle,\n        COALESCE((SELECT power FROM player_items WHERE player_id = players.id AND kind = 'weapon' AND equipped = 1 LIMIT 1), 0) + CASE WHEN players.weapon_skin_enabled=1 THEN 20 ELSE 0 END + players.jewelry_attack + (COALESCE((SELECT CASE i.item_name WHEN 'Bilgelik Kemeri' THEN 50 ELSE 0 END FROM player_items i WHERE i.player_id=players.id AND i.kind='belt' AND i.equipped=1 AND i.rarity='crafted' AND i.power=0 AND i.role='all' AND i.enchantments='[]' AND i.expires_at_ms=0 AND i.premium_origin=0 LIMIT 1),0)) AS equipped_weapon_power,\n        (SELECT id FROM player_items WHERE player_id=players.id AND kind='weapon' AND equipped=1 LIMIT 1) AS equipped_weapon_id,\n        COALESCE((SELECT CASE WHEN substr(item_name,1,3)='+5 ' AND kind IN ('weapon','armor','helmet','shoes','necklace') THEN json_insert(CASE WHEN json_valid(enchantments) AND json_type(enchantments)='array' THEN enchantments ELSE '[]' END, '$[#]', json_object('kind',CASE kind WHEN 'weapon' THEN 'strong_players' WHEN 'shoes' THEN 'strong_players' WHEN 'helmet' THEN 'critical_damage491' ELSE 'resistant_players' END,'value',CASE kind WHEN 'helmet' THEN 10 WHEN 'weapon' THEN 5 WHEN 'armor' THEN 5 ELSE 3 END)) ELSE enchantments END FROM player_items WHERE player_id = players.id AND kind = 'weapon' AND equipped = 1 LIMIT 1), '[]') AS equipped_weapon_enchantments,\n        COALESCE((SELECT CASE WHEN substr(item_name,1,3)='+5 ' AND kind IN ('weapon','armor','helmet','shoes','necklace') THEN json_insert(CASE WHEN json_valid(enchantments) AND json_type(enchantments)='array' THEN enchantments ELSE '[]' END, '$[#]', json_object('kind',CASE kind WHEN 'weapon' THEN 'strong_players' WHEN 'shoes' THEN 'strong_players' WHEN 'helmet' THEN 'critical_damage491' ELSE 'resistant_players' END,'value',CASE kind WHEN 'helmet' THEN 10 WHEN 'weapon' THEN 5 WHEN 'armor' THEN 5 ELSE 3 END)) ELSE enchantments END FROM player_items WHERE player_id = players.id AND kind = 'armor' AND equipped = 1 LIMIT 1), '[]') AS equipped_armor_enchantments,\n        COALESCE((SELECT CASE WHEN substr(item_name,1,3)='+5 ' AND kind IN ('weapon','armor','helmet','shoes','necklace') THEN json_insert(CASE WHEN json_valid(enchantments) AND json_type(enchantments)='array' THEN enchantments ELSE '[]' END, '$[#]', json_object('kind',CASE kind WHEN 'weapon' THEN 'strong_players' WHEN 'shoes' THEN 'strong_players' WHEN 'helmet' THEN 'critical_damage491' ELSE 'resistant_players' END,'value',CASE kind WHEN 'helmet' THEN 10 WHEN 'weapon' THEN 5 WHEN 'armor' THEN 5 ELSE 3 END)) ELSE enchantments END FROM player_items WHERE player_id = players.id AND kind = 'helmet' AND equipped = 1 LIMIT 1), '[]') AS equipped_helmet_enchantments,\n        COALESCE((SELECT CASE WHEN substr(item_name,1,3)='+5 ' AND kind IN ('weapon','armor','helmet','shoes','necklace') THEN json_insert(CASE WHEN json_valid(enchantments) AND json_type(enchantments)='array' THEN enchantments ELSE '[]' END, '$[#]', json_object('kind',CASE kind WHEN 'weapon' THEN 'strong_players' WHEN 'shoes' THEN 'strong_players' WHEN 'helmet' THEN 'critical_damage491' ELSE 'resistant_players' END,'value',CASE kind WHEN 'helmet' THEN 10 WHEN 'weapon' THEN 5 WHEN 'armor' THEN 5 ELSE 3 END)) ELSE enchantments END FROM player_items WHERE player_id = players.id AND kind = 'shoes' AND equipped = 1 LIMIT 1), '[]') AS equipped_shoes_enchantments,\n        COALESCE((SELECT CASE WHEN substr(item_name,1,3)='+5 ' AND kind IN ('weapon','armor','helmet','shoes','necklace') THEN json_insert(CASE WHEN json_valid(enchantments) AND json_type(enchantments)='array' THEN enchantments ELSE '[]' END, '$[#]', json_object('kind',CASE kind WHEN 'weapon' THEN 'strong_players' WHEN 'shoes' THEN 'strong_players' WHEN 'helmet' THEN 'critical_damage491' ELSE 'resistant_players' END,'value',CASE kind WHEN 'helmet' THEN 10 WHEN 'weapon' THEN 5 WHEN 'armor' THEN 5 ELSE 3 END)) ELSE enchantments END FROM player_items WHERE player_id = players.id AND kind = 'necklace' AND equipped = 1 LIMIT 1), '[]') AS equipped_necklace_enchantments\n       FROM players WHERE id = ?",
+      "calls": 10,
+      "totalMs": 0.4492799999993622,
+      "maxMs": 0.09063900000001013
+    }
+  ]
+}

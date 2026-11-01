@@ -1,0 +1,2 @@
+pearl_reset {"applied":true,"appliedAtMs":1793514206024,"backupName":"before-pearl-reset-1793514206024-fef9dd55-5640-4595-aa8d-69b92a15c4d1.sqlite"}
+{"passed":true,"averageMs":{"factory":{"native":0.64156225,"cached":0.06853653599999916},"fullRefresh":{"native":1.3248015277777794,"cached":0.9007214500000019}},"schemaCalls":{"nativeFactory":1500,"nativeFullRefresh":540,"cachedFullRefresh":9}}

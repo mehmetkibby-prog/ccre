@@ -1,0 +1,13 @@
+{
+  "name": "CORE511_R86_TOPLU.zip",
+  "bytes": 1562829,
+  "sha256": "9eed28b0c88ee460d85ed329a577bb3fb8546c373bb4f1da383433ca42b579ac",
+  "sourceCoreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "targetCoreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "productionFiles": 19,
+  "members": 42,
+  "bootstrapHelpPassed": true,
+  "liveDeployment": false,
+  "gatePath": "evidence/final-release-gate-r86.json",
+  "assessmentKind": "local-native30-one180-plusjoin"
+}

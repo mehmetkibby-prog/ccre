@@ -1,0 +1,107 @@
+{
+  "scope": "No production mutation; fake SQL sink, constructor/hydration allocation-only comparison under release Node flags. Exact generated hydrate/setSelectSql source reused with globals retained. Not a load test or end-to-end speed claim.",
+  "sameQueriesForEquipmentSetStates": true,
+  "medianSavedMsPerTen": 0.2975328499999989,
+  "rounds": [
+    {
+      "beforeMs": 7.193168000000014,
+      "afterMs": 0.4223180000000184,
+      "savedMsPerTen": 0.6770849999999996
+    },
+    {
+      "beforeMs": 4.820209000000034,
+      "afterMs": 0.5044520000000148,
+      "savedMsPerTen": 0.4315757000000019
+    },
+    {
+      "beforeMs": 6.517566000000045,
+      "afterMs": 5.979122000000018,
+      "savedMsPerTen": 0.05384440000000268
+    },
+    {
+      "beforeMs": 2.703156999999976,
+      "afterMs": 0.23908699999998362,
+      "savedMsPerTen": 0.24640699999999924
+    },
+    {
+      "beforeMs": 3.734421999999995,
+      "afterMs": 0.35953100000000404,
+      "savedMsPerTen": 0.3374890999999991
+    },
+    {
+      "beforeMs": 9.591493999999955,
+      "afterMs": 0.3867819999999824,
+      "savedMsPerTen": 0.9204711999999973
+    },
+    {
+      "beforeMs": 6.576346000000001,
+      "afterMs": 0.5416309999999953,
+      "savedMsPerTen": 0.6034715000000006
+    },
+    {
+      "beforeMs": 24.466493999999955,
+      "afterMs": 0.728240000000028,
+      "savedMsPerTen": 2.3738253999999928
+    },
+    {
+      "beforeMs": 2.2106569999999692,
+      "afterMs": 0.21571299999999383,
+      "savedMsPerTen": 0.19949439999999755
+    },
+    {
+      "beforeMs": 2.2656489999999962,
+      "afterMs": 0.21389900000002626,
+      "savedMsPerTen": 0.205174999999997
+    },
+    {
+      "beforeMs": 2.2132419999999797,
+      "afterMs": 0.21527199999997038,
+      "savedMsPerTen": 0.19979700000000095
+    },
+    {
+      "beforeMs": 7.776375999999971,
+      "afterMs": 5.200609999999983,
+      "savedMsPerTen": 0.2575765999999987
+    },
+    {
+      "beforeMs": 2.1834069999999883,
+      "afterMs": 0.22169399999995676,
+      "savedMsPerTen": 0.19617130000000316
+    },
+    {
+      "beforeMs": 2.2321769999999788,
+      "afterMs": 0.25807200000002695,
+      "savedMsPerTen": 0.1974104999999952
+    },
+    {
+      "beforeMs": 6.840328999999997,
+      "afterMs": 0.21540199999998322,
+      "savedMsPerTen": 0.6624927000000014
+    },
+    {
+      "beforeMs": 11.040791000000013,
+      "afterMs": 0.4790039999999749,
+      "savedMsPerTen": 1.0561787000000038
+    },
+    {
+      "beforeMs": 2.632745,
+      "afterMs": 0.2161429999999882,
+      "savedMsPerTen": 0.24166020000000116
+    },
+    {
+      "beforeMs": 2.421419999999955,
+      "afterMs": 0.21273700000000417,
+      "savedMsPerTen": 0.22086829999999508
+    },
+    {
+      "beforeMs": 6.699857000000009,
+      "afterMs": 0.21718600000002652,
+      "savedMsPerTen": 0.6482670999999982
+    },
+    {
+      "beforeMs": 8.050468000000023,
+      "afterMs": 0.21540199999998322,
+      "savedMsPerTen": 0.783506600000004
+    }
+  ]
+}

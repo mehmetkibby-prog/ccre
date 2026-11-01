@@ -1,0 +1,155 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "actions": [
+    {
+      "name": "claim_rewards",
+      "sha256": "f3e54b9a356c61dee617bd7839bfdb6e49123336cbb2228280af4fa4db628f61"
+    },
+    {
+      "name": "donate",
+      "sha256": "f1f3913455af08be892f669f6ee727df4dd78e74964464bef1364b8625bb654e"
+    },
+    {
+      "name": "respawn",
+      "sha256": "bffc2252845cecdae091c0ba6b7207d68570ba7b03969af197be6b2a0466dcae"
+    },
+    {
+      "name": "collect",
+      "sha256": "85d1fa8e9a1572b5e5eeed9282d58b18b60b06d03c66f8ec891b7b5fb2e7b104"
+    },
+    {
+      "name": "use_potion",
+      "sha256": "f1669a55a8561cc7a09b2b607223e71eb1cf8c16e7e63c1ba26294ecbbdd08b4"
+    },
+    {
+      "name": "guardian_dash",
+      "sha256": "a1a42656c0aaf349acf0c1ebd981f3559298f7263adcae863ac0a2ad324abd96"
+    },
+    {
+      "name": "start_fishing",
+      "sha256": "db9e50b2fad04f6f263c81a95e1bec32ea15f5bdd9f7eca8d8a9ef3064b0f5c0"
+    },
+    {
+      "name": "fishing_input",
+      "sha256": "0725110d4224ebac46ee08a240fa3d438ffb82266e9f8d68ec056e87ef7a86bb"
+    },
+    {
+      "name": "finish_fishing",
+      "sha256": "5d4a8f84940f3bf87230b2f40c57c1c93ba78f6f003271f30328a7d8f350dc94"
+    },
+    {
+      "name": "cancel_fishing",
+      "sha256": "31a6bbecf1325cf10a4f304cd960c9ee931151e9f05021cde19f138852bf7405"
+    },
+    {
+      "name": "sell_fish",
+      "sha256": "01bcaef3258827119be5652a042e163f3063a8f791dc7c1b53daec1255019718"
+    },
+    {
+      "name": "arena_join_queue",
+      "sha256": "53377d0e1d80fe9274ed35cb2b3aaa2fda839a39bf528880ccbd059a7cbf1d25"
+    },
+    {
+      "name": "arena_cancel_queue",
+      "sha256": "a34838d90364b6f5e194df041393e2d66b567a63394ca1c197c419dcb0aed1bc"
+    },
+    {
+      "name": "arena_ack_result",
+      "sha256": "2750ee18d450eff0727e6781306826e1bf6bf524636f540968a7b032b4f95504"
+    },
+    {
+      "name": "invite_party",
+      "sha256": "facfa168276699d776d90a92ecd574525d13b907f9bee5b40d483b1f01559282"
+    },
+    {
+      "name": "reject_party",
+      "sha256": "406a53823ecbcb37eaad83f052f999a0329273dae871aebaae2fd5a13de0adae"
+    },
+    {
+      "name": "accept_party",
+      "sha256": "7511ce0cae478b0e0efa5e5ededf8679c6ee6ec6f6c3c637e2719cc76dd5e1f5"
+    },
+    {
+      "name": "kick_party",
+      "sha256": "549c5fc8076ec98fb5684c8f493239c64cfd0536f7daed554a6117c4124469bf"
+    },
+    {
+      "name": "leave_party",
+      "sha256": "03d8c79dcf9c159c376922776804ee486da24c64713f535a4d2c6e94a96f537a"
+    },
+    {
+      "name": "travel_event",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_dragon",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_rune_v2",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_rune",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_ancient",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_afk",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_market",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_forest",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_frozen",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_fishing",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_sanctum",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_sinsi",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_war",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    },
+    {
+      "name": "travel_black",
+      "sha256": "40ac6783d9e3edb8c27fdd4a83de4c5bb911563184bf2b73eed8096a1b79fdca"
+    }
+  ],
+  "claim": {
+    "nativeBodySha256": "66431301c7fea287647e38e785d9e0547ab8389eb929f85669b8961ad741bcd3",
+    "adaptedBodySha256": "f3e54b9a356c61dee617bd7839bfdb6e49123336cbb2228280af4fa4db628f61",
+    "adapters": [
+      [
+        "await getGameSettings()",
+        "settings"
+      ],
+      [
+        ", colLabHttpAuth.rateLimitContext(request, auth, \"claim-rewards\")",
+        ""
+      ]
+    ],
+    "scope": "Exact native claim branch in ordered shared durable writer; original participant/receipt guards and 120/min rate policy retained"
+  },
+  "fullProductionIntegration": false
+}

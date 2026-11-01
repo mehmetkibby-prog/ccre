@@ -1,0 +1,17 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793521466414,"backupName":"before-pearl-reset-1793521466414-5e4be783-af89-427c-97f7-f2dca828fe69.sqlite"}
+# Subtest: first real native lethal commands retain boot statements and prepared cache
+ok 1 - first real native lethal commands retain boot statements and prepared cache
+  ---
+  duration_ms: 2102.070008
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2706.321963

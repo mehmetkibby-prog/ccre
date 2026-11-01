@@ -1,0 +1,23 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793521710885,"backupName":"before-pearl-reset-1793521710885-c1b15b34-885a-4d77-a49b-ac36b4d791c9.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T08:28:35.740Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":369118,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b3c359c80969c852c708a738"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T08:28:35.741Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":369124,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c19dd313b8b395e9d9799404"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T08:28:35.741Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":369150,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"26ff830b0e55c28fa0215322"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T08:28:35.741Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":369156,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fa08888e2e5be9175487bc06"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T08:28:35.755Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":369107,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"acff1c9a80638180f3f2c40b"}
+# Subtest: actual native host startup retains worker boot pool until first real lethal command
+ok 1 - actual native host startup retains worker boot pool until first real lethal command
+  ---
+  duration_ms: 6475.146374
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7384.609514

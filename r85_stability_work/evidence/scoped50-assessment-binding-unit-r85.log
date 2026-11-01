@@ -1,0 +1,12 @@
+test_assessor_and_summarizer_bytes_must_match_bound_identity (__main__.Scoped50BindingTests.test_assessor_and_summarizer_bytes_must_match_bound_identity) ... ok
+test_complete_in_memory_binding_is_accepted (__main__.Scoped50BindingTests.test_complete_in_memory_binding_is_accepted) ... ok
+test_empty_pin_list_is_rejected (__main__.Scoped50BindingTests.test_empty_pin_list_is_rejected) ... ok
+test_every_mandatory_role_requires_pinned_evidence (__main__.Scoped50BindingTests.test_every_mandatory_role_requires_pinned_evidence) ... ok
+test_functional_certificate_must_match_candidate (__main__.Scoped50BindingTests.test_functional_certificate_must_match_candidate) ... ok
+test_harness_and_topology_mapping_must_match_pinned_files (__main__.Scoped50BindingTests.test_harness_and_topology_mapping_must_match_pinned_files) ... ok
+test_registered_stage_labels_are_mandatory (__main__.Scoped50BindingTests.test_registered_stage_labels_are_mandatory) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.023s
+
+OK

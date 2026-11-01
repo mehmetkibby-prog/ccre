@@ -1,0 +1,63 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793511946308,"backupName":"before-pearl-reset-1793511946308-180cc3ef-0c28-4655-b935-08b49b1182e9.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:45:51.622Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":340874,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"652f28aeb134fcdf7b903a9d"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:45:51.623Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":340887,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f5438be337d5d8199e090bbf"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:45:51.624Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":340911,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"97e8cc29778390a029600f62"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:45:51.624Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":340922,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1453b41fc7fc69dff410e6c4"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:45:51.647Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":340854,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"306d17c8232ec3e358bde23b"}
+# Subtest: native guild donation source SIGKILL before COMMIT recovers CURRENT DB and replays one native receipt
+not ok 1 - native guild donation source SIGKILL before COMMIT recovers CURRENT DB and replays one native receipt
+  ---
+  duration_ms: 6941.027577
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/writer/native-permanent-process.test.mjs:15:39'
+  failureType: 'testCodeFailure'
+  error: `{"error":"Cannot find module '/workspace/ccre/r85_stability_work/working/native510-bb3a6cc689c6/dist-vds/server/channel-runtime/assets/guild-village-runtime-Dke_G6YB.js' imported from /workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/entry-rules.mjs"}`
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/tests/writer/native-permanent-process.test.mjs:21:174)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793511954059,"backupName":"before-pearl-reset-1793511954059-9f170621-7e88-486c-a64e-c0bae0b09ef4.sqlite"}
+# {"event":"core511_fault","at":"2026-11-01T05:45:59.710Z","code":"actor_command_outcome_pending","channel":1,"source":"channel","operation":"native_action","requestEpoch":1,"sequence":1,"actorRef":"9c7125708c4d5e8c3f03e823","stack":[]}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.793Z","action":"shutdown_abort","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}]}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.793Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":1,"pid":341143,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"5a1673766f1737e51f05a63d"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.794Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":2,"pid":341158,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"ac0ebb7dc33cf4190d7d9d8f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.794Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":3,"pid":341181,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"000f00be5a418e58d4655aea"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.794Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":4,"pid":341200,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"6290fb89dc18391f639c28c4"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:46:04.794Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":0,"pid":341128,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"be8fc80f367da52bda266bee"}
+# Subtest: native command becoming pending during a cold freeze releases its healthy peer and later commits the original once
+not ok 2 - native command becoming pending during a cold freeze releases its healthy peer and later commits the original once
+  ---
+  duration_ms: 12506.202904
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/writer/native-recovery-r85.test.mjs:44:1'
+  failureType: 'testCodeFailure'
+  error: 'permanent_actor_fenced'
+  code: 'permanent_actor_fenced'
+  stack: |-
+    kernelError (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/contract.mjs:13:58)
+    demand (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/contract.mjs:14:51)
+    ActorIsolation.guard (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/actor-isolation.mjs:77:4)
+    CoreCoordinator.authority.commandGuard (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/coordinator.mjs:89:119)
+    PlayerWriteScope.run (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/player-write-scope.mjs:61:125)
+    work (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/writer-runtime.mjs:112:37)
+    NativeGameServices.run (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/mode-services.mjs:26:19)
+    file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/writer-runtime.mjs:118:25
+    CommandFailureScope.run (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/command-failure-scope.mjs:40:20)
+    registerOwnedRule (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/writer-runtime.mjs:106:170)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21036.008063

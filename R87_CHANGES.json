@@ -1,0 +1,151 @@
+{
+  "baseline": "R86 installed (user-confirmed)",
+  "candidate": "R87 stopped, not release accepted",
+  "files": [
+    {
+      "path": "core511-source/scripts/core511/actor-checkpoint.mjs",
+      "before": {
+        "bytes": 11505,
+        "sha256": "f1903ee5f3734798f23287025d12d580a70c31b3be61e5b0a32ef7a15e993df7"
+      },
+      "after": {
+        "bytes": 10970,
+        "sha256": "bd9b7ad029e2e46a925da24df1beeb1211ddbd1c4e9a4ef42fe63e37fcb8b7bb"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/actor-section-reuse-r52.mjs",
+      "before": {
+        "bytes": 24757,
+        "sha256": "471a242ccceb5fde7396ba2ecf0a1b19af7d2fad452ceb6c7aa8c2ff860c8799"
+      },
+      "after": {
+        "bytes": 25030,
+        "sha256": "6826982505548372115970ce534e7a5267d84f092c66aa50df3f630de9ef2fde"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/attack-loop.mjs",
+      "before": {
+        "bytes": 9216,
+        "sha256": "e6a347b80a89f34da1223f45878a8440c45c57b575d987f0db84e5e0557f840e"
+      },
+      "after": {
+        "bytes": 9309,
+        "sha256": "bf4d1917670012b163bddb5ffabd75c60cbf1db3ef5d247e64319e2716b28c7e"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/attack-writer.mjs",
+      "before": {
+        "bytes": 16192,
+        "sha256": "33d6396b7a781364881d534d388c9eafc360fe90d9492dfcf61bf5fa0c430655"
+      },
+      "after": {
+        "bytes": 16299,
+        "sha256": "0ae5f9f1382dcc79b57a29d62f15069a6f893225adf42f7c8e4948a005b33276"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/default-loot-cache-r87.mjs",
+      "before": null,
+      "after": {
+        "bytes": 2164,
+        "sha256": "450eaa21b1ddfdfff777c426b101bbd5a304bbafacb7ef6758ebeb6728deb571"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/attack-writer-rules.mjs",
+      "before": {
+        "bytes": 588403,
+        "sha256": "6b8594a26ca424c749c230b9f3f3e8f2b926e43cfdfa1f305c64373eff4573d8"
+      },
+      "after": {
+        "bytes": 588524,
+        "sha256": "949fb0696b9576d5ceb293c89c76a7fef2e2656748716ee8dc3a3af25026a143"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/client/game-client-core511-r87-aaf06f246f8a616a.js",
+      "before": null,
+      "after": {
+        "bytes": 1647904,
+        "sha256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/native-client-proof.json",
+      "before": {
+        "bytes": 368316,
+        "sha256": "ac923ecd0e60d069b17deae2cd47eb4c613c0a91559a792bd2cc8eeb1087adc9"
+      },
+      "after": {
+        "bytes": 371920,
+        "sha256": "ed029279459fb69b9628c7a34290088caac8c2c8e800de31703afa1ad317d8e3"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "before": {
+        "bytes": 155497,
+        "sha256": "2637e712a425b278deb605df6c533f94a86518b8e3c8bcaf7377593b32bcb56f"
+      },
+      "after": {
+        "bytes": 156093,
+        "sha256": "1c40673e237bd2bdf148921012d69b8737c766f8ea02b7ce4aa9d51d59d6a7cf"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/joined-checkpoint-r53.mjs",
+      "before": {
+        "bytes": 3998,
+        "sha256": "1018d97be12191558ff749c20ce79fd1460f5604e271526f8cd6a0d2cca5327d"
+      },
+      "after": {
+        "bytes": 4106,
+        "sha256": "fcb39ea9e1439c74e516b32b49134661336fb72b19ce4671602b6559a1cf6041"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/native-http-bindings.mjs",
+      "before": {
+        "bytes": 15094,
+        "sha256": "c9d045c79c97c75f0e630dc3d961c19e8b1ef7c8c8d65adf59d43f1a12534923"
+      },
+      "after": {
+        "bytes": 15094,
+        "sha256": "b892c694982313bfc29f7e9df09c02e827da98c9e8f4646cd589c20a9e5772a0"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/rune-reward-scope-r87.mjs",
+      "before": null,
+      "after": {
+        "bytes": 534,
+        "sha256": "494e1e9e052987491be85fe2dfddae3181e728419c74d03af2807bcc8cfabfbc"
+      }
+    },
+    {
+      "path": "core511-source/scripts/core511/writer-settings.mjs",
+      "before": {
+        "bytes": 1578,
+        "sha256": "1c9fb568f10969f85855ee0916290e7476d9790b0873174d62a2e5b48478bae7"
+      },
+      "after": {
+        "bytes": 2046,
+        "sha256": "b4a1319ee7bd32787c714d607aa5f34d010a71619345f438154d1a752be5cc7a"
+      }
+    },
+    {
+      "path": "http-runtime/dist-vds/server/index.js",
+      "before": {
+        "bytes": 2229879,
+        "sha256": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1"
+      },
+      "after": {
+        "bytes": 2229879,
+        "sha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c"
+      }
+    }
+  ]
+}

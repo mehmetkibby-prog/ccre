@@ -1,0 +1,17 @@
+{
+  "source": "handoff/r85-investigation",
+  "adaptation": "Only module import paths rewritten to complete integrated production core; all assertions unchanged",
+  "files": [
+    "freeze-outcomes.test.mjs",
+    "freeze-failure-proof.test.mjs",
+    "shared-prepare.test.mjs",
+    "freeze-deadline.test.mjs",
+    "shared-lifecycle.test.mjs",
+    "freeze-wire.test.mjs",
+    "freeze-fixture.mjs",
+    "writer-same-channel-review.test.mjs",
+    "writer-boundary-review.test.mjs",
+    "shared-abort-late-review.test.mjs",
+    "writer-proof-review.test.mjs"
+  ]
+}

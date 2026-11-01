@@ -1,0 +1,118 @@
+// Timing-only diagnostic copy of frozen45123633; unchanged isolated workload.
+import {observeWriterTimingR85} from '../writer/writer-timing-observer-r85.mjs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import net from 'node:net';
+import {fork} from 'node:child_process';
+import {createHash,randomBytes,randomUUID} from 'node:crypto';
+import {pathToFileURL} from 'node:url';
+const core=new URL('core511-source/scripts/core511/',pathToFileURL(process.env.R85_RUNTIME_TREE+'/'));
+const {nativeHttpHost}=await import(new URL('tests/native-http-host-fixture.mjs',core));
+const {realmStartupConfig}=await import(new URL('tests/native-realm-startup-fixture.mjs',core));
+const {put}=await import(new URL('tests/pvp-fixture.mjs',core));
+const {nativeTokenHash}=await import(new URL('entry-writer.mjs',core));
+const {PROTOCOL}=await import(new URL('contract.mjs',core));
+const {sourceIdentity}=await import(new URL('source-identity.mjs',core));
+const realistic=true,count=Number(process.argv[2]??1),seconds=Number(process.argv[3]??30);
+assert([1,10,30,50,100].includes(count));assert(seconds>=10&&seconds<=180);
+const label=process.env.R85_RUNTIME_LABEL??'r85-isolated-calibration';assert(/^[a-z0-9-]+$/.test(label));
+const out=new URL(`../../evidence/native-mixed-load-${label}-${count}.json`,import.meta.url);
+const hash=sourceIdentity().sha256;assert.equal(hash,process.env.R85_EXPECT_CORE_SHA);
+const ingressPath=new URL('../delivery511/runtime-ingress.mjs',core),ingressBytes=fs.readFileSync(ingressPath),ingressSHA256=createHash('sha256').update(ingressBytes).digest('hex');
+assert.match(process.env.R85_EXPECT_INGRESS_SHA??'',/^[a-f0-9]{64}$/,'Explicit expected delivery ingress identity required');
+assert.equal(ingressSHA256,process.env.R85_EXPECT_INGRESS_SHA,'Delivery ingress source identity');
+assert.deepEqual(process.execArgv,['--no-lazy'],'Final run cannot add dynamic source-transform loaders');
+assert.equal(process.env.NODE_OPTIONS,'--no-warnings --import '+new URL('./register-r84-fixture.mjs',import.meta.url).pathname,'Only pinned native fixture loader permitted');
+const {startIngress}=await import(ingressPath);
+const cleanups=[],scope={after:fn=>cleanups.push(fn)},players=[],rankBootstrap=[],runId=randomUUID();
+const harnessPins=Object.fromEntries(['native-mixed-load-isolated.mjs','native-mixed-generator.mjs','run.py','r84-fixture-loader.mjs','register-r84-fixture.mjs'].map(name=>[name,createHash('sha256').update(fs.readFileSync(new URL(name,import.meta.url))).digest('hex')]));
+const topologyPins=Object.fromEntries(['../delivery511/runtime-entry.mjs','../delivery511/runtime-host.mjs','../delivery511/runtime-ingress.mjs','channel-process.mjs','process-supervisor.mjs'].map(name=>{const bytes=fs.readFileSync(new URL(name,core));return [name,{bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')}];}));
+let s,ingress,generator,started,queueTimer,measuredPromise,requestId=0,report={runId,players:count,seconds,coreSHA256:hash,deliverySHA256:ingressSHA256,deliveryIdentity:{path:'core511-source/scripts/delivery511/runtime-ingress.mjs',bytes:ingressBytes.length,beforeSHA256:ingressSHA256,expectedSHA256:process.env.R85_EXPECT_INGRESS_SHA,effectiveSource:'Direct disk import. No additional --import/--loader allowed; ordinary pinned fixture loader does not transform delivery modules.'},harnessPins,topologyPins,nodeVersion:process.version,nodeExecArgv:process.execArgv,mainEagerStartup:process.execArgv.includes('--no-lazy'),realisticTransport:true,separateGenerator:true,passed:false,fullGameAcceptance:false,liveTouched:false};
+let abortRun;const interrupted=new Promise((_,reject)=>{abortRun=signal=>reject(Error('diagnostic_aborted_by_'+signal));});interrupted.catch(()=>{});
+process.once('SIGTERM',()=>abortRun('SIGTERM'));process.once('SIGINT',()=>abortRun('SIGINT'));
+const pending=new Map(),summary=values=>{const a=[...values].sort((a,b)=>a-b),p=f=>a[Math.max(0,Math.ceil(a.length*f)-1)]??null;return {count:a.length,p50:p(.5),p95:p(.95),p99:p(.99),max:a.at(-1)??null};};
+function command(method,payload={}){const id=++requestId;return new Promise((resolve,reject)=>{pending.set(id,{resolve,reject});generator.send({type:'generator-command',id,method,payload},error=>{if(error){pending.delete(id);reject(error);}});});}
+function request(p,action,body={}){return new Request(s.f.origin+'/api/realtime/core511-'+action,{method:'POST',headers:{Origin:s.f.origin,Cookie:'__Host-yasam-session='+p.token+'; __Host-yasam-csrf='+p.csrf,'X-CSRF-Token':p.csrf,'X-Game-Instance':p.instance,'Content-Type':'application/json'},body:JSON.stringify({protocol:PROTOCOL,...body})});}
+async function listenersAvailable(){const reserved=[];try{for(let i=0;i<4;i++){const server=net.createServer();await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});reserved.push(server);}return Object.fromEntries(reserved.map((server,i)=>[i+1,{host:'127.0.0.1',port:server.address().port}]));}finally{await Promise.all(reserved.map(server=>new Promise(resolve=>server.close(resolve))));}}
+try{
+ const listeners=await listenersAvailable();
+ s=await nativeHttpHost(scope,{listeners,realmSetup:async(host,seed)=>{
+  const realm=realmStartupConfig(scope,host);await realm.prepare();
+  await host.database.atomic(()=>{
+   const sql=host.database.sqlite,template=sql.prepare('SELECT * FROM players WHERE id=?').get(seed.id),now=Date.now();
+   sql.exec('UPDATE players SET last_seen=0; DELETE FROM game_presence');
+   for(let n=0;n<count;n++){
+    const id=runId+':'+n,accountId=id+':account',channel=n%4+1,index=Math.floor(n/4),x=2700+(index%5)*28,y=2025+Math.floor(index/5)*28,token=randomBytes(32).toString('hex'),csrf=randomBytes(32).toString('hex'),instance=randomUUID(),targetId='golge-load-'+runId+'-'+n;
+    put(sql,'accounts',{...seed.account,id:accountId,username:'native'+n,username_normalized:'native'+n,email:'native'+n+'@fixture.invalid',email_normalized:'native'+n+'@fixture.invalid'});
+    put(sql,'players',{...template,id,account_id:accountId,name:'Native'+n,channel,area:'forest',x,y,hp:100000,max_hp:1000000,potions:realistic?64:2,gems:1000,essence:1000,attack_one_at:0,attack_two_at:0,attack_three_at:0,attack_four_at:0,last_seen:0,loadlab_run_id:'',...(realistic&&n%2===0?{level:40,rank_tier:0,rank_xp:0,rank_started_at:0,rank_forest:50,rank_frozen:50,rank_black:50,rank_ancient:50}:{})});
+    if(realistic&&n%2===0){
+     const read=()=>({...sql.prepare('SELECT level,rank_tier,rank_xp,rank_started_at,rank_forest,rank_frozen,rank_black,rank_ancient,rank_unlocked,hp,max_hp,hp_revision FROM players WHERE id=?').get(id)}),before=read();
+     // Exercise the actual native level-entry and quest-completion triggers.
+     // Directly inserting level65 leaves rank_started_at=0 and creates an
+     // impossible established-rank fixture that reloads on its first kill.
+     sql.prepare('UPDATE players SET level=65 WHERE id=?').run(id);const afterLevelEntry=read();
+     assert.equal(before.level,40);assert.equal(before.rank_started_at,0);assert.equal(afterLevelEntry.level,65);assert(afterLevelEntry.rank_started_at>0);
+     sql.prepare('UPDATE players SET rank_forest=rank_forest WHERE id=?').run(id);
+     assert.equal(read().rank_tier,1);
+     // Preserve the existing arranged stress HP/XP; do not warm combat.
+     sql.prepare('UPDATE players SET rank_xp=100,hp=100000,max_hp=1000000 WHERE id=?').run(id);
+     const after=read();assert.equal(after.rank_tier,1);assert.equal(after.rank_xp,100);assert.equal(after.rank_started_at,afterLevelEntry.rank_started_at);
+     rankBootstrap.push({actor:id,before,afterLevelEntry,after});
+    }
+    put(sql,'auth_sessions',{token_hash:nativeTokenHash(token),csrf_hash:nativeTokenHash(csrf),account_id:accountId,created_at:Math.floor(now/1000),last_seen_at:Math.floor(now/1000),expires_at:Math.floor(now/1000)+3600,security_version:seed.account.security_version});
+    put(sql,'game_presence',{account_id:accountId,token_hash:nativeTokenHash(token),instance_id:instance,expires_at_ms:now+40000,chat_after_id:0});
+    for(const [suffix,hp] of [['',100000000],['-lethal-0',1],['-lethal-1',1]])put(sql,'monsters',{id:targetId+suffix,name:'Gölge',area:'forest',channel,x:x+20,y,hp,max_hp:hp,spawn_round:17,last_damaged_at_ms:now,last_regen_at_ms:now});
+    const drops=[];
+    for(let j=0;j<2;j++){const drop=id+':drop:'+j;drops.push(drop);put(sql,'world_drops',{id:drop,owner_id:id,monster_id:targetId,kind:'weathered_iron',item_name:'Fixture material',rarity:'white',power:0,amount:3,role:null,enchantments:'[]',x,y,expires_at:Math.floor(now/1000)+600,collectible_at:Math.floor(now/1000)});}
+    players.push({id,accountId,channel,x,y,token,csrf,instance,targetId,drops});
+   }
+  });
+ }});
+ await s.host.database.atomic(()=>{for(const p of players)globalThis.__colLaunch.grant(p.accountId,true);});
+ s.core.start();await s.world.startJobs();
+ const proxyToken=randomBytes(32).toString('hex'),publicHost=new URL(s.f.origin).host;
+ ingress=await startIngress({config:{hosts:[publicHost],proxyToken,delivery511:{proxyPort:0,channelPorts:[1,2,3,4].map(ch=>listeners[ch].port),appPort:1}},health:()=>Response.json({ok:true})});
+ generator=fork(new URL('./native-mixed-generator.mjs',import.meta.url),[],{execPath:process.execPath,execArgv:process.execArgv,serialization:'advanced',stdio:['ignore','inherit','inherit','ipc']});
+ generator.on('message',message=>{
+  if(message?.type==='generator-result'){const row=pending.get(message.id);if(!row)return;pending.delete(message.id);if(message.error)row.reject(Object.assign(Error(message.error.message),{stack:message.error.stack}));else row.resolve(message.value);}
+  else if(message?.type==='generator-http')void(async()=>{try{const response=await s.core.http(new Request(message.url,message.options));generator.send({type:'generator-http-result',id:message.id,status:response.status,headers:[...response.headers],body:await response.text()});}catch(error){generator.send({type:'generator-http-result',id:message.id,error:error.stack});}})();
+  else if(message?.type==='generator-progress')console.log(JSON.stringify({...message,type:undefined,event:'native_mixed_progress',players:count,faults:s.faults.length,writerQueue:s.host.database.writeQueue.length,mainRssBytes:process.memoryUsage().rss}));
+  else if(message?.type==='generator-window-complete'){clearInterval(queueTimer);queueTimer=null;measuredPromise=s.core.diagnostics.endLoad(runId);}
+ });
+ generator.once('exit',(code,signal)=>{for(const row of pending.values())row.reject(Error('generator_exited:'+code+':'+signal));pending.clear();});
+ generator.once('error',error=>{for(const row of pending.values())row.reject(error);pending.clear();});
+ await command('initialize',{origin:s.f.origin,gateway:{port:ingress.server.address().port,token:proxyToken,host:publicHost}});
+ for(const p of players){
+  await s.host.database.atomic(()=>s.host.database.sqlite.prepare('UPDATE game_presence SET expires_at_ms=? WHERE account_id=?').run(Date.now()+40000,p.accountId));
+  const response=await s.core.http(request(p,'character',{channel:p.channel})),ticket=await response.json();assert.equal(response.status,200,JSON.stringify(ticket));assert.equal(ticket.channel,p.channel);
+  const connected=await command('add',{p,ticket});assert.equal(connected.connected,true);
+ }
+ const prepared=await command('prepare');report.generatorPid=prepared.pid;report.setupHeartbeats=prepared.setupHeartbeats;
+ report.rankBootstrap={method:'Native level40→65 UPDATE triggers rank_started_at; native rank quest trigger awards tier1; existing arranged highHP and rankXP then seeded. No gameplay combat warmup.',actors:rankBootstrap};
+ const before=await s.core.diagnostics.sample();await s.core.diagnostics.beginLoad(runId);started=performance.now();
+ const queueSamples=[],writerAcks=[],readerQueries=[],nativeCommand=s.writer.command.bind(s.writer),query=s.reader.query.bind(s.reader);
+ const writerTimingR85=observeWriterTimingR85(s,started);
+ queueTimer=setInterval(()=>{const at=performance.now(),jobs=s.host.database.writeQueue??[],oldest=jobs.reduce((age,job)=>Math.max(age,Number.isFinite(job.queuedAt477)?at-job.queuedAt477:0),0);queueSamples.push({offset:at-started,writerDepth:jobs.length,oldestWriterAgeMs:oldest,mainRssBytes:process.memoryUsage().rss});},100);
+ s.writer.command=async(...args)=>{const at=performance.now();try{return await nativeCommand(...args);}finally{writerAcks.push({ms:performance.now()-at,offset:at-started,operationId:args[1]?.operationId,actor:args[1]?.playerId,batchActors:1+(args[1]?.payload?.batchAttacksR57?.length??0),operation:args[1]?.operation,action:args[1]?.payload?.input?.action});}};
+ s.reader.query=async(name,...args)=>{const at=performance.now();try{return await query(name,...args);}finally{readerQueries.push({name,ms:performance.now()-at,offset:at-started});}};
+ console.log(JSON.stringify({event:'native_mixed_started',players:count,seconds,runId,separateGenerator:true,serverPid:process.pid,generatorPid:generator.pid}));
+ const clientResult=await Promise.race([command('run',{seconds,startEpochMs:performance.timeOrigin+started}),interrupted]);
+ // Keep the generator report transfer outside the native measurement window:
+ // the child sends its small completion notice before transferring samples.
+ assert(measuredPromise,'native_measurement_completion_notice');const measured=await measuredPromise,sql=s.host.database.sqlite;
+ const economics=players.map(p=>({actor:p.id,potions:sql.prepare('SELECT potions FROM players WHERE id=?').get(p.id).potions,expectedPotions:realistic?64-(clientResult.actors.find(c=>c.actor===p.id).successfulCommands.use_potion??0):1,progress:sql.prepare('SELECT level,xp,rank_tier,rank_xp FROM players WHERE id=?').get(p.id),material:sql.prepare("SELECT amount FROM dungeon_materials WHERE player_id=? AND kind='weathered_iron'").get(p.id)?.amount??0,dropsRemaining:sql.prepare('SELECT COUNT(*) n FROM world_drops WHERE id IN (?,?)').get(...p.drops).n,terminalLives:[0,1].map(j=>sql.prepare('SELECT hp,spawn_round FROM monsters WHERE id=?').get(p.targetId+'-lethal-'+j)),xpClaims:sql.prepare('SELECT COUNT(*) n FROM monster_xp_claims WHERE monster_id IN (?,?) AND player_id=? AND spawn_round=17').get(p.targetId+'-lethal-0',p.targetId+'-lethal-1',p.id).n,allOwnTargetKillClaims:sql.prepare('SELECT COUNT(*) n FROM monster_xp_claims WHERE monster_id IN (?,?,?) AND player_id=?').get(p.targetId,p.targetId+'-lethal-0',p.targetId+'-lethal-1',p.id).n}));
+ const faults=s.faults.map(f=>({code:f.error?.code,message:f.error?.message,stack:f.error?.stack})),samples=clientResult.samples,actors=clientResult.actors,errors=clientResult.errors,commandHolds=clientResult.commandHoldsOver600Ms;
+ report={...report,passed:clientResult.passed&&faults.length===0&&economics.every(e=>e.potions===e.expectedPotions&&e.material>=6&&e.dropsRemaining===0&&e.terminalLives.every(life=>life.hp===0||life.spawn_round>17)&&e.xpClaims===2),durationMs:performance.now()-started,transport:'Separate generator TCP→unmodified installed main runtime-ingress /_game authentication and socket pipe→four native channel TCP listeners. Main HTTP admission/fetch via private fixture RPC; outer Caddy/TLS not included.',owners:s.host.children.size,commandLatencyMs:clientResult.commandLatencyMs,byAction:clientResult.byAction,writerAckMs:summary(writerAcks.map(r=>r.ms)),writerAcks,readerQueries,readerQueryWallMs:Object.fromEntries([...new Set(readerQueries.map(r=>r.name))].map(name=>[name,summary(readerQueries.filter(r=>r.name===name).map(r=>r.ms))])),errors,faults,unacknowledged:clientResult.unacknowledged,economics,diagnosticsBefore:before,diagnosticsAfter:await s.core.diagnostics.sample(),measurement:measured,samples,sourceUnchanged:sourceIdentity().sha256===hash,generatorResources:clientResult.generatorResources,limitations:['Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.','Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS.','Signed central auth uses local verified fixture replies. Generator is a separate OS process on the same4CPU quota; its resources are reported separately, and still compete for host CPU.','No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee.']};
+ report.writerTimingR85=writerTimingR85.finish();report.timingFixtureR85={baseSHA256:'4512363309a00367238322ee38bd55dcbe1c95c4f561d95511381a17e9d927a3',copySHA256:createHash('sha256').update(fs.readFileSync(new URL('./native-mixed-load-writertrace-r85.mjs',import.meta.url))).digest('hex'),observerSHA256:createHash('sha256').update(fs.readFileSync(new URL('../writer/writer-timing-observer-r85.mjs',import.meta.url))).digest('hex'),acceptance:false};report.queueObservation={sampleEveryMs:100,samples:queueSamples,clientSamples:clientResult.clientQueueSamples,maxWriterDepth:Math.max(0,...queueSamples.map(r=>r.writerDepth)),maxOldestWriterAgeMs:Math.max(0,...queueSamples.map(r=>r.oldestWriterAgeMs)),maxMainRssBytes:Math.max(0,...queueSamples.map(r=>r.mainRssBytes)),commandHoldsOver600Ms:commandHolds,maxPendingCommandAgeMs:Math.max(0,...commandHolds.map(r=>r.ageMs)),scope:'Server main writer FIFO sampled separately from generator input-await age. Not browser visual stop measurement.'};
+ report.clientTransport={implementation:'Actual pinned Core511Transport + OwnPrediction in separate OS process, no simulated server acknowledgements',inputFrameIntervalMs:50,authoritativeMovementMinimumMs:200,motionPreviewMinimumMs:50,predictionLimitMs:600,attackMinimumMs:1300,eligiblePotionMinimumMs:2000,heartbeatIntervalMs:5000,rankedActorCount:Math.ceil(count/2),actors};
+ report.deliveryIdentity.afterSHA256=createHash('sha256').update(fs.readFileSync(ingressPath)).digest('hex');report.deliveryUnchanged=report.deliveryIdentity.afterSHA256===ingressSHA256;
+ report.runtimeCancelledInputCount=clientResult.runtimeCancelledInputCount;report.passScope='Native economy, healthy transport/no faults or live input cancellation, drained slots, unchanged core and delivery ingress. Latency and caps are a separate performance gate.';report.ackSemantics='Generator wire input-to-result latency; attack202 is provisional. Native writer waits/durable outcomes separate. Real600ms OwnPrediction cap; no rendered FPS inference.';report.passed&&=report.sourceUnchanged&&report.deliveryUnchanged&&errors.length===0&&report.runtimeCancelledInputCount===0;if(!report.passed)process.exitCode=1;
+}catch(error){report={...report,error:{message:error.message,stack:error.stack}};process.exitCode=1;}
+finally{
+ clearInterval(queueTimer);const cleanupErrors=[];
+ if(generator?.connected){try{await command('close');}catch(error){cleanupErrors.push(error.stack);}generator.disconnect();}
+ if(ingress)try{await ingress.close();}catch(error){cleanupErrors.push(error.stack);}
+ for(const cleanup of cleanups.toReversed())try{await cleanup();}catch(error){cleanupErrors.push(error.stack);}
+ if(cleanupErrors.length){report.cleanupErrors=cleanupErrors;report.passed=false;process.exitCode=1;}
+ fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({event:'native_mixed_finished',players:count,passed:report.passed,error:report.error?.message,errors:report.errors?.length,p99:report.commandLatencyMs?.p99,max:report.commandLatencyMs?.max,out:out.pathname}));
+}

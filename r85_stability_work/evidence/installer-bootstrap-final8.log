@@ -1,0 +1,14 @@
+usage: bootstrap-smoke.zip [-h]
+                           (--check | --apply | --recover | --rollback-latest | --disk-report)
+                           [--archive ARCHIVE]
+
+R85: verified in-place game update, with code-only recovery and an intact DB.
+
+options:
+  -h, --help         show this help message and exit
+  --check
+  --apply
+  --recover
+  --rollback-latest
+  --disk-report
+  --archive ARCHIVE

@@ -1,0 +1,1 @@
+ALTER TABLE `players` ADD `last_regen_at` integer DEFAULT 0 NOT NULL;

@@ -1,0 +1,20 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/world-loop.mjs",
+  "sourceSha256": "c036a52e4959150f4aa5f2799e89090e99da3de2f6dbda154bef305f28fe7185",
+  "methodSha256": "7a01b253887ee2ae481cfa6d27145e59a8ca5baea28f4334fff29df45d5ea996",
+  "generatedSha256": "1f504d4d4a0c5b2054756d6213bdc4bb33cfd9affd2a8f10dfd370d8f7e43568",
+  "extractedSha256": "79ce88f140c28d6c11f51b70f398c5853e73d7e2cb3556737b1534e3f398fd7f",
+  "adaptation": "count-checked R19 ordinary-map adventure hooks",
+  "edits": [
+    "candidate scope lookup uses spatial grid",
+    "rune/black boss id families extended to channel4",
+    "immutable engagement JSON parsed once per changed row"
+  ],
+  "fullAiIntegrationComplete": false,
+  "r53MemoryAdapter": {
+    "priorGeneratedSha256": "c86002b73b3591f291be00da6b026fef5eab54924d4a09fa73adfd27f5f40fcf",
+    "currentGeneratedSha256": "1f504d4d4a0c5b2054756d6213bdc4bb33cfd9affd2a8f10dfd370d8f7e43568",
+    "scope": "Only memory lookup/engagement representation adapters. Native attack/retaliation formula bodies, reward rules and writer extraction are unchanged. Exact inverse patch in R53 evidence."
+  }
+}

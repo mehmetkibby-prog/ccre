@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: exact snapshot callback revives forest to forest after optimistic operation releases
+ok 1 - exact snapshot callback revives forest to forest after optimistic operation releases
+  ---
+  duration_ms: 5.227721
+  type: 'test'
+  ...
+# Subtest: heartbeat revision ahead of a held snapshot recovers forest to forest once optimistic operation releases
+ok 2 - heartbeat revision ahead of a held snapshot recovers forest to forest once optimistic operation releases
+  ---
+  duration_ms: 1.1997
+  type: 'test'
+  ...
+# Subtest: exact snapshot callback revives rune_v2 to bazaar after optimistic operation releases
+ok 3 - exact snapshot callback revives rune_v2 to bazaar after optimistic operation releases
+  ---
+  duration_ms: 1.259832
+  type: 'test'
+  ...
+# Subtest: heartbeat revision ahead of a held snapshot recovers rune_v2 to bazaar once optimistic operation releases
+ok 4 - heartbeat revision ahead of a held snapshot recovers rune_v2 to bazaar once optimistic operation releases
+  ---
+  duration_ms: 9.257726
+  type: 'test'
+  ...
+# Subtest: fresh snapshots cannot revive a newer death with stale authority
+ok 5 - fresh snapshots cannot revive a newer death with stale authority
+  ---
+  duration_ms: 0.964902
+  type: 'test'
+  ...
+# Subtest: cross-area respawn event clears a held optimistic snapshot and duplicate revision cannot repeat revival
+ok 6 - cross-area respawn event clears a held optimistic snapshot and duplicate revision cannot repeat revival
+  ---
+  duration_ms: 1.203307
+  type: 'test'
+  ...
+# Subtest: old private respawn notification cannot revive a newer authoritative death
+ok 7 - old private respawn notification cannot revive a newer authoritative death
+  ---
+  duration_ms: 3.979551
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 563.847972

@@ -1,0 +1,145 @@
+{
+  "version": "R84_GAMEPLAY",
+  "sourceVersion": "R83_GAMEPLAY",
+  "recordedUtc": "2026-10-31T13:27:05.411906+00:00",
+  "productionFiles": {
+    "core511-source/scripts/core511/native-bootstrap.mjs": {
+      "before": "5310063cb758defe9974fb420c53e0fd511005d1e2c944b34653c3dd38a1ef21",
+      "after": "414ceef1ac133b2fa1a3e0975f58da0dc40994db1ac420ea684cd2b65637ed88",
+      "bytes": 3392
+    },
+    "core511-source/scripts/core511/global-world-coordinator.mjs": {
+      "before": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+      "after": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+      "bytes": 21381
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "63732cba846952bc7d71b82f04bb6c592fabec38ddcd87952a704889008a16cb",
+      "after": "000218daabe25c2ea9f39c0a51e4df9d4a37a65713778c8cb0f1eb7ea689792e",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "5b9bb228b9e59fbb514d43d4937656a5d7c8f987604ec8f502901bcdd542298b",
+      "after": "590befaac0235e8cfaa10ba3bae585c89c528cbac07012a0c74c26b22e8b8adc",
+      "bytes": 358418
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "05506c2d696a082063f090238a36b869d2ff5d4143e123203fb203d9b3582b09",
+      "after": "8a4c99bf980c8670bd913bd5180a66cb8bab6077b6f513fe739b1aebe4309d24",
+      "bytes": 154901
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r84-1295951c6cf23767.js": {
+      "before": null,
+      "after": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+      "bytes": 1642572
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+      "after": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+      "bytes": 2229879
+    }
+  },
+  "sourceCoreSHA256": "dddf16515a7061a88b9aa1543b3c692fcc5383f09602e34e31c04c8c7625d172",
+  "targetCoreSHA256": "a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365",
+  "passedTests": 200,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "groups": [
+    {
+      "name": "clientJoin",
+      "passed": 19,
+      "scope": "controlled virtual-time HTTP/WebSocket peers and React setters; source-exact candidate controller, request wrappers, selection/creation callbacks and channel dialog; no live VDS measurement",
+      "file": "client-join-results.json"
+    },
+    {
+      "name": "channelDisplay",
+      "passed": 32,
+      "scope": "8 source-exact/SQLite scenarios in 4 feature combinations; OS/live entry not simulated end-to-end",
+      "files": [
+        "channel-display-default.json",
+        "channel-display-0-0.json",
+        "channel-display-0-1.json",
+        "channel-display-1-0.json"
+      ]
+    },
+    {
+      "name": "recoveryCompletion",
+      "passed": 30,
+      "scope": "Complete source class bodies with controlled process and database I/O; actual RecoveryRetry and WorldProcessSupervisor.startJobs; not full VDS integration",
+      "file": "recovery-finalization-results.json"
+    },
+    {
+      "name": "recoveryOwnerReadiness",
+      "passed": 16,
+      "scope": "Four focused schedules across original/guarded and watchdog0/1. Exact current callbacks/methods; process, boot, exit fence and durability ports controlled. Not live VDS evidence.",
+      "file": "recovery-owner-readiness-results.json"
+    },
+    {
+      "name": "installerAndBuilder",
+      "passed": 103,
+      "scope": "Actual R84 Python installer, SQLite backup/quick_check, filesystem, flock, atomic replacement, immutable graph/hardlinks, STATE and crash journals. OS service/account HTTP and full external release verification use isolated fixtures. Final actual payload and client metadata are separately hash-checked.",
+      "file": "installer-evidence.json"
+    }
+  ],
+  "counting": "Includes expected baseline reproductions, negative controls and candidate regressions; not 200 independent live-user journeys. Four standalone client baseline demonstrations are retained but not added to this total.",
+  "evidenceSHA256": {
+    "RECOVERY_FINDINGS.txt": "e413cb2f4efffb91ddf4dd255ce42ff9d3bd9bb28d4fbded598b72f0ff76c303",
+    "SHARED_UNKNOWN_EVIDENCE.txt": "37e02b8b113d61fd3cb2533740c653ae65e823ede8e03a9dafeef97c2ddaec29",
+    "channel-display-0-0.json": "755d9b936a2053893a517d197632f743443bbb9e2248f2c31583f8c19476f0be",
+    "channel-display-0-1.json": "30f1c97d3e64f58a60182dcb1cc08bf1557867a23533d1c3570ef874ed3acf5c",
+    "channel-display-1-0.json": "dde44cb4b6c43c2e66b585dfe7c431225a698bdc7c1e86e76531461a6196dcd0",
+    "channel-display-default.json": "87cab965c97745c4234bed5589e6653ee96693d24f6f4d22797b47a4c3c4a6c0",
+    "client-join-baseline.json": "f0252144736f0fd48f7093100c57f0e49c776c5f0d72459b71997b2c991286f3",
+    "client-join-results.json": "3040f4d85ee56c7550cb9c2f05027023b1dff5cc51d6cdcee74182c858bc8a72",
+    "incident-evidence.json": "3a8982e3ee63ea3fe3a1eb62a9e8af7a89986ac1620b6c764bb004dd25566104",
+    "installer-builder-results.txt": "60c69882bdfe0434b65075700015a992d9880714969fcf431ad44c67d62339d8",
+    "installer-client-results.txt": "2151a0571ceb1b1567d2e63f4a25ab55802bd807526e11f37bb98a6004196205",
+    "installer-evidence.json": "57100a2f4bd1e063a7b460b6fd8854c7f2e7d544813964c143c9ec983f15f7a9",
+    "installer-gates-results.txt": "880e59ad748368529be7ca46253fcef0c384cbde995a2aad92c3b78332f93178",
+    "installer-inplace-results.txt": "6dab0681738ccdbf0a5ddd79b94579849efbce6d0fd9b08e10bf001a7229187c",
+    "recovery-finalization-results.json": "7e1970cacb3444015373cf33a9abbd3f3080b07b54d729be1f595216e73ca440",
+    "recovery-owner-readiness-results.json": "5c7f48b326d52630757ecfcc40c618d7e1dfbb9c046c709ad710291d83e5a57a",
+    "source-verification.json": "5d81fcbd4c501f66ae225d7cfb794b60862df29b64184531139cd669d0243261"
+  },
+  "knownIncident": {
+    "journalScreenshot": "upload/01-12683.jpg",
+    "unknownAtUTC": [
+      "2026-10-31T12:33:36.424Z",
+      "2026-10-31T12:33:55.723Z"
+    ],
+    "unknownRequestMethod": "shared_expireUnknown",
+    "globalWorldBusyIsSecondary": true,
+    "originalWriterFaultCodeKnown": false,
+    "originalFaultWindowUTC": [
+      "2026-10-31T12:33:24Z",
+      "2026-10-31T12:33:47Z"
+    ],
+    "initiatingLagCauseFixed": false
+  },
+  "preserved": [
+    "Durable receipt and certified rollback requirements",
+    "Actual owner termination before replacement",
+    "Existing watchdog and shutdown policy",
+    "Account/presence authentication and serialized mutation authority",
+    "Current player database during code rollback",
+    "Old immutable browser graph",
+    "Node/SQLite runtime bytes"
+  ],
+  "limitations": [
+    "No live VDS deployment or load test performed",
+    "42 current source files unavailable locally; exact manifest pins kept and files untouched",
+    "Controlled process/durability and browser ports; not complete native/server/browser integration",
+    "Initial shared_command_outcome_unknown writer error remains undetermined"
+  ],
+  "liveDeploymentPerformed": false,
+  "databaseChanges": false,
+  "sourceFilesAdded": 1,
+  "sourceFilesChanged": 7,
+  "rootReview": {
+    "productionSyntax": true,
+    "clientRegressionRerun": true,
+    "displayRegressionRerun": true,
+    "candidateBytesMatchEvidence": true,
+    "independentServerReview": "No blocking issue found in final current candidate after owner-generation guard"
+  }
+}

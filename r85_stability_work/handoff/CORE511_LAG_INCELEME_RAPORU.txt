@@ -1,0 +1,415 @@
+CORE OF LIFE — TOPLU LAG VE KİLİTLENME İNCELEMESİ
+31 Ekim 2026
+
+DURUM
+Bu belge kaynak incelemesi, kontrollü hata üretimi ve yerel düzeltme adaylarını
+anlatır. Canlı sunucuya kurulmuş bir güncelleme veya bütün lag sorunlarının
+çözüldüğüne ilişkin bir rapor değildir. VDS bağlantısı kurulmadı; canlı oyun,
+oyuncu kayıtları ve yönetici tarafından belirlenen oyun durumu değiştirilmedi.
+
+İstemcide gecikmeyi büyüten dört davranış doğrulandı ve birlikte düzeltildi.
+Sunucunun grup işlemlerini iptal etme/toparlanma yollarında da ayrı kusurlar
+doğrulandı; dar bileşen adayları bağımsız kontrolden geçti. Hareket onayının ilk
+neden geciktiği henüz kesinleştirilmedi. Tam oyunu çalıştırabilmek için yerel
+çalışma kopyasında eksik olan 42 tam kaynak dosyasına ihtiyaç var. Bunlar
+sunucuda eksik demek değildir; burada bulunan güncelleme paketleri tam kurulum
+değil, değişiklik paketleridir.
+
+1. KULLANILAN KAYNAK VE KANIT SINIRLARI
+
+Yerel inceleme tabanı: dondurulmuş R84 çalışma ağacı.
+R84 çekirdek kimliği:
+a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365
+
+R84 oyun istemcisi:
+game-client-core511-r84-1295951c6cf23767.js
+SHA256:
+1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b
+
+Bu istemcinin gerçekten referans verdiği taşıma kodu R79 adlı dosyadır:
+core511-transport-r79-715e78ecd9021ea8.js
+SHA256:
+715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc
+Dosyanın adında eski sürüm yazması, tek başına yanlış dosyanın çalıştığı
+anlamına gelmez; aktif referanslar ve içerik özeti birlikte incelendi.
+
+Canlı VDS'nin kurulu sürümü ve çalışan süreçlerinin tam dosya kimliği bu
+çalışmada henüz gözlenmedi. Ekran görüntülerindeki sürüm yazıları tek başına
+mevcut kurulumun bütün dosyalarını doğrulamaz.
+
+Son Discord görseli, oyuncuların hareket ederken takıldığına ve bir süre sonra
+hareket edemediğine ilişkin belirti kanıtıdır. Görseldeki saatlerin sunucu UTC
+saatiyle eşleştirilmesi henüz yapılmadı. Görselden belirli bir sunucu hatasının
+tam zamanını veya tek kök nedeni çıkarmıyoruz.
+
+2. DOĞRULANAN İSTEMCİ KUSURLARI
+
+A) Otomatik ganimet toplama bütün oyun komutu kuyruğunu doldurabiliyor.
+
+Gerçek istemci toplama işlevi, gerçek 120 ms zamanlayıcı ve mevcut taşıma
+uygulaması çalıştırıldı. Bir toplama işleminin sunucu sonucu bekletildiğinde
+4,68 saniyede 33 toplama komutu oluştu: biri etkin, 32'si kuyrukta. Ardından
+oyuncunun saldırısı input_backpressure ile reddedildi. İlk işlemin 8 saniyelik
+arayüz zaman aşımı henüz dolmadan bu durum oluşuyor.
+
+Ayrıca arayüz 8 saniyede vazgeçince yerel hedef kilidi kalkıyor. Asıl komut
+hâlâ taşıma katmanında beklerken aynı ganimet 9,5 saniye civarında yeniden
+kuyruğa eklenebiliyor. Bağlantı kurulmadan önce bekleyen manuel toplamada da
+aynı hedefin iki kez gönderilebildiği ayrı olarak üretildi.
+
+Yerel adayın davranışı:
+- Hedefin gerçekten etkin/ikincil/kuyrukta olan komutunu da kontrol eder.
+- Otomatik toplamada toplam iki bekleyen hedefe izin verir.
+- Aynı hedefi, eski komut sonuçlanmadan yeniden sıraya koymaz.
+- Yeni toplama için bağlantının gerçekten hazır olmasını bekler.
+- Hazır bağlantıda farklı hedeflere yönelik bilinçli manuel toplamayı korur.
+- Envantere eşya yazma, ödül verme, sunucu yetkisi ve kalıcılık kuralları
+  değiştirilmez. İstemci testleri veritabanı işlemlerini çalıştırmış sayılmaz.
+
+Ölçülen bedel: 12 ganimetin sürekli 40/100/120/180/300/600 ms sonuç gecikmesiyle
+toplanması önceki ve aday sürümde aynı zamanda tamamlandı. Yapay bir toparlanma
+senaryosunda ilk üç sonuç 600 ms, kalanlar 20 ms sürdüğünde toplam süre
+1.980 ms'den 2.660 ms'ye çıktı. Bütün grup için 680 ms fark, kuyruk bir anda
+boşaldığında mevcut 120 ms otomatik toplama turunu beklemekten kaynaklanıyor.
+
+B) Saldırının arayüz zaman aşımı, asıl saldırıyı iptal etmiyor.
+
+8 saniyede arayüz beklemeyi bırakıyor; kabul edilmiş komut taşıma katmanında
+kalıyor. Önceki yerel yetenek kilidi kalktığı için aynı yetenek yeniden sıraya
+giriyor. İkinci arayüz beklemesi de sona erdikten sonra ilk onay geç gelirse,
+artık oyuncunun güncel niyetini temsil etmeyen ikinci saldırı gönderilebiliyor.
+
+Yerel aday aynı yeteneğin gerçek komut sahipliğini kontrol ederek bunu önlüyor.
+Farklı yeteneklerin mevcut bağımsızlığı, komut sırası, sunucu saldırı aralığı
+denetimi ve yeniden bağlanma davranışı korunuyor. Bağlantı kurulurken henüz
+kuyruk satırı olmayan aralık da kontrol edildi. İlk dünya isteği bağlantıyı
+kurmaya devam ediyor; saldırı kapısı bağlantıyı başlatmak için gerekli değil.
+
+C) Otomatik iksir de sonucu belirsizken yeniden sıraya girebiliyor.
+
+Açık dünya ve zindan için gerçek otomatik iksir koduyla üretildi. İlk iksir
+2. saniyede gönderiliyor; arayüz 10. saniyede zaman aşımına uğruyor; 10,5.
+saniyede yeni otomatik iksir eski komutun arkasına giriyor. Geç gelen ilk onay
+ikinci, artık zaman aşımına uğramış isteği gönderebiliyor.
+
+Yerel aday, mevcut açık dünya veya zindan iksir komutu sonuçlanana kadar yeni
+otomatik iksiri bekletiyor. Bilinçli manuel iksir tekrarları korunuyor.
+Sağlıklı durumda otomatik kullanım zamanları her iki sürümde de aynı kaldı:
+2, 4, 6, 8 ve 10. saniye. Bekleyen iksir sırasında ölüm ve geç sonuç durumu
+ayrıca kontrol edildi; istemci kendiliğinden dirilme sonucu uydurmuyor.
+
+D) Düzenli bağlantı bildirimleri (heartbeat) de gereksiz komut biriktiriyor.
+
+Mevcut heartbeat işlevi, 5 saniyelik normal zamanlayıcısı ve gerçek taşıma kodu
+ile üretildi. İlk sonuç 25 saniye bekletildiğinde 10. ve 20. saniyelerde yeni
+bildirimler kuyruğa girebiliyor. İlk onay gelince arayüz beklemesi çoktan sona
+ermiş bildirim de gönderiliyor. İlk bağlantı 20 saniye sürerse bağlantı henüz
+kurulmadan üç mutasyon isteği birikebiliyor.
+
+Birleşik aday bağlantı bekleyişini core ve oyuncu kimliğine bağlı tek bir
+bekleyişte tutuyor; gerçek heartbeat komutu beklerken yenisini üretmiyor.
+Heartbeat'in bağlantıyı başlatma rolü korundu. Başka türde komutların bulunması
+normal bildirimi engellemiyor. Sağlıklı durumda 0/5/10/15 saniye aralığı aynı;
+bağlantı geri alma, kanal geçişi, aynı/farklı epoch ile yeniden bağlanma,
+eski oyuncu yanıtı, ölüm/AFK/arka plan ve 429 durumları ayrıca kontrol edildi.
+17 heartbeat kontrolü, diğer 39 davranışla aynı birleşik dosya üzerinde geçti.
+
+Birleşik istemci adayının kimliği:
+game-client-core511-r85-b25e12cf61072ebe.js
+SHA256:
+b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7
+Boyut: 1.646.905 bayt.
+Tek geçerli birleşik manifest: movement/combined-client-candidate.json.
+Bir üretim dosyasında sekiz dar değişiklik; ters uygulandığında bütün R84
+dosyası bire bir geri elde ediliyor. Aday yayımlanmadı veya kurulmadı.
+
+3. HAREKETİN NEDEN HÂLÂ DURABİLDİĞİ
+
+Bu bölüm düzeltmenin sınırını gösterir; aşağıdaki gecikmeler kontrollü test
+eşinden üretildi, canlı VDS'den ölçülmedi. Tam mevcut taşıma ve hareket tahmini
+kodu çalıştırıldı. Sunucu tarafındaki veritabanı yazıcısı bu testte çalışmadı.
+
+Koşul                              Önceki istemci     Aday
+40 ms sıralı sonuç, 6 sn yürüyüş     Durma yok          Durma yok
+300 ms sıralı sonuç, 6 sn yürüyüş    2.960 ms durma     2.960 ms durma
+Aynı testte en uzun tek durma       560 ms            560 ms
+Aynı testte en büyük normal kuyruk  32                1
+İlk toplama sonucu 5 sn gecikince:
+  İlk hareketin gönderilmesi        20 ms             20 ms
+  İlk hareketin onayı               5.040 ms          5.040 ms
+  En uzun tek durma                 4.420 ms          4.420 ms
+
+Karakterin gösterilen konumları her karşılaştırmada aynı kaldı. Taşıma katmanı
+toplama yanında hareket gönderebiliyor; asıl hareket sonucu gelmeyince mevcut
+600 ms tahmin sınırına ulaşılıyor ve hareket duruyor.
+
+Sonuç: otomatik toplama kuyruğunun düzeltilmesi saldırının reddedilmesini ve
+gereksiz yükü azaltır. Ancak ilk sunucu beklemesi korunuyorsa hareket durması
+da korunur. Bu nedenle yalnız istemci adayını kurup bütün lag düzeldi demek
+desteklenmiyor. Tahmin süresini uzatarak gecikmeyi saklamak da bu çalışmanın
+çözümü değildir.
+
+4. DOĞRULANAN SUNUCU TOPARLANMA KUSURLARI
+
+Birden fazla kanaldan gelen hata bilgileri kaybolabiliyor:
+Bir grup işleminde iki kanal farklı oyuncular için doğrulanmış durdurma bilgisi
+döndürdüğünde, ilk hatada reddedilen Promise.all yalnız ilk hata bilgisini
+üst katmana taşıyor. Diğer reddedilmiş oyuncu sağlıklı/dondurulmuş sanılabiliyor.
+Bu oyuncuya yanlış yenileme isteği gönderilmesi resident_control_fenced
+hatasına, sağlıklı bir başka oyuncunun da askıda kalmasına yol açabiliyor.
+
+Aynı kanaldaki farklı hata türleri birbirini örtebiliyor:
+Bir oyuncunun doğrulanmış durdurma bilgisiyle başka oyuncunun sonucu belirsiz
+komutu birlikte korunmalı. Yalnız ilk hata koduna bakılması bu ayrımı bozuyor.
+Bağımsız aday incelemesi ayrıca ilk düzeltme taslağında bir güvenlik açığı
+yakaladı: bir oyuncunun pending kaydı, aynı gruptaki diğer oyuncuların pending
+durumunu kanıtlamaz. Bu ek bulgu R84'ün kök hatası diye sayılmıyor. Taslakta
+her oyuncunun güncel sahip/epoch/kanal/süreç kimliğiyle ayrı eşleştirilmesi ve
+bilginin gerçek kontrol iletişimi sınırında doğrulanması gerektiği görüldü.
+
+Dış kanal kontrolü hiç başlamamış bir grubu reddedebiliyor:
+Gerçek ChannelRuntime ön kontrolü, bir oyuncuda bekleyen kabul edilmiş komut
+varsa bütün freeze_group isteğini ResidentControl başlamadan reddediyor.
+Önceki iptal yolu, hiç dondurulmamış sağlıklı üyeye refresh göndererek yeni
+hata yaratabiliyor. Bağımsız inceleme bu sınırı, yalnız alt bileşeni çalıştıran
+ilk testlerden sonra yakaladı. Adayda gerçekten hiç başlamayan üye ile işlem
+başladıktan sonra reddedilen üye ayrı, doğrulanabilir bilgilerle ele alınıyor.
+
+Grup iptali başarısız olursa grup kaydı askıda kalabiliyor:
+Transfer iptalindeki hata, sonraki fail çağrısına ulaşılmasını engelleyebiliyor.
+Grup kaydı, freezing geçişi ve bekleyen tamamlanma sözü temizlenmeden kalıyor.
+Aday, bilinmeyen sonucu başarılı saymadan mevcut güvenli kurtarma yoluna
+bildiriyor; bu aşamada yeniden yazmaya veya kilidi keyfî kaldırmaya izin vermiyor.
+
+Cevabı hiç gelmeyen kardeş kanal toparlanmayı engelleyebiliyor:
+Hazırlık aşamasında bir kanal hata verirken diğeri sonsuza kadar bekliyorsa,
+koşulsuz allSettled beklemesi kurtarma başlangıcını engelliyor. Erken aday
+incelemesinde aynı risk yakalandı. Doğrulanamayan hata hemen mevcut kurtarmaya
+iletilecek, sınırlı hazırlık beklemesi de yalnız kurtarmayı başlatacak biçimde
+ele alınıyor. Süre dolması işlemin yapılmadığını veya geri alındığını kanıtlamaz.
+
+Geç sonuçların yeni sahip/grup durumunu bozması:
+Hata sonrası eski isteğin geç gelen onayı, yeni grup veya yeni dünya sahibini
+başarılı dondurulmuş gibi işaretleyememeli. Adaydaki kontroller, tam grup,
+token, sahip ve aşama kimliğine bağlanıyor. Özel hata kanıtları gerçek kontrol
+iletişiminin JSON serileştirme sınırında da ayrıca doğrulanıyor.
+
+Bu kusurlar bileşen düzeyinde üretildi. Oyuncunun son bildirdiği her durmanın
+aynı nedenden oluştuğunu veya ilk yazıcı hatasının bulunduğunu göstermez.
+Sunucu adayının son pinleri ve bağımsız değerlendirmesi, çalışma alanındaki
+r85-investigation/writer ve r85-investigation/source-recovery kanıtlarıyla
+birlikte tutuluyor. Tam oyun kabulü aşağıdaki eksik kaynak engeline bağlıdır.
+
+Sunucu adayının son pin manifesti SHA256:
+c0bd10b3692105c260927b3025bbb83423eda2721ecb630adf31f0e7dc7f2f88
+Birleştirilmiş patch SHA256:
+cff189bdc811cac6c9bd91b9f3cb2ec61a77fbe88474b108e1f1c2f894072c66
+Sekiz mevcut modül ve iki yeni yardımcı dosya içerir.
+62 yazar kontrolü ve 18 bağımsız kontrol, toplam 80 başarılı test çalıştırması.
+Bazı senaryolar örtüşür; 80 ayrı hata veya 80 tam oyun senaryosu anlamına gelmez.
+
+Adayın yeni 10 saniyelik hazırlık sınırı bir performans hedefi veya kalıcı
+işlem iptali değildir. Sadece mevcut güvenli toparlanma yolunu başlatır.
+Gerçekten uzun süren meşru grup işleri ve gereksiz toparlanma oluşmaması tam
+oyun testinde doğrulanmalı. Eski/yeni süreçlerin karışık çalışmasına yönelik
+uyumluluk garantisi verilmez; kontrol protokolü dosyaları birlikte kurulmalı.
+
+Son diff incelemesinde, iç freeze hatasının dış admit_held yanıtına yeni kanıt
+olarak taşınmasının bağlantıyı kapattığı bir taslak regresyonu da üretildi ve
+kapatıldı. Dış işlem zaten başlamış olabileceği için yalnız hata kodu döner;
+"hiç başlamadı" bilgisi yalnız kendi freeze kontrol kapsamına bağlı kalır.
+Alıcının sahte veya yanlış kapsamdaki kanıtı reddetmesi korunur. Bu da R84'ün
+ilk canlı hatası diye sayılan bir bulgu değildir.
+
+5. HENÜZ KESİNLEŞMEYENLER
+
+- İlk kalıcı oyun komutu/hareket onayı gecikmesinin gerçek nedeni.
+- Eski kayıtların önündeki asıl yazıcı hatası. Görseldeki
+  shared_command_outcome_unknown, ardından global_world_busy ve
+  game_instance_expired zinciri tek başına ilk hatayı açıklamıyor.
+  12:33:24–12:33:47 UTC aralığındaki ilk core511_fault kaydı özellikle gerekli.
+- Tam güncel yerel sunucuda ölüm, dirilme, ganimet, envanter ve ödül işlemlerinin
+  kopma/tekrar bağlanma sırasında kayıpsız ve çift uygulanmadan tamamlanması.
+- Tarayıcı çizim döngüsünün gerçek mobil/PC uzun görevleri ve ağ gecikmesiyle
+  aynı zaman çizelgesinde incelenmesi. Yerel HTTP süresi oyuncu pingi değildir.
+- Uzun süreli karma yükte gerçek 50 oyuncu kapasitesi.
+- Genel envanter/üretim/yükseltme/satış mutasyonlarında zaman aşımı sonrası
+  arayüz davranışı. Hepsi aynı isimle tekilleştirilemez; kasıtlı tekrarlar ve
+  farklı satın alma/yükseltme niyetleri birbirine karıştırılmamalı.
+- fr2 > 0 iken oyuncunun eski satırını koruyan snapshot birleştirmesinde HP ve
+  ölüm sürümü güncellemelerinin olay/doğrudan sonuç yollarıyla birlikte testi.
+  Kaynakta olay ve doğrudan sonuç yollarının fr2'den bağımsız HP/ölüm güncellediği
+  de görüldü. Yeni snapshot/olay/dirilme entegrasyon testi çalıştırılmadı. Altı
+  ilgili kaynak dilimi son adayda bire bir korunuyor. Bu kod hareketin kanonik
+  durumunu doğrudan yönetmiyor; kanıtlanmış hareket durması nedeni sayılmıyor.
+
+6. CPU GÖSTERGESİ VE 50 OYUNCU SORUSU
+
+Paneldeki busyPercent, ilgili işlem döngüsünün meşgul olma ölçüsüdür; bütün
+VDS'nin CPU yüzdesiyle aynı ölçüm değildir. Bir oyuncuda %40 görülmesi, 50
+oyuncuda yüzdeyi doğrusal çarpıp çökme sonucu çıkarmaya yetmez. Bunun tersi de
+doğru: ortalama CPU düşük diye kalıcı sonuç bekleyen oyuncunun takılmadığı
+söylenemez. Asenkron bekleme sırasında CPU sakin olabilir.
+
+Kapasite kararı; toplam/işlem/ana iş parçacığı CPU, komut kuyruk yaşı, kalıcı
+sonuç süresi, hareket onayı, tick ve event-loop gecikmelerinin p95/p99/en yüksek
+değerleri, disk beklemesi ve oyuncu deneyimi birlikte ölçülerek verilecek.
+Tek ekran görüntüsünden 50 kişi kaldırır veya çöker iddiası çıkarmıyoruz.
+
+7. NEDEN 42 KAYNAK DOSYASI İSTENİYOR?
+
+İncelenen Git deposu tam çalışma ağacı yerine eklemeli güncelleme paketleri
+içeriyor. 25 dal, 18 üst ZIP ve 12 iç ZIP taramasında eksik 42 dosyanın gereken
+tam SHA256 kimlikli gövdeleri bulunamadı. Eski sürümde aynı adlı dosya bulmak,
+onu güncel dosya kabul etmek için yeterli değil.
+
+Eksiklerin içinde action-writer.mjs, player-jobs.mjs,
+resident-world-transition.mjs, native-presence.mjs,
+generated/native-http-services.mjs ve generated/reward-services.mjs bulunuyor.
+Bunlar gerçek yazıcı, HTTP bağları, ödül ve dünya geçişi testlerini etkiliyor.
+Toplam 42 dosya 9.846.424 bayt. R83 ve R84 manifestlerinde bu üyeler aynı.
+
+Tam kaynak gelmeden eski kodla boşluk doldurup alınan sonuçlara güncel oyunun
+yük testi denmeyecek. Kontrollü test eşleri zaten açıkça böyle etiketleniyor.
+
+8. TEK SEFERLİK SALT OKUNUR TANILAMA
+
+Dosya: CORE511_TANI_ARACI.zip
+Boyut: 92.525 bayt.
+SHA256:
+da60fbf9f173a75799201ac9b8916f1b48d85ff3749d7cecfbd43defd5610b2b
+
+Bu araç bir güncelleme kurmaz. Oyun servisini durdurmaz/yeniden başlatmaz,
+bakım ayarını değiştirmez, veritabanı açmaz. Yalnız yeni bir rapor ZIP'i üretir.
+
+Yaptıkları:
+1) Sabit listedeki 42 kaynak dosyasını boyut ve SHA256 ile doğrular. Bir üye
+   uyuşmazsa kaynak ihracatını durdurur; eski/yanlış dosyayı güncel saymaz.
+2) Bilinen R83/R84 çekirdek/HTTP dosyalarının kimliğini sınırlı okuma ile
+   karşılaştırır. Bu, bütün kurulumun veya çalışan süreç belleğinin tam
+   doğrulanması değildir; raporda sınırı açıkça yazılıdır.
+3) 120 saniye süreç/ana iş parçacığı/host CPU, bellek basıncı ve yerel sağlık
+   örnekleri toplar. Örneklerde UTC zamanını tutar.
+4) Son 12 saatten yalnız seçili yapılandırılmış hata olaylarını okur. Ham
+   günlük, oyuncu/oturum kimlikleri, SQL, .env veya ayar dosyaları eklenmez.
+5) Bir hata/eksik durumunu sıfır veya başarılı ölçüm gibi göstermeden raporlar.
+
+Dosyayı VDS üzerinde /root/CORE511_TANI_ARACI.zip olarak yerleştirip aşağıdaki
+komutun tamamını çalıştır:
+
+(
+  set -euo pipefail
+  cd /root
+  printf '%s\n' 'da60fbf9f173a75799201ac9b8916f1b48d85ff3749d7cecfbd43defd5610b2b  CORE511_TANI_ARACI.zip' | sha256sum -c -
+  python3 -u /root/CORE511_TANI_ARACI.zip --duration 120 --journal-hours 12
+)
+
+Ölçüm 120 saniyedir; kaynak ve günlük okuması ek süre alabilir. Mümkünse
+oyuncular sorunu yaşarken çalıştır. O sırada takılma olmasa da kaynaklar ve
+geçmiş hata kayıtları incelenebilir. Kurulumu/güncellemeyi ölçümle aynı anda
+çalıştırma; değişen kaynak kimliği bilinçli olarak kabul edilmez.
+
+Sonunda örneğin şu dosya yolu yazacak:
+/root/CORE511_TANI_YYYYmmdd_HHMMSS_UTC.zip
+
+Geri gereken şey bu sonuç ZIP dosyasının kendisidir; terminal ekran görüntüsü
+değil. Dosyayı VDS'den mevcut dosya aktarımı yönteminle indirip sohbete ekle.
+noVNC terminal ekranıdır; ekranda dosya yolunun görünmesi dosyanın telefona
+indiği anlamına gelmez. Araç dosyayı internete kendisi yüklemez.
+
+KAYNAK: 0/42 yazarsa da oluşan raporu gönder; nedeni ayıklanmış biçimde içindedir.
+Bir dosya adı veya hata ekranına bakıp yeni tahmini yama hazırlamak yerine bu
+paketteki gerçek içerik ve zaman çizelgesi kullanılacak.
+
+9. TAM OYUN DOĞRULAMASI İÇİN KALAN ÇALIŞMA
+
+Kaynak/kurulum:
+- 42 gövdeyi beklenen SHA256 ile doğrula; gerçek kurulu tabanı ayrı belirle.
+- Tam bağımlılıkları sabitle. Tarihî test fixture manifestini güncel kod
+  doğrulaması yerine kullanma; Node/SQLite ve HTTP adaptörü kimliğini tut.
+- Bütün adayları ayrı bir çalışma ağacına birleştir; R84 tabanını değiştirme.
+- Yeni istemci dosyasının gerçek sunucu referansını ve önbellek kimliğini yenile.
+
+İşlev ve kalıcılık:
+- Yürüme + sürekli saldırı + ganimet + otomatik iksir eşzamanlı.
+- PvE, PvP, destek becerisi, zindan, grup/kanal/bölge geçişleri.
+- Öldürücü vuruş, ödül, yere düşme, dirilme, sayfa yenileme ve yeniden giriş.
+- Envanter, artı basma, üretim, takas/satış, lonca ve kale savaşı işleri.
+- Admin durumu, otomatik açılış, bakım ve güncelleme sonrasında aynı politika.
+- Her kalıcı işlem için gerçek işlem/receipt denetimi: çift eşya/para/ödül yok;
+  doğrulanmış işlem kaybı yok; eski sahip yeni yazıcı olamıyor.
+
+Hata üretimi:
+- Geç/kayıp/tekrarlı sonuç, kopan bağlantı, istemci zaman aşımı.
+- Aynı ve farklı kanallarda birden fazla oyuncu hatası.
+- İşlem başlamadan reddedilen grup ve başladıktan sonra belirsizleşen grup.
+- Yazma/commit/kalıcılık aşamalarında kontrollü süreç kaybı ve geri dönüş.
+- Cevabı gelmeyen kanal; eski grubun çok geç gelen onayı.
+- Bilinmeyen sonucu başarılı veya geri alınmış saymadan doğru kurtarma.
+
+Yük ve süre:
+- 1, 10, 30 ve toplam 50 etkin oyuncu ile aynı senaryoları karşılaştır.
+- Normal kanal kapasitesini aşmadan dengeli ve tek kanala yoğun yükü ayrı ölç.
+- Kale savaşının farklı kapasite ve ortak-dünya akışını ayrıca çalıştır.
+- Yalnız bağlantı açan botlar yerine gerçekten hareket/saldırı/ölüm/ganimet/
+  sosyal-ekonomi işlemleri yapan istemciler kullan.
+- En az bir saat karma çalışma ve ilgili periyodik işleri kapsayan test;
+  daha uzun zamanlayıcı varsa onu ayrıca doğrulanabilir biçimde tetikle.
+- Yerel test donanımı ile VDS donanımı farkını açık tut. Yerel yük sonucu
+  doğrudan canlı VDS kapasite garantisi olarak yazılmamalı.
+
+Tarayıcı:
+- Masaüstü ve dokunmatik hareket/girdi yollarını gerçek tarayıcıda ölç.
+- Sunucu onayıyla frame/long-task zaman çizelgesini aynı olayda karşılaştır.
+- Ölüm ekranı, F5 sonrası kanal seçimi ve tekrar bağlanma tamamlanmasını izle.
+
+Yayımlama ölçütü:
+- Tekrar üretilen kusurlar önceki sürümde görülüyor, birleşik son adayda
+  görülmüyor ve adayın byte kimliği test kanıtına bağlı olmalı.
+- Sağlıklı senaryoda yeni hareket durması, kuyruk birikimi veya işlev kaybı
+  olmamalı. Hata senaryosunda bekleme sınırlı ve durum dürüst olmalı.
+- Bütün ilgili testlerin yanında test edilmemiş kalan alanlar da yazılmalı.
+- Oyuncu verisi korunmalı. Kod geri dönüşü gerektiğinde güncel oyuncu DB'si
+  kullanılmalı; eski oyuncu veritabanına dönerek ilerleme kaybettirilmemeli.
+- Oyun açık/bakım durumu yöneticinin kaydedilmiş kararından alınmalı.
+
+10. KANIT DOSYALARI VE YENİDEN ÜRETİLEBİLİRLİK
+
+Çalışma alanı kökü: /workspace/scratch/68fd588af980
+
+r85-investigation/movement/MOVEMENT_AUDIT.txt
+r85-investigation/movement/combined-client-candidate.json
+r85-investigation/movement/gameplay-timeout-baseline-evidence.json
+r85-investigation/movement/collect-timeout-baseline-evidence.json
+r85-investigation/movement/potion-timeout-baseline-evidence.json
+r85-investigation/movement/gameplay-pacing-candidate-evidence.json
+r85-investigation/movement/collect-admission-candidate-evidence.json
+r85-investigation/movement/potion-admission-candidate-evidence.json
+r85-investigation/movement/heartbeat-ownership-audit-evidence.json
+r85-investigation/movement/heartbeat-admission-candidate-evidence.json
+r85-investigation/movement/movement-collection-trace-evidence.json
+r85-investigation/writer/candidate-pins.json
+r85-investigation/writer/writer-candidate.patch
+r85-investigation/writer/verification.json
+r85-investigation/writer/WRITER_FINDINGS.txt
+r85-investigation/source-recovery/writer-review-final.json
+r85-investigation/source-recovery/writer-boundary-review-initial.json
+r85-investigation/source-recovery/source-search-evidence.json
+r85-investigation/source-recovery/missing-pinned-manifest.json
+r85-investigation/diagnostics/tool-build.json
+r85-investigation/root-verification.json
+
+İstemci: son birleşik aday üzerinde 56 davranış kontrolü, 7 toplama karşılaştırması,
+2 otomatik iksir zaman karşılaştırması ve 3 hareket/taşıma karşılaştırması.
+Bunlar gerçek taşıma kodu ile kontrollü eş kullanır; tam oyun veya canlı yük
+testi değildir. Tam dosyanın sözdizimi ve geri çevrilebilirliği doğrulandı.
+
+Tanı aracı: 24 birim/işletim kontrolü ve bağımsız 4 rapor yayımlama kontrolü
+geçti. Ek bağımsız günlük ve 7 kaynak çıkarma kontrolü önceki aşamada geçti.
+Son ZIP, oyun kurulu olmayan yerel ortamda gerçekten çalıştırıldı; eksik
+hedefi doğru biçimde 0/42 ve target_unavailable olarak bildirdi. Bu kontrol
+VDS'nin ölçüldüğü veya canlı oyunun test edildiği anlamına gelmez.
+
+Bu çalışma, tekrarlayan sorunları tek bir doğrulanmış adayda toparlamak için
+sürdürülüyor. Şu anda operatörden gereken somut adım tanı aracıyla sonuç ZIP'ini
+almaktır; bu aşamada yeni oyun paketi kurma talimatı verilmemektedir.

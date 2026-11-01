@@ -1,0 +1,1322 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "nativeBodySha256": "1f5e5effda583906fb4bfad4745a33212a87f2257f70e80de4f68534e35eae5b",
+  "nativeHitPlanSha256": "46826f9af5b60fafb9c1a2b2b4e4b3dbc000e615a72d9e8abc7cb10079cb82ae",
+  "generatedSha256": "c736427374cb87e4b04aadb673fb4bde7786d25dddaebcf722c53a2327e25cc9",
+  "writerSha256": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
+  "extractedSha256": "2efb43e15d125ed783cf07838fe69ab74dec22d5b0830df08502d6b0db018f96",
+  "extractedWriterSha256": "35db05f42a55964b7eccc23aef89bdf8f3bddcb6dc4fbf2cfe5586967fad12d4",
+  "adventureAdapterSha256": "7befc664cd8fdcc9b5b0a12743d55d1c492949005fd8f0130178a66605cedbab",
+  "rankingSourceSha256": "2588dd9037feb8a1cad98e166afcae53b72e6148891183d25ad9ee6dd748e51b",
+  "rankingDeclarations": [
+    "prepareRuneV2Winner483",
+    "isRuneV2RankBoss483",
+    "RUNE_V2_WINNER_INSERT_SQL483",
+    "eligible",
+    "runeV2RealPlayerSql483",
+    "RUNE_V2_IDS_SQL483",
+    "RUNE_V2_WINNER_PAY_SQL483"
+  ],
+  "libraries": [
+    {
+      "file": "lib/event-island444.mjs",
+      "sourceSha256": "7ebc7448b7185313146e99368a2929db197e5385142121dcf5aee2af95048c72",
+      "name": "eventKind444",
+      "nativeSha256": "6d8e37dd9b69400e95f88c30f058b5d5b52f71b4f20a9b567bcb9e830466d408",
+      "generatedSha256": "b129c3989c8eaff4dd822e3d52529059d1e2b917e4c8599cba8ff43277d1ca75"
+    },
+    {
+      "file": "lib/rune-v2.mjs",
+      "sourceSha256": "be3553161f000ce60b8131fec1fb26e638ace7db04f2a10043f5162b5711b6bb",
+      "name": "runeV2MonsterKey",
+      "nativeSha256": "35d4044b2ac96ef7ff4f420cdf15209faeccb148754e900b5a523860785ee376",
+      "generatedSha256": "e5f733e4d8e5e916cf3e38d5c3fcd145a66a701bdf70715d955279744dca9a4d"
+    },
+    {
+      "file": "lib/runes.mjs",
+      "sourceSha256": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae",
+      "name": "runeMonsterKey",
+      "nativeSha256": "067500244241510cce865bfd9dfe7d47e632524a885e038a7ded1a22c74c5e48",
+      "generatedSha256": "69da295b7cd655a0f634cfbcf29d47f88589a178ce1df2cbb5ce993f8079d263"
+    },
+    {
+      "file": "lib/rune-drops.mjs",
+      "sourceSha256": "cb9229bf6d387c042d5d2773ee061cac1fb96dec0e3edd7682923b2f6fd85b25",
+      "name": "prepareRuneDrops",
+      "nativeSha256": "0e4fcd1031de8854b4ead4bda3c3182ffc3629b82c681d920e3ca9f4a7f53221",
+      "generatedSha256": "0e4fcd1031de8854b4ead4bda3c3182ffc3629b82c681d920e3ca9f4a7f53221"
+    }
+  ],
+  "eventProfile": {
+    "source": "dist-vds/server/index.js",
+    "sha256": "f52307ebd0359ca26172556b9e1696e94749467e471cdc2e7df443179dde0381"
+  },
+  "controlProof": [
+    {
+      "function": "dashGuardian",
+      "method": "dashRead",
+      "querySha256": "8da34a6c5cd4ddaa54bd5e975dcca292b9bb1f9675f5f57b29eb9b6fc3de8309"
+    },
+    {
+      "function": "dashGuardian",
+      "method": "dashMove",
+      "querySha256": "9e71f2fe368358c92de010e11da1949f1933d3db9ce1ced704fe37729c402ebd"
+    },
+    {
+      "function": "colTrapImpact456",
+      "method": "rootPlayer",
+      "querySha256": "56fd16abaeb3b8f2dae0829ef0d2566e9ae105780d68db5468861a02ba284970"
+    },
+    {
+      "function": "colTrapImpact456",
+      "method": "rootMonster",
+      "querySha256": "4247223effa87f4641a063458f1afb29b54e19938a138843127f73b3b5ebfb05"
+    },
+    {
+      "function": "applyGuardianImpact",
+      "method": "ownPlayer",
+      "querySha256": "7a99b8a17ef26d2e7c4d241120abb6d5c673d257511472b147196c2fce455568"
+    },
+    {
+      "function": "applyGuardianImpact",
+      "method": "targetPlayer",
+      "querySha256": "b90ffbe01009aa2ade8d3715825efb6f5baf0b3110b92e9fd90b2ad37b6029d6"
+    },
+    {
+      "function": "applyGuardianImpact",
+      "method": "movePlayer",
+      "querySha256": "f660225607c5b30a8a47026b225cb9e2f1af8c173913645cb65c4dd2e41befb9"
+    },
+    {
+      "function": "applyGuardianImpact",
+      "method": "stunPlayer",
+      "querySha256": "d851e75daa15f1dfcfcd01ba89a1e24d1dccf1597dcbf0eed5fd41e81ec885a8"
+    },
+    {
+      "function": "applyGuardianImpact",
+      "method": "controlMonster",
+      "querySha256": "eb227b6213035a6a347001f32bedf07ec84e315d37ab7191189d92eca1526b88"
+    }
+  ],
+  "declarations": [
+    {
+      "name": "colTransferLevel491",
+      "sha256": "c82bf59eaf6633d6924acc74fd385e86dc3a747c6d3586836290aaad1828f4f2"
+    },
+    {
+      "name": "colTransferBonus491",
+      "sha256": "0777e11b4e402699b09689aedf4c990d550602ddbf37f80300a8e25aafdbefb0"
+    },
+    {
+      "name": "defaultFishingCatch482",
+      "sha256": "73045bbe45205837a5e78d6b94d0c3e61e2028b06a7cb0c3dae1d6f107291784"
+    },
+    {
+      "name": "validateFishingCatch482",
+      "sha256": "2c00c4454be8a597fbf19492a31251508fb47885a6d50b289694877add13afbe"
+    },
+    {
+      "name": "readFishingCatch482",
+      "sha256": "9901be4240eff34c6cb26d10253453712035f0e000c38213681ded4e5db81037"
+    },
+    {
+      "name": "colSupportCast456",
+      "sha256": "88dce1f4e6edd8d3d4884a7a516c0f68f2d985b22e647d013cefad732cfca42d"
+    },
+    {
+      "name": "colTrapImpact456",
+      "sha256": "e752613ba09a39dfafbb22ba8303db11a1442c72355f8a43650a06d0ae9b7b3d"
+    },
+    {
+      "name": "colJewelry456",
+      "sha256": "8b3e088de54f80689cdf04d9ab9d542294f41efddadecdc8b484ae551e8ba9a8"
+    },
+    {
+      "name": "effectiveSkillCooldown444",
+      "sha256": "261ae94f966426b9398ef2cd130f89b44e1d0c47adcf3a2f90417d7f7e62da96"
+    },
+    {
+      "name": "EMERALD_SET444",
+      "sha256": "c6f67d41dd37d578cc0f89a4ed06d4212e9f013bc8f31b78c411ec447771efd6"
+    },
+    {
+      "name": "emeraldName444",
+      "sha256": "d5d7e9f3876d438782e7b242e0f4e11d6851cdbc54b9862ec4650ccc41157da3"
+    },
+    {
+      "name": "emeraldPower444",
+      "sha256": "2a3de4783df74ff5d0b9827343b69de5df54318fd02e3f3cf2eb94eb67670e06"
+    },
+    {
+      "name": "colRuneFactor",
+      "sha256": "289683a852b2d39e0805f42c141fa9515bc734d900614104dc65c5e1044b7ab4"
+    },
+    {
+      "name": "PROGRESSION_MATERIALS",
+      "sha256": "83e0af04c695c4d0fde2b743faf80ef2d53d487ca3c7216d747821697c2d0061"
+    },
+    {
+      "name": "UPGRADE_MATERIAL_KINDS",
+      "sha256": "74ca08017476adbfcb7f0ed7acc26075500b878fd98cb8ae7a990427aae8eeba"
+    },
+    {
+      "name": "progressionMaterial",
+      "sha256": "9365caeb3c40a4a9e8e7ecd05273fd21b86fbc1980f57e3533410c4704066d05"
+    },
+    {
+      "name": "materialForSource",
+      "sha256": "96ac0144bff3b748d68eb6f933af2fd8312514ff3f9a9e5e8828520aff4bd272"
+    },
+    {
+      "name": "LOOT_PPM",
+      "sha256": "7c236424fed45a3ae40d0197b43fa2f66f173e7eee9810229cfe2a6a1fc28a0e"
+    },
+    {
+      "name": "LOOT_BPS",
+      "sha256": "9e40495527cd11633e38f95048619da2fea995c8580db9d9863c4bce85dbc84e"
+    },
+    {
+      "name": "MAX_LOOT_PROFILE_JSON_BYTES",
+      "sha256": "ef5eea66f315b80862473dff46b11b9c4ee07635d720c041b878b51fa6356636"
+    },
+    {
+      "name": "LOOT_GEAR_KINDS",
+      "sha256": "f906f26f4f2acdb459f3ef105cb2d04c4a85ef8517534dc2d893f9122afe93d1"
+    },
+    {
+      "name": "OPEN_WORLD_LOOT_GEAR_KINDS",
+      "sha256": "7417bedae71cc88e8544899bb2ed118350408f1027f9fbc18a30469686c8bc88"
+    },
+    {
+      "name": "LOOT_RARITIES",
+      "sha256": "fad625b8bda56d869aff82c751a15614c8ca05d5a287fa6d3b2fdee101197a6f"
+    },
+    {
+      "name": "LOOT_RESOURCE_KINDS",
+      "sha256": "69d2fa85a1992455168c58ebf046cef5b63a6b1de6009b3a365f6d3c8eec6a37"
+    },
+    {
+      "name": "SPECIAL_LOOT_RESOURCES",
+      "sha256": "cd265de628d3ac3b0676e138120714ad1c35a59008ada5a44abc8ae4c311e8dc"
+    },
+    {
+      "name": "LOOT_ITEM_FAMILIES",
+      "sha256": "49d361ac1e78c48d444bd7a500512327677cce2af36ec3e8015f79e0726e74a1"
+    },
+    {
+      "name": "LOOT_SOURCE_DEFINITIONS",
+      "sha256": "9fa51986db999f2b1b4ae8ff82734b696a062fac1f323f3abb629bfebb49b5d4"
+    },
+    {
+      "name": "SIMPLE_LOOT_BUCKET_IDS",
+      "sha256": "b04b3b41e0e73f0a68b3a93458dad0adb2cd80063ed30d68d2902e5883752584"
+    },
+    {
+      "name": "FOREST_SIMPLE_LOOT_CHANCES",
+      "sha256": "be32124b75c0b14a853bc3afc34743d12817b9073fc1a305427b695c0bd2b0d2"
+    },
+    {
+      "name": "FROZEN_SIMPLE_LOOT_CHANCES",
+      "sha256": "d0265cf25960fa6f35fd7a172fa15f70899592fe723f90fcd3bcfd00c575d659"
+    },
+    {
+      "name": "ANCIENT_SIMPLE_LOOT_CHANCES",
+      "sha256": "2b84b0fd2c9d427b9bd0a841237c1d3132b9bfcbcc416067e178d4a9007006af"
+    },
+    {
+      "name": "SOURCE_KEYS",
+      "sha256": "3c45b5d2966172bc0118a48d97d6d9842597782d0545928d1768d6a2cc3ae17f"
+    },
+    {
+      "name": "GEAR_KINDS",
+      "sha256": "6bd8f60afc5ebee64ba5457e4125818d4277c56053d61c48db656e14202420ad"
+    },
+    {
+      "name": "RARITIES",
+      "sha256": "af0d97c3e1b25ff077cee648557e2576b0ae49308fe34cb4c61f01720dd6d181"
+    },
+    {
+      "name": "RESOURCE_KINDS",
+      "sha256": "414080264d7795dabae3aafe49e98876f0e6bb77e39dc2f90a011432f339da8b"
+    },
+    {
+      "name": "ITEM_FAMILIES",
+      "sha256": "fc40dd8b5db9b38c93d5a398a46487f3e0d80369f609a1c417a9634957c9f3bf"
+    },
+    {
+      "name": "SAFE_ID",
+      "sha256": "b0d9eefeb92da60bbf6339121c6738afa22b02b8c1da8b2c9d3193d8d3658ee3"
+    },
+    {
+      "name": "SAFE_LABEL",
+      "sha256": "b56908bc758045fe078d427af58d4c40b332d19160f8b99131d24ce4e2914f9b"
+    },
+    {
+      "name": "isLootSourceKey",
+      "sha256": "c82cc5ebcea6f6f13268a6bcc2228cc67817bec3e44b2f702cec61b2e182c19d"
+    },
+    {
+      "name": "lootSourceDefinition",
+      "sha256": "29f707cbc62cb2e2eb959c10a2382614a2f7086bc7b5e8f30236e39b6b83e7d3"
+    },
+    {
+      "name": "finiteNumber",
+      "sha256": "3d8820b93fbe3bcd16a41294b3cc99ace5269be387b51de7b1993d4891d2a4d1"
+    },
+    {
+      "name": "integerInRange",
+      "sha256": "a03b2b3329cc2a0a6d21cdda18b7f13e8d93c54840409d0c259139b36943f9cf"
+    },
+    {
+      "name": "chanceToPpm",
+      "sha256": "42f6c5a0ebdfd8a552eee2d5ad7beb0df06a04030226f4aa293adbe486828a94"
+    },
+    {
+      "name": "weightedSplit",
+      "sha256": "c402ecebc9a9ece777ebd6ba6bb630d26249431bf81751d77967d9f34bfa90f5"
+    },
+    {
+      "name": "kindWeights",
+      "sha256": "1b0712c9129a1c3b57ec298f97020cc9e4a53e76f7f0db4ab8290ca5edad99d8"
+    },
+    {
+      "name": "legacyRarityPpms",
+      "sha256": "2705aa15af917c9ca1ba9e98a108ce3a015dc58eccb887a8d543205b9be31a02"
+    },
+    {
+      "name": "gearOutcomes",
+      "sha256": "203121107002df86b0835b91e90d01cd1a1d41ca9e8b1acb948236be39ad43c0"
+    },
+    {
+      "name": "SIMPLE_BUCKET_KINDS",
+      "sha256": "c7f0c44d3b3dd51453109e28191496c15a94e609162f60f17d15b4671fe24366"
+    },
+    {
+      "name": "SIMPLE_BUCKET_RARITY",
+      "sha256": "48ef353425e46f14c25cc03d5d6a53bfa4227b89aeff7a9225339ec8df518a77"
+    },
+    {
+      "name": "normalizedSimpleChance",
+      "sha256": "96b93f652fd585eff3504fda698b15a6e8a1268414a12f2f6075554f1c18beb4"
+    },
+    {
+      "name": "simpleGearOutcomes",
+      "sha256": "d8497b9a11c5b6cfa2a6862d19460861f4b899c3b9860c4ca135ba5087d481fa"
+    },
+    {
+      "name": "extractSimpleLootChances",
+      "sha256": "0eb8f83c917456e5ef727fe8e0ec47b1b562ec2e1497957bc25fbc93f7834cfe"
+    },
+    {
+      "name": "simpleLootTotalChancePpm",
+      "sha256": "67c0964eeb594a5cfd0d6009deafc15c68c7b2a3cbb0de3e7ecfbd0ac3749148"
+    },
+    {
+      "name": "rescaleSimpleLootChances",
+      "sha256": "47a1dcc589f528de4d9fb88bfe320ab1d805332d9456a2e8a9e1ce3a5a9faf8d"
+    },
+    {
+      "name": "withSimpleLootChances",
+      "sha256": "7447149aa395664e66e0df3851396298949c391bc203438ece935e55fd57242f"
+    },
+    {
+      "name": "withEquipmentDropChance",
+      "sha256": "a8355f9eff4c59b7e78b119957117a126337d1eca567af2b8a1f55a61a146ca5"
+    },
+    {
+      "name": "directLootProfile",
+      "sha256": "1e1943f3b388ce460047e2f7e7fb8f13ccf16f1b9b469bb68cafc813854425ef"
+    },
+    {
+      "name": "balanceWhiteLootChances",
+      "sha256": "16aa7de9e31468b9d0fffbbfd88d4bda426ed5cff5d658112dc1b2abd28bc054"
+    },
+    {
+      "name": "upgradeEquipmentDropProfile",
+      "sha256": "e1167dbb6c68d9d73c27e4980732835dceb1a21b9c32267e6dabe803518e93ce"
+    },
+    {
+      "name": "allowsSpecialLootResources",
+      "sha256": "49054e53e2d1fef29539615f03c88f244ff4679e4af95ab213105d8bc4644c58"
+    },
+    {
+      "name": "allowsProfileResource",
+      "sha256": "ce69fa2116381d8e009c851f0e8883fe61e9383abe3889f6e5bf43efefe119bf"
+    },
+    {
+      "name": "resourceOutcome",
+      "sha256": "77fed23e4adc70fe2c47fb6d484b918dd7fcaefd92d4917572e68e36c298e969"
+    },
+    {
+      "name": "rareResourceOutcome",
+      "sha256": "471d30778b0bc94f8b861bf173c6530d1836165fd1911db864a5af43d4fae560"
+    },
+    {
+      "name": "variantEssenceRange",
+      "sha256": "ae3e9225cefe28afe8cf286068ec91eb19664e03d361da3abd5174dad93909ee"
+    },
+    {
+      "name": "regularProfile",
+      "sha256": "9ba6d6e7964a21cdc77fd522b7522df66e1615df7e548c370f60ad33d91b8326"
+    },
+    {
+      "name": "frozenEliteProfile",
+      "sha256": "46d1d227f283f60bb32e972a8b7170791e786a352c877618e2611ef27997ce16"
+    },
+    {
+      "name": "worldBossProfile",
+      "sha256": "474b90baae7221d1ee5824282b05ebada505b1a15e3a291038ec4ba3f5674706"
+    },
+    {
+      "name": "sinsiStoneProfile",
+      "sha256": "dacda9fc91b4bf2e5f7eb105083b4ecc7824e3161f150146914798f5cb283a4c"
+    },
+    {
+      "name": "buildDefaultLootProfile",
+      "sha256": "8a8fe2be3c3048541f54e6bf5d11361d930c8d128397f1162ac17b02658a8e8a"
+    },
+    {
+      "name": "monsterSpecies",
+      "sha256": "1c81733054483dfc0a9d0bfe6a0073b7be4dc2090c5e95ff43ffd014e2db0f6d"
+    },
+    {
+      "name": "resolveLootSourceKey",
+      "sha256": "ac2b58a70e788baefb9443a69db054747c3d4ca13ed758f0cf226cf468c5b05e"
+    },
+    {
+      "name": "isRecord",
+      "sha256": "797a8d8754ba4e568ceaaf2e6335660efca88e036b283e443aeb10012a6a2b8b"
+    },
+    {
+      "name": "normalizedItem",
+      "sha256": "f5ac12b63cba3ea5a896907caa866cf78db45d34588fbd146baf29fa2dd51452"
+    },
+    {
+      "name": "validateLootProfile",
+      "sha256": "538ab64638796fb9fbda632ecdcf7614c32100b6396bf06a2f885fbfc437c8a7"
+    },
+    {
+      "name": "validateRewardSafeLootProfile",
+      "sha256": "87ab2d09cced5db4052ded4fb5822e1fa0fb83b0f3bc9acf06d0e2a0f67ea012"
+    },
+    {
+      "name": "getBossEffectiveLootGroups",
+      "sha256": "abd5c620cc0e752435b4fed7e66d448365ce2ec0b55bfed29763986bba5143ae"
+    },
+    {
+      "name": "getEffectiveLootGroups",
+      "sha256": "88dea2d78f384b5f997fc2d663cbc5af267a7eaf49da606beac14a5f90fb57b0"
+    },
+    {
+      "name": "normalizedRandom",
+      "sha256": "011b063ea39c161cc48ba2eb5a84b11e45f7dfe4c4bac84d5e7e4fcecdd60ab4"
+    },
+    {
+      "name": "rollLootProfile",
+      "sha256": "24df226b111b8d0329bb0a2b98147c46ecbfef8ee73577de5cf5ee0bd2e078b8"
+    },
+    {
+      "name": "GENERIC_GEAR_NAMES",
+      "sha256": "10e9b4a40a27393ffb5db15597ec691bfb130002e409aed4cfe18e8dcb19b961"
+    },
+    {
+      "name": "SINSI_GEAR_NAMES",
+      "sha256": "d265c94a8275d9c521432506ec86e86dc20d3b72672456b402768d9e44d2172b"
+    },
+    {
+      "name": "rollLootRole",
+      "sha256": "7cf990c29587902206f36dd4bcb58aab488fd531ed60e3625e006f2f35968c1b"
+    },
+    {
+      "name": "resolveLootItemName",
+      "sha256": "6956ac1d50b1071ba05b90bb54734bff1a1f1bfc6c28d4bb613fa29b47a62c1a"
+    },
+    {
+      "name": "resolveLootPowerRange",
+      "sha256": "93d8723054a9a642a9158965b1856e4eb95665fce90eb4fd2a16457eee70f49c"
+    },
+    {
+      "name": "rollLootPower",
+      "sha256": "665c83ae4547775d0c53a8f09133fbe760497a15fab7418b94b42422d4f87d18"
+    },
+    {
+      "name": "compactLootProfile",
+      "sha256": "3284dbf2e92e02aecdbebba0356d0f7486730309571a24e8d02041d07e0c079b"
+    },
+    {
+      "name": "expandCompactLootProfile",
+      "sha256": "1fccb7a857993835cb055cc8b5636dea528694e7d22bc69a94bc303fcd8a65f7"
+    },
+    {
+      "name": "parseStoredLootProfile",
+      "sha256": "f692cd3e3bd16bb6fd61d79ae074e896b240a86e7b2eca83464bb82a40e063fe"
+    },
+    {
+      "name": "createLootProfileSnapshot",
+      "sha256": "cc91c595899401813d84f3a10cc71f50f3dac68850cae86bc73e74cf991e6427"
+    },
+    {
+      "name": "readLootProfileSnapshot",
+      "sha256": "0a1ece2f8fdef9f25d078cb1cdb12de9333ebffe583023b3cc8585ac4596c0f8"
+    },
+    {
+      "name": "parseLootProfileSnapshot",
+      "sha256": "383db6600cbcded98dedb71307da5101247c364baf3dcd372e11e520e5742e74"
+    },
+    {
+      "name": "parseLiveLootProfileSnapshot",
+      "sha256": "6eed57f9b3a7119ab4c02a63be93c7fe151d1a266829431c6d77c8d91aabd39d"
+    },
+    {
+      "name": "withEvolutionScrolls",
+      "sha256": "8820e105fdac12da5d422df94644f0d8fc12438ef44e33010b1706667678e10e"
+    },
+    {
+      "name": "withLegacyHelmetDrops",
+      "sha256": "f756d88ff593084bf4ce446d1758b6c10f0f8db7ff5c41740c1275019e5666fb"
+    },
+    {
+      "name": "withUpgradeMaterialDrops",
+      "sha256": "2caf3cbb58704f9f543a6af9b2a933debd9c579632f83e769ea02a92317ebff4"
+    },
+    {
+      "name": "EQUIPMENT_SETS",
+      "sha256": "2fa2866dcd32ac50ee6a10d38be2756da070929a95271809c361f6801adb8d56"
+    },
+    {
+      "name": "equipmentSetState",
+      "sha256": "969ce3f90bc9c4dc8e95fb47745a13a61e2213a952d09a05fdafcd94c4475a2b"
+    },
+    {
+      "name": "colEquipmentSetThreshold473",
+      "sha256": "db9551ba82ec263d862a56f3834132f8c90c61fcf6c58e3b4b36c7d3d84367a3"
+    },
+    {
+      "name": "equipmentSetBonuses",
+      "sha256": "f0d51fb0646136e55b94d94fd7e588cf3d82c260802c6439944b69d46996c970"
+    },
+    {
+      "name": "effectiveAttackCooldownMs",
+      "sha256": "a3f8c4e68dcbdfefc9df5a5063e52f3ef7e969212cf770a03009b8d7774506cb"
+    },
+    {
+      "name": "regionalMonsterMultiplier",
+      "sha256": "99457103c9dd56251cebfb3bcc46d744f77879ccf6530f704253e815ec5caeec"
+    },
+    {
+      "name": "validEnchantments",
+      "sha256": "2ab2e2b0b9c825d2c6c2f105c7758e02de09150f057de4be95c53050a942c2a8"
+    },
+    {
+      "name": "weaponForbiddenEnchantments",
+      "sha256": "6b0f2c7108f5260be3da3b21e5d3640d6740f31465f5bfd9e55c39998e535eec"
+    },
+    {
+      "name": "enchantmentFitsItem",
+      "sha256": "334279171e5825c314a3a828fe3d8b65b56595d5b422fcdd7b6957ab44a8d1fa"
+    },
+    {
+      "name": "isGearKind",
+      "sha256": "a225a00e5ee77a232ab46621258d1257264c53560e089a4115f724f4ff3647c8"
+    },
+    {
+      "name": "parseEnchantments",
+      "sha256": "e52d8891e7a2ebebb525459abbb78d864b72b1f38d932957027aec7708235508"
+    },
+    {
+      "name": "totalParsedEnchantments",
+      "sha256": "66fa764c52c291beecb7dff3e0a311f698fb60fa3b1d4abce7d0258e825e9ed0"
+    },
+    {
+      "name": "colEnhancementEntries491",
+      "sha256": "4347a8f0d749137ed67a14fd5ae84e55dea8fecfc2b2c7562a4c5d94e8ea8c2d"
+    },
+    {
+      "name": "createEnchantmentTotals",
+      "sha256": "92ae6297b2a1c0a9f1b8e8e10da80a7bdfa94f08a187b95635a3831dabf6a53e"
+    },
+    {
+      "name": "enchantmentTotal",
+      "sha256": "1e67e63b73917dd4b286f8691dfa64b2911630b435984cf14475e045043be928"
+    },
+    {
+      "name": "attackIsBlocked",
+      "sha256": "28f55dc19ff1587cd3dbfe4275a7735458944b40d887ce4a81a359dac298dcc7"
+    },
+    {
+      "name": "calculateEquipmentStats",
+      "sha256": "cf99a2a5bd49d1a7d18e9c4610e60c940562d052275d197721bcfdd09de6bfe0"
+    },
+    {
+      "name": "ENCHANT_TIERS",
+      "sha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35"
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "sha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a"
+    },
+    {
+      "name": "tierKeys",
+      "sha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918"
+    },
+    {
+      "name": "enchantTierValues",
+      "sha256": "446b0406bb557060ce08550920dff1188dddcf5d84500772684e41cbd33dea48"
+    },
+    {
+      "name": "rollEnchantmentValue",
+      "sha256": "e4734c8fd9df48dc4fac4022534222a73bb731462d18fea8a98fdf55928b594f"
+    },
+    {
+      "name": "clamp$2",
+      "sha256": "693fd0451576ae8fc258ae30270a13a5348d5267e68370d53695488930279365"
+    },
+    {
+      "name": "enchantKinds",
+      "sha256": "35c43209359fd6d3136f58edb68bdec590e2ada44368cd1ec17cb131144858c8"
+    },
+    {
+      "name": "rollEnchantments",
+      "sha256": "bf58fb561b07aa83e57565186d4042f9188aa32fbd0aa3e914f56ca0cd1fa3f9"
+    },
+    {
+      "name": "setSelectSql",
+      "sha256": "45688f376cead8a0e6fa24fa38ef59bf2a8ef480e571523f6b6ac5687cc1729c"
+    },
+    {
+      "name": "fishingEventRewardMutation",
+      "sha256": "05e6c89b9f4c1e9df0f835aee08a1481e0a8389674e689ab78b7b5ea6c945b4b"
+    },
+    {
+      "name": "extraService",
+      "sha256": "a2483930670d31d20d2cfe01fe9f121438dae1e8439b4ee68b5a2cb6ffdcb736"
+    },
+    {
+      "name": "premiumBuff",
+      "sha256": "e722abe7cd788ade9f46a65eaac21f9c0afc22556c55cd32ff3aeed9206d05c7"
+    },
+    {
+      "name": "premiumXpSql",
+      "sha256": "959e10634b0803ff9858c86c7bf7e7b24e6b2c8b80ca903b0ae849da73e13688"
+    },
+    {
+      "name": "wisdomSql",
+      "sha256": "f267103fb3dced0fa6c89cc9bf5bb695a9dd7a52087dbe12532cdd578ea63b90"
+    },
+    {
+      "name": "EMPTY_GUILD_BUFF",
+      "sha256": "89a746ea0cf5b14701dbecfcbcb9d10652ccb7e1ef1f614ae263f96d5236a4c3"
+    },
+    {
+      "name": "guildSkillService",
+      "sha256": "64370835cf024ecf2356795b74034dc3db7dcf081f2e1db8c9875ebfcd5b3bb2"
+    },
+    {
+      "name": "guildBuff",
+      "sha256": "b3725df767e32532f5ce95c393aa2bee99eadb75037d41464ae886eb644cc86a"
+    },
+    {
+      "name": "guildXpSql",
+      "sha256": "3971b21b01061387ff36c04c526db60b69578208cef86fb559c3e3796f13c084"
+    },
+    {
+      "name": "EMPTY_RANK_BONUSES",
+      "sha256": "3a74615ee7b227fe36fbeda420344f403dd02cf1bd9bdbbf6ebb0bfaed64fe3a"
+    },
+    {
+      "name": "DRAGON_WORLD",
+      "sha256": "c123307e08d4f2b8a9b9cde920875cb9424d6a3a1827c27b8ea245c539c25c79"
+    },
+    {
+      "name": "DRAGON_ENTRY",
+      "sha256": "9418983d299b513e03c658bde129ed7585ad276dac511659c3bef31de02591dc"
+    },
+    {
+      "name": "dragonService",
+      "sha256": "e6e23b12f3d35efa4ee3ea15757dd9865aa1caff49e7839e586b5f53c2a48d39"
+    },
+    {
+      "name": "rankService",
+      "sha256": "42d35ea69fec61c2b598a313e7f7a28bfaec44d4e8927e915c8ca9d408ec3314"
+    },
+    {
+      "name": "serverRankBonuses",
+      "sha256": "fa29270bdc18b512db269269299c4eea500cb70c542e55dd95f7f1d2baf2dee7"
+    },
+    {
+      "name": "ANCIENT_WORLD",
+      "sha256": "06c5eb4d182808ece971b17177098b8f756389dfd8ad0f2ed14257f8c8b074a8"
+    },
+    {
+      "name": "ANCIENT_SPAWN",
+      "sha256": "41ae6422de604adc3e946b58998a97b94dab2cb775558588fceea4a3f29bc7d5"
+    },
+    {
+      "name": "expansion65Available",
+      "sha256": "4814095e0af3026e57c564d5a5530a226fc6848080e356a0ea62648cd23f2ea9"
+    },
+    {
+      "name": "canEnterAncient",
+      "sha256": "dbe4b6f31e5c0bae5630cd9713aa6912c1f5e03d7e083791008b1ddfc4cd3466"
+    },
+    {
+      "name": "levelCapSql",
+      "sha256": "4582a9c5145eac0eae805d65ca151a3ac7219cea5c6d07d182efc8b093ce0d19"
+    },
+    {
+      "name": "GUILD_VILLAGE_WORLD",
+      "sha256": "01a02060c5c5d7f0ff2fcf9d1dda26699bd8620e11b37264ea11a58ecd3a6ae9"
+    },
+    {
+      "name": "GUILD_HALL_WORLD",
+      "sha256": "39bdff0e9f46c25b4f8d0529028413e273858c2b06b4eb628115df2812ade9b1"
+    },
+    {
+      "name": "GUILD_PLOTS",
+      "sha256": "a617caf21b3462aff4e7c9231f4a0e0e53017b5c040d42a7ccaa62b133a36558"
+    },
+    {
+      "name": "guildArea",
+      "sha256": "a2a1a8da83f9d2ff79ca503dc9ed6a2ab0efd568bbcbbf74338a85e45f59c303"
+    },
+    {
+      "name": "guildWalkable",
+      "sha256": "1bc64fa610e1f3d12131b0290e159997da427c31c2586e5c9c433d05936cd68b"
+    },
+    {
+      "name": "guildSegment",
+      "sha256": "b5cc66b6624a696a2858026bb95eea28dac1e47d47c5395459ff1914f6250cc0"
+    },
+    {
+      "name": "AFK_WORLD",
+      "sha256": "95315a72f9a334c75ba1046953dd8af9c3b9b16d9e2a25caffb07e44cf8b3a27"
+    },
+    {
+      "name": "AFK_SPAWN",
+      "sha256": "763620e9e3f52057eefcce6a908dba3f75b95140c5683f8657f5c98a70826861"
+    },
+    {
+      "name": "AFK_FREE_MS",
+      "sha256": "3414790d5cb26ca781f985fb80cb0366e82d660efebf5827480a480b68d4073c"
+    },
+    {
+      "name": "afkDay",
+      "sha256": "98a177479721773e8b1d8f7ee94f103cc9d94e0c9701d5423acf71af861bf770"
+    },
+    {
+      "name": "afkRemaining",
+      "sha256": "11db5c44290dcc5da8161cac83fc3b5a6ba30f6fc5bca702ba84941b1e6dcc8a"
+    },
+    {
+      "name": "FOREST_CORE_OBSTACLE",
+      "sha256": "120057d0c0e50c9c9721d9c0185bbc1408dd1cd6d6b3ca7c5f3dd313b3796956"
+    },
+    {
+      "name": "insideForestCore",
+      "sha256": "8cb97f02e0593099a4841a95a066f070e8ef5c58cbfbd17826fa411b21673a5f"
+    },
+    {
+      "name": "forestCoreSegment",
+      "sha256": "bc5fa81bec6ade5c5370693217819b1c4705fdfd4dab0cea45f5e337d0b795c6"
+    },
+    {
+      "name": "ANCIENT_CORE_OBSTACLE",
+      "sha256": "12912a8b48a90d4704ef9394769e14868ee520a8aa7b7dcb49eed3fcb6bb377e"
+    },
+    {
+      "name": "insideAncientCore",
+      "sha256": "8177a6b2510b45bef8807415a773cae0df6f33b9f9bd2a774bd1577fd39ba8ae"
+    },
+    {
+      "name": "ancientCoreSegment",
+      "sha256": "0b30a41d315a89ede3bb6fe53686ed04c30d3da72dba2e6735b2842ebfd756d2"
+    },
+    {
+      "name": "WAR_WORLD",
+      "sha256": "5d879fa5dd4d594d185edeae7389dd7c53bd6bf93cf3dae23f059e4f6d872da6"
+    },
+    {
+      "name": "WAR_SAFE",
+      "sha256": "e16936573f1fe83d84da4b1317f2702ddaa0cbe7b38fc14fda0921b9451f08bb"
+    },
+    {
+      "name": "inWarSafeZone",
+      "sha256": "f168cbf8cc9a86b8f02307672e61947d4b50e5786142ff86ae4ff2c241a11de8"
+    },
+    {
+      "name": "COMMON_WORLD",
+      "sha256": "3f6ad12e730e01ab50eb83406140e77fdf4ae9b22e6bce23238b808d97df8652"
+    },
+    {
+      "name": "BLACK_WORLD",
+      "sha256": "beaad12481945895842f37f90f4dda3ca6dc20924a60ebff71f0c3db06a1e650"
+    },
+    {
+      "name": "BLACK_SPAWN",
+      "sha256": "8152ce476452f40c8f8b0eed3046514eedc99df45c427770b43dc996658602aa"
+    },
+    {
+      "name": "FOREST_WORLD",
+      "sha256": "a847638d517a0e26fe854da5dc44b8101a5553875aee36af0cce5b3b8b9ae17f"
+    },
+    {
+      "name": "FROZEN_WORLD",
+      "sha256": "6a1ef6aa50663f73e1b006d6562472bb7217515d4f0dc417d07d55fbb01c4db3"
+    },
+    {
+      "name": "FOREST_SPAWN",
+      "sha256": "1b6ab8969d006aa418a1c78f986aaa03f2d6d5a0ab8d71db1d65a83f4a8236c0"
+    },
+    {
+      "name": "BAZAAR_SPAWN",
+      "sha256": "287dbcaecf4cdcbbca3d851a55731654505edfd7927bd5b69a1fd9f871ddb75c"
+    },
+    {
+      "name": "FROZEN_SPAWN",
+      "sha256": "854e8c0cb08384593655f066a4fc24e27db503dbd364ec4ac24257805dc33fc0"
+    },
+    {
+      "name": "FROZEN_LAKE",
+      "sha256": "fd1ec734fd7417d8d20b92061049eaaf795ca9495b5213d2214136a5929b082d"
+    },
+    {
+      "name": "FISHING_LAKE$1",
+      "sha256": "ade9b421e3aa8c7ca73e13e4e945b06db5c4ba724b88ae7df4fb2b0b42f43982"
+    },
+    {
+      "name": "FOREST_WALKABLE_POLYGON",
+      "sha256": "6368b349f6bce6a8cbfb7999274f2e7acf2fd1291d7fddd2443680fabdbdbb04"
+    },
+    {
+      "name": "areaWorld",
+      "sha256": "1921f21f3801c8d8469378486fe9a6d4b300fd0aaf3001b6f818d6a4fdcff796"
+    },
+    {
+      "name": "insideForestBounds",
+      "sha256": "42c0a770ca108acc584fd188ff2a2f8413ba696c401d1ef7e969f296fa10c931"
+    },
+    {
+      "name": "isForestWalkablePosition",
+      "sha256": "a13f3a6610942f63fabed0d50a64d0ab08fe7900a6eb5911b4ba7b2d7929ef1e"
+    },
+    {
+      "name": "isFrozenWalkablePosition",
+      "sha256": "1fe6f867f64a32ba75b1f1c98c3bac2c472fc354eeaa8de3041f1d93674ec0eb"
+    },
+    {
+      "name": "isAreaWalkablePosition",
+      "sha256": "e40e830f885db933196f6cf1dba1a61999429a51c17deedb3adb2b347aa21a1e"
+    },
+    {
+      "name": "isAreaWalkableSegment",
+      "sha256": "c3b8d30b3213f4c18749988212800aedee398c54d0d8c6c5f5c9b87ffdc3bf2b"
+    },
+    {
+      "name": "service",
+      "sha256": "819feecb9c08dddc00348ab0d9318f6a78a8649680298ade60a1543d6ba8d8be"
+    },
+    {
+      "name": "readCommunityProgress",
+      "sha256": "2fce6c0b782ff2255c589f614883c97b549c1d3f835f3d56a150683c81dcbe61"
+    },
+    {
+      "name": "samePvpActorScope",
+      "sha256": "2500ad5292b788c494dd23c99b1b6d6e94bf7c2454c304651d999c84e115c3e2"
+    },
+    {
+      "name": "armorDamageReduction",
+      "sha256": "4cde3e8aa1d7e813f82021ad570d1251d082aa5e69990598e9100a72708fadb9"
+    },
+    {
+      "name": "forestLootMultiplier",
+      "sha256": "482a03bb186ccebe7c53c5170ff068a05cddeb12039d1f71f85d39ff4eda538c"
+    },
+    {
+      "name": "WEAPON_KILL_SQL",
+      "sha256": "b80577a8fc05474e916457f458044cfb9e57805af14c09c0ff9be92a89c025a9"
+    },
+    {
+      "name": "BOSS_SANCTUM_ENTRY",
+      "sha256": "1a31188e91eb8f912c0259a008bb591e5b7f0868df94d97aa227cba061b69881"
+    },
+    {
+      "name": "SINSI_STONE_ENTRY",
+      "sha256": "289d54f3a1b5e5b37931950375c7703d61440a12edc67a24a024fa0ea6080bb1"
+    },
+    {
+      "name": "WAR_ENTRY",
+      "sha256": "fe72e6a69031ff35c7cb610043ffb8af52ee49d7b53d14ac47e6949779752b8e"
+    },
+    {
+      "name": "PVP_REWARD_COOLDOWN_MS",
+      "sha256": "de5d8e2d253000d01bf9b886eb0147d52ea86b8257fd29560882b4191fb07a9d"
+    },
+    {
+      "name": "isBlackStoneBoss476",
+      "sha256": "fda81d8c6ce2a0bacac43756d06138c3d4fc96a5b3cb7cdde7c63e254184db1e"
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "sha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364"
+    },
+    {
+      "name": "ANCIENT_BOSS_ID",
+      "sha256": "5a8d3138b52f741e7a656ed2266b6f9cbe0de9be0772f61c646ac86d1ace574d"
+    },
+    {
+      "name": "isFrozenBossId",
+      "sha256": "db02393a2e9efd9f65ed6697ad3b533b897dd46adf519a0af5b48762e672d52c"
+    },
+    {
+      "name": "isAncientBossId",
+      "sha256": "4d3f7f48ef7212a5015ae475303536ef4e9da88a9093fac16f12b46de0225850"
+    },
+    {
+      "name": "isFrozenWaterId",
+      "sha256": "14773bf9a2b9ffeaadb6a52e8eebf20e06e5a5bc939af52c66e30dd3ad80b647"
+    },
+    {
+      "name": "isFrozenEliteId",
+      "sha256": "0171bdd841fd94eec1f66a6fc9661a181b847938bb086b358a5f07a666be4c50"
+    },
+    {
+      "name": "clamp$1",
+      "sha256": "c47fe8c420bb649bd0a4f848588c53a61e99f33875794fd35d650d13fddbd55d"
+    },
+    {
+      "name": "distance",
+      "sha256": "ac3313e014473d16c5b1635b74acd419794c5c08f7242e08874c0233fe1ce4d0"
+    },
+    {
+      "name": "safeId",
+      "sha256": "f985a1870b1bf229d6941aabaee2c9c0091b5fcbde21a953e8fa319fcd26920e"
+    },
+    {
+      "name": "EVENT_KINDS",
+      "sha256": "796300970fb041f08f4309084a3ddad54df007948ab85f9d96da1bd4dd72a335"
+    },
+    {
+      "name": "EVENT_LABELS",
+      "sha256": "5e21e32f2d96168562d28ca11cd3a05c85afada967656e3aefd1cb3588703389"
+    },
+    {
+      "name": "CHEST_PRIZES",
+      "sha256": "da743001435b28a3b3cffaa49eeb55ccda4e604365395a6b63e4566c4ea441c6"
+    },
+    {
+      "name": "MOONLIGHT_PRIZES",
+      "sha256": "959b16688cc695cffb4ba23e37f1b9f0ae40beb55d69c720030898c54b5282b6"
+    },
+    {
+      "name": "FISHING_EVENT_PRIZES",
+      "sha256": "285a510544796bb8e1db3c0ca8ed90a5ed7d16616e86e0159596f904a63876f2"
+    },
+    {
+      "name": "defaultEvents",
+      "sha256": "6d91c38b3f63acc2a369cf124097d39751f512d05dd0428df974d3a561df5350"
+    },
+    {
+      "name": "validateEvents",
+      "sha256": "d1adf67545d1ca60c762af92721edf05a056209b620bc6871c4bc42c470ddc12"
+    },
+    {
+      "name": "parseEvents",
+      "sha256": "f2058415a7680da5460d6fa42948e0188038e9239e751823e5c79bffc0d7f940"
+    },
+    {
+      "name": "cachedEventsRaw",
+      "sha256": "8f9f5c2483aca40123804a9469f04ad679359262399fffdd2dd91a3da3c5edc5"
+    },
+    {
+      "name": "cachedEventsConfig",
+      "sha256": "40ee46bf07b65a5300b24b8dd69e6f1cf51d149c241ddc65fda3aa7d190de0ef"
+    },
+    {
+      "name": "deepFreeze",
+      "sha256": "c93fb45d7b702d4823146ecab8898e13f885d8ad835579eac59dfc24d478079c"
+    },
+    {
+      "name": "readEventsConfig",
+      "sha256": "1681f3a58fc7e5f6e4739aeee8b73f42b6423bdbd32f2a741672bde260061866"
+    },
+    {
+      "name": "eventBonus",
+      "sha256": "6d3017dd55406089df2df4ccaa392d86fd23b8b4d9366744292ee85d37902901"
+    },
+    {
+      "name": "bonusAmount",
+      "sha256": "03cb0f7cf695310189c2240007b990c3fdc1d9822c62ffe5cc245ab2f4fe9b76"
+    },
+    {
+      "name": "rollFishingEventReward",
+      "sha256": "0c49eaf429af7251952cbbb84dbc61f40dbdd495a0cce4a2ec0517a351622c18"
+    },
+    {
+      "name": "restoreStolenLife",
+      "sha256": "9b412ec682bcea101fbad810a1857c645b089c8fb13be05824c85b71b29a03c9"
+    },
+    {
+      "name": "hasWingBonus",
+      "sha256": "d19376cbbcd625bf54c0cf9791e01a328279b786122101195d652bd71ae3f78a"
+    },
+    {
+      "name": "infiniteEquipmentPower",
+      "sha256": "613dc0b612cc6ddf91ca5505bbcbfd57864d4a196a7e700ca5ef4db32201ed34"
+    },
+    {
+      "name": "dungeonService",
+      "sha256": "cae51cf3e17803c365db0184493a231f6f4469a5aa1259d435122d60ef430945"
+    },
+    {
+      "name": "GUILD_MONSTER_KILL_SQL",
+      "sha256": "0e75b579213b60e3211422c935248e7803f5fa8a78d1b075783386a450f675da"
+    },
+    {
+      "name": "guardianEndpoint",
+      "sha256": "87e8f042fe844cf1dcf4a79c8ffabff19e44291194499eb91b3fe9257179440d"
+    },
+    {
+      "name": "applyGuardianImpact",
+      "sha256": "c620bee7402236b64649eaa951106654a067b6b50f5a6e1119937ea1ddd9d0c0"
+    },
+    {
+      "name": "lifeStealAmount",
+      "sha256": "f298cc006bd2dc98bfe16ab458d2d28354fefd785af144931ebf1ab584d3a138"
+    },
+    {
+      "name": "dashGuardian",
+      "sha256": "1befd04f82abb42e6a2c6f7c550f390a6995b741aa0a822650500f74909c4815"
+    },
+    {
+      "name": "guardianCastVisual",
+      "sha256": "21d0dc76c01c2a9468e12a18421b4aaa68a1d2192fe84801d92324d3beea0e67"
+    },
+    {
+      "name": "clamp",
+      "sha256": "b87941fa0559de3847714a73ba321ffb116487cd25e134128771679cb71269f7"
+    },
+    {
+      "name": "FISHING_PROOF_SCALE",
+      "sha256": "b76482f24c4fa8151a6befae55534767eeb07f124377c6a8c9858071d7b4ea5f"
+    },
+    {
+      "name": "fishingMotion",
+      "sha256": "16887e4d3c9f7b5246e545c9351f61600c8fce61243f2395bbf751f81427379f"
+    },
+    {
+      "name": "advanceFishingProof",
+      "sha256": "dfbec6dd03bddc4ec231ffd15b2f716ad5edd47cce50f790d5c494a547480343"
+    },
+    {
+      "name": "replayFishingInputs",
+      "sha256": "c255ab0413d728a49dea88eb0c29e01150d23eec511c40413c1b3d84cc3ec12d"
+    },
+    {
+      "name": "ARENA_RULES",
+      "sha256": "87ad2fe55d9d36907198f22d337192c4e77103ec7875df3b2642989f11553414"
+    },
+    {
+      "name": "ARENA_COUNTDOWN_MS",
+      "sha256": "9b08a18066e0bed66cf8ee3d0f0b4e99ddbbf9afea2af46c9aaaf5cd6d4c4971"
+    },
+    {
+      "name": "ARENA_ANNOUNCEMENT_MS",
+      "sha256": "8dd099f5a97913f070d7776f5acfc4d546248a1e591f9db4839cb0e8e95ea9a9"
+    },
+    {
+      "name": "ARENA_QUEUE_TTL_MS",
+      "sha256": "77d20aaf35cad83a38eed384260110f6c3e6db8724855e8f6d114a17752753aa"
+    },
+    {
+      "name": "ARENA_RECONNECT_GRACE_MS",
+      "sha256": "68570e1ab11d3b7b6cd296fdb00ee1266883cb59e2ad9f33e332d3275c3ad436"
+    },
+    {
+      "name": "isArenaMode",
+      "sha256": "aa189734e495332c57f6a5d0afcfb07d257c7bfe508f43783ec5210024b05768"
+    },
+    {
+      "name": "safeArenaTeamName",
+      "sha256": "90edc1eb0b5935bac8a52cde029a070d06da372ba2f35b81664a075ce8a822e8"
+    },
+    {
+      "name": "arenaSpawn",
+      "sha256": "2fcd802faf57318e5bf70b982f492c037f26efb499e115c5cc325e3c7a39ca2f"
+    },
+    {
+      "name": "readAreaSkillHints",
+      "sha256": "7db50d6799b9860a6f667b92095eac06762138889f444dc3086f4016ee3b7cfc"
+    },
+    {
+      "name": "areaSkillPoint",
+      "sha256": "802f6bcff6cb55b514405c41f07551fc55fe24c7a485b94309a0a31088979c6a"
+    },
+    {
+      "name": "DROP_COLLECTION_RANGE",
+      "sha256": "cb7a23ed6c5a6565e772285ba0655707f73947f4e6860d634346e029e3a66456"
+    },
+    {
+      "name": "FISHERMAN",
+      "sha256": "a2349d569fd5a5f0aa48c0cdeb3c7e4401c3da1b3e575f38710768d9a9712065"
+    },
+    {
+      "name": "FISHING_SPAWN",
+      "sha256": "7d3fb283a230b75e7d62d6eda306e9ac4b4db15d0b6cd08870575dedc8c70c0c"
+    },
+    {
+      "name": "FISHING_LAKE",
+      "sha256": "bae5114da79892ed7790dca13afc66cca912390a8c59003420e86dc9fe109dee"
+    },
+    {
+      "name": "FISHERMAN_INTERACTION_RANGE",
+      "sha256": "93296f0594b8fc903022a49e9dffd644de67e0ed6e645a54d37e72addfecb317"
+    },
+    {
+      "name": "PENDING_DROP_ENCHANTMENTS",
+      "sha256": "54fda76e576b17bae98fead0310e0f18d8b0136752f42daa975b2ed6ffce4130"
+    },
+    {
+      "name": "PROFILE_PENDING_DROP_ENCHANTMENTS",
+      "sha256": "6f1f6962d7e24e9d19fb310dd35efc5dfac5b9703bd01df3b3ad425e9b896bc5"
+    },
+    {
+      "name": "WORLD_BOSS_TOP_DAMAGE_GEMS",
+      "sha256": "2f59e84ac311749bfec4cb4b0af19e2c8634f45f07daf1247bd362252e629e18"
+    },
+    {
+      "name": "announceRareDrop",
+      "sha256": "88be8684d44d4fee51ab20c66438cf0d00a5aa05a248313849b178e79984dcf1"
+    },
+    {
+      "name": "broadcastAnnouncement",
+      "sha256": "9ae74a1f5ba216536cbf651ebefb8a8e5cd37b1b03af53901a3b5f7ac298f4d5"
+    },
+    {
+      "name": "rejectBasicAttackCadence",
+      "sha256": "5fe4ac51e488ba53fd24666e2466b9f8a0afeab02739fb680d9ee45d88b10fc0"
+    },
+    {
+      "name": "monsterCombatPosition",
+      "sha256": "25b51f2433d1e62a38f72d42de2ce704018100c821eed33626bcbecb1d11c321"
+    },
+    {
+      "name": "colCriticalMultiplier491",
+      "sha256": "c4e571e71eb658ff97222514f34a66e4723691169a5d195353a8597a7c637e19"
+    },
+    {
+      "name": "equippedEnchantItems",
+      "sha256": "0aecd524cae610bf0a4baf4a8775f2ca6f979228707aa4a502da5d26558914fb"
+    },
+    {
+      "name": "droppedGearKind",
+      "sha256": "1b030d830fa9452e3e0c3072b9a2383e045d2f9d944802538015c5e2af42b27d"
+    },
+    {
+      "name": "droppedGearName",
+      "sha256": "dbc8626119878bc71e427005d7ca046466ab8bf2abb1c3d354edd5b76de09291"
+    },
+    {
+      "name": "finalizePendingDropEnchantments",
+      "sha256": "b13912102d6a0f1b32e8ff5799f7a24ecb9ce58235f928ab238c3553ca9fa72c"
+    },
+    {
+      "name": "tryFinalizePendingDropEnchantments",
+      "sha256": "ecd3ff54cfb3d525870609526e0b6ae49f26250d2776657c3e9b1c0885d452fa"
+    },
+    {
+      "name": "profileFromDefeat",
+      "sha256": "4040cdea8ae7562bd9091d52ec49f3ddc81b2348e922cc7de57db3a9aada3ae1"
+    },
+    {
+      "name": "prepareProfileDrops",
+      "sha256": "ca84ea7018cfff7188ca0e7891e93ba890941babd829cd47c9d309314a017965"
+    },
+    {
+      "name": "profileDropInsertStatements",
+      "sha256": "67d25c096bbedd217dc15bcdf29389b25a799fecbea326def0a4691932ac3b57"
+    },
+    {
+      "name": "defaultLootSnapshotCache",
+      "sha256": "96165f50f05d7c9e2ee4bba8cc319245cfeb874b37b26a58add9cd357bfdb0fb"
+    },
+    {
+      "name": "defaultLootSnapshot",
+      "sha256": "9387f22c3d8ec3a1909f638abe3f0cb0633e1a1614d9c94048a1b8a0085c74b5"
+    },
+    {
+      "name": "prepareMonsterXp",
+      "sha256": "fe44b6baa695c5199a3f20c48eedb690321c01a8cc14b6a49cd523b900e8e9c7"
+    },
+    {
+      "name": "awardProfileBossRewards",
+      "sha256": "07abdb7dfd8df7969855bd28250201d005cc395b98399834ac1c46d360275caf"
+    },
+    {
+      "name": "awardPendingBossRewards",
+      "sha256": "21bf9f5d2c984f2da764ea1972779c2b2a043baa604027161d9d276c3d00fcc0"
+    },
+    {
+      "name": "monsterXpReward",
+      "sha256": "cfb21234fbb91fd4c10ab2b140581afe88b2e1de53b3f113f9267d70557cd1af"
+    },
+    {
+      "name": "normalEssenceRoll",
+      "sha256": "84dc8c7f3ad667c9efb3af92b6b730da2eaf5fe7c5849840a57ec7b1f70253e5"
+    },
+    {
+      "name": "monsterIsInPlayerWorld",
+      "sha256": "dc909e989e7c7b76490d38a9b1970bce2de48abedde64e1ced796b34c9d02a85"
+    },
+    {
+      "name": "pveAttackCadenceMs",
+      "sha256": "631d931054579ae5e2d395998ca6294e4a04cd153b507b71d103ba5eac8dacde"
+    },
+    {
+      "name": "armPveEngagement",
+      "sha256": "112e549922d1113bd337cef589aa4dbe946595307d3826e2507eb71db1852bec"
+    },
+    {
+      "name": "preparePveEngagement",
+      "sha256": "260f28f33c6c346be10538a7156e1d5f37137d791201d32b2089f6615fdb45a5"
+    },
+    {
+      "name": "spawnSinsiStoneWaves",
+      "sha256": "7ae2d5e1235c7a65c4e544c1f172a0e867cc98351faed66782095e88afed86bf"
+    },
+    {
+      "name": "awardProfileSinsiStoneRewards",
+      "sha256": "d6fa14944ff5b8974db7d66ae9790d7ced57a696515a7b6355a86bf134ee8004"
+    },
+    {
+      "name": "awardPendingSinsiStoneRewards",
+      "sha256": "9d18e60b5ed9ef431ce00690decc6c50a808e0454d5bdeb2268747f0fde897ff"
+    },
+    {
+      "name": "tryAwardPendingSinsiStoneRewards",
+      "sha256": "0a90121eceae87cb503d50023d6ed03cb7d2892f789db6fe2ddecd92f154394e"
+    },
+    {
+      "name": "normalPendingSourceKey",
+      "sha256": "84fa6a2fdf31e333cfdfe99c47c64e0f8ed76106ddd35e6fac15dbe2ff0b1ebb"
+    },
+    {
+      "name": "awardProfileNormalRewards",
+      "sha256": "b34736ffad22f5a403108748e6cbf0ed0a43bc490b657e9bd12c5928b38a8367"
+    },
+    {
+      "name": "awardPendingNormalRewards",
+      "sha256": "b49e1b964f5dc70d7ab759a818471d8425d4dce16ea67da434717a9a3e3db3e6"
+    },
+    {
+      "name": "canFishAt",
+      "sha256": "3e8360d4cbba3d7329b3a532bcabf469458d79428ffa7716abaf7d1bb64d5686"
+    },
+    {
+      "name": "rollFish",
+      "sha256": "24031dd90a15264e9e9b309e01dededc73fa5bdd01871c6c366e9922ca85602f"
+    },
+    {
+      "name": "TEAM_MODES",
+      "sha256": "eb919b89658daabb8d1da7284920079b64751642eaae5a3e56b0b9214ddcf5ac"
+    },
+    {
+      "name": "arenaRoundReady498",
+      "sha256": "426ceb4745a201265f2dacad2d1b900c81815c838e1f4a8247079ff74ec417b0"
+    },
+    {
+      "name": "selectArenaTeams498",
+      "sha256": "f92c818ed93a502d2e48de0ba9d369a783450711ad602c23cf1d6d72bbf07bab"
+    },
+    {
+      "name": "queueArenaGroup498",
+      "sha256": "102263667bafc06e409b95d27edf7a5d052b3987b7af71187b03ce2b8d0f7fd8"
+    },
+    {
+      "name": "acceptArenaSafeParty498",
+      "sha256": "32f3d91df8a47664bd31fb382e636fa7182750a194de27888ebcb14c4a974e37"
+    },
+    {
+      "name": "tryCreateArenaMatch",
+      "sha256": "a56fc63dc68f8437f96fe1b081a112407592bd7260752f703c71a2f8d6f15603"
+    },
+    {
+      "name": "tryFinishArenaForfeit",
+      "sha256": "02c173585a295cdbd963a168c0438f07a86e778d846509d4ea5fe94dd0e7ff8a"
+    },
+    {
+      "name": "settleArenaMatch",
+      "sha256": "4ae61493a05ba2084f497378961ad790072a2d8ed9758ad764c17095423567d0"
+    },
+    {
+      "name": "colNotifyPvpGemLoss479",
+      "sha256": "9009aebc3e4d9f3c53efbc42833778069f9ead98111b371efa9b38f31d42b8e3"
+    }
+  ],
+  "ports": [
+    "settlePveEngagement",
+    "prepareMixedPlayers473",
+    "selectMixedMonsters473",
+    "runMixedBlack473",
+    "publishRealtimeRoomEvent",
+    "publishRealtimeRoomEventToChannels",
+    "deliverRealtime",
+    "scheduleRequestTask",
+    "startBackgroundTask",
+    "publishCommunityProgress",
+    "runRewardDelivery",
+    "publishRealtimePlayerEvent",
+    "publishRealtimeWorldEvent",
+    "pvpContinuity",
+    "releasePvpCommit",
+    "readActionSnapshot",
+    "enforceRateLimit"
+  ],
+  "edits": [
+    "Resident planning replaces explicit storage boundaries only",
+    "Original per-target SQL reward plans run only in the durable writer",
+    "Channel4 boss classifiers, winner SQL ID list and quest exclusion are explicit opt-in; other native predicates unchanged",
+    "Native rune drop helper moved unchanged into operation RNG/UUID closure",
+    "R56 reversible skip port for certified zero-row ordinary rewards; native formulas unchanged"
+  ],
+  "fullProductionIntegration": false,
+  "r24Geometry": {
+    "scope": "Only mist-specific bounds; native combat, movement and ownership rules preserved. Tower bounds unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "d1cb5795d697781e7edff7acbf41443bbb268a0f1e6d0db90bc3db5dff67c3dd",
+        "current": "170f79c553f529da475d62c4e3333ac0f41af249b6224d060b45e5a8e586268a",
+        "file": "attack-rules.mjs"
+      },
+      "writerSha256": {
+        "previous": "13eb49ae5588981f6ce71bfd5bb0be21d76eebe11038c8f9caf964e749b67ab7",
+        "current": "18d8674bd55a509222930916d591279ee7f594087b55b4c83789aaa347d52048",
+        "file": "attack-writer-rules.mjs"
+      }
+    }
+  },
+  "r31": {
+    "fromRelease": "R30",
+    "previousGeneratedHashes": {
+      "generatedSha256": "170f79c553f529da475d62c4e3333ac0f41af249b6224d060b45e5a8e586268a",
+      "writerSha256": "18d8674bd55a509222930916d591279ee7f594087b55b4c83789aaa347d52048"
+    },
+    "changes": [
+      "canonical single-slot belt stat and XP integration",
+      "mist PvP bypasses old 5 percent gem debit; 15 percent durable escrow in writer"
+    ]
+  },
+  "r53MemoryAdapter": {
+    "priorGeneratedSha256": "49d51d3adaf72f25a05fe269c4af911c0cfb2e23533fa13a03f502868176bca3",
+    "currentGeneratedSha256": "c736427374cb87e4b04aadb673fb4bde7786d25dddaebcf722c53a2327e25cc9",
+    "scope": "Only memory lookup/engagement representation adapters. Native attack/retaliation formula bodies, reward rules and writer extraction are unchanged. Exact inverse patch in R53 evidence.",
+    "unchangedWriterSha256": "22c4851dfbd67315401f058d9dc746230ce5309d648f2543821f5c02f3633622"
+  },
+  "r54BaselineWriterSha256": "22c4851dfbd67315401f058d9dc746230ce5309d648f2543821f5c02f3633622",
+  "rewardAdapterSha256": "29492079232514616b4a7135a36d8ff28fb9fbd5b543c213f46f6cfa8979a2bf",
+  "r54Scope": "Exact postprocessed R533 writer + reversible prepareMonsterXp adapter; all other generated files unchanged.",
+  "r56BaseWriterSha256": "13ee4bcf2ca2204432723766e88cc7f5e86a7f8f47cf08a4672f93e3a37e4628",
+  "r56NonlethalAdapterSha256": "7f2c80b3d2b71a3a754bdf43da3e46e1b5f4e15bb1d3bc3c5ab1191cf6728406",
+  "lootProfileCacheR61AdapterSha256": "4b6cb8c2337010ea329d6863a3bf8a5a4a26246ac4b36dff48659efa2ab5f11e"
+}

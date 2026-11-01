@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+ok 1 - private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+  ---
+  duration_ms: 3.871906
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793512520648,"backupName":"before-pearl-reset-1793512520648-996f5b83-9e84-4709-b9ff-ee73ab974249.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:36.621Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":347435,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d312c5f7171ba197dfe64dce"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:36.623Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":347446,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9fe0a73d065142fa001d00d9"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:36.623Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":347460,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f71ef38927791e5968a190dc"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:36.624Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":347466,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f8b8fc277d3383db0d64db35"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:36.640Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":347409,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"95b0c55d7700735d390b6382"}
+# Subtest: native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 2 - native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 17564.599364
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793512538149,"backupName":"before-pearl-reset-1793512538149-924f6c7a-ce08-4157-85f5-1d029c254bc6.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:53.929Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":347650,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b0d541a10c26cfd43c406990"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:53.930Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":347664,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"00b31fd84aa55265c949b856"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:53.930Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":347674,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"245d605e07d2fe3cfb9bac4e"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:53.930Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":347680,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c85e0fce4c899c010f7bd139"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:53.949Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":347635,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"93fb9b8b4263ba101403a5a4"}
+# Subtest: native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 3 - native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 17298.173303
+  type: 'test'
+  ...
+# Subtest: native original publishers and senders agree on four-channel rooms, arena isolation, private cross-scope and GM audiences
+ok 4 - native original publishers and senders agree on four-channel rooms, arena isolation, private cross-scope and GM audiences
+  ---
+  duration_ms: 61.428466
+  type: 'test'
+  ...
+# Subtest: nested audience calls and failures never share borrowed scratch or mutate prior returned events
+ok 5 - nested audience calls and failures never share borrowed scratch or mutate prior returned events
+  ---
+  duration_ms: 0.905422
+  type: 'test'
+  ...
+# Subtest: hot event fanout follows live scope, connections and GM changes while shared nested payloads stay immutable
+ok 6 - hot event fanout follows live scope, connections and GM changes while shared nested payloads stay immutable
+  ---
+  duration_ms: 1.377945
+  type: 'test'
+  ...
+# Subtest: native lab audience, payload caps and private world instance never widen to another player
+ok 7 - native lab audience, payload caps and private world instance never widen to another player
+  ---
+  duration_ms: 2.656716
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793512520649,"backupName":"before-pearl-reset-1793512520649-7bc14cca-1c58-45d9-9277-a8b40ac17835.sqlite"}
+# Subtest: native audience COMMIT captures exact admitted owners and concealment; replay and transfer retain only intended mailbox
+ok 8 - native audience COMMIT captures exact admitted owners and concealment; replay and transfer retain only intended mailbox
+  ---
+  duration_ms: 1843.800299
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 35630.540063

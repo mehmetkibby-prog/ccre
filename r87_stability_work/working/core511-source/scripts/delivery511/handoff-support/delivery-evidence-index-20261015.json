@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 2,
+  "scope": "delivery continuation; retained game candidate unchanged",
+  "runtimeSha256": "ee1f1e5c0085f63de8df52fd892dd27cf9a65029176c2c0fc3db69f0d07680f4",
+  "previousGatesRepeated": false,
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 534859,
+      "sha256": "84151b2a17e5811ee75b200a33612f117e7cf6fec3b6c6d27f1691b370bd1f44"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-driver-r1.json",
+      "bytes": 6668576,
+      "sha256": "bb2734a354402866518d7777919e1ff2cee6b9e10c80d0d5dc7b91f81f18fe71"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-driver-r1.log",
+      "bytes": 1749,
+      "sha256": "173be601c350175ef8043f3501db5977ee67563cd59fb514038a92b5fc3a9fac"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-driver.log",
+      "bytes": 919,
+      "sha256": "4dca019167ba7225f355193b429fc6b0d4f087594b5971ccdeed04e896401914"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-lifecycle-r1.tap",
+      "bytes": 1110,
+      "sha256": "d51fdf95da5519d0c63a7f4b36fce691b6f8c7b9e4cab19546764880cd811a0c"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-local-acceptance-r1.json",
+      "bytes": 387,
+      "sha256": "b0f0f823172302188630317a1352e0d906b0fe1f049dc84c24e254fe4df6a055"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-strict-r1.json",
+      "bytes": 111324,
+      "sha256": "fce566dd593592f0d53f6a697cb73dff6cd4c4c7a1772ff110cee98ddbe08251"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-canary-strict-r1.log",
+      "bytes": 587,
+      "sha256": "99ec698d27c67f93eb952ba62b7102671d27a5b760fd580c12887f709d5d33d5"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-controller-r1.tap",
+      "bytes": 2091,
+      "sha256": "7073242de6f91d32d6f691fd4b269100d72c0b3d954d774808240b28007e0d14"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-direct-r1.json",
+      "bytes": 1006,
+      "sha256": "3dd9a39c7e5091c2a1ac6029850094a0139f74f8c331caaa824c06a8f4325c71"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-direct-r1.log",
+      "bytes": 5684,
+      "sha256": "f728d52e54e9614c6190fef1ea0766ac47e67a1e58f4e4c4aa7a37eac01ed08b"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-direct-r2.json",
+      "bytes": 2249,
+      "sha256": "d8d3f49ebf165d32cf5cc8a49d58cee3aa32b3d2724439d4ff95ef0b32f2b7b8"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-direct-r2.log",
+      "bytes": 10957,
+      "sha256": "01627a27c175516e63c9bebf5775e17e2bf262efd6832b1c0b1e2729db90aed0"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-environment-r1.json",
+      "bytes": 478,
+      "sha256": "f548faaad1868a91a81ae4432d82756b324f086a001bfc66be47e10c72d05c4c"
+    },
+    {
+      "path": "scripts/core511/evidence/terminal-installer-static-r1.json",
+      "bytes": 5121,
+      "sha256": "b3bf6fddf1bcf8d2aa052b35d7ec7137f1f443bc5d4d90bfd8e79623fb8406ce"
+    },
+    {
+      "path": "scripts/delivery511/KURULUM_TR.txt",
+      "bytes": 5963,
+      "sha256": "b2f0f5ac0000f98a7f046fe04d59776bf58d2d5083af6a5fb529d2104202a76f"
+    },
+    {
+      "path": "scripts/delivery511/bootstrap.py",
+      "bytes": 3992,
+      "sha256": "342a43d9b61588cfbbb4723cc13ffb4a07783a0d21ce4417520307ef415d5f12"
+    },
+    {
+      "path": "scripts/delivery511/browser-gate.mjs",
+      "bytes": 9723,
+      "sha256": "8554b526ecbcb15ea1e3fe6871c63397a776550f39c2332bd41fc14879368141"
+    },
+    {
+      "path": "scripts/delivery511/build-package.py",
+      "bytes": 5730,
+      "sha256": "3e21a58a11aa36c37b9ab181769a9b35e3d8ef7438ddf36d2c979ca7574f636e"
+    },
+    {
+      "path": "scripts/delivery511/canary-client.mjs",
+      "bytes": 8156,
+      "sha256": "95ba454de5278e68bde2b64e8d69470d951f7673173adb7a2053a1a328cebecd"
+    },
+    {
+      "path": "scripts/delivery511/canary-host.mjs",
+      "bytes": 8169,
+      "sha256": "975869f5bf75db8bdb90e8d64c274131ce789feeeae494b2f4189f9c7bd9e5ef"
+    },
+    {
+      "path": "scripts/delivery511/canary-isolation.mjs",
+      "bytes": 2053,
+      "sha256": "afe726f0fd104406f6996a64404aec546720e4f05a960641f1b9d9b920e3a879"
+    },
+    {
+      "path": "scripts/delivery511/canary-lifecycle.mjs",
+      "bytes": 2503,
+      "sha256": "9a2684744ca28fc0ca80d67b5f010c6ce2bda466ad74b9bebde3ff9373962e14"
+    },
+    {
+      "path": "scripts/delivery511/canary-lifecycle.test.mjs",
+      "bytes": 1573,
+      "sha256": "a99c6612043a7cc8177657339bbdaf194529e5dd2ac8d8152d4195bb72ef92fa"
+    },
+    {
+      "path": "scripts/delivery511/col-core511",
+      "bytes": 618,
+      "sha256": "6a4d26c0574d5fb22272c055c87e268f28ac89f1ca5b4d2feb324f4f3cff17f2"
+    },
+    {
+      "path": "scripts/delivery511/configuration-gate.mjs",
+      "bytes": 3271,
+      "sha256": "fb36b3060cb5e1602e39bc07443b8ff6b406e0af187a46641a4e168621b3ce79"
+    },
+    {
+      "path": "scripts/delivery511/delivery-http-fixture.mjs",
+      "bytes": 4000,
+      "sha256": "98d3e3a8a781fb8cd98721b8ea0a3accaed0caa2a158abbbe357986429305f17"
+    },
+    {
+      "path": "scripts/delivery511/delivery-status.json",
+      "bytes": 1701,
+      "sha256": "53817bad7b7479cb3e408b6b48e65d005122863f3d8e1455d6efad852e30c3a3"
+    },
+    {
+      "path": "scripts/delivery511/direct-installer-gate.mjs",
+      "bytes": 11947,
+      "sha256": "9cf5cce9d89167be329bd95fca4cd2b4a978bf128cc77dbe1a75c5e1da82c689"
+    },
+    {
+      "path": "scripts/delivery511/generated/accounts-entry.mjs",
+      "bytes": 4330,
+      "sha256": "562f5c1902f1ee9eeb5573b9457cebc170a24f3002e3e5965235be1d38909eb9"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/all-known-archive-blobs.json",
+      "bytes": 27734,
+      "sha256": "22fc7c4a43ac9ce9c4892eccf107e2772622d9e5e82d958f6f979063188133fd"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/build-deps-package-lock.json",
+      "bytes": 2688,
+      "sha256": "751d6751cdcfeefe8d311c8d5612b8e4677d2f6c7893e0c0eea6a155caf1baf7"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/build-deps-package.json",
+      "bytes": 255,
+      "sha256": "c8a134c9c53fde6db77497559bd8fd5070a40932732019e9f3b478a76e810350"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/evidence-file-index.json",
+      "bytes": 29139,
+      "sha256": "a16e4feecdb59ea87341bc18bd8f4a94477d80af1daf64ae9c25c5bde97c97c2"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/known-assets-archives.json",
+      "bytes": 1144,
+      "sha256": "fdfd6ee4935ed6008f4aa78b0b33db33f1cb66eae0f488fb1b7defc2fe01e497"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/known-loose-assets.json",
+      "bytes": 5068,
+      "sha256": "eb2461dd3afb67f7aa82cebf1ff7f4581cd066cb2904421697aed365250d9314"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/known-native-delta-archives.json",
+      "bytes": 6561,
+      "sha256": "d41988d000a7d8ba9f81495486354435423ef2322ca90369521be59848602a8c"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/known-pre481-archives.json",
+      "bytes": 7834,
+      "sha256": "52f8745fde697d518ee75adc1a64dfaaa1dcf5ca406d8f8f91817e42fde7f210"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore-blob-candidates.json",
+      "bytes": 133399,
+      "sha256": "86b6af32674714085e4358c4049b553f9310db6030cce3fc1f7a569b67e1b096"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_assets.py",
+      "bytes": 3912,
+      "sha256": "95c03c215a982e2b148041c683611370376408ede077c264429f7473021d157a"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_backend.py",
+      "bytes": 3133,
+      "sha256": "4ca9b79288908800ff49c77c266ffd09495916f9ee19db7a86c61d45ef006a8b"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_delivery.py",
+      "bytes": 1595,
+      "sha256": "d8e36f59317bfbc94abf0433bced25e8b213cd394507434dc326228f96a0aa8b"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_delta.py",
+      "bytes": 3917,
+      "sha256": "40e9ba78a5dd19630bf87ed322710ea266c933ba1b18d6abb48e181b05b50503"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_fixture_support.py",
+      "bytes": 1374,
+      "sha256": "79df75c76f987481d563ccc2c2b5fe9ee5e963fb3e6b3e422b0e0d2c4e7ea567"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_loose_assets.py",
+      "bytes": 3133,
+      "sha256": "b620eb1e151e5943505ed4083a5a51694729e4f7ca0b77a06711160b71bc7c93"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_pinned_archives.py",
+      "bytes": 3275,
+      "sha256": "529480c9f3ac5f736fa01fabfe1429766f8b5f81234c9e31d95ded78b63d916c"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_pre481.py",
+      "bytes": 3912,
+      "sha256": "cd1cf25959f132207a2b9420a745e7c2f2c8d29189068820e12d935b65bcd2d8"
+    },
+    {
+      "path": "scripts/delivery511/handoff-support/restore_source.py",
+      "bytes": 1588,
+      "sha256": "46f2820ee57bffde37b0fd15b63bf2c8ff7ac59d3b10ace495d3bc46c3798706"
+    },
+    {
+      "path": "scripts/delivery511/install-controller.mjs",
+      "bytes": 1705,
+      "sha256": "31b824ba92c247835dbbb9b5ba00fd03ae17bb000d3955f2a45e2550fc1d8fca"
+    },
+    {
+      "path": "scripts/delivery511/install-controller.test.mjs",
+      "bytes": 2766,
+      "sha256": "c75140ab1b5fc0d13f5f5adce0ab7d84da21323ff50f65ae3dfb7f628ddff81a"
+    },
+    {
+      "path": "scripts/delivery511/install-operations.mjs",
+      "bytes": 18236,
+      "sha256": "916f56bd69f16f190c59d3be2c399d55e3a173941cd07d23c75b52f645d23398"
+    },
+    {
+      "path": "scripts/delivery511/installed-key.mjs",
+      "bytes": 627,
+      "sha256": "3bbc63df17d91fe40e2b97c157324c38ae5aaeb1a1690298d96691025014cfbd"
+    },
+    {
+      "path": "scripts/delivery511/installer-entry.mjs",
+      "bytes": 3093,
+      "sha256": "d73a79907954f7792f20396771b82bc13a58ce1c946b9213e9cdccff5e9799a8"
+    },
+    {
+      "path": "scripts/delivery511/isolation-probe.mjs",
+      "bytes": 405,
+      "sha256": "234e8094d8159a8de3deac3876a18a064679bc56d46ce2df7ccdb58170aa9cd5"
+    },
+    {
+      "path": "scripts/delivery511/local-canary-acceptance.mjs",
+      "bytes": 1866,
+      "sha256": "6fb14de558a73944b7266c155eaa23b7b4cfd08efc1709634c3e55691fbfbf5e"
+    },
+    {
+      "path": "scripts/delivery511/maintenance-client.mjs",
+      "bytes": 2933,
+      "sha256": "26bcb3f5d2426143ddc7a2485e75e62731cae5bb9538a2386b60ccc38fb52d51"
+    },
+    {
+      "path": "scripts/delivery511/nginx-config.mjs",
+      "bytes": 2456,
+      "sha256": "380bb2cc7c1792cdf4ecdc74c6135d87304653cabf594e6fa8891124758e8cec"
+    },
+    {
+      "path": "scripts/delivery511/nginx-gate.mjs",
+      "bytes": 6754,
+      "sha256": "586d81358f3bf236a7e1f865880d8821e84952812b94bed43194a7bdd48ab3a0"
+    },
+    {
+      "path": "scripts/delivery511/prepare-http-runtime.mjs",
+      "bytes": 2130,
+      "sha256": "cde95f472e67f2733924800599bd5d631d697d735c7d504e2bd0f42f0415183b"
+    },
+    {
+      "path": "scripts/delivery511/process-resources.mjs",
+      "bytes": 818,
+      "sha256": "646d15b98a47fee1a99546fcf7d2de7e1798bce97dff4c25a47126e5ed25d3b5"
+    },
+    {
+      "path": "scripts/delivery511/rollback-current-db.mjs",
+      "bytes": 3387,
+      "sha256": "5a74220690d2b5cf7e2ecdbd4edfcceb7371cbc93044fdc8e3c779c379bf8313"
+    },
+    {
+      "path": "scripts/delivery511/rollback-entry.mjs",
+      "bytes": 862,
+      "sha256": "7ed57987976d0e606491e934b444914b37f24cd78e6d85b34e7217b1aab81b65"
+    },
+    {
+      "path": "scripts/delivery511/rollback-gate.mjs",
+      "bytes": 9241,
+      "sha256": "02998c57faffefa07b4ae1bdbc32bcfce27759809678ad5ff0a3d9f751748bd3"
+    },
+    {
+      "path": "scripts/delivery511/runtime-entry.mjs",
+      "bytes": 1005,
+      "sha256": "22528618d3ee1d5df80a99bd4f2078e8f4ca7914861295914f70d1f623f78d94"
+    },
+    {
+      "path": "scripts/delivery511/runtime-host.mjs",
+      "bytes": 3020,
+      "sha256": "169b498aa60b4c8775ba097e69b3d2e0cb83f05689ec4d75067cd585d927bc06"
+    },
+    {
+      "path": "scripts/delivery511/runtime-ingress.mjs",
+      "bytes": 3832,
+      "sha256": "62dd6627ab0e1907f9209cca086146b666fcfd66ecdad6be3e030a93126a8e48"
+    },
+    {
+      "path": "scripts/delivery511/service-units.mjs",
+      "bytes": 3502,
+      "sha256": "09e258ce8a09f58aabb6131cec678b5a691335a567bd04ae56a3b16bd027a6d8"
+    },
+    {
+      "path": "scripts/delivery511/supervise-canary.py",
+      "bytes": 3867,
+      "sha256": "a3bdebf0b7ade0a2599d64ae382f4a769f1caeb1176867813c03736124de03f5"
+    }
+  ]
+}

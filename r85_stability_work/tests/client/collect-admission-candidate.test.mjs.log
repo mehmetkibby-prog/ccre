@@ -1,0 +1,211 @@
+{
+  "passed": 11,
+  "baselineDefectsReproduced": 1,
+  "cases": [
+    {
+      "name": "same target is owned after observer timeout for manual and automatic attempts",
+      "status": "passed",
+      "wireInputs": 1,
+      "lateAckMs": 16000,
+      "localPendingMarksAfterSettlement": 0,
+      "creditClaim": "no client-side invented credit; native ledger not executed"
+    },
+    {
+      "name": "automatic admission is bounded before first timeout and keeps attack queue room",
+      "status": "passed",
+      "atMs": 4680,
+      "ownedCollections": 2,
+      "totalQueue": 2,
+      "userAttack": "admitted FIFO after two existing collections; no backpressure rejection"
+    },
+    {
+      "name": "synchronous automatic calls reserve both slots before async enqueue",
+      "status": "passed"
+    },
+    {
+      "name": "pending early drop does not hide the next collectible drop after UI timeout",
+      "status": "passed"
+    },
+    {
+      "name": "manual closest available pickup remains allowed at automatic cap",
+      "status": "passed"
+    },
+    {
+      "name": "successful pickup updates visible inventory and absolute balances only once",
+      "status": "passed"
+    },
+    {
+      "name": "explicit failure keeps retry backoff and permits a later fresh attempt",
+      "status": "passed"
+    },
+    {
+      "name": "bag guard remains authoritative and no local pending mark survives rejection",
+      "status": "passed"
+    },
+    {
+      "name": "all fresh collection admissions respect connection and owner fences",
+      "status": "passed"
+    },
+    {
+      "name": "baseline counterexample: manual retry while ensure has no queue row",
+      "status": "baseline defect reproduced",
+      "delayedTicketMs": 9500,
+      "wireSameDrop": 2
+    },
+    {
+      "name": "manual pre-queue retry suppressed until independent initial connection is ready",
+      "status": "passed",
+      "delayedTicketMs": 9500,
+      "wireSameDrop": 1
+    },
+    {
+      "name": "accepted collection ownership survives real reconnect and late ACK without replay",
+      "status": "passed",
+      "sockets": 2,
+      "wireInputs": 2
+    }
+  ],
+  "throughput": [
+    {
+      "case": "constant ACK delay 40 ms",
+      "baseline": {
+        "lastPickupMs": 1360,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "candidate": {
+        "lastPickupMs": 1360,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "constant ACK delay 100 ms",
+      "baseline": {
+        "lastPickupMs": 1420,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "candidate": {
+        "lastPickupMs": 1420,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "constant ACK delay 120 ms",
+      "baseline": {
+        "lastPickupMs": 1440,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "candidate": {
+        "lastPickupMs": 1440,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 1,
+        "maxQueue": 0,
+        "queueDrainAfterFirstAckMs": 1320
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "constant ACK delay 180 ms",
+      "baseline": {
+        "lastPickupMs": 2160,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 5,
+        "maxQueue": 4,
+        "queueDrainAfterFirstAckMs": 1980
+      },
+      "candidate": {
+        "lastPickupMs": 2160,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 2,
+        "maxQueue": 1,
+        "queueDrainAfterFirstAckMs": 1980
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "constant ACK delay 300 ms",
+      "baseline": {
+        "lastPickupMs": 3600,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 8,
+        "maxQueue": 7,
+        "queueDrainAfterFirstAckMs": 3300
+      },
+      "candidate": {
+        "lastPickupMs": 3600,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 2,
+        "maxQueue": 1,
+        "queueDrainAfterFirstAckMs": 3300
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "constant ACK delay 600 ms",
+      "baseline": {
+        "lastPickupMs": 7200,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 10,
+        "maxQueue": 9,
+        "queueDrainAfterFirstAckMs": 6600
+      },
+      "candidate": {
+        "lastPickupMs": 7200,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 2,
+        "maxQueue": 1,
+        "queueDrainAfterFirstAckMs": 6600
+      },
+      "pickupDelayAddedMs": 0
+    },
+    {
+      "case": "first 3 ACKs 600 ms then 20 ms (recovery burst)",
+      "baseline": {
+        "lastPickupMs": 1980,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 10,
+        "maxQueue": 9,
+        "queueDrainAfterFirstAckMs": 1380
+      },
+      "candidate": {
+        "lastPickupMs": 2660,
+        "received": 12,
+        "completed": 12,
+        "maxOwned": 2,
+        "maxQueue": 1,
+        "queueDrainAfterFirstAckMs": 2060
+      },
+      "pickupDelayAddedMs": 680,
+      "tradeoff": "bounded automatic backlog can leave up to one 120 ms poll gap after rapid ACK bursts; unchanged FIFO and pickup interval"
+    }
+  ]
+}

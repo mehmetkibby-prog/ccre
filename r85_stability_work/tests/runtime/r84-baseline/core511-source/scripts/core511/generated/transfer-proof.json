@@ -1,0 +1,52 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "generatedSha256": "0c535c7e2a3ebe039a2c59995991b4e60d83fe9cbef2c742c245f6ceb2c147e8",
+  "branch": {
+    "start": 523278,
+    "end": 528365,
+    "sha256": "890ec26110ef38c1480fc148a63e9832edcf4f2f2273b60c29687d73b0e7550c"
+  },
+  "guards": [
+    {
+      "start": 495935,
+      "end": 496204,
+      "sha256": "28e6c56501906cf0af7be1d59812eaeb19e5a04a9cc29deabe516508c6ef3d79"
+    },
+    {
+      "start": 518255,
+      "end": 518520,
+      "sha256": "e478b9d95894a79c815e96f35010f4fb2c5832e724a27b9b96d5bae29b26d6e6"
+    },
+    {
+      "start": 518520,
+      "end": 518681,
+      "sha256": "a7b09bef107518a034884ba8cf7f6fd35e71b0016e9b9f803ed01e4146cb31c5"
+    },
+    {
+      "start": 518683,
+      "end": 518859,
+      "sha256": "1a9de5c8861723e85f8a9e93eafd8e00bda59a9dcdeeff1c00f9605cbf073d6e"
+    },
+    {
+      "start": 519184,
+      "end": 519325,
+      "sha256": "7fb80e1b48cd74850218f4b8c3f52626df4b4194d3708cd4838f09f95797f0bf"
+    }
+  ],
+  "plan": {
+    "start": 524424,
+    "end": 526031,
+    "sha256": "06e33ad9e1ec59c98c51d200b4363aa0e0e1c2b099651b9bdbdeebb8fd00eaa4"
+  },
+  "edits": [
+    "R19 strict adventure-area guard requires leaving the run before channel transfer in both native preflights",
+    "channel selector 1..3 to 1..4",
+    "channel capacity dependency now defaults to 25 for every channel",
+    "writer-only plan uses synchronous membership read",
+    "synchronous native preflight removes await; original asynchronous entry retained",
+    "Response is injected for synchronous writer result without changing branches"
+  ],
+  "integrationComplete": false
+}

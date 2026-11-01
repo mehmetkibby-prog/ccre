@@ -1,0 +1,50 @@
+TAP version 13
+# (node:337316) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: native writer binds the private owner stream to the verified main identity, never payload identity
+not ok 1 - native writer binds the private owner stream to the verified main identity, never payload identity
+  ---
+  duration_ms: 220.320858
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:6:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing fixture runtime member: lib/armor-mitigation.d.mts,lib/combat-attack-client.d.mts,lib/community-event.d.mts,lib/community-live.d.mts,lib/game-events.d.mts,lib/movement-checkpoint-client.d.mts,lib/seasonal-layouts.d.mts,vds-server/src/guild-schema.d.mts'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    verifyBaseline (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:34:80)
+    async fixture (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:78:27)
+    async setupPvp (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/pvp-fixture.mjs:15:10)
+    async setupEntry (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/entry-fixture.mjs:8:10)
+    async setup (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:30:22)
+    async TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:7:46)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: native potion accepted before security expiry commits once, while the expired socket loses permission
+not ok 2 - native potion accepted before security expiry commits once, while the expired socket loses permission
+  ---
+  duration_ms: 147.847541
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing fixture runtime member: lib/armor-mitigation.d.mts,lib/combat-attack-client.d.mts,lib/community-event.d.mts,lib/community-live.d.mts,lib/game-events.d.mts,lib/movement-checkpoint-client.d.mts,lib/seasonal-layouts.d.mts,vds-server/src/guild-schema.d.mts'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    verifyBaseline (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:34:80)
+    async fixture (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:78:27)
+    async setupPvp (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/pvp-fixture.mjs:15:10)
+    async setupEntry (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/entry-fixture.mjs:8:10)
+    async setup (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:30:22)
+    async TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:33:61)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 871.970863

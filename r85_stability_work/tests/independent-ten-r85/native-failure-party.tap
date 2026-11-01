@@ -1,0 +1,42 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793523702188,"backupName":"before-pearl-reset-1793523702188-11bdc04b-6ae0-455b-96ea-f38ed7c3fbd2.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"type":"core511_command_sql_rolled_back","operation":"attack","family":"insert_normal_defeats","queryDigest":"e06e023f2222d142","sqliteCode":1811,"frames":["writer-sql-timing477.mjs:85:69","command-failure-scope.mjs:28:134","retaliation-writer.mjs:24:374","reward-sql-r531.mjs:79:40","retaliation-writer.mjs:24:424","retaliation-writer.mjs:30:116"],"outcome":"negative_receipt_pending_durability"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T09:01:48.225Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":373752,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d86b0ba02598f01009749ca6"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T09:01:48.225Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":373758,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f91fb22724ea3bbbab00ec95"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T09:01:48.226Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":373768,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9d9e4f0dd62ed1c80a05c954"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T09:01:48.226Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":373774,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ea6b37ffbdc3cfe1c4ab581a"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T09:01:48.241Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":373741,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"4deaec113695e965c1249e18"}
+# Subtest: late native batch SQL failure rolls back every actor, settles every sequence, and permits next input: joined
+ok 1 - late native batch SQL failure rolls back every actor, settles every sequence, and permits next input: joined
+  ---
+  duration_ms: 7670.801315
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793523710588,"backupName":"before-pearl-reset-1793523710588-4377c583-703e-4c5f-80b3-473ac75ea89a.sqlite"}
+# Subtest: ten native independent kills with25 held party actors equal serial native awards
+not ok 2 - ten native independent kills with25 held party actors equal serial native awards
+  ---
+  duration_ms: 1962.237766
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/independent-ten-r85/native-party-economy.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: 'channel_full'
+  code: 'ERR_SQLITE_ERROR'
+  stack: |-
+    StatementSync.<anonymous> (file:///tmp/col-r11-native-fixture-3UlrG4/runtime/vds-server/src/writer-sql-timing477.mjs:85:69)
+    StatementSync.run (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/command-failure-scope.mjs:28:134)
+    put (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/pvp-fixture.mjs:14:156)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/tests/independent-ten-r85/native-party-economy.test.mjs:21:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11286.662122

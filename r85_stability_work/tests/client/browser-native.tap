@@ -1,0 +1,23 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793512214611,"backupName":"before-pearl-reset-1793512214611-fd9d8d8d-0e71-4aa8-a927-0d01243f5e61.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:50:44.221Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":344384,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dee9ad0b26fb17f9e1b937a0"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:50:44.221Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":344390,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0a855539dfe538114abc0e48"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:50:44.221Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":344406,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"602c375459ab2a898d46e14d"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:50:44.221Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":344422,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"07cb35527b1bcb63495e2eb9"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:50:44.240Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":344360,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"f3ad4fd44c871ce722e492a0"}
+# Subtest: desktop and mobile actual browser input, canvas, current transport and native writer lifecycle
+ok 1 - desktop and mobile actual browser input, canvas, current transport and native writer lifecycle
+  ---
+  duration_ms: 31096.592446
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32080.869445

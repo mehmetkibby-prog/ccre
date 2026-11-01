@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+ok 1 - private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+  ---
+  duration_ms: 4.075089
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 82.868797

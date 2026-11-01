@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: independent secondary settles due AI before its frame, but only take consumes input
+ok 1 - independent secondary settles due AI before its frame, but only take consumes input
+  ---
+  duration_ms: 2.091806
+  type: 'test'
+  ...
+# Subtest: incoming attacker is an earlier kill target leaves AI and accepted head untouched
+ok 2 - incoming attacker is an earlier kill target leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.236842
+  type: 'test'
+  ...
+# Subtest: secondary belongs to a party leaves AI and accepted head untouched
+ok 3 - secondary belongs to a party leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.298658
+  type: 'test'
+  ...
+# Subtest: an older overlapping waiter is already fenced leaves AI and accepted head untouched
+ok 4 - an older overlapping waiter is already fenced leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.346908
+  type: 'test'
+  ...
+# Subtest: secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+ok 5 - secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.292356
+  type: 'test'
+  ...
+# Subtest: an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+ok 6 - an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.276746
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 295.422198

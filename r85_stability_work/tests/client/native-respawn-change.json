@@ -1,0 +1,26 @@
+{
+  "scope": "narrow native cross-area own respawn notification repair",
+  "productionFiles": [
+    {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/action-writer.mjs",
+      "relative": "action-writer.mjs",
+      "bytes": 9425,
+      "sha256": "6199fd493a24a0c05571d8d3211eb48d35de462c6aa0315b3dad6d62942749af",
+      "baselineSha256": "4f712838c458cec8fee90947ab8efec60d217e8763ad54e443caf90afb82eac6"
+    },
+    {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/notification-audience.mjs",
+      "relative": "notification-audience.mjs",
+      "bytes": 8959,
+      "sha256": "f9cf20f1ce7a1d217540b91690d2cc846f2289867ede5f5dc93f59a5825e74a1",
+      "baselineSha256": "fc48e3ce4c715f58b7719ea79fc327a9d1e8ca3850b907c03e6a862f20e44267"
+    },
+    {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/respawn-notification-r85.mjs",
+      "relative": "respawn-notification-r85.mjs",
+      "bytes": 2566,
+      "sha256": "06be17f7799d294448338add34b3b6b31fd8901b7bcd497b3d3fd35236d6fe94",
+      "baselineSha256": null
+    }
+  ]
+}

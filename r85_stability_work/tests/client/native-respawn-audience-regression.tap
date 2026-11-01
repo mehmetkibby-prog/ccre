@@ -1,0 +1,45 @@
+TAP version 13
+# (node:346881) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: native original publishers and senders agree on four-channel rooms, arena isolation, private cross-scope and GM audiences
+ok 1 - native original publishers and senders agree on four-channel rooms, arena isolation, private cross-scope and GM audiences
+  ---
+  duration_ms: 63.332146
+  type: 'test'
+  ...
+# Subtest: nested audience calls and failures never share borrowed scratch or mutate prior returned events
+ok 2 - nested audience calls and failures never share borrowed scratch or mutate prior returned events
+  ---
+  duration_ms: 1.028483
+  type: 'test'
+  ...
+# Subtest: hot event fanout follows live scope, connections and GM changes while shared nested payloads stay immutable
+ok 3 - hot event fanout follows live scope, connections and GM changes while shared nested payloads stay immutable
+  ---
+  duration_ms: 1.919057
+  type: 'test'
+  ...
+# Subtest: native lab audience, payload caps and private world instance never widen to another player
+ok 4 - native lab audience, payload caps and private world instance never widen to another player
+  ---
+  duration_ms: 3.658089
+  type: 'test'
+  ...
+# (node:346881) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# pearl_reset {"applied":true,"appliedAtMs":1793512478332,"backupName":"before-pearl-reset-1793512478332-a921aa1d-5e36-42bd-a76f-19b8e7786a06.sqlite"}
+# Subtest: native audience COMMIT captures exact admitted owners and concealment; replay and transfer retain only intended mailbox
+ok 5 - native audience COMMIT captures exact admitted owners and concealment; replay and transfer retain only intended mailbox
+  ---
+  duration_ms: 1731.524435
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2294.370043

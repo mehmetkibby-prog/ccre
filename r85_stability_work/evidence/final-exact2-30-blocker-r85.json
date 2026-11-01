@@ -1,0 +1,1960 @@
+{
+  "status": "performance-blocked-no-scaling",
+  "passed": false,
+  "coreSHA256": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+  "deliverySHA256": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+  "rawTransportEconomyPassed": true,
+  "performanceFailure": "additional wire input-to-result max300ms exceeded; this is distinct from historical event-loop300 policy",
+  "scope": "New exact-basic-cadence, automatic-potion,4generatorTCP workload; not comparable as equal-workload A/B with older1300ms/manual-potion tests. No renderedFPS orVDS acceptance claim.",
+  "testedPlayers": [
+    1,
+    10,
+    30
+  ],
+  "notRunPlayers": [
+    50,
+    100
+  ],
+  "fullWindowIncluded": true,
+  "top20Over300": [
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:27",
+      "channel": 4,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 431.5656880000006,
+      "offset": 2267.3411064531247,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:19",
+      "channel": 4,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 388.8382739999997,
+      "offset": 2264.697011453125,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:15",
+      "channel": 4,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 388.1183089999995,
+      "offset": 2264.6252574531254,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:11",
+      "channel": 4,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 387.6277220000002,
+      "offset": 2264.535579453125,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:7",
+      "channel": 4,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 387.07405800000015,
+      "offset": 2264.457163453125,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:19",
+      "channel": 4,
+      "sequence": 18,
+      "action": "move",
+      "ms": 340.68070199999966,
+      "offset": 2312.8563064531254,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:15",
+      "channel": 4,
+      "sequence": 18,
+      "action": "move",
+      "ms": 340.02899400000024,
+      "offset": 2312.7163454531246,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:11",
+      "channel": 4,
+      "sequence": 18,
+      "action": "move",
+      "ms": 339.57249199999933,
+      "offset": 2312.5928844531254,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:7",
+      "channel": 4,
+      "sequence": 18,
+      "action": "move",
+      "ms": 339.08497999999963,
+      "offset": 2312.450348453125,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:28",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 338.63029000000006,
+      "offset": 2267.3557824843747,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:24",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 337.1774969999997,
+      "offset": 2267.266264484375,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:16",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 335.7342899999994,
+      "offset": 2266.9694604843753,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:12",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 335.0236219999997,
+      "offset": 2266.8952714843754,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:8",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 334.3633380000001,
+      "offset": 2266.8257324843753,
+      "status": 200
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:4",
+      "channel": 1,
+      "sequence": 17,
+      "action": "attack",
+      "ms": 333.6042699999998,
+      "offset": 2266.752004484375,
+      "status": 200
+    }
+  ],
+  "over300Total": 15,
+  "allOver300AreFirstKillWave": true,
+  "windows": [
+    {
+      "name": "initial-automatic-potion",
+      "startMs": 0,
+      "endMs": 1800,
+      "wireMs": {
+        "count": 420,
+        "p50": 38.36950200000001,
+        "p95": 161.01281199999994,
+        "p99": 198.58833000000004,
+        "max": 239.27437800000007
+      },
+      "byAction": {
+        "attack": {
+          "count": 90,
+          "p50": 35.9374429999998,
+          "p95": 45.74307699999963,
+          "p99": 51.530829999999696,
+          "max": 51.530829999999696
+        },
+        "heartbeat": {
+          "count": 30,
+          "p50": 45.39777800000002,
+          "p95": 47.39944300000025,
+          "p99": 47.82689699999992,
+          "max": 47.82689699999992
+        },
+        "move": {
+          "count": 270,
+          "p50": 38.03725900000018,
+          "p95": 57.34399200000007,
+          "p99": 59.82170099999985,
+          "max": 60.389402000000246
+        },
+        "use_potion": {
+          "count": 30,
+          "p50": 190.64635800000042,
+          "p95": 207.74164599999995,
+          "p99": 239.27437800000007,
+          "max": 239.27437800000007
+        }
+      },
+      "writerMs": {
+        "count": 17,
+        "p50": 49.87466500000119,
+        "p95": 73.05457899999965,
+        "p99": 73.05457899999965,
+        "max": 73.05457899999965
+      },
+      "writerCommandCounts": {
+        "actor_checkpoint:None": 8,
+        "native_action:use_potion": 9
+      },
+      "maxWriterDepth": 3,
+      "maxOldestWriterAgeMs": 35.84284899999875,
+      "attackWriterRecords": []
+    },
+    {
+      "name": "first-seeded-kill-wave",
+      "startMs": 1800,
+      "endMs": 4000,
+      "wireMs": {
+        "count": 398,
+        "p50": 33.554889,
+        "p95": 266.0698079999993,
+        "p99": 387.6277220000002,
+        "max": 431.5656880000006
+      },
+      "byAction": {
+        "attack": {
+          "count": 90,
+          "p50": 30.587556000000404,
+          "p95": 387.07405800000015,
+          "p99": 431.5656880000006,
+          "max": 431.5656880000006
+        },
+        "move": {
+          "count": 308,
+          "p50": 33.993263999999726,
+          "p95": 218.5986070000008,
+          "p99": 339.08497999999963,
+          "max": 340.68070199999966
+        }
+      },
+      "writerMs": {
+        "count": 43,
+        "p50": 13.75832199999968,
+        "p95": 277.22606599999926,
+        "p99": 343.76120400000036,
+        "max": 343.76120400000036
+      },
+      "writerCommandCounts": {
+        "actor_checkpoint:None": 35,
+        "attack:attack": 8
+      },
+      "maxWriterDepth": 7,
+      "maxOldestWriterAgeMs": 317.5517090000012,
+      "attackWriterRecords": [
+        {
+          "ms": 112.07873400000062,
+          "offset": 2277.5926629999994,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 140.1226770000012,
+          "offset": 2285.4177419999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 186.6832290000002,
+          "offset": 2289.750586,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 212.87569900000017,
+          "offset": 2289.9610599999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 256.97343999999975,
+          "offset": 2290.725488,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 277.22606599999926,
+          "offset": 2297.4808570000005,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 324.73447699999997,
+          "offset": 2299.192395,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 343.76120400000036,
+          "offset": 2299.5377200000003,
+          "operation": "attack",
+          "action": "attack"
+        }
+      ]
+    },
+    {
+      "name": "second-seeded-kill-wave",
+      "startMs": 11500,
+      "endMs": 14000,
+      "wireMs": {
+        "count": 469,
+        "p50": 21.790845999999874,
+        "p95": 95.93568400000004,
+        "p99": 160.0374299999985,
+        "max": 163.20112100000006
+      },
+      "byAction": {
+        "attack": {
+          "count": 105,
+          "p50": 21.252160000000003,
+          "p95": 152.72659399999975,
+          "p99": 162.12788499999988,
+          "max": 163.20112100000006
+        },
+        "move": {
+          "count": 364,
+          "p50": 21.86908299999959,
+          "p95": 59.78653699999995,
+          "p99": 95.93568400000004,
+          "max": 97.54005999999936
+        }
+      },
+      "writerMs": {
+        "count": 42,
+        "p50": 11.109850999997434,
+        "p95": 71.37678900000174,
+        "p99": 113.72376599999916,
+        "max": 113.72376599999916
+      },
+      "writerCommandCounts": {
+        "attack:attack": 12,
+        "actor_checkpoint:None": 30
+      },
+      "maxWriterDepth": 2,
+      "maxOldestWriterAgeMs": 83.14989700000297,
+      "attackWriterRecords": [
+        {
+          "ms": 24.28927399999884,
+          "offset": 12038.873719000001,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 49.08849099999861,
+          "offset": 12139.912235000002,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 61.60654400000203,
+          "offset": 12142.518434,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 47.821554999998625,
+          "offset": 12175.322654000001,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 68.69501899999887,
+          "offset": 12197.953370000001,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 71.37678900000174,
+          "offset": 12208.337307,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.443570000003092,
+          "offset": 12277.874248999999,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 45.35959499999808,
+          "offset": 12281.224077,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 58.607803000002605,
+          "offset": 12281.403072,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 91.79325400000016,
+          "offset": 12290.33675,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 113.72376599999916,
+          "offset": 12290.983929,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 70.34178600000087,
+          "offset": 12344.591091,
+          "operation": "attack",
+          "action": "attack"
+        }
+      ]
+    },
+    {
+      "name": "later",
+      "startMs": 14000,
+      "endMs": 60000,
+      "wireMs": {
+        "count": 9039,
+        "p50": 34.148206999998365,
+        "p95": 55.99506999999721,
+        "p99": 97.771936000001,
+        "max": 194.92742799999905
+      },
+      "byAction": {
+        "attack": {
+          "count": 1962,
+          "p50": 28.9419510000007,
+          "p95": 55.28377599999658,
+          "p99": 60.36625599999388,
+          "max": 104.84278099999938
+        },
+        "collect": {
+          "count": 157,
+          "p50": 97.92635399999926,
+          "p95": 159.9901890000001,
+          "p99": 164.88178299999709,
+          "max": 194.92742799999905
+        },
+        "heartbeat": {
+          "count": 270,
+          "p50": 35.013441999999486,
+          "p95": 53.51053899999533,
+          "p99": 56.0123190000013,
+          "max": 56.347734999999375
+        },
+        "move": {
+          "count": 6650,
+          "p50": 35.09041300000172,
+          "p95": 54.643484999993234,
+          "p99": 60.670460000001185,
+          "max": 152.60484799999904
+        }
+      },
+      "writerMs": {
+        "count": 1156,
+        "p50": 6.797348000000056,
+        "p95": 32.44280099999742,
+        "p99": 46.797811000004,
+        "max": 55.520367000004626
+      },
+      "writerCommandCounts": {
+        "actor_checkpoint:None": 910,
+        "native_action:collect": 157,
+        "attack:attack": 89
+      },
+      "maxWriterDepth": 6,
+      "maxOldestWriterAgeMs": 26.92818499999703,
+      "attackWriterRecords": [
+        {
+          "ms": 18.66475899999932,
+          "offset": 24636.17566,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.31411500000104,
+          "offset": 24736.718169,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.652658999999403,
+          "offset": 24937.477338999997,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 27.79191799999535,
+          "offset": 24939.519003,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 32.76274700000067,
+          "offset": 24976.459436999998,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 45.88936599999579,
+          "offset": 24978.588483,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 54.70828700000129,
+          "offset": 24983.358781999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.36268800000107,
+          "offset": 25125.653959999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 19.43938700000581,
+          "offset": 25494.720260999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 19.882725999996183,
+          "offset": 25547.675465,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 28.692960000000312,
+          "offset": 25642.750763999997,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 44.319885999997496,
+          "offset": 25642.918978,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.823512000002665,
+          "offset": 25823.067886999997,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.813843999996607,
+          "offset": 26246.935178,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 22.01057999999466,
+          "offset": 28479.769691,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 26.076694000003044,
+          "offset": 28486.230386999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 34.52135499999713,
+          "offset": 28495.977092,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.98845799999981,
+          "offset": 28631.327972,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.345218000002205,
+          "offset": 29073.389843999998,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 12.481490999998641,
+          "offset": 29099.264108999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.358123999998497,
+          "offset": 29141.633703,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.938840999995591,
+          "offset": 29186.844612,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.125521999994817,
+          "offset": 29636.182151,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.24531799999386,
+          "offset": 29837.943501,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.176860999999917,
+          "offset": 34035.061401,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 25.331053999994765,
+          "offset": 34696.322022,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 20.2910600000032,
+          "offset": 34728.377896,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 33.54243100000167,
+          "offset": 34730.056451,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 33.10067600000184,
+          "offset": 34740.063252,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.932839000000968,
+          "offset": 34833.886037,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.803547000003164,
+          "offset": 34886.946167999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.453221999996458,
+          "offset": 35072.015673,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.847224999997707,
+          "offset": 35286.176772,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 11.932048000002396,
+          "offset": 35323.998071999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 23.509111999999732,
+          "offset": 35396.208538,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 32.119323999999324,
+          "offset": 35398.492384,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 20.730470000002242,
+          "offset": 35441.328896,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 29.46469700000307,
+          "offset": 35441.563733999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 23.73441399999865,
+          "offset": 35886.493764,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.989629999996396,
+          "offset": 36095.599773,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 21.666993000006187,
+          "offset": 38373.187634999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 25.299230999997235,
+          "offset": 38786.02916,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.229620999998588,
+          "offset": 38887.31388,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.924859000006109,
+          "offset": 38926.358179999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.721109000005526,
+          "offset": 39083.279580999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 21.251949999998033,
+          "offset": 39085.739486,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.595172000001185,
+          "offset": 39687.98482,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.118390000003274,
+          "offset": 40294.924578,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.012403000000631,
+          "offset": 43972.493990999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.161339999998745,
+          "offset": 44586.485189,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 30.246801999994204,
+          "offset": 44731.066782,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.654142999999749,
+          "offset": 45993.180876,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.091233999999531,
+          "offset": 47185.96365,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.470642000000225,
+          "offset": 47985.024412,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 22.74163899999985,
+          "offset": 47996.253248,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 19.900119999998424,
+          "offset": 48124.317586,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.305460000003222,
+          "offset": 48141.503725999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.78338200000144,
+          "offset": 48373.893635,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 19.887538000002678,
+          "offset": 48694.050302999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.271214000000327,
+          "offset": 48824.379194,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 29.290539000001445,
+          "offset": 48826.252233,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 33.698639000002004,
+          "offset": 48840.143575999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 46.797811000004,
+          "offset": 48840.765167,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 55.520367000004626,
+          "offset": 48845.409932999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.83641699999862,
+          "offset": 49292.79058,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.060600999997405,
+          "offset": 49333.800334,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.631980999998632,
+          "offset": 50031.558615,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 19.09121900000173,
+          "offset": 50374.162237,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 12.300455999997212,
+          "offset": 51624.940399,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.976196000003256,
+          "offset": 51683.676440999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 22.55994500000088,
+          "offset": 51887.843901,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.754367000001366,
+          "offset": 52144.291315999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 12.66484599999967,
+          "offset": 52183.129231,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.70851699999912,
+          "offset": 52422.446775,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 13.233667000000423,
+          "offset": 52942.355555999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.89184699999896,
+          "offset": 53083.141969,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.4283310000028,
+          "offset": 55393.501749999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 23.539761,
+          "offset": 55883.779954,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 20.639449000009336,
+          "offset": 56775.658596999994,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.52417200000491,
+          "offset": 57038.239865999996,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 18.383805999998003,
+          "offset": 57485.958532,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.640254999991157,
+          "offset": 57525.371208000004,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 22.21035799999663,
+          "offset": 58495.037122,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 15.070319999998901,
+          "offset": 58543.76701999999,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 17.436770999993314,
+          "offset": 58632.950260000005,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 39.330497999995714,
+          "offset": 58678.54537,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 14.573596000001999,
+          "offset": 59041.402257999995,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 16.894348000001628,
+          "offset": 59589.269515,
+          "operation": "attack",
+          "action": "attack"
+        },
+        {
+          "ms": 25.821684000009554,
+          "offset": 59589.478574999994,
+          "operation": "attack",
+          "action": "attack"
+        }
+      ]
+    }
+  ],
+  "actorPredictionHistory": [
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:0",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 397.11049100000037,
+      "maxGeneratorFrameGapMs": 74.59410000000025,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:4",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 396.00127900000007,
+      "maxGeneratorFrameGapMs": 74.78521700000056,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:8",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 396.46535700000004,
+      "maxGeneratorFrameGapMs": 74.86336399999982,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:12",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 396.77564600000005,
+      "maxGeneratorFrameGapMs": 74.98509000000013,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:16",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 397.0889109999998,
+      "maxGeneratorFrameGapMs": 75.09927400000015,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:20",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 397.6987509999999,
+      "maxGeneratorFrameGapMs": 75.21504999999979,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:24",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 398.0529230000002,
+      "maxGeneratorFrameGapMs": 75.29109199999948,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:28",
+      "channel": 1,
+      "generatorShard": 0,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 399.2594570000001,
+      "maxGeneratorFrameGapMs": 75.36113300000034,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:1",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 262.07431200000065,
+      "maxGeneratorFrameGapMs": 55.9699599999949,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:5",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 264.56533799999943,
+      "maxGeneratorFrameGapMs": 56.083673000001,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:9",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 264.48563600000034,
+      "maxGeneratorFrameGapMs": 56.11148400000093,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:13",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 305.92075900000054,
+      "maxGeneratorFrameGapMs": 56.126021000003675,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:17",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 306.4182969999965,
+      "maxGeneratorFrameGapMs": 56.09818899999664,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:21",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 295.1622440000001,
+      "maxGeneratorFrameGapMs": 56.11493999999948,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:25",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 294.868555,
+      "maxGeneratorFrameGapMs": 56.13346499999898,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:29",
+      "channel": 2,
+      "generatorShard": 1,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 294.6875179999997,
+      "maxGeneratorFrameGapMs": 56.153040999997756,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:2",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 377.152513,
+      "maxGeneratorFrameGapMs": 53.50458300000173,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:6",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 381.50769000000037,
+      "maxGeneratorFrameGapMs": 54.70215300000018,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:10",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 399.9000449999994,
+      "maxGeneratorFrameGapMs": 54.85401700000057,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:14",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 381.8086919999996,
+      "maxGeneratorFrameGapMs": 55.061706999993476,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:18",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 334.87411500000053,
+      "maxGeneratorFrameGapMs": 55.06186699999671,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:22",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 305.5293810000003,
+      "maxGeneratorFrameGapMs": 55.0348840000006,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:26",
+      "channel": 3,
+      "generatorShard": 2,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 305.53408000000036,
+      "maxGeneratorFrameGapMs": 54.976417999998375,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:3",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 449.52217199999996,
+      "maxGeneratorFrameGapMs": 54.6085579999999,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:7",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 488.4779869999993,
+      "maxGeneratorFrameGapMs": 54.6306399999994,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:11",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 488.5172309999998,
+      "maxGeneratorFrameGapMs": 54.65729999999894,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:15",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 488.724878,
+      "maxGeneratorFrameGapMs": 54.70230399999855,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:19",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 489.0898100000004,
+      "maxGeneratorFrameGapMs": 54.746917000000394,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:23",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 450.3697510000002,
+      "maxGeneratorFrameGapMs": 54.71162099999856,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    },
+    {
+      "actor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:27",
+      "channel": 4,
+      "generatorShard": 3,
+      "predictionCapEpisodes": 0,
+      "predictionCapIntervals": [],
+      "predictionLimitedInputMs": 0,
+      "predictionLimitedSamples": [],
+      "maxMoveAckGapMs": 450.85086000000047,
+      "maxGeneratorFrameGapMs": 54.70230400000219,
+      "cancelledInputs": [],
+      "remainingCommandQueue": 0
+    }
+  ],
+  "channels": [
+    {
+      "channel": "channel-1",
+      "deathBatchEnvelopes": 3,
+      "secondaryDeathBatchInputs": 10,
+      "deathWaitR82": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793520905804,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 31,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 31,
+        "totalP95Ms": 281.0920240000005,
+        "totalMaxMs": 295.1271540000007,
+        "checkpointMaxMs": 7.016834999994899,
+        "writerMaxMs": 287.7258660000007,
+        "refreshMaxMs": 12.072573999999804,
+        "last": {
+          "atMs": 1793520905318,
+          "outcome": "completed",
+          "totalMs": 31.200582000004943,
+          "checkpointMs": 1.8956509999989066,
+          "writerMs": 28.280618000004324,
+          "refreshMs": 1.0243130000017118
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793520848268,
+            "outcome": "completed",
+            "totalMs": 281.0920240000005,
+            "checkpointMs": 2.831560000000536,
+            "writerMs": 266.18789000000015,
+            "refreshMs": 12.072573999999804
+          },
+          {
+            "atMs": 1793520848284,
+            "outcome": "completed",
+            "totalMs": 295.1271540000007,
+            "checkpointMs": 1.3441720000000714,
+            "writerMs": 287.7258660000007,
+            "refreshMs": 6.057115999999951
+          }
+        ]
+      }
+    },
+    {
+      "channel": "channel-2",
+      "deathBatchEnvelopes": 7,
+      "secondaryDeathBatchInputs": 16,
+      "deathWaitR82": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793520905803,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 28,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 28,
+        "totalP95Ms": 134.14519299999938,
+        "totalMaxMs": 162.9634300000007,
+        "checkpointMaxMs": 5.271717000003264,
+        "writerMaxMs": 154.93657499999972,
+        "refreshMaxMs": 13.05749999999989,
+        "last": {
+          "atMs": 1793520904425,
+          "outcome": "completed",
+          "totalMs": 48.491266999997606,
+          "checkpointMs": 1.6592390000005253,
+          "writerMs": 43.74136600000202,
+          "refreshMs": 3.0906619999950635
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793520848108,
+            "outcome": "completed",
+            "totalMs": 134.14519299999938,
+            "checkpointMs": 3.1765439999999217,
+            "writerMs": 117.91114899999957,
+            "refreshMs": 13.05749999999989
+          },
+          {
+            "atMs": 1793520848139,
+            "outcome": "completed",
+            "totalMs": 162.9634300000007,
+            "checkpointMs": 1.919676000000436,
+            "writerMs": 154.93657499999972,
+            "refreshMs": 6.107179000000542
+          }
+        ]
+      }
+    },
+    {
+      "channel": "channel-3",
+      "deathBatchEnvelopes": 5,
+      "secondaryDeathBatchInputs": 11,
+      "deathWaitR82": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793520905802,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 25,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 25,
+        "totalP95Ms": 215.5868759999994,
+        "totalMaxMs": 229.30661599999985,
+        "checkpointMaxMs": 5.204243000000133,
+        "writerMaxMs": 223.79605100000026,
+        "refreshMaxMs": 19.262455000000045,
+        "last": {
+          "atMs": 1793520904354,
+          "outcome": "completed",
+          "totalMs": 22.348288000001048,
+          "checkpointMs": 1.7147929999991902,
+          "writerMs": 19.09723600000143,
+          "refreshMs": 1.5362590000004275
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793520848200,
+            "outcome": "completed",
+            "totalMs": 215.5868759999994,
+            "checkpointMs": 2.800913000000037,
+            "writerMs": 193.5235079999993,
+            "refreshMs": 19.262455000000045
+          },
+          {
+            "atMs": 1793520848215,
+            "outcome": "completed",
+            "totalMs": 229.30661599999985,
+            "checkpointMs": 2.0277589999996053,
+            "writerMs": 223.79605100000026,
+            "refreshMs": 3.4828059999999823
+          },
+          {
+            "atMs": 1793520858091,
+            "outcome": "completed",
+            "totalMs": 104.57203900000059,
+            "checkpointMs": 4.555580000000191,
+            "writerMs": 95.2385430000013,
+            "refreshMs": 4.777915999999095
+          },
+          {
+            "atMs": 1793520858112,
+            "outcome": "completed",
+            "totalMs": 122.72322500000155,
+            "checkpointMs": 2.040201000001616,
+            "writerMs": 117.00567599999886,
+            "refreshMs": 3.677348000001075
+          }
+        ]
+      }
+    },
+    {
+      "channel": "channel-4",
+      "deathBatchEnvelopes": 7,
+      "secondaryDeathBatchInputs": 13,
+      "deathWaitR82": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793520905803,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 25,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 25,
+        "totalP95Ms": 338.5065919999997,
+        "totalMaxMs": 354.5884670000005,
+        "checkpointMaxMs": 4.474616999999853,
+        "writerMaxMs": 351.1785769999997,
+        "refreshMaxMs": 6.009965999999622,
+        "last": {
+          "atMs": 1793520904759,
+          "outcome": "completed",
+          "totalMs": 18.103766000000178,
+          "checkpointMs": 0.7911870000025374,
+          "writerMs": 16.11232700000255,
+          "refreshMs": 1.2002519999950891
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793520848334,
+            "outcome": "completed",
+            "totalMs": 338.5065919999997,
+            "checkpointMs": 2.347805999999764,
+            "writerMs": 330.66697600000043,
+            "refreshMs": 5.491809999999532
+          },
+          {
+            "atMs": 1793520848351,
+            "outcome": "completed",
+            "totalMs": 354.5884670000005,
+            "checkpointMs": 1.2436930000003485,
+            "writerMs": 351.1785769999997,
+            "refreshMs": 2.1661970000004658
+          }
+        ]
+      }
+    }
+  ],
+  "economy": {
+    "actors": 30,
+    "allPassed": true,
+    "automaticChargesDebited": 27000000,
+    "automaticActorLedgerCount": 30,
+    "manualPotionStockRetained": true,
+    "initialKillReceiptsEach": true,
+    "seededDropsRemoved": true,
+    "nativeKillClaims": 159
+  },
+  "readerActorWorldQueries": {
+    "count": 0
+  },
+  "generatorResources": {
+    "processes": [
+      {
+        "shard": 0,
+        "pid": 367699,
+        "players": 8,
+        "startEpochMs": 1793520845701.91,
+        "resourceStartedEpochMs": 1793520845702.5527,
+        "endedEpochMs": 1793520905753.213,
+        "commonEndEpochMs": 1793520905752.917,
+        "drainOffsetMs": 60002.49062548437,
+        "durationMs": 60051.302978515625,
+        "cpuMs": 4779.615,
+        "cpuCores": 0.07959219472240242,
+        "elu": 0.06770077667761197,
+        "eluActiveMs": 4065.493249027133,
+        "eluIdleMs": 55985.416778,
+        "maxPauseMs": 26.984447,
+        "peakRssBytes": 157114368,
+        "sampledMeanRssBytes": 148931094.26086956,
+        "sampleCount": 598
+      },
+      {
+        "shard": 1,
+        "pid": 367700,
+        "players": 8,
+        "startEpochMs": 1793520845701.91,
+        "resourceStartedEpochMs": 1793520845702.5627,
+        "endedEpochMs": 1793520905753.2488,
+        "commonEndEpochMs": 1793520905752.917,
+        "drainOffsetMs": 60042.49828403125,
+        "durationMs": 60051.3388671875,
+        "cpuMs": 4863.359,
+        "cpuCores": 0.08098668725365216,
+        "elu": 0.06779829586947948,
+        "eluActiveMs": 4071.3470320337738,
+        "eluIdleMs": 55979.528581,
+        "maxPauseMs": 12.804095,
+        "peakRssBytes": 158789632,
+        "sampledMeanRssBytes": 150853683.2854758,
+        "sampleCount": 599
+      },
+      {
+        "shard": 2,
+        "pid": 367706,
+        "players": 7,
+        "startEpochMs": 1793520845701.91,
+        "resourceStartedEpochMs": 1793520845702.6396,
+        "endedEpochMs": 1793520905753.2468,
+        "commonEndEpochMs": 1793520905752.917,
+        "drainOffsetMs": 60001.24284210937,
+        "durationMs": 60051.3369140625,
+        "cpuMs": 4317.887,
+        "cpuCores": 0.0719032618071299,
+        "elu": 0.06014840777856659,
+        "eluActiveMs": 3611.962049971043,
+        "eluIdleMs": 56438.871935,
+        "maxPauseMs": 27.787263,
+        "peakRssBytes": 153284608,
+        "sampledMeanRssBytes": 143472294.67779633,
+        "sampleCount": 599
+      },
+      {
+        "shard": 3,
+        "pid": 367712,
+        "players": 7,
+        "startEpochMs": 1793520845701.91,
+        "resourceStartedEpochMs": 1793520845703.1252,
+        "endedEpochMs": 1793520905755.1038,
+        "commonEndEpochMs": 1793520905752.917,
+        "drainOffsetMs": 60001.144905453126,
+        "durationMs": 60053.19384765625,
+        "cpuMs": 4462.278,
+        "cpuCores": 0.0743054234770588,
+        "elu": 0.06085201661205909,
+        "eluActiveMs": 3654.2979700038322,
+        "eluIdleMs": 56397.910213999996,
+        "maxPauseMs": 11.755519,
+        "peakRssBytes": 155574272,
+        "sampledMeanRssBytes": 144556573.1103679,
+        "sampleCount": 598
+      }
+    ],
+    "count": 4,
+    "startEpochMs": 1793520845701.91,
+    "endEpochMs": 1793520905755.1038,
+    "wholeWindowMs": 60053.19384765625,
+    "nativeEndRequestedEpochMs": 1793520905744.626,
+    "nativeEndCompletedEpochMs": 1793520905752.917,
+    "cpuMs": 18423.139000000003,
+    "cpuCores": 0.3067803362255148,
+    "weightedElu": 0.06412485727922727,
+    "eluActiveMs": 15403.100301035782,
+    "eluIdleMs": 224801.727508,
+    "maxProcessElu": 0.06779829586947948,
+    "maxPauseMs": 27.787263,
+    "sumLifetimePeakRssBytes": 624762880,
+    "sumSampledMeanRssBytes": 587813645.3345096,
+    "scope": "Sum CPU milliseconds divided by one common elapsed window. Per-process CPU snapshots include waiting after each gameplay drain until report request; report serialization is excluded. ELU weights total active/idle milliseconds, not a mean of process fractions. RSS peak is a conservative sum of lifetime peaks, not simultaneous native-server memory."
+  },
+  "loopResources": {
+    "processLoops": [
+      {
+        "target": "main",
+        "maxPauseMs": 37.617663,
+        "elu": 0.166501699039686,
+        "processCpuMs": 15970.754,
+        "maxRssBytes": 519356416,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 37.58491099999992,
+            "elu": 0.18992907439486045
+          },
+          "normal": {
+            "timerMaxPauseMs": 17.525304999999207,
+            "elu": 0.16182432018774828
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.166065000001,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "world",
+        "maxPauseMs": 12.140543,
+        "elu": 0.012578923676357243,
+        "processCpuMs": 1335.224,
+        "maxRssBytes": 109678592,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 12.13195799999994,
+            "elu": 0.017355495347592086
+          },
+          "normal": {
+            "timerMaxPauseMs": 8.336670999997295,
+            "elu": 0.01162835998883575
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.893323,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "channel-1",
+        "maxPauseMs": 19.578879,
+        "elu": 0.12540076576203263,
+        "processCpuMs": 9984.388,
+        "maxRssBytes": 213901312,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 15.056917999999314,
+            "elu": 0.16224942782429588
+          },
+          "normal": {
+            "timerMaxPauseMs": 13.53421199999866,
+            "elu": 0.11804236782893618
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.160547,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "channel-2",
+        "maxPauseMs": 19.316735,
+        "elu": 0.1235546685219402,
+        "processCpuMs": 10222.832,
+        "maxRssBytes": 213491712,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 18.094199000000117,
+            "elu": 0.1719870998754234
+          },
+          "normal": {
+            "timerMaxPauseMs": 12.625722999997379,
+            "elu": 0.11388346469638548
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.542560999998,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "channel-3",
+        "maxPauseMs": 32.014335,
+        "elu": 0.11437785241907977,
+        "processCpuMs": 9139.482,
+        "maxRssBytes": 213299200,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 22.229318000000603,
+            "elu": 0.15366217585555086
+          },
+          "normal": {
+            "timerMaxPauseMs": 18.38989500000025,
+            "elu": 0.10653135134493812
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.860986,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "channel-4",
+        "maxPauseMs": 16.457727,
+        "elu": 0.11658261321617544,
+        "processCpuMs": 9338.868,
+        "maxRssBytes": 227573760,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 14.200808000000052,
+            "elu": 0.16146516213380316
+          },
+          "normal": {
+            "timerMaxPauseMs": 12.533048000004783,
+            "elu": 0.10761946853643267
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.090441,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      },
+      {
+        "target": "reader",
+        "maxPauseMs": 21.839871,
+        "elu": 0.013755865157264333,
+        "processCpuMs": null,
+        "maxRssBytes": null,
+        "segments": {
+          "startup": {
+            "timerMaxPauseMs": 10.109517000000778,
+            "elu": 0.01520787186652984
+          },
+          "normal": {
+            "timerMaxPauseMs": 21.730727999998635,
+            "elu": 0.013467014093180196
+          },
+          "cutoffMs": 10000,
+          "eluBoundaryElapsedMs": 10000.355661,
+          "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+        }
+      }
+    ],
+    "resources": {
+      "cpuBudget": 4,
+      "totalCpuFraction": 0.2331025482434518,
+      "maxRssBytes": 1497300992
+    }
+  },
+  "interpretation": [
+    "All15wire responses>300ms occur in firstkillwave, with top431.57ms attackstatus200 at2.267s foractor27/channel4. Initialautomaticpotion maximum239.27ms; no potion response causes thisgatefailure.",
+    "Thirty initialkills use8nativeattack envelopes; batching engages. Fullwindow22batches include50secondaryinputs (72kills insidebatched envelopes);159killclaims and109nativeattack envelopes are consistent.",
+    "Firstkillwritermax343.76ms andqueueoldest317.55ms; secondkillwritermax113.72ms. No actor_world refresh queries. Existing exact earlier workerCPU traces attribute thisclass of serialburst primarily to nativeattack/reward service, not generator saturation; this finalrun itself is not CPUprofiled.",
+    "Zero actual600ms predictioncap episodes or limitedinput, zerocancellations/faults/errors, all30economiesexact. MaxmovementACKgap489.09ms. Performance failure remains explicit despite those safety passes.",
+    "One invalid_world_event cosmetic warning is preserved in rawlog. Rootassigned separate read-onlyclienttrace; fixtureactorids containcolon, incompatible with nativeworldchat player_idregex, but exactwarningeventpayload is not captured here."
+  ],
+  "pins": [
+    {
+      "path": "evidence/native-mixed-load-r85-final-exact2-30.json",
+      "bytes": 4071004,
+      "sha256": "600463e3c65428c096741d14948106201962007f0f56722b0edf14b891b55c4c"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-final-exact2-30-summary.json",
+      "bytes": 20415,
+      "sha256": "c9a6aca8e6d20a7e49880fb4a26feb73336521f22cc2227fafd11759dd318769"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-final-exact2-30.log",
+      "bytes": 4479,
+      "sha256": "889b959af555c6a2da767e6ce7725b7857f61532736d11117957f49acb2b66a3"
+    },
+    {
+      "path": "evidence/crowd-summary-r85.json",
+      "bytes": 37155,
+      "sha256": "96fea62faee886cb38bcd7df7e15c6f14bf11e6d84c336eace99ba2820c28ec6"
+    },
+    {
+      "path": "evidence/final-harness-admission-hp-correction-r85.json",
+      "bytes": 2639,
+      "sha256": "32918f486018ffad8476ac9d8ace3ea90470f883ef6d9b19d048185aafa2bf5a"
+    }
+  ]
+}

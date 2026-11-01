@@ -1,0 +1,979 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "generatedSha256": "ce1f1d795cbc1778733d4062971c5a204d879ba462d5316601bcde7efaa1a43d",
+  "modules": [
+    {
+      "file": "vds-server/src/cp-coupons483.mjs",
+      "sha256": "4570b4adedb91e8b2103afc3775d5c39ef979b58ee2190fca469d282260d121a",
+      "declarations": [
+        {
+          "sha256": "60a5776e16b041952acae1cfd0531552eadc93670063fe55cdc593d427aaf2ae",
+          "start": 58,
+          "end": 150
+        },
+        {
+          "sha256": "d282f3179e13f6be12f3b4bc51ac570ab4665b574a58eb3e0c6ed94c5e8c1b89",
+          "start": 158,
+          "end": 217
+        },
+        {
+          "sha256": "5f8a3deb4e5d3aa3b9efbded870b5236b4719b2c11bb099d91e9b7a50b473d3e",
+          "start": 218,
+          "end": 262
+        },
+        {
+          "sha256": "1d59fbfb8b4c87e0e010ab3f7b3890eeea5a9fee5dceca094b6020231c561cb9",
+          "start": 430,
+          "end": 785
+        },
+        {
+          "sha256": "c8b7856293715fb3eb53e18dfef032738bbf29fbeda0c0404ef2be661a2607a8",
+          "start": 793,
+          "end": 1023
+        },
+        {
+          "sha256": "34b654da220e0516e79411409dd213d67d0937769777f0bf01e15080fcf29ebe",
+          "start": 1024,
+          "end": 1170
+        },
+        {
+          "sha256": "c3737835899f5a06802ea9f2856da70c0576c5edf5ddbec97532fdcbc8fbce7d",
+          "start": 1178,
+          "end": 2411
+        },
+        {
+          "sha256": "530c1dbccd529d03f55c5dc634e4753f288af431d736b7624eda267381be513f",
+          "start": 2419,
+          "end": 3130
+        },
+        {
+          "sha256": "9e03d045c01426498c114e7d9d91d18b918a27c2d8c28cf670674dd694844ef1",
+          "start": 3138,
+          "end": 4099
+        },
+        {
+          "sha256": "16e678b3dee8b4628d3d6c1117df27667b19ebdd675bf26fd495074f95b61fa9",
+          "start": 4107,
+          "end": 4695
+        },
+        {
+          "sha256": "9a392de32eac8e04c7005f734474fa3c23e5f7da15d52470dc9a644f90efad35",
+          "start": 4703,
+          "end": 5615
+        },
+        {
+          "sha256": "8a3c1afca9fbf1af41f900ef70dfe64d8739966e2b29b74ddf719b85c869282d",
+          "start": 5854,
+          "end": 5894
+        },
+        {
+          "sha256": "344fa8bcb67d2822207d10ca83dde1d0000d2d16467d2fb5aa2e0df016b7bdf2",
+          "start": 5895,
+          "end": 6021
+        },
+        {
+          "sha256": "c674e2b56f6e67d6df00b538718dcc17cc82e31476f00412c7c630dfc49f9071",
+          "start": 6022,
+          "end": 6161
+        },
+        {
+          "sha256": "091de7d6fec0d5042027ec1559a08ec2e7a63340fc90f2725b2d23d98d4a5530",
+          "start": 6162,
+          "end": 6931
+        },
+        {
+          "sha256": "fd1825df87de9b628689e436ed6a39f61942a44cd9116148788d320054837ab5",
+          "start": 6932,
+          "end": 7408
+        },
+        {
+          "sha256": "3d3bd3972e21574033f2bf2ad2e0f2bee19720b1082f2bdbf870166c22b63c18",
+          "start": 7416,
+          "end": 9796
+        },
+        {
+          "sha256": "b684e88ba0cc42b0f78a7e4563ea344b64d8140775e29d136e32ea6ee6ec85f7",
+          "start": 9804,
+          "end": 11457
+        },
+        {
+          "sha256": "96b9da58e6c7d056b9cf2742d2b065a2e28c7c55698484e69891ed6a17e3005a",
+          "start": 11465,
+          "end": 13694
+        }
+      ],
+      "exports": [
+        "COUPON_FACE483",
+        "isCoupon483",
+        "couponActor483",
+        "couponCapacity483",
+        "verifyCoupon483",
+        "mintCoupon483",
+        "redeemCoupon483",
+        "escrowCoupon483",
+        "receiveCoupon483",
+        "assertCouponRollback483",
+        "reconcileCouponRollback483",
+        "restoreCouponHolds483"
+      ]
+    },
+    {
+      "file": "vds-server/src/dragon-boss.mjs",
+      "sha256": "40d856aeda3b6f1c45b39de573eb5ae61965dbc2e6aa210ada12718905c69743",
+      "declarations": [
+        {
+          "sha256": "ce93913477f5652ac87314a499fcdf6b3500babf156429f42f2af1ddf36e5f7e",
+          "start": 719,
+          "end": 1803
+        },
+        {
+          "sha256": "4540885efcef80a3e1607f7803f4d96dbc7984fe025e244a5681c153f0fc9a8f",
+          "start": 1811,
+          "end": 13180
+        }
+      ],
+      "exports": [
+        "ensureDragonSchema",
+        "createDragonBoss"
+      ]
+    },
+    {
+      "file": "vds-server/src/quests438.mjs",
+      "sha256": "0d8119f12a3878247ecc19ce8d7dadfb23dc7d897ef760c2e65acc92a2b8441f",
+      "declarations": [
+        {
+          "sha256": "a2958f67d74e55603b0917f77a3841361bbd61209b892f89f63e8e47d3c4404c",
+          "start": 657,
+          "end": 2418
+        },
+        {
+          "sha256": "a8ba5cd17bfec947f64ce3420cac44a0ebd36d0eb48bcb781653742a42a34c5e",
+          "start": 2427,
+          "end": 10543
+        }
+      ],
+      "exports": [
+        "ensureQuests438Schema",
+        "createQuests438"
+      ]
+    },
+    {
+      "file": "lib/runes.mjs",
+      "sha256": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae",
+      "declarations": [
+        {
+          "sha256": "d5c852afe19ed867288e8045a0d1868726806597f3fd846692538d1312c1a9d0",
+          "start": 7,
+          "end": 453
+        },
+        {
+          "sha256": "d3057a1c44dca84e1a78bfaa95e7a763886fa6f13a3059d52b7cd2d3d3de0c0a",
+          "start": 461,
+          "end": 783
+        },
+        {
+          "sha256": "709a433196c1a2e6a22686cf7f69d4759e61745db1f8f96104d54b8fab226fb8",
+          "start": 791,
+          "end": 833
+        },
+        {
+          "sha256": "c875e3f53375e0960becee388d9d5d14152f5dbd46d4b42e54fb8a9363970ac3",
+          "start": 841,
+          "end": 874
+        },
+        {
+          "sha256": "b4f9c3f4167929e41827e9e6b92583355bc680cee120500d4853cfef9b0f7062",
+          "start": 882,
+          "end": 962
+        },
+        {
+          "sha256": "a92beb7101d7985785dff2c492bd6670b35d67b8bec133e4a6f437ff98d0ed32",
+          "start": 970,
+          "end": 1055
+        },
+        {
+          "sha256": "0135dc121d811c57ad7b6c1b368b0bf2976d8ce43816e3a52a8423f72196a40d",
+          "start": 1063,
+          "end": 1132
+        },
+        {
+          "sha256": "9abc816770925b09541fe056840b42062c2bee710fedbc799c24c063518171e5",
+          "start": 1140,
+          "end": 1299
+        },
+        {
+          "sha256": "ed3167f5e8d269864479efcfaffaac0e19df275b48355859fd90478fcf0c8a92",
+          "start": 1307,
+          "end": 1386
+        },
+        {
+          "sha256": "067500244241510cce865bfd9dfe7d47e632524a885e038a7ded1a22c74c5e48",
+          "start": 1394,
+          "end": 1550
+        },
+        {
+          "sha256": "2e8a567fcdefeac7f40fe9c07024886acb0e6ae7e97dc0ec564261076a872bdc",
+          "start": 1558,
+          "end": 1895
+        },
+        {
+          "sha256": "247968fe68feb32d2a9004e579f66f0dbcd2853a0da3e31af257d9480d8e8d11",
+          "start": 1903,
+          "end": 2152
+        },
+        {
+          "sha256": "5ce0f612cba2d8ec34bb9736e1a729836c7505e77325a2ef88815fa2b8c48d4b",
+          "start": 2153,
+          "end": 2355
+        },
+        {
+          "sha256": "7fa8df67c96c53c7ba6e018b3035426ebf2c0f0d8cbc26a694eeafc3f577239e",
+          "start": 2356,
+          "end": 2530
+        },
+        {
+          "sha256": "c3df7f9585a97359a644ed098d11b49c837ca0105bb7c678abf72ff14e4995b8",
+          "start": 2531,
+          "end": 2649
+        },
+        {
+          "sha256": "050bf7f34e09f19a9fd3d07ea0bc9ee6ec8a0ec8139ac4e6aa9f8937029c87f1",
+          "start": 2657,
+          "end": 2902
+        },
+        {
+          "sha256": "d70ada0fe78216992385b6e3d448a3949391cafa92d55cd93d23a7bbb229a859",
+          "start": 2910,
+          "end": 3553
+        },
+        {
+          "sha256": "e97a74e711519cbe7cb6c7bb15c418e542a71b0eb789d3bcc4a346271aefe94a",
+          "start": 3554,
+          "end": 3851
+        },
+        {
+          "sha256": "77522830e65218846d2468231211aadd34fcd00e2f1554ebded98c6cc67902ab",
+          "start": 3859,
+          "end": 3988
+        },
+        {
+          "sha256": "51e3e9ebacfb2e37e07b7b570d0a16dc17dbcab00701be6a82cf50562c253220",
+          "start": 3996,
+          "end": 4808
+        },
+        {
+          "sha256": "0afac6f347398f9c276770e4e9f0fa58853cc2e3e726d1bd3f252eb812e0909a",
+          "start": 4816,
+          "end": 5345
+        },
+        {
+          "sha256": "9db2b4522305f26326da66b12f79ca7c1628e130d69a26670aae642ae95eba5f",
+          "start": 5353,
+          "end": 6672
+        }
+      ],
+      "exports": [
+        "RUNE_TYPES",
+        "RUNE_MOBS",
+        "RUNE_WORLD",
+        "RUNE_SPAWN",
+        "RUNE_GATE_MESSAGE",
+        "runeEligible",
+        "isRuneKind",
+        "runeUpgradeCost",
+        "runeBonusPercent",
+        "runeMonsterKey",
+        "RUNE_WALKABLE_POLYGON",
+        "RUNE_OBSTACLES",
+        "runeWalkable",
+        "runeWalkableSegment",
+        "RUNE_SPAWNS",
+        "defaultRuneConfig",
+        "RUNE_LOOT_LABELS",
+        "validateRuneConfig"
+      ]
+    },
+    {
+      "file": "lib/rune-v2.mjs",
+      "sha256": "be3553161f000ce60b8131fec1fb26e638ace7db04f2a10043f5162b5711b6bb",
+      "declarations": [
+        {
+          "sha256": "211354e13277baf0b3b938d6d1848903bd30b99622f18062f4e88dc4440fe19b",
+          "start": 106,
+          "end": 135
+        },
+        {
+          "sha256": "86bf3a1281e35e75cd86c16968171d18e625c0ec4874f3d078d5c74779589eb8",
+          "start": 143,
+          "end": 314
+        },
+        {
+          "sha256": "93ef0ce7202e711342358f3af59344b12c3c5bef7119b09ba64bd827fa2a59fd",
+          "start": 322,
+          "end": 385
+        },
+        {
+          "sha256": "271b16d8d257170aa562a9b6fa78474c753214f5e9c3903187c3f94320dfbe84",
+          "start": 393,
+          "end": 448
+        },
+        {
+          "sha256": "00cabce6ba25105ad22917666ea849af0c377f23ce4eca09338169752106c3e3",
+          "start": 456,
+          "end": 596
+        },
+        {
+          "sha256": "5a4c1f0d30cc61a8f97325943822ad4d24c47e8ec337b64601b3a112d5829e2b",
+          "start": 597,
+          "end": 707
+        },
+        {
+          "sha256": "120135d024cf2a1f06cbd31dff9553ad43ded098b7bdf1479523c614ce8b9781",
+          "start": 715,
+          "end": 795
+        },
+        {
+          "sha256": "35d4044b2ac96ef7ff4f420cdf15209faeccb148754e900b5a523860785ee376",
+          "start": 803,
+          "end": 1014
+        },
+        {
+          "sha256": "d9441db0ff0a055982ee4740defb1c0eab16784c65935b16899f21b1cc3e00f3",
+          "start": 1022,
+          "end": 1472
+        },
+        {
+          "sha256": "3e05565ef9ffa291ffca676ca348c46a56cbdacfdb7304f20ccf6c9212a4a9e3",
+          "start": 1480,
+          "end": 3726
+        }
+      ],
+      "exports": [
+        "RUNE_V2_AREA",
+        "RUNE_V2_MOBS",
+        "RUNE_V2_LOOT_LABELS",
+        "RUNE_V2_BOSS_SPAWN",
+        "RUNE_V2_SPAWNS",
+        "isRuneV2Boss",
+        "runeV2MonsterKey",
+        "defaultRuneV2Config",
+        "validateRuneV2Config"
+      ]
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "sha256": "7ebc7448b7185313146e99368a2929db197e5385142121dcf5aee2af95048c72",
+      "declarations": [
+        {
+          "sha256": "7701d20bbbfff9ccffb7a3eb8aeba5fcbae3e374bddbd807f0d010f56ff44eac",
+          "start": 7,
+          "end": 68
+        },
+        {
+          "sha256": "37d471f047c2b473aefec308ae6e246d294670ff8d0189d08518d8e3cc8947b2",
+          "start": 76,
+          "end": 128
+        },
+        {
+          "sha256": "d0a841d5b30a85e8a648c6c381a139c80bf5afc87b5a46543c705113287510bf",
+          "start": 136,
+          "end": 745
+        },
+        {
+          "sha256": "8ee5cb2dbe925afb826813ef827a5a4e7758c48bf2ba3a0697450699c25681ea",
+          "start": 746,
+          "end": 798
+        },
+        {
+          "sha256": "6d8e37dd9b69400e95f88c30f058b5d5b52f71b4f20a9b567bcb9e830466d408",
+          "start": 806,
+          "end": 1036
+        },
+        {
+          "sha256": "34ea41098bff79d3cdda1e814b2a25a379273a26d799a093b6dc234615be4011",
+          "start": 1044,
+          "end": 1156
+        },
+        {
+          "sha256": "5e9430e31856e393fc6e06cae62bf9cfaba7c18a9f25e3f1e54c835f0f970cc9",
+          "start": 1164,
+          "end": 1259
+        },
+        {
+          "sha256": "6ce313ebd78767c33b215ed8c4a345d87a8e49b508ee7992e074cac47c5850e8",
+          "start": 1267,
+          "end": 1795
+        },
+        {
+          "sha256": "4eeeb7be99358380356bb7f8079073ecd1215b7baa791eb8a7a72991e1c0a885",
+          "start": 1803,
+          "end": 2234
+        },
+        {
+          "sha256": "678ef83c64d8f7a6bc8e81c0cd939b50a66ab4a840d6117d5e4d50b8324812db",
+          "start": 2242,
+          "end": 2337
+        },
+        {
+          "sha256": "31d60f15d9c5439acad6d4b44ac4346b932d7947451e4d88b4f0ca9b2a8bf21c",
+          "start": 2339,
+          "end": 2750
+        }
+      ],
+      "exports": [
+        "EVENT_WORLD444",
+        "EVENT_SPAWN444",
+        "EVENT_BOSSES444",
+        "eventKind444",
+        "eventWalkable444",
+        "eventSegment444",
+        "validateEventPlan444",
+        "validateEventConfig444",
+        "defaultEventConfig444"
+      ]
+    },
+    {
+      "file": "vds-server/src/cauldron-grants488.mjs",
+      "sha256": "80417e91f52729244a68163a58550e4c081a4e8f07e3143befa0c3673acc9caf",
+      "declarations": [
+        {
+          "sha256": "a178bf8ea39e250757a6c17d3723ce891c9e489ce86a26ec5d71540d1470ba4b",
+          "start": 603,
+          "end": 633
+        },
+        {
+          "sha256": "f6412a9f87c04a857fdb5016647cfc9732155e9e1f017d82f9374d76021ffcf8",
+          "start": 634,
+          "end": 670
+        },
+        {
+          "sha256": "b6e181aad200912f476ccb80590a064f7afe5e38e5214e87085ccd68d6139969",
+          "start": 671,
+          "end": 716
+        },
+        {
+          "sha256": "98a48cf0668a91daf5d6c0bff800cd03c53d9329d72a4999757b16cedfef07cf",
+          "start": 717,
+          "end": 909
+        },
+        {
+          "sha256": "5ee2ce3af86e876f0177a1438b8711a45246d69d17cee64076e4814c99e19d54",
+          "start": 910,
+          "end": 964
+        },
+        {
+          "sha256": "1a44be6a87b60b3942358f3d9fac03bc496d156b1a1b304e61fb1304c75363e8",
+          "start": 965,
+          "end": 1079
+        },
+        {
+          "sha256": "a96a78c30383a8cd21d6e77540e85a7799b88d3e0d692acf3c87085669ad99d5",
+          "start": 1080,
+          "end": 1310
+        },
+        {
+          "sha256": "73cbb2959ceec3d1dd47b7a751feed85883c0b78e115186dab1c89cec85b1a52",
+          "start": 1311,
+          "end": 1518
+        },
+        {
+          "sha256": "4a8646fd2003a6be632cb5ac6d0e27e1db7817e0ff7b19dc159eadf8aebd8ce3",
+          "start": 1755,
+          "end": 12533
+        }
+      ],
+      "exports": [
+        "createCauldronGrants488"
+      ]
+    },
+    {
+      "file": "vds-server/src/cauldron-engine488.mjs",
+      "sha256": "0face88a3ec5856138c3321174eb907b22f619fe22f40e97d098d5b726da3ea3",
+      "declarations": [
+        {
+          "sha256": "dd4bdba519da95bd527713d148f686d10cea9888fb0925715fef34c27e234147",
+          "start": 332,
+          "end": 437
+        },
+        {
+          "sha256": "fd2816565d2079ffb3aa2d60ee630fa6e100aab665b96e2d2a0bda05584fb78c",
+          "start": 446,
+          "end": 1427
+        },
+        {
+          "sha256": "8111a9c021eb7fe31f7054af21da1a5824ef6fe648f2e6682820207304f81545",
+          "start": 1435,
+          "end": 6600
+        }
+      ],
+      "exports": [
+        "ensureCauldronSchema488",
+        "createCauldron488"
+      ]
+    },
+    {
+      "file": "vds-server/src/arena-market.mjs",
+      "sha256": "3daf12e94164aaedbbadf65642cdb506ecb8ca33c301cc69cc59d595fa2fcd72",
+      "declarations": [
+        {
+          "sha256": "983fe9c6e21247d4d3ef539f0dd8e996b2cdcc3053e628b4434fef68f69dcdd4",
+          "start": 422,
+          "end": 4186
+        },
+        {
+          "sha256": "50031449b63a351da2e6025677ed8fb4d8a69d12017224c107c2f9e17f00c848",
+          "start": 4194,
+          "end": 9209
+        }
+      ],
+      "exports": [
+        "ensureArenaMarketSchema",
+        "createArenaMarket"
+      ]
+    },
+    {
+      "file": "vds-server/src/battle-pass.mjs",
+      "sha256": "daf77dce08b567f898974d264dcc190eb7b6fa8ce2ec33836b11ce0e77c04d8d",
+      "declarations": [
+        {
+          "sha256": "cfccc5f6cd637293e4e491b1aa8c1a913cd5dc3c6801306a505742047f2c0fb6",
+          "start": 403,
+          "end": 2367
+        },
+        {
+          "sha256": "5b366f8da4301ac6fbf13ff40c675b81e11775c055d18320a0620dcfbde02fbb",
+          "start": 2376,
+          "end": 11768
+        }
+      ],
+      "exports": [
+        "ensureBattlePassSchema",
+        "createBattlePass"
+      ]
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "sha256": "c0b3f3958366dfd79ab2ddf453eb2cbda0248492f321f187a76cc296dc559fa6",
+      "declarations": [
+        {
+          "sha256": "6f62cfb4849384d3da3cec34105f349bd5038cef94ff9609cb26b019a4a72b42",
+          "start": 497,
+          "end": 913
+        },
+        {
+          "sha256": "821bbb33f31c82d28f1e55b0cf380eb8401272b65ad476bb275c11505f9b268a",
+          "start": 921,
+          "end": 1875
+        },
+        {
+          "sha256": "89bc7dcd9cef66af851f94f282301b42ec329f55494fa36d9f2488ca156bdc77",
+          "start": 1883,
+          "end": 16020
+        },
+        {
+          "sha256": "a3f93049ec4f101e890ef8a399c271041078569accb35aa4e69cd1007444766c",
+          "start": 16029,
+          "end": 17068
+        },
+        {
+          "sha256": "53dad0393c0f3b32fd0a0d4290d2fefd0d334e99e286a5997e5cb24890be8f4e",
+          "start": 17070,
+          "end": 17910
+        }
+      ],
+      "exports": [
+        "ensureEventIsland444",
+        "createEventIsland444",
+        "rollEventDungeon444"
+      ]
+    },
+    {
+      "file": "vds-server/src/runes.mjs",
+      "sha256": "0c73c5efc5cdc0ba4ec11eec83b8724fb34796b3cc0b7386eaf2a83fda229ebc",
+      "declarations": [
+        {
+          "sha256": "7f2bcf0c51d77d250c49940c2ff09e9c1a4a65ec2890195d55deac406714c8cb",
+          "start": 228,
+          "end": 4335
+        },
+        {
+          "sha256": "8b26c17b42eb88941ec38573099da66ae09fbf04b17eb5f185a4bdf522f33633",
+          "start": 4343,
+          "end": 11106
+        }
+      ],
+      "exports": [
+        "ensureRuneSchema",
+        "createRunes"
+      ]
+    },
+    {
+      "file": "vds-server/src/rune-v2.mjs",
+      "sha256": "18bf3248c3cb0bf8d6f65ef697bca5fe77f67315610158424dfdc013519a2dbb",
+      "declarations": [
+        {
+          "sha256": "f9b0727af2d23265d41192afc660e2613baa55151323af170dcb16c3ae43fc17",
+          "start": 514,
+          "end": 1745
+        },
+        {
+          "sha256": "7d880348c25298c6bfad22773e660e3b52d608a23d99eba4c377e9e19f69195d",
+          "start": 1753,
+          "end": 4280
+        }
+      ],
+      "exports": [
+        "ensureRuneV2Schema",
+        "createRuneV2"
+      ]
+    },
+    {
+      "file": "vds-server/src/first-evolution-quest.mjs",
+      "sha256": "1c20a04b7687ad2bc3a390728f6de6abdf927b617f40dfb93320f7684a6fd44f",
+      "declarations": [
+        {
+          "sha256": "dcaf65fa6ec7575adaa902ed1b5363df8eef31ad29079a6e1256e86af301843a",
+          "start": 184,
+          "end": 1328
+        },
+        {
+          "sha256": "a25a222c9d2531a0cc6594ad237cdbda051fbd0eb5ddeed771dbf090dc50c4cd",
+          "start": 1336,
+          "end": 3114
+        }
+      ],
+      "exports": [
+        "ensureEvolutionQuestSchema",
+        "createEvolutionQuest"
+      ]
+    },
+    {
+      "file": "vds-server/src/community-event.mjs",
+      "sha256": "9280aae84df098186493f27e8ee0f448e7961d94b584f2d25d95eb8868fba364",
+      "declarations": [
+        {
+          "sha256": "ff1bf3624d4d571763be22824f2a991d531a5a3e3d945d7e400cef7b16bc5451",
+          "start": 318,
+          "end": 3526
+        },
+        {
+          "sha256": "5479817563fe52c2f8b645489af2059833ca1375d7b38e54347dfa68d7ef38b3",
+          "start": 3527,
+          "end": 3663
+        },
+        {
+          "sha256": "9657771e24b37e8ce1215734f4f738700939e7254901bb1793656464332492c2",
+          "start": 3671,
+          "end": 10629
+        }
+      ],
+      "exports": [
+        "ensureCommunitySchema",
+        "createCommunityEvent"
+      ]
+    },
+    {
+      "file": "vds-server/src/guild-village.mjs",
+      "sha256": "4eb0ce8f3e8f47619031c7ed305d846fa9704e05186e715df4bf7a0a088d5b9e",
+      "declarations": [
+        {
+          "sha256": "e96f6ab1c12a4c202fa0f5deebaa684fb8b739ef02336016fc70f0e2756b74a5",
+          "start": 162,
+          "end": 1724
+        },
+        {
+          "sha256": "25878e108502f7419b7c9b319f32e2a1b3d9f4b823443729df5acfee90484ca8",
+          "start": 1732,
+          "end": 12392
+        }
+      ],
+      "exports": [
+        "ensureGuildVillageSchema",
+        "createGuildVillage"
+      ]
+    },
+    {
+      "file": "vds-server/src/status.mjs",
+      "sha256": "311d66e30783192da02bb41808e87f9ce88d7ec5ef65c6263ccc0b5715b9e3d6",
+      "declarations": [
+        {
+          "sha256": "e2736c5028a68c91b45a7c9c6fc13beb9f21512316b3e3110aac5bf4968e8e23",
+          "start": 146,
+          "end": 943
+        },
+        {
+          "sha256": "89e4fa5d7c5dd1e7c22759e6461530e15318eb62d6d3e1d1a400be74afa98fb9",
+          "start": 951,
+          "end": 3748
+        }
+      ],
+      "exports": [
+        "ensureStatusSchema",
+        "createStatus"
+      ]
+    },
+    {
+      "file": "vds-server/src/ranks.mjs",
+      "sha256": "8ebe32dc996896946c5c82871091f742857503066af362d3e72364ec20c3d701",
+      "declarations": [
+        {
+          "sha256": "23b2f160aae96c02b0ae369ad70c00774a96ae12a34bf51307c154f175b397ee",
+          "start": 369,
+          "end": 438
+        },
+        {
+          "sha256": "609a5985da90ecfb29ad9115330cb2aa61aea7e9d2318bc71e1bb6cd2452f5fb",
+          "start": 439,
+          "end": 1294
+        },
+        {
+          "sha256": "be1ae5caa26f7c90fdf7eaee90a96fe4ca1168afdcda44df99b432bbde1653ec",
+          "start": 1295,
+          "end": 1438
+        },
+        {
+          "sha256": "6b08e27446f02217e9ec211607c0638483b4f6bca0a3df045c820ee1248e82b3",
+          "start": 1439,
+          "end": 1801
+        },
+        {
+          "sha256": "d2bcc1702ed96cf006fbd823ede682a966b60c8756f84fc023f02fbab62f6344",
+          "start": 1802,
+          "end": 2193
+        },
+        {
+          "sha256": "1105ccd58a2336143b708509ab4570bbd8bd8e2e552dc6a95a87a9f688800bdf",
+          "start": 2201,
+          "end": 7275
+        },
+        {
+          "sha256": "7191ba62bc09979e47e19bb42e1b57aff495129a02ed0c14bc5a1c0b6a97dbd0",
+          "start": 7284,
+          "end": 13871
+        }
+      ],
+      "exports": [
+        "ensureRankSchema",
+        "createRanks"
+      ]
+    },
+    {
+      "file": "vds-server/src/progression-settings.mjs",
+      "sha256": "de9f487abb89bd2af455ae8cdf2435d53b926c52f3e89d7532a34c3064e4df7a",
+      "declarations": [
+        {
+          "sha256": "7496dec1c6199e596b1d976b6fd81d4e0b0d62a56d4a59553c308d2735be37cf",
+          "start": 185,
+          "end": 1270
+        },
+        {
+          "sha256": "a5a6731c72cb7133f4ba302693996f6608bc6f9aefebcae8bbeec99a5912c137",
+          "start": 1278,
+          "end": 2163
+        }
+      ],
+      "exports": [
+        "ensureProgressionSchema",
+        "createProgressionSettings"
+      ]
+    },
+    {
+      "file": "vds-server/src/premium-engine.mjs",
+      "sha256": "0ee411f2459c9a5bf6598602cc63f02c2d1d41f0a9556d5503c089f24fd2fc6c",
+      "declarations": [
+        {
+          "sha256": "fa6b95019a4ae215e4b0d7262b95c5121723db246d4aa61880307c0d33cc307a",
+          "start": 1231,
+          "end": 1310
+        },
+        {
+          "sha256": "4688dcacd8a486c1611f18f2bf7a8602856517970351ceca1829db241f5f68cc",
+          "start": 1318,
+          "end": 3260
+        },
+        {
+          "sha256": "d079239b0369f5f2ed82f3a4edcb0aa8a804131fc0e90ca7c352b548fad33e39",
+          "start": 3268,
+          "end": 3401
+        },
+        {
+          "sha256": "a88af0e6fa4b443cb1d7b53f440d059971ce27890444815dde9736f150450bbe",
+          "start": 3409,
+          "end": 34033
+        }
+      ],
+      "exports": [
+        "rerollEnchants",
+        "addEnchantment",
+        "PremiumEngine"
+      ]
+    },
+    {
+      "file": "vds-server/src/guild-skill.mjs",
+      "sha256": "75fd621ff506be441bda08c2ab1f82ab159b5445b96c2ee52394691aeb362f1a",
+      "declarations": [
+        {
+          "sha256": "c92285caddc85077879b319ba9e7b6cc7e0e96419dddc97c418f96c4ec15751c",
+          "start": 318,
+          "end": 1413
+        },
+        {
+          "sha256": "06dca2fb337bb7e7f1c2bbafcac07093aa405263fa705b8df7f455e93eba1633",
+          "start": 1421,
+          "end": 9043
+        }
+      ],
+      "exports": [
+        "ensureGuildSkillSchema",
+        "createGuildSkill"
+      ]
+    }
+  ],
+  "channelEdits": [
+    {
+      "file": "lib/runes.mjs",
+      "from": "/^rune-(tide|warden|sentinel|wraith)-c[1-3]-\\d+$/",
+      "to": "(fourChannels?/^rune-(tide|warden|sentinel|wraith)-c[1-4]-\\d+$/:/^rune-(tide|warden|sentinel|wraith)-c[1-3]-\\d+$/)"
+    },
+    {
+      "file": "lib/rune-v2.mjs",
+      "from": "/^rune-v2-boss-c[1-3]-1$/",
+      "to": "(fourChannels?/^rune-v2-boss-c[1-4]-1$/:/^rune-v2-boss-c[1-3]-1$/)"
+    },
+    {
+      "file": "lib/rune-v2.mjs",
+      "from": "/^rune-v2-(tide|warden|sentinel|wraith)-c[1-3]-[1-5]$/",
+      "to": "(fourChannels?/^rune-v2-(tide|warden|sentinel|wraith)-c[1-4]-[1-5]$/:/^rune-v2-(tide|warden|sentinel|wraith)-c[1-3]-[1-5]$/)"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "from": "/^event-(world|frozen|water|ancient|dragon|dungeon|solo)-c[1-3]-[a-f0-9-]{36}$/",
+      "to": "(fourChannels?/^event-(world|frozen|water|ancient|dragon|dungeon|solo)-c[1-4]-[a-f0-9-]{36}$/:/^event-(world|frozen|water|ancient|dragon|dungeon|solo)-c[1-3]-[a-f0-9-]{36}$/)"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "from": "value.length>21",
+      "to": "value.length>7*channelCount"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "from": "'En fazla 21 boss planı satırı olabilir.'",
+      "to": "'En fazla '+(7*channelCount)+' boss planı satırı olabilir.'"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "from": "const totals=[0,0,0,0]",
+      "to": "const totals=Array(channelCount+1).fill(0)"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "from": "r.channel>3",
+      "to": "r.channel>channelCount"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "/-c([1-3])-/",
+      "to": "(fourChannels?/-c([1-4])-/:/-c([1-3])-/)"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "ch<=3",
+      "to": "ch<=channelCount"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "publicStates=Array(4)",
+      "to": "publicStates=Array(channelCount+1)"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "Array.from({length:4}",
+      "to": "Array.from({length:channelCount+1}"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "channel<=3",
+      "to": "channel<=channelCount"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "channel>3",
+      "to": "channel>channelCount"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "const totals=[0,0,0,0]",
+      "to": "const totals=Array(channelCount+1).fill(0)"
+    },
+    {
+      "file": "vds-server/src/runes.mjs",
+      "from": "/^rune-(tide|warden|sentinel|wraith)-c[1-3]-[6-8]$/",
+      "to": "(fourChannels?/^rune-(tide|warden|sentinel|wraith)-c[1-4]-[6-8]$/:/^rune-(tide|warden|sentinel|wraith)-c[1-3]-[6-8]$/)"
+    },
+    {
+      "file": "vds-server/src/runes.mjs",
+      "from": "ch<=3",
+      "to": "ch<=channelCount"
+    },
+    {
+      "file": "vds-server/src/rune-v2.mjs",
+      "from": "ch<=3",
+      "to": "ch<=channelCount"
+    },
+    {
+      "file": "vds-server/src/rune-v2.mjs",
+      "from": "ch<=3",
+      "to": "ch<=channelCount"
+    },
+    {
+      "file": "vds-server/src/rune-v2.mjs",
+      "from": "\"UPDATE monsters SET hp=MIN(?,MAX(1,CAST((hp*?+MAX(1,max_hp)-1)/MAX(1,max_hp) AS INTEGER))),max_hp=? WHERE id IN ('rune-v2-boss-c1-1','rune-v2-boss-c2-1','rune-v2-boss-c3-1') AND id='rune-v2-boss-c'||channel||'-1' AND area='rune_v2' AND variant='rune_v2_boss' AND is_boss=0 AND is_stone=0 AND summoned=0 AND loadlab_run_id='' AND hp>0 AND max_hp<>?\"",
+      "to": "(fourChannels?\"UPDATE monsters SET hp=MIN(?,MAX(1,CAST((hp*?+MAX(1,max_hp)-1)/MAX(1,max_hp) AS INTEGER))),max_hp=? WHERE id IN ('rune-v2-boss-c1-1','rune-v2-boss-c2-1','rune-v2-boss-c3-1','rune-v2-boss-c4-1') AND id='rune-v2-boss-c'||channel||'-1' AND area='rune_v2' AND variant='rune_v2_boss' AND is_boss=0 AND is_stone=0 AND summoned=0 AND loadlab_run_id='' AND hp>0 AND max_hp<>?\":\"UPDATE monsters SET hp=MIN(?,MAX(1,CAST((hp*?+MAX(1,max_hp)-1)/MAX(1,max_hp) AS INTEGER))),max_hp=? WHERE id IN ('rune-v2-boss-c1-1','rune-v2-boss-c2-1','rune-v2-boss-c3-1') AND id='rune-v2-boss-c'||channel||'-1' AND area='rune_v2' AND variant='rune_v2_boss' AND is_boss=0 AND is_stone=0 AND summoned=0 AND loadlab_run_id='' AND hp>0 AND max_hp<>?\")"
+    },
+    {
+      "file": "vds-server/src/event-island444.mjs",
+      "from": "const snapshot=(buildProfile)=>({...current,catalog:",
+      "to": "const snapshot=(buildProfile)=>({...current,channels:Array.from({length:channelCount},(_,i)=>i+1),catalog:"
+    }
+  ],
+  "changes": [
+    "ESM bindings injected for deterministic server UUID/RNG/clock and native sibling modules",
+    "Only recorded finite channel-count/classifier edits are opt-in; original economy/eligibility/claim SQL retained"
+  ],
+  "fullProductionIntegration": false,
+  "r31": {
+    "fromRelease": "R30",
+    "previousGeneratedHashes": {
+      "generatedSha256": "6911806932777898be2c735bc2c49d0314dc3c00207fdff06a97941d67850ba6"
+    },
+    "changes": [
+      "canonical single-slot belt stat and XP integration"
+    ]
+  },
+  "r70QuestObjectives": {
+    "scope": "Uses validated extended quest events and server-owned progress reads; grant/transaction/receipts unchanged.",
+    "baseSha256": "2464505671798c7b77edc278a8e1150efc258695b36facd4a7994a6995e3afcc"
+  },
+  "r76EnchantmentSettings": {
+    "sourceSha256": "ded7e65dc5c422d5a13f7daac397d44dbd86b3f2ad224b4ba34ad0e49721b8e0",
+    "patchedSha256": "52041b8f7e3cbbbd5676523f4f8f616a0ca704c64012346b0616c3c7e85d1c7c",
+    "edits": [
+      {
+        "from": "const s=db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{},gear=questClassItem438(item,p.role);",
+        "to": "const s={...(db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{}),...(db.prepare('SELECT * FROM combat_settings WHERE id=1').get()??{})},gear=questClassItem438(item,p.role);",
+        "count": 1
+      },
+      {
+        "from": "questEnchantments438(item.kind,db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{},random)",
+        "to": "questEnchantments438(item.kind,{...(db.prepare('SELECT * FROM game_settings WHERE id=1').get()??{}),...(db.prepare('SELECT * FROM combat_settings WHERE id=1').get()??{})},random)",
+        "count": 1
+      }
+    ],
+    "scope": "Quest class/general equipment and cauldron class rewards read saved combat tiers in addition to existing game power settings; no stored gear rewrite."
+  },
+  "r77EventIslandChannels": {
+    "change": "Admin snapshot exposes actual configured channel list",
+    "priorGeneratedSha256": "52041b8f7e3cbbbd5676523f4f8f616a0ca704c64012346b0616c3c7e85d1c7c",
+    "inversePreservesAllOtherBytes": true
+  }
+}

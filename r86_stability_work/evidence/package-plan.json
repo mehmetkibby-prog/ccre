@@ -1,0 +1,119 @@
+{
+  "sourceArchiveSHA256": "465eae779b9af525155d1fda328902dbdccab2bc6a7ac000dbe0c48960c39927",
+  "sourceCoreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "targetCoreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "productionFiles": 19,
+  "files": {
+    "core511-source/scripts/core511/actor-checkpoint.mjs": {
+      "before": "5f4ea1fd4cc4fc0b48bb06679cf636efe70b8c6a2ff7d36c5b7a38a9ad9e4a46",
+      "after": "f1903ee5f3734798f23287025d12d580a70c31b3be61e5b0a32ef7a15e993df7",
+      "bytes": 11505
+    },
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs": {
+      "before": "6707d7e23f59089a8ca429510cd679ce726edd9148e2df51bd53bda37d22dce4",
+      "after": "471a242ccceb5fde7396ba2ecf0a1b19af7d2fad452ceb6c7aa8c2ff860c8799",
+      "bytes": 24757
+    },
+    "core511-source/scripts/core511/attack-commit-r53.mjs": {
+      "before": "e1b3415482b540fdaaf52bb34374fa3a34faeb20653576d87b81e57c1b325613",
+      "after": "41cfd5697225ccd38033a5e9aa5d0223dca39b6d76b613cbac62aed3e4779335",
+      "bytes": 8175
+    },
+    "core511-source/scripts/core511/attack-loop.mjs": {
+      "before": "6f9defa2d5facd812d612edb8eb7f38220d0d403d185e07c682f60649caedc12",
+      "after": "e6a347b80a89f34da1223f45878a8440c45c57b575d987f0db84e5e0557f840e",
+      "bytes": 9216
+    },
+    "core511-source/scripts/core511/attack-writer.mjs": {
+      "before": "15719dcd652a0d5f1d930303cb69cd577a84a8bd4217a89aa13271f1916948b6",
+      "after": "33d6396b7a781364881d534d388c9eafc360fe90d9492dfcf61bf5fa0c430655",
+      "bytes": 16192
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83",
+      "after": "b0e40c24f66b66cf73d7bd169e8c5067daf8d9ef7eaf5c9d1a58f66f5284f2a5",
+      "bytes": 48587
+    },
+    "core511-source/scripts/core511/death-batch-single-r57.mjs": {
+      "before": "6ebdb378e97179f1fda3c2ea68d119344c4edf4f4d7200e5c8d5199688022475",
+      "after": "a3b14f6cf67e8a78b901c4e7b3525bac1c009720b36a85b1d3a207b90978db74",
+      "bytes": 11762
+    },
+    "core511-source/scripts/core511/fixed-loop.mjs": {
+      "before": "5ac89b33e95122ac5100e08856836cc306b925bb956aa20ed0395ecd2ab4a22e",
+      "after": "a74f39100170681c464b9e4ee14b9bd33fff3785720c4c254bb2b2a5684f8c7c",
+      "bytes": 14699
+    },
+    "core511-source/scripts/core511/generated/attack-writer-rules.mjs": {
+      "before": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
+      "after": "6b8594a26ca424c749c230b9f3f3e8f2b926e43cfdfa1f305c64373eff4573d8",
+      "bytes": 588403
+    },
+    "core511-source/scripts/core511/item-refresh-r57.mjs": {
+      "before": "ecb0bf9a0ec310109cd7cf558d648f2ac11470fe3663b50c514702fbc867a994",
+      "after": "51fe009238b6c43592d692340367703746008ad7a40d1ecfc313c3ed66e1f6c7",
+      "bytes": 5816
+    },
+    "core511-source/scripts/core511/movement-loop.mjs": {
+      "before": "279c31e42935a165277de1a1a3408bf64bcb02c2eada8d22afe7e68026f006c2",
+      "after": "960080e2728542186a8275eba7a66feff3aaa88a9b8f06c96576a05f2be46f5c",
+      "bytes": 2674
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "bdd42ad28f5ee55df2d4c7255d6e839ba59144e1132e6e9d8473e22e84093cd5",
+      "after": "c9d045c79c97c75f0e630dc3d961c19e8b1ef7c8c8d65adf59d43f1a12534923",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/potion-batch-channel-r61.mjs": {
+      "before": "963836727d31f80f6c7ae86e2e727f613527a86796f982d5da5189ff6bdb516f",
+      "after": "73e9468bbe90c6fa0a5249b9d50125be0e7e12ba440b3c18f6cdc5cf09cddf89",
+      "bytes": 9637
+    },
+    "core511-source/scripts/core511/potion-batch-writer-r61.mjs": {
+      "before": "82e92f9b7b5007d0511bde4b2d6a2c1c902e1d23f8c437a42e7cb7a7d8178a76",
+      "after": "636f108294d145cca9b79aa0239bd1a7e7d68f2bda1b108fb169cb56435e7d72",
+      "bytes": 6800
+    },
+    "core511-source/scripts/core511/resident-channel.mjs": {
+      "before": "3014ca58458dc7a0d3aba6b895cee37c7e48d8adcad48a7ac059eb1dd4332366",
+      "after": "ac89872b2c0230ae866c46eabe05932116c5a53341cfc4c6a78705f0b3be06ab",
+      "bytes": 22261
+    },
+    "core511-source/scripts/core511/retaliation-loop.mjs": {
+      "before": "70db1b7305220acfb41cd2b333aacc97e29c924e93544122c5e3dc1aa5acfa13",
+      "after": "0b3695e0f3825be38ec70ab2e0316c77923456723a6541e23af6e20ffd5eb452",
+      "bytes": 5933
+    },
+    "core511-source/scripts/core511/tick-slices-r53.mjs": {
+      "before": "1a27aad0a39dd4369d612bd7223b0658956097a5d85b456327c0b6ddfcc9d461",
+      "after": "d6918770dcef6e491b11fe47f31897e5a82afee2f7b23ce434493ea740f1cfb0",
+      "bytes": 7138
+    },
+    "core511-source/scripts/core511/death-movement-r86.mjs": {
+      "before": null,
+      "after": "af7ec2ac95859a05cc0e33254c4e1a2e46d5e775f3df87abc28f648a57d945dd",
+      "bytes": 10842
+    },
+    "core511-source/scripts/core511/event-config-cache-r86.mjs": {
+      "before": null,
+      "after": "8e9b05dd6bc03a94a6427623cd52c94e21ec0fdfa5f4907b40cbe840f43b6ff8",
+      "bytes": 892
+    }
+  },
+  "newFiles": [
+    "core511-source/scripts/core511/death-movement-r86.mjs",
+    "core511-source/scripts/core511/event-config-cache-r86.mjs"
+  ],
+  "retainedClient": {
+    "oldNamespace": "core511-32083f0f5b1149bc",
+    "namespace": "core511-32083f0f5b1149bc",
+    "oldName": "game-client-core511-r85-b25e12cf61072ebe.js",
+    "name": "game-client-core511-r85-b25e12cf61072ebe.js",
+    "generatedNames": [
+      "game-client-core511-r85-b25e12cf61072ebe.js"
+    ]
+  },
+  "retainedHTTP": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+  "retainedIngress": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+  "archiveProduced": false
+}

@@ -1,0 +1,17 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793523856421,"backupName":"before-pearl-reset-1793523856421-d25e4915-df22-49c8-936b-b2fe5852de54.sqlite"}
+# Subtest: ten native independent kills with25 held party actors equal serial native awards
+ok 1 - ten native independent kills with25 held party actors equal serial native awards
+  ---
+  duration_ms: 2686.803859
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3363.924833

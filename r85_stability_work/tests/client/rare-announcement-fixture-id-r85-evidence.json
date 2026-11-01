@@ -1,0 +1,64 @@
+{
+  "scope": "Exact Acorn-sliced native rare announcement function declarations, actual nativeAtomicStatements adapter and in-memory SQLite, complete generated world validator and notificationViews. Controlled clock and publication port; not native-process/full-load reproduction.",
+  "producer": {
+    "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/attack-writer-rules.mjs",
+    "sha256": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
+    "declarations": [
+      {
+        "name": "announceRareDrop",
+        "start": 141909,
+        "end": 142764,
+        "sha256": "7ef9a49514093ed51f22c9a7a4f2d92e66273e6b593f3cd16c491ac60ca3068f"
+      },
+      {
+        "name": "broadcastAnnouncement",
+        "start": 142766,
+        "end": 143407,
+        "sha256": "51ecfadbd341f2f5d1dd77560cb0484ba2b5db5ceee6203586b2924b5c6fadf9"
+      }
+    ]
+  },
+  "observedLogPayloadRetained": false,
+  "cases": [
+    {
+      "rarity": "purple",
+      "fixtureActor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:0",
+      "validActor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672",
+      "soleEventDifference": "message.player_id",
+      "fixtureRealtimeRecipients": 0,
+      "validRealtimeRecipients": 1,
+      "persistedMessageCount": 1,
+      "duplicateProducerCalls": 2,
+      "producedEvents": 1,
+      "warnings": [
+        "core511_notification_skipped invalid_world_event"
+      ]
+    },
+    {
+      "rarity": "red",
+      "fixtureActor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672:0",
+      "validActor": "d067e88b-d92c-4f40-b4b9-ee5660ff5672",
+      "soleEventDifference": "message.player_id",
+      "fixtureRealtimeRecipients": 0,
+      "validRealtimeRecipients": 1,
+      "persistedMessageCount": 1,
+      "duplicateProducerCalls": 2,
+      "producedEvents": 1,
+      "warnings": []
+    }
+  ],
+  "sources": {
+    "working/core511-source/scripts/core511/generated/notification-rules.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/notification-rules.mjs",
+      "sha256": "45f177b6180c5a968b26219eef3832d804ad4a034d06238569fe8440f4c618e4"
+    },
+    "working/core511-source/scripts/core511/notification-audience.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/notification-audience.mjs",
+      "sha256": "f9cf20f1ce7a1d217540b91690d2cc846f2289867ede5f5dc93f59a5825e74a1"
+    },
+    "tests/runtime/native-mixed-load-realistic.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/tests/runtime/native-mixed-load-realistic.mjs",
+      "sha256": "bdb61a1a3daf337762dcd855d15f4f9a2613ff59fa747c176164b1c9b4f0cda2"
+    }
+  }
+}

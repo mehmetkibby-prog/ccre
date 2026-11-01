@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: baseline mist: real actor A durable barrier prevents due disjoint rooms B/C from being submitted
+ok 1 - baseline mist: real actor A durable barrier prevents due disjoint rooms B/C from being submitted
+  ---
+  duration_ms: 2.98696
+  type: 'test'
+  ...
+# Subtest: baseline tower: real actor A durable barrier prevents due disjoint rooms B/C from being submitted
+ok 2 - baseline tower: real actor A durable barrier prevents due disjoint rooms B/C from being submitted
+  ---
+  duration_ms: 1.395537
+  type: 'test'
+  ...
+# Subtest: baseline: trusted quiesce keeps expired A due while B/C remain unscheduled
+ok 3 - baseline: trusted quiesce keeps expired A due while B/C remain unscheduled
+  ---
+  duration_ms: 1.117507
+  type: 'test'
+  ...
+# Subtest: baseline: actual conflicting room lane also suppresses disjoint rooms
+ok 4 - baseline: actual conflicting room lane also suppresses disjoint rooms
+  ---
+  duration_ms: 0.63147
+  type: 'test'
+  ...
+# Subtest: DungeonChannel and DungeonLoop tick skip a real actor barrier and visit both later rooms
+ok 5 - DungeonChannel and DungeonLoop tick skip a real actor barrier and visit both later rooms
+  ---
+  duration_ms: 0.410837
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 284.951897

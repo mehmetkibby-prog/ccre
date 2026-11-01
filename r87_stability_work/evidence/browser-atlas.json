@@ -1,0 +1,90 @@
+{
+  "scope": "Exact production wings loader bodies in real browser Canvas2D, deterministic synthetic atlas, fourfold CPU throttle. This is not a complete game renderer/FPS or live-server test.",
+  "runs": [
+    {
+      "browser": "chromium",
+      "mode": "baseline",
+      "sourceSHA256": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+      "requests": 1,
+      "readyMs": 47.19999998807907,
+      "rafIntervalsMs": {
+        "count": 8,
+        "p99": 16.69999999999999,
+        "max": 16.69999999999999
+      },
+      "timerSliceMs": {
+        "count": 0,
+        "p99": null,
+        "max": null
+      },
+      "longTasksMs": [],
+      "rafCount": 21,
+      "loadingGuardReleased": true,
+      "rgbaSHA256": "2e4fd267a42c22d077890c01c7ae77d1db0a1e834addd92a737aaaac4d9b167b"
+    },
+    {
+      "browser": "chromium",
+      "mode": "candidate",
+      "sourceSHA256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
+      "requests": 1,
+      "readyMs": 300.60000002384186,
+      "rafIntervalsMs": {
+        "count": 23,
+        "p99": 16.799999999999955,
+        "max": 16.799999999999955
+      },
+      "timerSliceMs": {
+        "count": 64,
+        "p99": 4.5,
+        "max": 4.5
+      },
+      "longTasksMs": [],
+      "rafCount": 36,
+      "loadingGuardReleased": true,
+      "rgbaSHA256": "2e4fd267a42c22d077890c01c7ae77d1db0a1e834addd92a737aaaac4d9b167b"
+    },
+    {
+      "browser": "edge",
+      "mode": "baseline",
+      "sourceSHA256": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+      "requests": 1,
+      "readyMs": 48.19999998807907,
+      "rafIntervalsMs": {
+        "count": 8,
+        "p99": 16.700000000000045,
+        "max": 16.700000000000045
+      },
+      "timerSliceMs": {
+        "count": 0,
+        "p99": null,
+        "max": null
+      },
+      "longTasksMs": [],
+      "rafCount": 22,
+      "loadingGuardReleased": true,
+      "rgbaSHA256": "2e4fd267a42c22d077890c01c7ae77d1db0a1e834addd92a737aaaac4d9b167b"
+    },
+    {
+      "browser": "edge",
+      "mode": "candidate",
+      "sourceSHA256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
+      "requests": 1,
+      "readyMs": 303.4000000357628,
+      "rafIntervalsMs": {
+        "count": 24,
+        "p99": 16.700000000000045,
+        "max": 16.700000000000045
+      },
+      "timerSliceMs": {
+        "count": 64,
+        "p99": 4.900000035762787,
+        "max": 4.900000035762787
+      },
+      "longTasksMs": [],
+      "rafCount": 37,
+      "loadingGuardReleased": true,
+      "rgbaSHA256": "2e4fd267a42c22d077890c01c7ae77d1db0a1e834addd92a737aaaac4d9b167b"
+    }
+  ],
+  "passed": true
+}

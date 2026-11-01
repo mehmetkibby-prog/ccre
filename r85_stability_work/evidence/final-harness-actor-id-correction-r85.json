@@ -1,0 +1,78 @@
+{
+  "status": "fixture-ready-no-rerun-authorized",
+  "productionEdited": false,
+  "productionCoreSHA256": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+  "liveTouched": false,
+  "nativeStartupOrLoadRun": false,
+  "change": "Only change player identifier construction from runId:n to runId-n and assert the unchanged native world-announcement player_id grammar. No cadence, setup health, native code or performance gate change.",
+  "inverseExact": true,
+  "before": {
+    "path": "tests/runtime/history/native-mixed-load-realistic-final-exact2.mjs",
+    "bytes": 28046,
+    "sha256": "bdb61a1a3daf337762dcd855d15f4f9a2613ff59fa747c176164b1c9b4f0cda2"
+  },
+  "after": {
+    "path": "tests/runtime/native-mixed-load-realistic.mjs",
+    "bytes": 28165,
+    "sha256": "1a467d6e737a73781fd89db9bccd8359b2a4cdd6bfb63dcb2862a096c9000315"
+  },
+  "clientProofReviewed": {
+    "casesPassed": 2,
+    "rarities": [
+      "purple",
+      "red"
+    ],
+    "scope": "Exact Acorn-sliced native rare announcement function declarations, actual nativeAtomicStatements adapter and in-memory SQLite, complete generated world validator and notificationViews. Controlled clock and publication port; not native-process/full-load reproduction.",
+    "result": "Exact native producer with real in-memory SQLite and complete validator: colon ID rejects realtime delivery; sole-field validUUID twin delivers. Persisted message and duplicate-call deduplication remain intact.",
+    "limits": "Originalwarningpayload notretained; this proves concretefixture incompatibility with same diagnostic, not exacteventbody/item/author from the oldload."
+  },
+  "readinessChecks": [
+    "Node22 parent syntax passes.",
+    "Pure100-ID construction confirms uniqueness andnative /^[A-Za-z0-9_-]{1,80}$/ grammar; priorcolonform rejects.",
+    "Complete parent differs only in one separator and oneassertion; exactinverse equals preservedbdb61a1a source.",
+    "Existing generator uses provided actorID without parsing thecolon suffix; auth,subscriptions,SQLkeys,receipt correlation continueusing the same opaqueID.",
+    "Old exact2 traces and their failed431.57ms firstwave result remain unchanged. Correct cosmeticannouncement coverage does not reclassify that independentperformancefailure."
+  ],
+  "pins": [
+    {
+      "path": "tests/client/rare-announcement-fixture-id-r85.test.mjs",
+      "bytes": 6214,
+      "sha256": "31006fe53982dec08781c882bb276a15e2170fb6d5f41006f11bb823ab1bf113"
+    },
+    {
+      "path": "tests/client/rare-announcement-fixture-id-r85.tap",
+      "bytes": 618,
+      "sha256": "411a0200db2d6fbb62cde7f429b5704a2826a97fd011ddcd2fd584329052bca2"
+    },
+    {
+      "path": "tests/client/rare-announcement-fixture-id-r85-evidence.json",
+      "bytes": 2679,
+      "sha256": "a68f5cad67c8adfe201b2328e0a4b86c111d154d843843549af1f91e5050582e"
+    },
+    {
+      "path": "tests/client/rare-announcement-fixture-id-r85-findings.md",
+      "bytes": 3513,
+      "sha256": "bd26025e84edc54372d0a4cff1a94dc3d22e218c0cb78202ee714bfda7b4cded"
+    },
+    {
+      "path": "tests/runtime/native-mixed-generator-realistic.mjs",
+      "bytes": 18805,
+      "sha256": "fa0cba414a83e5d7f93e5f8f4a1b5ba49548efc84529ce8de95da883997ccf0e"
+    },
+    {
+      "path": "tests/runtime/potion-ledger-fixture.mjs",
+      "bytes": 810,
+      "sha256": "bd4cb15699a5ea0f40c7e779aa2486aeea8421e2df89ad4f280ac3652723f120"
+    },
+    {
+      "path": "evidence/final-exact2-30-blocker-r85.json",
+      "bytes": 57976,
+      "sha256": "c4a68bff5ac6bb2b050d00a9aa453d1d704033579bd6ce90350ca6ffc3ad0f51"
+    }
+  ],
+  "historicalSourceMapping": {
+    "tests/runtime/native-mixed-load-realistic.mjs@bdb61a1a3daf337762dcd855d15f4f9a2613ff59fa747c176164b1c9b4f0cda2": "tests/runtime/history/native-mixed-load-realistic-final-exact2.mjs"
+  },
+  "proposedLaterLabel": "r85-final-exact3",
+  "nextStep": "Wait for coordinator decision and any finalproduction/functionalfreeze. No rerun now."
+}

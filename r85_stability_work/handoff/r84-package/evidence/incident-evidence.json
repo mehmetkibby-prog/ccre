@@ -1,0 +1,235 @@
+{
+  "incident": "2026-10-31 player-reported lag and channel-selection stall",
+  "status": "Investigating primary shared-command failure; preparing separately reproduced entry and recovery-completion fixes.",
+  "reported": {
+    "firstMessageTime": "15:34",
+    "firstMessageMeaning": "Lag returned; after F5 the player stayed at channel selection and could not enter.",
+    "secondMessageTime": "15:43",
+    "secondMessageMeaning": "The player reported that it resolved by itself.",
+    "clockAssumptionForJournalWindow": "Europe/Istanbul",
+    "continuousNineMinuteDurationProven": false,
+    "source": "user attachment 12676.jpg"
+  },
+  "publicHealth": {
+    "fetchedAtUTC": "2026-10-31T12:46:33.132944+00:00",
+    "fetchedAtEuropeIstanbul": "2026-10-31T15:46:33.132944+03:00",
+    "url": "https://r1.coreoflife.net/api/vds-health",
+    "status": 200,
+    "updateVersion": "R83_GAMEPLAY",
+    "allFourChannelsReady": true,
+    "onlineByChannel": [
+      7,
+      1,
+      0,
+      1
+    ],
+    "mainEventLoopBusyPercent": 33.38,
+    "mainEventLoopDelayMs": 13.6,
+    "queuedWrites": 0,
+    "walErrors": 0,
+    "walMaxMs": 66.05,
+    "mainCommitMaxMs": 14.13,
+    "scope": "Post-incident snapshot; does not establish state at 15:34 or a cause. Maxima are not incident-timestamped."
+  },
+  "adminScreenshots": {
+    "sourceFiles": [
+      "12677.jpg",
+      "12679.jpg"
+    ],
+    "transcription": "Selected visible fields only, not the original complete JSON.",
+    "measuredAtMs": 1793450823832,
+    "measuredAtUTC": "2026-10-31T12:47:03.832Z",
+    "measuredAtEuropeIstanbul": "2026-10-31T15:47:03.832+03:00",
+    "phoneDisplayedTime": "14:47",
+    "firstRetainedTicks": {
+      "meaning": "The pictured simulation runtimes began ticking around the reported lag minute. This does not by itself distinguish normal deployment startup from recovery or restart.",
+      "rows": [
+        {
+          "owner": "world",
+          "tick": 1,
+          "atMs": 1793450036162,
+          "atEuropeIstanbul": "2026-10-31T15:33:56.162+03:00"
+        },
+        {
+          "owner": "channel-1",
+          "tick": 1,
+          "atMs": 1793450037610,
+          "atEuropeIstanbul": "2026-10-31T15:33:57.610+03:00"
+        },
+        {
+          "owner": "channel-3",
+          "tick": 1,
+          "atMs": 1793450039481,
+          "atEuropeIstanbul": "2026-10-31T15:33:59.481+03:00"
+        },
+        {
+          "owner": "channel-4",
+          "tick": 1,
+          "atMs": 1793450040966,
+          "atEuropeIstanbul": "2026-10-31T15:34:00.966+03:00"
+        }
+      ],
+      "channel1LifetimeMaxFrame": {
+        "tick": 9236,
+        "atMs": 1793450499463,
+        "atEuropeIstanbul": "2026-10-31T15:41:39.463+03:00",
+        "ms": 54.3
+      },
+      "verification": "Parent independently read both supplied screenshots; timestamp conversion checked with UTC/Europe-Istanbul. Channel-2 tick 1 is not visible in retained slowest rows."
+    },
+    "main": {
+      "busyPercent": 35.9,
+      "loopDelayMs": 25.5,
+      "memoryRssMb": 1570.3,
+      "slowWorkWindowSeconds": 900,
+      "slowWorkTop": [],
+      "slowWorkBusyWindows": [],
+      "gcCount": 1264,
+      "gcTotalMs": 10493.94,
+      "gcMaxMs": 36.53
+    },
+    "channels": [
+      {
+        "channel": 1,
+        "online": 7,
+        "busyPercent": 32.8,
+        "loopDelayMs": 10.2,
+        "tickP95Ms": 11.8,
+        "maxTickMs": 54.3,
+        "writerAckP95Ms": 33.6,
+        "deathWaitR82": {
+          "active": 0,
+          "completed": 344,
+          "rejected": 2,
+          "failed": 0,
+          "samples": 128,
+          "totalP95Ms": 133,
+          "totalMaxMs": 273.7,
+          "checkpointMaxMs": 7.2,
+          "writerMaxMs": 100.8,
+          "refreshMaxMs": 168.5,
+          "recentSlowEarliestVisibleAtMs": 1793450724545,
+          "recentSlowLatestVisibleAtMs": 1793450819529
+        }
+      },
+      {
+        "channel": 2,
+        "online": 1,
+        "busyPercent": 2.7,
+        "loopDelayMs": 1.5,
+        "tickP95Ms": 2.1,
+        "maxTickMs": 16,
+        "writerAckP95Ms": 33.6,
+        "deathWaitR82": {
+          "active": 0,
+          "completed": 57,
+          "rejected": 0,
+          "failed": 0,
+          "totalP95Ms": 108.5,
+          "totalMaxMs": 169.8
+        }
+      },
+      {
+        "channel": 3,
+        "online": 0,
+        "busyPercent": 1.1,
+        "loopDelayMs": 3.7,
+        "tickP95Ms": 0.6,
+        "maxTickMs": 13.5,
+        "writerAckP95Ms": 0,
+        "deathWaitR82": {
+          "active": 0,
+          "completed": 0,
+          "rejected": 0,
+          "failed": 0,
+          "totalP95Ms": null,
+          "totalMaxMs": null
+        }
+      },
+      {
+        "channel": 4,
+        "online": 1,
+        "busyPercent": 2.6,
+        "loopDelayMs": 6.7,
+        "tickP95Ms": 2,
+        "maxTickMs": 18.4,
+        "writerAckP95Ms": 26.2,
+        "deathWaitR82": {
+          "active": 0,
+          "completed": 1,
+          "rejected": 0,
+          "failed": 0,
+          "totalP95Ms": 71.5,
+          "totalMaxMs": 71.5
+        }
+      }
+    ],
+    "limitations": [
+      "Busy percentages and loop delay are current process samples, not full incident measurements or player ping.",
+      "Death latency retains the last 128 completed samples; recentSlow is bounded by count. Visible channel-1 slow events start at 15:45:24 Turkey time, after the 15:43 recovery message.",
+      "The displayed diagnostics omit coordinator queue/terminal wait stages. Internal stage timing is opt-in via CORE511_STAGE_TIMING=1, defaults disabled, and records completed waits only; the live flag is unknown.",
+      "These screenshots do not prove a network fault, a fixed nine-minute timeout, a CPU-capacity problem, or the cause of the admission stall."
+    ]
+  },
+  "requestedEvidence": {
+    "unit": "coreoflife-r1.service",
+    "journalSinceUTC": "2026-10-31 12:29:00 UTC",
+    "journalUntilUTC": "2026-10-31 12:48:00 UTC",
+    "journalReceived": true
+  },
+  "journalScreenshots": {
+    "sourceFiles": [
+      "12681.jpg",
+      "12683.jpg"
+    ],
+    "transcription": "Selected clearly visible records only; full journal not available.",
+    "primaryVisibleRecoveryEvents": [
+      {
+        "atUTC": "2026-10-31T12:33:36.424Z",
+        "incident": 4,
+        "reason": "shared_command_outcome_unknown",
+        "origin": "shared_combat_failure",
+        "requestMethod": "shared_expireUnknown",
+        "phase": "shared_terminal_unknown"
+      },
+      {
+        "atUTC": "2026-10-31T12:33:36.440Z",
+        "incident": 5,
+        "reason": "global_world_busy",
+        "origin": "channel_recovery_request",
+        "phase": "frozen"
+      },
+      {
+        "atUTC": "2026-10-31T12:33:55.723Z",
+        "incident": 6,
+        "reason": "shared_command_outcome_unknown",
+        "origin": "shared_combat_failure",
+        "requestMethod": "shared_expireUnknown",
+        "phase": "shared_terminal_unknown"
+      },
+      {
+        "atUTC": "2026-10-31T12:33:55.734Z",
+        "incident": 7,
+        "reason": "global_world_busy",
+        "origin": "channel_recovery_request",
+        "phase": "frozen"
+      }
+    ],
+    "followingErrors": {
+      "code": "game_instance_expired",
+      "atUTC": [
+        "2026-10-31T12:34:12.360Z",
+        "2026-10-31T12:34:22.377Z",
+        "2026-10-31T12:34:32.419Z"
+      ],
+      "scope": "Different boot-local actor references; recurring 10-second session refresh. Screenshot ends before the 40-second disconnected retirement boundary."
+    },
+    "interpretation": [
+      "The unknown-command watcher triggered global recovery twice. Its underlying original writer exception is not visible in these screenshots.",
+      "The global_world_busy stack is a recovery-in-progress fence in SharedCombatBridge.terminalIdle called from CoreCoordinator.serial. It is not proof of the first trigger.",
+      "RecoveryCause fills attack/sourceChannel/phase from an active terminal when no explicit context exists; these fields alone do not prove the attack threw the first error.",
+      "The retained first simulation ticks around12:33:56Z belong to the replacement generation after this recovery.",
+      "The client eight-second timeout mismatch and recovery-finalization race are separately reproduced source defects, not yet proven to explain the full reported interval."
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+const root=process.env.COL_CORE511_BASE??path.resolve(import.meta.dirname,'../../../native510-bb3a6cc689c6'),hash=v=>createHash('sha256').update(v).digest('hex'),pin='bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b',bytes=fs.readFileSync(path.join(root,'realm-package-manifest.json'));
+if(hash(bytes)!==pin)throw Error('Exact native manifest required');const manifest=JSON.parse(bytes),files=[];
+for(const file of ['package-lock.json','vds-server/src/realm-runtime.mjs','vds-server/src/maintenance438.mjs','vds-server/src/loadtest-entry.mjs','vds-server/src/site-visits457.mjs','vds-server/src/http-timing.mjs']){const sha256=hash(fs.readFileSync(path.join(root,file)));if(manifest.files.find(r=>r.path===file)?.sha256!==sha256)throw Error('Native HTTP server dependency changed: '+file);files.push({file,sha256});}
+const lock=JSON.parse(fs.readFileSync(path.join(root,'package-lock.json'))),pkg=JSON.parse(fs.readFileSync(path.join(root,'node_modules/vinext/package.json')));if(pkg.version!==lock.packages['node_modules/vinext'].version)throw Error('Installed native Vinext version changed');
+const adapter='node_modules/vinext/dist/server/prod-server.js',proof={baselineManifestSha256:pin,files,vinext:{version:pkg.version,integrity:lock.packages['node_modules/vinext'].integrity,adapter,adapterSha256:hash(fs.readFileSync(path.join(root,adapter)))},scope:'Native node_modules installed from the exact lockfile. Original Vinext HTTP/static/RSC/streaming adapter, realm endpoint guards and game read-only site visit route. Candidate startup and request lifetime tracking are separate bindings.'};
+fs.writeFileSync(path.join(import.meta.dirname,'generated/native-http-server-proof.json'),JSON.stringify(proof,null,2)+'\n');console.log(JSON.stringify({nativeFiles:files.length,vinext:pkg.version}));

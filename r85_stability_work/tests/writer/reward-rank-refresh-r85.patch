@@ -1,0 +1,89 @@
+--- a/scripts/core511/reward-rank-refresh-r85.mjs
++++ b/scripts/core511/reward-rank-refresh-r85.mjs
+@@ -0,0 +1,43 @@
++import {demand} from './contract.mjs';
++import {prepareCached477} from './writer-statements.mjs';
++
++const stampSql=`SELECT r.config_json,r.revision,
++ (SELECT schema_version FROM pragma_schema_version) AS schema_version,
++ (SELECT sql FROM main.sqlite_schema WHERE type='table' AND name='players') AS players_sql,
++ (SELECT sql FROM main.sqlite_schema WHERE type='table' AND name='guild_skills') AS guild_sql
++ FROM rank_settings r WHERE r.id=1`;
++const fields=['config_json','revision','schema_version','players_sql','guild_sql'];
++
++// Only the external reward worker opts in. Its FIFO reservation excludes other
++// writers while these exact durable settings/schema bytes are read. Other
++// service refreshes, including dynamic event profiles, still run every time.
++export function createRewardRankRefreshR85(services){
++ const sql=services.sql,database=services.database,factory=services.modules.ranks.createRanks;
++ let cached=null;
++ return {
++  invalidate(){cached=null;},
++  afterCommand(ack){
++   // A proven native SQL rollback can resolve as a durable negative receipt,
++   // rather than reject the worker promise. Its JS settings reads may have
++   // observed uncommitted configuration, so success of the transport is not
++   // sufficient evidence for retaining this cache.
++   const result=ack?.result?.result;
++   if(result?.status!==200||result.body?.not_executed)cached=null;
++  },
++  refresh(current){
++   demand(current===services&&services.sql===sql&&services.database===database&&!sql.isTransaction&&!services.active,'reward_rank_refresh_context');
++   const stamp=prepareCached477(sql,stampSql).get();
++   demand(stamp&&typeof stamp.config_json==='string'&&typeof stamp.players_sql==='string','reward_rank_refresh_schema');
++   const previous=services.globals.__colRanks;
++   if(cached&&cached.service===previous&&cached.save===previous.save&&cached.settings===previous.settings&&fields.every(key=>Object.is(cached.stamp[key],stamp[key])))return previous;
++   cached=null;
++   const service=factory(database),save=service.save;
++   // Native save updates a private JS cache before an outer transaction might
++   // roll back. Invalidate before calling it, even if SQL later returns to the
++   // exact old bytes or the native method throws. Service identity alone is not
++   // evidence that its cached configuration still represents the durable row.
++   service.save=function(...args){cached=null;return Reflect.apply(save,this,args);};
++   cached={service,save:service.save,settings:service.settings,stamp};return service;
++  }
++ };
++}
+--- a/scripts/core511/game-services.mjs
++++ b/scripts/core511/game-services.mjs
+@@ -43,7 +43,7 @@
+   this.rules=createAttackWriterRules({globals:g,now,random,uuid,fourChannels:true});
+   this.rules.dungeonService(); // Original equipment stats and solo gear rolls.
+  }
+- refresh(){super.refresh();this.globals.__colProgression.refresh();this.globals.__colRanks=this.modules.ranks.createRanks(this.database);}
++ refresh({rankRefreshR85=null}={}){super.refresh();this.globals.__colProgression.refresh();this.globals.__colRanks=rankRefreshR85?rankRefreshR85.refresh(this):this.modules.ranks.createRanks(this.database);}
+  dungeonOptions(){
+   const g=this.globals;return {globals:g,stats:(...args)=>g.__colDungeon.stats(...args),makeGear:(...args)=>g.__colDungeon.makeGear(...args),progressionSettings:()=>g.__colProgression.snapshot()};
+  }
+--- a/scripts/core511/reward-worker-runtime-r533.mjs
++++ b/scripts/core511/reward-worker-runtime-r533.mjs
+@@ -10,6 +10,7 @@
+ import {workerWindowR56} from './r56-options.mjs';
+ import {installRewardGroupCommitR53} from './reward-group-commit-r53.mjs';
+ import {installRewardCheckpointR79} from './checkpoint-runtime-r79.mjs';
++import {createRewardRankRefreshR85} from './reward-rank-refresh-r85.mjs';
+ 
+ export async function runRewardWorkerR533({hook=()=>{}}={}){
+  const config=workerData,stat=statSync(config.file);
+@@ -36,6 +37,7 @@
+   allows(id,peer,request){const h=current?.shared;return Boolean(h&&request.payload?.sharedLease===h.proof&&request.playerId===current.request.playerId&&peer.channel===current.peer.channel&&peer.incarnation===current.peer.incarnation&&h.actors.includes(id));}
+  };
+  await writer.initialize();
++ const rankRefreshR85=createRewardRankRefreshR85(writer.services);
+  if(statementBootPoolR61)prepareCombatStatementBootR61(sql);
+  const materialize=writer.presence.materialize.bind(writer.presence);writer.presence.materialize=db=>(written=materialize(db));
+  const commit=database.commitWrites.bind(database);database.commitWrites=()=>{hook('before_commit',{database,current});commit();hook('after_commit',{database,current});};
+@@ -48,10 +50,10 @@
+   try{
+    demand(['attack','native_action'].includes(current.request.operation)&&(current.request.operation==='attack'||current.request.payload.input?.action==='claim_rewards'),'reward_worker_operation');
+    registry.registry.apply(current.registry);for(const fault of current.registryFaults??[])registry.registry.stop(fault.runId,{code:fault.code});
+-   writer.refreshOwners();writer.services.refresh();writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
+-   hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);hook('after_command',{database,current,ack});
++   writer.refreshOwners();writer.services.refresh({rankRefreshR85});writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
++   hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);hook('after_command',{database,current,ack});
+    parentPort.postMessage({id:message.id,ok:true,ack,written:written.map(p=>[p.actor,p.version]),workMs:performance.now()-started});
+-  }catch(error){parentPort.postMessage({id:message.id,ok:false,error:{code:error.code??'reward_worker_failed',message:error.message,stack:error.stack,fenceContext:error.fenceContext,rejection:actorRejection(error)},workMs:performance.now()-started});}
++  }catch(error){rankRefreshR85.invalidate();parentPort.postMessage({id:message.id,ok:false,error:{code:error.code??'reward_worker_failed',message:error.message,stack:error.stack,fenceContext:error.fenceContext,rejection:actorRejection(error)},workMs:performance.now()-started});}
+   finally{current=null;}
+  }).catch(error=>{parentPort.postMessage({type:'fatal',code:error.code??'reward_worker_failed'});process.exitCode=1;parentPort.close();});});
+  parentPort.postMessage({type:'ready',checkpointR79:checkpoint.snapshot()});

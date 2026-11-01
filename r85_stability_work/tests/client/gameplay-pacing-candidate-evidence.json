@@ -1,0 +1,74 @@
+{
+  "scope": "exact candidate request/pacing code with unchanged complete transport in controlled virtual time; not live VDS/full React/browser test",
+  "sourceSha256": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+  "candidateSha256": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+  "transportPath": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/client/core511-transport-r79-715e78ecd9021ea8.js",
+  "transportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+  "candidatePacingSha256": "0e5438b67e85f5b1c143e4e9d277f43c250ae5e37eafa674df79072febe59cc8",
+  "cases": [
+    {
+      "name": "timeout keeps attack slot 0 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps attack slot 1 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps attack slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps pvp_attack slot 0 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps pvp_attack slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps cast_support456 slot 3 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps guardian_dash slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "transport queue also retains same-ability ownership before wire admission",
+      "status": "passed"
+    },
+    {
+      "name": "secondary slot and cross-target PvP/PvE share the established ability gate",
+      "status": "passed"
+    },
+    {
+      "name": "different ability and non-combat actions preserve FIFO",
+      "status": "passed"
+    },
+    {
+      "name": "normal fast attacks, double-click gate, explicit error and rate deadline",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon attack representation and release do not change native dungeon pacing",
+      "status": "passed"
+    },
+    {
+      "name": "owner-ended rejection clears old commands but fresh combat remains fenced",
+      "status": "passed"
+    },
+    {
+      "name": "connecting, transition and verification states cannot accumulate pre-queue intent",
+      "status": "passed"
+    },
+    {
+      "name": "first world request establishes connection independently of combat gate",
+      "status": "passed"
+    },
+    {
+      "name": "real socket close schedules reconnect independently of suppressed combat",
+      "status": "passed"
+    }
+  ]
+}

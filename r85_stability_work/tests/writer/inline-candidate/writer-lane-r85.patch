@@ -1,0 +1,56 @@
+--- a/scripts/core511/writer-lane-r533.mjs
++++ b/scripts/core511/writer-lane-r533.mjs
+@@ -8,7 +8,7 @@
+  if(installed.has(database))return installed.get(database);
+  const schedule=database.scheduleWriteDrain,drain=database.drainWrites;
+  demand(typeof schedule==='function'&&typeof drain==='function','reward_worker_database_contract');
+- let busy=null,closed=false,nativeWrites=0,externalQueuedR54=0;
++ let busy=null,closed=false,nativeWrites=0,externalQueuedR54=0,idleWaitersR85=0;
+  let startedR80=null,completedR80=0,maxExternalMsR80=0;
+  const lane={
+   get busy(){return busy;},
+@@ -22,7 +22,7 @@
+    return {protocol:'single-writer-lane-v1',externalBusy:busy!==null,externalAgeMs:startedR80===null?null:Math.max(0,now-startedR80),queuedWrites:queue.length,queuedExternal,oldestQueuedAgeMs:oldest,nativeWrites,completedExternal:completedR80,maxExternalMs:maxExternalMsR80};
+   },
+   run(work){database.assertAvailable();demand(!closed&&typeof work==='function','reward_worker_lane_closed');return new Promise((resolve,reject)=>{if(rewardIdleCostR54)externalQueuedR54++;database.writeQueue.push({externalR533:work,resolve,reject,queuedAt477:performance.now()});database.scheduleWriteDrain();});},
+-  async idle(){while(busy)await busy;},
++  async idle(){idleWaitersR85++;try{while(busy)await busy;}finally{idleWaitersR85--;}},
+   close(){demand(!busy,'reward_worker_lane_busy');closed=true;}
+  };
+  database.scheduleWriteDrain=function(){if(!busy)return schedule.call(this);};
+@@ -35,14 +35,31 @@
+    const tail=this.writeQueue.splice(at);
+    try{return drain.call(this);}finally{this.writeQueue.push(...tail);this.scheduleWriteDrain();}
+   }
+-  this.writeDrain=null;const job=this.writeQueue.shift();if(rewardIdleCostR54)externalQueuedR54--;
++  this.writeDrain=null;let job=this.writeQueue.shift();if(rewardIdleCostR54)externalQueuedR54--;
+   demand(!this.sqlite.isTransaction,'reward_worker_main_transaction');
+   // A non-timer marker also prevents the original scheduler retained inside
+   // R53's group wrapper from starting a parallel drain.
+   const marker={externalR533:true};this.writeDrain=marker;
+-  startedR80=performance.now();
+-  const work=Promise.resolve().then(()=>job.externalR533());
+-  busy=work.then(job.resolve,job.reject).finally(()=>{maxExternalMsR80=Math.max(maxExternalMsR80,performance.now()-startedR80);completedR80++;startedR80=null;busy=null;if(this.writeDrain===marker)this.writeDrain=null;this.scheduleWriteDrain();});
++  const work=Promise.resolve().then(async()=>{
++   let completed=0,synchronousMs=0;
++   for(;;){
++    startedR80=performance.now();let failed=false,pending;
++    const invocation=performance.now();
++    try{pending=job.externalR533();}catch(error){pending=Promise.reject(error);}
++    synchronousMs+=performance.now()-invocation;
++    try{job.resolve(await pending);}catch(error){failed=true;job.reject(error);}
++    maxExternalMsR80=Math.max(maxExternalMsR80,performance.now()-startedR80);completedR80++;completed++;
++    // Publish the preceding durable result before invoking another fresh
++    // preflight. Awaited worker I/O already yielded the main event loop.
++    await Promise.resolve();
++    // No future envelope is prepared early. A queued sibling remains visibly
++    // unsent until shifted here. Any native/cold/shutdown idle waiter keeps
++    // the original single-job boundary; no main FIFO entry is bypassed.
++    if(failed||completed>=4||synchronousMs>=4||idleWaitersR85||nativeWrites||closed||this.closed||this.maintenance||this.sqlite.isTransaction||!this.writeQueue[0]?.externalR533)break;
++    job=this.writeQueue.shift();if(rewardIdleCostR54)externalQueuedR54--;
++   }
++  });
++  busy=work.finally(()=>{startedR80=null;busy=null;if(this.writeDrain===marker)this.writeDrain=null;this.scheduleWriteDrain();});
+  };
+  // Legacy asynchronous native D1 calls can include autocommitted writes.
+  // They wait outside SQLite. The regular atomic queue already waits in FIFO.

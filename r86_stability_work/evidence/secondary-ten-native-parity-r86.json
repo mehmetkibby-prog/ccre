@@ -1,0 +1,1508 @@
+{
+  "passed": true,
+  "coreSHA256": "7fc97cb869cf504e36fdd610e5850ffaace9084e3d839802481d05d284840e5b",
+  "sourceUnchanged": true,
+  "scope": "Current native FULL SQLite/GameWriter, ten real owner epochs, fixed independent per-actor seeds/time, five established ranks and five ordinary actors; all native economic effects and drop IDs compared against ten serial commands. Intrinsic authority/resources/savepoints/receipts real; fixture external security port true. No OS topology or performance claim.",
+  "outputs": {
+    "serial": {
+      "economics": {
+        "players": [
+          {
+            "id": "ten-native-0",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-1",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-2",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-3",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-4",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-5",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-6",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-7",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-8",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-9",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          }
+        ],
+        "monsters": [
+          {
+            "id": "golge-ten-native-0",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-1",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-2",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-3",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-4",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-5",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-6",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-7",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-8",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-9",
+            "hp": 0,
+            "spawn_round": 17
+          }
+        ],
+        "xp": [
+          {
+            "monster_id": "golge-ten-native-0",
+            "spawn_round": 17,
+            "player_id": "ten-native-0"
+          },
+          {
+            "monster_id": "golge-ten-native-1",
+            "spawn_round": 17,
+            "player_id": "ten-native-1"
+          },
+          {
+            "monster_id": "golge-ten-native-2",
+            "spawn_round": 17,
+            "player_id": "ten-native-2"
+          },
+          {
+            "monster_id": "golge-ten-native-3",
+            "spawn_round": 17,
+            "player_id": "ten-native-3"
+          },
+          {
+            "monster_id": "golge-ten-native-4",
+            "spawn_round": 17,
+            "player_id": "ten-native-4"
+          },
+          {
+            "monster_id": "golge-ten-native-5",
+            "spawn_round": 17,
+            "player_id": "ten-native-5"
+          },
+          {
+            "monster_id": "golge-ten-native-6",
+            "spawn_round": 17,
+            "player_id": "ten-native-6"
+          },
+          {
+            "monster_id": "golge-ten-native-7",
+            "spawn_round": 17,
+            "player_id": "ten-native-7"
+          },
+          {
+            "monster_id": "golge-ten-native-8",
+            "spawn_round": 17,
+            "player_id": "ten-native-8"
+          },
+          {
+            "monster_id": "golge-ten-native-9",
+            "spawn_round": 17,
+            "player_id": "ten-native-9"
+          }
+        ],
+        "claims": [
+          {
+            "monster_id": "golge-ten-native-0",
+            "spawn_round": 17,
+            "player_id": "ten-native-0"
+          },
+          {
+            "monster_id": "golge-ten-native-1",
+            "spawn_round": 17,
+            "player_id": "ten-native-1"
+          },
+          {
+            "monster_id": "golge-ten-native-2",
+            "spawn_round": 17,
+            "player_id": "ten-native-2"
+          },
+          {
+            "monster_id": "golge-ten-native-3",
+            "spawn_round": 17,
+            "player_id": "ten-native-3"
+          },
+          {
+            "monster_id": "golge-ten-native-4",
+            "spawn_round": 17,
+            "player_id": "ten-native-4"
+          },
+          {
+            "monster_id": "golge-ten-native-5",
+            "spawn_round": 17,
+            "player_id": "ten-native-5"
+          },
+          {
+            "monster_id": "golge-ten-native-6",
+            "spawn_round": 17,
+            "player_id": "ten-native-6"
+          },
+          {
+            "monster_id": "golge-ten-native-7",
+            "spawn_round": 17,
+            "player_id": "ten-native-7"
+          },
+          {
+            "monster_id": "golge-ten-native-8",
+            "spawn_round": 17,
+            "player_id": "ten-native-8"
+          },
+          {
+            "monster_id": "golge-ten-native-9",
+            "spawn_round": 17,
+            "player_id": "ten-native-9"
+          }
+        ],
+        "drops": [
+          {
+            "id": "0c58c714-d551-4f47-a6cd-7ec926e894ac",
+            "owner_id": "ten-native-2",
+            "monster_id": "golge-ten-native-2",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2758,
+            "y": 2025
+          },
+          {
+            "id": "1620643b-c2c9-4404-8f71-02d3eaa1e66e",
+            "owner_id": "ten-native-9",
+            "monster_id": "golge-ten-native-9",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2779.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "16828579-d168-4488-b075-e38926fab87d",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2719.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "1bfb344a-f74f-42b4-939c-d679856be5ea",
+            "owner_id": "ten-native-7",
+            "monster_id": "golge-ten-native-7",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2759.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "322da5d9-3c32-462d-a20d-f62866ec5315",
+            "owner_id": "ten-native-9",
+            "monster_id": "golge-ten-native-9",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 3,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2828,
+            "y": 2025
+          },
+          {
+            "id": "501d9aa1-e158-424c-b5e4-0589c7061868",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2772.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "5f3342fa-2d77-431b-958a-03070e67b883",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2749.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "748a880e-9097-42ea-8591-05e12448a00a",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2739.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "7596aba8-7d74-4fcd-8233-4bd7ddc41f97",
+            "owner_id": "ten-native-1",
+            "monster_id": "golge-ten-native-1",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2748,
+            "y": 2025
+          },
+          {
+            "id": "763061a8-8e2a-4584-83b7-c6bbda1fbb1e",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "shoes",
+            "item_name": "Kor Muhafız Çizmeleri",
+            "rarity": "orange",
+            "power": 36,
+            "amount": 1,
+            "role": "muhafiz",
+            "enchantments": "[{\"kind\":\"magic_defense\",\"value\":9}]",
+            "x": 2788,
+            "y": 2025
+          },
+          {
+            "id": "ab19c09b-9425-4fcb-9f92-236044c196be",
+            "owner_id": "ten-native-0",
+            "monster_id": "golge-ten-native-0",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2689.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "ab34e243-d663-413b-b672-5617264d45a4",
+            "owner_id": "ten-native-8",
+            "monster_id": "golge-ten-native-8",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2769.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "ace50ad1-8ef0-4307-bd67-92b66f72e0ff",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "armor",
+            "item_name": "Safir Rün Cübbesi",
+            "rarity": "blue",
+            "power": 16,
+            "amount": 1,
+            "role": "arkanist",
+            "enchantments": "[{\"kind\":\"magic_defense\",\"value\":2}]",
+            "x": 2768,
+            "y": 2025
+          },
+          {
+            "id": "b16b4d6e-2aa0-4a8b-8edc-dcd12112483a",
+            "owner_id": "ten-native-0",
+            "monster_id": "golge-ten-native-0",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2738,
+            "y": 2025
+          },
+          {
+            "id": "b4f2827d-e1b1-4337-921d-a2ae65d670ef",
+            "owner_id": "ten-native-4",
+            "monster_id": "golge-ten-native-4",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2729.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "b66cfd59-1f2f-48a5-89a1-ba0e951c9789",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2752.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "b765bfe6-311b-4f70-af28-822e7ee7cc3e",
+            "owner_id": "ten-native-1",
+            "monster_id": "golge-ten-native-1",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2699.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "c143b707-daee-4bfa-86a7-f3f2e86e03c5",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2782.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "d1880d67-de6a-4eb0-a775-915f140c80a2",
+            "owner_id": "ten-native-2",
+            "monster_id": "golge-ten-native-2",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2709.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "d580a725-c69d-4f01-b287-c2daa2a41967",
+            "owner_id": "ten-native-7",
+            "monster_id": "golge-ten-native-7",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 3,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2808,
+            "y": 2025
+          },
+          {
+            "id": "d9c43f1c-af16-40a8-8da5-b40f7e044c70",
+            "owner_id": "ten-native-4",
+            "monster_id": "golge-ten-native-4",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2778,
+            "y": 2025
+          },
+          {
+            "id": "f07c6b7c-38e8-468d-b1cf-62a61dddf4c3",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "armor",
+            "item_name": "Demir Nöbet Zırhı",
+            "rarity": "white",
+            "power": 6,
+            "amount": 1,
+            "role": "muhafiz",
+            "enchantments": "[{\"kind\":\"forest_power\",\"value\":8},{\"kind\":\"magic_defense\",\"value\":9},{\"kind\":\"sword_defense\",\"value\":4}]",
+            "x": 2798,
+            "y": 2025
+          },
+          {
+            "id": "f2e2f675-60d3-4233-b970-4f39ae651401",
+            "owner_id": "ten-native-8",
+            "monster_id": "golge-ten-native-8",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2818,
+            "y": 2025
+          }
+        ],
+        "materials": []
+      },
+      "receipts": 10,
+      "results": [
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-0",
+              "spawnRound": 17,
+              "damage": 21,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-1",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-2",
+              "spawnRound": 17,
+              "damage": 21,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-3",
+              "spawnRound": 17,
+              "damage": 23,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-4",
+              "spawnRound": 17,
+              "damage": 20,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-5",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-6",
+              "spawnRound": 17,
+              "damage": 31,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-7",
+              "spawnRound": 17,
+              "damage": 24,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-8",
+              "spawnRound": 17,
+              "damage": 19,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-9",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        }
+      ]
+    },
+    "batch": {
+      "economics": {
+        "players": [
+          {
+            "id": "ten-native-0",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-1",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-2",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-3",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-4",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-5",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-6",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-7",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-8",
+            "level": 65,
+            "xp": 0,
+            "rank_tier": 1,
+            "rank_xp": 134,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 1,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          },
+          {
+            "id": "ten-native-9",
+            "level": 40,
+            "xp": 34,
+            "rank_tier": 0,
+            "rank_xp": 0,
+            "hp": 100000,
+            "max_hp": 1000000,
+            "hp_revision": 0,
+            "gems": 10,
+            "essence": 0,
+            "quest_kills438": 1,
+            "daily_monster_kills": 1
+          }
+        ],
+        "monsters": [
+          {
+            "id": "golge-ten-native-0",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-1",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-2",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-3",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-4",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-5",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-6",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-7",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-8",
+            "hp": 0,
+            "spawn_round": 17
+          },
+          {
+            "id": "golge-ten-native-9",
+            "hp": 0,
+            "spawn_round": 17
+          }
+        ],
+        "xp": [
+          {
+            "monster_id": "golge-ten-native-0",
+            "spawn_round": 17,
+            "player_id": "ten-native-0"
+          },
+          {
+            "monster_id": "golge-ten-native-1",
+            "spawn_round": 17,
+            "player_id": "ten-native-1"
+          },
+          {
+            "monster_id": "golge-ten-native-2",
+            "spawn_round": 17,
+            "player_id": "ten-native-2"
+          },
+          {
+            "monster_id": "golge-ten-native-3",
+            "spawn_round": 17,
+            "player_id": "ten-native-3"
+          },
+          {
+            "monster_id": "golge-ten-native-4",
+            "spawn_round": 17,
+            "player_id": "ten-native-4"
+          },
+          {
+            "monster_id": "golge-ten-native-5",
+            "spawn_round": 17,
+            "player_id": "ten-native-5"
+          },
+          {
+            "monster_id": "golge-ten-native-6",
+            "spawn_round": 17,
+            "player_id": "ten-native-6"
+          },
+          {
+            "monster_id": "golge-ten-native-7",
+            "spawn_round": 17,
+            "player_id": "ten-native-7"
+          },
+          {
+            "monster_id": "golge-ten-native-8",
+            "spawn_round": 17,
+            "player_id": "ten-native-8"
+          },
+          {
+            "monster_id": "golge-ten-native-9",
+            "spawn_round": 17,
+            "player_id": "ten-native-9"
+          }
+        ],
+        "claims": [
+          {
+            "monster_id": "golge-ten-native-0",
+            "spawn_round": 17,
+            "player_id": "ten-native-0"
+          },
+          {
+            "monster_id": "golge-ten-native-1",
+            "spawn_round": 17,
+            "player_id": "ten-native-1"
+          },
+          {
+            "monster_id": "golge-ten-native-2",
+            "spawn_round": 17,
+            "player_id": "ten-native-2"
+          },
+          {
+            "monster_id": "golge-ten-native-3",
+            "spawn_round": 17,
+            "player_id": "ten-native-3"
+          },
+          {
+            "monster_id": "golge-ten-native-4",
+            "spawn_round": 17,
+            "player_id": "ten-native-4"
+          },
+          {
+            "monster_id": "golge-ten-native-5",
+            "spawn_round": 17,
+            "player_id": "ten-native-5"
+          },
+          {
+            "monster_id": "golge-ten-native-6",
+            "spawn_round": 17,
+            "player_id": "ten-native-6"
+          },
+          {
+            "monster_id": "golge-ten-native-7",
+            "spawn_round": 17,
+            "player_id": "ten-native-7"
+          },
+          {
+            "monster_id": "golge-ten-native-8",
+            "spawn_round": 17,
+            "player_id": "ten-native-8"
+          },
+          {
+            "monster_id": "golge-ten-native-9",
+            "spawn_round": 17,
+            "player_id": "ten-native-9"
+          }
+        ],
+        "drops": [
+          {
+            "id": "0c58c714-d551-4f47-a6cd-7ec926e894ac",
+            "owner_id": "ten-native-2",
+            "monster_id": "golge-ten-native-2",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2758,
+            "y": 2025
+          },
+          {
+            "id": "1620643b-c2c9-4404-8f71-02d3eaa1e66e",
+            "owner_id": "ten-native-9",
+            "monster_id": "golge-ten-native-9",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2779.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "16828579-d168-4488-b075-e38926fab87d",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2719.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "1bfb344a-f74f-42b4-939c-d679856be5ea",
+            "owner_id": "ten-native-7",
+            "monster_id": "golge-ten-native-7",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2759.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "322da5d9-3c32-462d-a20d-f62866ec5315",
+            "owner_id": "ten-native-9",
+            "monster_id": "golge-ten-native-9",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 3,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2828,
+            "y": 2025
+          },
+          {
+            "id": "501d9aa1-e158-424c-b5e4-0589c7061868",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2772.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "5f3342fa-2d77-431b-958a-03070e67b883",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2749.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "748a880e-9097-42ea-8591-05e12448a00a",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2739.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "7596aba8-7d74-4fcd-8233-4bd7ddc41f97",
+            "owner_id": "ten-native-1",
+            "monster_id": "golge-ten-native-1",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2748,
+            "y": 2025
+          },
+          {
+            "id": "763061a8-8e2a-4584-83b7-c6bbda1fbb1e",
+            "owner_id": "ten-native-5",
+            "monster_id": "golge-ten-native-5",
+            "kind": "shoes",
+            "item_name": "Kor Muhafız Çizmeleri",
+            "rarity": "orange",
+            "power": 36,
+            "amount": 1,
+            "role": "muhafiz",
+            "enchantments": "[{\"kind\":\"magic_defense\",\"value\":9}]",
+            "x": 2788,
+            "y": 2025
+          },
+          {
+            "id": "ab19c09b-9425-4fcb-9f92-236044c196be",
+            "owner_id": "ten-native-0",
+            "monster_id": "golge-ten-native-0",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2689.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "ab34e243-d663-413b-b672-5617264d45a4",
+            "owner_id": "ten-native-8",
+            "monster_id": "golge-ten-native-8",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2769.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "ace50ad1-8ef0-4307-bd67-92b66f72e0ff",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "armor",
+            "item_name": "Safir Rün Cübbesi",
+            "rarity": "blue",
+            "power": 16,
+            "amount": 1,
+            "role": "arkanist",
+            "enchantments": "[{\"kind\":\"magic_defense\",\"value\":2}]",
+            "x": 2768,
+            "y": 2025
+          },
+          {
+            "id": "b16b4d6e-2aa0-4a8b-8edc-dcd12112483a",
+            "owner_id": "ten-native-0",
+            "monster_id": "golge-ten-native-0",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2738,
+            "y": 2025
+          },
+          {
+            "id": "b4f2827d-e1b1-4337-921d-a2ae65d670ef",
+            "owner_id": "ten-native-4",
+            "monster_id": "golge-ten-native-4",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2729.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "b66cfd59-1f2f-48a5-89a1-ba0e951c9789",
+            "owner_id": "ten-native-3",
+            "monster_id": "golge-ten-native-3",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2752.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "b765bfe6-311b-4f70-af28-822e7ee7cc3e",
+            "owner_id": "ten-native-1",
+            "monster_id": "golge-ten-native-1",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2699.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "c143b707-daee-4bfa-86a7-f3f2e86e03c5",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2782.685086205247,
+            "y": 2007.1041206481132
+          },
+          {
+            "id": "d1880d67-de6a-4eb0-a775-915f140c80a2",
+            "owner_id": "ten-native-2",
+            "monster_id": "golge-ten-native-2",
+            "kind": "strong_branch",
+            "item_name": "Güçlü Dal",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2709.491434018945,
+            "y": 2044.7210011176549
+          },
+          {
+            "id": "d580a725-c69d-4f01-b287-c2daa2a41967",
+            "owner_id": "ten-native-7",
+            "monster_id": "golge-ten-native-7",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 3,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2808,
+            "y": 2025
+          },
+          {
+            "id": "d9c43f1c-af16-40a8-8da5-b40f7e044c70",
+            "owner_id": "ten-native-4",
+            "monster_id": "golge-ten-native-4",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 2,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2778,
+            "y": 2025
+          },
+          {
+            "id": "f07c6b7c-38e8-468d-b1cf-62a61dddf4c3",
+            "owner_id": "ten-native-6",
+            "monster_id": "golge-ten-native-6",
+            "kind": "armor",
+            "item_name": "Demir Nöbet Zırhı",
+            "rarity": "white",
+            "power": 6,
+            "amount": 1,
+            "role": "muhafiz",
+            "enchantments": "[{\"kind\":\"forest_power\",\"value\":8},{\"kind\":\"magic_defense\",\"value\":9},{\"kind\":\"sword_defense\",\"value\":4}]",
+            "x": 2798,
+            "y": 2025
+          },
+          {
+            "id": "f2e2f675-60d3-4233-b970-4f39ae651401",
+            "owner_id": "ten-native-8",
+            "monster_id": "golge-ten-native-8",
+            "kind": "essence",
+            "item_name": "Yaşam Özü",
+            "rarity": "white",
+            "power": 0,
+            "amount": 4,
+            "role": null,
+            "enchantments": "[]",
+            "x": 2818,
+            "y": 2025
+          }
+        ],
+        "materials": []
+      },
+      "receipts": 1,
+      "results": [
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-0",
+              "spawnRound": 17,
+              "damage": 21,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-1",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-2",
+              "spawnRound": 17,
+              "damage": 21,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-3",
+              "spawnRound": 17,
+              "damage": 23,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-4",
+              "spawnRound": 17,
+              "damage": 20,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-5",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-6",
+              "spawnRound": 17,
+              "damage": 31,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-7",
+              "spawnRound": 17,
+              "damage": 24,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-8",
+              "spawnRound": 17,
+              "damage": 19,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        },
+        {
+          "status": 200,
+          "hits": [
+            {
+              "id": "golge-ten-native-9",
+              "spawnRound": 17,
+              "damage": 22,
+              "hp": 0,
+              "killed": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

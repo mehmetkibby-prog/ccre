@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: baseline: due blocked first Sis room starves independent due room across five ticks
+ok 1 - baseline: due blocked first Sis room starves independent due room across five ticks
+  ---
+  duration_ms: 6.368746
+  type: 'test'
+  ...
+# Subtest: candidate mist: barrier in first room permits exactly one independent room
+ok 2 - candidate mist: barrier in first room permits exactly one independent room
+  ---
+  duration_ms: 2.394944
+  type: 'test'
+  ...
+# Subtest: candidate mist: suspended in first room permits exactly one independent room
+ok 3 - candidate mist: suspended in first room permits exactly one independent room
+  ---
+  duration_ms: 0.990169
+  type: 'test'
+  ...
+# Subtest: candidate mist: quiescer in first room permits exactly one independent room
+ok 4 - candidate mist: quiescer in first room permits exactly one independent room
+  ---
+  duration_ms: 0.976233
+  type: 'test'
+  ...
+# Subtest: candidate mist: missing in first room permits exactly one independent room
+ok 5 - candidate mist: missing in first room permits exactly one independent room
+  ---
+  duration_ms: 1.059589
+  type: 'test'
+  ...
+# Subtest: candidate mist: player-lease in first room permits exactly one independent room
+ok 6 - candidate mist: player-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 1.095787
+  type: 'test'
+  ...
+# Subtest: candidate mist: room-lease in first room permits exactly one independent room
+ok 7 - candidate mist: room-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 1.014776
+  type: 'test'
+  ...
+# Subtest: candidate mist: monster-lease in first room permits exactly one independent room
+ok 8 - candidate mist: monster-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 0.944995
+  type: 'test'
+  ...
+# Subtest: candidate tower: barrier in first room permits exactly one independent room
+ok 9 - candidate tower: barrier in first room permits exactly one independent room
+  ---
+  duration_ms: 0.999647
+  type: 'test'
+  ...
+# Subtest: candidate tower: suspended in first room permits exactly one independent room
+ok 10 - candidate tower: suspended in first room permits exactly one independent room
+  ---
+  duration_ms: 1.096539
+  type: 'test'
+  ...
+# Subtest: candidate tower: quiescer in first room permits exactly one independent room
+ok 11 - candidate tower: quiescer in first room permits exactly one independent room
+  ---
+  duration_ms: 2.896089
+  type: 'test'
+  ...
+# Subtest: candidate tower: missing in first room permits exactly one independent room
+ok 12 - candidate tower: missing in first room permits exactly one independent room
+  ---
+  duration_ms: 0.723862
+  type: 'test'
+  ...
+# Subtest: candidate tower: player-lease in first room permits exactly one independent room
+ok 13 - candidate tower: player-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 0.572319
+  type: 'test'
+  ...
+# Subtest: candidate tower: room-lease in first room permits exactly one independent room
+ok 14 - candidate tower: room-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 0.644774
+  type: 'test'
+  ...
+# Subtest: candidate tower: monster-lease in first room permits exactly one independent room
+ok 15 - candidate tower: monster-lease in first room permits exactly one independent room
+  ---
+  duration_ms: 0.535761
+  type: 'test'
+  ...
+# Subtest: candidate: empty expired room with busy room lease also permits independent room
+ok 16 - candidate: empty expired room with busy room lease also permits independent room
+  ---
+  duration_ms: 0.556861
+  type: 'test'
+  ...
+# Subtest: candidate: successful first admission stops scan and retains one operation through delayed writer ACK
+ok 17 - candidate: successful first admission stops scan and retains one operation through delayed writer ACK
+  ---
+  duration_ms: 0.981994
+  type: 'test'
+  ...
+# Subtest: candidate: four-room order is bounded and skipped first room regains original priority after unblocking
+ok 18 - candidate: four-room order is bounded and skipped first room regains original priority after unblocking
+  ---
+  duration_ms: 1.061623
+  type: 'test'
+  ...
+# Subtest: candidate: all blocked rooms are inspected once and no asynchronous work starts
+ok 19 - candidate: all blocked rooms are inspected once and no asynchronous work starts
+  ---
+  duration_ms: 0.504863
+  type: 'test'
+  ...
+# Subtest: candidate: checkpoint unknown failure cannot fall through or duplicate another room
+ok 20 - candidate: checkpoint unknown failure cannot fall through or duplicate another room
+  ---
+  duration_ms: 0.62626
+  type: 'test'
+  ...
+# Subtest: candidate: writer unknown failure cannot fall through or duplicate another room
+ok 21 - candidate: writer unknown failure cannot fall through or duplicate another room
+  ---
+  duration_ms: 0.577258
+  type: 'test'
+  ...
+# Subtest: candidate: synchronous admission error propagates without trying a later room
+ok 22 - candidate: synchronous admission error propagates without trying a later room
+  ---
+  duration_ms: 0.662517
+  type: 'test'
+  ...
+# Subtest: candidate: unknown execute return does not authorize another attempt
+ok 23 - candidate: unknown execute return does not authorize another attempt
+  ---
+  duration_ms: 0.180387
+  type: 'test'
+  ...
+# Subtest: candidate: due scheduled portal retains existing priority and one operation boundary
+ok 24 - candidate: due scheduled portal retains existing priority and one operation boundary
+  ---
+  duration_ms: 0.725124
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 281.55551

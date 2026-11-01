@@ -1,0 +1,112 @@
+{
+  "passed": true,
+  "coreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "runs": [
+    {
+      "path": "evidence/native-mixed-load-r86-target30-final-30.json",
+      "sha256": "341835d980ab75fab0c33a8340953b99867b1a85945f156325a7a34f3bb52657",
+      "runId": "e083bf22-4dee-4848-acac-79eab73a29a7",
+      "seconds": 180,
+      "players": 30,
+      "commands": 35372,
+      "commandLatencyMs": {
+        "count": 35372,
+        "p50": 35.66878100000031,
+        "p95": 54.9508569999889,
+        "p99": 85.99850299999525,
+        "max": 227.63672000000042
+      },
+      "movementLatencyMs": {
+        "count": 26025,
+        "p50": 37.098666999998386,
+        "p95": 54.07168200000888,
+        "p99": 59.136287999979686,
+        "max": 214.79683300000033
+      },
+      "writerAckMs": {
+        "count": 5054,
+        "p50": 4.791557999997167,
+        "p95": 19.636578000005102,
+        "p99": 55.536072999999305,
+        "max": 198.94094600000062
+      },
+      "predictionCapEpisodes": 0,
+      "clippedMovementFrames": 0,
+      "errors": 0,
+      "faults": 0,
+      "cancelledInputs": 0,
+      "exactNativeEconomyPassed": true,
+      "mainPeakMiB": 537.59,
+      "actorWorldReads": 0
+    }
+  ],
+  "midjoin": {
+    "path": "evidence/native-midjoin-r86-target30-mapjoin-30.json",
+    "sha256": "171dbc7798a7683c5433a3c5081ed22bfe14e68344c72278c005bfe2602d990d",
+    "initialActors": 29,
+    "actualActors": 30,
+    "admissionMs": 27.419143000000986,
+    "readyMs": 93.92193299999963,
+    "existingMovementDuringJoin": {
+      "count": 294,
+      "p50": 31.814932999999655,
+      "p95": 65.46817600000031,
+      "p99": 116.13216199999988,
+      "max": 191.53997999999956
+    },
+    "allCommands": {
+      "count": 5950,
+      "p50": 35.82325900000069,
+      "p95": 64.32554199999868,
+      "p99": 182.43605600000228,
+      "max": 242.37935800000014
+    },
+    "movement": {
+      "count": 4319,
+      "p50": 36.105092000001605,
+      "p95": 56.90471999999863,
+      "p99": 79.11533100000088,
+      "max": 242.37935800000014
+    },
+    "joinAggregateCriterion": {
+      "observedMs": 182.43605600000228,
+      "thresholdMs": 150,
+      "passed": false,
+      "required": false,
+      "reason": "During conversion to the user-requested30-player target, the180s aggregate p99 criterion was accidentally added to the separate30s joining diagnostic. Original joining acceptance required zero movement caps/clips, errors and exact economy, while latency remained observed. Restored that original scope after independent review; the added aggregate check FAILED and is explicitly retained. No samples were removed or rerun.180s all-command p99≤150 remains mandatory."
+    },
+    "errors": 0,
+    "predictionCapEpisodes": 0,
+    "nativeEconomyPassed": true
+  },
+  "runner": {
+    "path": "tests/run.py",
+    "sha256": "f2ddd1362dea9b2a43cb804749cc0877656f4cfa5b34a13f87ce98559d0a3037",
+    "note": "R86 runner selects the R86 native tree; raw harness run.py pin names the unchanged R85 harness companion, not this selected orchestration file. No additional R86 enabling flag; default-on production behavior tested."
+  },
+  "scope": "One fresh local30-player180s native four-channel processes, authenticated TCP ingress, actual client transport/prediction, movement/combat/automatic potion/loot and exact native economy. All startup/outlier samples retained.",
+  "limits": [
+    "No live VDS access or deployment.",
+    "No DOM/canvas frame-rate measurement, WAN or Caddy/TLS coverage.",
+    "Not a complete30-player dungeon/arena/guild/market mix or long-duration capacity guarantee.",
+    "Attack202 is provisional acceptance, never durable kill/reward completion; writer timing recorded separately."
+  ],
+  "previousFailuresRetained": [
+    "r86-phased-mapjoin50 (fourcaps,eightclippedframes,341.97ms;50-player target not passed)",
+    "r86-nativeai-mapjoin (four tiny partial startup clips before join,0.56–1.82ms)",
+    "r86-received-first (three startup caps,15 clipped frames,466.86ms)",
+    "r86-guard-diagnostic (instrumented diagnostic,74 due-PvE blocks)",
+    "r86-final-mapjoin (four startup partial movement clips of1.56–1.93ms before the joining window, no cap episodes)",
+    "r86-candidate-first",
+    "r86-matched-native",
+    "r86-mapjoin-first",
+    "r86-motion-first",
+    "r86-motion-rebase",
+    "r86-motion-fast"
+  ],
+  "instanceChecks": {
+    "behaviorPassed": 8,
+    "crashRecoveryPassed": 2,
+    "note": "Original copied test run also reports an obsolete V510 declaration comparison (installed R85 already has tower exceptions) and two missing copied fixture paths. Corrected crash tests pass; dungeon generated rules are byte-identical to R85. No production fix claimed for those fixture failures."
+  }
+}

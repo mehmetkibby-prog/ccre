@@ -1,0 +1,101 @@
+{
+  "verifiedAvailableSourceFiles": 1124,
+  "verifiedOtherUnchangedFiles": 439,
+  "changedFiles": 7,
+  "missingPinnedFiles": 42,
+  "missingPinnedPaths": [
+    "action-conflict-log-r65.mjs",
+    "action-writer.mjs",
+    "adventure-service.mjs",
+    "afk-channel.mjs",
+    "afk-client.mjs",
+    "afk-service.mjs",
+    "compose-native-http.mjs",
+    "daily-monster-rewards-r76.mjs",
+    "dungeon-peer-motion-r72.mjs",
+    "dungeon-projection.mjs",
+    "extract-reward-services.mjs",
+    "generated/client/admin-client-core511-r77-cd330aeddc742cd8.js",
+    "generated/client/core511-afk-r77-669a59aad349230a.js",
+    "generated/client/core511-transport-r72-2def200d709afcba.js",
+    "generated/client/game-client-core511-r72-10f67c795498b37b.js",
+    "generated/client/game-client-core511-r73-be706e266c9b01a4.js",
+    "generated/client/game-client-core511-r75-b69215a7f9a7341d.js",
+    "generated/client/game-client-core511-r76-63da43f1e5d71be7.js",
+    "generated/client/game-client-core511-r77-b2743163841c6721.js",
+    "generated/enchantment-settings-r76-proof.json",
+    "generated/native-http-services-proof.json",
+    "generated/native-http-services.mjs",
+    "generated/reward-services-proof.json",
+    "generated/reward-services.mjs",
+    "monster-ranking-r76.mjs",
+    "native-admin-player-r76.mjs",
+    "native-configuration.mjs",
+    "native-presence-lease.mjs",
+    "native-presence.mjs",
+    "nonlethal-rewards-r56.mjs",
+    "patch-admin-settings-r65.mjs",
+    "patch-guild-voice-renew-r72.mjs",
+    "patch-trade-idle-r72.mjs",
+    "peer-pose-r73.mjs",
+    "peer-pose-r75.mjs",
+    "player-jobs.mjs",
+    "remote-movement.mjs",
+    "remote-playback-r45.mjs",
+    "remote-playback-r72.mjs",
+    "resident-world-transition.mjs",
+    "tests/enchantment-settings-r76.test.mjs",
+    "tests/process-cold-upkeep.test.mjs"
+  ],
+  "sourceArchiveSHA256": "cf016d26bcdbc74991f726c48cb71794fc93d93a4987db17eb399c9fb9521974",
+  "sourceCoreSHA256": "dddf16515a7061a88b9aa1543b3c692fcc5383f09602e34e31c04c8c7625d172",
+  "targetCoreSHA256": "a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365",
+  "sourceRows": 1166,
+  "targetRows": 1167,
+  "client": {
+    "oldGameSHA256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+    "newGameSHA256": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+    "HTTPExactInverse": true,
+    "clientExactInverse": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2
+  },
+  "productionFiles": {
+    "core511-source/scripts/core511/native-bootstrap.mjs": {
+      "before": "5310063cb758defe9974fb420c53e0fd511005d1e2c944b34653c3dd38a1ef21",
+      "after": "414ceef1ac133b2fa1a3e0975f58da0dc40994db1ac420ea684cd2b65637ed88",
+      "bytes": 3392
+    },
+    "core511-source/scripts/core511/global-world-coordinator.mjs": {
+      "before": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+      "after": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+      "bytes": 21381
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "63732cba846952bc7d71b82f04bb6c592fabec38ddcd87952a704889008a16cb",
+      "after": "000218daabe25c2ea9f39c0a51e4df9d4a37a65713778c8cb0f1eb7ea689792e",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "5b9bb228b9e59fbb514d43d4937656a5d7c8f987604ec8f502901bcdd542298b",
+      "after": "590befaac0235e8cfaa10ba3bae585c89c528cbac07012a0c74c26b22e8b8adc",
+      "bytes": 358418
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "05506c2d696a082063f090238a36b869d2ff5d4143e123203fb203d9b3582b09",
+      "after": "8a4c99bf980c8670bd913bd5180a66cb8bab6077b6f513fe739b1aebe4309d24",
+      "bytes": 154901
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r84-1295951c6cf23767.js": {
+      "before": null,
+      "after": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+      "bytes": 1642572
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+      "after": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+      "bytes": 2229879
+    }
+  },
+  "liveDeploymentPerformed": false
+}

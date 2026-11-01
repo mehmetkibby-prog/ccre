@@ -1,0 +1,24 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793518110051,"backupName":"before-pearl-reset-1793518110051-2c3dfa0f-68e3-4354-984e-1561a439a425.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"type":"core511_command_sql_rolled_back","operation":"attack","family":"insert_normal_defeats","queryDigest":"e06e023f2222d142","sqliteCode":1811,"frames":["writer-sql-timing477.mjs:85:69","command-failure-scope.mjs:28:134","retaliation-writer.mjs:24:374","reward-sql-r531.mjs:79:40","retaliation-writer.mjs:24:424","retaliation-writer.mjs:30:116"],"outcome":"negative_receipt_pending_durability"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:28:35.427Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":361512,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"05702a2a7fcf62d113fae74c"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:28:35.427Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":361518,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bd586ef0a595b6d517429246"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:28:35.428Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":361528,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"68fd133a85690537f3ed8539"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:28:35.428Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":361534,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4c9bddf59c47404cd6b5383d"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:28:35.446Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":361501,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"becf29c28f7a01b8987f0aff"}
+# Subtest: late native batch SQL failure rolls back every actor, settles every sequence, and permits next input: joined
+ok 1 - late native batch SQL failure rolls back every actor, settles every sequence, and permits next input: joined
+  ---
+  duration_ms: 7023.509326
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7952.561373

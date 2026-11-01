@@ -1,0 +1,508 @@
+TAP version 13
+# Subtest: silent freeze deadline is unproven and consumes later replies without granting a stopped proof
+ok 1 - silent freeze deadline is unproven and consumes later replies without granting a stopped proof
+  ---
+  duration_ms: 2.237019
+  type: 'test'
+  ...
+# Subtest: a known stopped failure also has a deadline when its healthy sibling never answers
+ok 2 - a known stopped failure also has a deadline when its healthy sibling never answers
+  ---
+  duration_ms: 0.655289
+  type: 'test'
+  ...
+# Subtest: pending proof is checked again before a group can be classified as known
+ok 3 - pending proof is checked again before a group can be classified as known
+  ---
+  duration_ms: 0.492041
+  type: 'test'
+  ...
+# Subtest: unproven request failure is immediate even if every other request is unresolved
+ok 4 - unproven request failure is immediate even if every other request is unresolved
+  ---
+  duration_ms: 0.610204
+  type: 'test'
+  ...
+# Subtest: ordinary completed freezes retain result order and cancel the cold timer
+ok 5 - ordinary completed freezes retain result order and cancel the cold timer
+  ---
+  duration_ms: 0.480377
+  type: 'test'
+  ...
+# Subtest: freeze facts cannot cross a different request, method, or malformed control scope
+ok 6 - freeze facts cannot cross a different request, method, or malformed control scope
+  ---
+  duration_ms: 2.153661
+  type: 'test'
+  ...
+# Subtest: a not-started group must attest the whole exact RPC and cannot include a started actor
+ok 7 - a not-started group must attest the whole exact RPC and cannot include a started actor
+  ---
+  duration_ms: 0.970825
+  type: 'test'
+  ...
+# Subtest: stopped and pending proofs for the same actor are contradictory at the wire boundary
+ok 8 - stopped and pending proofs for the same actor are contradictory at the wire boundary
+  ---
+  duration_ms: 0.420896
+  type: 'test'
+  ...
+# Subtest: every pending member needs current exact registry and freeze-token identity
+ok 9 - every pending member needs current exact registry and freeze-token identity
+  ---
+  duration_ms: 1.517148
+  type: 'test'
+  ...
+# Subtest: runtime cannot attest unstarted after any matching resident, completed, or cold-traffic hold exists
+ok 10 - runtime cannot attest unstarted after any matching resident, completed, or cold-traffic hold exists
+  ---
+  duration_ms: 0.733066
+  type: 'test'
+  ...
+# Subtest: same-channel stopped and exact pending proof are both retained false
+ok 11 - same-channel stopped and exact pending proof are both retained false
+  ---
+  duration_ms: 7.377536
+  type: 'test'
+  ...
+# Subtest: same-channel stopped and exact pending proof are both retained true
+ok 12 - same-channel stopped and exact pending proof are both retained true
+  ---
+  duration_ms: 1.107534
+  type: 'test'
+  ...
+# Subtest: same-channel stopped and pending proof releases only unentered party transfer group
+ok 13 - same-channel stopped and pending proof releases only unentered party transfer group
+  ---
+  duration_ms: 2.516427
+  type: 'test'
+  ...
+# Subtest: parent joins and preserves two channel rejections; unrelated frozen actor resumes false
+ok 14 - parent joins and preserves two channel rejections; unrelated frozen actor resumes false
+  ---
+  duration_ms: 2.298205
+  type: 'test'
+  ...
+# {"code":"checkpoint_snapshot_conflict","proofs":["actor-1","actor-2"],"isolated":["actor-1","actor-2"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-3","stopped:actor-1","checkpoint:actor-3","invalidated:actor-3","stopped:actor-2","isolate:actor-1","isolate:actor-2","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: parent joins and preserves two channel rejections; unrelated frozen actor resumes true
+ok 15 - parent joins and preserves two channel rejections; unrelated frozen actor resumes true
+  ---
+  duration_ms: 0.918957
+  type: 'test'
+  ...
+# {"code":"checkpoint_snapshot_conflict","proofs":["actor-1","actor-2"],"isolated":["actor-1","actor-2"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-3","stopped:actor-2","checkpoint:actor-3","invalidated:actor-3","stopped:actor-1","isolate:actor-1","isolate:actor-2","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: one stopped actor waits for slow healthy checkpoint and keeps its existing safe outcome
+ok 16 - one stopped actor waits for slow healthy checkpoint and keeps its existing safe outcome
+  ---
+  duration_ms: 0.83045
+  type: 'test'
+  ...
+# Subtest: same-channel group retains every existing stopped proof and resumes other channel
+ok 17 - same-channel group retains every existing stopped proof and resumes other channel
+  ---
+  duration_ms: 1.336718
+  type: 'test'
+  ...
+# Subtest: an unproven sibling cannot be concealed by a known stopped-actor result
+ok 18 - an unproven sibling cannot be concealed by a known stopped-actor result
+  ---
+  duration_ms: 1.243842
+  type: 'test'
+  ...
+# Subtest: successful multi-channel native operation executes once and waits for durability
+ok 19 - successful multi-channel native operation executes once and waits for durability
+  ---
+  duration_ms: 1.825411
+  type: 'test'
+  ...
+# Subtest: party transfer aggregates cross-channel stopped proofs before releasing transition group
+ok 20 - party transfer aggregates cross-channel stopped proofs before releasing transition group
+  ---
+  duration_ms: 1.173007
+  type: 'test'
+  ...
+# {"code":"checkpoint_snapshot_conflict","proofs":["actor-1","actor-2"],"isolated":["actor-1","actor-2"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-3","stopped:actor-1","checkpoint:actor-3","invalidated:actor-3","stopped:actor-2","isolate:actor-1","isolate:actor-2","hydrated:actor-3","resumed:actor-3"],"faults":[],"groupPhase":"released","groups":0}
+# Subtest: failed transfer abort publishes unknown state and rejects its hold promise
+ok 21 - failed transfer abort publishes unknown state and rejects its hold promise
+  ---
+  duration_ms: 1.273097
+  type: 'test'
+  ...
+# {"code":"read_worker_unavailable","proofs":[],"isolated":["actor-1"],"entries":[],"transitions":[{"id":"actor-1","phase":"unknown"},{"id":"actor-2","phase":"unknown"}],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true}],"events":["quiesced:actor-2","stopped:actor-1","checkpoint:actor-2","invalidated:actor-2","isolate:actor-1","resident-fault:read_worker_unavailable","coordinator-fault:actor-1","coordinator-fault:actor-2"],"faults":[{"where":"resident","code":"read_worker_unavailable"},{"where":"coordinator","actor":"actor-1","code":"read_worker_unavailable"},{"where":"coordinator","actor":"actor-2","code":"read_worker_unavailable"}],"groupPhase":"unknown","groups":0,"holdRejected":true}
+# Subtest: stopped and exact pending actors coexist without freezing a healthy sibling false
+ok 22 - stopped and exact pending actors coexist without freezing a healthy sibling false
+  ---
+  duration_ms: 0.932954
+  type: 'test'
+  ...
+# {"code":"actor_command_pending","proofs":["actor-1"],"isolated":["actor-1"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-2","quiesced:actor-3","stopped:actor-1","checkpoint:actor-3","pending:actor-2","invalidated:actor-3","isolate:actor-1","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: stopped and exact pending actors coexist without freezing a healthy sibling true
+ok 23 - stopped and exact pending actors coexist without freezing a healthy sibling true
+  ---
+  duration_ms: 1.011342
+  type: 'test'
+  ...
+# {"code":"actor_command_pending","proofs":["actor-1"],"isolated":["actor-1"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-2","quiesced:actor-3","pending:actor-2","checkpoint:actor-3","stopped:actor-1","invalidated:actor-3","isolate:actor-1","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: unproven failure escalates while a sibling stays hung and late ACK cannot rewrite unknown parent entry
+ok 24 - unproven failure escalates while a sibling stays hung and late ACK cannot rewrite unknown parent entry
+  ---
+  duration_ms: 1.051839
+  type: 'test'
+  ...
+# Subtest: untracked actor_command_pending escalates without waiting for a hung sibling
+ok 25 - untracked actor_command_pending escalates without waiting for a hung sibling
+  ---
+  duration_ms: 0.983369
+  type: 'test'
+  ...
+# Subtest: a lost durability result never resumes actors or reruns the native callback
+ok 26 - a lost durability result never resumes actors or reruns the native callback
+  ---
+  duration_ms: 1.16393
+  type: 'test'
+  ...
+# Subtest: late transfer freeze ACK cannot alter group that already escalated unknown
+ok 27 - late transfer freeze ACK cannot alter group that already escalated unknown
+  ---
+  duration_ms: 0.905682
+  type: 'test'
+  ...
+# Subtest: late freeze ACK for an old parent entry cannot attach to a replacement
+ok 28 - late freeze ACK for an old parent entry cannot attach to a replacement
+  ---
+  duration_ms: 0.907826
+  type: 'test'
+  ...
+# Subtest: JSON transport preserves mixed stopped and exact pending proof 1,2,3
+ok 29 - JSON transport preserves mixed stopped and exact pending proof 1,2,3
+  ---
+  duration_ms: 8.33195
+  type: 'test'
+  ...
+# Subtest: JSON transport preserves mixed stopped and exact pending proof 1,1,2
+ok 30 - JSON transport preserves mixed stopped and exact pending proof 1,1,2
+  ---
+  duration_ms: 2.6978
+  type: 'test'
+  ...
+# Subtest: JSON transport preserves a same-channel mixed proof for party transition abort
+ok 31 - JSON transport preserves a same-channel mixed proof for party transition abort
+  ---
+  duration_ms: 3.947262
+  type: 'test'
+  ...
+# Subtest: a stopped proof for another token or actor cannot cross the control receiver
+ok 32 - a stopped proof for another token or actor cannot cross the control receiver
+  ---
+  duration_ms: 0.589624
+  type: 'test'
+  ...
+# Subtest: healthy ordinary abort completes once and releases its own exact terminal
+ok 33 - healthy ordinary abort completes once and releases its own exact terminal
+  ---
+  duration_ms: 2.088098
+  type: 'test'
+  ...
+# Subtest: healthy ordinary finish can finish its world lease after intentionally releasing channel holds
+ok 34 - healthy ordinary finish can finish its world lease after intentionally releasing channel holds
+  ---
+  duration_ms: 0.652754
+  type: 'test'
+  ...
+# Subtest: late ordinary abortTerminal ACK must not clear a replacement terminal or send old-world finish
+ok 35 - late ordinary abortTerminal ACK must not clear a replacement terminal or send old-world finish
+  ---
+  duration_ms: 0.808628
+  type: 'test'
+  ...
+# {"errorCode":"shared_abort_superseded","calls":["shared_abort"],"terminalIsReplacement":true,"terminal":"replacement-hold"}
+# Subtest: late ordinary finish release ACK must not clear a replacement terminal or finish its old world
+ok 36 - late ordinary finish release ACK must not clear a replacement terminal or finish its old world
+  ---
+  duration_ms: 0.75098
+  type: 'test'
+  ...
+# {"errorCode":"shared_finish_superseded","calls":["shared_reload","shared_release"],"terminalIsReplacement":true,"terminal":"replacement-hold"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:28.086Z","action":"shared_combat_failure","incident":1,"reason":"current_abort_failed","origin":"shared_combat_failure","requestMethod":"shared_abortTerminal","operation":null,"actorRef":"801833f32873780fe6379b7a","sourceChannel":1,"phase":"frozen","stack":[{"file":"shared-lifecycle.test.mjs","line":7,"column":33},{"file":"shared-lifecycle.test.mjs","line":70,"column":158}]}
+# Subtest: healthy ordinary cancellation waits for all abort ACKs then releases exactly its terminal
+ok 37 - healthy ordinary cancellation waits for all abort ACKs then releases exactly its terminal
+  ---
+  duration_ms: 2.878743
+  type: 'test'
+  ...
+# Subtest: healthy committed finish can close the world lease after releasing its channel terminal
+ok 38 - healthy committed finish can close the world lease after releasing its channel terminal
+  ---
+  duration_ms: 1.083468
+  type: 'test'
+  ...
+# Subtest: a valid late world-finish ACK updates only its old row after a subsequent terminal starts
+ok 39 - a valid late world-finish ACK updates only its old row after a subsequent terminal starts
+  ---
+  duration_ms: 1.232821
+  type: 'test'
+  ...
+# Subtest: retired committed finish reader_query ACK cannot disturb replacement
+ok 40 - retired committed finish reader_query ACK cannot disturb replacement
+  ---
+  duration_ms: 1.005301
+  type: 'test'
+  ...
+# Subtest: retired committed finish reader_query failure cannot disturb replacement
+ok 41 - retired committed finish reader_query failure cannot disturb replacement
+  ---
+  duration_ms: 0.800553
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_reload ACK cannot disturb replacement
+ok 42 - retired committed finish shared_reload ACK cannot disturb replacement
+  ---
+  duration_ms: 0.713138
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_reload failure cannot disturb replacement
+ok 43 - retired committed finish shared_reload failure cannot disturb replacement
+  ---
+  duration_ms: 1.053251
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_release ACK cannot disturb replacement
+ok 44 - retired committed finish shared_release ACK cannot disturb replacement
+  ---
+  duration_ms: 0.908838
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_release failure cannot disturb replacement
+ok 45 - retired committed finish shared_release failure cannot disturb replacement
+  ---
+  duration_ms: 1.32217
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_finish ACK cannot disturb replacement
+ok 46 - retired committed finish shared_finish ACK cannot disturb replacement
+  ---
+  duration_ms: 2.370392
+  type: 'test'
+  ...
+# Subtest: retired committed finish shared_finish failure cannot disturb replacement
+ok 47 - retired committed finish shared_finish failure cannot disturb replacement
+  ---
+  duration_ms: 0.608972
+  type: 'test'
+  ...
+# Subtest: retired cancellation shared_abort ACK stays within old scope
+ok 48 - retired cancellation shared_abort ACK stays within old scope
+  ---
+  duration_ms: 0.878972
+  type: 'test'
+  ...
+# Subtest: retired cancellation shared_abort failure stays within old scope
+ok 49 - retired cancellation shared_abort failure stays within old scope
+  ---
+  duration_ms: 0.47065
+  type: 'test'
+  ...
+# Subtest: retired cancellation shared_finish ACK stays within old scope
+ok 50 - retired cancellation shared_finish ACK stays within old scope
+  ---
+  duration_ms: 0.450612
+  type: 'test'
+  ...
+# Subtest: retired cancellation shared_finish failure stays within old scope
+ok 51 - retired cancellation shared_finish failure stays within old scope
+  ---
+  duration_ms: 0.357606
+  type: 'test'
+  ...
+# Subtest: current failed cancellation keeps the terminal fenced and requests recovery once
+ok 52 - current failed cancellation keeps the terminal fenced and requests recovery once
+  ---
+  duration_ms: 2.179259
+  type: 'test'
+  ...
+# Subtest: command abort caller cannot recover replacement after its old proof abort was superseded
+ok 53 - command abort caller cannot recover replacement after its old proof abort was superseded
+  ---
+  duration_ms: 1.000271
+  type: 'test'
+  ...
+# Subtest: late writer failure does not probe or recover a replacement owner
+ok 54 - late writer failure does not probe or recover a replacement owner
+  ---
+  duration_ms: 0.465771
+  type: 'test'
+  ...
+# Subtest: late exact-status failure does not recover replacement or replay the writer
+ok 55 - late exact-status failure does not recover replacement or replay the writer
+  ---
+  duration_ms: 0.471531
+  type: 'test'
+  ...
+# Subtest: late unknown-outcome watchdog status failure cannot schedule replacement recovery
+ok 56 - late unknown-outcome watchdog status failure cannot schedule replacement recovery
+  ---
+  duration_ms: 1.139814
+  type: 'test'
+  ...
+# Subtest: a genuine unresolved current command still waits for exact status and keeps its watchdog
+ok 57 - a genuine unresolved current command still waits for exact status and keeps its watchdog
+  ---
+  duration_ms: 0.30651
+  type: 'test'
+  ...
+# Subtest: late returning-group release ACK cannot clear replacement or finish the old world
+ok 58 - late returning-group release ACK cannot clear replacement or finish the old world
+  ---
+  duration_ms: 0.779965
+  type: 'test'
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:28.189Z","action":"shared_combat_failure","incident":1,"reason":"control_stream_failed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"073deac5135b990239e13ca8","sourceChannel":1,"phase":"freezing","stack":[{"file":"shared-prepare.test.mjs","line":30,"column":46}]}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:28.193Z","action":"shared_combat_failure","incident":1,"reason":"cold_freeze_deadline","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"99b8e7d53a605e2c4595b564","sourceChannel":1,"phase":"freezing","stack":[{"file":"contract.mjs","line":13,"column":58},{"file":"freeze-outcomes-r85.mjs","line":22,"column":28},{"file":"shared-prepare.test.mjs","line":43,"column":66}]}
+# Subtest: shared transport error starts recovery while another hold has no reply
+ok 59 - shared transport error starts recovery while another hold has no reply
+  ---
+  duration_ms: 6.806798
+  type: 'test'
+  ...
+# Subtest: shared prepare cannot remain silent forever; deadline only escalates recovery
+ok 60 - shared prepare cannot remain silent forever; deadline only escalates recovery
+  ---
+  duration_ms: 2.143485
+  type: 'test'
+  ...
+# Subtest: healthy shared prepare waits for every exact hold before its world checkpoint
+ok 61 - healthy shared prepare waits for every exact hold before its world checkpoint
+  ---
+  duration_ms: 1.408271
+  type: 'test'
+  ...
+# Subtest: structured pending abort still joins every started hold and never sends a gameplay command
+ok 62 - structured pending abort still joins every started hold and never sends a gameplay command
+  ---
+  duration_ms: 1.088233
+  type: 'test'
+  ...
+# Subtest: late old hold replies cannot freeze or recover a newly installed shared terminal
+ok 63 - late old hold replies cannot freeze or recover a newly installed shared terminal
+  ---
+  duration_ms: 0.951918
+  type: 'test'
+  ...
+# Subtest: late shared_checkpoint ACK cannot clear or recover replacement terminal
+ok 64 - late shared_checkpoint ACK cannot clear or recover replacement terminal
+  ---
+  duration_ms: 1.524468
+  type: 'test'
+  ...
+# Subtest: late shared_abort ACK cannot clear or recover replacement terminal
+ok 65 - late shared_abort ACK cannot clear or recover replacement terminal
+  ---
+  duration_ms: 1.405076
+  type: 'test'
+  ...
+# Subtest: late shared_finish ACK cannot clear or recover replacement terminal
+ok 66 - late shared_finish ACK cannot clear or recover replacement terminal
+  ---
+  duration_ms: 1.303536
+  type: 'test'
+  ...
+# Subtest: outer production control precheck must not manufacture a failed refresh for an unentered healthy member
+ok 67 - outer production control precheck must not manufacture a failed refresh for an unentered healthy member
+  ---
+  duration_ms: 11.818201
+  type: 'test'
+  ...
+# {"controlSourceSha256":"068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83","writes":0,"code":"actor_command_pending","proofs":[],"isolated":[],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":false},{"id":"actor-3","suspended":false}],"events":["cold:actor-3","quiesced:actor-3","checkpoint:actor-3","invalidated:actor-3","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: one tracked pending member must not classify another untracked member in the same RPC as known
+ok 68 - one tracked pending member must not classify another untracked member in the same RPC as known
+  ---
+  duration_ms: 5.516296
+  type: 'test'
+  ...
+# {"beforeSiblingRelease":{"settled":true,"faults":[{"where":"coordinator","actor":"actor-1","code":"actor_command_pending"},{"where":"coordinator","actor":"actor-2","code":"actor_command_pending"},{"where":"coordinator","actor":"actor-3","code":"actor_command_pending"}],"tracked":["actor-1"],"phases":[{"id":"actor-1","phase":"unknown"},{"id":"actor-2","phase":"unknown"},{"id":"actor-3","phase":"unknown"}]},"writes":0,"code":"actor_command_pending","proofs":[],"isolated":[],"entries":[{"id":"actor-1","phase":"unknown"},{"id":"actor-2","phase":"unknown"},{"id":"actor-3","phase":"unknown"}],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":true}],"events":["quiesced:actor-1","quiesced:actor-2","quiesced:actor-3","pending:actor-1","pending:actor-2","coordinator-fault:actor-1","coordinator-fault:actor-2","coordinator-fault:actor-3","checkpoint:actor-3"],"faults":[{"where":"coordinator","actor":"actor-1","code":"actor_command_pending"},{"where":"coordinator","actor":"actor-2","code":"actor_command_pending"},{"where":"coordinator","actor":"actor-3","code":"actor_command_pending"}]}
+# Subtest: a private unproven failure cannot regain a stopped proof when it crosses the real child serializer
+ok 69 - a private unproven failure cannot regain a stopped proof when it crosses the real child serializer
+  ---
+  duration_ms: 1.033561
+  type: 'test'
+  ...
+# {"wireKeys":["type","id","ok","code"],"receivedCode":"actor_command_pending","receivedStoppedFacts":0}
+# Subtest: actual admit_held wrapper returns its coded pending failure without leaking inner freeze facts or destroying transport
+ok 70 - actual admit_held wrapper returns its coded pending failure without leaking inner freeze facts or destroying transport
+  ---
+  duration_ms: 1.92159
+  type: 'test'
+  ...
+# {"baseline":false,"admitted":["actor-1"],"beforeCleanup":{"settled":true,"transportDestroyed":false,"replies":[{"type":"control_result","id":"e4e2e1da-a76d-4f27-804f-8c9b39ecb47d","ok":false,"code":"actor_command_pending"}]},"receivedCode":"actor_command_pending"}
+# Subtest: malformed, incomplete, and request-mismatched facts are rejected by the real parent control receiver
+ok 71 - malformed, incomplete, and request-mismatched facts are rejected by the real parent control receiver
+  ---
+  duration_ms: 3.594657
+  type: 'test'
+  ...
+# Subtest: per-actor facts require every exact current owner and every exact pending registry row
+ok 72 - per-actor facts require every exact current owner and every exact pending registry row
+  ---
+  duration_ms: 1.982083
+  type: 'test'
+  ...
+# Subtest: a public error field or status code alone does not create private freeze evidence
+ok 73 - a public error field or status code alone does not create private freeze evidence
+  ---
+  duration_ms: 0.224589
+  type: 'test'
+  ...
+# Subtest: stopped-owner evidence cannot also identify the same actor as pending or not-started
+ok 74 - stopped-owner evidence cannot also identify the same actor as pending or not-started
+  ---
+  duration_ms: 0.781831
+  type: 'test'
+  ...
+# Subtest: outer runtime never certifies not-started if a resident entry, completed token, or traffic hold already exists
+ok 75 - outer runtime never certifies not-started if a resident entry, completed token, or traffic hold already exists
+  ---
+  duration_ms: 0.458387
+  type: 'test'
+  ...
+# Subtest: valid not-started facts can clear only original parent entries without refresh, resume, or a native write
+ok 76 - valid not-started facts can clear only original parent entries without refresh, resume, or a native write
+  ---
+  duration_ms: 0.239668
+  type: 'test'
+  ...
+# Subtest: parent rejects positive freeze facts attached to a non-freeze admit_held wrapper reply
+ok 77 - parent rejects positive freeze facts attached to a non-freeze admit_held wrapper reply
+  ---
+  duration_ms: 0.55133
+  type: 'test'
+  ...
+# Subtest: same-channel stopped+pending retains stopped proof and resumes only healthy peer false
+ok 78 - same-channel stopped+pending retains stopped proof and resumes only healthy peer false
+  ---
+  duration_ms: 7.783974
+  type: 'test'
+  ...
+# {"writes":0,"code":"actor_command_pending","proofs":["actor-1"],"isolated":["actor-1"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-2","quiesced:actor-3","stopped:actor-1","checkpoint:actor-3","pending:actor-2","invalidated:actor-3","isolate:actor-1","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: same-channel stopped+pending retains stopped proof and resumes only healthy peer true
+ok 79 - same-channel stopped+pending retains stopped proof and resumes only healthy peer true
+  ---
+  duration_ms: 1.22587
+  type: 'test'
+  ...
+# {"writes":0,"code":"actor_command_pending","proofs":["actor-1"],"isolated":["actor-1"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-2","quiesced:actor-3","pending:actor-2","checkpoint:actor-3","stopped:actor-1","invalidated:actor-3","isolate:actor-1","hydrated:actor-3","resumed:actor-3"],"faults":[]}
+# Subtest: party-transfer same-channel stopped+pending releases only the unentered group
+ok 80 - party-transfer same-channel stopped+pending releases only the unentered group
+  ---
+  duration_ms: 2.672543
+  type: 'test'
+  ...
+# {"writes":0,"code":"actor_command_pending","proofs":["actor-1"],"isolated":["actor-1"],"entries":[],"transitions":[],"players":[{"id":"actor-1","suspended":true},{"id":"actor-2","suspended":true},{"id":"actor-3","suspended":false}],"events":["quiesced:actor-2","quiesced:actor-3","stopped:actor-1","pending:actor-2","checkpoint:actor-3","invalidated:actor-3","isolate:actor-1","hydrated:actor-3","resumed:actor-3"],"faults":[],"groupPhase":"released"}
+1..80
+# tests 80
+# suites 0
+# pass 80
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 966.673432

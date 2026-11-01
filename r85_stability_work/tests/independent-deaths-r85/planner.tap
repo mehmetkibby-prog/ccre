@@ -1,0 +1,61 @@
+TAP version 13
+# Subtest: five independent lethal heads union their complete groups before any consumption
+ok 1 - five independent lethal heads union their complete groups before any consumption
+  ---
+  duration_ms: 3.39039
+  type: 'test'
+  ...
+# Subtest: an older nonattack head and an earlier successor stop selection without overtaking
+ok 2 - an older nonattack head and an earlier successor stop selection without overtaking
+  ---
+  duration_ms: 0.56799
+  type: 'test'
+  ...
+# Subtest: foreign/held group, shared target, duplicate life and nonlethal head keep original path
+not ok 3 - foreign/held group, shared target, duplicate life and nonlethal head keep original path
+  ---
+  duration_ms: 1.077181
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/independent-deaths-r85/planner.test.mjs:42:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'input')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    Object.localKill (file:///workspace/ccre/r85_stability_work/tests/independent-deaths-r85/planner.test.mjs:23:188)
+    planSingleDeathsR57 (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/death-batch-single-r57.mjs:69:229)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/tests/independent-deaths-r85/planner.test.mjs:53:59)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ten-target and25-actor bounds stop before consuming the oversized group
+ok 4 - ten-target and25-actor bounds stop before consuming the oversized group
+  ---
+  duration_ms: 0.481359
+  type: 'test'
+  ...
+# Subtest: changed secondary epoch or head rejects the plan without consuming any input
+ok 5 - changed secondary epoch or head rejects the plan without consuming any input
+  ---
+  duration_ms: 0.397703
+  type: 'test'
+  ...
+# Subtest: AttackLoop leases every expanded actor and target before consuming the plan
+ok 6 - AttackLoop leases every expanded actor and target before consuming the plan
+  ---
+  duration_ms: 0.576346
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 308.218285

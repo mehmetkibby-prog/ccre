@@ -1,0 +1,282 @@
+{
+  "scope": "Isolated native GameWriter, actual four channel and world child processes, real WebSocket framing over private process streams, exact generated transport. No live VDS or React/browser rendering.",
+  "checks": [
+    {
+      "name": "forest lethal native hit → early reject → due respawn after delayed writer ACK",
+      "status": "passed",
+      "death": {
+        "hp": 0,
+        "max_hp": 1000,
+        "hp_revision": 1,
+        "respawn_at_ms": 1793512528277,
+        "area": "forest",
+        "gems": 103,
+        "position_revision": 0,
+        "realtime_scope_version": 2
+      },
+      "alive": {
+        "hp": 1000,
+        "max_hp": 1000,
+        "hp_revision": 2,
+        "respawn_at_ms": 0,
+        "area": "forest",
+        "gems": 103,
+        "position_revision": 1,
+        "realtime_scope_version": 3
+      },
+      "hit": {
+        "type": "player_hit",
+        "eventId": "pve:real-1:1",
+        "cycle": 1,
+        "area": "forest",
+        "channel": 4,
+        "spawnRound": 17,
+        "nextHitAtMs": 1793512526805,
+        "ability": "basic",
+        "targetId": "real-1",
+        "monsterId": "golge-native-respawn-c4",
+        "damage": 3,
+        "blocked": 0,
+        "attackBlocked": false,
+        "hp": 0,
+        "maxHp": 1000,
+        "hpRevision": 1,
+        "respawnAtMs": 1793512528277,
+        "dead": true,
+        "serverAt": 1793512525677
+      },
+      "respawn": {
+        "type": "player_respawn",
+        "eventId": "respawn:1793512528326:real-1",
+        "playerId": "real-1",
+        "hp": 1000,
+        "maxHp": 1000,
+        "hpRevision": 2,
+        "area": "forest",
+        "x": 2700,
+        "y": 2025,
+        "serverAt": 1793512536593
+      },
+      "nativeEvents": [],
+      "nativeNotifications": [
+        {
+          "id": "ad56596e79a7b5c6f0de25fabcc6a85b08f2ead0f1b0c36821861f67acd8276f",
+          "route": {
+            "cycle": 1,
+            "channels": [
+              4
+            ],
+            "area": "forest",
+            "event": {
+              "type": "player_respawn",
+              "eventId": "respawn:1793512528326:real-1",
+              "playerId": "real-1",
+              "hp": 1000,
+              "maxHp": 1000,
+              "hpRevision": 2,
+              "area": "forest",
+              "x": 2700,
+              "y": 2025
+            },
+            "arena": null
+          },
+          "audience": [
+            "real-1",
+            "respawn-destination-observer",
+            "respawn-observer"
+          ]
+        }
+      ],
+      "direct": {
+        "ok": true,
+        "hp": 1000,
+        "maxHp": 1000,
+        "hpRevision": 2,
+        "area": "forest",
+        "x": 2700,
+        "y": 2025
+      },
+      "receiptCount": 1,
+      "heldAckMs": 8256,
+      "respawnWireInputs": 2,
+      "events": [
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_respawn"
+      ],
+      "packets": 35,
+      "respawnPackets": [
+        "event"
+      ],
+      "terminalFrameIncludesResult": true,
+      "oldRoomObserverEvents": 1,
+      "destinationObserverEvents": 1,
+      "staleOwnerReadRejected": false,
+      "oldEpoch": 1,
+      "newEpoch": null
+    },
+    {
+      "name": "rune_v2 lethal native hit → early reject → due respawn after delayed writer ACK",
+      "status": "passed",
+      "death": {
+        "hp": 0,
+        "max_hp": 1000,
+        "hp_revision": 1,
+        "respawn_at_ms": 1793512545531,
+        "area": "rune_v2",
+        "gems": 98,
+        "position_revision": 0,
+        "realtime_scope_version": 2
+      },
+      "alive": {
+        "hp": 1000,
+        "max_hp": 1000,
+        "hp_revision": 2,
+        "respawn_at_ms": 0,
+        "area": "bazaar",
+        "gems": 98,
+        "position_revision": 1,
+        "realtime_scope_version": 3
+      },
+      "hit": {
+        "type": "player_hit",
+        "eventId": "pve:real-1:1",
+        "cycle": 1,
+        "area": "rune_v2",
+        "channel": 4,
+        "spawnRound": 17,
+        "nextHitAtMs": 1793512544058,
+        "ability": "basic",
+        "targetId": "real-1",
+        "monsterId": "rune-v2-tide-c4-1",
+        "damage": 62,
+        "blocked": 0,
+        "attackBlocked": false,
+        "hp": 0,
+        "maxHp": 1000,
+        "hpRevision": 1,
+        "respawnAtMs": 1793512545531,
+        "dead": true,
+        "serverAt": 1793512542931
+      },
+      "respawn": {
+        "type": "player_respawn",
+        "eventId": "respawn:1793512545580:real-1",
+        "playerId": "real-1",
+        "hp": 1000,
+        "maxHp": 1000,
+        "hpRevision": 2,
+        "area": "bazaar",
+        "x": 1200,
+        "y": 920,
+        "serverAt": 1793512553843
+      },
+      "nativeEvents": [],
+      "nativeNotifications": [
+        {
+          "id": "4a5f6b16845c11edb4623995152cbab692f46e37c232c99934b31a4cac0985ed",
+          "route": {
+            "cycle": 1,
+            "channels": [
+              4
+            ],
+            "area": "rune_v2",
+            "event": {
+              "type": "player_respawn",
+              "eventId": "respawn:1793512545580:real-1",
+              "playerId": "real-1",
+              "hp": 1000,
+              "maxHp": 1000,
+              "hpRevision": 2,
+              "area": "bazaar",
+              "x": 1200,
+              "y": 920
+            },
+            "arena": null
+          },
+          "audience": [
+            "respawn-observer"
+          ]
+        },
+        {
+          "id": "00e60cbcca037022b61a8c20eba15f72c5862cfddd4561e4f0a71148b0a7b93b",
+          "route": {
+            "cycle": 1,
+            "channels": [
+              4
+            ],
+            "area": "bazaar",
+            "actors": [
+              "real-1"
+            ],
+            "event": {
+              "type": "player_respawn",
+              "eventId": "respawn:1793512545580:real-1",
+              "playerId": "real-1",
+              "hp": 1000,
+              "maxHp": 1000,
+              "hpRevision": 2,
+              "area": "bazaar",
+              "x": 1200,
+              "y": 920
+            },
+            "arena": null
+          },
+          "audience": [
+            "real-1"
+          ]
+        }
+      ],
+      "direct": {
+        "ok": true,
+        "hp": 1000,
+        "maxHp": 1000,
+        "hpRevision": 2,
+        "area": "bazaar",
+        "x": 1200,
+        "y": 920
+      },
+      "receiptCount": 1,
+      "heldAckMs": 8328,
+      "respawnWireInputs": 2,
+      "events": [
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_hit",
+        "player_respawn"
+      ],
+      "packets": 33,
+      "respawnPackets": [
+        "event"
+      ],
+      "terminalFrameIncludesResult": true,
+      "oldRoomObserverEvents": 1,
+      "destinationObserverEvents": 0,
+      "staleOwnerReadRejected": true,
+      "oldEpoch": 1,
+      "newEpoch": 2
+    }
+  ],
+  "sources": {
+    "transport": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "actionWriter": "6199fd493a24a0c05571d8d3211eb48d35de462c6aa0315b3dad6d62942749af",
+    "writerRuntime": "f5ce16bfecde7058c714b3098cdfb9aa05d3154cfb0c75f59f5ce18e331a483b",
+    "respawnNotification": "06be17f7799d294448338add34b3b6b31fd8901b7bcd497b3d3fd35236d6fe94",
+    "notificationAudience": "f9cf20f1ce7a1d217540b91690d2cc846f2289867ede5f5dc93f59a5825e74a1"
+  }
+}

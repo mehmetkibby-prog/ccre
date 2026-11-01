@@ -1,0 +1,382 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected "actual" not to be strictly deep-equal to:
+
+{
+  groups: [
+    {
+      charmMultiplierBps: 12500,
+      gearChanceModel: 'direct',
+      id: 'gear',
+      label: 'Ekipman',
+      outcomes: [
+        {
+          baseChancePpm: 50,
+          charmWeight: 50,
+          id: 'red-weapon',
+          item: {
+            family: 'generic',
+            kind: 'weapon',
+            rarity: 'red',
+            type: 'gear'
+          },
+          maxAmount: 1,
+          minAmount: 1
+        },
+        {
+          baseChancePpm: 50,
+          charmWeight: 50,
+          id: 'red-armor',
+          item: {
+            family: 'generic',
+            kind: 'armor',
+            rarity: 'red',
+            type: 'gear'
+          },
+          maxAmount: 1,
+          minAmount: 1
+        },
+        {
+          baseChancePpm: 50,
+          charmWeight: 50,
+          id: 'red-shoes',
+          item: {
+            family: 'generic',
+            kind: 'shoes',
+            rarity: 'red',
+            type: 'gear'
+          },
+          maxAmount: 1,
+          minAmount: 1
+...
+
+    at file:///workspace/ccre/r85_stability_work/tests/loot-pure-r85/native-pure-cost.mjs:17:315 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: {
+    version: 1,
+    key: 'black.slot1',
+    label: 'Kara Bölge · 1. Obsidyen Akrep',
+    groups: [
+      {
+        id: 'gear',
+        label: 'Ekipman',
+        rolls: 1,
+        charmMultiplierBps: 12500,
+        outcomes: [
+          {
+            id: 'red-weapon',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-armor',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-shoes',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-necklace',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'orange-weapon',
+            item: [Object],
+            baseChancePpm: 667,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 667
+          },
+          {
+            id: 'orange-armor',
+            item: [Object],
+            baseChancePpm: 666,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 666
+          },
+          {
+            id: 'orange-shoes',
+            item: [Object],
+            baseChancePpm: 334,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 334
+          },
+          {
+            id: 'orange-necklace',
+            item: [Object],
+            baseChancePpm: 333,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 333
+          },
+          {
+            id: 'blue-weapon',
+            item: [Object],
+            baseChancePpm: 10000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 10000
+          },
+          {
+            id: 'blue-armor',
+            item: [Object],
+            baseChancePpm: 10000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 10000
+          },
+          {
+            id: 'blue-shoes',
+            item: [Object],
+            baseChancePpm: 5000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 5000
+          },
+          {
+            id: 'blue-necklace',
+            item: [Object],
+            baseChancePpm: 5000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 5000
+          },
+          {
+            id: 'white-weapon',
+            item: [Object],
+            baseChancePpm: 55934,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 55934
+          },
+          {
+            id: 'white-armor',
+            item: [Object],
+            baseChancePpm: 55933,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 55933
+          },
+          {
+            id: 'white-shoes',
+            item: [Object],
+            baseChancePpm: 27967,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 27967
+          },
+          {
+            id: 'white-necklace',
+            item: [Object],
+            baseChancePpm: 27966,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 27966
+          }
+        ],
+        gearChanceModel: 'direct'
+      },
+      {
+        id: 'essence',
+        label: 'Yaşam Özü',
+        rolls: 1,
+        charmMultiplierBps: 10000,
+        outcomes: [
+          {
+            id: 'essence',
+            item: [Object],
+            baseChancePpm: 1000000,
+            minAmount: 2,
+            maxAmount: 4,
+            charmWeight: 0
+          }
+        ]
+      }
+    ]
+  },
+  expected: {
+    version: 1,
+    key: 'black.slot1',
+    label: 'Kara Bölge · 1. Obsidyen Akrep',
+    groups: [
+      {
+        id: 'gear',
+        label: 'Ekipman',
+        rolls: 1,
+        charmMultiplierBps: 12500,
+        outcomes: [
+          {
+            id: 'red-weapon',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-armor',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-shoes',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'red-necklace',
+            item: [Object],
+            baseChancePpm: 50,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 50
+          },
+          {
+            id: 'orange-weapon',
+            item: [Object],
+            baseChancePpm: 667,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 667
+          },
+          {
+            id: 'orange-armor',
+            item: [Object],
+            baseChancePpm: 666,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 666
+          },
+          {
+            id: 'orange-shoes',
+            item: [Object],
+            baseChancePpm: 334,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 334
+          },
+          {
+            id: 'orange-necklace',
+            item: [Object],
+            baseChancePpm: 333,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 333
+          },
+          {
+            id: 'blue-weapon',
+            item: [Object],
+            baseChancePpm: 10000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 10000
+          },
+          {
+            id: 'blue-armor',
+            item: [Object],
+            baseChancePpm: 10000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 10000
+          },
+          {
+            id: 'blue-shoes',
+            item: [Object],
+            baseChancePpm: 5000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 5000
+          },
+          {
+            id: 'blue-necklace',
+            item: [Object],
+            baseChancePpm: 5000,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 5000
+          },
+          {
+            id: 'white-weapon',
+            item: [Object],
+            baseChancePpm: 55934,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 55934
+          },
+          {
+            id: 'white-armor',
+            item: [Object],
+            baseChancePpm: 55933,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 55933
+          },
+          {
+            id: 'white-shoes',
+            item: [Object],
+            baseChancePpm: 27967,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 27967
+          },
+          {
+            id: 'white-necklace',
+            item: [Object],
+            baseChancePpm: 27966,
+            minAmount: 1,
+            maxAmount: 1,
+            charmWeight: 27966
+          }
+        ],
+        gearChanceModel: 'direct'
+      },
+      {
+        id: 'essence',
+        label: 'Yaşam Özü',
+        rolls: 1,
+        charmMultiplierBps: 10000,
+        outcomes: [
+          {
+            id: 'essence',
+            item: [Object],
+            baseChancePpm: 1000000,
+            minAmount: 2,
+            maxAmount: 4,
+            charmWeight: 0
+          }
+        ]
+      }
+    ]
+  },
+  operator: 'notDeepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.23.4

@@ -1,0 +1,677 @@
+{
+  "scope": "controlled virtual-time fixture, not live VDS or root-cause proof; actual pinned transport and source-exact Q/Z_/Bp callback; React setters, verification and HTTP/WebSocket peer are controlled ports; unrelated React effects are not mounted",
+  "source": {
+    "transport": "/workspace/scratch/68fd588af980/r83-work/core511-source/scripts/core511/generated/client/core511-transport-r79-715e78ecd9021ea8.js",
+    "transportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "game": "/workspace/scratch/68fd588af980/r83-work/core511-source/scripts/core511/generated/client/game-client-core511-r82-b75bd56f90806564.js",
+    "gameSha256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+    "requestExcerptSha256": "3afa82230b76743d75388690fed1daab6a923bfc72d9e4f78e95c7019e3c1e3f",
+    "selectionExcerptSha256": "a88d66e3b54044ba82920fcbaa5a95d6ba822fb7ea8cb2fb0bb917eacf91e6ef"
+  },
+  "cases": [
+    {
+      "name": "never_resolves",
+      "fixtureMode": "never",
+      "snapshots": [
+        {
+          "label": "first request in flight",
+          "atMs": 0,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "first outer timeout",
+          "atMs": 8000,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second UI attempt, first transport still pending",
+          "atMs": 8000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second outer timeout",
+          "atMs": 16000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "controlled request still unresolved at nine minutes",
+          "atMs": 540000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        }
+      ],
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "hasSignal": false
+        }
+      ],
+      "wire": [],
+      "events": [
+        {
+          "atMs": 0,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 0,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": null
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-busy",
+          "value": null
+        }
+      ],
+      "assertions": "passed"
+    },
+    {
+      "name": "late_success_without_retry",
+      "fixtureMode": "late_without_retry",
+      "snapshots": [
+        {
+          "label": "first request in flight",
+          "atMs": 0,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "first outer timeout",
+          "atMs": 8000,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "late successful reply, ready and world received",
+          "atMs": 9000,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": false,
+          "transportMovementSuspended": false,
+          "transportReady": true,
+          "transportEntrySelected": true,
+          "transportHasWorld": true,
+          "openSockets": 1
+        }
+      ],
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "hasSignal": false
+        }
+      ],
+      "wire": [
+        {
+          "atMs": 9000,
+          "type": "auth",
+          "ticket": "controlled-ticket-1",
+          "capabilities": [
+            "queued-movement-v1",
+            "ordered-movement-v2",
+            "validated-motion-v1",
+            "bot-challenge-v1"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "atMs": 0,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 0,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": null
+        },
+        {
+          "atMs": 9000,
+          "type": "socket-close",
+          "code": 1000,
+          "reason": "Session ended"
+        },
+        {
+          "atMs": 9000,
+          "type": "socket-close",
+          "code": 1000,
+          "reason": "Session ended"
+        }
+      ],
+      "assertions": "passed"
+    },
+    {
+      "name": "late_success_after_two_timeouts",
+      "fixtureMode": "late_after_two",
+      "snapshots": [
+        {
+          "label": "first request in flight",
+          "atMs": 0,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "first outer timeout",
+          "atMs": 8000,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second UI attempt, first transport still pending",
+          "atMs": 8000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second outer timeout",
+          "atMs": 16000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "first reply releases queued second POST despite both outer timeouts",
+          "atMs": 20000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 2,
+          "httpCallsCarryAbortSignal": [
+            false,
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": false,
+          "transportMovementSuspended": false,
+          "transportReady": true,
+          "transportEntrySelected": true,
+          "transportHasWorld": true,
+          "openSockets": 1
+        }
+      ],
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "hasSignal": false
+        },
+        {
+          "atMs": 20000,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "hasSignal": false
+        }
+      ],
+      "wire": [
+        {
+          "atMs": 20000,
+          "type": "auth",
+          "ticket": "controlled-ticket-1",
+          "capabilities": [
+            "queued-movement-v1",
+            "ordered-movement-v2",
+            "validated-motion-v1",
+            "bot-challenge-v1"
+          ]
+        },
+        {
+          "atMs": 20000,
+          "type": "auth",
+          "ticket": "controlled-ticket-2",
+          "capabilities": [
+            "queued-movement-v1",
+            "ordered-movement-v2",
+            "validated-motion-v1",
+            "bot-challenge-v1"
+          ]
+        }
+      ],
+      "events": [
+        {
+          "atMs": 0,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 0,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": null
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-busy",
+          "value": null
+        },
+        {
+          "atMs": 20000,
+          "type": "socket-close",
+          "code": 1000,
+          "reason": "Connection replaced"
+        },
+        {
+          "atMs": 20000,
+          "type": "socket-close",
+          "code": 1000,
+          "reason": "Session ended"
+        },
+        {
+          "atMs": 20000,
+          "type": "socket-close",
+          "code": 1000,
+          "reason": "Session ended"
+        }
+      ],
+      "assertions": "passed"
+    },
+    {
+      "name": "late_failure_after_two_timeouts",
+      "fixtureMode": "late_failure_after_two",
+      "snapshots": [
+        {
+          "label": "first request in flight",
+          "atMs": 0,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "first outer timeout",
+          "atMs": 8000,
+          "uiCalls": 1,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second UI attempt, first transport still pending",
+          "atMs": 8000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": 1,
+          "uiError": "",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "second outer timeout",
+          "atMs": 16000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": true,
+          "transportMovementSuspended": true,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        },
+        {
+          "label": "late 503 releases both gates; queued retry uses cached server backoff",
+          "atMs": 20000,
+          "uiCalls": 2,
+          "httpCharacterPosts": 1,
+          "httpCallsCarryAbortSignal": [
+            false
+          ],
+          "uiSelectedChannel": null,
+          "uiBusy": null,
+          "uiError": "Bağlantı yanıtı gecikti.",
+          "uiChannelModalOpen": true,
+          "selectionCallbackWorldRefreshes": 0,
+          "transportReplacing": false,
+          "transportMovementSuspended": false,
+          "transportReady": false,
+          "transportEntrySelected": false,
+          "transportHasWorld": false,
+          "openSockets": 0
+        }
+      ],
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "hasSignal": false
+        }
+      ],
+      "wire": [],
+      "events": [
+        {
+          "atMs": 0,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 0,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": null
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-error",
+          "value": ""
+        },
+        {
+          "atMs": 8000,
+          "type": "ui-busy",
+          "value": 1
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-error",
+          "value": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "atMs": 16000,
+          "type": "ui-busy",
+          "value": null
+        }
+      ],
+      "assertions": "passed"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "scope": "Exact production scheduler/kernel/state/lanes component reproduction, controlled writer/checkpoint ports. Not a native process, SQL, latency, or full-game FPS measurement.",
+  "baselineExpectedDefect": true,
+  "source": {
+    "adventure-channel.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/adventure-channel.mjs",
+      "sha256": "452af5eb132fda60e4cb6500772fa0d5aeb4dffe012f1bb90a07351e28e947c4"
+    },
+    "adventure-service.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/adventure-service.mjs",
+      "sha256": "ddc5be25f746bcb6b607e5dd9f00a0d21fbee4e2de2482d33f91229e41efe724"
+    },
+    "fixed-loop.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/fixed-loop.mjs",
+      "sha256": "5ac89b33e95122ac5100e08856836cc306b925bb956aa20ed0395ecd2ab4a22e"
+    },
+    "channel-runtime.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/channel-runtime.mjs",
+      "sha256": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83"
+    },
+    "dungeon-channel.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/dungeon-channel.mjs",
+      "sha256": "59362527ad2eadda3adadb774aed0b10013e3df618f25418ccbf92f4d003f9a6"
+    },
+    "dungeon-loop.mjs": {
+      "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/dungeon-loop.mjs",
+      "sha256": "322fe0122ae8b0e0fbe3be73b5b1a2efe69266624423ff65c70da8daa100f8a8"
+    }
+  },
+  "observations": [
+    {
+      "case": "mist-durable-barrier",
+      "ticks": 20,
+      "blockedActor": "a",
+      "dueIndependentActors": [
+        "b",
+        "c"
+      ],
+      "submissionsWhileBlocked": 0,
+      "afterBarrierReleased": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "case": "tower-durable-barrier",
+      "ticks": 20,
+      "blockedActor": "a",
+      "dueIndependentActors": [
+        "b",
+        "c"
+      ],
+      "submissionsWhileBlocked": 0,
+      "afterBarrierReleased": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "case": "quiesce-to-suspended",
+      "ticks": 40,
+      "submissions": 0,
+      "actorStillOwned": true,
+      "expiredDeadline": 900
+    },
+    {
+      "case": "room-lane-busy",
+      "ticks": 20,
+      "submissionsWhileBlocked": 0
+    },
+    {
+      "case": "dungeon-analogues",
+      "exactReadyAndTick": true,
+      "controlledStartOrStep": true,
+      "channelVisits": [
+        "b",
+        "c"
+      ],
+      "loopVisits": [
+        "b",
+        "c"
+      ]
+    }
+  ]
+}

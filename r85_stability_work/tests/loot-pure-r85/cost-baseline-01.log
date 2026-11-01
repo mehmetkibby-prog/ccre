@@ -1,0 +1,19 @@
+file:///workspace/ccre/r85_stability_work/working/native510-bb3a6cc689c6/vds-server/src/loadlab-gameplay.mjs:8
+    throw Object.assign(new Error('loadlab_registry_unavailable'),{code:'loadlab_registry_unavailable',status:503});
+                        ^
+
+Error: loadlab_registry_unavailable
+    at registry (file:///workspace/ccre/r85_stability_work/working/native510-bb3a6cc689c6/vds-server/src/loadlab-gameplay.mjs:8:25)
+    at colLabMonsterSource (file:///workspace/ccre/r85_stability_work/working/native510-bb3a6cc689c6/vds-server/src/loadlab-gameplay.mjs:128:15)
+    at file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/attack-writer-rules.mjs:3112:151
+    at Array.forEach (<anonymous>)
+    at Object.prepareProfileDrops (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/generated/attack-writer-rules.mjs:3108:15)
+    at file:///workspace/ccre/r85_stability_work/tests/loot-pure-r85/native-pure-cost.mjs:12:202
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async node:internal/modules/esm/loader:681:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  code: 'loadlab_registry_unavailable',
+  status: 503
+}
+
+Node.js v22.23.4

@@ -1,0 +1,127 @@
+R83 recovery-completion investigation — 31 October 2026
+
+STATUS
+A recovery-completion race and a lost pre-ready replacement-exit notification
+are reproduced in the exact current R83 class bodies.
+It is NOT established as the initiating cause of the player's 15:34 incident.
+No production source or VDS was modified. The candidate is an isolated review artifact.
+
+JOURNAL EVIDENCE
+upload/01-12681.jpg begins at 2026-10-31T12:33:55.734 UTC.
+Visible incident 7: global_world_busy, terminalIdle -> coordinator.serial,
+shared_combat_failure / global_recovery_request, origin channel_recovery_request.
+terminalIdle can throw this guard only when recoveringWorld is already true.
+Therefore it is a secondary recovery-fence rejection, not the first cause.
+recoveryCause() fills attack/sourceChannel=1/phase=frozen from the currently held
+shared terminal when the error lacks its own context. Those fields do not prove
+that the attack itself caused the original recovery.
+
+PROVEN RACE
+1. GlobalWorldCoordinator.recover completes owner recovery and sets
+   core.recoveringWorld=false inside its nested serial operation.
+2. Its outer recovery promise still occupies this.recovery until finally.
+3. An independent late SharedCombatBridge.fail sets recoveringWorld=true.
+4. recover sees the old promise and coalesces the late request into it.
+5. Original completion clears this.recovery without another pass or retry.
+Result: old recovery resolves, recoveringWorld=true, recovery=null, retry=null.
+Both after-readiness-publication and after-serial-queue-resolution schedules
+reproduce the state. The latter injection is independent of the flag setter.
+
+CANDIDATE SCOPE
+- Keep ingress fenced until recovery completion is published atomically.
+- Track requests arriving after the owner-recovery pass has become ready.
+- Coalesce multiple such requests into one subsequent ordinary recovery pass.
+- Continue coalescing pre-ready duplicate requests as before.
+- Pin the world row/incarnation after its boot and each channel's returned
+  boot row/incarnation. Validate the exact rows before enabling world jobs and
+  again after that ACK, immediately before marking this pass ready.
+- Require all pinned owners current, running and not exited; channels must also
+  have ready=true and matching online coordinator process records. A lost or
+  changed generation throws through the existing fenced failure/retry policy.
+- Preserve the existing replacement-failure fence and retry policy.
+- If closing or closingWork has begun, never start follow-up owners and retain
+  the ingress fence.
+- Do not remove terminalIdle/global_world_busy guards, weaken epochs, expire
+  leases, bypass durableExternal, or replay a gameplay mutation.
+
+WATCHDOG=0
+Candidate keeps recoveringWorld true through startJobs rather than the old
+fallback's early clear. The actual WorldProcessSupervisor.startJobs method is
+used by the harness: it requires a running world row and sends enable_jobs;
+it does not require recoveringWorld=false. The current world-process enable_jobs
+handler only enables the loop and returns its ACK. This makes fallback completion
+gating consistent with the existing watchdog=1 ordering. Failure retry remains
+DISABLED with watchdog=0, matching its existing policy; the fence stays closed.
+
+VALIDATION
+30/30 controlled scenarios passed:
+- 8 original-source baseline/reproduction scenarios across both watchdog flags.
+- 22 candidate scenarios across both flags.
+- Three pre-ready duplicate faults -> one pass.
+- Five post-ready faults -> exactly one follow-up pass (two total).
+- Follow-up replacement failure -> fence retained; retry enabled only with flag=1.
+- Both event orders around closing and closingWork -> no new owner boots.
+- Normal completion -> one pass.
+The first candidate exposed a closing-before-fault edge that cleared the fence;
+initial-candidate-shutdown-counterexample.json preserves it. The current candidate
+adds a completion shutdown guard; the expanded suite passes.
+The 30 cases were rerun successfully against the current generation-guarded bytes.
+
+PRE-READY REPLACEMENT EXIT
+Independent controlled reproduction runs the actual ChannelProcessSupervisor
+ended/requestRecovery bodies: CH1's new owner exits while CH2 is booting. Its
+request coalesces while completion.ready is false. Original R83 and the first
+completion-only candidate can finish with CH1 exited/offline, no recovery and
+no retry. Read-only health correctly reports 503 but does not schedule recovery.
+The current candidate detects that its pinned CH1 row no longer runs, rejects
+with global_recovery_channel_changed and keeps ingress fenced. The existing
+global retry is scheduled only when watchdog=1. With watchdog=0 the fence stays
+closed and no automatic retry is invented. No native mutation is replayed.
+The independent suite passes 16/16 focused cases: original/guarded source times
+both watchdog flags times four schedules. CH1 exit during CH2 boot exercises the
+first guard; CH1 exit while the world's enable_jobs ACK is pending exercises the
+second guard after the await. Original code loses both CH1 notifications.
+Independent world-exit and same-channel newer-row checks verify world readiness
+and generation identity as well. The newer-row substitution is a defensive
+identity test, not proof such a replacement can enter held supervisor queues.
+Original world exit already failed at startJobs; that case is a negative control.
+
+HARNESS LIMITS
+Complete GlobalWorldCoordinator, SharedCombatBridge and WorldProcessSupervisor
+class bodies are evaluated with controlled imported dependencies; import.meta.url
+is resolved to the actual source URL. RecoveryRetry is the actual imported class
+with a non-firing controlled timer. Real process exit, SQLite durability and I/O
+are mocked. This is not a full server integration test, performance test, or
+proof that a lost completion caused this real incident. No missing R83 source
+was replaced with an older release. The harness refuses changed pinned sources.
+Live periodic world/player/cleanup work may trigger another recovery after a
+stranded flag; thus the repro does not establish a nine-minute outage duration.
+The pre-ready duplicate case injects duplicate notifications while the replacement
+rows remain running. It does not test an already-booted replacement exiting while
+later channels boot; that now has its separate actual-ended/requestRecovery
+controlled harness. OS exit, boot and durability boundaries are still mocked.
+
+NEXT INCIDENT EVIDENCE
+New journal image 01-12683.jpg shows shared_command_outcome_unknown at
+12:33:36.424Z (incident 4) and 12:33:55.723Z (incident 6), both from
+shared_expireUnknown. Their following global_world_busy incidents are secondary.
+Need the original writer core511_fault rows around 12:33:24–12:33:27Z and
+12:33:43–12:33:46Z, approximately ten seconds before these watchdog events.
+The original sharedCommandPending flag is not included in the current log
+formatter: retain all fault codes, including runtime_fault, plus their stacks.
+Then correlate recovery-start/deadline/
+retry records until 12:43 UTC. The first tick timestamps indicate the shown game
+processes started at 12:33:56–12:34:01 UTC, consistent with recovery after this log.
+
+FILES
+recovery-finalization-repro.mjs: repeatable controlled concurrency harness.
+global-world-coordinator.candidate.mjs: isolated candidate source.
+recovery-finalization.candidate.patch: reviewable diff against exact R83 source.
+recovery-finalization-results.json: all 30 commands, outcomes, traces and hashes.
+initial-candidate-shutdown-counterexample.json: rejected first-candidate edge.
+pre-ready-replacement-exit-repro.mjs: independent owner-exit/generation harness.
+pre-ready-replacement-*.json: independent original/guarded scenario evidence.
+pre-ready-replacement-results.json: all 16 independent schedules and source pins.
+
+CURRENT CANDIDATE SHA256
+1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a

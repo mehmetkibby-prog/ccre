@@ -1,0 +1,74 @@
+[
+  {
+    "path": "permanent-coordinator.mjs",
+    "bytes": 12638,
+    "sha256": "80a76a162091c11cd488dafb338036b8887e76f2f1abca633150c2dd115ec761",
+    "baseSHA256": "cc12b3a13967e10e35e9297ce21a77ef2b69c5fc5735410b0eec25cc14a2709f"
+  },
+  {
+    "path": "transfer-freeze-group.mjs",
+    "bytes": 8187,
+    "sha256": "dac07f8f5d6a875387a75da3751b83e7d674ff7d3d1d34dd5b2a8b6e2382bdbc",
+    "baseSHA256": "8c39b6b4b104a16d7959a1dda492a9f7fd7d6b610c2da8678baaa151ae09060d"
+  },
+  {
+    "path": "actor-isolation.mjs",
+    "bytes": 18960,
+    "sha256": "1f1a4d6802a097a5446d2fe75e58e94932ba038459429d1f293addc729f6ce4b",
+    "baseSHA256": "0fff1c77af25cd9c802d90c26a1754500918de808448ca170ff51405ff00bd63"
+  },
+  {
+    "path": "coordinator.mjs",
+    "bytes": 47707,
+    "sha256": "e0f86dafad112c400e433b481eb35841e633946fa3d2d4c17fa3f65cd00fc0e4",
+    "baseSHA256": "572be6427d228e2d2cfd849d8e3318aa3c01638d799d7bd75e2c9365090ac17f"
+  },
+  {
+    "path": "resident-control.mjs",
+    "bytes": 15199,
+    "sha256": "cd5a5362f0dde00c55ad495999c62739809b675225d1bd167410778e2574d9c4",
+    "baseSHA256": "5118f81cb2d870bee5e84328c366b228e8742e77fa36c1a7da00fa2851b55543"
+  },
+  {
+    "path": "channel-runtime.mjs",
+    "bytes": 48561,
+    "sha256": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83",
+    "baseSHA256": "fb0d87b04baecb121765a2f737ae8178d05974dbd5435c024a9baa2e3e690179"
+  },
+  {
+    "path": "reliable-stream.mjs",
+    "bytes": 17203,
+    "sha256": "e418259e4f844da224a70a7e499a948e8573bc8fb68a00396bcbd33eee1cfc1c",
+    "baseSHA256": "1e93569ebbf0c6202aa1af3226f9e67f9239213b67f32559eb2a11c9aa4c2baa"
+  },
+  {
+    "path": "shared-combat-bridge.mjs",
+    "bytes": 34445,
+    "sha256": "193ffb95eacc8efdfcd8ec4e7eb680de1145da4ce7ac1370b00ddf9d572d8a0c",
+    "baseSHA256": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037"
+  },
+  {
+    "path": "freeze-outcomes-r85.mjs",
+    "bytes": 3363,
+    "sha256": "c78e1cd300398ff8878dd210a0adb8b8775b6c4205ea50a7e50295fc316185c6",
+    "baseSHA256": null
+  },
+  {
+    "path": "freeze-failure-r85.mjs",
+    "bytes": 4552,
+    "sha256": "74ae4ef35595b5ec0fbb467fdc97e78fb471f5d4fb5f1419d27689db0d41a513",
+    "baseSHA256": null
+  },
+  {
+    "path": "ownership.mjs",
+    "bytes": 28848,
+    "sha256": "93cf95ce649ce0b7bba7076988b3089f1478e4eee4f4b25d23d6d101e44c5876",
+    "baseSHA256": "51892e5bc62f4a8c4849618d47c117c2dba8a106ac0f906b2d70ef2fddc299f1"
+  },
+  {
+    "path": "player-write-scope.mjs",
+    "bytes": 5863,
+    "sha256": "296e7f76115a93d3d171c2911ef7e718b4de532f2c481a822f242a29e31935a0",
+    "baseSHA256": "b0e1af6f167c4c5efcb13e7189285952b703c849d3cad52f46960d5006ab26ac"
+  }
+]

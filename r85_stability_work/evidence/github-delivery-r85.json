@@ -1,0 +1,22 @@
+{
+  "status": "UPLOADED_AND_VERIFIED",
+  "repository": "mehmetkibby-prog/ccre",
+  "branch": "r85-download",
+  "commit": "0d98c749ada77ad1f32d1ad4b13ffaa85e8dff29",
+  "archiveBytes": 1401298,
+  "archiveSha256": "465eae779b9af525155d1fda328902dbdccab2bc6a7ac000dbe0c48960c39927",
+  "files": [
+    "CORE511_R85_TOPLU.zip",
+    "CORE511_R85_TOPLU.zip.sha256",
+    "KURULUM.md",
+    "README.md",
+    "SONUC.md"
+  ],
+  "userAuthorizedUpload": true,
+  "liveDeployment": false,
+  "remoteBranchVerified": true,
+  "verificationMethod": "Fresh authenticated clone; exact commit, file list and all hashes",
+  "verifiedAtUtc": "2026-11-01T10:18:15.487593+00:00",
+  "downloadUrl": "https://github.com/mehmetkibby-prog/ccre/raw/refs/heads/r85-download/CORE511_R85_TOPLU.zip",
+  "accessNote": "Repository visibility unchanged; authorized GitHub sign-in is required for the private repository."
+}

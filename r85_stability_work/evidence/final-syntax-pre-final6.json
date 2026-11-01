@@ -1,0 +1,249 @@
+{
+  "checked": [
+    "core511-source/scripts/core511/action-writer.mjs",
+    "core511-source/scripts/core511/actor-isolation.mjs",
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs",
+    "core511-source/scripts/core511/adventure-channel.mjs",
+    "core511-source/scripts/core511/attack-loop.mjs",
+    "core511-source/scripts/core511/channel-runtime.mjs",
+    "core511-source/scripts/core511/collect-light.mjs",
+    "core511-source/scripts/core511/command-failure-scope.mjs",
+    "core511-source/scripts/core511/coordinator.mjs",
+    "core511-source/scripts/core511/death-batch-single-r57.mjs",
+    "core511-source/scripts/core511/death-batch-writer-r57.mjs",
+    "core511-source/scripts/core511/game-services.mjs",
+    "core511-source/scripts/core511/loot-profile-cache-r61.mjs",
+    "core511-source/scripts/core511/native-http-bindings.mjs",
+    "core511-source/scripts/core511/nonlethal-triggers-r56.mjs",
+    "core511-source/scripts/core511/notification-audience.mjs",
+    "core511-source/scripts/core511/ownership.mjs",
+    "core511-source/scripts/core511/permanent-coordinator.mjs",
+    "core511-source/scripts/core511/player-write-scope.mjs",
+    "core511-source/scripts/core511/reliable-stream.mjs",
+    "core511-source/scripts/core511/resident-control.mjs",
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs",
+    "core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs",
+    "core511-source/scripts/core511/shared-combat-bridge.mjs",
+    "core511-source/scripts/core511/shared-combat-channel.mjs",
+    "core511-source/scripts/core511/transfer-freeze-group.mjs",
+    "core511-source/scripts/core511/writer-lane-r533.mjs",
+    "core511-source/scripts/core511/actor-progress-refresh-r85.mjs",
+    "core511-source/scripts/core511/collect-materials-r85.mjs",
+    "core511-source/scripts/core511/freeze-failure-r85.mjs",
+    "core511-source/scripts/core511/freeze-outcomes-r85.mjs",
+    "core511-source/scripts/core511/generated/client/game-client-core511-r85-b25e12cf61072ebe.js",
+    "core511-source/scripts/core511/respawn-notification-r85.mjs",
+    "core511-source/scripts/core511/reward-actor-scope-r85.mjs",
+    "core511-source/scripts/core511/reward-rank-refresh-r85.mjs",
+    "core511-source/scripts/core511/shared-claim-rejection-r85.mjs",
+    "http-runtime/dist-vds/server/index.js",
+    "core511-source/scripts/delivery511/runtime-ingress.mjs"
+  ],
+  "productionFiles": {
+    "core511-source/scripts/core511/action-writer.mjs": {
+      "before": "4f712838c458cec8fee90947ab8efec60d217e8763ad54e443caf90afb82eac6",
+      "after": "6199fd493a24a0c05571d8d3211eb48d35de462c6aa0315b3dad6d62942749af",
+      "bytes": 9425
+    },
+    "core511-source/scripts/core511/actor-isolation.mjs": {
+      "before": "0fff1c77af25cd9c802d90c26a1754500918de808448ca170ff51405ff00bd63",
+      "after": "1f1a4d6802a097a5446d2fe75e58e94932ba038459429d1f293addc729f6ce4b",
+      "bytes": 18960
+    },
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs": {
+      "before": "98ccb8ab12cc60e0e37f92e3f697e73da4ba6d8d871e663c91389a37a64f4f23",
+      "after": "9d8cd3dd8c4931e3164e8913d1626d4e11f91b559286add6d90bedf4e905a79e",
+      "bytes": 23959
+    },
+    "core511-source/scripts/core511/adventure-channel.mjs": {
+      "before": "452af5eb132fda60e4cb6500772fa0d5aeb4dffe012f1bb90a07351e28e947c4",
+      "after": "d06f6cadc996a03ccded2a8c82bb8aa4a2e7aeb8ea39bd41d2d6894ec3301b0d",
+      "bytes": 10502
+    },
+    "core511-source/scripts/core511/attack-loop.mjs": {
+      "before": "450267945b0787f846f591a74b05f4a15bed709443abd2e49cef075783af5cb8",
+      "after": "6f9defa2d5facd812d612edb8eb7f38220d0d403d185e07c682f60649caedc12",
+      "bytes": 9118
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "fb0d87b04baecb121765a2f737ae8178d05974dbd5435c024a9baa2e3e690179",
+      "after": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83",
+      "bytes": 48561
+    },
+    "core511-source/scripts/core511/collect-light.mjs": {
+      "before": "98f7edbb8deeef16f1e8558e773af5b3a5d2d3f614d74cafebe8f101e4811c52",
+      "after": "c0403746baea36eb4bf2db5d413b7a327c183aa3633531e59e39a68de3b35898",
+      "bytes": 5798
+    },
+    "core511-source/scripts/core511/command-failure-scope.mjs": {
+      "before": "22b32a1885116189b80458fdfcfc3cc56483ff0d334fefeab4df8cf3faefb8f7",
+      "after": "881bd48f3a0af866f07433833ec2328ad69c25e98580a2eebbf5fff2267baafd",
+      "bytes": 9034
+    },
+    "core511-source/scripts/core511/coordinator.mjs": {
+      "before": "572be6427d228e2d2cfd849d8e3318aa3c01638d799d7bd75e2c9365090ac17f",
+      "after": "e0f86dafad112c400e433b481eb35841e633946fa3d2d4c17fa3f65cd00fc0e4",
+      "bytes": 47707
+    },
+    "core511-source/scripts/core511/death-batch-single-r57.mjs": {
+      "before": "88985b87dfde9b96c0d1c904376f5347f51f665482ce9f4a99ffa6638dfc17de",
+      "after": "d76b4b45d09370862618c7502e2d9daed9efadf486a9d3b598e0c2d87450f6b6",
+      "bytes": 9749
+    },
+    "core511-source/scripts/core511/death-batch-writer-r57.mjs": {
+      "before": "286ac833d5ad587e2727bf005b41096942b62766c6f5ca66489b2e96862e085b",
+      "after": "a2e55843f19151e8d88c3763fa21ea2f39607137c2d223532d390bc344ceaf74",
+      "bytes": 8761
+    },
+    "core511-source/scripts/core511/game-services.mjs": {
+      "before": "c92b2f62d67c821de88dd42dee0a09cc0fd7f94d64b416afbdb228086bd20244",
+      "after": "0c3405bebe7aa8be1042f839f66f64ce1440d8cc24cfc18116b1c137d987f171",
+      "bytes": 5212
+    },
+    "core511-source/scripts/core511/generated/loot-profile-cache-r61-proof.json": {
+      "before": "3ada7b5e29bd11078d7a326f66dfb97af59360b87d8781b9a0dc805ff5b58149",
+      "after": "90a0392d4f2b38cbc2eec8a3304926d890b33b585d72eef84af2748c0bbb29f3",
+      "bytes": 1643
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "590befaac0235e8cfaa10ba3bae585c89c528cbac07012a0c74c26b22e8b8adc",
+      "after": "ac923ecd0e60d069b17deae2cd47eb4c613c0a91559a792bd2cc8eeb1087adc9",
+      "bytes": 368316
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "8a4c99bf980c8670bd913bd5180a66cb8bab6077b6f513fe739b1aebe4309d24",
+      "after": "2637e712a425b278deb605df6c533f94a86518b8e3c8bcaf7377593b32bcb56f",
+      "bytes": 155497
+    },
+    "core511-source/scripts/core511/loot-profile-cache-r61.mjs": {
+      "before": "89f5e370c893ad40e2e2a0d1f1de84d9979a6f0278a5ef121a7dcfba796851e7",
+      "after": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc",
+      "bytes": 6049
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "000218daabe25c2ea9f39c0a51e4df9d4a37a65713778c8cb0f1eb7ea689792e",
+      "after": "bdd42ad28f5ee55df2d4c7255d6e839ba59144e1132e6e9d8473e22e84093cd5",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/nonlethal-triggers-r56.mjs": {
+      "before": "712f4b8e16eddf375b3187ab970120887329a5fd0e0305f93dbf0a33339f7fc5",
+      "after": "053b05523bb0c4aa09f755956a0e6949b054eff4dd95c52c619815034987e868",
+      "bytes": 144023
+    },
+    "core511-source/scripts/core511/notification-audience.mjs": {
+      "before": "fc48e3ce4c715f58b7719ea79fc327a9d1e8ca3850b907c03e6a862f20e44267",
+      "after": "f9cf20f1ce7a1d217540b91690d2cc846f2289867ede5f5dc93f59a5825e74a1",
+      "bytes": 8959
+    },
+    "core511-source/scripts/core511/ownership.mjs": {
+      "before": "51892e5bc62f4a8c4849618d47c117c2dba8a106ac0f906b2d70ef2fddc299f1",
+      "after": "93cf95ce649ce0b7bba7076988b3089f1478e4eee4f4b25d23d6d101e44c5876",
+      "bytes": 28848
+    },
+    "core511-source/scripts/core511/permanent-coordinator.mjs": {
+      "before": "cc12b3a13967e10e35e9297ce21a77ef2b69c5fc5735410b0eec25cc14a2709f",
+      "after": "80a76a162091c11cd488dafb338036b8887e76f2f1abca633150c2dd115ec761",
+      "bytes": 12638
+    },
+    "core511-source/scripts/core511/player-write-scope.mjs": {
+      "before": "b0e1af6f167c4c5efcb13e7189285952b703c849d3cad52f46960d5006ab26ac",
+      "after": "296e7f76115a93d3d171c2911ef7e718b4de532f2c481a822f242a29e31935a0",
+      "bytes": 5863
+    },
+    "core511-source/scripts/core511/reliable-stream.mjs": {
+      "before": "1e93569ebbf0c6202aa1af3226f9e67f9239213b67f32559eb2a11c9aa4c2baa",
+      "after": "e418259e4f844da224a70a7e499a948e8573bc8fb68a00396bcbd33eee1cfc1c",
+      "bytes": 17203
+    },
+    "core511-source/scripts/core511/resident-control.mjs": {
+      "before": "5118f81cb2d870bee5e84328c366b228e8742e77fa36c1a7da00fa2851b55543",
+      "after": "cd5a5362f0dde00c55ad495999c62739809b675225d1bd167410778e2574d9c4",
+      "bytes": 15199
+    },
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs": {
+      "before": "e6995b9ad487604bf054771f95532b462a84adb6c04eb8132efd435cff6a7d8b",
+      "after": "ee98ff55cdc7473815fc79350a8b85bc16786bb1447a200831b3b55bc693f80b",
+      "bytes": 6137
+    },
+    "core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs": {
+      "before": "a9bd92ad0fd63e3f6e790a216df32667140c4fd704309ba263ea6577c5147320",
+      "after": "98525cf8c409d144250dd40d3bcfa11a07c669bc3fb35845561e867fb4002a74",
+      "bytes": 7940
+    },
+    "core511-source/scripts/core511/shared-combat-bridge.mjs": {
+      "before": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+      "after": "193ffb95eacc8efdfcd8ec4e7eb680de1145da4ce7ac1370b00ddf9d572d8a0c",
+      "bytes": 34445
+    },
+    "core511-source/scripts/core511/shared-combat-channel.mjs": {
+      "before": "b931c89ce9568b62d8f6a02f147a7d9d39b31f7a2364ca89bc81296c205808ad",
+      "after": "bb278b4b97555425d079466d7b5afdbf6c3a2d2143dfb9b67fbe857d620bec41",
+      "bytes": 32694
+    },
+    "core511-source/scripts/core511/transfer-freeze-group.mjs": {
+      "before": "8c39b6b4b104a16d7959a1dda492a9f7fd7d6b610c2da8678baaa151ae09060d",
+      "after": "dac07f8f5d6a875387a75da3751b83e7d674ff7d3d1d34dd5b2a8b6e2382bdbc",
+      "bytes": 8187
+    },
+    "core511-source/scripts/core511/writer-lane-r533.mjs": {
+      "before": "e87fc32b831222b25196edc0819583ecb50c17b26c499b36b9378cd7fb207ed7",
+      "after": "5cb20f7ad3ac88935f42b6fbc77479d9b2a5554fe3805af084bc893e921c81fb",
+      "bytes": 4990
+    },
+    "core511-source/scripts/core511/actor-progress-refresh-r85.mjs": {
+      "before": null,
+      "after": "7243d03de919a96bda1e7c52c59f05350e718eb9cc1ebd7278191ee3e5118eb7",
+      "bytes": 3150
+    },
+    "core511-source/scripts/core511/collect-materials-r85.mjs": {
+      "before": null,
+      "after": "a367268d6f4824a0f0f6409d7222cd3da96ade1a0206e29e9b3471c6e72005c3",
+      "bytes": 2181
+    },
+    "core511-source/scripts/core511/freeze-failure-r85.mjs": {
+      "before": null,
+      "after": "74ae4ef35595b5ec0fbb467fdc97e78fb471f5d4fb5f1419d27689db0d41a513",
+      "bytes": 4552
+    },
+    "core511-source/scripts/core511/freeze-outcomes-r85.mjs": {
+      "before": null,
+      "after": "c78e1cd300398ff8878dd210a0adb8b8775b6c4205ea50a7e50295fc316185c6",
+      "bytes": 3363
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r85-b25e12cf61072ebe.js": {
+      "before": null,
+      "after": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+      "bytes": 1646905
+    },
+    "core511-source/scripts/core511/respawn-notification-r85.mjs": {
+      "before": null,
+      "after": "06be17f7799d294448338add34b3b6b31fd8901b7bcd497b3d3fd35236d6fe94",
+      "bytes": 2566
+    },
+    "core511-source/scripts/core511/reward-actor-scope-r85.mjs": {
+      "before": null,
+      "after": "a5736cd136b2a760872bf951802ecf9fe05704ffd9311b70d0d3c501fe926b2b",
+      "bytes": 4253
+    },
+    "core511-source/scripts/core511/reward-rank-refresh-r85.mjs": {
+      "before": null,
+      "after": "e607c36514d8fbed46a29592be7f8537f7bfb9db000b8867306fd333148a5dde",
+      "bytes": 2523
+    },
+    "core511-source/scripts/core511/shared-claim-rejection-r85.mjs": {
+      "before": null,
+      "after": "53ce33944567beb623e510fab27bb6af54024c3a728e0bac2c49c187bffd287e",
+      "bytes": 1531
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+      "after": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+      "bytes": 2229879
+    },
+    "core511-source/scripts/delivery511/runtime-ingress.mjs": {
+      "before": "4b4a74bb7e57736787d717d51f28bb901e5d7f7fde060151bb84ad5c5c8b5403",
+      "after": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+      "bytes": 5191
+    }
+  }
+}

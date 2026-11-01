@@ -1,0 +1,630 @@
+CORE OF LIFE / CORE511 — CODEX DEVİR NOTU
+Güncelleme: 1 Kasım 2026, Türkiye tarihi
+Kapsam: R84'e kadar teslim edilen çalışmalar ve kaybolmaması gereken R85 adayları
+
+0. EN GÜNCEL DURUM — ÖNCE BUNU OKU
+
+Kullanıcının en son mesajı: "R84 kuruldu".
+Bu nedenle devam tabanı R84_GAMEPLAY'dir. R84'ü yeniden kurma talimatı verme.
+Önceki belgelerdeki "R84 henüz kurulmadı", "canlı son R81" veya benzeri
+ifadeler belgelerin hazırlanma anına aittir; bugünkü kullanıcı teyidinin
+yerine geçmez. Kurulum kullanıcı tarafından yapıldı. Bu çalışma ortamı
+VDS'ye bağlanıp son kurulu dosyaları veya çalışan süreçleri doğrulamış değil.
+
+R84 kurulmuş olması, lag şikâyetinin bittiği anlamına gelmiyor. Kurulumdan
+sonra aynı olayın sürüp sürmediğine dair yeni zaman damgalı ölçüm gelmedi.
+
+Kullanıcının amacı: Hareketin durması, canavar keserken kısa takılmalar,
+ölüm sonrası yeniden doğamama, sonradan artan lag, kanal seçimi/girişte
+kalma ve genel kurtarma sorunlarını birlikte araştırıp doğrulanmış, veri
+koruyan bir güncelleme hazırlamak. Zaman baskısından çok kalıcı doğrulama
+önemli; kullanıcı tek tek spekülatif güncellemelerden yorulmuş durumda.
+
+Hazır ve kurulmuş güncelleme: R84.
+Kurulabilir R85 güncellemesi: YOK.
+R85: Yerel bileşen adayları, yeniden üretimler, testler ve tanı aracı var.
+42 tam eşleşen güncel kaynak dosyası eksik; tam oyun açılışı, gerçek tarayıcı
+ve karma oyuncu yükü bu nedenle doğrulanmış değil.
+
+Bu devir sırasında yeni oyun testi, VDS bağlantısı, canlı değişiklik veya
+repo yayını yapılmadı. Mevcut paket kimlikleri ve taşınan dosya bütünlüğü
+kontrol edildi; önceki test sonuçları kapsamlarıyla birlikte aktarıldı.
+
+1. DEVİR PAKETİNİ NASIL KULLANACAKSIN?
+
+Kullanıcıya verilen ana dosya: CORE511_CODEX_DEVIR_R84.zip
+Bu bir geliştirme/devir arşividir; VDS'ye kurulacak oyun güncellemesi değildir.
+
+Önce şu dosyaları oku:
+1) CORE511_CODEX_DEVIR_R84.txt — bu not; güncel durumun tek başlangıç noktası.
+2) CORE511_R84_TESHIS_VE_KURULUM.txt — R84 teknik sonuçları ve tarihsel kurulum.
+3) r84-package/evidence/R84_KANIT.json — 200 kontrolün gerçek kapsamı.
+4) CORE511_LAG_INCELEME_RAPORU.txt — R85 araştırması, adaylar ve açık kapılar.
+5) R85 inceleme ZIP'inden r85-investigation/root-verification.json.
+6) Aynı ZIP'ten source-recovery/missing-pinned-manifest.json ve
+   source-recovery/RUNTIME_AND_SOURCE_FINDINGS.txt.
+
+Arşivde bulunanlar:
+- R80/R81/R82/R83/R84 orijinal kurulum ZIP'leri ve SHA dosyaları.
+- r79-inspect.zip: doğrulanmış orijinal CORE511_R79_TOPLU.zip baytları;
+  geçmişin ve sabit Node runtime'ının kaynağıdır. Yeniden kurmak için değildir.
+- R80–R84 kurucu kaynakları, update.json manifestleri, payload ve kanıtlar.
+- İlgili build/test/inceleme kaynakları ve önceki test çıktıları.
+- CORE511_KISMI_KAYNAK_AGACLARI.tar.xz: r79-audit ve r80-work ... r84-work
+  kaynak ağaçlarının mevcut doğrulanmış kısmi sürümleri. TAM OYUN KAYNAĞI DEĞİLDİR.
+- CORE511_KAYNAK_ENVANTERI.json: taşınan kaynak yolları, boyutları, hashleri
+  ve R83/R84 için eksik/eşleşen dosya sayıları.
+- CORE511_TANI_ARACI.zip: salt okunur VDS tanı ve eksik kaynak toplayıcısı.
+- CORE511_R85_INCELEME_KAYDI.zip: tamamlanmamış adayların ayrı mühendislik eki.
+- DOSYA_KIMLIKLERI.json: dış devir arşivindeki dosya kimlikleri.
+
+Geçmiş installer paketleri birbirine bağlı deltalardır. R84 kurulu sunucuda
+eski sürümleri sırayla çalıştırma. Kopyalanan eski raporlardaki talimatlar ve
+"canlı son sürüm" notları tarihsel bağlamlarıyla okunmalıdır.
+
+Yeni Codex ortamında kaynak tar arşivini devir klasörüne aç; r84-work ve
+r83-work gibi göreli klasör adlarını koru. R85 inceleme ZIP'ini aynı çalışma
+köküne aç. R85 ZIP'i içindeki ONCE_OKU.txt eski araştırmanın açıklamasıdır;
+kurulum durumu konusunda bu devir notundaki "R84 kuruldu" kaydı daha yenidir.
+
+Node runtime'ı kaynak tar arşivine ikinci kez kopyalanmadı. Tam aynı runtime
+r79-inspect.zip içinde şu iki üyede bulunur:
+  payload/runtime/node-v22.23.4-linux-x64/bin/node
+  payload/runtime/node-v22.23.4-linux-x64/LICENSE
+Yalnız bu üyeleri yerel geliştirme ortamında aşağıdaki konuma çıkar:
+  r79-audit/runtime/node-v22.23.4-linux-x64/bin/node
+  r79-audit/runtime/node-v22.23.4-linux-x64/LICENSE
+Installer'ı çalıştırma; arşiv okuması yeterli. Linux x64 Node dosyasına
+çalıştırma izni gerekir. Runtime kimliği:
+  Node v22.23.4; SQLite 3.53.4; modules 127; linux x64
+  node dosyası: 124902584 bayt
+  SHA256: 94efd062ed066c1a0b332e18249859c905e920eeada5df55d24c99b919629a90
+Yeni makine farklı mimarideyse bu binary'nin çalışacağını varsayma. Test
+ortamını uygun Linux x64 ortamına kur veya değişik ortamı açıkça raporla.
+VDS'nin çalışan Node/SQLite sürümünü bu devir için değiştirme.
+
+Bazı eski test/rapor yolları /workspace/scratch/68fd588af980 içerir.
+Bu önceki çalışma alanıdır; yeni Codex'te mevcut varsayma. Gerekirse sadece
+yerel harness yolunu uyarlayarak kaydet; üretim kimliği denetimini kaldırma.
+Kaynak ağaçları farklı sürümleri karşılaştırmak içindir; dosyaları sürümler
+arasında karıştırarak "tam kaynak" üretme.
+
+R80'e özel arşivleme notu: Eski yerel r80-work klasöründe üretime alınmamış
+foreground denemesinden üç değişmiş dosya ve reward-actor-scope-r80.mjs
+yardımcısı kalmıştı. Devirdeki R80 çekirdeği, yayımlanmış R81 paketinin tam
+R80 baseCoreRows kimliğine göre seçildi. Üç dosya r79-audit içindeki tam
+AYNI SHA'lı gövdelerden taşındı; taslak yardımcı üretim ağacına alınmadı.
+Bu bir oyun düzeltmesi veya eski sürümle tahmini eksik kaynak tamamlama
+değildir; bilinen R80 manifest baytlarını aynen devretmektir. Kaynak/yol/hash
+eşlemesi CORE511_KAYNAK_ENVANTERI.json içinde kaydedildi. Eski yerel çalışma
+klasörlerine veya orijinal paketlere dokunulmadı.
+
+2. R84'TE TAM OLARAK NE DEĞİŞTİ?
+
+R84, doğrulanmış R83_GAMEPLAY üzerine hazırlanmış yedi üretim yolu değişikliği
+içeren pakettir. Bir yeni içerik adresli oyun istemcisi eklenir.
+
+2.1 Geç gelen kanal girişi ve karakter oluşturma sonucu
+Eski istemci gözlem süresini 8 saniyede bitirirken gerçek istek devam
+ediyordu. Kontrollü durumda 9. saniyede gelen başarı ekrana uygulanmıyor;
+yeniden tıklama ikinci istek üretebiliyordu.
+R84 aynı giriş işleminin sahipliğini korur, geç gelen doğrulanmış yanıtı
+doğru oturum/karaktere uygular ve yinelenen gönderimi engeller. Kesin kanal
+retlerinde yeniden seçim mümkün; sonucu belirsiz işlem otomatik tekrar
+oynatılmaz. Gereken durumda açık "Yeniden bağlan" eylemi sunulur.
+
+2.2 Kanal listesinin uzun mutasyon kuyruğunu beklemesi
+Salt görüntüleme amaçlı kanal/entry-state okumaları ilgisiz uzun mutasyon
+kuyruğu arkasında bekliyordu. R84, açık DB işlemi ve global kurtarma yokluğu
+gibi mevcut korumaları denetleyerek bu okumaları ayırır. Gerçek kanala giriş
+hâlâ yetki, oturum, sahiplik ve kapasite kurallarına tabidir.
+
+2.3 Kurtarma biterken yeni hatanın kaybolması
+Yeni hata, eski recovery promise temizlenmeden gelince recoveringWorld=true
+olup aktif kurtarma veya planlı tekrar kalmayan durum yeniden üretildi.
+R84 tamamlanmayı tutarlı yayımlar; finalization sırasında gelen yeni hata
+mevcut geçiş sonrasında tek ek kurtarmaya aktarılır. Kapanış başlamışsa yeni
+süreç açılmaz; kalıcılık ve önceki sahiplerin sonlandırılması sırası korunur.
+
+2.4 Kurtarma sırasında yeni açılan kanalın tekrar ölmesi
+Yeni kanal 1, kanal 2 açılırken kapanmasına rağmen ilk taslak kurtarmayı
+başarılı sayabiliyordu. Son paket, dünya/kanal süreçlerinin aynı kuşakta ve
+çalışır durumda kaldığını açmadan önce doğrular. Başarısızsa giriş kapalı
+korunur ve mevcut kurtarma hata/tekrar politikası işler.
+
+Değişen üretim yolları:
+- core511-source/scripts/core511/native-bootstrap.mjs
+- core511-source/scripts/core511/global-world-coordinator.mjs
+- core511-source/scripts/core511/native-http-bindings.mjs
+- core511-source/scripts/core511/generated/native-client-proof.json
+- core511-source/scripts/core511/generated/native-http-composition-proof.json
+- core511-source/scripts/core511/generated/client/game-client-core511-r84-1295951c6cf23767.js
+- http-runtime/dist-vds/server/index.js
+
+HTTP bundle değişikliği 351 namespace ve 2 oyun dosya adı referansından
+oluşur; ters dönüşüm önceki baytları bire bir üretir. Eski oyun/transport
+dosyaları korunmuştur. DB şeması ve oyuncu verisi değişikliği yoktur.
+
+3. R84 KİMLİKLERİ, TESTLERİ VE KURULUM SINIRLARI
+
+Orijinal R84 arşivi: CORE511_R84_TOPLU.zip
+Boyut: 1228214 bayt
+SHA256: 87a244e0960f7556da117a28055ae0ade62a761351351769779cd03a0969ffca
+R83 kaynak core SHA256:
+  dddf16515a7061a88b9aa1543b3c692fcc5383f09602e34e31c04c8c7625d172
+R84 hedef core SHA256:
+  a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365
+R84 yeni oyun istemcisi SHA256:
+  1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b
+R84 HTTP SHA256:
+  c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320
+
+Önceki doğrulama toplamı 200; başarısız/atlanan 0:
+  19 istemci kanal/karakter girişi
+  32 kanal görüntüleme okuması
+  30 recovery completion
+  16 recovery sırasında süreç kaybı
+  103 kurulum / geri alma / paketleme
+Toplam, başlangıç sürümünde hatayı beklenen şekilde gösteren kontrolleri
+de içerir. 200 ayrı canlı oyuncu yolculuğu değildir.
+
+Kurucu testleri gerçek yerel dosya işlemleri, SQLite backup/quick_check,
+flock, atomik değiştirme, hardlink ve kesinti günlüklerini kullandı.
+Systemd, hesap HTTP'si ve canlı VDS kontrollü portlarla temsil edildi.
+İstemci ve recovery testleri gerçek kaynak gövdelerini kontrollü saat,
+ağ/süreç/kalıcılık sınırlarıyla çalıştırdı. Tam sunucu + native DB + gerçek
+tarayıcı + canlı oyuncu yükü çalıştırıldığı iddia edilmez.
+
+Kurucunun koruduğu kurallar: Tam önceki sürüm kimliği; panelde kayıtlı bakım
+veya ön kayıt; geçerli presence/admission olmaması; oyun içi admin dahil
+çıkıştan sonra 45 saniye; günlük yedekle aynı DB kilidi; doğrulanmış SQLite
+yedeği; hesap servisi ve DB kimliği; dört hazır kanal ve health sürümü.
+Gerçek CLI --check / --apply'dır. --game-only bu paketin seçeneği değildir.
+--recover yalnız aynı R84 kurulumu yarım kaldığında anlamlıdır.
+--rollback-latest eski kodu GÜNCEL DB ile kullanır; eski DB'yi geri yazmaz.
+Bu bilgiler tarihsel ve ilerideki kurucunun tasarım sınırlarıdır; kullanıcı
+R84 kurduğundan bugün yeniden kurulum/geri alma önerisi değildir.
+
+4. CANLI GÖRSELLERİN GÖSTERDİĞİ VE GÖSTERMEDİĞİ
+
+Oyuncular hem telefon hem PC'de hareketin kısa durduğunu, canavar keserken
+takılma, ölüm ekranında kalma, daha uzun donma ve F5 sonrası kanal seçimine
+takılma bildirdi. Sonra kendiliğinden düzeldiğini bildiren mesaj da var.
+Mesaj saatleri tek başına kesintinin baştan sona süresini belirlemez.
+
+31 Ekim 2026 sunucu günlüğünde görünen önemli olaylar:
+  12:33:36.424 UTC  shared_command_outcome_unknown / shared_expireUnknown
+  12:33:36.440 UTC  global_world_busy / channel_recovery_request
+  12:33:55.723 UTC  shared_command_outcome_unknown / shared_expireUnknown
+  12:33:55.734 UTC  global_world_busy / channel_recovery_request
+Ardından game_instance_expired görülüyor.
+
+İlk hata kodu bu filtrelenmiş çıktıda yok. shared_expireUnknown, yaklaşık
+10 saniyelik belirsiz sonuç kontrolünün sonundaki kurtarma aşamasıdır.
+global_world_busy ve game_instance_expired bu olay dizisinde sonraki
+belirtilerdir; başlangıç nedeni diye sunulmamalıdır. İlk core511_fault için
+12:33:24–12:33:47 UTC aralığı gerekir; daha geniş 12:33:20–12:33:56 UTC
+okuması R84 teknik raporunda bulunur. Eski günlük döndürülmüşse yeni olayın
+öncesi ve sonrasını aynı zaman çizgisinde yakala.
+
+Bu UTC saatleri Türkiye için +3 ile okunur: örneğin 12:33:36 UTC,
+15:33:36 Türkiye saatidir. Kullanıcının Kıbrıs/cihaz saatini bu farkla
+karıştırma; yerel duvar saati hatasını ancak gerçek clock verisiyle doğrula.
+Sırf saat dilimi farkı var diye olayın nedeni saat demek yanlış olur.
+
+Panel ana işlem busyPercent alanı process-event-loop-not-network-ping
+kapsamında event-loop utilization'dır; tüm VDS CPU'su veya kapasite yüzdesi
+değildir. "1/10 kişide %40, 50 kişi olursa kesin çöker" sonucu çıkarılamaz.
+Öte yandan düşük ortalama CPU, yazma kuyruğunda veya ACK bekleyen oyuncunun
+donmadığını da kanıtlamaz. Loopback HTTP ölçümü oyuncu pingi değildir.
+
+Önceki 30 saniyelik ekran görüntüsü özetleri:
+  R80: online 6; host busy ortalama %16,161; node tüm thread tek çekirdek
+       eşdeğeri %82,703; main thread %40,768; loopback max 84,869 ms.
+  R81: online 4; host busy ortalama %14,349; node %65,709;
+       main thread %24,17; loopback max 65,318 ms.
+Farklı oyuncu sayısı/zaman/iş yükü nedeniyle bunlar kontrollü önce-sonra
+performans kazanımı veya 50/100 oyuncu kapasite sonucu değildir.
+
+deathWaitR82, yerel CANAVAR ölümü callback'inin checkpoint, writer ve
+refresh evrelerini ölçer. Oyuncunun respawn arızasıyla aynı sayaç değildir.
+Ölü kalan oyuncunun yetkili hp/hp_revision/respawn_at_ms ve yaşam kuşağı,
+sunucu sonucu, reconnect ve arena kuralları birlikte araştırılmalıdır.
+SQL ile HP değiştirme veya ölüm korumasını kaldırma bu teşhisin yerine geçmez.
+
+5. EKSİK KAYNAK — TAM OYUN DOĞRULAMASININ ÖNÜNDEKİ ENGEL
+
+R83 kaynak manifesti 1166; mevcut doğrulanmış dosya 1124, eksik 42.
+R84 hedef manifesti 1167; mevcut doğrulanmış dosya 1125, eksik aynı 42.
+Bu devirde R83/R84 mevcut core dosyaları yeniden hash ile karşılaştırıldı;
+eşleşmeyen mevcut dosya bulunmadı. Eksikler eski sürümle doldurulmadı.
+
+Eksik 42 dosya toplam 9846424 bayt; bunlara action-writer.mjs,
+player-jobs.mjs, adventure-service.mjs, native-presence.mjs,
+native-configuration.mjs, resident-world-transition.mjs,
+generated/native-http-services.mjs ve generated/reward-services.mjs dahildir.
+Tam yol/boyut/SHA listesi missing-pinned-manifest.json içindedir.
+
+İncelenen Git deposu mehmetkibby-prog/ccre:
+  R83 pinned commit d3062e7f18b316bef59a1f096bcae1b944855ae3
+  pinned tree 5cdff0e93566ca7953d2dacfeb5a051d2ed06f35
+Bu depo artımlı paket/delta arşividir; bir branch'i çekmek tam çalışan oyun
+kaynağı elde etmek demek değildir. Önceki aramada 25 branch, 18 üst arşiv
+ve 12 iç arşivde bu 42 dosyanın tam eşleşen baytları bulunamadı.
+
+R84 belgelerindeki codex/r84-recovery-entry-20261031 adı hazırlanmış repo
+planıdır. Bu oturumda o branch için doğrulanmış ref/commit yayını veya merge
+tamamlanmış diye kabul etme. Yerel dosyalar ve ZIP kimliği kanıttır; gerçek
+remote durumunu ayrıca oku. Kullanıcının hesabı ve repo görünürlüğü değişmedi.
+
+Tarihsel R62 harness bağımlılıklarının bazıları ayrıca bulunmuş olsa da
+güncel 42 modülün yerine geçmez. ws/acorn araçları ve hash'i sabit Vinext
+adapter gibi çalışma ortamı bağımlılıklarını da belgelerden tamamla.
+Eski 100-actor MessageChannel sayısını yeni lethal loot/guild/dungeon,
+native dayanıklılık veya tarayıcı yük testi sonucu gibi tekrar kullanma.
+
+6. R85'E AİT DEVAM EKİ — KURULUM PAKETİ DEĞİL
+
+6.1 Son istemci adayı
+Yetkili manifest:
+  r85-investigation/movement/combined-client-candidate.json
+Dosya:
+  r85-investigation/movement/game-client-core511-r85-b25e12cf61072ebe.js
+SHA256:
+  b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7
+Boyut 1646905 bayt; R84 istemcisine 8 exact, tersine çevrilebilir değişiklik.
+
+Gerçek transport komutu hâlâ beklerken UI gözlemcisinin zaman aşımıyla yeni
+komut ürettiği dört yol yeniden üretildi: saldırı, otomatik ganimet toplama,
+otomatik iksir ve heartbeat. Aday, aynı komut sahipliğini ve yaşam kuşağını
+izleyerek kuyruk büyümesini sınırlar. Otomatik toplamada 2 toplam sahipli
+iş sınırı; elle farklı toplama ve elle iksir niyeti gibi ayrı davranışlar
+korunur. Heartbeat yeni presence oturumunu başlatabildiği için basit
+"hazır değilse dön" değişikliği yeterli ve güvenli değildir.
+
+Son aynı hash üzerinde 56 davranış kontrolü:
+  16 combat + 11 collect + 12 potion + 17 heartbeat.
+Ayrıca 7 toplama hızı, 2 sağlıklı iksir sıklığı, 3 gerçek transport/prediction
+hareket karşılaştırması; sözdizimi ve exact ters dönüşüm kontrolü var.
+
+Önemli olumsuz kanıt: Gerçek sunucu ACK gecikmesi sürdüğünde bu aday hareket
+durmasını çözmüyor. Kontrollü ilk collect ACK 5 saniye geciktirildiğinde
+hareket komutu 20 ms'de çıktı, ilk hareket ACK 5040 ms'de geldi; her iki
+istemcide en uzun durma 4420 ms kaldı. Kuyruk azaltma ilk sunucu gecikmesini
+ortadan kaldırmış sayılmaz. 600 ms prediction sınırı bu nedenle büyütülmedi.
+
+Toplama tradeoff'u: Sabit 40/100/120/180/300/600 ms ACK karşılaştırmalarında
+12 ganimet tamamlanması aynı; ilk 3 yanıt 600 ms, sonrakiler 20 ms senaryosunda
+1980 ms yerine 2660 ms (+680 ms toplam grup) ölçüldü. Bunu saklama; bounded
+kuyruk boşalınca 120 ms tarama aralıkları daha görünür oluyor.
+
+Snapshot/vitals kaynak incelemesi ayrı bir nottur. fr2>0 bazı snapshot
+alanlarının yenilenmesini tutabiliyor; doğrudan hit/player_state/respawn
+olayları ayrı yollarla yeniliyor. Bu aşamada yeni native respawn entegrasyon
+testi yok; bu gözlem "ölü kalmanın nedeni bulundu" sonucu değildir.
+
+6.2 Writer / freeze / recovery adayı
+10 normal üretim adayı dosya; kaynaklar writer/candidate altındadır.
+Yetkili pin manifesti: r85-investigation/writer/candidate-pins.json
+Manifest SHA256:
+  c0bd10b3692105c260927b3025bbb83423eda2721ecb630adf31f0e7dc7f2f88
+Patch SHA256:
+  cff189bdc811cac6c9bd91b9f3cb2ec61a77fbe88474b108e1f1c2f894072c66
+Son bağımsız inceleme: source-recovery/writer-review-final.json
+SHA256:
+  d57a6ab9f9329709e2318ed504af658f6989df83d20011bc717d8dc14c578c48
+
+Yeniden üretilmiş sorunlar: Promise.all ilk hatasında diğer aktörlerin kesin
+sonuç kanıtının kaybı; aynı/farklı kanaldaki stopped + pending kanıtlarının
+yanlış birleşimi; rejectFreeze hatasının tamamlanma sözünü açık bırakması;
+sessiz kardeş işlem nedeniyle recovery'nin hiç başlayamaması; geç ACK'nin
+yeni world/epoch/terminal üzerinde eski işlemi tamamlaması; ChannelRuntime
+precheck'te henüz başlamamış gruba yanlış refresh yapılması.
+
+Aday, aktör/epoch/token/channel/incarnation ile bağlı özel kanıtları taşır;
+belirsiz yazıyı başarılı saymaz, tekrarlamaz veya kanıtsız rollback yapmaz.
+10 saniyelik cold-prepare sınırı yalnız mevcut recovery'yi ister; kill/thaw/
+replay/başarılı rollback üretmez. Çok geç gelen callback'ler tam sahiplik ve
+yaşam kuşağıyla sınırlandırılır. Freeze kanıtları yalnız doğru özel kontrol
+RPC yöntemlerinde taşınır; outer admit_held hatası socket'i düşürmez.
+
+Son aday: 62 yazar + 18 bağımsız test yürütmesi geçti. Bazı senaryolar
+örtüşür; 80 ayrı hata veya tam oyun testi değildir. Gerçek kontrol framing
+ve sınıf gövdeleri çalışır; writer/DB/süreç portları kontrollüdür. Gerçek
+DB crash/fsync/receipt/restart ve karma yük doğrulaması hâlâ eksik.
+
+Eski adayları son sürüm sanma: 04bbc/4821 vb. istemci adayları ve
+71cff... writer pinli eski incelemeler tarihsel taslaklardır. Ortak son
+kimlik kaydı r85-investigation/root-verification.json dosyasıdır.
+Writer çalışma dizinindeki yüzlerce symlink tam kaynak değildir; arşivde
+yalnız pinli 10 normal dosya var. Builder gerektiğinde çalışma bağlantılarını
+yerel R84 tabanına yeniden kurar.
+
+7. TANİ ARACI VE CODEX'TE İLK SOMUT ADIM
+
+Dosya: CORE511_TANI_ARACI.zip
+Boyut: 92525 bayt
+SHA256:
+  da60fbf9f173a75799201ac9b8916f1b48d85ff3749d7cecfbd43defd5610b2b
+
+Araç güncelleme yapmaz; servis durdurmaz/restart etmez, DB açıp değiştirmez,
+bakım/açık tercihini değiştirmez. Sabit allowlist ile 42 eksik kaynak için
+tam boyut/hash kontrolü yapar; sınırlı kurulu dosya kimliklerini hash ile
+inceler; /proc ve loopback health ölçümü alır; belirli journal olaylarının
+ayıklanmış teknik alanlarını toplar. Ham günlük, .env, parola, token,
+oyuncu/oturum kimliği ve canlı DB dışa aktarmaz.
+
+Kurulu state sürümü, health sürümü ve disk dosya kimliği ayrı veriler olarak
+raporlanır. Bunlardan hiçbiri tek başına çalışan belleğin tüm kod kimliğini
+ispatlamaz. Örnek yoksa, süre sınırı aşılırsa, kaynak eksikse açık yazar.
+Tanı ZIP'i içine mevcut 42 eksik dosyanın tam eşleşen baytları alınabilir;
+özel proje kaynağıdır, herkese açık bir serviste paylaşılması gerekmez.
+
+Codex VDS'ye yetkili erişebiliyorsa bu salt okunur aracı kullanabilir;
+erişemiyorsa kullanıcı /root'a dosyayı koyup aşağıdaki bloğu çalıştırır:
+
+(
+  set -euo pipefail
+  cd /root
+  printf '%s\n' 'da60fbf9f173a75799201ac9b8916f1b48d85ff3749d7cecfbd43defd5610b2b  CORE511_TANI_ARACI.zip' | sha256sum -c -
+  python3 -u /root/CORE511_TANI_ARACI.zip --duration 120 --journal-hours 12
+)
+
+Bu bir R84 tekrar kurulumu değildir; oyun açıkken olağan kullanım sırasında
+ölçüm içindir. Sonuç /root/CORE511_TANI_<UTCtimestamp>.zip olarak yazılır.
+Codex'e gereken çıktı bu GERÇEK ZIP dosyasıdır; yalnız ekran görüntüsü değil.
+0/42 kaynak alınsa bile rapordaki ayıklanmış hata nedenleri işe yarar.
+12 saatlik journal 31 Ekim eski olayı artık kapsamıyorsa o olayın arşiv
+günlüğü ayrıca okunmalı veya yeni lag olayı ölçülmelidir.
+
+Araç için kayıtlı kapsam: 24 birim/süreç kontrolü, bağımsız toplayıcı ve
+yayın kontrolleri, 7 exporter güvenlik kontrolü; gerçek ZIP yerel oyunsuz
+ortamda çalıştırılmıştır. Bu canlı VDS ölçümü yapıldığı anlamına gelmez.
+
+8. CODEX'TE İZLENECEK ÇALIŞMA SIRASI
+
+A) R84 kullanıcı kurulum teyidini koru; erişim varsa mevcut state, health ve
+   dosya kimliklerini salt okunur kaydet. R84'ü tekrar kurma. Güncel olayın
+   tarihi, UTC zamanı, kanal ve yapılan eylemi yeni kanıtla bağla.
+B) Eksik 42 kaynağı sadece tam hash/size eşleşmesiyle al. Eski kaynaklarla
+   doldurma. HTTP, writer, reward/native bindings ve araç bağımlılıklarını
+   tam çalışma ortamına bağla; tarihi harness'i güncelmiş gibi kullanma.
+C) İlk geciken/başarısız server writer/ACK olayını saptamaya odaklan.
+   shared_expireUnknown sonrasını değil öncesini de incele. Queue age,
+   checkpoint, writer, receipt, refresh ve client ACK zamanlarını ayır.
+D) R85 adaylarını R84 tabanına karşı incele; aynı son hashlerin kanıtlarını
+   kullan. R80 foreground, R82 progress ve R83 8 ms reader taslaklarını
+   otomatik ekleme; özellikle reader için ölçülmüş kötüleşme var.
+E) İzole staging'de gerçek native DB/receipt/owner/epoch ve respawn/economy
+   entegrasyonunu tamamla. Kaybolan ACK, geç ACK, writer/IPC gecikmesi,
+   process crash ve recovery sırasında yeniden giriş senaryolarını dene.
+F) Karma iş yükü: hareket+savaş+ölüm+yeniden doğma+ganimet+iksir; envanter,
+   artı basma, takas/pazar/depo; lonca/kale; zindan/arena; admin/ayar ve
+   periyodik bakım. Birbiriyle çakışan işlemlerde veri ve ilerleme korunmalı.
+G) Staging'de 1/10/30/50 oyuncu basamakları ve periyodik işleri geçecek
+   süreli deneme yap. Daha önce kabul edilen 100 oyuncu hedefini veya
+   performans sınırlarını düşürme; hedef kapsamı belge/ayarlarla doğrula.
+   Geçmiş yerel ≤300 ms ve VDS 150/200 ms sınırlarını hangi ölçüye ait
+   olduklarıyla birlikte koru; ölçü eşlemesini uydurma. p50/p95/p99/max,
+   en uzun oyuncu durması, kuyruk ve ACK sürelerini raporla.
+H) Gerçek masaüstü ve mobil tarayıcıda input, WS, position reconciliation,
+   frame/long task izi al. Sunucu testini tarayıcı FPS testi sayma.
+I) Birleşik paketi önce staging'de yükseltme, kesinti, restart ve eski kod
+   + güncel DB geri alma ile doğrula. Son kanıtlar son paket baytlarına
+   bağlı olsun. Kanıt eksikse kurulur R85 veya "tüm lag bitti" diye sunma.
+
+9. KORUNACAK KULLANICI TERCİHLERİ VE GÜVENLİK KURALLARI
+
+- Bütün kullanıcı komutları kopyalanabilir fenced code block olarak verilir.
+  Ekran görüntüsü veya düz satır komut kullanıcı için kullanışlı değil.
+- Kısa, somut ilerleme güncellemeleri ver; uzun süre sessiz kalma.
+- Oyun açık/bakım/ön kayıt tercihi yalnız yönetim panelinden yönetilir.
+- Hesaplar, karakterler, eşyalar, para, loncalar ve ilerleme korunur.
+- Geri alma eski kod + güncel DB'dir; eski DB canlı ilerlemenin üstüne yazılmaz.
+- Sahiplik, epoch, receipt, durable ACK, writer FIFO ve bilinmeyen işlem
+  korumaları performans için devre dışı bırakılmaz.
+- Belirsiz mutasyon otomatik tekrar edilmez. Kör HP/respawn değişikliği yok.
+- Hareket tahmin sınırını büyütmek ilk sunucu gecikmesinin çözümü değildir.
+- Yerel fixture pass sayısını gerçek oyuncu kapasitesi diye sunma.
+- Canlıya bağlanılmadıysa bağlanılmış/deploy yapılmış gibi yazma. Gerçek
+  erişim yokken SSH/noVNC oturumu veya yetki var sayma; canlı yük üretme.
+- Gerekli kanıtı toplamadan "bir daha asla lag olmaz" garantisi verme.
+- Başarıyla tamamlanmış geçmiş testleri gerekçesiz tekrar çalıştırma;
+  yalnız yeni değişiklik, ortam taşıma riski veya zorunlu kapı için doğrula.
+
+10. KAYNAK BELGELERİN ÖNCELİĞİ
+
+Güncel kurulum durumu: bu nottaki en son kullanıcı teyidi.
+R84 paket doğruluğu: orijinal ZIP/SHA + r84-package/update.json ve R84_KANIT.
+R85 son aday doğruluğu: root-verification + combined-client-candidate +
+candidate-pins + writer-review-final.
+Tam kaynak eksikleri: missing-pinned-manifest + yeni alınacak VDS tanı ZIP'i.
+Canlı arıza nedeni: gerçek olay ölçümü; eski hedefli test tek başına yetmez.
+
+Aşağıda R79–R83 ayrıntılı tarihçe ve özgün kanıt kaynakları yer alır.
+
+
+EK A — R79–R83 AYRINTILI GEÇMİŞ
+
+CORE511 — R79–R83 DOĞRULANMIŞ ÇALIŞMA TARİHÇESİ
+Devir için yerel belge incelemesi, 1 Kasım 2026
+
+KAPSAM
+Bu not yeni bir oyun testi veya canlı VDS işlemi değildir. Mevcut paket,
+update.json, SONUC/NOTLAR ve KANIT dosyaları okunarak hazırlanmıştır.
+R79–R83 arşivlerinin bugünkü yerel baytları yeniden hashlenmiştir. Hedefli
+test sayıları önceki kaydedilmiş test çalıştırmalarına aittir. Paket bulunması
+canlıya kurulduğunu kanıtlamaz. En yeni kullanıcı mesajı "R84 kuruldu"dur;
+bu, kullanıcı kurulum teyididir. Asistan canlıya bağlanarak ayrıca doğrulamamıştır.
+Önceki "R84 henüz kurulmadı" notu bu yeni beyanla geçersizdir. R84'ü tekrar
+kurma talimatı verilmemelidir.
+
+R79 — BAŞLANGIÇ SÜRÜMÜ VE SONRASI İNCELEME
+Kaynaklar: r79-audit/SONUC.md; CORE_OF_LIFE_R79_CODEX_DEVIR.txt;
+r79-investigation/INCELEME_RAPORU.txt; r79-investigation/evidence/KANITLAR.json.
+R78 üzerine hazırlanan R79'un kayıtlı kapsamı:
+- Mevcut WAL checkpoint işçisi etkin oyun açılışına bağlandı; ana ve ödül
+  yazıcısı yalnız işçi hazırsa otomatik checkpoint'i ona bırakıyor. İşçi
+  kapanınca güvenli fallback korunuyor. Node 22.23.4 / SQLite 3.53.4 getirildi.
+- Eski metin doğrulamasında bağlantı koparma döngüsü düzeltildi. Yanlış/doğru
+  cevap, aynı bağlantı ve hesap/oturum/kanal/yasak denetimleri korundu.
+- Uygun arka plan ödüllerinin ilgisiz bütün kanalları bekletmesi daraltıldı.
+  Adventure ve tüm dünyayı etkileyen işler güvenli ortak yolu kullanıyor.
+- Doğrulanmış açık harita ganimetlerinde ilgisiz kanal savaş kaydı beklemesi
+  kaldırıldı; oyuncu/grup kaydı, kalıcı ACK ve çift toplama koruması korundu.
+- Yavaş ana COMMIT için sınırlı tanı, gerçek checkpoint/runtime sağlık alanları.
+R79 SONUC belgesindeki doğrulamalar yerel gerçek SQLite/Worker/kanal ve bazı
+kontrollü tarayıcı/sunucu senaryolarıdır. Tam canlı kapasite testi değildir.
+Eski R21 şema/istemci ve interpolation testleri geçmiş sayılmamıştır.
+
+R79 sonrası inceleme henüz düzeltme uygulamayan bir araştırmaydı. Bulgular:
+- Oyuncu kaynaklı foreground boss/Sinsi claim_rewards hâlâ dört kanalı
+  shared_hold ile bekletebiliyor (arka plan kapsam daraltmasından ayrı yol).
+- Hızlı ödül tekrarları genel bakımı da çoğaltıyor: kontrollü 10 saniyede
+  50 ms tekrar genel işleri 10 yerine 200 kez çağırıyor.
+- Checkpoint fallback'ten otomatik geri dönüş yok.
+- Gerçek istemci 600 ms onaysız hareket bütçesinden sonra duruyor; bu
+  sunucudaki ilk gecikmenin nedenini tek başına açıklamıyor.
+- Yerel UI aboneliği istisnası invalid_server_message/protocol mismatch
+  gibi bağlantı kapatabiliyor; canlıda gerçekleştiği kanıtlanmadı.
+- Panel busyPercent, event-loop utilization yüzdesidir; toplam VDS CPU veya
+  doğrulanmış oyuncu kapasitesi değildir.
+Kullanıcı R79 kurulumunu bildirmişti. Bu, yeni ortamın güncel sürüm kanıtı olmaz.
+Kayıtlı R79 commit: 9b6cf5a115f2e68277796be616d0f47ad95f5932 (r79-download).
+Yerel r79-inspect.zip ile yeniden doğrulanan R79 ZIP: 45.624.424 bayt,
+cd88c4a914da4fd9e23245309952daad8edecc44b9652e76a1645893bc27ec62.
+Dosya yerelde CORE511_R79_TOPLU.zip yerine r79-inspect.zip adındadır.
+İçeriği aynı kurulum paketidir. Devirde tarihsel kanıt olarak korunur;
+kullanıcıya eski sürümü yeniden kurma önerisi değildir.
+
+R80 — GENEL BAKIM TEKRARI, CHECKPOINT TOPARLANMASI, ÖLÇÜM
+Kaynaklar: CORE511_R80_NOTLAR.txt; r80-README.md;
+r80-package/update.json; r80-package/evidence/R80_KANIT.json.
+Tam R79_GAMEPLAY üzerine altı üretim dosyalı yerinde delta:
+- shared-world-jobs.mjs: genel bakım için ayrı 1 saniye sıklık; ödülün
+  50/250/1000 ms tarama aralıkları korunuyor. Geciken aralıklar toplu tekrar
+  edilerek yük patlaması oluşturmuyor. Kontrollü 50 ms senaryosunda genel
+  işler 200 -> 10, ödül taraması her iki sürümde 200 çağrı (10 saniye).
+- checkpoint-runtime-r79.mjs + native wal-checkpoint.mjs: bilinen geçici
+  nedenler için 30/60/120/240/300 saniye yeniden deneme, önceki worker'ın
+  çıkışını doğrulama ve iki başarılı checkpoint geçişiyle güvenli geri dönüş.
+  Bilinmeyen hata/protokol/sürüm sorunu kör yeniden denenmiyor; kalıcı ACK
+  veya normal üretim checkpoint/backlog sınırları gevşetilmiyor.
+- writer-lane-r533.mjs + yeni runtime-health-r80.mjs + native-http-bindings.mjs:
+  /api/vds-health içinde runtimeDiagnosticsR80; ELU, gecikme, writer kuyruğu,
+  bekleyen dış iş, WAL flush, checkpoint ve reward-worker ölçülerini ayırır.
+  Yeni SQL/profiler/kanal IPC başlatmaz; kimlik/token/SQL/ham log dışarı vermez.
+Doğrulama: 101 üretim+kurucu testi = 30 zamanlama + 10 gerçek SQLite/Worker
+checkpoint + 12 tanı/yazıcı + 46 kurucu + 3 exact health metodu.
+13/17 gibi alt sayıları tekrar toplama: 17 crash alt durumu ve 7 bağımsız
+tekrar kontrol 46 kurucu sayısına dahildir. Araç testleri ayrıca 16 ölçüm ve
+4 seçici kaynak dışa aktarma testidir.
+DIŞLANAN: foreground boss/Sinsi daraltma taslağı. 17 hedefli kontrol geçti
+ama sekiz tam kanal testi çalıştırılamadı; güncel action-writer ve diğer
+42 eksik kaynak nedeniyle dört taslak dosyası üretim payload'ına alınmadı.
+Gerçek VDS'ye bu çalışma ortamından kurulum yapılmadı; tüm oyun açılışı veya
+10/30 oyunculu canlı kapasite doğrulaması yapılmadı.
+
+R81 — CANLI CPU PROFİLİNDEKİ abandonedActors SORGUSU
+Kaynaklar: CORE511_R81_NOTLAR.txt; r81-README.md;
+r81-package/update.json; r81-package/evidence/R81_KANIT.json;
+r81-tests/abandoned-r81-benchmark.json.
+Tam R80_GAMEPLAY üzerine iki üretim dosyası:
+- abandoned-normal.mjs: senkron sorguyu mevcut prepared-statement scope'una
+  alır; kaynak oyuncunun kullanılan 10 alanını seçer; sources AS MATERIALIZED
+  ile ilgili canavar/tur kümesini sorgu içinde tutar. Sonuç/yetki önbelleği
+  değildir; veriler her çağrıda taze okunur. Writer tekrar kontrolü korunur.
+- native-http-bindings.mjs: yalnız sağlık sürümü etiketi R81_GAMEPLAY olur.
+Canlı profil kanıtı: abandonedActors ve alt çağrıları toplam örneklenmiş
+zamanın %17,016'sı; başlangıç/boşta dışlandığında %42,559. Bu kesin çağrı
+sayısı, canlı EXPLAIN planı veya tek sorgu gecikmesi değildir.
+Sentetik aynı SQLite benchmark: 600 oyuncu kaydı, 16 güncel katılımcı,
+30.000 tarihsel katılım; cached sorgu ortancası 92,8903 -> 0,2556 ms.
+Bu 600 eşzamanlı oyuncu veya aynı oranda VDS CPU kazancı anlamına gelmez.
+Doğrulama: 73 = 56 kurucu + 12 sorgu + 2 cache + 3 health testi. 120 karışık
+fixture ve 17 kesinti alt durumu zaten bu sayıların içindedir.
+R80 checkpoint, DB şeması, istemci, claim/sahiplik/freeze/durability korunur.
+42 exact-current modül eksik; tam oyun/canlı kapasite doğrulanmadı.
+
+R82 — AYRIK CHECKPOINT BEKLEMESİ VE YENİDEN DOĞMA YAŞAM DÖNGÜSÜ
+Kaynaklar: CORE511_R82_TESHIS_VE_KURULUM.txt; r82-README.md;
+r82-package/update.json; r82-package/evidence/R82_KANIT.json.
+Tam R81_GAMEPLAY üzerine 11 üretim payload dosyası:
+- combat-checkpoint: değişmez checkpoint'in bilinen hedef kümesi yeni yerel
+  canavar ölümü hedefinden ayrıksa gereksiz bekleme kalkar. Aynı/bilinmeyen
+  kapsam, oyuncunun kendi checkpoint'i, journal hatası, kendi durable ACK'i,
+  kaynak kilitleri ve receipt sırası korunur.
+- İstemci otomatik respawn effect'i: kendi cleanup token'ı, gerçek transport,
+  oyuncu/game-instance/epoch/ölüm kuşağı kontrolü; stale/skipped yanıt sonrası
+  yetkili yenileme; aynı hâlen geçerli ölüm için tekrar kontrol. 8 saniyelik
+  HTTP gözlemci timeout'u kabul edilmiş transport komutunu yeniden göndermez.
+- İlk respawn beklemesi ham cihaz Date.now yerine mevcut snapshot temelli
+  sunucu saati tahminiyle yapılır. Normal saat dilimi farkı arıza kanıtı
+  değildir; gerçek cihaz saat kayması ile karıştırılmamalıdır.
+- Geçici genel ölüm/ödül bildirimi kaldırılır; 202/pending/HP/ödül semantiği
+  değişmez. Bu, lag'in kendisinin giderildiğini göstermez.
+- Yetkili admin tanısına deathWaitR82: checkpoint/writer/committed-refresh
+  süreleri. Canavar ölümü callback metriğidir; oyuncu respawn nedeni değildir.
+- Yeni hash'li istemci varlığı ve HTTP graph referansları; eski R79 asset'i
+  byte-identical kalır. R82 kurulumu/geri alımı sonrası sayfa yenileme gerekir.
+Doğrulama: 147 = 32 checkpoint + 4 native respawn + 9 timing + 2 notice +
+27 effect/transport + 73 kurucu/recovery. Gerçek storage/receipt bileşenleri
+kullanılır ama terminal ödül dar fixture; tam native ganimet entegrasyonu yok.
+Kontrollü 500 ms ilgisiz checkpoint + 15 ms ölüm ACK: 517,865 -> 15,654 ms;
+aynı hedef yaklaşık 517 ms kalır. Canlı kullanıcı kazancı diye sunulmaz.
+AÇIK: Yenileme sonrası da ölü kalan canlı karakterin HP, hp_revision,
+respawn_at_ms ve tam sunucu yanıtı istenmiş, kanıt dosyası alınmamıştı.
+Sıfır/eksik deadline, gelecekteki deadline, arena kuralı veya kabul edilmiş
+belirsiz işlem birbirinden ayrılmalı; SQL ile zorla can verme yok.
+DIŞLANAN: actor-progress-refresh taslağı, eksik güncel adventure projection
+nedeniyle üretime alınmadı. 42 güncel kaynak eksik; full server/browser yok.
+
+R83 — OYUN İŞİ BİTTİKTEN SONRAKİ FAZLADAN HEARTBEAT BEKLEMESİ
+Kaynaklar: CORE511_R83_TESHIS_VE_KURULUM.txt; r83-README.md;
+r83-package/update.json; r83-package/evidence/R83_KANIT.json.
+Tam R82_GAMEPLAY üzerine üç mevcut sunucu dosyası:
+- heartbeat-loop.mjs ve shared-combat-channel.mjs: native ACK, yetkili
+  yenileme, olaylar, kaynak bırakma/ortak tamamlama bitmişken yalnız
+  heartbeat_schedule arka plan RPC'si oyuncu işlem bariyerini uzatmaz.
+  İş mevcut pending takibinde ve yaşam döngüsü drain'inde kalır; owner/epoch
+  ve hatanın fatal yolu korunur. Gerçek yazı/yenileme beklemesi kaldırılmaz.
+- native-http-bindings.mjs: yalnız R83 sağlık etiketi.
+İstemci, 600 ms tahmin sınırı, komut sırası, HP/ödül/DB şeması değişmez.
+Doğrulama: 93 = 22 gerçek sınıf davranışı + 3 mevcut transport/prediction
+entegrasyonu + 68 gerçek kurucu kontrolü. Servis/HTTP portları kontrollüdür.
+Yalnız arka plan cevabı 900 ms tutulduğunda üç kontrollü yolun her birinde
+R82 300 ms sabit görüntü üretir, R83 0 ms; canlı VDS/FPS/13:45:36 olayı değildir.
+DIŞLANAN: snapshot-read-queue için 8 ms batch bütçesi. Gerçek ColdReadCache
+ve SQLite yazma trafiğinde tekrar cache resetleriyle toplam süre 1,97–2,48
+kat arttığından gönderilmedi. Orijinal R82 reader dosyası üretimde aynı.
+1166 beklenen kaynak kimliği; yerelde 1124 mevcut, 42 eksik. Eski sürüm
+ikamesi yapılmadı. Canlı ölüm kaydının nedeni hâlâ ayrı doğrulama gerektirir.
+
+YEREL ARŞİV KİMLİKLERİ — BU İNCELEMEDE TEKRAR OKUNDU
+R79: r79-inspect.zip (asıl adı CORE511_R79_TOPLU.zip) — 45624424 bayt
+cd88c4a914da4fd9e23245309952daad8edecc44b9652e76a1645893bc27ec62
+R80: CORE511_R80_TOPLU.zip — 165075 bayt
+21a3b001edd4adc2f2bca5734efb6d9cc937e3c005214047d383c3e14e98ed54
+R81: CORE511_R81_TOPLU.zip — 139829 bayt
+46340f6459f85ccb07287e79b26efad52e2b0de052e8d878154e9fca681f2e21
+R82: CORE511_R82_TOPLU.zip — 1225461 bayt
+30ee51d4a45949b2a3bbbce49e846b430a5892f31ebffbfb38e9782ce8c15d81
+R83: CORE511_R83_TOPLU.zip — 163744 bayt
+cf016d26bcdbc74991f726c48cb71794fc93d93a4987db17eb399c9fb9521974
+
+DEĞİŞMEZ DEVİR KOŞULLARI
+- Bu paketler kendi tam önceki sürüm kimliğine bağlı deltalardır. Sürüm
+  atlatıp zorla uygulama, hash/manifest/admission kapısını kaldırma.
+- Kullanıcı hangi paketi kurduysa gerçek state/sağlık/bayt kimliklerini
+  birlikte kontrol et; eski hazırlanma tarihli notun "hâlâ R81" ifadesini
+  bugünün canlı sürümü diye sunma.
+- Oyun açma/bakım tercihi admin panelinde kalır. 45 saniye çıkış bekleme,
+  boş presence/admission ve kayıtlı bakım şartı kurucu tarafından doğrulanır.
+- Geri alma eski kod + GÜNCEL DB'dir. Eski DB yedeğini ilerlemenin üzerine
+  yazma; hesap servisini gereksiz yeniden başlatma.
+- Unknown commit/freeze/owner/epoch/receipt/durable ACK korumalarını kaldırma;
+  belirsiz komutu tekrar uygulama; 600 ms prediction limitini büyüterek
+  sunucudaki asıl gecikmeyi gizleme.
+- Tüm bu hedefli sayılar canlı 50/100 oyuncu kapasite testi yerine geçmez.
+- R84 ve varsa R85 aday çalışmaları ayrıca kendi kanıt ve kimlikleriyle
+  devredilmelidir; bu not R79–R83 tarihçesidir.

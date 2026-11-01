@@ -1,0 +1,36 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "sources": [
+    {
+      "file": "lib/rune-v2-ranking.mjs",
+      "sha256": "2588dd9037feb8a1cad98e166afcae53b72e6148891183d25ad9ee6dd748e51b"
+    },
+    {
+      "file": "lib/dragon-ranking498.mjs",
+      "sha256": "0a79ec207874e0e328fe8e34e08fbf9fa40e41b8e06563059edae3e9b49590e4"
+    },
+    {
+      "file": "lib/stone-boss-ranking476.mjs",
+      "sha256": "e240ccd9e0e87a656c1cfa4f80a09727512b838e9630b6e48c6f6bfcef3d7159"
+    }
+  ],
+  "predicates": [
+    {
+      "kind": "dragon",
+      "source": "`actor.is_gm=0 AND actor.loadlab_run_id='' AND actor.area=victim.area AND (victim.channel=0 OR actor.channel=victim.channel) AND actor.arena_match_id='' AND actor.hp>0 AND victim.area='dragon' AND victim.channel=0 AND victim.loadlab_run_id='' AND victim.id='dragon-world-1'`",
+      "sha256": "03db962513d699c7f0fabf040984e25da399a1dea569671b88624dd6f3cac51c"
+    },
+    {
+      "kind": "rune_v2",
+      "source": "`${eligible} AND actor.area=victim.area AND actor.channel=victim.channel AND actor.arena_match_id='' AND actor.hp>0 AND victim.area='rune_v2' AND victim.loadlab_run_id='' AND victim.id='rune-v2-boss-c'||victim.channel||'-1'`",
+      "sha256": "c9febc245907f3e6e418e2218e2883519f6f71c508e37a5db856e48e90cb2ed6"
+    }
+  ],
+  "generatedSha256": "32a9c53eb7a935e57be2e2419cb49e86efb84a3cef324b26ca6e3510697eb63b",
+  "edits": [
+    "Native dragon and RuneV2 hit CASE predicates compiled into synchronous resident comparisons",
+    "Native RuneV2 account/lab eligibility SELECT runs only in the fenced cold snapshot",
+    "Native black-stone participant scoring has no additional eligibility predicate",
+    "Only fixed native channel identifiers extend to4"
+  ]
+}

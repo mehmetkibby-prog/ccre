@@ -1,0 +1,55 @@
+TAP version 13
+# (node:346756) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+ok 1 - private respawn copy requires matching native actor, successful revision and destination, and is idempotent
+  ---
+  duration_ms: 4.768089
+  type: 'test'
+  ...
+# (node:346757) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:346757) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# pearl_reset {"applied":true,"appliedAtMs":1793512471462,"backupName":"before-pearl-reset-1793512471462-21d5a309-5a6e-4968-ab92-19bf026653a7.sqlite"}
+# (node:346757) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:346757) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:45.587Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":346800,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"33a86f2410b13cc622024396"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:45.588Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":346810,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"39ae1cfbc4dae9ab123fef46"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:45.588Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":346816,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4a99634a962dbf61cc535a59"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:45.589Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":346826,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f39e33bbfc7448417a08d62a"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:54:45.621Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":346792,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"dfe53d261af3bb09c8e2f7ce"}
+# Subtest: native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 2 - native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 15635.202886
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793512487154,"backupName":"before-pearl-reset-1793512487154-a543a96e-3212-461a-9319-3ddd6bdb4047.sqlite"}
+# (node:346757) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:346757) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:01.330Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":347002,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"83ae8fe40bd3e17b9b07dab8"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:01.331Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":347012,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"31fe6a59bff82e9cff46eeae"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:01.331Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":347019,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"eb5477d0490834b22e65c45f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:01.331Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":347033,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d000b6f853021b20f0a0dda2"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:55:01.359Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":346994,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"9535045df08199d5d3e9c500"}
+# Subtest: native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 3 - native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 15742.786134
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32019.185158

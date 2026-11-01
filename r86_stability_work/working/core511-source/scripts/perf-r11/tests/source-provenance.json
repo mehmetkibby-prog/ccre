@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "note": "Historical test logic adapted to explicit current native manifest; historical PASS totals are never reused. Production modules are not rewritten.",
+  "files": [
+    {
+      "source": "scripts/perf-r7/tests/r6-writer-group-durability.test.mjs",
+      "sourceSha256": "117e96d8f052683b3ab0c21f65ea2d7629174b0ec4ec0ed79c705d3637a29cf3",
+      "adapted": "scripts/perf-r11/tests/r11-writer-group-durability.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r7/tests/r6-pipeline-modes.test.mjs",
+      "sourceSha256": "84e78cbc2dee7bf5bb2066ab0b84bd229131369f80910def14c82ba7737740a2",
+      "adapted": "scripts/perf-r11/tests/r11-pipeline-modes.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r7/tests/r6-channel-write-cohort.test.mjs",
+      "sourceSha256": "5ff734cf10b85a4ddfd60ba13d20fbe8c4369288e0863470257c50c35994b083",
+      "adapted": "scripts/perf-r11/tests/r11-channel-write-cohort.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r7/tests/r6-cleanup-owner-retirement.test.mjs",
+      "sourceSha256": "1adf94738a4b29b098a1bc8405a335265ee22e568caa8d2782b7a2185488f6f7",
+      "adapted": "scripts/perf-r11/tests/r11-cleanup-owner-retirement.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r7/tests/r6-cleanup-child-worker.mjs",
+      "sourceSha256": "923f8c2e3bed46593068c88cd9233e5ed254a466ed8b6a703254557ba800c018",
+      "adapted": "scripts/perf-r11/tests/r11-cleanup-child-worker.mjs"
+    },
+    {
+      "source": "scripts/perf-r7/tests/r6-native-fixture.mjs",
+      "sourceSha256": "7fbb2d0d3f4c487361f9fcb37b469f0358bf8be06221ea315476eec226053019",
+      "adapted": "scripts/perf-r11/tests/native-fixture.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/fixture.mjs",
+      "sourceSha256": "b44daed345b0522b79143f7060e3ee3ee5560d4634a94191b76981d9f9a5bb22",
+      "adapted": "scripts/perf-r11/tests/reward/fixture.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/setup.mjs",
+      "sourceSha256": "53ce79919af3f9f6efee86bde03c9730266caeb984c20a6c73d14593166b1182",
+      "adapted": "scripts/perf-r11/tests/reward/setup.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/builders.mjs",
+      "sourceSha256": "b241fda157eac4f2dd8e5fa6a3c7ee918e63e3052ebec4d6c21e7163d38006f8",
+      "adapted": "scripts/perf-r11/tests/reward/builders.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/gates.test.mjs",
+      "sourceSha256": "8c8a0e506573dea517c8cba37d99ae986993796593e6aebab69b727c4c683fe8",
+      "adapted": "scripts/perf-r11/tests/reward/gates.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/selected-target-gates.test.mjs",
+      "sourceSha256": "e73790ce58841c037f01784b20775124d8511a0e2860d784cd0c088ace517e71",
+      "adapted": "scripts/perf-r11/tests/reward/selected-target-gates.test.mjs"
+    },
+    {
+      "source": "scripts/perf-r9/reward/isolation.test.mjs",
+      "sourceSha256": "1841eebb65f2f869e194f8bb3c1af25347edca29a56367e046384f3ea021af0c",
+      "adapted": "scripts/perf-r11/tests/reward/isolation.test.mjs"
+    }
+  ]
+}

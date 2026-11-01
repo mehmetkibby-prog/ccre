@@ -1,0 +1,23 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793519648431,"backupName":"before-pearl-reset-1793519648431-2035c0ef-9f54-4267-8e2a-b79b26134dc0.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:54:13.685Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":364186,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"61e6ea337be7d7f689eec94b"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:54:13.686Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":364192,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4706f2baa06a7a69d06e8caf"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:54:13.686Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":364202,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7aec96db95847703910e3941"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:54:13.686Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":364212,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0bcb1068c5194de4db0a4a1e"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:54:13.702Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":364175,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"96684828002ed80e47f8bd3e"}
+# Subtest: five native independent lethal heads keep economy, all replies and one exact durable batch replay
+ok 1 - five native independent lethal heads keep economy, all replies and one exact durable batch replay
+  ---
+  duration_ms: 6867.457024
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7811.962562

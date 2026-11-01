@@ -1,0 +1,52 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793514233307,"backupName":"before-pearl-reset-1793514233307-691c6c63-3ac3-4459-be08-824df0375f22.sqlite"}
+# Subtest: native rank reads/bonuses reuse only the exact durable schema and config; other services still refresh
+ok 1 - native rank reads/bonuses reuse only the exact durable schema and config; other services still refresh
+  ---
+  duration_ms: 1579.755806
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793514234874,"backupName":"before-pearl-reset-1793514234874-f2788d6f-e628-4606-94b3-ff17764e88d2.sqlite"}
+# Subtest: same revision changed config bytes and changed schema force native rank reconstruction
+ok 2 - same revision changed config bytes and changed schema force native rank reconstruction
+  ---
+  duration_ms: 1597.01876
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793514236482,"backupName":"before-pearl-reset-1793514236482-cf4512b6-9c00-40ea-b15c-c4203786c4f1.sqlite"}
+# Subtest: native save followed by outer rollback cannot reuse its mutated private settings cache
+ok 3 - native save followed by outer rollback cannot reuse its mutated private settings cache
+  ---
+  duration_ms: 1561.358145
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793514238035,"backupName":"before-pearl-reset-1793514238035-95d53ce3-6da9-445b-9864-e483692018aa.sqlite"}
+# Subtest: committed native config save, rollback return, explicit invalidation and foreign service reject stale cache
+ok 4 - committed native config save, rollback return, explicit invalidation and foreign service reject stale cache
+  ---
+  duration_ms: 1555.34232
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793514239518,"backupName":"before-pearl-reset-1793514239518-49aa0142-a4b3-48ff-9d15-d04adf157592.sqlite"}
+# Subtest: cached native grant matches a fresh native rank factory, including player effects and bonuses
+ok 5 - cached native grant matches a fresh native rank factory, including player effects and bonuses
+  ---
+  duration_ms: 1477.083711
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793514241002,"backupName":"before-pearl-reset-1793514241002-626209c8-52c6-471a-a819-f9ca56beba90.sqlite"}
+# Subtest: actual negative receipt after SQL rollback invalidates an uncommitted lazy rank settings read
+ok 6 - actual negative receipt after SQL rollback invalidates an uncommitted lazy rank settings read
+  ---
+  duration_ms: 1482.775649
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9696.003986

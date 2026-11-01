@@ -1,0 +1,806 @@
+--- a/core511-source/scripts/core511/permanent-coordinator.mjs
++++ b/core511-source/scripts/core511/permanent-coordinator.mjs
+@@ -1,3 +1,4 @@
++import {joinFreezeRequestsR85,unprovenFreezeR85} from './freeze-outcomes-r85.mjs';
+ import {demandFence} from './fence-diagnostics.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {demand,kernelError} from './contract.mjs';
+@@ -7,9 +8,9 @@
+ // parent supplies endpoint references created with the channel; callers cannot
+ // provide a socket, channel, epoch, or SQL. No lease expires on a timeout.
+ export class PermanentCoordinator {
+- constructor({authority,endpointFor,durable,onFault=()=>{},recoverRejectedFreeze=null,availabilityCheck=null,relatedActors=ids=>ids}){
++ constructor({authority,endpointFor,durable,onFault=()=>{},recoverRejectedFreeze=null,availabilityCheck=null,relatedActors=ids=>ids,knownPendingFreeze=()=>false}){
+   demand(authority&&typeof endpointFor==='function'&&typeof durable==='function','permanent_dependencies');
+-  Object.assign(this,{authority,endpointFor,durable,onFault,recoverRejectedFreeze,availabilityCheck,relatedActors});this.entries=new Map();this.tail=Promise.resolve();this.closed=false;
++  Object.assign(this,{authority,endpointFor,durable,onFault,recoverRejectedFreeze,availabilityCheck,relatedActors,knownPendingFreeze});this.entries=new Map();this.tail=Promise.resolve();this.closed=false;
+  }
+  guard(sql,peer,request){
+   const ids=new Set([request.playerId,...(request.payload?.resources??[]).filter(k=>typeof k==='string'&&k.startsWith('player:')).map(k=>k.slice(7))]);
+@@ -59,7 +60,8 @@
+     // Only one resident process can atomically decide for the complete group.
+     // Cross-channel ownership retains the existing coordinated freeze path.
+     const tryIdle=mayDeferIdle&&groups.size===1;mayDeferIdle=false;let deferredIdle=false;
+-    await Promise.all([...groups.values()].map(async group=>{
++    const batches=[...groups.values()];
++    await joinFreezeRequestsR85(batches.map(async group=>{
+      const requests=group.map(e=>({id:e.id,epoch:e.owner.epoch,token:e.token})),endpoint=group[0].endpoint;
+      demand(group.length===1||typeof endpoint.freezeGroup==='function','permanent_group_endpoint');
+      let acks;
+@@ -69,6 +71,7 @@
+       if(response?.deferred===true){demand(response.notExecuted===true&&response.code==='reward_recovery_busy','permanent_idle_group_ack');deferredIdle=true;return;}
+       acks=response?.acks;
+      }else acks=group.length===1?[await endpoint.freeze(requests[0])]:await endpoint.freezeGroup(requests);
++     demand(group.every(entry=>entry.phase==='freezing'&&this.entries.get(entry.id)===entry),'permanent_freeze_superseded');
+      demand(Array.isArray(acks)&&acks.length===group.length,'permanent_group_ack');
+      for(const [index,entry]of group.entries()){
+       const {id,token,owner,admission,simulation}=entry,ack=acks[index];
+@@ -79,7 +82,7 @@
+       demand(ack?.token===token&&ack.epoch===owner.epoch&&ack.channel===owner.channel&&ack.incarnation===owner.incarnation&&current?.incarnation===owner.incarnation&&current?.epoch===owner.epoch&&current?.sequence===ack.finalSequence&&(admission?currentAdmission?.session_id===admission.session_id:!currentAdmission&&currentSimulation?.epoch===simulation.epoch&&currentSimulation?.run_id===simulation.run_id),'permanent_freeze_mismatch');
+       entry.needsFreeze=false;entry.finalSequence=ack.finalSequence;
+      }
+-    }));
++    }),{knownPending:(error,index)=>this.knownPendingFreeze(batches[index],error)});
+     if(deferredIdle){
+      // The sole resident group returned before any freeze or cold producer
+      // hold. No callback/checkpoint/write ran; only our fresh entries may go.
+@@ -129,7 +132,7 @@
+    // A branded stopped-actor proof from a rejected freeze means the native
+    // cold callback was never entered. Recover only this pre-operation case;
+    // lost durability/refresh/resume still cannot be declared not executed.
+-   if(held.length&&held.every(entry=>entry.phase==='freezing')&&this.recoverRejectedFreeze){
++   if(!unprovenFreezeR85(error)&&held.length&&held.every(entry=>entry.phase==='freezing')&&this.recoverRejectedFreeze){
+     let recovered=false;try{recovered=await this.recoverRejectedFreeze(held,error);}catch(recoveryError){error=recoveryError;}
+     if(recovered)throw error;
+    }
+--- a/core511-source/scripts/core511/transfer-freeze-group.mjs
++++ b/core511-source/scripts/core511/transfer-freeze-group.mjs
+@@ -1,3 +1,4 @@
++import {joinFreezeRequestsR85,unprovenFreezeR85} from './freeze-outcomes-r85.mjs';
+ import {randomUUID} from 'node:crypto';
+ import {demand} from './contract.mjs';
+ import {retiredFreezeOwner} from './freeze-redirect.mjs';
+@@ -31,14 +32,15 @@
+   for(;;){
+    while(c.sharedWorld?.combat.terminal)await c.sharedWorld.combat.terminalIdle();this.add(this.related());
+    const groups=new Map();for(const entry of this.entries.values())if(entry.needsFreeze){const key=entry.owner.channel+':'+entry.owner.incarnation,rows=groups.get(key)??[];rows.push(entry);groups.set(key,rows);}
+-   await Promise.all([...groups.values()].map(async rows=>{
+-    const endpoint=c.process(rows[0].owner).control,requests=rows.map(e=>e.request),answers=rows.length===1?[await endpoint.request('freeze',requests[0])]:await endpoint.request('freeze_group',{requests});demand(answers.length===rows.length,'transfer_group_ack_count');
++   const batches=[...groups.values()];
++   await joinFreezeRequestsR85(batches.map(async rows=>{
++    const endpoint=c.process(rows[0].owner).control,requests=rows.map(e=>e.request),answers=rows.length===1?[await endpoint.request('freeze',requests[0])]:await endpoint.request('freeze_group',{requests});demand(this.phase==='freezing'&&rows.every(entry=>c.transitions.get(entry.request.id)===entry&&entry.phase==='freezing'),'transfer_freeze_superseded');demand(answers.length===rows.length,'transfer_group_ack_count');
+     for(const [i,entry]of rows.entries()){
+      const ack=answers[i];if(ack.retired){this.redirect(entry,ack);continue;}
+      const owner=c.authority.owner(entry.request.id);demand(ack.token===entry.request.token&&ack.epoch===entry.owner.epoch&&ack.channel===entry.owner.channel&&ack.incarnation===entry.owner.incarnation&&owner?.epoch===entry.owner.epoch&&owner.incarnation===entry.owner.incarnation&&owner.sequence===ack.finalSequence,'transfer_group_freeze_ack');
+      this.verifyAdmission(entry);entry.ack=ack;entry.needsFreeze=false;
+     }
+-   }));
++   }),{knownPending:(error,index)=>c.actorIsolation?.pendingFreeze(batches[index],error)===true});
+    while(c.sharedWorld?.combat.terminal)await c.sharedWorld.combat.terminalIdle();
+    // A borrowed, already-frozen actor can return through a native guild result
+    // while a different channel still drains. Require an explicit old-owner
+@@ -64,8 +66,15 @@
+  }
+  async finishSettlement(){if(this.settlement){await this.core.sharedWorld.combat.finishCold(this.settlement,this);this.settlement=null;}}
+  async rejectFreeze(error){
+-  if(this.phase!=='freezing'||this.settlement||!this.core.actorIsolation||!await this.core.actorIsolation.rejectTransitions([...this.entries.values()],error))return false;
+-  this.core.transferGroups.delete(this);this.phase='released';this.resolve();return true;
++  if(unprovenFreezeR85(error)||this.phase!=='freezing'||this.settlement||!this.core.actorIsolation)return false;
++  try{
++   if(!await this.core.actorIsolation.rejectTransitions([...this.entries.values()],error))return false;
++   this.core.transferGroups.delete(this);this.phase='released';this.resolve();return true;
++  }catch(recoveryError){
++   // The caller's catch is already awaiting us; publish the unresolved hold
++   // before rethrowing, or its own fail() call would never be reached.
++   this.fail(recoveryError);throw recoveryError;
++  }
+  }
+  async release(){
+   const c=this.core;await this.finishSettlement();this.phase='refreshing';for(const entry of this.entries.values())entry.phase='refreshing';
+--- a/core511-source/scripts/core511/actor-isolation.mjs
++++ b/core511-source/scripts/core511/actor-isolation.mjs
+@@ -2,6 +2,7 @@
+ import {actorFaultIsolation} from './r48-options.mjs';
+ import {actorFrameIsolation} from './r48_3-options.mjs';
+ import {actorIsolations} from './actor-isolation-proof.mjs';
++import {freezeFailuresR85} from './freeze-failure-r85.mjs';
+ import {prepareCached477} from './writer-statements.mjs';
+ import {requestDigest,opaqueId} from './generated/owner-protocol.mjs';
+ import {readReceipt} from './compact-receipt.mjs';
+@@ -63,9 +64,9 @@
+   if(shared)await combat.reconcileStatus(peer,request,ack);
+   this.clearUnknown(operationId);if(actorFrameIsolation)c.authority.commandOutcomes?.pruneActor(playerId);return {status:'committed',ack};
+  }
+- guard(peer,request){
++ guard(peer,request,resources=request.payload?.resources??[]){
+   if(!actorFaultIsolation)return;
+-  const ids=[request.playerId,...(request.payload?.resources??[]).filter(k=>typeof k==='string'&&k.startsWith('player:')).map(k=>k.slice(7))];
++  const ids=[request.playerId,...resources.filter(k=>typeof k==='string'&&k.startsWith('player:')).map(k=>k.slice(7))];
+   let exact;
+   for(const id of ids){
+    demand(!this.entries.has(id)||this.core.sharedWorld?.combat.stoppedAllows?.(id,peer,request),'permanent_actor_fenced');const pending=this.unknownActors.get(id);if(!pending)continue;
+@@ -142,18 +143,34 @@
+   }
+   this.entries.delete(id);if(actorFrameIsolation)c.authority.commandOutcomes?.pruneActor(id);return {isolated:true,epoch:result.epoch};
+  }
++ pendingFreezeEntry(entry){
++  const id=entry.id??entry.request?.id,owner=entry.owner,current=this.core.authority.owner(id);
++  if(!owner||current?.epoch!==owner.epoch||current.channel!==owner.channel||current.incarnation!==owner.incarnation)return false;
++  return [...this.unknownActors.get(id)??[]].some(row=>row.owners.some(p=>p.id===id&&p.owner?.epoch===owner.epoch&&p.owner.channel===owner.channel&&p.owner.incarnation===owner.incarnation));
++ }
++ pendingFreezeEntries(held,error){
++  if(error?.code!=='actor_command_pending')return null;
++  const facts=freezeFailuresR85(error);if(!facts.length||facts.some(f=>actorIsolations(error).some(p=>p.actor===f.actor)))return null;
++  const rows=facts.map(fact=>({fact,entry:held.find(entry=>(entry.id??entry.request?.id)===fact.actor&&(entry.token??entry.request?.token)===fact.freezeToken&&entry.owner?.epoch===fact.epoch&&entry.owner.channel===fact.channel&&entry.owner.incarnation===fact.incarnation)}));
++  if(rows.some(({fact,entry})=>{if(!entry)return true;const owner=this.core.authority.owner(fact.actor);return owner?.epoch!==fact.epoch||owner.channel!==fact.channel||owner.incarnation!==fact.incarnation||fact.pending&&!this.pendingFreezeEntry(entry);}))return null;
++  return rows;
++ }
++ pendingFreeze(held,error){return this.pendingFreezeEntries(held,error)!==null;}
+  async rejectTransitions(held,error){
+   const rows=held.map(entry=>({original:entry,id:entry.request.id,token:entry.request.token,owner:entry.owner,phase:entry.phase,admission:entry.admission??this.core.authority.admission(entry.request.id),simulation:entry.simulation??this.core.authority.simulation(entry.request.id),endpoint:this.core.endpoint(entry.owner.channel,entry.owner.incarnation)}));
+   return this.rejectFreeze(rows,error,this.core.transitions);
+  }
+  async rejectFreeze(held,error,store=this.core.permanent.entries){
+   if(!actorFaultIsolation||held.some(e=>e.phase!=='freezing'))return false;
+-  const proofs=actorIsolations(error),bad=new Set();
++  const proofs=actorIsolations(error),bad=new Set(),pending=this.pendingFreezeEntries(held,error);
++  if(error.code==='actor_command_pending'&&!pending)return false;
+   if(proofs.length){
+    const matches=proofs.map(proof=>({proof,entry:held.find(e=>e.id===proof.actor&&e.owner?.epoch===proof.epoch&&e.owner.channel===proof.channel&&e.owner.incarnation===proof.incarnation&&e.token===proof.freezeToken)}));if(matches.some(m=>!m.entry)||new Set(matches.map(m=>m.entry)).size!==matches.length)return false;
+    for(const {proof,entry}of matches){bad.add(entry);this.request({channel:proof.channel,incarnation:proof.incarnation,realm:this.core.realmId},{...proof,session:entry.admission?.session_id??'simulation:'+entry.simulation?.run_id,reason:proof.reason??error.code});}
+   }
+-  else if(error.code==='actor_command_pending')for(const entry of held){if([...this.unknownActors.get(entry.id)??[]].some(row=>row.owners.some(({id,owner})=>id===entry.id&&owner?.epoch===entry.owner?.epoch&&owner?.channel===entry.owner?.channel&&owner?.incarnation===entry.owner?.incarnation)))bad.add(entry);}
++  // Every pending actor has exact registry proof. An authenticated not_started
++  // member owns no resident/cold-traffic hold, so must not be refreshed/resumed.
++  for(const {entry}of pending??[])bad.add(entry);
+   if(!bad.size)return false;
+   // The synchronous cold callback has not been entered. Good members may
+   // already be frozen; refresh CURRENT DB and resume each exact original
+@@ -162,7 +179,21 @@
+    if(bad.has(entry))continue;
+    if(entry.endpoint){const request={id:entry.id,epoch:entry.owner.epoch,token:entry.token};const ack=await entry.endpoint.refresh(request);demand(ack?.refreshed===true&&ack.id===entry.id&&ack.epoch===entry.owner.epoch&&ack.token===entry.token,'actor_isolation_group_refresh');entry.phase='releasing';if(entry.original)entry.original.phase='releasing';const resumed=await entry.endpoint.resume(request);demand(resumed?.resumed===true&&resumed.epoch===entry.owner.epoch&&resumed.token===entry.token,'actor_isolation_group_resume');}
+   }
+-  for(const entry of held){demand(store.get(entry.id)===(entry.original??entry),'actor_isolation_lease_changed');store.delete(entry.id);}
++  for(const entry of held){
++   const original=entry.original??entry;demand(store.get(entry.id)===original,'actor_isolation_lease_changed');
++   const fact=pending?.find(row=>row.entry===entry)?.fact;
++   if(fact?.stage==='pending_command'&&typeof entry.endpoint?.cancelPending==='function'){
++    // Healthy actors and the cold serial lane are already released. Retain
++    // this exact pending actor's parent fence until its existing native result
++    // permits the child to checkpoint, refresh and resume the aborted freeze.
++    const request={id:entry.id,epoch:entry.owner.epoch,token:entry.token};
++    original.pendingCleanupR85=Promise.resolve().then(()=>entry.endpoint.cancelPending(request)).then(ack=>{
++     demand(ack?.id===entry.id&&ack.epoch===entry.owner.epoch&&ack.token===entry.token&&ack.resumed===true&&ack.cancelledPendingR85===true,'actor_pending_cleanup_ack');
++     if(store.get(entry.id)!==original)return;const owner=this.core.authority.owner(entry.id);
++     demand(owner?.epoch===entry.owner.epoch&&owner.channel===entry.owner.channel&&owner.incarnation===entry.owner.incarnation,'actor_pending_cleanup_owner');store.delete(entry.id);
++    }).catch(error=>{if(store.get(entry.id)!==original)return;original.phase='unknown';this.core.onFault({actor:entry.id,error});});
++   }else store.delete(entry.id);
++  }
+   return true;
+  }
+ }
+--- a/core511-source/scripts/core511/coordinator.mjs
++++ b/core511-source/scripts/core511/coordinator.mjs
+@@ -84,9 +84,9 @@
+   this.processes=new Map();this.sessions=new Map();this.revisions=new Map();this.transitions=new Map();this.transferGroups=new Set();this.entryReads=new Map();this.tail=Promise.resolve();this.closed=false;
+   this.budget=new ConnectionBudget({now:clock});
+   this.actorIsolation=new ActorIsolation(this);
+-  this.permanent=new PermanentCoordinator({relatedActors:ids=>dungeonFreezeActorsR71(this.database.sqlite,ids),authority:this.authority,endpointFor:(ch,inc)=>this.endpoint(ch,inc),durable:()=>this.writer.durableExternal?this.writer.durableExternal():this.writer.worldState?this.writer.worldState.syncExternal():this.database.durableAfterCommit(),onFault:(row,error)=>this.onFault({actor:row.id,error}),recoverRejectedFreeze:(held,error)=>this.actorIsolation.rejectFreeze(held,error),availabilityCheck:ids=>this.actorIsolation.assertAvailable(ids)});
++  this.permanent=new PermanentCoordinator({relatedActors:ids=>dungeonFreezeActorsR71(this.database.sqlite,ids),authority:this.authority,endpointFor:(ch,inc)=>this.endpoint(ch,inc),durable:()=>this.writer.durableExternal?this.writer.durableExternal():this.writer.worldState?this.writer.worldState.syncExternal():this.database.durableAfterCommit(),onFault:(row,error)=>this.onFault({actor:row.id,error}),recoverRejectedFreeze:(held,error)=>this.actorIsolation.rejectFreeze(held,error),availabilityCheck:ids=>this.actorIsolation.assertAvailable(ids),knownPendingFreeze:(held,error)=>this.actorIsolation.pendingFreeze(held,error)});
+   this.authority.commandGuard=(sql,peer,request)=>{this.globalWorld?.guardActor();this.sharedWorld?.combat.guard(peer,request);this.permanent.guard(sql,peer,request);const ids=[request.playerId,...(request.payload?.resources??[]).filter(k=>k.startsWith('player:')).map(k=>k.slice(7))];for(const id of ids){const held=this.transitions.get(id);if(held&&!this.sharedWorld?.combat.allows(id,peer,request))demandFence((held.phase==='freezing'||held.phase==='releasing')&&held.owner.channel===peer.channel&&held.owner.incarnation===peer.incarnation&&(id!==request.playerId||held.owner.epoch===request.epoch),'transition_actor_fenced',()=>({operation:request.operation,phase:held.phase,actor:id,session:this.sessions.get(id)?.identity.session,connection:this.sessions.get(id)?.session.gamePresence?.instanceId,channel:peer.channel,incarnation:peer.incarnation,requestEpoch:request.epoch,ownerEpoch:held.owner.epoch,sequence:request.sequence,leaseKind:'transition'}));}return true;};
+-  const commandGuard=this.authority.commandGuard;this.authority.commandGuard=(sql,peer,request)=>{this.actorIsolation.guard(peer,request);return commandGuard(sql,peer,request);};
++  const commandGuard=this.authority.commandGuard;this.authority.commandGuard=(sql,peer,request,resources=request.payload?.resources??[])=>{this.actorIsolation.guard(peer,request,resources);return commandGuard(sql,peer,resources===request.payload?.resources?request:{...request,payload:{...request.payload,resources}});};
+   this.authority.admissionGuard=ids=>{this.actorIsolation.assertAvailable(ids);return this.permanent.assertAvailable(ids);};
+   this.presence=new GamePresenceBridge({owner:id=>writer.owners.get(id),security:e=>this.securityCurrent(e.actor,e.epoch),clock});
+   this.worldStateUnsubscribe=writer.worldState?.subscribe(()=>{if(this.globalWorld?.held)return;for(const row of this.processes.values())if(row.online&&row.worldDelivery)void row.worldDelivery.flush().catch(error=>{
+@@ -129,7 +129,7 @@
+  }
+  nextRevision(id){const revision=(this.revisions.get(id)??0)+1;this.revisions.set(id,revision);return revision;}
+  process(peer){const row=this.processes.get(peer.channel);demand(row&&row.peer.incarnation===peer.incarnation&&(peer.realm??this.realmId)===row.peer.realm&&row.online,'channel_process_fenced');return row;}
+- endpoint(channel,incarnation){const row=this.processes.get(channel);if(!row?.online||row.peer.incarnation!==incarnation)return null;return {freeze:p=>row.control.request('freeze',p),freezeGroup:requests=>row.control.request('freeze_group',{requests}),freezeIdleGroup:requests=>row.control.request('freeze_idle_group',{requests}),refresh:p=>row.control.request('refresh_frozen',p),resume:p=>row.control.request('resume',p)};}
++ endpoint(channel,incarnation){const row=this.processes.get(channel);if(!row?.online||row.peer.incarnation!==incarnation)return null;return {freeze:p=>row.control.request('freeze',p),freezeGroup:requests=>row.control.request('freeze_group',{requests}),freezeIdleGroup:requests=>row.control.request('freeze_idle_group',{requests}),cancelPending:p=>row.control.request('cancel_pending_freeze',p),refresh:p=>row.control.request('refresh_frozen',p),resume:p=>row.control.request('resume',p)};}
+  async register(peer,{proof=randomBytes(32).toString('base64url')}={}){
+   demand(validChannel(peer.channel)&&peer.realm===this.realmId&&typeof peer.incarnation==='string'&&proof.length>=32,'coordinator_process_identity');
+   const old=this.processes.get(peer.channel);demand(!old?.online,'channel_process_already_live');
+--- a/core511-source/scripts/core511/resident-control.mjs
++++ b/core511-source/scripts/core511/resident-control.mjs
+@@ -1,3 +1,5 @@
++import {joinFreezeRequestsR85} from './freeze-outcomes-r85.mjs';
++import {attachFreezeFailuresR85} from './freeze-failure-r85.mjs';
+ import {demand,kernelError} from './contract.mjs';
+ import {retiredActorIsolation} from './r48_2-options.mjs';
+ import {actorFaultIsolation} from './r48-options.mjs';
+@@ -11,7 +13,7 @@
+ export class ResidentControl {
+  constructor({kernel,peer,lanes,checkpoints,combatCheckpoints,writer,frames,readBundle,applyBundle,drainModes=async()=>{},drainModesGroup=async ids=>{for(const id of ids)await drainModes(id);},unknownActor=()=>false,quarantined=()=>null,onFault=()=>{}}){
+   demand(kernel&&peer&&lanes&&checkpoints&&combatCheckpoints&&writer&&frames&&typeof readBundle==='function'&&typeof applyBundle==='function','resident_control_dependencies');
+-  Object.assign(this,{kernel,peer,lanes,checkpoints,combatCheckpoints,writer,frames,readBundle,applyBundle,drainModes,drainModesGroup,unknownActor,quarantined,onFault});this.entries=new Map();this.completed=new Map();this.idleGroups=new Map();this.idleMetrics={attempted:0,deferred:0,acquired:0,completed:0,failed:0,replayed:0};
++  Object.assign(this,{kernel,peer,lanes,checkpoints,combatCheckpoints,writer,frames,readBundle,applyBundle,drainModes,drainModesGroup,unknownActor,quarantined,onFault});this.entries=new Map();this.completed=new Map();this.pendingFreezesR85=new Map();this.idleGroups=new Map();this.idleMetrics={attempted:0,deferred:0,acquired:0,completed:0,failed:0,replayed:0};
+  }
+  validate({id,epoch,token}){demand(typeof id==='string'&&Number.isSafeInteger(epoch)&&epoch>0&&typeof token==='string'&&token.length>=8&&token.length<=160,'resident_control_request');}
+  freezeIdleGroup(requests,beforeDrain=null){
+@@ -59,16 +61,10 @@
+    // healthy leases first; the parent can then abort the unentered cold job,
+    // refresh/resume those exact owners, and retire only the rejected actor.
+    const freezes=requests.map((request,index)=>this.freeze(request,drained.then(rows=>{const row=rows[index];if(row.status==='rejected')throw row.reason;return {...row.value,modesDrained:true};})));
+-   return Promise.allSettled(freezes).then(rows=>{
+-    const rejected=rows.filter(row=>row.status==='rejected');
+-    if(rejected.length){
+-     // Each proof was produced by that actor's own completed quarantine. Do
+-     // not let a second rejected member masquerade as a healthy frozen peer.
+-     const unproven=rejected.find(row=>!actorIsolations(row.reason).length);if(unproven)throw unproven.reason;
+-     const error=rejected[0].reason;attachActorIsolations(error,rejected.flatMap(row=>actorIsolations(row.reason)));throw error;
+-    }
+-    return rows.map(row=>row.value);
+-   });
++   return joinFreezeRequestsR85(freezes,{knownPending:(error,index)=>{
++    const request=requests[index],actor=this.kernel.players.get(request.id);
++    return error?.code==='actor_command_pending'&&actor?.epoch===request.epoch&&this.unknownActor(request.id);
++   }});
+   }
+   // Drain all accepted cross-player work before suspending any group member.
+   const group=this.kernel.quiesceGroup(requests),cold=beforeDrain?.();
+@@ -125,7 +121,7 @@
+     this.frames.invalidate(id);entry.phase='frozen';
+     return {id,token,epoch,channel:this.peer.channel,incarnation:this.peer.incarnation,finalSequence:this.writer.finalSequence(id)};
+    }catch(error){
+-    if(actorFaultIsolation&&error?.code==='actor_command_pending'&&this.unknownActor(id)&&!entry.lease){entry.phase='pending_command';this.entries.delete(id);throw error;}
++    if(actorFaultIsolation&&error?.code==='actor_command_pending'&&this.unknownActor(id)&&!entry.lease){entry.phase='pending_command';this.entries.delete(id);const player=this.kernel.players.get(id);this.pendingFreezesR85.set(token,{entry,player,barrier:player?.barrier,work:null});throw attachFreezeFailuresR85(kernelError('actor_command_pending'),[{actor:id,epoch,freezeToken:token,channel:this.peer.channel,incarnation:this.peer.incarnation,stage:'pending_command',pending:true}]);}
+     const rejected=actorFaultIsolation&&actorRejection(error);
+     if(rejected?.actor===id&&rejected.epoch===epoch){
+      // The checkpoint transaction rolled back. No cold operation has started.
+@@ -138,6 +134,23 @@
+     entry.phase='unknown';if(entry.lease?.state==='held')this.lanes.fence(entry.lease);this.onFault(error,id);throw error;
+    }
+   })();return entry.promise;
++ }
++ cancelPending(request){
++  this.validate(request);const {id,epoch,token}=request,done=this.completed.get(token);
++  if(done?.cancelledPendingR85){demand(done.id===id&&done.epoch===epoch,'resident_pending_cancel_fenced');return Promise.resolve(done);}
++  const pending=this.pendingFreezesR85.get(token);
++  demand(pending?.entry.id===id&&pending.entry.epoch===epoch&&pending.entry.phase==='pending_command'&&!pending.entry.lease&&pending.barrier?.then,'resident_pending_cancel_fenced');
++  if(pending.work)return pending.work;
++  // Only the parent's authenticated pre-command abort cancels this freeze.
++  // Wait the original writer barrier, then use the normal durable checkpoint,
++  // current-image refresh and exact-owner resume. Never infer rollback or flip
++  // accepting while the native outcome is unresolved.
++  pending.work=(async()=>{
++   await pending.barrier;
++   demand(this.pendingFreezesR85.get(token)===pending&&this.kernel.players.get(id)===pending.player&&pending.player.epoch===epoch&&!pending.player.barrier&&!this.unknownActor(id)&&!this.entries.has(id),'resident_pending_cancel_fenced');
++   this.pendingFreezesR85.delete(token);await this.freeze(request);await this.refresh(request);const ack=await this.resume(request);ack.cancelledPendingR85=true;return ack;
++  })().catch(error=>{this.onFault(error,id);throw error;});
++  return pending.work;
+  }
+  refresh(request){
+   this.validate(request);const {id,epoch,token}=request,entry=this.entries.get(id);demand(entry&&entry.token===token&&entry.epoch===epoch,'resident_control_fenced');
+--- a/core511-source/scripts/core511/channel-runtime.mjs
++++ b/core511-source/scripts/core511/channel-runtime.mjs
+@@ -13,6 +13,7 @@
+ import {applyCollectLight,collectMetrics,collectTime} from './collect-light.mjs';
+ import {retiredActorIsolation} from './r48_2-options.mjs';
+ import {actorFaultIsolation} from './r48-options.mjs';
++import {rejectPendingFreezeStartR85} from './freeze-failure-r85.mjs';
+ import {actorRejection} from './actor-rejection.mjs';
+ import {ActorCommandRecovery} from './actor-command-recovery.mjs';
+ import {commandStatusDescriptor} from './actor-command-status.mjs';
+@@ -372,7 +373,8 @@
+    if(response.deferred)return response;
+    return {acks:response.acks.map((ack,i)=>{if(ack.retired)this.releaseColdTraffic(payload.requests[i],{retired:true});const identity=this.channel.identities.get(ack.id);return {...ack,rates:identity?this.rates.snapshot(identity):null};})};
+   }
+-  if(actorFaultIsolation&&(method==='freeze'||method==='freeze_group')){const ids=method==='freeze'?[payload.id]:payload.requests.map(p=>p.id);demand(!ids.some(id=>this.commandRecovery.hasActor(id,{confirmedOnly:true})),'actor_command_pending');}
++  if(actorFaultIsolation&&(method==='freeze'||method==='freeze_group'))rejectPendingFreezeStartR85(this,method==='freeze'?[payload]:payload.requests);
++  if(method==='cancel_pending_freeze'){const ack=await this.channel.control.cancelPending(payload);this.releaseColdTraffic(payload);return ack;}
+   if(method==='freeze'){await this.holdColdTraffic([payload]);const ack=await this.channel.control.freeze(payload),identity=this.channel.identities.get(payload.id);if(ack.retired)this.releaseColdTraffic(payload,{retired:true});return {...ack,rates:identity?this.rates.snapshot(identity):null};}
+   if(method==='freeze_group'){await this.holdColdTraffic(payload.requests);const acks=await this.channel.control.freezeGroup(payload.requests);return acks.map((ack,i)=>{if(ack.retired)this.releaseColdTraffic(payload.requests[i],{retired:true});const identity=this.channel.identities.get(ack.id);return {...ack,rates:identity?this.rates.snapshot(identity):null};});}
+   if(method==='resume'){const ack=await this.channel.control.resume(payload);this.releaseColdTraffic(payload);return ack;}
+--- a/core511-source/scripts/core511/reliable-stream.mjs
++++ b/core511-source/scripts/core511/reliable-stream.mjs
+@@ -13,6 +13,8 @@
+ import {ReadResultParts,beginReadParts,appendReadPart,readPartsMethod} from './ipc-read-parts.mjs';
+ import {markTransportNotSent} from './transport-not-sent.mjs';
+ import {controlIsolationFor,receiveActorIsolation} from './actor-isolation-proof.mjs';
++import {controlFreezeFailureForR85,receiveFreezeFailureR85} from './freeze-failure-r85.mjs';
++import {unprovenFreezeR85} from './freeze-outcomes-r85.mjs';
+ import {controlGlobalFreezeAbortFor,receiveGlobalFreezeAbort} from './global-freeze-abort-proof.mjs';
+ import {markIpcRequestError} from './ipc-request-context.mjs';
+ const MAX_FRAME=1048576;
+@@ -89,7 +91,7 @@
+     if(completed){send(completed.frame);return;}
+     demand(pending||this.controls.size<this.maxPending,'ipc_control_backpressure');
+     let task=pending;
+-    if(!task){task={fingerprint,promise:null};this.controls.set(frame.id,task);task.promise=Promise.resolve().then(()=>this.control(frame.method,frame.payload,frame.id)).then(value=>({type:'control_result',id:frame.id,ok:true,value}),error=>{const isolation=controlIsolationFor(error,frame.method,frame.payload),aborted=controlGlobalFreezeAbortFor(error,frame.method,frame.payload);return {type:'control_result',id:frame.id,ok:false,code:failureCode(error,'ipc_control_failed',frame.method),...(isolation?{actorIsolation:isolation}:{}),...(aborted?{globalFreezeAbort:aborted}:{})};}).then(result=>{this.controls.delete(frame.id);this.controlCompleted.set(frame.id,{fingerprint,frame:result});if(this.controlCompleted.size>512)this.controlCompleted.delete(this.controlCompleted.keys().next().value);return result;});}
++    if(!task){task={fingerprint,promise:null};this.controls.set(frame.id,task);task.promise=Promise.resolve().then(()=>this.control(frame.method,frame.payload,frame.id)).then(value=>({type:'control_result',id:frame.id,ok:true,value}),error=>{const unproven=unprovenFreezeR85(error),isolation=unproven?null:controlIsolationFor(error,frame.method,frame.payload),freezeFailure=unproven?null:controlFreezeFailureForR85(error,frame.method,frame.payload),aborted=controlGlobalFreezeAbortFor(error,frame.method,frame.payload);return {type:'control_result',id:frame.id,ok:false,code:failureCode(error,'ipc_control_failed',frame.method),...(isolation?{actorIsolation:isolation}:{}),...(freezeFailure?{freezeFailureR85:freezeFailure}:{}),...(aborted?{globalFreezeAbort:aborted}:{})};}).then(result=>{this.controls.delete(frame.id);this.controlCompleted.set(frame.id,{fingerprint,frame:result});if(this.controlCompleted.size>512)this.controlCompleted.delete(this.controlCompleted.keys().next().value);return result;});}
+     void task.promise.then(send).catch(()=>socket.destroy());return;
+    }
+    if(ipcSafeStream&&frame.type==='result_part'){
+@@ -149,7 +151,7 @@
+  // Only bounded diagnostics may abandon an unanswered request. Durable
+  // freeze/admission/refresh controls retain their existing replay semantics.
+  request(method,payload,{id=randomUUID(),timeoutMs=null}={}){demand(!this.closed,'ipc_control_closed');demand(this.pending.size<this.maxPending,'ipc_control_backpressure');demand(!this.pending.has(id),'ipc_control_duplicate_pending_id');demand(timeoutMs===null||['metrics','profile','load_measure'].includes(method)&&Number.isSafeInteger(timeoutMs)&&timeoutMs>0&&timeoutMs<=5000,'ipc_control_timeout_scope');const stage=stageStartR51(),frame={type:'control',id,method,payload},encoded=framed(frame),bytes=r35Options.writerHygiene?encoded:undefined;return observeStageR51('control.'+method,stage,new Promise((resolve,reject)=>{const row={frame,bytes,resolve,reject,timer:null};this.pending.set(id,row);if(timeoutMs!==null){row.timer=setTimeout(()=>{if(this.pending.get(id)!==row)return;this.pending.delete(id);reject(kernelError('ipc_control_timeout'));},timeoutMs);row.timer.unref();}this.send?.(frame,bytes);}));}
+- receive(frame){demand(frame.type==='control_result'&&typeof frame.id==='string','invalid_control_result');const row=this.pending.get(frame.id);if(!row)return;const error=frame.ok===true?null:receiveGlobalFreezeAbort(receiveActorIsolation(kernelError(typeof frame.code==='string'?frame.code:'ipc_control_failed'),frame.actorIsolation,row.frame.method,row.frame.payload),frame.globalFreezeAbort,row.frame.method,row.frame.payload);this.pending.delete(frame.id);clearTimeout(row.timer);frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(error,row.frame.method,row.frame.payload));}
++ receive(frame){demand(frame.type==='control_result'&&typeof frame.id==='string','invalid_control_result');const row=this.pending.get(frame.id);if(!row)return;const error=frame.ok===true?null:receiveFreezeFailureR85(receiveGlobalFreezeAbort(receiveActorIsolation(kernelError(typeof frame.code==='string'?frame.code:'ipc_control_failed'),frame.actorIsolation,row.frame.method,row.frame.payload),frame.globalFreezeAbort,row.frame.method,row.frame.payload),frame.freezeFailureR85,row.frame.method,row.frame.payload);this.pending.delete(frame.id);clearTimeout(row.timer);frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(error,row.frame.method,row.frame.payload));}
+  close(){this.closed=true;this.send=null;for(const row of this.pending.values()){clearTimeout(row.timer);row.reject(markIpcRequestError(kernelError('ipc_control_outcome_unknown'),row.frame.method,row.frame.payload));}this.pending.clear();}
+ }
+ export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128,maxInflightFor=null,controlFor=null,onClose=()=>{}}) {
+--- a/core511-source/scripts/core511/shared-combat-bridge.mjs
++++ b/core511-source/scripts/core511/shared-combat-bridge.mjs
+@@ -1,3 +1,4 @@
++import {settleFreezeRequestsR85} from './freeze-outcomes-r85.mjs';
+ import {captureStoppedR533,stoppedOwnerMatchesR533} from './shared-stopped-r533.mjs';
+ import {captureSharedAbortOwners,sharedAbortOwnerMatches} from './shared-abort-proof-r532.mjs';
+ import {recoveryCause,recoveryDiagnostic} from './recovery-diagnostics-r532.mjs';
+@@ -11,6 +12,8 @@
+ import {recoveryWatchdog} from './r47-options.mjs';
+ import {captureReturnSessions,rehomeWorldActors} from './global-return.mjs';
+ import {coldSettlementResources} from './settlement-resources.mjs';
++import {foregroundClaimScopeR85,foregroundClaimTargetsR85} from './reward-actor-scope-r85.mjs';
++import {sharedClaimMismatchR85} from './shared-claim-rejection-r85.mjs';
+ 
+ // Private parent pipe. HP and contribution proposals live only in the world
+ // owner; this book retains authority until the source confirms local promotion.
+@@ -26,6 +29,9 @@
+  async idle(){if(!this.requests.size)return;await new Promise((resolve,reject)=>this.idleWaiters.add({resolve,reject}));}
+  wake(){if(!this.terminal){for(const waiter of this.waiters)waiter.resolve();this.waiters.clear();}if(!this.requests.size){for(const waiter of this.idleWaiters)waiter.resolve();this.idleWaiters.clear();}}
+  get busy(){return this.requests.size>0;}
++ scopeCurrent(row,held){return Boolean(row&&this.requests.get(row.id)===row&&this.world.row===row.world&&!row.world.exited&&!this.core.recoveringWorld&&(held===undefined||this.terminal===held&&row.terminal===held));}
++ assertScope(row,held,code='shared_bridge_superseded'){demand(this.scopeCurrent(row,held),code);}
++ failScope(row,error,requestMethod,held){if(this.scopeCurrent(row,held))this.fail(error,{error,requestMethod});}
+  source(peer,payload){const owner=this.core.writer.owners.get(payload?.actor);demand(owner&&owner.channel===peer.channel&&owner.incarnation===peer.incarnation&&owner.epoch===payload.epoch&&['active','draining'].includes(owner.state),'shared_source_owner_fenced');return {...peer,actor:payload.actor,epoch:payload.epoch};}
+  entry(peer,payload){
+   const row=this.requests.get(payload.id);demand(row&&!row.coldGroup&&row.source.actor===payload.actor&&row.source.epoch===payload.epoch&&row.source.channel===peer.channel&&row.source.incarnation===peer.incarnation&&row.proof===payload.proof&&this.world.row===row.world&&!row.world.exited,'shared_bridge_lease_fenced');
+@@ -41,7 +47,7 @@
+  async reserve(source,id,coldGroup=null){
+   const world=this.world.row;demand(typeof id==='string'&&id.length>=16&&id.length<=160&&!this.requests.has(id)&&world?.state==='running'&&!world.exited,'shared_bridge_request');
+   const row={id,source,world,phase:'acquiring',proof:null,coldGroup,local:[]};this.requests.set(row.id,row);
+-  try{const grant=await world.control.request('shared_acquire',{peer:source,id:row.id});demand(this.world.row===world&&!world.exited,'shared_world_replaced');row.proof=grant.proof;row.phase='leased';return grant;}catch(error){this.fail(error,{error:error,requestMethod:'shared_reserve'});throw error;}
++  try{const grant=await world.control.request('shared_acquire',{peer:source,id:row.id});demand(this.scopeCurrent(row),'shared_world_replaced');row.proof=grant.proof;row.phase='leased';return grant;}catch(error){this.failScope(row,error,'shared_reserve');throw error;}
+  }
+  // Parent-only read lease for native transfer/entry. It never enters the
+  // channel command protocol or authorizes a shared monster mutation. Keep
+@@ -53,7 +59,7 @@
+   const id=randomUUID(),grant=await this.reserve(source,id,group),row=this.requests.get(id);demand(row?.proof===grant.proof,'shared_cold_grant');return row;
+  }
+  registeredCold(group){return this.core.transferGroups.has(group)||this.core.entryReads?.get(group.source)===group;}
+- assertCold(row,group){demand(this.registeredCold(group)&&row?.coldGroup===group&&this.requests.get(row.id)===row&&row.phase==='leased'&&this.world.row===row.world&&!row.world.exited,'shared_cold_fenced');this.core.process(row.source);return row;}
++ assertCold(row,group){demand(this.registeredCold(group)&&row?.coldGroup===group&&this.scopeCurrent(row)&&row.phase==='leased','shared_cold_fenced');this.core.process(row.source);return row;}
+  async checkpointCold(row,group){
+   this.assertCold(row,group);demand(group.phase==='freezing'&&!row.local.length,'shared_cold_checkpoint_phase');if(this.core.entryReads?.get(group.source)===group)group.assertUnadmitted();else this.source(row.source,{actor:row.source.actor,epoch:row.source.epoch});
+   try{
+@@ -64,31 +70,54 @@
+     const owner=c.writer.system.owner('channel:'+channel);demand(ack?.token===token&&ack.cycle===cycle&&ack.channel===channel&&ack.incarnation===target.peer.incarnation&&JSON.stringify(ack.resources)===JSON.stringify(resources)&&Number.isSafeInteger(ack.sequence)&&ack.sequence>=0&&owner?.online===1&&owner.incarnation===target.peer.incarnation&&owner.sequence>=ack.sequence,'shared_cold_local_ack');
+    }
+    const ack=await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});this.assertCold(row,group);return ack;
+-  }catch(error){this.fail(error,{error:error,requestMethod:'shared_checkpointCold'});throw error;}
++  }catch(error){this.failScope(row,error,'shared_checkpointCold');throw error;}
+  }
+  async finishCold(row,group){
+   this.assertCold(row,group);
+   try{
+-   await Promise.all(row.local.map(async({target,token,cycle})=>{this.core.process(target.peer);const ack=await target.control.request('settlement_resume',{token});this.core.process(target.peer);demand(ack?.token===token&&ack.cycle===cycle&&ack.channel===target.peer.channel&&ack.incarnation===target.peer.incarnation&&ack.resumed,'shared_cold_local_resume_ack');}));row.local=[];
++   await Promise.all(row.local.map(async({target,token,cycle})=>{this.core.process(target.peer);const ack=await target.control.request('settlement_resume',{token});this.core.process(target.peer);demand(ack?.token===token&&ack.cycle===cycle&&ack.channel===target.peer.channel&&ack.incarnation===target.peer.incarnation&&ack.resumed,'shared_cold_local_resume_ack');}));this.assertCold(row,group);row.local=[];
+    const ack=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});this.assertCold(row,group);row.phase='finished';this.requests.delete(row.id);this.wake();return ack;
+-  }catch(error){this.fail(error,{error:error,requestMethod:'shared_finishCold'});throw error;}
++  }catch(error){this.failScope(row,error,'shared_finishCold');throw error;}
+  }
+  async prepare(peer,payload){
+   for(;;){const holds=[...this.ownershipHolds,...[...(this.core.transferGroups??[])].filter(g=>g.phase!=='freezing')];if(!holds.length)break;await Promise.all(holds.map(g=>g.done));}
+   const row=this.entry(peer,payload);demand(row.phase==='leased'&&!this.terminal&&Array.isArray(payload.players)&&payload.players.includes(row.source.actor)&&new Set(payload.players).size===payload.players.length,'shared_terminal_scope');
+   const sourcePlayers=payload.players.map(id=>{const owner=this.core.writer.owners.get(id);demand(owner?.channel===peer.channel&&owner.incarnation===peer.incarnation,'shared_terminal_source_players');return {id,epoch:owner.epoch};});
+   const held={row,token:randomUUID(),phase:'freezing',channels:[],sourcePlayers,sessions:captureReturnSessions(this.core)};if(retiredActorIsolation)held.abortOwners=captureSharedAbortOwners(this.core);held.stoppedCandidates=captureStoppedR533(this.core,sourcePlayers);held.stopped=new Map();this.terminal=held;row.terminal=held;
++  const current=()=>this.scopeCurrent(row,held);
+   try{
+    const channels=[...this.core.processes.values()].filter(c=>c.online);demand(channels.length===4,'shared_terminal_channels');
++   // Keep the same signed world lease, source durable barrier, native command
++   // and receipt. Only an audited, completed boss/stone claim may select fewer
++   // resident holds. Drain shared contributions before deriving its SQL scope.
++   if(actorFaultIsolation&&sourcePlayers.length===1&&foregroundClaimTargetsR85(payload.foregroundClaimR85)){
++    await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});demand(current(),'shared_prepare_superseded');
++    const scope=foregroundClaimScopeR85(this.core.database.sqlite,payload.foregroundClaimR85,row.source.actor,peer.channel);
++    if(scope)held.foregroundClaimR85={scope,input:JSON.stringify(payload.foregroundClaimR85)};
++   }
++   if(held.foregroundClaimR85){
++    const selected=held.foregroundClaimR85.only=new Map(channels.map(c=>[c.peer.channel,[]]));
++    for(const id of held.foregroundClaimR85.scope.actors){
++     const stopped=held.stoppedCandidates.get(id);
++     if(stopped){selected.get(stopped.peer.channel).push({id,epoch:stopped.epoch});continue;}
++     const live=this.core.authority.admission(id)||this.core.authority.simulation?.(id);if(!live)continue;
++     const owner=this.core.authority.owner(id),channel=channels.find(c=>c.peer.channel===owner?.channel&&c.peer.incarnation===owner.incarnation);
++     demand(channel&&owner.epoch===live.epoch&&owner.channel===live.channel,'shared_claim_owner_fenced');
++     selected.get(channel.peer.channel).push({id,epoch:owner.epoch});
++    }
++   }
+    const holds=channels.map(async channel=>{
+     const freezes=[...this.core.permanent.entries.values()].filter(e=>e.phase==='freezing'&&e.owner?.channel===channel.peer.channel&&e.owner?.incarnation===channel.peer.incarnation).map(e=>({id:e.id,epoch:e.owner.epoch,token:e.token}));
+     for(const e of this.core.transitions.values())if(e.phase==='freezing'&&e.owner.channel===channel.peer.channel&&e.owner.incarnation===channel.peer.incarnation)freezes.push(e.request);
+-    const answer=await channel.control.request('shared_hold',{token:held.token,except:channel.peer.channel===peer.channel?sourcePlayers:[],freezes,stopped:[...held.stoppedCandidates.values()].filter(p=>p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation)});demand(answer.token===held.token&&answer.channel===channel.peer.channel&&answer.incarnation===channel.peer.incarnation&&Array.isArray(answer.actors),'shared_hold_ack');held.channels.push({channel,answer});
++    const only=held.foregroundClaimR85?.only.get(channel.peer.channel),except=channel.peer.channel===peer.channel?sourcePlayers:[];
++    const answer=await channel.control.request('shared_hold',{token:held.token,except,freezes,...(only?{only}:{}),stopped:[...held.stoppedCandidates.values()].filter(p=>p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation&&(!only||only.some(a=>a.id===p.actor&&a.epoch===p.epoch)))});demand(answer.token===held.token&&answer.channel===channel.peer.channel&&answer.incarnation===channel.peer.incarnation&&Array.isArray(answer.actors),'shared_hold_ack');demand(current(),'shared_prepare_superseded');held.channels.push({channel,answer});
++    if(only&&!answer.aborted){const reported=[...answer.actors,...(answer.stoppedActors??[]).map(a=>({id:a.actor,epoch:a.epoch})),...except];demand(answer.actors.every(a=>only.some(p=>p.id===a.id&&p.epoch===a.epoch))&&only.every(p=>reported.some(a=>a.id===p.id&&a.epoch===p.epoch)),'shared_claim_hold_scope');}
+    });
+    if(actorFaultIsolation){
+-    // Join every started hold before deciding whether pre-commit preparation
+-    // can be aborted. A sibling may still be awaiting its checkpoint fsync.
+-    const results=await Promise.allSettled(holds),failed=results.find(r=>r.status==='rejected');if(failed)throw failed.reason;
++    // A structured abort still joins every successful hold before release.
++    // An unproven failed transport escalates promptly: retiring a hung sibling
++    // may be necessary to settle its control request. No timeout grants thaw.
++    const results=await settleFreezeRequestsR85(holds,{set:this.set,clear:this.clear}),failed=results.find(r=>r.status==='rejected');if(failed)throw failed.reason;
+     if(held.channels.some(({answer})=>answer.aborted===true)){
+      demand(held.phase==='freezing'&&!row.commandAck,'shared_abort_after_commit');
+      for(const {channel,answer}of held.channels)if(answer.aborted){
+@@ -97,8 +126,9 @@
+       if(rejection.code==='actor_command_pending')demand([...this.core.actorIsolation.unknownActors.get(rejection.actor)??[]].some(r=>r.owners.some(a=>a.id===rejection.actor&&a.owner?.epoch===rejection.epoch&&a.owner.channel===channel.peer.channel&&a.owner.incarnation===channel.peer.incarnation)),'shared_abort_pending_proof');
+      }
+      await Promise.all(channels.map(async channel=>{const ack=await channel.control.request('shared_abort',{token:held.token});demand(ack?.aborted===true&&ack.token===held.token&&ack.channel===channel.peer.channel&&ack.incarnation===channel.peer.incarnation,'shared_abort_ack');}));
++     demand(current(),'shared_prepare_superseded');
+      await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});
+-     row.phase='finished';row.terminal=null;this.terminal=null;this.wake();return {prepared:false,rejected:true};
++     demand(current(),'shared_prepare_superseded');row.phase='finished';row.terminal=null;this.terminal=null;this.wake();return {prepared:false,rejected:true};
+     }
+    }else await Promise.all(holds);
+ 
+@@ -106,12 +136,14 @@
+     const p=held.stoppedCandidates.get(actor.actor);
+     demand(p&&p.peer.channel===channel.peer.channel&&p.peer.incarnation===channel.peer.incarnation&&actor.epoch===p.epoch&&actor.token===p.token&&actor.finalSequence===p.finalSequence&&stoppedOwnerMatchesR533(this.core,p),'shared_stopped_actor_proof');held.stopped.set(p.actor,p);
+    }
+-   await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});held.phase='frozen';
+-   return {prepared:true,players:[...held.channels.flatMap(c=>c.answer.actors.map(a=>a.id)),...held.stopped.keys()],...(held.stopped.size?{stoppedPlayers:[...held.stopped.keys()]}:{})};
+-  }catch(error){this.fail(error,{error:error,requestMethod:'shared_prepare'});throw error;}
++   await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});demand(current(),'shared_prepare_superseded');held.phase='frozen';
++   if(held.foregroundClaimR85&&!this.claimScopeCurrent(held)){await this.abortTerminal(row);return {prepared:false,rejected:true};}
++   return {prepared:true,players:held.foregroundClaimR85?held.foregroundClaimR85.scope.actors.filter(id=>!sourcePlayers.some(p=>p.id===id)):[...held.channels.flatMap(c=>c.answer.actors.map(a=>a.id)),...held.stopped.keys()],...(held.stopped.size?{stoppedPlayers:[...held.stopped.keys()]}:{})};
++  }catch(error){if(current())this.fail(error,{error:error,requestMethod:'shared_prepare'});throw error;}
+  }
+  assertWrite(sql,payload,context){
+   const held=this.terminal,row=held?.row;demand(held?.phase==='frozen'&&row.source.actor===context.actor&&row.source.epoch===context.epoch&&row.source.incarnation===context.peer.incarnation&&payload.sharedLease===row.proof,'shared_terminal_writer_fenced');
++  this.assertClaimCommand(held,payload,'native_action');
+   for(const p of held.stopped?.values()??[])demand(stoppedOwnerMatchesR533(this.core,p,sql),'shared_stopped_actor_changed');
+   for(const {channel,answer}of held.channels)for(const actor of answer.actors){const current=this.core.authority.owner(actor.id,sql);demand(current?.channel===channel.peer.channel&&current.incarnation===channel.peer.incarnation&&current.epoch===actor.epoch&&current.sequence===actor.sequence,'shared_terminal_actor_changed');}
+   return true;
+@@ -130,7 +162,25 @@
+   // every unauthorized write. Earlier work must drain while phase=freezing.
+   for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);await this.terminalIdle();this.core.process(peer);}
+  }
+- guard(peer,request){const held=this.blocking(peer,request);if(held){const context=this.conflict('reject',peer,request,held);try{demand(false,'shared_terminal_actor_fenced');}catch(error){error.context=context;throw error;}}return true;}
++ assertRefresh(payload,result,context){const h=this.terminal,claim=h?.foregroundClaimR85;if(!claim)return true;const audit=result?.sharedRefresh;if(!(payload.sharedLease===h.row.proof&&audit?.version===1&&audit.all===false&&Array.isArray(audit.actors)&&audit.actors.every(id=>claim.scope.actors.includes(id))))throw sharedClaimMismatchR85(payload,context);return true;}
++ claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||JSON.stringify(foregroundClaimScopeR85(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
++ assertClaimCommand(held,payload,operation){
++  const claim=held?.foregroundClaimR85;if(!claim)return;
++  const actors=new Set(claim.scope.actors),resources=payload.resources??[],ids=resources.filter(k=>k.startsWith('player:')).map(k=>k.slice(7));
++  demand(operation==='native_action'&&JSON.stringify(payload.input)===claim.input&&ids.every(id=>actors.has(id))&&claim.scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
++ }
++ guard(peer,request){
++  const active=this.terminal;
++  if(active?.foregroundClaimR85&&request.payload?.sharedLease===active.row.proof){
++   this.assertClaimCommand(active,request.payload,request.operation);
++   // The first guard runs before any native SQL/RNG and its rejection is
++   // certified only after the existing writer ROLLBACK. The post-write guard
++   // still checks every actual player write, but cannot reread participants
++   // which the successful native boss award legitimately deletes.
++   if(!this.core.writer.playerWrites.active)demand(this.claimScopeCurrent(active),'shared_terminal_actor_fenced');
++  }
++  const held=this.blocking(peer,request);if(held){const context=this.conflict('reject',peer,request,held);try{demand(false,'shared_terminal_actor_fenced');}catch(error){error.context=context;throw error;}}return true;
++ }
+  ownsStatus(peer,request){
+   const h=this.terminal,r=h?.row,q=r?.commandRequest;
+   return Boolean(h?.phase==='frozen'&&q&&r.source.channel===peer.channel&&r.source.incarnation===peer.incarnation&&q.operationId===request.operationId&&q.playerId===request.playerId&&q.epoch===request.epoch&&q.sequence===request.sequence&&q.operation===request.operation);
+@@ -147,10 +197,13 @@
+   await this.abortTerminal(row);row.commandRejected=error;return true;
+  }
+  async abortTerminal(row){
+-  const held=row.terminal;demand(held&&held===this.terminal&&held.phase==='frozen'&&!row.commandAck,'shared_abort_after_commit');
+-  await Promise.all(held.channels.map(async({channel})=>{const ack=await channel.control.request('shared_abort',{token:held.token});demand(ack?.aborted===true&&ack.token===held.token&&ack.channel===channel.peer.channel&&ack.incarnation===channel.peer.incarnation,'shared_abort_ack');}));
+-  await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});
+-  this.clearUnknown(row);row.phase='finished';row.terminal=null;this.terminal=null;this.wake();
++  const held=row.terminal;demand(held&&this.scopeCurrent(row,held)&&held.phase==='frozen'&&!row.commandAck,'shared_abort_after_commit');
++  try{
++   await Promise.all(held.channels.map(async({channel})=>{const ack=await channel.control.request('shared_abort',{token:held.token});demand(ack?.aborted===true&&ack.token===held.token&&ack.channel===channel.peer.channel&&ack.incarnation===channel.peer.incarnation,'shared_abort_ack');}));
++   this.assertScope(row,held,'shared_abort_superseded');
++   await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});
++   this.assertScope(row,held,'shared_abort_superseded');this.clearUnknown(row);row.phase='finished';row.terminal=null;this.terminal=null;this.wake();
++  }catch(error){this.failScope(row,error,'shared_abortTerminal',held);throw error;}
+  }
+  async cancel(peer,payload){
+   demand(actorFaultIsolation,'shared_cancel_disabled');const row=this.entry(peer,payload);demand(payload.operationId==='shared:'+row.id&&!row.commandRequest&&!row.commandAck,'shared_cancel_submitted');
+@@ -161,9 +214,10 @@
+   demand(this.ownsStatus(peer,request),'shared_command_status_fenced');return this.acceptCommand(this.terminal.row,ack);
+  }
+  async acceptCommand(row,ack){
+-  demand(ack?.key===row.commandRequest.operationId&&ack.result,'shared_command_receipt');
++  const held=row.terminal;this.assertScope(row,held);demand(held&&ack?.key===row.commandRequest.operationId&&ack.result,'shared_command_receipt');
+   if(row.commandAck)demand(row.commandAck.key===ack.key,'shared_command_receipt');else row.commandAck=ack;
+-  if(ack.result.passiveAdmissions?.length){row.passiveAdmission??=this.admitPassive(row.terminal,ack.result.passiveAdmissions);await row.passiveAdmission;}this.clearUnknown(row);return row.commandAck;
++  if(ack.result.passiveAdmissions?.length){row.passiveAdmission??=this.admitPassive(held,ack.result.passiveAdmissions);await row.passiveAdmission;}
++  this.assertScope(row,held);this.clearUnknown(row);return row.commandAck;
+  }
+  clearUnknown(row){if(row.commandWatchdog!==undefined&&row.commandWatchdog!==null)this.clear(row.commandWatchdog);row.commandWatchdog=null;row.commandUnknown=null;}
+  stopUnknownTimers(){for(const row of this.requests.values())this.clearUnknown(row);}
+@@ -171,52 +225,59 @@
+   if(row.commandUnknown)return;row.commandUnknown={at:this.clock(),error};
+   // One cold failure timer, never a gameplay poll. A coupled world commit
+   // cannot keep every owner frozen forever, nor be treated as rollback.
+-  row.commandWatchdog=this.set(()=>{row.commandWatchdog=null;void this.expireUnknown(row).catch(error=>this.fail(error,{error:error,requestMethod:'shared_watchUnknown'}));},10000);row.commandWatchdog?.unref?.();
++  row.commandWatchdog=this.set(()=>{row.commandWatchdog=null;void this.expireUnknown(row).catch(error=>{if(row.commandUnknown&&!row.commandAck)this.failScope(row,error,'shared_watchUnknown',row.terminal);});},10000);row.commandWatchdog?.unref?.();
+  }
+  async expireUnknown(row){
+-  if(this.requests.get(row.id)!==row||this.terminal!==row.terminal||!row.commandUnknown||row.commandAck||this.core.stopping||this.core.recoveringWorld)return;
++  if(!this.scopeCurrent(row,row.terminal)||!row.commandUnknown||row.commandAck||this.core.stopping)return;
+   const pending=row.commandUnknown,peer={channel:row.source.channel,incarnation:row.source.incarnation,realm:this.core.realmId},status=await this.core.actorIsolation.commandStatus(peer,row.commandRequest);
+   if(status.status==='committed')return;
+   // Only actual exit of all old owners and durable CURRENT DB recovery may
+   // reconcile this genuinely shared unknown. No epoch/lease expires here.
+-  if(this.requests.get(row.id)!==row||row.commandAck||row.commandUnknown!==pending)return;
++  if(!this.scopeCurrent(row,row.terminal)||row.commandAck||row.commandUnknown!==pending)return;
+   const error=Object.assign(Error('shared_command_outcome_unknown'),{code:'shared_command_outcome_unknown',fenceContext:{actor:row.source.actor,channel:row.source.channel,incarnation:row.source.incarnation,operation:row.commandRequest.operation,phase:'shared_terminal_unknown',requestEpoch:row.source.epoch,sequence:row.commandRequest.sequence,leaseKind:'shared'}});
+   this.core.onFault({actor:row.source.actor,channel:row.source.channel,error,authentication:true,sharedUnknownDeadline:true,elapsedMs:this.clock()-pending.at});this.fail(error,{error:error,requestMethod:'shared_expireUnknown'});
+  }
+  async command(peer,request){
+-  const held=this.terminal,row=held?.row;demand(row&&request.payload?.sharedLease===row.proof&&request.playerId===row.source.actor&&['attack','pvp_attack','heartbeat','movement','retaliation_death','native_action','mode_action','dungeon_entry'].includes(request.operation)&&!row.commandAck,'shared_terminal_command');
+-  if(!actorFaultIsolation){try{const ack=await this.core.writer.command(peer,request);row.commandAck=ack;if(ack.result.passiveAdmissions?.length)await this.admitPassive(held,ack.result.passiveAdmissions);return ack;}catch(error){this.fail(error,{error:error,requestMethod:'shared_command'});throw error;}}
++  const held=this.terminal,row=held?.row;demand(row&&this.scopeCurrent(row,held)&&request.payload?.sharedLease===row.proof&&request.playerId===row.source.actor&&['attack','pvp_attack','heartbeat','movement','retaliation_death','native_action','mode_action','dungeon_entry'].includes(request.operation)&&!row.commandAck,'shared_terminal_command');
++  if(!actorFaultIsolation){try{const ack=await this.core.writer.command(peer,request);this.assertScope(row,held);row.commandAck=ack;if(ack.result.passiveAdmissions?.length)await this.admitPassive(held,ack.result.passiveAdmissions);this.assertScope(row,held);return ack;}catch(error){this.failScope(row,error,'shared_command',held);throw error;}}
+   row.commandRequest=request;let ack;
+   try{ack=await this.core.writer.command(peer,request);}catch(error){
+-   let aborted;try{aborted=await this.abortCommand(row,error,peer,request);}catch(abortError){this.fail(abortError,{error:abortError,requestMethod:'shared_command'});throw abortError;}if(aborted)throw error;
+-   if(/^SQLITE_(CORRUPT|NOTADB|IOERR|FULL)/.test(error?.code??'')){this.fail(error,{error:error,requestMethod:'shared_command'});throw error;}
+-   // A missing IPC ACK is not a failed shared transaction. The exact receipt
+-   // is read and synced; the native gameplay callback is never run again.
+-   try{const status=await this.core.actorIsolation.commandStatus(peer,request);if(status.status==='committed')return status.ack;}catch(statusError){this.fail(statusError,{error:statusError,requestMethod:'shared_command'});throw statusError;}
++   if(!this.scopeCurrent(row,held))throw error;
++   let aborted;try{aborted=await this.abortCommand(row,error,peer,request);}catch(abortError){this.failScope(row,abortError,'shared_command',held);throw abortError;}if(aborted)throw error;
++   if(/^SQLITE_(CORRUPT|NOTADB|IOERR|FULL)/.test(error?.code??'')){this.failScope(row,error,'shared_command',held);throw error;}
++   // The exact durable receipt still decides the outcome. Superseded control
++   // state neither replays the writer nor recovers a replacement generation.
++   try{const status=await this.core.actorIsolation.commandStatus(peer,request);this.assertScope(row,held);if(status.status==='committed')return status.ack;}catch(statusError){this.failScope(row,statusError,'shared_command',held);throw statusError;}
+    this.watchUnknown(row,error);this.core.onFault({actor:request.playerId,channel:peer.channel,error,authentication:true,sharedCommandPending:true});throw error;
+   }
+-  try{return await this.acceptCommand(row,ack);}catch(error){this.fail(error,{error:error,requestMethod:'shared_command'});throw error;}
++  try{return await this.acceptCommand(row,ack);}catch(error){this.failScope(row,error,'shared_command',held);throw error;}
+  }
+  async admitPassive(held,admissions){
+-  const c=this.core;for(const entry of admissions){
++  const c=this.core,row=held.row;this.assertScope(row,held);for(const entry of admissions){
+    const owner=c.authority.owner(entry.id),simulation=c.authority.simulation(entry.id),channel=held.channels.find(r=>r.channel.peer.channel===entry.channel&&r.channel.peer.incarnation===entry.incarnation);
+    demand(channel&&!channel.answer.actors.some(a=>a.id===entry.id)&&owner?.epoch===entry.epoch&&owner.incarnation===entry.incarnation&&owner.channel===entry.channel&&owner.sequence===0&&simulation?.run_id===entry.runId&&simulation.epoch===entry.epoch&&!c.authority.admission(entry.id),'shared_passive_admission_owner');
+    const bundle=await c.load(entry.id),identity={actor:entry.id,account:bundle.player.account_id,session:'simulation:'+entry.runId,epoch:entry.epoch,channel:entry.channel,boot:entry.incarnation,realm:c.realmId};
+-   const ack=await channel.channel.control.request('shared_admit',{bundle,identity,frozen:{token:held.token}});demand(ack?.token===held.token&&ack.id===entry.id&&ack.epoch===entry.epoch&&ack.admitted,'shared_passive_admission_ack');channel.answer.actors.push({id:entry.id,epoch:entry.epoch,sequence:0,rates:null});
++   this.assertScope(row,held);const ack=await channel.channel.control.request('shared_admit',{bundle,identity,frozen:{token:held.token}});demand(ack?.token===held.token&&ack.id===entry.id&&ack.epoch===entry.epoch&&ack.admitted,'shared_passive_admission_ack');this.assertScope(row,held);channel.answer.actors.push({id:entry.id,epoch:entry.epoch,sequence:0,rates:null});
+   }
+  }
+  async finish(peer,payload){
+-  const row=this.entry(peer,payload);demand(row.phase==='leased','shared_finish_phase');row.phase='finishing';
+-  try{
+-   if(row.terminal){
++  const row=this.entry(peer,payload),held=row.terminal;demand(row.phase==='leased','shared_finish_phase');row.phase='finishing';let released=false;
++  const current=()=>this.scopeCurrent(row,held&&!released?held:undefined);
++  try{
++   demand(current(),'shared_finish_superseded');
++   if(held){
+     demand(row.commandAck,'shared_terminal_commit_missing');const snapshot=(await this.core.reader.query('kernel511_world_boot',[row.world.peer.incarnation,row.world.owner.epoch])).rows;
+-    await row.world.control.request('shared_reload',{peer:row.source,proof:row.proof,snapshot});row.terminal.phase='refreshing';
+-    if(row.commandAck.result.moves?.length){row.phase='returning';return {returning:true,token:row.terminal.token};}
++    demand(current(),'shared_finish_superseded');await row.world.control.request('shared_reload',{peer:row.source,proof:row.proof,snapshot});demand(current(),'shared_finish_superseded');held.phase='refreshing';
++    if(row.commandAck.result.moves?.length){row.phase='returning';return {returning:true,token:held.token};}
+     const invalidation=row.commandAck.result.sharedRefresh;demand(!invalidation||invalidation.version===1&&Array.isArray(invalidation.actors)&&typeof invalidation.all==='boolean','shared_refresh_metadata');
+-    await Promise.all(row.terminal.channels.map(async entry=>{const {channel,answer}=entry;entry.refreshActors=!invalidation||invalidation.all?answer.actors.map(a=>a.id):answer.actors.filter(a=>invalidation.actors.includes(a.id)).map(a=>a.id);const ack=await channel.control.request('shared_release',{token:row.terminal.token,refreshActors:entry.refreshActors});demand(ack.token===row.terminal.token&&ack.released,'shared_release_ack');(this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();}));this.terminal=null;this.wake();
+-   }
+-   const ack=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:payload.changes});row.phase='finished';return ack;
+-  }catch(error){this.fail(error,{error:error,requestMethod:'shared_finish'});throw error;}
++    await Promise.all(held.channels.map(async entry=>{const {channel,answer}=entry;entry.refreshActors=!invalidation||invalidation.all?answer.actors.map(a=>a.id):answer.actors.filter(a=>invalidation.actors.includes(a.id)).map(a=>a.id);const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');(this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();}));
++    demand(current(),'shared_finish_superseded');this.terminal=null;released=true;this.wake();
++   }
++   // The channel holds were intentionally released. The original row still
++   // owns its world lease until this finish reply; do not demand the old held
++   // pointer again or clear a later terminal when this ACK eventually arrives.
++   demand(current(),'shared_finish_superseded');const ack=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:payload.changes});demand(current(),'shared_finish_superseded');row.phase='finished';return ack;
++  }catch(error){if(current())this.fail(error,{error,requestMethod:'shared_finish'});throw error;}
+  }
+  async returnReady(peer,payload){
+   const row=this.entry(peer,payload),h=row.terminal;demand(row.phase==='returning'&&h===this.terminal&&Array.isArray(payload.actors),'shared_return_not_ready');
+@@ -225,10 +286,10 @@
+    demand(payload.actors.length===h.sourcePlayers.length&&h.sourcePlayers.every(p=>payload.actors.some(a=>a.id===p.id&&a.epoch===p.epoch)),'shared_return_source_group');
+    const source=h.channels.find(c=>c.channel.peer.incarnation===peer.incarnation);demand(source,'shared_return_source_channel');source.answer.actors.push(...payload.actors);
+    const held={token:h.token,channels:h.channels.map(({channel,answer})=>({peer:channel.peer,control:channel.control,ack:answer}))};
+-   await rehomeWorldActors(this.core,held,row.commandAck.result.moves,h.sessions,{exportMethod:'shared_export',admitMethod:'shared_admit'});
+-   await Promise.all(h.channels.map(async({channel})=>{const answer=await channel.control.request('shared_release',{token:h.token});demand(answer.token===h.token&&answer.released,'shared_release_ack');}));
+-   const answer=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});row.phase='finished';this.terminal=null;this.wake();return answer;
+-  }catch(error){this.fail(error,{error:error,requestMethod:'shared_returnReady'});throw error;}
++   await rehomeWorldActors(this.core,held,row.commandAck.result.moves,h.sessions,{exportMethod:'shared_export',admitMethod:'shared_admit'});this.assertScope(row,h,'shared_return_superseded');
++   await Promise.all(h.channels.map(async({channel})=>{const answer=await channel.control.request('shared_release',{token:h.token});demand(answer.token===h.token&&answer.released,'shared_release_ack');this.assertScope(row,h,'shared_return_superseded');}));this.assertScope(row,h,'shared_return_superseded');
++   const answer=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});this.assertScope(row,h,'shared_return_superseded');row.phase='finished';this.terminal=null;this.wake();return answer;
++  }catch(error){this.failScope(row,error,'shared_returnReady',h);throw error;}
+  }
+  complete(peer,payload){const row=this.entry(peer,payload);demand(row.phase==='finished','shared_complete_phase');this.requests.delete(row.id);this.wake();return {completed:true};}
+  abort(error){this.stopUnknownTimers();for(const set of [this.waiters,this.idleWaiters]){for(const waiter of set)waiter.reject(error);set.clear();}}
+--- a/core511-source/scripts/core511/freeze-outcomes-r85.mjs
++++ b/core511-source/scripts/core511/freeze-outcomes-r85.mjs
+@@ -0,0 +1,47 @@
++import {actorIsolations,attachActorIsolations} from './actor-isolation-proof.mjs';
++import {demand,kernelError} from './contract.mjs';
++import {freezeFailuresR85,attachFreezeFailuresR85} from './freeze-failure-r85.mjs';
++
++const unproven=new WeakSet();
++const markUnproven=error=>{if(error&&typeof error==='object')unproven.add(error);return error;};
++export const unprovenFreezeR85=error=>Boolean(error&&typeof error==='object'&&unproven.has(error));
++
++// Only certified pre-command outcomes may wait for their sibling freezes.
++// An unproven reply fails promptly: recovery may need to retire a sibling in
++// order to settle that sibling's pending control/checkpoint. Every launched
++// Promise retains both observers, so its later rejection is still consumed.
++// A deadline only requests the existing fenced recovery path. It does not
++// release an owner, declare rollback, or replay a native operation.
++export function settleFreezeRequestsR85(requests,{knownRejection=()=>false,deadlineMs=10000,set=setTimeout,clear=clearTimeout}={}){
++ demand(Array.isArray(requests)&&Number.isFinite(deadlineMs)&&deadlineMs>0,'freeze_join_configuration');
++ if(!requests.length)return Promise.resolve([]);
++ return new Promise((resolve,reject)=>{
++  let remaining=requests.length,done=false;const settled=new Array(remaining);
++  const finish=(index,row)=>{if(done)return;settled[index]=row;if(--remaining===0){done=true;clear(timer);resolve(settled);}};
++  const fail=error=>{if(done)return;done=true;clear(timer);reject(markUnproven(error));};
++  const timer=set(()=>fail(kernelError('cold_freeze_deadline')),deadlineMs);timer?.unref?.();
++  for(const [index,request]of requests.entries())Promise.resolve(request).then(value=>finish(index,{status:'fulfilled',value}),error=>{
++   if(done)return;
++   let known;try{known=knownRejection(error,index)===true;}catch(validationError){fail(validationError);return;}
++   if(known)finish(index,{status:'rejected',reason:error});else fail(error);
++  });
++ });
++}
++
++// A stopped proof and an already tracked unknown command are different facts.
++// The caller must verify the latter against the exact current parent owner (or
++// the resident's already confirmed command book). Both actors remain fenced.
++export async function joinFreezeRequestsR85(requests,{knownPending=()=>false,...options}={}){
++ const known=(error,index)=>!unprovenFreezeR85(error)&&(error?.code==='actor_command_pending'?freezeFailuresR85(error).length>0&&knownPending(error,index)===true:actorIsolations(error).length>0);
++ const settled=await settleFreezeRequestsR85(requests,{...options,knownRejection:known});
++ const failed=settled.map((row,index)=>({...row,index})).filter(result=>result.status==='rejected');
++ if(!failed.length)return settled.map(result=>result.value);
++ for(const result of failed)if(!known(result.reason,result.index))throw markUnproven(result.reason);
++ const error=(failed.find(result=>result.reason?.code==='actor_command_pending')??failed[0]).reason;
++ const stopped=failed.flatMap(result=>actorIsolations(result.reason));
++ const pending=failed.flatMap(result=>freezeFailuresR85(result.reason));
++ if(pending.some(fact=>stopped.some(proof=>proof.actor===fact.actor)))throw markUnproven(kernelError('freeze_failure_overlap_r85'));
++ if(pending.length)attachFreezeFailuresR85(error,pending);
++ if(stopped.length)attachActorIsolations(error,stopped);
++ throw error;
++}
+--- a/core511-source/scripts/core511/freeze-failure-r85.mjs
++++ b/core511-source/scripts/core511/freeze-failure-r85.mjs
+@@ -0,0 +1,48 @@
++import {demand,kernelError,validChannel} from './contract.mjs';
++import {actorIsolations} from './actor-isolation-proof.mjs';
++
++// These facts describe only a failed freeze control request. They are not a
++// command receipt, rollback proof, stopped-owner proof, or permission to write.
++// A pending command is still reconciled by the existing exact parent registry.
++const known=new WeakMap(),empty=Object.freeze([]);
++const id=value=>typeof value==='string'&&value.length>0&&value.length<=160;
++function snapshots(rows){
++ demand(Array.isArray(rows)&&rows.length>0&&rows.length<=100,'invalid_freeze_failure_r85');
++ const facts=rows.map(row=>{
++  demand(id(row?.actor)&&Number.isSafeInteger(row.epoch)&&row.epoch>0&&id(row.freezeToken)&&row.freezeToken.length>=8&&validChannel(row.channel)&&id(row.incarnation)&&['pending_command','not_started'].includes(row.stage)&&typeof row.pending==='boolean'&&(row.stage!=='pending_command'||row.pending===true),'invalid_freeze_failure_r85');
++  return Object.freeze({actor:row.actor,epoch:row.epoch,freezeToken:row.freezeToken,channel:row.channel,incarnation:row.incarnation,stage:row.stage,pending:row.pending});
++ });
++ demand(new Set(facts.map(row=>row.actor)).size===facts.length&&facts.some(row=>row.pending),'invalid_freeze_failure_r85');
++ return Object.freeze(facts);
++}
++function matches(facts,method,payload){
++ const requests=method==='freeze'?[payload]:['freeze_group','freeze_idle_group'].includes(method)?payload?.requests:null;
++ demand(Array.isArray(requests)&&requests.length>0&&requests.length<=100&&new Set(requests.map(r=>r?.id)).size===requests.length&&(method!=='freeze'||facts.length===1),'invalid_freeze_failure_scope_r85');
++ for(const fact of facts){const request=requests.find(row=>row?.id===fact.actor);demand(request&&request.epoch===fact.epoch&&request.token===fact.freezeToken,'invalid_freeze_failure_scope_r85');}
++ demand(new Set(facts.map(f=>f.channel+':'+f.incarnation)).size===1,'invalid_freeze_failure_scope_r85');
++ if(facts.some(f=>f.stage==='not_started'))demand(facts.length===requests.length&&facts.every(f=>f.stage==='not_started'),'invalid_freeze_failure_scope_r85');
++}
++export function attachFreezeFailuresR85(error,rows){demand(error?.code==='actor_command_pending','invalid_freeze_failure_code_r85');known.set(error,snapshots(rows));return error;}
++export function freezeFailuresR85(error){return known.get(error)??empty;}
++function disjoint(error,facts){demand(!facts.some(f=>actorIsolations(error).some(p=>p.actor===f.actor)),'invalid_freeze_failure_overlap_r85');}
++export function controlFreezeFailureForR85(error,method,payload){
++ // A wrapper such as admit_held may already have admitted an actor before its
++ // inner freeze rejects. Its outer failure is never a not-started freeze RPC.
++ // Emit only the coded error there; incoming cross-scope facts still fail closed.
++ if(!['freeze','freeze_group','freeze_idle_group'].includes(method))return null;
++ const facts=freezeFailuresR85(error);if(!facts.length)return null;demand(error?.code==='actor_command_pending','invalid_freeze_failure_code_r85');matches(facts,method,payload);disjoint(error,facts);return facts;
++}
++export function receiveFreezeFailureR85(error,rows,method,payload){if(rows===undefined)return error;demand(error?.code==='actor_command_pending','invalid_freeze_failure_code_r85');const facts=snapshots(rows);matches(facts,method,payload);disjoint(error,facts);known.set(error,facts);return error;}
++
++// The outer runtime may reject before starting either auxiliary traffic holds
++// or resident freezes. Authenticate that entire unstarted request explicitly,
++// so the parent never sends refresh/resume for a hold that did not exist.
++export function rejectPendingFreezeStartR85(runtime,requests){
++ const pending=requests.filter(request=>runtime.commandRecovery.hasActor(request.id,{confirmedOnly:true}));if(!pending.length)return;
++ for(const request of requests)runtime.channel.control.validate(request);
++ const error=kernelError('actor_command_pending'),ids=new Set(requests.map(r=>r.id));
++ const alreadyStarted=requests.some(r=>runtime.channel.control.entries.has(r.id)||runtime.channel.control.completed.has(r.token))||[...runtime.coldTraffic.values()].some(row=>ids.has(row.id));
++ if(alreadyStarted)throw error;
++ const pendingIds=new Set(pending.map(r=>r.id));
++ throw attachFreezeFailuresR85(error,requests.map(request=>({actor:request.id,epoch:request.epoch,freezeToken:request.token,channel:runtime.peer.channel,incarnation:runtime.peer.incarnation,stage:'not_started',pending:pendingIds.has(request.id)})));
++}
+--- a/core511-source/scripts/core511/ownership.mjs
++++ b/core511-source/scripts/core511/ownership.mjs
+@@ -17,6 +17,7 @@
+ import {actorFrameConflictProof} from './actor-frame-rejection.mjs';
+ import {ActorCommandOutcomes} from './actor-command-outcomes.mjs';
+ import {commandOutputRollbackProof} from './command-output-guard.mjs';
++import {sharedClaimRollbackProofR85} from './shared-claim-rejection-r85.mjs';
+ import {authorityReadR57,deathBatchR57} from './r57-options.mjs';
+ import {readActorFenceR57,readResourceActorFencesR57} from './authority-read-r57.mjs';
+ 
+@@ -127,7 +128,7 @@
+    demand(this.admission(id,db).session_id===sessionId,'session_epoch_fenced');return owner;});
+  }
+  command(peer,request,{before=null,after=null,dispatch=null}={}){
+-  const original=this.database,definition=this.operations[request.operation];let checkpointRejected=null,sharedGuardRejected=null,frameRejected=null,outputRejected=null;
++  const original=this.database,definition=this.operations[request.operation];let checkpointRejected=null,sharedGuardRejected=null,frameRejected=null,outputRejected=null,claimRejected=null;
+   const outcomes=actorFrameIsolation?(this.commandOutcomes??=new ActorCommandOutcomes(this)):null;let flight;
+   try{flight=outcomes?.begin(peer,request);}catch(error){return Promise.reject(error);}
+   const atomic=work=>dispatch?dispatch.atomic(work):timedAtomicR51(original,work,request.operation);
+@@ -138,7 +139,7 @@
+     const local=request.payload?.localScope;if(local){const code=local.kind==='collect'?LOCAL_COLLECT_REJECTED:local.kind==='claim'?LOCAL_CLAIM_REJECTED:LOCAL_KILL_REJECTED,offline=['collect','mixed'].includes(local.kind)?(local.kind==='mixed'?assertLocalMixedScope:assertLocalCollectScope)(db,{local,input:request.payload.input,resources:request.payload.resources,peer,actor:request.playerId,nowMs:request.payload.nowMs,batchSinglesR57:deathBatchR57&&request.operation==='attack'&&Array.isArray(request.payload.batchAttacksR57)&&request.payload.batchAttacksR57.length>0&&request.payload.batchAttacksR57.length<=4}):assertLocalRewardScope(db,{code,targets:local.targets,input:request.payload.input,nativeLimit:local.nativeLimit,completedR56:local.completedR56,resources:request.payload.resources,peer,actor:request.playerId});
+      // Offline party members may be written; run the post-work owner guard on
+      // them now, so a member mid-logout/transfer falls back instead of failing.
+-     if(offline.length)try{this.commandGuard?.(db,peer,{...request,payload:{...request.payload,resources:[...request.payload.resources,...offline.map(id=>'player:'+id)]}});}catch{throw Object.assign(new Error(code),{code});}}}
++     if(offline.length)try{this.commandGuard?.(db,peer,request,[...request.payload.resources,...offline.map(id=>'player:'+id)]);}catch{throw Object.assign(new Error(code),{code});}}}
+    catch(error){
+     // Never turn a replay/retired sequence into a negative acknowledgement:
+     // its first execution may already have committed before an ACK was lost.
+@@ -151,6 +152,10 @@
+    }
+    if(before)demand(before(db)!==false,'command_preparation_rejected');let result;
+    try{result=work(db);}catch(error){
++    if(sharedClaimRollbackProofR85(error,peer,request)){
++     const owner=this.owner(request.playerId,db),receipt=prepareCached477(db,'SELECT 1 FROM kernel511_channel_receipts WHERE operation_id=?').get(request.operationId);
++     if(!receipt&&owner?.epoch===request.epoch&&request.sequence===owner.sequence+1)claimRejected=error;
++    }
+     if(commandOutputRollbackProof(error,peer,request)){
+      const owner=this.owner(request.playerId,db),receipt=prepareCached477(db,'SELECT 1 FROM kernel511_channel_receipts WHERE operation_id=?').get(request.operationId);
+      if(!receipt&&owner?.epoch===request.epoch&&request.sequence===owner.sequence+1)outputRejected=error;
+@@ -174,7 +179,7 @@
+    // LocalDatabase rejects this SAME exception only after ROLLBACK TO the
+    // request savepoint and successful group durability. A rollback/COMMIT/fsync
+    // failure substitutes its own exception and cannot mint not_executed.
+-   if(outcomes&&(error===checkpointRejected||error===sharedGuardRejected||error===frameRejected||error===outputRejected||actorRejection(error))){
++   if(outcomes&&(error===checkpointRejected||error===sharedGuardRejected||error===frameRejected||error===outputRejected||error===claimRejected||actorRejection(error))){
+     // Another identical request may have committed in the same SQLite group
+     // before this rejected job's fsync finished. Its receipt takes precedence.
+     const owner=this.owner(request.playerId),receipt=prepareCached477(original.sqlite,'SELECT 1 FROM kernel511_channel_receipts WHERE operation_id=?').get(request.operationId);
+@@ -182,6 +187,7 @@
+    }
+    if(error===checkpointRejected)rejectActorJob(error,peer,request);
+    if(error===sharedGuardRejected)rejectSharedActorJob(error,peer,request);
++   if(error===claimRejected)rejectSharedActorJob(error,peer,request);
+    if(error===frameRejected){if(request.payload?.sharedLease)rejectSharedActorJob(error,peer,request);else rejectActorJob(error,peer,request);}
+    if(error===outputRejected){if(request.payload?.sharedLease)rejectSharedActorJob(error,peer,request);else rejectActorJob(error,peer,request);}
+    outcomes?.remember(peer,request,error);
+@@ -278,7 +284,10 @@
+  authority.operations[kind]={duringDrain,allowSimulation,execute(db,{playerId,epoch,payload,owner,operationId}){
+   const peer={channel:owner.channel,incarnation:owner.incarnation,realm:authority.realmId};
+   (allowSimulation?authority.assertSimulated:authority.assertAdmitted).call(authority,db,peer,playerId,epoch,{allowDraining:duringDrain});
+-  return {key:operationId,result:handler(db,payload,{actor:playerId,epoch,peer,key:operationId,realm:authority.realmId})};
++  // Native ChannelAuthority has checked request.sequence===owner.sequence+1
++  // before invoking this handler. Retain that original identity for the
++  // post-write resource audit, even if native work advances an owner.
++  return {key:operationId,result:handler(db,payload,{actor:playerId,epoch,sequence:owner.sequence+1,peer,key:operationId,realm:authority.realmId})};
+  }};
+ }
+ 
+--- a/core511-source/scripts/core511/player-write-scope.mjs
++++ b/core511-source/scripts/core511/player-write-scope.mjs
+@@ -49,12 +49,18 @@
+   }
+   sql.exec('DELETE FROM temp.kernel511_player_write_set;UPDATE temp.kernel511_player_write_enabled SET enabled=1');this.active=true;
+   try{
+-   const result=work();demand(!result?.then,'player_write_scope_synchronous');const ids=this.ids();
++   const result=work();demand(!result?.then,'player_write_scope_synchronous');
++   // A narrowed shared claim must cover cold projection effects as well as
++   // player writes. Reject inside the native transaction before any COMMIT.
++   if(payload.sharedLease&&shared.assertRefresh)shared.assertRefresh(payload,result,context);
++   const ids=this.ids();
+    if(kind==='dungeon_entry')for(const entry of result.passiveAdmissions??[]){const owner=this.authority.owner(entry.id,sql),simulation=this.authority.simulation(entry.id,sql);demand(!this.authority.admission(entry.id,sql)&&simulation?.run_id===entry.runId&&simulation.epoch===entry.epoch&&owner?.incarnation===context.peer.incarnation&&owner.channel===context.peer.channel&&owner.epoch===entry.epoch,'player_write_passive_claim');permitted.add(entry.id);}
+    for(const id of ids)if(this.authority.admission(id,sql)||this.authority.simulation(id,sql))demand(permitted.has(id),'player_write_unlocked_actor');
+    // Offline native rewards are legitimate, but may not race a permanent
+    // operation/transfer. Recheck the actual write set, not just caller keys.
+-   if(afterWriteGuard)demand(afterWriteGuard(sql,ids)===true,'player_write_frozen_scope');else this.authority.commandGuard?.(sql,context.peer,{playerId:context.actor,epoch:context.epoch,operation:kind,payload:{...payload,resources:[...new Set([...resources,...ids.map(id=>'player:'+id)])]}});
++   // Preserve the exact admitted command for unknown-outcome matching. Actual
++   // written resources extend the audit without changing that command's digest.
++   if(afterWriteGuard)demand(afterWriteGuard(sql,ids)===true,'player_write_frozen_scope');else this.authority.commandGuard?.(sql,context.peer,{playerId:context.actor,epoch:context.epoch,sequence:context.sequence,operationId:context.key,operation:kind,payload},[...new Set([...resources,...ids.map(id=>'player:'+id)])]);
+    return result;
+   }finally{this.active=false;sql.exec('UPDATE temp.kernel511_player_write_enabled SET enabled=0;DELETE FROM temp.kernel511_player_write_set');}
+  }

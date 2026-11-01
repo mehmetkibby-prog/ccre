@@ -1,0 +1,738 @@
+{
+  "diagnosticOnly": true,
+  "sourceMutated": false,
+  "stats": {
+    "GameWriter.refreshOwners": {
+      "count": 26,
+      "totalMs": 9.774013000003833,
+      "maxMs": 0.7702980000012758
+    },
+    "NativeModeServices.refresh": {
+      "count": 25,
+      "totalMs": 25.8055080000031,
+      "maxMs": 5.904317000000447
+    },
+    "NativeGameServices.refresh": {
+      "count": 25,
+      "totalMs": 32.8074849999939,
+      "maxMs": 7.435937999998714
+    },
+    "WriterPresence.materialize": {
+      "count": 25,
+      "totalMs": 8.814180999999735,
+      "maxMs": 1.9775929999996151
+    },
+    "GameWriter.command": {
+      "count": 25,
+      "totalMs": 806.43233899999,
+      "maxMs": 145.02401699999973
+    }
+  },
+  "spans": [
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546474861.2336,
+      "ms": 0.1474259999995411
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546484692.829,
+      "ms": 0.7702980000012758
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546484693.6172,
+      "ms": 5.904317000000447
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546484693.6145,
+      "ms": 7.435937999998714
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546484707.616,
+      "ms": 0.02213099999971746,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546484701.0894,
+      "ms": 145.02401699999973,
+      "operation": "attack",
+      "batch": 10
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546484863.1472,
+      "ms": 0.5456589999994321
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546484863.7102,
+      "ms": 1.040143000000171
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546484863.708,
+      "ms": 1.338278999999602
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546484865.5447,
+      "ms": 1.0433590000011463,
+      "rows": 13
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546484865.081,
+      "ms": 14.307912999998734,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546484899.9377,
+      "ms": 0.43663500000002387
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546484900.3877,
+      "ms": 0.8122669999993377
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546484900.3828,
+      "ms": 1.0233709999993152
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546484901.852,
+      "ms": 0.011070999998992193,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546484901.4238,
+      "ms": 14.76658899999893,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546484919.37,
+      "ms": 0.33841299999949115
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546484919.7178,
+      "ms": 0.882207999999082
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546484919.7158,
+      "ms": 1.07816400000047
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546484921.2659,
+      "ms": 0.002955999998448533,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546484920.8096,
+      "ms": 17.125514999999723,
+      "operation": "attack",
+      "batch": 2
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546484940.8738,
+      "ms": 0.36041300000033516
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546484941.243,
+      "ms": 0.815403000000515
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546484941.2412,
+      "ms": 1.0122709999996005
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546484942.7808,
+      "ms": 0.0024150000008376082,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546484942.2705,
+      "ms": 65.02853200000027,
+      "operation": "attack",
+      "batch": 10
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546485017.5957,
+      "ms": 0.36012299999856623
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546485017.9673,
+      "ms": 0.9101500000015221
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546485017.9653,
+      "ms": 1.151119000000108
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546485019.6055,
+      "ms": 0.0019529999990481883,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546485019.1362,
+      "ms": 25.455551999999443,
+      "operation": "attack",
+      "batch": 3
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546485050.1504,
+      "ms": 0.2879269999993994
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546485050.448,
+      "ms": 0.9394539999993867
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546485050.446,
+      "ms": 1.1662379999997938
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546485052.0708,
+      "ms": 0.0034059999998135027,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546485051.6306,
+      "ms": 7.984231999998883,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546485061.7502,
+      "ms": 0.3265499999997701
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546485062.0847,
+      "ms": 1.0065400000003137
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546485062.0833,
+      "ms": 1.2030070000000705
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546485063.7708,
+      "ms": 0.0024140000004990725,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546485063.302,
+      "ms": 39.310868999999,
+      "operation": "attack",
+      "batch": 6
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546485108.1523,
+      "ms": 0.2962729999999283
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546485108.459,
+      "ms": 0.7734540000001289
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546485108.457,
+      "ms": 0.968339000000924
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546485110.1382,
+      "ms": 0.8268439999992552,
+      "rows": 12
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546485109.4492,
+      "ms": 64.41263400000025,
+      "operation": "attack",
+      "batch": 10
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546485187.0537,
+      "ms": 0.41384300000026997
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546485187.4868,
+      "ms": 1.0799880000013218
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546485187.4832,
+      "ms": 1.3402029999997467
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546485189.5933,
+      "ms": 0.005240000000412692,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546485188.852,
+      "ms": 37.30989299999965,
+      "operation": "attack",
+      "batch": 6
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494512.726,
+      "ms": 0.5948310000021593
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494513.3376,
+      "ms": 1.0708799999993062
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494513.3342,
+      "ms": 1.6038249999983236
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494515.6863,
+      "ms": 1.9775929999996151,
+      "rows": 12
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494514.9712,
+      "ms": 19.463974999998754,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494552.8647,
+      "ms": 0.3693390000007639
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494553.2446,
+      "ms": 0.8242199999986042
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494553.2422,
+      "ms": 1.0527959999999439
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494554.9475,
+      "ms": 0.004207999998470768,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494554.311,
+      "ms": 60.158157999998366,
+      "operation": "attack",
+      "batch": 8
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494617.1729,
+      "ms": 0.3178829999997106
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494617.4976,
+      "ms": 0.7152060000007623
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494617.4954,
+      "ms": 0.9147389999998268
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494618.9175,
+      "ms": 1.2086180000005697,
+      "rows": 13
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494618.4265,
+      "ms": 31.854746000000887,
+      "operation": "attack",
+      "batch": 5
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494654.4258,
+      "ms": 0.2880380000024161
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494654.7197,
+      "ms": 0.7333299999991141
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494654.7183,
+      "ms": 0.9188959999992221
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494656.0889,
+      "ms": 0.8083090000000084,
+      "rows": 13
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494655.6536,
+      "ms": 33.55541199999789,
+      "operation": "attack",
+      "batch": 5
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494693.931,
+      "ms": 0.3567960000000312
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494694.2947,
+      "ms": 0.6761130000013509
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494694.293,
+      "ms": 0.935527000001457
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494695.7056,
+      "ms": 0.003285999999206979,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494695.2407,
+      "ms": 58.1188089999996,
+      "operation": "attack",
+      "batch": 10
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494756.041,
+      "ms": 0.2876670000005106
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494756.335,
+      "ms": 0.7153270000017073
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494756.3335,
+      "ms": 0.9140469999983907
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494757.6157,
+      "ms": 0.0034670000022742897,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494757.26,
+      "ms": 7.485321000000113,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494768.4866,
+      "ms": 0.29462100000091596
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494768.7874,
+      "ms": 0.6837670000022626
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494768.7861,
+      "ms": 0.8695850000003702
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494770.104,
+      "ms": 0.0033660000008239876,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494769.6663,
+      "ms": 8.188923999998224,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494780.0686,
+      "ms": 0.3060719999994035
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494780.3796,
+      "ms": 0.699376000000484
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494780.3782,
+      "ms": 0.8933480000014242
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494781.6812,
+      "ms": 0.8799440000002505,
+      "rows": 13
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494781.2861,
+      "ms": 8.3782280000014,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494792.126,
+      "ms": 0.3117019999990589
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494792.4443,
+      "ms": 0.6826849999997648
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494792.4426,
+      "ms": 0.877067999997962
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494793.7095,
+      "ms": 0.942059999997582,
+      "rows": 13
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494793.3357,
+      "ms": 9.542483000001084,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494805.2976,
+      "ms": 0.3569859999988694
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494805.6606,
+      "ms": 0.8270249999986845
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494805.6592,
+      "ms": 1.030365000002348
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494811.234,
+      "ms": 0.003736999999091495,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494806.7012,
+      "ms": 26.812096999998175,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494849.7195,
+      "ms": 0.3806609999992361
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494850.109,
+      "ms": 0.7540979999976116
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494850.1074,
+      "ms": 1.001840999997512
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494851.5647,
+      "ms": 0.0040470000021741726,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494851.124,
+      "ms": 8.742517999999109,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494886.1284,
+      "ms": 0.45145400000183145
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494886.5903,
+      "ms": 0.8596160000015516
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494886.5881,
+      "ms": 1.0698279999996885
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494888.1587,
+      "ms": 0.004248000001098262,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494887.6697,
+      "ms": 11.237457999999606,
+      "operation": "attack",
+      "batch": 1
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546494901.3652,
+      "ms": 0.282376999999542
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546494901.6523,
+      "ms": 0.7097749999993539
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546494901.6511,
+      "ms": 0.8953229999970063
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546494903.026,
+      "ms": 0.0035669999997480772,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546494902.5562,
+      "ms": 15.082378999999491,
+      "operation": "attack",
+      "batch": 2
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546495014.1375,
+      "ms": 0.5307710000015504
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546495014.6807,
+      "ms": 0.9249270000000251
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546495014.6787,
+      "ms": 1.1648960000020452
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546495016.5398,
+      "ms": 0.004097000000911066,
+      "rows": 0
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546495015.8623,
+      "ms": 62.604387000003044,
+      "operation": "attack",
+      "batch": 10
+    },
+    {
+      "name": "GameWriter.refreshOwners",
+      "startEpochMs": 1793546495081.0933,
+      "ms": 0.36125499999980093
+    },
+    {
+      "name": "NativeModeServices.refresh",
+      "startEpochMs": 1793546495081.462,
+      "ms": 0.7652390000002924
+    },
+    {
+      "name": "NativeGameServices.refresh",
+      "startEpochMs": 1793546495081.4602,
+      "ms": 0.948472000000038
+    },
+    {
+      "name": "WriterPresence.materialize",
+      "startEpochMs": 1793546495082.9011,
+      "ms": 1.0418449999997392,
+      "rows": 12
+    },
+    {
+      "name": "GameWriter.command",
+      "startEpochMs": 1793546495082.4285,
+      "ms": 14.481697999999597,
+      "operation": "attack",
+      "batch": 2
+    }
+  ]
+}

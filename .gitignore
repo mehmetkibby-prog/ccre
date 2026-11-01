@@ -1,0 +1,16 @@
+**/__pycache__/
+*.pyc
+.env
+.env.*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.db
+*.db-*
+*.pem
+*.key
+r79_stability_work/runtime/
+**/working/**/node_modules
+**/tests/runtime/r84-baseline/core511-source/scripts/delivery511
+**/tests/runtime/r84-baseline/core511-source/scripts/perf-r11
+**/tests/runtime/r84-baseline/native510-bb3a6cc689c6

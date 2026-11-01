@@ -1,0 +1,95 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/channel-native-services.mjs",
+  "sourceSha256": "3bd374d65b86654136ab58e0baddb3effe8a5b27abe54271216f57d15aba6273",
+  "declaration": {
+    "start": 2047,
+    "end": 6389,
+    "sha256": "4c38099b9d536b70ade9f8cea1b0a73c9274f40b13011e84f79f9ba847add7e1"
+  },
+  "generatedSha256": "eb6d49facc61476485e1475360874fe014d74d03713e5221a1ed8f02a4f50f62",
+  "inventory": {
+    "source": "vds-server/src/channel-native-operations.mjs",
+    "sourceSha256": "61e062b4cb6548b3d5b5a883d22911815cdd92e4d8088f8b1666398d74b0639a"
+  },
+  "factoryBindings": {
+    "createProgressionSettings": "progression",
+    "createCommunityEvent": "community",
+    "createEvolutionQuest": "evolution",
+    "createRanks": "ranks",
+    "createQuests438": "quests",
+    "createBattlePass": "battlePass",
+    "createCauldron488": "cauldron",
+    "createStatus": "status",
+    "createRunes": "runes",
+    "createRuneV2": "runeV2",
+    "createEventIsland444": "events",
+    "createArenaMarket": "arena",
+    "createDragonBoss": "dragon",
+    "createGuildVillage": "guildVillage",
+    "PremiumEngine": "premium",
+    "createGuildSkill": "guildSkill"
+  },
+  "globals": [
+    "__colEquipmentSets",
+    "__colProgression",
+    "__colCommunityEvent",
+    "__colOnboarding",
+    "__colEvolutionQuest",
+    "__colRanks",
+    "__colQuests438",
+    "__colBattlePass",
+    "__colCauldron488",
+    "__colEnhancement491",
+    "__colStatus",
+    "__colRunes",
+    "__colRuneV2",
+    "__colEventIsland444",
+    "__colArenaMarket",
+    "__colDragonBoss",
+    "__colItemLinks",
+    "__colPlayerTrade",
+    "__colStorage",
+    "__colBotCheck",
+    "__colLaunch",
+    "__colLaunchEmail",
+    "__colLevelRanking",
+    "__colMonsterRanking",
+    "__colStarterReward",
+    "__colDungeon",
+    "__colGuildVillage",
+    "__colPremium",
+    "__colGuildVoice",
+    "__colGuildSkill",
+    "__colAdminPlayerReset495",
+    "__colAdminGuildReset470"
+  ],
+  "changes": [
+    "Original initializer declaration byte-identical; native imports retained",
+    "Existing manifest-derived four-channel factories share raw sole SQLite and real clock/RNG",
+    "coordinatorOnly is mandatory; no DungeonEngine simulation or timers started",
+    "Exact native inventory dispatcher; HTTP scope separately restricts entry to expansion456.act/brokenCore464.act"
+  ],
+  "fullHttpIntegration": false,
+  "priorExtractionGeneratedSha256": "66571fa86ecaacfc7055afe2e241eecc56fe338705b2945152fb4c903fb25ca3",
+  "r76Gameplay": {
+    "feature": "daily-monster-prizes-api-r76",
+    "edits": [
+      {
+        "from": "import * as native0 from ",
+        "to": "import {createMonsterRankingR76} from '../monster-ranking-r76.mjs';\nimport * as native0 from ",
+        "count": 1
+      },
+      {
+        "from": "const createMonsterRanking=native9.createMonsterRanking;",
+        "to": "const createMonsterRanking=(...args)=>createMonsterRankingR76(native9.createMonsterRanking,...args);",
+        "count": 1
+      }
+    ],
+    "sourceSha256": "240642c3418a7305556d29f6709cb94a078f68db57834b3bbab3a0e567cc126a",
+    "sourcePin": "Released R75 archive update.json baseCoreRows generated/native-http-services.mjs",
+    "patchedSha256": "eb6d49facc61476485e1475360874fe014d74d03713e5221a1ed8f02a4f50f62",
+    "inverseEqual": true,
+    "scope": "Existing native daily ranking read/cache/cutoff retained; response describes top-three reward values."
+  }
+}

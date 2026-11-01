@@ -1,0 +1,9 @@
+{
+  "sourceCore": "fbbaa4e9026dd87898999ecc5d947f760ed5858c72be52586936b954d83fc087",
+  "diagnosticCore": "4494018f76150edda5e0533c3b5d5bc1f3270a072390dbc4b672120751e26138",
+  "changedOnly": "core511-source/scripts/core511/death-movement-r86.mjs",
+  "sourceHelperSHA": "af7ec2ac95859a05cc0e33254c4e1a2e46d5e775f3df87abc28f648a57d945dd",
+  "diagnosticHelperSHA": "174058d84fc0b872be84ee2884665638e31fce5b9bd10f80e63d26f86e94f50d",
+  "samplesPerChannelMax": 200,
+  "notCapacityAcceptance": true
+}

@@ -1,0 +1,1304 @@
+{
+  "diagnosticOnly": true,
+  "raw": "/workspace/ccre/r85_stability_work/evidence/native-mixed-load-r86-guard-diagnostic-50.json",
+  "diagnosticCoreSHA256": "4494018f76150edda5e0533c3b5d5bc1f3270a072390dbc4b672120751e26138",
+  "sourceUnchanged": true,
+  "nativeIntegrityPassed": true,
+  "startEpochMs": 1793551930505.842,
+  "channels": [
+    {
+      "target": "channel-1",
+      "counts": {
+        "blockedState:pve_due": 22,
+        "blockedState:checkpoint_overdue": 1
+      },
+      "firstWave": [
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932941,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2435.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932941,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2435.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932991,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2485.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932991,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2485.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933041,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2535.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933041,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2535.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933094,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2588.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-8",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933094,
+          "receivedAtMs": 1793551933045,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9389.213916,
+          "nextHitAtMs": 1793551932991,
+          "hp": 999640,
+          "capturedHp": 999640,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2539.157958984375,
+          "processedOffsetMs": 2588.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933094,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2588.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933140,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2634.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-8",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933140,
+          "receivedAtMs": 1793551933045,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9389.213916,
+          "nextHitAtMs": 1793551932991,
+          "hp": 999640,
+          "capturedHp": 999640,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2539.157958984375,
+          "processedOffsetMs": 2634.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933140,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2634.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-4",
+          "reasons": [
+            "pve_due",
+            "checkpoint_overdue"
+          ],
+          "now": 1793551933192,
+          "receivedAtMs": 1793551932858,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 7865.699969,
+          "checkpointJoinedAtMs": 9599.841426,
+          "nextHitAtMs": 1793551932795,
+          "hp": 999613,
+          "capturedHp": 999613,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2352.157958984375,
+          "processedOffsetMs": 2686.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-8",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933192,
+          "receivedAtMs": 1793551933045,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9389.213916,
+          "nextHitAtMs": 1793551932991,
+          "hp": 999640,
+          "capturedHp": 999640,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2539.157958984375,
+          "processedOffsetMs": 2686.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-36",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933192,
+          "receivedAtMs": 1793551932860,
+          "permitStartedAtMs": 1793551932907,
+          "checkpointAtMs": 9491.640483,
+          "nextHitAtMs": 1793551932798,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2354.157958984375,
+          "processedOffsetMs": 2686.157958984375,
+          "permitOffsetMs": 2401.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-20",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933240,
+          "receivedAtMs": 1793551932859,
+          "permitStartedAtMs": 1793551933220,
+          "checkpointAtMs": 9389.309114,
+          "checkpointJoinedAtMs": 9913.705768,
+          "nextHitAtMs": 1793551932804,
+          "hp": 999898,
+          "capturedHp": 999898,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2353.157958984375,
+          "processedOffsetMs": 2734.157958984375,
+          "permitOffsetMs": 2714.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-20",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933291,
+          "receivedAtMs": 1793551932859,
+          "permitStartedAtMs": 1793551933220,
+          "checkpointAtMs": 9389.309114,
+          "checkpointJoinedAtMs": 9913.705768,
+          "nextHitAtMs": 1793551932804,
+          "hp": 999898,
+          "capturedHp": 999898,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2353.157958984375,
+          "processedOffsetMs": 2785.157958984375,
+          "permitOffsetMs": 2714.157958984375
+        }
+      ],
+      "movement": {
+        "candidateGroups": 21,
+        "groups": 21,
+        "eligibleActors": 36,
+        "moves": 24,
+        "secondaryPreviews": 15,
+        "blockedState": 22,
+        "preservedPositions": 15
+      },
+      "deathWait": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793551960598,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 21,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 21,
+        "totalP95Ms": 282.98104199999943,
+        "totalMaxMs": 360.3139080000001,
+        "checkpointMaxMs": 49.65790200000083,
+        "writerMaxMs": 299.5684450000008,
+        "refreshMaxMs": 11.087560999998459,
+        "last": {
+          "atMs": 1793551959914,
+          "outcome": "completed",
+          "totalMs": 20.103715999997803,
+          "checkpointMs": 3.304843999998411,
+          "writerMs": 15.096797999998671,
+          "refreshMs": 1.7020740000007208
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793551933129,
+            "outcome": "completed",
+            "totalMs": 266.81568100000004,
+            "checkpointMs": 4.616929000001619,
+            "writerMs": 255.96248699999887,
+            "refreshMs": 6.236264999999548
+          },
+          {
+            "atMs": 1793551933146,
+            "outcome": "completed",
+            "totalMs": 282.98104199999943,
+            "checkpointMs": 4.429328000000169,
+            "writerMs": 276.21283399999993,
+            "refreshMs": 2.3388799999993353
+          },
+          {
+            "atMs": 1793551933218,
+            "outcome": "completed",
+            "totalMs": 360.3139080000001,
+            "checkpointMs": 49.65790200000083,
+            "writerMs": 299.5684450000008,
+            "refreshMs": 11.087560999998459
+          },
+          {
+            "atMs": 1793551943062,
+            "outcome": "completed",
+            "totalMs": 120.11666100000002,
+            "checkpointMs": 2.7176970000000438,
+            "writerMs": 115.91685499999949,
+            "refreshMs": 1.4821090000004915
+          },
+          {
+            "atMs": 1793551943090,
+            "outcome": "completed",
+            "totalMs": 123.08975099999952,
+            "checkpointMs": 0.2645349999984319,
+            "writerMs": 121.20342700000037,
+            "refreshMs": 1.6217890000007174
+          },
+          {
+            "atMs": 1793551943155,
+            "outcome": "completed",
+            "totalMs": 162.86630800000057,
+            "checkpointMs": 3.7248079999990296,
+            "writerMs": 157.5386150000013,
+            "refreshMs": 1.6028850000002421
+          },
+          {
+            "atMs": 1793551943304,
+            "outcome": "completed",
+            "totalMs": 259.4646270000012,
+            "checkpointMs": 5.071013000000676,
+            "writerMs": 252.05442400000175,
+            "refreshMs": 2.33918999999878
+          }
+        ]
+      }
+    },
+    {
+      "target": "channel-2",
+      "counts": {
+        "blockedState:pve_due": 21
+      },
+      "firstWave": [
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-1",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932916,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.083224,
+          "checkpointJoinedAtMs": 8810.262513,
+          "nextHitAtMs": 1793551932768,
+          "hp": 999577,
+          "capturedHp": 999577,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2410.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-5",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932916,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.199972,
+          "nextHitAtMs": 1793551932767,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2410.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-17",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932916,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.334914,
+          "nextHitAtMs": 1793551932768,
+          "hp": 999871,
+          "capturedHp": 999871,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2410.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-1",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932966,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.083224,
+          "checkpointJoinedAtMs": 8810.262513,
+          "nextHitAtMs": 1793551932768,
+          "hp": 999577,
+          "capturedHp": 999577,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2460.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-5",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932966,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.199972,
+          "nextHitAtMs": 1793551932767,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2460.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-17",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932966,
+          "receivedAtMs": 1793551932900,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 8749.334914,
+          "nextHitAtMs": 1793551932768,
+          "hp": 999871,
+          "capturedHp": 999871,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2394.157958984375,
+          "processedOffsetMs": 2460.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-33",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932966,
+          "receivedAtMs": 1793551932948,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 7248.908087,
+          "checkpointJoinedAtMs": 8810.349777,
+          "nextHitAtMs": 1793551932768,
+          "hp": 999934,
+          "capturedHp": 999934,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2442.157958984375,
+          "processedOffsetMs": 2460.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-37",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932966,
+          "receivedAtMs": 1793551932948,
+          "permitStartedAtMs": 1793551932830,
+          "checkpointAtMs": 7249.242712,
+          "checkpointJoinedAtMs": 8810.358743,
+          "nextHitAtMs": 1793551932939,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2442.157958984375,
+          "processedOffsetMs": 2460.157958984375,
+          "permitOffsetMs": 2324.157958984375
+        }
+      ],
+      "movement": {
+        "candidateGroups": 14,
+        "secondaryPreviews": 23,
+        "groups": 14,
+        "eligibleActors": 37,
+        "blockedState": 21,
+        "moves": 20,
+        "preservedPositions": 17
+      },
+      "deathWait": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793551960596,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 14,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 14,
+        "totalP95Ms": 312.11238700000104,
+        "totalMaxMs": 312.11238700000104,
+        "checkpointMaxMs": 131.08743700000014,
+        "writerMaxMs": 255.6247860000003,
+        "refreshMaxMs": 10.907965000000331,
+        "last": {
+          "atMs": 1793551960104,
+          "outcome": "completed",
+          "totalMs": 36.019232999999076,
+          "checkpointMs": 2.5120459999961895,
+          "writerMs": 32.24459900000511,
+          "refreshMs": 1.262587999997777
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793551932999,
+            "outcome": "completed",
+            "totalMs": 170.5796250000003,
+            "checkpointMs": 1.1699959999987186,
+            "writerMs": 158.50166400000126,
+            "refreshMs": 10.907965000000331
+          },
+          {
+            "atMs": 1793551933232,
+            "outcome": "completed",
+            "totalMs": 312.11238700000104,
+            "checkpointMs": 131.08743700000014,
+            "writerMs": 177.64200800000071,
+            "refreshMs": 3.3829420000001846
+          },
+          {
+            "atMs": 1793551943295,
+            "outcome": "completed",
+            "totalMs": 272.4360319999978,
+            "checkpointMs": 6.196866999998747,
+            "writerMs": 255.6247860000003,
+            "refreshMs": 10.614378999998735
+          }
+        ]
+      }
+    },
+    {
+      "target": "channel-3",
+      "counts": {
+        "blockedState:pve_due": 8
+      },
+      "firstWave": [
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-6",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932873,
+          "receivedAtMs": 1793551932839,
+          "permitStartedAtMs": 1793551932832,
+          "checkpointAtMs": 7936.326614,
+          "checkpointJoinedAtMs": 8139.433732,
+          "nextHitAtMs": 1793551932825,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2333.157958984375,
+          "processedOffsetMs": 2367.157958984375,
+          "permitOffsetMs": 2326.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-6",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932923,
+          "receivedAtMs": 1793551932839,
+          "permitStartedAtMs": 1793551932832,
+          "checkpointAtMs": 7936.326614,
+          "checkpointJoinedAtMs": 8139.433732,
+          "nextHitAtMs": 1793551932825,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2333.157958984375,
+          "processedOffsetMs": 2417.157958984375,
+          "permitOffsetMs": 2326.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-6",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551932973,
+          "receivedAtMs": 1793551932839,
+          "permitStartedAtMs": 1793551932832,
+          "checkpointAtMs": 7936.326614,
+          "checkpointJoinedAtMs": 8139.433732,
+          "nextHitAtMs": 1793551932825,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2333.157958984375,
+          "processedOffsetMs": 2467.157958984375,
+          "permitOffsetMs": 2326.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-6",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933022,
+          "receivedAtMs": 1793551932839,
+          "permitStartedAtMs": 1793551932832,
+          "checkpointAtMs": 7936.326614,
+          "checkpointJoinedAtMs": 8139.433732,
+          "nextHitAtMs": 1793551932825,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2333.157958984375,
+          "processedOffsetMs": 2516.157958984375,
+          "permitOffsetMs": 2326.157958984375
+        }
+      ],
+      "movement": {
+        "candidateGroups": 13,
+        "secondaryPreviews": 24,
+        "groups": 13,
+        "eligibleActors": 37,
+        "moves": 13,
+        "blockedState": 8,
+        "preservedPositions": 13
+      },
+      "deathWait": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793551960595,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 13,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 13,
+        "totalP95Ms": 222.5444069999994,
+        "totalMaxMs": 222.5444069999994,
+        "checkpointMaxMs": 6.464916999997513,
+        "writerMaxMs": 208.52498600000035,
+        "refreshMaxMs": 15.141098000000056,
+        "last": {
+          "atMs": 1793551960054,
+          "outcome": "completed",
+          "totalMs": 30.345695000003616,
+          "checkpointMs": 1.6922660000054748,
+          "writerMs": 27.03473899999517,
+          "refreshMs": 1.618690000002971
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793551932904,
+            "outcome": "completed",
+            "totalMs": 128.37796199999957,
+            "checkpointMs": 3.495563000000402,
+            "writerMs": 112.60654700000032,
+            "refreshMs": 12.27585199999885
+          },
+          {
+            "atMs": 1793551933053,
+            "outcome": "completed",
+            "totalMs": 222.5444069999994,
+            "checkpointMs": 1.4404230000000098,
+            "writerMs": 208.52498600000035,
+            "refreshMs": 12.578997999999046
+          },
+          {
+            "atMs": 1793551943057,
+            "outcome": "completed",
+            "totalMs": 131.97888299999977,
+            "checkpointMs": 6.464916999997513,
+            "writerMs": 118.87527400000181,
+            "refreshMs": 6.638692000000447
+          },
+          {
+            "atMs": 1793551943153,
+            "outcome": "completed",
+            "totalMs": 176.732849,
+            "checkpointMs": 2.1409199999980046,
+            "writerMs": 159.45083100000193,
+            "refreshMs": 15.141098000000056
+          },
+          {
+            "atMs": 1793551943208,
+            "outcome": "completed",
+            "totalMs": 184.02315799999997,
+            "checkpointMs": 1.5830370000003313,
+            "writerMs": 180.88328199999887,
+            "refreshMs": 1.556839000000764
+          }
+        ]
+      }
+    },
+    {
+      "target": "channel-4",
+      "counts": {
+        "blockedState:pve_due": 23
+      },
+      "firstWave": [
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-3",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933011,
+          "receivedAtMs": 1793551933007,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 7164.659304,
+          "checkpointJoinedAtMs": 7335.297723,
+          "nextHitAtMs": 1793551932809,
+          "hp": 999562,
+          "capturedHp": 999562,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 12,
+          "receivedOffsetMs": 2501.157958984375,
+          "processedOffsetMs": 2505.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-7",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933011,
+          "receivedAtMs": 1793551932993,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 5776.229263,
+          "checkpointJoinedAtMs": 7335.337137,
+          "nextHitAtMs": 1793551932964,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2487.157958984375,
+          "processedOffsetMs": 2505.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-19",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933011,
+          "receivedAtMs": 1793551933005,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 5777.026112,
+          "checkpointJoinedAtMs": 7335.518966,
+          "nextHitAtMs": 1793551932809,
+          "hp": 999871,
+          "capturedHp": 999871,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2499.157958984375,
+          "processedOffsetMs": 2505.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-3",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933062,
+          "receivedAtMs": 1793551933007,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 7164.659304,
+          "checkpointJoinedAtMs": 7335.297723,
+          "nextHitAtMs": 1793551932809,
+          "hp": 999562,
+          "capturedHp": 999562,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 12,
+          "receivedOffsetMs": 2501.157958984375,
+          "processedOffsetMs": 2556.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-7",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933062,
+          "receivedAtMs": 1793551932993,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 5776.229263,
+          "checkpointJoinedAtMs": 7335.337137,
+          "nextHitAtMs": 1793551932964,
+          "hp": 999616,
+          "capturedHp": 999616,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2487.157958984375,
+          "processedOffsetMs": 2556.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-19",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933062,
+          "receivedAtMs": 1793551933005,
+          "permitStartedAtMs": 1793551932837,
+          "checkpointAtMs": 5777.026112,
+          "checkpointJoinedAtMs": 7335.518966,
+          "nextHitAtMs": 1793551932809,
+          "hp": 999871,
+          "capturedHp": 999871,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2499.157958984375,
+          "processedOffsetMs": 2556.157958984375,
+          "permitOffsetMs": 2331.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-35",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933161,
+          "receivedAtMs": 1793551933024,
+          "permitStartedAtMs": 1793551933144,
+          "checkpointAtMs": 7342.599379,
+          "nextHitAtMs": 1793551932938,
+          "hp": 999952,
+          "capturedHp": 999952,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2518.157958984375,
+          "processedOffsetMs": 2655.157958984375,
+          "permitOffsetMs": 2638.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-35",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933212,
+          "receivedAtMs": 1793551933024,
+          "permitStartedAtMs": 1793551933144,
+          "checkpointAtMs": 7342.599379,
+          "nextHitAtMs": 1793551932938,
+          "hp": 999952,
+          "capturedHp": 999952,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2518.157958984375,
+          "processedOffsetMs": 2706.157958984375,
+          "permitOffsetMs": 2638.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-35",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933262,
+          "receivedAtMs": 1793551933024,
+          "permitStartedAtMs": 1793551933144,
+          "checkpointAtMs": 7342.599379,
+          "nextHitAtMs": 1793551932938,
+          "hp": 999952,
+          "capturedHp": 999952,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 11,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2518.157958984375,
+          "processedOffsetMs": 2756.157958984375,
+          "permitOffsetMs": 2638.157958984375
+        },
+        {
+          "kind": "blockedState",
+          "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-39",
+          "reasons": [
+            "pve_due"
+          ],
+          "now": 1793551933262,
+          "receivedAtMs": 1793551933229,
+          "permitStartedAtMs": 1793551933144,
+          "checkpointAtMs": 7342.623274,
+          "nextHitAtMs": 1793551933039,
+          "hp": 999964,
+          "capturedHp": 999964,
+          "rootUntil": 0,
+          "stunUntil": 0,
+          "positionRevision": 12,
+          "capturedPositionRevision": 11,
+          "receivedOffsetMs": 2723.157958984375,
+          "processedOffsetMs": 2756.157958984375,
+          "permitOffsetMs": 2638.157958984375
+        }
+      ],
+      "movement": {
+        "candidateGroups": 16,
+        "secondaryPreviews": 18,
+        "groups": 16,
+        "eligibleActors": 34,
+        "blockedState": 23,
+        "moves": 15,
+        "preservedPositions": 11
+      },
+      "deathWait": {
+        "schema": 1,
+        "scope": "local-monster-death-callback",
+        "measuredAtMs": 1793551960600,
+        "active": 0,
+        "oldestActiveMs": 0,
+        "phaseActive": {
+          "checkpoint": 0,
+          "writer": 0,
+          "refresh": 0
+        },
+        "phaseOldestMs": {
+          "checkpoint": null,
+          "writer": null,
+          "refresh": null
+        },
+        "completed": 16,
+        "rejected": 0,
+        "failed": 0,
+        "dropped": 0,
+        "sampleScope": "last-128-finished-in-this-process",
+        "samples": 16,
+        "totalP95Ms": 413.120328,
+        "totalMaxMs": 413.120328,
+        "checkpointMaxMs": 276.81617299999925,
+        "writerMaxMs": 268.60007900000073,
+        "refreshMaxMs": 26.53548099999989,
+        "last": {
+          "atMs": 1793551959873,
+          "outcome": "completed",
+          "totalMs": 55.73716599999898,
+          "checkpointMs": 3.139275000001362,
+          "writerMs": 50.116542999996454,
+          "refreshMs": 2.4813480000011623
+        },
+        "slowThresholdMs": 100,
+        "recentSlow": [
+          {
+            "atMs": 1793551933132,
+            "outcome": "completed",
+            "totalMs": 301.39914600000066,
+            "checkpointMs": 6.263586000000032,
+            "writerMs": 268.60007900000073,
+            "refreshMs": 26.53548099999989
+          },
+          {
+            "atMs": 1793551933279,
+            "outcome": "completed",
+            "totalMs": 413.120328,
+            "checkpointMs": 276.81617299999925,
+            "writerMs": 129.3868680000005,
+            "refreshMs": 6.917287000000215
+          },
+          {
+            "atMs": 1793551943039,
+            "outcome": "completed",
+            "totalMs": 123.06131800000003,
+            "checkpointMs": 7.9762510000000475,
+            "writerMs": 100.18366900000183,
+            "refreshMs": 14.901397999998153
+          },
+          {
+            "atMs": 1793551943081,
+            "outcome": "completed",
+            "totalMs": 117.87533099999928,
+            "checkpointMs": 2.159663999998884,
+            "writerMs": 112.86479099999997,
+            "refreshMs": 2.850876000000426
+          },
+          {
+            "atMs": 1793551943187,
+            "outcome": "completed",
+            "totalMs": 173.09994300000108,
+            "checkpointMs": 5.582578999998077,
+            "writerMs": 161.39894400000048,
+            "refreshMs": 6.118420000002516
+          },
+          {
+            "atMs": 1793551943193,
+            "outcome": "completed",
+            "totalMs": 178.8498350000009,
+            "checkpointMs": 5.2034309999980906,
+            "writerMs": 172.28941900000063,
+            "refreshMs": 1.3569850000021688
+          },
+          {
+            "atMs": 1793551943316,
+            "outcome": "completed",
+            "totalMs": 251.70887899999798,
+            "checkpointMs": 4.122822000001179,
+            "writerMs": 245.59551799999826,
+            "refreshMs": 1.9905389999985346
+          }
+        ]
+      }
+    }
+  ],
+  "result": {
+    "nativePassed": true,
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "errors": 0,
+    "faults": 0,
+    "allWireMs": {
+      "count": 9906,
+      "p50": 38.18730200000027,
+      "p95": 81.30195899999944,
+      "p99": 246.10374199999933,
+      "max": 510.143634
+    },
+    "moveWireMs": {
+      "count": 7217,
+      "p50": 38.74666400000024,
+      "p95": 66.5095160000019,
+      "p99": 154.7014019999997,
+      "max": 510.143634
+    },
+    "guardCounts": {
+      "blockedState:pve_due": 74,
+      "blockedState:checkpoint_overdue": 1
+    },
+    "firstWaveBlockedSamples": 39,
+    "firstWaveBlockedActors": 15,
+    "predictionCaps": [
+      {
+        "actor": "3ed0bc83-34c4-4a58-9924-d097c46c7b20-20",
+        "episodes": 1,
+        "totalMs": 99.16994599999998,
+        "limitedFrames": 2,
+        "limitedMs": 100.34378999999996,
+        "intervals": [
+          {
+            "startOffsetMs": 2784.77592,
+            "endOffsetMs": 2883.945866,
+            "durationMs": 99.16994599999998
+          }
+        ]
+      }
+    ]
+  },
+  "interpretation": [
+    "All74 blockedState samples contain PvE-due; only1 also checkpoint-overdue. First5s39 samples/15 actors, all PvE-due. No blockedProposal samples.",
+    "Actor20 has1 prediction-cap episode99.17ms and2 clipped frames100.34ms; native economy/integrity passes but strict performance does not.",
+    "The recorded guards ran after permits were already active; moving permit installation earlier alone cannot eliminate these blocks.",
+    "Engagement monster IDs, attackers489, lease keys and pending kill target IDs were not captured. Exact attacker identity cannot be proven from this raw file.",
+    "Existing harness attacks a100MHP monster before switching to the seeded lethal target. Native preparePveEngagement keeps an existing live primary attacker and unions attackers489; skipping due PvE is not justified.",
+    "checkpointAtMs/checkpointJoinedAtMs are process monotonic times. now/receivedAtMs/permitStartedAtMs are epoch times. They must not be subtracted across clocks."
+  ]
+}

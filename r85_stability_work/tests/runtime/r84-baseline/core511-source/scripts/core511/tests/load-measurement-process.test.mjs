@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {setup} from './process-fixture.mjs';
+import {validateRuntimeMeasurements} from '../runtime-acceptance.mjs';
+
+test('actual five OS owners and read-only thread measure native SQL and world OS pauses without double-counting process CPU',{timeout:25000},async t=>{
+ const {core,world,supervisor,reader,faults}=await setup(t,{shared:true,readerQueries:new Map([['measurement-slow','WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM n WHERE x<2000000) SELECT sum(x) AS total FROM n']])});await world.stopJobs();const runId=randomUUID(),old=[world.row,...supervisor.rows.values()];await core.diagnostics.beginLoad(runId);
+ const reading=reader.query('measurement-slow');assert(world.row.child.kill('SIGSTOP'));try{await new Promise(resolve=>setTimeout(resolve,100));}finally{world.row.child.kill('SIGCONT');}assert.equal((await reading).rows[0].total,2000001000000);
+ const report=await core.diagnostics.endLoad(runId),rows=report.measurement.eventLoops;assert.equal(rows.length,7);assert.equal(new Set(rows.map(r=>r.pid)).size,6);assert.equal(new Set(rows.map(r=>r.pid+':'+r.threadId)).size,7);const main=rows.find(r=>r.target==='main'),read=rows.find(r=>r.target==='reader');assert.equal(read.pid,main.pid);assert(read.threadId>0);assert.equal(read.processCpuMs,null);assert.equal(read.maxRssBytes,null);assert(rows.every(r=>r.complete&&r.delaySamples>0&&r.durationMs>100));
+ assert(rows.find(r=>r.target==='world').maxPauseMs>50,JSON.stringify(rows));assert(read.maxPauseMs>50,JSON.stringify(read));const failures=validateRuntimeMeasurements(report,{durationMs:1,transport:'message-channel'});assert(failures.includes('runtime_pause:world'));assert(failures.includes('runtime_pause:reader'));assert(!failures.includes('runtime_inventory')&&!failures.includes('runtime_identity')&&!failures.includes('runtime_topology'),JSON.stringify(failures));assert.equal(faults.length,0);assert.deepEqual([world.row,...supervisor.rows.values()],old);
+ console.log(JSON.stringify({scope:'short diagnostic fault measurement only; not complete-game or performance acceptance',measurement:report.measurement,failures}));
+});
+
+test('a changed actual read worker invalidates the interval instead of substituting its fresh measurements',{timeout:25000},async t=>{
+ const {core,world,supervisor,reader,faults}=await setup(t,{shared:true});await world.stopJobs();const runId=randomUUID(),old=[world.row,...supervisor.rows.values()],worker=reader.worker;await core.diagnostics.beginLoad(runId);await worker.terminate();await core.boot(core.processes.get(1).peer);assert.equal(reader.starts,2);
+ await assert.rejects(core.diagnostics.endLoad(runId),error=>{assert.equal(error.code,'load_process_changed');assert.equal(error.partialMeasurement.complete,false);assert.equal(error.partialMeasurement.eventLoops.length,6);assert.deepEqual(error.partialMeasurement.failures,[{target:'reader',code:'load_process_changed'}]);assert(!error.partialMeasurement.eventLoops.some(r=>r.target==='reader'));assert(validateRuntimeMeasurements({measurement:error.partialMeasurement},{durationMs:1,transport:'message-channel'}).length>0);return true;});assert.equal(core.diagnostics.load.active,null);assert.equal(faults.length,0);assert.deepEqual([world.row,...supervisor.rows.values()],old);const next=randomUUID();await core.diagnostics.beginLoad(next);const report=await core.diagnostics.endLoad(next);assert.equal(report.measurement.eventLoops.find(r=>r.target==='reader').threadId,reader.worker.threadId);assert.equal(reader.starts,2);
+});

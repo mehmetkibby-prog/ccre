@@ -1,0 +1,108 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "slices": [
+    {
+      "source": "vds-server/src/premium-engine.mjs",
+      "sourceSha256": "0ee411f2459c9a5bf6598602cc63f02c2d1d41f0a9556d5503c089f24fd2fc6c",
+      "start": 13111,
+      "end": 14373,
+      "sha256": "b0cd64eb21a4fa92c32962c82e94825ad96eec1370677d2fbf6935cf103f83e5"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "nativeDurabilityBoundary",
+      "start": 7299,
+      "end": 7434,
+      "sha256": "7ab52077f66240c65b6fdf423fa78c263aa084767f45e93901168afe8c0f5d89"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "state",
+      "start": 7442,
+      "end": 7512,
+      "sha256": "7a9b6c22abc7a0f4e373b2980b13b2db443119ff01ae3b9260a35ef06ad886bf"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "advance",
+      "start": 7521,
+      "end": 7617,
+      "sha256": "084d7b4fb6e80812e742b053beabb4ba1c47e1eef4c6d9dd09ed63251731bc48"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "pending",
+      "start": 7626,
+      "end": 7736,
+      "sha256": "0189a61500cd041e574aa955d24bda005069a109ccf84ce974845c28518b78d1"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "receipt",
+      "start": 7745,
+      "end": 7826,
+      "sha256": "a5345308a684ba66432fc2db2f423422b17a0f2ecde23e3c206ad21073f9206f"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "player",
+      "start": 7835,
+      "end": 7911,
+      "sha256": "931d28912958c4216d5ae70b11c70fb99e5992313f21e54ca70b61c2f6165c9b"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "credit",
+      "start": 7920,
+      "end": 8037,
+      "sha256": "7c918c39695f636d10f92381016b0a720290d4536a949de6335ed085fd3d6b47"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "paid",
+      "start": 8046,
+      "end": 8179,
+      "sha256": "97a36bdc880aa59010aa18d0a8a35d76c3f34800b197b47fbb80e51d5f62cb70"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "missing",
+      "start": 8188,
+      "end": 8373,
+      "sha256": "a74dcec15d3c6131f843789d72af0b4ef3b598c2258229416ad942a575ef72a9"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "transaction",
+      "start": 8407,
+      "end": 8573,
+      "sha256": "5446ea9bdc5ee80a3975de535ceff26ddd7255011719956b4c196c48bf8d8485"
+    },
+    {
+      "source": "vds-server/src/daily-monster-reward477.mjs",
+      "sourceSha256": "866687b4f81f000f94819a97db3defaa19a3515677ca8a8aaedb891ef8e1a08e",
+      "name": "settleOne",
+      "start": 8582,
+      "end": 9137,
+      "sha256": "d18db0ef777570e1b2e40aa025347346430790796e6b0ac155703b28c8b87330"
+    }
+  ],
+  "generatedSha256": "aff9105fe9cd29fdf255946482c49b8af1f544275747466e31716aef80fa4bdd",
+  "edits": [
+    "Exact native indexed premium due-query array",
+    "Exact native daily receipt read/credit/consume transaction declarations",
+    "Native UTC+3 day calculation and next-day idle deadline",
+    "Native separate FULL-connection guard becomes mandatory verified FULL or healthy async WAL fsync on the sole SystemWriter; outer receipt/ACK cannot bypass durability",
+    "Only parent-owned scheduling and outer durable receipt are supplied externally"
+  ]
+}

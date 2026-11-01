@@ -1,0 +1,95 @@
+{
+  "scope": "exact automatic potion poll and unchanged complete transport with controlled time/ACK/world state; native healing/inventory database not executed",
+  "sourceSha256": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+  "candidateSha256": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+  "transportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+  "candidatePotionExcerptSha256": "2921aef003ae8f5adf8e337ce189c8789861e56f4538c8ac920754924b3c4848",
+  "cases": [
+    {
+      "name": "open-world automatic potion ownership lasts beyond UI timeout",
+      "status": "passed"
+    },
+    {
+      "name": "open-world death while potion pending is never inferred as revival",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon automatic potion ownership lasts beyond UI timeout",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon death while potion pending is never inferred as revival",
+      "status": "passed"
+    },
+    {
+      "name": "automatic potion waits behind deliberate manual potions without deduplicating manual intents",
+      "status": "passed"
+    },
+    {
+      "name": "automatic potion remains admissible behind a different gameplay action",
+      "status": "passed"
+    },
+    {
+      "name": "explicit potion rejection releases ownership while retaining original two-second cadence",
+      "status": "passed"
+    },
+    {
+      "name": "connection, replacement and verification fences prevent pre-queue automatic intents",
+      "status": "passed"
+    },
+    {
+      "name": "existing death, HP, ownership, enabled, area and visibility conditions stay enforced",
+      "status": "passed"
+    },
+    {
+      "name": "delayed initial ticket admits no stale potion and restores automatic use after independent world connection",
+      "status": "passed"
+    },
+    {
+      "name": "real reconnect retains accepted potion without replay and late ACK releases the gate",
+      "status": "passed"
+    },
+    {
+      "name": "manual generic inventory/economy and potion callback bodies remain byte-identical",
+      "status": "passed"
+    }
+  ],
+  "cadence": [
+    {
+      "scope": "open-world",
+      "baselineWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "candidateWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "healthyAckMs": 40
+    },
+    {
+      "scope": "dungeon",
+      "baselineWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "candidateWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "healthyAckMs": 40
+    }
+  ]
+}

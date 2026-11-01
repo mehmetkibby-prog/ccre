@@ -1,0 +1,96 @@
+{
+  "diagnosticOnly": true,
+  "capacityAcceptanceClaimed": false,
+  "coreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "sourceUnchanged": true,
+  "workerProfileWindowSeconds": 25,
+  "samplingIntervalMicroseconds": 1000,
+  "stats": {
+    "GameWriter.refreshOwners": {
+      "count": 26,
+      "totalMs": 9.774013000003833,
+      "maxMs": 0.7702980000012758
+    },
+    "NativeModeServices.refresh": {
+      "count": 25,
+      "totalMs": 25.8055080000031,
+      "maxMs": 5.904317000000447
+    },
+    "NativeGameServices.refresh": {
+      "count": 25,
+      "totalMs": 32.8074849999939,
+      "maxMs": 7.435937999998714
+    },
+    "WriterPresence.materialize": {
+      "count": 25,
+      "totalMs": 8.814180999999735,
+      "maxMs": 1.9775929999996151
+    },
+    "GameWriter.command": {
+      "count": 25,
+      "totalMs": 806.43233899999,
+      "maxMs": 145.02401699999973
+    }
+  },
+  "firstCommand": {
+    "name": "GameWriter.command",
+    "startEpochMs": 1793546484701.0894,
+    "ms": 145.02401699999973,
+    "operation": "attack",
+    "batch": 10
+  },
+  "findings": [
+    "Parent preflight/IPC and worker presence/refresh are small relative to native command; presence no-op-write hypothesis is not primary in this measured first wave.",
+    "CPU profile contains startup SQL compilation/initialization; do not attribute its full prepare/exec totals to gameplay.",
+    "First ten-kill native command takes145.02ms; lower-level work is distributed among native attack, retirement/reward delivery, assertions and refresh snapshot. No single SQL stall was identified.",
+    "Secondary batch expected frame is constructed from the exact same current frame/settings, then recopied/compared; private-secondary-only redundant comparison elimination is a narrow candidate, not a demonstrated complete fix."
+  ],
+  "proposal": {
+    "file": "core511-source/scripts/core511/attack-writer.mjs",
+    "lines": [
+      75,
+      76,
+      77
+    ],
+    "scope": "For batchReadR61.fresh=true only, require frame.player but skip frame/settings self comparisons. Keep every primary expected-frame check, ownership/resource/security/receipt/durability guard.",
+    "performanceNotVerified": true,
+    "safetyTestsNeeded": [
+      "Secondary batch vs serial exact economy and results",
+      "Primary mismatched player/monster/settings still rejected",
+      "Null/dead secondary target retains native behavior",
+      "No public caller can opt into fresh-secondary mode"
+    ]
+  },
+  "pins": [
+    {
+      "path": "/workspace/ccre/r86_stability_work/tests/worker-profile-entry.mjs",
+      "bytes": 2283,
+      "sha256": "147c06745f5934d3b0104a8b7c5a15152c588e97920a7b400b4c73c898ecf961"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/tests/profile-worker-inner.mjs",
+      "bytes": 566,
+      "sha256": "7ff4fb1627a58f3043de2427afa5dded3b58f3efd582acdbb3d9963c70d9f2a6"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/worker-inner-spans.json",
+      "bytes": 18458,
+      "sha256": "1ae5d885d06ad596c87ce2afe38578074b1bca2fe39511efd057c7e35931a0b7"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/worker-inner.cpuprofile.json",
+      "bytes": 481064,
+      "sha256": "99ffd878c9bffa3a1ca809e2497933e39ebc49655ae6f2b8fc3fb5f6f13bde12"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/worker-inner.log",
+      "bytes": 3886,
+      "sha256": "cefd3b5e35f477f9ef3fdce1e78df5ccff47248256c4d783e9cf11c0b29df057"
+    },
+    {
+      "path": "/workspace/ccre/r85_stability_work/evidence/native-mixed-load-r86-worker-inner-50.json",
+      "bytes": 3434566,
+      "sha256": "aa5812c06c72c67e4dc1c1477277eded3ab1c9e06374af2d411c97e596b1e5dd"
+    }
+  ]
+}

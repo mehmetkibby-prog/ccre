@@ -1,0 +1,49 @@
+{
+  "cold-world-rules.mjs": {
+    "sourceSha256": "23f88854d30b90a73d1394db99d61a170e3e295ad8aeb736d6558ce9422e8271",
+    "edits": [
+      {
+        "from": "import {groundLoot30s}",
+        "to": "import {castleEnabled} from '../castle-model-r59.mjs';\nimport {groundLoot30s}",
+        "count": 1
+      },
+      {
+        "from": "var OWNER_PLAYER_SQL =",
+        "to": "const CASTLE_PLAYERS_SQL_R59=ACTIVE_PLAYERS_SQL.replaceAll('ORDER BY p.last_seen DESC LIMIT 80','ORDER BY (p.id=?2) DESC,p.last_seen DESC LIMIT 100');\nvar OWNER_PLAYER_SQL =",
+        "count": 1
+      },
+      {
+        "from": "ownerOnly ? OWNER_PLAYER_SQL : ACTIVE_PLAYERS_SQL)",
+        "to": "ownerOnly ? OWNER_PLAYER_SQL : castleEnabled()&&channel===4?CASTLE_PLAYERS_SQL_R59:ACTIVE_PLAYERS_SQL)",
+        "count": 1
+      },
+      {
+        "from": "var OWNER_PLAYER_SQL = ACTIVE_PLAYERS_SQL.replace(",
+        "to": "const CASTLE_OWNER_PLAYERS_SQL_R59=CASTLE_PLAYERS_SQL_R59.replaceAll('WHERE (p.last_seen >= ? OR p.id = ?)','WHERE (p.last_seen >= ? OR p.id = ?) AND p.id=?2');\nvar OWNER_PLAYER_SQL = ACTIVE_PLAYERS_SQL.replace(",
+        "count": 1
+      },
+      {
+        "from": "castleEnabled()&&channel===4?CASTLE_PLAYERS_SQL_R59:ACTIVE_PLAYERS_SQL",
+        "to": "castleEnabled()&&channel===4?(['guild_castle','bazaar'].includes(area)?CASTLE_OWNER_PLAYERS_SQL_R59:CASTLE_PLAYERS_SQL_R59):ACTIVE_PLAYERS_SQL",
+        "count": 1
+      }
+    ],
+    "patchedSha256": "fcff1a3bef42e476ec29efc70488c812af23adc29b166f346bba9d5e01504fc7"
+  },
+  "world-projection-rules.mjs": {
+    "sourceSha256": "d21c839aaa211f5a78cc3bab5ffeaa7137ca5c7ad91bafa89e2fb6d9d1ed3ce7",
+    "edits": [
+      {
+        "from": "export function createWorldProjectionRules",
+        "to": "import {castleEnabled} from '../castle-model-r59.mjs';\nexport function createWorldProjectionRules",
+        "count": 1
+      },
+      {
+        "from": "const players=projectedPlayers.sort((a,b)=>b.last_seen-a.last_seen).slice(0,80);",
+        "to": "const castleRoom=castleEnabled()&&data.channel===4;\n  const players=projectedPlayers.sort((a,b)=>castleRoom?Number(b.id===sub.id)-Number(a.id===sub.id)||b.last_seen-a.last_seen:b.last_seen-a.last_seen).slice(0,castleRoom?100:80);",
+        "count": 1
+      }
+    ],
+    "patchedSha256": "07e838d80dc5a45d3cf5dd15ff934d828952e4188cb392aa2f2aed4510ffa419"
+  }
+}

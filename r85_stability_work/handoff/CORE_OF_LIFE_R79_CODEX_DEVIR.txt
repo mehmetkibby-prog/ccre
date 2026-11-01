@@ -1,0 +1,293 @@
+CORE OF LIFE — CODEX DEVİR NOTU
+R79 SONRASI TAKILMA, LAG VE ANA İŞLEM YÜKÜ BULGULARI
+Hazırlanma tarihi: 31 Ekim 2026
+
+CODEX İÇİN BAŞLANGIÇ BAĞLAMI
+
+Kullanıcı R79 güncellemesini başarıyla kurduğunu bildirdi. İstenen çalışma, R79 kurulu taban üzerinde kalan takılma/lag nedenlerinin araştırılmasına devam edilmesi ve yaklaşık 10 oyuncuda panelde görülen %40 ana işlem yükünün açıklanmasıdır. Kullanıcının ek sorusu, 30 oyuncuya çıkıldığında bu değerin mutlaka kritik hâle gelip gelmeyeceğidir.
+
+Bu dosya, önceki araştırmanın bulgularını ve deney sonuçlarını tek başına aktarır. Bir güncelleme paketi değildir. Bu araştırma sırasında oyun koduna düzeltme uygulanmadı ve canlı sunucuda işlem yapılmadı. Aşağıdaki sonuçları uygulanmış düzeltmeler veya canlı performans ölçümleri olarak sunma.
+
+Devam ederken:
+1. mehmetkibby-prog/ccre deposundaki mevcut çalışma sürümünü ve kullanıcının kurulu sürümünü doğrula. Aşağıdaki commit araştırmanın sabit R79 referansıdır; daha yeni kod varsa aynı yolların hâlâ bulunup bulunmadığını kontrol et.
+2. Eski R78 bakım ekranını güncel R79 sağlık durumu sayma. Kullanıcı kurulumun tamamlandığını bildirmiştir; bu çalışma kalan performans sorunları üzerinedir.
+3. Öncelikle hızlı ödül tekrarının genel bakım işlerini çoğaltmasını ve oyuncu kaynaklı boss/Sinsi Taş ödülünün dört kanalı kapsayan beklemesini incele. Bunlar mevcut araştırmanın en güçlü iki kod bulgusudur.
+4. Kodda doğrulanan davranış, izole deney sonucu ve canlı sunucuda henüz ölçülmemiş etki ayrımını koru. %40'ın kesin nedeni veya 30 oyuncu kapasitesi bu araştırmada kanıtlanmadı.
+5. Düzeltme hazırlanırken sahiplik/epoch denetimi, tek ödül, kalıcı yazmadan sonra ACK ve kayıt sıralaması korunmalı. Bu korumaları gevşetmek veya istemcinin 600 ms tahmin sınırını büyütmek performans çözümü olarak kabul edilmedi.
+6. Hedefli değişiklikleri ilgili davranış testleriyle doğrula. Bu dosyadaki çağrı sayısı deneyi ve sentetik owner testi, gerçek oyuncu kapasitesi testi yerine geçmez.
+
+DOSYANIN KAPSAMI
+
+Aşağıda ayrıntılı inceleme raporu, ardından önceki deney çıktıları bulunur. Bulguların anlaşılması için başka bir dosya açmak gerekmez. Oyun kaynak kodu, test betiklerinin kaynakları ve canlı ölçüm Python betiği bu TXT'nin içine eklenmemiştir. Kaynakları belirtilen depo/sürümden edinmek gerekir. Canlı ölçüm betiği, önceki CORE511_R79_SONRASI_INCELEME.zip teslimindedir; burada yalnız kullanım ve ölçüm kapsamı aktarılır.
+
+AYRINTILI İNCELEME RAPORU
+
+CORE OF LIFE — R79 SONRASI TAKILMA VE ANA İŞLEM YÜKÜ İNCELEMESİ
+Tarih: 31 Ekim 2026, Türkiye saati
+
+SONUÇ
+
+Kullanıcı R79'un başarıyla kurulduğunu bildirdi. İnceleme buna göre R79 üzerine yapıldı. Önceki R78 bakım çıktısı güncel R79 sağlık ölçümü olarak kullanılmadı.
+
+10 oyuncuda panelde görülen %40, 30 oyuncuda yükün mutlaka %120 olacağını göstermez. Panelin Ana işlem yüzdesi, ana Node sürecinin son iki saniyedeki olay döngüsü meşguliyetidir (ELU). VDS'nin toplam CPU yüzdesi veya oyuncu kapasitesinin doluluk oranı değildir. Bununla birlikte sürekli %40 değerini yalnız "normal" diye kapatmak da doğru olmaz: olay döngüsü gecikmesi, gerçek CPU, kalıcı yazma beklemesi ve oyuncuların yaptığı işler birlikte incelenmelidir.
+
+R79 kaynaklarında, kalan gecikme ve gereksiz yük açısından iki öncelikli yol doğrulandı:
+1. Oyuncudan gelen boss/Sinsi Taş ödül talebi hâlâ dört kanalı kapsayan bekleme yoluna girebiliyor.
+2. Hızlı ödül tekrarları, yalnız ödül kontrolünü değil genel dünya bakım işlerini de tekrar çalıştırabiliyor.
+
+Ek olarak checkpoint işçisinin güvenli yedek yönteme geçtikten sonra kendiliğinden yeniden başlamadığı, oyuncunun kendi uzun işlem beklemesinin 600 ms sonrasında görünür hareket durmasına yansıdığı ve yerel arayüz dinleyicisi hatasının protokol hatası gibi bağlantı kapatabildiği gösterildi.
+
+Bu mekanizmalar kaynak ve izole deneylerle doğrulandı. Canlı VDS'deki %40 değerinin veya belirli bir donmanın hangi kısmından sorumlu oldukları henüz ölçülmedi. Canlı sunucuda değişiklik, güncelleme, yeniden başlatma, oyuncu/DB işlemi veya yük testi yapılmadı.
+
+1. KAYNAK VE DOĞRULAMA
+
+Depo: mehmetkibby-prog/ccre
+R79 branch: r79-download
+R79 commit: 9b6cf5a115f2e68277796be616d0f47ad95f5932
+Paket: CORE511_R79_TOPLU.zip
+Paket boyutu: 45.624.424 bayt
+SHA-256: cd88c4a914da4fd9e23245309952daad8edecc44b9652e76a1645893bc27ec62
+
+Kurulum betiği çalıştırılmadan paket açıldı. İncelenen R79 payload dosyaları update.json içindeki boyut ve SHA-256 kayıtlarıyla karşılaştırıldı. Değişmeyen core bağımlılıkları, tam R62 kaynak arşivinden yalnız R79'un beklediği SHA-256 ile birebir eşleşiyorsa inceleme ağacına alındı; eski olduğu için yaklaşık eşleştirme yapılmadı. 1.029 core bağımlılığı bu yöntemle doğrulandı. R78'den kalan ilgili dosyalar da aynı şekilde doğrulandı. Bütün projenin bütün işlevlerinin yeniden kurulduğu veya uçtan uca test edildiği iddia edilmiyor.
+
+Native manifest SHA-256:
+bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b
+Bu değer R79 update.json içindeki nativeBaseline ile aynıdır. İlgili native kaynakların boyut ve hashleri manifestle karşılaştırıldı. R78'in writer-sql-timing477.mjs değişikliği ayrıca korundu.
+
+İzole doğrulamalarda paketin Node v22.23.4 / SQLite 3.53.4 çalışma zamanı kullanıldı. Node dosyasının SHA-256 değeri de RUNTIME.json ile eşleşti. Deney çıktıları bu TXT dosyasının sonundaki EK A bölümünde de yer alır; önceki ZIP tesliminde evidence/KANITLAR.json olarak bulunur.
+
+R79 kapsam belgesi:
+https://github.com/mehmetkibby-prog/ccre/blob/9b6cf5a115f2e68277796be616d0f47ad95f5932/SONUC.md
+R78 önceki kapsam ve ölçüm sınırları:
+https://github.com/mehmetkibby-prog/ccre/blob/2da44c352fe08873ebe2d767fd63848a96573e98/SONUC.md
+
+2. PANELDEKİ %40 NEYİ GÖSTERİYOR?
+
+core511/admin-diagnostics.mjs içindeki adminLoad511, busyPercent değerini current.loopUtilization * 100 olarak hesaplıyor. sampleSeconds: 2 ve scope: process-event-loop-not-network-ping olarak etiketliyor. Veri yedi saniyeden eskiyse güncel sayıyı göstermiyor.
+
+native vds-server/src/runtime-performance.mjs, iki saniyede bir performance.eventLoopUtilization farkını alıyor. Gerçek process.cpuUsage ayrıca hesaplanıyor; paneldeki bu yüzde doğrudan ondan üretilmiyor.
+
+Dolayısıyla yaklaşık iki saniyelik bir örnekte %40 ELU, bu pencerenin yaklaşık 0,8 saniyesinin olay döngüsü açısından aktif sayılması demektir. Bu sürenin tamamının tek parça bir donma olduğu veya tamamında CPU hesap yapıldığı söylenemez. Senkron disk/işlem beklemeleri de ELU'yu artırabilir. Asenkron bekleme ise düşük ELU ile birlikte uzun oyuncu yanıt süresi oluşturabilir.
+
+Node.js'nin resmi açıklaması da ELU'nun CPU kullanımı olmadığını belirtir:
+https://nodejs.org/docs/latest-v22.x/api/perf_hooks.html#performanceeventlooputilizationutilization1-utilization2
+
+Oyuncu sayısı tek açıklayıcı değildir:
+- Dünya bakımı, süre dolumu denetimleri, dünya sahibi makbuzları gibi sabit işler vardır.
+- Oyuncu başına hareket, saldırı ve kayıt işi vardır.
+- Boss/Sinsi Taş, grup ve ayrı oda işlemleri aynı oyuncu sayısında farklı yük üretir.
+- Bazı ortak işlemlerde tek oyuncu daha geniş bir grubun beklemesine neden olabilir.
+- Ayrı ödül yazıcısı ve tek kalıcı yazma sırası, ana CPU ile yanıt süresini birbirinden ayırır.
+
+Bu yüzden tek bir "10 kişi / %40" gözleminden oyuncu başına maliyet çıkarılamaz. 30 kişi için güvenilir sonuç; benzer eylem yoğunluğunda CPU, ELU, olay döngüsü duraklaması ve gerçek işlem gecikmelerinin birlikte ölçülmesini gerektirir. Bu incelemede 30 canlı oyuncu testi yapılmadı ve kapasite garantisi verilmedi.
+
+3. ÖNCELİK 1 — BOSS/SİNSİ ÖDÜL TALEBİNİN GENİŞ BEKLEMESİ
+
+Doğrulanan R79 zinciri:
+- channel-runtime.mjs / localClaim, boss ve Sinsi Taş hedeflerinde yerel ödül kapsamı vermiyor.
+- resident-channel.mjs / action, bu claim_rewards işlemini sharedCombat.nativeAction'a gönderiyor.
+- shared-combat-channel.mjs / nativeAction, kalıcı işlem için shared_prepare istiyor.
+- shared-combat-bridge.mjs / prepare, dört online kanalın tümüne shared_hold gönderiyor.
+- Kanal tarafında ilgili residentlar askıya alınıyor; kayıtları, dünya checkpoint'i ve sonraki görüntü yenilemeleri bekleniyor.
+
+R79 arka plan ödülleri için daha dar bir yol eklemiş olsa da bu oyuncu talebi yolu aynı kapsamda değil. Gerçek derlenmiş istemci, öldürme cevabında rewardPending olduğunda ve katkı verilen başka bir hedef öldüğünde otomatik claim_rewards gönderebiliyor; yalnız kullanıcının elle bastığı bir ödül düğmesinden ibaret değil.
+
+İzole test sonucu:
+- Gerçek SharedCombatBridge modülü değiştirilmeden çalıştırıldı.
+- IPC ve owner kayıtları test verisiydi.
+- Tek kaynak oyuncu için hold gönderilen kanallar: [1, 2, 3, 4].
+- Dört kanala dağıtılmış 10 sentetik owner kaydında diğer dokuz oyuncu hold cevaplarının kapsamına girdi.
+
+Test, geniş bekleme kapsamını kanıtlar. Canlıda kaç ms sürdüğünü veya ne sıklıkta yaşandığını ölçmez. Bir sonraki düzeltme adayı, ödül alıcılarının ve ilgili kaynakların güvenli biçimde daraltılmasıdır. Sahiplik/epoch, tek ödül ve diskten sonra ACK korumaları kaldırılmamalıdır.
+
+4. ÖNCELİK 2 — HIZLI ÖDÜL TEKRARI GENEL BAKIMI DA HIZLANDIRIYOR
+
+shared-world-jobs.mjs olağan döngüyü bir saniye aralığına ayarlıyor. Her döngünün başında world_upkeep, ardından lonca bitişi, oyuncu bakım işleri, heartbeat ve zindan yaşam döngüsü denetimleri var.
+
+Ödül toparlama veya R79 scoped ödül sonucu tekrar aralığını 50 ms'ye çektiğinde bu genel işlerin tümü yeniden çağrılabiliyor. Yalnız ödül denetimi hızlanmıyor.
+
+Gerçek kaynak kodu, deterministik saat ve hemen tamamlanan test I/O'su ile 10 simüle saniyede:
+- Bekleyen ödül yok: world_upkeep ve world_player_jobs 10'ar çağrı.
+- Sürekli scoped ödül, 50 ms tekrar: 200'er çağrı.
+- Normal recovery, 50 ms tekrar: 200'er çağrı.
+- Deferred scoped ödül, 1000 ms tekrar: 10'ar çağrı.
+
+Bu sonuç 20 kat CPU veya 20 kat canlı gecikme anlamına gelmez. Gerçek I/O süresi ulaşılabilen çağrı sayısını azaltır. Ancak çağrı çoğalması gerçek bir kod davranışıdır.
+
+Tekrarlanan işler tamamen boş değildir:
+- world-jobs.mjs ayar ve dünya durumu okumaları yapar.
+- generated/world-job-rules.mjs pazar ilanlarının durumları ve sürelerine bakan bakım UPDATE'ini içerir.
+- system-writer.mjs benzersiz upkeep işi için işlem makbuzu ekler ve dünya sahibinin sequence değerini günceller.
+- world-player-jobs.mjs premium süre denetimini tekrar ister; bazı sorgular offline kayıtları da kapsar.
+- Lonca revision/expiry önbelleği erken çıkış yapabilir; her çağrının tam lonca taraması olduğu ileri sürülmüyor.
+- Reader sürecinde yürüyen okumaların tamamı ana süreç CPU'suna yazılamaz.
+
+Dar düzeltme adayı: Ödülün kısa tekrar ihtiyacı korunurken genel bakım sıklığını ayrı tutmak. Dünya/guardian/reset zamanı, bakım verisinin güncelliği ve ödül doğruluğu korunarak hedefli test gerekir. Bu incelemede oyun kaynağı değiştirilmedi.
+
+5. CHECKPOINT İŞÇİSİNİN YEDEK YÖNTEMDE KALMASI
+
+R79, checkpoint işçisini etkinleştiriyor. Native WalCheckpoint; başlangıç zaman aşımı, işçi hatası, checkpoint zaman aşımı veya bekleyen WAL sayfalarının 16.384 sınırını aşması gibi durumlarda güvenli otomatik checkpoint'e dönüyor.
+
+Kaynakta bu yedek duruma geçişten sonra otomatik yeniden başlatma yok. Geçici neden ortadan kalksa da işçi devreye dönmeyebilir. Oyun sağlık yanıtı sırf güvenli yedek yöntem kullanıldığı için hazır değil sayılmıyor; yalnız kernel ready bilgisine bakmak bu durumu kaçırabilir.
+
+Gerçek SQLite deneyi:
+- Başta ana ve ödül bağlantısında otomatik checkpoint 0, ayrı işçi hazır.
+- Okuyucu işlem açık tutularak WAL birikmesi üretildi.
+- Küçük deney için yalnız test seçeneğindeki eşik 16.384 yerine 2 sayfa yapıldı.
+- checkpoint-backlog sonrası iki bağlantıda otomatik checkpoint tekrar 4.000 oldu.
+- Okuyucu bırakılıp WAL sayfaları işlendikten sonra da işçi fallback durumunda kaldı.
+
+Bu güvenli geri dönüş veri kaybı kanıtı değildir. Performans yolunun kalıcı olarak eski yönteme dönebildiğinin kanıtıdır. Canlıdaki checkpointR79.ready, fallback, pendingPages ve core511_checkpoint kayıtları görülmeden mevcut sunucuda gerçekleştiği söylenemez.
+
+6. YAZMA SIRASI VE ÖLÇÜM EKSİĞİ
+
+writer-lane-r533.mjs, ana bağlantı ve ödül işçisini tek kalıcı yazma sırasıyla koordine eder. Ödül işi sürerken ana yazma kuyruğu da sırasını bekleyebilir. Bu veri doğruluğu için korunması gereken bir sınırdır.
+
+R79 server-stall-observer yalnız ana bağlantının COMMIT süresini gözler. Ödül işçisinin FULL COMMIT/fsync süresi, ana bağlantının asenkron WAL kalıcılığı, devam eden ödül işinin yaşı ve dış işin tuttuğu kuyruk beklemesi aynı sayaçla tamamen görünmez.
+
+Tamamlanmış işler için stage ölçümleri vardır; henüz tamamlanmamış uzun iş o istatistiğe girmemiş olabilir. WalSync mevcut toplam süre ve hata sayaçlarını tutar; bunların güvenli toplu alanlar olarak yetkili tanı yanıtına eklenmesi daha doğru teşhis sağlar. Bu, kendi başına bir performans düzeltmesi değildir.
+
+7. İSTEMCİDE GECİKMENİN GÖRÜNÜR ETKİSİ
+
+Gerçek derlenmiş R79 istemcisiyle, bir beceri yanıtı kontrollü olarak 1200 ms bekletildi. Hareket tahmini 200/400/600 ms'de ilerledi, 600 ms'deki 0,6 saniyelik güvenlik sınırından sonra yanıt gelene kadar aynı yerde kaldı. Beceri onayı gelince sonraki hareket komutu gönderildi.
+
+Bu, oyuncunun kendi uzun yazma/beceri beklemesinin nasıl hareket donmasına yansıdığını gösterir. Canlı beklemenin sebebini göstermez; tahmin sınırını büyütmek veya komut sırasını gevşetmek çözüm olarak önerilmiyor.
+
+Ayrı bir deneyde geçerli bir dünya paketini alan arayüz abonesine hata verdirildi. Gerçek transport, bunu invalid_server_message olarak sayıp 4002 / Protocol mismatch ile bağlantıyı kapattı. Böylece yerel UI istisnası protokol hatası gibi görünür hale gelebiliyor. Bu hata ayırma zayıflığı doğrulandı; kullanıcının canlı oyununda yaşandığına dair tarayıcı kaydı henüz yok.
+
+8. CANLIDA GEREKEN SONRAKİ ÖLÇÜM
+
+Önceki CORE511_R79_SONRASI_INCELEME.zip teslimindeki CORE511_R79_CANLI_OLCUM.py standart Python kitaplığıyla çalışır. Normal kullanım:
+
+python3 CORE511_R79_CANLI_OLCUM.py --duration 30 --interval 5 > CORE511_R79_OLCUM.json
+
+Bu sırada panelin ana işlem yüzdesini ve oyuncu sayısını not etmek veya ekran görüntüsünü almak gerekir. Betik 30 saniyelik aynı zaman aralığında:
+- Yerel sağlık yanıtından checkpoint durumunu ve kanal oyuncu sayılarını,
+- VDS genel CPU / iowait / steal farklarını,
+- Ana Node sürecinin bütün thread'leri için gerçek CPU'yu,
+- Ana olay döngüsü thread'inin gerçek CPU'sunu,
+- Süreç I/O farklarını toplar.
+
+Panel ELU'sunu bu genel sağlık uç noktası vermediği için betik onu ölçmüş gibi göstermez. Oyuncu pingini, SQL sorgularını veya foreground claim durdurma süresini de ölçmüş sayılmaz. Daha sonra gerekirse yetkili panel ölçümleriyle aynı zaman çizgisine yerleştirilir.
+
+Betik veritabanını açmaz, servis durdurmaz, oyun durumunu değiştirmez, bot/yük üretmez. Yalnız seçilmiş teknik alanları JSON'a yazar. Kullanıcı ve oturum kimlikleri, yapılandırma sırları veya ham loglar çıktıya alınmaz. İlk ölçüm mevcut yaklaşık 10 oyuncuyla; karşılaştırma ise doğal oyuncu artışında benzer eylem yoğunluğuyla yapılabilir.
+
+Ölçüm betiğinin CPU hesabı, süreç yeniden başlama sınırları, çıktıda özel alanların elenmesi ve yalnız yerel HTTP erişimi için hazırlanan 13 hedefli testi geçti. Ölçüm betiğinin testleri önceki ZIP tesliminde test_canli_olcum.py olarak bulunur; bu TXT test betiğinin kendisini içermez.
+
+ÖNCELİK SIRASI
+
+1. Mevcut R79 checkpoint ve gerçek CPU durumunu aynı zaman aralığında al.
+2. Takılmaların boss/Sinsi Taş ödül anıyla eşleşip eşleşmediğini kontrol et.
+3. Hızlı ödül tekrarında genel bakımın gereksiz çağrılarını ayıracak düzeltmeyi hedefli testle hazırla.
+4. Foreground ödül yolunun etkilenen sahiplerini güvenli kapsamla daraltmayı incele.
+5. Yazma sırası ve işçi beklemeleri için eksik toplu tanı alanlarını tamamla.
+
+SON SINIR
+
+Bu teslim, doğrulanmış kod incelemesi, izole kanıtlar ve canlı ölçüm hazırlığıdır. Oyun güncellemesi uygulanmadı. %40'ın kesin sebebi, canlı gecikmenin kaç ms azalacağı veya 30 oyuncu kapasitesi henüz kanıtlanmış değildir.
+
+
+EK A — KAYDEDİLMİŞ İZOLE DENEY ÇIKTILARI
+
+Bu kayıtlar önceki araştırmanın deney çıktılarıdır; bu TXT hazırlanırken testler yeniden çalıştırılmadı. Çıktılardaki /workspace/scratch/... yolları önceki inceleme ortamına aittir; yeni Codex oturumunda mevcut oldukları varsayılmamalıdır. p1...p10 kayıtları sentetiktir. Checkpoint deneyindeki 2 sayfalık eşik yalnız dalı küçük bir testle tetiklemek içindir; üretim eşiği 16.384'tür. Deney zamanları ve checkpoint süreleri canlı VDS gecikmesi olarak yorumlanmamalıdır.
+
+{
+  "runtime": {
+    "node": "v22.23.4",
+    "sqlite": "3.53.4",
+    "packageSha256": "cd88c4a914da4fd9e23245309952daad8edecc44b9652e76a1645893bc27ec62"
+  },
+  "scope": "Isolated local source probes. No live VDS capacity, CPU percentage or network latency measurement.",
+  "runs": [
+    {
+      "name": "client_movement",
+      "exit_code": 0,
+      "output": "{\"scenario\":\"Own skill ACK deliberately held 1200 ms; actual shipped R79 client transport\",\"samples\":[{\"at\":200,\"x\":20,\"pendingSeconds\":0.2},{\"at\":400,\"x\":40,\"pendingSeconds\":0.4},{\"at\":600,\"x\":60,\"pendingSeconds\":0.6},{\"at\":800,\"x\":60,\"pendingSeconds\":0.6},{\"at\":1000,\"x\":60,\"pendingSeconds\":0.6},{\"at\":1200,\"x\":60,\"pendingSeconds\":0.6}],\"canonicalMovesBeforeActionAck\":0,\"motionPreviewsBeforeAck\":13}\n{\"afterActionAck\":[{\"at\":0,\"sequence\":1,\"action\":\"attack\"},{\"at\":1200,\"sequence\":2,\"action\":\"move\",\"x\":35}]}\n"
+    },
+    {
+      "name": "client_listener",
+      "exit_code": 0,
+      "output": "{\"scenario\":\"Valid protocol frame; a UI subscriber alone throws\",\"closes\":[{\"code\":4002,\"reason\":\"Protocol mismatch\"}],\"errorEvents\":[{\"kind\":\"error\",\"value\":{\"code\":\"invalid_server_message\"}}]}\n"
+    },
+    {
+      "name": "foreground_hold",
+      "exit_code": 0,
+      "output": "{\n  \"sourcePath\": \"/workspace/scratch/68fd588af980/r79-audit/core511-source/scripts/core511/shared-combat-bridge.mjs\",\n  \"sourceSha256\": \"b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037\",\n  \"method\": \"Unchanged real SharedCombatBridge, mocked IPC/owner records; routing fanout only, not a latency benchmark.\",\n  \"sourceActors\": [\n    \"p1\"\n  ],\n  \"syntheticOnlinePlayers\": 10,\n  \"holdRequests\": [\n    {\n      \"channel\": 1,\n      \"method\": \"shared_hold\",\n      \"except\": [\n        \"p1\"\n      ],\n      \"bystandersRequested\": [\n        \"p2\",\n        \"p3\"\n      ]\n    },\n    {\n      \"channel\": 2,\n      \"method\": \"shared_hold\",\n      \"except\": [],\n      \"bystandersRequested\": [\n        \"p4\",\n        \"p5\",\n        \"p6\"\n      ]\n    },\n    {\n      \"channel\": 3,\n      \"method\": \"shared_hold\",\n      \"except\": [],\n      \"bystandersRequested\": [\n        \"p7\",\n        \"p8\"\n      ]\n    },\n    {\n      \"channel\": 4,\n      \"method\": \"shared_hold\",\n      \"except\": [],\n      \"bystandersRequested\": [\n        \"p9\",\n        \"p10\"\n      ]\n    }\n  ],\n  \"prepared\": true\n}\n"
+    },
+    {
+      "name": "reward_retry",
+      "exit_code": 0,
+      "output": "{\n  \"sourcePath\": \"/workspace/scratch/68fd588af980/r79-audit/core511-source/scripts/core511/shared-world-jobs.mjs\",\n  \"sourceSha256\": \"85b58bb289c54f6a75d954214ac8674a8421eecb23ea3e3e8f13ece41ad59403\",\n  \"method\": \"Exact source, deterministic clock and mocked I/O. Not a production performance test.\",\n  \"results\": [\n    {\n      \"scenario\": \"no pending reward\",\n      \"simulatedSeconds\": 10,\n      \"calls\": {\n        \"world_upkeep\": 10,\n        \"guild_war_due\": 10,\n        \"world_player_jobs\": 10,\n        \"heartbeat_due\": 10,\n        \"dungeon_lifecycle_due\": 10,\n        \"world_cleanup\": 1\n      }\n    },\n    {\n      \"scenario\": \"continuous scoped reward, retryAfterMs=50\",\n      \"simulatedSeconds\": 10,\n      \"calls\": {\n        \"world_upkeep\": 200,\n        \"guild_war_due\": 200,\n        \"world_player_jobs\": 200,\n        \"heartbeat_due\": 200,\n        \"dungeon_lifecycle_due\": 200,\n        \"world_cleanup\": 1\n      }\n    },\n    {\n      \"scenario\": \"ordinary reward recovery, retryAfterMs=50\",\n      \"simulatedSeconds\": 10,\n      \"calls\": {\n        \"world_upkeep\": 200,\n        \"guild_war_due\": 200,\n        \"world_player_jobs\": 200,\n        \"heartbeat_due\": 200,\n        \"dungeon_lifecycle_due\": 200,\n        \"world_cleanup\": 1\n      }\n    },\n    {\n      \"scenario\": \"scoped reward deferred, retryAfterMs=1000\",\n      \"simulatedSeconds\": 10,\n      \"calls\": {\n        \"world_upkeep\": 10,\n        \"guild_war_due\": 10,\n        \"world_player_jobs\": 10,\n        \"heartbeat_due\": 10,\n        \"dungeon_lifecycle_due\": 10,\n        \"world_cleanup\": 1\n      }\n    }\n  ]\n}\n(node:2) ExperimentalWarning: VM Modules is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    }
+  ],
+  "checkpointFallback": {
+    "node": "v22.23.4",
+    "sqlite": "3.53.4",
+    "fixture": "Real SQLite connections; maxPendingPages reduced from production 16384 to 2 only to force the exact fallback branch cheaply",
+    "before": {
+      "mainAutocheckpoint": 0,
+      "rewardAutocheckpoint": 0,
+      "checkpoint": {
+        "protocol": "passive-wal-worker-v1",
+        "sqliteVersion": "3.53.4",
+        "ready": true,
+        "fallback": null,
+        "connections": 1,
+        "running": false,
+        "completed": 1,
+        "busy": 0,
+        "durationMs": 1.555382999999992,
+        "maxDurationMs": 1.555382999999992,
+        "logPages": 5,
+        "checkpointedPages": 5,
+        "pendingPages": 0,
+        "pageSize": 4096,
+        "lastCompletedAtMs": 1793401335612
+      }
+    },
+    "fallback": {
+      "mainAutocheckpoint": 4000,
+      "rewardAutocheckpoint": 4000,
+      "checkpoint": {
+        "protocol": "passive-wal-worker-v1",
+        "sqliteVersion": "3.53.4",
+        "ready": false,
+        "fallback": "checkpoint-backlog",
+        "connections": 0,
+        "running": false,
+        "completed": 2,
+        "busy": 0,
+        "durationMs": 0.02227400000001012,
+        "maxDurationMs": 1.555382999999992,
+        "logPages": 16,
+        "checkpointedPages": 0,
+        "pendingPages": 16,
+        "pageSize": 4096,
+        "lastCompletedAtMs": 1793401335614
+      }
+    },
+    "readerReleased": {
+      "passiveCheckpoint": {
+        "busy": 0,
+        "log": 16,
+        "checkpointed": 16
+      },
+      "checkResult": false,
+      "ready": false,
+      "fallback": "checkpoint-backlog"
+    },
+    "events": [
+      {
+        "event": "core511_checkpoint",
+        "sqliteVersion": "3.53.4",
+        "state": "ready"
+      },
+      {
+        "event": "core511_checkpoint",
+        "sqliteVersion": "3.53.4",
+        "state": "fallback",
+        "reason": "checkpoint-backlog"
+      }
+    ]
+  }
+}

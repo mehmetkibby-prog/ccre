@@ -1,0 +1,46 @@
+TAP version 13
+# (node:342495) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:342495) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# pearl_reset {"applied":true,"appliedAtMs":1793512057319,"backupName":"before-pearl-reset-1793512057319-577b41e4-4e23-45c5-96bf-d603bad8baac.sqlite"}
+# (node:342495) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:342495) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:47:51.649Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":342551,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c01bd5c8cc29ec3b7c4f172f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:47:51.650Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":342561,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"608c9043123823b6aeb3bbfb"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:47:51.650Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":342571,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3a70af0fb72a7c8098430b0b"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:47:51.650Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":342577,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9e52249d416cc5acccc95238"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:47:51.687Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":342542,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"cfd0afdac514a21b5b925da7"}
+# Subtest: native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 1 - native forest lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 16038.667797
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793512073723,"backupName":"before-pearl-reset-1793512073723-2de4e737-040b-48a7-ada0-18247dc1655e.sqlite"}
+# (node:342495) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+# --import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("/workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs", pathToFileURL("./"));'
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:342495) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:48:08.050Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":343014,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5d383eb1d058f73fe9380413"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:48:08.050Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":343028,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"80101ae02cf4b23c2cde2d4e"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:48:08.050Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":343048,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0afdc4e4881ba64bbd50ea1e"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:48:08.050Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":343061,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"424406ea4a0e72798da4e877"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:48:08.079Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":343001,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"f1080d091deddc1aa01c93e9"}
+# Subtest: native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+ok 2 - native rune_v2 lethal hit and due respawn reach current generated transport exactly once after writer ACK
+  ---
+  duration_ms: 16375.835618
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33119.49409

@@ -1,0 +1,33 @@
+[
+  {
+    "before": "        let r3 = n3.getImageData(0, 0, 768, 512);\n        for (let e6 = 0; e6 < r3.data.length; e6 += 4) {\n          let t4 = r3.data[e6], n4 = r3.data[e6 + 1], i3 = r3.data[e6 + 2], a3 = n4 - Math.max(t4, i3);\n          n4 > 115 && a3 > 34 && (r3.data[e6 + 3] = a3 > 86 ? 0 : Math.round(255 * (86 - a3) / 52), r3.data[e6 + 1] = Math.min(r3.data[e6 + 1], Math.max(t4, i3)));\n        }\n        n3.clearRect(0, 0, 768, 512), n3.putImageData(r3, 0, 0), V2.current.wings = e5;",
+    "after": "        // R87: first remote wings must not process the whole atlas in one\n        // animation/input turn. Only publish after all rows are complete.\n        let colWingRowR87 = 0;\n        const colWingSliceR87 = () => {\n          try {\n            const height = Math.min(8, 512 - colWingRowR87);\n            const pixels = n3.getImageData(0, colWingRowR87, 768, height);\n            for (let i = 0; i < pixels.data.length; i += 4) {\n              const red = pixels.data[i], green = pixels.data[i + 1], blue = pixels.data[i + 2], excess = green - Math.max(red, blue);\n              if (green > 115 && excess > 34) {\n                pixels.data[i + 3] = excess > 86 ? 0 : Math.round(255 * (86 - excess) / 52);\n                pixels.data[i + 1] = Math.min(green, Math.max(red, blue));\n              }\n            }\n            n3.putImageData(pixels, 0, colWingRowR87);\n            colWingRowR87 += height;\n            if (colWingRowR87 < 512) setTimeout(colWingSliceR87, 0);\n            else { V2.current.wings = e5; gr2.current.delete(e4); }\n          } catch { gr2.current.delete(e4); }\n        };\n        setTimeout(colWingSliceR87, 0);\n        return;",
+    "count": 1
+  },
+  {
+    "before": "      } finally {\n        gr2.current.delete(e4);\n      }\n    }, t3.onerror = () => gr2.current.delete(e4), t3.src = `/game/crimson-core-wings-chroma.png`;",
+    "after": "      } catch {\n        gr2.current.delete(e4);\n      }\n    }, t3.onerror = () => gr2.current.delete(e4), t3.src = `/game/crimson-core-wings-chroma.png`;",
+    "count": 1
+  },
+  {
+    "before": "      let S2 = wa2.current.project(x2.players, g2.current).map((e6) => {",
+    "after": "      const colOldPlayersR87 = new Map(), colOldMonstersR87 = new Map();\n      for (const player of o4?.players ?? []) if (!colOldPlayersR87.has(player.id)) colOldPlayersR87.set(player.id, player);\n      for (const monster of o4?.monsters ?? []) if (!colOldMonstersR87.has(monster.id)) colOldMonstersR87.set(monster.id, monster);\n      let S2 = wa2.current.project(x2.players, g2.current).map((e6) => {",
+    "count": 1
+  },
+  {
+    "before": "o4?.players.find((e7) => e7.id === t5.id)",
+    "after": "colOldPlayersR87.get(t5.id)",
+    "count": 2
+  },
+  {
+    "before": "let t5 = o4?.monsters.find((t6) => t6.id === e6.id);",
+    "after": "let t5 = colOldMonstersR87.get(e6.id);",
+    "count": 1
+  },
+  {
+    "before": "if (!n3) return;",
+    "after": "if (!n3) { gr2.current.delete(e4); return; }",
+    "count": 1,
+    "scope": "wings-loader-only"
+  }
+]

@@ -1,0 +1,69 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "vds-server/src/world-push.mjs",
+  "sourceSha256": "89e9de46556139bad1d2e1b7b946ca7b91107c1f36eccefae207a6fc9894798a",
+  "bodies": [
+    {
+      "name": "maintenanceWorldOwner491",
+      "sha256": "02a2e9ef4a81eb3ef0a41d67fa9cf921d7f6fafaefc128300151224aac53ad74"
+    },
+    {
+      "name": "maintenanceWorldView491",
+      "sha256": "6c26075b0acdcec196c427ecf5dfc01613499497f0d11afcb349b78b2dd3f55e"
+    },
+    {
+      "name": "MONSTER_FIELDS",
+      "sha256": "c3c575ba9ca61d9fb5b6fee88bbdf4646d796719a352f6378eb459c8b6a02f57"
+    },
+    {
+      "name": "PLAYER_FIELDS",
+      "sha256": "f116b8be86c03e5d05ec19e9971ca9e6dc16f19a5e5b1673d1efa8eaa560e5a5"
+    },
+    {
+      "name": "pick",
+      "sha256": "debe5bcd52eb0ab83c10dcc5e1991b67b54d2d6341f1bb1fca5c55814e30607e"
+    },
+    {
+      "name": "liveDrops503",
+      "sha256": "1611a8edcdb0d07071004be61e290fb8d7347f6a0b5a0c1c6b068156e43c92e8"
+    },
+    {
+      "name": "regionalExpiryCache",
+      "sha256": "ae27ebdd298d69c408d97d16c43731ada5f9b64f3e597b8213ad88a6a631528c"
+    },
+    {
+      "name": "timedFields",
+      "sha256": "48e260ad8419bfbde490015f73e520a149d283e3b47339df79029c54ba394c0c"
+    },
+    {
+      "name": "WorldMonsterMap",
+      "sha256": "8aeb08894ea01a9d943d42bbb22c113259c5a96f6fe72463b34165ef649c7882"
+    },
+    {
+      "name": "project",
+      "sha256": "5a8c7b1889ade49f6c9621ecdb522b7598db330371390eac93d816561e1b9924"
+    },
+    {
+      "name": "forgetFriends487",
+      "sha256": "a9b9e9c8bf39a240fb3028eafd93e6a18b4cedfb95ea4a202d1f85dc284a417c"
+    },
+    {
+      "name": "seedFriends487",
+      "sha256": "baa5732cf3540e841226d80bdd984db0fc58a758b919bd7e1ada0208a60d60ee"
+    },
+    {
+      "name": "friendCommitted487",
+      "sha256": "aedcd8bbb221940b6287e4eba0ce2774b06b1627c0f8d9565b96cb8e95099ae7"
+    },
+    {
+      "name": "friendsView487",
+      "sha256": "0b87fc60c5995f6777e154e503a5d583687889dc78057af475bea06cae0061ab"
+    }
+  ],
+  "generatedSha256": "16291e8f313c6011d6f7c39c91d6ce5c003d359631cb05eb6ead83aef4ce7cf5",
+  "edits": [
+    "Native project/visibility/private allowlist/timed field bodies preserved exactly",
+    "Dependency injection supplies the same maintenance state and native rune wave view",
+    "No legacy constructor, SQL access, realtime HTTP, async scheduler or timers included"
+  ]
+}

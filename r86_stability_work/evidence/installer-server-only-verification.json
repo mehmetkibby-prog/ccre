@@ -1,0 +1,68 @@
+{
+  "tests": 10,
+  "passed": true,
+  "durationSeconds": 0.808,
+  "sourceCoreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "targetCoreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "productionFiles": 19,
+  "fullSuiteRun": false,
+  "archiveProduced": false,
+  "logSHA256": "adcbfd9b2be5eb4c2f79628dbfcf75a2e07b8e6e0ad18e5bc1509d0416054ab9",
+  "scope": "Real local SQLite/filesystem/installer journals and rollback. Fixture stubs service commands and external account/native deployment health.",
+  "modules": [
+    {
+      "name": "central.mjs",
+      "sourceSHA256": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+      "targetSHA256": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067",
+      "changed": false
+    },
+    {
+      "name": "client_stage.py",
+      "sourceSHA256": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42",
+      "targetSHA256": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42",
+      "changed": false
+    },
+    {
+      "name": "ingress_stage.py",
+      "sourceSHA256": "eab07f4a60e355d0066bf8a71c83f047b1bc8e01b059a1d28a92033a85cdb3bf",
+      "targetSHA256": "b79701b4548c71e5a78681b468dfd63fed3da7ea934ca6eed42a556627298464",
+      "changed": true
+    },
+    {
+      "name": "inplace_stage.py",
+      "sourceSHA256": "12c30fdacc771e3a2c0f40074f660443bf2965dd9203c41c15c869b799add5d0",
+      "targetSHA256": "6bcdea20c28de5e9a80b1f22d0f7f41067bb567016518348692568be2841e1e8",
+      "changed": true
+    },
+    {
+      "name": "installer.py",
+      "sourceSHA256": "ad78bdf5130349cce267bdfa801ae6b44e3c7200db61c3477728f3c0f509cceb",
+      "targetSHA256": "daf93d6528be1b855843af6e4000bb51d4d545e9129cca1c14c6d18cda86b707",
+      "changed": true
+    },
+    {
+      "name": "r63_support.py",
+      "sourceSHA256": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+      "targetSHA256": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc",
+      "changed": false
+    },
+    {
+      "name": "retention.py",
+      "sourceSHA256": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+      "targetSHA256": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91",
+      "changed": false
+    },
+    {
+      "name": "runtime_stage.py",
+      "sourceSHA256": "e0745e1319f41a625b7570402c9086cd7944736fc1433145e31816fdff271ca1",
+      "targetSHA256": "efe0d1bfee2077ab30fe1021a80015ad3f69cb30e9b1effa9190332be745cec6",
+      "changed": true
+    },
+    {
+      "name": "storage.py",
+      "sourceSHA256": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735",
+      "targetSHA256": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735",
+      "changed": false
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "dist-vds/server/index.js",
+  "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "generatedSha256": "35af97c3e3420e4937668a6093505d2c37d8a339de38f905955f5860d7a26001",
+  "declarations": [
+    {
+      "name": "guildAction",
+      "start": 991186,
+      "end": 998963,
+      "sha256": "25c99af29ec2068af01b9c8f6865d0f7c43416713b4d5056fcf47047814be904"
+    },
+    {
+      "name": "POST$22",
+      "start": 1753972,
+      "end": 1756815,
+      "sha256": "ae791871f8d1975a055e6009721c8c00e0101f1563ac6e739862274e605dffe1"
+    },
+    {
+      "name": "publishRealtimeGuildEvent",
+      "start": 854532,
+      "end": 855320,
+      "sha256": "657cb701a9b9ca097af62d170bebaa841e48a7e6853501f288d428e0ee59d7c6"
+    },
+    {
+      "name": "NORMAL_GROUP_RULES",
+      "start": 985585,
+      "end": 985720,
+      "sha256": "60461578c6d763c853bb0d0a6d7cae96a422e30046f163bfb1e6044e02d3009d"
+    },
+    {
+      "name": "GROUP_RULES",
+      "start": 985721,
+      "end": 985797,
+      "sha256": "d30d8578c8e4d15ed8be7f315d7d130f844090e72abe5c394a8130e40837bfc5"
+    },
+    {
+      "name": "authorized",
+      "start": 991083,
+      "end": 991185,
+      "sha256": "45cb36f505b34a922492c329925a0154d9152e8fa6b63597b42732ab5b6ffe36"
+    },
+    {
+      "name": "baseReadyPlayer",
+      "start": 985873,
+      "end": 986139,
+      "sha256": "1d1eadbf0bb3f6d49704332d60675b68ea56e65e1b23911cb30ead732f80d913"
+    },
+    {
+      "name": "guildKickoffStatements",
+      "start": 998964,
+      "end": 1003503,
+      "sha256": "8e87c2535f414072971c362c994550bf709696f02c2396a05f4b52c70b55860b"
+    },
+    {
+      "name": "joinGuildWar",
+      "start": 1003504,
+      "end": 1008696,
+      "sha256": "4faab62f71478a9f982a2dda446576b08ece157aed06ab63c928d96ae474dbaf"
+    },
+    {
+      "name": "startGuildWar",
+      "start": 1008697,
+      "end": 1011595,
+      "sha256": "68391ab15f43f4fea3c99f3d90366220f92d161e2497cff7a48a028f016adc8a"
+    }
+  ],
+  "cases": [
+    {
+      "action": "create",
+      "start": 991815,
+      "end": 992334,
+      "sha256": "04f0582fae0f2ce9bf35d8006db0bc0defc9922626b4241274d2c6026fef713e"
+    },
+    {
+      "action": "invite",
+      "start": 992337,
+      "end": 993151,
+      "sha256": "f4dab21f7ff10b4e2016011303e0283b2f9f111abba099b5325527dcc2397b1d"
+    },
+    {
+      "action": "accept",
+      "start": 993154,
+      "end": 993824,
+      "sha256": "4f332cb16465c32f9189361bce64607a486d4c6249b1b669d12be1d80c432e93"
+    },
+    {
+      "action": "decline",
+      "start": 993827,
+      "end": 994018,
+      "sha256": "45e09cc541a8e57307117dbbf2218d8c175bdbcb7ab610dbc6c71b4c6c9025fe"
+    },
+    {
+      "action": "leave",
+      "start": 994021,
+      "end": 994186,
+      "sha256": "5bbef6018dfb177d90ac5218dc0e2034ee687ddfea577ae02a2f0837dc0f2e46"
+    },
+    {
+      "action": "disband",
+      "start": 994189,
+      "end": 994824,
+      "sha256": "7574418714f305594a55aa41410872994cd90ccd5f8661579d1444172bf328f8"
+    },
+    {
+      "action": "kick",
+      "start": 994827,
+      "end": 995025,
+      "sha256": "421043b2031afe8504e26184c2a5e39084809447e4494a328fc158612fdfed2c"
+    },
+    {
+      "action": "permission",
+      "start": 995028,
+      "end": 995276,
+      "sha256": "f0b0c8598b7fc2b5294a747658ae4c69bdf6b428d5295e9178c82b98653b0424"
+    },
+    {
+      "action": "transfer",
+      "start": 995279,
+      "end": 995615,
+      "sha256": "52a919280d9970f9ba4e7cd138c2b3e5773ade03f7344e2a66482b98b483a417"
+    },
+    {
+      "action": "tax",
+      "start": 995618,
+      "end": 995951,
+      "sha256": "2a13e362ff4a34aa59fec2489085655ef5bc6e7a22265a42789e033240be8fde"
+    },
+    {
+      "action": "withdraw",
+      "start": 995954,
+      "end": 997260,
+      "sha256": "461f18bd10b44ab1c5be8f5f453da4ac152c152fce90c9e97a4f7be67f9ceb92"
+    },
+    {
+      "action": "challenge",
+      "start": 997263,
+      "end": 998483,
+      "sha256": "0bf151007bdfcd6db5c32b785c75ae40dc2a63e1193861e39f8811e40d5860ab"
+    },
+    {
+      "action": "war_decline",
+      "start": 998486,
+      "end": 998745,
+      "sha256": "5d3d576b8f71fd24349d1e0149ef9a9bf9f0925ad241ea38d78000114eff990c"
+    },
+    {
+      "action": "war_accept",
+      "start": 998748,
+      "end": 998826,
+      "sha256": "e0f16b559f2109424e98be49fe87f2964107ee7bc4a337e73bbcfb8b0f7a5eec"
+    },
+    {
+      "action": "war_join",
+      "start": 998829,
+      "end": 998904,
+      "sha256": "08405ddced6b1930bb3e9d1eacd1c3ec26eb4664d9bc7bc4611a32347f7217ff"
+    },
+    {
+      "action": "default",
+      "start": 998907,
+      "end": 998958,
+      "sha256": "e572705ab4627c76cf20eb21a2e7a53dfd0bcc2c751fc033b4d76dcfd1e41436"
+    }
+  ],
+  "eventDeclarations": [
+    {
+      "start": 1754742,
+      "end": 1754827,
+      "sha256": "f33c07bf89357fdef29b0c35b8b172f60cda3c5062baf9fc9a1bdc534250d5fb"
+    },
+    {
+      "start": 1754831,
+      "end": 1754921,
+      "sha256": "b7181c99f764b09b0a79cb158283186e9b35794ef05579ceddee7c5453d35fcb"
+    },
+    {
+      "start": 1754925,
+      "end": 1755411,
+      "sha256": "76a68e5f04f7e267b24bfe08daa7f1d1207663e0f603e482cedf7b36063056ab"
+    },
+    {
+      "start": 1755415,
+      "end": 1755695,
+      "sha256": "2254315be221e18c682f8d635f0c9454346ddf7d34903e7f55ceb7d52879006a"
+    },
+    {
+      "start": 1755699,
+      "end": 1755853,
+      "sha256": "200f011a442736a5f1e6ab083c6683ebd92311719dd9778126be6436f0aea760"
+    },
+    {
+      "start": 1755857,
+      "end": 1756030,
+      "sha256": "3f815a7966ff2e9d631ce72871b9d40356af92c208cd82e4e577eb054b021f91"
+    }
+  ],
+  "audience": [
+    {
+      "start": 854599,
+      "end": 854665,
+      "sha256": "a101476e67a0aa25a154ea89217c7928a82a687fd442943835742e080a1b15d4"
+    },
+    {
+      "start": 854667,
+      "end": 854760,
+      "sha256": "b2872977d9b08e898c4f1d20705c2c05577b15caa82e83b5d31113c69fd8d00a"
+    }
+  ],
+  "edits": [
+    "Select all fifteen original guild cases, three war entry helpers and rejection; preserve native SQL/guards/results with the explicitly authorized fixed 25-player capacity on all four channels",
+    "Remove async/await only for the synchronous atomic statement facade",
+    "Inject clock/UUID, database and authorized actor into original guild_changed recipient queries/event construction",
+    "Capture the exact original guild publisher private audience (including native empty/80 limit) with existing private-player event transport; current owners are dedicated authenticated sockets",
+    "Durable event recording replaces post-response scheduling; storage errors fail the whole transaction rather than losing a committed notification"
+  ],
+  "actions": [
+    "create",
+    "invite",
+    "accept",
+    "decline",
+    "leave",
+    "disband",
+    "kick",
+    "permission",
+    "transfer",
+    "tax",
+    "withdraw",
+    "challenge",
+    "war_decline",
+    "war_accept",
+    "war_join"
+  ],
+  "unboundActions": [],
+  "capacityException": "Bind original channelCapacitySql510 calls to 25 for the authorized four-channel architecture; retain every native occupancy, readiness, team and time guard"
+}

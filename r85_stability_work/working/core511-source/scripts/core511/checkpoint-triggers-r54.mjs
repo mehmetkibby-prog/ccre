@@ -1,0 +1,16 @@
+// Exact R54 observer-only TEMP triggers. No game rows are changed.
+// Generated from inspected evidence/r54-checkpoint-triggers.json; unknown triggers still reject batching.
+export const checkpointTriggerHashesR54=new Set([
+ "34ac88312650d55caa4b3f807714defd933ea0c2eb85e313aa698c4084b25d69", // kernel511_refresh_r533_boss_participants_DELETE_scope
+ "f025377d1a12d0a4548fd1c44793d6287e59a2855a2ef390eae24e30c86be17b", // kernel511_refresh_r533_boss_participants_INSERT_scope
+ "adf6964dc07ed2bbb30efc0ffa8291f8eca9d02b53fbd15dac767495dde2552e", // kernel511_refresh_r533_boss_participants_UPDATE_scope
+ "3484a0e50c87f9b7d70d981226c82ef36d4435f2b82765b603471d28aca67c92", // kernel511_refresh_r533_combat_events_DELETE_scope
+ "e2cfae604a92660673fe27d17fc9aa45c0803b8fbba1d083c325055919be1fe1", // kernel511_refresh_r533_combat_events_INSERT_scope
+ "f920438ae7b78365aa09a0dec6703378a678a3f5f8a201ac6bbbf8de34cb9756", // kernel511_refresh_r533_combat_events_UPDATE_scope
+ "acd5cdfd5fa6bb4fea039930a9b221a2ab2e4e5a5e72fde6fcda39bdc9b6c184", // kernel511_refresh_r533_monster_participants_DELETE_scope
+ "4f7840a21aaea90504748535c7027350ee9db5d5006d0caf7fd629f167b3d778", // kernel511_refresh_r533_monster_participants_INSERT_scope
+ "b47a81ce1c8a5f421a2d49d3ad87d99f18de9547e85a1aa2845c9694f009efa1", // kernel511_refresh_r533_monster_participants_UPDATE_scope
+ "b1844351c050fe7685ffd7a4a6ff7de718e49576cd66c6135a276b6dd2929938", // kernel511_refresh_r533_monsters_DELETE_scope
+ "71e1837f81e973d429c9febfbea151a2d5408a1db36147cf708f4bd7a626695d", // kernel511_refresh_r533_monsters_INSERT_scope
+ "dce7c44957c59168b56d57000e2267dada5dd4b1c568cc3039be0462b92b4cad", // kernel511_refresh_r533_monsters_UPDATE_scope
+]);

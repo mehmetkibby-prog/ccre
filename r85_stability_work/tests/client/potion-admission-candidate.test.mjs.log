@@ -1,0 +1,91 @@
+{
+  "passed": 12,
+  "cases": [
+    {
+      "name": "open-world automatic potion ownership lasts beyond UI timeout",
+      "status": "passed"
+    },
+    {
+      "name": "open-world death while potion pending is never inferred as revival",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon automatic potion ownership lasts beyond UI timeout",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon death while potion pending is never inferred as revival",
+      "status": "passed"
+    },
+    {
+      "name": "automatic potion waits behind deliberate manual potions without deduplicating manual intents",
+      "status": "passed"
+    },
+    {
+      "name": "automatic potion remains admissible behind a different gameplay action",
+      "status": "passed"
+    },
+    {
+      "name": "explicit potion rejection releases ownership while retaining original two-second cadence",
+      "status": "passed"
+    },
+    {
+      "name": "connection, replacement and verification fences prevent pre-queue automatic intents",
+      "status": "passed"
+    },
+    {
+      "name": "existing death, HP, ownership, enabled, area and visibility conditions stay enforced",
+      "status": "passed"
+    },
+    {
+      "name": "delayed initial ticket admits no stale potion and restores automatic use after independent world connection",
+      "status": "passed"
+    },
+    {
+      "name": "real reconnect retains accepted potion without replay and late ACK releases the gate",
+      "status": "passed"
+    },
+    {
+      "name": "manual generic inventory/economy and potion callback bodies remain byte-identical",
+      "status": "passed"
+    }
+  ],
+  "cadence": [
+    {
+      "scope": "open-world",
+      "baselineWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "candidateWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "healthyAckMs": 40
+    },
+    {
+      "scope": "dungeon",
+      "baselineWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "candidateWireMs": [
+        2000,
+        4000,
+        6000,
+        8000,
+        10000
+      ],
+      "healthyAckMs": 40
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/guild-skill.mjs",
+  "sourceSha256": "75fd621ff506be441bda08c2ab1f82ab159b5445b96c2ee52394691aeb362f1a",
+  "slices": [
+    {
+      "name": "buffs",
+      "start": 1774,
+      "end": 1789,
+      "sha256": "2e2b9b9282e218b35d19d5622811216c85e8bcc94144b2922b2a40492c6c52e7"
+    },
+    {
+      "name": "observing",
+      "start": 1969,
+      "end": 1984,
+      "sha256": "a6884fdd26f404482b7f541c4210dc531e587edea59aa9d69eb1de99b50a200b"
+    },
+    {
+      "name": "revision",
+      "start": 1985,
+      "end": 1995,
+      "sha256": "e52b8c0bce1e07d9849b8a9897d35ba5c306643f1bf285371bb6dad3acc986f8"
+    },
+    {
+      "name": "syncedRevision",
+      "start": 1996,
+      "end": 2013,
+      "sha256": "5aa22882079b6481415c2a873dc82a92e658522bf7e3d16f765f058299231648"
+    },
+    {
+      "name": "nextExpiry",
+      "start": 2014,
+      "end": 2033,
+      "sha256": "85c8587c522656f08d32b0dea702146752e09e0c9821f31924ecf4de216dfaf0"
+    },
+    {
+      "name": "scanStartedAt",
+      "start": 2034,
+      "end": 2057,
+      "sha256": "620d7ad86ebe9d88f5f04707d6ea3674a18d03dfe592f2562b3a0471ec907ca4"
+    },
+    {
+      "name": "bonuses",
+      "start": 2066,
+      "end": 2318,
+      "sha256": "bfda7747d715c9f64afe9fa7cc271c5836b05d1e1c233feb0bddc98221067d1e"
+    },
+    {
+      "name": "syncSteps",
+      "start": 2321,
+      "end": 4410,
+      "sha256": "4cde3eb1e78b68269a4eebc0caecc6c5f1b3598738096884cee1011d4ca03cab"
+    },
+    {
+      "name": "observeCommits",
+      "start": 4431,
+      "end": 4475,
+      "sha256": "d1a3f60253e3500f6ca0cce8518adde535cb31345322a3411a212b235675e05a"
+    },
+    {
+      "name": "committed",
+      "start": 4478,
+      "end": 4599,
+      "sha256": "d07c1d4be4c1bf7f8a273d429ec8e443e0ad2b2eb4f36c4661119d502b369c2c"
+    }
+  ],
+  "generatedSha256": "8fa8698190188366ef071435d5f8f544d913112a4ef11265621303572337e491",
+  "edits": [
+    "Original generator and commit-observer state copied unchanged",
+    "Read-worker driver advances a yielded HP repair only after the permanent owner SystemWriter acknowledgement",
+    "Writer revision metadata and clock are explicit inputs; no guild gameplay SQL rewritten"
+  ]
+}

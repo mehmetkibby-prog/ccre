@@ -1,0 +1,58 @@
+test_binding_must_precede_first_measurement (__main__.Scoped50AssessmentTests.test_binding_must_precede_first_measurement) ... ok
+test_duplicate_actor_cannot_replace_missing_actor (__main__.Scoped50AssessmentTests.test_duplicate_actor_cannot_replace_missing_actor) ... ok
+test_duplicate_economic_actor_cannot_replace_missing_actor (__main__.Scoped50AssessmentTests.test_duplicate_economic_actor_cannot_replace_missing_actor) ... ok
+test_duplicate_loop_target_is_rejected (__main__.Scoped50AssessmentTests.test_duplicate_loop_target_is_rejected) ... ok
+test_historical_diagnostic50_retains_cap_limited_input_and_all_sixty_outliers (__main__.Scoped50AssessmentTests.test_historical_diagnostic50_retains_cap_limited_input_and_all_sixty_outliers) ... FAIL
+test_historical_one_and_ten_pass_scoped_regression_checks (__main__.Scoped50AssessmentTests.test_historical_one_and_ten_pass_scoped_regression_checks) ... 
+  test_historical_one_and_ten_pass_scoped_regression_checks (__main__.Scoped50AssessmentTests.test_historical_one_and_ten_pass_scoped_regression_checks) (players=1) ... FAIL
+  test_historical_one_and_ten_pass_scoped_regression_checks (__main__.Scoped50AssessmentTests.test_historical_one_and_ten_pass_scoped_regression_checks) (players=10) ... FAIL
+test_missing_actor_array_is_incomplete_evidence (__main__.Scoped50AssessmentTests.test_missing_actor_array_is_incomplete_evidence) ... ok
+test_missing_actor_prediction_counter_is_not_an_observed_zero (__main__.Scoped50AssessmentTests.test_missing_actor_prediction_counter_is_not_an_observed_zero) ... ok
+test_missing_errors_or_faults_is_not_zero_errors (__main__.Scoped50AssessmentTests.test_missing_errors_or_faults_is_not_zero_errors) ... ok
+test_missing_generator_process_evidence_is_incomplete (__main__.Scoped50AssessmentTests.test_missing_generator_process_evidence_is_incomplete) ... ok
+test_missing_raw_measurement_is_incomplete (__main__.Scoped50AssessmentTests.test_missing_raw_measurement_is_incomplete) ... ok
+test_nan_loop_elu_is_incomplete_evidence (__main__.Scoped50AssessmentTests.test_nan_loop_elu_is_incomplete_evidence) ... ok
+test_nan_resource_totals_are_incomplete_evidence (__main__.Scoped50AssessmentTests.test_nan_resource_totals_are_incomplete_evidence) ... ok
+test_raw_timer_or_histogram_cannot_be_hidden_by_smaller_reported_maximum (__main__.Scoped50AssessmentTests.test_raw_timer_or_histogram_cannot_be_hidden_by_smaller_reported_maximum) ... ok
+test_summary_tamper_cannot_hide_historical_caps (__main__.Scoped50AssessmentTests.test_summary_tamper_cannot_hide_historical_caps) ... ok
+test_truncated_loop_window_is_rejected (__main__.Scoped50AssessmentTests.test_truncated_loop_window_is_rejected) ... ok
+test_unfinished_loop_cannot_pass_as_complete (__main__.Scoped50AssessmentTests.test_unfinished_loop_cannot_pass_as_complete) ... ok
+test_wrong_loop_run_id_is_rejected (__main__.Scoped50AssessmentTests.test_wrong_loop_run_id_is_rejected) ... ok
+test_copied_first_primary_run_cannot_satisfy_second_primary (__main__.Scoped50CampaignOrderTests.test_copied_first_primary_run_cannot_satisfy_second_primary) ... ok
+test_duplicate_raw_digest_is_rejected_even_with_distinct_run_id (__main__.Scoped50CampaignOrderTests.test_duplicate_raw_digest_is_rejected_even_with_distinct_run_id) ... ok
+test_duplicate_run_id_is_rejected_even_with_distinct_artifact_bytes (__main__.Scoped50CampaignOrderTests.test_duplicate_run_id_is_rejected_even_with_distinct_artifact_bytes) ... ok
+test_duplicate_stage_id_is_rejected (__main__.Scoped50CampaignOrderTests.test_duplicate_stage_id_is_rejected) ... ok
+test_inverted_measurement_window_is_rejected (__main__.Scoped50CampaignOrderTests.test_inverted_measurement_window_is_rejected) ... ok
+test_nonfinite_timestamps_are_rejected (__main__.Scoped50CampaignOrderTests.test_nonfinite_timestamps_are_rejected) ... ok
+test_overlapping_native_windows_are_rejected (__main__.Scoped50CampaignOrderTests.test_overlapping_native_windows_are_rejected) ... ok
+test_reverse_execution_order_is_rejected (__main__.Scoped50CampaignOrderTests.test_reverse_execution_order_is_rejected) ... ok
+test_separate_chronological_runs_are_accepted (__main__.Scoped50CampaignOrderTests.test_separate_chronological_runs_are_accepted) ... ok
+
+======================================================================
+FAIL: test_historical_diagnostic50_retains_cap_limited_input_and_all_sixty_outliers (__main__.Scoped50AssessmentTests.test_historical_diagnostic50_retains_cap_limited_input_and_all_sixty_outliers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/runtime/scoped50-assessment-unit.test.py", line 101, in test_historical_diagnostic50_retains_cap_limited_input_and_all_sixty_outliers
+    self.assertTrue(result['integrityPassed'], result['integrityFailures'])
+AssertionError: False is not true : ['complete_writer_observations']
+
+======================================================================
+FAIL: test_historical_one_and_ten_pass_scoped_regression_checks (__main__.Scoped50AssessmentTests.test_historical_one_and_ten_pass_scoped_regression_checks) (players=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/runtime/scoped50-assessment-unit.test.py", line 93, in test_historical_one_and_ten_pass_scoped_regression_checks
+    self.assertTrue(result['integrityPassed'], result['integrityFailures'])
+AssertionError: False is not true : ['complete_writer_observations']
+
+======================================================================
+FAIL: test_historical_one_and_ten_pass_scoped_regression_checks (__main__.Scoped50AssessmentTests.test_historical_one_and_ten_pass_scoped_regression_checks) (players=10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/ccre/r85_stability_work/tests/runtime/scoped50-assessment-unit.test.py", line 93, in test_historical_one_and_ten_pass_scoped_regression_checks
+    self.assertTrue(result['integrityPassed'], result['integrityFailures'])
+AssertionError: False is not true : ['complete_writer_observations']
+
+----------------------------------------------------------------------
+Ran 27 tests in 1.599s
+
+FAILED (failures=3)

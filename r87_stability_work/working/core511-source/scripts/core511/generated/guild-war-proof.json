@@ -1,0 +1,48 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/guild-schema.mjs",
+  "sourceSha256": "0c736a07933a0f729d257a2a5bc803bbb21f9357cae90470ea46a420d9da38e9",
+  "timeout": {
+    "start": 119,
+    "end": 577,
+    "sha256": "5a3b73e60a8290b1c482a00ce42ea2e1a0e5ae12ec8105db9e6311923795467f"
+  },
+  "finish": {
+    "start": 8071,
+    "end": 11079,
+    "sha256": "74fb6860358b840349ee68350dbf8b107bf6422418bba8ef4da4fcaa9c65f5f9"
+  },
+  "generatedSha256": "6fb0d8435ed630af7eb4ac15b5cc32762e21ce71a616c53f8b639ca9c023cdce",
+  "edits": [
+    {
+      "from": "SELECT 1 AS channel UNION ALL SELECT 2 UNION ALL SELECT 3",
+      "to": "SELECT 1 AS channel UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4",
+      "count": 2
+    },
+    {
+      "from": "MAX(1,MIN(30,channel_capacity))",
+      "to": "MAX(1,MIN(25,channel_capacity))",
+      "count": 3
+    },
+    {
+      "from": "occupied.last_seen>=unixepoch()-30",
+      "to": "(occupied.last_seen>=unixepoch()-30 OR EXISTS(SELECT 1 FROM kernel511_admissions col_slot WHERE col_slot.player_id=occupied.id))",
+      "count": 3
+    },
+    {
+      "from": "arena_match_id=NEW.id AND last_seen>=unixepoch()-30",
+      "to": "arena_match_id=NEW.id AND (last_seen>=unixepoch()-30 OR EXISTS(SELECT 1 FROM kernel511_admissions col_slot WHERE col_slot.player_id=players.id))",
+      "count": 1
+    },
+    {
+      "from": "players.last_seen<unixepoch()-30 OR",
+      "to": "(players.last_seen<unixepoch()-30 AND NOT EXISTS(SELECT 1 FROM kernel511_admissions col_slot WHERE col_slot.player_id=players.id)) OR",
+      "count": 1
+    }
+  ],
+  "notes": [
+    "Timeout SQL is unchanged. Due query derives only the original WHERE clause.",
+    "Public channels extend to 4 and cap at 25. Reconnect admissions count as occupied slots even after the native 30-second SQL presence deadline.",
+    "Native score, tie, cancellation, economy, HP, position, return preference, overflow and announcements are unchanged."
+  ]
+}

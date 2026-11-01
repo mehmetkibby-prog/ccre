@@ -1,0 +1,93 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "vds-server/src/realm-runtime.mjs",
+  "sourceSha256": "90920023e6256095f4acf6091dabb47f538c71ce687dcde6b734bdfee966f5f3",
+  "generatedSha256": "c7a45126d6e1be7b257a1040898ae907c8b40244fd75e1ea82eb62b3b20d5114",
+  "edits": [
+    {
+      "start": 0,
+      "end": 75,
+      "original": "import {attachRealtimeMaintenance491} from './maintenance-realtime491.mjs';",
+      "replacement": "// Maintenance delivery belongs to the current four channel owners."
+    },
+    {
+      "start": 1763,
+      "end": 1785,
+      "original": "'./maintenance438.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/maintenance438.mjs\""
+    },
+    {
+      "start": 1815,
+      "end": 1837,
+      "original": "'./loadtest-entry.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/loadtest-entry.mjs\""
+    },
+    {
+      "start": 1866,
+      "end": 1887,
+      "original": "'./realm-control.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-control.mjs\""
+    },
+    {
+      "start": 1923,
+      "end": 1950,
+      "original": "'./realm-admin-service.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-admin-service.mjs\""
+    },
+    {
+      "start": 2050,
+      "end": 2072,
+      "original": "'./realm-manifest.mjs'",
+      "replacement": "\"./native-realm-manifest.mjs\""
+    },
+    {
+      "start": 2104,
+      "end": 2129,
+      "original": "'./realm-entry-store.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-entry-store.mjs\""
+    },
+    {
+      "start": 2190,
+      "end": 2216,
+      "original": "'./realm-service-auth.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-service-auth.mjs\""
+    },
+    {
+      "start": 2250,
+      "end": 2277,
+      "original": "'./realm-security-gate.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs\""
+    },
+    {
+      "start": 2308,
+      "end": 2331,
+      "original": "'./realm-admission.mjs'",
+      "replacement": "\"./native-realm-admission.mjs\""
+    },
+    {
+      "start": 2375,
+      "end": 2406,
+      "original": "'./realm-database-identity.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-database-identity.mjs\""
+    },
+    {
+      "start": 5907,
+      "end": 5945,
+      "original": "attachRealtimeMaintenance491(runtime);",
+      "replacement": "database.core511RealmStartup.capture(runtime);"
+    },
+    {
+      "start": 8280,
+      "end": 8336,
+      "original": "void acceptMaintenance438(req,res,globalThis.__colRealm)",
+      "replacement": "void globalThis[Symbol.for('coreoflife.core511.httpBindings')].privateRequest(req,res,()=>acceptMaintenance438(req,res,globalThis.__colRealm))"
+    },
+    {
+      "start": 8387,
+      "end": 8499,
+      "original": "void loadtestEntry(req,res,globalThis.__colRealm).catch(()=>{if(!res.headersSent)res.writeHead(500);res.end();})",
+      "replacement": "void globalThis[Symbol.for('coreoflife.core511.httpBindings')].privateRequest(req,res,()=>loadtestEntry(req,res,globalThis.__colRealm).catch(()=>{if(!res.headersSent)res.writeHead(500);res.end();}))"
+    }
+  ],
+  "scope": "Original signed calls, startup retry/identity checks, security gate, surviving-session revalidation and private endpoint checks/bodies unchanged. Rebase imports, bind candidate RealmAdmission, replace legacy maintenance attachment with locked-host capture and track two private HTTP operations through shutdown. Candidate manifest adds explicit CORE511 four-channel metadata while preserving legacy three-channel realms; central account deployment still requires the matching manifest module."
+}

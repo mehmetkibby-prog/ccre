@@ -1,0 +1,60 @@
+{
+  "status": "focused-native-passed-performance-unverified",
+  "before": {
+    "path": "/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/attack-writer.mjs",
+    "bytes": 16150,
+    "sha256": "15719dcd652a0d5f1d930303cb69cd577a84a8bd4217a89aa13271f1916948b6"
+  },
+  "after": {
+    "path": "/workspace/ccre/r86_stability_work/working/core511-source/scripts/core511/attack-writer.mjs",
+    "bytes": 16192,
+    "sha256": "33d6396b7a781364881d534d388c9eafc360fe90d9492dfcf61bf5fa0c430655"
+  },
+  "scope": "Skip only private fresh-secondary self-comparisons; primary frame/settings comparisons, player existence, all authority/resource/durability/receipt checks retained. No public option added.",
+  "tests": {
+    "nodeTests": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "meaningfulCases": 6,
+    "primaryCases": [
+      "stale player",
+      "stale monster",
+      "stale settings",
+      "public fresh flags plus extra handler argument",
+      "missing expected"
+    ],
+    "tenActorEconomyAndReplay": true
+  },
+  "artifacts": [
+    {
+      "path": "/workspace/ccre/r86_stability_work/tests/attack-secondary/primary-guards.test.mjs",
+      "bytes": 2658,
+      "sha256": "4c7af233eebf835dd2a56c5bdec124eae511e0c018d72fc365ab1186c95d0f4e"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/tests/attack-secondary/native-economy.test.mjs",
+      "bytes": 7933,
+      "sha256": "0fd5c08ca497dbfdb404b3c17d63705da780ec3d85d476c0ee3b6a5c22769f35"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/attack-secondary-tests.tap",
+      "bytes": 1555,
+      "sha256": "269ece53e056c5f9a8559130ce8170fc7441a9ec7ffae601ff3c15878db841bc"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/secondary-ten-native-parity-r86.json",
+      "bytes": 42687,
+      "sha256": "16e66c638c3dffb7fc317c8a021cd843865417ce64d42848e486d2f6e78bec2f"
+    },
+    {
+      "path": "/workspace/ccre/r86_stability_work/evidence/attack-secondary.diff",
+      "bytes": 2287,
+      "sha256": "9a16f1043b9411cb00f2027fbb6383ff38c4921f1d60d7998762838e6f900bd4"
+    }
+  ],
+  "testAdaptation": "Copied original independent-ten native economy test; imports relative to R86 working, source identity captured from candidate, evidence output renamed. Native setup, workload, comparison and replay checks unchanged. Existing documented R84 fixture loader used.",
+  "sourceUnchangedDuringNativeParity": true,
+  "performanceClaim": false,
+  "liveTouched": false
+}

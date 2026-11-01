@@ -1,0 +1,3 @@
+pearl_reset {"applied":true,"appliedAtMs":1793512116762,"backupName":"before-pearl-reset-1793512116762-c62a4032-d578-4d28-90ce-4ffc847daf8f.sqlite"}
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+{"event":"native_mixed_started","players":30,"seconds":30,"runId":"3352e2d5-9b90-47fe-a7ed-ce22dae33bcb"}

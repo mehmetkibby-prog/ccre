@@ -1,0 +1,131 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793511788859,"backupName":"before-pearl-reset-1793511788859-b682494a-093c-4156-b026-3b1db9c24c94.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:13.626Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":337990,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d55942bce620b7e579ddfd03"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:13.626Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":337996,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b74e810fd192a5bb255cd8b7"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:13.627Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":338009,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9e0dbdf9cd58778d20a7414f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:13.627Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":338015,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7078891e9b00c99b10e66860"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:13.646Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":337967,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"6197a665e1cdab856f8e11b6"}
+# Subtest: ordinary native guild-skill rejection refreshes and releases the owner before its original HTTP error
+not ok 1 - ordinary native guild-skill rejection refreshes and releases the owner before its original HTTP error
+  ---
+  duration_ms: 6134.273957
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:8:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'child')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    connect (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:58:112)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:9:155)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793511795169,"backupName":"before-pearl-reset-1793511795169-6aae76d1-5bce-40f8-b40a-d28e737bd726.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:19.635Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":338050,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dc7a2a7e3e56abac34d5a7d7"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:19.636Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":338065,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"2bbd9ffed623c393353dad53"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:19.636Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":338075,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"6651229675577d71e7363810"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:19.636Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":338084,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"21d3e25cb927a5cef5e5fceb"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:19.659Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":338039,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"f74948233739eb1d0ef1a0bc"}
+# Subtest: native guild donation source SIGKILL before COMMIT recovers CURRENT DB and replays one native receipt
+not ok 2 - native guild donation source SIGKILL before COMMIT recovers CURRENT DB and replays one native receipt
+  ---
+  duration_ms: 6027.966191
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:15:39'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'child')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    connect (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:58:112)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:16:150)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793511801032,"backupName":"before-pearl-reset-1793511801032-b5449f43-b56e-4e15-934f-e7ee32346553.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:25.975Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":338155,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9e653a02569ffe066bf74166"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:25.976Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":338163,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ca0631d3667127222c460080"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:25.976Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":338186,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"10f08d5bffe96b573be06ea1"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:25.976Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":338211,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"8784c4505419bf9f8a53b48c"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:25.997Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":338144,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"61f5acf699ff9010184b6d97"}
+# Subtest: native guild donation source SIGKILL after COMMIT recovers CURRENT DB and replays one native receipt
+not ok 3 - native guild donation source SIGKILL after COMMIT recovers CURRENT DB and replays one native receipt
+  ---
+  duration_ms: 6352.028591
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:15:39'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'child')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    connect (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:58:112)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-permanent-process.test.mjs:16:150)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793511808007,"backupName":"before-pearl-reset-1793511808007-6566b08f-9416-444f-abfa-60ec81b27257.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:32.599Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":338311,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0a6d33f5d542212210141a89"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:32.600Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":338322,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ff60ed45441db906fe64d4a7"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:32.600Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":338349,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dde62a0b6b3248abb7aac763"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:32.600Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":338373,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"da45b177904ddf2cdf1093b0"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:32.621Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":338300,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"fc3f30dff19283a458f34911"}
+# Subtest: native writer binds the private owner stream to the verified main identity, never payload identity
+not ok 4 - native writer binds the private owner stream to the verified main identity, never payload identity
+  ---
+  duration_ms: 6093.689755
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:6:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    409 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 409
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:7:139)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793511814057,"backupName":"before-pearl-reset-1793511814057-c216e41c-31e7-4be4-be86-80216be71398.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:38.821Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":338431,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"832e12eb45c1cc94396fcfa9"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:38.822Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":338446,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fd00b136e1de52e7405d3171"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:38.822Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":338471,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"649f504f48b5580888e02343"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:38.822Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":338477,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d0ef5e22f2a268d73abc222a"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T05:43:38.847Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":338409,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"df3c4b5db79b9cac6237f78e"}
+# Subtest: native potion accepted before security expiry commits once, while the expired socket loses permission
+not ok 5 - native potion accepted before security expiry commits once, while the expired socket loses permission
+  ---
+  duration_ms: 6213.105623
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'child')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    connect (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/process-fixture.mjs:58:112)
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/working/core511-source/scripts/core511/tests/native-writer-identity-process.test.mjs:33:158)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 0
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32162.620534

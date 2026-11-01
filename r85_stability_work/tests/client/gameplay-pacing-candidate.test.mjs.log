@@ -1,0 +1,70 @@
+{
+  "passed": 16,
+  "cases": [
+    {
+      "name": "timeout keeps attack slot 0 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps attack slot 1 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps attack slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps pvp_attack slot 0 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps pvp_attack slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps cast_support456 slot 3 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "timeout keeps guardian_dash slot 2 owned until late ACK",
+      "status": "passed"
+    },
+    {
+      "name": "transport queue also retains same-ability ownership before wire admission",
+      "status": "passed"
+    },
+    {
+      "name": "secondary slot and cross-target PvP/PvE share the established ability gate",
+      "status": "passed"
+    },
+    {
+      "name": "different ability and non-combat actions preserve FIFO",
+      "status": "passed"
+    },
+    {
+      "name": "normal fast attacks, double-click gate, explicit error and rate deadline",
+      "status": "passed"
+    },
+    {
+      "name": "dungeon attack representation and release do not change native dungeon pacing",
+      "status": "passed"
+    },
+    {
+      "name": "owner-ended rejection clears old commands but fresh combat remains fenced",
+      "status": "passed"
+    },
+    {
+      "name": "connecting, transition and verification states cannot accumulate pre-queue intent",
+      "status": "passed"
+    },
+    {
+      "name": "first world request establishes connection independently of combat gate",
+      "status": "passed"
+    },
+    {
+      "name": "real socket close schedules reconnect independently of suppressed combat",
+      "status": "passed"
+    }
+  ],
+  "evidence": "/workspace/ccre/r85_stability_work/tests/client/gameplay-pacing-candidate-evidence.json"
+}

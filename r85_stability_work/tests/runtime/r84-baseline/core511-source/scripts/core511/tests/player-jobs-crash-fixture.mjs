@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership} from '../ownership.mjs';
+import {SystemWriter} from '../system-writer.mjs';
+import {NativeGameServices} from '../game-services.mjs';
+import {createPlayerJobHandler} from '../player-jobs.mjs';
+import {isolatedPlayerJobs} from './player-jobs-fixture.mjs';
+const [file,input,phase,marker]=process.argv.slice(2);if(!file.includes('core511-isolated-')||!['before','after'].includes(phase))throw Error('Isolated player job crash required');
+const {peer,request}=JSON.parse(fs.readFileSync(input,'utf8')),{LocalDatabase}=await native('vds-server/src/database.mjs'),{installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry({now:()=>request.payload.nowMs});
+const db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:peer.realm}),writer=new SystemWriter(db,{realmId:peer.realm,authority}),services=new NativeGameServices(db.sqlite,{clock:()=>request.payload.nowMs}),handler=createPlayerJobHandler({database:db,services,clock:()=>request.payload.nowMs,assertHeld:isolatedPlayerJobs});
+writer.add('player_upkeep',(...args)=>{const value=handler(...args);if(phase==='before'){fs.writeFileSync(marker,'uncommitted_player_job');process.kill(process.pid,'SIGKILL');}return value;});
+await writer.command(peer,request);fs.writeFileSync(marker,'durable_player_job_before_ack');process.kill(process.pid,'SIGKILL');

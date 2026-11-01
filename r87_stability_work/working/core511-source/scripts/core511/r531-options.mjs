@@ -1,0 +1,11 @@
+export const rewardPeerCacheR531=process.env.CORE511_REWARD_PEER_CACHE_R531!=='0';
+export const rewardEmptyXpR531=process.env.CORE511_REWARD_EMPTY_XP_R531!=='0';
+export const quarantineDrainR531=process.env.CORE511_QUARANTINE_DRAIN_R531!=='0';
+export const checkpointSqlBatchR531=process.env.CORE511_CHECKPOINT_SQL_BATCH_R531!=='0';
+export const earlyCombatReplyR531=process.env.CORE511_EARLY_COMBAT_REPLY_R531!=='0';
+export const eventWireCacheR531=process.env.CORE511_EVENT_WIRE_CACHE_R531!=='0';
+export const checkpointDeadlinesR531=process.env.CORE511_CHECKPOINT_DEADLINES_R531!=='0';
+export const scopedPotionCheckpointR531=process.env.CORE511_SCOPED_POTION_CHECKPOINT_R531!=='0';
+export const egressPacingR531=process.env.CORE511_EGRESS_PACING_R531!=='0';
+export const joinedCheckpointBoundR531=process.env.CORE511_JOIN_CHECKPOINT_BOUND_R531!=='0';
+export const tickHoldR531=process.env.CORE511_TICK_HOLD_R531!=='0';

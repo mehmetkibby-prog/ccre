@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+const hash=x=>createHash('sha256').update(x).digest('hex'),root=process.env.COL_CORE511_BASE??path.resolve(import.meta.dirname,'../../../native510-bb3a6cc689c6'),out=path.join(import.meta.dirname,'generated');
+const baseline='bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b',bytes=fs.readFileSync(path.join(root,'realm-package-manifest.json'));if(hash(bytes)!==baseline)throw Error('Exact V510 required');
+const sourceFile='vds-server/src/world-cleanup.mjs',source=fs.readFileSync(path.join(root,sourceFile),'utf8'),manifest=JSON.parse(bytes);if(manifest.files.find(r=>r.path===sourceFile)?.sha256!==hash(source))throw Error('Native cleanup changed');
+const start=source.indexOf('const DROP_READY ='),end=source.indexOf('const active = new WeakMap();');if(start<0||end<start)throw Error('Native cleanup boundary drift');
+const dependency='lib/stone-boss-ranking476.mjs';if(manifest.files.find(r=>r.path===dependency)?.sha256!==hash(fs.readFileSync(path.join(root,dependency))))throw Error('Native stone guards changed');
+const generated='import {STONE_PARTICIPANT_EXPIRY_GUARD476,STONE_DEFEAT_EXPIRY_GUARD476} from '+JSON.stringify(path.relative(out,path.join(root,dependency)))+';\n'+source.slice(start,end);
+fs.writeFileSync(path.join(out,'world-cleanup-rules.mjs'),generated);fs.writeFileSync(path.join(out,'world-cleanup-proof.json'),JSON.stringify({baselineManifestSha256:baseline,source:sourceFile,sourceSha256:hash(source),start,end,sliceSha256:hash(source.slice(start,end)),generatedSha256:hash(generated),edits:['Original ordered retention table, guards, index definitions and bounded deletion SQL unchanged','Native candidate-before-guard cursor strategy implemented in query-only read worker','Each bounded deletion uses sole writer and process receipt; resident resource leases protect mutable contributions and fishing']},null,2)+'\n');

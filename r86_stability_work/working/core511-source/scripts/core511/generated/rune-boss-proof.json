@@ -1,0 +1,185 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/rune-v2-combat484.mjs",
+  "sourceSha256": "d87e4a7b1342b5eeeb6417dd5ded518492504c4a5ee5ca1b2ed5764df4e0b3ba",
+  "slices": [
+    {
+      "name": "RUNE_V2_BOSS_AI_SCHEMA484",
+      "start": 48,
+      "end": 519,
+      "sha256": "6736360fcbef48093f46e9045e9c01588875f37824598919773de5ef4b97bfa7"
+    },
+    {
+      "name": "contexts,views",
+      "start": 520,
+      "end": 565,
+      "sha256": "63d79d7f2c1c2bb71589a92025b9261106f6b71b2c8d9b098da14cf913052b0c"
+    },
+    {
+      "name": "bossId",
+      "start": 566,
+      "end": 617,
+      "sha256": "0e6355f22bea9ed95b0d2821d74daacf589a23f3839ef7f48e73aad3509d628d"
+    },
+    {
+      "name": "canonical",
+      "start": 618,
+      "end": 765,
+      "sha256": "d7adabf0f5ce925f1fe6d3596ad18875307f0003d896c7b27532b3e4fdcf1781"
+    },
+    {
+      "name": "squared",
+      "start": 766,
+      "end": 813,
+      "sha256": "43c1dc377040ddf7b439fb7c6436f1a9051b86c2736a95ec4840599c81a9320d"
+    },
+    {
+      "name": "real",
+      "start": 814,
+      "end": 1068,
+      "sha256": "0d637aadee3fb6505fdcccf11f21567afa52e1a9816e2b757aa8e86ccc697021"
+    },
+    {
+      "name": "realPlayer",
+      "start": 1069,
+      "end": 1365,
+      "sha256": "65fc69197f5099b18d340f38a67315b5fa34cf12c05de6462fcf0f4ce9c68a41"
+    },
+    {
+      "name": "bossGuard",
+      "start": 1366,
+      "end": 1678,
+      "sha256": "90839f05a52f15416d042414963686033651951e792cb164b27d42d5c5ac3d4a"
+    },
+    {
+      "name": "armorSql",
+      "start": 1679,
+      "end": 1999,
+      "sha256": "91f587d0fa5aaaefaee489a7ddb47b2cc824a169f234ac045b0609fe7108db61"
+    },
+    {
+      "name": "writerNow",
+      "start": 2000,
+      "end": 2060,
+      "sha256": "93734bdf020bfee7b417b8d7aed6d7dc476ed97667ec205919d2c0d27c83b38e"
+    },
+    {
+      "name": "enabled",
+      "start": 2061,
+      "end": 2159,
+      "sha256": "6ddf5ecb37de132136f7e52b2b16f39741b389e54966fc4f8db070b406265631"
+    },
+    {
+      "name": "waveEnabled",
+      "start": 2160,
+      "end": 2292,
+      "sha256": "fb36e80b90ca620cf0e1be7f83827f93c3be0598fd24ed5af68047db781dc6f6"
+    },
+    {
+      "name": "runeV2BossWave484",
+      "start": 2301,
+      "end": 2617,
+      "sha256": "fe9e037a6aa7c110c9b6163fbcc494f7277da68024f432529e75bb5451244024"
+    },
+    {
+      "name": "expose",
+      "start": 2618,
+      "end": 3007,
+      "sha256": "e8379a010ba2424ab12fd9920af08d1b2d33dda4aaeff61f814df1fabc0e990c"
+    },
+    {
+      "name": "forget",
+      "start": 3008,
+      "end": 3081,
+      "sha256": "ecbfd791acf797039a9b801afc7389c6c60a95e2778c226520e367e739c6109a"
+    },
+    {
+      "name": "context",
+      "start": 3082,
+      "end": 3218,
+      "sha256": "95d569357f9ee0fe144b75d0e5331a7503786e471ac4f819e713176f68906de3"
+    },
+    {
+      "name": "run",
+      "start": 3804,
+      "end": 12895,
+      "sha256": "56b5db635c38719e1de0b36276b465d968441915856fd84b62c124bf32fb83a5"
+    },
+    {
+      "name": "cancel",
+      "start": 12896,
+      "end": 13386,
+      "sha256": "4e7e41676ed95758e6572b820663c1ae159911cf1c1293ed850448354f915ebf"
+    },
+    {
+      "name": "runeV2ProjectedOrigin485",
+      "start": 13556,
+      "end": 13860,
+      "sha256": "2195bae7a50d1ea5d881bfbbc1343685e2bdc0d23ea5583aea0d8eaf73f8ba0f"
+    }
+  ],
+  "storageBoundaries": [
+    {
+      "kind": "loop,channels",
+      "start": 3886,
+      "end": 3951,
+      "sha256": "9b7d8bf61538bc4ffe1b689669381bea18833698dd96b5b76cf39c230f3450e5"
+    },
+    {
+      "kind": "id,boss",
+      "start": 4029,
+      "end": 4161,
+      "sha256": "6769e808449eb7c159c047da1c46fad446436bce1a0e10c2026b550a66e098bf"
+    },
+    {
+      "kind": "resident candidates",
+      "start": 4531,
+      "end": 5152,
+      "sha256": "3c6c91fb6173e9412996d95e02b4d165d562cd4e5ea0bc49c4bfdf0e336d0797"
+    },
+    {
+      "kind": "result",
+      "start": 5690,
+      "end": 6521,
+      "sha256": "2144ca9ecd7f24b36faea36762b5f75f036481c8f7336e709deb30ed172fc680"
+    },
+    {
+      "kind": "rows",
+      "start": 7461,
+      "end": 7885,
+      "sha256": "41b7100eeccc9398cafeab15909ecaa4b199ae3855d4f72b86fd9489c37f8f22"
+    },
+    {
+      "kind": "projectionGuard485",
+      "start": 8287,
+      "end": 8941,
+      "sha256": "94a388917f57ea8c8d3cfe25434b2c70e79d0baab402582e30cdebaf05276df9"
+    },
+    {
+      "kind": "guard",
+      "start": 9242,
+      "end": 9907,
+      "sha256": "3485319308a4f45f5ce43e55f051d52c8835f3c4ea121a2a1be317482d6e78d8"
+    },
+    {
+      "kind": "guard",
+      "start": 10410,
+      "end": 11020,
+      "sha256": "c96d8b280a42eb21afda748ac35344edc8b1ddcab9ca52ad17190b444e84f8fc"
+    },
+    {
+      "kind": "target mutation",
+      "start": 11061,
+      "end": 12146,
+      "sha256": "829d6e86bbc2d837861f881175a647fccf04b9d6c703f1ae4433dd206738315c"
+    }
+  ],
+  "generatedSha256": "fa1feb0332ba2daa0b25a97e41eec7516fb37568b7a82521a8b5b30c7c0cb936",
+  "edits": [
+    "Native synchronous writer variant only removes async/await inside the outer sole-writer transaction",
+    "Memory variant replaces only SQL reads/mutations with explicit resident ports; no SQL or async work remains",
+    "Original target sorting, radius, telegraph, cadence, cancellation and hit publication remain unchanged",
+    "Explicit process channels include channel4; original one owner/session rules remain",
+    "Ambient guild/rune/combat services and UUID source injected"
+  ]
+}

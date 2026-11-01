@@ -1,0 +1,33 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "vds-server/src/realm-manifest.mjs",
+  "sourceSha256": "81ebdf78adffabbd75e61564cf855ebeeb9f0c8ecb9e60b25fa9e3d5241a1513",
+  "generatedSha256": "a576d98b9f223da07844ad434dd0a5e03e2c9b5b67158b5bc70e721f9c9d36c1",
+  "edits": [
+    {
+      "original": "requireValue(row.channels === 3, 'v416a/b keeps three channels per realm');",
+      "replacement": "requireValue(row.coreProtocol === undefined || row.coreProtocol === \"coreoflife-kernel-v1\", 'unknown core protocol');\n    const core511 = row.coreProtocol === \"coreoflife-kernel-v1\";\n    requireValue(row.channels === (core511 ? 4 : 3), 'channel count must match the explicit core protocol');\n    requireValue(!core511 || input.phase !== '416a' && row.initialChannelCapacity === 25, 'CORE511 requires four channels of 25');"
+    },
+    {
+      "original": "    requireValue(typeof row.dbIdentity === 'string'",
+      "replacement": "    if (core511) {\n      requireValue(Array.isArray(row.ports.channels) && row.ports.channels.length === 4, 'CORE511 requires four channel ports');\n      boundPorts.channels = Object.freeze(row.ports.channels.map(value => {\n        requireValue(integer(value, 1024, 65535) && !ports.has(value), 'invalid or reused channel port');\n        ports.add(value); return value;\n      }));\n    } else requireValue(row.ports?.channels === undefined, 'legacy realm cannot specify channel ports');\n    requireValue(typeof row.dbIdentity === 'string'"
+    },
+    {
+      "original": "registrationOpen: row.registrationOpen, channels: 3, initialChannelCapacity: row.initialChannelCapacity,",
+      "replacement": "registrationOpen: row.registrationOpen, channels: row.channels, ...(core511 ? {coreProtocol: row.coreProtocol} : {}), initialChannelCapacity: row.initialChannelCapacity,"
+    },
+    {
+      "original": "health.ready === true && integer(health.channelCapacity, 1, 30) &&",
+      "replacement": "health.ready === true && integer(health.channelCapacity, 1, 30) &&\n      (!realm.coreProtocol || health.protocol === realm.coreProtocol && health.channelCapacity === 25) &&"
+    },
+    {
+      "original": "health.channels.length === 3",
+      "replacement": "health.channels.length === realm.channels"
+    },
+    {
+      "original": "capacity: capacity * 3",
+      "replacement": "capacity: capacity * realm.channels"
+    }
+  ],
+  "scope": "Explicit CORE511 realm only: four channels, fixed capacity25, protocol-matched health and four unique listener ports. Existing legacy three-channel realms and all identity, path, origin, rollout, visibility and port guards retained."
+}

@@ -1,0 +1,35 @@
+test_actual_package_source_and_retained_graph_scope (__main__.InstallerTests.test_actual_package_source_and_retained_graph_scope) ... ok
+test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change (__main__.InstallerTests.test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_before_hash_gate_refuses_unknown_source_without_stopping (__main__.InstallerTests.test_before_hash_gate_refuses_unknown_source_without_stopping) ... ok
+test_client_or_ingress_payload_injection_rejected_before_service_stop (__main__.InstallerTests.test_client_or_ingress_payload_injection_rejected_before_service_stop) ... ok
+test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account (__main__.InstallerTests.test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_manual_rollback_takes_fresh_backup_and_preserves_current_database (__main__.InstallerTests.test_manual_rollback_takes_fresh_backup_and_preserves_current_database) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_partial_gameplay_file_after_killed_writer_recovers_without_old_database (__main__.InstallerTests.test_partial_gameplay_file_after_killed_writer_recovers_without_old_database) ... ok
+test_r85_journal_cannot_be_adopted_by_r86_recovery (__main__.InstallerTests.test_r85_journal_cannot_be_adopted_by_r86_recovery) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_retained_http_tamper_rejected_before_service_stop (__main__.InstallerTests.test_retained_http_tamper_rejected_before_service_stop) ... ok
+test_retained_ingress_tamper_rejected_before_service_stop (__main__.InstallerTests.test_retained_ingress_tamper_rejected_before_service_stop) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.808s
+
+OK

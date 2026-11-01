@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {installGroupCommit} from '../group-commit.mjs';
+import {DurableLedger} from '../durable-ledger.mjs';
+const [file,phase,marker]=process.argv.slice(2);if(!file.includes('core511-isolated-'))throw Error('isolated crash only');
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true});installGroupCommit(db);let acks=0;
+const kill=()=>{fs.writeFileSync(marker,JSON.stringify({phase,acks,commits:db.writeStats.commits}));process.kill(process.pid,'SIGKILL');};
+const ledger=new DurableLedger(db,{authorize:()=>true,handlers:new Map([['reward',(sql,{i})=>{sql.prepare('INSERT INTO applied VALUES(?)').run(i);sql.exec('UPDATE money SET n=n+1');if(i===2&&phase==='before_commit')kill();const end=performance.now()+4;while(performance.now()<end){};return {i,n:sql.prepare('SELECT n FROM money').get().n};}]])});
+const flush=db.walSync.flush.bind(db.walSync);db.walSync.flush=async()=>{if(phase==='before_fsync')kill();const result=await flush();if(phase==='after_fsync')kill();return result;};
+await Promise.all([1,2].map(i=>ledger.submit({realm:'group-test'},{realm:'group-test',key:'reward:'+i,actor:'p',kind:'reward',payload:{i}}).then(()=>acks++)));if(phase==='after_ack')kill();throw Error('crash boundary not reached');

@@ -1,0 +1,162 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "plan": {
+    "start": 296290,
+    "end": 302904,
+    "sha256": "da4afa020bd105f5b6564ec6e03328e8714971c0ea13c0a71bd24e64d5bcbc4f"
+  },
+  "repair": {
+    "start": 290778,
+    "end": 295544,
+    "sha256": "1d2dfed113c360d18a96b6c73ce62848e6e9617b346870a5d9461d96eaf22ff5"
+  },
+  "despawn": {
+    "start": 303270,
+    "end": 303487,
+    "sha256": "e6702c8c9c551fdfd70a52752734148e1842d80dcb77ecdf02eba9b7e2f03e7c"
+  },
+  "dependencies": [
+    {
+      "name": "ENCHANT_TIERS",
+      "start": 112720,
+      "end": 113457,
+      "nativeSha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35",
+      "generatedSha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35"
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "start": 113463,
+      "end": 113506,
+      "nativeSha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a",
+      "generatedSha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a"
+    },
+    {
+      "name": "tierKeys",
+      "start": 113512,
+      "end": 113590,
+      "nativeSha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918",
+      "generatedSha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918"
+    },
+    {
+      "name": "ENCHANT_TIER_DEFAULTS",
+      "start": 113596,
+      "end": 113725,
+      "nativeSha256": "766a22d6bdfd19fa397b0622508b90494eff8a6e37517ecd99b65e9526f383f8",
+      "generatedSha256": "766a22d6bdfd19fa397b0622508b90494eff8a6e37517ecd99b65e9526f383f8"
+    },
+    {
+      "name": "ANCIENT_BOSS_SPAWN",
+      "start": 144228,
+      "end": 144286,
+      "nativeSha256": "8d4def082eacdba125a85aa49a65b6ecdcae1aa720a5ac9db5cd5069e48a3333",
+      "generatedSha256": "8d4def082eacdba125a85aa49a65b6ecdcae1aa720a5ac9db5cd5069e48a3333"
+    },
+    {
+      "name": "FROZEN_WATER_SPAWN",
+      "start": 145123,
+      "end": 145181,
+      "nativeSha256": "95499883bf0c094079d4eba082f097c0f1ec04d4065f4ee8787af56fd16e6296",
+      "generatedSha256": "95499883bf0c094079d4eba082f097c0f1ec04d4065f4ee8787af56fd16e6296"
+    },
+    {
+      "name": "FROZEN_BOSS_SPAWN",
+      "start": 145942,
+      "end": 145984,
+      "nativeSha256": "e0f26abf430efbc52026200111ffd07be86aa2cb341fc0306617a6bdd16992f3",
+      "generatedSha256": "e0f26abf430efbc52026200111ffd07be86aa2cb341fc0306617a6bdd16992f3"
+    },
+    {
+      "name": "EVOLUTION_DEFAULTS",
+      "start": 233877,
+      "end": 234353,
+      "nativeSha256": "7f070f947405a4117f05ed9759202a5de3af8f5149c8085737e4f2075480aba1",
+      "generatedSha256": "7f070f947405a4117f05ed9759202a5de3af8f5149c8085737e4f2075480aba1"
+    },
+    {
+      "name": "monsterBalanceKeyFor",
+      "start": 244384,
+      "end": 245420,
+      "nativeSha256": "82a9a84f121905b9caac25a1818b71134aa7d9166e44a19536b76a82115910e7",
+      "generatedSha256": "cdc8662148838a99fd20774119f0a2e7f62c91bf410445f69284bcdbad04d2a9"
+    },
+    {
+      "name": "BOSS_SPAWN",
+      "start": 245448,
+      "end": 245482,
+      "nativeSha256": "f5a5260b994fdb2c31fbd914595db71ff82662ee29584645e7d94f2fff3d7776",
+      "generatedSha256": "f5a5260b994fdb2c31fbd914595db71ff82662ee29584645e7d94f2fff3d7776"
+    },
+    {
+      "name": "isBlackStoneBoss476",
+      "start": 245661,
+      "end": 245785,
+      "nativeSha256": "fda81d8c6ce2a0bacac43756d06138c3d4fc96a5b3cb7cdde7c63e254184db1e",
+      "generatedSha256": "a48d5119006b1609cb92b67f2121232d86baf02312beb6abf510fd4618d12b83"
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "start": 245790,
+      "end": 245822,
+      "nativeSha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364",
+      "generatedSha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364"
+    },
+    {
+      "name": "ANCIENT_BOSS_ID",
+      "start": 245828,
+      "end": 245862,
+      "nativeSha256": "5a8d3138b52f741e7a656ed2266b6f9cbe0de9be0772f61c646ac86d1ace574d",
+      "generatedSha256": "5a8d3138b52f741e7a656ed2266b6f9cbe0de9be0772f61c646ac86d1ace574d"
+    },
+    {
+      "name": "FROZEN_WATER_ID_PREFIX",
+      "start": 245868,
+      "end": 245909,
+      "nativeSha256": "9c3afbaab98417245a719f38aa9261351e9cb9276882e43e5dac6f8d3ab5eb68",
+      "generatedSha256": "9c3afbaab98417245a719f38aa9261351e9cb9276882e43e5dac6f8d3ab5eb68"
+    },
+    {
+      "name": "isFrozenBossId",
+      "start": 245911,
+      "end": 245973,
+      "nativeSha256": "db02393a2e9efd9f65ed6697ad3b533b897dd46adf519a0af5b48762e672d52c",
+      "generatedSha256": "db02393a2e9efd9f65ed6697ad3b533b897dd46adf519a0af5b48762e672d52c"
+    },
+    {
+      "name": "isAncientBossId",
+      "start": 245974,
+      "end": 246038,
+      "nativeSha256": "4d3f7f48ef7212a5015ae475303536ef4e9da88a9093fac16f12b46de0225850",
+      "generatedSha256": "4d3f7f48ef7212a5015ae475303536ef4e9da88a9093fac16f12b46de0225850"
+    },
+    {
+      "name": "isFrozenWaterId",
+      "start": 246039,
+      "end": 246138,
+      "nativeSha256": "14773bf9a2b9ffeaadb6a52e8eebf20e06e5a5bc939af52c66e30dd3ad80b647",
+      "generatedSha256": "14773bf9a2b9ffeaadb6a52e8eebf20e06e5a5bc939af52c66e30dd3ad80b647"
+    },
+    {
+      "name": "DEFAULT_SETTINGS",
+      "start": 246297,
+      "end": 253864,
+      "nativeSha256": "878f8488090fd8865cc4f0462fa756f3f4e36326b963b9f8215f92507600fc55",
+      "generatedSha256": "878f8488090fd8865cc4f0462fa756f3f4e36326b963b9f8215f92507600fc55"
+    },
+    {
+      "name": "randomVariant",
+      "start": 289764,
+      "end": 289905,
+      "nativeSha256": "ed09793f7e382d7702ac5deb7dbc92cda981d11ebf43c6a171ac3122e5859475",
+      "generatedSha256": "ed09793f7e382d7702ac5deb7dbc92cda981d11ebf43c6a171ac3122e5859475"
+    }
+  ],
+  "generatedSha256": "7d58a90245e7708f32a36e0f5ffe2e15e7b38cf3d775a5cd07f38ea9f3eaa3c1",
+  "edits": [
+    "native respawn,repair,despawn SQL planners unchanged",
+    "explicit operation RNG and native service globals",
+    "fourth-channel boss and black-slot profile identifiers",
+    "monster repair/despawn adapter adds only channel and leased-id predicates; market housekeeping is a separate world job"
+  ]
+}

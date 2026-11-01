@@ -1,0 +1,21 @@
+// Exact new-table TEMP observers: only append audit metadata, never modify gameplay rows.
+export const castleAuditHashesR59={
+  "temp:kernel511_refresh_r533_castle_config_r59_INSERT_scope": "afb9ebb59145de2c3ba9818b07c089e8f910facc79c1006ea1e7ee678c0ad233",
+  "temp:kernel511_refresh_r533_castle_config_r59_UPDATE_scope": "2251fce346fc3e53b2134a522e4e675741831b7183663b34100b5149cd325730",
+  "temp:kernel511_refresh_r533_castle_config_r59_DELETE_scope": "da9ea6cc26154568c730448a67e4b460ca357fc615f2e9240b7c73faeacb3eec",
+  "temp:kernel511_refresh_r533_castle_events_r59_INSERT_scope": "350765123b8c27c024e41509d9d48b1348a36de7fc474e1e49b0dea970c24ccd",
+  "temp:kernel511_refresh_r533_castle_events_r59_UPDATE_scope": "3286194d6569d9f7bdd9711ed25407a2555c8591b381d680a8d34054757bc0a1",
+  "temp:kernel511_refresh_r533_castle_events_r59_DELETE_scope": "a4a56d1bfe8e6b4682b829d73826937904e6129362d77c61e50c0d1c02dd7629",
+  "temp:kernel511_refresh_r533_castle_roster_r59_INSERT_scope": "bf307fa80ef1a38191906c6fe348cf8fc88b414e72f93366fd09fce7a1549b54",
+  "temp:kernel511_refresh_r533_castle_roster_r59_UPDATE_scope": "67ddbd221c48e6ad100951d47fc95d615a54f8cfbe54aef1f8d3acb811062455",
+  "temp:kernel511_refresh_r533_castle_roster_r59_DELETE_scope": "948dc3c8721fed95499698519fc40fe3d995023267fff8fdda2a9cf0c63fc54b",
+  "temp:kernel511_refresh_r533_castle_chests_r59_INSERT_scope": "0802385549e728c8b1f684fa214c248fb11534c9c0e970aad19212fa38bb51b4",
+  "temp:kernel511_refresh_r533_castle_chests_r59_UPDATE_scope": "cd912dfb40d21fd4efff30ce21c5689f7a67a46896415abd989d82621501c444",
+  "temp:kernel511_refresh_r533_castle_chests_r59_DELETE_scope": "25c20301169fb3c08681237fa2144cc35b3e556600ed3c69855d48a9d9a74bf6",
+  "temp:kernel511_refresh_r533_castle_entries_r59_INSERT_scope": "e4f371d7bd00306e62444e2eaab2fe1899b5c00f2f3fe886575fa73b814dfed8",
+  "temp:kernel511_refresh_r533_castle_entries_r59_UPDATE_scope": "89de621ead53ec5f7aaf908a2085ff70ee5fc87b638ad3ee018cf03f765350f7",
+  "temp:kernel511_refresh_r533_castle_entries_r59_DELETE_scope": "66831f156b3c4538a58228c3bc98c779569801ed0e1dd307db2704bc3fdeabc0",
+  "temp:kernel511_refresh_r533_castle_receipts_r59_INSERT_scope": "d32ce33431e8b6ed9ea90612a546e1b7d689b11538127ccebdd2fbbad8ff0544",
+  "temp:kernel511_refresh_r533_castle_receipts_r59_UPDATE_scope": "8da96480d93cb3af792fee78fae75d285b776b645bb52a7a76100431d866d13c",
+  "temp:kernel511_refresh_r533_castle_receipts_r59_DELETE_scope": "340203718dacbd969b758abffe54d0b51c54a170e94996a3f8ad2f329359917a"
+};

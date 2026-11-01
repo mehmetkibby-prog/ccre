@@ -1,0 +1,3546 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793517813610,"backupName":"before-pearl-reset-1793517813610-bb03c647-9429-4b61-8d07-f4f27de0074a.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:23:38.830Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":360736,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4d97379bb36f8b9a87acb494"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:23:38.831Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":360742,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"739b15b27667f079263c9ccb"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:23:38.831Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":360752,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"2081fa92452f14607bacd2ec"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:23:38.831Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":360758,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ab2e94dad0e30da79af04f46"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T07:23:38.846Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":360725,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"866524c9112d983e459fc501"}
+# Subtest: five native independent lethal heads keep economy, all replies and one exact durable batch replay
+not ok 1 - five native independent lethal heads keep economy, all replies and one exact durable batch replay
+  ---
+  duration_ms: 6896.452531
+  type: 'test'
+  location: '/workspace/ccre/r85_stability_work/tests/independent-deaths-r85/native-process.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    ... Skipped lines
+    
+      {
+        key: 'attack:637004af-200c-498d-a1e7-0fbb71232779:1',
+        result: {
+          batchEngagementsR57: [
+            [
+    ...
+                  ],
+    -             pveHit: undefined,
+                  rewardPending: true,
+                  states: [
+                    {
+                      hp: 0,
+                      id: 'golge-independent-r85-1',
+    ...
+                  ],
+    -             pveHit: undefined,
+                  rewardPending: true,
+                  states: [
+                    {
+                      hp: 0,
+                      id: 'golge-independent-r85-2',
+    ...
+                  ],
+    -             pveHit: undefined,
+                  rewardPending: true,
+                  states: [
+                    {
+                      hp: 0,
+                      id: 'golge-independent-r85-3',
+    ...
+                  ],
+    -             pveHit: undefined,
+                  rewardPending: true,
+                  states: [
+                    {
+                      hp: 0,
+                      id: 'golge-independent-r85-4',
+    ...
+          },
+    +     events: [],
+    -     events: [
+    -       [
+    -         1,
+    -         [
+    -           1
+    -         ],
+    -         'forest',
+    -         {
+    -           ability: 0,
+    -           attackerId: 'real-1',
+    -           eventId: 'monster:f51e9dba-7a94-4250-ac44-bc26b197de29:1793517818686:current',
+    -           hits: [
+    -             {
+    -               critical: false,
+    -               damage: 29,
+    -               elemental: [],
+    -               hp: 0,
+    -               id: 'golge-independent-r85-0',
+    -               killed: true,
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           intentId: undefined,
+    -           serverAt: 1793517818686,
+    -           states: [
+    -             {
+    -               hp: 0,
+    -               id: 'golge-independent-r85-0',
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           targetId: 'golge-independent-r85-0',
+    -           type: 'monster_result'
+    -         },
+    -         1
+    -       ],
+    -       [
+    -         1,
+    -         [
+    -           1
+    -         ],
+    -         'forest',
+    -         {
+    -           ability: 0,
+    -           attackerId: 'shared-player-801',
+    -           eventId: 'monster:b62cc5b3-6997-4626-bc9c-b40bf22c51ab:1793517818686:current',
+    -           hits: [
+    -             {
+    -               critical: false,
+    -               damage: 26,
+    -               elemental: [],
+    -               hp: 0,
+    -               id: 'golge-independent-r85-1',
+    -               killed: true,
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           intentId: undefined,
+    -           serverAt: 1793517818686,
+    -           states: [
+    -             {
+    -               hp: 0,
+    -               id: 'golge-independent-r85-1',
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           targetId: 'golge-independent-r85-1',
+    -           type: 'monster_result'
+    -         },
+    -         1
+    -       ],
+    -       [
+    -         1,
+    -         [
+    -           1
+    -         ],
+    -         'forest',
+    -         {
+    -           ability: 0,
+    -           attackerId: 'shared-player-802',
+    -           eventId: 'monster:2e185cc9-24b7-431b-9704-4430e225aae7:1793517818686:current',
+    -           hits: [
+    -             {
+    -               critical: false,
+    -               damage: 25,
+    -               elemental: [],
+    -               hp: 0,
+    -               id: 'golge-independent-r85-2',
+    -               killed: true,
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           intentId: undefined,
+    -           serverAt: 1793517818686,
+    -           states: [
+    -             {
+    -               hp: 0,
+    -               id: 'golge-independent-r85-2',
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           targetId: 'golge-independent-r85-2',
+    -           type: 'monster_result'
+    -         },
+    -         1
+    -       ],
+    -       [
+    -         1,
+    -         [
+    -           1
+    -         ],
+    -         'forest',
+    -         {
+    -           ability: 0,
+    -           attackerId: 'shared-player-803',
+    -           eventId: 'monster:e3b4eb39-c31b-4ab6-804a-a05c4bb06445:1793517818686:current',
+    -           hits: [
+    -             {
+    -               critical: false,
+    -               damage: 27,
+    -               elemental: [],
+    -               hp: 0,
+    -               id: 'golge-independent-r85-3',
+    -               killed: true,
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           intentId: undefined,
+    -           serverAt: 1793517818686,
+    -           states: [
+    -             {
+    -               hp: 0,
+    -               id: 'golge-independent-r85-3',
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           targetId: 'golge-independent-r85-3',
+    -           type: 'monster_result'
+    -         },
+    -         1
+    -       ],
+    -       [
+    -         1,
+    -         [
+    -           1
+    -         ],
+    -         'forest',
+    -         {
+    -           ability: 0,
+    -           attackerId: 'shared-player-804',
+    -           eventId: 'monster:d6b2cfc5-8d20-4bca-b135-fb468d62ba94:1793517818686:current',
+    -           hits: [
+    -             {
+    -               critical: false,
+    -               damage: 25,
+    -               elemental: [],
+    -               hp: 0,
+    -               id: 'golge-independent-r85-4',
+    -               killed: true,
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           intentId: undefined,
+    -           serverAt: 1793517818686,
+    -           states: [
+    -             {
+    -               hp: 0,
+    -               id: 'golge-independent-r85-4',
+    -               spawnRound: 17
+    -             }
+    -           ],
+    -           targetId: 'golge-independent-r85-4',
+    -           type: 'monster_result'
+    -         },
+    -         1
+    -       ]
+    -     ],
+    -     itemRefreshR57: {
+    -       actorCommitSectionsR57: {
+    -         actors: [
+    -           {
+    -             drops: [
+    -               {
+    -                 amount: 4,
+    -                 collectible_at: 1793517823,
+    -                 enchantments: '[]',
+    -                 expires_at: 1793517848,
+    -                 id: '05cd2249-0c4a-4123-9bb8-7e45718df795',
+    -                 item_name: 'Yaşam Özü',
+    -                 kind: 'essence',
+    -                 monster_id: 'golge-independent-r85-0',
+    -                 owner_id: 'real-1',
+    -                 power: 0,
+    -                 rarity: 'white',
+    -                 role: null,
+    -                 x: 2738,
+    -                 y: 2025
+    -               }
+    -             ],
+    -             engagement: {
+    -               attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819646,"last_skill_at_ms":1793517818536},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819647,"last_skill_at_ms":1793517818536},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819648,"last_skill_at_ms":1793517818536},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819649,"last_skill_at_ms":1793517818536},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819650,"last_skill_at_ms":1793517818536}}',
+    -               expires_at_ms: 1793517826536,
+    -               hit_sequence: 0,
+    -               last_skill_at_ms: 1793517818536,
+    -               monster_id: 'golge-independent-r85-0',
+    -               next_hit_at_ms: 1793517819646,
+    -               player_id: 'real-1',
+    -               spawn_round: 17,
+    -               updated_at_ms: 1793517818536
+    -             },
+    -             id: 'real-1',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             },
+    -             playerRefR61: {
+    -               index: 0,
+    -               sha256: 'd52c55923b8ab1029fa9d3de120582cc0825728dc22d0f555c3c16d365d39718'
+    -             }
+    -           },
+    -           {
+    -             drops: [
+    -               {
+    -                 amount: 3,
+    -                 collectible_at: 1793517823,
+    -                 enchantments: '[]',
+    -                 expires_at: 1793517848,
+    -                 id: '42765c37-06f3-428e-b318-9d41d91f6e0a',
+    -                 item_name: 'Yaşam Özü',
+    -                 kind: 'essence',
+    -                 monster_id: 'golge-independent-r85-1',
+    -                 owner_id: 'shared-player-801',
+    -                 power: 0,
+    -                 rarity: 'white',
+    -                 role: null,
+    -                 x: 2748,
+    -                 y: 2025
+    -               }
+    -             ],
+    -             engagement: null,
+    -             id: 'shared-player-801',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             },
+    -             playerRefR61: {
+    -               index: 1,
+    -               sha256: '2611b5030f950e10bd0c8041d2b9e2464b748a86303454d19a5c46baca5cc879'
+    -             }
+    -           },
+    -           {
+    -             drops: [
+    -               {
+    -                 amount: 4,
+    -                 collectible_at: 1793517823,
+    -                 enchantments: '[]',
+    -                 expires_at: 1793517848,
+    -                 id: '70659f88-fc6e-413c-8a84-56b23c5b392a',
+    -                 item_name: 'Yaşam Özü',
+    -                 kind: 'essence',
+    -                 monster_id: 'golge-independent-r85-2',
+    -                 owner_id: 'shared-player-802',
+    -                 power: 0,
+    -                 rarity: 'white',
+    -                 role: null,
+    -                 x: 2758,
+    -                 y: 2025
+    -               }
+    -             ],
+    -             engagement: {
+    -               attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819695,"last_skill_at_ms":1793517818585},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819696,"last_skill_at_ms":1793517818585},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819697,"last_skill_at_ms":1793517818585},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819698,"last_skill_at_ms":1793517818585},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819699,"last_skill_at_ms":1793517818585}}',
+    -               expires_at_ms: 1793517826585,
+    -               hit_sequence: 0,
+    -               last_skill_at_ms: 1793517818585,
+    -               monster_id: 'golge-independent-r85-0',
+    -               next_hit_at_ms: 1793517819695,
+    -               player_id: 'shared-player-802',
+    -               spawn_round: 17,
+    -               updated_at_ms: 1793517818585
+    -             },
+    -             id: 'shared-player-802',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             },
+    -             playerRefR61: {
+    -               index: 2,
+    -               sha256: '132a16b6fa7c65cd4d592f1c8117a7f9cd4d350637f55a751f75b10cd6288511'
+    -             }
+    -           },
+    -           {
+    -             drops: [
+    -               {
+    -                 amount: 3,
+    -                 collectible_at: 1793517823,
+    -                 enchantments: '[]',
+    -                 expires_at: 1793517848,
+    -                 id: 'd5f2be0c-4930-4f77-9ab1-d90e17222d59',
+    -                 item_name: 'Yaşam Özü',
+    -                 kind: 'essence',
+    -                 monster_id: 'golge-independent-r85-3',
+    -                 owner_id: 'shared-player-803',
+    -                 power: 0,
+    -                 rarity: 'white',
+    -                 role: null,
+    -                 x: 2768,
+    -                 y: 2025
+    -               }
+    -             ],
+    -             engagement: {
+    -               attackers489: '{"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819747,"last_skill_at_ms":1793517818636},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819748,"last_skill_at_ms":1793517818636},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819749,"last_skill_at_ms":1793517818636},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819750,"last_skill_at_ms":1793517818636}}',
+    -               expires_at_ms: 1793517826636,
+    -               hit_sequence: 0,
+    -               last_skill_at_ms: 1793517818636,
+    -               monster_id: 'golge-independent-r85-1',
+    -               next_hit_at_ms: 1793517819747,
+    -               player_id: 'shared-player-803',
+    -               spawn_round: 17,
+    -               updated_at_ms: 1793517818636
+    -             },
+    -             id: 'shared-player-803',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             },
+    -             playerRefR61: {
+    -               index: 3,
+    -               sha256: 'e9feaea88f0dc59bae9a330fed860b246b19ecf916c2eef8c85db477681b32a2'
+    -             }
+    -           },
+    -           {
+    -             drops: [
+    -               {
+    -                 amount: 4,
+    -                 collectible_at: 1793517823,
+    -                 enchantments: '[]',
+    -                 expires_at: 1793517848,
+    -                 id: 'd496d90e-f945-4fe4-8658-65bb2a71ac83',
+    -                 item_name: 'Yaşam Özü',
+    -                 kind: 'essence',
+    -                 monster_id: 'golge-independent-r85-4',
+    -                 owner_id: 'shared-player-804',
+    -                 power: 0,
+    -                 rarity: 'white',
+    -                 role: null,
+    -                 x: 2778,
+    -                 y: 2025
+    -               }
+    -             ],
+    -             engagement: null,
+    -             id: 'shared-player-804',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             },
+    -             playerRefR61: {
+    -               index: 4,
+    -               sha256: 'b2e000a102a9ed3abb9e65b1a4add7f9abbd3ac5d8832a58838c2bc9a7d4c8cf'
+    -             }
+    -           }
+    -         ],
+    -         complete: true,
+    -         cycle: 1,
+    -         readAtMs: 1793517818754,
+    -         version: 1
+    -       },
+    -       actorSectionsR52: {
+    -         actor: 'real-1',
+    -         actors: [
+    -           {
+    -             engagementRef: {
+    -               kind: 'ack-attack'
+    -             },
+    -             id: 'real-1',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             }
+    -           },
+    -           {
+    -             engagementRef: {
+    -               index: 0,
+    -               kind: 'ack-batch-r57'
+    -             },
+    -             id: 'shared-player-801',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             }
+    -           },
+    -           {
+    -             engagementRef: {
+    -               index: 1,
+    -               kind: 'ack-batch-r57'
+    -             },
+    -             id: 'shared-player-802',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             }
+    -           },
+    -           {
+    -             engagementRef: {
+    -               index: 2,
+    -               kind: 'ack-batch-r57'
+    -             },
+    -             id: 'shared-player-803',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             }
+    -           },
+    -           {
+    -             engagementRef: {
+    -               index: 3,
+    -               kind: 'ack-batch-r57'
+    -             },
+    -             id: 'shared-player-804',
+    -             owner: {
+    -               channel: 1,
+    -               epoch: 1,
+    -               incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+    -             }
+    -           }
+    -         ],
+    -         cycle: 1,
+    -         readDrops: true,
+    -         readSections: true,
+    -         version: 1
+    -       },
+    -       cold: [
+    -         'real-1',
+    -         'shared-player-801',
+    -         'shared-player-802',
+    -         'shared-player-803',
+    -         'shared-player-804'
+    -       ],
+    -       items: [
+    -         {
+    -           atR57: 1793517818754,
+    -           heartbeatStateR57: {
+    -             gearDue: false,
+    -             queue: null
+    -           },
+    -           id: 'real-1',
+    -           inventory: [
+    -             {
+    -               created_at: 1793517818,
+    -               enchantments: '[{"kind":"evolution_kills","value":1}]',
+    -               equipped: 1,
+    -               expires_at_ms: 0,
+    -               id: 'starter-56cace8b-619a-45ab-805f-88ad5b9e8a12',
+    -               item_name: 'Acemi Yayı',
+    -               kind: 'weapon',
+    -               player_id: 'real-1',
+    -               power: 5,
+    -               rarity: 'white',
+    -               role: 'avci',
+    -               sale_locked499: 0
+    -             }
+    -           ],
+    -           weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+    -         },
+    -         {
+    -           atR57: 1793517818754,
+    -           heartbeatStateR57: {
+    -             gearDue: false,
+    -             queue: null
+    -           },
+    -           id: 'shared-player-801',
+    -           inventory: [
+    -             {
+    -               created_at: 1793517818,
+    -               enchantments: '[{"kind":"evolution_kills","value":1}]',
+    -               equipped: 1,
+    -               expires_at_ms: 0,
+    -               id: 'starter-533ad331-5cc9-49a4-9842-3ebb645aa314',
+    -               item_name: 'Acemi Yayı',
+    -               kind: 'weapon',
+    -               player_id: 'shared-player-801',
+    -               power: 5,
+    -               rarity: 'white',
+    -               role: 'avci',
+    -               sale_locked499: 0
+    -             }
+    -           ],
+    -           weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+    -         },
+    -         {
+    -           atR57: 1793517818754,
+    -           heartbeatStateR57: {
+    -             gearDue: false,
+    -             queue: null
+    -           },
+    -           id: 'shared-player-802',
+    -           inventory: [
+    -             {
+    -               created_at: 1793517818,
+    -               enchantments: '[{"kind":"evolution_kills","value":1}]',
+    -               equipped: 1,
+    -               expires_at_ms: 0,
+    -               id: 'starter-80b17d4c-69c8-48a0-b8cc-6f3db389e404',
+    -               item_name: 'Acemi Yayı',
+    -               kind: 'weapon',
+    -               player_id: 'shared-player-802',
+    -               power: 5,
+    -               rarity: 'white',
+    -               role: 'avci',
+    -               sale_locked499: 0
+    -             }
+    -           ],
+    -           weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+    -         },
+    -         {
+    -           atR57: 1793517818754,
+    -           heartbeatStateR57: {
+    -             gearDue: false,
+    -             queue: null
+    -           },
+    -           id: 'shared-player-803',
+    -           inventory: [
+    -             {
+    -               created_at: 1793517818,
+    -               enchantments: '[{"kind":"evolution_kills","value":1}]',
+    -               equipped: 1,
+    -               expires_at_ms: 0,
+    -               id: 'starter-5bedcc42-b9da-4288-8769-6e94e9a02c3a',
+    -               item_name: 'Acemi Yayı',
+    -               kind: 'weapon',
+    -               player_id: 'shared-player-803',
+    -               power: 5,
+    -               rarity: 'white',
+    -               role: 'avci',
+    -               sale_locked499: 0
+    -             }
+    -           ],
+    -           weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+    -         },
+    -         {
+    -           atR57: 1793517818754,
+    -           heartbeatStateR57: {
+    -             gearDue: false,
+    -             queue: null
+    -           },
+    -           id: 'shared-player-804',
+    -           inventory: [
+    -             {
+    -               created_at: 1793517818,
+    -               enchantments: '[{"kind":"evolution_kills","value":1}]',
+    -               equipped: 1,
+    -               expires_at_ms: 0,
+    -               id: 'starter-2e06b71e-7ade-46ad-abb5-58fd418c9679',
+    -               item_name: 'Acemi Yayı',
+    -               kind: 'weapon',
+    -               player_id: 'shared-player-804',
+    -               power: 5,
+    -               rarity: 'white',
+    -               role: 'avci',
+    -               sale_locked499: 0
+    -             }
+    -           ],
+    -           weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+    -         }
+    -       ],
+    -       kills: 5,
+    -       mode: 'counter',
+    -       version: 1
+    -     },
+          monsters: [
+            {
+              area: 'forest',
+              channel: 1,
+              control_x: 0,
+    ...
+              ],
+    -         pveHit: undefined,
+              rewardPending: true,
+              states: [
+                {
+                  hp: 0,
+                  id: 'golge-independent-r85-0',
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    key: 'attack:637004af-200c-498d-a1e7-0fbb71232779:1'
+    result:
+      result:
+        body:
+          ok: true
+          guardianEffect: ~
+          lifeSteal: ~
+          hits:
+            0:
+              id: 'golge-independent-r85-0'
+              damage: 29
+              hp: 0
+              killed: true
+              critical: false
+              spawnRound: 17
+              elemental:
+          states:
+            0:
+              id: 'golge-independent-r85-0'
+              spawnRound: 17
+              hp: 0
+          progression:
+            0:
+              id: 'real-1'
+              xp: 34
+              level: 40
+              rank_xp: 0
+          xp: 34
+          groundDrops: 0
+          rewardPending: true
+          nextAttackAtMs: 1793517819310
+          tickCount: 4
+          tickIntervalMs: 320
+          message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+        status: 200
+      events:
+        0:
+          0: 1
+          1:
+            0: 1
+          2: 'forest'
+          3:
+            type: 'monster_result'
+            eventId: 'monster:f51e9dba-7a94-4250-ac44-bc26b197de29:1793517818686:current'
+            attackerId: 'real-1'
+            targetId: 'golge-independent-r85-0'
+            ability: 0
+            hits:
+              0: <Circular>
+            states:
+              0: <Circular>
+            serverAt: 1793517818686
+          4: 1
+        1:
+          0: 1
+          1:
+            0: 1
+          2: 'forest'
+          3:
+            type: 'monster_result'
+            eventId: 'monster:b62cc5b3-6997-4626-bc9c-b40bf22c51ab:1793517818686:current'
+            attackerId: 'shared-player-801'
+            targetId: 'golge-independent-r85-1'
+            ability: 0
+            hits:
+              0:
+                id: 'golge-independent-r85-1'
+                damage: 26
+                hp: 0
+                killed: true
+                critical: false
+                spawnRound: 17
+                elemental:
+            states:
+              0:
+                id: 'golge-independent-r85-1'
+                spawnRound: 17
+                hp: 0
+            serverAt: 1793517818686
+          4: 1
+        2:
+          0: 1
+          1:
+            0: 1
+          2: 'forest'
+          3:
+            type: 'monster_result'
+            eventId: 'monster:2e185cc9-24b7-431b-9704-4430e225aae7:1793517818686:current'
+            attackerId: 'shared-player-802'
+            targetId: 'golge-independent-r85-2'
+            ability: 0
+            hits:
+              0:
+                id: 'golge-independent-r85-2'
+                damage: 25
+                hp: 0
+                killed: true
+                critical: false
+                spawnRound: 17
+                elemental:
+            states:
+              0:
+                id: 'golge-independent-r85-2'
+                spawnRound: 17
+                hp: 0
+            serverAt: 1793517818686
+          4: 1
+        3:
+          0: 1
+          1:
+            0: 1
+          2: 'forest'
+          3:
+            type: 'monster_result'
+            eventId: 'monster:e3b4eb39-c31b-4ab6-804a-a05c4bb06445:1793517818686:current'
+            attackerId: 'shared-player-803'
+            targetId: 'golge-independent-r85-3'
+            ability: 0
+            hits:
+              0:
+                id: 'golge-independent-r85-3'
+                damage: 27
+                hp: 0
+                killed: true
+                critical: false
+                spawnRound: 17
+                elemental:
+            states:
+              0:
+                id: 'golge-independent-r85-3'
+                spawnRound: 17
+                hp: 0
+            serverAt: 1793517818686
+          4: 1
+        4:
+          0: 1
+          1:
+            0: 1
+          2: 'forest'
+          3:
+            type: 'monster_result'
+            eventId: 'monster:d6b2cfc5-8d20-4bca-b135-fb468d62ba94:1793517818686:current'
+            attackerId: 'shared-player-804'
+            targetId: 'golge-independent-r85-4'
+            ability: 0
+            hits:
+              0:
+                id: 'golge-independent-r85-4'
+                damage: 25
+                hp: 0
+                killed: true
+                critical: false
+                spawnRound: 17
+                elemental:
+            states:
+              0:
+                id: 'golge-independent-r85-4'
+                spawnRound: 17
+                hp: 0
+            serverAt: 1793517818686
+          4: 1
+      completedClaimsR56:
+        0:
+          id: 'golge-independent-r85-0'
+          spawnRound: 17
+        1:
+          id: 'golge-independent-r85-1'
+          spawnRound: 17
+        2:
+          id: 'golge-independent-r85-2'
+          spawnRound: 17
+        3:
+          id: 'golge-independent-r85-3'
+          spawnRound: 17
+        4:
+          id: 'golge-independent-r85-4'
+          spawnRound: 17
+      checkpointR53:
+        0:
+          id: 'real-1'
+          joinedAckSha256R57: 'ca2b8e662fa41abbd05fc4cea1925c426e17c07c1a19579bd6a85d49c2353103'
+        1:
+          id: 'shared-player-802'
+          joinedAckSha256R57: 'c3d717bc4f7ff72dc327b781f8d7f43d7d15b213b8526707b3a2860ac0cdc964'
+        2:
+          id: 'shared-player-803'
+          joinedAckSha256R57: 'a540df44afafcc4b4a3a73ff0778bdf06399b81956dbf866681bb204739146c5'
+      rewardsCompletedR53: 5
+      community:
+      players:
+        0:
+          id: 'real-1'
+          name: 'Human Fixture'
+          role: 'avci'
+          x: 2700
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819310
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'account-real-1'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        1:
+          id: 'shared-player-801'
+          name: 'Paylasim801'
+          role: 'avci'
+          x: 2710
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819311
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-801'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        2:
+          id: 'shared-player-802'
+          name: 'Paylasim802'
+          role: 'avci'
+          x: 2720
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-802'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        3:
+          id: 'shared-player-803'
+          name: 'Paylasim803'
+          role: 'avci'
+          x: 2730
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-803'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        4:
+          id: 'shared-player-804'
+          name: 'Paylasim804'
+          role: 'avci'
+          x: 2740
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-804'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+      monsters:
+        0:
+          id: 'golge-independent-r85-0'
+          name: 'Gölge'
+          x: 2720
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        1:
+          id: 'golge-independent-r85-1'
+          name: 'Gölge'
+          x: 2730
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        2:
+          id: 'golge-independent-r85-2'
+          name: 'Gölge'
+          x: 2740
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        3:
+          id: 'golge-independent-r85-3'
+          name: 'Gölge'
+          x: 2750
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        4:
+          id: 'golge-independent-r85-4'
+          name: 'Gölge'
+          x: 2760
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+      participants:
+        0:
+          monster_id: 'golge-independent-r85-0'
+          spawn_round: 17
+          player_id: 'real-1'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        1:
+          monster_id: 'golge-independent-r85-1'
+          spawn_round: 17
+          player_id: 'shared-player-801'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        2:
+          monster_id: 'golge-independent-r85-2'
+          spawn_round: 17
+          player_id: 'shared-player-802'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        3:
+          monster_id: 'golge-independent-r85-3'
+          spawn_round: 17
+          player_id: 'shared-player-803'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        4:
+          monster_id: 'golge-independent-r85-4'
+          spawn_round: 17
+          player_id: 'shared-player-804'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+      bossParticipants:
+      engagement:
+        player_id: 'real-1'
+        monster_id: 'golge-independent-r85-0'
+        spawn_round: 17
+        next_hit_at_ms: 1793517819646
+        expires_at_ms: 1793517826536
+        hit_sequence: 0
+        updated_at_ms: 1793517818536
+        last_skill_at_ms: 1793517818536
+        attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819646,"last_skill_at_ms":1793517818536},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819647,"last_skill_at_ms":1793517818536},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819648,"last_skill_at_ms":1793517818536},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819649,"last_skill_at_ms":1793517818536},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819650,"last_skill_at_ms":1793517818536}}'
+      batchResultsR57:
+        0:
+          actor: 'shared-player-801'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0: <Circular>
+              states:
+                0: <Circular>
+              progression:
+                0:
+                  id: 'shared-player-801'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819311
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        1:
+          actor: 'shared-player-802'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0: <Circular>
+              states:
+                0: <Circular>
+              progression:
+                0:
+                  id: 'shared-player-802'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        2:
+          actor: 'shared-player-803'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0: <Circular>
+              states:
+                0: <Circular>
+              progression:
+                0:
+                  id: 'shared-player-803'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        3:
+          actor: 'shared-player-804'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0: <Circular>
+              states:
+                0: <Circular>
+              progression:
+                0:
+                  id: 'shared-player-804'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+      batchEngagementsR57:
+        0:
+          0: 'shared-player-801'
+          1: ~
+        1:
+          0: 'shared-player-802'
+          1:
+            player_id: 'shared-player-802'
+            monster_id: 'golge-independent-r85-0'
+            spawn_round: 17
+            next_hit_at_ms: 1793517819695
+            expires_at_ms: 1793517826585
+            hit_sequence: 0
+            updated_at_ms: 1793517818585
+            last_skill_at_ms: 1793517818585
+            attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819695,"last_skill_at_ms":1793517818585},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819696,"last_skill_at_ms":1793517818585},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819697,"last_skill_at_ms":1793517818585},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819698,"last_skill_at_ms":1793517818585},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819699,"last_skill_at_ms":1793517818585}}'
+        2:
+          0: 'shared-player-803'
+          1:
+            player_id: 'shared-player-803'
+            monster_id: 'golge-independent-r85-1'
+            spawn_round: 17
+            next_hit_at_ms: 1793517819747
+            expires_at_ms: 1793517826636
+            hit_sequence: 0
+            updated_at_ms: 1793517818636
+            last_skill_at_ms: 1793517818636
+            attackers489: '{"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819747,"last_skill_at_ms":1793517818636},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819748,"last_skill_at_ms":1793517818636},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819749,"last_skill_at_ms":1793517818636},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819750,"last_skill_at_ms":1793517818636}}'
+        3:
+          0: 'shared-player-804'
+          1: ~
+      notifications:
+      notificationActors:
+      sharedRefresh:
+        version: 1
+        actors:
+          0: 'real-1'
+          1: 'shared-player-801'
+          2: 'shared-player-802'
+          3: 'shared-player-803'
+          4: 'shared-player-804'
+        all: false
+        tables:
+          0: 'monster_xp_claims'
+          1: 'normal_reward_claims'
+          2: 'player_items'
+          3: 'pve_engagements'
+          4: 'world_drops'
+        itemActorsR57:
+          0: 'real-1'
+          1: 'shared-player-801'
+          2: 'shared-player-802'
+          3: 'shared-player-803'
+          4: 'shared-player-804'
+      itemRefreshR57:
+        version: 1
+        mode: 'counter'
+        cold: <Circular>
+        kills: 5
+        items:
+          0:
+            id: 'real-1'
+            inventory:
+              0:
+                id: 'starter-56cace8b-619a-45ab-805f-88ad5b9e8a12'
+                player_id: 'real-1'
+                kind: 'weapon'
+                item_name: 'Acemi Yayı'
+                rarity: 'white'
+                power: 5
+                role: 'avci'
+                enchantments: '[{"kind":"evolution_kills","value":1}]'
+                equipped: 1
+                created_at: 1793517818
+                expires_at_ms: 0
+                sale_locked499: 0
+            weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+            heartbeatStateR57:
+              gearDue: false
+              queue: ~
+            atR57: 1793517818754
+          1:
+            id: 'shared-player-801'
+            inventory:
+              0:
+                id: 'starter-533ad331-5cc9-49a4-9842-3ebb645aa314'
+                player_id: 'shared-player-801'
+                kind: 'weapon'
+                item_name: 'Acemi Yayı'
+                rarity: 'white'
+                power: 5
+                role: 'avci'
+                enchantments: '[{"kind":"evolution_kills","value":1}]'
+                equipped: 1
+                created_at: 1793517818
+                expires_at_ms: 0
+                sale_locked499: 0
+            weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+            heartbeatStateR57:
+              gearDue: false
+              queue: ~
+            atR57: 1793517818754
+          2:
+            id: 'shared-player-802'
+            inventory:
+              0:
+                id: 'starter-80b17d4c-69c8-48a0-b8cc-6f3db389e404'
+                player_id: 'shared-player-802'
+                kind: 'weapon'
+                item_name: 'Acemi Yayı'
+                rarity: 'white'
+                power: 5
+                role: 'avci'
+                enchantments: '[{"kind":"evolution_kills","value":1}]'
+                equipped: 1
+                created_at: 1793517818
+                expires_at_ms: 0
+                sale_locked499: 0
+            weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+            heartbeatStateR57:
+              gearDue: false
+              queue: ~
+            atR57: 1793517818754
+          3:
+            id: 'shared-player-803'
+            inventory:
+              0:
+                id: 'starter-5bedcc42-b9da-4288-8769-6e94e9a02c3a'
+                player_id: 'shared-player-803'
+                kind: 'weapon'
+                item_name: 'Acemi Yayı'
+                rarity: 'white'
+                power: 5
+                role: 'avci'
+                enchantments: '[{"kind":"evolution_kills","value":1}]'
+                equipped: 1
+                created_at: 1793517818
+                expires_at_ms: 0
+                sale_locked499: 0
+            weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+            heartbeatStateR57:
+              gearDue: false
+              queue: ~
+            atR57: 1793517818754
+          4:
+            id: 'shared-player-804'
+            inventory:
+              0:
+                id: 'starter-2e06b71e-7ade-46ad-abb5-58fd418c9679'
+                player_id: 'shared-player-804'
+                kind: 'weapon'
+                item_name: 'Acemi Yayı'
+                rarity: 'white'
+                power: 5
+                role: 'avci'
+                enchantments: '[{"kind":"evolution_kills","value":1}]'
+                equipped: 1
+                created_at: 1793517818
+                expires_at_ms: 0
+                sale_locked499: 0
+            weaponEnchantmentR57: '[{"kind":"evolution_kills","value":1}]'
+            heartbeatStateR57:
+              gearDue: false
+              queue: ~
+            atR57: 1793517818754
+        actorSectionsR52:
+          version: 1
+          cycle: 1
+          actor: 'real-1'
+          actors:
+            0:
+              id: 'real-1'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagementRef:
+                kind: 'ack-attack'
+            1:
+              id: 'shared-player-801'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagementRef:
+                kind: 'ack-batch-r57'
+                index: 0
+            2:
+              id: 'shared-player-802'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagementRef:
+                kind: 'ack-batch-r57'
+                index: 1
+            3:
+              id: 'shared-player-803'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagementRef:
+                kind: 'ack-batch-r57'
+                index: 2
+            4:
+              id: 'shared-player-804'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagementRef:
+                kind: 'ack-batch-r57'
+                index: 3
+          readSections: true
+          readDrops: true
+        actorCommitSectionsR57:
+          version: 1
+          complete: true
+          cycle: 1
+          actors:
+            0:
+              id: 'real-1'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagement:
+                player_id: 'real-1'
+                monster_id: 'golge-independent-r85-0'
+                spawn_round: 17
+                next_hit_at_ms: 1793517819646
+                expires_at_ms: 1793517826536
+                hit_sequence: 0
+                updated_at_ms: 1793517818536
+                last_skill_at_ms: 1793517818536
+                attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819646,"last_skill_at_ms":1793517818536},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819647,"last_skill_at_ms":1793517818536},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819648,"last_skill_at_ms":1793517818536},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819649,"last_skill_at_ms":1793517818536},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819650,"last_skill_at_ms":1793517818536}}'
+              drops:
+                0:
+                  id: '05cd2249-0c4a-4123-9bb8-7e45718df795'
+                  owner_id: 'real-1'
+                  monster_id: 'golge-independent-r85-0'
+                  kind: 'essence'
+                  item_name: 'Yaşam Özü'
+                  rarity: 'white'
+                  power: 0
+                  amount: 4
+                  role: ~
+                  enchantments: '[]'
+                  x: 2738
+                  y: 2025
+                  expires_at: 1793517848
+                  collectible_at: 1793517823
+              playerRefR61:
+                index: 0
+                sha256: 'd52c55923b8ab1029fa9d3de120582cc0825728dc22d0f555c3c16d365d39718'
+            1:
+              id: 'shared-player-801'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagement: ~
+              drops:
+                0:
+                  id: '42765c37-06f3-428e-b318-9d41d91f6e0a'
+                  owner_id: 'shared-player-801'
+                  monster_id: 'golge-independent-r85-1'
+                  kind: 'essence'
+                  item_name: 'Yaşam Özü'
+                  rarity: 'white'
+                  power: 0
+                  amount: 3
+                  role: ~
+                  enchantments: '[]'
+                  x: 2748
+                  y: 2025
+                  expires_at: 1793517848
+                  collectible_at: 1793517823
+              playerRefR61:
+                index: 1
+                sha256: '2611b5030f950e10bd0c8041d2b9e2464b748a86303454d19a5c46baca5cc879'
+            2:
+              id: 'shared-player-802'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagement:
+                player_id: 'shared-player-802'
+                monster_id: 'golge-independent-r85-0'
+                spawn_round: 17
+                next_hit_at_ms: 1793517819695
+                expires_at_ms: 1793517826585
+                hit_sequence: 0
+                updated_at_ms: 1793517818585
+                last_skill_at_ms: 1793517818585
+                attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819695,"last_skill_at_ms":1793517818585},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819696,"last_skill_at_ms":1793517818585},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819697,"last_skill_at_ms":1793517818585},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819698,"last_skill_at_ms":1793517818585},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819699,"last_skill_at_ms":1793517818585}}'
+              drops:
+                0:
+                  id: '70659f88-fc6e-413c-8a84-56b23c5b392a'
+                  owner_id: 'shared-player-802'
+                  monster_id: 'golge-independent-r85-2'
+                  kind: 'essence'
+                  item_name: 'Yaşam Özü'
+                  rarity: 'white'
+                  power: 0
+                  amount: 4
+                  role: ~
+                  enchantments: '[]'
+                  x: 2758
+                  y: 2025
+                  expires_at: 1793517848
+                  collectible_at: 1793517823
+              playerRefR61:
+                index: 2
+                sha256: '132a16b6fa7c65cd4d592f1c8117a7f9cd4d350637f55a751f75b10cd6288511'
+            3:
+              id: 'shared-player-803'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagement:
+                player_id: 'shared-player-803'
+                monster_id: 'golge-independent-r85-1'
+                spawn_round: 17
+                next_hit_at_ms: 1793517819747
+                expires_at_ms: 1793517826636
+                hit_sequence: 0
+                updated_at_ms: 1793517818636
+                last_skill_at_ms: 1793517818636
+                attackers489: '{"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819747,"last_skill_at_ms":1793517818636},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819748,"last_skill_at_ms":1793517818636},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819749,"last_skill_at_ms":1793517818636},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819750,"last_skill_at_ms":1793517818636}}'
+              drops:
+                0:
+                  id: 'd5f2be0c-4930-4f77-9ab1-d90e17222d59'
+                  owner_id: 'shared-player-803'
+                  monster_id: 'golge-independent-r85-3'
+                  kind: 'essence'
+                  item_name: 'Yaşam Özü'
+                  rarity: 'white'
+                  power: 0
+                  amount: 3
+                  role: ~
+                  enchantments: '[]'
+                  x: 2768
+                  y: 2025
+                  expires_at: 1793517848
+                  collectible_at: 1793517823
+              playerRefR61:
+                index: 3
+                sha256: 'e9feaea88f0dc59bae9a330fed860b246b19ecf916c2eef8c85db477681b32a2'
+            4:
+              id: 'shared-player-804'
+              owner:
+                channel: 1
+                incarnation: '78b67145-0fde-448a-a20a-3e3227add329'
+                epoch: 1
+              engagement: ~
+              drops:
+                0:
+                  id: 'd496d90e-f945-4fe4-8658-65bb2a71ac83'
+                  owner_id: 'shared-player-804'
+                  monster_id: 'golge-independent-r85-4'
+                  kind: 'essence'
+                  item_name: 'Yaşam Özü'
+                  rarity: 'white'
+                  power: 0
+                  amount: 4
+                  role: ~
+                  enchantments: '[]'
+                  x: 2778
+                  y: 2025
+                  expires_at: 1793517848
+                  collectible_at: 1793517823
+              playerRefR61:
+                index: 4
+                sha256: 'b2e000a102a9ed3abb9e65b1a4add7f9abbd3ac5d8832a58838c2bc9a7d4c8cf'
+          readAtMs: 1793517818754
+  actual:
+    key: 'attack:637004af-200c-498d-a1e7-0fbb71232779:1'
+    result:
+      result:
+        body:
+          ok: true
+          guardianEffect: ~
+          lifeSteal: ~
+          hits:
+            0:
+              id: 'golge-independent-r85-0'
+              damage: 29
+              hp: 0
+              killed: true
+              critical: false
+              spawnRound: 17
+              elemental:
+          states:
+            0:
+              id: 'golge-independent-r85-0'
+              spawnRound: 17
+              hp: 0
+          progression:
+            0:
+              id: 'real-1'
+              xp: 34
+              level: 40
+              rank_xp: 0
+          xp: 34
+          groundDrops: 0
+          rewardPending: true
+          nextAttackAtMs: 1793517819310
+          tickCount: 4
+          tickIntervalMs: 320
+          message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+        status: 200
+      events:
+      completedClaimsR56:
+        0:
+          id: 'golge-independent-r85-0'
+          spawnRound: 17
+        1:
+          id: 'golge-independent-r85-1'
+          spawnRound: 17
+        2:
+          id: 'golge-independent-r85-2'
+          spawnRound: 17
+        3:
+          id: 'golge-independent-r85-3'
+          spawnRound: 17
+        4:
+          id: 'golge-independent-r85-4'
+          spawnRound: 17
+      checkpointR53:
+        0:
+          id: 'real-1'
+          joinedAckSha256R57: 'ca2b8e662fa41abbd05fc4cea1925c426e17c07c1a19579bd6a85d49c2353103'
+        1:
+          id: 'shared-player-802'
+          joinedAckSha256R57: 'c3d717bc4f7ff72dc327b781f8d7f43d7d15b213b8526707b3a2860ac0cdc964'
+        2:
+          id: 'shared-player-803'
+          joinedAckSha256R57: 'a540df44afafcc4b4a3a73ff0778bdf06399b81956dbf866681bb204739146c5'
+      rewardsCompletedR53: 5
+      community:
+      players:
+        0:
+          id: 'real-1'
+          name: 'Human Fixture'
+          role: 'avci'
+          x: 2700
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819310
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'account-real-1'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        1:
+          id: 'shared-player-801'
+          name: 'Paylasim801'
+          role: 'avci'
+          x: 2710
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819311
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-801'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        2:
+          id: 'shared-player-802'
+          name: 'Paylasim802'
+          role: 'avci'
+          x: 2720
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-802'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        3:
+          id: 'shared-player-803'
+          name: 'Paylasim803'
+          role: 'avci'
+          x: 2730
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-803'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+        4:
+          id: 'shared-player-804'
+          name: 'Paylasim804'
+          role: 'avci'
+          x: 2740
+          y: 2025
+          hp: 100000
+          essence: 0
+          contribution: 0
+          last_seen: 1793517818
+          created_at: 1793517813
+          xp: 34
+          level: 40
+          channel: 1
+          gems: 1000
+          potions: 0
+          skill_one: 5
+          skill_two: 5
+          skill_three: 5
+          area: 'forest'
+          attack_one_at: 1793517819312
+          attack_two_at: 0
+          attack_three_at: 0
+          last_monster_hit_at: 0
+          account_id: 'shared-account-804'
+          last_regen_at: 0
+          has_rod: 0
+          rod_equipped: 0
+          fish_sokan: 0
+          fish_levrek: 0
+          fish_zargana: 0
+          hp_revision: 0
+          respawn_at_ms: 0
+          xp_ring_until: 0
+          drop_charm_until: 0
+          has_wings: 0
+          wings_equipped: 0
+          stone_dust: 0
+          max_hp: 100000
+          pearls: 0
+          arena_match_id: ''
+          movement_checked_at_ms: 0
+          movement_debt_ms: 0
+          position_revision: 0
+          realtime_scope_version: 1
+          combat_lock_until_ms: 1793517823686
+          fishing_cooldown_until_ms: 0
+          is_gm: 0
+          last_movement_at_ms: 1793517818000
+          loadlab_run_id: ''
+          loadlab_team: 0
+          motion_stream_id: ''
+          motion_sequence: 0
+          root_until_ms: 0
+          stun_until_ms: 0
+          gm_invisible: 0
+          gm_visibility_revision: 0
+          core_coins: 0
+          trade_glass_until_ms: 0
+          pumpkin_until499: 0
+          pumpkin_enabled499: 0
+          halloween_candy_until: 0
+          quest_kills438: 1
+          quest_fish438: 0
+          stat_attack: 0
+          stat_defense: 0
+          stat_hp: 0
+          stat_revision: 0
+          red_pearls: 0
+          arena_coins: 0
+          arena_wings_owned: 0
+          arena_wings_equipped: 0
+          arena_wings_expires_at_ms: 0
+          arena_exp_rings: 0
+          arena_exp_until: 0
+          fishing_guides: 0
+          boss_reminders: 0
+          mastery_seals492: 0
+          protection_seals: 0
+          battle_rations: 0
+          fishing_baits: 0
+          rank_scrolls: 0
+          radiant_costumes: 0
+          essence_charms: 0
+          fishing_guide_until: 0
+          boss_reminder_until: 0
+          ration_until: 0
+          wisdom_until: 0
+          radiant_until: 0
+          essence_until: 0
+          bait_remaining: 0
+          radiant_enabled: 0
+          talisman_stones: 0
+          talisman_powers: 0
+          essence_bonus_remainder: 0
+          wheel_paid_pearls: 0
+          wheel_paid_potions: 0
+          wheel_paid_essence: 0
+          wheel_paid_gems: 0
+          wings_expires_at_ms: 0
+          item_link_orbs: 0
+          teleport_skin_expires_at_ms: 0
+          weapon_skin_expires_at_ms: 0
+          auto_potion_remaining: 0
+          auto_potion_total: 0
+          enchant_scrolls: 0
+          enchant_add_scrolls: 0
+          fifth_enchant_scrolls: 0
+          auto_potion_owned: 0
+          auto_potion_enabled: 0
+          auto_potion_at_ms: 0
+          stall_skin_owned: 0
+          stall_skin_enabled: 0
+          teleport_skin_owned: 0
+          teleport_skin_enabled: 0
+          weapon_skin_owned: 0
+          weapon_skin_enabled: 0
+          storage_pages: 0
+          rename_scrolls: 0
+          afk_tickets: 0
+          group_dungeon_day494: 0
+          group_dungeon_entries494: 0
+          rune_attack_level: 0
+          rune_defense_level: 0
+          rune_hp_level: 0
+          battle_pass_season: ''
+          battle_pass_xp: 0
+          daily_monster_day: 20758
+          daily_monster_kills: 1
+          rank_tier: 0
+          rank_xp: 0
+          rank_started_at: 0
+          rank_forest: 0
+          rank_frozen: 0
+          rank_black: 0
+          rank_ancient: 0
+          rank_cosmetics: '{}'
+          rank_unlocked: '[]'
+          set_hp: 0
+          set_pve: 0
+          set_pvp: 0
+          set_resistance: 0
+          set_speed: 0
+          set_attack: 0
+          specialization: ''
+          skill_four: 5
+          attack_four_at: 0
+          special_guard_until_ms: 0
+          jewelry_attack: 0
+          jewelry_defense: 0
+          jewelry_cast_speed: 0
+          jewelry_pvp: 0
+          jewelry_resist: 0
+          jewelry_earring_enchantments: '[]'
+          jewelry_bracelet_enchantments: '[]'
+      monsters:
+        0:
+          id: 'golge-independent-r85-0'
+          name: 'Gölge'
+          x: 2720
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        1:
+          id: 'golge-independent-r85-1'
+          name: 'Gölge'
+          x: 2730
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        2:
+          id: 'golge-independent-r85-2'
+          name: 'Gölge'
+          x: 2740
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        3:
+          id: 'golge-independent-r85-3'
+          name: 'Gölge'
+          x: 2750
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+        4:
+          id: 'golge-independent-r85-4'
+          name: 'Gölge'
+          x: 2760
+          y: 2025
+          hp: 0
+          max_hp: 1
+          respawn_at: 1793517836
+          variant: 'normal'
+          is_boss: 0
+          despawn_at: 0
+          spawn_round: 17
+          area: 'forest'
+          channel: 1
+          is_stone: 0
+          wave_stage: 0
+          summoned: 0
+          parent_stone_id: ~
+          loadlab_run_id: ''
+          root_until_ms: 0
+          stun_until_ms: 0
+          control_x: 0
+          control_y: 0
+          last_damaged_at_ms: 1793517818686
+          last_regen_at_ms: 1793517813927
+      participants:
+        0:
+          monster_id: 'golge-independent-r85-0'
+          spawn_round: 17
+          player_id: 'real-1'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        1:
+          monster_id: 'golge-independent-r85-1'
+          spawn_round: 17
+          player_id: 'shared-player-801'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        2:
+          monster_id: 'golge-independent-r85-2'
+          spawn_round: 17
+          player_id: 'shared-player-802'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        3:
+          monster_id: 'golge-independent-r85-3'
+          spawn_round: 17
+          player_id: 'shared-player-803'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+        4:
+          monster_id: 'golge-independent-r85-4'
+          spawn_round: 17
+          player_id: 'shared-player-804'
+          created_at: 1793517818
+          stone_damage476: 0
+          stone_first_hit_at_ms476: 0
+      bossParticipants:
+      engagement:
+        player_id: 'real-1'
+        monster_id: 'golge-independent-r85-0'
+        spawn_round: 17
+        next_hit_at_ms: 1793517819646
+        expires_at_ms: 1793517826536
+        hit_sequence: 0
+        updated_at_ms: 1793517818536
+        last_skill_at_ms: 1793517818536
+        attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819646,"last_skill_at_ms":1793517818536},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819647,"last_skill_at_ms":1793517818536},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819648,"last_skill_at_ms":1793517818536},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819649,"last_skill_at_ms":1793517818536},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819650,"last_skill_at_ms":1793517818536}}'
+      batchResultsR57:
+        0:
+          actor: 'shared-player-801'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0:
+                  id: 'golge-independent-r85-1'
+                  damage: 26
+                  hp: 0
+                  killed: true
+                  critical: false
+                  spawnRound: 17
+                  elemental:
+              states:
+                0:
+                  id: 'golge-independent-r85-1'
+                  spawnRound: 17
+                  hp: 0
+              progression:
+                0:
+                  id: 'shared-player-801'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819311
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        1:
+          actor: 'shared-player-802'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0:
+                  id: 'golge-independent-r85-2'
+                  damage: 25
+                  hp: 0
+                  killed: true
+                  critical: false
+                  spawnRound: 17
+                  elemental:
+              states:
+                0:
+                  id: 'golge-independent-r85-2'
+                  spawnRound: 17
+                  hp: 0
+              progression:
+                0:
+                  id: 'shared-player-802'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        2:
+          actor: 'shared-player-803'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0:
+                  id: 'golge-independent-r85-3'
+                  damage: 27
+                  hp: 0
+                  killed: true
+                  critical: false
+                  spawnRound: 17
+                  elemental:
+              states:
+                0:
+                  id: 'golge-independent-r85-3'
+                  spawnRound: 17
+                  hp: 0
+              progression:
+                0:
+                  id: 'shared-player-803'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+        3:
+          actor: 'shared-player-804'
+          sequence: 1
+          result:
+            body:
+              ok: true
+              guardianEffect: ~
+              lifeSteal: ~
+              hits:
+                0:
+                  id: 'golge-independent-r85-4'
+                  damage: 25
+                  hp: 0
+                  killed: true
+                  critical: false
+                  spawnRound: 17
+                  elemental:
+              states:
+                0:
+                  id: 'golge-independent-r85-4'
+                  spawnRound: 17
+                  hp: 0
+              progression:
+                0:
+                  id: 'shared-player-804'
+                  xp: 34
+                  level: 40
+                  rank_xp: 0
+              xp: 34
+              groundDrops: 0
+              rewardPending: true
+              nextAttackAtMs: 1793517819312
+              tickCount: 4
+              tickIntervalMs: 320
+              message: '1 yaratık düştü · katılan herkese ganimet şansı · +34 TP'
+            status: 200
+      batchEngagementsR57:
+        0:
+          0: 'shared-player-801'
+          1: ~
+        1:
+          0: 'shared-player-802'
+          1:
+            player_id: 'shared-player-802'
+            monster_id: 'golge-independent-r85-0'
+            spawn_round: 17
+            next_hit_at_ms: 1793517819695
+            expires_at_ms: 1793517826585
+            hit_sequence: 0
+            updated_at_ms: 1793517818585
+            last_skill_at_ms: 1793517818585
+            attackers489: '{"golge-independent-r85-0":{"monster_id":"golge-independent-r85-0","spawn_round":17,"next_hit_at_ms":1793517819695,"last_skill_at_ms":1793517818585},"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819696,"last_skill_at_ms":1793517818585},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819697,"last_skill_at_ms":1793517818585},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819698,"last_skill_at_ms":1793517818585},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819699,"last_skill_at_ms":1793517818585}}'
+        2:
+          0: 'shared-player-803'
+          1:
+            player_id: 'shared-player-803'
+            monster_id: 'golge-independent-r85-1'
+            spawn_round: 17
+            next_hit_at_ms: 1793517819747
+            expires_at_ms: 1793517826636
+            hit_sequence: 0
+            updated_at_ms: 1793517818636
+            last_skill_at_ms: 1793517818636
+            attackers489: '{"golge-independent-r85-1":{"monster_id":"golge-independent-r85-1","spawn_round":17,"next_hit_at_ms":1793517819747,"last_skill_at_ms":1793517818636},"golge-independent-r85-2":{"monster_id":"golge-independent-r85-2","spawn_round":17,"next_hit_at_ms":1793517819748,"last_skill_at_ms":1793517818636},"golge-independent-r85-3":{"monster_id":"golge-independent-r85-3","spawn_round":17,"next_hit_at_ms":1793517819749,"last_skill_at_ms":1793517818636},"golge-independent-r85-4":{"monster_id":"golge-independent-r85-4","spawn_round":17,"next_hit_at_ms":1793517819750,"last_skill_at_ms":1793517818636}}'
+        3:
+          0: 'shared-player-804'
+          1: ~
+      notifications:
+      notificationActors:
+      sharedRefresh:
+        version: 1
+        actors:
+          0: 'real-1'
+          1: 'shared-player-801'
+          2: 'shared-player-802'
+          3: 'shared-player-803'
+          4: 'shared-player-804'
+        all: false
+        tables:
+          0: 'monster_xp_claims'
+          1: 'normal_reward_claims'
+          2: 'player_items'
+          3: 'pve_engagements'
+          4: 'world_drops'
+        itemActorsR57:
+          0: 'real-1'
+          1: 'shared-player-801'
+          2: 'shared-player-802'
+          3: 'shared-player-803'
+          4: 'shared-player-804'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r85_stability_work/tests/independent-deaths-r85/native-process.test.mjs:44:97)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: five independent lethal heads union their complete groups before any consumption
+ok 2 - five independent lethal heads union their complete groups before any consumption
+  ---
+  duration_ms: 2.727586
+  type: 'test'
+  ...
+# Subtest: an older nonattack head and an earlier successor stop selection without overtaking
+ok 3 - an older nonattack head and an earlier successor stop selection without overtaking
+  ---
+  duration_ms: 0.561018
+  type: 'test'
+  ...
+# Subtest: foreign/held group, shared target, duplicate life and nonlethal head keep original path
+ok 4 - foreign/held group, shared target, duplicate life and nonlethal head keep original path
+  ---
+  duration_ms: 2.264651
+  type: 'test'
+  ...
+# Subtest: ten-target and25-actor bounds stop before consuming the oversized group
+ok 5 - ten-target and25-actor bounds stop before consuming the oversized group
+  ---
+  duration_ms: 0.452395
+  type: 'test'
+  ...
+# Subtest: changed secondary epoch or head rejects the plan without consuming any input
+ok 6 - changed secondary epoch or head rejects the plan without consuming any input
+  ---
+  duration_ms: 0.580143
+  type: 'test'
+  ...
+# Subtest: independent successor cannot inherit lead priority over an older remembered resource waiter
+ok 7 - independent successor cannot inherit lead priority over an older remembered resource waiter
+  ---
+  duration_ms: 0.218138
+  type: 'test'
+  ...
+# Subtest: AttackLoop leases every expanded actor and target before consuming the plan
+ok 8 - AttackLoop leases every expanded actor and target before consuming the plan
+  ---
+  duration_ms: 0.57834
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 7
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8141.975019

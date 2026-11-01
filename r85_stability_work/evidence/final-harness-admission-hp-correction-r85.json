@@ -1,0 +1,36 @@
+{
+  "status": "fixture-only-premeasurement-assertion-corrected",
+  "authorizedByCoordinator": true,
+  "productionCoreSHA256Unchanged": "572129943dbd0df97818f6b53b4e12defa42b87483f3d456e669881edc1e9356",
+  "liveTouched": false,
+  "workloadChanged": false,
+  "acceptanceGatesChanged": false,
+  "failure": {
+    "path": "evidence/final-exact-admission-precondition-failure-r85.json",
+    "bytes": 2283,
+    "sha256": "2969bebd73aaddaad8f3d2f91b8e41ce1ddddb78d0aab27f80904fe1f3fecad4"
+  },
+  "beforeParent": {
+    "path": "tests/runtime/history/native-mixed-load-realistic-before-admission-hp.mjs",
+    "bytes": 27667,
+    "sha256": "ef7d2c1dafc495238fed219d911c8e37309091543c3a1237ff5e8ed1399c7231"
+  },
+  "afterParent": {
+    "path": "tests/runtime/native-mixed-load-realistic.mjs",
+    "bytes": 28046,
+    "sha256": "bdb61a1a3daf337762dcd855d15f4f9a2613ff59fa747c176164b1c9b4f0cda2"
+  },
+  "change": "Replace strict100000HP equality after sequential native admissions by0<HP<=100000 and exactmaxHP1m. Explicitly check allSQLinitialautocharge900000,total1m,owned/enabled1 andmanual64. Retain observedHP; do not reset damage.",
+  "oracleReason": "Native monster/world ticks may damage earlier entrants during other admissions. Lower aliveHP increases the initialdeficit; therefore automatic native heal still independently exhausts exactly900000charge. Finalstock andmutatingledger oracle remain unchanged.",
+  "otherSetupAssumptionsReviewed": [
+    "No exactinitialposition assertion: native auth/admission, terrain and movement validation remain active. Arranged movement follows realtransport from actualprojectedposition.",
+    "Seededtargets have nativehp/maxhp1 andspawnround17; no clientattacks occur during admission. No gameplaywarmup.",
+    "Drops expire600s afterseed; full100stage180s plusobserved boundedsetup fits thatwindow. Their actualSQLremaining/claimassertions remain independent.",
+    "Presence is refreshed justbeforeeachnativeadmission; eachconnectedclient sends ordinary5sheartbeat duringsetup. Noauth/presence bypass.",
+    "Rankedactors still use actualnative40to65levelentry andquesttrigger; no fallback-changing counterreset.",
+    "Parent measurement begins onlyafterallgeneratorsprepare/drain; startclock,pacing,20Hzprediction/5Hzmovement/650msstatcooldown,500msautopotionpoll,600mscap and allacceptancegates unchanged."
+  ],
+  "rerunLabel": "r85-final-exact2",
+  "retainedPriorArtifacts": "All r85-final-exact1/10timedresults and failed30admission remain byte-exact; oldparent source and preparation docs archived. Freshlabel and same newharnesspin required for allfive finalstages.",
+  "syntaxPassed": true
+}

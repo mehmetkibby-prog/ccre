@@ -1,0 +1,18 @@
+{
+  "native-guild-membership.mjs": {
+    "sourceSha256": "35af97c3e3420e4937668a6093505d2c37d8a339de38f905955f5860d7a26001",
+    "patchedSha256": "0cf940da0fab88e0c8602df5617b5093c0efe49eb5dc2efab8af94cbf10d098f",
+    "edits": [
+      {
+        "from": "export function createNativeGuildMembership",
+        "to": "import {castleEnabled} from '../castle-model-r59.mjs';\nexport function createNativeGuildMembership",
+        "count": 1
+      },
+      {
+        "from": "  AND (SELECT COUNT(*) FROM guild_members WHERE guild_id=g.id)<40",
+        "to": "  ${castleEnabled()?'':'AND (SELECT COUNT(*) FROM guild_members WHERE guild_id=g.id)<40'}",
+        "count": 1
+      }
+    ]
+  }
+}

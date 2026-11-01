@@ -1,0 +1,38 @@
+test_final_client_proofs_and_current_r84_base_overlay_match (__main__.ActualClientProofTests.test_final_client_proofs_and_current_r84_base_overlay_match) ... ok
+test_http_is_exact_old_namespace_and_game_reference_rewrite (__main__.ActualClientProofTests.test_http_is_exact_old_namespace_and_game_reference_rewrite) ... ok
+test_client_metadata_cannot_silently_change_namespace_or_source (__main__.ImmutableClientTests.test_client_metadata_cannot_silently_change_namespace_or_source) ... ok
+test_complete_circular_graph_portal_ssr_html_manifest_and_old_inodes (__main__.ImmutableClientTests.test_complete_circular_graph_portal_ssr_html_manifest_and_old_inodes) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_corrupt_old_graph_refused_before_any_service_stop (__main__.ImmutableClientTests.test_corrupt_old_graph_refused_before_any_service_stop) ... ok
+test_crash_after_hardlink_restores_refs_and_unlinks_only_new_names (__main__.ImmutableClientTests.test_crash_after_hardlink_restores_refs_and_unlinks_only_new_names) ... ok
+test_existing_new_namespace_is_preserved_and_update_refused (__main__.ImmutableClientTests.test_existing_new_namespace_is_preserved_and_update_refused) ... ok
+test_explicit_package_cannot_inject_link_source (__main__.ImmutableClientTests.test_explicit_package_cannot_inject_link_source) ... ok
+test_journal_created_directories_cannot_include_owner_directory (__main__.ImmutableClientTests.test_journal_created_directories_cannot_include_owner_directory) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_journal_link_source_cannot_be_redirected_to_core (__main__.ImmutableClientTests.test_journal_link_source_cannot_be_redirected_to_core) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_modified_new_hardlink_identity_blocks_rollback_without_old_graph_mutation (__main__.ImmutableClientTests.test_modified_new_hardlink_identity_blocks_rollback_without_old_graph_mutation) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_modified_ssr_reference_is_never_overwritten_by_rollback (__main__.ImmutableClientTests.test_modified_ssr_reference_is_never_overwritten_by_rollback) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_parent_symlink_in_old_graph_refused_before_stop (__main__.ImmutableClientTests.test_parent_symlink_in_old_graph_refused_before_stop) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.587s
+
+OK

@@ -1,0 +1,105 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "modules": [
+    {
+      "source": "vds-server/src/solo-dungeon-engine.mjs",
+      "sourceSha256": "545547bb3625ee54ef8e982b872a920f05899edc468cb81ab674a81a9008f608",
+      "generated": "solo-rules.mjs",
+      "generatedSha256": "7bd431ca025a06158725bf3cc29d6a76a9aa6078eac38ba676c9cef83c55ff76",
+      "extractedSha256": "7bd431ca025a06158725bf3cc29d6a76a9aa6078eac38ba676c9cef83c55ff76",
+      "declarations": [
+        {
+          "bytes": 161,
+          "sha256": "d31fda0fd1f02073d2c27d9fd3b27057c9d8a8b86a27c1380a6747a576eeec83"
+        },
+        {
+          "bytes": 290,
+          "sha256": "6f0127895bbdcc6c2abb1b01337f98eff143e4bbb1836ef42456890613158562"
+        },
+        {
+          "bytes": 1119,
+          "sha256": "500c5163b5665eb6b14d6eb67bae28d9ce647b57f56ee56973578edb78d0c11d"
+        },
+        {
+          "bytes": 2240,
+          "sha256": "026238872f6a1e5a053d2df5ee1097f007c4112cb678bea15f321be2918f4a1e"
+        },
+        {
+          "bytes": 582,
+          "sha256": "c8b7d8bab53937bc778a40e3cf7c741d2597354ee4691f934582b3b882890bf4"
+        },
+        {
+          "bytes": 324,
+          "sha256": "72c4d9075d5e74c37645759d129409798e0d4182f35f4f137866280a16ee9e69"
+        },
+        {
+          "bytes": 1597,
+          "sha256": "c75699ef62e0038939bca9b7a279f8a3d09e1d1d7e879eb3c1170bb36c2f09b8"
+        }
+      ],
+      "exports": [
+        "soloInfo",
+        "craftSoloKey",
+        "createSolo",
+        "soloStage",
+        "soloTick",
+        "rewardSolo"
+      ]
+    },
+    {
+      "source": "vds-server/src/dungeon-engine.mjs",
+      "sourceSha256": "2ec4ee82e2de060330dd04147fae7197d84a57e16553bdc545d626f1e195369d",
+      "generated": "dungeon-rules.mjs",
+      "generatedSha256": "fb7699fd76a623557608d6ace3debfa4aaab6808cb3ba0385f01bbc93167125f",
+      "extractedSha256": "3f693c45980b4f9af60da6833725806941db182395cfa8c32512864a878e3c9b",
+      "adaptation": "count-checked R18 tower hooks; ordinary solo/group rules retained",
+      "declarations": [
+        {
+          "bytes": 46,
+          "sha256": "798eb4da0d242eabe1d3f04e4d402fd93f21efec995e4eb425f3eb5dd1b1c180"
+        },
+        {
+          "bytes": 64,
+          "sha256": "876c997d1f41f3941dc45fa7e227407983063f02ac29ecadff0499116d68eaff"
+        },
+        {
+          "bytes": 103,
+          "sha256": "162c95b39a278a76581d10b3d5bea6820f8d6d74c3d026472136c4358d24a1a8"
+        },
+        {
+          "bytes": 56,
+          "sha256": "012a0f811c41f7ac1695bc8885fa17bea5b0f1f1d2aea0fcb93416a896036eb1"
+        },
+        {
+          "bytes": 55,
+          "sha256": "7bc9205e296b25512c4c9a36414efc34e5ed5dea97be8c734a0d6bba2fb7dcf5"
+        },
+        {
+          "bytes": 33,
+          "sha256": "ef8e3934c4e33085247b44d17317f421bb8fc7edfeec828383c20a0db049743f"
+        },
+        {
+          "bytes": 74,
+          "sha256": "641084927d4fe09230b584fb2049d7655d2691d9bc8ba7b9e08b4505a64ff1c2"
+        },
+        {
+          "bytes": 985,
+          "sha256": "3f35050104ba9d562e319facfa9de41cac456c7855c4a15dca16189a18e58fb2"
+        },
+        {
+          "bytes": 62967,
+          "sha256": "32c51772c4c1fcc47c87552d0ca41907f4fb715e4bc0d5eec832453660f3eb4c"
+        }
+      ],
+      "exports": [
+        "validateDungeonSettings",
+        "DungeonEngine"
+      ],
+      "r31": {
+        "beforeSha256": "0bb06a23a3f7d8a0a46aec007c514e68998b7d8d29820279d9743f72f01e4986",
+        "change": "R31 local group limit import: 15 -> 30; original counters and UTC+3 day unchanged"
+      }
+    }
+  ],
+  "integrationComplete": false
+}

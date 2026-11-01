@@ -1,0 +1,80 @@
+R83 SHARED-COMMAND UNKNOWN OUTCOME — EVIDENCE AND FIX BOUNDARY
+31 October 2026; exact available R83 source only; no VDS or production changes.
+
+INCIDENT FACTS
+Journal screenshot upload/01-12683.jpg reports:
+  12:33:36.424Z  incident 4  shared_command_outcome_unknown
+    origin shared_combat_failure; requestMethod shared_expireUnknown;
+    phase shared_terminal_unknown.
+  12:33:36.440Z  incident 5  global_world_busy, channel_recovery_request.
+  12:33:55.723Z  incident 6  shared_command_outcome_unknown, same origin/method.
+  12:33:55.734Z  incident 7  global_world_busy, channel_recovery_request.
+The unknown deadlines are 19.299 seconds apart. Their following global_world_busy
+events are secondary: terminalIdle throws that code when recovery is already on.
+The primary writer errors occurred approximately ten seconds before each deadline,
+subject to timer/event-loop scheduling. The initial errors are NOT in the supplied
+filtered recovery_cause summary. This does not prove a nine-minute outage.
+
+EXACT SOURCE PATH
+scripts/core511/shared-combat-bridge.mjs:
+  command (187–199) awaits writer.command. A matching private actorRejection
+  proof permits abortCommand. Otherwise it attempts exact commandStatus. A
+  committed receipt resolves the command; an unresolved outcome starts the
+  ten-second watchUnknown timer and logs the ORIGINAL writer error via onFault.
+  expireUnknown (176–184) repeats exact status reconciliation, then invokes
+  global recovery if the same shared command remains unknown. It never replays
+  gameplay and never treats a timeout as proof of rollback.
+scripts/core511/actor-isolation.mjs:
+  commandStatus (31–65) checks an exact durable receipt first. Without a receipt,
+  unchanged owner sequence alone is insufficient; the writer may still be in flight.
+scripts/core511/actor-command-outcomes.mjs:
+  remember deliberately excludes sharedLease proofs. Shared negative status needs
+  the bridge's stronger completed shared_abort, not merely actor-only rollback.
+scripts/core511/shared-combat-bridge.mjs:
+  rejectedStatus (138–141) requires commandRejected, phase finished, and no terminal.
+  abortTerminal (149–153) validates all channel abort ACKs and world finish, clears
+  unknown/timer, then releases the shared terminal. Therefore simply returning on
+  not_executed at expireUnknown does not fix the normal still-frozen unknown path.
+scripts/core511/actor-rejection.mjs and ownership.mjs:
+  Known shared pre-execution/frame/output errors acquire private provenance only
+  after exact outer rollback/durability and receipt/owner checks. Public error-code
+  text is not evidence. Original-error identity is preserved through this path;
+  receipt/advanced-owner and concurrent-identical-command guards intentionally
+  suppress a false negative. No incident-specific lost proof was demonstrated.
+
+WHAT WAS RULED OUT AS A JUSTIFIED PATCH
+No evidence establishes that these incidents had a valid not_executed response,
+a dropped certified rollback proof, or a particular missing classification code.
+Adding a guessed code to the shared rollback allowlist, using missing receipt as
+rollback proof, shortening expiry, unlocking the terminal, or disabling the
+global_world_busy guard would not be a supported root-cause fix. No such change
+was made. The 8192-character shared lease bound is already in current source,
+enabled by default; live environment overrides have not been inspected.
+
+SEPARATE PROVEN DEFECT
+The recovery completion race is independently reproduced and has an isolated narrow
+candidate, source pins, and 30 passing controlled interleaving cases in this folder.
+It can leave recoveringWorld true after a late fault coalesces with an already
+completed recovery promise. A separate actual-ended/requestRecovery harness also
+reproduces a fresh CH1 owner exiting while CH2 boots: its notification coalesces,
+and old code finishes with CH1 offline and no retry. The current isolated candidate
+pins/revalidates every newly booted owner before jobs/ready publication; a lost
+generation enters the existing fenced failure/retry policy. Neither defect is
+proven to be the cause of either original writer error or the full reported lag
+duration. Fixtures mock OS exit/boot and DB durability boundaries.
+See RECOVERY_FINALIZATION_FINDINGS.txt for exact evidence and limits.
+
+MINIMUM REMAINING EVIDENCE
+Read ordinary core511_fault events around 12:33:24–12:33:27Z and
+12:33:43–12:33:46Z, retaining all codes (including runtime_fault), actorRef/channel,
+stack and detailSuppressed. The current formatter discards the sharedCommandPending
+tag, so filtering only recovery_cause or that tag loses the initial writer error.
+The reporter emits detail for at most 20 faults per ten-second window; a code-only
+suppressed row still matters. Original errors near 12:33:26/45Z determine which
+native comparison, guard, transaction or transport boundary must be reproduced.
+
+CONCLUSION
+The supplied journal proves shared-command outcome uncertainty triggered two global
+recoveries. The available source trace explains the resulting freeze and admission
+block, but does not identify the initial failing writer operation. The staged
+recovery/entry improvements must not be represented as a proven fix for all lag.

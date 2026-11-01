@@ -1,0 +1,50 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "sources": [
+    {
+      "file": "vds-server/src/cpu-profile507.mjs",
+      "sha256": "20c586b1df79021b9e623ecc44bdbab5bcc913e2cc18dea7cbcf6859a1fd5eec"
+    },
+    {
+      "file": "vds-server/src/runtime-performance.mjs",
+      "sha256": "4e9e502ead0296883eaab165db7cb188ad72a3fd9587c2830d4cde670dcf6442"
+    },
+    {
+      "file": "vds-server/src/slow-work504.mjs",
+      "sha256": "a53e3db4af73e5233bb9a184f119321c0bedf73af8ee5a6652d3593fb201bccd"
+    },
+    {
+      "file": "vds-server/src/host-resources.mjs",
+      "sha256": "ad3dcf2504f6d1d097bdc1458a63f0b190b5bad576b5a278fdb9382de054d4b7"
+    },
+    {
+      "file": "vds-server/src/features504.mjs",
+      "sha256": "1535109fcc9776c2c1c8cd9fdeb6f7d2d4b1046ffa66d6eb7d7243e60c073e90"
+    }
+  ],
+  "generatedSha256": "20ed2a044f830f4d732a55b0189578174579e0fde241377f84a2836c44fe15f9",
+  "edits": [
+    [
+      "/^(main|channel-[1-3])$/",
+      "/^(main|world|channel-[1-4])$/"
+    ],
+    [
+      "Number(job.target.slice(-1))",
+      "(job.target==='world'?0:Number(job.target.slice(-1)))"
+    ],
+    [
+      "Number(target.slice(-1))",
+      "(target==='world'?0:Number(target.slice(-1)))"
+    ]
+  ],
+  "adminResponder": {
+    "nativeDeclarationSha256": "7d8def5b954f2779e1219861abe698de06cea7fab08c32bbbf9ade93d35a7183",
+    "binding": "Unchanged adminCpuProfile507 body closes over the provided current-host coordinator"
+  },
+  "notes": [
+    "Native inspector capture, sanitization,60s duration,120s cooldown,5min TTL and size/chunk limits unchanged",
+    "Only main coordinator targets extend to channel4 and independent world index0",
+    "Native process/GC/ELU/CPU/stall sampler is imported unchanged; no acceptance threshold is relaxed",
+    "Additional factory retains the exact native HTTP response/error/download function; authorization remains in the native router"
+  ]
+}

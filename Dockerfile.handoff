@@ -1,0 +1,5 @@
+# Optional isolated Linux x64 fixture environment; no live deployment.
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends python3 ca-certificates xz-utils git && rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace/ccre
+CMD ["bash"]

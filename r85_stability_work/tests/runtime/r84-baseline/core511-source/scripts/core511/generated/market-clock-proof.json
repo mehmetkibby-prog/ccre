@@ -1,0 +1,14 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "start": 869123,
+  "end": 870368,
+  "querySha256": "419d399204b2c4b8b7d98a8ede2d7e89ef472294a670a3c33077cbda0c645974",
+  "predicate": "created_at>CAST(strftime('%s','now') AS INTEGER)-172800",
+  "lifetimeSeconds": 172800,
+  "generatedSha256": "31f64fe395d4fad34f30c396470450fead62917eeabe9728a88b483f207b2366",
+  "edits": [
+    "Native strict seconds-based creation-time predicate on already authorized public shop rows; no other visibility, stock or player state recalculation"
+  ]
+}

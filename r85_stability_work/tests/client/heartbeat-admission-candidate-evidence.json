@@ -1,0 +1,324 @@
+{
+  "scope": "exact separate candidate zp2 plus unchanged current heartbeat scheduler, budget, health helpers and full current transport. Controlled HTTP/WS peer; no native durable heartbeat/maintenance assertions.",
+  "candidateSha256": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+  "transportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+  "cases": [
+    {
+      "name": "healthy ready normal 5s cadence",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "heartbeat"
+        },
+        {
+          "at": 10000,
+          "sequence": 3,
+          "action": "heartbeat"
+        },
+        {
+          "at": 15000,
+          "sequence": 4,
+          "action": "heartbeat"
+        }
+      ],
+      "ticketCalls": 1
+    },
+    {
+      "name": "heartbeat alone bootstraps first connection",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "heartbeat"
+        },
+        {
+          "at": 10000,
+          "sequence": 3,
+          "action": "heartbeat"
+        },
+        {
+          "at": 15000,
+          "sequence": 4,
+          "action": "heartbeat"
+        }
+      ],
+      "ticketCalls": 1
+    },
+    {
+      "name": "one accepted heartbeat survives timeout until authoritative late result",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 30000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "queueAt25s": 0,
+      "observerErrors": [
+        {
+          "at": 8000,
+          "name": "ActionRequestTimeoutError",
+          "message": "Bağlantı yanıtı gecikti."
+        },
+        {
+          "at": 8000,
+          "name": "ActionRequestTimeoutError",
+          "message": "Bağlantı yanıtı gecikti."
+        }
+      ],
+      "meaning": "accepted first command is not replayed and no stale successor is flushed after it; normal poll resumes after settlement"
+    },
+    {
+      "name": "single-owned first connection held 20s has no mutating prequeue waiters",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 20000,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 25000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "ticketCalls": 1,
+      "observerErrors": []
+    },
+    {
+      "name": "other active and queued actions do not suppress heartbeat",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "attack"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "use_potion"
+        },
+        {
+          "at": 5000,
+          "sequence": 3,
+          "action": "heartbeat"
+        }
+      ],
+      "normalHeartbeatEnqueuedWhileOtherKindsOwned": true
+    },
+    {
+      "name": "queued-only heartbeat stays owned past UI timeout behind an unrelated accepted attack",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "attack"
+        },
+        {
+          "at": 25000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "queuedHeartbeatsAt25s": 1,
+      "abortedObserverNotRevived": true
+    },
+    {
+      "name": "same-epoch reconnect retains accepted heartbeat and later resumes normal cadence",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 15000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "connections": 2
+    },
+    {
+      "name": "epoch replacement clears old accepted ownership without replay",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 1,
+          "action": "heartbeat"
+        }
+      ],
+      "epoch": 2,
+      "errors": [
+        {
+          "at": 2250,
+          "name": "ActionRequestError",
+          "message": "İşlemin sonucu doğrulanamadı. Güncel durumu yenile."
+        }
+      ]
+    },
+    {
+      "name": "explicit action error releases ownership but preserves minimum cadence",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "errorStatus": 500
+    },
+    {
+      "name": "command Retry-After and maintenance rate gate remain authoritative",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 12000,
+          "sequence": 2,
+          "action": "heartbeat"
+        }
+      ],
+      "nextAllowedNormalMs": 12000
+    },
+    {
+      "name": "presence reclaim creates and connects a fresh owner without J entry selection",
+      "result": "passed",
+      "entrySelected": false,
+      "reconnected": true,
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        }
+      ]
+    },
+    {
+      "name": "new instance is not blocked by an old owner connecting and old completion cannot clear new owner",
+      "result": "passed",
+      "ticketCalls": 2,
+      "wire": [
+        {
+          "at": 5000,
+          "sequence": 1,
+          "action": "heartbeat"
+        }
+      ],
+      "oldOwnerDisposed": true
+    },
+    {
+      "name": "stale player response cannot update replacement player vitals",
+      "result": "passed",
+      "hp": 90,
+      "revision": 4,
+      "discardedOldRevision": 50
+    },
+    {
+      "name": "actual transfer drain heartbeat remains intact and new channel heartbeat is admitted",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 1,
+          "action": "heartbeat"
+        }
+      ],
+      "channel": 2,
+      "epoch": 2,
+      "internalDrainMarkerPreserved": true
+    },
+    {
+      "name": "dead hidden AFK player retains heartbeat cadence without fabricated revival",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        },
+        {
+          "at": 5000,
+          "sequence": 2,
+          "action": "heartbeat"
+        },
+        {
+          "at": 10000,
+          "sequence": 3,
+          "action": "heartbeat"
+        }
+      ],
+      "deadStill": true,
+      "hidden": true,
+      "area": "afk"
+    },
+    {
+      "name": "inactive or unselected UI does not bootstrap heartbeat",
+      "result": "passed",
+      "ticketCalls": 0,
+      "wire": []
+    },
+    {
+      "name": "bot check and ended owner gates remain intact and verification resumes normal polling",
+      "result": "passed",
+      "wire": [
+        {
+          "at": 0,
+          "sequence": 1,
+          "action": "heartbeat"
+        }
+      ],
+      "blockedWhileVerifiedRequired": true,
+      "blockedAfterSessionEnded": true
+    }
+  ]
+}

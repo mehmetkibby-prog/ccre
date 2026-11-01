@@ -1,0 +1,632 @@
+{
+  "passed": true,
+  "coreSHA256": "167bc201e0e6406309c8d8f10a27b0a9640dd5ebc878bd2fb68f39196093699d",
+  "scope": "Ten actual GameWriter native automatic potions, exact charge/heal parity versus serial, durable receipt replay, tenth SQLite trigger failure after all earlier debit attempts rolls back all players and retains only the proven negative receipt for replay. External security fixture allows; native owner, resource, journal and transaction paths real. No performance claim.",
+  "outputs": {
+    "serial": {
+      "economics": {
+        "players": [
+          {
+            "id": "potion-native-0",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2700,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-1",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2710,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-2",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2720,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-3",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2730,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-4",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2740,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-5",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2750,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-6",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2760,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-7",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2770,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-8",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2780,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-9",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2790,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          }
+        ],
+        "encounters": []
+      },
+      "replies": [
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        }
+      ],
+      "receipts": 10
+    },
+    "batch": {
+      "economics": {
+        "players": [
+          {
+            "id": "potion-native-0",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2700,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-1",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2710,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-2",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2720,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-3",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2730,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-4",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2740,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-5",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2750,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-6",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2760,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-7",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2770,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-8",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2780,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          },
+          {
+            "id": "potion-native-9",
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "auto_potion_owned": 0,
+            "auto_potion_enabled": 0,
+            "auto_potion_remaining": 0,
+            "auto_potion_total": 400,
+            "auto_potion_at_ms": 1793549969544,
+            "x": 2790,
+            "y": 2025,
+            "position_revision": 0,
+            "gems": 10,
+            "essence": 0
+          }
+        ],
+        "encounters": []
+      },
+      "replies": [
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        },
+        {
+          "body": {
+            "ok": true,
+            "hp": 500,
+            "max_hp": 1000,
+            "hp_revision": 1,
+            "potions": 3,
+            "maxHp": 1000,
+            "hpRevision": 1,
+            "message": "Oto iksir canını yeniledi."
+          },
+          "status": 200
+        }
+      ],
+      "receipts": 1
+    },
+    "rollback": {
+      "attempted": 10,
+      "allPlayersUnchanged": true,
+      "durableNegativeReceiptReplay": true
+    }
+  }
+}

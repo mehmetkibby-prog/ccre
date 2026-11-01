@@ -1,0 +1,12 @@
+{
+  "oldNamespace": "core511-32083f0f5b1149bc",
+  "namespace": "core511-27dfe29036d78e12",
+  "oldName": "game-client-core511-r85-b25e12cf61072ebe.js",
+  "name": "game-client-core511-r87-aaf06f246f8a616a.js",
+  "sourceSha256": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+  "generatedSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+  "inverseEqual": true,
+  "namespaceReplacements": 351,
+  "gameNameReplacements": 2,
+  "scope": "Immutable R87 game client references only; native HTTP routes unchanged."
+}

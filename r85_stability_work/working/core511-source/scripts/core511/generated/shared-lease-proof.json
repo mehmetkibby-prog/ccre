@@ -1,0 +1,37 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "files": [
+    {
+      "source": "vds-server/src/channel-protocol.mjs",
+      "sourceSha256": "8b408e51d35f7c39b21871b6d6bd4806447bbb435a85cc8612579a0dce895ff4",
+      "generated": "shared-lease-protocol.mjs",
+      "generatedSha256": "6c350e99614dacc99049ae4f30f69363cf147ecdbd0e10c54347ad214e03ff33",
+      "edit": {
+        "from": "export const CHANNEL_COUNT = 3;",
+        "to": "export const CHANNEL_COUNT = 4;"
+      }
+    },
+    {
+      "source": "vds-server/src/channel-shared-authority.mjs",
+      "sourceSha256": "a91f21cc6fdf590e3f1cdbfcd53a6e8040089bb7025c6f6ff208968b7543d944",
+      "generated": "shared-lease-authority.mjs",
+      "generatedSha256": "216ac21d90b86a838d06ec77fce570738c062d6c75adacae6f78e3c4dd31f6cb",
+      "edit": {
+        "from": "from './channel-protocol.mjs'",
+        "to": "from './shared-lease-protocol.mjs'"
+      }
+    }
+  ],
+  "selector": {
+    "source": "vds-server/src/channel-shared-combat.mjs",
+    "sourceSha256": "ec05bd358fd5b6901f00b1b311903650895f073242b5e263fc787efc0fa3f991",
+    "sliceSha256": "38b277e0caf3da64b222cb9d08c004961a93d6aa45193a92e1033fd857f19564",
+    "generated": "shared-lease-selection.mjs",
+    "generatedSha256": "810201c0e6f104da06478a0fc797c2a5eb88efb8bc1d4db247f85628fde3afed"
+  },
+  "notes": [
+    "Native signed single-owner FIFO lease authority copied unchanged. Only channel count extends to four and protocol import points at that extension.",
+    "Native lease selector retains ability normalization and conservative area/unknown-target behavior; only target lookup uses the resident Map.",
+    "Authority lives in the independent world process. No timeout grants a replacement owner; actual supervisor fencing remains required."
+  ]
+}

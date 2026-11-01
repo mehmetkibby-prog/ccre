@@ -1,0 +1,154 @@
+TAP version 13
+# Subtest: real secondary plan settles one 202 and later moves never regress on durable ACK
+ok 1 - real secondary plan settles one 202 and later moves never regress on durable ACK
+  ---
+  duration_ms: 3.175791
+  type: 'test'
+  ...
+# Subtest: guard rejection stays queued during death and cannot become an attack ACK
+ok 2 - guard rejection stays queued during death and cannot become an attack ACK
+  ---
+  duration_ms: 1.248742
+  type: 'test'
+  ...
+# Subtest: secondary rejection event is idempotent and does not rewind settled movement
+ok 3 - secondary rejection event is idempotent and does not rewind settled movement
+  ---
+  duration_ms: 0.954663
+  type: 'test'
+  ...
+# Subtest: early-settled secondary still requires one exact final result per captured actor
+ok 4 - early-settled secondary still requires one exact final result per captured actor
+  ---
+  duration_ms: 0.969781
+  type: 'test'
+  ...
+# Subtest: certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+ok 5 - certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+  ---
+  duration_ms: 3.351389
+  type: 'test'
+  ...
+# Subtest: motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+ok 6 - motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+  ---
+  duration_ms: 3.264236
+  type: 'test'
+  ...
+# Subtest: authoritative section-reader fallback retains current-state and barrier fences with motion context
+ok 7 - authoritative section-reader fallback retains current-state and barrier fences with motion context
+  ---
+  duration_ms: 1.288657
+  type: 'test'
+  ...
+# Subtest: 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+ok 8 - 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+  ---
+  duration_ms: 3.508663
+  type: 'test'
+  ...
+# Subtest: due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+ok 9 - due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+  ---
+  duration_ms: 3.637263
+  type: 'test'
+  ...
+# Subtest: guard rejection is not consumed/remapped into the pending attack ACK
+ok 10 - guard rejection is not consumed/remapped into the pending attack ACK
+  ---
+  duration_ms: 0.520071
+  type: 'test'
+  ...
+# Subtest: authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+ok 11 - authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+  ---
+  duration_ms: 4.141985
+  type: 'test'
+  ...
+# Subtest: section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+ok 12 - section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+  ---
+  duration_ms: 0.900662
+  type: 'test'
+  ...
+# Subtest: section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+ok 13 - section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+  ---
+  duration_ms: 0.909318
+  type: 'test'
+  ...
+# Subtest: queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+ok 14 - queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+  ---
+  duration_ms: 1.056202
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553411170,"backupName":"before-pearl-reset-1793553411170-35c8b068-aa9e-48bc-b5ef-af5a3866a370.sqlite"}
+# Subtest: pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+ok 15 - pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+  ---
+  duration_ms: 1582.799336
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553412771,"backupName":"before-pearl-reset-1793553412771-662d6475-2f9a-49a6-96a2-780f03ca6a8b.sqlite"}
+# Subtest: terminal native retaliation retains its real barrier and leaves the original attack head queued
+ok 16 - terminal native retaliation retains its real barrier and leaves the original attack head queued
+  ---
+  duration_ms: 1593.804542
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553414268,"backupName":"before-pearl-reset-1793553414268-f2865b75-d362-4b0c-83c0-b71ef9d0c54f.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553415724,"backupName":"before-pearl-reset-1793553415724-60d14844-7905-4db5-996c-ab3e0a47349c.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553417131,"backupName":"before-pearl-reset-1793553417131-275e50a3-5403-4171-98db-387e69709af4.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553418604,"backupName":"before-pearl-reset-1793553418604-60fc817a-d4e2-4cae-bde3-17b80925754b.sqlite"}
+# Subtest: ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+ok 17 - ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+  ---
+  duration_ms: 5891.908446
+  type: 'test'
+  ...
+# Subtest: independent secondary settles due AI before its frame, but only take consumes input
+ok 18 - independent secondary settles due AI before its frame, but only take consumes input
+  ---
+  duration_ms: 2.104419
+  type: 'test'
+  ...
+# Subtest: incoming attacker is an earlier kill target leaves AI and accepted head untouched
+ok 19 - incoming attacker is an earlier kill target leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.233386
+  type: 'test'
+  ...
+# Subtest: secondary belongs to a party leaves AI and accepted head untouched
+ok 20 - secondary belongs to a party leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.258313
+  type: 'test'
+  ...
+# Subtest: an older overlapping waiter is already fenced leaves AI and accepted head untouched
+ok 21 - an older overlapping waiter is already fenced leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.390619
+  type: 'test'
+  ...
+# Subtest: secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+ok 22 - secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.287337
+  type: 'test'
+  ...
+# Subtest: an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+ok 23 - an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.238946
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10109.038744

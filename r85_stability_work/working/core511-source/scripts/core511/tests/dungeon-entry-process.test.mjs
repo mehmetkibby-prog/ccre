@@ -1,0 +1,54 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {combatState} from './process-fixture.mjs';
+import {party} from './dungeon-process-fixture.mjs';
+import {until} from './helpers.mjs';
+import {createDungeonRules} from '../generated/dungeon-rules.mjs';
+import {createRules} from '../generated/rules.mjs';
+
+test('native dungeon create with foreign party members returns original eligibility rejection instead of indefinite local-owner wait',{timeout:30000},async t=>{
+ const s=await party(t),{f,actors,action,old,world,supervisor}=s;assert(new Set(actors.map(p=>p.ticket.channel)).size>1);const answer=await action(actors[0],{action:'create'});
+ assert.equal(answer.ok,false);assert.equal(answer.code,'dungeon_rule_rejected');assert.equal(answer.error,'Tüm üyeler gereken seviyede, aynı Pazar kanalında ve savaş dışında çevrimiçi olmalı.');assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,0);assert.deepEqual([world.row,...supervisor.rows.values()],old);
+});
+
+test('foreign-party dungeon entry preserves original native rejection order for keeper, leader, size and member eligibility',{timeout:35000},async t=>{
+ const s=await party(t),{f,core,writer,actors,action}=s,ids=actors.map(p=>p.id),Rules=createDungeonRules({globals:writer.services.globals,progressionSettings:()=>writer.services.globals.__colProgression.snapshot()}),engine=new Rules.DungeonEngine(f.sql,{now:f.clock,stats:createRules({globals:writer.services.globals}).calculateEquipmentStats,onWork:()=>{}});engine.transaction=fn=>fn();
+ const original=()=>{f.sql.exec('SAVEPOINT dungeon_entry_oracle');try{engine.command(ids[0],{action:'create'});assert.fail('oracle must reject');}catch(error){assert.equal(error.constructor,Error);assert.equal(error.code,undefined);return error.message;}finally{f.sql.exec('ROLLBACK TO dungeon_entry_oracle;RELEASE dungeon_entry_oracle');}};
+ const cases=[()=>f.sql.prepare('UPDATE players SET x=0,y=0 WHERE id=?').run(ids[0]),()=>f.sql.prepare('UPDATE parties SET leader_id=? WHERE id=?').run(ids[1],'dungeon-native-party511'),()=>f.sql.prepare('DELETE FROM party_members WHERE player_id=?').run(ids[2]),()=>f.sql.prepare('UPDATE players SET level=1 WHERE id=?').run(ids[1])];
+ for(const change of cases){await core.permanentPlayers(ids,()=>{for(const id of ids)f.sql.prepare('UPDATE players SET x=1910,y=660,level=50,last_seen=? WHERE id=?').run(Math.floor(f.clock()/1000),id);f.sql.prepare('UPDATE parties SET leader_id=? WHERE id=?').run(ids[0],'dungeon-native-party511');f.sql.prepare('INSERT OR IGNORE INTO party_members(player_id,party_id,joined_at) VALUES(?,?,3)').run(ids[2],'dungeon-native-party511');change();});const expected=original(),answer=await action(actors[0],{action:'create'});assert.equal(answer.ok,false);assert.equal(answer.error,expected);assert.equal(answer.code,'dungeon_rule_rejected');}
+ assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,0);
+});
+
+test('native three-player dungeon entry waits for its durable ACK then all members ready and play in the same room',{timeout:35000},async t=>{
+ const s=await party(t,{together:true}),{f,writer,actors,action,supervisor,faults}=s,command=writer.command.bind(writer);let release,committed=false;const wait=new Promise(r=>release=r);
+ writer.command=async(peer,request)=>{const ack=await command(peer,request);if(request.operation==='dungeon_entry'&&!committed){committed=true;await wait;}return ack;};const pending=action(actors[0],{action:'create'});void pending.catch(()=>{});
+ try{await until(()=>committed||faults.length,8000);assert.equal(faults.length,0);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,3);assert(!actors[0].live.packets.some(p=>p.results?.some(r=>r.sequence===1)));const state=await combatState(supervisor.rows.get(actors[0].ticket.channel));for(const actor of actors.slice(1))assert.equal(state.players.find(p=>p.id===actor.id).suspended,true);
+  release();assert.equal((await pending).ok,true);for(const actor of actors.slice(1))assert.equal((await action(actor,{action:'ready',ready:true})).ok,true);assert.equal(f.sql.prepare('SELECT status FROM dungeon_runs').get().status,'active');assert.equal((await action(actors[0],{action:'move',x:1,y:0,sequence:1})).ok,true);assert.equal(faults.length,0,faults.map(f=>f.error?.stack).join('\n'));
+ }finally{release();await pending;}
+});
+
+test('native thirty-second party liveness permits a just-logged-out member without restoring a client admission',{timeout:35000},async t=>{
+ const s=await party(t,{together:true}),{f,writer,actors,action,supervisor}=s,offline=actors[2],previous=writer.authority.owner(offline.id);assert.equal((await offline.http('logout')).status,200);assert.equal(writer.authority.admission(offline.id),null);assert.equal(writer.authority.simulation(offline.id),null);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM party_members').get().n,3);
+ const answer=await action(actors[0],{action:'create'});assert.equal(answer.ok,true);const simulation=writer.authority.simulation(offline.id);assert(simulation);assert.equal(writer.authority.admission(offline.id),null);assert(simulation.epoch>previous.epoch);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,3);const state=await combatState(supervisor.rows.get(actors[0].ticket.channel));assert(state.players.some(p=>p.id===offline.id));assert.equal(writer.authority.counts().get(actors[0].ticket.channel),2);
+ const ticket=await offline.http();assert.equal(ticket.status,200);assert.equal(ticket.channel,actors[0].ticket.channel);offline.live=await s.connect(ticket);offline.sequence=0;assert.equal(writer.authority.simulation(offline.id),null);assert.equal(writer.authority.counts().get(ticket.channel),3);for(const actor of actors.slice(1))assert.equal((await action(actor,{action:'ready',ready:true})).ok,true);assert.equal(f.sql.prepare('SELECT status FROM dungeon_runs').get().status,'active');
+});
+
+test('offline party member outside native thirty-second liveness rejects without acquiring simulation ownership',{timeout:30000},async t=>{
+ const s=await party(t,{together:true}),{f,core,writer,actors,action}=s,offline=actors[2];assert.equal((await offline.http('logout')).status,200);await core.permanentPlayers([offline.id],()=>f.sql.prepare('UPDATE players SET last_seen=? WHERE id=?').run(Math.floor(f.clock()/1000)-31,offline.id));const answer=await action(actors[0],{action:'create'});assert.equal(answer.ok,false);assert.equal(answer.error,'Tüm üyeler gereken seviyede, aynı Pazar kanalında ve savaş dışında çevrimiçi olmalı.');assert.equal(writer.authority.simulation(offline.id),null);assert.equal(writer.authority.admission(offline.id),null);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,0);
+});
+
+for(const offline of [false,true])for(const phase of ['before','after'])test('actual source SIGKILL '+phase+' native dungeon entry COMMIT '+(offline?'with passive candidate':'with active members')+' recovers zero or one complete room',{timeout:45000},async t=>{
+ const s=await party(t,{together:true}),{f,writer,core,world,supervisor,actors,action,connect,old,faults}=s,source=supervisor.rows.get(actors[0].ticket.channel),execute=writer.authority.operations.dungeon_entry.execute,command=writer.command.bind(writer);let killed=false,observed=null;
+ if(offline)assert.equal((await actors[2].http('logout')).status,200);const count=()=>({rooms:f.sql.prepare('SELECT COUNT(*) n FROM dungeon_runs').get().n,members:f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n});
+ writer.authority.operations.dungeon_entry.execute=(...args)=>{const result=execute(...args);if(phase==='before'&&!killed){killed=true;source.child.kill('SIGKILL');throw Object.assign(Error('dungeon_entry_before_commit'),{code:'dungeon_entry_before_commit'});}return result;};
+ writer.command=async(peer,request)=>{try{const ack=await command(peer,request);if(request.operation==='dungeon_entry'&&phase==='after'&&!killed){killed=true;observed=count();source.child.kill('SIGKILL');throw Object.assign(Error('dungeon_entry_ack_lost'),{code:'dungeon_entry_ack_lost'});}return ack;}catch(error){if(request.operation==='dungeon_entry'&&phase==='before'&&killed)observed=count();throw error;}};
+ actors[0].live.ws.send(JSON.stringify({type:'input',sequence:++actors[0].sequence,payload:{action:'dungeon',command:{action:'create'}}}));await until(()=>observed,9000);assert.deepEqual(observed,phase==='before'?{rooms:0,members:0}:{rooms:1,members:3});
+ await until(()=>!core.recoveringWorld&&!world.global.recovery&&world.row?.state==='running'&&supervisor.rows.size===4&&[...supervisor.rows.values()].every(r=>r.state==='running'&&!old.includes(r)),20000);assert(old.every(r=>r.exited));assert.equal(source.child.signalCode,'SIGKILL');await world.stopJobs();const ticket=await actors[0].http();assert.equal(ticket.status,200);actors[0].live=await connect(ticket);actors[0].sequence=0;
+ if(phase==='before')assert.equal((await action(actors[0],{action:'create'})).ok,true);assert.deepEqual(count(),{rooms:1,members:3});assert(!faults.some(f=>f.globalRecovery),faults.map(f=>f.error?.stack).join('\n'));assert.equal(actors[0].live.ws.readyState,1);if(offline){assert.equal(writer.authority.admission(actors[2].id),null);assert(writer.authority.simulation(actors[2].id));}
+});
+
+test('lost new passive owner admission ACK retires all five owners and recovers the exact committed room',{timeout:40000},async t=>{
+ const s=await party(t,{together:true}),{f,core,writer,world,supervisor,actors,old}=s;assert.equal((await actors[2].http('logout')).status,200);const channel=actors[0].ticket.channel,source=supervisor.rows.get(channel),control=core.processes.get(channel).control,request=control.request.bind(control);let lost=false;
+ control.request=async(method,payload)=>{const ack=await request(method,payload);if(method==='shared_admit'&&payload.identity.actor===actors[2].id&&!lost){lost=true;source.child.kill('SIGKILL');throw Object.assign(Error('passive_admit_ack_lost'),{code:'passive_admit_ack_lost'});}return ack;};actors[0].live.ws.send(JSON.stringify({type:'input',sequence:++actors[0].sequence,payload:{action:'dungeon',command:{action:'create'}}}));await until(()=>lost,9000);
+ await until(()=>!core.recoveringWorld&&!world.global.recovery&&world.row?.state==='running'&&supervisor.rows.size===4&&[...supervisor.rows.values()].every(r=>r.state==='running'&&!old.includes(r)),20000);assert(old.every(r=>r.exited));assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_runs').get().n,1);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM dungeon_members').get().n,3);assert.equal(writer.authority.admission(actors[2].id),null);assert(writer.authority.simulation(actors[2].id));assert.equal(writer.authority.counts().get(channel),2);
+});

@@ -1,0 +1,3063 @@
+{
+  "scope": "Complete source class bodies with controlled process and database I/O; actual RecoveryRetry and WorldProcessSupervisor.startJobs; not full VDS integration",
+  "passed": 30,
+  "total": 30,
+  "runs": [
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-gate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": true,
+        "mode": "after-gate",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "lateFault",
+            "after-gate",
+            0,
+            true,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "REPRODUCED: recovery resolved but ingress remains fenced, with no active recovery or retry.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": true,
+        "mode": "after-queue",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "REPRODUCED: recovery resolved but ingress remains fenced, with no active recovery or retry.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=pre-ready-duplicates"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": true,
+        "mode": "pre-ready-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 3,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=none"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": true,
+        "mode": "none",
+        "recoveryResult": "resolved",
+        "injections": 0,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-gate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": false,
+        "mode": "after-gate",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "enable_jobs",
+            false
+          ],
+          [
+            "lateFault",
+            "after-gate",
+            0,
+            true,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "REPRODUCED: recovery resolved but ingress remains fenced, with no active recovery or retry.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": false,
+        "mode": "after-queue",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "enable_jobs",
+            false
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "REPRODUCED: recovery resolved but ingress remains fenced, with no active recovery or retry.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=pre-ready-duplicates",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": false,
+        "mode": "pre-ready-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 3,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "enable_jobs",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=none",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": false,
+        "watchdog": false,
+        "mode": "none",
+        "recoveryResult": "resolved",
+        "injections": 0,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "enable_jobs",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-gate",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "after-gate",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "lateFault",
+            "after-gate",
+            0,
+            false,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "after-queue",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue-duplicates",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "after-queue-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 5,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            3,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            4,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=pre-ready-duplicates",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "pre-ready-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 3,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=none",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "none",
+        "recoveryResult": "resolved",
+        "injections": 0,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=boot-failure",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "boot-failure",
+        "recoveryResult": "rejected",
+        "injections": 0,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": true,
+        "recoveryPasses": 1,
+        "channelBoots": 0,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "channelFault",
+            "replacement_failed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: failed replacement remains fenced; retry follows the existing watchdog flag.",
+      "stderr": "core511_recovery {\"code\":\"recovery_retry_scheduled\",\"scope\":\"global\",\"attempt\":1,\"delayMs\":2000}\n"
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=followup-boot-failure",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "followup-boot-failure",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": true,
+        "recoveryPasses": 2,
+        "channelBoots": 4,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "channelFault",
+            "replacement_failed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: failed follow-up remains fenced; retry follows the watchdog flag.",
+      "stderr": "core511_recovery {\"code\":\"recovery_retry_scheduled\",\"scope\":\"global\",\"attempt\":1,\"delayMs\":2000}\n"
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=closing-first",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "closing-first",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 1,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "closing",
+            4,
+            1
+          ],
+          [
+            "lateFault",
+            "after-closing",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "abortStop",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=fault-first-closing",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "fault-first-closing",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "before-closing",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "closing",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=closing-work-first",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "closing-work-first",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 1,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "closingWork",
+            4,
+            1
+          ],
+          [
+            "lateFault",
+            "after-closing-work",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "abortStop",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=fault-first-closing-work",
+        "--candidate"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": true,
+        "mode": "fault-first-closing-work",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "before-closing-work",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "closingWork",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-gate",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "after-gate",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ],
+          [
+            "lateFault",
+            "after-gate",
+            0,
+            false,
+            false
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "after-queue",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=after-queue-duplicates",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "after-queue-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 5,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 8,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            3,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            4,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: late fault(s) cause exactly one additional pass, then ingress releases.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=pre-ready-duplicates",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "pre-ready-duplicates",
+        "recoveryResult": "resolved",
+        "injections": 3,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            1,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "lateFault",
+            "pre-ready",
+            2,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=none",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "none",
+        "recoveryResult": "resolved",
+        "injections": 0,
+        "recoveringWorld": false,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "recoveringWorld",
+            false
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: normal/pre-ready duplicate recovery completes once.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=boot-failure",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "boot-failure",
+        "recoveryResult": "rejected",
+        "injections": 0,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 0,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "channelFault",
+            "replacement_failed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: failed replacement remains fenced; retry follows the existing watchdog flag.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=followup-boot-failure",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "followup-boot-failure",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 2,
+        "channelBoots": 4,
+        "worldBoots": 2,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "after-queue",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "channelFault",
+            "replacement_failed"
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "CANDIDATE PASS: failed follow-up remains fenced; retry follows the watchdog flag.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=closing-first",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "closing-first",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 1,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "closing",
+            4,
+            1
+          ],
+          [
+            "lateFault",
+            "after-closing",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "abortStop",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=fault-first-closing",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "fault-first-closing",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "before-closing",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "closing",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=closing-work-first",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "closing-work-first",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "closingWork",
+            4,
+            1
+          ],
+          [
+            "lateFault",
+            "after-closing-work",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "r84-investigation/shared/recovery-finalization-repro.mjs",
+        "--mode=fault-first-closing-work",
+        "--candidate",
+        "--watchdog=0"
+      ],
+      "exitCode": 0,
+      "result": {
+        "sourceSha256": {
+          "globalWorld": "1f0e357304eb1436ce4fb9b0ece97c4e68a6f14d3e3652cdbbd8e477b219da3a",
+          "sharedCombatBridge": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "worldSupervisor": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recoveryRetry": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "pinnedOriginalSources": {
+          "global-world-coordinator.mjs": "a27cc698bbd618e605d90fee05075778e971b9a623f1b1cc1f24a2798158a272",
+          "shared-combat-bridge.mjs": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+          "world-supervisor.mjs": "91e503d80bf6385d4c7d8688292c9eddaf8b3468ca327813d62b134e72b3bf89",
+          "recovery-retry.mjs": "bad6ec434eab28927e2eb9f5999eb0583acaecf7870df40c5a82e5ed2d13434e"
+        },
+        "candidate": true,
+        "watchdog": false,
+        "mode": "fault-first-closing-work",
+        "recoveryResult": "resolved",
+        "injections": 1,
+        "recoveringWorld": true,
+        "recoveryPromisePresent": false,
+        "retryScheduled": false,
+        "recoveryPasses": 1,
+        "channelBoots": 4,
+        "worldBoots": 1,
+        "shutdowns": 0,
+        "trace": [
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "enable_jobs",
+            true
+          ],
+          [
+            "lateFault",
+            "before-closing-work",
+            0,
+            true,
+            true
+          ],
+          [
+            "recoveringWorld",
+            true
+          ],
+          [
+            "closingWork",
+            4,
+            1
+          ],
+          [
+            "recoveringWorld",
+            true
+          ]
+        ],
+        "diagnostics": [
+          {
+            "event": "shared_combat_failure",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "global_recovery_start",
+            "code": "initial_owner_fault"
+          },
+          {
+            "event": "shared_combat_failure",
+            "code": "late_owner_fault"
+          },
+          {
+            "event": "global_recovery_request",
+            "code": "late_owner_fault"
+          }
+        ]
+      },
+      "summary": "PASS: closing prevents a follow-up boot and keeps ingress fenced.",
+      "stderr": ""
+    }
+  ]
+}

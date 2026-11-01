@@ -1,0 +1,918 @@
+{
+  "scope": "controlled virtual-time HTTP/WebSocket peers and React setters; source-exact candidate controller, request wrappers, selection/creation callbacks and channel dialog; no live VDS measurement",
+  "input": {
+    "game": "/workspace/scratch/68fd588af980/r83-work/core511-source/scripts/core511/generated/client/game-client-core511-r82-b75bd56f90806564.js",
+    "gameSha256": "b75bd56f90806564ec65360e1ceaa127f22aba0a8b86a2a0d2406d8dbd24b607",
+    "transport": "/workspace/scratch/68fd588af980/r83-work/core511-source/scripts/core511/generated/client/core511-transport-r79-715e78ecd9021ea8.js",
+    "transportSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "helper": "/workspace/scratch/68fd588af980/r84-investigation/client/join-controller-r84.mjs",
+    "helperSha256": "510e0cc871527511e3f989048e870b771acbcd389f6788d10c183ace61637ce3"
+  },
+  "output": {
+    "path": "/workspace/scratch/68fd588af980/r84-investigation/client/game-client-core511-r84-1295951c6cf23767.js",
+    "filename": "game-client-core511-r84-1295951c6cf23767.js",
+    "sha256": "1295951c6cf237672c1371eec30727238d8a2722773b848577d9cfbaeba72c8b",
+    "bytes": 1642572
+  },
+  "cases": [
+    {
+      "name": "fast existing-character success",
+      "result": "passed",
+      "detail": {
+        "completedAt": 100
+      },
+      "final": {
+        "atMs": 100,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Kanal 1'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 1,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-1"
+        }
+      ]
+    },
+    {
+      "name": "late success retains busy and applies once",
+      "result": "passed",
+      "detail": {
+        "atEightSeconds": {
+          "atMs": 8000,
+          "http": 1,
+          "characterPosts": 1,
+          "channel": null,
+          "busy": 1,
+          "error": "",
+          "note": "Sunucudan kanal bağlantısı bekleniyor. Yanıt geldiğinde devam edilecek.",
+          "needsReconnect": false,
+          "creating": false,
+          "creationError": "",
+          "hasPlayer": true,
+          "playerId": "fixture-player",
+          "messages": [
+            "Kanal 1'e katıldın."
+          ],
+          "worldRefreshes": 0,
+          "channelRefreshes": 0,
+          "transportReady": false,
+          "transportReplacing": true,
+          "transportEntrySelected": false,
+          "reloads": 0
+        }
+      },
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Kanal 1'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 1,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-2"
+        }
+      ]
+    },
+    {
+      "name": "unresolved HTTP retains one owner, no duplicate click POST",
+      "result": "passed",
+      "detail": {
+        "virtualPersistenceMs": 540000
+      },
+      "final": {
+        "atMs": 540000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": 1,
+        "error": "",
+        "note": "Sunucudan kanal bağlantısı bekleniyor. Yanıt geldiğinde devam edilecek.",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": false,
+        "transportReplacing": true,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-3"
+        }
+      ]
+    },
+    {
+      "name": "late known 503 enables only manual retry",
+      "result": "passed",
+      "detail": {
+        "knownRejection": {
+          "atMs": 20000,
+          "http": 1,
+          "characterPosts": 1,
+          "channel": null,
+          "busy": null,
+          "error": "Controlled channel_process_unavailable",
+          "note": "",
+          "needsReconnect": false,
+          "creating": false,
+          "creationError": "",
+          "hasPlayer": true,
+          "playerId": "fixture-player",
+          "messages": [
+            "Controlled channel_process_unavailable",
+            "Kanal 1'e katıldın."
+          ],
+          "worldRefreshes": 0,
+          "channelRefreshes": 1,
+          "transportReady": false,
+          "transportReplacing": false,
+          "transportEntrySelected": false,
+          "reloads": 0
+        }
+      },
+      "final": {
+        "atMs": 21000,
+        "http": 2,
+        "characterPosts": 2,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Controlled channel_process_unavailable",
+          "Kanal 1'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 2,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-4"
+        },
+        {
+          "atMs": 21000,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-4"
+        }
+      ]
+    },
+    {
+      "name": "unknown global_world_busy exposes reconnect, prevents replay",
+      "result": "passed",
+      "detail": {
+        "beforeFreshSession": {
+          "atMs": 20000,
+          "http": 1,
+          "characterPosts": 1,
+          "channel": null,
+          "busy": null,
+          "error": "Controlled global_world_busy Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+          "note": "",
+          "needsReconnect": true,
+          "creating": false,
+          "creationError": "",
+          "hasPlayer": true,
+          "playerId": "fixture-player",
+          "messages": [
+            "Controlled global_world_busy Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+          ],
+          "worldRefreshes": 0,
+          "channelRefreshes": 1,
+          "transportReady": false,
+          "transportReplacing": false,
+          "transportEntrySelected": false,
+          "reloads": 1
+        }
+      },
+      "final": {
+        "atMs": 20000,
+        "http": 2,
+        "characterPosts": 2,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Kanal 1'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 1,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 1
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-5"
+        },
+        {
+          "atMs": 20000,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-5-new"
+        }
+      ]
+    },
+    {
+      "name": "unknown outcome stays held across same-instance remount",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 0,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": null,
+        "error": "Controlled core511_unavailable Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+        "note": "",
+        "needsReconnect": true,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Controlled core511_unavailable Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 1,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-6"
+        }
+      ]
+    },
+    {
+      "name": "unmount suppresses all late UI callbacks",
+      "result": "passed",
+      "detail": {
+        "lateUiWrites": 0
+      },
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": 1,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-7"
+        }
+      ]
+    },
+    {
+      "name": "remount same choice observes existing POST",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Kanal 1'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 1,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-8"
+        }
+      ]
+    },
+    {
+      "name": "remount different choice never enters old choice",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 9000,
+        "http": 2,
+        "characterPosts": 2,
+        "channel": 2,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Önceki bağlantı işlemi sonuçlandı. Girmek istediğin kanalı yeniden seç.",
+          "Kanal 2'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 2,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-9"
+        },
+        {
+          "atMs": 9000,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 2,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-9"
+        }
+      ]
+    },
+    {
+      "name": "changed instance ignores old result and uses new owner",
+      "result": "passed",
+      "detail": {
+        "oldCoreDisposed": true
+      },
+      "final": {
+        "atMs": 0,
+        "http": 2,
+        "characterPosts": 2,
+        "channel": 2,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Kanal 2'e katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 1,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-10"
+        },
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 2,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-10-new"
+        }
+      ]
+    },
+    {
+      "name": "session-ended event suppresses late success",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": 1,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-11"
+        }
+      ]
+    },
+    {
+      "name": "late character creation completes without duplicate POST",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Pazar Köyü'ne katıldın."
+        ],
+        "worldRefreshes": 1,
+        "channelRefreshes": 0,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "name": "FixtureHero",
+            "role": "avci",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-12"
+        }
+      ]
+    },
+    {
+      "name": "creation channel_full retains existing rejection behavior",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 9000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": null,
+        "error": "Controlled channel_full",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "Controlled channel_full",
+        "hasPlayer": false,
+        "playerId": "",
+        "messages": [
+          "Controlled channel_full"
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 1,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "name": "FixtureHero",
+            "role": "avci",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-13"
+        }
+      ]
+    },
+    {
+      "name": "successful join with invalid player identity cannot replay creation",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 0,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": true,
+        "creating": false,
+        "creationError": "Karakter kimliği oluşturulamadı. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+        "hasPlayer": false,
+        "playerId": "",
+        "messages": [
+          "Karakter kimliği oluşturulamadı. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "name": "FixtureHero",
+            "role": "avci",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-14"
+        }
+      ]
+    },
+    {
+      "name": "server ticket channel mismatch requires reconnect, no POST replay",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 0,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": null,
+        "error": "Seçtiğin kanal doğrulanamadı. Lütfen kanalını yeniden seç. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+        "note": "",
+        "needsReconnect": true,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Seçtiğin kanal doğrulanamadı. Lütfen kanalını yeniden seç. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 1,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-15"
+        }
+      ]
+    },
+    {
+      "name": "post-success UI channel mismatch retains unknown owner",
+      "result": "passed",
+      "detail": {
+        "scope": "exact embedded controller validation with controlled result port",
+        "underlyingOperationCalls": 1
+      },
+      "final": {
+        "atMs": 0,
+        "http": 0,
+        "characterPosts": 0,
+        "channel": null,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": []
+    },
+    {
+      "name": "remount edited creation requires fresh character read",
+      "result": "passed",
+      "detail": {},
+      "final": {
+        "atMs": 0,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": 1,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": true,
+        "creating": false,
+        "creationError": "Önceki bağlantı işlemi sonuçlandı. Girmek istediğin kanalı yeniden seç. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+        "hasPlayer": false,
+        "playerId": "",
+        "messages": [
+          "Önceki bağlantı işlemi sonuçlandı. Girmek istediğin kanalı yeniden seç. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": true,
+        "transportReplacing": false,
+        "transportEntrySelected": true,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "name": "FixtureHero",
+            "role": "avci",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-17"
+        }
+      ]
+    },
+    {
+      "name": "WS readiness timeout is explicit unknown outcome",
+      "result": "passed",
+      "detail": {
+        "transportDeadlineMs": 10000
+      },
+      "final": {
+        "atMs": 10000,
+        "http": 1,
+        "characterPosts": 1,
+        "channel": null,
+        "busy": null,
+        "error": "Bağlantı yenileniyor. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al.",
+        "note": "",
+        "needsReconnect": true,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [
+          "Bağlantı yenileniyor. Bağlantı sonucu doğrulanamadı. Yeniden bağlan düğmesiyle güncel karakterini al."
+        ],
+        "worldRefreshes": 0,
+        "channelRefreshes": 1,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "https://fixture.invalid/api/realtime/core511-character",
+          "body": {
+            "action": "join",
+            "channel": 1,
+            "protocol": "coreoflife-kernel-v1"
+          },
+          "signal": false,
+          "instance": "r84-fixture-18"
+        }
+      ]
+    },
+    {
+      "name": "ordinary non-join request still times out at 8 seconds",
+      "result": "passed",
+      "detail": {
+        "unchangedTimeoutMs": 8000
+      },
+      "final": {
+        "atMs": 8000,
+        "http": 1,
+        "characterPosts": 0,
+        "channel": null,
+        "busy": null,
+        "error": "",
+        "note": "",
+        "needsReconnect": false,
+        "creating": false,
+        "creationError": "",
+        "hasPlayer": true,
+        "playerId": "fixture-player",
+        "messages": [],
+        "worldRefreshes": 0,
+        "channelRefreshes": 0,
+        "transportReady": false,
+        "transportReplacing": false,
+        "transportEntrySelected": false,
+        "reloads": 0
+      },
+      "http": [
+        {
+          "atMs": 0,
+          "url": "/fixture/cold",
+          "body": {
+            "action": "read"
+          },
+          "signal": true,
+          "instance": "r84-fixture-19"
+        }
+      ]
+    }
+  ],
+  "inversePatchRestoresExactOriginal": true,
+  "allPassed": true
+}

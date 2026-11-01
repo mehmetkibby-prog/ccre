@@ -1,0 +1,278 @@
+TAP version 13
+# Subtest: V510 dungeon declarations are identical after factory extraction; RNG replay is stable
+not ok 1 - V510 dungeon declarations are identical after factory extraction; RNG replay is stable
+  ---
+  duration_ms: 1.371942
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    begin
+    + actual - expected
+    ... Skipped lines
+    
+      'begin(r) {\n' +
+    +   "        if(r.mode!=='solo'&&r.mode!=='tower'){\n" +
+    -   "        if(r.mode!=='solo'){\n" +
+        '        if (r.size < this.rules.dungeonMin || r.size > this.rules.dungeonMax)\n' +
+        '            throw new Error("Girişte gereken grup sayısı değişti. Bekçi üzerinden yeni hazırlık başlat.");\n' +
+        "        const live = this.db.prepare('SELECT player_id FROM party_members WHERE party_id=?').all(r.partyId).map(p => p.player_id);\n" +
+        "        const leader = this.db.prepare('SELECT leader_id FROM parties WHERE id=?').get(r.partyId);\n" +
+        '        if (leader?.leader_id !== r.leaderId || live.length !== r.size || r.members.some(p => !live.includes(p.id)))\n' +
+    ...
+        '        }\n' +
+    +   "        if(r.mode!=='solo'&&r.mode!=='tower'){\n" +
+    -   "        if(r.mode!=='solo'){\n" +
+        "            if(r.started)throw new Error('Zindan zaten başladı.');\n" +
+        '            consumeGroupLimit494(this.db,r.members.map(m=>m.id),this.now());\n' +
+        '        }\n' +
+        '        r.started = this.now();\n' +
+        '        r.deadline = r.started + r.cfg.duration_seconds * 1000;\n' +
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: |-
+    begin(r) {
+            if(r.mode!=='solo'){
+            if (r.size < this.rules.dungeonMin || r.size > this.rules.dungeonMax)
+                throw new Error("Girişte gereken grup sayısı değişti. Bekçi üzerinden yeni hazırlık başlat.");
+            const live = this.db.prepare('SELECT player_id FROM party_members WHERE party_id=?').all(r.partyId).map(p => p.player_id);
+            const leader = this.db.prepare('SELECT leader_id FROM parties WHERE id=?').get(r.partyId);
+            if (leader?.leader_id !== r.leaderId || live.length !== r.size || r.members.some(p => !live.includes(p.id)))
+                throw new Error('Grup değişti. Bekçi üzerinden yeni hazırlık başlat.');
+            }
+            const channel = this.player(r.leaderId).channel;
+            for (const m of r.members) {
+                const p = this.player(m.id);
+                if (p.level < r.cfg.minimum_level || p.area !== 'bazaar' || p.hp <= 0 || p.channel !== channel || p.last_seen < this.now() / 1000 - 30 || p.combat_lock_until_ms > this.now() || p.arena_match_id)
+                    throw new Error('Bir üye giriş koşullarını artık karşılamıyor.');
+                m.gmInvisible = p.is_gm === 1 && p.gm_invisible === 1;
+                m.visibilityRevision = p.gm_visibility_revision || 0;
+                m.stats = this.statsFor(p);
+                m.maxHp = m.stats.maxHp;
+                const gear = this.db.prepare('SELECT kind,rarity,enchantments FROM player_items WHERE player_id=? AND equipped=1').all(p.id);
+                const pet=this.db.prepare('SELECT * FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind=char(115,116,97,114,116,101,114) THEN 259200 ELSE 604800 END)>unixepoch() AND equipped=1').get(p.id);
+                m.appearance = { premiumBuff:globalThis.__colPremium?.buff?.(p.id),talismanColor:JSON.parse(gear.find(g=>g.kind==='weapon')?.enchantments||'[]').find(e=>e.kind==='stone_talisman_color')?.value??0,rank:globalThis.__colRanks?.appearance(p.id), weaponSkin:!!p.weapon_skin_enabled, costume:gear.some(g=>g.kind==='costume'),level:p.level,petKind:pet?.kind,petName:pet?.name,coreWings:!!this.db.prepare('SELECT 1 FROM dungeon_wings WHERE player_id=? AND equipped=1').get(p.id),wings:!!p.wings_equipped,weapon: gear.find(g => g.kind === 'weapon')?.rarity ?? 'white', armor: gear.find(g => g.kind === 'armor')?.rarity ?? 'white', evolution: JSON.parse(gear.find(g => g.kind === 'weapon')?.enchantments ?? '[]').find(e => e.kind === 'evolution_level')?.value ?? 0 };
+            }
+            if(r.mode!=='solo'){
+                if(r.started)throw new Error('Zindan zaten başladı.');
+                consumeGroupLimit494(this.db,r.members.map(m=>m.id),this.now());
+            }
+            r.started = this.now();
+            r.deadline = r.started + r.cfg.duration_seconds * 1000;
+            r.stage = 1;
+            this.stage(r);
+        }
+  actual: |-
+    begin(r) {
+            if(r.mode!=='solo'&&r.mode!=='tower'){
+            if (r.size < this.rules.dungeonMin || r.size > this.rules.dungeonMax)
+                throw new Error("Girişte gereken grup sayısı değişti. Bekçi üzerinden yeni hazırlık başlat.");
+            const live = this.db.prepare('SELECT player_id FROM party_members WHERE party_id=?').all(r.partyId).map(p => p.player_id);
+            const leader = this.db.prepare('SELECT leader_id FROM parties WHERE id=?').get(r.partyId);
+            if (leader?.leader_id !== r.leaderId || live.length !== r.size || r.members.some(p => !live.includes(p.id)))
+                throw new Error('Grup değişti. Bekçi üzerinden yeni hazırlık başlat.');
+            }
+            const channel = this.player(r.leaderId).channel;
+            for (const m of r.members) {
+                const p = this.player(m.id);
+                if (p.level < r.cfg.minimum_level || p.area !== 'bazaar' || p.hp <= 0 || p.channel !== channel || p.last_seen < this.now() / 1000 - 30 || p.combat_lock_until_ms > this.now() || p.arena_match_id)
+                    throw new Error('Bir üye giriş koşullarını artık karşılamıyor.');
+                m.gmInvisible = p.is_gm === 1 && p.gm_invisible === 1;
+                m.visibilityRevision = p.gm_visibility_revision || 0;
+                m.stats = this.statsFor(p);
+                m.maxHp = m.stats.maxHp;
+                const gear = this.db.prepare('SELECT kind,rarity,enchantments FROM player_items WHERE player_id=? AND equipped=1').all(p.id);
+                const pet=this.db.prepare('SELECT * FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind=char(115,116,97,114,116,101,114) THEN 259200 ELSE 604800 END)>unixepoch() AND equipped=1').get(p.id);
+                m.appearance = { premiumBuff:globalThis.__colPremium?.buff?.(p.id),talismanColor:JSON.parse(gear.find(g=>g.kind==='weapon')?.enchantments||'[]').find(e=>e.kind==='stone_talisman_color')?.value??0,rank:globalThis.__colRanks?.appearance(p.id), weaponSkin:!!p.weapon_skin_enabled, costume:gear.some(g=>g.kind==='costume'),level:p.level,petKind:pet?.kind,petName:pet?.name,coreWings:!!this.db.prepare('SELECT 1 FROM dungeon_wings WHERE player_id=? AND equipped=1').get(p.id),wings:!!p.wings_equipped,weapon: gear.find(g => g.kind === 'weapon')?.rarity ?? 'white', armor: gear.find(g => g.kind === 'armor')?.rarity ?? 'white', evolution: JSON.parse(gear.find(g => g.kind === 'weapon')?.enchantments ?? '[]').find(e => e.kind === 'evolution_level')?.value ?? 0 };
+            }
+            if(r.mode!=='solo'&&r.mode!=='tower'){
+                if(r.started)throw new Error('Zindan zaten başladı.');
+                consumeGroupLimit494(this.db,r.members.map(m=>m.id),this.now());
+            }
+            r.started = this.now();
+            r.deadline = r.started + r.cfg.duration_seconds * 1000;
+            r.stage = 1;
+            this.stage(r);
+        }
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:34:103)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549925521,"backupName":"before-pearl-reset-1793549925521-c41746f9-a75c-4c36-96f1-e0db95679080.sqlite"}
+# Subtest: idle room keeps exact native clocks without full-room clone or redundant projection
+ok 2 - idle room keeps exact native clocks without full-room clone or redundant projection
+  ---
+  duration_ms: 1755.59729
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549927109,"backupName":"before-pearl-reset-1793549927109-16588a10-2a1e-4a0b-9b7e-112fdcc34267.sqlite"}
+# Subtest: native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+ok 3 - native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+  ---
+  duration_ms: 1636.963821
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549928699,"backupName":"before-pearl-reset-1793549928699-c2105f5b-5d62-458b-be2b-c29aaae200a1.sqlite"}
+# Subtest: dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+ok 4 - dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+  ---
+  duration_ms: 1540.399704
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549930185,"backupName":"before-pearl-reset-1793549930185-d42755bc-f835-4afc-a730-ef71721ae188.sqlite"}
+# Subtest: failed native economy command rolls back, preserves room and allows a later valid command
+ok 5 - failed native economy command rolls back, preserves room and allows a later valid command
+  ---
+  duration_ms: 1482.015423
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549931690,"backupName":"before-pearl-reset-1793549931690-fc3cd090-5b9f-4a74-90bc-aaddc1d782f3.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+not ok 6 - native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1574.657114
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:157:39'
+  failureType: 'testCodeFailure'
+  error: |-
+    
+    node:internal/modules/run_main:123
+        triggerUncaughtException(
+        ^
+    Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/workspace/ccre/r86_stability_work/tests/instances/dungeon-crash-fixture.mjs' imported from /workspace/ccre/r85_stability_work/
+        at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+        at moduleResolve (node:internal/modules/esm/resolve:865:10)
+        at defaultResolve (node:internal/modules/esm/resolve:989:11)
+        at nextResolve (node:internal/modules/esm/hooks:748:28)
+        at resolve (file:///workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs:23:9)
+        at nextResolve (node:internal/modules/esm/hooks:748:28)
+        at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+        at MessagePort.handleMessage (node:internal/modules/esm/worker:199:24)
+        at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+        at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+      code: 'ERR_MODULE_NOT_FOUND',
+      url: 'file:///workspace/ccre/r86_stability_work/tests/instances/dungeon-crash-fixture.mjs'
+    }
+    
+    Node.js v22.23.4
+    
+    
+    null !== 'SIGKILL'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SIGKILL'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    moduleResolve (node:internal/modules/esm/resolve:865:10)
+    defaultResolve (node:internal/modules/esm/resolve:989:11)
+    nextResolve (node:internal/modules/esm/hooks:748:28)
+    resolve (file:///workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs:23:9)
+    nextResolve (node:internal/modules/esm/hooks:748:28)
+    Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    MessagePort.handleMessage (node:internal/modules/esm/worker:199:24)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:169:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549933229,"backupName":"before-pearl-reset-1793549933229-ab9f2e6d-24a4-436a-887d-20c12f90f59c.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+not ok 7 - native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1536.55478
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:157:39'
+  failureType: 'testCodeFailure'
+  error: |-
+    
+    node:internal/modules/run_main:123
+        triggerUncaughtException(
+        ^
+    Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/workspace/ccre/r86_stability_work/tests/instances/dungeon-crash-fixture.mjs' imported from /workspace/ccre/r85_stability_work/
+        at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+        at moduleResolve (node:internal/modules/esm/resolve:865:10)
+        at defaultResolve (node:internal/modules/esm/resolve:989:11)
+        at nextResolve (node:internal/modules/esm/hooks:748:28)
+        at resolve (file:///workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs:23:9)
+        at nextResolve (node:internal/modules/esm/hooks:748:28)
+        at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+        at MessagePort.handleMessage (node:internal/modules/esm/worker:199:24)
+        at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+        at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+      code: 'ERR_MODULE_NOT_FOUND',
+      url: 'file:///workspace/ccre/r86_stability_work/tests/instances/dungeon-crash-fixture.mjs'
+    }
+    
+    Node.js v22.23.4
+    
+    
+    null !== 'SIGKILL'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SIGKILL'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    moduleResolve (node:internal/modules/esm/resolve:865:10)
+    defaultResolve (node:internal/modules/esm/resolve:989:11)
+    nextResolve (node:internal/modules/esm/hooks:748:28)
+    resolve (file:///workspace/ccre/r85_stability_work/tests/runtime/r84-fixture-loader.mjs:23:9)
+    nextResolve (node:internal/modules/esm/hooks:748:28)
+    Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    MessagePort.handleMessage (node:internal/modules/esm/worker:199:24)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/instances/dungeon-native-r86.test.mjs:169:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549934832,"backupName":"before-pearl-reset-1793549934832-e1884409-e5bb-4dc2-a871-ec76225c0abd.sqlite"}
+# Subtest: 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+ok 8 - 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+  ---
+  duration_ms: 1529.965733
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549936406,"backupName":"before-pearl-reset-1793549936406-8326f0e9-f4e2-4e2d-8ee6-2c8b4b3e777c.sqlite"}
+# Subtest: native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+ok 9 - native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+  ---
+  duration_ms: 1575.935846
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549937876,"backupName":"before-pearl-reset-1793549937876-18d987c2-1ab8-4a8e-89ff-424a18430552.sqlite"}
+# Subtest: native dungeon rewards use four-channel authority and per-player ordered durable receipts
+ok 10 - native dungeon rewards use four-channel authority and per-player ordered durable receipts
+  ---
+  duration_ms: 1468.112937
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793549939887,"backupName":"before-pearl-reset-1793549939887-767204d1-4b53-4d57-88a4-d1e362bfbcad.sqlite"}
+# Subtest: native respawn preserves region, arena countdown/round and no-early-revive rules
+ok 11 - native respawn preserves region, arena countdown/round and no-early-revive rules
+  ---
+  duration_ms: 1857.566058
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 8
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16714.483566

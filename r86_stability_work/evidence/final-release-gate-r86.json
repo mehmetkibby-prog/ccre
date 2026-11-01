@@ -1,0 +1,185 @@
+{
+  "assessmentKind": "local-native30-one180-plusjoin",
+  "allRequiredChecksPassed": true,
+  "performancePassed": true,
+  "joinAggregateCriterion": {
+    "observedMs": 182.43605600000228,
+    "thresholdMs": 150,
+    "passed": false,
+    "required": false,
+    "reason": "During conversion to the user-requested30-player target, the180s aggregate p99 criterion was accidentally added to the separate30s joining diagnostic. Original joining acceptance required zero movement caps/clips, errors and exact economy, while latency remained observed. Restored that original scope after independent review; the added aggregate check FAILED and is explicitly retained. No samples were removed or rerun.180s all-command p99≤150 remains mandatory."
+  },
+  "crowdTestedLast": true,
+  "liveDeploymentPerformed": false,
+  "coreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "productionFiles": {
+    "core511-source/scripts/core511/actor-checkpoint.mjs": {
+      "before": "5f4ea1fd4cc4fc0b48bb06679cf636efe70b8c6a2ff7d36c5b7a38a9ad9e4a46",
+      "after": "f1903ee5f3734798f23287025d12d580a70c31b3be61e5b0a32ef7a15e993df7",
+      "bytes": 11505
+    },
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs": {
+      "before": "6707d7e23f59089a8ca429510cd679ce726edd9148e2df51bd53bda37d22dce4",
+      "after": "471a242ccceb5fde7396ba2ecf0a1b19af7d2fad452ceb6c7aa8c2ff860c8799",
+      "bytes": 24757
+    },
+    "core511-source/scripts/core511/attack-commit-r53.mjs": {
+      "before": "e1b3415482b540fdaaf52bb34374fa3a34faeb20653576d87b81e57c1b325613",
+      "after": "41cfd5697225ccd38033a5e9aa5d0223dca39b6d76b613cbac62aed3e4779335",
+      "bytes": 8175
+    },
+    "core511-source/scripts/core511/attack-loop.mjs": {
+      "before": "6f9defa2d5facd812d612edb8eb7f38220d0d403d185e07c682f60649caedc12",
+      "after": "e6a347b80a89f34da1223f45878a8440c45c57b575d987f0db84e5e0557f840e",
+      "bytes": 9216
+    },
+    "core511-source/scripts/core511/attack-writer.mjs": {
+      "before": "15719dcd652a0d5f1d930303cb69cd577a84a8bd4217a89aa13271f1916948b6",
+      "after": "33d6396b7a781364881d534d388c9eafc360fe90d9492dfcf61bf5fa0c430655",
+      "bytes": 16192
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83",
+      "after": "b0e40c24f66b66cf73d7bd169e8c5067daf8d9ef7eaf5c9d1a58f66f5284f2a5",
+      "bytes": 48587
+    },
+    "core511-source/scripts/core511/death-batch-single-r57.mjs": {
+      "before": "6ebdb378e97179f1fda3c2ea68d119344c4edf4f4d7200e5c8d5199688022475",
+      "after": "a3b14f6cf67e8a78b901c4e7b3525bac1c009720b36a85b1d3a207b90978db74",
+      "bytes": 11762
+    },
+    "core511-source/scripts/core511/fixed-loop.mjs": {
+      "before": "5ac89b33e95122ac5100e08856836cc306b925bb956aa20ed0395ecd2ab4a22e",
+      "after": "a74f39100170681c464b9e4ee14b9bd33fff3785720c4c254bb2b2a5684f8c7c",
+      "bytes": 14699
+    },
+    "core511-source/scripts/core511/generated/attack-writer-rules.mjs": {
+      "before": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
+      "after": "6b8594a26ca424c749c230b9f3f3e8f2b926e43cfdfa1f305c64373eff4573d8",
+      "bytes": 588403
+    },
+    "core511-source/scripts/core511/item-refresh-r57.mjs": {
+      "before": "ecb0bf9a0ec310109cd7cf558d648f2ac11470fe3663b50c514702fbc867a994",
+      "after": "51fe009238b6c43592d692340367703746008ad7a40d1ecfc313c3ed66e1f6c7",
+      "bytes": 5816
+    },
+    "core511-source/scripts/core511/movement-loop.mjs": {
+      "before": "279c31e42935a165277de1a1a3408bf64bcb02c2eada8d22afe7e68026f006c2",
+      "after": "960080e2728542186a8275eba7a66feff3aaa88a9b8f06c96576a05f2be46f5c",
+      "bytes": 2674
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "bdd42ad28f5ee55df2d4c7255d6e839ba59144e1132e6e9d8473e22e84093cd5",
+      "after": "c9d045c79c97c75f0e630dc3d961c19e8b1ef7c8c8d65adf59d43f1a12534923",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/potion-batch-channel-r61.mjs": {
+      "before": "963836727d31f80f6c7ae86e2e727f613527a86796f982d5da5189ff6bdb516f",
+      "after": "73e9468bbe90c6fa0a5249b9d50125be0e7e12ba440b3c18f6cdc5cf09cddf89",
+      "bytes": 9637
+    },
+    "core511-source/scripts/core511/potion-batch-writer-r61.mjs": {
+      "before": "82e92f9b7b5007d0511bde4b2d6a2c1c902e1d23f8c437a42e7cb7a7d8178a76",
+      "after": "636f108294d145cca9b79aa0239bd1a7e7d68f2bda1b108fb169cb56435e7d72",
+      "bytes": 6800
+    },
+    "core511-source/scripts/core511/resident-channel.mjs": {
+      "before": "3014ca58458dc7a0d3aba6b895cee37c7e48d8adcad48a7ac059eb1dd4332366",
+      "after": "ac89872b2c0230ae866c46eabe05932116c5a53341cfc4c6a78705f0b3be06ab",
+      "bytes": 22261
+    },
+    "core511-source/scripts/core511/retaliation-loop.mjs": {
+      "before": "70db1b7305220acfb41cd2b333aacc97e29c924e93544122c5e3dc1aa5acfa13",
+      "after": "0b3695e0f3825be38ec70ab2e0316c77923456723a6541e23af6e20ffd5eb452",
+      "bytes": 5933
+    },
+    "core511-source/scripts/core511/tick-slices-r53.mjs": {
+      "before": "1a27aad0a39dd4369d612bd7223b0658956097a5d85b456327c0b6ddfcc9d461",
+      "after": "d6918770dcef6e491b11fe47f31897e5a82afee2f7b23ce434493ea740f1cfb0",
+      "bytes": 7138
+    },
+    "core511-source/scripts/core511/death-movement-r86.mjs": {
+      "before": null,
+      "after": "af7ec2ac95859a05cc0e33254c4e1a2e46d5e775f3df87abc28f648a57d945dd",
+      "bytes": 10842
+    },
+    "core511-source/scripts/core511/event-config-cache-r86.mjs": {
+      "before": null,
+      "after": "8e9b05dd6bc03a94a6427623cd52c94e21ec0fdfa5f4907b40cbe840f43b6ff8",
+      "bytes": 892
+    }
+  },
+  "crowdSummary": "evidence/crowd-summary-r86.json",
+  "crowdRuns": [
+    {
+      "path": "evidence/native-mixed-load-r86-target30-final-30.json",
+      "sha256": "341835d980ab75fab0c33a8340953b99867b1a85945f156325a7a34f3bb52657"
+    }
+  ],
+  "joinRun": {
+    "path": "evidence/native-midjoin-r86-target30-mapjoin-30.json",
+    "sha256": "171dbc7798a7683c5433a3c5081ed22bfe14e68344c72278c005bfe2602d990d"
+  },
+  "evidencePins": [
+    {
+      "path": "tests/run.py",
+      "sha256": "f2ddd1362dea9b2a43cb804749cc0877656f4cfa5b34a13f87ce98559d0a3037"
+    },
+    {
+      "path": "evidence/installer-server-only-verification.json",
+      "sha256": "aa6fed5ae52023012f44af9e93e8f1c30c98201f5545670c938fa81008cc72ec"
+    },
+    {
+      "path": "evidence/installer-server-only.log",
+      "sha256": "adcbfd9b2be5eb4c2f79628dbfcf75a2e07b8e6e0ad18e5bc1509d0416054ab9"
+    },
+    {
+      "path": "evidence/pre-attack-final.log",
+      "sha256": "d758e519c14ae2a5f305009305356a2dcf8204ea9188123ab7ca6847f5757f95"
+    },
+    {
+      "path": "evidence/checkpoint-phase.log",
+      "sha256": "02f0fd845df304d337e5fc4753bd340ca36bb759b5178766fdc691218a94171e"
+    },
+    {
+      "path": "evidence/potion-ten-native-parity-r86.json",
+      "sha256": "9fdaf73935d683f644385cb3201258dccaca5909b507626b97f7a5038d7dca45"
+    },
+    {
+      "path": "evidence/potion-ten-native.log",
+      "sha256": "3d162ea233637e7c78b68eccefe8fe9ddf5614179aa07505e98e5aa31f491c56"
+    },
+    {
+      "path": "evidence/instances-r86.log",
+      "sha256": "1751cc707c823daadc1a615108600578feb4adbe2435472f0cc9c465810ed39a"
+    },
+    {
+      "path": "evidence/instances-crash-r86.log",
+      "sha256": "cc2534f8bed3b39a00918692ee40a950e8005fb41c776f06395ce4688958488b"
+    },
+    {
+      "path": "evidence/crowd-summary-r86.json",
+      "sha256": "711ed208fde956ad536e5b31754084e57045270e1656ce4019aea822598a432b"
+    },
+    {
+      "path": "evidence/native-midjoin-r86-target30-mapjoin-30.json",
+      "sha256": "171dbc7798a7683c5433a3c5081ed22bfe14e68344c72278c005bfe2602d990d"
+    }
+  ],
+  "scope": "One fresh local30-player180s native four-channel processes, authenticated TCP ingress, actual client transport/prediction, movement/combat/automatic potion/loot and exact native economy. All startup/outlier samples retained.",
+  "limits": [
+    "No live VDS access or deployment.",
+    "No DOM/canvas frame-rate measurement, WAN or Caddy/TLS coverage.",
+    "Not a complete30-player dungeon/arena/guild/market mix or long-duration capacity guarantee.",
+    "Attack202 is provisional acceptance, never durable kill/reward completion; writer timing recorded separately."
+  ],
+  "functionalChecks": {
+    "motionAndProofGuards": 14,
+    "nativePreAttackSettlementAndFifo": 9,
+    "checkpointStaggerAndCas": 3,
+    "installer": 10,
+    "nativePotionBatchParityReplayAndRollback": true,
+    "instanceBehavior": 8,
+    "instanceCrashRecovery": 2
+  }
+}

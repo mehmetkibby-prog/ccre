@@ -1,0 +1,884 @@
+TAP version 13
+# Subtest: real secondary plan settles one 202 and later moves never regress on durable ACK
+ok 1 - real secondary plan settles one 202 and later moves never regress on durable ACK
+  ---
+  duration_ms: 6.621064
+  type: 'test'
+  ...
+# Subtest: guard rejection stays queued during death and cannot become an attack ACK
+ok 2 - guard rejection stays queued during death and cannot become an attack ACK
+  ---
+  duration_ms: 1.219126
+  type: 'test'
+  ...
+# Subtest: secondary rejection event is idempotent and does not rewind settled movement
+ok 3 - secondary rejection event is idempotent and does not rewind settled movement
+  ---
+  duration_ms: 0.906002
+  type: 'test'
+  ...
+# Subtest: early-settled secondary still requires one exact final result per captured actor
+ok 4 - early-settled secondary still requires one exact final result per captured actor
+  ---
+  duration_ms: 0.731125
+  type: 'test'
+  ...
+# Subtest: certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+ok 5 - certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+  ---
+  duration_ms: 4.625999
+  type: 'test'
+  ...
+# Subtest: motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+ok 6 - motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+  ---
+  duration_ms: 4.80309
+  type: 'test'
+  ...
+# Subtest: authoritative section-reader fallback retains current-state and barrier fences with motion context
+ok 7 - authoritative section-reader fallback retains current-state and barrier fences with motion context
+  ---
+  duration_ms: 1.801254
+  type: 'test'
+  ...
+# Subtest: 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+ok 8 - 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+  ---
+  duration_ms: 3.18615
+  type: 'test'
+  ...
+# Subtest: due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+ok 9 - due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+  ---
+  duration_ms: 3.442699
+  type: 'test'
+  ...
+# Subtest: guard rejection is not consumed/remapped into the pending attack ACK
+ok 10 - guard rejection is not consumed/remapped into the pending attack ACK
+  ---
+  duration_ms: 0.566548
+  type: 'test'
+  ...
+# Subtest: authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+ok 11 - authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+  ---
+  duration_ms: 4.43429
+  type: 'test'
+  ...
+# Subtest: section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+ok 12 - section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+  ---
+  duration_ms: 0.914538
+  type: 'test'
+  ...
+# Subtest: section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+ok 13 - section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+  ---
+  duration_ms: 0.657147
+  type: 'test'
+  ...
+# Subtest: queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+ok 14 - queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+  ---
+  duration_ms: 1.198528
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553277988,"backupName":"before-pearl-reset-1793553277988-195f4526-f08c-4c7d-966a-c7361952a030.sqlite"}
+# Subtest: pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+ok 15 - pre-attack real native AI equals SQLite retaliation and reaches the first attack frame once without publishing rewards
+  ---
+  duration_ms: 1603.407389
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553279474,"backupName":"before-pearl-reset-1793553279474-ae379cbc-2448-4724-afa5-cc90585d2000.sqlite"}
+# Subtest: terminal native retaliation retains its real barrier and leaves the original attack head queued
+ok 16 - terminal native retaliation retains its real barrier and leaves the original attack head queued
+  ---
+  duration_ms: 1484.534903
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793553281088,"backupName":"before-pearl-reset-1793553281088-83bdc88a-7cb9-43f9-b9ba-5c29fb3767db.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553282571,"backupName":"before-pearl-reset-1793553282571-42066868-a873-49d8-88e2-c41a8d44c287.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553284011,"backupName":"before-pearl-reset-1793553284011-90d7eb06-3ec2-4023-9f1c-dc6219f5a15c.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793553285402,"backupName":"before-pearl-reset-1793553285402-c47b5a36-d0d7-4989-815c-abab76c17d28.sqlite"}
+# Subtest: ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+ok 17 - ordinary due settlement retains busy-monster, actor hold and checkpoint deadline guards
+  ---
+  duration_ms: 6004.569839
+  type: 'test'
+  ...
+# Subtest: independent secondary settles due AI before its frame, but only take consumes input
+ok 18 - independent secondary settles due AI before its frame, but only take consumes input
+  ---
+  duration_ms: 2.138523
+  type: 'test'
+  ...
+# Subtest: incoming attacker is an earlier kill target leaves AI and accepted head untouched
+not ok 19 - incoming attacker is an earlier kill target leaves AI and accepted head untouched
+  ---
+  duration_ms: 2.022457
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:46:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   entries: [
+    +     {
+    +       actor: 'secondary',
+    +       epoch: 1,
+    +       input: {
+    +         ability: 0,
+    +         action: 'attack',
+    +         intentId: 'secondary',
+    +         spawnRound: 1,
+    +         targetId: 'monster-secondary'
+    +       },
+    +       receivedAtMs: 10000,
+    +       seed: 'a4e404734344fd7b2a4392ce381225bc3ded9ce873b6d010fe3bd95a05ef2273',
+    +       sequence: 1
+    +     }
+    +   ],
+    +   heads: [
+    +     {
+    +       head: {
+    +         at: 10000,
+    +         kind: 'combat',
+    +         order: 2,
+    +         payload: {
+    +           ability: 0,
+    +           action: 'attack',
+    +           intentId: 'secondary',
+    +           spawnRound: 1,
+    +           targetId: 'monster-secondary'
+    +         },
+    +         receivedAtMs: 10000,
+    +         sequence: 1
+    +       },
+    +       p: {
+    +         accepting: true,
+    +         barrier: null,
+    +         deferred: [],
+    +         epoch: 1,
+    +         lastAccepted: 1,
+    +         lastApplied: 0,
+    +         passive: false,
+    +         queue: [
+    +           {
+    +             at: 10000,
+    +             kind: 'combat',
+    +             order: 2,
+    +             payload: {
+    +               ability: 0,
+    +               action: 'attack',
+    +               intentId: 'secondary',
+    +               spawnRound: 1,
+    +               targetId: 'monster-secondary'
+    +             },
+    +             receivedAtMs: 10000,
+    +             sequence: 1
+    +           }
+    +         ],
+    +         quiescer: null,
+    +         results: [],
+    +         settled: [],
+    +         suspended: false
+    +       }
+    +     }
+    +   ],
+    +   ids: [
+    +     'primary',
+    +     'secondary'
+    +   ],
+    +   targets: [
+    +     {
+    +       id: 'monster-primary',
+    +       spawnRound: 1
+    +     },
+    +     {
+    +       id: 'monster-secondary',
+    +       spawnRound: 1
+    +     }
+    +   ]
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    targets:
+      0:
+        id: 'monster-primary'
+        spawnRound: 1
+      1:
+        id: 'monster-secondary'
+        spawnRound: 1
+    entries:
+      0:
+        actor: 'secondary'
+        epoch: 1
+        sequence: 1
+        receivedAtMs: 10000
+        seed: 'a4e404734344fd7b2a4392ce381225bc3ded9ce873b6d010fe3bd95a05ef2273'
+        input:
+          action: 'attack'
+          ability: 0
+          targetId: 'monster-secondary'
+          spawnRound: 1
+          intentId: 'secondary'
+    heads:
+      0:
+        p:
+          epoch: 1
+          passive: false
+          lastAccepted: 1
+          lastApplied: 0
+          queue:
+            0:
+              sequence: 1
+              kind: 'combat'
+              payload: <Circular>
+              at: 10000
+              receivedAtMs: 10000
+              order: 2
+          results:
+          settled:
+          deferred:
+          barrier: ~
+          accepting: true
+          suspended: false
+          quiescer: ~
+        head: <Circular>
+    ids:
+      0: 'primary'
+      1: 'secondary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:47:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: secondary belongs to a party leaves AI and accepted head untouched
+not ok 20 - secondary belongs to a party leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.988095
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:46:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   entries: [
+    +     {
+    +       actor: 'secondary',
+    +       epoch: 1,
+    +       input: {
+    +         ability: 0,
+    +         action: 'attack',
+    +         intentId: 'secondary',
+    +         spawnRound: 1,
+    +         targetId: 'monster-secondary'
+    +       },
+    +       receivedAtMs: 10000,
+    +       seed: 'daaa0b911aa8a856191d56e02778ca208df370047e756f8c210f90e47d612226',
+    +       sequence: 1
+    +     }
+    +   ],
+    +   heads: [
+    +     {
+    +       head: {
+    +         at: 10000,
+    +         kind: 'combat',
+    +         order: 2,
+    +         payload: {
+    +           ability: 0,
+    +           action: 'attack',
+    +           intentId: 'secondary',
+    +           spawnRound: 1,
+    +           targetId: 'monster-secondary'
+    +         },
+    +         receivedAtMs: 10000,
+    +         sequence: 1
+    +       },
+    +       p: {
+    +         accepting: true,
+    +         barrier: null,
+    +         deferred: [],
+    +         epoch: 1,
+    +         lastAccepted: 1,
+    +         lastApplied: 0,
+    +         passive: false,
+    +         queue: [
+    +           {
+    +             at: 10000,
+    +             kind: 'combat',
+    +             order: 2,
+    +             payload: {
+    +               ability: 0,
+    +               action: 'attack',
+    +               intentId: 'secondary',
+    +               spawnRound: 1,
+    +               targetId: 'monster-secondary'
+    +             },
+    +             receivedAtMs: 10000,
+    +             sequence: 1
+    +           }
+    +         ],
+    +         quiescer: null,
+    +         results: [],
+    +         settled: [],
+    +         suspended: false
+    +       }
+    +     }
+    +   ],
+    +   ids: [
+    +     'primary',
+    +     'secondary'
+    +   ],
+    +   targets: [
+    +     {
+    +       id: 'monster-primary',
+    +       spawnRound: 1
+    +     },
+    +     {
+    +       id: 'monster-secondary',
+    +       spawnRound: 1
+    +     }
+    +   ]
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    targets:
+      0:
+        id: 'monster-primary'
+        spawnRound: 1
+      1:
+        id: 'monster-secondary'
+        spawnRound: 1
+    entries:
+      0:
+        actor: 'secondary'
+        epoch: 1
+        sequence: 1
+        receivedAtMs: 10000
+        seed: 'daaa0b911aa8a856191d56e02778ca208df370047e756f8c210f90e47d612226'
+        input:
+          action: 'attack'
+          ability: 0
+          targetId: 'monster-secondary'
+          spawnRound: 1
+          intentId: 'secondary'
+    heads:
+      0:
+        p:
+          epoch: 1
+          passive: false
+          lastAccepted: 1
+          lastApplied: 0
+          queue:
+            0:
+              sequence: 1
+              kind: 'combat'
+              payload: <Circular>
+              at: 10000
+              receivedAtMs: 10000
+              order: 2
+          results:
+          settled:
+          deferred:
+          barrier: ~
+          accepting: true
+          suspended: false
+          quiescer: ~
+        head: <Circular>
+    ids:
+      0: 'primary'
+      1: 'secondary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:47:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: an older overlapping waiter is already fenced leaves AI and accepted head untouched
+not ok 21 - an older overlapping waiter is already fenced leaves AI and accepted head untouched
+  ---
+  duration_ms: 5.535758
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:46:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   entries: [
+    +     {
+    +       actor: 'secondary',
+    +       epoch: 1,
+    +       input: {
+    +         ability: 0,
+    +         action: 'attack',
+    +         intentId: 'secondary',
+    +         spawnRound: 1,
+    +         targetId: 'monster-secondary'
+    +       },
+    +       receivedAtMs: 10000,
+    +       seed: '33a737d89cd38efd720840038029a85d64644021779ce1c48a73bcbad3404f12',
+    +       sequence: 1
+    +     }
+    +   ],
+    +   heads: [
+    +     {
+    +       head: {
+    +         at: 10000,
+    +         kind: 'combat',
+    +         order: 2,
+    +         payload: {
+    +           ability: 0,
+    +           action: 'attack',
+    +           intentId: 'secondary',
+    +           spawnRound: 1,
+    +           targetId: 'monster-secondary'
+    +         },
+    +         receivedAtMs: 10000,
+    +         sequence: 1
+    +       },
+    +       p: {
+    +         accepting: true,
+    +         barrier: null,
+    +         deferred: [],
+    +         epoch: 1,
+    +         lastAccepted: 1,
+    +         lastApplied: 0,
+    +         passive: false,
+    +         queue: [
+    +           {
+    +             at: 10000,
+    +             kind: 'combat',
+    +             order: 2,
+    +             payload: {
+    +               ability: 0,
+    +               action: 'attack',
+    +               intentId: 'secondary',
+    +               spawnRound: 1,
+    +               targetId: 'monster-secondary'
+    +             },
+    +             receivedAtMs: 10000,
+    +             sequence: 1
+    +           }
+    +         ],
+    +         quiescer: null,
+    +         results: [],
+    +         settled: [],
+    +         suspended: false
+    +       }
+    +     }
+    +   ],
+    +   ids: [
+    +     'primary',
+    +     'secondary'
+    +   ],
+    +   targets: [
+    +     {
+    +       id: 'monster-primary',
+    +       spawnRound: 1
+    +     },
+    +     {
+    +       id: 'monster-secondary',
+    +       spawnRound: 1
+    +     }
+    +   ]
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    targets:
+      0:
+        id: 'monster-primary'
+        spawnRound: 1
+      1:
+        id: 'monster-secondary'
+        spawnRound: 1
+    entries:
+      0:
+        actor: 'secondary'
+        epoch: 1
+        sequence: 1
+        receivedAtMs: 10000
+        seed: '33a737d89cd38efd720840038029a85d64644021779ce1c48a73bcbad3404f12'
+        input:
+          action: 'attack'
+          ability: 0
+          targetId: 'monster-secondary'
+          spawnRound: 1
+          intentId: 'secondary'
+    heads:
+      0:
+        p:
+          epoch: 1
+          passive: false
+          lastAccepted: 1
+          lastApplied: 0
+          queue:
+            0:
+              sequence: 1
+              kind: 'combat'
+              payload: <Circular>
+              at: 10000
+              receivedAtMs: 10000
+              order: 2
+          results:
+          settled:
+          deferred:
+          barrier: ~
+          accepting: true
+          suspended: false
+          quiescer: ~
+        head: <Circular>
+    ids:
+      0: 'primary'
+      1: 'secondary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:47:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+not ok 22 - secondary arrived after the exact tick watermark despite the same timestamp leaves AI and accepted head untouched
+  ---
+  duration_ms: 1.036054
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:46:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   entries: [
+    +     {
+    +       actor: 'secondary',
+    +       epoch: 1,
+    +       input: {
+    +         ability: 0,
+    +         action: 'attack',
+    +         intentId: 'secondary',
+    +         spawnRound: 1,
+    +         targetId: 'monster-secondary'
+    +       },
+    +       receivedAtMs: 10000,
+    +       seed: '9c811e95932dc9893694faf12d0bb9b62bd09b3a48b6c612c4f65dcb9477275f',
+    +       sequence: 1
+    +     }
+    +   ],
+    +   heads: [
+    +     {
+    +       head: {
+    +         at: 10000,
+    +         kind: 'combat',
+    +         order: 2,
+    +         payload: {
+    +           ability: 0,
+    +           action: 'attack',
+    +           intentId: 'secondary',
+    +           spawnRound: 1,
+    +           targetId: 'monster-secondary'
+    +         },
+    +         receivedAtMs: 10000,
+    +         sequence: 1
+    +       },
+    +       p: {
+    +         accepting: true,
+    +         barrier: null,
+    +         deferred: [],
+    +         epoch: 1,
+    +         lastAccepted: 1,
+    +         lastApplied: 0,
+    +         passive: false,
+    +         queue: [
+    +           {
+    +             at: 10000,
+    +             kind: 'combat',
+    +             order: 2,
+    +             payload: {
+    +               ability: 0,
+    +               action: 'attack',
+    +               intentId: 'secondary',
+    +               spawnRound: 1,
+    +               targetId: 'monster-secondary'
+    +             },
+    +             receivedAtMs: 10000,
+    +             sequence: 1
+    +           }
+    +         ],
+    +         quiescer: null,
+    +         results: [],
+    +         settled: [],
+    +         suspended: false
+    +       }
+    +     }
+    +   ],
+    +   ids: [
+    +     'primary',
+    +     'secondary'
+    +   ],
+    +   targets: [
+    +     {
+    +       id: 'monster-primary',
+    +       spawnRound: 1
+    +     },
+    +     {
+    +       id: 'monster-secondary',
+    +       spawnRound: 1
+    +     }
+    +   ]
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    targets:
+      0:
+        id: 'monster-primary'
+        spawnRound: 1
+      1:
+        id: 'monster-secondary'
+        spawnRound: 1
+    entries:
+      0:
+        actor: 'secondary'
+        epoch: 1
+        sequence: 1
+        receivedAtMs: 10000
+        seed: '9c811e95932dc9893694faf12d0bb9b62bd09b3a48b6c612c4f65dcb9477275f'
+        input:
+          action: 'attack'
+          ability: 0
+          targetId: 'monster-secondary'
+          spawnRound: 1
+          intentId: 'secondary'
+    heads:
+      0:
+        p:
+          epoch: 1
+          passive: false
+          lastAccepted: 1
+          lastApplied: 0
+          queue:
+            0:
+              sequence: 1
+              kind: 'combat'
+              payload: <Circular>
+              at: 10000
+              receivedAtMs: 10000
+              order: 2
+          results:
+          settled:
+          deferred:
+          barrier: ~
+          accepting: true
+          suspended: false
+          quiescer: ~
+        head: <Circular>
+    ids:
+      0: 'primary'
+      1: 'secondary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:47:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+not ok 23 - an earlier nonbasic input separates the FIFO prefix leaves AI and accepted head untouched
+  ---
+  duration_ms: 0.652058
+  type: 'test'
+  location: '/workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:46:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + {
+    +   entries: [
+    +     {
+    +       actor: 'secondary',
+    +       epoch: 1,
+    +       input: {
+    +         ability: 0,
+    +         action: 'attack',
+    +         intentId: 'secondary',
+    +         spawnRound: 1,
+    +         targetId: 'monster-secondary'
+    +       },
+    +       receivedAtMs: 10000,
+    +       seed: '05bb442cd0319a73ab1041db6c1b11e637e87c5f6f34966b4aa141e636b142f2',
+    +       sequence: 1
+    +     }
+    +   ],
+    +   heads: [
+    +     {
+    +       head: {
+    +         at: 10000,
+    +         kind: 'combat',
+    +         order: 2,
+    +         payload: {
+    +           ability: 0,
+    +           action: 'attack',
+    +           intentId: 'secondary',
+    +           spawnRound: 1,
+    +           targetId: 'monster-secondary'
+    +         },
+    +         receivedAtMs: 10000,
+    +         sequence: 1
+    +       },
+    +       p: {
+    +         accepting: true,
+    +         barrier: null,
+    +         deferred: [],
+    +         epoch: 1,
+    +         lastAccepted: 1,
+    +         lastApplied: 0,
+    +         passive: false,
+    +         queue: [
+    +           {
+    +             at: 10000,
+    +             kind: 'combat',
+    +             order: 2,
+    +             payload: {
+    +               ability: 0,
+    +               action: 'attack',
+    +               intentId: 'secondary',
+    +               spawnRound: 1,
+    +               targetId: 'monster-secondary'
+    +             },
+    +             receivedAtMs: 10000,
+    +             sequence: 1
+    +           }
+    +         ],
+    +         quiescer: null,
+    +         results: [],
+    +         settled: [],
+    +         suspended: false
+    +       }
+    +     }
+    +   ],
+    +   ids: [
+    +     'primary',
+    +     'secondary'
+    +   ],
+    +   targets: [
+    +     {
+    +       id: 'monster-primary',
+    +       spawnRound: 1
+    +     },
+    +     {
+    +       id: 'monster-secondary',
+    +       spawnRound: 1
+    +     }
+    +   ]
+    + }
+    - null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual:
+    targets:
+      0:
+        id: 'monster-primary'
+        spawnRound: 1
+      1:
+        id: 'monster-secondary'
+        spawnRound: 1
+    entries:
+      0:
+        actor: 'secondary'
+        epoch: 1
+        sequence: 1
+        receivedAtMs: 10000
+        seed: '05bb442cd0319a73ab1041db6c1b11e637e87c5f6f34966b4aa141e636b142f2'
+        input:
+          action: 'attack'
+          ability: 0
+          targetId: 'monster-secondary'
+          spawnRound: 1
+          intentId: 'secondary'
+    heads:
+      0:
+        p:
+          epoch: 1
+          passive: false
+          lastAccepted: 1
+          lastApplied: 0
+          queue:
+            0:
+              sequence: 1
+              kind: 'combat'
+              payload: <Circular>
+              at: 10000
+              receivedAtMs: 10000
+              order: 2
+          results:
+          settled:
+          deferred:
+          barrier: ~
+          accepting: true
+          suspended: false
+          quiescer: ~
+        head: <Circular>
+    ids:
+      0: 'primary'
+      1: 'secondary'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/ccre/r86_stability_work/tests/pre-attack-secondary.test.mjs:47:63)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 18
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10178.461779

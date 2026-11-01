@@ -1,0 +1,406 @@
+{
+  "version": "R85_GAMEPLAY",
+  "recordedUtc": "2026-11-01T10:17:42.497455+00:00",
+  "assessmentKind": "verified-functional-mitigation",
+  "coreSHA256": "47e7486138ceb488d645e78c20c5c297d3ea423a7acb5cb4215a828ca17c6759",
+  "baseCoreSHA256": "a0e0bcdfd87717a3d5129a0a30d29bda5a4f85639a2b68773af556f19bda6365",
+  "productionFiles": {
+    "core511-source/scripts/core511/action-loop.mjs": {
+      "before": "40839c2bcaa926b3c58269a36a3aa4dae43c2286fd3f2b1891e8ee7484ae1f5a",
+      "after": "4412003a3c2388b5c41900f9edb1fce3a38140320f0a23f94478bc955ee7a5e5",
+      "bytes": 9745
+    },
+    "core511-source/scripts/core511/action-writer.mjs": {
+      "before": "4f712838c458cec8fee90947ab8efec60d217e8763ad54e443caf90afb82eac6",
+      "after": "6199fd493a24a0c05571d8d3211eb48d35de462c6aa0315b3dad6d62942749af",
+      "bytes": 9425
+    },
+    "core511-source/scripts/core511/actor-isolation.mjs": {
+      "before": "0fff1c77af25cd9c802d90c26a1754500918de808448ca170ff51405ff00bd63",
+      "after": "1f1a4d6802a097a5446d2fe75e58e94932ba038459429d1f293addc729f6ce4b",
+      "bytes": 18960
+    },
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs": {
+      "before": "98ccb8ab12cc60e0e37f92e3f697e73da4ba6d8d871e663c91389a37a64f4f23",
+      "after": "6707d7e23f59089a8ca429510cd679ce726edd9148e2df51bd53bda37d22dce4",
+      "bytes": 24169
+    },
+    "core511-source/scripts/core511/adventure-channel.mjs": {
+      "before": "452af5eb132fda60e4cb6500772fa0d5aeb4dffe012f1bb90a07351e28e947c4",
+      "after": "d06f6cadc996a03ccded2a8c82bb8aa4a2e7aeb8ea39bd41d2d6894ec3301b0d",
+      "bytes": 10502
+    },
+    "core511-source/scripts/core511/attack-loop.mjs": {
+      "before": "450267945b0787f846f591a74b05f4a15bed709443abd2e49cef075783af5cb8",
+      "after": "6f9defa2d5facd812d612edb8eb7f38220d0d403d185e07c682f60649caedc12",
+      "bytes": 9118
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "fb0d87b04baecb121765a2f737ae8178d05974dbd5435c024a9baa2e3e690179",
+      "after": "068f5c3d619caccb53f26d4355ef44696e28de90f29b259d2ae5225c0ff1dc83",
+      "bytes": 48561
+    },
+    "core511-source/scripts/core511/claim-actor-join-r56.mjs": {
+      "before": "1aeef2c51e566c18038f9a0369f8af139e3ffe773c2a6c03e4727ff19ce848b0",
+      "after": "dcc645b226ce6880b56150e1d72bbb06b1110d448050fc8798fb87e998f0ee32",
+      "bytes": 6860
+    },
+    "core511-source/scripts/core511/collect-light.mjs": {
+      "before": "98f7edbb8deeef16f1e8558e773af5b3a5d2d3f614d74cafebe8f101e4811c52",
+      "after": "f1e4b539244c0c003e96595cf2846d97e44bfaed1837625169f5bbb36fc7423f",
+      "bytes": 6368
+    },
+    "core511-source/scripts/core511/command-failure-scope.mjs": {
+      "before": "22b32a1885116189b80458fdfcfc3cc56483ff0d334fefeab4df8cf3faefb8f7",
+      "after": "881bd48f3a0af866f07433833ec2328ad69c25e98580a2eebbf5fff2267baafd",
+      "bytes": 9034
+    },
+    "core511-source/scripts/core511/coordinator.mjs": {
+      "before": "572be6427d228e2d2cfd849d8e3318aa3c01638d799d7bd75e2c9365090ac17f",
+      "after": "e0f86dafad112c400e433b481eb35841e633946fa3d2d4c17fa3f65cd00fc0e4",
+      "bytes": 47707
+    },
+    "core511-source/scripts/core511/death-batch-single-r57.mjs": {
+      "before": "88985b87dfde9b96c0d1c904376f5347f51f665482ce9f4a99ffa6638dfc17de",
+      "after": "6ebdb378e97179f1fda3c2ea68d119344c4edf4f4d7200e5c8d5199688022475",
+      "bytes": 10553
+    },
+    "core511-source/scripts/core511/death-batch-writer-r57.mjs": {
+      "before": "286ac833d5ad587e2727bf005b41096942b62766c6f5ca66489b2e96862e085b",
+      "after": "1561600f339f2d6e4bae6a5ee49d387ee15599070c3b5045aa5a110555ea8ea0",
+      "bytes": 9235
+    },
+    "core511-source/scripts/core511/game-services.mjs": {
+      "before": "c92b2f62d67c821de88dd42dee0a09cc0fd7f94d64b416afbdb228086bd20244",
+      "after": "0c3405bebe7aa8be1042f839f66f64ce1440d8cc24cfc18116b1c137d987f171",
+      "bytes": 5212
+    },
+    "core511-source/scripts/core511/generated/loot-profile-cache-r61-proof.json": {
+      "before": "3ada7b5e29bd11078d7a326f66dfb97af59360b87d8781b9a0dc805ff5b58149",
+      "after": "90a0392d4f2b38cbc2eec8a3304926d890b33b585d72eef84af2748c0bbb29f3",
+      "bytes": 1643
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "590befaac0235e8cfaa10ba3bae585c89c528cbac07012a0c74c26b22e8b8adc",
+      "after": "ac923ecd0e60d069b17deae2cd47eb4c613c0a91559a792bd2cc8eeb1087adc9",
+      "bytes": 368316
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "8a4c99bf980c8670bd913bd5180a66cb8bab6077b6f513fe739b1aebe4309d24",
+      "after": "2637e712a425b278deb605df6c533f94a86518b8e3c8bcaf7377593b32bcb56f",
+      "bytes": 155497
+    },
+    "core511-source/scripts/core511/loot-profile-cache-r61.mjs": {
+      "before": "89f5e370c893ad40e2e2a0d1f1de84d9979a6f0278a5ef121a7dcfba796851e7",
+      "after": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc",
+      "bytes": 6049
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "000218daabe25c2ea9f39c0a51e4df9d4a37a65713778c8cb0f1eb7ea689792e",
+      "after": "bdd42ad28f5ee55df2d4c7255d6e839ba59144e1132e6e9d8473e22e84093cd5",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/nonlethal-triggers-r56.mjs": {
+      "before": "712f4b8e16eddf375b3187ab970120887329a5fd0e0305f93dbf0a33339f7fc5",
+      "after": "6752b99519d1d1bc8e817a878850e96bd78fc5f08d43b55e7d09374e09a6c6ac",
+      "bytes": 144377
+    },
+    "core511-source/scripts/core511/notification-audience.mjs": {
+      "before": "fc48e3ce4c715f58b7719ea79fc327a9d1e8ca3850b907c03e6a862f20e44267",
+      "after": "f9cf20f1ce7a1d217540b91690d2cc846f2289867ede5f5dc93f59a5825e74a1",
+      "bytes": 8959
+    },
+    "core511-source/scripts/core511/ownership.mjs": {
+      "before": "51892e5bc62f4a8c4849618d47c117c2dba8a106ac0f906b2d70ef2fddc299f1",
+      "after": "93cf95ce649ce0b7bba7076988b3089f1478e4eee4f4b25d23d6d101e44c5876",
+      "bytes": 28848
+    },
+    "core511-source/scripts/core511/permanent-coordinator.mjs": {
+      "before": "cc12b3a13967e10e35e9297ce21a77ef2b69c5fc5735410b0eec25cc14a2709f",
+      "after": "80a76a162091c11cd488dafb338036b8887e76f2f1abca633150c2dd115ec761",
+      "bytes": 12638
+    },
+    "core511-source/scripts/core511/player-write-scope.mjs": {
+      "before": "b0e1af6f167c4c5efcb13e7189285952b703c849d3cad52f46960d5006ab26ac",
+      "after": "296e7f76115a93d3d171c2911ef7e718b4de532f2c481a822f242a29e31935a0",
+      "bytes": 5863
+    },
+    "core511-source/scripts/core511/reliable-stream.mjs": {
+      "before": "1e93569ebbf0c6202aa1af3226f9e67f9239213b67f32559eb2a11c9aa4c2baa",
+      "after": "e418259e4f844da224a70a7e499a948e8573bc8fb68a00396bcbd33eee1cfc1c",
+      "bytes": 17203
+    },
+    "core511-source/scripts/core511/resident-control.mjs": {
+      "before": "5118f81cb2d870bee5e84328c366b228e8742e77fa36c1a7da00fa2851b55543",
+      "after": "cd5a5362f0dde00c55ad495999c62739809b675225d1bd167410778e2574d9c4",
+      "bytes": 15199
+    },
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs": {
+      "before": "e6995b9ad487604bf054771f95532b462a84adb6c04eb8132efd435cff6a7d8b",
+      "after": "ee98ff55cdc7473815fc79350a8b85bc16786bb1447a200831b3b55bc693f80b",
+      "bytes": 6137
+    },
+    "core511-source/scripts/core511/scoped-reward-maintenance-r79.mjs": {
+      "before": "a9bd92ad0fd63e3f6e790a216df32667140c4fd704309ba263ea6577c5147320",
+      "after": "98525cf8c409d144250dd40d3bcfa11a07c669bc3fb35845561e867fb4002a74",
+      "bytes": 7940
+    },
+    "core511-source/scripts/core511/shared-combat-bridge.mjs": {
+      "before": "b70598a8afd1dfaed4e43543a33419dbc0f5226c1e545ee03f85f43582b5a037",
+      "after": "193ffb95eacc8efdfcd8ec4e7eb680de1145da4ce7ac1370b00ddf9d572d8a0c",
+      "bytes": 34445
+    },
+    "core511-source/scripts/core511/shared-combat-channel.mjs": {
+      "before": "b931c89ce9568b62d8f6a02f147a7d9d39b31f7a2364ca89bc81296c205808ad",
+      "after": "bb278b4b97555425d079466d7b5afdbf6c3a2d2143dfb9b67fbe857d620bec41",
+      "bytes": 32694
+    },
+    "core511-source/scripts/core511/transfer-freeze-group.mjs": {
+      "before": "8c39b6b4b104a16d7959a1dda492a9f7fd7d6b610c2da8678baaa151ae09060d",
+      "after": "dac07f8f5d6a875387a75da3751b83e7d674ff7d3d1d34dd5b2a8b6e2382bdbc",
+      "bytes": 8187
+    },
+    "core511-source/scripts/core511/writer-lane-r533.mjs": {
+      "before": "e87fc32b831222b25196edc0819583ecb50c17b26c499b36b9378cd7fb207ed7",
+      "after": "5cb20f7ad3ac88935f42b6fbc77479d9b2a5554fe3805af084bc893e921c81fb",
+      "bytes": 4990
+    },
+    "core511-source/scripts/core511/actor-progress-refresh-r85.mjs": {
+      "before": null,
+      "after": "7243d03de919a96bda1e7c52c59f05350e718eb9cc1ebd7278191ee3e5118eb7",
+      "bytes": 3150
+    },
+    "core511-source/scripts/core511/collect-encounter-r85.mjs": {
+      "before": null,
+      "after": "be8f76cdf2ae4fdbf0796cf5aacd58808f85c8e075e54b5b0835bfc97fe4fb54",
+      "bytes": 3452
+    },
+    "core511-source/scripts/core511/collect-join-r85.mjs": {
+      "before": null,
+      "after": "7fe8a9cd4a2a79a1cad507c4ed5c01a7f88daad319d18e6c2946c6bb70f678f3",
+      "bytes": 2081
+    },
+    "core511-source/scripts/core511/collect-materials-r85.mjs": {
+      "before": null,
+      "after": "a367268d6f4824a0f0f6409d7222cd3da96ade1a0206e29e9b3471c6e72005c3",
+      "bytes": 2181
+    },
+    "core511-source/scripts/core511/freeze-failure-r85.mjs": {
+      "before": null,
+      "after": "74ae4ef35595b5ec0fbb467fdc97e78fb471f5d4fb5f1419d27689db0d41a513",
+      "bytes": 4552
+    },
+    "core511-source/scripts/core511/freeze-outcomes-r85.mjs": {
+      "before": null,
+      "after": "c78e1cd300398ff8878dd210a0adb8b8775b6c4205ea50a7e50295fc316185c6",
+      "bytes": 3363
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r85-b25e12cf61072ebe.js": {
+      "before": null,
+      "after": "b25e12cf61072ebe008bd3e38bcb832aca61db273b5baa994963dff73af7c2a7",
+      "bytes": 1646905
+    },
+    "core511-source/scripts/core511/independent-death-batch-r85.mjs": {
+      "before": null,
+      "after": "34c79702bafc1f0aecc12d2dd69c878bf218303713576a86ddce0625912efa1f",
+      "bytes": 3851
+    },
+    "core511-source/scripts/core511/respawn-notification-r85.mjs": {
+      "before": null,
+      "after": "06be17f7799d294448338add34b3b6b31fd8901b7bcd497b3d3fd35236d6fe94",
+      "bytes": 2566
+    },
+    "core511-source/scripts/core511/reward-actor-scope-r85.mjs": {
+      "before": null,
+      "after": "a5736cd136b2a760872bf951802ecf9fe05704ffd9311b70d0d3c501fe926b2b",
+      "bytes": 4253
+    },
+    "core511-source/scripts/core511/reward-rank-refresh-r85.mjs": {
+      "before": null,
+      "after": "e607c36514d8fbed46a29592be7f8537f7bfb9db000b8867306fd333148a5dde",
+      "bytes": 2523
+    },
+    "core511-source/scripts/core511/shared-claim-rejection-r85.mjs": {
+      "before": null,
+      "after": "53ce33944567beb623e510fab27bb6af54024c3a728e0bac2c49c187bffd287e",
+      "bytes": 1531
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+      "after": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+      "bytes": 2229879
+    },
+    "core511-source/scripts/delivery511/runtime-ingress.mjs": {
+      "before": "4b4a74bb7e57736787d717d51f28bb901e5d7f7fde060151bb84ad5c5c8b5403",
+      "after": "325bd1caa7c52df9df159b63afa3cd7faf470f2cdae3f513a5c4ca29f655cec9",
+      "bytes": 5191
+    }
+  },
+  "allRequiredChecksPassed": true,
+  "allRequiredFunctionalChecksPassed": true,
+  "exactPreviouslyMeasuredSourceRestored": true,
+  "crowdTestedLast": false,
+  "full50PlayerStabilityPassed": false,
+  "originalLongCampaignPassed": false,
+  "capacity100Status": "not-tested",
+  "liveDeploymentPerformed": false,
+  "crowdSummary": "evidence/delivery-mitigation-summary-r85.json",
+  "evidencePins": [
+    {
+      "path": "KURULUM.md",
+      "bytes": 2053,
+      "sha256": "0fade83202783e0619487ff4ea640d51edc3fc8f6ccf255809d7e7da516368d3"
+    },
+    {
+      "path": "R85_DURUM.md",
+      "bytes": 1291,
+      "sha256": "0e2c07ec7e84c693bc874f308ae054ed0ac248a0dfb22a23199b4a1ddb742c37"
+    },
+    {
+      "path": "SONUC.md",
+      "bytes": 3224,
+      "sha256": "d83d3039568b5c371e4336eaedc7b74d1d632384bda5d4b764d839653da4b543"
+    },
+    {
+      "path": "build_release.py",
+      "bytes": 18030,
+      "sha256": "2e53437522c3171ee149d7ecb12085831fb16e9b690d95f58b5374b32d355c43"
+    },
+    {
+      "path": "evidence/checkpoint-phase-revert-mitigation-r85.json",
+      "bytes": 4141,
+      "sha256": "ae8f2a5b86f2dc51b32bffa1f43892f680b74e889fe294fb5239e5a1720d5786"
+    },
+    {
+      "path": "evidence/delivery-mitigation-summary-r85.json",
+      "bytes": 26753,
+      "sha256": "9a465926b4e16d669da20c5765a128c1d01b28d3ce85b98a3a2bcaafcc565943"
+    },
+    {
+      "path": "evidence/final-syntax.json",
+      "bytes": 13970,
+      "sha256": "cfe86727bcc64d8dc7cb8c483ec093d348a065edc84587bb4c14a448fc73a079"
+    },
+    {
+      "path": "evidence/independent-integration-review.json",
+      "bytes": 37816,
+      "sha256": "8608e5de00695e8fbb4922df521e493108e2ad8f8e52ebd02cd13d7aa2fcf277"
+    },
+    {
+      "path": "evidence/ingress-installer-verification-r85.json",
+      "bytes": 6185,
+      "sha256": "568eb086f37a4cfafb76e8f15719c518cf95343c74c3b123a28b3d105eb0d78e"
+    },
+    {
+      "path": "evidence/installer-bootstrap-mitigation-final.json",
+      "bytes": 1445,
+      "sha256": "35783d50d7f3c33e4ba05c9024cc43a341a1c145c34f44ccf7e721c2c8bd3f26"
+    },
+    {
+      "path": "evidence/installer-final.json",
+      "bytes": 13617,
+      "sha256": "657eb62bb14823a13880a749ed3bd52ece94f18be4462f6f2b51e313714561e1"
+    },
+    {
+      "path": "evidence/instances-r85-exact47e-restoration.json",
+      "bytes": 3528,
+      "sha256": "88689ba005241f16eaa2c2ca65de731a52c1c950d9625a23306b2a78f9f5a17e"
+    },
+    {
+      "path": "evidence/instances-r85-final-candidate.json",
+      "bytes": 6856,
+      "sha256": "eb58c2f27ecea5557207aa5198259b0284a31f8d4557940b28ebe4baf957dcff"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary1-50-summary.json",
+      "bytes": 20368,
+      "sha256": "2c5d9c5081853f8d61af8d144a54bea1091640963d2a63afcb4a5840769a6079"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary1-50.json",
+      "bytes": 17968641,
+      "sha256": "3ab30aa8ab7288b08192e21ec9a3564cca8b4dade1acf521c8026bf70af29a94"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary1-50.log",
+      "bytes": 6621,
+      "sha256": "1178482c57a66f2bd10103a02d0b3911999277c84dc0543c9d3b9ca5d2e459c2"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary2-50-summary.json",
+      "bytes": 20539,
+      "sha256": "bfd4541f0d9235160b6b045d15672b9d2652476508a3a9206cce5e12dc38525b"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary2-50.json",
+      "bytes": 17943635,
+      "sha256": "58f37946a814e72c2d43c8e15ea03a077f8cd2a5c91138dd2975e01ba6a88272"
+    },
+    {
+      "path": "evidence/native-mixed-load-r85-scoped50-primary2-50.log",
+      "bytes": 6897,
+      "sha256": "7ae61ab4be0d3aa5995cfb8c7297f963c0e60aa8b5e3e4f3cf0d9ccdcd72bc30"
+    },
+    {
+      "path": "evidence/package-plan.json",
+      "bytes": 12316,
+      "sha256": "197f358a06f53faa21bf5137cbd18a1b3db142ee25cb58a6055cdbba607231d7"
+    },
+    {
+      "path": "evidence/performance-upgrade-integration-r85.json",
+      "bytes": 14796,
+      "sha256": "14b0e37f2e07f5a6819a0fa17c2685112ac6e6f6b3878a3993bf64241e997ea5"
+    },
+    {
+      "path": "evidence/scoped50-assessment-plan-r85.json",
+      "bytes": 12497,
+      "sha256": "4e2f8812c82ea1851b8dc7debdccb297f8d0337ea8512793a5f330d8498b8209"
+    },
+    {
+      "path": "evidence/scoped50-assessment-r85.json",
+      "bytes": 51471,
+      "sha256": "b62a9566d26fb3c8255abc306e4c6732a15ac01ec73ad594c4cb05136efc993d"
+    },
+    {
+      "path": "evidence/scoped50-final-binding-r85.json",
+      "bytes": 573937,
+      "sha256": "7c31f94c475b65c12cf9d7154cf4c0b63b8873bc71c430477e7d8feb010b6360"
+    },
+    {
+      "path": "evidence/scoped50-retry1-assessment-r85.json",
+      "bytes": 41256,
+      "sha256": "ba56559ff8c1337a095a0fae09ed4d8c2626f4b84baf0c315d00eada235fbdb8"
+    },
+    {
+      "path": "evidence/urgent50-assessment-r85.json",
+      "bytes": 12557,
+      "sha256": "69ae1e49eec84477c6ebf210b710b4f1ecf5e8b6e3c9a888ae8418dccf38796f"
+    },
+    {
+      "path": "prepare_package.py",
+      "bytes": 9779,
+      "sha256": "7f16d3115354683ab2bbe2f6b290f1fef5a9c672423c3141b527a8c1f0945b38"
+    },
+    {
+      "path": "publish_r85.py",
+      "bytes": 5236,
+      "sha256": "29c06a068cf2dd8483da57098f9d41efd17a6669574aa63bab3d8e79d207ba84"
+    },
+    {
+      "path": "seal_release_mitigation.py",
+      "bytes": 5462,
+      "sha256": "512de1f74bd3786c641b46d2fe64c1b1da7ec1b457cf8492a395eded2075b943"
+    },
+    {
+      "path": "tests/runtime/scoped50-assessment.py",
+      "bytes": 34196,
+      "sha256": "856d0d8a9f637ccb87d2849c791a3567062b0d3e66d20fafc4e3ca867cee53c7"
+    },
+    {
+      "path": "tests/runtime/summarize-mixed-load.py",
+      "bytes": 5822,
+      "sha256": "245da8bf1b191fb049e0c05aea28eb810bd164d10474149299137a43b017b576"
+    }
+  ],
+  "scope": "Functional mitigation release only. Exact previously measured47e source restored; both scheduling experiments excluded. Two50x180-second runs had zero clipped movement frames, but second had three near-limit markers. Full50 stability target remains failed;100-player capacity and live performance not verified."
+}

@@ -1,0 +1,100 @@
+[
+  {
+    "file": "attack-writer-rules.mjs",
+    "sourceSha256": "2d48e90e711ee93c730ef193103b9dcc9d223acb36649de4aa221ce080840325",
+    "patchedSha256": "8fe36c92e1bef097e9e5ed2cd906032ff7fa11afd3bbeef4b64f8126aeb37c92",
+    "edits": [
+      {
+        "from": "import {balanceFactor487} from \"../../../../native510-bb3a6cc689c6/lib/level-balance487.mjs\";",
+        "to": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "import {balanceXpSql487} from \"../../../../native510-bb3a6cc689c6/lib/level-balance487.mjs\";",
+        "to": "import {balanceXpSql487} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "to": "import {balanceFactor487,levelExemptEnabledR58} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "const itemMultiplier = balance487?.enabled?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "to": "const itemMultiplier = balance487?.enabled||levelExemptEnabledR58(balanceArea)?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "file": "rules.mjs",
+    "sourceSha256": "128b6594227673c61737a22a0a4386865650a4738fd3e523c00eb980b192f6a2",
+    "patchedSha256": "66c4b2f7c00758ec8c2b5c3ba8147c188e671be235ffd65a427ce224acc4acc9",
+    "edits": [
+      {
+        "from": "import {balanceFactor487} from \"../../../../native510-bb3a6cc689c6/lib/level-balance487.mjs\";",
+        "to": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "to": "import {balanceFactor487,levelExemptEnabledR58} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "const itemMultiplier = balance487?.enabled?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "to": "const itemMultiplier = balance487?.enabled||levelExemptEnabledR58(balanceArea)?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "file": "attack-rules.mjs",
+    "sourceSha256": "c736427374cb87e4b04aadb673fb4bde7786d25dddaebcf722c53a2327e25cc9",
+    "patchedSha256": "bd702a44c94457b37907755547a832d3327902d12cddab411a947c01d45d8317",
+    "edits": [
+      {
+        "from": "import {balanceFactor487} from \"../../../../native510-bb3a6cc689c6/lib/level-balance487.mjs\";",
+        "to": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "import {balanceXpSql487} from \"../../../../native510-bb3a6cc689c6/lib/level-balance487.mjs\";",
+        "to": "import {balanceXpSql487} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "import {balanceFactor487} from \"../level-rewards-r58.mjs\";",
+        "to": "import {balanceFactor487,levelExemptEnabledR58} from \"../level-rewards-r58.mjs\";",
+        "count": 1
+      },
+      {
+        "from": "const itemMultiplier = balance487?.enabled?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "to": "const itemMultiplier = balance487?.enabled||levelExemptEnabledR58(balanceArea)?1:forestLootMultiplier(profile.key, participant.level, settings);",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "file": "dungeon-rules.mjs",
+    "sourceSha256": "0c47164f6a7cd6c319d479c30fb909f27d159a19842db4b61cbe9c29c33b5e4d",
+    "patchedSha256": "77963628107a0505f24d134e4a10929094a1033137c66321a174d559e007a15f",
+    "edits": [
+      {
+        "from": "const ambient=globalThis;",
+        "to": "import {gameplayR58} from '../r58-gameplay-options.mjs';\nconst ambient=globalThis;",
+        "count": 1
+      },
+      {
+        "from": "        const p = r.members.find(p => p.id === id), now = this.now();",
+        "to": "        if(gameplayR58.dungeonWorldControls&&((input.runId!==undefined&&input.runId!==r.id)||(input.attempt!==undefined&&input.attempt!==r.attempt)))return this.snapshot(id);\n        const p = r.members.find(p => p.id === id), now = this.now();",
+        "count": 1
+      },
+      {
+        "from": "d.ownerId===id&&dist(p,d)<=140",
+        "to": "d.ownerId===id&&dist(p,d)<=(gameplayR58.dungeonWorldControls&&r.mode!=='tower'?230:140)",
+        "count": 1
+      }
+    ]
+  }
+]

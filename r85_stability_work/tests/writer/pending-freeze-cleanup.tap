@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: pending cancellation waits original barrier and checkpoints current image once; duplicate cancellation shares result
+ok 1 - pending cancellation waits original barrier and checkpoints current image once; duplicate cancellation shares result
+  ---
+  duration_ms: 3.887823
+  type: 'test'
+  ...
+# Subtest: stale token or replacement resident cannot resume after original barrier settles
+ok 2 - stale token or replacement resident cannot resume after original barrier settles
+  ---
+  duration_ms: 0.477773
+  type: 'test'
+  ...
+# Subtest: negative original barrier and checkpoint failure retain cancellation failure without resuming
+ok 3 - negative original barrier and checkpoint failure retain cancellation failure without resuming
+  ---
+  duration_ms: 0.939164
+  type: 'test'
+  ...
+# Subtest: parent cancellation failed preserves the current fence
+ok 4 - parent cancellation failed preserves the current fence
+  ---
+  duration_ms: 4.127641
+  type: 'test'
+  ...
+# Subtest: parent cancellation entry preserves the current fence
+ok 5 - parent cancellation entry preserves the current fence
+  ---
+  duration_ms: 1.292555
+  type: 'test'
+  ...
+# Subtest: parent cancellation owner preserves the current fence
+ok 6 - parent cancellation owner preserves the current fence
+  ---
+  duration_ms: 1.211834
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.577502

@@ -1,0 +1,29 @@
+TAP version 13
+# Subtest: 50 simultaneous hydrated actors get stable earlier eligibility and retain five-per-50ms native SQL checkpoint budget
+ok 1 - 50 simultaneous hydrated actors get stable earlier eligibility and retain five-per-50ms native SQL checkpoint budget
+  ---
+  duration_ms: 22.89263
+  type: 'test'
+  ...
+# {"event":"core511_fault","at":"2026-11-01T17:25:28.513Z","code":"checkpoint_snapshot_conflict","operation":"actor_checkpoint","phase":"compare","requestEpoch":1,"checkpointColumns":["position_revision"],"actorRef":"2d989244b43f8772fab79536","stack":[{"file":"contract.mjs","line":13,"column":58},{"file":"checkpoint-rejection.mjs","line":11,"column":14},{"file":"actor-checkpoint.mjs","line":52,"column":77},{"file":"checkpoint-phase.test.mjs","line":14,"column":58},{"file":"checkpoint-phase.test.mjs","line":42,"column":22},{"file":"checkpoint-phase.test.mjs","line":42,"column":9}]}
+# Subtest: pending checkpoint preserves captured CAS image, strict two-second fence and newer motion suffix
+ok 2 - pending checkpoint preserves captured CAS image, strict two-second fence and newer motion suffix
+  ---
+  duration_ms: 2.053715
+  type: 'test'
+  ...
+# Subtest: explicit drain ignores phase delay and existing checkpoint CAS still rejects foreign persistent changes
+ok 3 - explicit drain ignores phase delay and existing checkpoint CAS still rejects foreign persistent changes
+  ---
+  duration_ms: 2.44162
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 245.967135

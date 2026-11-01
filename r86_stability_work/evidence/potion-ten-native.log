@@ -1,0 +1,18 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793549969446,"backupName":"before-pearl-reset-1793549969446-92157503-ffef-4df3-a705-4e67db0c3789.sqlite"}
+# {"type":"core511_command_sql_rolled_back","operation":"native_action","family":"update_players","queryDigest":"35e8e25b17ae2052","sqliteCode":1811,"frames":["writer-sql-timing477.mjs:85:69","command-failure-scope.mjs:28:134","retaliation-writer.mjs:22:147","attack-writer-rules.mjs:6581:747","action-writer.mjs:60:1454","action-writer.mjs:60:2045"],"outcome":"negative_receipt_pending_durability"}
+# Subtest: ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+ok 1 - ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+  ---
+  duration_ms: 2341.741773
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3153.805119
