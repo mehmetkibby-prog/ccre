@@ -1,0 +1,28 @@
+{
+  "imageModel": "nano-banana-pro",
+  "modelAi": "latest",
+  "polycount": 20000,
+  "conceptStyle": "Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+  "concepts": [
+    { "id": "g1", "group": "guardian", "prompt": "A battle-hardened human knight guardian in full steel plate armor with rivets and scratches, dark crimson tabard with a simple golden emblem, chainmail skirt, leather belts and pouches, short brown hair and stubble, no helmet" },
+    { "id": "g2", "group": "guardian", "prompt": "A rugged northern warrior guardian wearing a heavy chainmail hauberk, fur-lined leather mantle over the shoulders, steel pauldrons and bracers, braided beard, weathered face, layered dark leather and wool clothing" },
+    { "id": "g3", "group": "guardian", "prompt": "A noble paladin guardian in polished dark steel armor with gold trim, white and blue surcoat, ornate pauldrons, short half cape, determined young face with short blond hair, no helmet" },
+    { "id": "g4", "group": "guardian", "prompt": "A grim veteran sentinel guardian wearing a closed great helm with a narrow visor, worn steel plates over a padded gambeson, dark green cloak hanging at the back, rusty chain details" },
+    { "id": "h1", "group": "hunter", "prompt": "A hooded human ranger hunter in fitted dark brown leather armor, forest green hooded cloak with the hood up, leather bracers, quiver of arrows on the back, lean build, focused face with light stubble" },
+    { "id": "h2", "group": "hunter", "prompt": "A female huntress ranger with braided auburn hair, light leather armor with fur trim, studded leather bodice, wrist guards, quiver strap across the chest and quiver on the back, practical boots, confident expression" },
+    { "id": "h3", "group": "hunter", "prompt": "A silent forest stalker hunter with a deep hood and a scarf mask covering the lower face, layered grey-green cloth and leather, fingerless gloves, belts with small knives and pouches, quiver on the back" },
+    { "id": "h4", "group": "hunter", "prompt": "A seasoned beast hunter with a wolf pelt over the shoulders, dark leather jerkin, rugged weathered face with scars and a short black beard, leather trousers with knee guards, quiver on the back" },
+    { "id": "a1", "group": "arcanist", "prompt": "An old bearded arcanist wizard in long dark blue layered robes with silver embroidered runes, leather belt with scroll cases and pouches, long grey beard, wise stern face, hood lowered" },
+    { "id": "a2", "group": "arcanist", "prompt": "A young female arcanist sorceress in a deep crimson and black robe with gold trim, fitted bodice, long dark hair, faint blue runes on the sleeves, elegant but battle-ready" },
+    { "id": "a3", "group": "arcanist", "prompt": "A battle mage arcanist wearing a dark hooded robe over light leather armor and a steel gorget, arcane amulet on the chest, belts with potion vials, scarred clean-shaven face, short dark hair, hood down" },
+    { "id": "a4", "group": "arcanist", "prompt": "A mysterious arcanist mage in a deep purple robe with a tall high collar and layered cloth, ornate silver shoulder clasps, pale face with faint runic tattoos, shaved head" }
+  ],
+  "roles": { "guardian": "guardian", "hunter": "hunter", "arcanist": "arcanist" },
+  "heights": { "guardian": 1.86, "hunter": 1.8, "arcanist": 1.8 },
+  "animations": {
+    "guardian": { "Idle": 89, "Walk": 21, "Run": 14, "Attack Slash": 97, "Attack Thrust": 240, "Attack Charged": 242, "Cast Ground Slam": 127, "Hit Reaction": 178, "Death": 189 },
+    "hunter": { "Idle": 0, "Walk": 30, "Run": 14, "Attack Archery Shot": 224, "Attack Draw Shoot": 222, "Cast Archery Volley": 227, "Hit Reaction": 179, "Death": 183 },
+    "arcanist": { "Idle": 0, "Walk": 30, "Run": 14, "Attack Magic 1": 129, "Attack Magic 2": 131, "Cast Charged Spell": 125, "Hit Reaction": 178, "Death": 189 },
+    "npc": { "Idle": 0 }
+  }
+}
