@@ -213,7 +213,7 @@ function buildPieces(L: HLook): Piece[] {
   return P;
 }
 
-function weaponModel(L: HLook): { obj: THREE.Object3D; orb?: THREE.Object3D } | null {
+export function weaponModel(L: HLook): { obj: THREE.Object3D; orb?: THREE.Object3D } | null {
   const g = new THREE.Group();
   const metal = new THREE.MeshStandardMaterial({ color: 0xd8dee8, metalness: 0.95, roughness: 0.22 });
   const wood = new THREE.MeshStandardMaterial({ color: 0x5a3a22, roughness: 0.75, map: objTexture('timber').map });
@@ -276,7 +276,7 @@ function weaponModel(L: HLook): { obj: THREE.Object3D; orb?: THREE.Object3D } | 
   return { obj: g, orb };
 }
 
-function shieldModel(L: HLook): THREE.Object3D {
+export function shieldModel(L: HLook): THREE.Object3D {
   const g = new THREE.Group();
   const shape = new THREE.Shape();
   shape.moveTo(-0.2, 0.25); shape.lineTo(0.2, 0.25); shape.lineTo(0.2, 0.0); shape.quadraticCurveTo(0.18, -0.22, 0, -0.32); shape.quadraticCurveTo(-0.18, -0.22, -0.2, 0.0); shape.closePath();

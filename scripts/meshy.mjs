@@ -8,6 +8,7 @@
  *   node scripts/meshy.mjs balance
  *   node scripts/meshy.mjs concepts [grup]                 konsept görselleri (scripts/meshy-characters.json)
  *   node scripts/meshy.mjs build <konsept> <modelId>       görselden 3B → iskelet → animasyonlar → assets-src/characters/<modelId>/
+ *   node scripts/meshy.mjs build g1:guardian h2:hunter      birden çok karakter, paralel
  *   node scripts/meshy.mjs status
  */
 import fs from 'node:fs';
@@ -155,6 +156,13 @@ const [cmd, a1, a2] = process.argv.slice(2);
 const bal = async () => { const b = await call('GET', '/v1/balance'); console.log(`kredi: ${b.balance}`); };
 if (cmd === 'balance') await bal();
 else if (cmd === 'concepts') { await concepts(a1); await bal(); }
-else if (cmd === 'build') { if (!a1 || !a2) throw new Error('kullanım: build <konsept> <modelId>'); await build(a1, a2); await bal(); }
+else if (cmd === 'build') {
+  // build g1 guardian   veya   build g1:guardian h2:hunter a3:arcanist   (aynı süreçte paralel; durum dosyası tek elden yazılır)
+  const pairs = a2 && !a1.includes(':') ? [[a1, a2]] : process.argv.slice(3).map((x) => x.split(':'));
+  if (!pairs.length || pairs.some((p) => p.length !== 2)) throw new Error('kullanım: build <konsept> <modelId> | build k:id k:id …');
+  const res = await Promise.allSettled(pairs.map(([c, m]) => build(c, m)));
+  res.forEach((r, i) => { if (r.status === 'rejected') console.error(`HATA ${pairs[i][1]}: ${r.reason?.message ?? r.reason}`); });
+  await bal();
+}
 else if (cmd === 'status') console.log(JSON.stringify(state, null, 2));
 else console.log('komutlar: balance | concepts [grup] | build <konsept> <modelId> | status');

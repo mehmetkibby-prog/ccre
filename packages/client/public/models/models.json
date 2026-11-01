@@ -1,1 +1,110 @@
-{}
+{
+  "arcanist": {
+    "url": "arcanist.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Charged Spell",
+      "attack": "Attack Magic 1"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ]
+  },
+  "guardian": {
+    "url": "guardian.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Charged",
+      "Attack Slash",
+      "Attack Thrust"
+    ]
+  },
+  "hunter": {
+    "url": "hunter.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Archery Volley",
+      "attack": "Attack Draw Shoot"
+    },
+    "attackClips": [
+      "Attack Archery Shot",
+      "Attack Draw Shoot"
+    ]
+  },
+  "crafter": {
+    "url": "crafter.glb",
+    "height": 1.68,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "fisher": {
+    "url": "fisher.glb",
+    "height": 1.74,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "keeper": {
+    "url": "keeper.glb",
+    "height": 1.76,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "mage": {
+    "url": "mage.glb",
+    "height": 1.72,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "merchant": {
+    "url": "merchant.glb",
+    "height": 1.74,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "smith": {
+    "url": "smith.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "stable": {
+    "url": "stable.glb",
+    "height": 1.78,
+    "anims": {
+      "idle": "Idle"
+    }
+  },
+  "warden": {
+    "url": "warden.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle"
+    }
+  }
+}

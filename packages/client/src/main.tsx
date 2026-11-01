@@ -6,6 +6,8 @@ import { api } from './api.ts';
 import { store } from './game/store.ts';
 import { GameScreen } from './ui/GameScreen.tsx';
 import { createHumanoid, animateHumanoid, LOOKS } from './g3d/humanoid.ts';
+import { createGlbChar, loadManifest, onModelReady, type GlbChar } from './g3d/models.ts';
+import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
@@ -106,28 +108,48 @@ function ClassPreview({ cls }: { cls: ClassId }) {
     r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.shadowMap.enabled = true;
     const scene = new THREE.Scene();
     const cam = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
-    cam.position.set(0, 1.35, 4.6); cam.lookAt(0, 1.0, 0);
+    cam.position.set(0, 1.25, 5.3); cam.lookAt(0, 0.95, 0);
     scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a2a18, 0.9));
     const key = new THREE.DirectionalLight(0xfff0d8, 2.6); key.position.set(2, 4, 3); key.castShadow = true; scene.add(key);
     const rim = new THREE.DirectionalLight(0x9fd0ff, 1.6); rim.position.set(-3, 2, -3); scene.add(rim);
     const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 48), new THREE.MeshStandardMaterial({ color: 0x2a3424, roughness: 0.9 }));
     floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-    const rig = createHumanoid(LOOKS[cls]);
-    rig.root.traverse((o) => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
-    scene.add(rig.root);
-    let raf = 0; let t0 = performance.now();
+    // Hazır gerçekçi model varsa onu, yoksa (yüklenene kadar) prosedürel modeli göster
+    let rig: ReturnType<typeof createHumanoid> | null = null;
+    let glb: GlbChar | null = null;
+    const show = () => {
+      const g = createGlbChar(cls);
+      if (g) {
+        equipGlb(g, LOOKS[cls]);
+        if (rig) scene.remove(rig.root);
+        rig = null; glb = g;
+        scene.add(g.root);
+      } else if (!rig) {
+        rig = createHumanoid(LOOKS[cls]);
+        rig.root.traverse((o) => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
+        scene.add(rig.root);
+      }
+    };
+    loadManifest().then(show);
+    show();
+    const off = onModelReady((id) => { if (id === cls && !glb) show(); });
+    let raf = 0; const t0 = performance.now(); let last = t0; let lastCyc = 0;
     const loop = (t: number) => {
       const w = canvas.clientWidth, h = canvas.clientHeight;
       if (canvas.width !== w * devicePixelRatio) { r.setPixelRatio(devicePixelRatio); r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
-      const s = (t - t0) / 1000;
-      rig.root.rotation.y = Math.sin(s * 0.5) * 0.6;
-      const cyc = s % 4;
-      animateHumanoid(rig, cyc > 3 ? (cls === 'arcanist' ? 'cast' : 'attack') : 'idle', s, cyc > 3 ? (cyc - 3) : 0, 0);
+      const s = (t - t0) / 1000, dt = t - last; last = t;
+      const obj = glb?.root ?? rig?.root;
+      if (obj) obj.rotation.y = Math.sin(s * 0.5) * 0.6;
+      const cyc = s % 5, acting = cyc > 3.6;
+      const st = acting ? (cls === 'arcanist' ? 'cast' : 'attack') : 'idle';
+      if (glb) { glb.update(st, dt, false, 0, acting && lastCyc <= 3.6); }
+      else if (rig) animateHumanoid(rig, st, s, acting ? (cyc - 3.6) / 1.4 : 0, 0);
+      lastCyc = cyc;
       r.render(scene, cam);
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); r.dispose(); };
+    return () => { cancelAnimationFrame(raf); off(); r.dispose(); };
   }, [cls]);
   return <canvas ref={ref} className="preview3d" />;
 }

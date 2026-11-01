@@ -7,6 +7,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, onModelReady, loadManifest, type GlbChar } from './models.ts';
+import { equipGlb } from './gear.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
@@ -254,6 +255,7 @@ export class Renderer3D {
   /** Oyuncu/NPC görünümü: hazır 3B model (GLB) varsa onu, yoksa prosedürel modeli kullanır. */
   private humanView(modelId: string, kind: number, x: number, y: number): View {
     const glb = createGlbChar(modelId);
+    if (glb) equipGlb(glb, LOOKS[modelId]);
     if (glb) return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
     return { kind, obj: rig.root, rig, model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };

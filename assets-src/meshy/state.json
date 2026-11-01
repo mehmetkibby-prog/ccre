@@ -71,7 +71,287 @@
       "prompt": "A mysterious arcanist mage in a deep purple robe with a tall high collar and layered cloth, ornate silver shoulder clasps, pale face with faint runic tattoos, shaved head. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
       "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a1966e-63cb-7588-8d8f-6761b9613805_0.png?Expires=1793784406&Signature=c-Nd-n55TAIW6251mQhKv4KxtAq2T0KpjiH-JQR7~OcuN2UrAsdh219vOeH7KQWWhLd6AEoA8nvUiQhaHSLn3r~Nr0t3P~F5lHz~QF2iQO6kE1Alsyomgi1xGg4M7rt-VfXd5dH~pGm2XtV~DTqlNN69zeiOFKdnSrRc255hXpeJnHW1c6YcpcMlvVbmAaRrhrG2iIzrVPSfVuLWRpX4FfW9RPbMVZkgKV~DPwxYnlVn2CyEDo0zsD8rZAsZ0we7G8vXHdxWMPPURsIDjLXehE6tqgqDIDCa1poI81yg8mwUz5UkqZnBTucbnSx5oZyvakbeZnh7xcQBhOAW51CIGA__&Key-Pair-Id=K1VGYTHIYLM9UM",
       "file": "assets-src/meshy/concepts/a4.png"
+    },
+    "n_smith": {
+      "task": "01a19676-4d5b-74fd-9249-92c6a7c10b19",
+      "prompt": "A burly middle-aged village blacksmith with a thick dark moustache, heavy leather apron over a rough linen shirt with rolled sleeves, soot-stained muscular forearms, thick leather gloves tucked in the belt, heavy work boots. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-4d5b-74fd-9249-92c6a7c10b19_0.png?Expires=1793784924&Signature=VJVpU6E0ZcnBHY9o7xPq7eijaL1wYjX-mlIo9Y7xtSXHdOvJK55BdYX9vlIzXLbRXJ~y87oNNlMORR40opBaJnVvXMoYg9pDoXvAmhPT~zGtdwp2mPLxRMlTkkzwAl73dhcechhJ0BKIjfm3rgVXHEUzP01~dYINA5UWx0ruyVmBCd95oO-4c1f2M7KGJS3OwoKRVo~pUS8XvvCezseqPsYgCucYTcG49KHfuj6y8waG5wePFyJoS2BNuZm1oMmrk91aM6K4eMXCVshTCdcK~OJX8MQoL90hqr6y0slegT5mJa5W3eWZYplAIkZZ5OSdYqO7nROyamZ~y~oZbSUUzg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_smith.png"
+    },
+    "n_keeper": {
+      "task": "01a19676-52bf-74d6-b9ba-eb4c78161b99",
+      "prompt": "A stocky middle-aged storehouse keeper with a trimmed grey beard, brown wool vest over a cream linen shirt, leather belt with a ring of iron keys and a small ledger, wool trousers, sturdy boots. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-52bf-74d6-b9ba-eb4c78161b99_0.png?Expires=1793784924&Signature=QSLb0X2qPU38YinQhdSEAhm~j55ZTlfaMQjc8WEV7~PlWHTSMtenqVSOdISXyAnfF6ll1RhoV4ibpIeDHMKLr1sZKKobi7JdEjFuHmqmBjJY-kYCrnEUz67USPa9BTz~mRoIH~exFJfrBsRuvH0dmDgC25sbPiqwanVJ7P51q9c4UsJnv1pzTd8gYonW2iAX~k1m8igHCrySPP~0KkaVHG0oWMrf8HODEEDoDGAwwn6QVZiOdR3cx~VDCiF0n4lT8mgNbWQ7HohhBPEDqFoXl0mJOud4hMYWP96fcwaFcHYnlqreJLSsGqBOOLKg9m4i1tZIGet7XvQkIJMJoiCpMw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_keeper.png"
+    },
+    "n_crafter": {
+      "task": "01a19676-5949-7770-9b33-b0d6490ad383",
+      "prompt": "A middle-aged female artisan with brown hair tied back under a simple headscarf, sleeves rolled up, canvas work apron with tool pockets over a linen dress, leather gloves tucked in the belt. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-5949-7770-9b33-b0d6490ad383_0.png?Expires=1793784927&Signature=HRVLKpIPThyYakrxYQI8iACZnJhg7I6wU6ZhfJNU~T0zOQHF9miXZrfaqBdsifBCiv6ONDTfDzsg3iCIdRZgeZnvEYJj2GjSFbOGWD0VPVDvpZNoQ-sMjhSiH~KlUJQPJ5nqj5EiXCg~RbQDt~9O3dCq8tfIiM18dw80wYwXJEtfu04MvTyNlaTMtc7WDS6~E1zGfildvlAiyJT6WBtrE7LwWZFz3XRdd3cLKIC8Y~BGyor16pn8xD1glgIIUWLOigUZ-kvBl8CGI4qvW5bNUwNcFlZmaFNd3kT8HzETEPLCv~h1L7OM10xJFpqd8~5p~epWxYEGuTk1TSyxrci7aw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_crafter.png"
+    },
+    "n_mage": {
+      "task": "01a19676-5c2e-76e9-997a-b9d307776c12",
+      "prompt": "A calm female teleporter mage in an elegant light grey and teal robe with silver embroidery, long silver-white hair, a crystal pendant, gentle wise face, hood down. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-5c2e-76e9-997a-b9d307776c12_0.png?Expires=1793784926&Signature=GF7O-bahyGsYsRcBzqDi5QDw93q4O~5OLNxS625nkwgkYAxZLYmrQ-HmOt4VFfGftYxLH1xALkD4xeCMiUTLWXhbTsuRgAJxDaNWm9M9hyBDEyHZTcAb8NgjioMlvI1Bl~5sKaIzqGz7zuAoM~0f5vKmBW09pzfjC0biJvaZu9dvSGAqANPoFCf5Rk2W-DsEwe99frNhjS21CeqyNeRYVdj~K5CuruE5KDg2cbjEeFReJwqvs9xbQGWVUJLmvlJbzlB3px6~raPV7p8ZpbtNlhLZ9cgqEOPp6z35Ui9jyo5oclusvUBApdliIgpJthtmp9Mpk7fMeJsEASktIhF7gA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_mage.png"
+    },
+    "n_warden": {
+      "task": "01a19676-60fa-7078-975d-fe0e1810f6d0",
+      "prompt": "A stern veteran dungeon warden in dark iron lamellar armor with a black wool cloak, scarred face, short grey hair and beard, heavy gauntlets, a large iron key ring on the belt. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-60fa-7078-975d-fe0e1810f6d0_0.png?Expires=1793784926&Signature=nF3VPlcXrx~B-5bEHGER7VhNKPD0LCRiyXLwRY7dqdYE0Kf5Pn6y-6-ZE1rGsTWoBmWPm58gOgR8MJedT49pbR8bMgXiP7pfLWSCX6HQKkNa0aYuW6mTjb-ltsLLmcpS~I4EzmtKm3CULNrKCYziXhRwA6xQARsu1zFMtkfJvxMxfUMGV5vop0351WJiHvlJyqqjoatoapVW19qDi16Jl78oKUqWm5tlKDHu5M7glTdL~j021P9Mg1XS6DYr0b-8q6SUkTb2ulwn9aMJdMoAWgzJ2MZ~8EgF9s7LhCRb7ccTzyELgmjaLD2O9XA~fRoHZjYXMilps5nRjrizpNcCCw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_warden.png"
+    },
+    "n_stable": {
+      "task": "01a19676-6606-756c-a2cd-e36d2f4d15e0",
+      "prompt": "A young stable master with tousled hair, rough brown riding jacket, leather gloves, tall riding boots, a coiled rope hanging from the belt, friendly face. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-6606-756c-a2cd-e36d2f4d15e0_0.png?Expires=1793784942&Signature=lSLXx1~iKnRMLwLYR4DbULhNwjJyKouHiSuq2RYLPtGkJy1LlE30mNPQfb-mSWjsRoO6~P3keGWtE2G08MmHlkTSU-zqK2I2mu7OCxQYHUramsSF1BwJ4ujrMgOm6bQH~arCLyrtBxzzZi2UwzYzQ~5DbmMp3mAzXn7Yc93vvl87Gik0kxjOgjDPzM3YhfHAdPTXEDcqv8EHHjM6VYfJPAIREaGFh4K2TzPuLi90OXOyCi8wqyfz1yIBZ7Bt79GpYmo3B5Z-9WTpyGZOeY1-B4g2Zt~ZnHZim3dKeTDVVAFput~s3D3lw6neonDahO5lE~MhfZKsG8vERwCASfeJ9A__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_stable.png"
+    },
+    "n_merchant": {
+      "task": "01a19676-68ea-7519-b3e0-7c747f9a30ef",
+      "prompt": "A portly cheerful traveling merchant with a black beard, layered wool robe with a wide colorful sash, embroidered vest, leather coin pouches on the belt, small brimless felt cap. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-68ea-7519-b3e0-7c747f9a30ef_0.png?Expires=1793784929&Signature=mBLXS81mmxhl6wwLzvbcnDMsdDXs~Qn2FzW5hdXOFJ6NQIqIX1QVSD1Vy7H~Dg8UYGEsek-QpWLIZtdXhBjOPGMhz9oXABD1OMNdvoYwOSICIyZuPLhbAyzixlMvFMw8s2RxJA5M60caws0c3pys7qTxf~0nnVMc4gjtab2-Vc78vYzcvMiCZqncCjyRMgKHsO5y8W~7xmxbtoZh7isgNAIvePecoGG2QihepTcSLeCWI-SZzIqeVRqxeEaeOXu8Hvs2oTQVMK5KWfJsNIsGxVpvg1Q~9qe5TsQMYM7gwymoDVIrdKls~Jj3nzaI01NKmlDUY9hjxL8ivogGWt91sg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_merchant.png"
+    },
+    "n_fisher": {
+      "task": "01a19676-6b35-708a-8d20-cafebbf5b96d",
+      "prompt": "An old weathered fisherman with a white beard, thick knitted wool sweater, oiled canvas waders and boots, knitted cap, rope belt with a small knife. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-6b35-708a-8d20-cafebbf5b96d_0.png?Expires=1793784946&Signature=HUc4EqOGZp1jYajRFGsJHWALK~BGJvALafYoRB5Y2ZKvYdAa7jwkAcNj5Hv8MNh0Rnlwq4C1pybUTniUK~xg8I3fGmjkFCwWrIf-teVu0tSdCAhZIibTQac2QfAs5C2YksBBZM74~YX5fdnrvuvIzNSzkeFYdYwEqP3lmpZYacTBYW1Sxa75ZetafV1VcQ9fwViTsOITM3S3KvQlV-0xUuWiP8c-rZeb-oziGPkS-bMI1~~JCj56Eyz6xVxUqY0TP9o8nFbLMNrz2viGJQYT9oqqR~xy3WusRM0J~GRpm0haoEPdW7nmPQ-hOSlsN5CheiWBy21LXu0rQ4BUNIJhRA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_fisher.png"
     }
   },
-  "builds": {}
+  "builds": {
+    "guardian": {
+      "concept": "g1",
+      "model": "01a19672-9f0e-70f4-b6c9-0d0a6d8a8334",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a19672-9f0e-70f4-b6c9-0d0a6d8a8334/output/model.glb?Expires=1793784816&Signature=UE9lLY3HsWGQCZfR1ONPWIrxu~41g9nNfKR-wLCtjA-JnH4R8ZcQ~A4oIFrRM0NRavhfw~2UVzSkKQqn~4mg19H-7yg~n1vgdHVS9hdepDbcvTFVimbkG0C91kGoFRwwdlcg720nK4sWde49Sof-OyPXXXhXYLFN-UAH2mPpyWZhU1CO7rkCD-KatQVaRn5aL~c3VPNQOXpQnc0lhyoxBppdGVR-id7HsBKPZl8k77SA-Tv~iN3M1UYqssYwHyH6YKhZBZLfc13aPKtmoYrVBK9RrZAqvBsCpvZSFQHxD45z1YGTNRSQH7t8a42vu6ztukMQb5jUp2DVv4VthxEsxg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19675-21b9-77a2-8aff-c924db246ae2",
+      "rigLogged": true,
+      "anims": {
+        "Walk": {
+          "task": "01a19675-8555-7711-949e-1b4530f0c79f",
+          "actionId": 21
+        },
+        "Run": {
+          "task": "01a19675-86e2-7212-b46a-312116f6cad2",
+          "actionId": 14
+        },
+        "Attack Slash": {
+          "task": "01a19675-884f-7474-9d8a-5edef886e4aa",
+          "actionId": 97
+        },
+        "Attack Thrust": {
+          "task": "01a19675-ae77-74d1-91c0-9b48bfb59eae",
+          "actionId": 240
+        },
+        "Attack Charged": {
+          "task": "01a19675-b006-76e0-8564-f589a42fdc0c",
+          "actionId": 242
+        },
+        "Cast Ground Slam": {
+          "task": "01a19675-b18a-7107-8031-3d49a26fa177",
+          "actionId": 127
+        },
+        "Hit Reaction": {
+          "task": "01a19675-d89e-7503-a074-6e8c68ff3334",
+          "actionId": 178
+        },
+        "Death": {
+          "task": "01a19675-da92-73b1-ba07-7bc5f8151d7b",
+          "actionId": 189
+        },
+        "Idle": {
+          "task": "01a1967e-a93f-7200-a5f9-08f80b0cff13",
+          "actionId": 0
+        }
+      }
+    },
+    "hunter": {
+      "concept": "h2",
+      "model": "01a19672-9f25-75e8-82ce-b0f95ef07201",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a19672-9f25-75e8-82ce-b0f95ef07201/output/model.glb?Expires=1793784818&Signature=ZZe8cTbELGkP18a~byQBwoT8wcEGGsYZ27por5j2ASwqLVHe9ke-JYQArMpz2KcermJiJiUy5fEIKQON7ag0F2HuV5bTbgzLGr07hnzZ8lxhwLgmDF9oA3XV0atnM4oWa-bj6UbPXXEIj5diWqBZQPxIdfU~~xaSOpKGhLv2aAeN7XgelxVoKGw-UzOSg5SQwHNPF7ezXB98GA-E6cMXQocVjN86sGjKcy65boVnUWXva580aDGnPUXj9zHTlX3gmaOnXCR0HvK8~xfNSUmh-Z79fBFCaHKrMXHoGFEgjrqQE4XZEWPnoXQam9-TrASLS-SIOwLSZcahH-qk95pMAA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19675-21fa-74f8-8814-394aabb2837d",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19675-8375-758a-b6f9-4e792f4a787a",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a19675-851a-761e-a654-2211013f17bb",
+          "actionId": 30
+        },
+        "Run": {
+          "task": "01a19675-86bf-77a2-8000-d02b93d97d61",
+          "actionId": 14
+        },
+        "Attack Archery Shot": {
+          "task": "01a19675-ad40-751f-96c8-09a7a16a5103",
+          "actionId": 224
+        },
+        "Attack Draw Shoot": {
+          "task": "01a19675-aecd-73cf-ab34-5566ea6af9f4",
+          "actionId": 222
+        },
+        "Cast Archery Volley": {
+          "task": "01a19675-b067-71e4-8915-4df46f2b5919",
+          "actionId": 227
+        },
+        "Hit Reaction": {
+          "task": "01a19675-b1d4-7460-9b38-e5384387ad33",
+          "actionId": 179
+        },
+        "Death": {
+          "task": "01a19675-da48-7571-9e0e-327fb2954415",
+          "actionId": 183
+        }
+      }
+    },
+    "arcanist": {
+      "concept": "a3",
+      "model": "01a19672-9f53-72a5-9311-226f97b12337",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a19672-9f53-72a5-9311-226f97b12337/output/model.glb?Expires=1793784822&Signature=BjwUxnsgITUFBU-oebq83Aa7Abb2GjNicxqu90HcekR9eWb8Ae788wFzl6ikTgjO41d2QVMl137oYN01YQ7l3i5gtCWuJSARRnHYUAHXVjasNI-Eo1nw6GWbdVvIlEzAlSnWwohjNH0cNsIqvqUo-ECLcDyJIAI5Wu9HwkYHRdU3WQ0K4QRAjkCfXuvky2v4PwxQzC0kkAVAGjyPQi4klz5VeS96wxDWs9AMIeRunPAL3~gdGgx9eayu9kHD2BqTZtRV-qoIVOiywEGVj3hZBjy~ZwSmw~Qffj-GD4-~hYzrNGJ~YXUOYW7OR57Rj6zPSYyhshiTpewFE3t4X1tIEw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19675-3217-71e3-83b3-7426cc3dd5a6",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19675-82cf-7568-ad5b-3da8f07904f9",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a19675-8437-71e1-815a-b2d186245e85",
+          "actionId": 30
+        },
+        "Run": {
+          "task": "01a19675-8579-7281-a1a4-8e64b675fd0b",
+          "actionId": 14
+        },
+        "Attack Magic 1": {
+          "task": "01a19675-8763-752d-9e31-588f64ee1493",
+          "actionId": 129
+        },
+        "Attack Magic 2": {
+          "task": "01a19675-adbd-77fd-81ef-c8c0d6acffa7",
+          "actionId": 131
+        },
+        "Cast Charged Spell": {
+          "task": "01a19675-af27-70e2-96bf-a0b257f39a6b",
+          "actionId": 125
+        },
+        "Hit Reaction": {
+          "task": "01a19675-b088-7397-811c-c67acf62a431",
+          "actionId": 178
+        },
+        "Death": {
+          "task": "01a19675-b1cd-7310-b898-e8d3fd4b52eb",
+          "actionId": 189
+        }
+      }
+    },
+    "smith": {
+      "concept": "n_smith",
+      "model": "01a1967e-a37e-713f-a3bb-61262813357d",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a37e-713f-a3bb-61262813357d/output/model.glb?Expires=1793785611&Signature=P9Zcic5iG6htBqjjlB74SCxpQFfYNzAZB16ro6obOxpBiEfigXB-sulmOx5xCYV-oJlENvJvbzlvdPb0SvuSEytoPiSbp192vn-CqFPdsspI~fpl-GzknfO7oa5ihg49fQhriQlTaURuUvlHXtBi89dx4o8p-VkuYMOVxgCM1Sm3iWHRdE1I4GGNVURTZPxHFbBrBna8VVWbq1hexReY5jJFB5YRDbi7Y1NnUXnfqiXTnbE-ZzYQCEEA6LbG2DfUaLI-Da5Q5NyMhuaRhki3o4NLPBMSJ0ikT3WMxMQ3Ma1-Xpd1HSOG1ViETgRolnm118pLSzKxk4rS-BXtz7aAhA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19681-3565-7430-bffa-9536929d227b",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-9597-76c1-b8dd-00b68ccefc78",
+          "actionId": 0
+        }
+      }
+    },
+    "keeper": {
+      "concept": "n_keeper",
+      "model": "01a1967e-a37d-7257-baf3-d69c9e58825a",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a37d-7257-baf3-d69c9e58825a/output/model.glb?Expires=1793785597&Signature=JFqEys1iaLL1B0C8VTSQvWjO9MU8tKdkcICu4ddateCbjIiiKqelv5~ujYpKAkV07OlcCcWlkURnkP10Hu2yhZrACqYQV4HPM7014-yKFvF4zzZyqK~S1-V1D8Tsz7fEjiUoH8ToaDmKSv62rrT9eN6PfDUnCT-wVDoEJqi0OnhLF~6NIhe6bq~R3XeO4l6sg4iKZT8AlTc7p1ulxlXEtXrTkqNKoYcrVDqEiJlkbFcpu4pAC6z45tlgbnyNOIYjMVtDBq-T3j4iudiExHcWdf5kPOPz4bBUHHJhVMrn100qsKZ1PZtCws7VdrqUSkMWD6jOohEPrsE9jC2YSjuG~w__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19681-0394-73d6-b12d-e1e75a4ea17b",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-65b9-7215-8819-35441bdd9a34",
+          "actionId": 0
+        }
+      }
+    },
+    "crafter": {
+      "concept": "n_crafter",
+      "model": "01a1967e-a3d8-718e-82a0-8999ae3f4044",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a3d8-718e-82a0-8999ae3f4044/output/model.glb?Expires=1793785586&Signature=e7YTg-2vmrYpegAu3jND7FLirDxd-zGuUkSH~4BWlmZD72JplcS2nOZ6TXKLixw2sCXA1RmpC8cZD2ziuNmSO55oeTcXpEiWzy4LKnEIF7qLO3Vtaa-pgCCACg-~1dsvziRLGz3WgN2r9j4tTbF2TKv5T35wMV0NnG775Rvp809rXTNl-GYMuEgWpIwN3u6FSsrxx9HNRrUGtPElSgLSRV1dsJnNqUf6kXpF6Kj-g2R3rhRTyTf54qKkLR4Ur1e1SqKoEz7JVo9uLRvg2nIlvoo1azys59ksWhJl3Zac3XaW40lZmknO4DCSFI5a1WAeEWR55TJrPx1OhmDUCjITzA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19680-d28f-7170-975d-03a6b7184b7f",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-32bd-73b5-8352-534d8fdc1d3a",
+          "actionId": 0
+        }
+      }
+    },
+    "mage": {
+      "concept": "n_mage",
+      "model": "01a1967e-a377-728f-9f2e-7164680d8d65",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a377-728f-9f2e-7164680d8d65/output/model.glb?Expires=1793785616&Signature=iXnLxh8YPXjVmHym5ZmwJ6BEicMzcOJKWrsDwnw9YCtRekDZrzACEbDixuSu39Zokcxsrpac7SXJppWIC7mz1raFWL-yxZGiH4mIM3GHg613F~yBNt2Cn9x~ajCH~sYh8xUDTfxrehjQe6F3Ne8Lry~uswWJ2iUjnszZPhd4G6h9mlW1sQc3P9Br-PDTb0fNkbdIt5QTwMEql2S7owo3F4ZlrRoGLDMzgey6EjpQHnMGqAzN5BWdog-fhQTxJp~AmQzlm-iQ4q9tvzVJLNrzY12aeeA~t4f6SB5RXFKRpUuYFsgAQAA4wA3RHfCDWmO-8K038ekiSJHVl5gNIENMFg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19681-5400-7729-84f9-0f536c6ea791",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-a407-7633-ad26-5b1da59f8f43",
+          "actionId": 0
+        }
+      }
+    },
+    "warden": {
+      "concept": "n_warden",
+      "model": "01a1967e-a394-75f2-b733-e1c2c5177265",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a394-75f2-b733-e1c2c5177265/output/model.glb?Expires=1793785694&Signature=aoqDfQHdKqTKx4j3GUl87axWCYkBZzSVcIPmWCjA1t211L0EEI1JltfekzpVaINzqRVrhieXSDwnIjNT~7tMn3zLF-jW8Q5MHCaxMYxGlR3pzdtH--jCnMFx4F-O1aerc8yK8Q0c9prSoHIMIHgb7f1C5yaEfzsrBgxnPQRX0CW5KPAABs9m7uI2OKK13QCCpqbMVExmnH6RsCO3oGoiock2SfPi5Q1iaZBuWbFH6j4P1YQmLaZA-hWPC7pnITspZKds41KVrN7MNU1yRfRG75UOVgJcaQL2m07g~07ZXIJi7SSWTU8lPG0YRf-rxP~unc6A9GEnTfP~QJkyglWY2w__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19682-8079-751b-bf81-8d51424c4ae3",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19682-e053-7201-8193-b5f65f3bb2da",
+          "actionId": 0
+        }
+      }
+    },
+    "stable": {
+      "concept": "n_stable",
+      "model": "01a1967e-a3b3-726b-bca7-d284a565ef97",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a3b3-726b-bca7-d284a565ef97/output/model.glb?Expires=1793785765&Signature=Bxt7a1A3d4cuvTqQGy40LfAq~iT2XF4zumxZ5tGPFuY9XEMT3oBhRmDrFQlprlw2ZdN7i7jIVnwrYGGPmJ-df0Jnlz7RVtjN3-b3xuw4t7UOkNNL9txZO4IK505wZbPUJFXlTBbjrl5B~m31VnrxMlODOmUsfWNhZ-doe~pk9rbcz1OnMdytCZvo6JIdrbcqJGYMlv5N-j7g8j~P8wOFVOc2zE6N~lC69bIFOVPauGAiqSg~RTHiyM5mJuzmSJRmpdv43D-91WEvGnqSW3928JIwJKJAjYdTxTl2mU8vNqO4lZldO9Kq383fL~RXYMGln5VjhkwyU5AY2RpmpKuihw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19683-9638-7268-a706-e531d00f72fa",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19683-e5cf-709e-a49d-c1060a3e4cd0",
+          "actionId": 0
+        }
+      }
+    },
+    "merchant": {
+      "concept": "n_merchant",
+      "model": "01a1967e-a394-76f5-9458-b68a309aceeb",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a394-76f5-9458-b68a309aceeb/output/model.glb?Expires=1793785640&Signature=ERgqFfZlNTd4MCunqhgxNzABxIDfFKbDR8B9bRUwDWpQ2GPH~V5jtZbiu5-m-jBC~3DJ61EA~mIWlBmx8scLVKUc0wBLzOBv2s4J4hsox677fVAagZGgWSUU08TWwjSHXWb3lVt7flH0HDTHtDQUNRiqbiOIYY17zcM07qrbKruHBxQ6wTTex3-iKbGxAYqmj-6hWKmeTN9bF84lViXGmQ42X9CFgcXz0BZE400-54de-wAapLXs~6c0zQ65S1PgI8sRjW4NbaS-OQdPY0rriywlr6hYnG9UXbxmqD7bWXyqyEp4cgrpC2iHTSBVYjcKZlN~A~zl8IMeJ1L~TvoLwg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19681-a9fe-775b-b4c5-f41ff33740d5",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-f81b-70c1-a444-c56411aa16f4",
+          "actionId": 0
+        }
+      }
+    },
+    "fisher": {
+      "concept": "n_fisher",
+      "model": "01a1967e-a3de-77e6-8700-ed176058529a",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1967e-a3de-77e6-8700-ed176058529a/output/model.glb?Expires=1793785614&Signature=FxD0psXjl8jkRWoP8YTwQgLQsunrn0T9wBdj2RSTzjczjeJKwU9VAnfbvX9Oe-yDeVr82jk9MH4C~eazSiKN1ShpyxRIzOei1aIfnSPpOyL2DLacY~Q6pZBtpqM~VeyAJPbmKQBMr~rj3vWCIegmz96UPyDOt65vtEpezw85REX1GGNtxzYtWKJqZrixEWXwRVgmcQINtSNcRhxtUJ4GuVv-I1D~a65Uk3xmgS-xYkP3b~jY8J7fBZG7Sn6pXcc~KVyYmxvxPQig50vq8sfzvrSeFm6QdgTUGdNVsLxAa9ng6PWvJiHWVbmBJquLlL-390CFj-6zH6YzT9mOG1XQCA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a19681-461a-72cd-9d44-8697c9bd23bd",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a19681-98ed-7561-8169-6c07cb5d847d",
+          "actionId": 0
+        }
+      }
+    }
+  }
 }

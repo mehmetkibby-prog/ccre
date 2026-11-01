@@ -103,7 +103,32 @@ export function model(id: string): Loaded | null {
   return null;
 }
 
-export interface GlbChar { root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D }
+export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
+export interface GlbChar { root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D; bones: GlbBones }
+
+const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
+/**
+ * Bir nesneyi kemiğe bağlar. Yön ve konum, karakterin bağlanma (A-poz) anındaki kök uzayında verilir:
+ * böylece iskeletin kemik eksenleri ne olursa olsun silah elde doğru durur (+Z ileri, +X karakterin solu).
+ */
+export function attachToBone(root: THREE.Object3D, bone: THREE.Object3D, obj: THREE.Object3D, rootQuat: THREE.Quaternion, rootPos: THREE.Vector3) {
+  root.updateMatrixWorld(true);
+  const holder = new THREE.Group();
+  bone.getWorldQuaternion(_q).invert();
+  root.getWorldQuaternion(_q2);
+  holder.quaternion.copy(_q.multiply(_q2).multiply(rootQuat));
+  holder.position.copy(bone.worldToLocal(root.localToWorld(rootPos.clone())));
+  bone.getWorldScale(_s);
+  holder.scale.set(1 / _s.x, 1 / _s.y, 1 / _s.z);
+  holder.add(obj);
+  bone.add(holder);
+  return holder;
+}
+/** Kemiğin kök uzayındaki konumu (bağlanma pozunda). */
+export function boneRootPos(root: THREE.Object3D, bone: THREE.Object3D) {
+  root.updateMatrixWorld(true);
+  return root.worldToLocal(bone.getWorldPosition(new THREE.Vector3()));
+}
 
 /** Bir modelin kendi iskelet ve animasyon karıştırıcısıyla yeni bir örneği. */
 export function createGlbChar(id: string): GlbChar | null {
@@ -120,8 +145,14 @@ export function createGlbChar(id: string): GlbChar | null {
   const act = (c: THREE.AnimationClip) => { let a = actions.get(c); if (!a) { a = mixer.clipAction(c); actions.set(c, a); } return a; };
   let current: THREE.AnimationAction | null = null;
   let curState: string = '';
-  let hand: THREE.Object3D | undefined;
-  inner.traverse((o) => { if (!hand && /(right|r)[_ .-]?hand$|hand[_ .-]?r$|righthand/i.test(o.name)) hand = o; });
+  const find = (re: RegExp) => { let b: THREE.Object3D | undefined; inner.traverse((o) => { if (!b && (o as THREE.Bone).isBone && re.test(o.name)) b = o; }); return b; };
+  const bones: GlbBones = {
+    handR: find(/(right|^r)[_ .-]?hand$|hand[_ .-]?r$/i), handL: find(/(left|^l)[_ .-]?hand$|hand[_ .-]?l$/i),
+    foreArmL: find(/(left|^l)[_ .-]?(fore[_ .-]?arm|lower[_ .-]?arm|elbow)$|(forearm|lowerarm)[_ .-]?l$/i),
+    fingerR: find(/(right|^r)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(right|^r)[_ .-]?middle[_ .-]?1$/i), fingerL: find(/(left|^l)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(left|^l)[_ .-]?middle[_ .-]?1$/i),
+  };
+  const hand = bones.handR;
+  root.updateMatrixWorld(true);
   const attackClips = (L.entry.attackClips ?? []).map((n) => L.clips.find((c) => c.name === n)).filter(Boolean) as THREE.AnimationClip[];
   let attackN = 0;
   const play = (st: HState | 'run', once: boolean) => {
@@ -141,7 +172,7 @@ export function createGlbChar(id: string): GlbChar | null {
   };
   play('idle', false);
   return {
-    root, height: (L.entry.height ?? 1.8) + 0.2, hand,
+    root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
     update(st, dt, moving, speed, restart) {
       const want = st === 'walk' ? (L.map.run && speed > 3.5 ? 'run' : 'walk') : st;
       if (want !== curState || (restart && (want === 'attack' || want === 'cast'))) {

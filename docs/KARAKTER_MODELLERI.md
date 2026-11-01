@@ -61,3 +61,22 @@ Seçenekler:
 ## Lisans
 - **Mixamo:** Ücretsizdir. Adobe'nin SSS'sine göre (forumlarda aktarıldığı kadarıyla) ticari oyunlarda kullanılabilir, ancak modeller tek başına yeniden dağıtılamaz. Yayından önce Adobe'nin güncel koşullarını kontrol edin.
 - **Meshy:** Ücretsiz plandaki çıktılar için lisans koşulları farklı olabilir. Ticari kullanım hakkını Meshy'nin güncel fiyatlandırma/lisans sayfasından doğrulayın.
+
+## Meshy API ile otomatik üretim (kullanılan yol)
+Anahtar, ortamın **Network secrets** bölümünde `api.meshy.ai` için Bearer sırrı olarak durur; betik anahtarı görmez.
+Ağ izni: `api.meshy.ai`, `assets.meshy.ai`.
+
+```bash
+node scripts/meshy.mjs balance                                   # kalan kredi
+node scripts/meshy.mjs concepts guardian                         # konsept görselleri (scripts/meshy-characters.json)
+node scripts/meshy.mjs build g1:guardian h2:hunter a3:arcanist   # görselden 3B → iskelet → animasyonlar
+node scripts/import-characters.mjs                               # oyun GLB'leri + models.json
+```
+Her görev kimliği `assets-src/meshy/state.json`'da tutulur; yarıda kalan iş yeniden çalıştırılınca kredi harcamadan sürer.
+Bir animasyonu değiştirmek için `meshy-characters.json`'daki action_id'yi değiştirip state.json'dan o animasyonun kaydını ve dosyasını silmek yeterli.
+
+Kullanılan konseptler: Muhafız **g1**, Avcı **h2**, Arkanist **a3**; NPC'ler `n_*`.
+Harcanan kredi (1 Kasım 2026): konseptler 9×20 = 180, kahraman 3×(30+5+8..9×3) ≈ 183, NPC 8×(30+5+3) = 304 → toplam ≈ 667.
+
+Test sayfası .glb sunmadığı için yayın öncesi `node scripts/web-pack-models.mjs <klasör>` modelleri glTF JSON + JPG'ye çevirir.
+Silahlar (kılıç, kalkan, yay, asa, çekiç, olta) `packages/client/src/g3d/gear.ts` ile bağlanma pozuna göre ele takılır.
