@@ -94,6 +94,7 @@ input, select { font-family: inherit; }
 .game { position: fixed; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; }
 .game canvas.gl, .game canvas.ov { position: absolute; inset: 0; width: 100%; height: 100%; }
 .game canvas.ov { pointer-events: none; }
+.game canvas.gl { touch-action: none; }
 .hud { position: absolute; inset: 0; pointer-events: none; }
 .hud > * { pointer-events: auto; }
 
@@ -140,6 +141,10 @@ input, select { font-family: inherit; }
 .menu button { width: 44px; height: 44px; border-radius: 6px; background: linear-gradient(180deg, #262e24, #121712); border: 1px solid #5a4a28; color: var(--gold2); font-size: 19px; cursor: pointer; position: relative; display: grid; place-items: center; }
 .menu button:hover { border-color: var(--gold); }
 .menu button small { position: absolute; bottom: 1px; right: 3px; font-size: 9px; color: var(--muted); font-weight: 800; }
+.menu button.exit { grid-column: span 3; width: 100%; gap: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+.menu button.exit svg { width: 18px; height: 18px; }
+.menu .mob-only { display: none; }
+.menu .badge { position: absolute; top: -4px; right: -4px; background: #c8302c; color: #fff; border-radius: 8px; font-size: 10px; padding: 0 4px; font-weight: 800; }
 
 .chat { position: absolute; left: 8px; bottom: 8px; width: min(380px, 42vw); padding: 6px; display: flex; flex-direction: column; gap: 4px; }
 .chat .msgs { height: 150px; overflow-y: auto; font-size: 12.5px; line-height: 1.35; padding-right: 4px; }
@@ -205,6 +210,16 @@ input, select { font-family: inherit; }
 .dead h2 { font-family: Fredoka; color: #ff8a7a; font-size: 30px; margin: 0 0 6px; }
 
 /* ── mobil ── */
+.camctl { position: absolute; right: calc(10px + env(safe-area-inset-right, 0px)); top: 168px; display: flex; flex-direction: column; gap: 6px; touch-action: none; }
+.camctl button { width: 42px; height: 42px; border-radius: 50%; border: 1px solid #6a5428; background: radial-gradient(circle at 40% 35%, rgba(58,58,40,.92), rgba(20,20,16,.92)); color: var(--gold2); font-size: 20px; font-weight: 900; display: grid; place-items: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+.camctl button.small { width: 34px; height: 34px; font-size: 15px; align-self: center; }
+@media (max-width: 820px) { .camctl { top: 150px; } }
+@media (max-height: 500px) {
+  .camctl { flex-direction: row; top: calc(8px + env(safe-area-inset-top, 0px)); right: calc(132px + env(safe-area-inset-right, 0px)); gap: 5px; }
+  .camctl button { width: 36px; height: 36px; font-size: 17px; }
+  .camctl button.small { width: 30px; height: 30px; }
+  .lootfeed { top: 52px; }
+}
 .joy { position: absolute; left: 22px; bottom: 26px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.06), rgba(255,255,255,.02)); border: 2px solid rgba(216,178,90,.35); touch-action: none; }
 .joy i { position: absolute; width: 60px; height: 60px; left: 40px; top: 40px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #f0d080, #8a6a28); box-shadow: 0 2px 8px #000; }
 .mact { position: absolute; right: 16px; bottom: 22px; width: 220px; height: 220px; touch-action: none; }
@@ -227,4 +242,59 @@ input, select { font-family: inherit; }
   .charsel { grid-template-columns: 1fr; }
   .lootfeed { right: 124px; }
   .topbar { top: 52px; }
+}
+
+/* ── telefon düzeni (dokunmatik) ── */
+@media (pointer: coarse) {
+  .wallet { top: calc(6px + env(safe-area-inset-top, 0px)); left: calc(6px + env(safe-area-inset-left, 0px)); font-size: 11px; padding: 5px 7px; min-width: 0; gap: 2px; }
+  .wallet img { width: 14px; height: 14px; }
+  .wallet .meta { font-size: 10px; gap: 5px; }
+  .wallet .w .muted { display: none; }
+  .wallet .meta span:nth-child(2) { display: none; }
+  .mm { top: calc(6px + env(safe-area-inset-top, 0px)); right: calc(6px + env(safe-area-inset-right, 0px)); width: 112px; padding: 4px; }
+  .mm canvas { width: 102px; height: 102px; }
+  .mm .zn { font-size: 11px; }
+  .topbar { top: calc(6px + env(safe-area-inset-top, 0px)); gap: 4px; }
+  .worldhp { width: min(150px, 36vw); padding: 3px 6px 5px; }
+  .worldhp .lbl { font-size: 9px; letter-spacing: .4px; }
+  .worldhp .bar { height: 6px; }
+  .target { width: min(150px, 36vw); padding: 4px 6px 5px; }
+  .target .nm { font-size: 11px; }
+  .menu { left: calc(6px + env(safe-area-inset-left, 0px)); right: auto; top: 118px; bottom: auto; transform: none; grid-template-columns: 40px; gap: 4px; padding: 4px; }
+  .menu button { width: 40px; height: 40px; font-size: 16px; }
+  .menu button svg { width: 22px; height: 22px; }
+  .menu button small { display: none; }
+  .menu button.exit { grid-column: auto; width: 40px; }
+  .menu button.exit .lbl { display: none; }
+  .menu .mob-only { display: grid; }
+  .chat { display: none; top: 118px; bottom: auto; left: calc(58px + env(safe-area-inset-left, 0px)); width: min(72vw, 340px); }
+  .chat.open { display: flex; }
+  .chat .msgs { height: 120px; font-size: 12px; }
+  .bottom { bottom: calc(6px + env(safe-area-inset-bottom, 0px)); gap: 6px; align-items: center; }
+  .bottom .slots { display: none; }
+  .skillbar { width: min(52vw, 240px); padding: 5px 7px 6px; gap: 3px; }
+  .xpl { font-size: 9px; }
+  .orb { width: 54px; height: 54px; border-width: 2px; }
+  .orb .t { font-size: 10px; }
+  .joy { left: calc(18px + env(safe-area-inset-left, 0px)); bottom: calc(78px + env(safe-area-inset-bottom, 0px)); width: 130px; height: 130px; }
+  .joy i { left: 35px; top: 35px; }
+  .mact { right: calc(8px + env(safe-area-inset-right, 0px)); bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+  .camctl { top: 150px; }
+  .toasts { top: 150px; }
+  .lootfeed { right: 124px; top: 70px; }
+}
+@media (pointer: coarse) and (max-height: 500px) {
+  .menu { top: auto; left: 50%; transform: translateX(-50%); bottom: calc(52px + env(safe-area-inset-bottom, 0px)); grid-template-columns: none; grid-auto-flow: column; }
+  .menu button { width: 36px; height: 36px; }
+  .menu button.exit { width: 36px; }
+  .chat { top: 60px; left: calc(8px + env(safe-area-inset-left, 0px)); }
+  .chat .msgs { height: 90px; }
+  .joy { bottom: calc(18px + env(safe-area-inset-bottom, 0px)); width: 118px; height: 118px; }
+  .joy i { left: 29px; top: 29px; }
+  .mact { bottom: calc(6px + env(safe-area-inset-bottom, 0px)); transform: scale(.85); transform-origin: bottom right; }
+  .bottom { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); }
+  .skillbar { width: min(34vw, 220px); }
+  .orb { width: 46px; height: 46px; }
+  .camctl { top: calc(8px + env(safe-area-inset-top, 0px)); }
+  .toasts { top: 90px; }
 }

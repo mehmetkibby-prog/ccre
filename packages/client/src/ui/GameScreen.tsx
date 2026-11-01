@@ -16,6 +16,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
   useEffect(() => {
     const g = new Game(gl.current!, ov.current!, ticket, (reason) => onExit(reason));
     currentGame = g;
+    (window as unknown as { __colGame?: Game }).__colGame = g;
     g.start();
     setGame(g);
     return () => { g.stop(); currentGame = null; };
@@ -28,13 +29,17 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     let rot: { x: number; yaw: number; moved: boolean; btn: number } | null = null;
     const touches = new Map<number, { x: number; y: number }>();
     let pinch: { d: number; a: number; zoom: number; yaw: number } | null = null;
+    // tek parmak: dokun-bırak = tıkla; yana kaydır = kamerayı döndür
+    let drag: { id: number; x: number; y: number; t: number; yaw: number; zoom: number; rotating: boolean } | null = null;
     const pos = (e: PointerEvent) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
     const down = (e: PointerEvent) => {
       if (!game) return;
       if (e.pointerType === 'touch') {
         touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
-        if (touches.size === 2) { const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), a: Math.atan2(b.y - a.y, b.x - a.x), zoom: game.renderer.camZoom, yaw: game.renderer.camYaw }; return; }
-        const p = pos(e); game.clickScreen(p.x, p.y); return;
+        if (touches.size === 2) { drag = null; const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), a: Math.atan2(b.y - a.y, b.x - a.x), zoom: game.renderer.camZoom, yaw: game.renderer.camYaw }; return; }
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), yaw: game.renderer.camYaw, zoom: game.renderer.camZoom, rotating: false };
+        try { c.setPointerCapture(e.pointerId); } catch { /* */ }
+        return;
       }
       (document.activeElement as HTMLElement | null)?.blur?.();
       if (e.button === 2 || e.button === 1) { rot = { x: e.clientX, yaw: game.renderer.camYaw, moved: false, btn: e.button }; c.setPointerCapture(e.pointerId); return; }
@@ -49,6 +54,13 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
           const d = Math.hypot(a.x - b.x, a.y - b.y), ang = Math.atan2(b.y - a.y, b.x - a.x);
           game.renderer.camZoom = Math.max(0.6, Math.min(2.3, pinch.zoom * (d / Math.max(30, pinch.d))));
           game.renderer.camYaw = pinch.yaw - (ang - pinch.a);
+        } else if (drag && drag.id === e.pointerId) {
+          const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+          if (!drag.rotating && Math.hypot(dx, dy) > 14) drag.rotating = true;
+          if (drag.rotating) {
+            game.renderer.camYaw = drag.yaw - dx * 0.011;
+            game.renderer.camZoom = Math.max(0.6, Math.min(2.3, drag.zoom * Math.exp(-dy * 0.004)));
+          }
         }
         return;
       }
@@ -62,7 +74,13 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     const endTouch = (e: PointerEvent) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
     const up = (e: PointerEvent) => {
       held = false;
-      if (e.pointerType === 'touch') endTouch(e);
+      if (e.pointerType === 'touch') {
+        if (drag && drag.id === e.pointerId && game && e.type === 'pointerup') {
+          if (!drag.rotating && performance.now() - drag.t < 600) { const p = pos(e); game.clickScreen(p.x, p.y); }
+        }
+        if (drag && drag.id === e.pointerId) drag = null;
+        endTouch(e);
+      }
       if (rot && game) {
         // sürüklemeden sağ tık: hedefe saldır
         if (!rot.moved && rot.btn === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; } }
@@ -97,6 +115,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <BottomBar game={game} />
       <Menu onExit={onExit} />
       {mobile && <MobileControls game={game} />}
+      {mobile && <CameraControls game={game} />}
       <Panels game={game} onExit={onExit} />
       <DeathOverlay game={game} />
       <ConnStatus />
@@ -205,6 +224,7 @@ function LootFeed() {
 function Chat() {
   const msgs = useStore((s) => s.chat);
   const tab = useStore((s) => s.chatTab);
+  const chatOpen = useStore((s) => s.chatOpen);
   const [ch, setCh] = useState<'local' | 'world' | 'trade'>('local');
   const [text, setText] = useState('');
   const box = useRef<HTMLDivElement>(null);
@@ -218,7 +238,7 @@ function Chat() {
   const list = msgs.filter((m) => tab === 'all' || m.ch === tab);
   const names: Record<string, string> = { world: 'Dünya', trade: 'Ticaret', local: 'Bölge', sys: 'Sistem' };
   return (
-    <div className="frame chat">
+    <div className={'frame chat' + (chatOpen ? ' open' : '')}>
       <div className="tabs2">{['all', 'world', 'trade', 'local'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}</div>
       <div className="msgs" ref={box}>
         {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined }}>{m.from}</b>: {m.text}</div>)}
@@ -281,6 +301,7 @@ function BottomBar({ game }: { game: Game }) {
 function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void }) {
   const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p })); };
   const self = useStore((s) => s.self);
+  const unread = useStore((s) => s.unread);
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
   return (
     <div className="frame menu">
@@ -290,7 +311,8 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button title="Işınlan (T)" onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small></button>
       <button title="Harita (M)" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small></button>
       <button title="Ayarlar" onClick={() => open('settings')}><MenuIcon k="gear" /></button>
-      <button title="Kanal değiştir / Çıkış" onClick={() => { currentGame?.stop(); onExit('', true); }} style={{ gridColumn: 'span 3', width: '100%', fontSize: 12, fontWeight: 800 }}>Kanal / Çıkış</button>
+      <button title="Sohbet" className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
+      <button title="Kanal değiştir / Çıkış" className="exit" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="lbl">Kanal / Çıkış</span></button>
     </div>
   );
 }
@@ -328,6 +350,28 @@ function MobileControls({ game }: { game: Game }) {
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><MenuIcon k="pick" /></button>
       </div>
     </>
+  );
+}
+
+/** Telefonda kamera düğmeleri: basılı tut = döndür, +/− = yakınlaştır. */
+function CameraControls({ game }: { game: Game }) {
+  const hold = (fn: () => void) => {
+    let raf = 0;
+    const loop = () => { fn(); raf = requestAnimationFrame(loop); };
+    return {
+      onPointerDown: (e: React.PointerEvent) => { e.preventDefault(); e.stopPropagation(); try { (e.target as HTMLElement).setPointerCapture?.(e.pointerId); } catch { /* */ } cancelAnimationFrame(raf); loop(); },
+      onPointerUp: () => cancelAnimationFrame(raf), onPointerCancel: () => cancelAnimationFrame(raf), onPointerLeave: () => cancelAnimationFrame(raf),
+    };
+  };
+  const r = game.renderer;
+  return (
+    <div className="camctl" aria-label="Kamera">
+      <button aria-label="Kamerayı sola döndür" {...hold(() => { r.camYaw += 0.035; })}>⟲</button>
+      <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
+      <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(2.3, r.camZoom * 1.015); })}>+</button>
+      <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(0.6, r.camZoom / 1.015); })}>−</button>
+      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = 1; }}>⌂</button>
+    </div>
   );
 }
 
