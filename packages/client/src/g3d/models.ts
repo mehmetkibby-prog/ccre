@@ -17,7 +17,7 @@ import type { HState } from './humanoid.ts';
  * }
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
-export interface ModelEntry { url: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; weaponBone?: string }
+export interface ModelEntry { url: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
 interface Loaded { scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
@@ -77,6 +77,7 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   const target = entry.height ?? 1.8;
   const scale = entry.scale ?? (size.y > 0.01 ? target / size.y : 1);
   const offsetY = -box.min.y * scale;
+  console.debug('[model] boyut', id, size.toArray().map((v) => v.toFixed(2)).join('×'), 'ölçek', scale.toFixed(3));
   const map: Loaded['map'] = {};
   for (const [st, name] of Object.entries(entry.anims ?? {})) { const c = gltf.animations.find((a) => a.name === name); if (c) map[st as HState] = c; }
   for (const [st, re] of PATTERNS) if (!map[st]) { const c = gltf.animations.find((a) => re.test(a.name) && !Object.values(map).includes(a)); if (c) map[st] = c; }
@@ -102,7 +103,7 @@ export function model(id: string): Loaded | null {
   return null;
 }
 
-export interface GlbChar { root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number): void; hand?: THREE.Object3D }
+export interface GlbChar { root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D }
 
 /** Bir modelin kendi iskelet ve animasyon karıştırıcısıyla yeni bir örneği. */
 export function createGlbChar(id: string): GlbChar | null {
@@ -121,8 +122,11 @@ export function createGlbChar(id: string): GlbChar | null {
   let curState: string = '';
   let hand: THREE.Object3D | undefined;
   inner.traverse((o) => { if (!hand && /(right|r)[_ .-]?hand$|hand[_ .-]?r$|righthand/i.test(o.name)) hand = o; });
+  const attackClips = (L.entry.attackClips ?? []).map((n) => L.clips.find((c) => c.name === n)).filter(Boolean) as THREE.AnimationClip[];
+  let attackN = 0;
   const play = (st: HState | 'run', once: boolean) => {
-    const clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
+    let clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
+    if (st === 'attack' && attackClips.length) clip = attackClips[attackN++ % attackClips.length];
     if (!clip) return;
     const a = act(clip);
     if (a === current && !once) return;
@@ -138,9 +142,9 @@ export function createGlbChar(id: string): GlbChar | null {
   play('idle', false);
   return {
     root, height: (L.entry.height ?? 1.8) + 0.2, hand,
-    update(st, dt, moving, speed) {
+    update(st, dt, moving, speed, restart) {
       const want = st === 'walk' ? (L.map.run && speed > 3.5 ? 'run' : 'walk') : st;
-      if (want !== curState) {
+      if (want !== curState || (restart && (want === 'attack' || want === 'cast'))) {
         curState = want;
         play(want as HState, want === 'attack' || want === 'cast' || want === 'dead' || want === 'hurt');
       }

@@ -122,6 +122,14 @@ export class Renderer3D {
       // model geldi: o modeli kullanan görünümleri yeniden kur
       for (const [eid, v] of this.views) if (v.model === id && !v.glb) { this.dyn.remove(v.obj); this.views.delete(eid); }
       if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
+      // NPC'ler: yerinde yeni modelle değiştir
+      this.npcViews = this.npcViews.map((v) => {
+        if (v.model !== id || v.glb) return v;
+        const nv = this.humanView(id, 99, v.lx, v.ly);
+        nv.obj.position.copy(v.obj.position); nv.yaw = v.yaw;
+        this.dyn.remove(v.obj); this.dyn.add(nv.obj);
+        return Object.assign(nv, { npc: (v as unknown as { npc: string }).npc });
+      });
     });
   }
 
@@ -326,7 +334,9 @@ export class Renderer3D {
     const tt = now / 1000;
     const sp = dt > 0 ? (dist / dt) * 1000 : 0;
     v.speed = (v.speed ?? 0) * 0.8 + sp * 0.2;
-    if (v.glb) v.glb.update(v.state, dt, moving, v.speed);
+    const restart = (v.state === 'attack' || v.state === 'cast') && (v as View & { lastStart?: number }).lastStart !== animStart;
+    (v as View & { lastStart?: number }).lastStart = animStart;
+    if (v.glb) v.glb.update(v.state, dt, moving, v.speed, restart);
     else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
   }
