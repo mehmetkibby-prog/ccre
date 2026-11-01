@@ -26,23 +26,23 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     const c = gl.current!;
     let held = false; let lastHover = 0;
     // kamera döndürme (sağ/orta tuşla sürükle) ve iki parmakla döndür/yakınlaştır
-    let rot: { x: number; yaw: number; moved: boolean; btn: number } | null = null;
+    let rot: { x: number; y: number; yaw: number; pitch: number; moved: boolean; btn: number } | null = null;
     const touches = new Map<number, { x: number; y: number }>();
     let pinch: { d: number; a: number; zoom: number; yaw: number } | null = null;
     // tek parmak: dokun-bırak = tıkla; yana kaydır = kamerayı döndür
-    let drag: { id: number; x: number; y: number; t: number; yaw: number; zoom: number; rotating: boolean } | null = null;
+    let drag: { id: number; x: number; y: number; t: number; yaw: number; pitch: number; rotating: boolean } | null = null;
     const pos = (e: PointerEvent) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
     const down = (e: PointerEvent) => {
       if (!game) return;
       if (e.pointerType === 'touch') {
         touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
         if (touches.size === 2) { drag = null; const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), a: Math.atan2(b.y - a.y, b.x - a.x), zoom: game.renderer.camZoom, yaw: game.renderer.camYaw }; return; }
-        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), yaw: game.renderer.camYaw, zoom: game.renderer.camZoom, rotating: false };
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), yaw: game.renderer.camYaw, pitch: game.renderer.camPitch, rotating: false };
         try { c.setPointerCapture(e.pointerId); } catch { /* */ }
         return;
       }
       (document.activeElement as HTMLElement | null)?.blur?.();
-      if (e.button === 2 || e.button === 1) { rot = { x: e.clientX, yaw: game.renderer.camYaw, moved: false, btn: e.button }; c.setPointerCapture(e.pointerId); return; }
+      if (e.button === 2 || e.button === 1) { rot = { x: e.clientX, y: e.clientY, yaw: game.renderer.camYaw, pitch: game.renderer.camPitch, moved: false, btn: e.button }; c.setPointerCapture(e.pointerId); return; }
       held = true; const p = pos(e); game.clickScreen(p.x, p.y);
     };
     const move = (e: PointerEvent) => {
@@ -59,12 +59,12 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
           if (!drag.rotating && Math.hypot(dx, dy) > 14) drag.rotating = true;
           if (drag.rotating) {
             game.renderer.camYaw = drag.yaw - dx * 0.011;
-            game.renderer.camZoom = Math.max(0.6, Math.min(2.3, drag.zoom * Math.exp(-dy * 0.004)));
+            game.renderer.camPitch = Math.max(0.1, Math.min(1.3, drag.pitch + dy * 0.006));
           }
         }
         return;
       }
-      if (rot) { const dx = e.clientX - rot.x; if (Math.abs(dx) > 4) rot.moved = true; game.renderer.camYaw = rot.yaw - dx * 0.008; return; }
+      if (rot) { const dx = e.clientX - rot.x, dy = e.clientY - rot.y; if (Math.hypot(dx, dy) > 4) rot.moved = true; game.renderer.camYaw = rot.yaw - dx * 0.008; game.renderer.camPitch = Math.max(0.1, Math.min(1.3, rot.pitch + dy * 0.005)); return; }
       const p = pos(e);
       const now = performance.now();
       if (held && game.moveTarget) { const w = game.renderer.screenToWorld(p.x, p.y); game.moveTarget = w; }
@@ -370,7 +370,7 @@ function CameraControls({ game }: { game: Game }) {
       <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
       <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(2.3, r.camZoom * 1.015); })}>+</button>
       <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(0.6, r.camZoom / 1.015); })}>−</button>
-      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = 1; }}>⌂</button>
+      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = 1; r.camPitch = 0.62; }}>⌂</button>
     </div>
   );
 }

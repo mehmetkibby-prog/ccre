@@ -21,8 +21,8 @@ export class GrassField {
   private density: number;
   radius: number;
   constructor(private l: MapLayout, private heightAt: (x: number, y: number) => number, quality: string) {
-    this.density = quality === 'high' ? 7 : 4; // m² başına öbek
-    this.radius = quality === 'high' ? 36 : 26;
+    this.density = quality === 'high' ? 7 : 3; // m² başına öbek
+    this.radius = quality === 'high' ? 36 : 22;
     fadeR.value = this.radius;
     // 3 çapraz kart; normaller yukarı eğik (yumuşak ışık)
     const parts: THREE.BufferGeometry[] = [];

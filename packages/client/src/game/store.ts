@@ -32,13 +32,19 @@ export interface UiState {
   modal: { title: string; lines: string[] } | null;
   upgradeResult: { ok: boolean; before: number; after: number; chance: number } | null;
   lootFeed: { id: number; text: string; rarity: string; at: number }[];
-  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number };
+  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number };
 }
 
 const SETTINGS_KEY = 'col_settings';
 function loadSettings(): UiState['settings'] {
-  const def = { music: 0.5, sfx: 0.7, quality: 'high' as const, zoom: 1, showNames: true, showDamage: true, fpsCap: 60 };
-  try { return { ...def, ...JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}') }; } catch { return def; }
+  // telefon/tablet: orta kalite (pahalı ortam gölgelemesi kapalı, düşük çözünürlük)
+  const touch = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+  const def = { music: 0.5, sfx: 0.7, quality: (touch ? 'medium' : 'high') as UiState['settings']['quality'], zoom: 1, showNames: true, showDamage: true, fpsCap: 60, v: 2 };
+  try {
+    const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) ?? '{}');
+    if (saved.v !== 2) delete saved.quality; // eski sürümün "yüksek" varsayılanını taşıma
+    return { ...def, ...saved, v: 2 };
+  } catch { return def; }
 }
 
 let state: UiState = {

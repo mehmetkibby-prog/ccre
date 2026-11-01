@@ -13,7 +13,7 @@ const ox = Number(q.get('ox') ?? 0), oy = Number(q.get('oy') ?? 0);
 const g: any = { selfId: 1, cls, dx: l.spawn.x + ox, dy: l.spawn.y + oy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
 const r = new Renderer3D(g, document.getElementById('gl') as HTMLCanvasElement, document.getElementById('ov') as HTMLCanvasElement);
 r.setLayout(l);
-r.camYaw = Number(q.get('yaw') ?? 0); r.camZoom = Number(q.get('cz') ?? 1);
+r.camYaw = Number(q.get('yaw') ?? 0); r.camZoom = Number(q.get('cz') ?? 1); r.camPitch = Number(q.get('cp') ?? 0.62);
 store.set({ char: { id: 1, name: 'Çağlar', cls, role: 'player' }, hp: 100, maxHp: 100 });
 let id = 10;
 const mk = (kind: number, x: number, y: number, extra: Partial<CEnt>): CEnt => ({ id: id++, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: 0, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 5, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra });

@@ -238,8 +238,8 @@ export function sculptedTemplate(id: string): THREE.Object3D | null {
   if (!def) return null;
   const t0 = performance.now();
   const BI = BIf();
-  const bodyGeo = sculpt(def.body, BI, { min: [-0.44, 0.0, -0.3], max: [0.44, 1.62, 0.3] }, 0.0115);
-  const headGeo = sculpt(def.head, BI, { min: [-0.17, 1.5, -0.3], max: [0.17, 1.95, 0.2] }, 0.0065);
+  const bodyGeo = sculpt(def.body, BI, { min: [-0.44, 0.0, -0.3], max: [0.44, 1.62, 0.3] }, 0.016);
+  const headGeo = sculpt(def.head, BI, { min: [-0.17, 1.5, -0.3], max: [0.17, 1.95, 0.2] }, 0.0085);
   const geo = mergeGroups(bodyGeo, headGeo);
   const cloth = objTexture('cloth');
   const mats = [

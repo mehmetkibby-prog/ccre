@@ -74,7 +74,9 @@ export class Renderer3D {
   selfRing: THREE.Mesh;
   grass: GrassField | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
-  camYaw = 0; camZoom = 1; private camYawS = 0; private camZoomS = 1;
+  camYaw = 0; camZoom = 1; camPitch = 0.62; private camYawS = 0; private camZoomS = 1; private camPitchS = 0.62;
+  /** Dinamik çözünürlük: FPS düşünce piksel oranı kendiliğinden azalır. */
+  private dynScale = 1; private fpsAcc = 0; private fpsFrames = 0; private fpsAt = 0;
   private skyTex: THREE.Texture | null = null;
   quality = '';
   camTarget = new THREE.Vector3();
@@ -92,7 +94,7 @@ export class Renderer3D {
     this.octx = overlay.getContext('2d')!;
     this.scene.add(this.world, this.dyn, this.fx.group, this.sun, this.sun.target, this.hemi);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(q === 'high' ? 2048 : 1024, q === 'high' ? 2048 : 1024);
+    this.sun.shadow.mapSize.set(q === 'high' ? 2048 : q === 'medium' ? 1024 : 512, q === 'high' ? 2048 : q === 'medium' ? 1024 : 512);
     const sc = this.sun.shadow.camera; sc.left = -22; sc.right = 22; sc.top = 22; sc.bottom = -22; sc.near = 1; sc.far = 90;
     this.sun.shadow.bias = -0.0004; this.sun.shadow.normalBias = 0.03;
     // ortam yansıması (metal zırh için)
@@ -171,6 +173,7 @@ export class Renderer3D {
     // tema ışığı
     const th = THEME[l.def.theme as keyof typeof THEME] ?? THEME.forest;
     this.scene.fog = new THREE.Fog(th.fog, th.near, th.far);
+    this.camera.far = th.far + 20; this.camera.updateProjectionMatrix(); // sisin ötesi çizilmez
     this.scene.background = this.skyGradient(th.top, th.fog);
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
@@ -178,6 +181,17 @@ export class Renderer3D {
     // kendi karakterini yeniden ekle
     if (this.self) this.dyn.add(this.self.obj);
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
+  }
+
+  /** Son 2 sn'nin ortalaması 38 FPS'in altındaysa çözünürlüğü %12 düşür; 55'in üstündeyse geri yükselt. */
+  private adaptResolution(now: number, dt: number) {
+    if (document.hidden) return;
+    this.fpsAcc += dt; this.fpsFrames++;
+    if (now - this.fpsAt < 2000) return;
+    const fps = (this.fpsFrames * 1000) / Math.max(1, this.fpsAcc);
+    this.fpsAt = now; this.fpsAcc = 0; this.fpsFrames = 0;
+    if (fps < 38 && this.dynScale > 0.55) this.dynScale = Math.max(0.55, this.dynScale * 0.88);
+    else if (fps > 55 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.06);
   }
 
   private skyGradient(top: number, horizon: number): THREE.Texture {
@@ -201,7 +215,7 @@ export class Renderer3D {
     const q = store.get().settings.quality;
     if (q !== this.quality) { this.setupComposer(); this.renderer.shadowMap.enabled = q !== 'low'; }
     const maxDpr = q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1;
-    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+    const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     if (w !== this.w || h !== this.h || dpr !== this.dpr) {
       this.w = w; this.h = h; this.dpr = dpr;
@@ -319,6 +333,7 @@ export class Renderer3D {
 
   // ───────── çerçeve ─────────
   draw(now: number, dt: number) {
+    this.adaptResolution(now, dt);
     this.resize();
     if (!this.terrain) return;
     const g = this.g;
@@ -385,14 +400,20 @@ export class Renderer3D {
     let dy = this.camYaw - this.camYawS; while (dy > Math.PI) dy -= Math.PI * 2; while (dy < -Math.PI) dy += Math.PI * 2;
     this.camYawS += dy * Math.min(1, dt / 90);
     this.camZoomS += (this.camZoom * zoom - this.camZoomS) * Math.min(1, dt / 110);
-    const zk = THREE.MathUtils.clamp((this.camZoomS - 0.7) / 1.6, 0, 1); // 0 uzak · 1 yakın
-    const dist = co ? co.dist : THREE.MathUtils.lerp(19, 6.5, zk);
-    const pitch = co ? co.pitch : THREE.MathUtils.lerp(0.9, 0.42, zk);
+    const zk = THREE.MathUtils.clamp((this.camZoomS - 0.6) / 1.7, 0, 1); // 0 uzak · 1 yakın
+    this.camPitch = THREE.MathUtils.clamp(this.camPitch, 0.1, 1.3);
+    this.camPitchS += (this.camPitch - this.camPitchS) * Math.min(1, dt / 90);
+    const dist = co ? co.dist : THREE.MathUtils.lerp(17, 5.5, zk);
+    const pitch = co ? co.pitch : this.camPitchS;
     let sx = 0, sy = 0;
     if (this.shakeAmt > 0.002) { sx = (Math.random() - 0.5) * this.shakeAmt; sy = (Math.random() - 0.5) * this.shakeAmt; this.shakeAmt *= Math.pow(0.003, dt / 1000); }
     const hd = Math.cos(pitch) * dist;
-    this.camera.position.set(this.camTarget.x + Math.sin(this.camYawS) * hd + sx, this.camTarget.y + Math.sin(pitch) * dist + sy, this.camTarget.z + Math.cos(this.camYawS) * hd);
-    this.camera.lookAt(this.camTarget.x, this.camTarget.y + THREE.MathUtils.lerp(0.8, 1.3, zk), this.camTarget.z);
+    const cx = this.camTarget.x + Math.sin(this.camYawS) * hd + sx, cz = this.camTarget.z + Math.cos(this.camYawS) * hd;
+    // kamera yerin içine girmesin (tepe/yamaç)
+    const ground = this.heightAt(cx / U, cz / U) + 0.7;
+    this.camera.position.set(cx, Math.max(ground, this.camTarget.y + Math.sin(pitch) * dist + sy), cz);
+    // alçak açıda biraz yukarı bak: ufuk görünsün
+    this.camera.lookAt(this.camTarget.x, this.camTarget.y + 1.1 + (1 - Math.min(1, pitch / 0.6)) * 0.8, this.camTarget.z);
     this.g.camYaw = this.camYawS;
     shared.cam.value.copy(this.camera.position);
     shared.focus.value.set(tx, ty + 1.0, tz);
@@ -501,11 +522,15 @@ export class Renderer3D {
     ray.setFromCamera(new THREE.Vector2((sx / this.w) * 2 - 1, -(sy / this.h) * 2 + 1), this.camera);
     let h = this.camTarget.y;
     const p = new THREE.Vector3();
+    let hit = false;
     for (let i = 0; i < 3; i++) {
       const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -h);
       if (!ray.ray.intersectPlane(plane, p)) break;
+      hit = true;
       h = this.heightAt(p.x / U, p.z / U);
     }
+    // ufka/göğe dokunuldu: yere ışın değmiyor → olduğun yerde kal
+    if (!hit || p.distanceTo(this.camTarget) > 60) return { x: this.g.dx, y: this.g.dy };
     return { x: p.x / U, y: p.z / U };
   }
   /** Ekranda en yakın varlık/NPC (piksel mesafesi). */

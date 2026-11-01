@@ -393,7 +393,9 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
   const groups = new Map<string, Prop[]>();
   for (const p of props) {
     if (quality === 'low' && (p.k === 'grasstuft' || p.k === 'flowers')) continue;
-    const key = p.k + '|' + variantFor(p);
+    // 40 m'lik hücreler: her hücre ayrı InstancedMesh → görüş/gölge dışı kalanlar çizilmez
+    const cell = Math.floor((p.x * U) / 40) + ':' + Math.floor((p.y * U) / 40);
+    const key = p.k + '|' + variantFor(p) + '|' + cell;
     const arr = groups.get(key) ?? []; arr.push(p); groups.set(key, arr);
   }
   const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), pos = new THREE.Vector3(), e = new THREE.Euler();
