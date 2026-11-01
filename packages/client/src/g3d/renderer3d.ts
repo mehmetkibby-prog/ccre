@@ -400,7 +400,11 @@ export class Renderer3D {
     const co = (this as any).camOverride as { x: number; y: number; dist: number; pitch: number } | undefined;
     const fx0 = co ? co.x : g.dx, fy0 = co ? co.y : g.dy;
     const tx = fx0 * U, tz = fy0 * U, ty = this.heightAt(fx0, fy0);
-    this.camTarget.lerp(this.tmpV.set(tx, ty, tz), this.camTarget.lengthSq() === 0 ? 1 : Math.min(1, dt / 70));
+    // yatayda oyuncuya kilitli (kare süresine bağlı gecikme FPS dalgalanınca karakteri ekranda oynatıyordu);
+    // yalnız yükseklik, zamandan bağımsız üstel yumuşatmayla izlenir
+    const first = this.camTarget.lengthSq() === 0 || Math.hypot(this.camTarget.x - tx, this.camTarget.z - tz) > 30;
+    this.camTarget.x = tx; this.camTarget.z = tz;
+    this.camTarget.y = first ? ty : this.camTarget.y + (ty - this.camTarget.y) * (1 - Math.pow(0.0005, dt / 1000));
     // yumuşak dönüş/yakınlaşma; yakınlaştıkça kamera alçalır (3B his)
     let dy = this.camYaw - this.camYawS; while (dy > Math.PI) dy -= Math.PI * 2; while (dy < -Math.PI) dy += Math.PI * 2;
     this.camYawS += dy * Math.min(1, dt / 90);

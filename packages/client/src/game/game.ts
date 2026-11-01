@@ -33,6 +33,10 @@ export class Game {
   // kendi karakter tahmini
   px = 0; py = 0; // tahmin edilen
   dx = 0; dy = 0; // ekranda gösterilen
+  // Sabit 20 Hz adımlı tahmin, ekranda iki adım arası doğrusal akar (sabit hız, titreme yok).
+  // Sunucu düzeltmesi görüntüde sıçrama yapmasın diye ayrı bir ofsette tutulur ve hızla söner.
+  private ppx = 0; private ppy = 0; // bir önceki adımın tahmini
+  private corrX = 0; private corrY = 0;
   sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; lastMoveAt = 0; selfFlags = 0;
   seq = 0;
   pending: { seq: number; dir: number }[] = [];
@@ -93,7 +97,7 @@ export class Game {
   setMap(id: string, x: number, y: number) {
     this.layout = getLayout(id);
     this.ents.clear();
-    this.px = this.dx = x || this.layout.spawn.x; this.py = this.dy = y || this.layout.spawn.y;
+    this.px = this.dx = this.ppx = x || this.layout.spawn.x; this.py = this.dy = this.ppy = y || this.layout.spawn.y; this.corrX = this.corrY = 0;
     this.pending = [];
     this.targetId = 0; this.moveTarget = null; this.autoAttack = false;
     this.renderer.setLayout(this.layout);
@@ -113,7 +117,7 @@ export class Game {
       case 'self': store.set((s) => ({ self: { ...(s.self ?? ({} as any)), ...strip(m) } })); break;
       case 'map': {
         const same = m.map === this.layout.def.id;
-        if (same) { this.px = this.dx = m.x; this.py = this.dy = m.y; this.pending = []; }
+        if (same) { this.px = this.dx = this.ppx = m.x; this.py = this.dy = this.ppy = m.y; this.corrX = this.corrY = 0; this.pending = []; }
         else { this.setMap(m.map, m.x, m.y); notify(MAPS[m.map]?.name ?? m.map, 'zone'); }
         this.fx.shapes.push({ kind: 'teleport', x: m.x, y: m.y, r: 0, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '' });
         sfx.play('teleport');
@@ -201,9 +205,13 @@ export class Game {
     const pos = { x: s.sx, y: s.sy };
     const speed = this.speed();
     for (const p of this.pending) stepMove(this.layout, pos, p.dir, speed);
-    const err = Math.hypot(pos.x - this.px, pos.y - this.py);
+    const ex = pos.x - this.px, ey = pos.y - this.py;
+    if (ex === 0 && ey === 0) return;
     this.px = pos.x; this.py = pos.y;
-    if (err > 220) { this.dx = this.px; this.dy = this.py; }
+    // ışınlanma / büyük sapma: anında; küçük sapma: görüntü yerinde kalır, fark birkaç karede erir
+    if (Math.hypot(ex, ey) > 220) { this.ppx = this.px; this.ppy = this.py; this.dx = this.px; this.dy = this.py; this.corrX = this.corrY = 0; return; }
+    this.ppx += ex; this.ppy += ey;
+    this.corrX -= ex; this.corrY -= ey;
   }
 
   speed() { return store.get().self?.combat?.speed ?? CLASSES[this.cls].speed; }
@@ -312,13 +320,20 @@ export class Game {
     this.lastFrame = t;
     this.inputAcc += dt;
     let n = 0;
-    while (this.inputAcc >= 50 && n < 4) { this.inputTick(); this.inputAcc -= 50; n++; }
+    while (this.inputAcc >= 50 && n < 4) {
+      this.ppx = this.px; this.ppy = this.py;
+      this.inputTick();
+      this.inputAcc -= 50; n++;
+    }
     if (this.inputAcc > 200) this.inputAcc = 0;
-    // görüntülenen konumu tahmine yumuşakça yaklaştır
-    const k = 1 - Math.pow(0.0005, dt / 1000);
-    const ex = this.px - this.dx, ey = this.py - this.dy;
-    if (Math.hypot(ex, ey) < 0.5) { this.dx = this.px; this.dy = this.py; }
-    else { this.dx += ex * Math.min(1, k * 1.6 + 0.35); this.dy += ey * Math.min(1, k * 1.6 + 0.35); }
+    // görüntü: son iki tahmin adımı arasında sabit hızla akar + sönen düzeltme ofseti
+    const a = Math.min(1, Math.max(0, this.inputAcc / 50));
+    const decay = Math.pow(0.002, dt / 1000); // ~0,15 sn'de erir
+    this.corrX *= decay; this.corrY *= decay;
+    if (Math.abs(this.corrX) < 0.05) this.corrX = 0;
+    if (Math.abs(this.corrY) < 0.05) this.corrY = 0;
+    this.dx = this.ppx + (this.px - this.ppx) * a + this.corrX;
+    this.dy = this.ppy + (this.py - this.ppy) * a + this.corrY;
     this.interpolate(t);
     this.renderer.draw(t, dt);
     this.frames++;
