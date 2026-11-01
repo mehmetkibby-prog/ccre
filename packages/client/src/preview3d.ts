@@ -51,4 +51,4 @@ const loop = (t: number) => {
   requestAnimationFrame(loop);
 };
 requestAnimationFrame(loop);
-(window as any).ready = true;
+(window as any).ready = true; (window as any).__r = r;

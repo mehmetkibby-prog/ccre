@@ -4,7 +4,6 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, onModelReady, loadManifest, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
@@ -23,6 +22,9 @@ import { store } from '../game/store.ts';
 
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
+/** Dokunmatik (telefon/tablet): ekran kartı bant genişliği dar, tam ekran efekt geçişleri pahalı. */
+const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+
 const THEME = {
   // Aydınlık, sıcak gündüz: güçlü gök ışığı (gölgeler kararmasın), açık sis ve gökyüzü
   village: { fog: 0xc4d2d8, top: 0x7aa6d6, sky: 0xd8e6f2, ground: 0x8a7c62, sun: 0xfff0d8, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 55, far: 140 },
@@ -33,21 +35,6 @@ const THEME = {
   ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 48, far: 125 },
 } as const;
 
-/** Renk düzenleme: hafif doygunluk düşüşü, kontrast, sıcak ışık / soğuk gölge, kenar karartma. */
-const GradeShader = {
-  uniforms: { tDiffuse: { value: null }, uSat: { value: 1.04 }, uCon: { value: 1.0 }, uVig: { value: 0.1 } },
-  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uSat; uniform float uCon; uniform float uVig; varying vec2 vUv;
-    void main(){
-      vec4 c = texture2D(tDiffuse, vUv);
-      float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
-      vec3 col = mix(vec3(l), c.rgb, uSat);
-      col = (col - 0.5) * uCon + 0.5;
-      col += mix(vec3(-0.012, 0.0, 0.02), vec3(0.03, 0.012, -0.02), smoothstep(0.2, 0.8, l));
-      vec2 d = vUv - 0.5; col *= 1.0 - uVig * smoothstep(0.35, 0.85, length(d * vec2(1.25, 1.0)));
-      gl_FragColor = vec4(clamp(col, 0.0, 1.0), c.a);
-    }`,
-};
 
 interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh }
 
@@ -78,6 +65,7 @@ export class Renderer3D {
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
   camYaw = 0; camZoom = 1; camPitch = 0.62; private camYawS = 0; private camZoomS = 1; private camPitchS = 0.62;
   /** Dinamik çözünürlük: FPS düşünce piksel oranı kendiliğinden azalır. */
+  private frameNo = 0;
   private dynScale = 1; private fpsAcc = 0; private fpsFrames = 0; private fpsAt = 0;
   private skyTex: THREE.Texture | null = null;
   quality = '';
@@ -92,7 +80,9 @@ export class Renderer3D {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
     this.renderer.shadowMap.enabled = q !== 'low';
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.type = MOBILE ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+    // telefonda gölge haritası iki karede bir yenilenir (karakter gölgeleri 30 Hz'de akıcı görünür)
+    if (MOBILE) this.renderer.shadowMap.autoUpdate = false;
     this.octx = overlay.getContext('2d')!;
     this.scene.add(this.world, this.dyn, this.fx.group, this.sun, this.sun.target, this.hemi);
     this.sun.castShadow = true;
@@ -138,7 +128,9 @@ export class Renderer3D {
   private setupComposer() {
     const q = store.get().settings.quality;
     this.quality = q;
-    if (q === 'low') { this.composer = null; return; }
+    // Telefonda efekt zinciri yok: sahne doğrudan ekrana çizilir (donanım kenar yumuşatma, ton eşleme aynı geçişte).
+    // Bu, her karede 4–6 tam ekran geçişi ve ortam gölgelendirmesi için sahnenin ikinci kez çizilmesini kaldırır.
+    if (q === 'low' || MOBILE) { this.composer = null; this.bloom = null; return; }
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     if (q === 'high') {
@@ -150,7 +142,6 @@ export class Renderer3D {
     this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
-    this.composer.addPass(new ShaderPass(GradeShader));
   }
 
   heightAt(x: number, y: number) { return this.terrain ? this.terrain.heightAt(x, y) : 0; }
@@ -193,15 +184,16 @@ export class Renderer3D {
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
   }
 
-  /** Son 2 sn'nin ortalaması 38 FPS'in altındaysa çözünürlüğü %12 düşür; 55'in üstündeyse geri yükselt. */
+  /** Son 2 sn'nin ortalamasına göre çizim çözünürlüğünü ayarla (hedef 60 FPS). */
   private adaptResolution(now: number, dt: number) {
     if (document.hidden) return;
     this.fpsAcc += dt; this.fpsFrames++;
     if (now - this.fpsAt < 2000) return;
     const fps = (this.fpsFrames * 1000) / Math.max(1, this.fpsAcc);
     this.fpsAt = now; this.fpsAcc = 0; this.fpsFrames = 0;
-    if (fps < 38 && this.dynScale > 0.55) this.dynScale = Math.max(0.55, this.dynScale * 0.88);
-    else if (fps > 55 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.06);
+    // hedef akıcı 60 FPS: 50'nin altında çözünürlük kademeli düşer, 57'nin üstünde geri çıkar
+    if (fps < 50 && this.dynScale > 0.6) this.dynScale = Math.max(0.6, this.dynScale * (fps < 35 ? 0.82 : 0.9));
+    else if (fps > 57 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
   }
 
   private skyGradient(top: number, horizon: number): THREE.Texture {
@@ -224,7 +216,7 @@ export class Renderer3D {
   resize() {
     const q = store.get().settings.quality;
     if (q !== this.quality) { this.setupComposer(); this.renderer.shadowMap.enabled = q !== 'low'; }
-    const maxDpr = q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1;
+    const maxDpr = MOBILE ? (q === 'high' ? 1.5 : q === 'medium' ? 1.2 : 1) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
     const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     if (w !== this.w || h !== this.h || dpr !== this.dpr) {
@@ -235,7 +227,7 @@ export class Renderer3D {
       this.composer?.setSize(w, h);
       this.camera.aspect = w / Math.max(1, h);
       this.camera.updateProjectionMatrix();
-      const odpr = Math.min(window.devicePixelRatio || 1, 2);
+      const odpr = Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2);
       this.overlay.width = Math.round(w * odpr); this.overlay.height = Math.round(h * odpr);
       this.octx.setTransform(odpr, 0, 0, odpr, 0, 0);
       this.fx.setScale(h * dpr * 0.9);
@@ -434,6 +426,7 @@ export class Renderer3D {
     this.sun.position.set(this.camTarget.x + 26, this.camTarget.y + 24, this.camTarget.z + 14);
     this.sun.target.position.copy(this.camTarget);
     // çiz
+    if (MOBILE && (this.frameNo++ & 1) === 0) this.renderer.shadowMap.needsUpdate = true;
     if (this.composer) this.composer.render(); else this.renderer.render(this.scene, this.camera);
     this.drawOverlay(now);
   }
