@@ -29,7 +29,7 @@ if (q.get('show') !== 'none') {
 const lineup = q.get('lineup');
 if (lineup) {
   g.ents.clear();
-  const list = lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
+  const list = lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup.startsWith('p') ? [['P', Number(lineup.slice(1))]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
   list.forEach(([k, v], i) => {
     const x = sx + (i - (list.length - 1) / 2) * (lineup === 'mons' ? 110 : 75), y = sy + 20;
     if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: Number(q.get('dir') ?? 64), level: 30, weapon: 3 }));

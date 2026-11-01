@@ -21,8 +21,8 @@ export class GrassField {
   private density: number;
   radius: number;
   constructor(private l: MapLayout, private heightAt: (x: number, y: number) => number, quality: string) {
-    this.density = quality === 'high' ? 7 : 3; // m² başına öbek
-    this.radius = quality === 'high' ? 36 : 22;
+    this.density = quality === 'high' ? 3.6 : 1.5; // m² başına öbek (seyrek, sakin)
+    this.radius = quality === 'high' ? 30 : 18;
     fadeR.value = this.radius;
     // 3 çapraz kart; normaller yukarı eğik (yumuşak ışık)
     const parts: THREE.BufferGeometry[] = [];
@@ -35,7 +35,7 @@ export class GrassField {
     this.geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     this.geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     const frozen = l.def.theme === 'frozen';
-    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xd0dcd4 : 0xd2dca8 });
+    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xc8d4cc : 0xbac69a });
     addWind(m, 0.1, 0.4);
     addFade(m); // rüzgârdan önce çalışır
     this.mat = m;
@@ -67,7 +67,7 @@ export class GrassField {
       if (l.blocked[ty * l.w + tx] && r2 < 0.6) continue;
       p.set(gx, this.heightAt(sx, sy) - 0.02, gz);
       e.set(0, r3 * 6.283, 0); q.setFromEuler(e);
-      const sc = 0.65 + r2 * 0.75; s.set(sc, sc * (k > 1 ? 1.35 : 1) * (0.8 + r1 * 0.5), sc);
+      const sc = 0.6 + r2 * 0.5; s.set(sc, sc * (k > 1 ? 1.2 : 0.9) * (0.75 + r1 * 0.4), sc);
       mats.push(m4.compose(p, q, s).clone());
     }
     if (!mats.length) return null;

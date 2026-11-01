@@ -312,32 +312,37 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
   let seed = 7;
   const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
   if (kind === 'broad') {
-    for (let i = 0; i < 110; i++) {
-      const x = 16 + rnd() * (S - 32), y = 16 + rnd() * (S - 32), a = rnd() * Math.PI * 2, l = 11 + rnd() * 11;
-      const g = 70 + rnd() * 70, yellow = rnd() < 0.12 ? 1 : 0;
+    // yumuşak yaprak kütlesi: dar renk aralığı, damar çizgisi yok, hafif bulanık kenar
+    ctx.filter = 'blur(0.7px)';
+    for (let i = 0; i < 170; i++) {
+      const x = 18 + rnd() * (S - 36), y = 18 + rnd() * (S - 36), a = rnd() * Math.PI * 2, l = 12 + rnd() * 10;
+      const g = 92 + rnd() * 34, yellow = rnd() < 0.08 ? 1 : 0;
       ctx.save(); ctx.translate(x, y); ctx.rotate(a);
       const grd = ctx.createLinearGradient(-l * 0.5, 0, l * 0.5, 0);
-      grd.addColorStop(0, `rgb(${g * (0.55 + yellow * 0.3)},${g},${g * 0.3})`); grd.addColorStop(1, `rgb(${g * (0.4 + yellow * 0.3)},${g * 0.78},${g * 0.24})`);
+      grd.addColorStop(0, `rgb(${g * (0.52 + yellow * 0.25)},${g},${g * 0.34})`); grd.addColorStop(1, `rgb(${g * (0.46 + yellow * 0.25)},${g * 0.88},${g * 0.3})`);
       ctx.fillStyle = grd;
-      ctx.beginPath(); ctx.moveTo(0, -l); ctx.quadraticCurveTo(l * 0.55, -l * 0.1, 0, l); ctx.quadraticCurveTo(-l * 0.55, -l * 0.1, 0, -l); ctx.fill();
-      ctx.strokeStyle = 'rgba(20,30,10,0.45)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(0, -l); ctx.lineTo(0, l); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -l); ctx.quadraticCurveTo(l * 0.6, -l * 0.1, 0, l); ctx.quadraticCurveTo(-l * 0.6, -l * 0.1, 0, -l); ctx.fill();
       ctx.restore();
     }
+    ctx.filter = 'none';
   } else if (kind === 'needle') {
-    ctx.strokeStyle = '#2e2216'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(S / 2, S); ctx.lineTo(S / 2, 10); ctx.stroke();
-    for (let i = 0; i < 340; i++) {
+    ctx.strokeStyle = '#3a2c1e'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(S / 2, S); ctx.lineTo(S / 2, 10); ctx.stroke();
+    ctx.filter = 'blur(0.5px)';
+    for (let i = 0; i < 300; i++) {
       const y = 10 + rnd() * (S - 20), side = rnd() < 0.5 ? -1 : 1, l = (S - y) * 0.16 + 16 + rnd() * 18;
-      const g = 55 + rnd() * 60;
-      ctx.strokeStyle = `rgb(${g * 0.4},${g},${g * 0.55})`; ctx.lineWidth = 1.6;
+      const g = 70 + rnd() * 30;
+      ctx.strokeStyle = `rgb(${g * 0.45},${g},${g * 0.6})`; ctx.lineWidth = 1.9;
       ctx.beginPath(); ctx.moveTo(S / 2, y); ctx.lineTo(S / 2 + side * l, y + l * 0.5); ctx.stroke();
     }
+    ctx.filter = 'none';
   } else {
-    for (let i = 0; i < 70; i++) {
-      const x = rnd() * S, h = S * (0.45 + rnd() * 0.55), g = 70 + rnd() * 70;
+    // ince, sakin çimen: az sap, dar renk aralığı, dip zemin rengine yakın
+    for (let i = 0; i < 46; i++) {
+      const x = 10 + rnd() * (S - 20), h = S * (0.4 + rnd() * 0.45), g = 96 + rnd() * 28;
       const grd = ctx.createLinearGradient(0, S, 0, S - h);
-      grd.addColorStop(0, `rgb(${g * 0.42},${g * 0.56},${g * 0.24})`); grd.addColorStop(1, `rgb(${g * 0.8},${g * 1.05},${g * 0.46})`);
-      ctx.strokeStyle = grd; ctx.lineWidth = 1.6 + rnd() * 2.2;
-      ctx.beginPath(); ctx.moveTo(x, S); ctx.quadraticCurveTo(x + (rnd() - 0.5) * 24, S - h * 0.6, x + (rnd() - 0.5) * 50, S - h); ctx.stroke();
+      grd.addColorStop(0, `rgb(${g * 0.5},${g * 0.6},${g * 0.3})`); grd.addColorStop(1, `rgb(${g * 0.78},${g * 0.98},${g * 0.5})`);
+      ctx.strokeStyle = grd; ctx.lineWidth = 1.4 + rnd() * 1.4; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(x, S); ctx.quadraticCurveTo(x + (rnd() - 0.5) * 18, S - h * 0.6, x + (rnd() - 0.5) * 34, S - h); ctx.stroke();
     }
   }
   const tex = new THREE.CanvasTexture(cv);

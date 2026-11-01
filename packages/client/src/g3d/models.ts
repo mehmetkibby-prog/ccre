@@ -18,7 +18,7 @@ import type { HState } from './humanoid.ts';
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
 export interface ModelEntry { url: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
-interface Loaded { scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
+interface Loaded { sphere?: THREE.Sphere; scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
 let manifest: Record<string, ModelEntry> | null = null;
@@ -111,7 +111,6 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
     const m = o as THREE.Mesh;
     if (m.isMesh) {
       m.castShadow = true; m.receiveShadow = true;
-      if ((m as THREE.SkinnedMesh).isSkinnedMesh) m.frustumCulled = false;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
       for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; }
     }
@@ -156,7 +155,7 @@ export function model(id: string): Loaded | null {
 }
 
 export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
-export interface GlbChar { root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D; bones: GlbBones }
+export interface GlbChar { id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
 /**
@@ -205,6 +204,15 @@ export function createGlbChar(id: string): GlbChar | null {
   };
   const hand = bones.handR;
   root.updateMatrixWorld(true);
+  // Görüş dışı eleme: iskeletli ağın sınır küresi bağlanma pozunda bir kez hesaplanır, animasyon payıyla büyütülür.
+  // (Önceden eleme kapalıydı; köydeki tüm karakterler kamera arkasında da gölgeleriyle çiziliyordu.)
+  inner.traverse((o) => {
+    const sm = o as THREE.SkinnedMesh;
+    if (!sm.isSkinnedMesh) return;
+    if (!L.sphere) { sm.computeBoundingSphere(); L.sphere = sm.boundingSphere!.clone(); L.sphere.radius *= 1.6; }
+    sm.boundingSphere = L.sphere.clone();
+    sm.frustumCulled = true;
+  });
   const attackClips = (L.entry.attackClips ?? []).map((n) => L.clips.find((c) => c.name === n)).filter(Boolean) as THREE.AnimationClip[];
   let attackN = 0;
   const play = (st: HState | 'run', once: boolean) => {
@@ -224,7 +232,7 @@ export function createGlbChar(id: string): GlbChar | null {
   };
   play('idle', false);
   return {
-    root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
+    id, root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
     update(st, dt, moving, speed, restart) {
       const want = st === 'walk' ? (L.map.run && speed > 3.5 ? 'run' : 'walk') : st;
       if (want !== curState || (restart && (want === 'attack' || want === 'cast'))) {
