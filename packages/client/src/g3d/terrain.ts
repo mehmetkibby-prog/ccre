@@ -25,20 +25,27 @@ export class Terrain {
     const seed = l.def.seed;
     const theme = l.def.theme;
     const gAt = (tx: number, ty: number) => l.ground[Math.max(0, Math.min(l.h - 1, ty)) * l.w + Math.max(0, Math.min(l.w - 1, tx))];
-    // yükseklikler
+    // yükseklikler: yabani haritalarda tepeler ve kenarlarda kayalık yamaçlar
+    const wild = theme !== 'village' && theme !== 'lake';
+    const spx = layout.spawn.x / TILE, spy = layout.spawn.y / TILE;
     for (let j = 0; j < this.hh; j++) for (let i = 0; i < this.hw; i++) {
       const tx = i / SUB, ty = j / SUB;
-      let h = (fbm(tx / l.w, ty / l.h, 3, 4, seed) - 0.5) * (theme === 'village' ? 0.5 : 1.4);
+      let h = (fbm(tx / l.w, ty / l.h, 3, 4, seed) - 0.5) * (wild ? 3.4 : 0.6) + (fbm(tx / 9, ty / 9, 2, 3, seed + 11) - 0.5) * (wild ? 0.7 : 0.15);
+      // doğuş noktası çevresi daha düz
+      const ds = Math.hypot(tx - spx, ty - spy);
+      if (ds < 8) h *= 0.35 + 0.65 * (ds / 8);
       // su çukurları: komşu tile'ların su oranı
       let water = 0, cnt = 0;
       for (let dy = -1; dy <= 0; dy++) for (let dx = -1; dx <= 0; dx++) { const g = gAt(Math.floor(tx) + dx, Math.floor(ty) + dy); if (g === G_WATER || g === G_DEEP) water += g === G_DEEP ? 1.6 : 1; cnt++; }
-      h -= (water / cnt) * 1.1;
-      // sınır tepeleri (doğal duvar)
+      h -= (water / cnt) * 1.3;
+      // sınır yamaçları (doğal duvar)
       const edge = Math.min(tx, ty, l.w - tx, l.h - ty);
-      if (edge < 3) h += (3 - edge) * (theme === 'village' ? 0.5 : 0.9) * (0.6 + fbm(tx / 7, ty / 7, 2, 2, seed + 3) * 0.8);
+      const rim = wild ? 5 : 3;
+      if (edge < rim) h += Math.pow(rim - edge, 1.35) * (wild ? 1.25 : 0.55) * (0.55 + fbm(tx / 6, ty / 6, 2, 3, seed + 3) * 0.9);
       // yollar ve meydan düz
       const g = gAt(Math.floor(tx), Math.floor(ty));
       if (g === 3 || g === 9 || g === 11) h = h * 0.25 + 0.02;
+      else if (g === 2) h *= 0.75;
       this.heights[j * this.hw + i] = h;
     }
     // geometri
@@ -95,23 +102,31 @@ void groundBlend(){
   vec2 suv = uv + j * (${(TILE_M * 0.9).toFixed(3)} / uMapSize);
   vec4 s0 = texture2D(uSplat0, suv), s1 = texture2D(uSplat1, suv), s2 = texture2D(uSplat2, suv);
   float w[${nl}];
-  w[0]=s0.r; w[1]=s0.g; w[2]=s0.b; w[3]=s0.a; w[4]=s1.r; w[5]=s1.g; w[6]=s1.b; w[7]=s1.a; w[8]=s2.r; w[9]=s2.g;
-  vec2 tuv = vWPos.xz / 2.6;
+  vec4 SP[3]; SP[0]=s0; SP[1]=s1; SP[2]=s2;
+  for (int i = 0; i < ${nl}; i++) w[i] = SP[i / 4][i - (i / 4) * 4];
+  // eğim: dik yerler kaya yamacı olur
+  float slope = smoothstep(0.2, 0.42, 1.0 - normalize(vWNor).y);
+  for (int i = 0; i < ${nl}; i++) w[i] *= (1.0 - slope);
+  w[${LAYER_NAMES.indexOf('cliff')}] += slope;
+  vec2 tuv = vWPos.xz / 2.4;
+  // yamaçta dikey düzlemden örnekle (kaya dokusu gerilmesin)
+  vec2 cuv = vec2(vWPos.x + vWPos.z, vWPos.y * 1.6) / 3.0;
   vec3 col = vec3(0.0); vec3 nor = vec3(0.0); float tot = 0.0;
   for (int i = 0; i < ${nl}; i++) {
     if (w[i] < 0.01) continue;
-    vec4 c = texture(uColArr, vec3(tuv, float(i)));
+    vec2 uvi = i == ${LAYER_NAMES.indexOf('cliff')} ? mix(tuv, cuv, slope) : tuv;
+    vec4 c = texture(uColArr, vec3(uvi, float(i)));
     // yükseklik tabanlı keskin geçiş: taşlar çimenin içinden çıkar
     float hgt = dot(c.rgb, vec3(0.33));
     float ww = pow(w[i], 1.6) * (0.35 + hgt);
     ww = ww * ww;
     col += c.rgb * ww;
-    nor += (texture(uNorArr, vec3(tuv, float(i))).xyz * 2.0 - 1.0) * ww;
+    nor += (texture(uNorArr, vec3(uvi, float(i))).xyz * 2.0 - 1.0) * ww;
     tot += ww;
   }
   gCol = col / max(tot, 1e-4) * uTint;
   // geniş ölçekli renk varyasyonu (tekrar hissini kırar)
-  gCol *= 0.85 + 0.3 * vn(vWPos.xz * 0.08);
+  gCol *= 0.82 + 0.3 * vn(vWPos.xz * 0.06) + 0.08 * vn(vWPos.xz * 0.5);
   gNor = normalize(nor / max(tot, 1e-4));
 }`)
         .replace('#include <map_fragment>', 'groundBlend();\ndiffuseColor.rgb *= gCol;')

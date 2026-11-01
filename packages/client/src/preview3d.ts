@@ -10,9 +10,10 @@ const cls = (q.get('cls') ?? 'guardian') as 'guardian';
 store.set({ settings: { ...store.get().settings, quality: (q.get('q') as 'high') ?? 'high', zoom: Number(q.get('zoom') ?? 1) } });
 const l = getLayout(map);
 const ox = Number(q.get('ox') ?? 0), oy = Number(q.get('oy') ?? 0);
-const g: any = { selfId: 1, cls, dx: l.spawn.x + ox, dy: l.spawn.y + oy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0 };
+const g: any = { selfId: 1, cls, dx: l.spawn.x + ox, dy: l.spawn.y + oy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
 const r = new Renderer3D(g, document.getElementById('gl') as HTMLCanvasElement, document.getElementById('ov') as HTMLCanvasElement);
 r.setLayout(l);
+r.camYaw = Number(q.get('yaw') ?? 0); r.camZoom = Number(q.get('cz') ?? 1);
 store.set({ char: { id: 1, name: 'Çağlar', cls, role: 'player' }, hp: 100, maxHp: 100 });
 let id = 10;
 const mk = (kind: number, x: number, y: number, extra: Partial<CEnt>): CEnt => ({ id: id++, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: 0, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 5, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra });
@@ -31,7 +32,7 @@ if (lineup) {
   const list = lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
   list.forEach(([k, v], i) => {
     const x = sx + (i - (list.length - 1) / 2) * (lineup === 'mons' ? 110 : 75), y = sy + 20;
-    if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: 64, level: 30, weapon: 3 }));
+    if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: Number(q.get('dir') ?? 64), level: 30, weapon: 3 }));
     else add(mk(Kind.MONSTER, x, y, { tpl: MONSTER_INDEX.get(v as string)!, variant: i % 2, dir: 64, level: 20 }));
   });
   g.dx = sx - 1000; g.dy = sy - 1000; // kendini uzağa al

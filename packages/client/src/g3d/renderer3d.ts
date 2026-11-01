@@ -4,6 +4,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { GrassField } from './grass.ts';
+import { createGlbChar, onModelReady, loadManifest, type GlbChar } from './models.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
@@ -20,15 +23,31 @@ import { store } from '../game/store.ts';
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 const THEME = {
-  village: { fog: 0xb8c8a8, sky: 0xcfe0f0, ground: 0x6a6040, sun: 0xfff0d8, sunI: 2.6, hemi: 0.75, exp: 1.0 },
-  forest: { fog: 0x8aa088, sky: 0xbfd8e0, ground: 0x4a5030, sun: 0xffe8c0, sunI: 2.4, hemi: 0.7, exp: 1.0 },
-  lake: { fog: 0xa8c8d0, sky: 0xd0e8f8, ground: 0x5a6040, sun: 0xfff0d8, sunI: 2.6, hemi: 0.75, exp: 1.0 },
-  frozen: { fog: 0xc8d8e8, sky: 0xe0ecf8, ground: 0x8a9aa8, sun: 0xe8f0ff, sunI: 2.2, hemi: 0.9, exp: 0.95 },
-  black: { fog: 0x2a2030, sky: 0x4a3a5a, ground: 0x201820, sun: 0xffb090, sunI: 1.6, hemi: 0.45, exp: 1.1 },
-  ancient: { fog: 0x8a8a6a, sky: 0xc8c8a8, ground: 0x4a4a30, sun: 0xffe0b0, sunI: 2.3, hemi: 0.7, exp: 1.0 },
+  village: { fog: 0x9aa498, top: 0x6f8fb4, sky: 0xb4c4d4, ground: 0x4e4434, sun: 0xffdcb0, sunI: 3.3, hemi: 0.6, exp: 1.08, near: 40, far: 120 },
+  forest: { fog: 0x6c7a68, top: 0x5f7a92, sky: 0xa8b8b0, ground: 0x3a3626, sun: 0xffd8a4, sunI: 3.0, hemi: 0.58, exp: 1.1, near: 32, far: 105 },
+  lake: { fog: 0x93a4aa, top: 0x6a8cb0, sky: 0xbccad6, ground: 0x4a4636, sun: 0xffe0b8, sunI: 3.2, hemi: 0.6, exp: 1.08, near: 40, far: 125 },
+  frozen: { fog: 0xaeb8c0, top: 0x8296ac, sky: 0xd0d8e0, ground: 0x6a7480, sun: 0xe6ecff, sunI: 2.7, hemi: 0.65, exp: 1.0, near: 30, far: 100 },
+  black: { fog: 0x1e1820, top: 0x2a2030, sky: 0x4a3a50, ground: 0x181216, sun: 0xff9a70, sunI: 1.9, hemi: 0.26, exp: 1.05, near: 24, far: 85 },
+  ancient: { fog: 0x7e7a62, top: 0x6a7a8a, sky: 0xb8b498, ground: 0x3e3a28, sun: 0xffd8a8, sunI: 2.9, hemi: 0.58, exp: 1.08, near: 32, far: 105 },
 } as const;
 
-interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh }
+/** Renk düzenleme: hafif doygunluk düşüşü, kontrast, sıcak ışık / soğuk gölge, kenar karartma. */
+const GradeShader = {
+  uniforms: { tDiffuse: { value: null }, uSat: { value: 0.9 }, uCon: { value: 1.05 }, uVig: { value: 0.26 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uSat; uniform float uCon; uniform float uVig; varying vec2 vUv;
+    void main(){
+      vec4 c = texture2D(tDiffuse, vUv);
+      float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+      vec3 col = mix(vec3(l), c.rgb, uSat);
+      col = (col - 0.5) * uCon + 0.5;
+      col += mix(vec3(-0.012, 0.0, 0.02), vec3(0.03, 0.012, -0.02), smoothstep(0.2, 0.8, l));
+      vec2 d = vUv - 0.5; col *= 1.0 - uVig * smoothstep(0.35, 0.85, length(d * vec2(1.25, 1.0)));
+      gl_FragColor = vec4(clamp(col, 0.0, 1.0), c.a);
+    }`,
+};
+
+interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh }
 
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
@@ -53,8 +72,10 @@ export class Renderer3D {
   clicks: { x: number; y: number; t: number }[] = [];
   ringMesh: THREE.Mesh;
   selfRing: THREE.Mesh;
-  grass: THREE.InstancedMesh | null = null;
-  grassAt = { x: -1e9, y: -1e9 };
+  grass: GrassField | null = null;
+  /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
+  camYaw = 0; camZoom = 1; private camYawS = 0; private camZoomS = 1;
+  private skyTex: THREE.Texture | null = null;
   quality = '';
   camTarget = new THREE.Vector3();
   private tmpV = new THREE.Vector3();
@@ -94,6 +115,12 @@ export class Renderer3D {
     this.fx.posOf = (id) => (id === this.g.selfId ? { x: this.g.dx, y: this.g.dy } : this.g.ents.get(id) ?? null);
     this.fx.heightAt = (x, y) => this.heightAt(x, y);
     this.setupComposer();
+    loadManifest();
+    onModelReady((id) => {
+      // model geldi: o modeli kullanan görünümleri yeniden kur
+      for (const [eid, v] of this.views) if (v.model === id && !v.glb) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
+    });
   }
 
   private setupComposer() {
@@ -108,9 +135,10 @@ export class Renderer3D {
       ao.blendIntensity = 0.85;
       this.composer.addPass(ao);
     }
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.5, 0.45, 0.88);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
+    this.composer.addPass(new ShaderPass(GradeShader));
   }
 
   heightAt(x: number, y: number) { return this.terrain ? this.terrain.heightAt(x, y) : 0; }
@@ -124,32 +152,46 @@ export class Renderer3D {
     this.views.clear();
     for (const v of this.npcViews) this.dyn.remove(v.obj);
     this.npcViews = [];
-    if (this.grass) { this.dyn.remove(this.grass); this.grass = null; }
-    this.grassAt = { x: -1e9, y: -1e9 };
+    if (this.grass) { this.dyn.remove(this.grass.group); this.grass.dispose(); this.grass = null; }
     const t0 = performance.now();
     this.terrain = new Terrain(l);
     this.world.add(this.terrain.mesh);
     if (this.terrain.water) this.world.add(this.terrain.water);
     const q = store.get().settings.quality;
     this.world.add(buildProps(l.props, (x, y) => this.heightAt(x, y), q));
+    if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
       const def = l.def.npcs.find((d) => d.id === n.id);
-      const rig = createHumanoid(LOOKS[def?.art ?? 'merchant'] ?? LOOKS.merchant);
-      rig.root.position.set(n.x * U, this.heightAt(n.x, n.y), n.y * U);
-      this.dyn.add(rig.root);
-      this.npcViews.push({ kind: 99, obj: rig.root, rig, height: 2.0, phase: 0, lx: n.x, ly: n.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, ...({ npc: n.id } as object) });
+      const v = this.humanView(def?.art ?? 'merchant', 99, n.x, n.y);
+      v.obj.position.set(n.x * U, this.heightAt(n.x, n.y), n.y * U);
+      this.dyn.add(v.obj);
+      this.npcViews.push(Object.assign(v, { npc: n.id }));
     }
     // tema ışığı
     const th = THEME[l.def.theme as keyof typeof THEME] ?? THEME.forest;
-    this.scene.fog = new THREE.Fog(th.fog, 34, 92);
-    this.scene.background = new THREE.Color(th.fog);
+    this.scene.fog = new THREE.Fog(th.fog, th.near, th.far);
+    this.scene.background = this.skyGradient(th.top, th.fog);
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
     this.renderer.toneMappingExposure = th.exp;
     // kendi karakterini yeniden ekle
     if (this.self) this.dyn.add(this.self.obj);
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
+  }
+
+  private skyGradient(top: number, horizon: number): THREE.Texture {
+    this.skyTex?.dispose();
+    const c = document.createElement('canvas'); c.width = 4; c.height = 256;
+    const x = c.getContext('2d')!;
+    const g = x.createLinearGradient(0, 0, 0, 256);
+    const t = new THREE.Color(top), h = new THREE.Color(horizon);
+    g.addColorStop(0, `#${t.getHexString()}`); g.addColorStop(0.48, `#${h.getHexString()}`); g.addColorStop(1, `#${h.clone().multiplyScalar(0.7).getHexString()}`);
+    x.fillStyle = g; x.fillRect(0, 0, 4, 256);
+    const tex = new THREE.CanvasTexture(c);
+    tex.mapping = THREE.EquirectangularReflectionMapping; tex.colorSpace = THREE.SRGBColorSpace;
+    this.skyTex = tex;
+    return tex;
   }
 
   shake(n: number) { this.shakeAmt = Math.max(this.shakeAmt, n * 0.02); }
@@ -181,24 +223,34 @@ export class Renderer3D {
     const cls = this.g.cls;
     if (this.self && this.selfCls === cls) return this.self;
     if (this.self) this.dyn.remove(this.self.obj);
-    const rig = createHumanoid(LOOKS[cls]);
-    this.self = { kind: Kind.PLAYER, obj: rig.root, rig, height: 2.0, phase: 0, lx: this.g.dx, ly: this.g.dy, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+    this.self = this.humanView(cls, Kind.PLAYER, this.g.dx, this.g.dy);
     this.selfCls = cls;
-    this.dyn.add(rig.root);
+    this.dyn.add(this.self.obj);
     return this.self;
+  }
+
+  /** Oyuncu/NPC görünümü: hazır 3B model (GLB) varsa onu, yoksa prosedürel modeli kullanır. */
+  private humanView(modelId: string, kind: number, x: number, y: number): View {
+    const glb = createGlbChar(modelId);
+    if (glb) return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+    const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
+    return { kind, obj: rig.root, rig, model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
   }
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
-      const rig = createHumanoid(LOOKS[CLASS_IDS[e.cls] ?? 'guardian']);
-      v = { kind: e.kind, obj: rig.root, rig, height: 2.0, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+      v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y);
     } else if (e.kind === Kind.MONSTER) {
       const def = MONSTERS[e.tpl];
       if (!def) return null;
-      const mon = createMonster(def.art, e.variant, def.size);
-      v = { kind: e.kind, obj: mon.root, mon, height: mon.height, phase: Math.random() * 6, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+      const glb = createGlbChar(def.art);
+      if (glb) { glb.root.scale.multiplyScalar(def.size * (e.variant === 2 ? 1.12 : 1)); v = { kind: e.kind, obj: glb.root, glb, model: def.art, height: glb.height * def.size, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 }; }
+      else {
+        const mon = createMonster(def.art, e.variant, def.size);
+        v = { kind: e.kind, obj: mon.root, mon, model: def.art, height: mon.height, phase: Math.random() * 6, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+      }
     } else if (e.kind === Kind.LOOT) {
       const grp = new THREE.Group();
       const tex = this.lootTex(e.icon, e.rarity);
@@ -258,7 +310,10 @@ export class Renderer3D {
     v.phase += dist * (Math.PI * 2 / 1.55);
     const k = st === 'dead' ? (now - v.deadAt) / 700 : (now - v.stateAt) / (st === 'attack' ? 480 : 600);
     const tt = now / 1000;
-    if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
+    const sp = dt > 0 ? (dist / dt) * 1000 : 0;
+    v.speed = (v.speed ?? 0) * 0.8 + sp * 0.2;
+    if (v.glb) v.glb.update(v.state, dt, moving, v.speed);
+    else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
   }
 
@@ -304,7 +359,7 @@ export class Renderer3D {
       const a = toSelf ? Math.atan2(g.dx - v.lx, g.dy - v.ly) : 0;
       let d = a - v.yaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
       v.yaw += d * Math.min(1, dt / 300); v.obj.rotation.y = v.yaw;
-      animateHumanoid(v.rig!, 'idle', now / 1000 + v.lx, 0, 0);
+      if (v.glb) v.glb.update('idle', dt, false, 0); else animateHumanoid(v.rig!, 'idle', now / 1000 + v.lx, 0, 0);
     }
     // hedef halkası
     const tgt = g.targetId ? g.ents.get(g.targetId) : null;
@@ -316,7 +371,7 @@ export class Renderer3D {
       this.ringMesh.rotation.z = now / 1500;
     }
     // çimen
-    this.updateGrass(g.dx, g.dy);
+    this.grass?.update(g.dx * U, g.dy * U);
     // efektler
     this.fx.update(dt, now);
     this.ambient(dt);
@@ -326,68 +381,27 @@ export class Renderer3D {
     const fx0 = co ? co.x : g.dx, fy0 = co ? co.y : g.dy;
     const tx = fx0 * U, tz = fy0 * U, ty = this.heightAt(fx0, fy0);
     this.camTarget.lerp(this.tmpV.set(tx, ty, tz), this.camTarget.lengthSq() === 0 ? 1 : Math.min(1, dt / 70));
-    const dist = co ? co.dist : 16 / zoom;
-    const pitch = co ? co.pitch : 0.82; // ~47°
+    // yumuşak dönüş/yakınlaşma; yakınlaştıkça kamera alçalır (3B his)
+    let dy = this.camYaw - this.camYawS; while (dy > Math.PI) dy -= Math.PI * 2; while (dy < -Math.PI) dy += Math.PI * 2;
+    this.camYawS += dy * Math.min(1, dt / 90);
+    this.camZoomS += (this.camZoom * zoom - this.camZoomS) * Math.min(1, dt / 110);
+    const zk = THREE.MathUtils.clamp((this.camZoomS - 0.7) / 1.6, 0, 1); // 0 uzak · 1 yakın
+    const dist = co ? co.dist : THREE.MathUtils.lerp(19, 6.5, zk);
+    const pitch = co ? co.pitch : THREE.MathUtils.lerp(0.9, 0.42, zk);
     let sx = 0, sy = 0;
     if (this.shakeAmt > 0.002) { sx = (Math.random() - 0.5) * this.shakeAmt; sy = (Math.random() - 0.5) * this.shakeAmt; this.shakeAmt *= Math.pow(0.003, dt / 1000); }
-    this.camera.position.set(this.camTarget.x + sx, this.camTarget.y + Math.sin(pitch) * dist + sy, this.camTarget.z + Math.cos(pitch) * dist);
-    this.camera.lookAt(this.camTarget.x, this.camTarget.y + 0.8, this.camTarget.z);
+    const hd = Math.cos(pitch) * dist;
+    this.camera.position.set(this.camTarget.x + Math.sin(this.camYawS) * hd + sx, this.camTarget.y + Math.sin(pitch) * dist + sy, this.camTarget.z + Math.cos(this.camYawS) * hd);
+    this.camera.lookAt(this.camTarget.x, this.camTarget.y + THREE.MathUtils.lerp(0.8, 1.3, zk), this.camTarget.z);
+    this.g.camYaw = this.camYawS;
     shared.cam.value.copy(this.camera.position);
     shared.focus.value.set(tx, ty + 1.0, tz);
     // güneş gölge kamerası oyuncuyu takip eder
-    this.sun.position.set(this.camTarget.x + 18, this.camTarget.y + 30, this.camTarget.z + 10);
+    this.sun.position.set(this.camTarget.x + 26, this.camTarget.y + 24, this.camTarget.z + 14);
     this.sun.target.position.copy(this.camTarget);
     // çiz
     if (this.composer) this.composer.render(); else this.renderer.render(this.scene, this.camera);
     this.drawOverlay(now);
-  }
-
-  private updateGrass(px: number, py: number) {
-    const q = store.get().settings.quality;
-    if (q === 'low' || !this.layout) return;
-    if (Math.hypot(px - this.grassAt.x, py - this.grassAt.y) < 260) return;
-    this.grassAt = { x: px, y: py };
-    const l = this.layout;
-    const R = q === 'high' ? 34 : 24; // metre
-    const count = q === 'high' ? 9000 : 4500;
-    if (!this.grass) {
-      const geo = new THREE.BufferGeometry();
-      const planes: THREE.BufferGeometry[] = [];
-      for (let i = 0; i < 3; i++) { const p = new THREE.PlaneGeometry(0.55, 0.42); p.translate(0, 0.21, 0); p.rotateY((i / 3) * Math.PI); planes.push(p); }
-      const merged = (planes[0].clone() as THREE.BufferGeometry);
-      void geo; void merged;
-      const mg = mergeSimple(planes);
-      // çimen normallerini yukarı eğ: yumuşak ışık
-      const n = mg.attributes.normal as THREE.BufferAttribute;
-      for (let i = 0; i < n.count; i++) n.setXYZ(i, n.getX(i) * 0.3, 0.95, n.getZ(i) * 0.3);
-      this.grass = new THREE.InstancedMesh(mg, sharedMat('grass'), count);
-      this.grass.frustumCulled = false;
-      this.grass.receiveShadow = true;
-      this.dyn.add(this.grass);
-    }
-    const m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), e = new THREE.Euler();
-    let n = 0;
-    const cx = px * U, cz = py * U;
-    let seed = 1;
-    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-    const theme = l.def.theme;
-    if (theme === 'black') { this.grass.count = 0; return; }
-    for (let i = 0; i < count * 3 && n < count; i++) {
-      const gx = Math.floor((cx - R + rnd() * R * 2) / 0.9) * 0.9 + rnd() * 0.9, gz = Math.floor((cz - R + rnd() * R * 2) / 0.9) * 0.9 + rnd() * 0.9;
-      const sx = gx / U, sy = gz / U;
-      const tx = Math.floor(sx / TILE), ty = Math.floor(sy / TILE);
-      if (tx < 0 || ty < 0 || tx >= l.w || ty >= l.h) continue;
-      const gt = l.ground[ty * l.w + tx];
-      if (!(gt === 0 || gt === 1 || (theme === 'frozen' && gt === 6 && rnd() < 0.15))) continue;
-      if (l.blocked[ty * l.w + tx] && rnd() < 0.7) continue;
-      p.set(gx, this.heightAt(sx, sy), gz);
-      e.set(0, rnd() * 6.28, 0); q4.setFromEuler(e);
-      const sc = 0.7 + rnd() * 0.7; s.set(sc, sc * (gt === 1 ? 1.3 : 1), sc);
-      m4.compose(p, q4, s);
-      this.grass.setMatrixAt(n++, m4);
-    }
-    this.grass.count = n;
-    this.grass.instanceMatrix.needsUpdate = true;
   }
 
   private ambient(dt: number) {

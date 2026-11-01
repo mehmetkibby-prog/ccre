@@ -24,24 +24,54 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
   useEffect(() => {
     const c = gl.current!;
     let held = false; let lastHover = 0;
+    // kamera döndürme (sağ/orta tuşla sürükle) ve iki parmakla döndür/yakınlaştır
+    let rot: { x: number; yaw: number; moved: boolean; btn: number } | null = null;
+    const touches = new Map<number, { x: number; y: number }>();
+    let pinch: { d: number; a: number; zoom: number; yaw: number } | null = null;
     const pos = (e: PointerEvent) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
     const down = (e: PointerEvent) => {
-      if (!game || e.pointerType === 'touch' && isMobile()) { if (game && e.pointerType === 'touch') { const p = pos(e); game.clickScreen(p.x, p.y); } return; }
+      if (!game) return;
+      if (e.pointerType === 'touch') {
+        touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (touches.size === 2) { const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), a: Math.atan2(b.y - a.y, b.x - a.x), zoom: game.renderer.camZoom, yaw: game.renderer.camYaw }; return; }
+        const p = pos(e); game.clickScreen(p.x, p.y); return;
+      }
       (document.activeElement as HTMLElement | null)?.blur?.();
-      if (e.button === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; } return; }
+      if (e.button === 2 || e.button === 1) { rot = { x: e.clientX, yaw: game.renderer.camYaw, moved: false, btn: e.button }; c.setPointerCapture(e.pointerId); return; }
       held = true; const p = pos(e); game.clickScreen(p.x, p.y);
     };
     const move = (e: PointerEvent) => {
       if (!game) return;
+      if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
+        touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pinch && touches.size === 2) {
+          const [a, b] = [...touches.values()];
+          const d = Math.hypot(a.x - b.x, a.y - b.y), ang = Math.atan2(b.y - a.y, b.x - a.x);
+          game.renderer.camZoom = Math.max(0.6, Math.min(2.3, pinch.zoom * (d / Math.max(30, pinch.d))));
+          game.renderer.camYaw = pinch.yaw - (ang - pinch.a);
+        }
+        return;
+      }
+      if (rot) { const dx = e.clientX - rot.x; if (Math.abs(dx) > 4) rot.moved = true; game.renderer.camYaw = rot.yaw - dx * 0.008; return; }
       const p = pos(e);
       const now = performance.now();
       if (held && game.moveTarget) { const w = game.renderer.screenToWorld(p.x, p.y); game.moveTarget = w; }
       if (now - lastHover > 80) { lastHover = now; const hit = game.renderer.pickScreen(p.x, p.y); game.hoverId = hit?.e?.id ?? 0; c.style.cursor = hit?.type === 'ent' ? 'crosshair' : hit ? 'pointer' : 'default'; }
     };
-    const up = () => { held = false; };
+    const wheel = (e: WheelEvent) => { if (!game) return; e.preventDefault(); game.renderer.camZoom = Math.max(0.6, Math.min(2.3, game.renderer.camZoom * (e.deltaY > 0 ? 0.9 : 1.1))); };
+    const endTouch = (e: PointerEvent) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
+    const up = (e: PointerEvent) => {
+      held = false;
+      if (e.pointerType === 'touch') endTouch(e);
+      if (rot && game) {
+        // sürüklemeden sağ tık: hedefe saldır
+        if (!rot.moved && rot.btn === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; } }
+        rot = null;
+      }
+    };
     const ctx = (e: Event) => e.preventDefault();
-    c.addEventListener('pointerdown', down); window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); c.addEventListener('contextmenu', ctx);
-    return () => { c.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); c.removeEventListener('contextmenu', ctx); };
+    c.addEventListener('pointerdown', down); window.addEventListener('pointermove', move); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up); c.addEventListener('contextmenu', ctx); c.addEventListener('wheel', wheel, { passive: false });
+    return () => { c.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); window.removeEventListener('pointercancel', up); c.removeEventListener('contextmenu', ctx); c.removeEventListener('wheel', wheel); };
   }, [game]);
   return (
     <div className="game">

@@ -74,39 +74,51 @@ export function normalFrom(t: TexSet, strength: number): Uint8ClampedArray {
 // ───────────── zemin dokuları ─────────────
 export const GROUND_PAINTERS: Record<string, Painter> = {
   grass(u, v) {
-    const n = fbm(u, v, 4, 5, 11), n2 = fbm(u, v, 16, 3, 12), blade = fbm(u * 1, v * 1, 64, 2, 13);
-    const dry = clamp01((fbm(u, v, 3, 3, 14) - 0.55) * 3);
-    let c = mixc([58, 96, 34], [104, 142, 52], n * 0.8 + blade * 0.4);
-    c = mixc(c, [128, 128, 64], dry * 0.45);
-    const k = 0.8 + n2 * 0.35;
-    return [c[0] * k, c[1] * k, c[2] * k, blade * 0.7 + n * 0.3];
+    // doğal çayır: zeytin yeşili tonlar, kuru lekeler, toprak aralıkları, yön verilmiş ince ot dokusu
+    const n = fbm(u, v, 3, 5, 11), n2 = fbm(u, v, 14, 3, 12);
+    const blade = fbm(u * 1.0, v * 0.35, 96, 2, 13);
+    const dry = clamp01((fbm(u, v, 2, 4, 14) - 0.52) * 3.2);
+    const soil = clamp01((fbm(u, v, 9, 3, 15) - 0.68) * 5);
+    let c = mixc([46, 58, 26], [104, 112, 54], clamp01(n * 0.7 + blade * 0.55 - 0.1));
+    c = mixc(c, [132, 118, 70], dry * 0.55);
+    c = mixc(c, [74, 60, 42], soil * 0.7);
+    const k = 0.82 + n2 * 0.3;
+    return [c[0] * k, c[1] * k, c[2] * k, blade * 0.65 + n * 0.25 - soil * 0.2];
   },
   lush(u, v) {
-    const n = fbm(u, v, 4, 5, 21), blade = fbm(u, v, 64, 2, 23);
-    const c = mixc([40, 82, 30], [78, 124, 44], n * 0.7 + blade * 0.5);
-    const flower = hash(Math.floor(u * 90), Math.floor(v * 90), 5) > 0.992 ? 1 : 0;
-    return flower ? [230, 220, 120, 1] : [c[0], c[1], c[2], blade];
+    const n = fbm(u, v, 3, 5, 21), blade = fbm(u, v * 0.35, 96, 2, 23), n2 = fbm(u, v, 12, 3, 24);
+    let c = mixc([30, 44, 20], [76, 92, 40], clamp01(n * 0.6 + blade * 0.6 - 0.1));
+    const clover = clamp01((fbm(u, v, 22, 2, 25) - 0.6) * 4);
+    c = mixc(c, [62, 84, 36], clover * 0.6);
+    const k = 0.85 + n2 * 0.25;
+    return [c[0] * k, c[1] * k, c[2] * k, blade * 0.7 + clover * 0.2];
   },
   dirt(u, v) {
-    const n = fbm(u, v, 3, 6, 31), n2 = fbm(u, v, 12, 4, 32);
-    const vo = voronoi(u, v, 10, 33);
-    const pebble = vo.d1 < 0.16 && hash(vo.id, 1, 34) > 0.82 ? 1 - vo.d1 / 0.16 : 0;
-    const crack = clamp01(1 - (vo.d2 - vo.d1) * 22) * clamp01((n2 - 0.45) * 4);
-    let c = mixc([78, 58, 40], [134, 104, 72], n * 0.75 + n2 * 0.35);
-    c = mixc(c, [128, 120, 108], pebble * 0.85);
-    c = mixc(c, [50, 36, 24], crack * 0.6);
-    return [c[0], c[1], c[2], n * 0.5 + n2 * 0.3 + pebble * 0.5 - crack * 0.3];
+    const n = fbm(u, v, 3, 6, 31), n2 = fbm(u, v, 12, 4, 32), n3 = fbm(u, v, 40, 2, 35);
+    const vo = voronoi(u, v, 14, 33);
+    const psz = 0.08 + hash(vo.id, 5, 38) * 0.14;
+    const pebble = vo.d1 < psz && hash(vo.id, 1, 34) > 0.9 ? Math.sqrt(1 - vo.d1 / psz) : 0;
+    const damp = clamp01((fbm(u, v, 2, 3, 36) - 0.55) * 3);
+    let c = mixc([70, 58, 44], [124, 106, 82], clamp01(n * 0.7 + n3 * 0.4 - 0.1));
+    c = mixc(c, [52, 42, 32], damp * 0.5);
+    c = mixc(c, mixc([84, 80, 74], [128, 120, 108], hash(vo.id, 2, 37)), pebble * 0.75);
+    return [c[0], c[1], c[2], n * 0.4 + n2 * 0.3 + pebble * 0.7];
   },
   cobble(u, v) {
-    const vo = voronoi(u, v, 9, 41);
-    const edge = clamp01((vo.d2 - vo.d1) * 6);
-    const tint = hash(vo.id, 3, 42);
-    const n = fbm(u, v, 32, 3, 43);
-    const stone = mixc(mixc([112, 104, 94], [168, 152, 128], tint), [140, 128, 112], n * 0.3);
-    const mortar = [48, 42, 34];
-    const c = mixc(mortar, stone, Math.pow(edge, 0.6));
-    const h = Math.pow(edge, 0.5) * (0.8 + n * 0.2);
-    return [c[0], c[1], c[2], h];
+    // eski arnavut kaldırımı: düzensiz, yuvarlak taşlar; derzlerde toprak ve yosun
+    const vo = voronoi(u, v, 8, 41);
+    const e = clamp01((vo.d2 - vo.d1) * 4.2);
+    const dome = Math.sqrt(clamp01(e * 1.6));
+    const tint = hash(vo.id, 3, 42), tint2 = hash(vo.id, 7, 44);
+    const n = fbm(u, v, 40, 3, 43), n2 = fbm(u, v, 6, 3, 45);
+    let stone = mixc(mixc([92, 88, 82], [150, 138, 118], tint), [118, 108, 96], tint2 * 0.4);
+    stone = mixc(stone, [70, 66, 60], (1 - dome) * 0.45); // aşınmış kenar
+    const k = 0.85 + n * 0.3;
+    stone = [stone[0] * k, stone[1] * k, stone[2] * k];
+    const moss = clamp01((n2 - 0.55) * 3);
+    const gap = mixc([40, 34, 26], [58, 68, 34], moss);
+    const c = mixc(gap, stone, clamp01(e * 6));
+    return [c[0], c[1], c[2], dome * (0.85 + n * 0.15)];
   },
   sand(u, v) {
     const n = fbm(u, v, 6, 4, 51), ripple = Math.sin((v + fbm(u, v, 3, 2, 52) * 0.4) * Math.PI * 28) * 0.5 + 0.5;
@@ -144,6 +156,18 @@ export const GROUND_PAINTERS: Record<string, Painter> = {
     const m = clamp01(edge * 30);
     return [c[0] * (0.55 + m * 0.45), c[1] * (0.55 + m * 0.45), c[2] * (0.55 + m * 0.45), m * 0.8 + n * 0.2];
   },
+  cliff(u, v) {
+    // yamaç kayası: katmanlı tabakalar, çatlaklar, yer yer yosun
+    const n = fbm(u, v, 3, 6, 111), n2 = fbm(u, v, 10, 4, 112);
+    const strata = Math.sin((v * 9 + n * 2.2) * Math.PI) * 0.5 + 0.5;
+    const vo = voronoi(u, v * 1.8, 5, 113);
+    const crack = clamp01(1 - (vo.d2 - vo.d1) * 16);
+    let c = mixc([72, 68, 62], [142, 134, 120], clamp01(n * 0.6 + strata * 0.35 + n2 * 0.2 - 0.1));
+    c = mixc(c, [36, 32, 28], crack * 0.75);
+    const moss = clamp01((fbm(u, v, 2, 3, 114) - 0.62) * 3);
+    c = mixc(c, [64, 76, 40], moss * 0.6);
+    return [c[0], c[1], c[2], n * 0.5 + strata * 0.3 - crack * 0.5];
+  },
   planks(u, v) {
     const board = Math.floor(v * 6);
     const fy = (v * 6) % 1;
@@ -166,7 +190,7 @@ export function groundTextureArrays(size = 256) {
   LAYER_NAMES.forEach((name, i) => {
     const t = make(size, GROUND_PAINTERS[name]);
     col.set(t.color, i * size * size * 4);
-    nor.set(normalFrom(t, name === 'cobble' || name === 'flagstone' ? 6 : 3), i * size * size * 4);
+    nor.set(normalFrom(t, name === 'cobble' ? 9 : name === 'flagstone' || name === 'cliff' ? 6 : 3), i * size * size * 4);
   });
   const mk = (data: Uint8Array, srgb: boolean) => {
     const tex = new THREE.DataArrayTexture(data, size, size, n);
@@ -288,28 +312,32 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
   let seed = 7;
   const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
   if (kind === 'broad') {
-    for (let i = 0; i < 70; i++) {
-      const x = 20 + rnd() * (S - 40), y = 20 + rnd() * (S - 40), a = rnd() * Math.PI * 2, l = 16 + rnd() * 14;
-      const g = 90 + rnd() * 80;
+    for (let i = 0; i < 110; i++) {
+      const x = 16 + rnd() * (S - 32), y = 16 + rnd() * (S - 32), a = rnd() * Math.PI * 2, l = 11 + rnd() * 11;
+      const g = 70 + rnd() * 70, yellow = rnd() < 0.12 ? 1 : 0;
       ctx.save(); ctx.translate(x, y); ctx.rotate(a);
-      ctx.fillStyle = `rgb(${g * 0.55},${g},${g * 0.35})`;
-      ctx.beginPath(); ctx.moveTo(0, -l); ctx.quadraticCurveTo(l * 0.6, 0, 0, l); ctx.quadraticCurveTo(-l * 0.6, 0, 0, -l); ctx.fill();
-      ctx.strokeStyle = `rgba(30,50,20,0.5)`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, -l); ctx.lineTo(0, l); ctx.stroke();
+      const grd = ctx.createLinearGradient(-l * 0.5, 0, l * 0.5, 0);
+      grd.addColorStop(0, `rgb(${g * (0.55 + yellow * 0.3)},${g},${g * 0.3})`); grd.addColorStop(1, `rgb(${g * (0.4 + yellow * 0.3)},${g * 0.78},${g * 0.24})`);
+      ctx.fillStyle = grd;
+      ctx.beginPath(); ctx.moveTo(0, -l); ctx.quadraticCurveTo(l * 0.55, -l * 0.1, 0, l); ctx.quadraticCurveTo(-l * 0.55, -l * 0.1, 0, -l); ctx.fill();
+      ctx.strokeStyle = 'rgba(20,30,10,0.45)'; ctx.lineWidth = 0.8; ctx.beginPath(); ctx.moveTo(0, -l); ctx.lineTo(0, l); ctx.stroke();
       ctx.restore();
     }
   } else if (kind === 'needle') {
-    ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(S / 2, S); ctx.lineTo(S / 2, 10); ctx.stroke();
-    for (let i = 0; i < 260; i++) {
-      const y = 10 + rnd() * (S - 20), side = rnd() < 0.5 ? -1 : 1, l = (S - y) * 0.18 + 20 + rnd() * 20;
-      const g = 70 + rnd() * 70;
-      ctx.strokeStyle = `rgb(${g * 0.35},${g},${g * 0.55})`; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(S / 2, y); ctx.lineTo(S / 2 + side * l, y + l * 0.45); ctx.stroke();
+    ctx.strokeStyle = '#2e2216'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(S / 2, S); ctx.lineTo(S / 2, 10); ctx.stroke();
+    for (let i = 0; i < 340; i++) {
+      const y = 10 + rnd() * (S - 20), side = rnd() < 0.5 ? -1 : 1, l = (S - y) * 0.16 + 16 + rnd() * 18;
+      const g = 55 + rnd() * 60;
+      ctx.strokeStyle = `rgb(${g * 0.4},${g},${g * 0.55})`; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(S / 2, y); ctx.lineTo(S / 2 + side * l, y + l * 0.5); ctx.stroke();
     }
   } else {
-    for (let i = 0; i < 40; i++) {
-      const x = rnd() * S, h = S * (0.5 + rnd() * 0.5), g = 90 + rnd() * 90;
-      ctx.strokeStyle = `rgb(${g * 0.55},${g},${g * 0.3})`; ctx.lineWidth = 3 + rnd() * 3;
-      ctx.beginPath(); ctx.moveTo(x, S); ctx.quadraticCurveTo(x + (rnd() - 0.5) * 30, S - h * 0.6, x + (rnd() - 0.5) * 60, S - h); ctx.stroke();
+    for (let i = 0; i < 70; i++) {
+      const x = rnd() * S, h = S * (0.45 + rnd() * 0.55), g = 70 + rnd() * 70;
+      const grd = ctx.createLinearGradient(0, S, 0, S - h);
+      grd.addColorStop(0, `rgb(${g * 0.42},${g * 0.56},${g * 0.24})`); grd.addColorStop(1, `rgb(${g * 0.8},${g * 1.05},${g * 0.46})`);
+      ctx.strokeStyle = grd; ctx.lineWidth = 1.6 + rnd() * 2.2;
+      ctx.beginPath(); ctx.moveTo(x, S); ctx.quadraticCurveTo(x + (rnd() - 0.5) * 24, S - h * 0.6, x + (rnd() - 0.5) * 50, S - h); ctx.stroke();
     }
   }
   const tex = new THREE.CanvasTexture(cv);

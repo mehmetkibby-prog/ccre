@@ -52,6 +52,7 @@ export class Game {
   stopped = false;
   hoverId = 0;
   pingSent = 0;
+  camYaw = 0;
 
   constructor(public canvas: HTMLCanvasElement, overlay: HTMLCanvasElement, private ticket: string, private onClose: (reason: string) => void) {
     this.renderer = new Renderer3D(this, canvas, overlay);
@@ -330,7 +331,10 @@ export class Game {
     const st = store.get();
     const dead = (this.selfFlags & EFlag.DEAD) !== 0;
     if (dead || !this.ws || this.ws.readyState !== 1) return;
-    const mv = this.input.moveVector();
+    const mv0 = this.input.moveVector();
+    // ekran yönü → dünya yönü (kamera döndürülmüş olabilir)
+    const cy = Math.cos(this.camYaw), sy = Math.sin(this.camYaw);
+    const mv = { x: mv0.x * cy + mv0.y * sy, y: -mv0.x * sy + mv0.y * cy };
     let dir = NO_DIR;
     if (mv.x || mv.y) { dir = dirIndexFromVector(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
     // saldırı: basılı tutma veya otomatik hedef

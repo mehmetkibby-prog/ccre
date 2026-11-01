@@ -3,6 +3,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { cyl, lathe, at, clean, colorize } from './geom.ts';
 import { objTexture } from './textures.ts';
+import { sculptedTemplate } from './heroes.ts';
 
 /**
  * İskeletli, gerçekçi oranlı insan modeli (≈1.8 m). Parçalar kemiklere sabit bağlanır,
@@ -357,7 +358,7 @@ export function instantiate(tpl: THREE.Object3D) {
 
 export function createHumanoid(L: HLook): Rig {
   let tpl = templates.get(L.id);
-  if (!tpl) { tpl = buildTemplate(L); templates.set(L.id, tpl); }
+  if (!tpl) { tpl = sculptedTemplate(L.id) ?? buildTemplate(L); templates.set(L.id, tpl); }
   const root = skClone(tpl) as THREE.Object3D;
   const body = root.getObjectByName('body')!;
   let mesh!: THREE.SkinnedMesh;

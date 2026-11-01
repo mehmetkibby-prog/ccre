@@ -31,11 +31,38 @@ export function addCutout(m: THREE.Material) {
           vec3 ab = uFocus - uCam;
           float tt = clamp(dot(vCutW - uCam, ab) / dot(ab, ab), 0.0, 1.0);
           float dd = length(vCutW - (uCam + ab * tt));
-          if (tt < 0.985 && dd < uCutR && vCutW.y > uFocus.y - 0.6) {
-            float k = dd / uCutR;
-            float n = fract(sin(dot(floor(gl_FragCoord.xy), vec2(12.9898, 78.233))) * 43758.5453);
-            if (n > k * k * k) discard;
+          // koni: kameraya yakın yerde dar, oyuncuya yakın yerde geniş delik
+          float rr = uCutR * (0.25 + 0.75 * tt);
+          if (tt < 0.985 && dd < rr && vCutW.y > uFocus.y - 0.6) {
+            float k = dd / rr;
+            // 4x4 Bayer düzenli titreşim: gürültüsüz, temiz geçiş
+            ivec2 q = ivec2(mod(gl_FragCoord.xy, 4.0));
+            int bi = q.x + q.y * 4;
+            float bayer[16] = float[16](0.0,8.0,2.0,10.0,12.0,4.0,14.0,6.0,3.0,11.0,1.0,9.0,15.0,7.0,13.0,5.0);
+            float th = (bayer[bi] + 0.5) / 16.0;
+            if (th > smoothstep(0.55, 1.0, k)) discard;
           }
+        }`);
+  });
+  return m;
+}
+
+/** Mesafeye göre yumuşak küçülme: çimen alanının kenarında "pat" diye belirme olmaz. */
+export const fadeR = { value: 30 };
+export function addFade(m: THREE.Material) {
+  patch(m, 'fade', (sh) => {
+    sh.uniforms.uFadeC = shared.focus; sh.uniforms.uFadeR = fadeR;
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nuniform vec3 uFadeC; uniform float uFadeR;')
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        {
+          vec4 io = vec4(0.0, 0.0, 0.0, 1.0);
+          #ifdef USE_INSTANCING
+            io = instanceMatrix * io;
+          #endif
+          io = modelMatrix * io;
+          float fd = distance(io.xz, uFadeC.xz);
+          transformed *= 1.0 - smoothstep(uFadeR - 9.0, uFadeR, fd);
         }`);
   });
   return m;
@@ -77,13 +104,13 @@ export function mat(key: string): THREE.Material {
   switch (key) {
     case 'bark': m = texMat('bark', { color: 0xc8b8a8 }); break;
     case 'bark_dead': m = texMat('bark', { color: 0x6a6070 }); break;
-    case 'leaves': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb8d890 }), 0.09, 5); break;
+    case 'leaves': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0x8ea068 }), 0.09, 5); break;
     case 'leaves_autumn': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xf0b070 }), 0.09, 5); break;
-    case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0x9ac0a0 }), 0.05, 7); break;
+    case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0x7e9a80 }), 0.05, 7); break;
     case 'needles_snow': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xb8d8d0 }), 0.04, 7); break;
-    case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xa0c878 }), 0.05, 1.2); break;
-    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.95, color: 0xb0d080 }), 0.12, 0.6); break;
-    case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x35603a, roughness: 0.95, side: THREE.DoubleSide }); break;
+    case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0x86a062 }), 0.05, 1.2); break;
+    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.95, color: 0x9aaa70 }), 0.12, 0.6); break;
+    case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x2a4630, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'pine_core_snow': m = new THREE.MeshStandardMaterial({ color: 0x3a5a52, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'snow': m = new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.7 }); break;
     case 'rock': m = texMat('rock', { color: 0xffffff }); break;
@@ -91,9 +118,9 @@ export function mat(key: string): THREE.Material {
     case 'plaster': m = texMat('plaster', {}, 0.5); break;
     case 'timber': m = texMat('timber', { roughness: 0.8 }); break;
     case 'stonewall': m = texMat('stonewall', {}, 0.6); break;
-    case 'roof_red': m = texMat('rooftile', { roughness: 0.75 }, 0.5); break;
+    case 'roof_red': m = texMat('rooftile', { color: 0xb8988a, roughness: 0.8 }, 0.5); break;
     case 'roof_slate': m = texMat('rooftile_slate', { roughness: 0.6 }, 0.5); break;
-    case 'roof_green': m = texMat('rooftile', { color: 0x80c8a0, roughness: 0.75 }, 0.5); break;
+    case 'roof_green': m = texMat('rooftile_slate', { color: 0x9aa890, roughness: 0.7 }, 0.5); break;
     case 'roof_blue': m = texMat('rooftile_slate', { color: 0xa0b8ff, roughness: 0.6 }, 0.5); break;
     case 'planks': m = texMat('timber', { color: 0xd8b088 }, 1); break;
     case 'metal': m = texMat('metal', { color: 0x9aa4b0, metalness: 0.9, roughness: 0.35 }); break;
