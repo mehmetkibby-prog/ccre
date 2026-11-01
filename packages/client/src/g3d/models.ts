@@ -39,12 +39,58 @@ function getLoader() {
   return loader;
 }
 
+/** Yükleme durumu (test sürümünde ekranda gösterilir). */
+export const modelStatus = { total: 0, loaded: 0, failed: 0, lastError: '' };
+const statusListeners = new Set<() => void>();
+export function onModelStatus(fn: () => void) { statusListeners.add(fn); return () => { statusListeners.delete(fn); }; }
+const bumpStatus = () => statusListeners.forEach((f) => f());
+
+function b64ToBytes(b64: string) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+/** glTF JSON + ikili tampon → bellekte GLB. */
+function packGlb(json: unknown, bin: Uint8Array | null) {
+  const enc = new TextEncoder().encode(JSON.stringify(json));
+  const jsonLen = (enc.length + 3) & ~3, binLen = bin ? (bin.length + 3) & ~3 : 0;
+  const total = 12 + 8 + jsonLen + (bin ? 8 + binLen : 0);
+  const buf = new ArrayBuffer(total), dv = new DataView(buf), u8 = new Uint8Array(buf);
+  dv.setUint32(0, 0x46546c67, true); dv.setUint32(4, 2, true); dv.setUint32(8, total, true);
+  dv.setUint32(12, jsonLen, true); dv.setUint32(16, 0x4e4f534a, true);
+  u8.set(enc, 20); u8.fill(0x20, 20 + enc.length, 20 + jsonLen);
+  if (bin) { const o = 20 + jsonLen; dv.setUint32(o, binLen, true); dv.setUint32(o + 4, 0x004e4942, true); u8.set(bin, o + 8); }
+  return buf;
+}
+/**
+ * .glb doğrudan; .json (glTF + gömülü tampon) ise tampon burada çözülüp bellekte GLB kurulur.
+ * Bazı barındırıcıların içerik güvenlik politikası data: adreslerinin fetch ile okunmasını engellediği için
+ * yükleyicinin gömülü tamponu kendisinin açmasına güvenilmez.
+ */
+async function fetchModel(url: string): Promise<GLTF> {
+  const l = getLoader();
+  if (!/\.json(\?|$)/i.test(url)) return l.loadAsync(url);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + url);
+  const json = await r.json();
+  let bin: Uint8Array | null = null;
+  const b0 = json.buffers?.[0];
+  if (typeof b0?.uri === 'string' && b0.uri.startsWith('data:')) {
+    bin = b64ToBytes(b0.uri.slice(b0.uri.indexOf(',') + 1));
+    delete b0.uri;
+    b0.byteLength = bin.length;
+  }
+  const base = url.slice(0, url.lastIndexOf('/') + 1);
+  return new Promise((res, rej) => l.parse(packGlb(json, bin), base, res, rej));
+}
+
 export function loadManifest(): Promise<void> {
   if (manifestPromise) return manifestPromise;
   manifestPromise = fetch(BASE + 'models.json', { cache: 'no-cache' })
-    .then((r) => (r.ok ? r.json() : {}))
+    .then((r) => { if (!r.ok) { modelStatus.lastError = 'models.json HTTP ' + r.status; bumpStatus(); return {}; } return r.json(); })
     .then((m) => { manifest = m && typeof m === 'object' ? (m as Record<string, ModelEntry>) : {}; })
-    .catch(() => { manifest = {}; });
+    .catch((e) => { manifest = {}; modelStatus.lastError = 'models.json: ' + ((e as Error)?.message ?? e); bumpStatus(); });
   return manifestPromise;
 }
 export function onModelReady(fn: (id: string) => void) { listeners.add(fn); return () => listeners.delete(fn); }
@@ -95,11 +141,17 @@ export function model(id: string): Loaded | null {
   const entry = manifest[id];
   if (!entry) return null;
   loading.add(id);
-  getLoader().load(BASE + entry.url, (gltf) => {
+  modelStatus.total++; bumpStatus();
+  fetchModel(BASE + entry.url).then((gltf) => {
     loading.delete(id);
     loaded.set(id, prepare(id, gltf, entry));
+    modelStatus.loaded++; bumpStatus();
     listeners.forEach((f) => f(id));
-  }, undefined, (err) => { loading.delete(id); failed.add(id); console.warn('[model] yüklenemedi', id, err); });
+  }).catch((err) => {
+    loading.delete(id); failed.add(id);
+    modelStatus.failed++; modelStatus.lastError = `${id}: ${(err as Error)?.message ?? err}`; bumpStatus();
+    console.warn('[model] yüklenemedi', id, err);
+  });
   return null;
 }
 

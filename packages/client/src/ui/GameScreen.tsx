@@ -6,6 +6,8 @@ import { iconUrl } from '../game/art/icons.ts';
 import { SkillIcon, MenuIcon } from './icons.tsx';
 import { Panels } from './panels.tsx';
 import { sfx } from '../game/audio.ts';
+import { modelStatus, onModelStatus } from '../g3d/models.ts';
+import { OFFLINE } from '../mode.ts';
 
 export let currentGame: Game | null = null;
 
@@ -151,6 +153,17 @@ function TopBar() {
   );
 }
 
+/** Test sürümünde 3B model yükleme durumu: modeller yüklenmezse sebebi ekranda görünsün. */
+function ModelBadge() {
+  const [, force] = useState(0);
+  useEffect(() => onModelStatus(() => force((n) => n + 1)), []);
+  const m = modelStatus;
+  if (!OFFLINE && !m.failed) return null;
+  if (!m.total && !m.lastError) return null;
+  const bad = m.failed > 0 || (!!m.lastError && !m.loaded);
+  return <div className="meta" style={{ color: bad ? '#ff8a7a' : '#8fe08a', whiteSpace: 'normal', maxWidth: 260 }}>Model {m.loaded}/{m.total}{m.lastError ? ' · ' + m.lastError.slice(0, 90) : ''}</div>;
+}
+
 function Wallet() {
   const self = useStore((s) => s.self);
   const ping = useStore((s) => s.ping);
@@ -164,6 +177,7 @@ function Wallet() {
       <div className="w"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')} <span className="muted" style={{ fontSize: 10 }}>Öz</span></div>
       <div className="w"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')} <span className="muted" style={{ fontSize: 10 }}>ÇP</span></div>
       <div className="meta"><span>K{ch}</span><span>{online} çevrimiçi</span><span style={{ color: ping > 200 ? '#ff8a7a' : ping > 100 ? '#ffd27a' : '#8fe08a' }}>{ping} ms</span><span>{fps} fps</span></div>
+      <ModelBadge />
     </div>
   );
 }
