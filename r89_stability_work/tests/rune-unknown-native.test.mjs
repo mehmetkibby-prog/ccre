@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const root=process.env.R85_RUNTIME_TREE+'/core511-source/scripts/core511/';
+const {setup}=await import(root+'tests/process-fixture.mjs');
+const {until}=await import(root+'tests/helpers.mjs');
+test('an unknown Rune catalog row cannot crash the channel when hit or killed',{timeout:30000},async t=>{
+ const target='rune-v2-unknown-c4-1',s=await setup(t,{shared:true,localCombat:{id:target,hp:1,area:'rune_v2'}});
+ await s.world.stopJobs();const live=await s.connect(await s.http('character',{channel:4}));
+ await s.core.permanentPlayers([s.f.id],()=>s.f.sql.prepare("UPDATE players SET area='rune_v2',level=65,x=2700,y=2025,hp=100000,max_hp=100000,attack_one_at=0,respawn_at_ms=0,stun_until_ms=0,root_until_ms=0 WHERE id=?").run(s.f.id));
+ const result=n=>live.packets.flatMap(p=>p.results??[]).find(r=>r.sequence===n);
+ live.ws.send(JSON.stringify({type:'input',sequence:1,payload:{action:'attack',ability:0,targetId:target,spawnRound:17,intentId:'r89-unknown-rune'}}));
+ await until(()=>result(1)||s.faults.length,8000);
+ const faults=s.faults.map(f=>f.error?.stack??String(f.error));
+ fs.writeFileSync(new URL('../evidence/rune-unknown-'+(process.env.R85_RUNTIME_LABEL??'candidate')+'.json',import.meta.url),JSON.stringify({source:process.env.R85_RUNTIME_TREE,faults,first:result(1)},null,2)+'\n');
+ assert.equal(faults.length,0,faults.join('\n'));assert.equal(result(1)?.status,200,JSON.stringify(result(1)));
+ await until(()=>s.f.sql.prepare('SELECT hp FROM monsters WHERE id=?').get(target)?.hp===0,8000);
+ live.ws.send(JSON.stringify({type:'input',sequence:2,payload:{action:'move',x:2703,y:2025}}));
+ await until(()=>result(2)||s.faults.length,8000);assert.equal(result(2)?.status,200,JSON.stringify(result(2)));assert.equal(s.faults.length,0);
+});

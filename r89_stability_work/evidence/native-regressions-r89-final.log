@@ -1,0 +1,333 @@
+TAP version 13
+# Subtest: simultaneously hydrated actors spread their first checkpoint, retain 1500ms cadence and the 2s hard fence
+ok 1 - simultaneously hydrated actors spread their first checkpoint, retain 1500ms cadence and the 2s hard fence
+  ---
+  duration_ms: 13.699972
+  type: 'test'
+  ...
+# Subtest: real secondary plan settles one 202 and later moves never regress on durable ACK
+ok 2 - real secondary plan settles one 202 and later moves never regress on durable ACK
+  ---
+  duration_ms: 3.334892
+  type: 'test'
+  ...
+# Subtest: guard rejection stays queued during death and cannot become an attack ACK
+ok 3 - guard rejection stays queued during death and cannot become an attack ACK
+  ---
+  duration_ms: 1.264373
+  type: 'test'
+  ...
+# Subtest: secondary rejection event is idempotent and does not rewind settled movement
+ok 4 - secondary rejection event is idempotent and does not rewind settled movement
+  ---
+  duration_ms: 0.953772
+  type: 'test'
+  ...
+# Subtest: early-settled secondary still requires one exact final result per captured actor
+ok 5 - early-settled secondary still requires one exact final result per captured actor
+  ---
+  duration_ms: 0.847915
+  type: 'test'
+  ...
+# Subtest: certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+ok 6 - certified commit sections preserve newer native motion with no full read and keep the exact SQL durable base
+  ---
+  duration_ms: 3.461169
+  type: 'test'
+  ...
+# Subtest: motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+ok 7 - motion comparison cannot excuse a tampered committed section, ACK position, or changed resident economy
+  ---
+  duration_ms: 4.136571
+  type: 'test'
+  ...
+# Subtest: authoritative section-reader fallback retains current-state and barrier fences with motion context
+ok 8 - authoritative section-reader fallback retains current-state and barrier fences with motion context
+  ---
+  duration_ms: 1.226642
+  type: 'test'
+  ...
+# Subtest: 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+ok 9 - 700ms pending kill permits native position updates without HP/rewards; ACK merge preserves latest position and dirty durable base
+  ---
+  duration_ms: 3.083914
+  type: 'test'
+  ...
+# Subtest: due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+ok 10 - due PvE, root, HP/scope drift and external control cannot bypass the kill barrier
+  ---
+  duration_ms: 3.420333
+  type: 'test'
+  ...
+# Subtest: guard rejection is not consumed/remapped into the pending attack ACK
+ok 11 - guard rejection is not consumed/remapped into the pending attack ACK
+  ---
+  duration_ms: 0.559335
+  type: 'test'
+  ...
+# Subtest: authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+ok 12 - authoritative relocation/death is never overwritten by buffered motion; permit closes on rejection
+  ---
+  duration_ms: 4.127003
+  type: 'test'
+  ...
+# Subtest: section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+ok 13 - section comparison uses only immutable captured motion; installation preserves raw SQL receipt and actual durable base
+  ---
+  duration_ms: 0.984731
+  type: 'test'
+  ...
+# Subtest: section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+ok 14 - section comparison cannot certify foreign rows, nonmotion drift or changed owner fences
+  ---
+  duration_ms: 0.6794
+  type: 'test'
+  ...
+# Subtest: queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+ok 15 - queued motion uses the native receive-time PvE deadline; processing delay cannot turn an earlier move into a due hit
+  ---
+  duration_ms: 1.040965
+  type: 'test'
+  ...
+# Subtest: shipped R86 dungeon rules are preserved byte-for-byte; RNG replay is stable
+ok 16 - shipped R86 dungeon rules are preserved byte-for-byte; RNG replay is stable
+  ---
+  duration_ms: 14.942369
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571107719,"backupName":"before-pearl-reset-1793571107719-783bcb45-5954-4c7d-887d-5e201654fcca.sqlite"}
+# Subtest: idle room keeps exact native clocks without full-room clone or redundant projection
+ok 17 - idle room keeps exact native clocks without full-room clone or redundant projection
+  ---
+  duration_ms: 1629.579418
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571109276,"backupName":"before-pearl-reset-1793571109276-55940c11-6338-49d5-af74-c8c9fe725c5a.sqlite"}
+# Subtest: native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+ok 18 - native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+  ---
+  duration_ms: 1644.86468
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571110908,"backupName":"before-pearl-reset-1793571110908-f8622983-c380-4838-9b6e-7209da8694cb.sqlite"}
+# Subtest: dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+ok 19 - dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+  ---
+  duration_ms: 1554.814468
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571112552,"backupName":"before-pearl-reset-1793571112552-fe8301e3-5ed7-4957-996e-1537183e8db8.sqlite"}
+# Subtest: failed native economy command rolls back, preserves room and allows a later valid command
+ok 20 - failed native economy command rolls back, preserves room and allows a later valid command
+  ---
+  duration_ms: 1620.647554
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571114084,"backupName":"before-pearl-reset-1793571114084-15f34729-b078-4806-9a93-41172d674cde.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+ok 21 - native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1721.392227
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571115771,"backupName":"before-pearl-reset-1793571115771-734006f5-6a26-4836-bca0-7ace319d5b92.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+ok 22 - native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 1671.403725
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571117462,"backupName":"before-pearl-reset-1793571117462-da38797f-60db-4490-8f38-acb01ce896ba.sqlite"}
+# Subtest: 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+ok 23 - 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+  ---
+  duration_ms: 1522.099327
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571118971,"backupName":"before-pearl-reset-1793571118971-4bcb73ac-35ef-4d3a-abce-24ee740c1acf.sqlite"}
+# Subtest: native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+ok 24 - native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+  ---
+  duration_ms: 1503.261221
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571120480,"backupName":"before-pearl-reset-1793571120480-c63735bb-fb77-447d-b3cf-3105faa4eefb.sqlite"}
+# Subtest: native dungeon rewards use four-channel authority and per-player ordered durable receipts
+ok 25 - native dungeon rewards use four-channel authority and per-player ordered durable receipts
+  ---
+  duration_ms: 1540.387047
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571122720,"backupName":"before-pearl-reset-1793571122720-5afebd29-7426-4e4f-9a98-4f3f017e2ab8.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:07.575Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":418932,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e23111c1f02df4801996a73a"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:07.577Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":418938,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e7e2bc118353b11328da3eac"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:07.577Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":418948,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"40228b67473d14d20e14356c"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:07.577Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":418958,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7833ed4633da75c03d48ebcb"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:07.590Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":418921,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"a5e7c8576382111a61bf354a"}
+# Subtest: forest: movement continues during a delayed real potion ACK without early heal or position rewind
+ok 26 - forest: movement continues during a delayed real potion ACK without early heal or position rewind
+  ---
+  duration_ms: 6319.795731
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571129095,"backupName":"before-pearl-reset-1793571129095-eb41152b-5245-4986-a492-0437c893bc16.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:13.747Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":418981,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c033ddbf34d81e217a6d4901"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:13.747Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":418987,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ce30d6c5843dcba0e1fbc7a9"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:13.747Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":418997,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ffa0e302f0b6efc659a55caa"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:13.747Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":419003,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"62fcf0831a3b52ffa04677ae"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:13.765Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":418970,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"018f1cb3d13e1279cb02d176"}
+# Subtest: rune_v2: movement continues during a delayed real potion ACK without early heal or position rewind
+ok 27 - rune_v2: movement continues during a delayed real potion ACK without early heal or position rewind
+  ---
+  duration_ms: 6148.150041
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571135957,"backupName":"before-pearl-reset-1793571135957-3c692507-b9b7-43c2-8261-4aa8dedc393c.sqlite"}
+# {"type":"core511_command_sql_rolled_back","operation":"native_action","family":"update_players","queryDigest":"35e8e25b17ae2052","sqliteCode":1811,"frames":["writer-sql-timing477.mjs:85:69","command-failure-scope.mjs:28:134","retaliation-writer.mjs:22:147","attack-writer-rules.mjs:6582:747","action-writer.mjs:60:1454","action-writer.mjs:60:2045"],"outcome":"negative_receipt_pending_durability"}
+# Subtest: ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+ok 28 - ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+  ---
+  duration_ms: 2387.088146
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571139180,"backupName":"before-pearl-reset-1793571139180-ed18c240-ed4e-4989-803d-94c8713fd0d9.sqlite"}
+# {"type":"core511_command_sql_rolled_back","operation":"native_action","family":"update_players","queryDigest":"35e8e25b17ae2052","sqliteCode":1811,"frames":["writer-sql-timing477.mjs:85:69","command-failure-scope.mjs:28:134","retaliation-writer.mjs:22:147","attack-writer-rules.mjs:6582:747","action-writer.mjs:60:1454","action-writer.mjs:60:2045"],"outcome":"negative_receipt_pending_durability"}
+# Subtest: ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+ok 29 - ten native potions equal serial healing and charge debit; replay exact; tenth SQL failure rolls back every actor
+  ---
+  duration_ms: 2464.233601
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571142220,"backupName":"before-pearl-reset-1793571142220-abb9d966-8489-42db-909b-33fa86234fdf.sqlite"}
+# Subtest: native settings refresh preserves exact settings, same-revision edits, rollback recovery and dynamic services
+ok 30 - native settings refresh preserves exact settings, same-revision edits, rollback recovery and dynamic services
+  ---
+  duration_ms: 1718.180837
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571144593,"backupName":"before-pearl-reset-1793571144593-49b9411f-a8e0-4af8-a940-5099a56027ee.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:29.567Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":419078,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"97719dbf7007492da344482f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:29.568Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":419084,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fd2ee2bab05a12bc739155c3"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:29.568Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":419094,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b7e7c2019a65f195db274630"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:29.568Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":419100,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"05596e0a327cead3f8b4e41a"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:29.582Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":419067,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"38d847e8f82ad628e4486b6a"}
+# Subtest: R88 Rune V2 ordinary native death (provisional 202 allowed), reward claim replay and second player movement
+ok 31 - R88 Rune V2 ordinary native death (provisional 202 allowed), reward claim replay and second player movement
+  ---
+  duration_ms: 6411.149069
+  type: 'test'
+  ...
+# Subtest: Rune potion join includes only the ordinary catalog and one matching actor scope
+ok 32 - Rune potion join includes only the ordinary catalog and one matching actor scope
+  ---
+  duration_ms: 1.972386
+  type: 'test'
+  ...
+# Subtest: Rune potion refresh preserves scope/equipment and falls back for death, rewards or additional actors
+ok 33 - Rune potion refresh preserves scope/equipment and falls back for death, rewards or additional actors
+  ---
+  duration_ms: 0.274953
+  type: 'test'
+  ...
+# Subtest: all native attack respawn paths retain configured Rune zero/positive values and existing generic fallbacks
+ok 34 - all native attack respawn paths retain configured Rune zero/positive values and existing generic fallbacks
+  ---
+  duration_ms: 3.463292
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571152068,"backupName":"before-pearl-reset-1793571152068-89388e98-517d-4964-9c3e-5832c704606f.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:36.698Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":419152,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b3cc01a94c7b482ebc9cbd18"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:36.699Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":419158,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"83d63c090888b332df40f548"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:36.699Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":419168,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"521b7837a8b3af28a3d66bdc"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:36.699Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":419174,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e69e731f364991db544785e7"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:36.719Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":419141,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"8d60c30c032c282b588e9f88"}
+# Subtest: an unknown Rune catalog row cannot crash the channel when hit or killed
+ok 35 - an unknown Rune catalog row cannot crash the channel when hit or killed
+  ---
+  duration_ms: 6118.626466
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571159246,"backupName":"before-pearl-reset-1793571159246-1e8b243a-319a-4a2e-ac88-47674b7b0cb9.sqlite"}
+# Subtest: Sis: native PvP all classes/basic/area skills match durable rules; no new combat engine
+ok 36 - Sis: native PvP all classes/basic/area skills match durable rules; no new combat engine
+  ---
+  duration_ms: 1696.592214
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571160860,"backupName":"before-pearl-reset-1793571160860-43bf68df-d600-442e-9465-c59aafafb610.sqlite"}
+# Subtest: four entrants, fifth refused; completion once, idle refused, offline expiry returns origin
+ok 37 - four entrants, fifth refused; completion once, idle refused, offline expiry returns origin
+  ---
+  duration_ms: 1463.000449
+  type: 'test'
+  ...
+# Subtest: Mist admin retains auth/CSRF origin gate and waits for durable configuration
+ok 38 - Mist admin retains auth/CSRF origin gate and waits for durable configuration
+  ---
+  duration_ms: 773.182404
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571163720,"backupName":"before-pearl-reset-1793571163720-abca70d3-bbea-41b1-af31-00c738635684.sqlite"}
+# Subtest: owned rune writer rejects stale actor, monster, gear and cast snapshots before the atomic death
+ok 39 - owned rune writer rejects stale actor, monster, gear and cast snapshots before the atomic death
+  ---
+  duration_ms: 1685.374572
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571165287,"backupName":"before-pearl-reset-1793571165287-e8a7a85c-f840-4f78-8d20-1e01b03508fb.sqlite"}
+# Subtest: actual rune death SIGKILL on both COMMIT sides preserves one HP, gem loss, respawn and boss sequence
+ok 40 - actual rune death SIGKILL on both COMMIT sides preserves one HP, gem loss, respawn and boss sequence
+  ---
+  duration_ms: 2124.906062
+  type: 'test'
+  ...
+# Subtest: rune boss preserves pinned native timing/target code with SQL-free synchronous memory boundaries
+ok 41 - rune boss preserves pinned native timing/target code with SQL-free synchronous memory boundaries
+  ---
+  duration_ms: 0.807257
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571167905,"backupName":"before-pearl-reset-1793571167905-4ec7908c-6eb1-4e50-a3df-6c55366a9923.sqlite"}
+# Subtest: native rune basics, telegraph, impact, dodging, stun and life reset equal original SQL with resident SQL forbidden
+ok 42 - native rune basics, telegraph, impact, dodging, stun and life reset equal original SQL with resident SQL forbidden
+  ---
+  duration_ms: 1647.79966
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571169465,"backupName":"before-pearl-reset-1793571169465-0f47f9da-6de1-4366-862a-77d88ba555f4.sqlite"}
+# Subtest: native rune wave delivery grace, expired casts and lethal gem penalty preserve original results without early memory commit
+ok 43 - native rune wave delivery grace, expired casts and lethal gem penalty preserve original results without early memory commit
+  ---
+  duration_ms: 1533.781994
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571170984,"backupName":"before-pearl-reset-1793571170984-4829080b-a196-4c5d-a721-a65c47a66141.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1793571172458,"backupName":"before-pearl-reset-1793571172458-9aa24322-df5b-42bd-841d-0856ab07c9bf.sqlite"}
+# Subtest: native rune candidate lab/GM/session exclusions and channel4 use the same guarded clock and damage
+ok 44 - native rune candidate lab/GM/session exclusions and channel4 use the same guarded clock and damage
+  ---
+  duration_ms: 2996.038264
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793571174907,"backupName":"before-pearl-reset-1793571174907-617c16c5-95f1-479d-80c2-fc46fcfe2f0d.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:59.632Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":419350,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0eb71a1d2bc907633405a1b4"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:59.633Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":419356,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"71dd691778b719e12e019385"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:59.633Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":419366,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e7b22335b0eb715cb53bb81f"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:59.633Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":419372,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b169eb12a5f94dbadef74154"}
+# {"event":"core511_recovery_cause","at":"2026-11-01T22:12:59.649Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":419339,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"b8d4e75be9e350e46ce173f8"}
+# Subtest: tower schema and admin save integrate with actual writer, four channel owners and world configuration barrier
+ok 45 - tower schema and admin save integrate with actual writer, four channel owners and world configuration barrier
+  ---
+  duration_ms: 6245.552715
+  type: 'test'
+  ...
+1..45
+# tests 45
+# suites 0
+# pass 45
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75780.601022

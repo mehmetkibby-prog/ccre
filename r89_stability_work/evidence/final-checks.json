@@ -1,0 +1,13 @@
+{
+  "coreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "passed": true,
+  "tests": 45,
+  "pass": 45,
+  "fail": 0,
+  "logs": [
+    {
+      "path": "evidence/native-regressions-r89-final.log",
+      "sha256": "82b9c537092bfd38cc32d7afb387eb0f91c469ecd5013f54169baa1f851eabe0"
+    }
+  ]
+}

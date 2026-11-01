@@ -1,0 +1,69 @@
+{
+  "coreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "passed": true,
+  "tests": 36,
+  "logs": [
+    {
+      "path": "evidence/final-actual-package.test.py.log",
+      "sha256": "174c2f72a38b02fe7fff1043cee80ce461319a1b0239ffce1c5b9da0db7e5031"
+    },
+    {
+      "path": "evidence/final-installer-boundaries.test.py.log",
+      "sha256": "45a968c309e5da55272adfec4c440f1584b75f1c0e195f37e82f243bbd1c43b8"
+    },
+    {
+      "path": "evidence/final-installer-client.test.py.log",
+      "sha256": "0c23b3027d7d447178ad7f04eb7346bb42a9074c5fb5be4b242297778ccc05d1"
+    },
+    {
+      "path": "evidence/final-installer-gates.test.py.log",
+      "sha256": "305244aaa298fbf44a5ca5afca76a1929a41e2f4f1159cc05e5438fc7a2b7197"
+    },
+    {
+      "path": "evidence/final-installer-health.test.py.log",
+      "sha256": "b4bfd7a321cf36c12d29160ce7d8a0aab6368f3363160f6c9f97d8ab02d33359"
+    },
+    {
+      "path": "evidence/final-installer-recovery.test.py.log",
+      "sha256": "6f94262efa46d5ff7797dbabfb011ee93466afaf4de948f75f03de11e64275b1"
+    }
+  ],
+  "modules": [
+    {
+      "name": "central.mjs",
+      "sha256": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067"
+    },
+    {
+      "name": "client_stage.py",
+      "sha256": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42"
+    },
+    {
+      "name": "ingress_stage.py",
+      "sha256": "4db0a16459d3d794d135c38633e48df4c6d5b3c5e554796d683f10a5af06c881"
+    },
+    {
+      "name": "inplace_stage.py",
+      "sha256": "16c8306e5034b13699ea5eb68ed5458be43ab7316565d60408f0721dade095ab"
+    },
+    {
+      "name": "installer.py",
+      "sha256": "8d93ae24479f1b6416a704798c42401f4715e26270ca148fc216c4983ac5ada0"
+    },
+    {
+      "name": "r63_support.py",
+      "sha256": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc"
+    },
+    {
+      "name": "retention.py",
+      "sha256": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91"
+    },
+    {
+      "name": "runtime_stage.py",
+      "sha256": "364c7b06432099491bad76e9d4f60dfb485cc23cef58c766c9ecf8fb81b4efd5"
+    },
+    {
+      "name": "storage.py",
+      "sha256": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735"
+    }
+  ]
+}

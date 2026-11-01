@@ -1,0 +1,15 @@
+{
+  "hashes": [
+    {
+      "name": "generated/attack-rules.mjs",
+      "before": "bbcf5271678ef11e54b3cf7eb0db7c6a775a0ce3d75a7f8bc9b8169ba3a66de9",
+      "after": "7d0c3dfc87a6aff29cc3d6a57b5b526c0523e419b17de6e84c60304b81a8a79d"
+    },
+    {
+      "name": "generated/attack-writer-rules.mjs",
+      "before": "949fb0696b9576d5ceb293c89c76a7fef2e2656748716ee8dc3a3af25026a143",
+      "after": "980606a62dded6ef1b7258800c7348403ad296e52a283b32345115291219ac64"
+    }
+  ],
+  "scope": "Unknown catalog rows use the existing generic respawn rule. Known catalog values, damage and rewards are unchanged."
+}

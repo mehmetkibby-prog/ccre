@@ -1,0 +1,13 @@
+test_active_admission_is_refused_before_any_stop (__main__.R89SpecificBoundaryTests.test_active_admission_is_refused_before_any_stop) ... ok
+test_active_presence_is_refused_before_any_stop (__main__.R89SpecificBoundaryTests.test_active_presence_is_refused_before_any_stop) ... ok
+test_correctly_hashed_http_payload_cannot_add_route_logic (__main__.R89SpecificBoundaryTests.test_correctly_hashed_http_payload_cannot_add_route_logic) ... ok
+test_open_policy_is_not_silently_changed_by_installer (__main__.R89SpecificBoundaryTests.test_open_policy_is_not_silently_changed_by_installer) ... ok
+test_payload_hash_mismatch_is_refused_before_any_stop (__main__.R89SpecificBoundaryTests.test_payload_hash_mismatch_is_refused_before_any_stop) ... ok
+test_plan_requires_r86_source_and_r89_destination (__main__.R89SpecificBoundaryTests.test_plan_requires_r86_source_and_r89_destination) ... ok
+test_r82_state_is_rejected_before_any_service_stop (__main__.R89SpecificBoundaryTests.test_r82_state_is_rejected_before_any_service_stop) ... ok
+test_recent_player_is_refused_before_any_stop (__main__.R89SpecificBoundaryTests.test_recent_player_is_refused_before_any_stop) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.072s
+
+OK

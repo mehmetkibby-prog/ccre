@@ -11,6 +11,7 @@ import {workerWindowR56} from './r56-options.mjs';
 import {installRewardGroupCommitR53} from './reward-group-commit-r53.mjs';
 import {installRewardCheckpointR79} from './checkpoint-runtime-r79.mjs';
 import {createRewardRankRefreshR85} from './reward-rank-refresh-r85.mjs';
+import {createRewardServiceRefreshR89} from './reward-service-refresh-r89.mjs';
 
 export async function runRewardWorkerR533({hook=()=>{}}={}){
  const config=workerData,stat=statSync(config.file);
@@ -38,6 +39,7 @@ export async function runRewardWorkerR533({hook=()=>{}}={}){
  };
  await writer.initialize();
  const rankRefreshR85=createRewardRankRefreshR85(writer.services);
+ const serviceRefreshR89=createRewardServiceRefreshR89(writer.services);
  if(statementBootPoolR61)prepareCombatStatementBootR61(sql);
  const materialize=writer.presence.materialize.bind(writer.presence);writer.presence.materialize=db=>(written=materialize(db));
  const commit=database.commitWrites.bind(database);database.commitWrites=()=>{hook('before_commit',{database,current});commit();hook('after_commit',{database,current});};
@@ -50,10 +52,10 @@ export async function runRewardWorkerR533({hook=()=>{}}={}){
   try{
    demand(['attack','native_action'].includes(current.request.operation)&&(current.request.operation==='attack'||current.request.payload.input?.action==='claim_rewards'),'reward_worker_operation');
    registry.registry.apply(current.registry);for(const fault of current.registryFaults??[])registry.registry.stop(fault.runId,{code:fault.code});
-   writer.refreshOwners();writer.services.refresh({rankRefreshR85});writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
-   hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);hook('after_command',{database,current,ack});
+   writer.refreshOwners();writer.services.refresh({rankRefreshR85,serviceRefreshR89});writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
+   hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);serviceRefreshR89.afterCommand(ack);hook('after_command',{database,current,ack});
    parentPort.postMessage({id:message.id,ok:true,ack,written:written.map(p=>[p.actor,p.version]),workMs:performance.now()-started});
-  }catch(error){rankRefreshR85.invalidate();parentPort.postMessage({id:message.id,ok:false,error:{code:error.code??'reward_worker_failed',message:error.message,stack:error.stack,fenceContext:error.fenceContext,rejection:actorRejection(error)},workMs:performance.now()-started});}
+  }catch(error){rankRefreshR85.invalidate();serviceRefreshR89.invalidate();parentPort.postMessage({id:message.id,ok:false,error:{code:error.code??'reward_worker_failed',message:error.message,stack:error.stack,fenceContext:error.fenceContext,rejection:actorRejection(error)},workMs:performance.now()-started});}
   finally{current=null;}
  }).catch(error=>{parentPort.postMessage({type:'fatal',code:error.code??'reward_worker_failed'});process.exitCode=1;parentPort.close();});});
  parentPort.postMessage({type:'ready',checkpointR79:checkpoint.snapshot()});

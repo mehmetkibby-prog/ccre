@@ -1,0 +1,33 @@
+test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change (__main__.InstallerTests.test_apply_then_idempotent_apply_no_release_clone_runtime_or_database_change) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_before_hash_gate_refuses_unknown_source_without_stopping (__main__.InstallerTests.test_before_hash_gate_refuses_unknown_source_without_stopping) ... ok
+test_crash_after_third_existing_file_replaces_only_code_and_recovers (__main__.InstallerTests.test_crash_after_third_existing_file_replaces_only_code_and_recovers) ... ok
+test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account (__main__.InstallerTests.test_health_failure_rolls_back_code_but_keeps_post_backup_progress_and_account) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_manual_rollback_takes_fresh_backup_and_preserves_current_database (__main__.InstallerTests.test_manual_rollback_takes_fresh_backup_and_preserves_current_database) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_partial_gameplay_file_after_killed_writer_recovers_without_old_database (__main__.InstallerTests.test_partial_gameplay_file_after_killed_writer_recovers_without_old_database) ... ok
+test_r86_journal_cannot_be_adopted_by_r89_recovery (__main__.InstallerTests.test_r86_journal_cannot_be_adopted_by_r89_recovery) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_unknown_manual_file_blocks_all_restore_writes (__main__.InstallerTests.test_unknown_manual_file_blocks_all_restore_writes) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.797s
+
+OK

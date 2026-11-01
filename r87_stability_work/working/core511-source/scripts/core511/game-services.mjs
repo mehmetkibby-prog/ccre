@@ -43,7 +43,7 @@ export class NativeGameServices extends NativeModeServices {
   this.rules=createAttackWriterRules({globals:g,now,random,uuid,fourChannels:true});
   this.rules.dungeonService(); // Original equipment stats and solo gear rolls.
  }
- refresh({rankRefreshR85=null}={}){super.refresh();this.globals.__colProgression.refresh();this.globals.__colRanks=rankRefreshR85?rankRefreshR85.refresh(this):this.modules.ranks.createRanks(this.database);}
+ refresh({rankRefreshR85=null,serviceRefreshR89=null}={}){super.refresh({serviceRefreshR89});if(!serviceRefreshR89?.refresh(this,'__colProgression'))this.globals.__colProgression.refresh();this.globals.__colRanks=rankRefreshR85?rankRefreshR85.refresh(this):this.modules.ranks.createRanks(this.database);}
  dungeonOptions(){
   const g=this.globals;return {globals:g,stats:(...args)=>g.__colDungeon.stats(...args),makeGear:(...args)=>g.__colDungeon.makeGear(...args),progressionSettings:()=>g.__colProgression.snapshot()};
  }

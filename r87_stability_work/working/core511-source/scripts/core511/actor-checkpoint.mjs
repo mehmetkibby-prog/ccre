@@ -19,6 +19,15 @@ const columns=Object.freeze([...scope,...CHECKPOINT_FIELDS]);
 const pick=row=>{const value={};for(const name of columns)value[name]=row[name];return value;};
 const same=(a,b,fields=columns)=>fields.every(name=>Object.is(a?.[name],b?.[name]));
 const quote=s=>'"'+s+'"';
+// One potion/reward may hydrate every party member at the same instant. Spread
+// only their first periodic snapshot. Later polls keep the full 1500ms period;
+// unlike a permanently shortened cadence this does not increase steady writes.
+function firstCheckpointDelayR89(id){
+ if(!checkpointScheduleR57||process.env.CORE511_R89_CHECKPOINT_PHASE==='0')return R53_CHECKPOINT_START_MS;
+ let hash=2166136261;for(let i=0;i<id.length;i++)hash=Math.imul(hash^id.charCodeAt(i),16777619);
+ hash=Math.imul(hash^(hash>>>16),0x85ebca6b);hash=Math.imul(hash^(hash>>>13),0xc2b2ae35);
+ return R53_CHECKPOINT_START_MS-500+((hash^(hash>>>16))>>>0)%501;
+}
 // Original allowlists and changed-column writer. A nonterminal checkpoint can
 // never change currency/items/XP/scope, revive a dead player or commit a death.
 // Native death/respawn/reward rules must use their durable operation handlers.
@@ -66,7 +75,7 @@ export class ActorCheckpoints {
   demand(state&&typeof submit==='function'&&typeof pollable==='function','checkpoint_dependencies');Object.assign(this,{state,submit,encounters,pollable,clock,onFatal,onRejected});
   this.entries=new Map();this.incarnation=randomUUID();this.serial=0;this.failure=null;
  }
- hydrate(row){demand(!this.entries.get(row.id)?.pending,'checkpoint_pending');const owner=this.state.owners.get(row.id);demand(owner,'owner_epoch_fenced');this.entries.set(row.id,{base:pick(row),epoch:owner.epoch,at:this.clock(),pending:null});}
+ hydrate(row){demand(!this.entries.get(row.id)?.pending,'checkpoint_pending');const owner=this.state.owners.get(row.id);demand(owner,'owner_epoch_fenced');this.entries.set(row.id,{base:pick(row),epoch:owner.epoch,at:this.clock(),pollDelayR89:firstCheckpointDelayR89(row.id),pending:null});}
  // Only post-commit callers use this: applyCommit has already installed a
  // validated DB bundle (or a certified receipt refresh) behind the actor lease.
  // That read may be newer than the receipt. Never rebase to the older receipt.
@@ -94,7 +103,7 @@ export class ActorCheckpoints {
   // must not replace it with an unproven owner error after quarantine froze it.
   if(quarantineDrainR531&&entry.rejectedR531)throw entry.rejectedR531;
   const owner=this.state.assertOwner(id,entry.epoch,{allowQuiesced:true}),row=this.state.read('players',id),snapshot=pick(row);
-  if(same(snapshot,entry.base)&&!this.encounters?.changed(id)){entry.at=this.clock();return Promise.resolve({unchanged:true});}
+  if(same(snapshot,entry.base)&&!this.encounters?.changed(id)){entry.at=this.clock();entry.pollDelayR89=R53_CHECKPOINT_START_MS;return Promise.resolve({unchanged:true});}
   demand(same(snapshot,entry.base,scope),'checkpoint_scope_changed');
   const pve=this.encounters?.snapshot(id),capturedAt=this.clock();
   const event={actor:id,key:'checkpoint:'+this.incarnation+':'+(++this.serial),kind:'actor_checkpoint',payload:{base:entry.base,current:snapshot,...(pve===undefined?{}:{pve})}};
@@ -103,7 +112,7 @@ export class ActorCheckpoints {
    demand(ack.key===event.key&&same(ack.result?.saved,snapshot),'checkpoint_ack_mismatch');
    demand(this.entries.get(id)===entry&&this.state.owners.get(id)===owner,'checkpoint_owner_changed');
    if(this.encounters)this.encounters.acknowledged(id,pve,ack.result.encounter);
-   entry.base=snapshot;entry.pending=null;entry.at=memoryCombatR53?capturedAt:this.clock();owner.pending--;return ack;
+   entry.base=snapshot;entry.pending=null;entry.at=memoryCombatR53?capturedAt:this.clock();entry.pollDelayR89=R53_CHECKPOINT_START_MS;owner.pending--;return ack;
   }).catch(error=>{const rejection=actorRejection(error);if(rejection?.actor===id&&rejection.epoch===entry.epoch&&rejection.key===event.key&&this.entries.get(id)===entry&&this.state.owners.get(id)===owner){entry.pending=null;entry.at=this.clock();owner.pending--;if(actorFaultIsolation&&(error.code==='checkpoint_snapshot_conflict'||actorFrameIsolation&&error.code==='encounter_snapshot_conflict')){if(quarantineDrainR531)entry.rejectedR531=error;this.state.freeze(id,entry.epoch);this.onRejected(id,error);}throw error;}this.failure=error;if(this.state.owners.get(id)===owner)this.state.freeze(id,entry.epoch);this.onFatal(error);throw error;});
   entry.pending=pending;return pending;
  }
@@ -115,7 +124,7 @@ export class ActorCheckpoints {
   // snapshots over five frames instead of flooding the sole writer. Explicit
   // drains/joins bypass pacing; the 2s overdue input fence remains unchanged.
   const entries=paced?[...this.entries].sort((a,b)=>a[1].at-b[1].at):this.entries;
-  for(const [id,entry]of entries)if(!entry.pending&&!entry.joinedR53&&now-entry.at>=(memoryCombatR53?R53_CHECKPOINT_START_MS:CHECKPOINT_MS)&&this.pollable(id)){
+  for(const [id,entry]of entries)if(!entry.pending&&!entry.joinedR53&&now-entry.at>=(memoryCombatR53?(entry.pollDelayR89??R53_CHECKPOINT_START_MS):CHECKPOINT_MS)&&this.pollable(id)){
    const owner=this.state.owners.get(id);if(owner?.state!=='active'||owner.epoch!==entry.epoch)continue;
    if(paced&&this.changed(id)){if(this.pollWindowR57.count>=5)continue;this.pollWindowR57.count++;}
    void this.flush(id).catch(()=>{});

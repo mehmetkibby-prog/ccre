@@ -10,6 +10,7 @@ import {createActorCheckpointHandler} from './actor-checkpoint.mjs';
 import {checkpointConflictProof} from './checkpoint-rejection.mjs';
 import {actorFrameConflictProof} from './actor-frame-rejection.mjs';
 import {normalPlayerR53,normalMonsterR53} from './r53-options.mjs';
+import {potionPlayerR89,potionMonsterR89} from './potion-scope-r89.mjs';
 import {demand} from './contract.mjs';
 import {compactJoinedAckR57} from './joined-ack-r57.mjs';
 
@@ -29,12 +30,12 @@ export function createJoinedClaimActorsR56(authority){
   if(potion){
    demand(actors.length===1&&actors[0].actor===context.actor&&held.size<=1025,'potion_join_actor');
    const player=preparePotionStatementR61(sql,'SELECT * FROM players WHERE id=?').get(context.actor);
-   demand(normalPlayerR53(player)&&player.channel===context.peer.channel,'potion_join_player');
+   demand(potionPlayerR89(player)&&player.channel===context.peer.channel,'potion_join_player');
    for(const key of held){
     if(key==='player:'+context.actor)continue;
     demand(key.startsWith('monster:'),'potion_join_resource');
-    const m=preparePotionStatementR61(sql,'SELECT area,channel,is_boss,is_stone FROM monsters WHERE id=?').get(key.slice(8));
-    demand(normalMonsterR53(m)&&m.channel===player.channel&&m.area===player.area,'potion_join_monster');
+    const m=preparePotionStatementR61(sql,'SELECT id,area,channel,is_boss,is_stone,summoned FROM monsters WHERE id=?').get(key.slice(8));
+    demand(potionMonsterR89(m)&&m.channel===player.channel&&m.area===player.area,'potion_join_monster');
    }
   }else if(collect){
    demand(actors.length===1&&actors[0].actor===context.actor,'collect_join_actor');
@@ -50,7 +51,7 @@ export function createJoinedClaimActorsR56(authority){
    if(collect&&!validCollectMaterialDropR85(collectDrop(),payload.localScope))return rejectCollect();
    for(const row of actors){
     demand(held.has('player:'+row.actor),'claim_join_unlocked');authority.assertAdmitted(sql,context.peer,row.actor,row.epoch);
-    demand(normalPlayerR53(preparePotionStatementR61(sql,'SELECT area,arena_match_id FROM players WHERE id=?').get(row.actor)),'claim_join_player');
+    demand((potion?potionPlayerR89:normalPlayerR53)(preparePotionStatementR61(sql,'SELECT area,arena_match_id FROM players WHERE id=?').get(row.actor)),'claim_join_player');
     try{saved.push(compactJoinedAckR57(row.actor,row.payload,checkpoint(sql,row.payload,{...context,actor:row.actor,epoch:row.epoch})));}
     catch(error){
      const request={operation:'actor_checkpoint',playerId:row.actor,epoch:row.epoch,operationId:context.key,payload:row.payload};

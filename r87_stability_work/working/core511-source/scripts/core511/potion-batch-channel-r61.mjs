@@ -3,20 +3,20 @@ import {OperationRandom} from './operation-random.mjs';
 import {actorRejection} from './actor-rejection.mjs';
 import {stageStartR51,stageEndR51,stageRecordR51} from './stage-timing-r51.mjs';
 import {combatInputOrder} from './combat-input-order.mjs';
-import {normalPlayerR53} from './r53-options.mjs';
+import {potionPlayerR89} from './potion-scope-r89.mjs';
 import {potionJoinTargetsR56} from './potion-join-r56.mjs';
 import {olderGroupWaitingR57} from './group-fairness-r57.mjs';
 import {demand} from './contract.mjs';
 import {beginActionMovementR88,stopDeathMovementR86,rebaseDeathCheckpointR86} from './death-movement-r86.mjs';
 
-const plans=new WeakSet(),areas=new Set(['forest','frozen','black','ancient']);
+const plans=new WeakSet(),areas=new Set(['forest','frozen','black','ancient','rune_v2']);
 export const POTION_BATCH_EXTRA_LIMIT_R61=POTION_BATCH_LIMIT_R86-1;
 
 // Planning has no input, mount, journal or resource mutation. A busy extension
 // simply leaves the original potion available to its established path.
 export function planPotionsR61(channel,context,{enabled=potionBatchR61,seedFor=()=>OperationRandom.seed(),eligible=()=>true}={}){
  const {id,input,inputOrder,now,kernel}=context,source=channel.view.player(id);
- if(!enabled||input?.action!=='use_potion'||!Number.isSafeInteger(inputOrder)||!normalPlayerR53(source)||!areas.has(source.area))return null;
+ if(!enabled||input?.action!=='use_potion'||!Number.isSafeInteger(inputOrder)||!potionPlayerR89(source)||!areas.has(source.area))return null;
  const scope=(actor,next,receivedAtMs)=>{
   const footprint=channel.actions.footprint(actor,next,receivedAtMs),ids=[...new Set([actor,...footprint.players])];
   const targets=potionJoinTargetsR56({input:next,footprint,ids,kernel});
@@ -28,7 +28,7 @@ export function planPotionsR61(channel,context,{enabled=potionBatchR61,seedFor=(
  const keys=new Set(first.resources),entries=[],heads=[];let nextQueuedOrder=kernel.players.get(id)?.queue[0]?.order??Infinity;
  for(const [actor,p]of combatInputOrder(kernel.players)){
   const head=p.queue[0],next=head.payload,row=channel.view.player(actor);
-  if(actor===id||head.order<=inputOrder||head.order>=nextQueuedOrder||head.receivedAtMs>now||p.externalHold||next?.action!=='use_potion'||!normalPlayerR53(row)||row.area!==source.area||row.channel!==source.channel||!areas.has(row.area)||channel.checkpoints.overdueR53(actor)||(!channel.checkpoints.entries.has(actor)||channel.checkpoints.entries.get(actor).pending||channel.checkpoints.entries.get(actor).joinedR53)||channel.lanes.busy(['player:'+actor])||!eligible(actor,next,head.receivedAtMs))break;
+  if(actor===id||head.order<=inputOrder||head.order>=nextQueuedOrder||head.receivedAtMs>now||p.externalHold||next?.action!=='use_potion'||!potionPlayerR89(row)||row.area!==source.area||row.channel!==source.channel||!areas.has(row.area)||channel.checkpoints.overdueR53(actor)||(!channel.checkpoints.entries.has(actor)||channel.checkpoints.entries.get(actor).pending||channel.checkpoints.entries.get(actor).joinedR53)||channel.lanes.busy(['player:'+actor])||!eligible(actor,next,head.receivedAtMs))break;
   const identity=channel.identities.get(actor);if(!identity||channel.ports.guard(identity,next,now)!==true||channel.mounts?.rejectAction?.(actor,next))break;
   const own=scope(actor,next,head.receivedAtMs);if(!own||new Set([...keys,...own.resources]).size>2048)break;
   if(olderGroupWaitingR57({kernel,id:actor,input:next,inputOrder:head.order,ids:[actor],resources:own.resources}))break;

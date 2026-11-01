@@ -1,0 +1,804 @@
+{
+  "version": "R89_GAMEPLAY",
+  "sourceVersion": "R86_GAMEPLAY",
+  "coreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "assessmentKind": "local-native50-twochannels-forest180-rune180",
+  "liveDeploymentPerformed": false,
+  "fullGameAcceptance": false,
+  "performancePassed": true,
+  "allRequiredChecksPassed": true,
+  "productionFiles": {
+    "core511-source/scripts/core511/action-loop.mjs": {
+      "before": "4412003a3c2388b5c41900f9edb1fce3a38140320f0a23f94478bc955ee7a5e5",
+      "after": "77c480b4157eba1ae4199ad075d9318f194a264b1d1978a8009fe2c3d7ac8da5",
+      "bytes": 11036
+    },
+    "core511-source/scripts/core511/actor-checkpoint.mjs": {
+      "before": "f1903ee5f3734798f23287025d12d580a70c31b3be61e5b0a32ef7a15e993df7",
+      "after": "5eef28e5cb97636c24e7191be57365eedb2d2f2226ca3ce5f00ec1e6e66cca2a",
+      "bytes": 11763
+    },
+    "core511-source/scripts/core511/actor-section-reuse-r52.mjs": {
+      "before": "471a242ccceb5fde7396ba2ecf0a1b19af7d2fad452ceb6c7aa8c2ff860c8799",
+      "after": "6826982505548372115970ce534e7a5267d84f092c66aa50df3f630de9ef2fde",
+      "bytes": 25030
+    },
+    "core511-source/scripts/core511/attack-loop.mjs": {
+      "before": "e6a347b80a89f34da1223f45878a8440c45c57b575d987f0db84e5e0557f840e",
+      "after": "bf4d1917670012b163bddb5ffabd75c60cbf1db3ef5d247e64319e2716b28c7e",
+      "bytes": 9309
+    },
+    "core511-source/scripts/core511/attack-memory.mjs": {
+      "before": "3d66012cc4f5eb5bff840b7b4c81fc3d14891319e48473fcab8421a73f62b031",
+      "after": "464d952c034413c2da29ca5098d4e744a1a1080a5c8d2be1d0d50af3c7dd0372",
+      "bytes": 15774
+    },
+    "core511-source/scripts/core511/attack-writer.mjs": {
+      "before": "33d6396b7a781364881d534d388c9eafc360fe90d9492dfcf61bf5fa0c430655",
+      "after": "0ae5f9f1382dcc79b57a29d62f15069a6f893225adf42f7c8e4948a005b33276",
+      "bytes": 16299
+    },
+    "core511-source/scripts/core511/channel-connections.mjs": {
+      "before": "1dc4b4e27f77f311ebf9a0c2d3a2cc0871354fcbe6cd81aa3ff0c2bb8ed33ef5",
+      "after": "42911b7bbc30094253be2656a23b5d41cfece42b45b5ed49801e98eaf45dbfd8",
+      "bytes": 19485
+    },
+    "core511-source/scripts/core511/claim-actor-join-r56.mjs": {
+      "before": "dcc645b226ce6880b56150e1d72bbb06b1110d448050fc8798fb87e998f0ee32",
+      "after": "2c041c45c9f01f9d02f6c4dcf023993cd8b83eb428b969c8ac6bb9789b85ea8a",
+      "bytes": 6970
+    },
+    "core511-source/scripts/core511/client-transport.mjs": {
+      "before": "56b276e559beb3ea9938efdaa964a002f3dd14f8b4d876a2bab007555e0fecbc",
+      "after": "90f463116287bfb3f81e574494c8e96e8d30cdb1d9fc6fb2a8095af9ed8884b0",
+      "bytes": 38851
+    },
+    "core511-source/scripts/core511/death-movement-r86.mjs": {
+      "before": "af7ec2ac95859a05cc0e33254c4e1a2e46d5e775f3df87abc28f648a57d945dd",
+      "after": "a2b7308580dcd7e78cefd1c0792818640c4389bf63c0083492ac3cf4175ef835",
+      "bytes": 13484
+    },
+    "core511-source/scripts/core511/extract-pve-attack.mjs": {
+      "before": "14d38592bcb7c0c2ed75ba1e14a64b5ba82c617fdab0a468a670b1e8b0ee23b6",
+      "after": "0ab9297083ecb8fbb0edea32a8d0cba5e512588fff9108e9eddad0de9f7a5653",
+      "bytes": 36043
+    },
+    "core511-source/scripts/core511/fixed-loop.mjs": {
+      "before": "a74f39100170681c464b9e4ee14b9bd33fff3785720c4c254bb2b2a5684f8c7c",
+      "after": "245e21ca6c396f63e7acc9bb0294cbfbe81a945b2b5da6ea9b678e6315c606d8",
+      "bytes": 14878
+    },
+    "core511-source/scripts/core511/game-services.mjs": {
+      "before": "0c3405bebe7aa8be1042f839f66f64ce1440d8cc24cfc18116b1c137d987f171",
+      "after": "034a3604a2472709bf45764a59668adb6bcb50b2e7bd6cc8e0fa73822ea0a0a6",
+      "bytes": 5310
+    },
+    "core511-source/scripts/core511/generated/attack-rules.mjs": {
+      "before": "bbcf5271678ef11e54b3cf7eb0db7c6a775a0ce3d75a7f8bc9b8169ba3a66de9",
+      "after": "7d0c3dfc87a6aff29cc3d6a57b5b526c0523e419b17de6e84c60304b81a8a79d",
+      "bytes": 588171
+    },
+    "core511-source/scripts/core511/generated/attack-writer-rules.mjs": {
+      "before": "6b8594a26ca424c749c230b9f3f3e8f2b926e43cfdfa1f305c64373eff4573d8",
+      "after": "980606a62dded6ef1b7258800c7348403ad296e52a283b32345115291219ac64",
+      "bytes": 588628
+    },
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "ac923ecd0e60d069b17deae2cd47eb4c613c0a91559a792bd2cc8eeb1087adc9",
+      "after": "dc5dd8a3dd5a8d7f37e93becdad84d320fc6d93a8b4afb875ea86a8e2984280d",
+      "bytes": 373254
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "2637e712a425b278deb605df6c533f94a86518b8e3c8bcaf7377593b32bcb56f",
+      "after": "752085f9742eaf48ab6422589613f40e905857d7bee3520b6be3bf5085f14fbf",
+      "bytes": 156699
+    },
+    "core511-source/scripts/core511/joined-checkpoint-r53.mjs": {
+      "before": "1018d97be12191558ff749c20ce79fd1460f5604e271526f8cd6a0d2cca5327d",
+      "after": "fcb39ea9e1439c74e516b32b49134661336fb72b19ce4671602b6559a1cf6041",
+      "bytes": 4106
+    },
+    "core511-source/scripts/core511/mode-services.mjs": {
+      "before": "9de57cb92451dcfe9d6b0cc83ea7c5738ca2f5da408ae245aa18395187df7759",
+      "after": "6d4515df99cd8b42b178a516bdf75d1bb4106e9bb5a2ae28875b36590a4a1fbd",
+      "bytes": 3300
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "c9d045c79c97c75f0e630dc3d961c19e8b1ef7c8c8d65adf59d43f1a12534923",
+      "after": "c07ff503df8b19ce11e0b5a65dba771dce2987bd31c2ca8c4375426fa486e11d",
+      "bytes": 15094
+    },
+    "core511-source/scripts/core511/potion-batch-channel-r61.mjs": {
+      "before": "73e9468bbe90c6fa0a5249b9d50125be0e7e12ba440b3c18f6cdc5cf09cddf89",
+      "after": "955eb71b655bd5a50a595b4d4aeca70b1438b9a1960d4a26c991d758d7290896",
+      "bytes": 10050
+    },
+    "core511-source/scripts/core511/potion-join-r56.mjs": {
+      "before": "9b7c6946a6fb4ab85b0aec6b8e9723eeca1553d8b89774c249b946a5b95ef5b7",
+      "after": "2561ef679073264043545270e0c054256b43f5f673d57d879c3fdf399d3e2d1f",
+      "bytes": 1035
+    },
+    "core511-source/scripts/core511/potion-refresh.mjs": {
+      "before": "9f9e33a45fefa928b3b30b6f876a7bbd8b22a604252c8e6188d43cfc437f28a6",
+      "after": "5931107e185875e8b3b6331d90ecbe0d3cf2dfba9f98c595c139bb236c245e6d",
+      "bytes": 1193
+    },
+    "core511-source/scripts/core511/resident-channel.mjs": {
+      "before": "ac89872b2c0230ae866c46eabe05932116c5a53341cfc4c6a78705f0b3be06ab",
+      "after": "f1c5f4f4fb52c3180a5aedf689f39cdb385c8ebd765539fa0c1e552765b5892e",
+      "bytes": 22808
+    },
+    "core511-source/scripts/core511/reward-reply-r54.mjs": {
+      "before": "7204aaf8b813727582dc5e99565cc390bc2d0d23a181f8a06665df883cdd2f41",
+      "after": "135628c28d30dba9fcc89fc8e288a7e1db857a7c6ab62dc51591b3750a4d34ab",
+      "bytes": 3525
+    },
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs": {
+      "before": "ee98ff55cdc7473815fc79350a8b85bc16786bb1447a200831b3b55bc693f80b",
+      "after": "fb17b0a9bd1824b911dcd57907f5cccef986ea0d097fa03481bc24ce9bfa85d2",
+      "bytes": 6375
+    },
+    "core511-source/scripts/core511/writer-settings.mjs": {
+      "before": "1c9fb568f10969f85855ee0916290e7476d9790b0873174d62a2e5b48478bae7",
+      "after": "b4a1319ee7bd32787c714d607aa5f34d010a71619345f438154d1a752be5cc7a",
+      "bytes": 2046
+    },
+    "core511-source/scripts/core511/adapt-rune-respawn-r89.mjs": {
+      "before": null,
+      "after": "1de8e6ed671fe03b7f99e3dad95ed7de4e5e732d3e59fb16a7bf4e145b541d0d",
+      "bytes": 1057
+    },
+    "core511-source/scripts/core511/default-loot-cache-r87.mjs": {
+      "before": null,
+      "after": "450eaa21b1ddfdfff777c426b101bbd5a304bbafacb7ef6758ebeb6728deb571",
+      "bytes": 2164
+    },
+    "core511-source/scripts/core511/generated/client/core511-transport-r88-f2a907c787e721a0.js": {
+      "before": null,
+      "after": "f2a907c787e721a0b0ec9fd2ec32e625e4f8e1dc6607fe10bc4feb37144d52bd",
+      "bytes": 586166
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r87-aaf06f246f8a616a.js": {
+      "before": null,
+      "after": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
+      "bytes": 1647904
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r88-aa6aed7dd8933fa4.js": {
+      "before": null,
+      "after": "aa6aed7dd8933fa463f8a9e4e2df7f53ca6af9412977bb3c632a35ebc67256bd",
+      "bytes": 1647904
+    },
+    "core511-source/scripts/core511/potion-scope-r89.mjs": {
+      "before": null,
+      "after": "f5637f222ada76e7cfce6c645bb40ec8a7219d9a87f242db0dabcbe7f84e0dc5",
+      "bytes": 614
+    },
+    "core511-source/scripts/core511/reward-service-refresh-r89.mjs": {
+      "before": null,
+      "after": "2f29967aaa88065afd13057e152d797f937a9f7c85a7c4934a59f0a0d338b287",
+      "bytes": 2447
+    },
+    "core511-source/scripts/core511/rune-reward-scope-r87.mjs": {
+      "before": null,
+      "after": "494e1e9e052987491be85fe2dfddae3181e728419c74d03af2807bcc8cfabfbc",
+      "bytes": 534
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+      "after": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
+      "bytes": 2229879
+    }
+  },
+  "runs": {
+    "normal": {
+      "path": "evidence/native-crowd-r89-refresh-forest-final-50.json",
+      "sha256": "1868c0023ecb59e39126dde25230d62b485576f0807636b859a8a394c6cd09e4",
+      "players": 50,
+      "seconds": 180,
+      "populationChannels": 2,
+      "integrityPassed": true,
+      "performancePassed": true,
+      "commands": {
+        "count": 58797,
+        "p50": 46.04778199999964,
+        "p95": 79.78831499999797,
+        "p99": 125.88947199999984,
+        "max": 358.46777700000075
+      },
+      "byAction": {
+        "move": {
+          "count": 43283,
+          "p50": 46.72963500000333,
+          "p95": 77.43613499999628,
+          "p99": 99.32462999999552,
+          "max": 358.46777700000075
+        },
+        "heartbeat": {
+          "count": 1800,
+          "p50": 46.74985200000083,
+          "p95": 77.72083399999974,
+          "p99": 92.09493200000725,
+          "max": 191.77495699999963
+        },
+        "attack": {
+          "count": 12753,
+          "p50": 38.026244000007864,
+          "p95": 70.33384600000136,
+          "p99": 96.2849069999993,
+          "max": 335.87164499999926
+        },
+        "use_potion": {
+          "count": 50,
+          "p50": 327.5170990000006,
+          "p95": 338.75599799999964,
+          "p99": 344.0886909999999,
+          "max": 344.0886909999999
+        },
+        "collect": {
+          "count": 911,
+          "p50": 107.70992500000284,
+          "p95": 281.19932400000107,
+          "p99": 332.09024800000043,
+          "max": 341.9573760000003
+        }
+      },
+      "predictionCapEpisodes": 0,
+      "predictionLimitedFrames": 0,
+      "predictionLimitedInputMs": 0,
+      "runeDefeats": null,
+      "faults": 0,
+      "errors": 0
+    },
+    "rune": {
+      "path": "evidence/native-rune-r89-refresh-rune-final-50.json",
+      "sha256": "d2ce32afde2c28630f590eee75299f80d3ed3a41306b3fb26c0faa59d9e4cfbf",
+      "players": 50,
+      "seconds": 180,
+      "populationChannels": 2,
+      "integrityPassed": true,
+      "performancePassed": true,
+      "commands": {
+        "count": 52668,
+        "p50": 41.143236000003526,
+        "p95": 70.80421000000206,
+        "p99": 86.06158299997333,
+        "max": 408.2774410000002
+      },
+      "byAction": {
+        "move": {
+          "count": 43158,
+          "p50": 41.65663399999903,
+          "p95": 68.9759610000001,
+          "p99": 83.29080899999826,
+          "max": 252.56070799999998
+        },
+        "heartbeat": {
+          "count": 1800,
+          "p50": 37.61295300000347,
+          "p95": 69.99938999999722,
+          "p99": 81.63049400000091,
+          "max": 102.36425799999961
+        },
+        "attack": {
+          "count": 7613,
+          "p50": 37.86090699999477,
+          "p95": 78.29841199997463,
+          "p99": 89.35477499998524,
+          "max": 138.30351200000223
+        },
+        "use_potion": {
+          "count": 50,
+          "p50": 315.3642810000001,
+          "p95": 407.48658199999954,
+          "p99": 408.2774410000002,
+          "max": 408.2774410000002
+        },
+        "collect": {
+          "count": 47,
+          "p50": 117.80536999999822,
+          "p95": 169.0768160000007,
+          "p99": 171.46128600000156,
+          "max": 171.46128600000156
+        }
+      },
+      "predictionCapEpisodes": 0,
+      "predictionLimitedFrames": 0,
+      "predictionLimitedInputMs": 0,
+      "runeDefeats": 40,
+      "faults": 0,
+      "errors": 0
+    }
+  },
+  "midjoins": [
+    {
+      "path": "evidence/native-midjoin-r89-refresh-midjoin-final-50.json",
+      "sha256": "fe537b47423f00b637bc25f4a1f0284df7431c8d0fd3bdd6a7835263f97758b4",
+      "passed": true,
+      "commands": {
+        "count": 9841,
+        "p50": 49.12935900000048,
+        "p95": 121.1320510000005,
+        "p99": 290.95626099999936,
+        "max": 426.4132320000008
+      },
+      "byAction": {
+        "move": {
+          "count": 7158,
+          "p50": 49.1411569999982,
+          "p95": 96.12532299999657,
+          "p99": 187.26822099999845,
+          "max": 342.1477880000002
+        },
+        "heartbeat": {
+          "count": 299,
+          "p50": 42.191303999999946,
+          "p95": 103.80723300000045,
+          "p99": 121.2942779999994,
+          "max": 125.48771699999998
+        },
+        "attack": {
+          "count": 2098,
+          "p50": 43.83970000000045,
+          "p95": 81.9555049999999,
+          "p99": 118.23732400000063,
+          "max": 351.9822320000003
+        },
+        "use_potion": {
+          "count": 50,
+          "p50": 343.2442940000001,
+          "p95": 369.9947080000002,
+          "p99": 426.4132320000008,
+          "max": 426.4132320000008
+        },
+        "collect": {
+          "count": 236,
+          "p50": 220.85120600000027,
+          "p95": 350.7033159999992,
+          "p99": 354.46855700000015,
+          "max": 354.81457299999965
+        }
+      },
+      "predictionCapEpisodes": 0,
+      "predictionLimitedFrames": 0,
+      "joinReadyMs": 105.85807399999976,
+      "windows": {
+        "before": {
+          "fromMs": 2999.6951210000007,
+          "toMs": 4999.695121000001,
+          "commandLatencyMs": {
+            "count": 661,
+            "p50": 46.35979099999986,
+            "p95": 211.04748800000016,
+            "p99": 235.55450099999962,
+            "max": 283.2555549999988
+          },
+          "moveLatencyMs": {
+            "count": 475,
+            "p50": 48.77479400000084,
+            "p95": 127.50326199999927,
+            "p99": 232.01259400000072,
+            "max": 283.2555549999988
+          },
+          "sameChannelLatencyMs": {
+            "count": 320,
+            "p50": 51.42765099999997,
+            "p95": 187.37797000000046,
+            "p99": 235.55450099999962,
+            "max": 237.4581160000007
+          },
+          "otherChannelLatencyMs": {
+            "count": 341,
+            "p50": 44.84214800000154,
+            "p95": 214.7709909999994,
+            "p99": 233.59259800000018,
+            "max": 283.2555549999988
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 82,
+            "p50": 28.78420399999959,
+            "p95": 110.42260899999928,
+            "p99": 111.22658000000047,
+            "max": 111.22658000000047
+          }
+        },
+        "during": {
+          "fromMs": 4999.695121000001,
+          "toMs": 7105.553195,
+          "commandLatencyMs": {
+            "count": 727,
+            "p50": 57.158745999999155,
+            "p95": 317.22661700000026,
+            "p99": 353.55708500000037,
+            "max": 354.81457299999965
+          },
+          "moveLatencyMs": {
+            "count": 478,
+            "p50": 56.6217230000002,
+            "p95": 212.25628700000016,
+            "p99": 339.39580899999964,
+            "max": 342.1477880000002
+          },
+          "sameChannelLatencyMs": {
+            "count": 363,
+            "p50": 54.16837399999895,
+            "p95": 282.771256,
+            "p99": 348.0895339999988,
+            "max": 351.1921790000015
+          },
+          "otherChannelLatencyMs": {
+            "count": 364,
+            "p50": 60.21552000000156,
+            "p95": 341.9376250000005,
+            "p99": 354.26186100000086,
+            "max": 354.81457299999965
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 159,
+            "p50": 63.640808000000106,
+            "p95": 117.05852600000071,
+            "p99": 124.32506799999828,
+            "max": 124.48835400000098
+          }
+        },
+        "after": {
+          "fromMs": 7105.553195,
+          "toMs": 10105.553195,
+          "commandLatencyMs": {
+            "count": 927,
+            "p50": 48.11659700000018,
+            "p95": 77.72356500000024,
+            "p99": 87.56134399999974,
+            "max": 129.80176100000062
+          },
+          "moveLatencyMs": {
+            "count": 716,
+            "p50": 48.94347000000016,
+            "p95": 79.85323099999914,
+            "p99": 87.56134399999974,
+            "max": 91.53775999999925
+          },
+          "sameChannelLatencyMs": {
+            "count": 450,
+            "p50": 44.80998399999953,
+            "p95": 74.61018100000001,
+            "p99": 84.31188600000132,
+            "max": 129.80176100000062
+          },
+          "otherChannelLatencyMs": {
+            "count": 477,
+            "p50": 49.20758399999977,
+            "p95": 81.71707200000128,
+            "p99": 89.29481200000009,
+            "max": 91.53775999999925
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 104,
+            "p50": 8.492819000002783,
+            "p95": 18.15044299999863,
+            "p99": 30.87645600000178,
+            "max": 31.47126699999717
+          }
+        }
+      }
+    },
+    {
+      "path": "evidence/native-midjoin-r89-refresh-midjoin-confirm-50.json",
+      "sha256": "2daf59d997283571f48c6d7c2ae38a5cb4c7efd928a1744b1786e14fcd5087e4",
+      "passed": true,
+      "commands": {
+        "count": 9848,
+        "p50": 49.65681200000108,
+        "p95": 119.7826869999999,
+        "p99": 265.7502320000003,
+        "max": 480.5074050000003
+      },
+      "byAction": {
+        "move": {
+          "count": 7162,
+          "p50": 49.59066299999904,
+          "p95": 95.35975099999996,
+          "p99": 181.44496199999776,
+          "max": 386.17675099999997
+        },
+        "heartbeat": {
+          "count": 299,
+          "p50": 48.075558999998975,
+          "p95": 78.57416899999953,
+          "p99": 86.71608799999922,
+          "max": 96.19540400000005
+        },
+        "attack": {
+          "count": 2105,
+          "p50": 45.18919399999868,
+          "p95": 83.82742700000017,
+          "p99": 111.04179300000033,
+          "max": 393.32162100000005
+        },
+        "use_potion": {
+          "count": 50,
+          "p50": 397.3930099999998,
+          "p95": 480.2864520000003,
+          "p99": 480.5074050000003,
+          "max": 480.5074050000003
+        },
+        "collect": {
+          "count": 232,
+          "p50": 212.9254689999998,
+          "p95": 299.68853899999976,
+          "p99": 313.202573999999,
+          "max": 314.64890699999887
+        }
+      },
+      "predictionCapEpisodes": 0,
+      "predictionLimitedFrames": 0,
+      "joinReadyMs": 129.40438099999847,
+      "windows": {
+        "before": {
+          "fromMs": 3000.2893060000006,
+          "toMs": 5000.289306000001,
+          "commandLatencyMs": {
+            "count": 679,
+            "p50": 59.46838199999911,
+            "p95": 223.77005000000008,
+            "p99": 301.340467,
+            "max": 330.15017999999964
+          },
+          "moveLatencyMs": {
+            "count": 484,
+            "p50": 57.77293699999973,
+            "p95": 203.36507600000004,
+            "p99": 223.82796899999994,
+            "max": 330.15017999999964
+          },
+          "sameChannelLatencyMs": {
+            "count": 332,
+            "p50": 57.35388300000159,
+            "p95": 223.77005000000008,
+            "p99": 305.1005239999995,
+            "max": 305.30279300000075
+          },
+          "otherChannelLatencyMs": {
+            "count": 347,
+            "p50": 61.65037400000074,
+            "p95": 223.35569699999996,
+            "p99": 268.3474749999996,
+            "max": 330.15017999999964
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 92,
+            "p50": 52.87707399999999,
+            "p95": 119.92520399999921,
+            "p99": 130.4100180000005,
+            "max": 130.4100180000005
+          }
+        },
+        "during": {
+          "fromMs": 5000.289306000001,
+          "toMs": 7129.693686999999,
+          "commandLatencyMs": {
+            "count": 738,
+            "p50": 55.94780300000093,
+            "p95": 205.19580099999985,
+            "p99": 265.7502320000003,
+            "max": 271.2103669999997
+          },
+          "moveLatencyMs": {
+            "count": 493,
+            "p50": 58.9225349999997,
+            "p95": 126.00075899999865,
+            "p99": 203.12875800000074,
+            "max": 243.91600599999947
+          },
+          "sameChannelLatencyMs": {
+            "count": 360,
+            "p50": 57.574814000001425,
+            "p95": 206.36451699999998,
+            "p99": 245.79070800000045,
+            "max": 254.00084699999934
+          },
+          "otherChannelLatencyMs": {
+            "count": 378,
+            "p50": 54.89285100000052,
+            "p95": 203.63046500000019,
+            "p99": 269.29637100000036,
+            "max": 271.2103669999997
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 156,
+            "p50": 24.354205999999976,
+            "p95": 87.05788500000199,
+            "p99": 89.51003900000069,
+            "max": 104.03926299999875
+          }
+        },
+        "after": {
+          "fromMs": 7129.693686999999,
+          "toMs": 10129.693686999999,
+          "commandLatencyMs": {
+            "count": 950,
+            "p50": 50.14971399999922,
+            "p95": 81.73510600000009,
+            "p99": 86.43402200000128,
+            "max": 96.24612100000013
+          },
+          "moveLatencyMs": {
+            "count": 719,
+            "p50": 49.79042500000105,
+            "p95": 79.99177000000054,
+            "p99": 85.88703999999962,
+            "max": 90.53204000000005
+          },
+          "sameChannelLatencyMs": {
+            "count": 470,
+            "p50": 51.21246500000052,
+            "p95": 80.92172699999901,
+            "p99": 85.97471299999961,
+            "max": 96.24612100000013
+          },
+          "otherChannelLatencyMs": {
+            "count": 480,
+            "p50": 49.73340599999938,
+            "p95": 82.10044199999902,
+            "p99": 87.43430099999932,
+            "max": 90.53204000000005
+          },
+          "predictionCapsOverlapping": [],
+          "writerAckMs": {
+            "count": 103,
+            "p50": 7.303550000000541,
+            "p95": 16.500460999999632,
+            "p99": 17.372749999998632,
+            "max": 17.62863799999832
+          }
+        }
+      }
+    }
+  ],
+  "supersededTrial": {
+    "coreSHA256": "1786c7cda2f62d6828ea7e8fe11586f82b7c73939890a0ab805df8e57f7fc352",
+    "predictionCapEpisodes": 5,
+    "reason": "Pre-final cold reward burst; retained evidence, not final acceptance"
+  },
+  "tests": {
+    "coreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+    "passed": true,
+    "tests": 45,
+    "pass": 45,
+    "fail": 0,
+    "logs": [
+      {
+        "path": "evidence/native-regressions-r89-final.log",
+        "sha256": "82b9c537092bfd38cc32d7afb387eb0f91c469ecd5013f54169baa1f851eabe0"
+      }
+    ]
+  },
+  "installer": {
+    "coreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+    "passed": true,
+    "tests": 36,
+    "logs": [
+      {
+        "path": "evidence/final-actual-package.test.py.log",
+        "sha256": "174c2f72a38b02fe7fff1043cee80ce461319a1b0239ffce1c5b9da0db7e5031"
+      },
+      {
+        "path": "evidence/final-installer-boundaries.test.py.log",
+        "sha256": "45a968c309e5da55272adfec4c440f1584b75f1c0e195f37e82f243bbd1c43b8"
+      },
+      {
+        "path": "evidence/final-installer-client.test.py.log",
+        "sha256": "0c23b3027d7d447178ad7f04eb7346bb42a9074c5fb5be4b242297778ccc05d1"
+      },
+      {
+        "path": "evidence/final-installer-gates.test.py.log",
+        "sha256": "305244aaa298fbf44a5ca5afca76a1929a41e2f4f1159cc05e5438fc7a2b7197"
+      },
+      {
+        "path": "evidence/final-installer-health.test.py.log",
+        "sha256": "b4bfd7a321cf36c12d29160ce7d8a0aab6368f3363160f6c9f97d8ab02d33359"
+      },
+      {
+        "path": "evidence/final-installer-recovery.test.py.log",
+        "sha256": "6f94262efa46d5ff7797dbabfb011ee93466afaf4de948f75f03de11e64275b1"
+      }
+    ],
+    "modules": [
+      {
+        "name": "central.mjs",
+        "sha256": "012147ecec3bee2f947c93839a12922a4e45ff4b4b2354ea636bc48c33839067"
+      },
+      {
+        "name": "client_stage.py",
+        "sha256": "a78df17ca31c3f50bbbdc72d9d83ce1561b66a5a00e10d419d76544eb9fd8b42"
+      },
+      {
+        "name": "ingress_stage.py",
+        "sha256": "4db0a16459d3d794d135c38633e48df4c6d5b3c5e554796d683f10a5af06c881"
+      },
+      {
+        "name": "inplace_stage.py",
+        "sha256": "16c8306e5034b13699ea5eb68ed5458be43ab7316565d60408f0721dade095ab"
+      },
+      {
+        "name": "installer.py",
+        "sha256": "8d93ae24479f1b6416a704798c42401f4715e26270ca148fc216c4983ac5ada0"
+      },
+      {
+        "name": "r63_support.py",
+        "sha256": "6f63fa46295ffab1cd9fec98fe888e61ced3e02166a6bc9afc9a25b33b9ef1fc"
+      },
+      {
+        "name": "retention.py",
+        "sha256": "4634da7fd4494cf27e1e2ac58015a6e0502f7d6002030408e83cdb183841ac91"
+      },
+      {
+        "name": "runtime_stage.py",
+        "sha256": "364c7b06432099491bad76e9d4f60dfb485cc23cef58c766c9ecf8fb81b4efd5"
+      },
+      {
+        "name": "storage.py",
+        "sha256": "cdb5e3826639a3bca1dd4a7566f16af9e6626fb7251839736bda70481b5f9735"
+      }
+    ]
+  },
+  "evidencePins": [
+    {
+      "path": "evidence/native-crowd-r89-refresh-forest-final-50.json",
+      "sha256": "1868c0023ecb59e39126dde25230d62b485576f0807636b859a8a394c6cd09e4"
+    },
+    {
+      "path": "evidence/native-rune-r89-refresh-rune-final-50.json",
+      "sha256": "d2ce32afde2c28630f590eee75299f80d3ed3a41306b3fb26c0faa59d9e4cfbf"
+    },
+    {
+      "path": "evidence/native-midjoin-r89-refresh-midjoin-final-50.json",
+      "sha256": "fe537b47423f00b637bc25f4a1f0284df7431c8d0fd3bdd6a7835263f97758b4"
+    },
+    {
+      "path": "evidence/native-midjoin-r89-refresh-midjoin-confirm-50.json",
+      "sha256": "2daf59d997283571f48c6d7c2ae38a5cb4c7efd928a1744b1786e14fcd5087e4"
+    },
+    {
+      "path": "evidence/native-midjoin-r89-midjoin-final-50.json",
+      "sha256": "24055b1b30950043d7c12859412b01cba2ca0d568f0aa8fc4776a410c844723a"
+    },
+    {
+      "path": "evidence/native-regressions-r89-final.log",
+      "sha256": "82b9c537092bfd38cc32d7afb387eb0f91c469ecd5013f54169baa1f851eabe0"
+    },
+    {
+      "path": "evidence/final-actual-package.test.py.log",
+      "sha256": "174c2f72a38b02fe7fff1043cee80ce461319a1b0239ffce1c5b9da0db7e5031"
+    },
+    {
+      "path": "evidence/final-installer-boundaries.test.py.log",
+      "sha256": "45a968c309e5da55272adfec4c440f1584b75f1c0e195f37e82f243bbd1c43b8"
+    },
+    {
+      "path": "evidence/final-installer-client.test.py.log",
+      "sha256": "0c23b3027d7d447178ad7f04eb7346bb42a9074c5fb5be4b242297778ccc05d1"
+    },
+    {
+      "path": "evidence/final-installer-gates.test.py.log",
+      "sha256": "305244aaa298fbf44a5ca5afca76a1929a41e2f4f1159cc05e5438fc7a2b7197"
+    },
+    {
+      "path": "evidence/final-installer-health.test.py.log",
+      "sha256": "b4bfd7a321cf36c12d29160ce7d8a0aab6368f3363160f6c9f97d8ab02d33359"
+    },
+    {
+      "path": "evidence/final-installer-recovery.test.py.log",
+      "sha256": "6f94262efa46d5ff7797dbabfb011ee93466afaf4de948f75f03de11e64275b1"
+    }
+  ],
+  "limits": [
+    "Local native server and actual transport/prediction; 25 players per channel on two channels.",
+    "Arranged HP/targets and automatic potion charges; finite180s runs. Primary command p99 gate150ms; midjoin checks require intact economy and zero prediction clipping, with all latencies reported.",
+    "No live VDS, Caddy/TLS/WAN, full rendered browser FPS or every50-player boss/instance mixture."
+  ]
+}

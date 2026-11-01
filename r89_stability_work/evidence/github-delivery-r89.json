@@ -1,0 +1,22 @@
+{
+  "status": "UPLOADED_AND_VERIFIED",
+  "repository": "mehmetkibby-prog/ccre",
+  "branch": "r89-download",
+  "commit": "a31e202bff4f8351fb2fbeac2cefcfa3a33e3fef",
+  "archiveBytes": 6171058,
+  "archiveSha256": "cf18468029536e94b4b0a7ba1c08be201dbff5e86bcf16384b18239b90407566",
+  "files": [
+    "CORE511_R89_TOPLU.zip",
+    "CORE511_R89_TOPLU.zip.sha256",
+    "KURULUM.md",
+    "README.md",
+    "SONUC.md"
+  ],
+  "userAuthorizedUpload": true,
+  "liveDeployment": false,
+  "remoteBranchVerified": true,
+  "verificationMethod": "Fresh authenticated clone; exact commit, file list and hashes",
+  "verifiedAtUtc": "2026-11-01T22:14:37.554038+00:00",
+  "downloadUrl": "https://github.com/mehmetkibby-prog/ccre/raw/refs/heads/r89-download/CORE511_R89_TOPLU.zip",
+  "accessNote": "Repository visibility unchanged; authorized GitHub sign-in required."
+}

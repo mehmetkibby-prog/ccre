@@ -1,0 +1,20 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const root=process.env.R85_RUNTIME_TREE+'/core511-source/scripts/core511/';
+const {setup}=await import(root+'tests/process-fixture.mjs');
+const {until}=await import(root+'tests/helpers.mjs');
+for(const area of ['forest','rune_v2'])test(area+': movement continues during a delayed real potion ACK without early heal or position rewind',{timeout:30000},async t=>{
+ const s=await setup(t,{shared:true});await s.world.stopJobs();
+ const live=await s.connect(await s.http('character',{channel:4}));
+ await s.core.permanentPlayers([s.f.id],()=>s.f.sql.prepare("UPDATE players SET area=?,level=65,x=2700,y=2025,hp=100,max_hp=1000,auto_potion_owned=1,auto_potion_enabled=1,auto_potion_total=400,auto_potion_remaining=400,auto_potion_at_ms=0,respawn_at_ms=0,stun_until_ms=0,root_until_ms=0 WHERE id=?").run(area,s.f.id));
+ let release,reached=false;const gate=new Promise(resolve=>release=resolve),original=s.writer.command.bind(s.writer);
+ t.after(()=>release());s.writer.command=async(peer,request)=>{const ack=await original(peer,request);if(request.payload?.input?.action==='use_potion'){reached=true;await gate;}return ack;};
+ const result=n=>live.packets.flatMap(p=>p.results??[]).find(r=>r.sequence===n),send=(sequence,payload)=>live.ws.send(JSON.stringify({type:'input',sequence,payload}));
+ send(1,{action:'use_potion',automatic:true});await until(()=>reached||s.faults.length,8000);assert.equal(s.faults.length,0);assert(reached);
+ assert.equal(result(1),undefined,'healing response waits for durable ACK delivery');
+ send(2,{action:'move',x:2703,y:2025});await until(()=>result(2)||s.faults.length,1500);assert.equal(s.faults.length,0);assert.equal(result(2)?.status,200,JSON.stringify(result(2)));assert.equal(result(1),undefined);
+ release();await until(()=>result(1)||s.faults.length,8000);assert.equal(result(1)?.status,200,JSON.stringify(result(1)));assert.equal(s.f.sql.prepare('SELECT auto_potion_remaining FROM players WHERE id=?').get(s.f.id).auto_potion_remaining,0);
+ send(3,{action:'move',x:2705,y:2025});await until(()=>result(3)||s.faults.length,8000);assert.equal(result(3)?.status,200,JSON.stringify(result(3)));assert.equal(s.faults.length,0);
+ await s.core.permanentPlayers([s.f.id],()=>{});
+ const row=s.f.sql.prepare('SELECT x,hp FROM players WHERE id=?').get(s.f.id);assert(row.x>=2703,'potion ACK cannot rewind the accepted position');assert.equal(row.hp,500);
+});

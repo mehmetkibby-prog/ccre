@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import {adaptRuneRespawnR89} from './adapt-rune-respawn-r89.mjs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {createRequire} from 'node:module';
@@ -236,12 +237,12 @@ for(const [name,next,stop,answer]of [
  ['tryCreateArenaMatch','readArenaSelection511','const selectedIds','selected']
 ]){const original=declarations.get(name).text,index=original.indexOf(stop);if(index<0)throw Error('Native heartbeat reader boundary changed '+name);lines.push(original.slice(0,index).replace('function '+name+'(','function '+next+'(')+'return '+answer+';}');heartbeatReaders.push(next);}
 lines.push('return Object.freeze({mixedNative,mixedMemory,nativeAttack,nativeAction,memoryAttack,nativePvp,memoryPvp,nativeContinuity,memoryContinuity,hydratePvp,hydrateCombatTarget,planMemory,prepareHits,hydrateAttack,applyGuardianImpact,colTrapImpact456,guardianMemory,trapMemory,dashGuardian,dashMemory,dashActionMemory,colSupportCast456,supportMemory,guardianCastVisual,lifeStealAmount,restoreStolenLife,preparePveEngagement,prepareRuneV2Winner483,questMonsterEligible438,dungeonService,eventBossProfile444,eventKind444,runeMonsterKey,runeV2MonsterKey,prepareRuneDrops,'+[...new Set([...rewardRoots,...heartbeatRoots,...heartbeatReaders])].join(',')+'});\n}');
-const extracted=lines.join('\n')+'\n',generated=adaptAdventureAttack(extracted);parse(generated,{ecmaVersion:'latest',sourceType:'module'});
+const extracted=lines.join('\n')+'\n',generated=adaptRuneRespawnR89(adaptAdventureAttack(extracted));parse(generated,{ecmaVersion:'latest',sourceType:'module'});
 if(process.env.COL_CORE511_EMIT_V510_ORACLE==='1')fs.writeFileSync(path.join(out,'attack-rules-v510-oracle.mjs'),extracted);
 fs.writeFileSync(path.join(out,'attack-rules.mjs'),generated);
 let writer=synchronous(extracted).replace('export function createAttackRules(','export function createAttackWriterRules(');
 writer=writer.replace('const env={CORE_RUNTIME:', 'const Promise={all:values=>values.map(syncValue),allSettled:values=>values.map(value=>({status:"fulfilled",value:syncValue(value)}))};function syncValue(value){if(value?.then)throw Error("async_native_attack_boundary");return value;}\nconst env={CORE_RUNTIME:');
-const extractedWriterSha256=hash(writer);if(process.env.COL_CORE511_EMIT_V510_ORACLE==='1')fs.writeFileSync(path.join(out,'attack-writer-rules-v510-oracle.mjs'),writer);const beforeLootProfileR61=adaptAdventureAttack(writer,{writer:true});writer=adaptLootProfileCacheR61(beforeLootProfileR61);
+const extractedWriterSha256=hash(writer);if(process.env.COL_CORE511_EMIT_V510_ORACLE==='1')fs.writeFileSync(path.join(out,'attack-writer-rules-v510-oracle.mjs'),writer);const beforeLootProfileR61=adaptAdventureAttack(writer,{writer:true});writer=adaptRuneRespawnR89(adaptLootProfileCacheR61(beforeLootProfileR61));
 parse(writer,{ecmaVersion:'latest',sourceType:'module'});fs.writeFileSync(path.join(out,'attack-writer-rules.mjs'),writer);
 fs.writeFileSync(path.join(out,'loot-profile-cache-r61-proof.json'),JSON.stringify({version:1,beforeSha256:hash(beforeLootProfileR61),afterSha256:hash(writer),adapterSha256:hash(fs.readFileSync(new URL('./adapt-loot-profile-cache-r61.mjs',import.meta.url))),helperSha256:hash(fs.readFileSync(new URL('./loot-profile-cache-r61.mjs',import.meta.url))),scope:'Writer-only factory-local deterministic loot profile derivation; native body, SQL, RNG, claims and reward writes unchanged.',edits:LOOT_PROFILE_EDITS_R61},null,2)+'\n');
 const generatedBody=name=>{let result;walk(parse(generated,{ecmaVersion:'latest',sourceType:'module'}),n=>{if(n.type==='FunctionDeclaration'&&n.id.name===name){if(result)throw Error('duplicate_generated_function:'+name);result=generated.slice(n.start,n.end);}});if(!result)throw Error('missing_generated_function:'+name);return result;};

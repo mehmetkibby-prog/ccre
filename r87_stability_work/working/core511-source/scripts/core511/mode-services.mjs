@@ -27,5 +27,5 @@ export class NativeModeServices {
  }
  // The trusted settings-change coordinator calls this after its atomic commit
  // and before broadcasting the new immutable configuration to channel workers.
- refresh(){demand(!this.active,'mode_refresh_during_operation');for(const key of ['__colStatus','__colRanks','__colDragonBoss','__colQuests438','__colRunes','__colRuneV2','__colEventIsland444','__colArenaMarket','__colBattlePass','__colCommunityEvent'])this.globals[key].refresh?.();}
+ refresh({serviceRefreshR89=null}={}){demand(!this.active,'mode_refresh_during_operation');for(const key of ['__colStatus','__colRanks','__colDragonBoss','__colQuests438','__colRunes','__colRuneV2','__colEventIsland444','__colArenaMarket','__colBattlePass','__colCommunityEvent'])if(!serviceRefreshR89?.refresh(this,key))this.globals[key].refresh?.();}
 }

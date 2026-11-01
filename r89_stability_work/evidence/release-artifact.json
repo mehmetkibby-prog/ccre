@@ -1,0 +1,11 @@
+{
+  "name": "CORE511_R89_TOPLU.zip",
+  "bytes": 6171058,
+  "sha256": "cf18468029536e94b4b0a7ba1c08be201dbff5e86bcf16384b18239b90407566",
+  "sourceCoreSHA256": "6965a41ff2c9f3018f6f70f091b1bfbfdc8c16bac8470f17b6ba78c637dfe2fc",
+  "targetCoreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "productionFiles": 36,
+  "members": 64,
+  "bootstrapHelpPassed": true,
+  "liveDeployment": false
+}

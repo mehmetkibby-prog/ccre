@@ -1,0 +1,25 @@
+test_check_is_read_only_and_apply_holds_both_actual_flock_files (__main__.CliAndFailureTests.test_check_is_read_only_and_apply_holds_both_actual_flock_files) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds (__main__.CliAndFailureTests.test_failed_rollback_start_is_fenced_and_subsequent_recovery_succeeds) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_held_install_lock_prevents_any_service_stop (__main__.CliAndFailureTests.test_held_install_lock_prevents_any_service_stop) ... ok
+test_quick_check_failure_happens_before_any_code_replacement (__main__.CliAndFailureTests.test_quick_check_failure_happens_before_any_code_replacement) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+ok
+test_sqlite_api_backup_includes_committed_wal_from_dead_writer (__main__.CliAndFailureTests.test_sqlite_api_backup_includes_committed_wal_from_dead_writer) ... Kurulum DB yedeği: %100
+Kurulum DB yedeği: %100
+Yedek sağlamlığı kontrol ediliyor (quick_check); kalan süre: 1199 sn.
+Kurulum DB yedeği doğrulandı (quick_check=ok).
+ok
+test_unlisted_zip_payload_is_refused (__main__.CliAndFailureTests.test_unlisted_zip_payload_is_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.150s
+
+OK

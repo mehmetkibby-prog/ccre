@@ -1,0 +1,6 @@
+test_r89_health_requires_own_version_and_available_diagnostics_but_r86_does_not (__main__.HealthVersionGateTests.test_r89_health_requires_own_version_and_available_diagnostics_but_r86_does_not) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+OK

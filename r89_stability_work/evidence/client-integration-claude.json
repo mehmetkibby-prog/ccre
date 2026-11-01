@@ -1,0 +1,32 @@
+{
+  "client": {
+    "oldGame": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "oldGameSha256": "aaf06f246f8a616ae3158cc0d1869a7010ce78faab95994349c97f6f8378055b",
+    "game": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "gameSha256": "aa6aed7dd8933fa463f8a9e4e2df7f53ca6af9412977bb3c632a35ebc67256bd",
+    "oldBridge": "core511-transport-r79-715e78ecd9021ea8.js",
+    "oldBridgeSha256": "715e78ecd9021ea8dbfd5f2b534b8dc69f02f4fe78d8ec2978a92a4b707874dc",
+    "bridge": "core511-transport-r88-f2a907c787e721a0.js",
+    "bridgeSha256": "f2a907c787e721a0b0ec9fd2ec32e625e4f8e1dc6607fe10bc4feb37144d52bd",
+    "edit": {
+      "before": "var mayPipelineMovement = (payload) => payload?.action === \"attack\" && Number(payload.ability ?? 0) === 0 || [\"claim_rewards\", \"collect\"].includes(payload?.action);",
+      "after": "var mayPipelineMovement = (payload) => payload?.action === \"attack\" && Number(payload.ability ?? 0) === 0 || [\"claim_rewards\", \"collect\", \"use_potion\"].includes(payload?.action);",
+      "count": 1
+    },
+    "inverseEqual": true,
+    "transportSourceSha256": "90f463116287bfb3f81e574494c8e96e8d30cdb1d9fc6fb2a8095af9ed8884b0",
+    "scope": "R88: a pending use_potion may be followed by one pipelined movement batch (server allowsFollowingMovement mirrors it); no other client change."
+  },
+  "http": {
+    "oldNamespace": "core511-27dfe29036d78e12",
+    "namespace": "core511-cf3191131d993da1",
+    "oldName": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "name": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "sourceSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+    "generatedSha256": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Immutable R88 game client/transport references only; native HTTP routes unchanged."
+  }
+}
