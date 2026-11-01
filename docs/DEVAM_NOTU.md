@@ -6,7 +6,8 @@
 - Görsel: Three.js 3B motor; prosedürel dokular (çimen, toprak, arnavut kaldırımı vb.), iskeletli karakterler ve canavarlar, gölge, GTAO, parıltı, rüzgârlı çimen, su, görüş deliği.
 
 ## Sıradaki somut işler (öncelik sırasıyla)
-1. **Görsel cila:** karakter detayları (kumaş kıvrımları, zırh plakaları, yüz), kurt/golem modelleri, ağaç kartlarının ölçeği, köyde zemin çeşitliliği, gece/gündüz ışığı, ses ve müzik.
+1. **Gerçekçi karakter modelleri:** Meshy → Mixamo dosyaları gelince `node scripts/import-characters.mjs` (bkz. docs/KARAKTER_MODELLERI.md). Hat örnek gerçekçi modellerle test edildi (FBX+GLB, ortak animasyon, yön, üçgen azaltma).
+   **Görsel cila:** kurt/golem modelleri, ağaç kartlarının ölçeği, köyde zemin çeşitliliği, gece/gündüz ışığı, ses ve müzik.
 2. **Ekonomi çekirdeği:** depo (Rauf) + Mücevher bankası; iki karakter arası atomik aktarım altyapısı (takas → pazar tezgâhı → Ticaret Camı).
 3. **Grup sistemi** (5 kişi, TP bonusu) ve **görev zinciri + ilk adım rehberi**.
 4. **Haso:** silah evrimi, nadirlik dönüşümü, efsun işlemleri, taş/tılsım.
