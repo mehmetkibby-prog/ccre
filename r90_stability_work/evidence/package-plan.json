@@ -1,0 +1,46 @@
+{
+  "version": "R90_GAMEPLAY",
+  "baseCoreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "targetCoreSHA256": "b891076bb7e888968cbe42d1b8d19425b9390a72908706b7f9067a517e28001e",
+  "productionFiles": 7,
+  "files": {
+    "core511-source/scripts/core511/afk-coordinator.mjs": {
+      "before": "9bbf18adb70f2cbbda5b76cc2452141e3d9975b9ecfc9a22008c324364ba86de",
+      "after": "17b887888c9e01ee253747ad9c8c8e820ba915d6d7e7f8b93006b60cf2e613f3",
+      "bytes": 12014
+    },
+    "core511-source/scripts/core511/channel-runtime.mjs": {
+      "before": "b0e40c24f66b66cf73d7bd169e8c5067daf8d9ef7eaf5c9d1a58f66f5284f2a5",
+      "after": "fb36b68e0508bebe6ba6fc6daa58c8469cda0c1beb7da03f4bea7cf6ad8480e2",
+      "bytes": 48629
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "c07ff503df8b19ce11e0b5a65dba771dce2987bd31c2ca8c4375426fa486e11d",
+      "after": "236f8bb3e127aa476b1e68207291c93f22cf05bc696e346afcb223cb2629d891",
+      "bytes": 15288
+    },
+    "core511-source/scripts/core511/patch-native-bot-check.mjs": {
+      "before": "184277306803a315c7ebe3ca189d7e66cc6db9cec3dca3578ff7770b01027ff1",
+      "after": "569044e930677d81f73dadfede6a5783a3206265e6cd93357f5407817ab918b7",
+      "bytes": 2058
+    },
+    "core511-source/scripts/core511/session-mirror.mjs": {
+      "before": "98034ea2b757d72f42eb6c31275a0d3fa842e2ed97b20689f21fd4e18bb70124",
+      "after": "3612837810bed4293c602d6c9f30765dcfd6e290ed50762ef5fc01b613d5cc59",
+      "bytes": 6525
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
+      "after": "80b77f6ccf5e71a64eabd872eff1f996697de35a241fdb810696d16e9a83dbe5",
+      "bytes": 2229934
+    },
+    "core511-source/scripts/core511/verification-room-r90.mjs": {
+      "before": null,
+      "after": "cdef832285177d16a8a91a8c975ec5ab25cb3522740e79508500aa52cc323a78",
+      "bytes": 1649
+    }
+  },
+  "clientChanges": false,
+  "databaseChanges": false,
+  "liveDeployment": false
+}

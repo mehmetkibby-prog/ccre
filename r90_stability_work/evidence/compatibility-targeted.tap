@@ -1,0 +1,23 @@
+TAP version 13
+# Subtest: native CAPTCHA patch reverses exactly and retains original four guarded call sites
+ok 1 - native CAPTCHA patch reverses exactly and retains original four guarded call sites
+  ---
+  duration_ms: 647.340232
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793598357109,"backupName":"before-pearl-reset-1793598357109-e27146c4-88be-4d38-a7c9-ac332082d93b.sqlite"}
+# Subtest: session mirror retains original security freshness, captcha/AFK, ban, maintenance and epoch gates without hot SQL
+ok 2 - session mirror retains original security freshness, captcha/AFK, ban, maintenance and epoch gates without hot SQL
+  ---
+  duration_ms: 1810.432727
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2178.091313

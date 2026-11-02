@@ -1,0 +1,39 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793597897495,"backupName":"before-pearl-reset-1793597897495-84d07eb8-f501-418a-9318-daf46d4ab40c.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:38:22.439Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":434482,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7856f1a79492c75a3f337a4d"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:38:22.439Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":434488,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"edd16818c4124ea7073591d5"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:38:22.440Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":434498,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"03f4fab5410521a8a4612487"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:38:22.440Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":434504,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c3429c477ddea81fce8c9821"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:38:22.460Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":434471,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"93330b0419cca870ba816cd0"}
+# Subtest: expired legacy verification is deferred inside a real tower, resumes at exit and preserves the same live session
+not ok 1 - expired legacy verification is deferred inside a real tower, resumes at exit and preserves the same live session
+  ---
+  duration_ms: 6414.449813
+  type: 'test'
+  location: '/tmp/core511-r90-work/tests/verification-room-process.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    A timed CAPTCHA must not interrupt an active tower.
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/core511-r90-work/tests/verification-room-process.test.mjs:65:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7415.374946

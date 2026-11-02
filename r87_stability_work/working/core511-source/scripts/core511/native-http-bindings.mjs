@@ -35,6 +35,7 @@ import {AdminMountDropsR55} from './mount-drops-r55.mjs';
 import {gameplayR55} from './r55-gameplay-options.mjs';
 import {gameplayR58} from './r58-gameplay-options.mjs';
 import {mistPreviewR58} from './mist-preview-r58.mjs';
+import {deferRoomBotCheckR90} from './verification-room-r90.mjs';
 
 const databaseKey=Symbol.for('coreoflife.localDatabase'),bindingKey=Symbol.for('coreoflife.core511.httpBindings');
 const hooks=['__colChannelPermanent','__colCore511Presence'];
@@ -62,6 +63,7 @@ export class NativeHttpBindings {
    // Existing native service construction may add its idempotent helper schema.
    // It happens before any owner starts and must be durable before readiness.
    await host.database.atomic(sql=>{const beltHp=installBeltHpGuard(sql);createTowerSchema(sql);createAdventureSchema(sql);createMountSchema(sql);createCastleSchema(sql);readTowerConfig(sql.prepare('SELECT value FROM kadim_tower_settings WHERE id=1').get().value);self.services=createNativeHttpServices(sql,{database:host.database,realmRuntime});self.operations=createNativeHttpOperations(host.database);beltHp.normalize();});
+   self.services.__colBotCheck=globalThis.__colBotCheck=deferRoomBotCheckR90(host.database.sqlite,self.services.__colBotCheck);
    globalThis.__colEnhancement491=wrapEnhancementDurabilityR55(globalThis.__colEnhancement491,host.database.sqlite);
    await host.database.atomic(sql=>createAdminMaterialSchemaR55(sql));
    self.materialGrant=new AdminMaterialsR55(host.database,()=>self.core());host.database.core511MaterialGrantR55=self.materialGrant;
@@ -109,7 +111,7 @@ export class NativeHttpBindings {
   const c=this.core(),host=this.host,counts=c.nativeBootstrap.counts(),rows=CHANNELS.map(channel=>{const r=c.channelSupervisor?.rows.get(channel),p=c.processes.get(channel);return {channel,ready:Boolean(r?.state==='running'&&!r.exited&&r.ready&&p?.online&&r.peer.incarnation===p.peer.incarnation),online:counts.get(channel)??0,capacity:CAPACITY};});
   const world=c.sharedWorld?.row,worldReady=Boolean(world?.state==='running'&&!world.exited),readerReady=Boolean(!c.reader.closed&&c.reader.slot&&!c.reader.slot.failed&&!c.reader.slot.ended),realmReady=Boolean(host.nativeRealmStartup?.ready&&host.nativeRealmStartup.runtime===c.realm),ready=this.accepting&&!c.stopping&&!c.recoveringWorld&&!c.globalWorld?.recovery&&worldReady&&readerReady&&realmReady&&rows.every(r=>r.ready);
   const checkpoint=host.database.core511CheckpointR79?.snapshot(),checkpointR79={...publicCheckpointR80(checkpoint),sqliteVersion:process.versions.sqlite,nodeVersion:process.version};
-  return Response.json({ok:ready,runtime:'vds-node-sqlite',loadlabProtocol:1,releaseVersion:'511',updateVersion:'R89_GAMEPLAY',durable:true,protocol:PROTOCOL,startupId:host.boot,checkpointR79,runtimeDiagnosticsR80:runtimeHealthR80(c),realm:{realmId:host.expected.realmId,dbIdentity:host.expected.dbIdentity,protocol:PROTOCOL,ready,sampledAtMs:c.clock(),channelCapacity:CAPACITY,channels:rows.map(r=>r.online)},channelProcesses:{enabled:true,channels:rows},kernel511:{worldReady,readerReady,realmReady,ready,towerReady:this.towerReady===true,adventureReady:!!this.mistAdmin,guildReaderReady:this.guildReader?.ready===true&&!this.guildReader.closed}},{status:ready?200:503,headers:{'cache-control':'no-store'}});
+  return Response.json({ok:ready,runtime:'vds-node-sqlite',loadlabProtocol:1,releaseVersion:'511',updateVersion:'R90_GAMEPLAY',durable:true,protocol:PROTOCOL,startupId:host.boot,checkpointR79,runtimeDiagnosticsR80:runtimeHealthR80(c),realm:{realmId:host.expected.realmId,dbIdentity:host.expected.dbIdentity,protocol:PROTOCOL,ready,sampledAtMs:c.clock(),channelCapacity:CAPACITY,channels:rows.map(r=>r.online)},channelProcesses:{enabled:true,channels:rows},kernel511:{worldReady,readerReady,realmReady,ready,towerReady:this.towerReady===true,adventureReady:!!this.mistAdmin,guildReaderReady:this.guildReader?.ready===true&&!this.guildReader.closed}},{status:ready?200:503,headers:{'cache-control':'no-store'}});
  }
  async stop(){this.accepting=false;await Promise.allSettled([...this.pending]);await this.guildReader?.close();}
  core(){

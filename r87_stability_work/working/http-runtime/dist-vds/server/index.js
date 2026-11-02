@@ -33426,11 +33426,11 @@ async function GET$25(request) {
 		return (await db().core511BotCheck.call(auth,async()=>{
  const current=await requireGameSession(request);
  if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;
-},bot,()=>Response.json({
+},bot,()=>{const required=bot.required(auth.account.id);return Response.json({
 			required,
 			dueAt: bot.deadline(auth.account.id),
 			...required ? bot.challenge(auth.account.id, "game") : {}
-		}, { headers: { "Cache-Control": "no-store" } })));
+		}, { headers: { "Cache-Control": "no-store" } });}));
 	} catch (e) {
 		return authErrorResponse(e, "Doğrulama yüklenemedi.");
 	}

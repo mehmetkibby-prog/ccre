@@ -1,15 +1,13 @@
-# Core of Life — R89
+# Core of Life — R90
 
-Güncel düzeltme dalı: `r89-codex-stability`. Rün Sahili ve hareket/kayıt yığılması düzeltmeleri tamamlandı; sonuçlar [R89 raporunda](r89_stability_work/SONUC.md). Kurucu doğrudan kurulu **R86** üzerine uygulanır. Bu depoya gönderme canlı VDS kurulumu değildir.
+Güncel dal: `r90-verification-room`. R90, kule/zindan/Sis Yarığı içinde eski doğrulamanın savaşı kesmesini düzeltir. R89 üzerine uygulanır; canlı VDS kurulumu yapılmadı.
 
-- [Kurulum ve geri alma](r89_stability_work/KURULUM.md)
-- [İndirilebilir R89 paketi](https://github.com/mehmetkibby-prog/ccre/tree/r89-download)
-- [Ölçüm ve doğrulama kanıtı](r89_stability_work/evidence/final-release-gate-r89.json)
+- [Düzeltme ve test raporu](r90_stability_work/SONUC.md)
+- [Kurulum ve geri alma](r90_stability_work/KURULUM.md)
+- [İndirme dalı](https://github.com/mehmetkibby-prog/ccre/tree/r90-download)
 
-Üretim kaynakları geçmişten gelen `r87_stability_work/working/` yolunda güncellenmiştir. `r89_stability_work/working` bu dizine göreli bağlantıdır. R88 dalı korunur; R85/R86 dizinleri karşılaştırma kaynaklarıdır.
+Üretim kaynakları `r87_stability_work/working/` yolundadır; `r90_stability_work/working` bu dizine göreli bağlantıdır. Bu dalı `python3 tools/verify_r90.py` ile doğrulayın. R89 ve R88 dalları kendi kaynak/kanıtlarıyla korunur. Bu daldaki eski R87/R89 manifestleri güncel R90 kimliği değildir.
 
-Bu dal için `python3 tools/verify_r89.py` çalıştırın. Eski `HANDOFF_MANIFEST.json`, `DEVIR_R87.md`, `CLAUDE_BASLANGIC.md` ve `tools/verify_snapshot.py` durdurulan R87 devrinin tarihsel kayıtlarıdır; R89 kurulum talimatı veya R89 dosya manifesti değildir.
+R90 testleri yereldir: 15 hedefli davranış/uyumluluk ve 10 kurulum kontrolü geçti. Yeni 50 oyuncu yük testi veya canlı test yapılmadı. Oyuncu veritabanı, hesap verisi ve gizli erişim bilgileri bu pakette yoktur. Değişiklikler 7 sunucu dosyasıyla sınırlıdır.
 
-Yerel yeniden üretim: [CALISTIRMA.md](CALISTIRMA.md) içindeki sabit yol/Node/bağımlılık hazırlığı geçerlidir; güncel dalı klonlayın. Ardından `python3 r89_stability_work/verify_final.py` izole native yük/doğruluk/kurucu testlerini sıralı çalıştırır. Bu komut ölçüm dosyalarını yeniden yazar; önce mevcut kanıtları koruyun. Süreç çalışırken üretim kaynaklarını değiştirmeyin veya aynı makinede başka yük testi başlatmayın.
-
-50 oyunculu ölçümler iki kanalda 25'er oyuncuyla, gerçek sunucu ve TCP/WebSocket taşımasıyla yapılır. Çizim yapan 50 tarayıcı, canlı VDS, WAN ve bütün harita/etkinlik birleşimleri kapsam dahilinde değildir. `fullGameAcceptance: false` korunur. Canlı veritabanı, hesaplar, özel anahtarlar ve erişim bilgileri bu güncellemeye eklenmez.
+Yeniden üretim için `CALISTIRMA.md` içindeki Node/bağımlılık ve yerel test ortamı hazırlığı geçerlidir. Paket hazırlama betikleri özgün çalışma alanındaki doğrulanmış R89 ve R86 arşivlerini ister; bunların yerini rastgele bir tabanla değiştirmeyin. R90 davranış testlerini `R85_RUNTIME_TREE=<R90 çalışma ağacı> python3 r90_stability_work/tests/run.py --test r90_stability_work/tests/verification-room.test.mjs r90_stability_work/tests/verification-room-process.test.mjs` ile çalıştırın.

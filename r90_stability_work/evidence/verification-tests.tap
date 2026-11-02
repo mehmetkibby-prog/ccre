@@ -1,0 +1,96 @@
+TAP version 13
+# Subtest: question and penalty use monotonic countdown; only server release unlocks
+ok 1 - question and penalty use monotonic countdown; only server release unlocks
+  ---
+  duration_ms: 0.59437
+  type: 'test'
+  ...
+# Subtest: reload keeps remaining server deadline and admin disable releases only the AFK flag
+ok 2 - reload keeps remaining server deadline and admin disable releases only the AFK flag
+  ---
+  duration_ms: 0.257211
+  type: 'test'
+  ...
+# Subtest: panel keeps four answer buttons usable and shows penalty timer without recovery bypass
+ok 3 - panel keeps four answer buttons usable and shows penalty timer without recovery bypass
+  ---
+  duration_ms: 0.251981
+  type: 'test'
+  ...
+# Subtest: compiled patch is exactly reversible and leaves separate native CAPTCHA callback untouched
+ok 4 - compiled patch is exactly reversible and leaves separate native CAPTCHA callback untouched
+  ---
+  duration_ms: 24.594164
+  type: 'test'
+  ...
+# Subtest: two wrong choices persist a 120-second lock across reconnect, channel change and process restart
+ok 5 - two wrong choices persist a 120-second lock across reconnect, channel change and process restart
+  ---
+  duration_ms: 11.315012
+  type: 'test'
+  ...
+# Subtest: a correct choice clears the wrong streak and restores play immediately
+ok 6 - a correct choice clears the wrong streak and restores play immediately
+  ---
+  duration_ms: 8.562625
+  type: 'test'
+  ...
+# Subtest: unanswered challenges retain their existing recovery lock instead of receiving a timed penalty
+ok 7 - unanswered challenges retain their existing recovery lock instead of receiving a timed penalty
+  ---
+  duration_ms: 8.223609
+  type: 'test'
+  ...
+# Subtest: exemption hides a challenge and cancels it at expiry without imposing a lock
+ok 8 - exemption hides a challenge and cancels it at expiry without imposing a lock
+  ---
+  duration_ms: 7.571381
+  type: 'test'
+  ...
+# Subtest: administrative disable and environment disable leave movement unblocked
+ok 9 - administrative disable and environment disable leave movement unblocked
+  ---
+  duration_ms: 4.171782
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1793598073796,"backupName":"before-pearl-reset-1793598073796-009a32b2-2e33-4011-871a-ba3a49aa8c23.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:41:18.991Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":434839,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"45af71ca390b16abb4850ac3"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:41:18.992Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":434845,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e4bf71ad9a39dcdea35b0c06"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:41:18.992Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":434855,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"56f51a48ba11f165a8863303"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:41:18.992Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":434861,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1eb1f2b6458743dae12de629"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T05:41:19.009Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":434828,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"3d2160392d8e13030aa63250"}
+# Subtest: expired legacy verification is deferred inside a real tower, resumes at exit and preserves the same live session
+ok 10 - expired legacy verification is deferred inside a real tower, resumes at exit and preserves the same live session
+  ---
+  duration_ms: 6632.962197
+  type: 'test'
+  ...
+# {"towerRun":"8b192b80c7494d019607986f5fc4807d","sameSession":true,"expiredDeadlinePreserved":true,"moveAndAttack":true,"requiredAfterExit":true,"wrongAnswerRejected":true,"correctAnswerAccepted":true,"faults":0}
+# Subtest: all ten tower floors, mist and native dungeon memberships defer without resetting the native deadline
+ok 11 - all ten tower floors, mist and native dungeon memberships defer without resetting the native deadline
+  ---
+  duration_ms: 2.809417
+  type: 'test'
+  ...
+# Subtest: room deferral does not relax bans, security expiry, owner epochs or maintenance; exit restores the due check immediately
+ok 12 - room deferral does not relax bans, security expiry, owner epochs or maintenance; exit restores the due check immediately
+  ---
+  duration_ms: 0.381653
+  type: 'test'
+  ...
+# Subtest: HTTP challenge creation rechecks membership after a queued room entry instead of reusing the earlier required result
+ok 13 - HTTP challenge creation rechecks membership after a queued room entry instead of reusing the earlier required result
+  ---
+  duration_ms: 64.726268
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8281.736324

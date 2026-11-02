@@ -1,10 +1,11 @@
 import {demand} from './contract.mjs';
+import {verificationRoomR90} from './verification-room-r90.mjs';
 
 // Only the trusted main-process control stream may install these snapshots.
 // They carry the original security gate's absolute expiry, never a TTL renewed
 // by a pong. Channel ticks/inputs only consult Maps and the local clock.
 export class SessionMirror {
- constructor({peer,owner,player,guildAccess=null,maintenance=null,clock=Date.now,revoke=()=>{},botChallenge=null}){Object.assign(this,{peer,owner,player,guildAccess,maintenance,clock,revoke,botChallenge});this.entries=new Map();this.revisions=new Map();}
+ constructor({peer,owner,player,dungeonLocked=()=>false,guildAccess=null,maintenance=null,clock=Date.now,revoke=()=>{},botChallenge=null}){Object.assign(this,{peer,owner,player,dungeonLocked,guildAccess,maintenance,clock,revoke,botChallenge});this.entries=new Map();this.revisions=new Map();}
  update(snapshot){
   const {actor,account,session,epoch,revision}=snapshot;
   demand(typeof actor==='string'&&typeof account==='string'&&typeof session==='string'&&Number.isSafeInteger(epoch)&&epoch>0&&Number.isSafeInteger(revision)&&revision>0,'session_mirror_identity');
@@ -24,9 +25,9 @@ export class SessionMirror {
   if(!e.realmOpen)return {status:503,code:'realm_closed'};
   if(!e.maintenanceAllowed||!e.canPlay||this.maintenance&&!this.maintenance.allows(e.account))return {status:403,code:'game_maintenance'};
   const player=this.player(identity.actor);if(!player)return {status:409,code:'player_unavailable'};
-  // This is exactly the native AFK-only exemption. Leaving the island uses
-  // the original absolute due time; pings can never extend a captcha deadline.
-  if(player.area!=='afk'&&now>=e.botDueMs)return {status:403,code:'bot_check_required'};
+  // Defer the timed text CAPTCHA in an authoritative combat instance. This
+  // checks memory only and retains the original absolute due time on exit.
+  if(player.area!=='afk'&&now>=e.botDueMs&&!verificationRoomR90(player,this.dungeonLocked(identity.actor)))return {status:403,code:'bot_check_required'};
   if(player.area.startsWith('guild_')){
    // Inventory/area reloads carry the original service's absolute deadline.
    // A hall grant cannot follow the player to a different hall, nor expire

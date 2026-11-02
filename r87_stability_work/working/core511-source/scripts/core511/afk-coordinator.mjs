@@ -1,5 +1,6 @@
 import {AfkService} from './afk-service.mjs';
 import {createAfkSchema} from './afk-schema.mjs';
+import {verificationRoomReaderR90} from './verification-room-r90.mjs';
 
 const failure=(status,code,error)=>({status,body:{ok:false,code,error}});
 const unavailable=()=>failure(503,'afk_check_unavailable','Doğrulama şu anda kullanılamıyor. Biraz sonra yeniden dene.');
@@ -13,6 +14,7 @@ export class AfkCoordinator {
   this.core=core;this.closed=false;this.tail=Promise.resolve();this.delivery=new Map();this.pendingChanges=[];this.nextPurge=core.clock()+60000;
   this.ready=core.database.atomic(sql=>{
    createAfkSchema(sql);
+   this.verificationRoomR90=verificationRoomReaderR90(sql);
    this.service=new AfkService({sql,now:core.clock,deferCommit:true,onChange:change=>this.pendingChanges.push(change)});
   }).then(()=>{this.service.commit();this.pendingChanges.length=0;});
   // Başlangıç hatası boot() tarafından gözlenir; sahipsiz Promise oluşmaz.
@@ -67,7 +69,9 @@ export class AfkCoordinator {
     if(!this.current(peer,payload))return denied();
     // Bu bağlam sadece kimliği doğrulanmış kanal IPC'sinden gelir. WebSocket
     // oyuncusu account/epoch/exempt/eligible veya özet metriklerini seçemez.
-    const context={eligible:payload.eligible===true,exempt:this.accountAdmin(s)||payload.exempt===true};
+    // A room entry can commit after the channel sent eligible=true. Recheck
+    // current durable membership at question creation, not its old IPC flag.
+    const context={eligible:payload.eligible===true&&!this.verificationRoomR90(identity.actor),exempt:this.accountAdmin(s)||payload.exempt===true};
     if(op==='summary')return {status:200,body:{ok:true,recorded:Boolean(this.service.recordSummary(identity,payload.summary))}};
     if(op==='issue')return this.service.issue(identity,{...context,reason:payload.reason});
     if(op==='answer')return this.service.answer(identity,{nonce:payload.nonce,choice:payload.choice});

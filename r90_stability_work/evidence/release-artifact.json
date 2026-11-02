@@ -1,0 +1,23 @@
+{
+  "version": "R90_GAMEPLAY",
+  "baseCoreSHA256": "8d145357746321e2376013af405de65cdf82b173206556a119d03505465aa75a",
+  "targetCoreSHA256": "b891076bb7e888968cbe42d1b8d19425b9390a72908706b7f9067a517e28001e",
+  "productionFiles": 7,
+  "files": [
+    "core511-source/scripts/core511/afk-coordinator.mjs",
+    "core511-source/scripts/core511/channel-runtime.mjs",
+    "core511-source/scripts/core511/native-http-bindings.mjs",
+    "core511-source/scripts/core511/patch-native-bot-check.mjs",
+    "core511-source/scripts/core511/session-mirror.mjs",
+    "http-runtime/dist-vds/server/index.js",
+    "core511-source/scripts/core511/verification-room-r90.mjs"
+  ],
+  "clientChanges": false,
+  "databaseChanges": false,
+  "liveDeployment": false,
+  "archive": "CORE511_R90_TOPLU.zip",
+  "sha256": "51f0c634b0b05bce1f6267b0ffca3218e4ea56141a912333741fafb336082e2b",
+  "bytes": 656489,
+  "behaviorTests": 15,
+  "installerTests": 10
+}
