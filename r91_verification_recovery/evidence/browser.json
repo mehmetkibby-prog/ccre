@@ -1,0 +1,32 @@
+{
+  "browser": "154.0.8037.57",
+  "scope": "Exact packaged verification functions plus unchanged shipped CAPTCHA component, real React and browser; dialog primitives are fixture DOM, not the entire game.",
+  "results": [
+    {
+      "mobile": false,
+      "originalStallReproduced": true,
+      "automaticRecovery": true,
+      "manualRetry": true,
+      "bodyTimeout": true,
+      "duplicateNotifications": true,
+      "lateResponseFenced": true,
+      "wrongAnswerRemainsBlocked": true,
+      "malformedFailClosed": true,
+      "unmount": true,
+      "pageErrors": []
+    },
+    {
+      "mobile": true,
+      "originalStallReproduced": true,
+      "automaticRecovery": true,
+      "manualRetry": true,
+      "bodyTimeout": true,
+      "duplicateNotifications": true,
+      "lateResponseFenced": true,
+      "wrongAnswerRemainsBlocked": true,
+      "malformedFailClosed": true,
+      "unmount": true,
+      "pageErrors": []
+    }
+  ]
+}

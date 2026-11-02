@@ -1,0 +1,19 @@
+{
+  "artifact": "CORE511_R91_DOGRULAMA.zip",
+  "sha256": "0b391cb9dbff9d066c9f35c597b3b6026ac3e835823ebbbc99b13a60f9d4471d",
+  "sourceVersion": "R90_GAMEPLAY",
+  "targetVersion": "R91_GAMEPLAY",
+  "nativeHttpStartup": {
+    "status": 200,
+    "channelsReady": 4,
+    "checkpointReady": true,
+    "diagnosticsReady": true,
+    "staleProofRejected": true,
+    "faults": 0
+  },
+  "installer": {
+    "passed": 10,
+    "failed": 0
+  },
+  "liveDeployment": false
+}
