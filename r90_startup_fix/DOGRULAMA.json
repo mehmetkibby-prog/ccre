@@ -1,0 +1,19 @@
+{
+  "originalR90SHA256": "51f0c634b0b05bce1f6267b0ffca3218e4ea56141a912333741fafb336082e2b",
+  "correctedArchiveSHA256": "d61728a0c604b1b8c3fb7aadfa0009d2fe6b49c55742b53daf2aa5ceac79e25c",
+  "productionFiles": 8,
+  "originalErrorReproduced": "native_http_server_entry_changed",
+  "realHttpStartup": {
+    "status": 200,
+    "version": "R90_GAMEPLAY",
+    "readyChannels": 4,
+    "checkpointReady": true,
+    "runtimeDiagnosticsReady": true,
+    "faults": 0
+  },
+  "installerTestsPassed": 10,
+  "vdsRecipeExactBytes": true,
+  "mismatchedProofRejected": true,
+  "liveDeploymentPerformed": false,
+  "testLimit": "Local temporary database and mocked signed accounts fetch; real game processes and HTTP listener. SSR asset map is a test-only empty map; no complete browser/50-player claim."
+}
