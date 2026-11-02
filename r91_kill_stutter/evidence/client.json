@@ -1,0 +1,18 @@
+{
+  "client": {
+    "sourceSha256": "aa6aed7dd8933fa463f8a9e4e2df7f53ca6af9412977bb3c632a35ebc67256bd",
+    "patchedSha256": "1952f17b982d29e51f846e3082286b43e1a8d18186bfd59e3280c6b8ff87ec6d",
+    "name": "game-client-core511-r91-1952f17b982d29e5.js",
+    "helperSha256": "6a38f6b299264ac347d85888731db0beb82c9efb31ef1307d4faa23aeaf54c2f",
+    "scope": "Bound verification status reads, recover retry, coalesce duplicate requirements, display read errors; fail closed."
+  },
+  "oldName": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+  "name": "game-client-core511-r91-1952f17b982d29e5.js",
+  "oldNamespace": "core511-cf3191131d993da1",
+  "namespace": "core511-45df958261399af9",
+  "httpBefore": "80b77f6ccf5e71a64eabd872eff1f996697de35a241fdb810696d16e9a83dbe5",
+  "httpAfter": "05efc6d28c18e28f7ef731cfd84aaa403572754a1b6ae4ae16d0f157f52b0f16",
+  "namespaceReplacements": 351,
+  "gameNameReplacements": 2,
+  "inverseEqual": true
+}

@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: a committed transfer with held fsync cannot make an unrelated game transaction write stale presence or fail
+ok 1 - a committed transfer with held fsync cannot make an unrelated game transaction write stale presence or fail
+  ---
+  duration_ms: 27.086473
+  type: 'test'
+  ...
+# Subtest: reward mirror uses indexed presence keys and rereads admission/epoch on every command
+ok 2 - reward mirror uses indexed presence keys and rereads admission/epoch on every command
+  ---
+  duration_ms: 5.966896
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 918.648819

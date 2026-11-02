@@ -1,0 +1,26 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1793648409562,"backupName":"before-pearl-reset-1793648409562-e7cd0e0f-40d3-43eb-b23a-749afcacc753.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# [vinext] Production server running at http://127.0.0.1:44209
+# {"event":"core511_recovery_cause","at":"2026-11-02T19:40:14.486Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":467252,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"073e21c458a0204b2a104b33"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T19:40:14.486Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":467258,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dd6c2ca4dc25ed54f0233c7a"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T19:40:14.486Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":467268,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1b83072c713c1bd3afff620b"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T19:40:14.487Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":467274,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"763ca1d5a3b0d249a015d0b1"}
+# {"event":"core511_recovery_cause","at":"2026-11-02T19:40:14.503Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":467241,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"fc9cb2543b8d74449c587e65"}
+# Subtest: exact R91 HTTP rejects stale proof; corrected package opens actual HTTP listener with four ready channels
+ok 1 - exact R91 HTTP rejects stale proof; corrected package opens actual HTTP listener with four ready channels
+  ---
+  duration_ms: 6416.875419
+  type: 'test'
+  ...
+# Original R91 reproduced: native_http_server_entry_changed before HTTP listener opens.
+# Corrected package: actual HTTP 200, R91 version, four channels ready, checkpoint worker ready, runtime diagnostics ready, no faults.
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7456.028727

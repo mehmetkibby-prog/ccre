@@ -1,0 +1,2959 @@
+{
+  "baselineSmall": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "29b53a6070ed3ee92bd227248ed64f3b1fa7968b9bdb095900f58b7e668af18a",
+    "byAction": {
+      "move": {
+        "count": 7184,
+        "p50": 52.94229700000142,
+        "p95": 99.433348999999,
+        "p99": 210.22288200000003,
+        "max": 568.6581569999998
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 51.408486000000266,
+        "p95": 103.79611999999997,
+        "p99": 107.17662300000029,
+        "max": 111.97461500000009
+      },
+      "attack": {
+        "count": 2104,
+        "p50": 50.11952299999757,
+        "p95": 83.84890499999983,
+        "p99": 141.4895579999993,
+        "max": 602.817524
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 388.0054479999999,
+        "p95": 464.27583700000014,
+        "p99": 464.4050379999999,
+        "max": 464.4050379999999
+      },
+      "collect": {
+        "count": 217,
+        "p50": 261.2917300000008,
+        "p95": 348.6106920000002,
+        "p99": 387.9067020000002,
+        "max": 392.6136229999993
+      }
+    },
+    "writerAckMs": {
+      "count": 1240,
+      "p50": 11.544840999998996,
+      "p95": 124.6159520000001,
+      "p99": 300.8859220000013,
+      "max": 388.3714629999995
+    },
+    "errors": [],
+    "faults": [],
+    "history": {
+      "rows": 0
+    },
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "9096c31fbc22496935e1c48ab07f4996ec5e40d1bdc130719381b60cec61a4bd",
+    "rawFile": "native-crowd-baseline-small-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 42,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 311.47070200000053,
+        "totalMaxMs": 359.67821000000004,
+        "writerMaxMs": 352.77013799999986
+      },
+      {
+        "target": "channel-2",
+        "completed": 40,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 388.00922999999966,
+        "totalMaxMs": 401.2127930000006,
+        "writerMaxMs": 392.87471899999946
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30066.938692999996,
+      "elu": 0.2598455192761445,
+      "maxPauseMs": 44.793855,
+      "processCpuMs": 10628.587
+    },
+    "queue": {
+      "maxWriterDepth": 33,
+      "maxOldestWriterAgeMs": 321.2511539999996,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    }
+  },
+  "baselineRewardHistory": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "29b53a6070ed3ee92bd227248ed64f3b1fa7968b9bdb095900f58b7e668af18a",
+    "byAction": {
+      "move": {
+        "count": 7113,
+        "p50": 51.38469500000065,
+        "p95": 113.79517399999895,
+        "p99": 236.48038500000075,
+        "max": 555.3735789999992
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 55.31847999999809,
+        "p95": 119.35245000000032,
+        "p99": 141.00036900000032,
+        "max": 144.36272200000076
+      },
+      "attack": {
+        "count": 2094,
+        "p50": 47.658212000000276,
+        "p95": 110.13017799999943,
+        "p99": 245.0845019999997,
+        "max": 406.3829850000002
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 564.3910699999997,
+        "p95": 611.2369429999999,
+        "p99": 611.8773510000001,
+        "max": 611.8773510000001
+      },
+      "collect": {
+        "count": 231,
+        "p50": 169.03749099999914,
+        "p95": 317.0316050000001,
+        "p99": 324.78705100000116,
+        "max": 326.6232799999998
+      }
+    },
+    "writerAckMs": {
+      "count": 1304,
+      "p50": 11.188919000000169,
+      "p95": 106.91502000000037,
+      "p99": 254.0946069999991,
+      "max": 286.2208920000012
+    },
+    "errors": [],
+    "faults": [],
+    "history": {
+      "rows": 200000,
+      "seedMs": 2803.2692560000005,
+      "logicalBytes": 500756480
+    },
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "27da2659d8137686c69ded8719bb20c13270aebc87edc5595ce616bc3efc5842",
+    "rawFile": "native-crowd-baseline-history-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 45,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 195.65255500000058,
+        "totalMaxMs": 278.5923270000003,
+        "writerMaxMs": 267.2906409999996
+      },
+      {
+        "target": "channel-2",
+        "completed": 39,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 293.1686669999999,
+        "totalMaxMs": 306.2082699999992,
+        "writerMaxMs": 295.3578259999995
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30081.79142,
+      "elu": 0.2835921130347329,
+      "maxPauseMs": 53.638794999998936,
+      "processCpuMs": 11468.212
+    },
+    "queue": {
+      "maxWriterDepth": 29,
+      "maxOldestWriterAgeMs": 271.74137699999847,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    }
+  },
+  "baselineOwners": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "29b53a6070ed3ee92bd227248ed64f3b1fa7968b9bdb095900f58b7e668af18a",
+    "byAction": {
+      "move": {
+        "count": 6956,
+        "p50": 53.145878999999695,
+        "p95": 134.18163699999968,
+        "p99": 403.3994619999994,
+        "max": 1685.6321150000003
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 54.93714199999886,
+        "p95": 102.16769300000033,
+        "p99": 116.2987350000003,
+        "max": 132.6552499999998
+      },
+      "attack": {
+        "count": 2071,
+        "p50": 53.41955700000108,
+        "p95": 154.5995929999999,
+        "p99": 989.7275000000009,
+        "max": 1787.1411159999998
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 325.11560999999983,
+        "p95": 435.1600559999997,
+        "p99": 460.72052899999926,
+        "max": 460.72052899999926
+      },
+      "collect": {
+        "count": 223,
+        "p50": 218.1558479999985,
+        "p95": 303.14656899999864,
+        "p99": 391.88916900000004,
+        "max": 594.9289119999994
+      }
+    },
+    "writerAckMs": {
+      "count": 1270,
+      "p50": 11.748281000000134,
+      "p95": 230.14578500000061,
+      "p99": 1060.355684,
+      "max": 1434.865799000001
+    },
+    "errors": [],
+    "faults": [],
+    "history": {
+      "rows": 0
+    },
+    "historicalOwners": 5000,
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "6faeef67b6da185ef1ebcdfe510a6c9fb645772651234451097a1f6e07d97c1b",
+    "rawFile": "native-crowd-baseline-owners-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 46,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 1119.721794000001,
+        "totalMaxMs": 1455.156363,
+        "writerMaxMs": 1443.3318179999987
+      },
+      {
+        "target": "channel-2",
+        "completed": 46,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 1325.4227260000007,
+        "totalMaxMs": 1405.700633999999,
+        "writerMaxMs": 1396.3656790000005
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30051.667323,
+      "elu": 0.27575307974988367,
+      "maxPauseMs": 39.412655000000086,
+      "processCpuMs": 13699.832
+    },
+    "queue": {
+      "maxWriterDepth": 33,
+      "maxOldestWriterAgeMs": 1343.0451080000003,
+      "commandHoldsOver600Ms": [
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 600.1417810000003,
+          "offset": 3120.9326794375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 694.5463479999999,
+          "offset": 3120.9326794375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 665.2933709999998,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 647.6799499999997,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-26",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 604.4465840000003,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 712.6265940000003,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 604.2038710000006,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 807.0311609999999,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 602.9309830000002,
+          "offset": 3233.4174924375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 764.9257419999994,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 747.3123209999994,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-26",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 704.078955,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 812.258965,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 703.8362420000003,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 906.6635319999996,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 702.5633539999999,
+          "offset": 3333.0498634375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 865.1529429999991,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-2",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 631.6900759999999,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 847.5395219999991,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-26",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 804.3061559999996,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 912.4861659999997,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 804.063443,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1006.8907329999993,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 802.7905549999996,
+          "offset": 3433.2770644374996
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 965.8589069999998,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-2",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 732.3960400000005,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 948.2454859999998,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-16",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 699.4379950000002,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-18",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 699.220609,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-26",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 905.0121200000003,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1013.1921300000004,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 904.7694070000007,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 698.6036570000006,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 698.465158,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1107.596697,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 903.4965190000003,
+          "offset": 3533.9830284375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1073.2182859999994,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 631.7005529999997,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1055.6048649999993,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-16",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 806.7973739999998,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-18",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 806.5799879999995,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-26",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1012.3714989999999,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1120.551509,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1012.1287860000002,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 805.9630360000001,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 805.8245369999995,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1214.9560759999995,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1010.8558979999998,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-44",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 604.0599299999994,
+          "offset": 3641.3424074375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1178.6036129999993,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 737.0858799999996,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1160.9901919999993,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1225.9368359999999,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1117.5141130000002,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 911.3483630000001,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 911.2098639999995,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1116.2412249999998,
+          "offset": 3746.7277344374997
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1279.1278849999999,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 837.6101520000002,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1261.5144639999999,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 619.9333940000006,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 619.8040020000008,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 619.7094260000003,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1326.4611080000004,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1218.0383850000007,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1011.8726350000006,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1011.734136,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-34",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 619.5861650000006,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1216.7654970000003,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-40",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 619.4544900000001,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 618.0197900000003,
+          "offset": 3847.2520064375003
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1378.7490689999995,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 937.2313359999998,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1361.1356479999995,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 719.5545780000002,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 719.4251860000004,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 623.9383189999999,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 719.33061,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 680.8981610000001,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1426.082292,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1317.6595690000004,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1111.4938190000003,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 621.8851939999995,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1111.3553199999997,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 621.798933,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-34",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 719.2073490000002,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1316.386681,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-40",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 719.0756739999997,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-40",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 622.7918570000002,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 717.6409739999999,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 654.26037,
+          "offset": 3946.8731904375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1480.9327589999994,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1039.4150259999997,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-10",
+          "sequence": 24,
+          "action": "move",
+          "ageMs": 623.898889,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1463.3193379999993,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 821.7382680000001,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 821.6088760000002,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 726.1220089999997,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 821.5142999999998,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 783.0818509999999,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1528.265982,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1419.8432590000002,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1213.677509,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-30",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 724.0688839999993,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1213.5390099999995,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 723.9826229999999,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-34",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 821.3910390000001,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1418.5703709999998,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-40",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 821.2593639999996,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-40",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 724.975547,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 819.8246639999998,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 756.4440599999998,
+          "offset": 4049.0568804375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-0",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1139.6571360000007,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-10",
+          "sequence": 24,
+          "action": "move",
+          "ageMs": 724.1409990000011,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1563.5614480000004,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-14",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 921.9803780000011,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 921.8509860000013,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-20",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 826.3641190000008,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 921.7564100000009,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-22",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 883.323961000001,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-24",
+          "sequence": 24,
+          "action": "move",
+          "ageMs": 672.2285030000003,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1628.508092000001,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1520.0853690000013,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1313.7811200000006,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-32",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 824.2247330000009,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-34",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 921.6331490000011,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1518.8124810000008,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 920.0667740000008,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 856.6861700000009,
+          "offset": 4149.298990437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1728.449810000001,
+          "offset": 4249.240708437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-28",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1620.0270870000013,
+          "offset": 4249.240708437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1618.7541990000009,
+          "offset": 4249.240708437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 1020.0084920000008,
+          "offset": 4249.240708437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 956.6278880000009,
+          "offset": 4249.240708437501
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 608.2246859999996,
+          "offset": 4354.8203944375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 1125.588178,
+          "offset": 4354.8203944375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-48",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 1062.207574,
+          "offset": 4354.8203944375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-38",
+          "sequence": 77,
+          "action": "move",
+          "ageMs": 616.1602849999981,
+          "offset": 13304.7700104375
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 697.378471,
+          "offset": 3125.281385703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 616.2886930000004,
+          "offset": 3288.0473497031253
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 860.1444350000002,
+          "offset": 3288.0473497031253
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 616.1727060000003,
+          "offset": 3288.0473497031253
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 663.8638280000005,
+          "offset": 3288.0473497031253
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 650.578555,
+          "offset": 3288.0473497031253
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 726.2860120000005,
+          "offset": 3398.0446687031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 970.1417540000002,
+          "offset": 3398.0446687031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 726.1700250000004,
+          "offset": 3398.0446687031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 773.8611470000005,
+          "offset": 3398.0446687031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 760.5758740000001,
+          "offset": 3398.0446687031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 685.7193919999991,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 834.8504489999996,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1078.7061909999993,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 834.7344619999994,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 882.4255839999996,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 675.074951999999,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 869.1403109999992,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 662.5043909999995,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 662.323922999999,
+          "offset": 3506.6091057031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 673.7784450000008,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 786.213436,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 935.3444930000005,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1179.2002350000002,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 935.2285060000004,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 982.9196280000006,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 775.568996,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 969.6343550000001,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 762.9984350000004,
+          "offset": 3607.1031497031254
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 775.8153069999998,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 888.250297999999,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 686.6687809999994,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 612.0415249999996,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1037.3813549999995,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1281.2370969999993,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1037.2653679999994,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1084.9564899999996,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 877.605857999999,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-19",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 643.720745999999,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 641.7255389999991,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1071.6712169999992,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 865.0352969999994,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 631.5318609999995,
+          "offset": 3709.1400117031244
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 875.301074,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 654.7825179999991,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 987.7360649999991,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 654.7345589999995,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 786.1545479999995,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 654.7008359999991,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 711.5272919999998,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 654.6703889999999,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1136.8671219999997,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 654.6093149999997,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1380.7228639999994,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1136.7511349999995,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1184.4422569999997,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 654.5741489999991,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 977.0916249999991,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-19",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 743.2065129999992,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 741.2113059999992,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 619.1743429999997,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1171.1569839999993,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 964.5210639999996,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 731.0176279999996,
+          "offset": 3808.6257787031245
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 976.3098149999996,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 755.7912589999987,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 755.7432999999992,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 755.7095769999987,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 812.5360329999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 755.6791299999995,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-9",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 609.7158389999995,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 755.6180559999993,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 18,
+          "action": "attack",
+          "ageMs": 1481.731604999999,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1237.7598759999992,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1285.4509979999993,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 755.5828899999988,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1078.1003659999988,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 618.9950489999992,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 842.2200469999989,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 618.866238999999,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-23",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 636.0258669999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-23",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 618.8134899999995,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-25",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 618.7595999999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 720.1830839999993,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 618.7091149999987,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1272.165724999999,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 618.6571779999995,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1065.5298049999992,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 618.6029469999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 696.5086569999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 832.0263689999992,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 618.5543859999989,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 619.7667809999994,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 618.3630789999988,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-41",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 619.5123949999988,
+          "offset": 3909.634519703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 856.3203949999997,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 856.2724360000002,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 856.2387129999997,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 21,
+          "action": "move",
+          "ageMs": 913.0651690000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 856.2082660000005,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-9",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 710.2449750000005,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 856.1471920000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1338.2890120000002,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1385.9801340000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 856.1120259999998,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1178.6295019999998,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 719.5241850000002,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 719.3953750000001,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-23",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 719.3426260000006,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-25",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 719.2887360000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 820.7122200000003,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 719.2382509999998,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1372.694861,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 719.1863140000005,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 719.1320830000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 797.0377930000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 719.0835219999999,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 720.2959170000004,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 718.8922149999999,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-47",
+          "sequence": 23,
+          "action": "move",
+          "ageMs": 698.9882500000003,
+          "offset": 4010.163655703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 956.9963479999997,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 956.9483890000001,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 956.9146659999997,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 956.8842190000005,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 956.8231450000003,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1438.9649650000001,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 956.7879789999997,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 820.2001380000002,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 820.071328,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-23",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 820.0185790000005,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-25",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 819.9646890000004,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 921.3881730000003,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 819.9142039999997,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1473.3708139999999,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 819.8622670000004,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 819.8080360000004,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 897.7137460000004,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 819.7594749999998,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 820.9718700000003,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 819.5681679999998,
+          "offset": 4110.839608703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-1",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 1057.7251569999999,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-3",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 1057.6771980000003,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-5",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 1057.6434749999999,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-7",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 1057.6130280000007,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-11",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1057.5519540000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-13",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1539.6937740000003,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1057.516788,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-17",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 920.9289470000003,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-21",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 920.8001370000002,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-23",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 920.7473880000007,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-25",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 920.6934980000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 20,
+          "action": "move",
+          "ageMs": 1022.1169820000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-27",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 920.6430129999999,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 19,
+          "action": "move",
+          "ageMs": 1574.099623,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-29",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 920.5910760000006,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-31",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 920.5368450000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 21,
+          "action": "attack",
+          "ageMs": 998.4425550000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-33",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 628.5123800000001,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-35",
+          "sequence": 22,
+          "action": "attack",
+          "ageMs": 920.488284,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 22,
+          "action": "move",
+          "ageMs": 921.7006790000005,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-37",
+          "sequence": 23,
+          "action": "attack",
+          "ageMs": 920.296977,
+          "offset": 4211.568417703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1159.4280339999996,
+          "offset": 4313.479663703125
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 20,
+          "action": "attack",
+          "ageMs": 1259.9891989999987,
+          "offset": 4414.040828703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 76,
+          "action": "attack",
+          "ageMs": 648.7942110000004,
+          "offset": 12978.624830703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 77,
+          "action": "move",
+          "ageMs": 600.2728319999987,
+          "offset": 12978.624830703124
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 76,
+          "action": "attack",
+          "ageMs": 748.918651,
+          "offset": 13078.749270703123
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-15",
+          "sequence": 77,
+          "action": "move",
+          "ageMs": 700.3972719999983,
+          "offset": 13078.749270703123
+        },
+        {
+          "actor": "d67ac7c0-7972-4718-b7ac-844f6261d626-47",
+          "sequence": 81,
+          "action": "move",
+          "ageMs": 634.7330139999976,
+          "offset": 13178.826451703124
+        }
+      ],
+      "maxPendingCommandAgeMs": 1728.449810000001
+    },
+    "compressedRawSHA256": "986a40a72b3390efcee2d92acba6c2a06b8335f436ee3813867b9ac6456c1d13"
+  },
+  "fixedOwners": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "795d3f2d7ff4aaa4028264dfba4d8e842520b1f749a09221256b918e15268a62",
+    "byAction": {
+      "move": {
+        "count": 7145,
+        "p50": 52.664512999999715,
+        "p95": 108.60624799999914,
+        "p99": 210.88256600000022,
+        "max": 544.5459740000006
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 49.71646399999736,
+        "p95": 95.94239799999923,
+        "p99": 104.65678899999966,
+        "max": 110.95056699999986
+      },
+      "attack": {
+        "count": 2088,
+        "p50": 48.79753300000084,
+        "p95": 93.65669000000162,
+        "p99": 214.53877199999988,
+        "max": 408.46934500000043
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 465.47356500000024,
+        "p95": 586.2119309999998,
+        "p99": 612.9648090000001,
+        "max": 612.9648090000001
+      },
+      "collect": {
+        "count": 210,
+        "p50": 209.79352199999994,
+        "p95": 331.11831300000085,
+        "p99": 339.73716500000046,
+        "max": 346.609563
+      }
+    },
+    "writerAckMs": {
+      "count": 1252,
+      "p50": 12.418822999999975,
+      "p95": 121.45974399999977,
+      "p99": 236.4353600000013,
+      "max": 339.7075480000003
+    },
+    "errors": [],
+    "faults": [],
+    "history": {
+      "rows": 0
+    },
+    "historicalOwners": 5000,
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "674d42092f616fc2f25e18e565cf5d95c5723a7e2670ff0c97668059c7c5f14a",
+    "rawFile": "native-crowd-fixed-owners-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 32,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 256.6295819999996,
+        "totalMaxMs": 341.50732400000015,
+        "writerMaxMs": 278.57303500000125
+      },
+      {
+        "target": "channel-2",
+        "completed": 33,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 289.21613199999956,
+        "totalMaxMs": 289.8433839999998,
+        "writerMaxMs": 280.99676100000033
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30062.901308,
+      "elu": 0.31371388622342317,
+      "maxPauseMs": 69.599231,
+      "processCpuMs": 15025.833
+    },
+    "queue": {
+      "maxWriterDepth": 39,
+      "maxOldestWriterAgeMs": 268.68139599999995,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    },
+    "compressedRawSHA256": "334703ed81f766b82d71ba8a00889705bbb02f84a2df4330c2c168b414c8ba41"
+  },
+  "finalOwners90s": {
+    "passed": true,
+    "seconds": 90,
+    "players": 50,
+    "coreSHA256": "795d3f2d7ff4aaa4028264dfba4d8e842520b1f749a09221256b918e15268a62",
+    "byAction": {
+      "move": {
+        "count": 21602,
+        "p50": 50.15360800000053,
+        "p95": 83.56951100000151,
+        "p99": 134.66185899999982,
+        "max": 518.8073320000003
+      },
+      "heartbeat": {
+        "count": 900,
+        "p50": 46.4640359999903,
+        "p95": 83.90049799999906,
+        "p99": 102.73061700000017,
+        "max": 112.87017600000036
+      },
+      "attack": {
+        "count": 6342,
+        "p50": 45.131305999995675,
+        "p95": 76.53576900000007,
+        "p99": 124.83091100000001,
+        "max": 345.72149400000035
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 335.5668390000001,
+        "p95": 457.35136799999964,
+        "p99": 457.56457599999976,
+        "max": 457.56457599999976
+      },
+      "collect": {
+        "count": 506,
+        "p50": 140.20828200000688,
+        "p95": 298.4317890000002,
+        "p99": 408.3537329999999,
+        "max": 426.8913159999993
+      }
+    },
+    "writerAckMs": {
+      "count": 3825,
+      "p50": 8.646240000001853,
+      "p95": 58.313192000001436,
+      "p99": 154.79660199999853,
+      "max": 269.74220199999945
+    },
+    "errors": [],
+    "faults": [],
+    "history": {
+      "rows": 0
+    },
+    "historicalOwners": 5000,
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with arranged high-HP actors/targets, two seeded lethal rounds/material drops per actor plus natural repeated respawns/visible loot. Not every natural encounter.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "e967da3b62cb9e459e80327b96a2ab30ebb6a83abc4550836dd956fa974148e8",
+    "rawFile": "native-crowd-final-owners-90s-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 159,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 60.43340999999782,
+        "totalMaxMs": 108.95710999999574,
+        "writerMaxMs": 103.11924600000202
+      },
+      {
+        "target": "channel-2",
+        "completed": 147,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 65.92783200000122,
+        "totalMaxMs": 101.81397500000094,
+        "writerMaxMs": 94.44750600000043
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 90077.592736,
+      "elu": 0.309024748736861,
+      "maxPauseMs": 35.782655,
+      "processCpuMs": 45465.96
+    },
+    "queue": {
+      "maxWriterDepth": 36,
+      "maxOldestWriterAgeMs": 228.0188820000003,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    },
+    "compressedRawSHA256": "8b6d2222bebd8b0855905cfea180e746c3f89983805fc0de6d46888cf0fcd68c"
+  },
+  "baselineRune": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "29b53a6070ed3ee92bd227248ed64f3b1fa7968b9bdb095900f58b7e668af18a",
+    "byAction": {
+      "move": {
+        "count": 7195,
+        "p50": 44.52795900000092,
+        "p95": 75.21099999999933,
+        "p99": 107.9047610000016,
+        "max": 179.1384539999999
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 54.223658999999316,
+        "p95": 84.21374600000036,
+        "p99": 117.55441900000005,
+        "max": 120.87611099999958
+      },
+      "attack": {
+        "count": 855,
+        "p50": 54.256171999999424,
+        "p95": 97.87354199999754,
+        "p99": 154.68485599999985,
+        "max": 178.25181599999996
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 274.987024,
+        "p95": 295.94772100000046,
+        "p99": 296.67237399999976,
+        "max": 296.67237399999976
+      },
+      "collect": {
+        "count": 20,
+        "p50": 108.90686800000185,
+        "p95": 226.29831700000068,
+        "p99": 274.0518630000006,
+        "max": 274.0518630000006
+      }
+    },
+    "writerAckMs": {
+      "count": 977,
+      "p50": 7.361107000000629,
+      "p95": 22.09573399999863,
+      "p99": 53.91176099999939,
+      "max": 144.78966600000058
+    },
+    "errors": [],
+    "faults": [],
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with 50 high-HP level65 rank1 actors sharing native Rune catalog mobs at eight locations per channel; initial mob HP arranged at1500; later respawns use native settings. Not every natural encounter or sustained high-DPS/boss combat.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "07d2a04f81a30527fb1e90bca2fd6b977d552950737b1818bc341ab13c00a981",
+    "rawFile": "native-rune-baseline-rune-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 8,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 87.94162199999846,
+        "totalMaxMs": 87.94162199999846,
+        "writerMaxMs": 82.41508100000283
+      },
+      {
+        "target": "channel-2",
+        "completed": 8,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 98.42622100000153,
+        "totalMaxMs": 98.42622100000153,
+        "writerMaxMs": 78.98249100000248
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30053.505411,
+      "elu": 0.2105454246722358,
+      "maxPauseMs": 61.243391,
+      "processCpuMs": 8003.252
+    },
+    "queue": {
+      "maxWriterDepth": 4,
+      "maxOldestWriterAgeMs": 81.12178400000084,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    }
+  },
+  "rejectedRuneWorkerExperiment": {
+    "passed": true,
+    "seconds": 30,
+    "players": 50,
+    "coreSHA256": "298e01715205ef65c41e97864996792eca47719c1c8fe8502df66c77b85d769e",
+    "byAction": {
+      "move": {
+        "count": 7192,
+        "p50": 43.78197199999977,
+        "p95": 75.50619000000006,
+        "p99": 127.25674999999956,
+        "max": 300.0690519999989
+      },
+      "heartbeat": {
+        "count": 300,
+        "p50": 38.61543299999903,
+        "p95": 81.50824499999999,
+        "p99": 119.30167299999994,
+        "max": 185.31710199999998
+      },
+      "attack": {
+        "count": 856,
+        "p50": 46.3590549999999,
+        "p95": 99.51634199999899,
+        "p99": 212.76803199999995,
+        "max": 229.81753499999832
+      },
+      "use_potion": {
+        "count": 50,
+        "p50": 219.83701399999973,
+        "p95": 305.3078170000008,
+        "p99": 305.946731,
+        "max": 305.946731
+      },
+      "collect": {
+        "count": 22,
+        "p50": 166.42939900000056,
+        "p95": 276.62828499999887,
+        "p99": 278.9802869999985,
+        "max": 278.9802869999985
+      }
+    },
+    "writerAckMs": {
+      "count": 983,
+      "p50": 6.654278000001796,
+      "p95": 25.45957300000009,
+      "p99": 90.0904789999986,
+      "max": 122.5755369999988
+    },
+    "errors": [],
+    "faults": [],
+    "sourceUnchanged": true,
+    "deliveryUnchanged": true,
+    "limitations": [
+      "Actual transport scheduling with 50 high-HP level65 rank1 actors sharing native Rune catalog mobs at eight locations per channel; initial mob HP arranged at1500; later respawns use native settings. Not every natural encounter or sustained high-DPS/boss combat.",
+      "Actual transport and prediction without rendered DOM/canvas; prediction limits are not measured visual FPS. Generator input runs at20Hz while the actual browser uses RAF; both clamp frame integration at250ms.",
+      "Signed central auth uses local verified fixture replies. Generators are up to four separate OS processes, one per channel, on the same4CPU quota; their resources are reported separately and still compete for host CPU.",
+      "Main ingress architecture matches installed startup; delivery source provenance is the exact pinned archived entry plus approved noDelay change, not a byte-verified live R84 ingress.",
+      "No Caddy/TLS or WAN latency, complete dungeon/arena/guild/trade/admin crowd mix, complete static assets, full historical load suite or long-duration capacity guarantee."
+    ],
+    "rawSHA256": "b0170f0b64bae2a112cf79da229549eafa9db708cdeb6a60524784600e41230f",
+    "rawFile": "native-rune-fixed-rune-50.json",
+    "deathWait": [
+      {
+        "target": "channel-1",
+        "completed": 8,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 126.56727300000057,
+        "totalMaxMs": 126.56727300000057,
+        "writerMaxMs": 118.08926600000268
+      },
+      {
+        "target": "channel-2",
+        "completed": 8,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": 119.6412539999983,
+        "totalMaxMs": 119.6412539999983,
+        "writerMaxMs": 110.51137199999721
+      },
+      {
+        "target": "channel-3",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      },
+      {
+        "target": "channel-4",
+        "completed": 0,
+        "rejected": 0,
+        "failed": 0,
+        "totalP95Ms": null,
+        "totalMaxMs": null,
+        "writerMaxMs": null
+      }
+    ],
+    "mainEventLoop": {
+      "durationMs": 30049.851206000003,
+      "elu": 0.20052981919114066,
+      "maxPauseMs": 52.002815,
+      "processCpuMs": 7934.064
+    },
+    "queue": {
+      "maxWriterDepth": 7,
+      "maxOldestWriterAgeMs": 82.26732999999876,
+      "commandHoldsOver600Ms": [],
+      "maxPendingCommandAgeMs": 0
+    }
+  }
+}

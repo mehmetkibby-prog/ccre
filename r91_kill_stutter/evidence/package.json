@@ -1,0 +1,55 @@
+{
+  "baseCoreSHA256": "b8045ab52349200d99be5906857870b6898e8c74614e9c5f62a1525b11bf810b",
+  "targetCoreSHA256": "795d3f2d7ff4aaa4028264dfba4d8e842520b1f749a09221256b918e15268a62",
+  "files": {
+    "core511-source/scripts/core511/generated/native-client-proof.json": {
+      "before": "dc5dd8a3dd5a8d7f37e93becdad84d320fc6d93a8b4afb875ea86a8e2984280d",
+      "after": "10a7812e38610bf58729b8d0aa0e14194fe6eda71f4cebe1be7c254408cb7310",
+      "bytes": 373744
+    },
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json": {
+      "before": "a18880e9567afb0c6fc8855b4dfd441b6b0f6a9c5e351b4b2230fab249532022",
+      "after": "dfed2031f7117437444cb6efd3061eb3c14aaf7c8c0ce614f45b6f2ed4e8bd91",
+      "bytes": 156699
+    },
+    "core511-source/scripts/core511/native-http-bindings.mjs": {
+      "before": "236f8bb3e127aa476b1e68207291c93f22cf05bc696e346afcb223cb2629d891",
+      "after": "0022c9bd33454eeb3cc86753c556da7bdda49e8e0ec1aeaf08bee64584a2e41e",
+      "bytes": 15288
+    },
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs": {
+      "before": "fb17b0a9bd1824b911dcd57907f5cccef986ea0d097fa03481bc24ce9bfa85d2",
+      "after": "9b5832bf7fcc802841061a5aad7e843645a75d76c0ccd20e1de39baf376dc29a",
+      "bytes": 6391
+    },
+    "core511-source/scripts/core511/writer-runtime.mjs": {
+      "before": "f5ce16bfecde7058c714b3098cdfb9aa05d3154cfb0c75f59f5ce18e331a483b",
+      "after": "2b766783d578458539a3af515ba7eeec8f0fbb82734e30dd4f1c1a111e628bd9",
+      "bytes": 21734
+    },
+    "http-runtime/dist-vds/server/index.js": {
+      "before": "80b77f6ccf5e71a64eabd872eff1f996697de35a241fdb810696d16e9a83dbe5",
+      "after": "05efc6d28c18e28f7ef731cfd84aaa403572754a1b6ae4ae16d0f157f52b0f16",
+      "bytes": 2229934
+    },
+    "core511-source/scripts/core511/generated/client/game-client-core511-r91-1952f17b982d29e5.js": {
+      "before": null,
+      "after": "1952f17b982d29e51f846e3082286b43e1a8d18186bfd59e3280c6b8ff87ec6d",
+      "bytes": 1649857
+    },
+    "core511-source/scripts/core511/verification-recovery-r91.mjs": {
+      "before": null,
+      "after": "6a38f6b299264ac347d85888731db0beb82c9efb31ef1307d4faa23aeaf54c2f",
+      "bytes": 6321
+    }
+  },
+  "client": {
+    "oldNamespace": "core511-cf3191131d993da1",
+    "namespace": "core511-45df958261399af9",
+    "oldName": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "name": "game-client-core511-r91-1952f17b982d29e5.js",
+    "generatedNames": [
+      "game-client-core511-r91-1952f17b982d29e5.js"
+    ]
+  }
+}
