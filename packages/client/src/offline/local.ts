@@ -9,7 +9,7 @@ import type { CharState, FromWorker } from '../../../server/src/types.ts';
 import { TUNING, MAPS, SELL_PRICES, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
 const KEY = 'col_offline_v1';
-interface Db { nextAcc: number; nextChar: number; accounts: { id: number; username: string; pass: string; starter: boolean }[]; chars: Record<number, CharState>; session: number | null }
+interface Db { nextAcc: number; nextChar: number; accounts: { id: number; username: string; pass: string; starter: boolean }[]; chars: Record<number, CharState>; session: number | null; market?: unknown }
 function loadDb(): Db {
   try { const d = JSON.parse(localStorage.getItem(KEY) ?? 'null'); if (d && d.accounts) return d; } catch { /* boş */ }
   return { nextAcc: 1, nextChar: 1, accounts: [], chars: {}, session: null };
@@ -56,6 +56,8 @@ class Backend {
   lastWorld = 0;
   constructor() {
     this.world = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 8000, post: (m) => this.onWorld(m) });
+    // pazar: dükkânlar ve sahibi yokken yapılan satışların kazancı bu cihazda kalıcı
+    if (db.market) this.world.loadMarket(db.market);
   }
   start() {
     if (this.started) return;
@@ -75,6 +77,13 @@ class Backend {
   private onWorld(m: FromWorker) {
     switch (m.type) {
       case 'out': for (const [sid, d] of m.batch) this.sockets.get(sid)?.deliver(d); break;
+      case 'market': {
+        // dükkân durumu ve etkilenen karakterler aynı kayıtta (tek localStorage yazımı) saklanır
+        db.market = m.state;
+        for (const c of m.chars) if (c.id > 0) { const cur = db.chars[c.id]; if (!cur || cur.saveVersion <= c.saveVersion) db.chars[c.id] = c; }
+        persist();
+        break;
+      }
       case 'save': case 'left': if (m.char.id > 0) { const cur = db.chars[m.char.id]; if (!cur || cur.saveVersion <= m.char.saveVersion) { db.chars[m.char.id] = m.char; persist(); } } break;
       case 'donate': {
         const gain = m.amount * 0.02 * Math.max(0.15, (100 - this.health) / 100);
@@ -156,13 +165,33 @@ class Backend {
       this.bots.push({ sid, seq: 0, tx: c.x, ty: c.y, forest, target: 0, nextChat: performance.now() + 15000 + Math.random() * 40000 });
     });
   }
+  /**
+   * Test sürümü: köydeki botlar arada bir oyuncu dükkânlarından makul fiyatlı (NPC satış fiyatının en çok
+   * 4 katı) bir eşya alır. Böylece sen başka yerdeyken satış ve "dükkânın sattı" akışı görülebilir.
+   */
+  private nextBotBuy = performance.now() + 45_000 + Math.random() * 60_000;
+  private botShop() {
+    if (performance.now() < this.nextBotBuy) return;
+    this.nextBotBuy = performance.now() + 70_000 + Math.random() * 110_000;
+    const offers = this.world.market.stalls.filter((s) => s.ownerId > 0).flatMap((s) => s.items.filter((m) => m.price <= (SELL_PRICES[m.item.rarity] ?? 5) * 4).map((m) => ({ s, m })));
+    const shoppers = this.bots.filter((b) => !b.forest && !this.world.market.stalls.some((s) => s.ownerId === -(b.sid - 10_000 + 1)));
+    if (!offers.length || !shoppers.length) return;
+    const { s, m } = offers[Math.floor(Math.random() * offers.length)];
+    const b = shoppers[Math.floor(Math.random() * shoppers.length)], p = this.world.bySid.get(b.sid);
+    if (!p || p.zone.id !== s.zone) return;
+    p.x = s.x + 60; p.y = s.y + 90; b.tx = p.x; b.ty = p.y;
+    if (p.char.bag.length > 20) p.char.bag = [];
+    p.char.gems = Math.max(p.char.gems, m.price);
+    this.world.onCmd(b.sid, JSON.stringify({ t: 'stall_buy', stall: s.id, item: m.item.id, price: m.price, req: 'botbuy' + Date.now() }));
+  }
   private driveBots() {
+    this.botShop();
     const lines = ['Selam!', 'Orman bugün kalabalık', 'Haso artı basıyor mu?', 'Kurtlara dikkat', 'Grup arayan var mı?', 'Turuncu kılıç düştü!'];
     for (const b of this.bots) {
       const p = this.world.bySid.get(b.sid);
       if (!p) continue;
       if (p.dead) { this.world.onCmd(b.sid, '{"t":"respawn","where":"here"}'); continue; }
-      if (p.stall) continue; // tezgâh başındaki tüccar yerinden kalkmaz
+      if (this.world.market.stalls.some((s) => s.ownerId === p.char.id)) continue; // dükkânının başındaki tüccar yerinden kalkmaz
       let tx = b.tx, ty = b.ty;
       if (b.forest) {
         let t = b.target ? p.zone.monsterById.get(b.target) : undefined;

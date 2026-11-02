@@ -70,30 +70,56 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
 }
 
 // ───────── eşya ipucu ─────────
-function ItemTip({ it, x, y }: { it: ItemInstance; x: number; y: number }) {
+const TIER_NAMES = ['1. kademe', '2. kademe', '3. kademe', '4. kademe'];
+function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
   const tpl = ITEM_TPL.get(it.tpl);
   const r = RARITY[it.rarity];
-  return (
-    <div className="frame tip" style={{ left: Math.min(x + 16, innerWidth - 270), top: Math.min(y + 10, innerHeight - 220) }}>
+  const body = (
+    <>
       <div className="nm" style={{ color: r.color }}>{itemDisplayName(it)}</div>
       <div className="muted" style={{ fontSize: 11 }}>{r.name} · {tpl ? SLOT_NAMES[tpl.slot] : ''}{tpl?.cls ? ` · ${CLASSES[tpl.cls].name}` : ''} · Gereken Sv. {r.minLevel}</div>
       <div className="st" style={{ marginTop: 6 }}>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'} +{itemPower(it)}</div>
-      {it.ench.map((e, i) => <div key={i} className="en">{ENCHANTS[e.t].name} +{e.v}{ENCHANTS[e.t].unit}</div>)}
+      {it.ench.length > 0 && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Efsunlar ({it.ench.length})</div>}
+      {it.ench.map((e, i) => (
+        <div key={i} className={'en t' + (e.tier ?? 0)}>
+          <span>{ENCHANTS[e.t].name} {ENCHANTS[e.t].unit === '%' ? `%${e.v}` : `+${e.v.toLocaleString('tr-TR')}`}</span>
+          <small>{TIER_NAMES[e.tier ?? 0]}</small>
+          {pinned && <div className="ed">{ENCHANTS[e.t].desc}</div>}
+        </div>
+      ))}
       {it.kills ? <div className="muted" style={{ fontSize: 11 }}>Silahla av: {it.kills}</div> : null}
       {it.locked && <div style={{ color: '#ffd27a', fontSize: 11 }}>Kilitli (satılamaz)</div>}
-      <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Satış: {SELL_PRICES[it.rarity]} Mücevher</div>
+      <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>NPC'ye satış: {SELL_PRICES[it.rarity]} Mücevher</div>
+    </>
+  );
+  // telefonda: dokununca sabit kart, "Kapat" ile kapanır
+  if (pinned) return (
+    <div className="frame tip tip-sheet" role="dialog" aria-label="Eşya özellikleri" onPointerDown={(e) => e.stopPropagation()}>
+      {body}
+      <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>
     </div>
   );
+  return <div className="frame tip" style={{ left: Math.min(x + 16, innerWidth - 270), top: Math.min(y + 10, innerHeight - 220) }}>{body}</div>;
 }
+let lastPointer = 'mouse';
 function useTip() {
-  const [tip, setTip] = useState<{ it: ItemInstance; x: number; y: number } | null>(null);
-  const bind = (it: ItemInstance | undefined) => it ? { onPointerEnter: (e: React.PointerEvent) => setTip({ it, x: e.clientX, y: e.clientY }), onPointerMove: (e: React.PointerEvent) => setTip({ it, x: e.clientX, y: e.clientY }), onPointerLeave: () => setTip(null) } : {};
+  const [tip, setTip] = useState<{ it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void } | null>(null);
+  // fare: üstüne gelince; dokunmatik: dokununca sabit kart (üstüne gelme olayı dokunmada anlık titriyordu)
+  const bind = (it: ItemInstance | undefined) => it ? {
+    onPointerEnter: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip({ it, x: e.clientX, y: e.clientY }); },
+    onPointerMove: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip({ it, x: e.clientX, y: e.clientY }); },
+    onPointerLeave: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip(null); },
+    onPointerDown: (e: React.PointerEvent) => { lastPointer = e.pointerType; },
+    // dokunmatik: kart, hücrenin kendi tıklamasından (seçim) SONRA açılır; ekranı kapatmaz
+    onTapCard: () => { if (lastPointer !== 'mouse') setTip({ it, x: 0, y: 0, pinned: true, onClose: () => setTip(null) }); },
+  } : {};
   return { tip, bind, clear: () => setTip(null) };
 }
-function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: string; onClick?: () => void; sel?: boolean; bind?: object }) {
+function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: string; onClick?: () => void; sel?: boolean; bind?: { onTapCard?: () => void } }) {
   const tpl = it ? ITEM_TPL.get(it.tpl) : null;
+  const { onTapCard, ...handlers } = bind ?? {};
   return (
-    <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} onClick={onClick} {...bind}>
+    <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
       {it && tpl ? <img src={iconUrl(tpl.icon, RIDX.indexOf(it.rarity))} alt="" /> : <span className="lbl">{label}</span>}
       {it?.plus ? <span className="plus">+{it.plus}</span> : null}
       {it?.locked ? <span className="lock">🔒</span> : null}
@@ -118,7 +144,7 @@ function Inventory({ game }: { game: Game }) {
           <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Kuşanılmış eşyaya tıkla: çıkar</div>
         </div>
         <div>
-          <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Tezgâhı</button>}</div>
+          <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Dükkânı</button>}</div>
           <div className="bag" style={{ marginTop: 8 }}>
             {self.bag.map((it) => <Cell key={it.id} it={it} sel={sel === it.id} bind={bind(it)} onClick={() => setSel(sel === it.id ? null : it.id)} />)}
             {Array.from({ length: Math.max(0, 35 - self.bag.length) }).slice(0, 14).map((_, i) => <div key={'e' + i} className="cell" />)}
@@ -309,6 +335,10 @@ function Settings() {
         <div className="row">{(['low', 'medium', 'high'] as const).map((q) => <button key={q} className={'btn small ' + (s.quality === q ? 'primary' : '')} onClick={() => set({ quality: q })}>{q === 'low' ? 'Düşük' : q === 'medium' ? 'Orta' : 'Yüksek'}</button>)}</div>
         <div className="muted" style={{ fontSize: 11 }}>Düşük: gölge, çimen ve parıltı kapalı. Oyun kuralları değişmez; kritik savaş bilgileri her profilde görünür.</div>
       </div>
+      <div className="field"><label>Kare hızı</label>
+        <div className="row">{([[30, '30 · Pil tasarrufu'], [60, '60'], [0, 'Sınırsız']] as const).map(([v, l]) => <button key={v} className={'btn small ' + (s.fpsCap === v ? 'primary' : '')} onClick={() => set({ fpsCap: v })}>{l}</button>)}</div>
+        <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa 30 seç. Sınırsız, 120 Hz ekranlarda saniyede 120 kare çizer ve pili hızlı tüketir.</div>
+      </div>
       <div className="field"><label>Yakınlaştırma: {s.zoom.toFixed(2)}</label><input type="range" min={0.7} max={1.6} step={0.05} value={s.zoom} onChange={(e) => set({ zoom: Number(e.target.value) })} /></div>
       <div className="field"><label>Müzik / ambiyans: {Math.round(s.music * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.music} onChange={(e) => set({ music: Number(e.target.value) })} /></div>
       <div className="field"><label>Efekt sesi: {Math.round(s.sfx * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
@@ -432,7 +462,7 @@ function Market({ game }: { game: Game }) {
   const view = useStore((s) => s.stallView);
   const my = useStore((s) => s.myStall);
   if (view && !view.own) return <StallBuy game={game} />;
-  if (my?.open) return <MyStallPanel game={game} />;
+  if (my) return <MyStallPanel game={game} />;
   return <StallSetup game={game} />;
 }
 function StallSetup({ game }: { game: Game }) {
@@ -456,14 +486,14 @@ function StallSetup({ game }: { game: Game }) {
   const bad = chosen.some((id) => { const n = Number(prices[id]); return !Number.isInteger(n) || n < 1 || n > STALL_MAX_PRICE; });
   const open = () => game.send({ t: 'stall_open', title, items: chosen.map((id) => ({ id, price: Number(prices[id]) })), req: reqId() });
   return (
-    <Panel title="Pazar Tezgâhı Kur" width={720}>
-      {!mk ? <div className="muted">Tezgâh yalnız Pazar Köyü'ndeki Pazar Meydanı'nda kurulur. Işınlayıcı Nur seni köye götürebilir.</div> : (
+    <Panel title="Dükkân Kur" width={720}>
+      {!mk ? <div className="muted">Dükkân yalnız Pazar Köyü'ndeki Pazar Meydanı'nda kurulur. Işınlayıcı Nur seni köye götürebilir.</div> : (
         <>
           <div className={'stall-where' + (here ? ' ok' : '')}>
-            {here ? <>Pazar Meydanı'ndasın. Eşyalarını seç, fiyat ver, tezgâhını aç.</> : <>Tezgâh yalnız <b>{mk.name}</b>'nda kurulabilir (köyün doğusu).</>}
+            {here ? <>Pazar Meydanı'ndasın. Eşyalarını seç, fiyat ver, dükkânını aç. Dükkân burada kalır, sen istediğin yere gidebilirsin.</> : <>Dükkân yalnız <b>{mk.name}</b>'nda kurulabilir (köyün doğusu).</>}
             {!here && <button className="btn small primary" onClick={() => { game.goToMarket(); close(); }}>Meydana yürü</button>}
           </div>
-          <div className="field"><label>Tezgâh adı</label><input value={title} maxLength={STALL_TITLE_MAX} placeholder={`${store.get().char?.name ?? ''} Tezgâhı`} onChange={(e) => setTitle(e.target.value)} /></div>
+          <div className="field"><label>Dükkân adı</label><input value={title} maxLength={STALL_TITLE_MAX} placeholder={`${store.get().char?.name ?? ''} Dükkânı`} onChange={(e) => setTitle(e.target.value)} /></div>
           <div className="row"><b>Çantan</b><span className="muted" style={{ fontSize: 12 }}>Satmak istediklerine dokun · {chosen.length}/{STALL_MAX_ITEMS}</span></div>
           <div className="bag" style={{ marginTop: 6 }}>
             {self.bag.map((it) => <Cell key={it.id} it={it} sel={prices[it.id] !== undefined} bind={bind(it)} onClick={() => toggle(it)} />)}
@@ -485,9 +515,9 @@ function StallSetup({ game }: { game: Game }) {
             </div>
           )}
           <div className="row" style={{ marginTop: 12 }}>
-            <span className="muted" style={{ fontSize: 12 }}>Tezgâh açıkken yürüyemez, eşyalarını kullanamazsın. Eşyalar satılana kadar çantanda kalır.</span>
+            <span className="muted" style={{ fontSize: 12 }}>Seçtiğin eşyalar çantandan dükkâna geçer. Dükkânı kapatınca satılmayanlar geri döner.</span>
             <div className="spacer" />
-            <button className="btn primary" disabled={!here || chosen.length === 0 || bad} onClick={open}>Tezgâhı Aç</button>
+            <button className="btn primary" disabled={!here || chosen.length === 0 || bad} onClick={open}>Dükkânı Aç</button>
           </div>
         </>
       )}
@@ -497,27 +527,27 @@ function StallSetup({ game }: { game: Game }) {
 }
 function MyStallPanel({ game }: { game: Game }) {
   const my = useStore((s) => s.myStall)!;
-  const self = useStore((s) => s.self);
   const log = useStore((s) => s.stallLog);
+  const free = useStore((s) => 35 - (s.self?.bag.length ?? 0));
   const { tip, bind } = useTip();
   return (
-    <Panel title={`Tezgâhın: ${my.title}`} width={620}>
-      <div className="stall-where ok">Tezgâhın açık. Diğer oyuncular sana tıklayıp alışveriş yapabilir. Satış olunca Mücevher hemen hesabına geçer.</div>
+    <Panel title={`Dükkânın: ${my.title}`} width={620}>
+      <div className="stall-where ok">Dükkânın Pazar Meydanı'nda açık. İstediğin yere gidebilirsin; oyundan çıksan da açık kalır. Sen yokken satılanların parası oyuna girince hesabına geçer.</div>
+      <div className="row" style={{ fontSize: 13 }}><span className="muted">Şimdiye kadar kazanç:</span><b style={{ color: '#ffd27a' }}>{fmtG(my.earned)} Mücevher</b></div>
       <div className="stall-list">
-        {my.items.map(({ id, price }) => {
-          const it = self?.bag.find((b) => b.id === id);
-          if (!it) return null;
-          return (
-            <div className="stall-row" key={id}>
-              <Cell it={it} bind={bind(it)} />
-              <span className="nm" style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</span>
-              <span className="pv">{fmtG(price)} <small>Mücevher</small></span>
-            </div>
-          );
-        })}
+        {my.items.map(({ item, price }) => (
+          <div className="stall-row" key={item.id}>
+            <Cell it={item} bind={bind(item)} />
+            <span className="nm" style={{ color: RARITY[item.rarity].color }}>{itemDisplayName(item)}</span>
+            <span className="pv">{fmtG(price)} <small>Mücevher</small></span>
+          </div>
+        ))}
       </div>
       {log.length > 0 && <><div style={{ marginTop: 12 }}><b>Satışlar</b></div>{log.map((l, i) => <div key={i} className="muted" style={{ fontSize: 12 }}>✓ {l}</div>)}</>}
-      <div className="row" style={{ marginTop: 14 }}><div className="spacer" /><button className="btn red" onClick={() => game.send({ t: 'stall_close' })}>Tezgâhı Kapat</button></div>
+      <div className="row" style={{ marginTop: 14 }}>
+        <span className="muted" style={{ fontSize: 12 }}>Kapatınca kalan {my.items.length} eşya çantana döner{free < my.items.length ? ` (çantanda ${free} boş yer var)` : ''}.</span>
+        <div className="spacer" /><button className="btn red" onClick={() => game.send({ t: 'stall_close' })}>Dükkânı Kapat</button>
+      </div>
       {tip && <ItemTip {...tip} />}
     </Panel>
   );
@@ -532,16 +562,16 @@ function StallBuy({ game }: { game: Game }) {
   useEffect(() => {
     if (v.items || v.closed) return;
     const iv = setInterval(() => {
-      const s = store.get().stalls.find((q) => q.id === v.owner);
+      const s = store.get().stalls.find((q) => q.id === v.stall);
       if (!s) { store.set({ stallView: { ...v, closed: true } }); return; }
-      if (Math.hypot(s.x - game.px, s.y - game.py) < 500) game.send({ t: 'stall_view', owner: v.owner });
+      if (Math.hypot(s.x - game.px, s.y - game.py) < 500) game.send({ t: 'stall_view', stall: v.stall });
     }, 500);
     return () => clearInterval(iv);
   }, [v, game]);
   return (
-    <Panel title={v.title ? `${v.title}` : 'Tezgâh'} width={620}>
+    <Panel title={v.title ? `${v.title}` : 'Dükkân'} width={620}>
       <div className="row" style={{ marginBottom: 8 }}><span className="muted">Satıcı: <b style={{ color: '#f1ead8' }}>{v.name ?? '…'}</b></span><div className="spacer" /><span>Mücevherin: <b style={{ color: '#ffd27a' }}>{fmtG(gems)}</b></span></div>
-      {v.closed ? <div className="muted">Bu tezgâh kapanmış.</div> : !v.items ? <div className="muted">Tezgâha yürüyorsun…</div> : v.items.length === 0 ? <div className="muted">Tezgâhta eşya kalmamış.</div> : (
+      {v.closed ? <div className="muted">Bu dükkân kapanmış.</div> : !v.items ? <div className="muted">Dükkâna yürüyorsun…</div> : v.items.length === 0 ? <div className="muted">Dükkânda eşya kalmamış.</div> : (
         <div className="stall-list">
           {v.items.map(({ item, price }) => {
             const poor = gems < price;
@@ -551,7 +581,7 @@ function StallBuy({ game }: { game: Game }) {
                 <span className="nm" style={{ color: RARITY[item.rarity].color }}>{itemDisplayName(item)}</span>
                 <span className={'pv' + (poor ? ' poor' : '')}>{fmtG(price)} <small>Mücevher</small></span>
                 {confirm === item.id
-                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', owner: v.owner, item: item.id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
+                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', stall: v.stall, item: item.id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
                   : <button className="btn small primary" disabled={poor || bagFull} title={poor ? 'Yeterli Mücevherin yok' : bagFull ? 'Çantan dolu' : ''} onClick={() => setConfirm(item.id)}>Satın al</button>}
               </div>
             );

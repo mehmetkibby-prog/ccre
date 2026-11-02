@@ -187,6 +187,7 @@ export class Gateway {
         break;
       }
       case 'save': this.store.enqueue(m.char, m.urgent); break;
+      case 'market': this.queueMarket(m.channel, m.state, m.chars); break;
       case 'left': {
         this.store.enqueue(m.char, true);
         const rel = this.charRelease.get(m.char.id);
@@ -205,6 +206,31 @@ export class Gateway {
       }
       default: break;
     }
+  }
+
+  /**
+   * Pazar yazımları kanal başına sırayla yapılır (geç gelen eski durum yenisini ezmesin). Hata olursa
+   * aynı durum yeniden denenir; bu arada yeni bir durum gelirse onunla birleşir (karakterler korunur).
+   */
+  private marketQ = new Map<number, { state: unknown; chars: Map<number, CharState>; busy: boolean }>();
+  private queueMarket(ch: number, state: unknown, chars: CharState[]) {
+    const q = this.marketQ.get(ch) ?? { state: null, chars: new Map<number, CharState>(), busy: false };
+    q.state = state;
+    for (const c of chars) { const prev = q.chars.get(c.id); if (!prev || prev.saveVersion <= c.saveVersion) q.chars.set(c.id, c); }
+    this.marketQ.set(ch, q);
+    this.flushMarket(ch);
+  }
+  private flushMarket(ch: number) {
+    const q = this.marketQ.get(ch);
+    if (!q || q.busy || q.state === null) return;
+    const state = q.state, chars = [...q.chars.values()];
+    q.state = null; q.chars = new Map(); q.busy = true;
+    this.store.writeMarket(ch, state, chars).then(() => { q.busy = false; this.flushMarket(ch); }, () => {
+      q.busy = false;
+      if (q.state === null) q.state = state; // daha yeni durum yoksa aynısını yeniden dene
+      for (const c of chars) if (!q.chars.has(c.id)) q.chars.set(c.id, c);
+      setTimeout(() => this.flushMarket(ch), 1000);
+    });
   }
 
   /** Worker çöktü: o kanaldaki oturumlar kapanır; son kaydedilmiş durum geçerlidir. */

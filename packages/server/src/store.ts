@@ -82,23 +82,56 @@ export class CharacterStore {
     }));
   }
 
+  /**
+   * Pazar değişikliği: pazar durumu ve etkilenen karakterler TEK işlemde yazılır (eşya ya dükkânda ya
+   * çantada olur, ikisinde birden ya da hiçbirinde değil). Daha yeni sürümü yazılmış karakter atlanır:
+   * o yeni sürüm bu değişikliği zaten içerir.
+   */
+  async writeMarket(channel: number, state: unknown, chars: CharState[]) {
+    for (const c of chars) this.remember(c);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query(`INSERT INTO server_state (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, revision = server_state.revision + 1, updated_at = now()`, ['market:ch' + channel, JSON.stringify(state)]);
+      for (const c of chars) await this.writeChar(client, c);
+      await client.query('COMMIT');
+      for (const c of chars) { const q = this.queue.get(c.id); if (q && q.saveVersion <= c.saveVersion) { this.queue.delete(c.id); this.urgent.delete(c.id); } }
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      this.failures++;
+      console.error('[store] market write failed', channel, (e as Error).message);
+      throw e;
+    } finally { client.release(); }
+  }
+  async loadMarket(channel: number): Promise<unknown> {
+    const r = await pool.query(`SELECT value FROM server_state WHERE key = $1`, ['market:ch' + channel]);
+    return r.rowCount ? r.rows[0].value : null;
+  }
+
   private async write(c: CharState) {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+      if (!(await this.writeChar(client, c))) { await client.query('ROLLBACK'); this.stale++; return; }
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK').catch(() => {});
+      throw e;
+    } finally { client.release(); }
+  }
+  /** Bir karakteri açık işlem içinde yazar; daha yeni sürüm varsa false. */
+  private async writeChar(client: pg.PoolClient, c: CharState): Promise<boolean> {
+    {
       const r = await client.query(
         `UPDATE characters SET level=$2, xp=$3, hp=$4, map=$5, x=$6, y=$7, gems=$8, essence=$9, cp=$10, arena_coin=$11,
           stat_str=$12, stat_res=$13, stat_vit=$14, skill_levels=$15, spec=$16, kills=$17, misc=$18, save_version=$19, last_seen=now()
          WHERE id=$1 AND save_version < $19 RETURNING id`,
         [c.id, c.level, c.xp, c.hp, c.map, c.x, c.y, c.gems, c.essence, c.cp, c.arenaCoin, c.stats.str, c.stats.res, c.stats.vit, c.skills, c.spec, c.kills, JSON.stringify(c.misc), c.saveVersion],
       );
-      if (r.rowCount === 0) { await client.query('ROLLBACK'); this.stale++; return; }
+      if (r.rowCount === 0) return false;
       await writeItems(client, c);
-      await client.query('COMMIT');
-    } catch (e) {
-      await client.query('ROLLBACK').catch(() => {});
-      throw e;
-    } finally { client.release(); }
+      return true;
+    }
   }
 
   async load(charId: number): Promise<CharState | null> {

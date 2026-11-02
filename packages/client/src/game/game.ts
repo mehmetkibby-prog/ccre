@@ -82,7 +82,16 @@ export class Game {
     this.input.attach();
     this.input.onKey = (code, down, e) => this.onKey(code, down, e);
     this.lastFrame = performance.now();
-    const loop = (t: number) => { if (this.stopped) return; this.frame(t); this.raf = requestAnimationFrame(loop); };
+    // kare sınırı (ayarlar): 120 Hz ekranlı telefon sınırsızken saniyede 120 kare çizip ısınıyordu
+    let lastDraw = 0;
+    const loop = (t: number) => {
+      if (this.stopped) return;
+      this.raf = requestAnimationFrame(loop);
+      const cap = store.get().settings.fpsCap;
+      if (cap > 0 && t - lastDraw < 1000 / cap - 3) return;
+      lastDraw = t;
+      this.frame(t);
+    };
     this.raf = requestAnimationFrame(loop);
     setInterval(() => { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.send({ t: 'ping', c: this.pingSent }); } }, 3000);
   }
@@ -109,6 +118,7 @@ export class Game {
   private onJson(m: any, setReason: (r: string) => void) {
     switch (m.t) {
       case 'welcome':
+        if (OFFLINE) Object.assign(window, { __colGame: this });
         this.selfId = m.entityId;
         this.setMap(m.map, m.x, m.y);
         store.set({ entityId: m.entityId, channel: m.channel, worldHealth: m.worldHealth, online: m.online });
@@ -130,8 +140,9 @@ export class Game {
       case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
       // ───────── pazar tezgâhları ─────────
       case 'stalls': store.set({ stalls: Array.isArray(m.list) ? m.list : [] }); break;
-      case 'stall': store.set((st) => (st.panel === 'market' || !st.stallView || st.stallView.owner === m.owner ? { stallView: m, panel: 'market' } : {})); break;
-      case 'mystall': store.set({ myStall: { open: !!m.open, title: String(m.title ?? ''), items: Array.isArray(m.items) ? m.items : [] } }); break;
+      case 'stall': store.set((st) => (st.panel === 'market' && (!st.stallView || st.stallView.stall === m.stall) ? { stallView: m } : {})); break;
+      case 'mystall': store.set({ myStall: m.stall ?? null }); break;
+      case 'stall_away': store.set((st) => ({ stallLog: [...(m.sales ?? []).map((x: { buyer: string; name: string; price: number }) => `${x.buyer} · ${x.name} · ${Number(x.price).toLocaleString('tr-TR')} Mücevher (sen yokken)`), ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'stall_sold': store.set((st) => ({ stallLog: [`${m.buyer} · ${m.name} · ${Number(m.price).toLocaleString('tr-TR')} Mücevher`, ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
       case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
@@ -401,7 +412,6 @@ export class Game {
     const cy = Math.cos(this.camYaw), sy = Math.sin(this.camYaw);
     const mv = { x: mv0.x * cy + mv0.y * sy, y: -mv0.x * sy + mv0.y * cy };
     let dir = NO_DIR;
-    if (store.get().myStall?.open) { this.moveTarget = null; return; } // tezgâh başında oturuyor
     if (!mv.x && !mv.y) this.lastJoyDir = NO_DIR;
     if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
     // saldırı: basılı tutma veya otomatik hedef
@@ -511,11 +521,17 @@ export class Game {
   }
   potion() { this.send({ t: 'potion' }); }
   /** Bir tezgâhı aç: yakınsa içeriğini iste, uzaksa önce yürü. */
-  openStall(owner: number) {
-    const s = store.get().stalls.find((q) => q.id === owner);
-    store.set({ stallView: { owner, name: s?.name, title: s?.title }, panel: 'market' });
+  openStall(id: string) {
+    const s = store.get().stalls.find((q) => q.id === id);
+    store.set({ stallView: { stall: id, name: s?.name, title: s?.title }, panel: 'market' });
     if (s && Math.hypot(s.x - this.px, s.y - this.py) > 520) this.moveTarget = { x: s.x, y: s.y + 110 };
-    else this.send({ t: 'stall_view', owner });
+    else this.send({ t: 'stall_view', stall: id });
+  }
+  /** Dünya noktasındaki dükkân (tezgâh, direkler ve tente alanı). */
+  stallAt(wx: number, wy: number): string | null {
+    let best: string | null = null, bd = 95;
+    for (const s of store.get().stalls) { const d = Math.hypot(s.x - wx, s.y + 40 - wy); if (d < bd) { bd = d; best = s.id; } }
+    return best;
   }
   /** Pazar Meydanı'na yürü (köyün doğusu). */
   goToMarket() {
@@ -535,7 +551,8 @@ export class Game {
       else this.moveTarget = { x: e.x, y: e.y };
       return;
     }
-    if (hit?.type === 'ent' && hit.e!.kind === Kind.PLAYER && store.get().stalls.some((s) => s.id === hit.e!.id)) { this.openStall(hit.e!.id); return; }
+    // dükkân: tıklanan nokta bir dükkânın tezgâhına yakınsa (dükkân sahipten bağımsız bir nesnedir)
+    if (hit?.type !== 'npc') { const sl = this.stallAt(wx, wy); if (sl && !(hit?.type === 'ent' && hit.e!.kind === Kind.MONSTER)) { this.openStall(sl); return; } }
     if (hit?.type === 'ent') {
       this.setTarget(hit.e!.id);
       if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.moveTarget = null; }

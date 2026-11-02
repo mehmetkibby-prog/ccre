@@ -12,9 +12,10 @@ export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean }
 export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | null;
 
-export interface StallInfo { id: number; name: string; title: string; x: number; y: number; n: number }
-export interface StallView { owner: number; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
-export interface MyStall { open: boolean; title: string; items: { id: string; price: number }[] }
+export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number }
+export interface StallView { stall: string; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
+/** Oyuncunun kendi dükkânı (sahibinden bağımsız; oyundan çıksa da açık kalır). */
+export interface MyStall { id: string; title: string; zone: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; earned: number; openedAt: number }
 export interface UiState {
   connected: boolean; status: string;
   map: string; channel: number; entityId: number;

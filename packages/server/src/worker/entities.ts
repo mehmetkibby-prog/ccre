@@ -18,8 +18,6 @@ export class Player {
   dirty = 0;
   // hareket
   inputs: { seq: number; dir: number }[] = [];
-  /** Açık pazar tezgâhı: eşyalar satılana kadar çantada kalır; tezgâh yalnız kimlik → fiyat tutar. */
-  stall: { title: string; prices: Map<string, number>; x: number; y: number; openedAt: number } | null = null;
   lastSeq = 0;
   moveBudget = 0;
   movedThisTick = false;

@@ -42,12 +42,18 @@ export type ToWorker =
   | { type: 'move'; sid: number; data: ArrayBuffer }
   | { type: 'chat'; ch: string; from: string; text: string; cls: string }
   | { type: 'world'; health: number; online: number }
+  | { type: 'market_load'; state: unknown }
   | { type: 'shutdown' };
 
 // worker → ana
+/** Kanalın pazarı: bağımsız dükkânlar ve sahibi yokken yapılan satışların bekleyen kazancı. */
+export interface MarketStall { id: string; ownerId: number; ownerName: string; zone: string; title: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; openedAt: number; earned: number }
+export interface MarketState { v: 1; stalls: MarketStall[]; pending: Record<string, { gems: number; sales: { buyer: string; name: string; price: number; at: number }[] }> }
 export type FromWorker =
   | { type: 'out'; batch: [number, string | ArrayBuffer][] }
   | { type: 'save'; char: CharState; urgent: boolean }
+  /** Pazar değişti: durum ve etkilenen karakterler tek işlemde yazılmalı. */
+  | { type: 'market'; channel: number; state: MarketState; chars: CharState[] }
   | { type: 'left'; sid: number; char: CharState }
   | { type: 'joined'; sid: number; ok: boolean; err?: string }
   | { type: 'chat'; sid: number; ch: string; text: string }

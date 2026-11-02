@@ -25,3 +25,4 @@ export const STALL_MIN_GAP = 120; // iki tezgâh arası en az (dünya birimi)
 export const STALL_VIEW_RANGE = 600;
 export const STALL_MAX_PRICE = 50_000_000;
 export const STALL_TITLE_MAX = 32;
+export const MARKET_MAX_STALLS = 80; // bir kanalın pazarındaki en çok dükkân

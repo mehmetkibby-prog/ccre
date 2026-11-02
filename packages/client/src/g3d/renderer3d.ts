@@ -24,6 +24,30 @@ const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 /** Dokunmatik (telefon/tablet): ekran kartı bant genişliği dar, tam ekran efekt geçişleri pahalı. */
 const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+/**
+ * Telefonda karakter/canavar gerçek gölge düşürmez, yumuşak zemin gölgesi kullanır. Gölge haritasında
+ * yalnız durağan dünya kalır ve oyuncu 2,5 m yürüdükçe bir kez çizilir (önceden her karede ya da iki
+ * karede bir çiziliyordu: telefonu ısıtan en pahalı geçişlerden biri; kendi gölgesi de sekiyordu).
+ */
+const DYN_SHADOWS = !MOBILE;
+let blobGeo: THREE.PlaneGeometry | null = null, blobMat: THREE.MeshBasicMaterial | null = null;
+function blobShadow(r: number) {
+  if (!blobGeo) {
+    blobGeo = new THREE.PlaneGeometry(2, 2); blobGeo.rotateX(-Math.PI / 2);
+    const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+    const c = cv.getContext('2d')!, gr = c.createRadialGradient(32, 32, 2, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(0,0,0,0.55)'); gr.addColorStop(0.55, 'rgba(0,0,0,0.3)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+    const tex = new THREE.CanvasTexture(cv);
+    blobMat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  }
+  const m = new THREE.Mesh(blobGeo, blobMat!); m.scale.setScalar(r); m.position.y = 0.04; m.renderOrder = 1; m.name = 'blob';
+  return m;
+}
+function prepDynamic(obj: THREE.Object3D, r: number) {
+  obj.traverse((o) => { if ((o as THREE.Mesh).isMesh && o.name !== 'blob') { o.castShadow = DYN_SHADOWS; } });
+  if (!DYN_SHADOWS && !obj.userData.blob) { obj.userData.blob = true; obj.add(blobShadow(r)); }
+}
 
 const THEME = {
   // Aydınlık, sıcak gündüz: güçlü gök ışığı (gölgeler kararmasın), açık sis ve gökyüzü
@@ -156,6 +180,7 @@ export class Renderer3D {
     this.views.clear();
     for (const v of this.npcViews) this.dyn.remove(v.obj);
     this.npcViews = [];
+    this.shadowDirty = true; // yeni harita: durağan gölge haritası yeniden çizilsin
     if (this.grass) { this.dyn.remove(this.grass.group); this.grass.dispose(); this.grass = null; }
     const t0 = performance.now();
     this.terrain = new Terrain(l);
@@ -251,8 +276,9 @@ export class Renderer3D {
   private humanView(modelId: string, kind: number, x: number, y: number): View {
     const glb = createGlbChar(modelId);
     if (glb) equipGlb(glb, LOOKS[modelId]);
-    if (glb) return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
+    if (glb) { prepDynamic(glb.root, 0.55); return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 }; }
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
+    prepDynamic(rig.root, 0.55);
     return { kind, obj: rig.root, rig, model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
   }
 
@@ -290,7 +316,7 @@ export class Renderer3D {
       }
       v = { kind: e.kind, obj: grp, height: 1, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, sprite: sp, beam };
     } else return null;
-    v.obj.traverse((o) => { if ((o as THREE.Mesh).isMesh && e.kind !== Kind.LOOT) o.castShadow = true; });
+    if (e.kind !== Kind.LOOT) prepDynamic(v.obj, e.kind === Kind.MONSTER ? 0.8 : 0.55);
     this.dyn.add(v.obj);
     this.views.set(e.id, v);
     return v;
@@ -340,15 +366,16 @@ export class Renderer3D {
 
   // ───────── çerçeve ─────────
   private baseExp = 1;
-  private stallObjs = new Map<number, THREE.Object3D>();
+  private stallObjs = new Map<string, THREE.Object3D>();
+  private shadowDirty = true; private shadowAt = new THREE.Vector3(1e9, 0, 0);
   /** Oyuncu tezgâhları: satıcının çevresinde direkli tente ve önünde tezgâh masası. */
   private syncStalls() {
     const list = store.get().stalls;
     const ids = new Set(list.map((s) => s.id));
-    for (const [id, o] of this.stallObjs) if (!ids.has(id)) { this.dyn.remove(o); o.traverse((q) => { const m = q as THREE.Mesh; if (m.isMesh) m.geometry.dispose(); }); this.stallObjs.delete(id); }
+    for (const [id, o] of this.stallObjs) if (!ids.has(id)) { this.shadowDirty = true; this.dyn.remove(o); o.traverse((q) => { const m = q as THREE.Mesh; if (m.isMesh) m.geometry.dispose(); }); this.stallObjs.delete(id); }
     for (const sl of list) {
       let o = this.stallObjs.get(sl.id);
-      if (!o) { o = makeStall(sl.id); this.stallObjs.set(sl.id, o); this.dyn.add(o); }
+      if (!o) { o = makeStall(sl.id); this.stallObjs.set(sl.id, o); this.dyn.add(o); this.shadowDirty = true; }
       o.position.set(sl.x * U, this.heightAt(sl.x, sl.y), sl.y * U);
     }
   }
@@ -464,11 +491,12 @@ export class Renderer3D {
     shared.focus.value.set(tx, ty + 1.0, tz);
     // güneş gölge kamerası oyuncuyu takip eder; gölge haritası karesine oturtulur. Oturtulmadan her
     // karede yarım kare kayıyor ve yürürken bütün gölge kenarları titriyordu.
-    this.snapShadow(this.camTarget);
-    // çiz: telefonda gölge iki karede bir çizilir, ama oyuncu yürürken her karede (yoksa kendi gölgesi
-    // 30 Hz'de sekiyor ve karakter titriyor gibi görünüyordu)
-    const selfMoving = now - g.lastMoveAt < 250;
-    if (MOBILE && (selfMoving || (this.frameNo & 1) === 0)) this.renderer.shadowMap.needsUpdate = true;
+    if (!MOBILE) this.snapShadow(this.camTarget);
+    else if (this.shadowDirty || this.shadowAt.distanceToSquared(this.camTarget) > 2.5 * 2.5) {
+      // telefonda durağan gölge haritası: yalnız 2,5 m yürüyünce (ya da dünya değişince) yeniden çizilir
+      this.snapShadow(this.camTarget); this.shadowAt.copy(this.camTarget); this.shadowDirty = false;
+      this.renderer.shadowMap.needsUpdate = true;
+    }
     this.frameNo++;
     if (this.composer) this.composer.render(); else this.renderer.render(this.scene, this.camera);
     this.drawOverlay(now);
@@ -637,9 +665,10 @@ function mergeSimple(list: THREE.BufferGeometry[]) {
 const STALL_CLOTH = ['#b8402c', '#2c6ab8', '#3a8a4a', '#c89a2a', '#8a3ab0', '#d06a2a'];
 const stallMats = new Map<string, THREE.Material>();
 const stallMat = (c: string, rough = 0.85) => { let m = stallMats.get(c); if (!m) { m = new THREE.MeshStandardMaterial({ color: c, roughness: rough }); stallMats.set(c, m); } return m; };
-function makeStall(id: number): THREE.Object3D {
+function makeStall(id: string): THREE.Object3D {
   const g = new THREE.Group();
-  const wood = stallMat('#6a4424'), dark = stallMat('#4a2e18'), cloth = stallMat(STALL_CLOTH[id % STALL_CLOTH.length], 0.95), cloth2 = stallMat('#efe4c8', 0.95);
+  let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  const wood = stallMat('#6a4424'), dark = stallMat('#4a2e18'), cloth = stallMat(STALL_CLOTH[h % STALL_CLOTH.length], 0.95), cloth2 = stallMat('#efe4c8', 0.95);
   // dört direk
   for (const [x, z] of [[-1.15, -0.95], [1.15, -0.95], [-1.15, 1.05], [1.15, 1.05]] as const) {
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 2.5, 6), dark); post.position.set(x, 1.25, z); g.add(post);

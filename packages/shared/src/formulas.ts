@@ -92,3 +92,26 @@ export function rollDamage(atk: number, mult: number, targetDef: number, critPct
   if (crit) dmg *= 1 + critDmgPct / 100;
   return { dmg: Math.round(dmg), crit };
 }
+
+// ───────── efsunların savaş etkisi ─────────
+export type AttackKind = 'sword' | 'arrow' | 'magic';
+/** Oyuncu saldırısının türü sınıfa göre: Muhafız kılıç, Avcı ok, Arkanist büyü. */
+export function classAttackKind(cls: ClassId): AttackKind { return cls === 'hunter' ? 'arrow' : cls === 'arcanist' ? 'magic' : 'sword'; }
+/** Canavar saldırısının türü: uzaktan saldıranlar (Öz Yutan, Tipi Kâhini, boss) büyü, diğerleri yakın dövüş. */
+export function monsterAttackKind(range: number): AttackKind { return range >= 200 ? 'magic' : 'sword'; }
+/**
+ * Saldıranın efsunlarından hasar çarpanı. targetTheme: canavarın bulunduğu haritanın teması (oyuncu hedefte null).
+ * Ateş ve Buz her hedefe işler; Donmuş Çam canavarları ateşe 1,5 kat zayıf, buza yarı dayanıklıdır.
+ */
+export function enchantAttackMult(e: CombatStats['enchants'], targetTheme: string | null): number {
+  const frozen = targetTheme === 'frozen';
+  let pct = (e.fire_dmg ?? 0) * (frozen ? 1.5 : 1) + (e.ice_dmg ?? 0) * (frozen ? 0.5 : 1);
+  if (frozen) pct += e.frost_power ?? 0;
+  if (targetTheme === 'forest') pct += e.forest_power ?? 0;
+  return 1 + pct / 100;
+}
+/** Savunanın efsunlarından gelen hasar çarpanı (tür savunması en çok %60). */
+export function enchantDefenseMult(e: CombatStats['enchants'], kind: AttackKind): number {
+  const pct = kind === 'sword' ? e.sword_def ?? 0 : kind === 'arrow' ? e.arrow_def ?? 0 : e.magic_def ?? 0;
+  return 1 - Math.min(60, pct) / 100;
+}

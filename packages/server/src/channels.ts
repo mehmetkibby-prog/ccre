@@ -2,7 +2,7 @@ import { Worker } from 'node:worker_threads';
 import { config } from './config.ts';
 import type { ToWorker, FromWorker, WorkerStats } from './types.ts';
 
-export interface ChannelHandlers { onMessage(ch: number, m: FromWorker): void; onCrash(ch: number): void }
+export interface ChannelHandlers { onMessage(ch: number, m: FromWorker): void; onCrash(ch: number): void; onSpawn?(ch: number): void }
 
 /** Her kanal ayrı bir worker thread'dir. Biri çökerse yalnız o yeniden başlar; diğerleri etkilenmez. */
 export class ChannelManager {
@@ -32,6 +32,7 @@ export class ChannelManager {
       this.h.onMessage(ch, m);
     });
     w.on('error', (e) => console.error(`[ch${ch}] worker error`, e));
+    this.h.onSpawn?.(ch); // kalıcı durumu (pazar) yeni worker'a yükle
     w.on('exit', (code) => {
       if (this.workers[ch] !== w) return;
       this.workers[ch] = null;

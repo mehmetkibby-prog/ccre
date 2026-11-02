@@ -16,6 +16,7 @@ port.on('message', (m: ToWorker) => {
     case 'join': world.join(m.sid, m.char); break;
     case 'leave': world.leave(m.sid); break;
     case 'world': world.setWorld(m.health, m.online); break;
+    case 'market_load': world.loadMarket(m.state); break;
     case 'shutdown':
       for (const sid of [...world.bySid.keys()]) world.leave(sid);
       post({ type: 'stats', data: world.stats() });

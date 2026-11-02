@@ -437,7 +437,7 @@ function StallFab({ game }: { game: Game }) {
     return () => clearInterval(iv);
   }, [map, game]);
   if (panel) return null;
-  if (my?.open) return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Tezgâhım · {my.items.length} eşya</button>;
   if (!here) return null;
-  return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Tezgâh Kur</button>;
+  if (my) return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Dükkânım · {my.items.length} eşya</button>;
+  return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Dükkân Kur</button>;
 }

@@ -23,6 +23,7 @@ async function main() {
   const channels = new ChannelManager({
     onMessage: (ch, m) => gateway.onWorker(ch, m),
     onCrash: (ch) => gateway.onCrash(ch),
+    onSpawn: (ch) => { store.loadMarket(ch).then((state) => channels.send(ch, { type: 'market_load', state })).catch((e) => console.error(`[ch${ch}] pazar yüklenemedi`, e)); },
   });
   gateway = new Gateway(channels, store, world);
   channels.start();

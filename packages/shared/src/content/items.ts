@@ -50,22 +50,30 @@ export const ITEM_TPL = new Map(ITEM_TEMPLATES.map((t) => [t.id, t] as const));
 export type EnchantType =
   | 'forest_power' | 'frost_power' | 'fire_dmg' | 'ice_dmg' | 'sword_def' | 'arrow_def' | 'magic_def'
   | 'pvp_power' | 'pvp_resist' | 'crit' | 'atk_speed' | 'skill_speed' | 'lifesteal' | 'block' | 'hp';
-export const ENCHANTS: Record<EnchantType, { name: string; unit: '%' | ''; slots: Slot[]; tiers: [number, number, number, number] }> = {
-  forest_power: { name: 'Orman Canavarlarına Güç', unit: '%', slots: ['weapon', 'necklace', 'earring'], tiers: [3, 5, 8, 12] },
-  frost_power: { name: 'Buz Canavarlarına Güç', unit: '%', slots: ['weapon', 'necklace', 'earring'], tiers: [3, 5, 8, 12] },
-  fire_dmg: { name: 'Ateş Hasarı', unit: '%', slots: ['weapon'], tiers: [2, 4, 6, 9] },
-  ice_dmg: { name: 'Buz Hasarı', unit: '%', slots: ['weapon'], tiers: [2, 4, 6, 9] },
-  sword_def: { name: 'Kılıca Karşı Savunma', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [3, 5, 8, 12] },
-  arrow_def: { name: 'Oka Karşı Savunma', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [3, 5, 8, 12] },
-  magic_def: { name: 'Büyüye Karşı Savunma', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [3, 5, 8, 12] },
-  pvp_power: { name: 'PvP Güç', unit: '%', slots: ['weapon', 'bracelet', 'earring'], tiers: [1, 2, 3, 5] },
-  pvp_resist: { name: 'PvP Direnç', unit: '%', slots: ['armor', 'necklace', 'bracelet'], tiers: [1, 2, 3, 5] },
-  crit: { name: 'Kritik Vuruş', unit: '%', slots: ['weapon', 'helmet', 'earring'], tiers: [2, 3, 5, 8] },
-  atk_speed: { name: 'Saldırı Hızı', unit: '%', slots: ['weapon', 'boots', 'bracelet'], tiers: [2, 4, 6, 9] },
-  skill_speed: { name: 'Yetenek Hızı', unit: '%', slots: ['weapon', 'helmet', 'necklace'], tiers: [2, 4, 6, 9] },
-  lifesteal: { name: 'Can Çalma', unit: '%', slots: ['weapon', 'necklace'], tiers: [1, 2, 3, 4] },
-  block: { name: 'Blok', unit: '%', slots: ['armor', 'bracelet'], tiers: [2, 3, 5, 7] },
-  hp: { name: 'Maks. Can', unit: '', slots: ['armor', 'helmet', 'boots', 'necklace', 'earring', 'bracelet'], tiers: [80, 160, 280, 450] },
+/**
+ * Efsunlar (Efsun Rehberi): dört kademe değeri. `legacy` olanlar artık düşmez; eski eşyalarda çalışmaya devam eder.
+ * Hepsi savaşta uygulanır: bkz. formulas.ts (computeStats, enchantAttackMult, enchantDefenseMult) ve world.ts hit/monsterHitPlayer.
+ */
+export const ENCHANTS: Record<EnchantType, { name: string; unit: '%' | ''; slots: Slot[]; tiers: [number, number, number, number]; desc: string; group: 'atk' | 'def'; legacy?: boolean }> = {
+  frost_power: { name: 'Donmuş Çam Gücü', unit: '%', slots: ['weapon', 'necklace', 'earring'], tiers: [2, 4, 8, 10], group: 'atk', desc: 'Donmuş Çam Geçidi canavarlarına verilen hasar artar.' },
+  fire_dmg: { name: 'Ateş', unit: '%', slots: ['weapon', 'earring'], tiers: [2, 4, 8, 10], group: 'atk', desc: 'Bütün saldırılara ateş hasarı ekler. Donmuş Çam canavarlarına 1,5 kat etkili.' },
+  ice_dmg: { name: 'Buz', unit: '%', slots: ['weapon', 'bracelet'], tiers: [2, 4, 8, 10], group: 'atk', desc: 'Bütün saldırılara buz hasarı ekler. Donmuş Çam canavarları buza dayanıklıdır (yarısı işler).' },
+  pvp_power: { name: 'Oyunculara Karşı Güç', unit: '%', slots: ['weapon', 'bracelet', 'earring'], tiers: [3, 6, 12, 15], group: 'atk', desc: 'Oyunculara verilen hasar artar.' },
+  crit: { name: 'Kritik Şansı', unit: '%', slots: ['weapon', 'helmet', 'earring'], tiers: [2, 4, 7, 10], group: 'atk', desc: 'Kritik vuruş olasılığı artar.' },
+  atk_speed: { name: 'Saldırı Hızı', unit: '%', slots: ['weapon', 'boots', 'bracelet'], tiers: [2, 4, 8, 10], group: 'atk', desc: 'Temel saldırı bekleme süresi kısalır (toplamda en çok %40).' },
+  skill_speed: { name: 'Büyü Hızı', unit: '%', slots: ['weapon', 'helmet', 'necklace'], tiers: [3, 7, 10, 15], group: 'atk', desc: 'Becerilerin bekleme süresi kısalır (toplamda en çok %40).' },
+  sword_def: { name: 'Kılıç Savunması', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [2, 5, 9, 12], group: 'def', desc: 'Yakın dövüş hasarı azalır: Muhafız ve yakın dövüşen canavarlar.' },
+  arrow_def: { name: 'Ok Savunması', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [2, 5, 9, 12], group: 'def', desc: 'Avcı oklarından gelen hasar azalır.' },
+  magic_def: { name: 'Büyü Savunması', unit: '%', slots: ['armor', 'helmet', 'boots'], tiers: [2, 5, 9, 12], group: 'def', desc: 'Büyü hasarı azalır: Arkanist ile Öz Yutan ve Tipi Kâhini.' },
+  pvp_resist: { name: 'Oyunculara Karşı Savunma', unit: '%', slots: ['armor', 'necklace', 'bracelet'], tiers: [3, 6, 12, 15], group: 'def', desc: 'Oyunculardan gelen hasar azalır.' },
+  block: { name: 'Saldırı Bloklama', unit: '%', slots: ['armor', 'bracelet'], tiers: [2, 4, 8, 10], group: 'def', desc: 'Gelen saldırıyı tamamen engelleme olasılığı.' },
+  lifesteal: { name: 'Can Çalma', unit: '%', slots: ['weapon', 'necklace'], tiers: [1, 2, 3, 5], group: 'def', desc: 'Verilen hasarın bu kadarı can olarak geri gelir (canavar ve oyuncu).' },
+  hp: { name: 'Azami Can', unit: '', slots: ['armor', 'helmet', 'boots', 'necklace', 'earring', 'bracelet'], tiers: [300, 600, 1000, 1500], group: 'def', desc: 'Azami cana sabit artış.' },
+  forest_power: { name: 'Orman Canavarlarına Güç', unit: '%', slots: ['weapon', 'necklace', 'earring'], tiers: [3, 5, 8, 12], group: 'atk', legacy: true, desc: 'Kuzey Ormanı canavarlarına verilen hasar artar (eski efsun).' },
+};
+/** Canavardan düşen eşyada efsun sayısı (1–4) ağırlıkları; nadirlik yükseldikçe çok efsun olasılığı artar. */
+export const ENCHANT_COUNT_WEIGHTS: Record<string, [number, number, number, number]> = {
+  white: [55, 28, 13, 4], blue: [40, 32, 19, 9], orange: [26, 33, 27, 14], default: [12, 26, 34, 28],
 };
 export const ENCHANT_TIER_WEIGHTS = [55, 28, 13, 4];
 

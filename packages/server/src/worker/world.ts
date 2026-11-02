@@ -1,12 +1,13 @@
 import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
-  COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
+  COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
+  enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, SELL_PRICES, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
-import type { CharState, FromWorker, WorkerStats } from '../types.ts';
+import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
@@ -66,14 +67,13 @@ export class World {
     zone.addPlayer(p);
     this.sendJson(p, { t: 'welcome', entityId: p.id, channel: this.opt.channel, map: zone.id, x: p.x, y: p.y, serverTime: this.now, worldHealth: this.worldHealth, online: this.online });
     this.sendFullSelf(p);
-    this.sendStalls(p);
+    this.marketJoin(p);
     this.opt.post({ type: 'joined', sid, ok: true });
   }
 
   leave(sid: number) {
     const p = this.bySid.get(sid);
     if (!p) return;
-    if (p.stall) this.closeStall(p, '');
     this.bySid.delete(sid);
     p.zone.removePlayer(p);
     for (const m of p.zone.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
@@ -113,12 +113,10 @@ export class World {
 
   private dispatch(p: Player, c: ClientCmd) {
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
-    // tezgâh açıkken çanta, savaş ve yolculuk kapalı: aynı eşya iki kez satılamaz / kullanılamaz
-    if (p.stall && !STALL_FREE_CMDS.has(c.t)) { this.notice(p, 'Tezgâhın açıkken bunu yapamazsın. Önce tezgâhı kapat.'); return; }
     switch (c.t) {
       case 'stall_open': return this.cmdStallOpen(p, c);
-      case 'stall_close': if (p.stall) this.closeStall(p, 'Tezgâhını kapattın.'); return;
-      case 'stall_view': return this.cmdStallView(p, Number(c.owner) | 0);
+      case 'stall_close': return this.cmdStallClose(p);
+      case 'stall_view': return this.cmdStallView(p, String(c.stall ?? ''));
       case 'stall_buy': return this.cmdStallBuy(p, c);
       case 'attack': return this.cmdAttack(p, c.id);
       case 'skill': return this.cmdSkill(p, c.s | 0, c.id, c.x, c.y);
@@ -174,7 +172,7 @@ export class World {
     for (const p of z.playerSet) {
       p.movedThisTick = false;
       p.moveBudget = Math.min(p.moveBudget + TICK_MS, 300);
-      const blocked = p.dead || now < p.stunUntil || now < p.rootUntil || p.stall !== null;
+      const blocked = p.dead || now < p.stunUntil || now < p.rootUntil;
       while (p.inputs.length && p.moveBudget >= TICK_MS - 1) {
         const inp = p.inputs.shift()!;
         p.moveBudget -= TICK_MS;
@@ -374,6 +372,8 @@ export class World {
     p.lastDamageAt = now; p.combatUntil = now + COMBAT_LOCK_MS;
     if (rnd() * 100 < p.stats.block) { p.zone.emit(p.x, p.y, { e: Ev.DAMAGE, src: m.id, tgt: p.id, amount: 0, flags: DmgFlag.BLOCK }); return; }
     let { dmg } = rollDamage(m.atk, mult, p.stats.def, 3, 40, rnd);
+    // Kılıç / Büyü Savunması efsunu: canavarın saldırı türüne göre
+    dmg = Math.max(1, Math.round(dmg * enchantDefenseMult(p.stats.enchants, monsterAttackKind(m.def.range))));
     if (p.shieldUntil > now) dmg = Math.round(dmg * (1 - p.shieldPct / 100));
     p.hp -= dmg; p.dirty |= Upd.HP;
     p.zone.emit(p.x, p.y, { e: Ev.DAMAGE, src: m.id, tgt: p.id, amount: dmg, flags: 0 });
@@ -502,8 +502,8 @@ export class World {
     const st = p.stats;
     if (t instanceof Monster) {
       let atk = st.atk;
-      const forestBonus = z.def.theme === 'forest' ? st.enchants.forest_power ?? 0 : z.def.theme === 'frozen' ? st.enchants.frost_power ?? 0 : 0;
-      atk *= 1 + (forestBonus + st.pvePower) / 100;
+      // Ateş, Buz, Donmuş Çam Gücü (ve eski Orman Gücü) efsunları
+      atk *= enchantAttackMult(st.enchants, z.def.theme) * (1 + st.pvePower / 100);
       const { dmg, crit } = rollDamage(atk, mult, t.armor, st.crit, st.critDmg, rnd);
       const real = Math.min(dmg, t.hp);
       t.hp -= dmg; t.dirty |= Upd.HP; t.lastHitAt = this.now;
@@ -517,14 +517,15 @@ export class World {
     } else {
       // PvP
       if (rnd() * 100 < t.stats.block) { z.emit(t.x, t.y, { e: Ev.DAMAGE, src: p.id, tgt: t.id, amount: 0, flags: DmgFlag.BLOCK }); return; }
-      const atk = st.atk * (1 + st.pvpPower / 100);
+      const atk = st.atk * (1 + st.pvpPower / 100) * enchantAttackMult(st.enchants, null);
       let { dmg, crit } = rollDamage(atk, mult * 0.6, t.stats.def, st.crit, st.critDmg, rnd);
-      dmg = Math.max(1, Math.round(dmg * (1 - Math.min(60, t.stats.pvpResist) / 100)));
+      dmg = Math.max(1, Math.round(dmg * (1 - Math.min(60, t.stats.pvpResist) / 100) * enchantDefenseMult(t.stats.enchants, classAttackKind(p.char.cls))));
       if (t.shieldUntil > this.now) dmg = Math.round(dmg * (1 - t.shieldPct / 100));
       t.hp -= dmg; t.dirty |= Upd.HP; t.lastDamageAt = this.now; t.combatUntil = this.now + COMBAT_LOCK_MS;
       if (sk?.stunMs) t.stunUntil = this.now + Math.round(sk.stunMs * 0.6);
       if (sk?.rootMs) t.rootUntil = this.now + Math.round(sk.rootMs * 0.6);
       z.emit(t.x, t.y, { e: Ev.DAMAGE, src: p.id, tgt: t.id, amount: dmg, flags: crit ? DmgFlag.CRIT : 0 });
+      if (st.lifesteal > 0) { const h = Math.round(Math.min(dmg, Math.max(0, t.hp + dmg)) * st.lifesteal / 100); if (h > 0) { p.hp = Math.min(st.maxHp, p.hp + h); p.dirty |= Upd.HP; } }
       if (t.hp <= 0) this.killPlayer(t, p);
     }
   }
@@ -641,7 +642,6 @@ export class World {
 
   private moveToZone(p: Player, z: Zone, x: number, y: number) {
     const from = p.zone;
-    if (p.stall) this.closeStall(p, '');
     const pos = nearestFree(z.layout, x, y);
     if (from !== z) {
       from.removePlayer(p);
@@ -932,95 +932,143 @@ export class World {
     this.bytesOut += typeof data === 'string' ? data.length : data.byteLength;
   }
   sendJson(p: Player, o: unknown) { this.pushOut(p.sid, JSON.stringify(o)); }
-  // ───────────────────────────── pazar tezgâhı ─────────────────────────────
+  // ───────────────────────────── pazar: bağımsız dükkânlar ─────────────────────────────
+  /**
+   * Dükkân, sahibinden bağımsız bir dünya nesnesidir: eşyalar sahibinin çantasından dükkâna geçer,
+   * sahip serbestçe dolaşır, oyundan çıksa da dükkân açık kalır. Satış parası sahibi bu kanaldaysa
+   * hemen cüzdanına, değilse `pending` defterine yazılır ve sahibi kanala girdiğinde teslim edilir.
+   * Her değişiklik, etkilenen karakterlerle birlikte tek mesajla (tek işlemde yazılmak üzere) kaydedilir.
+   */
+  market: MarketState = { v: 1, stalls: [], pending: {} };
+  loadMarket(raw: unknown) {
+    const st = sanitizeMarket(raw);
+    // yükleme gelmeden açılmış dükkân olursa korunur (aynı kimlik iki kez eklenmez)
+    const have = new Set(this.market.stalls.map((s) => s.id));
+    for (const s of st.stalls) if (!have.has(s.id) && !this.market.stalls.some((q) => q.ownerId === s.ownerId)) this.market.stalls.push(s);
+    for (const [k, v] of Object.entries(st.pending)) { const cur = this.market.pending[k]; this.market.pending[k] = cur ? { gems: cur.gems + v.gems, sales: [...cur.sales, ...v.sales].slice(-30) } : v; }
+    for (const z of this.zones.values()) if (z.def.market) this.broadcastStalls(z);
+    for (const p of this.bySid.values()) { this.deliverEarnings(p); this.sendMyStall(p); }
+  }
+  /** Pazar durumunu ve aynı işlemde yazılacak karakterleri ana sürece bildirir. */
+  private persistMarket(players: Player[]) {
+    const chars = players.map((q) => this.snapshotChar(q));
+    this.opt.post({ type: 'market', channel: this.opt.channel, state: structuredClone(this.market), chars });
+  }
   private stallList(z: Zone) {
-    const list: { id: number; name: string; title: string; x: number; y: number; n: number }[] = [];
-    for (const q of z.playerSet) if (q.stall) list.push({ id: q.id, name: q.char.name, title: q.stall.title, x: Math.round(q.stall.x), y: Math.round(q.stall.y), n: q.stall.prices.size });
-    return list;
+    return this.market.stalls.filter((s) => s.zone === z.id).map((s) => ({ id: s.id, ownerId: s.ownerId, name: s.ownerName, title: s.title, x: Math.round(s.x), y: Math.round(s.y), n: s.items.length }));
   }
   private sendStalls(p: Player) { if (p.zone.def.market) this.sendJson(p, { t: 'stalls', list: this.stallList(p.zone) }); }
   private broadcastStalls(z: Zone) {
     const msg = JSON.stringify({ t: 'stalls', list: this.stallList(z) });
     for (const q of z.playerSet) this.pushOut(q.sid, msg);
   }
+  private ownStall(charId: number) { return this.market.stalls.find((s) => s.ownerId === charId) ?? null; }
   private sendMyStall(p: Player) {
-    const s = p.stall;
-    this.sendJson(p, { t: 'mystall', open: !!s, title: s?.title ?? '', items: s ? [...s.prices].map(([id, price]) => ({ id, price })) : [] });
+    const s = this.ownStall(p.char.id);
+    this.sendJson(p, { t: 'mystall', stall: s ? { id: s.id, title: s.title, zone: s.zone, x: s.x, y: s.y, items: s.items, earned: s.earned, openedAt: s.openedAt } : null });
   }
+  /** Sahip yokken yapılan satışların parası: kanala girince cüzdana geçer. */
+  private deliverEarnings(p: Player) {
+    const key = String(p.char.id), due = this.market.pending[key];
+    if (!due || due.gems <= 0) return;
+    delete this.market.pending[key];
+    p.char.gems += due.gems; p.selfDirty |= 1;
+    const lines = due.sales.slice(-5).map((x) => `${x.buyer}: ${x.name} (${x.price.toLocaleString('tr-TR')})`).join(', ');
+    this.notice(p, `Sen yokken dükkânın ${due.sales.length} satış yaptı: +${due.gems.toLocaleString('tr-TR')} Mücevher. ${lines}`, 'ok');
+    this.sendJson(p, { t: 'stall_away', gems: due.gems, sales: due.sales });
+    this.persistMarket([p]);
+  }
+  /** Oyuncu kanala girdiğinde: dükkân listesi, kendi dükkânı ve bekleyen kazanç. */
+  marketJoin(p: Player) { this.sendStalls(p); this.sendMyStall(p); this.deliverEarnings(p); }
+
   private cmdStallOpen(p: Player, c: Extract<ClientCmd, { t: 'stall_open' }>) {
-    if (p.stall) return this.notice(p, 'Tezgâhın zaten açık.');
+    if (this.ownStall(p.char.id)) return this.notice(p, 'Zaten açık bir dükkânın var. Yenisini kurmak için önce onu kapat.');
     const z = p.zone, mk = z.def.market;
-    if (!mk) return this.notice(p, 'Tezgâh yalnız Pazar Köyü\'ndeki Pazar Meydanı\'nda kurulabilir.');
-    if (!inMarket(z.def, p.x, p.y)) return this.notice(p, `Tezgâh kurmak için ${mk.name}'na git (köyün doğusu).`);
-    for (const q of z.playerSet) if (q !== p && q.stall && Math.hypot(q.stall.x - p.x, q.stall.y - p.y) < STALL_MIN_GAP) return this.notice(p, `Burada ${q.char.name} tezgâh kurmuş. Biraz uzaklaş.`);
+    if (!mk) return this.notice(p, 'Dükkân yalnız Pazar Köyü\'ndeki Pazar Meydanı\'nda kurulabilir.');
+    if (!inMarket(z.def, p.x, p.y)) return this.notice(p, `Dükkân kurmak için ${mk.name}'na git (köyün doğusu).`);
+    for (const s of this.market.stalls) if (s.zone === z.id && Math.hypot(s.x - p.x, s.y - p.y) < STALL_MIN_GAP) return this.notice(p, `Burada ${s.ownerName} dükkân kurmuş. Biraz uzaklaş.`);
+    if (this.market.stalls.length >= MARKET_MAX_STALLS) return this.notice(p, 'Pazarda yer kalmadı.');
     const items = Array.isArray(c.items) ? c.items.slice(0, STALL_MAX_ITEMS + 1) : [];
     if (items.length === 0) return this.notice(p, 'Satmak için en az bir eşya seç.');
-    if (items.length > STALL_MAX_ITEMS) return this.notice(p, `Tezgâha en çok ${STALL_MAX_ITEMS} eşya konabilir.`);
-    const prices = new Map<string, number>();
+    if (items.length > STALL_MAX_ITEMS) return this.notice(p, `Dükkâna en çok ${STALL_MAX_ITEMS} eşya konabilir.`);
+    const picked: { idx: number; price: number }[] = [];
     for (const it of items) {
       const id = String(it?.id ?? ''), price = Math.floor(Number(it?.price));
-      const bagItem = p.char.bag.find((b) => b.id === id);
-      if (!bagItem) return this.notice(p, 'Seçtiğin bir eşya artık çantanda değil.');
-      if (bagItem.locked) return this.notice(p, `${itemDisplayName(bagItem)} kilitli. Satmak için önce kilidini aç.`);
+      const idx = p.char.bag.findIndex((b) => b.id === id);
+      if (idx < 0) return this.notice(p, 'Seçtiğin bir eşya artık çantanda değil.');
+      if (p.char.bag[idx].locked) return this.notice(p, `${itemDisplayName(p.char.bag[idx])} kilitli. Satmak için önce kilidini aç.`);
       if (!Number.isFinite(price) || price < 1 || price > STALL_MAX_PRICE) return this.notice(p, `Fiyat 1 ile ${STALL_MAX_PRICE.toLocaleString('tr-TR')} Mücevher arasında olmalı.`);
-      prices.set(id, price);
+      if (!picked.some((q) => q.idx === idx)) picked.push({ idx, price });
     }
     if (this.seenReceipt(p, String(c.req ?? ''))) return;
-    const title = sanitizeChat(String(c.title ?? ''), STALL_TITLE_MAX).trim() || `${p.char.name} Tezgâhı`;
-    p.inputs.length = 0;
-    p.stall = { title, prices, x: p.x, y: p.y, openedAt: this.now };
-    if (p.anim !== Anim.IDLE) { p.anim = Anim.IDLE; p.dirty |= Upd.ANIM; }
+    // eşyalar çantadan dükkâna geçer (artık kullanılamaz, iki kez satılamaz)
+    const moved = picked.map(({ idx, price }) => ({ item: p.char.bag[idx], price }));
+    const ids = new Set(moved.map((m) => m.item.id));
+    p.char.bag = p.char.bag.filter((b) => !ids.has(b.id));
+    const title = sanitizeChat(String(c.title ?? ''), STALL_TITLE_MAX).trim() || `${p.char.name} Dükkânı`;
+    this.market.stalls.push({ id: uuid(), ownerId: p.char.id, ownerName: p.char.name, zone: z.id, title, x: Math.round(p.x), y: Math.round(p.y), items: moved, openedAt: this.now, earned: 0 });
+    p.selfDirty |= 2;
+    this.persistMarket([p]);
     this.sendMyStall(p);
     this.broadcastStalls(z);
-    this.notice(p, `Tezgâhın açıldı: ${prices.size} eşya. Satış olunca haber vereceğim.`, 'ok');
+    this.notice(p, `Dükkânın açıldı: ${moved.length} eşya. İstediğin yere gidebilirsin, oyundan çıksan da açık kalır.`, 'ok');
   }
-  closeStall(p: Player, msg: string) {
-    if (!p.stall) return;
-    p.stall = null;
+  private cmdStallClose(p: Player) {
+    const s = this.ownStall(p.char.id);
+    if (!s) return this.notice(p, 'Açık bir dükkânın yok.');
+    if (p.char.bag.length + s.items.length > BAG_EQUIP_CAP) return this.notice(p, `Dükkândaki ${s.items.length} eşya için çantanda yer aç (${BAG_EQUIP_CAP - p.char.bag.length} boş yer var).`);
+    for (const m of s.items) p.char.bag.push(m.item);
+    this.market.stalls = this.market.stalls.filter((q) => q !== s);
+    p.selfDirty |= 2;
+    this.persistMarket([p]);
     this.sendMyStall(p);
-    this.broadcastStalls(p.zone);
-    if (msg) this.notice(p, msg, 'info');
+    const z = this.zones.get(s.zone); if (z) this.broadcastStalls(z);
+    this.notice(p, s.items.length ? `Dükkânın kapandı, ${s.items.length} eşya çantana döndü.` : 'Dükkânın kapandı.', 'info');
   }
-  private stallOf(p: Player, owner: number): Player | null {
-    for (const q of p.zone.playerSet) if (q.id === owner && q.stall) return q;
-    return null;
-  }
-  private cmdStallView(p: Player, owner: number) {
-    const q = this.stallOf(p, owner);
-    if (!q || !q.stall) { this.sendJson(p, { t: 'stall', owner, closed: true }); return; }
-    if (Math.hypot(q.stall.x - p.x, q.stall.y - p.y) > STALL_VIEW_RANGE) { this.sendJson(p, { t: 'stall', owner, far: true, x: q.stall.x, y: q.stall.y, name: q.char.name, title: q.stall.title }); return; }
-    const items: { item: ItemInstance; price: number }[] = [];
-    for (const [id, price] of q.stall.prices) { const it = q.char.bag.find((b) => b.id === id); if (it) items.push({ item: it, price }); }
-    this.sendJson(p, { t: 'stall', owner, name: q.char.name, title: q.stall.title, items, own: q === p });
+  private cmdStallView(p: Player, id: string) {
+    const s = this.market.stalls.find((q) => q.id === id);
+    if (!s || s.zone !== p.zone.id) { this.sendJson(p, { t: 'stall', stall: id, closed: true }); return; }
+    const own = s.ownerId === p.char.id;
+    if (!own && Math.hypot(s.x - p.x, s.y - p.y) > STALL_VIEW_RANGE) { this.sendJson(p, { t: 'stall', stall: id, far: true, x: s.x, y: s.y, name: s.ownerName, title: s.title }); return; }
+    this.sendJson(p, { t: 'stall', stall: id, name: s.ownerName, title: s.title, items: s.items, own });
   }
   private cmdStallBuy(p: Player, c: Extract<ClientCmd, { t: 'stall_buy' }>) {
-    const q = this.stallOf(p, Number(c.owner) | 0);
-    if (!q || !q.stall) return this.notice(p, 'Bu tezgâh kapanmış.');
-    if (q === p) return this.notice(p, 'Kendi tezgâhından alamazsın.');
-    if (Math.hypot(q.stall.x - p.x, q.stall.y - p.y) > STALL_VIEW_RANGE) return this.notice(p, 'Tezgâha biraz daha yaklaş.');
-    const id = String(c.item ?? ''), price = q.stall.prices.get(id);
-    const idx = q.char.bag.findIndex((b) => b.id === id);
-    if (price === undefined || idx < 0) { this.cmdStallView(p, q.id); return this.notice(p, 'Bu eşya satılmış.'); }
-    if (price !== Math.floor(Number(c.price))) { this.cmdStallView(p, q.id); return this.notice(p, 'Fiyat değişmiş, tezgâhı yeniledim.'); }
+    const s = this.market.stalls.find((q) => q.id === String(c.stall ?? ''));
+    if (!s || s.zone !== p.zone.id) return this.notice(p, 'Bu dükkân kapanmış.');
+    if (s.ownerId === p.char.id) return this.notice(p, 'Kendi dükkânından alamazsın.');
+    if (Math.hypot(s.x - p.x, s.y - p.y) > STALL_VIEW_RANGE) return this.notice(p, 'Dükkâna biraz daha yaklaş.');
+    const idx = s.items.findIndex((m) => m.item.id === String(c.item ?? ''));
+    if (idx < 0) { this.cmdStallView(p, s.id); return this.notice(p, 'Bu eşya satılmış.'); }
+    const { item, price } = s.items[idx];
+    if (price !== Math.floor(Number(c.price))) { this.cmdStallView(p, s.id); return this.notice(p, 'Fiyat değişmiş, dükkânı yeniledim.'); }
     if (p.char.gems < price) return this.notice(p, `Yeterli Mücevherin yok (${price.toLocaleString('tr-TR')} gerekiyor).`);
     if (p.char.bag.length >= BAG_EQUIP_CAP) return this.notice(p, 'Çantan dolu.');
     if (this.seenReceipt(p, String(c.req ?? ''))) return;
-    // tek adımda aktarım: eşya satıcının çantasından alıcınınkine, Mücevher alıcıdan satıcıya
-    const [item] = q.char.bag.splice(idx, 1);
+    // tek adımda aktarım; para sahibine: kanaldaysa cüzdanına, değilse bekleyen kazanca
+    s.items.splice(idx, 1);
     delete item.locked;
     item.src = 'pazar';
-    q.stall.prices.delete(id);
-    p.char.gems -= price; q.char.gems += price;
-    p.char.bag.push(item);
-    p.selfDirty |= 1 | 2; q.selfDirty |= 1 | 2;
-    this.save(p, true); this.save(q, true);
+    p.char.gems -= price; p.char.bag.push(item); p.selfDirty |= 1 | 2;
+    s.earned += price;
     const name = itemDisplayName(item);
+    let owner: Player | null = null;
+    for (const q of this.bySid.values()) if (q.char.id === s.ownerId) { owner = q; break; }
+    if (owner) {
+      owner.char.gems += price; owner.selfDirty |= 1;
+      this.notice(owner, `Dükkânın sattı: ${p.char.name}, ${name} için ${price.toLocaleString('tr-TR')} Mücevher ödedi.`, 'ok');
+      this.sendJson(owner, { t: 'stall_sold', buyer: p.char.name, name, price });
+    } else {
+      const key = String(s.ownerId), cur = this.market.pending[key] ?? { gems: 0, sales: [] };
+      cur.gems += price; cur.sales.push({ buyer: p.char.name, name, price, at: this.now }); cur.sales = cur.sales.slice(-30);
+      this.market.pending[key] = cur;
+    }
+    let closedEmpty = false;
+    if (s.items.length === 0) { this.market.stalls = this.market.stalls.filter((q) => q !== s); closedEmpty = true; }
+    this.persistMarket(owner ? [p, owner] : [p]);
     this.notice(p, `${name} satın alındı: −${price.toLocaleString('tr-TR')} Mücevher`, 'ok');
-    this.notice(q, `${p.char.name}, ${name} eşyanı ${price.toLocaleString('tr-TR')} Mücevher'e aldı.`, 'ok');
-    this.sendJson(q, { t: 'stall_sold', buyer: p.char.name, name, price });
-    if (q.stall.prices.size === 0) this.closeStall(q, 'Tezgâhındaki her şey satıldı, tezgâh kapandı.');
-    else { this.sendMyStall(q); this.broadcastStalls(q.zone); }
-    this.cmdStallView(p, q.id);
+    if (owner) { this.sendMyStall(owner); if (closedEmpty) this.notice(owner, 'Dükkânındaki her şey satıldı, dükkân kapandı.', 'info'); }
+    const z = this.zones.get(s.zone); if (z) this.broadcastStalls(z);
+    this.cmdStallView(p, s.id);
   }
 
   notice(p: Player, text: string, kind: 'info' | 'error' | 'ok' = 'error') { this.sendJson(p, { t: 'notice', text, kind }); }
@@ -1177,8 +1225,10 @@ function lootSpawn(l: Loot, now: number): EntitySpawn {
 /** Eşya üretimi: efsunlar uygun havuzdan, tür tekrar etmeden. */
 export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?: number): ItemInstance {
   const tpl = ITEM_TPL.get(tplId)!;
-  const n = enchCount ?? (rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
-  const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => ENCHANTS[k].slots.includes(tpl.slot));
+  // canavardan düşen eşya: 1–4 rastgele efsun (nadirlik yükseldikçe çok efsun olasılığı artar)
+  const dropCount = () => { const w = ENCHANT_COUNT_WEIGHTS[rarity] ?? ENCHANT_COUNT_WEIGHTS.default; let r = rnd() * 100; for (let k = 0; k < 4; k++) if ((r -= w[k]) <= 0) return k + 1; return 1; };
+  const n = enchCount ?? (src === 'drop' ? dropCount() : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
+  const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => !ENCHANTS[k].legacy && ENCHANTS[k].slots.includes(tpl.slot));
   const ench: ItemInstance['ench'] = [];
   for (let i = 0; i < n && pool.length; i++) {
     const t = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
@@ -1200,5 +1250,20 @@ function uuid(): string {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
 }
 
-/** Tezgâh açıkken de çalışan komutlar (çanta ve konum değiştirmeyenler). */
-const STALL_FREE_CMDS = new Set(['stall_close', 'stall_view', 'stall_open', 'chat', 'ping', 'sync', 'potion', 'autopotion', 'npc']);
+/** Kayıttan gelen pazar durumunu doğrular (bozuk kayıt dünyayı çökertmesin; geçersiz dükkân atlanır). */
+function sanitizeMarket(raw: unknown): MarketState {
+  const out: MarketState = { v: 1, stalls: [], pending: {} };
+  const r = (raw && typeof raw === 'object' ? raw : {}) as { stalls?: unknown; pending?: unknown };
+  const okItem = (it: unknown): it is ItemInstance => !!it && typeof it === 'object' && typeof (it as ItemInstance).id === 'string' && ITEM_TPL.has((it as ItemInstance).tpl) && Array.isArray((it as ItemInstance).ench);
+  for (const s of Array.isArray(r.stalls) ? r.stalls as MarketStall[] : []) {
+    if (!s || typeof s.id !== 'string' || !Number.isFinite(s.ownerId) || typeof s.zone !== 'string' || !MAPS[s.zone]?.market || !Array.isArray(s.items)) continue;
+    const items = s.items.filter((m) => okItem(m?.item) && Number.isFinite(m.price) && m.price >= 1).map((m) => ({ item: m.item, price: Math.floor(m.price) }));
+    if (!items.length) continue;
+    out.stalls.push({ id: s.id, ownerId: s.ownerId, ownerName: String(s.ownerName ?? '?').slice(0, 24), zone: s.zone, title: String(s.title ?? '').slice(0, STALL_TITLE_MAX), x: Number(s.x) || 0, y: Number(s.y) || 0, items, openedAt: Number(s.openedAt) || 0, earned: Number(s.earned) || 0 });
+  }
+  if (r.pending && typeof r.pending === 'object') for (const [k, v] of Object.entries(r.pending as MarketState['pending'])) {
+    if (!/^-?\d+$/.test(k) || !v || !Number.isFinite(v.gems) || v.gems <= 0) continue;
+    out.pending[k] = { gems: Math.floor(v.gems), sales: Array.isArray(v.sales) ? v.sales.slice(-30) : [] };
+  }
+  return out;
+}

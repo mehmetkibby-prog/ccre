@@ -338,3 +338,11 @@ input, select { font-family: inherit; }
 @media (max-width: 560px) { .stall-row { grid-template-columns: 40px minmax(0, 1fr) auto; } .stall-row > :last-child { grid-column: 2 / -1; justify-self: end; } }
 .stall-row .price input { background: #10140e; color: #f1ead8; border: 1px solid #4a3e22; border-radius: 5px; padding: 5px 7px; font: inherit; font-weight: 800; }
 .stall-row .price input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+/* ───────── eşya kartı (dokunmatik) ve efsun kademeleri ───────── */
+.tip .en { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+.tip .en small { font-size: 10px; color: var(--muted); font-weight: 700; }
+.tip .en.t3 > span { color: #ffd84a; font-weight: 800; }
+.tip .en.t2 > span { color: #ffb86a; }
+.tip .en .ed { width: 100%; font-size: 11px; color: #b8b0a0; margin: -2px 0 4px; }
+.tip.tip-sheet { position: fixed; left: 50%; top: 8px; bottom: auto; transform: translateX(-50%); z-index: 70; width: min(420px, calc(100vw - 24px)); max-height: 60vh; overflow: auto; pointer-events: auto; box-shadow: 0 8px 24px rgba(0,0,0,.6); }
