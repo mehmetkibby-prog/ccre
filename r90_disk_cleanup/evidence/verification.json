@@ -1,0 +1,19 @@
+{
+  "tests": 43,
+  "passed": true,
+  "realComponents": [
+    "temporary filesystem",
+    "SQLite databases and backup files",
+    "flock install and daily-backup locks",
+    "ZIP wrapper and module integrity checks"
+  ],
+  "simulatedComponents": [
+    "systemd properties",
+    "service/process references",
+    "game health",
+    "Live binding methods in outer integration tests"
+  ],
+  "liveVdsApplied": false,
+  "productionOwnerUid": 0,
+  "fixtureOwnerUid": 1000
+}

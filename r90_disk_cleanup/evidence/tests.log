@@ -1,0 +1,105 @@
+....Sürüm temizliği: 2 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmp3zur58ws/releases/core511-r78
+SİLİNEBİLİR: /tmp/tmp3zur58ws/root/col-entry420.fixture
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+Eski klasör temizlendi: core511-r78
+Eski klasör temizlendi: col-entry420.fixture
+Sürüm temizliği: 0 eski klasör; tahmini boşalacak 0.0 GiB.
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+...Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpmu14e2ci/releases/core511-r78
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+........Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpumi1ypd5/releases/core511-r78
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+....usage: cleanup.zip [-h] (--inspect | --apply)
+cleanup.zip: error: one of the arguments --inspect --apply is required
+..Sürüm temizliği: 2 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpubc07w0d/releases/core511-r78
+SİLİNEBİLİR: /tmp/tmpubc07w0d/root/col-entry420.fixture
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+...Sürüm temizliği: 2 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpmagl48q7/releases/core511-r78
+SİLİNEBİLİR: /tmp/tmpmagl48q7/root/col-entry420.fixture
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+..Sürüm temizliği: 2 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmp79k_co9k/releases/core511-r78
+SİLİNEBİLİR: /tmp/tmp79k_co9k/root/col-entry420.fixture
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+İNCELEME TAMAMLANDI; silme yapılmadı.
+Kullanılabilir boş alan: 2.35 GiB
+Sürüm temizliği: 2 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmp79k_co9k/releases/core511-r78
+SİLİNEBİLİR: /tmp/tmp79k_co9k/root/col-entry420.fixture
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+Eski klasör temizlendi: core511-r78
+Eski klasör temizlendi: col-entry420.fixture
+TEMİZLİK TAMAMLANDI. Silinen klasör: 2
+Dosya sistemindeki boş alan değişimi: 0.0 GiB
+Kullanılabilir boş alan: 2.35 GiB
+Sürüm temizliği: 0 eski klasör; tahmini boşalacak 0.0 GiB.
+KORUNDU: core511-698 (service/process)
+KORUNDU: core511-r66-accounts (accounts)
+KORUNDU: core511-r79 (current + verified in-place rollback)
+TEMİZLİK TAMAMLANDI. Silinen klasör: 0
+Dosya sistemindeki boş alan değişimi: -0.0 GiB
+Kullanılabilir boş alan: 2.35 GiB
+........Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpyemigict/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+Eski klasör temizlendi: core511-stale
+Sürüm temizliği: 0 eski klasör; tahmini boşalacak 0.0 GiB.
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+...Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpq5g4pubd/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+Eski klasör temizlendi: core511-stale
+.Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmppn8fapvy/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+Eski klasör temizlendi: core511-stale
+.Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpczntknbj/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmpczntknbj/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+Eski klasör temizlendi: core511-stale
+.Sürüm temizliği: 1 eski klasör; tahmini boşalacak 0.0 GiB.
+SİLİNEBİLİR: /tmp/tmp31v99mbe/releases/core511-stale
+KORUNDU: core511-accounts (accounts)
+KORUNDU: core511-current (current)
+KORUNDU: core511-previous (previous)
+...
+----------------------------------------------------------------------
+Ran 43 tests in 0.501s
+
+OK
