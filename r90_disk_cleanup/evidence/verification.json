@@ -1,5 +1,5 @@
 {
-  "tests": 43,
+  "tests": 52,
   "passed": true,
   "realComponents": [
     "temporary filesystem",
@@ -15,5 +15,7 @@
   ],
   "liveVdsApplied": false,
   "productionOwnerUid": 0,
-  "fixtureOwnerUid": 1000
+  "fixtureOwnerUid": 1000,
+  "cleanupRevision": 2,
+  "regression": "Real original SQL migrations/schema snapshots no longer classified as user data when exact path, size and SHA256 match pinned source"
 }

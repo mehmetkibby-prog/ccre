@@ -108,7 +108,7 @@ def plan(live,releases,state_root,external=None,mounts=None,updates_root=None,st
    for root in roots:
     if alias.resolve().is_relative_to(root):pins.setdefault(root,'active symlink')
  mounts=mount_points() if mounts is None else mounts
- trees={};unknown={};interrupted={}
+ trees={};unknown={};interrupted={};details={}
  audit=state_root/'release-retention'
  if audit.exists():
   require(not audit.is_symlink() and audit.stat().st_uid==ROOT_UID and stat.S_IMODE(audit.stat().st_mode)==0o700,'Temizlik günlüğü izinleri değişmiş')
@@ -129,7 +129,9 @@ def plan(live,releases,state_root,external=None,mounts=None,updates_root=None,st
    trees[root]=inspect_tree(root,mounts,root in pins)
    if root not in pins:
     from cleanup import staging_archive_guard
-    trees[root][2].extend(staging_archive_guard(root,mounts))
+    examples=[]
+    trees[root][2].extend(staging_archive_guard(root,mounts,managed=root not in staging,examples=examples))
+    if examples:details[str(root)]=examples
    if trees[root][2]:unknown[root]=','.join(sorted(set(trees[root][2])))
   except (OSError,RuntimeError,ValueError,KeyError,TypeError):unknown[root]='unrecognized tree'
  # Unknown directories can still depend on managed releases; retain those too.
@@ -154,6 +156,7 @@ def plan(live,releases,state_root,external=None,mounts=None,updates_root=None,st
   for key,row in trees[root][0].items():
    saved=inodes.setdefault(key,{**row,'count':0});saved['count']+=row['count']
  return {'protected':{str(k):v for k,v in pins.items()},'candidates':[str(p) for p in candidates],
+         'protectedDetails':{name:examples for name,examples in details.items() if Path(name) in pins},
          'reclaimableBytes':sum(v['blocks'] for v in inodes.values() if v['links']==v['count']),
          'identities':{str(p):(p.stat().st_dev,p.stat().st_ino) for p in candidates}}
 

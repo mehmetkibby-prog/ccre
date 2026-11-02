@@ -1,5 +1,5 @@
 """Remove only unused managed releases and recognized old installer directories."""
-import argparse,contextlib,hashlib,os,re,stat,sys,time,zipfile
+import argparse,contextlib,hashlib,json,os,re,stat,sys,time,zipfile
 from pathlib import Path
 import installer as m
 import retention
@@ -12,6 +12,13 @@ ARCHIVE_EXTENSIONS=('.tar','.tgz','.tar.gz','.tar.xz','.tar.bz2','.7z','.rar','.
 DATA_EXTENSIONS=('.sqlite','.sqlite3','.db','.sql','.rdb','.aof','.sqlite-wal','.sqlite-shm','.db-wal','.db-shm')
 
 ROOT_UID=0
+SCHEMA_SOURCES=json.loads((Path(__file__).parent/'schema_sources.json').read_text())['files']
+
+def known_schema_source(root,path):
+ # Fixed paths and byte hashes from the original bundled schema, not a suffix
+ # exemption. An SQL dump or changed snapshot at the same path stays protected.
+ expected=SCHEMA_SOURCES.get(path.relative_to(root).as_posix())
+ return bool(expected and not path.is_symlink() and path.stat().st_size==expected['bytes'] and digest(path)==expected['sha256'])
 
 def old_installer_name(name):
  if re.fullmatch(r'col-entry(?:420|421|422|423|424|425)\.[A-Za-z0-9_-]+',name):return True
@@ -33,8 +40,11 @@ def staging_directories(now=None):
    result[path]=bool(old_installer_name(path.name) and now-st.st_mtime>=3600 and st.st_uid==ROOT_UID and not st.st_mode&0o022)
  return result
 
-def staging_archive_guard(root,mounts):
+def staging_archive_guard(root,mounts,managed=False,examples=None):
  blocked=[]
+ def block(reason,path):
+  blocked.append(reason)
+  if examples is not None and len(examples)<5:examples.append({'reason':reason,'path':path.relative_to(root).as_posix()})
  for folder,dirs,files in os.walk(root,followlinks=False,onerror=lambda e:(_ for _ in ()).throw(e)):
   dirs[:]=[n for n in dirs if Path(folder)/n not in mounts]
   for name in files:
@@ -42,13 +52,14 @@ def staging_archive_guard(root,mounts):
    if p.is_symlink():continue
    lower=name.lower()
    if lower.endswith(DATA_EXTENSIONS) or re.search(r'\.(?:sqlite3?|db|sql)(?:$|[._-])',lower) or (not lower.endswith(('.py','.mjs','.js','.ts','.md')) and any(mark in lower for mark in ('backup','snapshot','-before.','yedek'))):
-    blocked.append('backup/data file');continue
+    if not (managed and known_schema_source(root,p)):block('backup/data file',p)
+    continue
    if not lower.endswith(ARCHIVE_EXTENSIONS):continue
    # Never discard an opaque archive inside a staging folder. A recognizable
    # Python installer ZIP contains its own plan; nested archives or data cause
    # preservation rather than decompression or speculative deletion.
    if not lower.endswith('.zip') or p.stat().st_size>100*1024**2:
-    blocked.append('unclassified archive');continue
+    block('unclassified archive',p);continue
    try:
     with zipfile.ZipFile(p) as z:
      names=z.namelist()
@@ -57,7 +68,7 @@ def staging_archive_guard(root,mounts):
       base=Path(member).name.lower()
       require(not member.startswith('/') and '..' not in Path(member).parts,'archive member path')
       require(not base.endswith(DATA_EXTENSIONS+ARCHIVE_EXTENSIONS) and not any(x in base for x in ('backup.sqlite','snapshot','-before.','yedek')),'archive data')
-   except (OSError,RuntimeError,ValueError,zipfile.BadZipFile):blocked.append('unclassified archive')
+   except (OSError,RuntimeError,ValueError,zipfile.BadZipFile):block('unclassified archive',p)
  return blocked
 
 def live_guard(live):
@@ -90,6 +101,10 @@ def run(apply=False):
    result=retention.cleanup(live,m.RELEASES,DATA,apply=apply,staging=staging,recheck=recheck)
    recheck()
    after=os.statvfs(m.RELEASES);free_after=after.f_bavail*after.f_frsize
+   for name,reason in sorted(result['protected'].items()):
+    if Path(name).parent==m.RELEASES and Path(name) not in (live.root,live.accounts_root):
+     print('ESKİ SÜRÜM KORUNDU: '+Path(name).name+' ('+reason+')',flush=True)
+     for row in result.get('protectedDetails',{}).get(name,[]):print('  '+row['reason']+': '+row['path'],flush=True)
    if apply:
     print('TEMİZLİK TAMAMLANDI. Silinen klasör: '+str(len(result['deleted'])),flush=True)
     print('Dosya sistemindeki boş alan değişimi: '+str(round((free_after-free_before)/1024**3,2))+' GiB',flush=True)

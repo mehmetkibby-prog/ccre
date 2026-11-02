@@ -1,0 +1,8 @@
+{
+  "source": "R78 bundled native510-bb3a6cc689c6/drizzle",
+  "originalManifestComparison": "all sizes and SHA256 match original release manifest",
+  "sqlFiles": 61,
+  "schemaSnapshots": 61,
+  "bytes": 6502507,
+  "fileListSha256": "9169b1f5dc2a8321a4db587c4dc47f3e8e7fd496c41b94cfa37ef1386ad637a1"
+}

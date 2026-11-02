@@ -1,0 +1,10 @@
+{
+  "scope": "Read-only archive/data filter on full original release fixture, with schema bytes verified against R78 bundled native source",
+  "before": {
+    "backup/data file": 122
+  },
+  "after": {},
+  "remainingExamples": [],
+  "sourceFilesChanged": false,
+  "liveVdsApplied": false
+}

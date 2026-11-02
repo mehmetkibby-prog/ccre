@@ -2,14 +2,14 @@
 import hashlib,json,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
-MODULES={'installer.py','storage.py','r63_support.py','retention.py','central.mjs','cleanup.py','runtime_stage.py','inplace_stage.py','ingress_stage.py','client_stage.py','rollback_scope.py'}
+MODULES={'installer.py','storage.py','r63_support.py','retention.py','central.mjs','cleanup.py','runtime_stage.py','inplace_stage.py','ingress_stage.py','client_stage.py','rollback_scope.py','schema_sources.json'}
 WRAPPER='''import hashlib,json,os,sys,tempfile,zipfile
 from pathlib import Path
 archive=Path(sys.argv[0]).resolve();os.umask(0o077)
 try:
  with zipfile.ZipFile(archive) as z,tempfile.TemporaryDirectory(prefix='core-disk-cleanup-') as temp:
   manifest=json.loads(z.read('modules.json'))
-  expected={'installer.py','storage.py','r63_support.py','retention.py','central.mjs','cleanup.py','runtime_stage.py','inplace_stage.py','ingress_stage.py','client_stage.py','rollback_scope.py'}
+  expected={'installer.py','storage.py','r63_support.py','retention.py','central.mjs','cleanup.py','runtime_stage.py','inplace_stage.py','ingress_stage.py','client_stage.py','rollback_scope.py','schema_sources.json'}
   if set(manifest)!=expected or len(z.namelist())!=len(set(z.namelist())):raise RuntimeError('Paket dosya listesi bozuk')
   for name,sha in manifest.items():
    data=z.read('support/'+name)
