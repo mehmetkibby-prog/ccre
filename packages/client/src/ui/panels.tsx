@@ -2,7 +2,7 @@ import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, UPGRADE_TABLE, SELL_PRICES, masteryChance, itemDisplayName, itemPower,
-  classSkill, STAT_MAX, getLayout, TILE, type ItemInstance, type Slot, type ClassId,
+  classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
@@ -11,7 +11,7 @@ import { SkillIcon } from './icons.tsx';
 import { sfx } from '../game/audio.ts';
 
 const RIDX = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
-const close = () => store.set({ panel: null, npc: null, shop: null });
+const close = () => store.set({ panel: null, npc: null, shop: null, stallView: null });
 
 function Panel({ title, children, width }: { title: string; children: React.ReactNode; width?: number }) {
   return (
@@ -40,6 +40,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'shop' && <Shop game={game} />}
       {p === 'upgrade' && <Upgrade game={game} />}
       {p === 'admin' && <AdminPanel onClose={() => store.set({ panel: null })} />}
+      {p === 'market' && <Market game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
           <div className="title" style={{ fontSize: 20, marginBottom: 8 }}>Dikkat: PvP bölgesi</div>
@@ -117,7 +118,7 @@ function Inventory({ game }: { game: Game }) {
           <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Kuşanılmış eşyaya tıkla: çıkar</div>
         </div>
         <div>
-          <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span></div>
+          <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Tezgâhı</button>}</div>
           <div className="bag" style={{ marginTop: 8 }}>
             {self.bag.map((it) => <Cell key={it.id} it={it} sel={sel === it.id} bind={bind(it)} onClick={() => setSel(sel === it.id ? null : it.id)} />)}
             {Array.from({ length: Math.max(0, 35 - self.bag.length) }).slice(0, 14).map((_, i) => <div key={'e' + i} className="cell" />)}
@@ -420,6 +421,145 @@ function Upgrade({ game }: { game: Game }) {
           ) : <div className="muted">Bu eşya en üst artıda (+5).</div>}
         </div>
       )}
+    </Panel>
+  );
+}
+
+// ───────── pazar tezgâhı ─────────
+const fmtG = (n: number) => n.toLocaleString('tr-TR');
+const suggestPrice = (it: ItemInstance) => Math.max(1, Math.round((SELL_PRICES[it.rarity] ?? 5) * 3 * (1 + it.plus * 0.6)));
+function Market({ game }: { game: Game }) {
+  const view = useStore((s) => s.stallView);
+  const my = useStore((s) => s.myStall);
+  if (view && !view.own) return <StallBuy game={game} />;
+  if (my?.open) return <MyStallPanel game={game} />;
+  return <StallSetup game={game} />;
+}
+function StallSetup({ game }: { game: Game }) {
+  const self = useStore((s) => s.self);
+  const map = useStore((s) => s.map);
+  const { tip, bind } = useTip();
+  const [title, setTitle] = useState('');
+  const [prices, setPrices] = useState<Record<string, string>>({});
+  const [here, setHere] = useState(() => inMarket(MAPS[map], game.px, game.py));
+  useEffect(() => { const iv = setInterval(() => setHere(MAPS[map] ? inMarket(MAPS[map], game.px, game.py) : false), 400); return () => clearInterval(iv); }, [map, game]);
+  if (!self) return null;
+  const mk = MAPS[map]?.market;
+  const chosen = Object.keys(prices).filter((id) => self.bag.some((b) => b.id === id));
+  const toggle = (it: ItemInstance) => {
+    if (it.locked) return notify('Kilitli eşya satılamaz. Önce çantada kilidini aç.', 'error');
+    const next = { ...prices };
+    if (next[it.id] !== undefined) delete next[it.id];
+    else { if (chosen.length >= STALL_MAX_ITEMS) return notify(`Tezgâha en çok ${STALL_MAX_ITEMS} eşya konabilir.`, 'error'); next[it.id] = String(suggestPrice(it)); }
+    setPrices(next);
+  };
+  const bad = chosen.some((id) => { const n = Number(prices[id]); return !Number.isInteger(n) || n < 1 || n > STALL_MAX_PRICE; });
+  const open = () => game.send({ t: 'stall_open', title, items: chosen.map((id) => ({ id, price: Number(prices[id]) })), req: reqId() });
+  return (
+    <Panel title="Pazar Tezgâhı Kur" width={720}>
+      {!mk ? <div className="muted">Tezgâh yalnız Pazar Köyü'ndeki Pazar Meydanı'nda kurulur. Işınlayıcı Nur seni köye götürebilir.</div> : (
+        <>
+          <div className={'stall-where' + (here ? ' ok' : '')}>
+            {here ? <>Pazar Meydanı'ndasın. Eşyalarını seç, fiyat ver, tezgâhını aç.</> : <>Tezgâh yalnız <b>{mk.name}</b>'nda kurulabilir (köyün doğusu).</>}
+            {!here && <button className="btn small primary" onClick={() => { game.goToMarket(); close(); }}>Meydana yürü</button>}
+          </div>
+          <div className="field"><label>Tezgâh adı</label><input value={title} maxLength={STALL_TITLE_MAX} placeholder={`${store.get().char?.name ?? ''} Tezgâhı`} onChange={(e) => setTitle(e.target.value)} /></div>
+          <div className="row"><b>Çantan</b><span className="muted" style={{ fontSize: 12 }}>Satmak istediklerine dokun · {chosen.length}/{STALL_MAX_ITEMS}</span></div>
+          <div className="bag" style={{ marginTop: 6 }}>
+            {self.bag.map((it) => <Cell key={it.id} it={it} sel={prices[it.id] !== undefined} bind={bind(it)} onClick={() => toggle(it)} />)}
+            {self.bag.length === 0 && <div className="muted" style={{ fontSize: 13, gridColumn: '1 / -1' }}>Çantanda satılacak ekipman yok.</div>}
+          </div>
+          {chosen.length > 0 && (
+            <div className="stall-list">
+              {chosen.map((id) => {
+                const it = self.bag.find((b) => b.id === id)!;
+                return (
+                  <div className="stall-row" key={id}>
+                    <Cell it={it} bind={bind(it)} />
+                    <span className="nm" style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</span>
+                    <label className="price"><input inputMode="numeric" value={prices[id]} onChange={(e) => setPrices({ ...prices, [id]: e.target.value.replace(/[^0-9]/g, '').slice(0, 9) })} /><span>Mücevher</span></label>
+                    <button className="btn small ghost" onClick={() => toggle(it)} aria-label="Çıkar">✕</button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <div className="row" style={{ marginTop: 12 }}>
+            <span className="muted" style={{ fontSize: 12 }}>Tezgâh açıkken yürüyemez, eşyalarını kullanamazsın. Eşyalar satılana kadar çantanda kalır.</span>
+            <div className="spacer" />
+            <button className="btn primary" disabled={!here || chosen.length === 0 || bad} onClick={open}>Tezgâhı Aç</button>
+          </div>
+        </>
+      )}
+      {tip && <ItemTip {...tip} />}
+    </Panel>
+  );
+}
+function MyStallPanel({ game }: { game: Game }) {
+  const my = useStore((s) => s.myStall)!;
+  const self = useStore((s) => s.self);
+  const log = useStore((s) => s.stallLog);
+  const { tip, bind } = useTip();
+  return (
+    <Panel title={`Tezgâhın: ${my.title}`} width={620}>
+      <div className="stall-where ok">Tezgâhın açık. Diğer oyuncular sana tıklayıp alışveriş yapabilir. Satış olunca Mücevher hemen hesabına geçer.</div>
+      <div className="stall-list">
+        {my.items.map(({ id, price }) => {
+          const it = self?.bag.find((b) => b.id === id);
+          if (!it) return null;
+          return (
+            <div className="stall-row" key={id}>
+              <Cell it={it} bind={bind(it)} />
+              <span className="nm" style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</span>
+              <span className="pv">{fmtG(price)} <small>Mücevher</small></span>
+            </div>
+          );
+        })}
+      </div>
+      {log.length > 0 && <><div style={{ marginTop: 12 }}><b>Satışlar</b></div>{log.map((l, i) => <div key={i} className="muted" style={{ fontSize: 12 }}>✓ {l}</div>)}</>}
+      <div className="row" style={{ marginTop: 14 }}><div className="spacer" /><button className="btn red" onClick={() => game.send({ t: 'stall_close' })}>Tezgâhı Kapat</button></div>
+      {tip && <ItemTip {...tip} />}
+    </Panel>
+  );
+}
+function StallBuy({ game }: { game: Game }) {
+  const v = useStore((s) => s.stallView)!;
+  const gems = useStore((s) => s.self?.gems ?? 0);
+  const bagFull = useStore((s) => (s.self?.bag.length ?? 0) >= 35);
+  const { tip, bind } = useTip();
+  const [confirm, setConfirm] = useState<string | null>(null);
+  // uzaktan açıldıysa: tezgâha varınca içeriği iste
+  useEffect(() => {
+    if (v.items || v.closed) return;
+    const iv = setInterval(() => {
+      const s = store.get().stalls.find((q) => q.id === v.owner);
+      if (!s) { store.set({ stallView: { ...v, closed: true } }); return; }
+      if (Math.hypot(s.x - game.px, s.y - game.py) < 500) game.send({ t: 'stall_view', owner: v.owner });
+    }, 500);
+    return () => clearInterval(iv);
+  }, [v, game]);
+  return (
+    <Panel title={v.title ? `${v.title}` : 'Tezgâh'} width={620}>
+      <div className="row" style={{ marginBottom: 8 }}><span className="muted">Satıcı: <b style={{ color: '#f1ead8' }}>{v.name ?? '…'}</b></span><div className="spacer" /><span>Mücevherin: <b style={{ color: '#ffd27a' }}>{fmtG(gems)}</b></span></div>
+      {v.closed ? <div className="muted">Bu tezgâh kapanmış.</div> : !v.items ? <div className="muted">Tezgâha yürüyorsun…</div> : v.items.length === 0 ? <div className="muted">Tezgâhta eşya kalmamış.</div> : (
+        <div className="stall-list">
+          {v.items.map(({ item, price }) => {
+            const poor = gems < price;
+            return (
+              <div className="stall-row" key={item.id}>
+                <Cell it={item} bind={bind(item)} />
+                <span className="nm" style={{ color: RARITY[item.rarity].color }}>{itemDisplayName(item)}</span>
+                <span className={'pv' + (poor ? ' poor' : '')}>{fmtG(price)} <small>Mücevher</small></span>
+                {confirm === item.id
+                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', owner: v.owner, item: item.id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
+                  : <button className="btn small primary" disabled={poor || bagFull} title={poor ? 'Yeterli Mücevherin yok' : bagFull ? 'Çantan dolu' : ''} onClick={() => setConfirm(item.id)}>Satın al</button>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {bagFull && <div className="err">Çantan dolu; satın almak için yer aç.</div>}
+      {tip && <ItemTip {...tip} />}
     </Panel>
   );
 }

@@ -83,6 +83,30 @@ function genVillage(l: MapLayout, rng: Rng) {
     }
   };
   road(cx - 1, 3, cx + 1, cy); road(cx - 1, cy, cx + 1, h - 4); road(3, cy - 1, cx, cy + 1); road(cx, cy - 1, w - 4, cy + 1);
+  // Pazar Meydanı: oyuncuların tezgâh kurduğu geniş taş meydan (doğu yolu üstünde)
+  const mk = l.def.market;
+  if (mk) {
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const d = ((x - mk.tx) / mk.rx) ** 2 + ((y - mk.ty) / mk.ry) ** 2;
+      if (d < 1.12) { l.ground[idx(l, x, y)] = d > 0.86 ? G.DIRT : G.COBBLE; protect[idx(l, x, y)] = 1; }
+    }
+    // kenarda fener halkası ve dört köşede sancak
+    for (let k = 0; k < 14; k++) {
+      const a = (k / 14) * Math.PI * 2;
+      const fx = mk.tx + Math.cos(a) * (mk.rx + 0.6), fy = mk.ty + Math.sin(a) * (mk.ry + 0.6);
+      if (Math.abs(Math.sin(a)) < 0.25 && Math.cos(a) < 0) continue; // batı girişi (yol) açık kalsın
+      l.props.push({ k: 'lamp', x: fx * TILE, y: fy * TILE, v: 0, s: 1 });
+    }
+    for (const [ox, oy] of [[-0.72, -0.72], [0.72, -0.72], [-0.72, 0.72], [0.72, 0.72]] as const) l.props.push({ k: 'banner', x: (mk.tx + ox * mk.rx) * TILE, y: (mk.ty + oy * mk.ry) * TILE, v: 0, s: 1.1 });
+    // kenarda süs sandık ve fıçılar (yürüme alanının dışında)
+    for (let k = 0; k < 10; k++) {
+      const a = 0.4 + (k / 10) * Math.PI * 2;
+      const fx = mk.tx + Math.cos(a) * (mk.rx + 1.6), fy = mk.ty + Math.sin(a) * (mk.ry + 1.6);
+      if (fx < 2 || fy < 2 || fx > w - 3 || fy > h - 3 || (Math.abs(Math.sin(a)) < 0.3 && Math.cos(a) < 0)) continue;
+      l.props.push({ k: k % 2 ? 'barrel' : 'crate', x: fx * TILE, y: fy * TILE, v: k % 2, s: 1 });
+      l.blocked[idx(l, Math.floor(fx), Math.floor(fy))] = 1;
+    }
+  }
   // göl köşesi
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const d = ((x - 9) / 5.5) ** 2 + ((y - 37) / 3.6) ** 2 + (smoothNoise(x, y, 3, 9) - 0.5) * 0.5;
@@ -130,7 +154,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     }
   }
   // süs
-  for (let n = 0; n < 220; n++) {
+  for (let n = 0, N = Math.round(220 * (w * h) / (56 * 44)); n < N; n++) {
     const x = 3 + ((rng() * (w - 6)) | 0), y = 3 + ((rng() * (h - 6)) | 0);
     const i = idx(l, x, y);
     if (protect[i] || l.blocked[i] || l.ground[i] === G.SAND || l.ground[i] === G.WATER) continue;

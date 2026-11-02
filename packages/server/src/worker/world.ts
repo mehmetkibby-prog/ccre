@@ -1,6 +1,6 @@
 import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
-  COMBAT_LOCK_MS, BAG_EQUIP_CAP, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
+  COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
   SHOPS, SELL_PRICES, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
@@ -66,12 +66,14 @@ export class World {
     zone.addPlayer(p);
     this.sendJson(p, { t: 'welcome', entityId: p.id, channel: this.opt.channel, map: zone.id, x: p.x, y: p.y, serverTime: this.now, worldHealth: this.worldHealth, online: this.online });
     this.sendFullSelf(p);
+    this.sendStalls(p);
     this.opt.post({ type: 'joined', sid, ok: true });
   }
 
   leave(sid: number) {
     const p = this.bySid.get(sid);
     if (!p) return;
+    if (p.stall) this.closeStall(p, '');
     this.bySid.delete(sid);
     p.zone.removePlayer(p);
     for (const m of p.zone.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
@@ -111,7 +113,13 @@ export class World {
 
   private dispatch(p: Player, c: ClientCmd) {
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
+    // tezgâh açıkken çanta, savaş ve yolculuk kapalı: aynı eşya iki kez satılamaz / kullanılamaz
+    if (p.stall && !STALL_FREE_CMDS.has(c.t)) { this.notice(p, 'Tezgâhın açıkken bunu yapamazsın. Önce tezgâhı kapat.'); return; }
     switch (c.t) {
+      case 'stall_open': return this.cmdStallOpen(p, c);
+      case 'stall_close': if (p.stall) this.closeStall(p, 'Tezgâhını kapattın.'); return;
+      case 'stall_view': return this.cmdStallView(p, Number(c.owner) | 0);
+      case 'stall_buy': return this.cmdStallBuy(p, c);
       case 'attack': return this.cmdAttack(p, c.id);
       case 'skill': return this.cmdSkill(p, c.s | 0, c.id, c.x, c.y);
       case 'pickup': return this.cmdPickup(p, c.id);
@@ -166,7 +174,7 @@ export class World {
     for (const p of z.playerSet) {
       p.movedThisTick = false;
       p.moveBudget = Math.min(p.moveBudget + TICK_MS, 300);
-      const blocked = p.dead || now < p.stunUntil || now < p.rootUntil;
+      const blocked = p.dead || now < p.stunUntil || now < p.rootUntil || p.stall !== null;
       while (p.inputs.length && p.moveBudget >= TICK_MS - 1) {
         const inp = p.inputs.shift()!;
         p.moveBudget -= TICK_MS;
@@ -633,6 +641,7 @@ export class World {
 
   private moveToZone(p: Player, z: Zone, x: number, y: number) {
     const from = p.zone;
+    if (p.stall) this.closeStall(p, '');
     const pos = nearestFree(z.layout, x, y);
     if (from !== z) {
       from.removePlayer(p);
@@ -642,9 +651,11 @@ export class World {
       p.known.clear(); p.resetPending = true;
       p.inputs.length = 0;
       this.sendJson(p, { t: 'map', map: z.id, x: p.x, y: p.y });
+      this.sendStalls(p);
     } else {
       p.x = pos.x; p.y = pos.y; z.players.move(p); p.dirty |= Upd.POS; p.inputs.length = 0;
       this.sendJson(p, { t: 'map', map: z.id, x: p.x, y: p.y });
+      this.sendStalls(p);
     }
     z.emit(p.x, p.y, { e: Ev.FX, fx: Fx.TELEPORT, x: p.x | 0, y: p.y | 0, r: 60, ms: 900, a: 0 });
     p.markSave();
@@ -921,6 +932,97 @@ export class World {
     this.bytesOut += typeof data === 'string' ? data.length : data.byteLength;
   }
   sendJson(p: Player, o: unknown) { this.pushOut(p.sid, JSON.stringify(o)); }
+  // ───────────────────────────── pazar tezgâhı ─────────────────────────────
+  private stallList(z: Zone) {
+    const list: { id: number; name: string; title: string; x: number; y: number; n: number }[] = [];
+    for (const q of z.playerSet) if (q.stall) list.push({ id: q.id, name: q.char.name, title: q.stall.title, x: Math.round(q.stall.x), y: Math.round(q.stall.y), n: q.stall.prices.size });
+    return list;
+  }
+  private sendStalls(p: Player) { if (p.zone.def.market) this.sendJson(p, { t: 'stalls', list: this.stallList(p.zone) }); }
+  private broadcastStalls(z: Zone) {
+    const msg = JSON.stringify({ t: 'stalls', list: this.stallList(z) });
+    for (const q of z.playerSet) this.pushOut(q.sid, msg);
+  }
+  private sendMyStall(p: Player) {
+    const s = p.stall;
+    this.sendJson(p, { t: 'mystall', open: !!s, title: s?.title ?? '', items: s ? [...s.prices].map(([id, price]) => ({ id, price })) : [] });
+  }
+  private cmdStallOpen(p: Player, c: Extract<ClientCmd, { t: 'stall_open' }>) {
+    if (p.stall) return this.notice(p, 'Tezgâhın zaten açık.');
+    const z = p.zone, mk = z.def.market;
+    if (!mk) return this.notice(p, 'Tezgâh yalnız Pazar Köyü\'ndeki Pazar Meydanı\'nda kurulabilir.');
+    if (!inMarket(z.def, p.x, p.y)) return this.notice(p, `Tezgâh kurmak için ${mk.name}'na git (köyün doğusu).`);
+    for (const q of z.playerSet) if (q !== p && q.stall && Math.hypot(q.stall.x - p.x, q.stall.y - p.y) < STALL_MIN_GAP) return this.notice(p, `Burada ${q.char.name} tezgâh kurmuş. Biraz uzaklaş.`);
+    const items = Array.isArray(c.items) ? c.items.slice(0, STALL_MAX_ITEMS + 1) : [];
+    if (items.length === 0) return this.notice(p, 'Satmak için en az bir eşya seç.');
+    if (items.length > STALL_MAX_ITEMS) return this.notice(p, `Tezgâha en çok ${STALL_MAX_ITEMS} eşya konabilir.`);
+    const prices = new Map<string, number>();
+    for (const it of items) {
+      const id = String(it?.id ?? ''), price = Math.floor(Number(it?.price));
+      const bagItem = p.char.bag.find((b) => b.id === id);
+      if (!bagItem) return this.notice(p, 'Seçtiğin bir eşya artık çantanda değil.');
+      if (bagItem.locked) return this.notice(p, `${itemDisplayName(bagItem)} kilitli. Satmak için önce kilidini aç.`);
+      if (!Number.isFinite(price) || price < 1 || price > STALL_MAX_PRICE) return this.notice(p, `Fiyat 1 ile ${STALL_MAX_PRICE.toLocaleString('tr-TR')} Mücevher arasında olmalı.`);
+      prices.set(id, price);
+    }
+    if (this.seenReceipt(p, String(c.req ?? ''))) return;
+    const title = sanitizeChat(String(c.title ?? ''), STALL_TITLE_MAX).trim() || `${p.char.name} Tezgâhı`;
+    p.inputs.length = 0;
+    p.stall = { title, prices, x: p.x, y: p.y, openedAt: this.now };
+    if (p.anim !== Anim.IDLE) { p.anim = Anim.IDLE; p.dirty |= Upd.ANIM; }
+    this.sendMyStall(p);
+    this.broadcastStalls(z);
+    this.notice(p, `Tezgâhın açıldı: ${prices.size} eşya. Satış olunca haber vereceğim.`, 'ok');
+  }
+  closeStall(p: Player, msg: string) {
+    if (!p.stall) return;
+    p.stall = null;
+    this.sendMyStall(p);
+    this.broadcastStalls(p.zone);
+    if (msg) this.notice(p, msg, 'info');
+  }
+  private stallOf(p: Player, owner: number): Player | null {
+    for (const q of p.zone.playerSet) if (q.id === owner && q.stall) return q;
+    return null;
+  }
+  private cmdStallView(p: Player, owner: number) {
+    const q = this.stallOf(p, owner);
+    if (!q || !q.stall) { this.sendJson(p, { t: 'stall', owner, closed: true }); return; }
+    if (Math.hypot(q.stall.x - p.x, q.stall.y - p.y) > STALL_VIEW_RANGE) { this.sendJson(p, { t: 'stall', owner, far: true, x: q.stall.x, y: q.stall.y, name: q.char.name, title: q.stall.title }); return; }
+    const items: { item: ItemInstance; price: number }[] = [];
+    for (const [id, price] of q.stall.prices) { const it = q.char.bag.find((b) => b.id === id); if (it) items.push({ item: it, price }); }
+    this.sendJson(p, { t: 'stall', owner, name: q.char.name, title: q.stall.title, items, own: q === p });
+  }
+  private cmdStallBuy(p: Player, c: Extract<ClientCmd, { t: 'stall_buy' }>) {
+    const q = this.stallOf(p, Number(c.owner) | 0);
+    if (!q || !q.stall) return this.notice(p, 'Bu tezgâh kapanmış.');
+    if (q === p) return this.notice(p, 'Kendi tezgâhından alamazsın.');
+    if (Math.hypot(q.stall.x - p.x, q.stall.y - p.y) > STALL_VIEW_RANGE) return this.notice(p, 'Tezgâha biraz daha yaklaş.');
+    const id = String(c.item ?? ''), price = q.stall.prices.get(id);
+    const idx = q.char.bag.findIndex((b) => b.id === id);
+    if (price === undefined || idx < 0) { this.cmdStallView(p, q.id); return this.notice(p, 'Bu eşya satılmış.'); }
+    if (price !== Math.floor(Number(c.price))) { this.cmdStallView(p, q.id); return this.notice(p, 'Fiyat değişmiş, tezgâhı yeniledim.'); }
+    if (p.char.gems < price) return this.notice(p, `Yeterli Mücevherin yok (${price.toLocaleString('tr-TR')} gerekiyor).`);
+    if (p.char.bag.length >= BAG_EQUIP_CAP) return this.notice(p, 'Çantan dolu.');
+    if (this.seenReceipt(p, String(c.req ?? ''))) return;
+    // tek adımda aktarım: eşya satıcının çantasından alıcınınkine, Mücevher alıcıdan satıcıya
+    const [item] = q.char.bag.splice(idx, 1);
+    delete item.locked;
+    item.src = 'pazar';
+    q.stall.prices.delete(id);
+    p.char.gems -= price; q.char.gems += price;
+    p.char.bag.push(item);
+    p.selfDirty |= 1 | 2; q.selfDirty |= 1 | 2;
+    this.save(p, true); this.save(q, true);
+    const name = itemDisplayName(item);
+    this.notice(p, `${name} satın alındı: −${price.toLocaleString('tr-TR')} Mücevher`, 'ok');
+    this.notice(q, `${p.char.name}, ${name} eşyanı ${price.toLocaleString('tr-TR')} Mücevher'e aldı.`, 'ok');
+    this.sendJson(q, { t: 'stall_sold', buyer: p.char.name, name, price });
+    if (q.stall.prices.size === 0) this.closeStall(q, 'Tezgâhındaki her şey satıldı, tezgâh kapandı.');
+    else { this.sendMyStall(q); this.broadcastStalls(q.zone); }
+    this.cmdStallView(p, q.id);
+  }
+
   notice(p: Player, text: string, kind: 'info' | 'error' | 'ok' = 'error') { this.sendJson(p, { t: 'notice', text, kind }); }
 
   private sendSelf(p: Player, mask: number) {
@@ -1097,3 +1199,6 @@ function uuid(): string {
   const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
 }
+
+/** Tezgâh açıkken de çalışan komutlar (çanta ve konum değiştirmeyenler). */
+const STALL_FREE_CMDS = new Set(['stall_close', 'stall_view', 'stall_open', 'chat', 'ping', 'sync', 'potion', 'autopotion', 'npc']);

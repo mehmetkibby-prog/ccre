@@ -6,7 +6,7 @@
  */
 import { World, makeItem } from '../../../server/src/worker/world.ts';
 import type { CharState, FromWorker } from '../../../server/src/types.ts';
-import { TUNING, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
+import { TUNING, MAPS, SELL_PRICES, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
 const KEY = 'col_offline_v1';
 interface Db { nextAcc: number; nextChar: number; accounts: { id: number; username: string; pass: string; starter: boolean }[]; chars: Record<number, CharState>; session: number | null }
@@ -50,6 +50,7 @@ class Backend {
   tickets = new Map<string, { accountId: number; charId: number }>();
   nextSid = 1;
   bots: Bot[] = [];
+  merchants = 0;
   health = 100;
   started = false;
   lastWorld = 0;
@@ -121,7 +122,7 @@ class Backend {
   // ───────── test botları: köyde dolaşan ve ormanda avlanan oyuncular ─────────
   resetBots() {
     for (const bot of this.bots) this.world.leave(bot.sid);
-    this.bots = [];
+    this.bots = []; this.merchants = 0;
     this.spawnBots();
   }
   private spawnBots() {
@@ -138,7 +139,20 @@ class Backend {
         bag: [], equip: { weapon: makeItem(`w_${cls}`, j > 4 ? 'orange' : 'blue', 'bot', 1), armor: makeItem(`a_${cls}`, 'blue', 'bot', 1) }, materials: { red_potion: 999 }, misc: { autoPotion: true }, saveVersion: 0,
       };
       const sid = 10_000 + i;
+      // köydeki ilk üç bot Pazar Meydanı'nda tezgâh açan tüccar
+      const merchant = !forest && this.merchants < 3 && !!MAPS.bazaar.market;
+      if (merchant) {
+        const mk = MAPS.bazaar.market!, k = this.merchants++;
+        const spots = [[-6, -4], [5, -5], [-3, 5]] as const;
+        c.x = (mk.tx + spots[k][0]) * 64 + 32; c.y = (mk.ty + spots[k][1]) * 64 + 32;
+        const rar = ['white', 'blue', 'blue', 'orange', 'orange', 'crimson'] as const;
+        c.bag = Array.from({ length: 4 + k }, (_, n) => makeItem(ITEM_TEMPLATES[(i * 7 + n * 5) % ITEM_TEMPLATES.length].id, rar[(n + k) % rar.length], 'bot', (n + k) % 3));
+      }
       this.world.join(sid, c);
+      if (merchant) {
+        const titles = [`${name}'nin Silah Dükkânı`, 'Ucuz zırh, kaçırma!', `${name} · Nadir eşyalar`];
+        this.world.onCmd(sid, JSON.stringify({ t: 'stall_open', title: titles[this.merchants - 1], items: c.bag.map((it) => ({ id: it.id, price: Math.round((SELL_PRICES[it.rarity] ?? 5) * (2.5 + Math.random() * 2)) })), req: 'bot' + sid }));
+      }
       this.bots.push({ sid, seq: 0, tx: c.x, ty: c.y, forest, target: 0, nextChat: performance.now() + 15000 + Math.random() * 40000 });
     });
   }
@@ -148,6 +162,7 @@ class Backend {
       const p = this.world.bySid.get(b.sid);
       if (!p) continue;
       if (p.dead) { this.world.onCmd(b.sid, '{"t":"respawn","where":"here"}'); continue; }
+      if (p.stall) continue; // tezgâh başındaki tüccar yerinden kalkmaz
       let tx = b.tx, ty = b.ty;
       if (b.forest) {
         let t = b.target ? p.zone.monsterById.get(b.target) : undefined;

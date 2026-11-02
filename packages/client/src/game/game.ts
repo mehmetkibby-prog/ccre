@@ -1,4 +1,4 @@
-import {
+import { DIR_STEPS,
   readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
   MONSTERS, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
 } from '@col/shared';
@@ -59,6 +59,7 @@ export class Game {
   camYaw = 0;
 
   constructor(public canvas: HTMLCanvasElement, overlay: HTMLCanvasElement, private ticket: string, private onClose: (reason: string) => void) {
+    if (OFFLINE) Object.assign(window, { __colGame: this, __colStore: store }); // yalnız tarayıcı test sürümünde: uçtan uca testler için
     this.renderer = new Renderer3D(this, canvas, overlay);
     this.fx = this.renderer.fx;
     this.setMap('bazaar', 0, 0);
@@ -116,6 +117,7 @@ export class Game {
       case 'char': this.charId = m.id; this.cls = m.cls; store.set({ char: { id: m.id, name: m.name, cls: m.cls, role: m.role } }); break;
       case 'self': store.set((s) => ({ self: { ...(s.self ?? ({} as any)), ...strip(m) } })); break;
       case 'map': {
+        store.set({ stalls: [], stallView: null, panel: store.get().panel === 'market' ? null : store.get().panel });
         const same = m.map === this.layout.def.id;
         if (same) { this.px = this.dx = this.ppx = m.x; this.py = this.dy = this.ppy = m.y; this.corrX = this.corrY = 0; this.pending = []; }
         else { this.setMap(m.map, m.x, m.y); notify(MAPS[m.map]?.name ?? m.map, 'zone'); }
@@ -126,6 +128,11 @@ export class Game {
       }
       case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
       case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
+      // ───────── pazar tezgâhları ─────────
+      case 'stalls': store.set({ stalls: Array.isArray(m.list) ? m.list : [] }); break;
+      case 'stall': store.set((st) => (st.panel === 'market' || !st.stallView || st.stallView.owner === m.owner ? { stallView: m, panel: 'market' } : {})); break;
+      case 'mystall': store.set({ myStall: { open: !!m.open, title: String(m.title ?? ''), items: Array.isArray(m.items) ? m.items : [] } }); break;
+      case 'stall_sold': store.set((st) => ({ stallLog: [`${m.buyer} · ${m.name} · ${Number(m.price).toLocaleString('tr-TR')} Mücevher`, ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
       case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
       case 'gain': {
@@ -394,7 +401,9 @@ export class Game {
     const cy = Math.cos(this.camYaw), sy = Math.sin(this.camYaw);
     const mv = { x: mv0.x * cy + mv0.y * sy, y: -mv0.x * sy + mv0.y * cy };
     let dir = NO_DIR;
-    if (mv.x || mv.y) { dir = dirIndexFromVector(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
+    if (store.get().myStall?.open) { this.moveTarget = null; return; } // tezgâh başında oturuyor
+    if (!mv.x && !mv.y) this.lastJoyDir = NO_DIR;
+    if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
     // saldırı: basılı tutma veya otomatik hedef
     const wantAttack = this.input.attackHeld || this.autoAttack;
     if (wantAttack && dir === NO_DIR) {
@@ -430,9 +439,27 @@ export class Game {
       const pos = { x: this.px, y: this.py };
       stepMove(this.layout, pos, dir, this.speed());
       this.px = pos.x; this.py = pos.y;
-      if (pos.x !== ox || pos.y !== oy) { this.lastMoveAt = performance.now(); this.sdir = Math.round(Math.atan2(pos.y - oy, pos.x - ox) / (Math.PI * 2) * 256) & 255; }
+      // bakış yönü girişten: engel boyunca kayarken konum farkı yönü oynatıyordu
+      if (pos.x !== ox || pos.y !== oy) { this.lastMoveAt = performance.now(); this.sdir = (dir * (256 / DIR_STEPS)) & 255; }
       else if (this.moveTarget) this.moveTarget = null; // engel: dur
     }
+  }
+
+  /**
+   * Joystick yönü (64 adım) için histerezis: başparmak hiç tam durmadığından yön iki komşu adım arasında
+   * her 50 ms'de gidip geliyor, karakterin gövdesi sallanıyordu. Önceki yön ham açıya 0,9 adımdan yakınsa korunur.
+   */
+  private lastJoyDir = NO_DIR;
+  private steadyDir(x: number, y: number): number {
+    const raw = dirIndexFromVector(x, y);
+    const prev = this.lastJoyDir;
+    if (prev !== NO_DIR && raw !== prev) {
+      let a = Math.atan2(y, x) / (Math.PI * 2) * DIR_STEPS; if (a < 0) a += DIR_STEPS;
+      let d = Math.abs(a - prev); if (d > DIR_STEPS / 2) d = DIR_STEPS - d;
+      if (d < 0.9) return prev;
+    }
+    this.lastJoyDir = raw;
+    return raw;
   }
 
   nearestEnemy(maxD: number): CEnt | null {
@@ -483,6 +510,18 @@ export class Game {
     else notify('Yakında toplanacak ganimet yok.', 'info');
   }
   potion() { this.send({ t: 'potion' }); }
+  /** Bir tezgâhı aç: yakınsa içeriğini iste, uzaksa önce yürü. */
+  openStall(owner: number) {
+    const s = store.get().stalls.find((q) => q.id === owner);
+    store.set({ stallView: { owner, name: s?.name, title: s?.title }, panel: 'market' });
+    if (s && Math.hypot(s.x - this.px, s.y - this.py) > 520) this.moveTarget = { x: s.x, y: s.y + 110 };
+    else this.send({ t: 'stall_view', owner });
+  }
+  /** Pazar Meydanı'na yürü (köyün doğusu). */
+  goToMarket() {
+    const m = this.layout.def.market;
+    if (m) this.moveTarget = { x: m.tx * 64 + 32 - 200, y: m.ty * 64 + 32 + 60 };
+  }
   travel(map: string, confirm = false) { this.send({ t: 'travel', map, req: reqId(), confirm }); }
 
   /** Ekran tıklaması: hedef seç, NPC ile konuş, ganimet al veya yürü. */
@@ -496,6 +535,7 @@ export class Game {
       else this.moveTarget = { x: e.x, y: e.y };
       return;
     }
+    if (hit?.type === 'ent' && hit.e!.kind === Kind.PLAYER && store.get().stalls.some((s) => s.id === hit.e!.id)) { this.openStall(hit.e!.id); return; }
     if (hit?.type === 'ent') {
       this.setTarget(hit.e!.id);
       if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.moveTarget = null; }

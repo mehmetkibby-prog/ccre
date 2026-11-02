@@ -1,6 +1,6 @@
 import { AnnouncementBar, useCanAdmin } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, type ClassId } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, type ClassId } from '@col/shared';
 import { Game } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -118,6 +118,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <Chat />
       <BottomBar game={game} />
       <Menu onExit={onExit} />
+      <StallFab game={game} />
       {mobile && <MobileControls game={game} />}
       {mobile && <CameraControls game={game} />}
       <Panels game={game} onExit={onExit} />
@@ -422,3 +423,21 @@ function DeathOverlay({ game }: { game: Game }) {
 }
 
 export { MATERIAL, CLASSES, reqId };
+
+/** Pazar Meydanı'nda tezgâh kurma kısayolu; tezgâh açıkken "Tezgâhım". */
+function StallFab({ game }: { game: Game }) {
+  const map = useStore((s) => s.map);
+  const my = useStore((s) => s.myStall);
+  const panel = useStore((s) => s.panel);
+  const [here, setHere] = useState(false);
+  useEffect(() => {
+    const def = MAPS[map];
+    if (!def?.market) { setHere(false); return; }
+    const iv = setInterval(() => setHere(inMarket(def, game.px, game.py)), 400);
+    return () => clearInterval(iv);
+  }, [map, game]);
+  if (panel) return null;
+  if (my?.open) return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Tezgâhım · {my.items.length} eşya</button>;
+  if (!here) return null;
+  return <button className="btn small primary stall-fab" onClick={() => store.set({ panel: 'market', stallView: null })}>Tezgâh Kur</button>;
+}

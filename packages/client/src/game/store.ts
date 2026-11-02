@@ -10,8 +10,11 @@ export interface SelfInfo {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | null;
 
+export interface StallInfo { id: number; name: string; title: string; x: number; y: number; n: number }
+export interface StallView { owner: number; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
+export interface MyStall { open: boolean; title: string; items: { id: string; price: number }[] }
 export interface UiState {
   connected: boolean; status: string;
   map: string; channel: number; entityId: number;
@@ -26,6 +29,7 @@ export interface UiState {
   panel: Panel;
   npc: { id: string; name: string; title: string; actions: string[] } | null;
   shop: string | null;
+  stalls: StallInfo[]; stallView: StallView | null; myStall: MyStall | null; stallLog: string[];
   cooldowns: Record<number, number>; // beceri → bitiş (performance.now)
   ping: number; fps: number;
   confirmTravel: { map: string; text: string } | null;
@@ -49,7 +53,7 @@ function loadSettings(): UiState['settings'] {
 
 let state: UiState = {
   connected: false, status: '', map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
-  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: false, unread: 0, notices: [], panel: null, npc: null, shop: null, cooldowns: {},
+  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: false, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, lootFeed: [], settings: loadSettings(),
 };
 const listeners = new Set<() => void>();

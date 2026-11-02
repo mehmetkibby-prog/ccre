@@ -141,5 +141,9 @@ export type ClientCmd =
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'npc'; id: string }
   | { t: 'use'; key: string; req: string }
+  | { t: 'stall_open'; title: string; items: { id: string; price: number }[]; req: string }
+  | { t: 'stall_close' }
+  | { t: 'stall_view'; owner: number }
+  | { t: 'stall_buy'; owner: number; item: string; price: number; req: string }
   | { t: 'ping'; c: number }
   | { t: 'sync' };

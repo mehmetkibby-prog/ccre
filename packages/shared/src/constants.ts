@@ -19,3 +19,9 @@ export const BAG_EQUIP_CAP = 35;
 export const RESPAWN_DELAY_MS = 5_000;
 export const COMBAT_LOCK_MS = 6_000;
 export const PARTY_XP_RANGE = 2400;
+// oyuncu tezgâhı (pazar)
+export const STALL_MAX_ITEMS = 12;
+export const STALL_MIN_GAP = 120; // iki tezgâh arası en az (dünya birimi)
+export const STALL_VIEW_RANGE = 600;
+export const STALL_MAX_PRICE = 50_000_000;
+export const STALL_TITLE_MAX = 32;

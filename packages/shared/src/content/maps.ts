@@ -20,6 +20,8 @@ export interface MapDef {
   minLevel: number;
   respawnMap: string;
   dropPenalty?: 'none' | 'gems5';
+  /** Oyuncu tezgâhlarının kurulabildiği alan (karo merkezi ve elips yarıçapları). */
+  market?: { tx: number; ty: number; rx: number; ry: number; name: string };
   spawns: SpawnGroup[];
   npcs: NpcDef[];
   desc: string;
@@ -28,9 +30,10 @@ export interface MapDef {
 
 export const MAPS: Record<string, MapDef> = {
   bazaar: {
-    id: 'bazaar', name: 'Pazar Köyü', w: 56, h: 44, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
+    id: 'bazaar', name: 'Pazar Köyü', w: 88, h: 60, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
     respawnMap: 'bazaar', spawns: [], travelable: true,
-    desc: 'Güvenli sosyal merkez. Ticaret, demirci, depo ve seferler buradan başlar.',
+    market: { tx: 67, ty: 24, rx: 14, ry: 11, name: 'Pazar Meydanı' },
+    desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar.',
     npcs: [
       { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'shop_smith'] },
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },
@@ -84,3 +87,11 @@ export const MAPS: Record<string, MapDef> = {
   },
 };
 export const MAP_IDS = Object.keys(MAPS);
+
+/** Nokta (dünya birimi) haritanın pazar alanında mı? */
+export function inMarket(def: MapDef, x: number, y: number): boolean {
+  const m = def.market;
+  if (!m) return false;
+  const T = 64, cx = m.tx * T + T / 2, cy = m.ty * T + T / 2;
+  return ((x - cx) / (m.rx * T)) ** 2 + ((y - cy) / (m.ry * T)) ** 2 <= 1;
+}

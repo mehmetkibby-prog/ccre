@@ -321,3 +321,20 @@ input, select { font-family: inherit; }
 .announce { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 25; max-width: min(640px, 92vw); padding: 7px 16px; border-radius: 18px; background: linear-gradient(180deg, rgba(200,150,46,.95), rgba(122,90,20,.95)); color: #1a1206; font-weight: 800; font-size: 13px; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.45); pointer-events: none; }
 .admin-btn { position: fixed; right: 12px; bottom: 12px; z-index: 5; }
 @media (max-width: 520px) { .admin-row { grid-template-columns: minmax(0, 1fr) 54px; } .admin-row input[type=range] { grid-column: 1 / -1; grid-row: 2; } }
+
+/* ───────── pazar tezgâhı ───────── */
+.stall-where { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 10px; border-radius: 6px; border: 1px solid #6a4a22; background: rgba(120, 70, 20, .18); font-size: 13px; margin-bottom: 10px; }
+.stall-where.ok { border-color: #4a7a44; background: rgba(60, 120, 60, .16); }
+.stall-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.stall-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 4px 6px; border-radius: 6px; background: rgba(0,0,0,.22); }
+.stall-row .cell { width: 44px; height: 44px; }
+.stall-row .nm { font-weight: 800; font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stall-row .pv { font-weight: 800; color: #ffd27a; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stall-row .pv small { color: var(--muted); font-weight: 600; }
+.stall-row .pv.poor { color: #ff8a7a; }
+.stall-row .price { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.stall-row .price input { width: 96px; text-align: right; }
+.stall-fab { position: absolute; left: 50%; bottom: 128px; transform: translateX(-50%); z-index: 6; box-shadow: 0 4px 14px rgba(0,0,0,.45); }
+@media (max-width: 560px) { .stall-row { grid-template-columns: 40px minmax(0, 1fr) auto; } .stall-row > :last-child { grid-column: 2 / -1; justify-self: end; } }
+.stall-row .price input { background: #10140e; color: #f1ead8; border: 1px solid #4a3e22; border-radius: 5px; padding: 5px 7px; font: inherit; font-weight: 800; }
+.stall-row .price input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
