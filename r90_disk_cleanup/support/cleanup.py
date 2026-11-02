@@ -13,11 +13,13 @@ DATA_EXTENSIONS=('.sqlite','.sqlite3','.db','.sql','.rdb','.aof','.sqlite-wal','
 
 ROOT_UID=0
 SCHEMA_SOURCES=json.loads((Path(__file__).parent/'schema_sources.json').read_text())['files']
+ARTIFACT_SOURCES=json.loads((Path(__file__).parent/'artifact_sources.json').read_text())['files']
+PACKAGED_SOURCES={**SCHEMA_SOURCES,**ARTIFACT_SOURCES}
 
-def known_schema_source(root,path):
- # Fixed paths and byte hashes from the original bundled schema, not a suffix
- # exemption. An SQL dump or changed snapshot at the same path stays protected.
- expected=SCHEMA_SOURCES.get(path.relative_to(root).as_posix())
+def known_packaged_source(root,path):
+ # Exact original schema, dependency sourcemap and evidence-file identities.
+ # This is not an extension/name exemption: changed files stay protected.
+ expected=PACKAGED_SOURCES.get(path.relative_to(root).as_posix())
  return bool(expected and not path.is_symlink() and path.stat().st_size==expected['bytes'] and digest(path)==expected['sha256'])
 
 def old_installer_name(name):
@@ -52,7 +54,7 @@ def staging_archive_guard(root,mounts,managed=False,examples=None):
    if p.is_symlink():continue
    lower=name.lower()
    if lower.endswith(DATA_EXTENSIONS) or re.search(r'\.(?:sqlite3?|db|sql)(?:$|[._-])',lower) or (not lower.endswith(('.py','.mjs','.js','.ts','.md')) and any(mark in lower for mark in ('backup','snapshot','-before.','yedek'))):
-    if not (managed and known_schema_source(root,p)):block('backup/data file',p)
+    if not (managed and known_packaged_source(root,p)):block('backup/data file',p)
     continue
    if not lower.endswith(ARCHIVE_EXTENSIONS):continue
    # Never discard an opaque archive inside a staging folder. A recognizable

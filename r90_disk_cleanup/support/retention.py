@@ -164,7 +164,8 @@ def cleanup(live,releases,state_root,apply=False,external=None,mounts=None,updat
  recheck();result=plan(live,releases,state_root,external,mounts,updates_root,staging)
  print('Sürüm temizliği: '+str(len(result['candidates']))+' eski klasör; tahmini boşalacak '+str(round(result['reclaimableBytes']/1024**3,2))+' GiB.',flush=True)
  for name in result['candidates']:print('SİLİNEBİLİR: '+name,flush=True)
- for name,why in sorted(result['protected'].items()):print('KORUNDU: '+Path(name).name+' ('+why+')',flush=True)
+ for name,why in sorted(result['protected'].items()):
+  if Path(name).parent==Path(releases):print('KORUNDU: '+Path(name).name+' ('+why+')',flush=True)
  if not apply:return result
  require(shutil.rmtree.avoids_symlink_attacks,'Güvenli dizin silme desteklenmiyor')
  audit=Path(state_root)/'release-retention';audit.mkdir(mode=0o700,exist_ok=True)

@@ -1,5 +1,5 @@
 {
-  "tests": 52,
+  "tests": 59,
   "passed": true,
   "realComponents": [
     "temporary filesystem",
@@ -16,6 +16,6 @@
   "liveVdsApplied": false,
   "productionOwnerUid": 0,
   "fixtureOwnerUid": 1000,
-  "cleanupRevision": 2,
-  "regression": "Real original SQL migrations/schema snapshots no longer classified as user data when exact path, size and SHA256 match pinned source"
+  "cleanupRevision": 3,
+  "regression": "Actual Next/Lucide map bytes reproduce v2 false positive; exact original artifact pins permit unused release deletion while modified data and active dependencies remain protected"
 }

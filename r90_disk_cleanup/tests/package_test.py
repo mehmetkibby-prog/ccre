@@ -42,4 +42,14 @@ class Tests(unittest.TestCase):
      destination.writestr(name,data)
    result=self.run_package(target,'--apply')
    self.assertEqual(result.returncode,1);self.assertIn('Paket bütünlüğü bozuk',result.stdout)
+ def test_tampered_artifact_allowlist_is_rejected(self):
+  with tempfile.TemporaryDirectory() as directory:
+   target=Path(directory)/'modified.zip'
+   with zipfile.ZipFile(PACKAGE) as source,zipfile.ZipFile(target,'w') as destination:
+    for name in source.namelist():
+     data=source.read(name)
+     if name=='support/artifact_sources.json':data=b'{"files":{}}'
+     destination.writestr(name,data)
+   result=self.run_package(target,'--apply')
+   self.assertEqual(result.returncode,1);self.assertIn('Paket bütünlüğü bozuk',result.stdout)
 if __name__=='__main__':unittest.main(verbosity=2)

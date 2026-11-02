@@ -1,0 +1,45 @@
+{
+  "files": {
+    "deps/native/node_modules/next/dist/esm/server/app-render/dev-validation-worker-snapshot.js.map": {
+      "bytes": 6676,
+      "sha256": "a7a052d6d920c36251c1c41dda0fddd0cfa8174a900c8a827646aeb5699f3a37"
+    },
+    "deps/native/node_modules/next/dist/server/app-render/dev-validation-worker-snapshot.js.map": {
+      "bytes": 6662,
+      "sha256": "29b9de463b46b840d28b7c6e90cd5fe60c80bc31cf3c96f368c29c00bfade477"
+    },
+    "deps/native/node_modules/lucide-react/dist/esm/icons/cloud-backup.mjs.map": {
+      "bytes": 3291,
+      "sha256": "e46e82f0fe0d67f4e6971fc27aada74ab3b37215a31ba037b98f6ae5b377b391"
+    },
+    "deps/native/node_modules/lucide-react/dist/esm/icons/database-backup.mjs.map": {
+      "bytes": 4275,
+      "sha256": "84ca41f9b1c8d63352c1247ecf910a306366e420ef73204291e9b1509dbab4d6"
+    },
+    "core511-source/scripts/core511/evidence/terminal-refresh-borrowed-before.tap": {
+      "bytes": 1691,
+      "sha256": "e852b6d38dc17850aa9e113205b373b82310dab90abcfe45c1ddf9197a2b9db9"
+    }
+  },
+  "provenance": {
+    "next": {
+      "version": "16.3.6",
+      "integrity": "sha512-L+otWM/aQbYTx98aZhgEoMb4bZAXx1YVW4UMA/vuCyCoWG5HJyZUili8QAkqzrcC+5///tsz3s0M+SlyB5bLMw==",
+      "registryArchiveSha256": "7351150c4790cc7ea55f164e6d06bd01164bb65eb861f8ed7169d83a665d99a8"
+    },
+    "lucide-react": {
+      "version": "1.31.0",
+      "integrity": "sha512-G8u2eEtoHUnUa9f8lbvqDhCiORMnYLdUEo06EEG9MQvHQrInKcX3Pa2TH39MM5qyzRcWETxB0+aOwAPI1g1kEg==",
+      "registryArchiveSha256": "935a384e968bd03656c00002c0f574e7461376df432968554603aa02e7c96b03"
+    },
+    "tapIndex": {
+      "path": "core511-source/scripts/delivery511/handoff-support/evidence-file-index.json",
+      "bytes": 29139,
+      "sha256": "a16e4feecdb59ea87341bc18bd8f4a94477d80af1daf64ae9c25c5bde97c97c2",
+      "originalManifestMatched": true,
+      "localR78CopyMatched": true,
+      "reportBytesAvailableLocally": false
+    }
+  },
+  "liveVdsApplied": false
+}
