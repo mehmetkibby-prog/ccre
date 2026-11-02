@@ -34,6 +34,7 @@ export function SkillIcon({ id }: { id: string }) {
 
 export function MenuIcon({ k }: { k: string }) {
   const p: Record<string, React.ReactNode> = {
+    admin: <><path d="M10 34 L8 16 L17 24 L24 10 L31 24 L40 16 L38 34 Z" fill="#e8b838" stroke={dark} strokeWidth="2" /><rect x="10" y="35" width="28" height="6" rx="2" fill="#c8962e" stroke={dark} strokeWidth="2" /></>,
     bag: <><path d="M12 18 H36 L34 42 H14 Z" fill="#a07040" stroke={dark} strokeWidth="2" /><path d="M18 18 C18 8 30 8 30 18" stroke="#d8b25a" strokeWidth="3" /></>,
     char: <><circle cx="24" cy="15" r="8" fill="#e8c8a0" stroke={dark} strokeWidth="2" /><path d="M10 42 C10 28 38 28 38 42 Z" fill="#6a8ab0" stroke={dark} strokeWidth="2" /></>,
     skills: <><path d="M24 6 L29 18 L42 19 L32 27 L35 40 L24 33 L13 40 L16 27 L6 19 L19 18 Z" fill="#f0c860" stroke={dark} strokeWidth="2" /></>,

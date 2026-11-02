@@ -5,9 +5,9 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, onModelReady, loadManifest, type GlbChar } from './models.ts';
+import { createGlbChar, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -178,7 +178,8 @@ export class Renderer3D {
     this.scene.background = this.skyGradient(th.top, th.fog);
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
-    this.renderer.toneMappingExposure = th.exp;
+    this.baseExp = th.exp;
+    this.renderer.toneMappingExposure = th.exp * TUNING.brightness;
     // kendi karakterini yeniden ekle
     if (this.self) this.dyn.add(this.self.obj);
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
@@ -319,7 +320,7 @@ export class Renderer3D {
     v.obj.rotation.y = v.yaw;
     let st: HState = STATE[anim] ?? 'idle';
     if (dead) st = 'dead';
-    else if ((st === 'attack' || st === 'cast') && now - animStart > 600) st = moving ? 'walk' : 'idle';
+    else if ((st === 'attack' || st === 'cast') && now - animStart > (st === 'cast' ? CAST_ANIM_MS : ATTACK_ANIM_MS)) st = moving ? 'walk' : 'idle';
     else if (st === 'idle' && moving) st = 'walk';
     else if (st === 'walk' && !moving && now - v.stateAt > 140) st = 'idle';
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
@@ -331,13 +332,15 @@ export class Renderer3D {
     v.speed = (v.speed ?? 0) * 0.8 + sp * 0.2;
     const restart = (v.state === 'attack' || v.state === 'cast') && (v as View & { lastStart?: number }).lastStart !== animStart;
     (v as View & { lastStart?: number }).lastStart = animStart;
-    if (v.glb) v.glb.update(v.state, dt, moving, v.speed, restart);
+    if (v.glb) v.glb.update(v.state, dt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
     else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
   }
 
   // ───────── çerçeve ─────────
+  private baseExp = 1;
   draw(now: number, dt: number) {
+    this.renderer.toneMappingExposure = this.baseExp * TUNING.brightness; // yönetim panelinden ışık seviyesi
     this.adaptResolution(now, dt);
     this.resize();
     if (!this.terrain) return;
@@ -348,7 +351,8 @@ export class Renderer3D {
     const sv = this.ensureSelf();
     const selfDead = (g.selfFlags & EFlag.DEAD) !== 0;
     let sAnim = g.selfAnim;
-    if (!((sAnim === Anim.ATTACK || sAnim === Anim.CAST) && now - g.selfAnimStart < 520)) sAnim = now - g.lastMoveAt < 120 ? Anim.WALK : Anim.IDLE;
+    if (!((sAnim === Anim.ATTACK || sAnim === Anim.CAST) && now - g.selfAnimStart < (sAnim === Anim.CAST ? CAST_ANIM_MS : ATTACK_ANIM_MS) - 60)) sAnim = now - g.lastMoveAt < 120 ? Anim.WALK : Anim.IDLE;
+    (sv as View & { skill?: number }).skill = g.selfSkill;
     this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, dt, selfDead);
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
@@ -366,6 +370,7 @@ export class Renderer3D {
         continue;
       }
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
+      (v as View & { skill?: number }).skill = e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, dt, dead);
       // ölü canavar yavaşça kaybolur
       if (e.kind === Kind.MONSTER && dead && v.deadAt) { const k = (now - v.deadAt) / 1500; v.obj.position.y -= Math.max(0, k - 0.5) * 0.8; }

@@ -13,7 +13,7 @@ export interface Sample { t: number; x: number; y: number }
 export interface CEnt {
   id: number; kind: number;
   x: number; y: number; samples: Sample[];
-  dir: number; anim: number; animStart: number;
+  dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
   name: string; cls: number; variant: number; tpl: number; weapon: number; guild: string;
   icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
@@ -37,7 +37,7 @@ export class Game {
   // Sunucu düzeltmesi görüntüde sıçrama yapmasın diye ayrı bir ofsette tutulur ve hızla söner.
   private ppx = 0; private ppy = 0; // bir önceki adımın tahmini
   private corrX = 0; private corrY = 0;
-  sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; lastMoveAt = 0; selfFlags = 0;
+  sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; selfSkill = 0; lastMoveAt = 0; selfFlags = 0;
   seq = 0;
   pending: { seq: number; dir: number }[] = [];
   serverOffset: number | null = null;
@@ -245,8 +245,8 @@ export class Game {
         const src = isSelf ? null : this.ents.get(ev.src);
         const sp = isSelf ? { x: this.dx, y: this.dy } : src ? this.entPos(src) : null;
         if (!sp) break;
-        if (isSelf) { this.selfAnim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; this.selfAnimStart = now; this.sdir = Math.round(Math.atan2(ev.y - this.dy, ev.x - this.dx) / (Math.PI * 2) * 256) & 255; }
-        else if (src) { src.anim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; }
+        if (isSelf) { this.selfAnim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; this.selfAnimStart = now; this.selfSkill = ev.skill; this.sdir = Math.round(Math.atan2(ev.y - this.dy, ev.x - this.dx) / (Math.PI * 2) * 256) & 255; }
+        else if (src) { src.anim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; src.skill = ev.skill; }
         const clsIdx = isSelf ? CLASS_IDS.indexOf(this.cls) : src?.kind === Kind.PLAYER ? src.cls : -1;
         if (ev.skill === 9) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 420, kind: 'ice', color: '#8fe6ff' }); break; }
         if (clsIdx === 1 && (ev.skill === 0 || ev.skill === 2 || ev.skill === 3)) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); if (isSelf) sfx.play('bow'); }
@@ -254,6 +254,7 @@ export class Game {
         else if (clsIdx === 0 && ev.skill === 0) { this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 46, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 220, color: '#ffffff' }); if (isSelf) sfx.play('swing'); }
         else if (ev.skill > 0 && isSelf) sfx.play('skill');
         if (clsIdx === 0 && ev.skill === 1) this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 70, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 300, color: '#ffd27a' });
+        if (ev.skill > 0 && ev.skill < 9) this.skillFx(clsIdx, ev.skill, sp, ev, now);
         break;
       }
       case Ev.DEATH: {
@@ -287,6 +288,48 @@ export class Game {
         this.fx.burst(p.x, p.y, 1.0, 60, '#ffe680', 4, 1300, 0.24, 1); this.fx.light(p.x, p.y, 2, '#ffd860', 8, 1200);
         if (isSelf) { this.fx.text(p.x, p.y, 2.8, `Seviye ${ev.level}!`, '#ffe680', 30, 2000); sfx.play('levelup'); notify(`Tebrikler! Seviye ${ev.level} oldun.`, 'ok'); }
         break;
+      }
+    }
+  }
+
+  /** Becerilere özgü görsel: kullanan karakterde toplanan ışık, hedefte sınıfa göre ayrı etki. */
+  private skillFx(clsIdx: number, skill: number, sp: { x: number; y: number }, ev: { x: number; y: number; tgt: number }, now: number) {
+    const col = clsIdx === 0 ? '#ffd27a' : clsIdx === 1 ? '#9dff6a' : '#b28bff';
+    const fx = this.fx, a = Math.atan2(ev.y - sp.y, ev.x - sp.x);
+    // hazırlık: ayak altında halka, yükselen kıvılcımlar, kısa ışık
+    fx.shapes.push({ kind: 'blast', x: sp.x, y: sp.y, r: 70, r2: 0, a: 0, t0: now, dur: 480, color: col });
+    fx.burst(sp.x, sp.y, 0.2, 18, col, 1.4, 600, 0.14, 2.5);
+    fx.light(sp.x, sp.y, 1.2, col, 2.5, 450);
+    const later = (ms: number, f: () => void) => window.setTimeout(f, ms);
+    if (clsIdx === 0) {
+      if (skill === 1) { // zincir: hedefe uzanan altın ışın, hedefte kıvılcım
+        fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 180, kind: 'orb', color: col });
+        later(180, () => { fx.burst(ev.x, ev.y, 1, 26, col, 3, 600, 0.2); fx.light(ev.x, ev.y, 1.2, col, 5, 350); });
+      } else if (skill === 2) { // hücum: arkada toz izi, hedefte şok dalgası
+        for (let i = 0; i < 6; i++) { const k = i / 6; fx.burst(sp.x + (ev.x - sp.x) * k, sp.y + (ev.y - sp.y) * k, 0.1, 6, '#d9c7a1', 1.2, 600, 0.22, 1); }
+        later(160, () => { fx.shapes.push({ kind: 'blast', x: ev.x, y: ev.y, r: 160, r2: 0, a: 0, t0: performance.now(), dur: 520, color: col }); fx.burst(ev.x, ev.y, 0.2, 40, '#fff1c4', 4, 700, 0.22); fx.light(ev.x, ev.y, 1, col, 7, 450); });
+      } else { // uzmanlık: kalkan / hüküm darbesi
+        fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 95, r2: 0, a, t0: now, dur: 360, color: col });
+        fx.shapes.push({ kind: 'blast', x: sp.x + Math.cos(a) * 110, y: sp.y + Math.sin(a) * 110, r: 200, r2: 0, a: 0, t0: now, dur: 560, color: col });
+      }
+    } else if (clsIdx === 1) {
+      if (skill === 1) { // yelpaze: hedef çevresine beş ok
+        for (let i = 0; i < 5; i++) {
+          const ox = (Math.random() - 0.5) * 220, oy = (Math.random() - 0.5) * 220;
+          later(i * 45, () => fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x + ox, ty: ev.y + oy, tgt: 0, t0: performance.now(), dur: 240, kind: 'arrow', color: col }));
+        }
+        later(300, () => fx.burst(ev.x, ev.y, 0.3, 30, col, 3, 650, 0.2));
+      } else { // delici / şafak oku: parlayan büyük ok ve iz
+        fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 230, kind: 'orb', color: skill === 3 ? '#fff3a8' : col });
+        later(230, () => { fx.burst(ev.x, ev.y, 1, 36, skill === 3 ? '#fff3a8' : col, 4, 700, 0.22); fx.light(ev.x, ev.y, 1.2, col, 6, 400); if (skill === 2) fx.shapes.push({ kind: 'blast', x: ev.x, y: ev.y, r: 110, r2: 0, a: 0, t0: performance.now(), dur: 700, color: col }); });
+      }
+    } else if (clsIdx === 2) {
+      if (skill === 2) { // kırağı mührü: buz küresi, hedefte buz çiçeği
+        fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 300, kind: 'ice', color: '#bff4ff' });
+        later(300, () => { fx.burst(ev.x, ev.y, 0.3, 46, '#dff9ff', 2.5, 900, 0.2, 1); fx.shapes.push({ kind: 'blast', x: ev.x, y: ev.y, r: 130, r2: 0, a: 0, t0: performance.now(), dur: 800, color: '#8fe6ff' }); fx.light(ev.x, ev.y, 1, '#8fe6ff', 6, 600); });
+      } else { // öz halkası / patlama: hedefe süzülen küre, ardından halka
+        fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 280, kind: 'orb', color: col });
+        later(280, () => { fx.shapes.push({ kind: 'blast', x: ev.x, y: ev.y, r: skill === 3 ? 190 : 170, r2: 0, a: 0, t0: performance.now(), dur: 600, color: col }); fx.burst(ev.x, ev.y, 0.5, 50, col, 4.5, 800, 0.24); });
       }
     }
   }

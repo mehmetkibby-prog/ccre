@@ -1,3 +1,4 @@
+import { AnnouncementBar, useCanAdmin } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, type ClassId } from '@col/shared';
 import { Game } from '../game/game.ts';
@@ -110,6 +111,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
     <div className="hud">
       <TopBar />
       <Wallet />
+      <AnnouncementBar />
       <Minimap game={game} />
       <Toasts />
       <LootFeed />
@@ -187,6 +189,7 @@ function Minimap({ game }: { game: Game }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const map = useStore((s) => s.map);
   const bgRef = useRef<HTMLCanvasElement | null>(null);
+  const [zone, setZone] = useState('');
   useEffect(() => {
     const l = getLayout(map);
     const c = document.createElement('canvas'); c.width = l.w * 4; c.height = l.h * 4;
@@ -209,18 +212,23 @@ function Minimap({ game }: { game: Game }) {
       ctx.save(); ctx.beginPath(); ctx.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); ctx.clip();
       ctx.drawImage(bg, S / 2 - cx, S / 2 - cy, bg.width * 1.4, bg.height * 1.4);
       const dot = (x: number, y: number, c: string, r = 2.2) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(S / 2 + (x * scale - cx), S / 2 + (y * scale - cy), r, 0, Math.PI * 2); ctx.fill(); };
+      for (const z of game.layout.zones) { ctx.strokeStyle = 'rgba(255,110,80,.55)'; ctx.fillStyle = 'rgba(220,70,50,.12)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(S / 2 + (z.x * scale - cx), S / 2 + (z.y * scale - cy), z.r * scale, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
       for (const n of game.layout.npcs) dot(n.x, n.y, '#ffd84a', 2.6);
       for (const e of game.ents.values()) dot(e.x, e.y, e.kind === Kind.MONSTER ? (e.variant === 2 ? '#ff3030' : '#e86a50') : e.kind === Kind.PLAYER ? '#6ab0ff' : '#fff6c2', e.kind === Kind.LOOT ? 1.5 : 2);
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
       ctx.save(); ctx.translate(S / 2, S / 2); ctx.rotate((game.sdir / 256) * Math.PI * 2); ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-4, -4); ctx.lineTo(-2, 0); ctx.lineTo(-4, 4); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
       ctx.restore();
+      // bulunulan yuva (girince adı görünür)
+      const z = game.layout.zones.find((q) => Math.hypot(q.x - game.dx, q.y - game.dy) < q.r + 120);
+      const label = z ? `${z.name} · Sv ${z.level[0]}-${z.level[1]}` : '';
+      setZone((prev) => (prev === label ? prev : label));
     }, 200);
     return () => clearInterval(iv);
   }, [game]);
   return (
     <div className="frame mm" onClick={() => store.set({ panel: 'map' })}>
       <canvas ref={ref} />
-      <div className="zn">{MAPS[map]?.name}</div>
+      <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
     </div>
   );
 }
@@ -316,6 +324,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
   const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p })); };
   const self = useStore((s) => s.self);
   const unread = useStore((s) => s.unread);
+  const canAdmin = useCanAdmin();
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
   return (
     <div className="frame menu">
@@ -325,6 +334,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button title="Işınlan (T)" onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small></button>
       <button title="Harita (M)" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small></button>
       <button title="Ayarlar" onClick={() => open('settings')}><MenuIcon k="gear" /></button>
+      {canAdmin && <button title="Yönetim paneli" onClick={() => open('admin')}><MenuIcon k="admin" /></button>}
       <button title="Sohbet" className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
       <button title="Kanal değiştir / Çıkış" className="exit" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="lbl">Kanal / Çıkış</span></button>
     </div>

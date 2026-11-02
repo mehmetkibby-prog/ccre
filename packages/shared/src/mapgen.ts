@@ -2,6 +2,7 @@ import { mulberry32, smoothNoise, noise2, type Rng } from './rng.ts';
 import { TILE } from './constants.ts';
 import { MAPS, type MapDef, type Region } from './content/maps.ts';
 import { MONSTERS } from './content/monsters.ts';
+import { TUNING } from './tuning.ts';
 
 export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND = 5, SNOW = 6, ICE = 7, ASH = 8, STONE = 9, DEEP = 10, PLANK = 11 }
 
@@ -12,6 +13,8 @@ export type PropKind =
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
 export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number }
+/** Bir canavar türünün yuvası: canavarlar bu dairenin içinde doğar ve dolaşır. */
+export interface MonsterZone { name: string; monster: string; x: number; y: number; r: number; level: [number, number]; count: number }
 
 export interface MapLayout {
   def: MapDef;
@@ -21,6 +24,7 @@ export interface MapLayout {
   props: Prop[];
   spawn: { x: number; y: number };
   spawnPoints: SpawnPoint[];
+  zones: MonsterZone[];
   npcs: { id: string; x: number; y: number }[];
 }
 
@@ -215,7 +219,7 @@ function genWild(l: MapLayout, rng: Rng) {
   }
   l.props.push({ k: 'portalstone', x: l.spawn.x - 70, y: l.spawn.y - 30, v: theme === 'frozen' ? 1 : theme === 'black' ? 2 : 0, s: 1 });
   // canavar noktaları
-  placeSpawns(l, rng);
+  placeSpawns(l, mulberry32(l.def.seed * 7 + 13)); // kendi RNG'si: yoğunluk değişince aynı tohumdan yeniden kurulabilir
 }
 
 function genLake(l: MapLayout, rng: Rng) {
@@ -255,31 +259,83 @@ function regionOf(l: MapLayout, x: number, y: number): Region {
   return d < 0.33 ? 'near' : d < 0.6 ? 'mid' : 'far';
 }
 
+const ZONE_NAMES: Record<string, string[]> = {
+  shadow_wolf: ['Kurt İni', 'Gölge Sürüsü', 'Uluma Tepesi', 'Kurt Pınarı', 'Kara Pati Yatağı'],
+  rot_guard: ['Çürük Kamp', 'Yıkık Nöbet', 'Pas Karakolu', 'Çürük Mezarlık'],
+  essence_eater: ['Öz Yuvası', 'Yutan Çukuru', 'Mor Bataklık', 'Öz Kuyusu'],
+  frost_lynx: ['Vaşak Sırtı', 'Kırağı Yatağı', 'Buzlu Pati İzi'],
+  ice_golem: ['Golem Kayalığı', 'Buz Ocağı', 'Donuk Taşlar'],
+  blizzard_seer: ['Kâhin Çemberi', 'Tipi Sunağı', 'Ak Fırtına'],
+  black_stone: ['Kara Taş'],
+};
+/** Bir yuvada kaç canavar olur: kalabalık ama okunaklı sürüler. */
+const PACK = 9;
+
+/**
+ * Canavar yerleşimi: her doğma grubu birkaç yuvaya bölünür. Yuva merkezleri grubun bölgesinde
+ * (yakın/orta/uzak), birbirinden ve başlangıç noktasından uzakta seçilir; canavarlar yuva dairesi
+ * içinde, birbirine çok yapışmadan dağıtılır. Yeniden doğma aynı noktada olduğundan yuva korunur.
+ * Önceden canavarlar haritanın her yerine 1–3'lük gruplarla serpiliyordu (dağınık ve seyrek).
+ */
 function placeSpawns(l: MapLayout, rng: Rng) {
   const mdefs = new Map(MONSTERS.map((m) => [m.id, m] as const));
+  const dens = TUNING.density[l.def.id] ?? 1;
+  const used = new Map<string, number>();
+  const taken = new Set<number>();
   for (const g of l.def.spawns) {
     const md = mdefs.get(g.monster);
-    let placed = 0, tries = 0;
-    // küçük sürüler halinde yerleştir
-    while (placed < g.count && tries++ < g.count * 200) {
-      const tx = 3 + ((rng() * (l.w - 6)) | 0), ty = 3 + ((rng() * (l.h - 6)) | 0);
-      if (!isFree(l, tx, ty)) continue;
-      const x = tc(tx), y = tc(ty);
-      if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 700) continue;
-      if (g.region !== 'any' && regionOf(l, x, y) !== g.region) continue;
-      const pack = md?.boss ? 1 : 1 + ((rng() * 3) | 0);
-      for (let k = 0; k < pack && placed < g.count; k++) {
-        const ox = k === 0 ? 0 : ((rng() - 0.5) * 3) | 0, oy = k === 0 ? 0 : ((rng() - 0.5) * 3) | 0;
-        if (!isFree(l, tx + ox, ty + oy)) continue;
+    const total = md?.boss ? g.count : Math.max(1, Math.round(g.count * dens));
+    const camps = md?.boss ? total : Math.max(1, Math.round(total / PACK));
+    let left = total;
+    for (let c = 0; c < camps && left > 0; c++) {
+      const n = md?.boss ? 1 : Math.ceil(left / (camps - c));
+      const rT = md?.boss ? 2 : Math.min(7, Math.max(3.2, Math.sqrt(n) * 1.35 + 1.2)); // yarıçap (karo)
+      // yuva merkezi
+      let cx = -1, cy = -1;
+      for (let tries = 0; tries < 900; tries++) {
+        const relax = tries > 600; // çok sıkışık haritada bölge koşulunu gevşet
+        const tx = 4 + ((rng() * (l.w - 8)) | 0), ty = 4 + ((rng() * (l.h - 8)) | 0);
+        if (!isFree(l, tx, ty)) continue;
+        const x = tc(tx), y = tc(ty);
+        if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 900 + rT * TILE) continue;
+        if (!relax && g.region !== 'any' && regionOf(l, x, y) !== g.region) continue;
+        if (l.zones.some((z) => Math.hypot(z.x - x, z.y - y) < z.r + rT * TILE + 2.5 * TILE)) continue;
+        // dairenin çoğu yürünebilir olmalı
+        let free = 0, all = 0;
+        for (let oy = -Math.floor(rT); oy <= rT; oy++) for (let ox = -Math.floor(rT); ox <= rT; ox++) if (ox * ox + oy * oy <= rT * rT) { all++; if (tx + ox > 1 && ty + oy > 1 && tx + ox < l.w - 2 && ty + oy < l.h - 2 && isFree(l, tx + ox, ty + oy)) free++; }
+        if (free < Math.max(n * 1.6, all * 0.55)) continue;
+        cx = tx; cy = ty; break;
+      }
+      if (cx < 0) continue;
+      const names = ZONE_NAMES[g.monster] ?? [md?.name ?? 'Yuva'];
+      const k = used.get(g.monster) ?? 0; used.set(g.monster, k + 1);
+      const zone: MonsterZone = { name: names[k % names.length] + (k >= names.length ? ' ' + (Math.floor(k / names.length) + 1) : ''), monster: g.monster, x: tc(cx), y: tc(cy), r: rT * TILE, level: [g.level[0], g.level[1]], count: 0 };
+      l.zones.push(zone);
+      let placed = 0;
+      for (let tries = 0; placed < n && tries < n * 80; tries++) {
+        const a = rng() * Math.PI * 2, d = (placed === 0 ? 0 : Math.sqrt(rng())) * rT;
+        const tx = Math.round(cx + Math.cos(a) * d), ty = Math.round(cy + Math.sin(a) * d);
+        if (tx < 2 || ty < 2 || tx >= l.w - 2 || ty >= l.h - 2 || !isFree(l, tx, ty)) continue;
+        const key = ty * l.w + tx;
+        if (taken.has(key) && tries < n * 40) continue; // aynı karoya iki canavar koyma (gerekirse izin ver)
+        taken.add(key);
         const tot = g.variants[0] + g.variants[1] + g.variants[2];
         const r = rng() * tot;
         const variant = (r < g.variants[0] ? 0 : r < g.variants[0] + g.variants[1] ? 1 : 2) as 0 | 1 | 2;
         const level = g.level[0] + ((rng() * (g.level[1] - g.level[0] + 1)) | 0);
-        l.spawnPoints.push({ monster: g.monster, level, variant, x: tc(tx + ox), y: tc(ty + oy) });
+        const jx = (rng() - 0.5) * TILE * 0.6, jy = (rng() - 0.5) * TILE * 0.6;
+        l.spawnPoints.push({ monster: g.monster, level, variant, x: tc(tx) + jx, y: tc(ty) + jy });
         placed++;
       }
+      zone.count = placed; left -= placed;
     }
   }
+}
+
+/** Yönetimden yoğunluk değişince yuvaları ve doğma noktalarını aynı tohumla yeniden kurar. */
+export function rebuildSpawns(l: MapLayout) {
+  l.spawnPoints = []; l.zones = [];
+  if (l.def.spawns.length) placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 
 const cache = new Map<string, MapLayout>();
@@ -291,7 +347,7 @@ export function getLayout(mapId: string): MapLayout {
   const l: MapLayout = {
     def, w: def.w, h: def.h,
     ground: new Uint8Array(def.w * def.h), blocked: new Uint8Array(def.w * def.h),
-    props: [], spawn: { x: 0, y: 0 }, spawnPoints: [], npcs: [],
+    props: [], spawn: { x: 0, y: 0 }, spawnPoints: [], zones: [], npcs: [],
   };
   const rng = mulberry32(def.seed);
   if (def.theme === 'village') genVillage(l, rng);

@@ -6,7 +6,7 @@
  */
 import { World, makeItem } from '../../../server/src/worker/world.ts';
 import type { CharState, FromWorker } from '../../../server/src/types.ts';
-import { getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
+import { TUNING, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
 const KEY = 'col_offline_v1';
 interface Db { nextAcc: number; nextChar: number; accounts: { id: number; username: string; pass: string; starter: boolean }[]; chars: Record<number, CharState>; session: number | null }
@@ -66,7 +66,7 @@ class Backend {
       let n = 0;
       while (now >= next && n < 3) { this.driveBots(); this.world.tick(); next += 50; n++; }
       if (now - next > 500) next = now + 50;
-      if (now - this.lastWorld > 5000) { this.lastWorld = now; this.health = Math.max(0, this.health - 0.015); this.broadcast(JSON.stringify({ t: 'world', health: Math.round(this.health * 100) / 100, online: this.sockets.size + this.bots.length })); this.world.setWorld(this.health, this.sockets.size + this.bots.length); }
+      if (now - this.lastWorld > 5000) { this.lastWorld = now; this.health = Math.max(0, this.health - 0.015 * TUNING.worldDecayMul); this.broadcast(JSON.stringify({ t: 'world', health: Math.round(this.health * 100) / 100, online: this.sockets.size + this.bots.length })); this.world.setWorld(this.health, this.sockets.size + this.bots.length); }
       setTimeout(loop, Math.max(0, next - performance.now()));
     };
     loop();
@@ -119,17 +119,23 @@ class Backend {
   broadcast(msg: string) { for (const s of this.sockets.values()) s.deliver(msg); }
 
   // ───────── test botları: köyde dolaşan ve ormanda avlanan oyuncular ─────────
+  resetBots() {
+    for (const bot of this.bots) this.world.leave(bot.sid);
+    this.bots = [];
+    this.spawnBots();
+  }
   private spawnBots() {
     const lv = getLayout('bazaar'), lf = getLayout('forest');
-    BOT_NAMES.forEach((name, i) => {
+    const names = Array.from({ length: TUNING.bots }, (_, i) => BOT_NAMES[i % BOT_NAMES.length] + (i >= BOT_NAMES.length ? ' ' + (Math.floor(i / BOT_NAMES.length) + 1) : ''));
+    names.forEach((name, i) => {
       const forest = i % 2 === 1;
       const cls = CLASS_IDS[i % 3];
       const l = forest ? lf : lv;
-      const level = forest ? 6 + i : 3 + i * 2;
+      const j = i % 8, level = forest ? 6 + j : 3 + j * 2;
       const c: CharState = {
-        id: -(i + 1), accountId: -1, role: 'player', name, cls, level, xp: 0, hp: 99999, map: forest ? 'forest' : 'bazaar', x: l.spawn.x + (i - 4) * 60, y: l.spawn.y + 40,
+        id: -(i + 1), accountId: -1, role: 'player', name, cls, level, xp: 0, hp: 99999, map: forest ? 'forest' : 'bazaar', x: l.spawn.x + (j - 4) * 60 + Math.floor(i / 8) * 25, y: l.spawn.y + 40 + Math.floor(i / 8) * 50,
         gems: 0, essence: 0, cp: 0, arenaCoin: 0, stats: { str: Math.min(64, (level - 1) * 2), res: level - 1, vit: 0 }, skills: [1, 1, 1, 1], spec: null, kills: 0,
-        bag: [], equip: { weapon: makeItem(`w_${cls}`, i > 4 ? 'orange' : 'blue', 'bot', 1), armor: makeItem(`a_${cls}`, 'blue', 'bot', 1) }, materials: { red_potion: 999 }, misc: { autoPotion: true }, saveVersion: 0,
+        bag: [], equip: { weapon: makeItem(`w_${cls}`, j > 4 ? 'orange' : 'blue', 'bot', 1), armor: makeItem(`a_${cls}`, 'blue', 'bot', 1) }, materials: { red_potion: 999 }, misc: { autoPotion: true }, saveVersion: 0,
       };
       const sid = 10_000 + i;
       this.world.join(sid, c);
@@ -169,6 +175,14 @@ class Backend {
 }
 let _backend: Backend | null = null;
 const B = () => (_backend ??= new Backend());
+/** Yönetim ayarı değişti: çalışan dünyada yoğunluğu değişen haritaların yuvalarını ve botları yeniden kurar. */
+export function onTuningChanged(prev: { density: Record<string, number>; bots: number }) {
+  const b = _backend; if (!b) return;
+  for (const id of new Set([...Object.keys(prev.density), ...Object.keys(TUNING.density)])) {
+    if ((prev.density[id] ?? 1) !== (TUNING.density[id] ?? 1)) b.world.reseedMonsters(id);
+  }
+  if (prev.bots !== TUNING.bots && b.started) b.resetBots();
+}
 export function createSocket(url: string): WebSocket {
   const ticket = new URL(url, location.href).searchParams.get('ticket') ?? '';
   return new FakeSocket(ticket) as unknown as WebSocket;
@@ -227,7 +241,7 @@ export async function localApi(path: string, body: any): Promise<any> {
     }
     case '/api/channels': {
       me();
-      const online = B().sockets.size + BOT_NAMES.length;
+      const online = B().sockets.size + (B().started ? B().bots.length : TUNING.bots);
       return { open: true, reason: null, channels: [{ id: 1, name: 'Test Kanalı', population: online, capacity: 120, status: 'ok' }], realm: { name: 'Yaşam Çekirdeği (tarayıcı içi test)', online, capacity: 120 } };
     }
     case '/api/admission': {

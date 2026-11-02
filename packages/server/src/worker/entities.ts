@@ -1,4 +1,4 @@
-import { computeStats, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS } from '@col/shared';
+import { computeStats, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING } from '@col/shared';
 import type { CharState } from '../types.ts';
 import type { Zone } from './zone.ts';
 
@@ -102,7 +102,9 @@ export class Monster {
     this.tplIndex = MONSTER_INDEX.get(def.id)!;
     this.x = sp.x; this.y = sp.y;
     const s = monsterStats(def, sp.level, sp.variant);
-    this.maxHp = s.maxHp; this.hp = s.maxHp; this.atk = s.atk; this.armor = s.def; this.xp = s.xp;
+    // yönetim çarpanları doğuş anında uygulanır (yaşayan canavar değişmez, yeniden doğan yeni değeri alır)
+    const hp = Math.max(1, Math.round(s.maxHp * TUNING.monsterHpMul));
+    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(s.atk * TUNING.monsterAtkMul)); this.armor = s.def; this.xp = s.xp;
     this.wanderAt = Date.now() + Math.random() * 8000;
   }
   get level() { return this.sp.level; }

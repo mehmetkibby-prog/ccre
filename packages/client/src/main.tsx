@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
 import { CLASSES, CLASS_IDS, MAPS, validateCharacterName, type ClassId } from '@col/shared';
 import { api } from './api.ts';
-import { store } from './game/store.ts';
+import { store, useStore } from './game/store.ts';
 import { GameScreen } from './ui/GameScreen.tsx';
 import { createHumanoid, animateHumanoid, LOOKS } from './g3d/humanoid.ts';
 import { createGlbChar, loadManifest, onModelReady, type GlbChar } from './g3d/models.ts';
@@ -11,11 +11,32 @@ import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
+import { AdminPanel, AnnouncementBar, useCanAdmin } from './admin/AdminPanel.tsx';
+// Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
+if (OFFLINE) import('./admin/config.ts').then((m) => m.startConfigSync());
 
 type Screen = { s: 'loading' } | { s: 'auth' } | { s: 'chars' } | { s: 'channels'; charId: number } | { s: 'game'; ticket: string; charId: number; channel: number };
 interface Me { account: { id: number; username: string; role: string }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
 
 function App() {
+  return <><AppScreens /><MenuAdmin /></>;
+}
+
+/** Menü ekranlarında (oyun dışında) yönetim düğmesi ve duyuru. */
+function MenuAdmin() {
+  const canAdmin = useCanAdmin();
+  const [open, setOpen] = useState(false);
+  const inGame = useStoreConnected();
+  if (inGame) return null;
+  return <>
+    <AnnouncementBar />
+    {canAdmin && <button className="btn small primary admin-btn" onClick={() => setOpen(true)}>Yönetim Paneli</button>}
+    {open && <AdminPanel onClose={() => setOpen(false)} />}
+  </>;
+}
+function useStoreConnected() { return useStore((s) => s.connected); }
+
+function AppScreens() {
   const [screen, setScreen] = useState<Screen>({ s: 'loading' });
   const [me, setMe] = useState<Me | null>(null);
   const [lastError, setLastError] = useState('');

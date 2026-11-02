@@ -3,7 +3,7 @@ import {
   COMBAT_LOCK_MS, BAG_EQUIP_CAP, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
-  SHOPS, SELL_PRICES, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS,
+  SHOPS, SELL_PRICES, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats } from '../types.ts';
@@ -40,6 +40,16 @@ export class World {
 
   constructor(public opt: WorldOptions) {
     for (const id of Object.keys(MAPS)) this.zones.set(id, new Zone(id));
+  }
+  /** Yönetim: haritanın canavar yuvalarını güncel yoğunlukla yeniden kurar (oyuncuların görüşünden çıkanlar istemciden düşer). */
+  reseedMonsters(mapId: string) {
+    const z = this.zones.get(mapId);
+    if (!z) return;
+    for (const m of [...z.monsterList]) { m.threat.clear(); m.target = null; z.removeMonster(m); }
+    z.respawnQueue.length = 0;
+    rebuildSpawns(z.layout);
+    const defs = new Map(MONSTERS.map((d) => [d.id, d] as const));
+    for (const sp of z.layout.spawnPoints) { const d = defs.get(sp.monster); if (d) z.addMonster(new Monster(d, sp)); }
   }
 
   // ───────────────────────────── bağlantı ─────────────────────────────
@@ -194,7 +204,7 @@ export class World {
     for (let i = list.length - 1; i >= 0; i--) {
       const m = list[i];
       if (m.state === MState.DEAD) {
-        if (now >= m.removeAt) { z.removeMonster(m); z.respawnQueue.push({ at: now + (m.def.boss ? 10 * 60_000 : 12_000 + rnd() * 8000), sp: m.sp }); }
+        if (now >= m.removeAt) { z.removeMonster(m); z.respawnQueue.push({ at: now + (m.def.boss ? 10 * 60_000 : 12_000 + rnd() * 8000) * TUNING.respawnMul, sp: m.sp }); }
         continue;
       }
       if (!z.awakeCells[m.cell] && m.state === MState.IDLE) continue;
@@ -529,7 +539,7 @@ export class World {
     const c = p.char;
     const diff = c.level - m.level;
     const mod = diff > 5 ? Math.max(0.1, 1 - (diff - 5) * 0.12) : diff < -3 ? 1.2 : 1;
-    this.addXp(p, Math.max(1, Math.round(m.xp * mod)));
+    this.addXp(p, Math.max(1, Math.round(m.xp * mod * TUNING.xpMul)));
     c.kills++;
     const day = trDayKey(this.now);
     if (!c.misc.dailyKills || c.misc.dailyKills.day !== day) c.misc.dailyKills = { day, n: 0 };
@@ -538,20 +548,20 @@ export class World {
     if (w) w.kills = (w.kills ?? 0) + 1;
     const prof = LOOT_PROFILES[p.zone.def.theme] ?? LOOT_PROFILES[p.zone.id] ?? LOOT_PROFILES.forest;
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
-    const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm);
-    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm);
+    const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
+    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul);
     c.gems += gems; c.essence += ess;
     this.sendJson(p, { t: 'gain', gems, essence: ess, x: m.x | 0, y: m.y | 0 });
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
-      if (rnd() < prof.equipChance * VARIANT_LOOT_MULT[m.variant] * mod || m.def.boss) {
+      if (rnd() < prof.equipChance * VARIANT_LOOT_MULT[m.variant] * mod * TUNING.dropMul || m.def.boss) {
         const item = this.rollEquipment(p, prof.rarityWeights, m.variant === 2);
         if (item) this.dropLoot(p, m, { kind: 'item', item });
       }
     }
     for (const mat of prof.materials) {
-      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
+      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * TUNING.dropMul) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
     }
     p.selfDirty |= 1; p.markSave();
   }
@@ -1074,5 +1084,16 @@ export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?:
     for (let k = 0; k < 4; k++) { if ((r -= ENCHANT_TIER_WEIGHTS[k]) <= 0) { tier = k; break; } }
     ench.push({ t, v: ENCHANTS[t].tiers[tier], tier });
   }
-  return { id: crypto.randomUUID(), tpl: tplId, rarity, plus: 0, ench, src };
+  return { id: uuid(), tpl: tplId, rarity, plus: 0, ench, src };
+}
+
+/** Eşya kimliği. crypto.randomUUID güvenli olmayan (http) tarayıcı sayfalarında yoktur; getRandomValues her yerde var. */
+function uuid(): string {
+  const c = (globalThis as { crypto?: { randomUUID?: () => string; getRandomValues?: (a: Uint8Array) => Uint8Array } }).crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  const b = new Uint8Array(16);
+  if (c?.getRandomValues) c.getRandomValues(b); else for (let i = 0; i < 16; i++) b[i] = (Math.random() * 256) | 0;
+  b[6] = (b[6] & 0x0f) | 0x40; b[8] = (b[8] & 0x3f) | 0x80;
+  const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
 }

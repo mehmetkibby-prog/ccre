@@ -47,11 +47,12 @@ export const MAPS: Record<string, MapDef> = {
     desc: 'Başlangıç av bölgesi. Gölge Kurtları, Çürük Muhafızlar ve Öz Yutanlar.',
     npcs: [],
     spawns: [
-      { monster: 'shadow_wolf', count: 34, level: [1, 6], variants: [80, 18, 2], region: 'near' },
-      { monster: 'shadow_wolf', count: 18, level: [6, 10], variants: [60, 32, 8], region: 'mid' },
-      { monster: 'rot_guard', count: 26, level: [5, 12], variants: [65, 28, 7], region: 'mid' },
-      { monster: 'essence_eater', count: 22, level: [9, 16], variants: [55, 35, 10], region: 'far' },
-      { monster: 'rot_guard', count: 12, level: [12, 18], variants: [45, 40, 15], region: 'far' },
+      // her satır kendi yuvalarına bölünür (yaklaşık 9 canavarlık sürüler), bkz. mapgen placeSpawns
+      { monster: 'shadow_wolf', count: 40, level: [1, 6], variants: [80, 18, 2], region: 'near' },
+      { monster: 'shadow_wolf', count: 24, level: [6, 10], variants: [60, 32, 8], region: 'mid' },
+      { monster: 'rot_guard', count: 30, level: [5, 12], variants: [65, 28, 7], region: 'mid' },
+      { monster: 'essence_eater', count: 30, level: [9, 16], variants: [55, 35, 10], region: 'far' },
+      { monster: 'rot_guard', count: 18, level: [12, 18], variants: [45, 40, 15], region: 'far' },
     ],
   },
   frozen: {

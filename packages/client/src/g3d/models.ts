@@ -155,7 +155,7 @@ export function model(id: string): Loaded | null {
 }
 
 export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
-export interface GlbChar { id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean): void; hand?: THREE.Object3D; bones: GlbBones }
+export interface GlbChar { id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
 /**
@@ -180,6 +180,81 @@ export function boneRootPos(root: THREE.Object3D, bone: THREE.Object3D) {
   root.updateMatrixWorld(true);
   return root.worldToLocal(bone.getWorldPosition(new THREE.Vector3()));
 }
+
+/**
+ * Hazır (Meshy) saldırı/büyü klipleri 2–8 sn sürer. Önceden bütün klip 0,55 sn'ye sıkıştırılıyordu
+ * (4–14 kat hız) ve hareket kesik görünüyordu. Şimdi yalnız vuruş/atış anı makul hızla oynatılır.
+ */
+const activeCache = new WeakMap<THREE.AnimationClip, Map<number, THREE.AnimationClip>>();
+export const SWING_MAX_SPEED = 2;
+/**
+ * Klibin en yoğun hareket penceresi (vuruşun/atışın kendisi). Pencere uzunluğu, ekranda kalma
+ * süresine en çok SWING_MAX_SPEED hızla sığacak kadardır; hareketin en çok olduğu yer seçilir.
+ */
+/**
+ * Sınıf kliplerinde vuruş/atış anı (saniye), karelere tek tek bakılarak seçildi. Saldırıda pencere
+ * ≤ 1,14 sn (0,62 sn'ye 2 katla sığar), beceride ≤ 1,75 sn. Okçu kliplerinde otomatik seçim sadağa
+ * uzanmayı yakalıyordu; burada nişan + bırakma seçilir.
+ */
+const CLIP_WINDOWS: Record<string, { attack?: [number, number]; cast?: [number, number] }> = {
+  'Attack Draw Shoot': { attack: [6.2, 7.3], cast: [5.7, 7.4] },
+  'Attack Archery Shot': { attack: [3.15, 4.3], cast: [2.55, 4.3] },
+  'Cast Archery Volley': { attack: [0, 0.7], cast: [0, 0.7] },
+  'Attack Charged': { attack: [0.3, 1.35], cast: [0.25, 1.6] },
+  'Attack Slash': { attack: [0.6, 1.75], cast: [0.5, 1.95] },
+  'Attack Thrust': { attack: [1.2, 2.3], cast: [0.8, 2.4] },
+  'Cast Ground Slam': { attack: [1.4, 2.5], cast: [1.05, 2.7] },
+  'Attack Magic 1': { attack: [0.4, 1.5], cast: [0.3, 1.7] },
+  'Attack Magic 2': { attack: [0.7, 1.8], cast: [0.45, 2.0] },
+  'Cast Charged Spell': { attack: [1.3, 2.3], cast: [0.55, 2.3] },
+};
+function activeClip(clip: THREE.AnimationClip, screenMs: number, kind: 'attack' | 'cast'): THREE.AnimationClip {
+  let per = activeCache.get(clip);
+  if (!per) { per = new Map(); activeCache.set(clip, per); }
+  const hit = per.get(screenMs);
+  if (hit) return hit;
+  const FPS = 30, n = Math.max(2, Math.round(clip.duration * FPS) + 1);
+  const fixed = CLIP_WINDOWS[clip.name]?.[kind];
+  if (fixed) {
+    const a = Math.max(0, Math.round(fixed[0] * FPS)), b = Math.min(n - 1, Math.round(fixed[1] * FPS));
+    const sub = b - a >= 6 ? THREE.AnimationUtils.subclip(clip, clip.name + '#' + kind, a, b, FPS) : clip;
+    per.set(screenMs, sub);
+    return sub;
+  }
+  const motion = new Float32Array(n);
+  const q0 = new THREE.Quaternion(), q1 = new THREE.Quaternion();
+  for (const tr of clip.tracks) {
+    if (!(tr instanceof THREE.QuaternionKeyframeTrack) || tr.times.length < 2) continue;
+    // parmak ve yüz gibi küçük kemikler yerine büyük eklemler ağırlıklı (kalça/omurga/kollar)
+    const w = /hips|spine|arm|shoulder|leg|upleg|thigh|neck/i.test(tr.name) ? 1 : 0.35;
+    const it = tr.createInterpolant(); let prev: Float32Array | null = null;
+    for (let i = 0; i < n; i++) {
+      const v = it.evaluate(Math.min(clip.duration, i / FPS)) as unknown as Float32Array;
+      if (prev) { q0.fromArray(prev); q1.fromArray(v); motion[i] += w * q0.angleTo(q1); }
+      prev = Float32Array.from(v);
+    }
+  }
+  const win = Math.min(n - 1, Math.max(12, Math.round((screenMs / 1000) * SWING_MAX_SPEED * 0.92 * FPS)));
+  let out = clip;
+  if (win < n - 1) {
+    let sum = 0;
+    for (let i = 0; i < win; i++) sum += motion[i];
+    let best = sum, bs = 0;
+    for (let i = win; i < n; i++) { sum += motion[i] - motion[i - win]; if (sum > best) { best = sum; bs = i - win + 1; } }
+    const sub = THREE.AnimationUtils.subclip(clip, clip.name + '#vurus' + screenMs, bs, bs + win, FPS);
+    if (sub.duration > 0.2) out = sub;
+  }
+  per.set(screenMs, out);
+  return out;
+}
+/** Sınıf modelinde her becerinin kendi klibi (1, 2: beceriler; 3: uzmanlık becerisi). */
+const SKILL_CLIPS: Record<string, Record<number, string[]>> = {
+  guardian: { 1: ['Attack Thrust'], 2: ['Attack Charged'], 3: ['Cast Ground Slam'] },
+  hunter: { 1: ['Cast Archery Volley', 'Attack Archery Shot'], 2: ['Attack Draw Shoot'], 3: ['Attack Draw Shoot'] },
+  arcanist: { 1: ['Cast Charged Spell'], 2: ['Attack Magic 2'], 3: ['Cast Charged Spell'] },
+};
+/** Saldırı ve beceri animasyonlarının ekranda kalma süresi (ms); renderer de bu süreleri kullanır. */
+export const ATTACK_ANIM_MS = 620, CAST_ANIM_MS = 950;
 
 /** Bir modelin kendi iskelet ve animasyon karıştırıcısıyla yeni bir örneği. */
 export function createGlbChar(id: string): GlbChar | null {
@@ -213,31 +288,38 @@ export function createGlbChar(id: string): GlbChar | null {
     sm.boundingSphere = L.sphere.clone();
     sm.frustumCulled = true;
   });
-  const attackClips = (L.entry.attackClips ?? []).map((n) => L.clips.find((c) => c.name === n)).filter(Boolean) as THREE.AnimationClip[];
-  let attackN = 0;
-  const play = (st: HState | 'run', once: boolean) => {
+  const byName = (n: string) => L.clips.find((c) => c.name === n);
+  const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
+  const skillClips = SKILL_CLIPS[id] ?? {};
+  let attackN = 0, skillN = 0;
+  const play = (st: HState | 'run', once: boolean, skill = 0) => {
     let clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
     if (st === 'attack' && attackClips.length) clip = attackClips[attackN++ % attackClips.length];
+    if (st === 'cast') { const names = skillClips[skill] ?? []; const c = names.length ? byName(names[skillN++ % names.length]) : undefined; if (c) clip = c; }
     if (!clip) return;
+    const swing = once && (st === 'attack' || st === 'cast');
+    const screenMs = st === 'attack' ? ATTACK_ANIM_MS : CAST_ANIM_MS;
+    if (swing) clip = activeClip(clip, screenMs, st === 'attack' ? 'attack' : 'cast');
     const a = act(clip);
     if (a === current && !once) return;
     a.reset();
     a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, once ? 1 : Infinity);
     a.clampWhenFinished = once;
-    if (once && (st === 'attack' || st === 'cast')) a.timeScale = Math.max(1, clip.duration / 0.55);
+    // etkin bölüm ekranda kalma süresine sığacak kadar hızlanır; en çok 2,2 kat, en az 0,9 kat
+    if (swing) a.timeScale = THREE.MathUtils.clamp(clip.duration / (screenMs / 1000 * 0.92), 0.9, SWING_MAX_SPEED);
     else a.timeScale = 1;
     a.play();
-    if (current && current !== a) current.crossFadeTo(a, once ? 0.08 : 0.18, false);
+    if (current && current !== a) current.crossFadeTo(a, swing ? 0.12 : once ? 0.1 : 0.2, false);
     current = a;
   };
   play('idle', false);
   return {
     id, root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
-    update(st, dt, moving, speed, restart) {
+    update(st, dt, moving, speed, restart, skill) {
       const want = st === 'walk' ? (L.map.run && speed > 3.5 ? 'run' : 'walk') : st;
       if (want !== curState || (restart && (want === 'attack' || want === 'cast'))) {
         curState = want;
-        play(want as HState, want === 'attack' || want === 'cast' || want === 'dead' || want === 'hurt');
+        play(want as HState, want === 'attack' || want === 'cast' || want === 'dead' || want === 'hurt', skill ?? 0);
       }
       if ((want === 'walk' || want === 'run') && current) current.timeScale = THREE.MathUtils.clamp(speed / (want === 'run' ? 5.5 : 2.2), 0.6, 1.8);
       void moving;

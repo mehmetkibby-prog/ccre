@@ -298,3 +298,26 @@ input, select { font-family: inherit; }
   .camctl { top: calc(8px + env(safe-area-inset-top, 0px)); }
   .toasts { top: 90px; }
 }
+
+/* ───────── yönetim paneli ───────── */
+.admin-ov { position: fixed; z-index: 60; }
+.panel.admin { position: relative; top: auto; left: auto; transform: none; width: min(620px, 96vw); max-height: min(760px, 94vh); }
+.admin-status { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12px; margin-bottom: 8px; }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 10px; border: 1px solid #6a5a32; color: var(--gold2); font-size: 11px; font-weight: 800; }
+.pill.ok { border-color: #6ac078; color: #b8f0a8; }
+.admin-sec { border-top: 1px solid #3a3322; padding: 10px 0 6px; }
+.admin-sec h4 { margin: 0 0 8px; font-family: Fredoka, Nunito, sans-serif; color: var(--gold2); font-size: 15px; font-weight: 600; }
+.row.wrap { flex-wrap: wrap; gap: 6px; }
+.admin-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 62px; gap: 10px; align-items: center; padding: 5px 0; cursor: pointer; }
+.admin-row .lab { display: flex; flex-direction: column; min-width: 0; }
+.admin-row .lab b { font-size: 13px; }
+.admin-row .lab small { color: var(--muted); font-size: 11px; }
+.admin-row input[type=range] { width: 100%; accent-color: var(--gold); }
+.admin-row .val { text-align: right; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 13px; }
+.admin-row .val.changed { color: #ffd27a; }
+.admin-ta { width: 100%; min-height: 54px; resize: vertical; box-sizing: border-box; background: #10140e; color: #f1ead8; border: 1px solid #4a3e22; border-radius: 6px; padding: 8px; font: inherit; font-size: 13px; }
+.admin-ft { display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-top: 1px solid #3a3322; background: #12160f; border-radius: 0 0 6px 6px; }
+.okmsg { color: #b8f0a8; font-size: 13px; margin: 6px 0; }
+.announce { position: fixed; top: 8px; left: 50%; transform: translateX(-50%); z-index: 25; max-width: min(640px, 92vw); padding: 7px 16px; border-radius: 18px; background: linear-gradient(180deg, rgba(200,150,46,.95), rgba(122,90,20,.95)); color: #1a1206; font-weight: 800; font-size: 13px; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,.45); pointer-events: none; }
+.admin-btn { position: fixed; right: 12px; bottom: 12px; z-index: 5; }
+@media (max-width: 520px) { .admin-row { grid-template-columns: minmax(0, 1fr) 54px; } .admin-row input[type=range] { grid-column: 1 / -1; grid-row: 2; } }

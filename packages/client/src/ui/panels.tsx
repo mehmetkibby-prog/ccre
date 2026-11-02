@@ -1,3 +1,4 @@
+import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, UPGRADE_TABLE, SELL_PRICES, masteryChance, itemDisplayName, itemPower,
@@ -38,6 +39,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'npc' && <NpcDialog game={game} />}
       {p === 'shop' && <Shop game={game} />}
       {p === 'upgrade' && <Upgrade game={game} />}
+      {p === 'admin' && <AdminPanel onClose={() => store.set({ panel: null })} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
           <div className="title" style={{ fontSize: 20, marginBottom: 8 }}>Dikkat: PvP bölgesi</div>
@@ -282,6 +284,14 @@ function BigMap({ game }: { game: Game }) {
       const k = s / TILE;
       x.font = '700 12px Nunito'; x.textAlign = 'center';
       for (const n of l.npcs) { const d = l.def.npcs.find((q) => q.id === n.id); x.fillStyle = '#ffd84a'; x.beginPath(); x.arc(n.x * k, n.y * k, 4, 0, 7); x.fill(); x.fillStyle = '#fff'; x.fillText(d?.name ?? '', n.x * k, n.y * k - 7); }
+      // canavar yuvaları: daire + ad + seviye aralığı
+      for (const z of l.zones) {
+        x.fillStyle = 'rgba(220,70,50,.16)'; x.strokeStyle = 'rgba(255,120,90,.75)'; x.lineWidth = 1.5;
+        x.beginPath(); x.arc(z.x * k, z.y * k, z.r * k, 0, 7); x.fill(); x.stroke();
+        x.font = '800 11px Nunito'; x.lineWidth = 3; x.strokeStyle = 'rgba(0,0,0,.75)'; x.fillStyle = '#ffd9cf';
+        const t = `${z.name} · Sv ${z.level[0]}-${z.level[1]}`; x.strokeText(t, z.x * k, z.y * k + 4); x.fillText(t, z.x * k, z.y * k + 4);
+      }
+      x.font = '700 12px Nunito';
       x.fillStyle = '#fff'; x.strokeStyle = '#000'; x.lineWidth = 2; x.beginPath(); x.arc(game.dx * k, game.dy * k, 5, 0, 7); x.fill(); x.stroke();
     };
     draw(); const iv = setInterval(draw, 500); return () => clearInterval(iv);
