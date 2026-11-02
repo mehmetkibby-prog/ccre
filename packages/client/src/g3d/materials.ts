@@ -109,7 +109,10 @@ export function mat(key: string): THREE.Material {
     case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xa8c49c }), 0.05, 7); break;
     case 'needles_snow': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xb8d8d0 }), 0.04, 7); break;
     case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb2cc82 }), 0.05, 1.2); break;
-    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.95, color: 0x9aaa70 }), 0.12, 0.6); break;
+    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.35, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.95, color: 0xf0fce8 }), 0.12, 0.6); break;
+    // anime ağaç taçları: köşe renkli dolgun kütle (yaprak kartı yok), hafif rüzgâr
+    case 'canopy': m = addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6); break;
+    case 'canopy_low': m = addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5); break;
     case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x35553a, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'pine_core_snow': m = new THREE.MeshStandardMaterial({ color: 0x3a5a52, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'snow': m = new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.7 }); break;
@@ -149,4 +152,4 @@ export function mat(key: string): THREE.Material {
   cache.set(key, m);
   return m;
 }
-const CUT = new Set(['bark', 'bark_dead', 'leaves', 'leaves_autumn', 'needles', 'needles_snow', 'bush', 'pine_core', 'pine_core_snow', 'snow', 'rock', 'rock_dark', 'plaster', 'timber', 'stonewall', 'roof_red', 'roof_slate', 'roof_green', 'roof_blue', 'planks', 'glass_warm', 'cloth_red', 'cloth_green', 'cloth_cream', 'hay', 'iron', 'crystal', 'ice']);
+const CUT = new Set(['canopy', 'canopy_low', 'bark', 'bark_dead', 'leaves', 'leaves_autumn', 'needles', 'needles_snow', 'bush', 'pine_core', 'pine_core_snow', 'snow', 'rock', 'rock_dark', 'plaster', 'timber', 'stonewall', 'roof_red', 'roof_slate', 'roof_green', 'roof_blue', 'planks', 'glass_warm', 'cloth_red', 'cloth_green', 'cloth_cream', 'hay', 'iron', 'crystal', 'ice']);

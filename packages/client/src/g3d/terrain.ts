@@ -111,17 +111,23 @@ void groundBlend(){
   vec2 tuv = vWPos.xz / 2.4;
   // yamaçta dikey düzlemden örnekle (kaya dokusu gerilmesin)
   vec2 cuv = vec2(vWPos.x + vWPos.z, vWPos.y * 1.6) / 3.0;
+  // Doku türevleri döngüden ÖNCE: döngüdeki koşullu atlama (continue) içinde örtük türev tanımsızdır ve
+  // GPU doğru mipmap'i seçemez; uzaktaki taş/çimen dokusu en keskin seviyeden örneklenip yürürken
+  // "kayan siyah çizgiler" olarak titriyordu.
+  vec2 tdx = dFdx(tuv), tdy = dFdy(tuv), cdx = dFdx(cuv), cdy = dFdy(cuv);
   vec3 col = vec3(0.0); vec3 nor = vec3(0.0); float tot = 0.0;
   for (int i = 0; i < ${nl}; i++) {
     if (w[i] < 0.01) continue;
-    vec2 uvi = i == ${LAYER_NAMES.indexOf('cliff')} ? mix(tuv, cuv, slope) : tuv;
-    vec4 c = texture(uColArr, vec3(uvi, float(i)));
+    bool isCliff = i == ${LAYER_NAMES.indexOf('cliff')};
+    vec2 uvi = isCliff ? mix(tuv, cuv, slope) : tuv;
+    vec2 gx = isCliff ? mix(tdx, cdx, slope) : tdx, gy = isCliff ? mix(tdy, cdy, slope) : tdy;
+    vec4 c = textureGrad(uColArr, vec3(uvi, float(i)), gx, gy);
     // yükseklik tabanlı keskin geçiş: taşlar çimenin içinden çıkar
     float hgt = dot(c.rgb, vec3(0.33));
     float ww = pow(w[i], 1.6) * (0.35 + hgt);
     ww = ww * ww;
     col += c.rgb * ww;
-    nor += (texture(uNorArr, vec3(uvi, float(i))).xyz * 2.0 - 1.0) * ww;
+    nor += (textureGrad(uNorArr, vec3(uvi, float(i)), gx, gy).xyz * 2.0 - 1.0) * ww;
     tot += ww;
   }
   gCol = col / max(tot, 1e-4) * uTint;
@@ -134,7 +140,7 @@ void groundBlend(){
   vec3 up = normalize(vWNor);
   vec3 T = normalize(cross(vec3(0.0,0.0,1.0), up));
   vec3 B = normalize(cross(up, T));
-  vec3 wn = normalize(T * gNor.x + B * -gNor.y + up * gNor.z * 1.2);
+  vec3 wn = normalize(T * gNor.x + B * -gNor.y + up * gNor.z * 1.8); // kabartma yumuşak (anime görünüm)
   normal = normalize((viewMatrix * vec4(wn, 0.0)).xyz);
 }`);
     };

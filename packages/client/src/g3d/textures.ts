@@ -75,23 +75,21 @@ export function normalFrom(t: TexSet, strength: number): Uint8ClampedArray {
 export const GROUND_PAINTERS: Record<string, Painter> = {
   grass(u, v) {
     // doğal çayır: zeytin yeşili tonlar, kuru lekeler, toprak aralıkları, yön verilmiş ince ot dokusu
-    const n = fbm(u, v, 3, 5, 11), n2 = fbm(u, v, 14, 3, 12);
-    const blade = fbm(u * 1.0, v * 0.35, 96, 2, 13);
-    const dry = clamp01((fbm(u, v, 2, 4, 14) - 0.52) * 3.2);
-    const soil = clamp01((fbm(u, v, 9, 3, 15) - 0.68) * 5);
-    let c = mixc([46, 58, 26], [104, 112, 54], clamp01(n * 0.7 + blade * 0.55 - 0.1));
-    c = mixc(c, [132, 118, 70], dry * 0.55);
-    c = mixc(c, [74, 60, 42], soil * 0.7);
-    const k = 0.82 + n2 * 0.3;
-    return [c[0] * k, c[1] * k, c[2] * k, blade * 0.65 + n * 0.25 - soil * 0.2];
+    // anime çayır: parlak, yumuşak yeşil; düşük frekanslı geniş lekeler, ince (titreyen) desen yok
+    const n = fbm(u, v, 3, 5, 11), n2 = fbm(u, v, 8, 2, 12);
+    const warm = clamp01((fbm(u, v, 2, 4, 14) - 0.5) * 2.5);
+    let c = mixc([104, 168, 70], [146, 200, 88], clamp01(n * 0.9 - 0.05));
+    c = mixc(c, [178, 204, 98], warm * 0.45);
+    const k = 0.96 + n2 * 0.08;
+    return [c[0] * k, c[1] * k, c[2] * k, n * 0.4];
   },
   lush(u, v) {
-    const n = fbm(u, v, 3, 5, 21), blade = fbm(u, v * 0.35, 96, 2, 23), n2 = fbm(u, v, 12, 3, 24);
-    let c = mixc([30, 44, 20], [76, 92, 40], clamp01(n * 0.6 + blade * 0.6 - 0.1));
-    const clover = clamp01((fbm(u, v, 22, 2, 25) - 0.6) * 4);
-    c = mixc(c, [62, 84, 36], clover * 0.6);
-    const k = 0.85 + n2 * 0.25;
-    return [c[0] * k, c[1] * k, c[2] * k, blade * 0.7 + clover * 0.2];
+    const n = fbm(u, v, 3, 5, 21), n2 = fbm(u, v, 8, 2, 24);
+    let c = mixc([82, 150, 64], [124, 186, 80], clamp01(n * 0.9 - 0.05));
+    const clover = clamp01((fbm(u, v, 10, 2, 25) - 0.6) * 3);
+    c = mixc(c, [104, 170, 74], clover * 0.5);
+    const k = 0.96 + n2 * 0.08;
+    return [c[0] * k, c[1] * k, c[2] * k, n * 0.4 + clover * 0.2];
   },
   dirt(u, v) {
     const n = fbm(u, v, 3, 6, 31), n2 = fbm(u, v, 12, 4, 32), n3 = fbm(u, v, 40, 2, 35);
@@ -111,13 +109,14 @@ export const GROUND_PAINTERS: Record<string, Painter> = {
     const dome = Math.sqrt(clamp01(e * 1.6));
     const tint = hash(vo.id, 3, 42), tint2 = hash(vo.id, 7, 44);
     const n = fbm(u, v, 40, 3, 43), n2 = fbm(u, v, 6, 3, 45);
-    let stone = mixc(mixc([92, 88, 82], [150, 138, 118], tint), [118, 108, 96], tint2 * 0.4);
-    stone = mixc(stone, [70, 66, 60], (1 - dome) * 0.45); // aşınmış kenar
-    const k = 0.85 + n * 0.3;
+    let stone = mixc(mixc([150, 144, 134], [196, 184, 162], tint), [172, 162, 146], tint2 * 0.4);
+    stone = mixc(stone, [128, 120, 108], (1 - dome) * 0.3); // aşınmış kenar
+    const k = 0.92 + n * 0.14;
     stone = [stone[0] * k, stone[1] * k, stone[2] * k];
     const moss = clamp01((n2 - 0.55) * 3);
-    const gap = mixc([40, 34, 26], [58, 68, 34], moss);
-    const c = mixc(gap, stone, clamp01(e * 6));
+    // derz: açık toprak rengi ve yumuşak geçiş (koyu ince derz uzakta titreyen siyah çizgi oluyordu)
+    const gap = mixc([118, 104, 84], [112, 126, 78], moss);
+    const c = mixc(gap, stone, Math.sqrt(clamp01(e * 2.2)));
     return [c[0], c[1], c[2], dome * (0.85 + n * 0.15)];
   },
   sand(u, v) {
@@ -190,13 +189,13 @@ export function groundTextureArrays(size = 256) {
   LAYER_NAMES.forEach((name, i) => {
     const t = make(size, GROUND_PAINTERS[name]);
     col.set(t.color, i * size * size * 4);
-    nor.set(normalFrom(t, name === 'cobble' ? 9 : name === 'flagstone' || name === 'cliff' ? 6 : 3), i * size * size * 4);
+    nor.set(normalFrom(t, name === 'cobble' ? 4 : name === 'flagstone' || name === 'cliff' ? 4 : name === 'grass' || name === 'lush' ? 1.2 : 2.5), i * size * size * 4);
   });
   const mk = (data: Uint8Array, srgb: boolean) => {
     const tex = new THREE.DataArrayTexture(data, size, size, n);
     tex.format = THREE.RGBAFormat; tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
     tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = true;
-    tex.anisotropy = 4;
+    tex.anisotropy = 8; // eğik bakışta zemin bulanıklaşmadan net, titremeden
     if (srgb) tex.colorSpace = THREE.SRGBColorSpace;
     tex.needsUpdate = true;
     return tex;
@@ -336,14 +335,21 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
     }
     ctx.filter = 'none';
   } else {
-    // ince, sakin çimen: az sap, dar renk aralığı, dip zemin rengine yakın
-    for (let i = 0; i < 46; i++) {
-      const x = 10 + rnd() * (S - 20), h = S * (0.4 + rnd() * 0.45), g = 96 + rnd() * 28;
+    // anime çimen: az sayıda geniş, yumuşak, sivri uçlu yaprak; dipte zemin yeşili, uçta açık sarı-yeşil.
+    // (Önceki 46 ince sap ekranda bir pikselden inceydi ve yürürken titriyordu.)
+    ctx.filter = 'blur(0.6px)';
+    for (let i = 0; i < 9; i++) {
+      const x = 22 + (i / 8) * (S - 44) + (rnd() - 0.5) * 18, h = S * (0.5 + rnd() * 0.42), w = 16 + rnd() * 12, lean = (rnd() - 0.5) * 70;
       const grd = ctx.createLinearGradient(0, S, 0, S - h);
-      grd.addColorStop(0, `rgb(${g * 0.5},${g * 0.6},${g * 0.3})`); grd.addColorStop(1, `rgb(${g * 0.78},${g * 0.98},${g * 0.5})`);
-      ctx.strokeStyle = grd; ctx.lineWidth = 1.4 + rnd() * 1.4; ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(x, S); ctx.quadraticCurveTo(x + (rnd() - 0.5) * 18, S - h * 0.6, x + (rnd() - 0.5) * 34, S - h); ctx.stroke();
+      grd.addColorStop(0, 'rgb(96,164,66)'); grd.addColorStop(0.55, 'rgb(142,198,86)'); grd.addColorStop(1, 'rgb(206,234,128)');
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.moveTo(x - w / 2, S);
+      ctx.quadraticCurveTo(x - w * 0.35 + lean * 0.4, S - h * 0.55, x + lean, S - h);
+      ctx.quadraticCurveTo(x + w * 0.35 + lean * 0.4, S - h * 0.5, x + w / 2, S);
+      ctx.closePath(); ctx.fill();
     }
+    ctx.filter = 'none';
   }
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace;

@@ -35,7 +35,8 @@ export class GrassField {
     this.geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
     this.geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     const frozen = l.def.theme === 'frozen';
-    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.42, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xc8d4cc : 0xbac69a });
+    // alpha-to-coverage: MSAA ile yaprak kenarları yumuşar (alfa kesme kenarı titriyordu)
+    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.35, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xf4fff0 });
     addWind(m, 0.1, 0.4);
     addFade(m); // rüzgârdan önce çalışır
     this.mat = m;

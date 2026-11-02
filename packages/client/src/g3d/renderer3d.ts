@@ -3,6 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
@@ -51,12 +52,12 @@ function prepDynamic(obj: THREE.Object3D, r: number) {
 
 const THEME = {
   // Aydınlık, sıcak gündüz: güçlü gök ışığı (gölgeler kararmasın), açık sis ve gökyüzü
-  village: { fog: 0xc4d2d8, top: 0x7aa6d6, sky: 0xd8e6f2, ground: 0x8a7c62, sun: 0xfff0d8, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 55, far: 140 },
-  forest: { fog: 0xb8ccc4, top: 0x78a2cc, sky: 0xd2e2ea, ground: 0x7a7258, sun: 0xffeccc, sunI: 3.5, hemi: 1.15, exp: 1.25, near: 48, far: 125 },
-  lake: { fog: 0xc6d6de, top: 0x78a6d8, sky: 0xdae8f4, ground: 0x857a62, sun: 0xfff0dc, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 55, far: 145 },
-  frozen: { fog: 0xd4dee6, top: 0x8eaed0, sky: 0xe6eef6, ground: 0x9aa6b2, sun: 0xf4f6ff, sunI: 3.1, hemi: 1.1, exp: 1.12, near: 45, far: 120 },
-  black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 40, far: 110 },
-  ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 48, far: 125 },
+  village: { fog: 0xc4d2d8, top: 0x7aa6d6, sky: 0xd8e6f2, ground: 0x8a7c62, sun: 0xfff0d8, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 130, far: 250 },
+  forest: { fog: 0xb8ccc4, top: 0x78a2cc, sky: 0xd2e2ea, ground: 0x7a7258, sun: 0xffeccc, sunI: 3.5, hemi: 1.15, exp: 1.25, near: 130, far: 250 },
+  lake: { fog: 0xc6d6de, top: 0x78a6d8, sky: 0xdae8f4, ground: 0x857a62, sun: 0xfff0dc, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 130, far: 250 },
+  frozen: { fog: 0xd4dee6, top: 0x8eaed0, sky: 0xe6eef6, ground: 0x9aa6b2, sun: 0xf4f6ff, sunI: 3.1, hemi: 1.1, exp: 1.12, near: 130, far: 250 },
+  black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 130, far: 250 },
+  ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 130, far: 250 },
 } as const;
 
 
@@ -104,15 +105,18 @@ export class Renderer3D {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.0;
-    this.renderer.shadowMap.enabled = q !== 'low';
+    // telefonda güneş gölgesi yok (zemin gölgeleri var): en pahalı geçiş kalkar, sahne parlak kalır
+    this.renderer.shadowMap.enabled = q !== 'low' && DYN_SHADOWS;
     this.renderer.shadowMap.type = MOBILE ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
     // telefonda gölge haritası iki karede bir yenilenir (karakter gölgeleri 30 Hz'de akıcı görünür)
     if (MOBILE) this.renderer.shadowMap.autoUpdate = false;
     this.octx = overlay.getContext('2d')!;
     this.scene.add(this.world, this.dyn, this.fx.group, this.sun, this.sun.target, this.hemi);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(q === 'high' ? 2048 : q === 'medium' ? 1024 : 512, q === 'high' ? 2048 : q === 'medium' ? 1024 : 512);
-    const sc = this.sun.shadow.camera; sc.left = -22; sc.right = 22; sc.top = 22; sc.bottom = -22; sc.near = 1; sc.far = 90;
+    // sis uzaklaştı: gölge alanı görünen sahnenin büyük kısmını kapsar (gölge sınırı göze batmasın)
+    const ms = q === 'high' ? 2048 : 1024;
+    this.sun.shadow.mapSize.set(ms, ms);
+    const sc = this.sun.shadow.camera; sc.left = -40; sc.right = 40; sc.top = 40; sc.bottom = -40; sc.near = 1; sc.far = 140;
     this.sun.shadow.bias = -0.0004; this.sun.shadow.normalBias = 0.03;
     // ortam yansıması (metal zırh için)
     const pm = new THREE.PMREMGenerator(this.renderer);
@@ -156,6 +160,8 @@ export class Renderer3D {
     // Telefonda efekt zinciri yok: sahne doğrudan ekrana çizilir (donanım kenar yumuşatma, ton eşleme aynı geçişte).
     // Bu, her karede 4–6 tam ekran geçişi ve ortam gölgelendirmesi için sahnenin ikinci kez çizilmesini kaldırır.
     if (q === 'low' || MOBILE) { this.composer = null; this.bloom = null; return; }
+    // Not: ara görüntü MSAA'lı (samples) yapılınca GTAO derinliği bozup uzak sahneyi kızıla boyadı; kenar yumuşatma
+    // bunun yerine zincirin sonundaki SMAA geçişiyle yapılır (antialias yalnız ekran tamponunu etkiler).
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     if (q === 'high') {
@@ -167,6 +173,7 @@ export class Renderer3D {
     this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
+    this.composer.addPass(new SMAAPass(Math.max(1, this.w), Math.max(1, this.h))); // bilgisayarda kenar yumuşatma
   }
 
   heightAt(x: number, y: number) { return this.terrain ? this.terrain.heightAt(x, y) : 0; }
@@ -187,7 +194,7 @@ export class Renderer3D {
     this.world.add(this.terrain.mesh);
     if (this.terrain.water) this.world.add(this.terrain.water);
     const q = store.get().settings.quality;
-    this.world.add(buildProps(l.props, (x, y) => this.heightAt(x, y), q));
+    this.world.add(buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS));
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
@@ -219,8 +226,11 @@ export class Renderer3D {
     const fps = (this.fpsFrames * 1000) / Math.max(1, this.fpsAcc);
     this.fpsAt = now; this.fpsAcc = 0; this.fpsFrames = 0;
     // hedef akıcı 60 FPS: 50'nin altında çözünürlük kademeli düşer, 57'nin üstünde geri çıkar
-    if (fps < 50 && this.dynScale > 0.6) this.dynScale = Math.max(0.6, this.dynScale * (fps < 35 ? 0.82 : 0.9));
-    else if (fps > 57 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
+    // hedef, seçilen kare sınırı (30 seçiliyken 60'a ulaşamadığı için çözünürlüğü boşuna düşürüyordu);
+    // telefonda en düşük %80: daha düşük çözünürlükte zemin ve çimen kenarları titriyordu
+    const cap = store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
+    if (fps < cap * 0.83 && this.dynScale > floor) this.dynScale = Math.max(floor, this.dynScale * (fps < cap * 0.6 ? 0.85 : 0.92));
+    else if (fps > cap * 0.95 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
   }
 
   private skyGradient(top: number, horizon: number): THREE.Texture {
@@ -242,7 +252,7 @@ export class Renderer3D {
 
   resize() {
     const q = store.get().settings.quality;
-    if (q !== this.quality) { this.setupComposer(); this.renderer.shadowMap.enabled = q !== 'low'; }
+    if (q !== this.quality) { this.setupComposer(); this.renderer.shadowMap.enabled = q !== 'low' && DYN_SHADOWS; }
     const maxDpr = MOBILE ? (q === 'high' ? 1.5 : q === 'medium' ? 1.2 : 1) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
     const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;

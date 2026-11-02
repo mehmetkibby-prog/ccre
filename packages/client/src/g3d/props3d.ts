@@ -4,6 +4,54 @@ import { box, cyl, lathe, at, merge, colorize, radialNormals, rng } from './geom
 import { mat } from './materials.ts';
 import { fbm } from './textures.ts';
 import { U } from './terrain.ts';
+import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+/**
+ * Anime tarzı yumuşak taç kütlesi: hafif tümsekli küre, yumuşak normaller, alttan koyu üstten açık köşe rengi.
+ * (Önceki yüzlerce alfa kesmeli yaprak kartı yürürken titriyordu ve uzaktan ne olduğu anlaşılmıyordu.)
+ */
+const _c = new THREE.Color();
+function fluff(seed: number, cx: number, cy: number, cz: number, rad: number, sy: number, dark: number, light: number, detail = 1, snow = false): THREE.BufferGeometry {
+  let g: THREE.BufferGeometry = new THREE.IcosahedronGeometry(rad, detail);
+  g.deleteAttribute('normal'); g.deleteAttribute('uv');
+  g = mergeVertices(g);
+  const pos = g.attributes.position as THREE.BufferAttribute, v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) {
+    v.fromBufferAttribute(pos, i);
+    const d = v.clone().normalize();
+    const bump = 1 + (fbm(d.x * 0.5 + 0.5 + seed * 0.37, d.z * 0.5 + 0.5 + d.y * 0.31, 3, 2, seed) - 0.5) * 0.42;
+    const flat = d.y < -0.2 ? 0.78 : 1; // altı biraz basık
+    pos.setXYZ(i, v.x * bump, v.y * bump * sy * flat, v.z * bump);
+  }
+  g.computeVertexNormals();
+  g.translate(cx, cy, cz);
+  const D = new THREE.Color(dark), L = new THREE.Color(light), W = new THREE.Color(0xf4f8ff);
+  colorize(g, (p, n) => {
+    const t = THREE.MathUtils.clamp((p.y - (cy - rad * sy)) / (2 * rad * sy), 0, 1);
+    const k = THREE.MathUtils.smoothstep(t * 0.6 + Math.max(0, n.y) * 0.4, 0.05, 0.95);
+    _c.copy(D).lerp(L, k);
+    if (snow && n.y > 0.35) _c.lerp(W, THREE.MathUtils.smoothstep(n.y, 0.35, 0.8) * 0.85);
+    return _c.clone();
+  });
+  return g;
+}
+function cone(cx: number, cy: number, cz: number, r: number, h: number, dark: number, light: number, snow: boolean, seed: number): THREE.BufferGeometry {
+  let g: THREE.BufferGeometry = new THREE.ConeGeometry(r, h, 12, 2);
+  g.deleteAttribute('normal'); g.deleteAttribute('uv');
+  g = mergeVertices(g);
+  const pos = g.attributes.position as THREE.BufferAttribute, v = new THREE.Vector3();
+  for (let i = 0; i < pos.count; i++) { v.fromBufferAttribute(pos, i); if (v.y < h * 0.45) { const a = Math.atan2(v.z, v.x); const w = 1 + Math.sin(a * 6 + seed) * 0.08; pos.setXYZ(i, v.x * w, v.y - (Math.sin(a * 6 + seed) * 0.5 + 0.5) * 0.18 * (h * 0.5 - v.y) / h, v.z * w); } }
+  g.computeVertexNormals();
+  g.translate(cx, cy + h / 2, cz);
+  const D = new THREE.Color(dark), L = new THREE.Color(light), W = new THREE.Color(0xf4f8ff);
+  colorize(g, (p, n) => {
+    const t = THREE.MathUtils.clamp((p.y - cy) / h, 0, 1);
+    _c.copy(D).lerp(L, THREE.MathUtils.smoothstep(t * 0.5 + Math.max(0, n.y) * 0.6, 0.1, 0.95));
+    if (snow && n.y > 0.3) _c.lerp(W, 0.8);
+    return _c.clone();
+  });
+  return g;
+}
 
 /** Bir prop modeli: malzeme anahtarına göre birleştirilmiş geometri parçaları. */
 export interface Part { geo: THREE.BufferGeometry; mat: string; shadow?: boolean }
@@ -49,11 +97,13 @@ const B: Partial<Record<PropKind, Builder>> = {
       parts.push({ g, m: 'bark' });
       tips.push([bx, y0 + by + 0.3, bz]);
     }
-    const leaves: THREE.BufferGeometry[] = [];
-    for (const [x, y, z] of tips) leaves.push(leafCluster(r, x, y, z, 1.25 + r() * 0.3, 20, 1.3));
-    leaves.push(leafCluster(r, 0, H + 0.3, 0, 1.75, 30, 1.4));
+    // anime taç: ortada büyük kütle, dal uçlarında daha küçük kütleler
+    const autumn = v === 2;
+    const dark = autumn ? 0xa8502a : 0x2f7a3e, light = autumn ? 0xffc65a : 0x9ede62;
+    const crown: THREE.BufferGeometry[] = [fluff(100 + v, 0, H + 0.55, 0, 1.75, 0.88, dark, light, 2)];
+    tips.slice(1).forEach(([x, y, z], i) => crown.push(fluff(110 + v * 7 + i, x * 0.9, y + 0.15, z * 0.9, 1.05 + r() * 0.3, 0.85, dark, light, 1)));
     const res = group(parts);
-    res.push({ geo: merge(leaves), mat: v === 2 ? 'leaves_autumn' : 'leaves' });
+    res.push({ geo: merge(crown, true), mat: 'canopy' });
     return res;
   },
   pine(v) { return pineModel(v, false); },
@@ -62,7 +112,7 @@ const B: Partial<Record<PropKind, Builder>> = {
     const r = rng(300 + v);
     const parts: { g: THREE.BufferGeometry; m: string }[] = [];
     const branch = (o: THREE.Vector3, dir: THREE.Vector3, l: number, rad: number, d: number) => {
-      if (d > 3 || l < 0.3) return;
+      if (d > 2 || l < 0.45) return; // daha az ve kalın dal: net kuru ağaç silüeti
       const g = cyl(rad * 0.6, rad, l, 6, 1); g.translate(0, l / 2, 0);
       g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir)); g.translate(o.x, o.y, o.z);
       parts.push({ g, m: 'bark_dead' });
@@ -92,8 +142,9 @@ const B: Partial<Record<PropKind, Builder>> = {
   },
   bush(v) {
     const r = rng(500 + v);
-    const leaves = [leafCluster(r, 0, 0.6, 0, 0.75, 30, 0.9), leafCluster(r, 0.5, 0.45, 0.2, 0.55, 18, 0.8), leafCluster(r, -0.45, 0.45, -0.1, 0.55, 18, 0.8)];
-    const res: Part[] = [{ geo: merge(leaves), mat: 'bush' }];
+    const blobs = [fluff(500 + v, 0, 0.55, 0, 0.72, 0.8, 0x357f40, 0x8fd060, 1), fluff(510 + v, 0.5, 0.42, 0.2, 0.5, 0.8, 0x357f40, 0x8fd060, 1), fluff(520 + v, -0.45, 0.42, -0.1, 0.52, 0.8, 0x357f40, 0x8fd060, 1)];
+    void r;
+    const res: Part[] = [{ geo: merge(blobs, true), mat: 'canopy_low' }];
     if (v !== 1) {
       const berries: THREE.BufferGeometry[] = [];
       for (let i = 0; i < 9; i++) { const a = r() * 6.28; berries.push(colorize(at(new THREE.SphereGeometry(0.06, 6, 5), Math.cos(a) * 0.65, 0.5 + r() * 0.5, Math.sin(a) * 0.65), v === 0 ? 0xd02840 : 0x4050e0)); }
@@ -266,7 +317,11 @@ const B: Partial<Record<PropKind, Builder>> = {
   grasstuft(v) {
     const list: THREE.BufferGeometry[] = [];
     for (let i = 0; i < 3; i++) list.push(at(new THREE.PlaneGeometry(0.7, 0.5), 0, 0.25, 0, 0, (i / 3) * Math.PI));
-    return [{ geo: merge(list), mat: v === 3 ? 'needles_snow' : 'grass', shadow: false }];
+    const g = merge(list);
+    // normaller yukarı: yandan ışık alan dikey kartlar koyu ve sivri görünüyordu; zeminle aynı parlaklıkta olsun
+    const nor = g.attributes.normal as THREE.BufferAttribute;
+    for (let i = 0; i < nor.count; i++) nor.setXYZ(i, 0, 1, 0);
+    return [{ geo: g, mat: v === 3 ? 'needles_snow' : 'grass', shadow: false }];
   },
   bones() {
     const list: THREE.BufferGeometry[] = [];
@@ -319,45 +374,19 @@ const B: Partial<Record<PropKind, Builder>> = {
 };
 
 function pineModel(v: number, snow: boolean): Part[] {
-  const r = rng(200 + v);
-  const H = 7 + v * 0.5;
-  const parts: { g: THREE.BufferGeometry; m: string }[] = [{ g: at(cyl(0.08, 0.3, H, 8, 1.4), 0, H / 2, 0), m: 'bark' }];
-  const cards: THREE.BufferGeometry[] = [];
-  const cores: THREE.BufferGeometry[] = [];
-  const tiers = 10;
+  // anime çam: üst üste dört yumuşak koni, net silüet (önceden katman başına 16 sarkık iğne kartı vardı)
+  const H = 6.2 + v * 0.6;
+  const parts: Part[] = [{ geo: merge([at(cyl(0.12, 0.3, H * 0.55, 8, 1.4), 0, H * 0.275, 0)]), mat: 'bark' }];
+  const dark = snow ? 0x2f5e58 : 0x226a4c, light = snow ? 0x7fb0a4 : 0x6fc88a;
+  const cones: THREE.BufferGeometry[] = [];
+  const tiers = 4;
   for (let t = 0; t < tiers; t++) {
     const k = t / tiers;
-    const y = 1.2 + k * (H - 1.3);
-    const len = 2.2 * (1 - k) + 0.35;
-    // koyu iç koni: yoğunluk hissi
-    if (t % 2 === 0) cores.push(at(new THREE.ConeGeometry(len * 0.45, len * 0.8, 9, 1, true), 0, y + len * 0.2, 0));
-    const n = 8;
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2 + t * 0.7 + r() * 0.4;
-      const droop = 0.35 + r() * 0.2;
-      for (const cross of [0, Math.PI / 2]) {
-        const g = new THREE.PlaneGeometry(len * 0.5, len);
-        g.translate(0, len / 2, 0);
-        g.rotateY(cross);
-        g.rotateZ(-Math.PI / 2 + droop);
-        g.rotateY(-a);
-        g.translate(0, y, 0);
-        cards.push(g);
-      }
-    }
+    const r = (2.2 - k * 1.55) * (1 + v * 0.06), h = 2.6 - k * 0.6;
+    cones.push(cone(0, H * 0.22 + k * H * 0.62, 0, r, h, dark, light, snow, t * 1.7 + v));
   }
-  const leaf = merge(cards);
-  radialNormals(leaf, new THREE.Vector3(0, H * 0.35, 0), 1.0);
-  const res = group(parts);
-  const core = merge(cores);
-  res.push({ geo: core, mat: snow ? 'pine_core_snow' : 'pine_core' });
-  res.push({ geo: leaf, mat: snow ? 'needles_snow' : 'needles' });
-  if (snow) {
-    const caps: THREE.BufferGeometry[] = [];
-    for (let t = 0; t < 6; t++) { const y = 1.6 + t * (H - 2) / 6, rad = 2.0 * (1 - t / 6) + 0.3; caps.push(at(new THREE.ConeGeometry(rad * 0.75, 0.45, 10, 1, true), 0, y + 0.35, 0)); }
-    res.push({ geo: merge(caps), mat: 'snow' });
-  }
-  return res;
+  parts.push({ geo: merge(cones, true), mat: 'canopy' });
+  return parts;
 }
 
 function crystalModel(v: number, m: string): Part[] {
@@ -388,7 +417,20 @@ export function propModel(k: PropKind, v: number): Part[] | null {
 }
 
 /** Haritadaki tüm propları türe göre gruplayıp InstancedMesh olarak kurar. */
-export function buildProps(props: Prop[], heightAt: (x: number, y: number) => number, quality: string): THREE.Group {
+/** Telefonda ağaç/çalı altına yumuşak zemin gölgesi (güneş gölge haritası yerine). */
+const BLOB_R: Partial<Record<PropKind, number>> = { tree: 2.7, pine: 2.3, snowpine: 2.3, bush: 1.2, deadtree: 1.3, rock: 1.0, house: 4.2, stall: 1.6, well: 1.2, tent: 2.4 };
+let blobPart: { geo: THREE.BufferGeometry; mat: THREE.Material } | null = null;
+function blobGeo() {
+  if (blobPart) return blobPart;
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+  const c = cv.getContext('2d')!, gr = c.createRadialGradient(32, 32, 2, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(20,40,20,0.42)'); gr.addColorStop(0.6, 'rgba(20,40,20,0.22)'); gr.addColorStop(1, 'rgba(20,40,20,0)');
+  c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+  const g = new THREE.PlaneGeometry(2, 2); g.rotateX(-Math.PI / 2); g.translate(0, 0.05, 0);
+  blobPart = { geo: g, mat: new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }) };
+  return blobPart;
+}
+export function buildProps(props: Prop[], heightAt: (x: number, y: number) => number, quality: string, blobs = false): THREE.Group {
   const root = new THREE.Group();
   const groups = new Map<string, Prop[]>();
   for (const p of props) {
@@ -420,6 +462,12 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
       im.computeBoundingSphere();
       im.frustumCulled = true;
       root.add(im);
+    }
+    const br = blobs ? BLOB_R[k as PropKind] : undefined;
+    if (br) {
+      const bp = blobGeo(), im = new THREE.InstancedMesh(bp.geo, bp.mat, list.length);
+      list.forEach((p, i) => { pos.set(p.x * U, heightAt(p.x, p.y) - 0.03, p.y * U); q.identity(); s.setScalar(br * p.s); m4.compose(pos, q, s); im.setMatrixAt(i, m4); });
+      im.renderOrder = 1; im.computeBoundingSphere(); root.add(im);
     }
   }
   return root;
