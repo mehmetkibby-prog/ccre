@@ -1,0 +1,67 @@
+{
+  "status": "PASS",
+  "duration": 30,
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "frames": 900,
+  "video": "H.264 / yuv420p",
+  "audio": "AAC stereo 48 kHz",
+  "fullAudioVideoDecode": true,
+  "faststart": true,
+  "address": {
+    "framesChecked": 900,
+    "maxMeanPixelDifference": 0.20955844155844155,
+    "minimumPixelRange": 219,
+    "persistent": true
+  },
+  "mobilePlayback": {
+    "currentTime": 1.06964,
+    "error": null,
+    "width": 1080,
+    "height": 1920,
+    "duration": 30
+  },
+  "seeks": [
+    {
+      "requested": 1.5,
+      "actual": 1.5
+    },
+    {
+      "requested": 5.2,
+      "actual": 5.2
+    },
+    {
+      "requested": 8.6,
+      "actual": 8.6
+    },
+    {
+      "requested": 11.9,
+      "actual": 11.9
+    },
+    {
+      "requested": 15.8,
+      "actual": 15.8
+    },
+    {
+      "requested": 18.8,
+      "actual": 18.8
+    },
+    {
+      "requested": 22.8,
+      "actual": 22.8
+    },
+    {
+      "requested": 25.5,
+      "actual": 25.5
+    },
+    {
+      "requested": 28.5,
+      "actual": 28.5
+    }
+  ],
+  "browserErrors": [],
+  "bytes": 19450651,
+  "sha256": "edcff4ef6bfc5fe6a401218bb8b2681f12cbc736bb52ecb5cab7249c6d55c8ca",
+  "scope": "Local Chromium with mobile viewport; no actual Instagram upload test."
+}
