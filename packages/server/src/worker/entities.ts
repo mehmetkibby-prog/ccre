@@ -62,9 +62,11 @@ export class Player {
     if (this.hp > this.stats.maxHp) this.hp = this.stats.maxHp;
     if (this.hp <= 0 && !this.dead) this.hp = this.stats.maxHp;
   }
+  /** Görünüm baytı: alt 4 bit silah, üst 4 bit gövde zırhı nadirliği (istemcide parıltı efekti). */
   weaponRarityIndex(): number {
-    const w = this.char.equip.weapon;
-    return w ? ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'].indexOf(w.rarity) : 0;
+    const R = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
+    const ix = (it?: { rarity: string }) => (it ? Math.max(0, R.indexOf(it.rarity)) : 0);
+    return ix(this.char.equip.weapon) | (ix(this.char.equip.armor) << 4);
   }
   markSave() { this.saveDirty = true; }
 }
@@ -99,12 +101,16 @@ export class Monster {
   nextPatternAt = 0;
   killed = false; // ölüm makbuzu: bir kez
   constructor(public def: MonsterDef, public sp: SpawnPoint) {
+    // yönetim: canavar türü ayarı (hız tanımın kopyasında; diğer alanlar doğuşta)
+    const mt = TUNING.monsters[def.id];
+    if (mt?.speedMul !== undefined) this.def = def = { ...def, speed: def.speed * mt.speedMul };
     this.tplIndex = MONSTER_INDEX.get(def.id)!;
     this.x = sp.x; this.y = sp.y;
     const s = monsterStats(def, sp.level, sp.variant);
     // yönetim çarpanları doğuş anında uygulanır (yaşayan canavar değişmez, yeniden doğan yeni değeri alır)
-    const hp = Math.max(1, Math.round(s.maxHp * TUNING.monsterHpMul));
-    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(s.atk * TUNING.monsterAtkMul)); this.armor = s.def; this.xp = s.xp;
+    const hp = Math.max(1, Math.round(s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
+    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
+    this.armor = Math.max(0, s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
     this.wanderAt = Date.now() + Math.random() * 8000;
   }
   get level() { return this.sp.level; }

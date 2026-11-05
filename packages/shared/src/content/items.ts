@@ -1,3 +1,4 @@
+import { TUNING } from '../tuning.ts';
 import type { ClassId } from './classes.ts';
 
 export type Slot = 'weapon' | 'armor' | 'helmet' | 'boots' | 'necklace' | 'earring' | 'bracelet';
@@ -8,17 +9,18 @@ export const SLOT_NAMES: Record<Slot, string> = {
 
 export type Rarity = 'white' | 'blue' | 'orange' | 'crimson' | 'unique' | 'infinite' | 'purple' | 'emerald';
 export const RARITIES: Rarity[] = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
-export interface RarityDef { id: Rarity; name: string; color: string; minLevel: number; power: number; }
+/** power: zırh ve takıların çarpanı (savunma/can); weaponPower: silah çarpanı (saldırı). */
+export interface RarityDef { id: Rarity; name: string; color: string; minLevel: number; power: number; weaponPower: number }
 /** Güç çarpanları renk sırasından otomatik türemez; her nadirlik kendi değeriyle tanımlı. */
 export const RARITY: Record<Rarity, RarityDef> = {
-  white: { id: 'white', name: 'Sıradan', color: '#e8e6df', minLevel: 1, power: 1 },
-  blue: { id: 'blue', name: 'Mavi', color: '#5fa8ff', minLevel: 7, power: 1.45 },
-  orange: { id: 'orange', name: 'Turuncu', color: '#ffa53d', minLevel: 20, power: 2.2 },
-  crimson: { id: 'crimson', name: 'Kızıl', color: '#ff4d5a', minLevel: 30, power: 3.1 },
-  unique: { id: 'unique', name: 'Eşsiz', color: '#ffd84a', minLevel: 50, power: 4.6 },
-  infinite: { id: 'infinite', name: 'Sonsuz', color: '#7cf3ff', minLevel: 50, power: 5.6 },
-  purple: { id: 'purple', name: 'Mor Kök', color: '#c58bff', minLevel: 60, power: 5.2 },
-  emerald: { id: 'emerald', name: 'Kadim Zümrüt', color: '#3ef09a', minLevel: 65, power: 6.4 },
+  white: { id: 'white', name: 'Sıradan', color: '#e8e6df', minLevel: 1, power: 1, weaponPower: 1 },
+  blue: { id: 'blue', name: 'Mavi', color: '#5fa8ff', minLevel: 7, power: 1.5, weaponPower: 1.8 },
+  orange: { id: 'orange', name: 'Turuncu', color: '#ffa53d', minLevel: 20, power: 2.6, weaponPower: 3.1 },
+  crimson: { id: 'crimson', name: 'Kızıl', color: '#ff4d5a', minLevel: 30, power: 3.9, weaponPower: 5.4 },
+  unique: { id: 'unique', name: 'Eşsiz', color: '#ffd84a', minLevel: 50, power: 5.4, weaponPower: 7.2 },
+  infinite: { id: 'infinite', name: 'Sonsuz', color: '#7cf3ff', minLevel: 50, power: 6.4, weaponPower: 8.6 },
+  purple: { id: 'purple', name: 'Mor Kök', color: '#c58bff', minLevel: 60, power: 6.0, weaponPower: 8.0 },
+  emerald: { id: 'emerald', name: 'Kadim Zümrüt', color: '#3ef09a', minLevel: 65, power: 7.2, weaponPower: 9.8 },
 };
 
 export interface ItemTemplate {
@@ -104,7 +106,10 @@ export function itemDisplayName(it: ItemInstance): string {
 export function itemPower(it: ItemInstance): number {
   const t = ITEM_TPL.get(it.tpl);
   if (!t) return 0;
-  const base = Math.round(t.basePower * RARITY[it.rarity].power);
+  // silah saldırıyı, diğerleri savunma/canı belirler; yönetim panelinden nadirlik başına değiştirilebilir
+  const r = RARITY[it.rarity], ov = TUNING.rarityPower[it.rarity];
+  const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
+  const base = Math.round(t.basePower * mult);
   const plus = t.slot === 'weapon' ? PLUS_WEAPON[it.plus] ?? 0 : PLUS_ARMOR[it.plus] ?? 0;
   return base + plus;
 }
@@ -127,3 +132,14 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'talisman_stone', name: 'Tılsım Taşı', icon: 'talisman', color: '#5ce0b0', sellable: false, desc: '20 tanesi Tılsımın Gücü olur.' },
 ];
 export const MATERIAL = new Map(MATERIALS.map((m) => [m.id, m] as const));
+
+/** Eşyanın ikon adı: silahlarda nadirliğe özel görsel (mavi/turuncu/kızıl; daha üstü kızıl görselini kullanır). */
+export function itemIconName(it: { tpl: string; rarity: Rarity }): string {
+  const t = ITEM_TPL.get(it.tpl);
+  if (!t) return 'bag';
+  if (t.slot === 'weapon' && t.cls && it.rarity !== 'white') {
+    const r = it.rarity === 'blue' || it.rarity === 'orange' ? it.rarity : 'crimson';
+    return `w_${t.cls}_${r}`;
+  }
+  return t.icon;
+}

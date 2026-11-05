@@ -257,6 +257,12 @@ const SKILL_CLIPS: Record<string, Record<number, string[]>> = {
 export const ATTACK_ANIM_MS = 620, CAST_ANIM_MS = 950;
 
 /** Bir modelin kendi iskelet ve animasyon karıştırıcısıyla yeni bir örneği. */
+/** Hazır silah modeli (ör. w_guardian_crimson): yüklüyse geometri ve malzemeyi paylaşan bir kopya, değilse yüklemeyi başlatıp null. */
+export function weaponGlb(id: string): THREE.Object3D | null {
+  const L = model(id);
+  return L ? L.scene.clone(true) : null;
+}
+
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
   if (!L) return null;

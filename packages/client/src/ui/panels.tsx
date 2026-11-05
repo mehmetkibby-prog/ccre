@@ -1,7 +1,7 @@
 import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
 import {
-  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, UPGRADE_TABLE, SELL_PRICES, masteryChance, itemDisplayName, itemPower,
+  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, UPGRADE_TABLE, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
   classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import type { Game } from '../game/game.ts';
@@ -89,7 +89,7 @@ function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y
       ))}
       {it.kills ? <div className="muted" style={{ fontSize: 11 }}>Silahla av: {it.kills}</div> : null}
       {it.locked && <div style={{ color: '#ffd27a', fontSize: 11 }}>Kilitli (satılamaz)</div>}
-      <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>NPC'ye satış: {SELL_PRICES[it.rarity]} Mücevher</div>
+      <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Satış: {sellPrice(it.rarity)} Mücevher</div>
     </>
   );
   // telefonda: dokununca sabit kart, "Kapat" ile kapanır
@@ -120,7 +120,7 @@ function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: st
   const { onTapCard, ...handlers } = bind ?? {};
   return (
     <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
-      {it && tpl ? <img src={iconUrl(tpl.icon, RIDX.indexOf(it.rarity))} alt="" /> : <span className="lbl">{label}</span>}
+      {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} alt="" /> : <span className="lbl">{label}</span>}
       {it?.plus ? <span className="plus">+{it.plus}</span> : null}
       {it?.locked ? <span className="lock">🔒</span> : null}
     </div>
@@ -133,15 +133,26 @@ function Inventory({ game }: { game: Game }) {
   const [sel, setSel] = useState<string | null>(null);
   if (!self) return null;
   const selItem = self.bag.find((b) => b.id === sel);
+  const selSlot = (Object.keys(self.equip) as Slot[]).find((s) => self.equip[s]?.id === sel);
+  const selEq = selSlot ? self.equip[selSlot] : undefined;
+  const sellIt = (it: ItemInstance) => { game.send({ t: 'sell', items: [it.id], req: reqId() }); setSel(null); clear(); };
   const layout: (Slot | null)[] = ['earring', 'helmet', 'necklace', 'weapon', 'armor', 'bracelet', null, 'boots', null];
   return (
     <Panel title="Çanta ve Ekipman" width={820}>
       <div className="inv">
         <div>
           <div className="paper">
-            {layout.map((s, i) => s ? <Cell key={s} it={self.equip[s]} label={SLOT_NAMES[s]} bind={bind(self.equip[s])} onClick={() => { if (self.equip[s]) { game.send({ t: 'unequip', slot: s }); clear(); } }} /> : <div key={i} />)}
+            {layout.map((s, i) => s ? <Cell key={s} it={self.equip[s]} label={SLOT_NAMES[s]} bind={bind(self.equip[s])} onClick={() => { if (self.equip[s]) setSel(sel === self.equip[s]!.id ? null : self.equip[s]!.id); }} sel={!!self.equip[s] && sel === self.equip[s]!.id} /> : <div key={i} />)}
           </div>
-          <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Kuşanılmış eşyaya tıkla: çıkar</div>
+          <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Eşyaya dokun: çıkar, sat ya da kilitle</div>
+          {selEq && selSlot && (
+            <div className="row" style={{ marginTop: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span style={{ color: RARITY[selEq.rarity].color, fontWeight: 800, width: '100%', textAlign: 'center' }}>{itemDisplayName(selEq)}</span>
+              <button className="btn small" onClick={() => { game.send({ t: 'unequip', slot: selSlot }); setSel(null); clear(); }}>Çıkar</button>
+              <button className="btn small red" disabled={!!selEq.locked} title={selEq.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selEq)}>Sat +{sellPrice(selEq.rarity)}</button>
+              <button className="btn small" onClick={() => game.send({ t: 'lock', item: selEq.id, on: !selEq.locked })}>{selEq.locked ? 'Kilidi aç' : 'Kilitle'}</button>
+            </div>
+          )}
         </div>
         <div>
           <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Dükkânı</button>}</div>
@@ -154,6 +165,7 @@ function Inventory({ game }: { game: Game }) {
               <span style={{ color: RARITY[selItem.rarity].color, fontWeight: 800 }}>{itemDisplayName(selItem)}</span>
               <div className="spacer" />
               <button className="btn small green" onClick={() => { game.send({ t: 'equip', item: selItem.id }); setSel(null); clear(); }}>Kuşan</button>
+              <button className="btn small red" disabled={!!selItem.locked} title={selItem.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selItem)}>Sat +{sellPrice(selItem.rarity)}</button>
               <button className="btn small" onClick={() => game.send({ t: 'lock', item: selItem.id, on: !selItem.locked })}>{selItem.locked ? 'Kilidi aç' : 'Kilitle'}</button>
             </div>
           )}
@@ -385,7 +397,7 @@ function Shop({ game }: { game: Game }) {
   if (!self || !shopId) return null;
   if (shopId === 'sell') {
     const list = self.bag.filter((i) => !i.locked);
-    const total = [...sel].reduce((a, id) => a + (SELL_PRICES[self.bag.find((x) => x.id === id)?.rarity ?? 'white'] ?? 0), 0);
+    const total = [...sel].reduce((a, id) => a + sellPrice(self.bag.find((x) => x.id === id)?.rarity ?? 'white'), 0);
     const pick = (rs: string[]) => setSel(new Set(list.filter((i) => rs.includes(i.rarity)).map((i) => i.id)));
     return (
       <Panel title="Eşya Sat" width={640}>
@@ -457,7 +469,7 @@ function Upgrade({ game }: { game: Game }) {
 
 // ───────── pazar tezgâhı ─────────
 const fmtG = (n: number) => n.toLocaleString('tr-TR');
-const suggestPrice = (it: ItemInstance) => Math.max(1, Math.round((SELL_PRICES[it.rarity] ?? 5) * 3 * (1 + it.plus * 0.6)));
+const suggestPrice = (it: ItemInstance) => Math.max(1, Math.round((MARKET_VALUE[it.rarity] ?? 5) * (1 + it.plus * 0.6)));
 function Market({ game }: { game: Game }) {
   const view = useStore((s) => s.stallView);
   const my = useStore((s) => s.myStall);

@@ -28,6 +28,18 @@ export class Terrain {
     // yükseklikler: yabani haritalarda tepeler ve kenarlarda kayalık yamaçlar
     const wild = theme !== 'village' && theme !== 'lake';
     const spx = layout.spawn.x / TILE, spy = layout.spawn.y / TILE;
+    // Göllere uzaklık (karo): su düzlemi tek yükseklikte (-0,32 m); tepe üstüne düşen göl tabanı suyun
+    // üstünde kalıp "içi boş göl" gibi görünüyordu. Göl karoları her zaman suyun altına oyulur, çevresi kıyıya iner.
+    const wd = new Float32Array(l.w * l.h).fill(1e9), qx: number[] = [];
+    for (let k = 0; k < l.w * l.h; k++) if (l.ground[k] === G_WATER || l.ground[k] === G_DEEP) { wd[k] = 0; qx.push(k); }
+    for (let qi = 0; qi < qx.length; qi++) {
+      const k = qx[qi], x = k % l.w, y = (k / l.w) | 0;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy; if (nx < 0 || ny < 0 || nx >= l.w || ny >= l.h) continue;
+        const nk = ny * l.w + nx; if (wd[nk] > wd[k] + 1) { wd[nk] = wd[k] + 1; qx.push(nk); }
+      }
+    }
+    const WATER_Y = -0.32;
     for (let j = 0; j < this.hh; j++) for (let i = 0; i < this.hw; i++) {
       const tx = i / SUB, ty = j / SUB;
       let h = (fbm(tx / l.w, ty / l.h, 3, 4, seed) - 0.5) * (wild ? 3.4 : 0.6) + (fbm(tx / 9, ty / 9, 2, 3, seed + 11) - 0.5) * (wild ? 0.7 : 0.15);
@@ -46,6 +58,12 @@ export class Terrain {
       const g = gAt(Math.floor(tx), Math.floor(ty));
       if (g === 3 || g === 9 || g === 11) h = h * 0.25 + 0.02;
       else if (g === 2) h *= 0.75;
+      // (kenar yamacı ve yollardan sonra: kenardaki göller de dolu kalsın)
+      if (water > 0) h = Math.min(h, WATER_Y - 0.18 - (water / cnt) * 0.9); // göl tabanı daima suyun altında
+      else {
+        const d = wd[Math.min(l.h - 1, Math.floor(ty)) * l.w + Math.min(l.w - 1, Math.floor(tx))];
+        if (d < 3) h = Math.min(h, THREE.MathUtils.lerp(WATER_Y + 0.12, Math.max(h, WATER_Y + 0.12), THREE.MathUtils.smoothstep(d, 0, 3))); // kıyıya yumuşak iniş
+      }
       this.heights[j * this.hw + i] = h;
     }
     // geometri

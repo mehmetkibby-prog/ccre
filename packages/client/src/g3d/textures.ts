@@ -370,3 +370,40 @@ export function glowTexture() {
   glowTex = new THREE.CanvasTexture(cv);
   return glowTex;
 }
+
+/**
+ * Ağaç taçları için döşenebilir yaprak kümesi dokusu: birbirine binen yaprak öbekleri (açık/koyu/sarımsı).
+ * Kırmızı kanal parlaklık, yeşil kanal sıcak ton payı. Kenarlar sarılarak çizilir (dikişsiz tekrar).
+ */
+let canopyTex: THREE.Texture | null = null;
+export function canopyTexture(): THREE.Texture {
+  if (canopyTex) return canopyTex;
+  const S = 256, cv = document.createElement('canvas'); cv.width = cv.height = S;
+  const ctx = cv.getContext('2d')!;
+  let seed = 91; const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  ctx.fillStyle = 'rgb(118,40,0)'; ctx.fillRect(0, 0, S, S);
+  const leaf = (x: number, y: number, a: number, l: number, v: number, warm: number) => {
+    for (const ox of [-S, 0, S]) for (const oy of [-S, 0, S]) {
+      const px = x + ox, py = y + oy;
+      if (px < -l || py < -l || px > S + l || py > S + l) continue;
+      ctx.save(); ctx.translate(px, py); ctx.rotate(a);
+      const g = ctx.createLinearGradient(0, -l, 0, l);
+      g.addColorStop(0, `rgb(${Math.min(255, v + 34)},${warm},0)`); g.addColorStop(1, `rgb(${Math.max(0, v - 30)},${warm},0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.moveTo(0, -l); ctx.quadraticCurveTo(l * 0.62, -l * 0.15, 0, l); ctx.quadraticCurveTo(-l * 0.62, -l * 0.15, 0, -l); ctx.fill();
+      ctx.restore();
+    }
+  };
+  // üç katman: koyu dip, orta, açık uç (öbekler halinde)
+  for (const [n, base, spread, size] of [[260, 70, 40, 15], [300, 128, 50, 13], [200, 190, 50, 11]] as const) {
+    for (let i = 0; i < n; i++) {
+      const cx = rnd() * S, cy = rnd() * S;
+      const k = 2 + ((rnd() * 3) | 0);
+      for (let j = 0; j < k; j++) leaf(cx + (rnd() - 0.5) * 18, cy + (rnd() - 0.5) * 18, rnd() * 6.28, size * (0.7 + rnd() * 0.6), base + (rnd() - 0.5) * spread, rnd() < 0.12 ? 160 : 30);
+    }
+  }
+  const t = new THREE.CanvasTexture(cv);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.anisotropy = 4;
+  canopyTex = t;
+  return t;
+}

@@ -6,7 +6,7 @@
  */
 import { World, makeItem } from '../../../server/src/worker/world.ts';
 import type { CharState, FromWorker } from '../../../server/src/types.ts';
-import { TUNING, MAPS, SELL_PRICES, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
+import { TUNING, MAPS, MARKET_VALUE, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
 const KEY = 'col_offline_v1';
 interface Db { nextAcc: number; nextChar: number; accounts: { id: number; username: string; pass: string; starter: boolean }[]; chars: Record<number, CharState>; session: number | null; market?: unknown }
@@ -160,7 +160,7 @@ class Backend {
       this.world.join(sid, c);
       if (merchant) {
         const titles = [`${name}'nin Silah Dükkânı`, 'Ucuz zırh, kaçırma!', `${name} · Nadir eşyalar`];
-        this.world.onCmd(sid, JSON.stringify({ t: 'stall_open', title: titles[this.merchants - 1], items: c.bag.map((it) => ({ id: it.id, price: Math.round((SELL_PRICES[it.rarity] ?? 5) * (2.5 + Math.random() * 2)) })), req: 'bot' + sid }));
+        this.world.onCmd(sid, JSON.stringify({ t: 'stall_open', title: titles[this.merchants - 1], items: c.bag.map((it) => ({ id: it.id, price: Math.round((MARKET_VALUE[it.rarity] ?? 5) * (0.8 + Math.random() * 0.6)) })), req: 'bot' + sid }));
       }
       this.bots.push({ sid, seq: 0, tx: c.x, ty: c.y, forest, target: 0, nextChat: performance.now() + 15000 + Math.random() * 40000 });
     });
@@ -173,7 +173,7 @@ class Backend {
   private botShop() {
     if (performance.now() < this.nextBotBuy) return;
     this.nextBotBuy = performance.now() + 70_000 + Math.random() * 110_000;
-    const offers = this.world.market.stalls.filter((s) => s.ownerId > 0).flatMap((s) => s.items.filter((m) => m.price <= (SELL_PRICES[m.item.rarity] ?? 5) * 4).map((m) => ({ s, m })));
+    const offers = this.world.market.stalls.filter((s) => s.ownerId > 0).flatMap((s) => s.items.filter((m) => m.price <= (MARKET_VALUE[m.item.rarity] ?? 5) * 1.4).map((m) => ({ s, m })));
     const shoppers = this.bots.filter((b) => !b.forest && !this.world.market.stalls.some((s) => s.ownerId === -(b.sid - 10_000 + 1)));
     if (!offers.length || !shoppers.length) return;
     const { s, m } = offers[Math.floor(Math.random() * offers.length)];
@@ -220,10 +220,11 @@ class Backend {
 let _backend: Backend | null = null;
 const B = () => (_backend ??= new Backend());
 /** Yönetim ayarı değişti: çalışan dünyada yoğunluğu değişen haritaların yuvalarını ve botları yeniden kurar. */
-export function onTuningChanged(prev: { density: Record<string, number>; bots: number }) {
+export function onTuningChanged(prev: { density: Record<string, number>; bots: number; spawns?: Record<string, unknown>; monsters?: string }) {
   const b = _backend; if (!b) return;
-  for (const id of new Set([...Object.keys(prev.density), ...Object.keys(TUNING.density)])) {
-    if ((prev.density[id] ?? 1) !== (TUNING.density[id] ?? 1)) b.world.reseedMonsters(id);
+  const spawnKey = (s: Record<string, unknown> | undefined, map: string) => JSON.stringify(Object.entries(s ?? {}).filter(([k]) => k.startsWith(map + ':')).sort());
+  for (const id of Object.keys(MAPS)) {
+    if ((prev.density[id] ?? 1) !== (TUNING.density[id] ?? 1) || spawnKey(prev.spawns, id) !== spawnKey(TUNING.spawns, id)) b.world.reseedMonsters(id);
   }
   if (prev.bots !== TUNING.bots && b.started) b.resetBots();
 }
@@ -302,3 +303,27 @@ export async function localApi(path: string, body: any): Promise<any> {
 }
 
 (window as unknown as { __colCreateSocket: typeof createSocket }).__colCreateSocket = createSocket;
+
+// ───────── yönetim paneli: oyuncular (tarayıcı sürümü: bu cihazdaki karakterler ve botlar) ─────────
+export interface AdminPlayer { id: number; name: string; cls: string; level: number; gems: number; essence: number; potions: number; map: string; online: boolean; bot: boolean }
+export function adminPlayers(): AdminPlayer[] {
+  const out = new Map<number, AdminPlayer>();
+  for (const c of Object.values(db.chars)) out.set(c.id, { id: c.id, name: c.name, cls: c.cls, level: c.level, gems: c.gems, essence: c.essence, potions: c.materials.red_potion ?? 0, map: c.map, online: false, bot: false });
+  for (const p of _backend?.world.bySid.values() ?? []) {
+    const c = p.char;
+    out.set(c.id, { id: c.id, name: c.name, cls: c.cls, level: c.level, gems: c.gems, essence: c.essence, potions: c.materials.red_potion ?? 0, map: p.zone.id, online: true, bot: c.id < 0 });
+  }
+  return [...out.values()].sort((a, b) => Number(b.online) - Number(a.online) || a.name.localeCompare(b.name, 'tr'));
+}
+export function adminUpdatePlayer(id: number, patch: { level?: number; gems?: number; essence?: number; potions?: number }): string {
+  if (_backend?.world.adminSetPlayer(id, patch)) return 'Çevrimiçi oyuncu anında güncellendi.';
+  const c = db.chars[id];
+  if (!c) return 'Karakter bulunamadı.';
+  if (patch.level !== undefined) { c.level = Math.max(1, Math.min(50, Math.round(patch.level))); c.xp = 0; }
+  if (patch.gems !== undefined) c.gems = Math.max(0, Math.round(patch.gems));
+  if (patch.essence !== undefined) c.essence = Math.max(0, Math.round(patch.essence));
+  if (patch.potions !== undefined) c.materials.red_potion = Math.max(0, Math.round(patch.potions));
+  c.saveVersion++;
+  persist();
+  return 'Kayıt güncellendi; oyuncu oyuna girince geçerli.';
+}

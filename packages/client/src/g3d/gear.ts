@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { weaponModel, shieldModel, type HLook } from './humanoid.ts';
-import { attachToBone, boneRootPos, type GlbChar } from './models.ts';
+import { attachToBone, boneRootPos, weaponGlb, type GlbChar } from './models.ts';
+import { glowTexture } from './textures.ts';
+import { weaponFx } from './gearfx.ts';
 
 /**
  * Elin bağlanma pozundaki geometrisinden avuç çerçevesi (kök uzayında):
@@ -84,11 +86,77 @@ const UP = new THREE.Vector3(0, 1, 0);
  * Hazır (GLB) karaktere sınıfının silahını ve kalkanını takar. Konum ve yön bağlanma pozunda,
  * elin gerçek geometrisinden hesaplanır; böylece silah avucun içinden geçer ve animasyonla birlikte doğru döner.
  */
-export function equipGlb(glb: GlbChar, L: HLook | undefined) {
-  if (!L) return;
+/**
+ * Silahın nadirlik görünümü: mavi safir parıltısı, turuncu altın-amber, kızıl ve üstü kırmızı ışıma ve hale.
+ * (rarity: RARITIES sırası; 0 beyaz = özgün görünüm)
+ */
+const RAR_STYLE: Record<number, { tint: number; emissive: number; ei: number; halo?: number }> = {
+  1: { tint: 0xa8c8ff, emissive: 0x2a5cff, ei: 0.55 },
+  2: { tint: 0xffc066, emissive: 0xff7a10, ei: 0.7, halo: 0xffa040 },
+  3: { tint: 0xff6a6a, emissive: 0xff1020, ei: 1.15, halo: 0xff2a30 },
+};
+const RAR_NAME = ['', 'blue', 'orange', 'crimson'];
+const WEAPON_CLS: Record<string, string> = { sword: 'guardian', bow: 'hunter', staff: 'arcanist' };
+/** Nadirliğe özel tasarlanmış silah modelinin kimliği (beyazda yok; kızıldan üstü kızıl modeli kullanır). */
+export function weaponModelId(kind: string | undefined, rarity: number) {
+  const cls = kind ? WEAPON_CLS[kind] : undefined;
+  return cls && rarity > 0 ? `w_${cls}_${RAR_NAME[Math.min(3, rarity)]}` : null;
+}
+/** Tasarlanmış modelin malzemesi: dokusu hafifçe kendinden ışır (nadirlik arttıkça daha çok). Model başına bir kez kurulur. */
+const glowMats = new Map<THREE.Material, THREE.Material>();
+function glowGlb(g: THREE.Object3D, rarity: number) {
+  const ei = [0, 0.12, 0.3, 0.5][Math.min(3, rarity)];
+  g.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    m.castShadow = true;
+    const src = m.material as THREE.MeshStandardMaterial;
+    let c = glowMats.get(src) as THREE.MeshStandardMaterial | undefined;
+    if (!c) {
+      c = src.clone();
+      if (c.map) { c.emissiveMap = c.map; c.emissive = new THREE.Color(0xffffff); c.emissiveIntensity = ei; }
+      glowMats.set(src, c);
+    }
+    m.material = c;
+  });
+}
+
+export function styleWeapon(g: THREE.Object3D, rarity: number, kind = 'sword', designed = false) {
+  const st = RAR_STYLE[Math.min(3, rarity)];
+  if (!st || rarity <= 0) return;
+  if (!designed) g.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    const mats = (Array.isArray(m.material) ? m.material : [m.material]).map((x) => {
+      const c = (x as THREE.MeshStandardMaterial).clone();
+      if (c.color) c.color.lerp(new THREE.Color(st.tint), 0.55);
+      if ('emissive' in c) { c.emissive = new THREE.Color(st.emissive); c.emissiveIntensity = st.ei * 0.6; }
+      return c;
+    });
+    m.material = Array.isArray(m.material) ? mats : mats[0];
+  });
+  if (st.halo) {
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: st.halo, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: rarity >= 3 ? 0.75 : 0.45 }));
+    halo.scale.setScalar(rarity >= 3 ? 0.9 : 0.6); halo.position.y = kind === 'staff' ? 1.2 : kind === 'bow' ? 0 : 0.5; halo.name = 'rarity-halo';
+    g.add(halo);
+  }
+  const fx = weaponFx(rarity, kind);
+  if (fx) g.add(fx);
+}
+
+/**
+ * Karaktere silah ve kalkan takar. Nadir silahta tasarlanmış model kullanılır; model henüz yüklenmediyse
+ * renklendirilmiş basit silah takılır ve beklenen modelin kimliği döner (gelince görünüm yeniden kurulur).
+ */
+export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0): string | null {
+  if (!L) return null;
   const { root, bones } = glb;
   const isBow = L.weapon === 'bow';
-  const w = isBow ? { obj: bowModel() } : weaponModel(L);
+  const wid = weaponModelId(L.weapon, rarity);
+  const designed = wid ? weaponGlb(wid) : null;
+  let w: { obj: THREE.Object3D } | null;
+  if (designed) { glowGlb(designed, rarity); const holder = new THREE.Group(); holder.add(designed); w = { obj: holder }; }
+  else w = isBow ? { obj: bowModel() } : weaponModel(L);
   const hand = isBow ? bones.handL : bones.handR;
   if (w && hand) {
     const f = handFrame(glb, hand);
@@ -114,6 +182,7 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined) {
       at = boneRootPos(root, hand);
       q = new THREE.Quaternion();
     }
+    styleWeapon(g, rarity, L.weapon, !!designed);
     attachToBone(root, hand, g, q, at);
   }
   if (L.shield && bones.foreArmL) {
@@ -128,4 +197,5 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined) {
     sh.scale.setScalar(0.8);
     attachToBone(root, bones.foreArmL, sh, q, elbow.lerp(wrist, 0.55).addScaledVector(out, 0.075));
   }
+  return wid && !designed ? wid : null;
 }

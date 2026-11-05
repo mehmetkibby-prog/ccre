@@ -16,7 +16,7 @@ type Db = any;
 let db: Db = null;
 
 function apply(raw: unknown) {
-  const prev = { density: { ...TUNING.density }, bots: TUNING.bots };
+  const prev = { density: { ...TUNING.density }, bots: TUNING.bots, spawns: structuredClone(TUNING.spawns) };
   applyTuning(raw);
   onTuningChanged(prev);
   listeners.forEach((f) => f(TUNING));

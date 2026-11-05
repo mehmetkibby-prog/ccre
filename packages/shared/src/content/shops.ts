@@ -1,3 +1,4 @@
+import { TUNING } from '../tuning.ts';
 /** NPC mağazaları ve artı basma tablosu (referans varsayılanları; yönetimden revizyonla değişir). */
 export interface ShopProduct { id: string; name: string; kind: 'material' | 'equipment'; ref: string; qty: number; price: number; currency: 'gems' | 'essence'; minLevel?: number }
 export const SHOPS: Record<string, { name: string; npc: string; products: ShopProduct[] }> = {
@@ -31,4 +32,9 @@ export const UPGRADE_TABLE: UpgradeStep[] = [
 /** Ustalık Mührü göreli %30 artırır: %20 → %26. */
 export function masteryChance(base: number): number { return Math.min(100, Math.round(base * 1.3 * 10) / 10); }
 
-export const SELL_PRICES: Record<string, number> = { white: 5, blue: 18, orange: 60, crimson: 180, unique: 500, infinite: 700, purple: 600, emerald: 900 };
+/** NPC'ye / çantadan doğrudan satış fiyatı (Mücevher); yönetim panelinden değişebilir (sellPrice). */
+export const SELL_PRICES: Record<string, number> = { white: 1, blue: 3, orange: 5, crimson: 15, unique: 25, infinite: 35, purple: 30, emerald: 50 };
+/** Oyuncular arası pazarda eşyanın yaklaşık değeri (önerilen dükkân fiyatı ve test botlarının alım sınırı). */
+export const MARKET_VALUE: Record<string, number> = { white: 5, blue: 18, orange: 60, crimson: 180, unique: 500, infinite: 700, purple: 600, emerald: 900 };
+/** Geçerli satış fiyatı: yönetim ayarı varsa o. */
+export function sellPrice(rarity: string): number { return TUNING.sellPrice[rarity] ?? SELL_PRICES[rarity] ?? 1; }

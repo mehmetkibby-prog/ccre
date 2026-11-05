@@ -106,5 +106,41 @@
     "anims": {
       "idle": "Idle"
     }
+  },
+  "w_guardian_blue": {
+    "url": "w_guardian_blue.glb",
+    "scale": 1
+  },
+  "w_guardian_orange": {
+    "url": "w_guardian_orange.glb",
+    "scale": 1
+  },
+  "w_guardian_crimson": {
+    "url": "w_guardian_crimson.glb",
+    "scale": 1
+  },
+  "w_hunter_blue": {
+    "url": "w_hunter_blue.glb",
+    "scale": 1
+  },
+  "w_hunter_orange": {
+    "url": "w_hunter_orange.glb",
+    "scale": 1
+  },
+  "w_hunter_crimson": {
+    "url": "w_hunter_crimson.glb",
+    "scale": 1
+  },
+  "w_arcanist_blue": {
+    "url": "w_arcanist_blue.glb",
+    "scale": 1
+  },
+  "w_arcanist_orange": {
+    "url": "w_arcanist_orange.glb",
+    "scale": 1
+  },
+  "w_arcanist_crimson": {
+    "url": "w_arcanist_crimson.glb",
+    "scale": 1
   }
 }

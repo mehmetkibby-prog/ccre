@@ -3,8 +3,8 @@ import {
   COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
-  enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, SELL_PRICES, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
+  itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
+  SHOPS, sellPrice, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
@@ -42,6 +42,29 @@ export class World {
   constructor(public opt: WorldOptions) {
     for (const id of Object.keys(MAPS)) this.zones.set(id, new Zone(id));
   }
+  /**
+   * Yönetim: bir karakterin seviyesini/cüzdanını değiştirir (çevrimiçiyse anında, istatistikleriyle).
+   * Sunucuda `gm_set` komutu yalnız yönetici rolündeki oyunculara açıktır; tarayıcı sürümünde panelden çağrılır.
+   */
+  adminSetPlayer(charId: number, patch: { level?: number; gems?: number; essence?: number; potions?: number }): boolean {
+    let p: Player | undefined;
+    for (const q of this.bySid.values()) if (q.char.id === charId) { p = q; break; }
+    if (!p) return false;
+    const c = p.char;
+    if (patch.level !== undefined) {
+      c.level = Math.max(1, Math.min(LEVEL_CAP_BASE, Math.round(patch.level))); c.xp = 0;
+      p.recompute(false); p.hp = p.stats.maxHp;
+      p.dirty |= Upd.HP | Upd.MAXHP | Upd.LEVEL;
+      p.zone.emit(p.x, p.y, { e: Ev.LEVELUP, id: p.id, level: c.level });
+    }
+    if (patch.gems !== undefined) c.gems = Math.max(0, Math.round(patch.gems));
+    if (patch.essence !== undefined) c.essence = Math.max(0, Math.round(patch.essence));
+    if (patch.potions !== undefined) c.materials.red_potion = Math.max(0, Math.round(patch.potions));
+    p.selfDirty |= 1 | 2 | 4;
+    this.save(p, true);
+    return true;
+  }
+
   /** Yönetim: haritanın canavar yuvalarını güncel yoğunlukla yeniden kurar (oyuncuların görüşünden çıkanlar istemciden düşer). */
   reseedMonsters(mapId: string) {
     const z = this.zones.get(mapId);
@@ -114,6 +137,15 @@ export class World {
   private dispatch(p: Player, c: ClientCmd) {
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
     switch (c.t) {
+      case 'gm_set': {
+        // yalnız yönetici rolü; hedef bu kanalda çevrimiçi oyuncu (ada göre)
+        if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
+        let target: Player | undefined;
+        for (const q of this.bySid.values()) if (q.char.name.toLocaleLowerCase('tr') === String(c.name ?? '').toLocaleLowerCase('tr')) { target = q; break; }
+        if (!target) return this.notice(p, 'Oyuncu bu kanalda çevrimiçi değil.');
+        this.adminSetPlayer(target.char.id, { level: c.level, gems: c.gems, essence: c.essence, potions: c.potions });
+        return this.notice(p, `${target.char.name} güncellendi.`, 'ok');
+      }
       case 'stall_open': return this.cmdStallOpen(p, c);
       case 'stall_close': return this.cmdStallClose(p);
       case 'stall_view': return this.cmdStallView(p, String(c.stall ?? ''));
@@ -210,7 +242,7 @@ export class World {
     for (let i = list.length - 1; i >= 0; i--) {
       const m = list[i];
       if (m.state === MState.DEAD) {
-        if (now >= m.removeAt) { z.removeMonster(m); z.respawnQueue.push({ at: now + (m.def.boss ? 10 * 60_000 : 12_000 + rnd() * 8000) * TUNING.respawnMul, sp: m.sp }); }
+        if (now >= m.removeAt) { z.removeMonster(m); z.respawnQueue.push({ at: now + (m.def.boss ? 10 * 60_000 : 12_000 + rnd() * 8000) * TUNING.respawnMul * (TUNING.monsters[m.def.id]?.respawnMul ?? 1), sp: m.sp }); }
         continue;
       }
       if (!z.awakeCells[m.cell] && m.state === MState.IDLE) continue;
@@ -555,7 +587,15 @@ export class World {
     c.misc.dailyKills.n++;
     const w = c.equip.weapon;
     if (w) w.kills = (w.kills ?? 0) + 1;
-    const prof = LOOT_PROFILES[p.zone.def.theme] ?? LOOT_PROFILES[p.zone.id] ?? LOOT_PROFILES.forest;
+    const base = LOOT_PROFILES[p.zone.def.theme] ?? LOOT_PROFILES[p.zone.id] ?? LOOT_PROFILES.forest;
+    // yönetim: canavar türüne özel ganimet tablosu (boş alanlar harita profilinden)
+    const mt = TUNING.monsters[m.def.id];
+    const prof = !mt ? base : {
+      equipChance: mt.equipChance ?? base.equipChance, rarityWeights: (mt.rarity as typeof base.rarityWeights) ?? base.rarityWeights,
+      gems: mt.gems ?? base.gems, essence: mt.essence ?? base.essence,
+      materials: [...base.materials.map((x) => ({ ...x, chance: mt.mats?.[x.id] ?? x.chance })),
+        ...Object.entries(mt.mats ?? {}).filter(([id, ch]) => ch > 0 && MATERIAL.has(id) && !base.materials.some((x) => x.id === id)).map(([id, chance]) => ({ id, chance, qty: [1, 1] as [number, number] }))],
+    };
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
     const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul);
@@ -576,7 +616,9 @@ export class World {
   }
 
   rollEquipment(p: Player, weights: Partial<Record<Rarity, number>>, shift: boolean): ItemInstance | null {
-    const entries = Object.entries(weights) as [Rarity, number][];
+    // yönetim: bütün canavarlarda nadirlik düşme çarpanı
+    const entries = (Object.entries(weights) as [Rarity, number][]).map(([k, w]) => [k, w * (TUNING.rarityDrop[k] ?? 1)] as [Rarity, number]).filter(([k, w]) => w > 0 && RARITIES.includes(k));
+    if (!entries.length) return null;
     let tot = 0; for (const [, w] of entries) tot += w;
     let r = rnd() * tot; let rarity: Rarity = entries[0][0];
     for (const [k, w] of entries) { if ((r -= w) <= 0) { rarity = k; break; } }
@@ -821,21 +863,25 @@ export class World {
     this.sendJson(p, { t: 'npc', id, name: def.name, title: def.title, actions: def.actions });
   }
 
+  /** Satış: çantadan ya da üzerindeki eşyadan, her yerde (NPC'ye gitmek gerekmez). Kilitli eşya satılmaz. */
   private cmdSell(p: Player, ids: string[], req: string) {
-    if (!this.nearNpc(p, 'tuccar') && !this.nearNpc(p, 'haso')) return this.notice(p, 'Satış için Tüccar Selim\'e veya Haso\'ya yaklaş.');
     if (this.seenReceipt(p, req)) return;
     const c = p.char;
-    let total = 0, n = 0;
+    let total = 0, n = 0, equipped = false;
     for (const id of ids) {
       const i = c.bag.findIndex((x) => x.id === id);
-      if (i < 0) continue;
-      const it = c.bag[i];
-      if (it.locked) continue;
-      total += SELL_PRICES[it.rarity] ?? 1;
-      c.bag.splice(i, 1); n++;
+      if (i >= 0) {
+        if (c.bag[i].locked) continue;
+        total += sellPrice(c.bag[i].rarity); c.bag.splice(i, 1); n++;
+        continue;
+      }
+      const slot = (Object.keys(c.equip) as Slot[]).find((s) => c.equip[s]?.id === id);
+      if (slot && !c.equip[slot]!.locked) { total += sellPrice(c.equip[slot]!.rarity); delete c.equip[slot]; n++; equipped = true; }
     }
+    if (!n) return this.notice(p, 'Satılacak eşya yok (kilitli eşya satılmaz).');
     c.gems += total;
-    p.selfDirty |= 1 | 2; this.save(p, true);
+    if (equipped) { p.recompute(false); p.hp = Math.min(p.hp, p.stats.maxHp); p.dirty |= Upd.HP | Upd.MAXHP; }
+    p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.notice(p, `${n} eşya satıldı: +${total} Mücevher`, 'ok');
   }
 
@@ -1216,7 +1262,7 @@ function monsterSpawn(m: Monster): EntitySpawn {
 }
 function lootSpawn(l: Loot, now: number): EntitySpawn {
   const pl = l.payload;
-  const icon = pl.kind === 'item' ? ITEM_TPL.get(pl.item.tpl)?.icon ?? 'bag' : MATERIAL.get(pl.key)?.icon ?? 'bag';
+  const icon = pl.kind === 'item' ? itemIconName(pl.item) : MATERIAL.get(pl.key)?.icon ?? 'bag';
   const rarity = pl.kind === 'item' ? RARITIES.indexOf(pl.item.rarity) : 0;
   const label = pl.kind === 'item' ? itemDisplayName(pl.item) : `${pl.qty}× ${MATERIAL.get(pl.key)?.name ?? pl.key}`;
   return { kind: Kind.LOOT, id: l.id, icon, rarity, x: Math.round(l.x), y: Math.round(l.y), owner: l.ownerChar, ttl: Math.max(0, LOOT_TTL_MS - (now - l.createdAt)), label };
@@ -1226,15 +1272,18 @@ function lootSpawn(l: Loot, now: number): EntitySpawn {
 export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?: number): ItemInstance {
   const tpl = ITEM_TPL.get(tplId)!;
   // canavardan düşen eşya: 1–4 rastgele efsun (nadirlik yükseldikçe çok efsun olasılığı artar)
-  const dropCount = () => { const w = ENCHANT_COUNT_WEIGHTS[rarity] ?? ENCHANT_COUNT_WEIGHTS.default; let r = rnd() * 100; for (let k = 0; k < 4; k++) if ((r -= w[k]) <= 0) return k + 1; return 1; };
-  const n = enchCount ?? (src === 'drop' ? dropCount() : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
-  const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => !ENCHANTS[k].legacy && ENCHANTS[k].slots.includes(tpl.slot));
+  // yönetim: efsun sayısı/kademe oranları, kademe değerleri ve kapalı efsunlar (boşsa varsayılan rehber değerleri)
+  const et = TUNING.enchants;
+  const pick = (w: readonly number[]) => { const tot = w.reduce((a, b) => a + b, 0); let r = rnd() * tot; for (let k = 0; k < w.length; k++) if ((r -= w[k]) <= 0) return k; return 0; };
+  const cw = et.countWeights?.[rarity] ?? et.countWeights?.default ?? ENCHANT_COUNT_WEIGHTS[rarity] ?? ENCHANT_COUNT_WEIGHTS.default;
+  const n = enchCount ?? (src === 'drop' ? pick(cw) + 1 : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
+  const off = new Set(et.disabled ?? []);
+  const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => !ENCHANTS[k].legacy && !off.has(k) && ENCHANTS[k].slots.includes(tpl.slot));
   const ench: ItemInstance['ench'] = [];
   for (let i = 0; i < n && pool.length; i++) {
     const t = pool.splice(Math.floor(rnd() * pool.length), 1)[0];
-    let r = rnd() * 100, tier = 0;
-    for (let k = 0; k < 4; k++) { if ((r -= ENCHANT_TIER_WEIGHTS[k]) <= 0) { tier = k; break; } }
-    ench.push({ t, v: ENCHANTS[t].tiers[tier], tier });
+    const tier = pick(et.tierWeights ?? ENCHANT_TIER_WEIGHTS);
+    ench.push({ t, v: (et.values?.[t] ?? ENCHANTS[t].tiers)[tier], tier });
   }
   return { id: uuid(), tpl: tplId, rarity, plus: 0, ench, src };
 }

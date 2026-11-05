@@ -28,7 +28,7 @@ describe('dupe/hile korumaları', () => {
     const cmd = JSON.stringify({ t: 'sell', items: [it1.id], req: 'abc' });
     w.onCmd(1, cmd); w.onCmd(1, cmd);
     expect(p.char.bag.length).toBe(0);
-    expect(p.char.gems - before).toBe(18);
+    expect(p.char.gems - before).toBe(3); // mavi eşya 3 Mücevher
   });
 
   it('kilitli eşya satılamaz', () => {
@@ -41,13 +41,32 @@ describe('dupe/hile korumaları', () => {
     expect(p.char.bag.length).toBe(1);
   });
 
-  it('NPC uzaktaysa satış/satın alma reddedilir', () => {
+  it('NPC uzaktaysa satın alma reddedilir', () => {
     w.join(1, char());
     const p = w.bySid.get(1)!;
     p.x = 200; p.y = 200;
     const g = p.char.gems;
     w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'general', product: 'potion_gems', qty: 5, price: 6, req: 'b1' }));
     expect(p.char.gems).toBe(g);
+  });
+
+  it('çantadan ve üzerindeki eşyadan her yerde satılır: beyaz 1, mavi 3, turuncu 5, kızıl 15', () => {
+    const items = (['white', 'blue', 'orange', 'crimson'] as const).map((r) => makeItem('boots', r, 't', 0));
+    const sword = makeItem('w_guardian', 'crimson', 't', 0);
+    w.join(1, char({ bag: items, equip: { weapon: sword }, gems: 0 }));
+    const p = w.bySid.get(1)!;
+    p.x = 200; p.y = 200; // NPC'den uzak
+    w.onCmd(1, JSON.stringify({ t: 'sell', items: [...items.map((i) => i.id), sword.id], req: 's9' }));
+    expect(p.char.gems).toBe(1 + 3 + 5 + 15 + 15);
+    expect(p.char.bag.length).toBe(0);
+    expect(p.char.equip.weapon).toBeUndefined();
+  });
+
+  it('görünüm baytı silah ve zırh nadirliğini taşır (parıltı efekti)', () => {
+    w.join(1, char({ equip: { weapon: makeItem('w_guardian', 'orange', 't', 0), armor: makeItem('a_guardian', 'crimson', 't', 0) } }));
+    const b = w.bySid.get(1)!.weaponRarityIndex();
+    expect(b & 15).toBe(2);
+    expect(b >> 4).toBe(3);
   });
 
   it('sahte fiyatla satın alma reddedilir, bedel alınmaz', () => {

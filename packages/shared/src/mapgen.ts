@@ -306,8 +306,12 @@ function placeSpawns(l: MapLayout, rng: Rng) {
   const dens = TUNING.density[l.def.id] ?? 1;
   const used = new Map<string, number>();
   const taken = new Set<number>();
-  for (const g of l.def.spawns) {
+  for (let gi = 0; gi < l.def.spawns.length; gi++) {
+    // yönetim: doğma grubu ayarı (sayı, seviye aralığı, normal/agresif/katil oranı)
+    const ov = TUNING.spawns[l.def.id + ':' + gi];
+    const g = ov ? { ...l.def.spawns[gi], count: ov.count ?? l.def.spawns[gi].count, level: ov.level ?? l.def.spawns[gi].level, variants: ov.variants ?? l.def.spawns[gi].variants } : l.def.spawns[gi];
     const md = mdefs.get(g.monster);
+    if (g.count <= 0) continue;
     const total = md?.boss ? g.count : Math.max(1, Math.round(g.count * dens));
     const camps = md?.boss ? total : Math.max(1, Math.round(total / PACK));
     let left = total;

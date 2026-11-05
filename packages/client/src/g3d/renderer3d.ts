@@ -8,7 +8,8 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, type MapLayout } from '@col/shared';
+import { armorFx, gearFxScale, gearRarity } from './gearfx.ts';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -31,6 +32,8 @@ const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse
  * karede bir çiziliyordu: telefonu ısıtan en pahalı geçişlerden biri; kendi gölgesi de sekiyordu).
  */
 const DYN_SHADOWS = !MOBILE;
+/** Nadir eşya parıltısı gösterilen en çok oyuncu ve en uzak mesafe² (sunucu birimi). */
+const FX_MAX = MOBILE ? 8 : 20, FX_FAR2 = (MOBILE ? 700 : 1100) ** 2;
 let blobGeo: THREE.PlaneGeometry | null = null, blobMat: THREE.MeshBasicMaterial | null = null;
 function blobShadow(r: number) {
   if (!blobGeo) {
@@ -61,7 +64,7 @@ const THEME = {
 } as const;
 
 
-interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh }
+interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null }
 
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
@@ -141,7 +144,8 @@ export class Renderer3D {
     loadManifest();
     onModelReady((id) => {
       // model geldi: o modeli kullanan görünümleri yeniden kur
-      for (const [eid, v] of this.views) if (v.model === id && !v.glb) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || v.wpend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      if (this.self && this.self.wpend === id) { this.dyn.remove(this.self.obj); this.self = null; }
       if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
       // NPC'ler: yerinde yeni modelle değiştir
       this.npcViews = this.npcViews.map((v) => {
@@ -268,25 +272,38 @@ export class Renderer3D {
       this.overlay.width = Math.round(w * odpr); this.overlay.height = Math.round(h * odpr);
       this.octx.setTransform(odpr, 0, 0, odpr, 0, 0);
       this.fx.setScale(h * dpr * 0.9);
+      gearFxScale.value = h * dpr * 0.9;
     }
   }
 
   // ───────── görünüm yönetimi ─────────
   private ensureSelf() {
     const cls = this.g.cls;
-    if (this.self && this.selfCls === cls) return this.self;
+    // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
+    const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4);
+    if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) this.dyn.remove(this.self.obj);
-    this.self = this.humanView(cls, Kind.PLAYER, this.g.dx, this.g.dy);
+    this.selfWR = wr;
+    this.self = this.humanView(cls, Kind.PLAYER, this.g.dx, this.g.dy, wr);
     this.selfCls = cls;
     this.dyn.add(this.self.obj);
     return this.self;
   }
 
   /** Oyuncu/NPC görünümü: hazır 3B model (GLB) varsa onu, yoksa prosedürel modeli kullanır. */
-  private humanView(modelId: string, kind: number, x: number, y: number): View {
+  private humanView(modelId: string, kind: number, x: number, y: number, gear = 0): View {
     const glb = createGlbChar(modelId);
-    if (glb) equipGlb(glb, LOOKS[modelId]);
-    if (glb) { prepDynamic(glb.root, 0.55); return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 }; }
+    const gr = gearRarity(gear);
+    const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon) : null;
+    if (glb) {
+      prepDynamic(glb.root, 0.55);
+      const aura = armorFx(gr.armor);
+      if (aura) glb.root.add(aura);
+      const gfx: THREE.Object3D[] = [];
+      if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx') gfx.push(o); });
+      return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend };
+    }
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
     prepDynamic(rig.root, 0.55);
     return { kind, obj: rig.root, rig, model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
@@ -294,9 +311,11 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
+    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== e.weapon) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
-      v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y);
+      v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y, e.weapon);
+      (v as View & { wr?: number }).wr = e.weapon;
     } else if (e.kind === Kind.MONSTER) {
       const def = MONSTERS[e.tpl];
       if (!def) return null;
@@ -309,7 +328,7 @@ export class Renderer3D {
     } else if (e.kind === Kind.LOOT) {
       const grp = new THREE.Group();
       const tex = this.lootTex(e.icon, e.rarity);
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, alphaTest: 0.03 }));
       sp.scale.setScalar(0.62); sp.position.y = 0.5;
       grp.add(sp);
       const col = new THREE.Color(RAR_COLORS[e.rarity] ?? '#ffffff');
@@ -376,6 +395,7 @@ export class Renderer3D {
 
   // ───────── çerçeve ─────────
   private baseExp = 1;
+  private selfWR = 0;
   private stallObjs = new Map<string, THREE.Object3D>();
   private shadowDirty = true; private shadowAt = new THREE.Vector3(1e9, 0, 0);
   /** Oyuncu tezgâhları: satıcının çevresinde direkli tente ve önünde tezgâh masası. */
@@ -421,6 +441,7 @@ export class Renderer3D {
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
     const seen = new Set<number>();
+    const fxNear: { v: View; d: number }[] = [];
     for (const e of g.ents.values()) {
       const v = this.viewFor(e);
       if (!v) continue;
@@ -436,12 +457,16 @@ export class Renderer3D {
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
       (v as View & { skill?: number }).skill = e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, dt, dead);
+      if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur
       if (e.kind === Kind.MONSTER && dead && v.deadAt) { const k = (now - v.deadAt) / 1500; v.obj.position.y -= Math.max(0, k - 0.5) * 0.8; }
       // isabet titreşimi
       if (now < e.hurtUntil) { v.obj.position.x += (Math.random() - 0.5) * 0.05; v.obj.position.z += (Math.random() - 0.5) * 0.05; }
     }
     for (const [id, v] of this.views) if (!seen.has(id)) { this.dyn.remove(v.obj); this.views.delete(id); }
+    // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)
+    if (fxNear.length > FX_MAX) fxNear.sort((a, b) => a.d - b.d);
+    for (let i = 0; i < fxNear.length; i++) { const on = i < FX_MAX && fxNear[i].d < FX_FAR2; for (const o of fxNear[i].v.gfx!) o.visible = on; }
     // NPC'ler: oyuncuya döner
     for (const v of this.npcViews) {
       const toSelf = Math.hypot(g.dx - v.lx, g.dy - v.ly) < 360;

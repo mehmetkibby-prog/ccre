@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { objTexture, leafTexture } from './textures.ts';
+import { objTexture, leafTexture, canopyTexture } from './textures.ts';
 
 export const shared = { time: { value: 0 }, focus: { value: new THREE.Vector3() }, cam: { value: new THREE.Vector3() }, cutR: { value: 3.0 } };
 
@@ -109,10 +109,10 @@ export function mat(key: string): THREE.Material {
     case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xa8c49c }), 0.05, 7); break;
     case 'needles_snow': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xb8d8d0 }), 0.04, 7); break;
     case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb2cc82 }), 0.05, 1.2); break;
-    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.35, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.95, color: 0xf0fce8 }), 0.12, 0.6); break;
+    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.95, color: 0xf0fce8 }), 0.12, 0.6); break;
     // anime ağaç taçları: köşe renkli dolgun kütle (yaprak kartı yok), hafif rüzgâr
-    case 'canopy': m = addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6); break;
-    case 'canopy_low': m = addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5); break;
+    case 'canopy': m = addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6), 1.1); break;
+    case 'canopy_low': m = addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5), 0.7); break;
     case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x35553a, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'pine_core_snow': m = new THREE.MeshStandardMaterial({ color: 0x3a5a52, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'snow': m = new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.7 }); break;
@@ -153,3 +153,30 @@ export function mat(key: string): THREE.Material {
   return m;
 }
 const CUT = new Set(['canopy', 'canopy_low', 'bark', 'bark_dead', 'leaves', 'leaves_autumn', 'needles', 'needles_snow', 'bush', 'pine_core', 'pine_core_snow', 'snow', 'rock', 'rock_dark', 'plaster', 'timber', 'stonewall', 'roof_red', 'roof_slate', 'roof_green', 'roof_blue', 'planks', 'glass_warm', 'cloth_red', 'cloth_green', 'cloth_cream', 'hay', 'iron', 'crystal', 'ice']);
+
+/** Ağaç taçlarına üç yönlü (UV gerektirmeyen) yaprak dokusu: köşe rengini yaprak öbekleriyle böler. */
+export function addCanopyLeaves(m: THREE.Material, scale = 1.1) {
+  patch(m, 'canopyLeaves' + scale, (sh) => {
+    sh.uniforms.uLeafTex = { value: canopyTexture() };
+    sh.vertexShader = sh.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vLeafP; varying vec3 vLeafN;')
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        { vec4 lp = vec4(transformed, 1.0); vec3 ln = objectNormal;
+          #ifdef USE_INSTANCING
+            lp = instanceMatrix * lp; ln = mat3(instanceMatrix) * ln;
+          #endif
+          vLeafP = (modelMatrix * lp).xyz; vLeafN = normalize(mat3(modelMatrix) * ln); }`);
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vLeafP; varying vec3 vLeafN; uniform sampler2D uLeafTex;')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        {
+          vec3 bw = pow(abs(normalize(vLeafN)), vec3(4.0)); bw /= (bw.x + bw.y + bw.z);
+          vec3 p = vLeafP / ${scale.toFixed(2)};
+          vec2 t1 = texture2D(uLeafTex, p.zy).rg, t2 = texture2D(uLeafTex, p.xz).rg, t3 = texture2D(uLeafTex, p.xy).rg;
+          vec2 t = t1 * bw.x + t2 * bw.y + t3 * bw.z;
+          diffuseColor.rgb *= mix(0.62, 1.22, t.r);
+          diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.18, 1.1, 0.7), t.g * 0.6);
+        }`);
+  });
+  return m;
+}
