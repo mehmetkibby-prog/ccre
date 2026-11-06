@@ -9,6 +9,8 @@ import { GrassField } from './grass.ts';
 import { createGlbChar, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity } from './gearfx.ts';
+import { buildMountains } from './mountains.ts';
+import { equipArmor } from './armor.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
@@ -172,6 +174,19 @@ export class Renderer3D {
       const ao = new GTAOPass(this.scene, this.camera, 512, 512);
       ao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1.2, scale: 1.0, samples: 12 });
       ao.blendIntensity = 0.85;
+      // GTAO sahneyi düz yüzey olarak bir kez daha çizer ve yalnız nokta/çizgileri gizler. Hale, büyü ve ganimet
+      // resimleri (sprite), saydam/toplamalı efektler ve alfa kesimli çimen kartları orada dolu dörtgen olup
+      // çevrelerini karartıyordu (bakış açısına göre beliren siyah çerçeveler). Bunlar da gizlenir.
+      const cache = (ao as unknown as { _visibilityCache: Map<THREE.Object3D, boolean> })._visibilityCache;
+      (ao as unknown as { overrideVisibility: () => void }).overrideVisibility = () => {
+        this.scene.traverse((o) => {
+          cache.set(o, o.visible);
+          const x = o as THREE.Mesh & { isPoints?: boolean; isLine?: boolean; isSprite?: boolean };
+          const m = x.material as THREE.Material | THREE.Material[] | undefined;
+          const mm = Array.isArray(m) ? m[0] : m;
+          if (x.isPoints || x.isLine || x.isSprite || (mm && (mm.transparent || !mm.depthWrite || mm.alphaTest > 0 || mm.blending !== THREE.NormalBlending))) o.visible = false;
+        });
+      };
       this.composer.addPass(ao);
     }
     this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
@@ -213,6 +228,10 @@ export class Renderer3D {
     this.scene.fog = new THREE.Fog(th.fog, th.near, th.far);
     this.camera.far = th.far + 20; this.camera.updateProjectionMatrix(); // sisin ötesi çizilmez
     this.scene.background = this.skyGradient(th.top, th.fog);
+    // ufukta dağlar (beyaz boşluk yerine manzara)
+    if (this.mountains) { this.scene.remove(this.mountains); this.mountains.geometry.dispose(); (this.mountains.material as THREE.Material).dispose(); }
+    this.mountains = buildMountains(l.def.theme, l.def.id.length * 13 + 5);
+    this.scene.add(this.mountains);
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
     this.baseExp = th.exp;
@@ -298,6 +317,7 @@ export class Renderer3D {
     const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon) : null;
     if (glb) {
       prepDynamic(glb.root, 0.55);
+      if (kind === Kind.PLAYER) equipArmor(glb, modelId, gr.armor);
       const aura = armorFx(gr.armor);
       if (aura) glb.root.add(aura);
       const gfx: THREE.Object3D[] = [];
@@ -396,6 +416,7 @@ export class Renderer3D {
   // ───────── çerçeve ─────────
   private baseExp = 1;
   private selfWR = 0;
+  private mountains: THREE.Mesh | null = null;
   private stallObjs = new Map<string, THREE.Object3D>();
   private shadowDirty = true; private shadowAt = new THREE.Vector3(1e9, 0, 0);
   /** Oyuncu tezgâhları: satıcının çevresinde direkli tente ve önünde tezgâh masası. */
@@ -521,6 +542,7 @@ export class Renderer3D {
     this.camera.position.set(cx, Math.max(this.camGroundS, this.camTarget.y + Math.sin(pitch) * dist + sy), cz);
     // alçak açıda biraz yukarı bak: ufuk görünsün
     this.camera.lookAt(this.camTarget.x, this.camTarget.y + 1.1 + (1 - Math.min(1, pitch / 0.6)) * 0.8, this.camTarget.z);
+    if (this.mountains) this.mountains.position.set(this.camera.position.x, this.camTarget.y - 2, this.camera.position.z);
     this.g.camYaw = this.camYawS;
     shared.cam.value.copy(this.camera.position);
     shared.focus.value.set(tx, ty + 1.0, tz);
