@@ -137,9 +137,9 @@ export const MATERIAL = new Map(MATERIALS.map((m) => [m.id, m] as const));
 export function itemIconName(it: { tpl: string; rarity: Rarity }): string {
   const t = ITEM_TPL.get(it.tpl);
   if (!t) return 'bag';
-  if (t.slot === 'weapon' && t.cls && it.rarity !== 'white') {
+  if ((t.slot === 'weapon' || t.slot === 'armor') && t.cls && it.rarity !== 'white') {
     const r = it.rarity === 'blue' || it.rarity === 'orange' ? it.rarity : 'crimson';
-    return `w_${t.cls}_${r}`;
+    return t.slot === 'weapon' ? `w_${t.cls}_${r}` : `armor_${t.cls}_${r}`;
   }
   return t.icon;
 }

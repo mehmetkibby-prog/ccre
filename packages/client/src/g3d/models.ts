@@ -17,7 +17,7 @@ import type { HState } from './humanoid.ts';
  * }
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
-export interface ModelEntry { url: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
+export interface ModelEntry { url: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
 interface Loaded { sphere?: THREE.Sphere; scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
@@ -93,6 +93,17 @@ export function loadManifest(): Promise<void> {
     .catch((e) => { manifest = {}; modelStatus.lastError = 'models.json: ' + ((e as Error)?.message ?? e); bumpStatus(); });
   return manifestPromise;
 }
+/** Model bildirimde var mı (yüklenmiş olması gerekmez). */
+export function hasModel(id: string) { return !!manifest?.[id]; }
+/** Model yüklenince (ya da yüklenemezse null ile) çözülür. */
+function whenLoaded(id: string): Promise<Loaded | null> {
+  const l = model(id);
+  if (l) return Promise.resolve(l);
+  if (failed.has(id) || !manifest?.[id]) return Promise.resolve(null);
+  return new Promise((res) => {
+    const t = setInterval(() => { const x = loaded.get(id); if (x || failed.has(id)) { clearInterval(t); res(x ?? null); } }, 100);
+  });
+}
 export function onModelReady(fn: (id: string) => void) { listeners.add(fn); return () => listeners.delete(fn); }
 
 const PATTERNS: [HState | 'run', RegExp][] = [
@@ -141,7 +152,8 @@ export function model(id: string): Loaded | null {
   if (!entry) return null;
   loading.add(id);
   modelStatus.total++; bumpStatus();
-  fetchModel(BASE + entry.url).then((gltf) => {
+  fetchModel(BASE + entry.url).then(async (gltf) => {
+    if (entry.animFrom) { const b = await whenLoaded(entry.animFrom); if (b) gltf.animations = b.clips; }
     loading.delete(id);
     loaded.set(id, prepare(id, gltf, entry));
     modelStatus.loaded++; bumpStatus();
@@ -296,7 +308,7 @@ export function createGlbChar(id: string): GlbChar | null {
   });
   const byName = (n: string) => L.clips.find((c) => c.name === n);
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
-  const skillClips = SKILL_CLIPS[id] ?? {};
+  const skillClips = SKILL_CLIPS[L.entry.animFrom ?? id] ?? {};
   let attackN = 0, skillN = 0;
   const play = (st: HState | 'run', once: boolean, skill = 0) => {
     let clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;

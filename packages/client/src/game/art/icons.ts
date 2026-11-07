@@ -5,7 +5,7 @@ const cache = new Map<string, string>();
 const RAR = ['#e8e6df', '#5fa8ff', '#ffa53d', '#ff4d5a', '#ffd84a', '#7cf3ff', '#c58bff', '#3ef09a'];
 
 /** Meshy ile üretilmiş, saydam arka planlı 128×128 ikonlar (public/icons). Nadirlik çerçeveyle gösterilir. */
-const PNG_ICONS = new Set(['armor_arcanist','armor_guardian','armor_hunter','boots','bow','bracelet','branch','chest','crystal','dust','earring','essence','gem','helm_arcanist','helm_guardian','helm_hunter','herb','iron','necklace','pearl_red','pearl_white','potion_red','scroll','scroll_evo','seal','seal_gold','staff','sword','talisman','w_arcanist_blue','w_arcanist_crimson','w_arcanist_orange','w_guardian_blue','w_guardian_crimson','w_guardian_orange','w_hunter_blue','w_hunter_crimson','w_hunter_orange']);
+const PNG_ICONS = new Set([...['guardian', 'hunter', 'arcanist'].flatMap((c) => ['blue', 'orange', 'crimson'].map((r) => `armor_${c}_${r}`)), 'armor_arcanist','armor_guardian','armor_hunter','boots','bow','bracelet','branch','chest','crystal','dust','earring','essence','gem','helm_arcanist','helm_guardian','helm_hunter','herb','iron','necklace','pearl_red','pearl_white','potion_red','scroll','scroll_evo','seal','seal_gold','staff','sword','talisman','w_arcanist_blue','w_arcanist_crimson','w_arcanist_orange','w_guardian_blue','w_guardian_crimson','w_guardian_orange','w_hunter_blue','w_hunter_crimson','w_hunter_orange']);
 export function iconUrl(name: string, rarity = 0): string {
   if (PNG_ICONS.has(name)) return `icons/${name}.png`;
   const key = name + '|' + rarity;

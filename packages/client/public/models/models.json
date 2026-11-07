@@ -142,5 +142,170 @@
   "w_arcanist_crimson": {
     "url": "w_arcanist_crimson.glb",
     "scale": 1
+  },
+  "guardian_orange": {
+    "url": "guardian_orange.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Charged",
+      "Attack Slash",
+      "Attack Thrust"
+    ],
+    "animFrom": "guardian"
+  },
+  "guardian_blue": {
+    "url": "guardian_blue.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Charged",
+      "Attack Slash",
+      "Attack Thrust"
+    ],
+    "animFrom": "guardian"
+  },
+  "guardian_crimson": {
+    "url": "guardian_crimson.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Charged",
+      "Attack Slash",
+      "Attack Thrust"
+    ],
+    "animFrom": "guardian"
+  },
+  "hunter_blue": {
+    "url": "hunter_blue.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Archery Volley",
+      "attack": "Attack Draw Shoot"
+    },
+    "attackClips": [
+      "Attack Archery Shot",
+      "Attack Draw Shoot"
+    ],
+    "animFrom": "hunter"
+  },
+  "hunter_orange": {
+    "url": "hunter_orange.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Archery Volley",
+      "attack": "Attack Draw Shoot"
+    },
+    "attackClips": [
+      "Attack Archery Shot",
+      "Attack Draw Shoot"
+    ],
+    "animFrom": "hunter"
+  },
+  "hunter_crimson": {
+    "url": "hunter_crimson.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Archery Volley",
+      "attack": "Attack Draw Shoot"
+    },
+    "attackClips": [
+      "Attack Archery Shot",
+      "Attack Draw Shoot"
+    ],
+    "animFrom": "hunter"
+  },
+  "arcanist_blue": {
+    "url": "arcanist_blue.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Charged Spell",
+      "attack": "Attack Magic 1"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ],
+    "animFrom": "arcanist"
+  },
+  "arcanist_orange": {
+    "url": "arcanist_orange.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Charged Spell",
+      "attack": "Attack Magic 1"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ],
+    "animFrom": "arcanist"
+  },
+  "arcanist_crimson": {
+    "url": "arcanist_crimson.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Charged Spell",
+      "attack": "Attack Magic 1"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ],
+    "animFrom": "arcanist"
   }
 }

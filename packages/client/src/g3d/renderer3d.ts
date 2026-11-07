@@ -6,7 +6,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
+import { createGlbChar, hasModel, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
@@ -66,7 +66,7 @@ const THEME = {
 } as const;
 
 
-interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null }
+interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null }
 
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
@@ -146,8 +146,8 @@ export class Renderer3D {
     loadManifest();
     onModelReady((id) => {
       // model geldi: o modeli kullanan görünümleri yeniden kur
-      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || v.wpend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
-      if (this.self && this.self.wpend === id) { this.dyn.remove(this.self.obj); this.self = null; }
+      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      if (this.self && (this.self.wpend === id || this.self.apend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
       if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
       // NPC'ler: yerinde yeni modelle değiştir
       this.npcViews = this.npcViews.map((v) => {
@@ -312,17 +312,22 @@ export class Renderer3D {
 
   /** Oyuncu/NPC görünümü: hazır 3B model (GLB) varsa onu, yoksa prosedürel modeli kullanır. */
   private humanView(modelId: string, kind: number, x: number, y: number, gear = 0): View {
-    const glb = createGlbChar(modelId);
     const gr = gearRarity(gear);
+    // nadir zırh: Meshy'de tasarlanmış zırhlı çeşit (aynı iskelet ve animasyonlar); yüklenene dek temel model
+    const vid = kind === Kind.PLAYER && gr.armor > 0 ? `${modelId}_${['', 'blue', 'orange', 'crimson'][Math.min(3, gr.armor)]}` : '';
+    const designed = !!vid && hasModel(vid);
+    let glb = designed ? createGlbChar(vid) : null;
+    const apend = designed && !glb ? vid : null;
+    glb ??= createGlbChar(modelId);
     const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon) : null;
     if (glb) {
       prepDynamic(glb.root, 0.55);
-      if (kind === Kind.PLAYER) equipArmor(glb, modelId, gr.armor);
+      if (kind === Kind.PLAYER && !designed) equipArmor(glb, modelId, gr.armor);
       const aura = armorFx(gr.armor);
       if (aura) glb.root.add(aura);
       const gfx: THREE.Object3D[] = [];
       if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx') gfx.push(o); });
-      return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend };
+      return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend };
     }
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
     prepDynamic(rig.root, 0.55);
