@@ -6,7 +6,9 @@ export function measuredResources(eventLoops){
 }
 export function validateRuntimeMeasurements(report,{durationMs,transport}={}){
  const failures=[],m=report?.measurement,rows=m?.eventLoops;
- if(!/^[a-f0-9-]{36}$/.test(m?.runId??'')||!Array.isArray(rows)||rows.length!==LOAD_TARGETS.length||new Set(rows.map(r=>r?.target)).size!==LOAD_TARGETS.length||LOAD_TARGETS.some(target=>!rows.some(r=>r?.target===target)))return ['runtime_inventory'];
+ const count=m?.actorReaders??0;if(![0,2].includes(count))return ['runtime_inventory'];
+ const targets=[...LOAD_TARGETS,...Array.from({length:count},(_,i)=>'reader-actor-'+(i+1))];
+ if(!/^[a-f0-9-]{36}$/.test(m?.runId??'')||!Array.isArray(rows)||rows.length!==targets.length||new Set(rows.map(r=>r?.target)).size!==targets.length||targets.some(target=>!rows.some(r=>r?.target===target)))return ['runtime_inventory'];
  const identities=new Set(),incarnations=new Set();
  for(const row of rows){
   if(row.protocol!==LOAD_WINDOW_PROTOCOL||row.runId!==m.runId||row.complete!==true||typeof row.incarnation!=='string'||!row.incarnation.length||!Number.isSafeInteger(row.pid)||row.pid<1||!Number.isSafeInteger(row.threadId)||row.threadId<0||!finite(row.durationMs,durationMs,Infinity)||!Number.isSafeInteger(row.delaySamples)||row.delaySamples<1||!Number.isSafeInteger(row.timerSamples)||row.timerSamples<1||!finite(row.histogramMaxPauseMs,0,Infinity)||!finite(row.timerMaxPauseMs,0,Infinity)||row.maxPauseMs!==Math.max(row.histogramMaxPauseMs,row.timerMaxPauseMs))failures.push('runtime_scope:'+row.target);
@@ -15,9 +17,9 @@ export function validateRuntimeMeasurements(report,{durationMs,transport}={}){
   if(!finite(row.elu,0,row.target==='main' ? P.mainElu : 1))failures.push('runtime_elu:'+row.target);
   if(row.threadId===0?(!finite(row.processCpuMs,0,Infinity)||!finite(row.maxRssBytes,1,P.maxRssBytes)):(row.processCpuMs!==null||row.maxRssBytes!==null))failures.push('runtime_process_resources:'+row.target);
  }
- if(identities.size!==7||incarnations.size!==7)failures.push('runtime_identity');
- const main=rows.find(r=>r.target==='main'),reader=rows.find(r=>r.target==='reader'),owners=rows.filter(r=>!['main','reader'].includes(r.target)),pids=new Set(rows.map(r=>r.pid));
- const processModel=pids.size===6&&main.threadId===0&&reader.pid===main.pid&&reader.threadId>0&&owners.every(r=>r.threadId===0&&r.pid!==main.pid)&&new Set(owners.map(r=>r.pid)).size===5;
+ if(identities.size!==targets.length||incarnations.size!==targets.length)failures.push('runtime_identity');
+ const main=rows.find(r=>r.target==='main'),reader=rows.find(r=>r.target==='reader'),readers=rows.filter(r=>r.target==='reader'||r.target.startsWith('reader-actor-')),owners=rows.filter(r=>r.target==='world'||r.target.startsWith('channel-')),pids=new Set(rows.map(r=>r.pid));
+ const processModel=pids.size===6&&main.threadId===0&&readers.every(r=>r.pid===main.pid&&r.threadId>0)&&owners.every(r=>r.threadId===0&&r.pid!==main.pid)&&new Set(owners.map(r=>r.pid)).size===5;
  const threadModel=transport==='message-channel'&&pids.size===1&&main.threadId===0&&rows.filter(r=>r!==main).every(r=>r.threadId>0);
  if(!processModel&&!threadModel)failures.push('runtime_topology');
  const resources=measuredResources(rows);

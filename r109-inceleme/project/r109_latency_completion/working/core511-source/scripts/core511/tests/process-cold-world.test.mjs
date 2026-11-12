@@ -201,7 +201,7 @@ test('native solo room survives logout and child restart as simulation-only owne
 
 for(const phase of ['idle','refresh'])test('actual read-worker exit '+phase+' preserves a native permanent commit and recovers current actor state',{timeout:35000},async t=>{
  const {f,reader,core,supervisor,world,http,connect,faults}=await setup(t,{shared:true});await world.stopJobs();let ticket=await http('ticket');assert.equal(ticket.status,200);let live=await connect(ticket);
- const old=reader.worker,rows=[world.row,...supervisor.rows.values()],source=supervisor.rows.get(ticket.channel),before=f.sql.prepare('SELECT potions FROM players WHERE id=?').get(f.id).potions,query=reader.query.bind(reader);let calls=0,killed=false;
+ const backend=reader.actorReader(ticket.channel),old=backend.worker,rows=[world.row,...supervisor.rows.values()],source=supervisor.rows.get(ticket.channel),before=f.sql.prepare('SELECT potions FROM players WHERE id=?').get(f.id).potions,query=reader.query.bind(reader);let calls=0,killed=false;
  if(phase==='idle')await old.terminate();
  else reader.query=(name,...args)=>{const result=query(name,...args);if(calls&&!killed&&name==='kernel511_actor_world'){killed=true;void old.terminate();}return result;};
  const work=core.permanentPlayers([f.id],()=>{calls++;return f.sql.prepare('UPDATE players SET potions=potions+1 WHERE id=?').run(f.id);});
@@ -211,7 +211,7 @@ for(const phase of ['idle','refresh'])test('actual read-worker exit '+phase+' pr
   await until(()=>supervisor.rows.get(ticket.channel)?.state==='running'&&supervisor.rows.get(ticket.channel)!==source&&!core.permanent.entries.has(f.id),15000);await supervisor.queue;assert(source.exited);assert.equal(world.row,rows[0]);reader.query=query;
   ticket=await http('ticket');assert.equal(ticket.status,200,JSON.stringify(ticket));live=await connect(ticket);
  }
- assert.equal(reader.starts,2);assert.equal(calls,1);const state=await combatState(supervisor.rows.get(ticket.channel));assert.equal(state.players.find(p=>p.id===f.id).potions,before+1);assert.equal(f.sql.prepare('SELECT potions FROM players WHERE id=?').get(f.id).potions,before+1);
+ assert.equal(backend.starts,2);assert.equal(calls,1);const state=await combatState(supervisor.rows.get(ticket.channel));assert.equal(state.players.find(p=>p.id===f.id).potions,before+1);assert.equal(f.sql.prepare('SELECT potions FROM players WHERE id=?').get(f.id).potions,before+1);
  live.ws.send(JSON.stringify({type:'input',sequence:1,payload:{action:'heartbeat'}}));await until(()=>live.packets.some(p=>p.results?.some(r=>r.sequence===1)),7000);assert.equal(live.packets.flatMap(p=>p.results??[]).find(r=>r.sequence===1).status,200);
  assert(!faults.some(f=>f.supervisor||f.globalRecovery),faults.map(f=>f.error?.stack).join('\n'));
 });

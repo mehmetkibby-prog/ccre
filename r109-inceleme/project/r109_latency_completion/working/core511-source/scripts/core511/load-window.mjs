@@ -23,7 +23,7 @@ function captureHistogram(h,at){
 // no sample discard, resolution subtraction, or raw GC/OS exclusion. CPU is process-wide and
 // is reported only by thread0, so the read worker is never counted twice.
 export class LoadWindow {
- constructor({target,incarnation}){demand(LOAD_TARGETS.includes(target)&&typeof incarnation==='string'&&incarnation.length>0,'load_window_identity');this.identity={protocol:LOAD_WINDOW_PROTOCOL,target,incarnation,pid:process.pid,threadId};this.active=null;this.last=null;}
+ constructor({target,incarnation}){demand([...LOAD_TARGETS,'reader-actor-1','reader-actor-2'].includes(target)&&typeof incarnation==='string'&&incarnation.length>0,'load_window_identity');this.identity={protocol:LOAD_WINDOW_PROTOCOL,target,incarnation,pid:process.pid,threadId};this.active=null;this.last=null;}
  async command({operation,runId}={}){
   demand(validRun(runId),'load_window_run');
   if(operation==='begin'){

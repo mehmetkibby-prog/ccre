@@ -39,7 +39,7 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
   demand(typeof name==='string'&&typeof sql==='string'&&/^\s*(SELECT|WITH)\b/i.test(sql),'invalid_read_worker_query');
   queries.set(name,sqlite.prepare(sql));
  }
- const coldWorld=new ColdWorldReader(sqlite),guildSync=new GuildSyncReader(sqlite),heartbeat=new HeartbeatMaintenanceReader(sqlite),loadWindow=new LoadWindow({target:'reader',incarnation:workerData.incarnation});let queue=Promise.resolve(),readWork=null;
+ const coldWorld=new ColdWorldReader(sqlite),guildSync=new GuildSyncReader(sqlite),heartbeat=new HeartbeatMaintenanceReader(sqlite),loadWindow=new LoadWindow({target:workerData.target??'reader',incarnation:workerData.incarnation});let queue=Promise.resolve(),readWork=null;
  const readMessage=async(message,{insideTransaction=false,post=reply=>parentPort.postMessage(reply)}={})=>{
   try {
    // A burst must not monopolize one promise/microtask drain. Yield between
@@ -85,11 +85,19 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
  parentPort.on('message',message=>{if(snapshotQueue)void snapshotQueue.push(message);else queue=queue.then(()=>readMessage(message));});
 }
 export class ReadWorker {
- constructor(file,queries,{maxPending=16,timeoutMs=10000,actorBundles=false}={}) {
+ constructor(file,queries,{maxPending=16,timeoutMs=10000,actorBundles=false,actorReaders=actorBundles?2:0,target='reader'}={}) {
+  demand([0,2].includes(actorReaders),'read_worker_pool_size');
   this.pending=new Map();this.sequence=0;this.maxPending=maxPending;this.timeoutMs=timeoutMs;this.closed=false;this.starts=0;this.recovery=null;
   this.readQueue=actorBundles?new BoundedReadQueue({concurrency:Math.min(8,maxPending),maxQueued:128,waitMs:5000}):null;
-  this.workerData={kernel511ReadWorker:true,file,queries:[...queries],actorBundles};this.start();
+  this.workerData={kernel511ReadWorker:true,file,queries:[...queries],actorBundles,target};this.start();
+  // Independent read-only WAL snapshots. Stateful guild cursors and world
+  // jobs remain on the original worker. All shards share the parent's one
+  // admission queue: parallelism must not multiply the backlog or timeouts.
+  this.actorReaders=Array.from({length:actorReaders},(_,i)=>new ReadWorker(file,queries,{maxPending,timeoutMs,actorBundles:true,actorReaders:0,target:'reader-actor-'+(i+1)}));
  }
+ actorReader(channel){return this.actorReaders.length&&[1,2,3,4].includes(channel)?this.actorReaders[(channel-1)%this.actorReaders.length]:this;}
+ get readers(){return [this,...this.actorReaders];}
+ get ready(){return this.readers.every(r=>!r.closed&&r.slot&&!r.slot.failed&&!r.slot.ended);}
  start(){
   demand(!this.closed&&(!this.slot||this.slot.ended),'read_worker_still_running');
   const incarnation=randomUUID(),worker=new Worker(new URL(import.meta.url),{workerData:{...this.workerData,incarnation},resourceLimits:{maxOldGenerationSizeMb:192}});
@@ -116,12 +124,13 @@ export class ReadWorker {
  }
  query(name,params=[]) {
   if(!this.readQueue)return this.send({name,params});
-  const slot=this.slot,wasHealthy=!slot.failed&&!slot.ended;
+  const backend=name==='kernel511_actor_world'?this.actorReader(params?.[1]):this;
+  const slot=backend.slot,wasHealthy=!slot.failed&&!slot.ended;
   return this.readQueue.run(()=>{
    // A queued request belongs to the incarnation on which it was accepted.
    // Do not silently replay guild cursors or old actor reads on a replacement.
-   if(wasHealthy&&(this.slot!==slot||slot.failed||slot.ended))throw kernelError('read_worker_process_changed');
-   return this.send({name,params});
+   if(wasHealthy&&(backend.slot!==slot||slot.failed||slot.ended))throw kernelError('read_worker_process_changed');
+   return backend.send({name,params});
   });
  }
  measure(payload,{slot=this.slot}={}){if(slot!==this.slot||slot.failed||slot.ended)return Promise.reject(kernelError('read_measurement_process_changed'));return this.send({type:'load_measure',payload},{expectedSlot:slot,timeoutMs:5000,terminateOnTimeout:false}).then(result=>result.rows);}
@@ -139,7 +148,7 @@ export class ReadWorker {
    },error=>this.reject(id,error.code??'read_worker_failed'));
   });
  }
- async close(){this.closed=true;this.readQueue?.close();for(const id of this.pending.keys())this.reject(id,'read_worker_closed');await this.worker.terminate();}
+ async close(){this.closed=true;this.readQueue?.close();for(const id of this.pending.keys())this.reject(id,'read_worker_closed');await Promise.all([this.worker.terminate(),...this.actorReaders.map(r=>r.close())]);}
 }
 
 // A single read transaction provides all admitted/refresh inputs at one WAL

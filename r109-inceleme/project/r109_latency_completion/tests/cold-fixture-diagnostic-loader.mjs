@@ -7,6 +7,10 @@ export async function load(url,context,nextLoad){
   const source=String(result.source),marker='createContentSchemaR102(sql);';if(!source.includes(marker))throw Error('cold_fixture_prerequisite_target_changed');
   return {...result,source:"import {createTowerSchema} from '../tower-config.mjs';\nimport {createAdventureSchema} from '../adventure-schema.mjs';\nimport {createCastleSchema} from '../castle-schema-r59.mjs';\n"+source.replace(marker,marker+'createTowerSchema(sql);createAdventureSchema(sql);createCastleSchema(sql);')};
  }
+ if(process.env.R108_FIXTURE_PREREQS==='1'&&url.endsWith('/scripts/core511/tests/process-fixture.mjs')&&result.format==='module'){
+  const source=String(result.source),marker='createTowerSchema(f.sql);';if(!source.includes(marker))throw Error('process_fixture_prerequisite_target_changed');
+  return {...result,source:"import {createAdventureSchema} from '../adventure-schema.mjs';\nimport {createCastleSchema} from '../castle-schema-r59.mjs';\n"+source.replace(marker,marker+'createAdventureSchema(f.sql);createCastleSchema(f.sql);')};
+ }
  if(process.env.R108_FIXTURE_DIAGNOSTIC!=='1'||!url.endsWith('/scripts/core511/read-worker.mjs')||result.format!=='module')return result;
  const source=String(result.source),marker='}catch(error){post({id:message.id,ok:false,code:error.code';
  if(!source.includes(marker))throw Error('cold_fixture_diagnostic_target_changed');
