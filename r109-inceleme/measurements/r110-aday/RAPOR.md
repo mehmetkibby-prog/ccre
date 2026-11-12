@@ -1,8 +1,8 @@
 # R110 adayı — takılma/gecikme incelemesi (R109_LATENCY2 üzerinde)
 
 Başlangıç: `r109-inceleme/project/r109_latency_completion/working` (R109_LATENCY2).
-Bu bir **kurulum paketi değildir**; eski ZIP'ler, R109 manifesti ve SHA256
-kimlikleri değişmedi. Canlı VDS'ye hiçbir şey uygulanmadı. Bütün sayılar bu
+Kurulum paketi ayrı: `project/r110_takilma/` (aşağıda). Eski ZIP'ler, R109
+manifesti ve SHA256 kimlikleri değişmedi. Canlı VDS'ye hiçbir şey uygulanmadı. Bütün sayılar bu
 çalışma ortamındaki **sentetik** yük testinden (4 çekirdek bütçe, botlar ayrı
 süreçte, `steal` ≈ %1,5) gelir; canlı kapasite garantisi değildir.
 
@@ -231,15 +231,18 @@ değiştirilmedi; yeni dosya `r110-options.mjs`).
   kanal el sıkışması (`test:handoff`, geçersiz biletle), gerçek bilet/oyun
   akışı + aynı devretme fonksiyonu (yük testi geçidi ve tarayıcı testi).
 
-## Canlıya alma için öneri
+## Canlıya alma
 
-1. Bu değişiklikler henüz **kurulum paketi değil**. Canlıya almak için
-   `docs/GUNCELLEME_KURALLARI.md`'ye uygun yeni bir R110 kurucusu gerekir
-   (yalnız 11 kod dosyası; şema/veri değişikliği yok; iki realm birlikte).
+1. Kurulum paketi: `project/r110_takilma/delivery/r110-takilma.zip`
+   (SHA256 `4fd1fbb8a36de2ae89fb693f5617ac3a8e697f2608f4a6b14464b6703a83bcc0`).
+   Yalnız kurulu R109_LATENCY2 üzerine; 12 kod dosyası; veri/şema değişikliği
+   yok; iki realm birlikte; tek önceki kod yedeği. Adımlar:
+   `project/r110_takilma/KURULUM.md`. Doğrulama: `npm run test:r110`
+   (R109 → R110 kurucu testleri + kurulmuş ağacın gerçek `runtime-entry` ile
+   iki realm/sekiz kanal açılışı ve bağlantı devretme testi).
 2. Kurulumdan sonra aynı saatlerde 30–40 oyuncuyla: sağlık yanıtındaki ana ELU
    ve COMMIT gözlemcisi, `vmstat 1 60` (özellikle `st` sütunu) ve 60 sn ana
-   CPU profili. Sorun sürerse `CORE511_R110_WS_HANDOFF=0` ile tek değişkende
-   geri dönülebilir.
+   CPU profili. Sorun sürerse paketle `--rollback` R109 koduna döner.
 3. `st` (steal) %5'i sık geçiyorsa takılmanın önemli kısmı host kaynaklıdır;
    ayrılmış vCPU'lu plan veya sağlayıcıyla görüşme gerekir.
 

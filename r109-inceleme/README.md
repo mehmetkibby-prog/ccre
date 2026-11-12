@@ -58,11 +58,15 @@ kullanılır. Bu bir anonim canlı DB kopyası değildir; pazar/lonca yazma traf
 bütün olasılıklarını temsil etmez. Canlı loglardan gerçek oran çıkarılmış değildir.
 Yeni karşılaştırmalarda aynı donanım/kota, veri, senaryo ve en az üç tekrar kullan.
 
-**R110 adayı (kurulu değil).** Bu dalda iki gecikme düzeltmesi ve ek testler
-var; rapor ve ölçümler `measurements/r110-aday/RAPOR.md`. Ek kontroller:
+**R110 (canlıya kurulmadı).** Bu dalda iki gecikme düzeltmesi, ek testler ve
+R109 kurulu sunucu için kurulum paketi `project/r110_takilma/delivery/r110-takilma.zip`
+var (adımlar: `project/r110_takilma/KURULUM.md`). Rapor ve ölçümler
+`measurements/r110-aday/RAPOR.md`. Ek kontroller (`test:r110` kurucuyu ve
+kurduğu ağacı doğrular):
 
 ```bash
 npm run test:handoff
+npm run test:r110
 BROWSER_WS_TRANSPORT=handoff R102_TEST_REALM=r1 TOWER=1 PREVIEW_NAME=r110-pc npm run test:browser
 ```
 

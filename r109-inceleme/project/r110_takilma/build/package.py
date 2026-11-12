@@ -67,5 +67,5 @@ if not out.exists():
 with zipfile.ZipFile(out) as z:assert z.testzip() is None;assert all(z.read(n)==b for n,b in data.items())
 delivery=ROOT/'delivery/r110-takilma.zip';delivery.parent.mkdir(exist_ok=True);shutil.copyfile(out,delivery)
 digest=sha(delivery.read_bytes());(ROOT/'delivery/r110-takilma.zip.sha256').write_text(digest+'  r110-takilma.zip\n')
-report={'file':str(delivery),'bytes':delivery.stat().st_size,'sha256':digest,'sourceVersion':'R109_LATENCY2','sourceCore':previous['targetCore'],'targetVersion':'R110_HANDOFF1','targetCore':plan['targetCore'],'changedCodeFiles':len(rows),'newFiles':[n for n,r in rows.items() if r['before']==[None]],'databaseScope':'none','namespace':plan['namespace']}
+report={'file':delivery.relative_to(ROOT).as_posix(),'bytes':delivery.stat().st_size,'sha256':digest,'sourceVersion':'R109_LATENCY2','sourceCore':previous['targetCore'],'targetVersion':'R110_HANDOFF1','targetCore':plan['targetCore'],'changedCodeFiles':len(rows),'newFiles':[n for n,r in rows.items() if r['before']==[None]],'databaseScope':'none','namespace':plan['namespace']}
 (ROOT/'evidence/package.json').write_bytes(encoded(report));print(json.dumps(report,indent=2))
