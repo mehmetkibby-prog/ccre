@@ -29,9 +29,10 @@ const {currentRealmFixture:realmStartupConfig}=await import('./current-realm-fix
 const {ProcessStream}=await import(coreRoot+'/process-stream.mjs');
 const {BASE,temporary}=await import(coreRoot+'/tests/helpers.mjs');
 const {attachPanelRuntime}=await import(working+'/core511-source/scripts/delivery511/panel-control.mjs');
-let phase='preparation',browser,server,s,linkDelay=0,started=Date.now();
+let phase='preparation',browser,server,s,linkDelay=0,handoffs=0,started=Date.now();
 const lag=()=>new Transform({transform(chunk,enc,callback){const delay=linkDelay;setTimeout(()=>this.push(chunk),delay);callback();}});
 const report={scope:'Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.',client:proof.name,checks};
+report.webSocketTransport=process.env.BROWSER_WS_TRANSPORT==='handoff'?'production-style-socket-handoff':'test-process-bridge';
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function wait(predicate,message,timeout=12000){const end=Date.now()+timeout;while(Date.now()<end){if(await predicate())return;await pause(70);}throw Error(message);}
 try{
@@ -134,6 +135,12 @@ try{
   const ext=path.extname(f);res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png','.svg':'image/svg+xml','.jpg':'image/jpeg','.mp3':'audio/mpeg'})[ext]??'application/octet-stream');res.end(fs.readFileSync(f));
  }catch(error){errors.push({kind:'http',message:error.message,stack:error.stack});log('faults',errors.at(-1));if(!res.headersSent)res.writeHead(500);res.end('fixture request failed');}});
  server.on('upgrade',async(req,socket,head)=>{try{
+  // R110: BROWSER_WS_TRANSPORT=handoff gives the browser socket to the channel
+  // process exactly like the production ingress (no test bridge, no lag hop).
+  if(process.env.BROWSER_WS_TRANSPORT==='handoff'){
+   const channel=Number(req.url.match(/channel\/(\d+)/)?.[1]),headers={...req.headers,origin:s.f.origin,'x-real-ip':'198.51.100.93',connection:'Upgrade',upgrade:'websocket'};
+   assert(s.supervisor.handoffWebSocket?.(channel,socket,{url:req.url,headers,head}),'browser WebSocket handoff');handoffs++;return;
+  }
   const row=s.supervisor.rows.get(Number(req.url.match(/channel\/(\d+)/)?.[1]));assert(row);const stream='test-browser:'+randomUUID(),bridge=new ProcessStream(row.child,{stream});bridges.push(bridge);
   await new Promise((resolve,reject)=>row.child.send({type:'test-browser-connection',stream},e=>e?reject(e):resolve()));
   const headers={...req.headers,origin:s.f.origin,'x-real-ip':'198.51.100.93'};bridge.write('GET '+req.url+' HTTP/1.1\r\n'+Object.entries(headers).map(([k,v])=>k+': '+v).join('\r\n')+'\r\n\r\n');if(head.length)bridge.write(head);socket.pipe(lag()).pipe(bridge).pipe(lag()).pipe(socket);socket.on('error',()=>bridge.destroy());bridge.on('error',()=>socket.destroy());
@@ -207,6 +214,6 @@ try{
  }
 }catch(error){report.failure={phase,message:error.message,stack:error.stack};if(browser){const page=browser.contexts()[0]?.pages()[0];if(page){report.failure.dom=await page.locator('body').innerText().catch(()=>null);await page.screenshot({path:out+'/failure.png'}).catch(()=>{});}}console.error(error);process.exitCode=1;
 }finally{
- report.durationMs=Date.now()-started;report.requests=requests;report.errors=errors;report.nativeFaults=s?.faults?.map(x=>x.error?.message)||[];report.missingAssets=[...missing];fs.writeFileSync(out+'/report.json',JSON.stringify(report,null,2)+'\n');
+ report.durationMs=Date.now()-started;report.webSocketHandoffs=handoffs;report.handoffStats=s?.supervisor?.handoffStatsR110??null;report.requests=requests;report.errors=errors;report.nativeFaults=s?.faults?.map(x=>x.error?.message)||[];report.missingAssets=[...missing];fs.writeFileSync(out+'/report.json',JSON.stringify(report,null,2)+'\n');
  await browser?.close();for(const b of bridges)b.destroy();if(server)await new Promise(r=>server.close(r));for(const fn of cleanups.reverse())try{await fn();}catch(error){console.error('cleanup',error.message);}console.log(JSON.stringify({passed:report.passed??false,phase,checks:checks.length,failure:report.failure?.message,report:out+'/report.json'}));
 }
