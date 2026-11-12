@@ -1,0 +1,76 @@
+{
+  "release": "/tmp/r111-installed-e_023ym1/release",
+  "base": "R111 ZIP applied by its own installer to an installed R110_HANDOFF1 fixture",
+  "package": {
+    "file": "delivery/r111-savas.zip",
+    "bytes": 747020,
+    "sha256": "c0864854c8a7041422344ff37ac7981bd12f8a9a2ce3ba57549554fd34113608",
+    "sourceVersion": "R110_HANDOFF1",
+    "sourceCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+    "targetVersion": "R111_COMBAT1",
+    "targetCore": "539fcd4593d08bff6feab8fb3d9634e276d40cc1c019c395db1c363c9bc285b9",
+    "changedCodeFiles": 12,
+    "newFiles": [
+      "core511-source/scripts/core511/ipc-replay-r111.mjs",
+      "core511-source/scripts/core511/slow-death-r111.mjs"
+    ],
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "installedVersion": "R111_COMBAT1",
+  "targetCore": "539fcd4593d08bff6feab8fb3d9634e276d40cc1c019c395db1c363c9bc285b9",
+  "overlay": [
+    {
+      "path": "core511-source/scripts/core511/attack-commit-r53.mjs",
+      "sha256": "a6561bcd6c3166f1ec55b169c0b3eb319c15f6bdf087e3e5b1a43e4013b459a0"
+    },
+    {
+      "path": "core511-source/scripts/core511/combat-continuation-r57.mjs",
+      "sha256": "9aad5a32aeef68e82b1d0d16d12a9a188edc7344eeb50d212807dafcc24a9916"
+    },
+    {
+      "path": "core511-source/scripts/core511/coordinator.mjs",
+      "sha256": "f0a9dda561039b5564e1005b8ddc2050af4b39df53b6afab052ad3e87d7bb8cd"
+    },
+    {
+      "path": "core511-source/scripts/core511/death-latency-r82.mjs",
+      "sha256": "904953f0e47787a86db9d55dcdeebbdf916ef4795b65ef87c86754e472cf8f2e"
+    },
+    {
+      "path": "core511-source/scripts/core511/fixed-loop.mjs",
+      "sha256": "270e659d25d5cf373eefde20e061a97cd2dddfd1ab4d13809d07e78a3ffc14f3"
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+      "sha256": "85687508462d6abfcd5127d742bf29540d4f07603b3953337f7127152a13a476"
+    },
+    {
+      "path": "core511-source/scripts/core511/ipc-replay-r111.mjs",
+      "sha256": "f849a89dbc451628db5e93405ae7916299228a5f9978b7c3329e84ebff2e907d"
+    },
+    {
+      "path": "core511-source/scripts/core511/native-http-action.mjs",
+      "sha256": "9ea89e046f9e043f8c238bdefa444c553635476d565f6f617c800175b0a0c43a"
+    },
+    {
+      "path": "core511-source/scripts/core511/native-http-bindings.mjs",
+      "sha256": "47034d49b2086b43a8da9017199361d2c4a0d3c6097e5b51943c678653b31177"
+    },
+    {
+      "path": "core511-source/scripts/core511/patch-native-social.mjs",
+      "sha256": "a8732210b3d49166b84d51cbe4bb3f2a033dd941455f16e47014987a83f0832d"
+    },
+    {
+      "path": "core511-source/scripts/core511/slow-death-r111.mjs",
+      "sha256": "93236febae9765b77d14a8b731c58358360ff52f1a9745242dde5fc85cf5eb70"
+    },
+    {
+      "path": "http-runtime/dist-vds/server/index.js",
+      "sha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/install-operations.mjs",
+      "sha256": "ad8adf48d02f5058406f90c8ecd93d972bcdc768754691030b85f5b33b3866d1"
+    }
+  ]
+}

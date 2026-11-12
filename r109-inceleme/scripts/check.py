@@ -31,6 +31,18 @@ elif group=='r110':
     stage=str(T/'evidence/runtime-stage.json')
     env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r110','RUNTIME_EXPECT_R110':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
     raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
+elif group=='r111':
+    subprocess.run([sys.executable,str(R/'tests/prepare-native-regression.py')],cwd=R,check=True)
+    cases=['combat-wake-r111.test.mjs','slow-death-r111.test.mjs','ipc-replay-r111.test.mjs','chat-continuity-r111.test.mjs']
+    rc=subprocess.run(runner+['--test','--test-concurrency=1',*[str(R/'tests'/f) for f in cases],str(R/'evidence/native-tests/native-http-social.test.mjs')],cwd=R,env=os.environ).returncode
+    if rc:raise SystemExit(rc)
+    T=P/'r111_combat_continuity'
+    rc=subprocess.run([sys.executable,str(T/'tests/installer_test.py'),'-v'],cwd=T,env=os.environ).returncode
+    if rc:raise SystemExit(rc)
+    subprocess.run([sys.executable,str(T/'tests/stage-runtime.py')],cwd=T,env=os.environ,check=True)
+    stage=str(T/'evidence/runtime-stage.json')
+    env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r111','RUNTIME_EXPECT_R110':'1','RUNTIME_EXPECT_R111':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
+    raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
 elif group=='browser':cmd=runner+[str(R/'tests/tower-browser.mjs')]
 else:raise SystemExit('Unknown check group: '+group)
 raise SystemExit(subprocess.run(cmd,cwd=R,env=os.environ).returncode)

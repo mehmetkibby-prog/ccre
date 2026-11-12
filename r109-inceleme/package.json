@@ -15,6 +15,7 @@
     "test:browser": "python3 scripts/check.py browser",
     "test:handoff": "python3 scripts/check.py handoff",
     "test:r110": "python3 scripts/check.py r110",
+    "test:r111": "python3 scripts/check.py r111",
     "load": "python3 scripts/load.py"
   },
   "dependencies": {
