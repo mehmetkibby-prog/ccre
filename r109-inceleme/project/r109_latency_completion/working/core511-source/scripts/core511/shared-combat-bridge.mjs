@@ -19,7 +19,7 @@ import {sharedClaimMismatchR85} from './shared-claim-rejection-r85.mjs';
 // owner; this book retains authority until the source confirms local promotion.
 // A lost grant/finish/COMMIT acknowledgement retires all five OS owners.
 export class SharedCombatBridge {
- constructor(world,{set=setTimeout,clear=clearTimeout,clock=()=>performance.now()}={}){this.world=world;this.core=world.core;this.set=set;this.clear=clear;this.clock=clock;this.requests=new Map();this.terminal=null;this.waiters=new Set();this.idleWaiters=new Set();this.ownershipHolds=new Set();this.actorWaits=0;this.actorRejections=0;this.actorConflicts=[];}
+ constructor(world,{set=setTimeout,clear=clearTimeout,clock=()=>performance.now()}={}){this.world=world;this.core=world.core;this.set=set;this.clear=clear;this.clock=clock;this.requests=new Map();this.terminal=null;this.waiters=new Set();this.idleWaiters=new Set();this.ownershipHolds=new Set();this.actorWaits=0;this.actorRejections=0;this.actorConflicts=[];this.channelReleaseR111=process.env.CORE511_R111_CHANNEL_RELEASE!=='0';}
  // A parent-only admission/retirement hold is acquired after accepted work
  // drains, outside the SQLite queue. It never grants a player write lease.
  reserveOwnership(){
@@ -150,17 +150,17 @@ export class SharedCombatBridge {
  }
  allows(id,peer,request){const held=this.terminal;return held?.phase==='frozen'&&request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation&&request.playerId===held.row.source.actor&&(held.channels.some(c=>c.answer.actors.some(a=>a.id===id))||this.stoppedAllows(id,peer,request));}
  stoppedAllows(id,peer,request){const h=this.terminal,p=h?.stopped?.get(id);return Boolean(p&&h.phase==='frozen'&&request.payload?.sharedLease===h.row.proof&&peer.incarnation===h.row.source.incarnation&&peer.channel===h.row.source.channel&&request.playerId===h.row.source.actor&&stoppedOwnerMatchesR533(this.core,p));}
- blocking(peer,request){const held=this.terminal;if(!held||held.phase==='freezing'||this.allows(request.playerId,peer,request)||request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation)return null;return held.channels.some(c=>c.answer.actors.some(a=>a.id===request.playerId))?held:null;}
+ blocking(peer,request){const held=this.terminal;if(!held||held.phase==='freezing'||this.allows(request.playerId,peer,request)||request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation)return null;return held.channels.some(c=>c.answer.actors.some(a=>a.id===request.playerId)&&!(held.phase==='refreshing'&&c.releasedR111&&c.channel.peer.channel===peer.channel&&c.channel.peer.incarnation===peer.incarnation))?held:null;}
  conflict(kind,peer,request,held){
   if(kind==='wait')this.actorWaits++;else this.actorRejections++;
   const row={at:Date.now(),kind,operation:request.operation,action:request.payload?.input?.action??null,actor:request.playerId,epoch:request.epoch,sequence:request.sequence,channel:peer.channel,phase:held.phase,terminalOperation:held.row.id,sourceActor:held.row.source.actor,sourceChannel:held.row.source.channel};
   this.actorConflicts.push(row);if(this.actorConflicts.length>256)this.actorConflicts.shift();return row;
  }
  async writable(peer,request){
-  // An individual release may resume CH4 before the final other-channel ACK.
-  // Wait OUTSIDE SQLite/the writer queue; the frozen guard below still rejects
-  // every unauthorized write. Earlier work must drain while phase=freezing.
-  for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);await this.terminalIdle();this.core.process(peer);}
+  // Wait OUTSIDE SQLite. Only this exact channel's validated post-COMMIT,
+  // post-reload release ACK can wake its ordinary work early. Admission and
+  // other global terminalIdle() waiters still join EVERY channel release.
+  for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);if(recoveryWatchdog)demand(!this.core.recoveringWorld,'global_world_busy');await new Promise((resolve,reject)=>this.waiters.add({resolve,reject,peer,request}));this.core.process(peer);}
  }
  assertRefresh(payload,result,context){const h=this.terminal,claim=h?.foregroundClaimR85;if(!claim)return true;const audit=result?.sharedRefresh;if(!(payload.sharedLease===h.row.proof&&audit?.version===1&&audit.all===false&&Array.isArray(audit.actors)&&audit.actors.every(id=>claim.scope.actors.includes(id))))throw sharedClaimMismatchR85(payload,context);return true;}
  claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||JSON.stringify(foregroundClaimScopeR85(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
@@ -270,7 +270,15 @@ export class SharedCombatBridge {
     demand(current(),'shared_finish_superseded');await row.world.control.request('shared_reload',{peer:row.source,proof:row.proof,snapshot});demand(current(),'shared_finish_superseded');held.phase='refreshing';
     if(row.commandAck.result.moves?.length){row.phase='returning';return {returning:true,token:held.token};}
     const invalidation=row.commandAck.result.sharedRefresh;demand(!invalidation||invalidation.version===1&&Array.isArray(invalidation.actors)&&typeof invalidation.all==='boolean','shared_refresh_metadata');
-    await Promise.all(held.channels.map(async entry=>{const {channel,answer}=entry;entry.refreshActors=!invalidation||invalidation.all?answer.actors.map(a=>a.id):answer.actors.filter(a=>invalidation.actors.includes(a.id)).map(a=>a.id);const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');(this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();}));
+    await Promise.all(held.channels.map(async entry=>{
+     const {channel,answer}=entry;entry.refreshActors=!invalidation||invalidation.all?answer.actors.map(a=>a.id):answer.actors.filter(a=>invalidation.actors.includes(a.id)).map(a=>a.id);
+     const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');
+     // The existing channel protocol has now refreshed and unlocked all of
+     // its held actors. Do not make their next normal kill wait for a slower
+     // sibling. Shared ownership and the source world lease remain held.
+     if(this.channelReleaseR111){entry.releasedR111=true;for(const waiter of this.waiters)if(waiter.peer&&!this.blocking(waiter.peer,waiter.request)){this.waiters.delete(waiter);waiter.resolve();}}
+     (this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();
+    }));
     demand(current(),'shared_finish_superseded');this.terminal=null;released=true;this.wake();
    }
    // The channel holds were intentionally released. The original row still

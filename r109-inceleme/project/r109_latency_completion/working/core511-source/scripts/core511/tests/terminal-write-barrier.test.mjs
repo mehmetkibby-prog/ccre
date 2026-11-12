@@ -13,16 +13,16 @@ function fixture(){
  return {bridge,peers,row,held,request,core};
 }
 
-test('actual terminal finish exposes a resumed CH4 while other release ACKs are pending; queued potion waits outside writer',async()=>{
+test('actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs',async()=>{
  const {bridge,peers,row,held,request}=fixture();let release,firstReleased=false,writes=0;
  const gate=new Promise(resolve=>release=resolve);
  for(const c of held.channels)c.channel.control.request=async()=>{if(c.channel.peer.channel===4)firstReleased=true;else await gate;return {token:held.token,released:true};};
  const finish=bridge.finish(peers[0],{id:row.id,actor:'source',epoch:1,proof:row.proof});
  while(!firstReleased)await new Promise(resolve=>setImmediate(resolve));
  assert.equal(held.phase,'refreshing');
- assert.throws(()=>bridge.guard(peers[3],request),e=>e.code==='shared_terminal_actor_fenced'&&e.context.operation==='native_action'&&e.context.action==='use_potion'&&e.context.actor==='actor-4'&&e.context.phase==='refreshing');
+ assert.equal(bridge.guard(peers[3],request),true);
  const command=bridge.writable(peers[3],request).then(()=>{bridge.guard(peers[3],request);writes++;});
- await new Promise(resolve=>setImmediate(resolve));assert.equal(writes,0);assert.equal(bridge.actorWaits,1);
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(writes,1);assert.equal(bridge.actorWaits,0);assert.equal(bridge.terminal,held);
  release();await Promise.all([finish,command]);assert.equal(writes,1);assert.equal(bridge.terminal,null);
 });
 
