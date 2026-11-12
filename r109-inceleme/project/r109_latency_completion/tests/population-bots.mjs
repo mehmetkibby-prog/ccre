@@ -4,16 +4,21 @@ import {randomUUID} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import {activePopulationInputs,settlePopulationEnd} from './population-end-settlement.mjs';
 import {observePopulationFinalEvent,recordPopulationPending} from './population-final-events.mjs';
+import {PopulationDelivery} from './population-delivery-r111.mjs';
 import {WebSocket} from '/tmp/core511-build-deps/node_modules/ws/wrapper.mjs';
 const {Core511Transport}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/client-transport.mjs');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const delivery=new PopulationDelivery();
 let actors=[],timer,measuring=false,counts={},errors=[],cpu,started,endSettlement=null;
 const count=k=>{if(measuring)counts[k]=(counts[k]||0)+1;};
 const quantile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.ceil(a.length*p)-1]:0;
-const snapshot=()=>({pid:process.pid,counts,errors,endSettlement,provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
+const snapshot=()=>({pid:process.pid,counts,errors,endSettlement,combatDelivery:delivery.snapshot(),provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
 async function send(a,input){
  if(input.action==='attack'){a.observedAttackIntents??=new Set();a.observedAttackIntents.add(input.intentId);if(a.observedAttackIntents.size>256){const oldest=a.observedAttackIntents.values().next().value;if([...a.pendingKills.values()].some(t=>t.intentId===oldest))throw Error('population_unresolved_intent_overflow');a.observedAttackIntents.delete(oldest);a.finalAttackEvents?.delete(oldest);}}
- const at=performance.now(),r=await a.client.command(input);
+ const at=performance.now();
+ if(measuring)delivery.sent(a.n,input,at);
+ const r=await a.client.command(input);
+ delivery.reply(a.n,input,r,performance.now());
  if(measuring){a.latencies.push(performance.now()-at);a.acks++;count('replies');}
  // With native regen/healing enchants, HP can reach its cap between the
  // received snapshot and potion execution. This exact legal no-op is counted,
@@ -80,7 +85,7 @@ async function command(method,value){
    // actor's socket while measuring (a frozen relay shows up as a long gap).
    class Socket extends WebSocket{constructor(url){super(url,{origin:serverOrigin,headers:{'X-Test-Actor':String(a.n)}});this.on('close',()=>{a.lastMessageAt=undefined;count('socketCloses');});this.on('error',()=>count('socketErrors'));this.on('message',()=>{const now=performance.now();if(measuring){a.messages++;if(a.lastMessageAt!==undefined)a.messageGaps.push(now-a.lastMessageAt);}a.lastMessageAt=now;});}}
    a.fetch=(url,opt={})=>fetch(origin+new URL(url,origin).pathname+new URL(url,origin).search,{...opt,headers:{origin:serverOrigin,cookie:'__Host-yasam-session='+a.token+'; __Host-yasam-csrf='+a.csrf,'X-CSRF-Token':a.csrf,'X-Game-Instance':a.instance,'X-Real-IP':'198.51.100.'+(a.n+1),'content-type':'application/json'}});
-   a.client=new Core511Transport({WebSocket:Socket,origin,headers:()=>({}),fetch:a.fetch,notify:(kind,v)=>{if(kind==='event')observePopulationFinalEvent(a,v);if(kind==='error'&&errors.length<100)errors.push({actor:a.n,kind,value:v});}});
+   a.client=new Core511Transport({WebSocket:Socket,origin,headers:()=>({}),fetch:a.fetch,notify:(kind,v)=>{if(kind==='event'){observePopulationFinalEvent(a,v);delivery.event(a.n,v,performance.now());}if(kind==='error'&&errors.length<100)errors.push({actor:a.n,kind,value:v});}});
    await a.client.replace('character',{channel:a.channel});await a.client.image();assert(a.client.ready,'ready actor '+a.n);
   }
   for(const a of actors){

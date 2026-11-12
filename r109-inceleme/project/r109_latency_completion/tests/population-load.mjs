@@ -10,10 +10,11 @@ import {PerformanceObserver,performance} from 'node:perf_hooks';
 import {Session} from 'node:inspector';
 const root=path.resolve(import.meta.dirname,'..'),tree=process.env.STUTTER_TREE,core=tree+'/core511-source/scripts/core511';
 // Explicit local diagnostic only; the package and live launch flags are untouched.
+if(process.env.R111_TEST_STAGES==='1')process.env.CORE511_STAGE_TIMING='1';
 if(process.env.R108_TEST_READ_BATCH==='0')process.env.CORE511_READ_SNAPSHOT_BATCH='0';
 const capacity=process.env.CORE101_REALM_ID==='r2'?10:25;
 const N=Number(process.env.LOAD_PLAYERS),duration=Number(process.env.LOAD_MS||60000),label=process.env.LOAD_LABEL;
-assert([10,30,40,50,100].includes(N));assert(N<=capacity*4,'respect realm admission capacity');assert(duration>=10000&&duration<=180000);assert(/^[a-z0-9-]+$/.test(label));
+assert([10,15,30,40,50,100].includes(N));assert(N<=capacity*4,'respect realm admission capacity');assert(duration>=10000&&duration<=180000);assert(/^[a-z0-9-]+$/.test(label));
 const out=root+'/evidence/'+label+'-'+N+'.json';assert(!fs.existsSync(out),'keep earlier results immutable');
 const {nativeHttpHost}=await import(core+'/tests/native-http-host-fixture.mjs');
 const {currentRealmFixture}=await import('./current-realm-fixture.mjs');
@@ -102,6 +103,8 @@ try{
  await pause(duration);measuring=false;clearInterval(timer);timer=null;
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
+ const diagnostics=await s.core.diagnostics.sample();
+ report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51}))};
  if(census)report.sqlCensus=census.report();
  if(framing){report.framingCensus=Object.fromEntries([...framing].sort((a,b)=>b[1].ms-a[1].ms));report.ipcSendCensus=ipcSends;}
  report.wsHandoff=s.supervisor.handoffStatsR110??null;if(report.wsHandoff?.sent)report.webSocketTransport='production-style-socket-handoff';
@@ -132,7 +135,7 @@ try{
  if(report.populationFixture.equipment){report.equipmentAfter=populationWeaponCounterSnapshot(s.host.database.sqlite,actors);report.equipmentKills=report.equipmentAfter.reduce((sum,row,index)=>sum+row.kills-report.equipmentBefore[index].kills,0);}
  report.soloRows=s.host.database.sqlite.prepare('SELECT id,status,state FROM dungeon_runs').all().map(row=>{const r=JSON.parse(row.state);return {id:row.id,status:row.status,stage:r.stage,message:r.message,deadline:r.deadline,members:r.members.map(m=>({actor:actors.find(a=>a.id===m.id)?.n,hp:m.hp,maxHp:m.maxHp,left:m.left}))};});
  const rows=measured.measurement.eventLoops,channels=rows.filter(r=>r.target.startsWith('channel-')),main=rows.find(r=>r.target==='main');
- report={...report,passed:bots.errors.length===0&&s.faults.length===0&&bots.endSettlement?.completed===true&&bots.actors.every(a=>a.ready&&!a.busy&&a.queued===0&&a.active===0&&a.pendingKills===0&&a.pendingClaims===0&&(a.zone!=='solo'||a.soloStage>0)),durationMs:Date.now()-started,measurement:measured,counts:bots.counts,provisionalOutcomes:bots.provisionalOutcomes,errors:bots.errors,faults:s.faults.map(f=>({code:f.error?.code,message:f.error?.message})),actors:bots.actors,summary:{tickP95Ms:Math.max(...channels.map(c=>c.game.tickP95Ms)),tickP99Ms:Math.max(...channels.map(c=>c.game.tickP99Ms)),maxTickMs:Math.max(...channels.map(c=>c.game.maxTickMs)),mainMaxPauseMs:main.maxPauseMs,mainPausesOver50Ms:main.pauseCountsOver50Ms.timer,channelPausesOver50Ms:channels.reduce((n,c)=>n+c.pauseCountsOver50Ms.timer,0),maxChannelPauseMs:Math.max(...channels.map(c=>c.maxPauseMs)),mainElu:main.elu,mainMaxRssBytes:main.maxRssBytes,resources:measured.resources}};
+ report={...report,passed:bots.errors.length===0&&s.faults.length===0&&bots.endSettlement?.completed===true&&bots.actors.every(a=>a.ready&&!a.busy&&a.queued===0&&a.active===0&&a.pendingKills===0&&a.pendingClaims===0&&(a.zone!=='solo'||a.soloStage>0)),durationMs:Date.now()-started,measurement:measured,counts:bots.counts,provisionalOutcomes:bots.provisionalOutcomes,errors:bots.errors,faults:s.faults.map(f=>({code:f.error?.code,message:f.error?.message})),actors:bots.actors,combatDelivery:bots.combatDelivery,summary:{tickP95Ms:Math.max(...channels.map(c=>c.game.tickP95Ms)),tickP99Ms:Math.max(...channels.map(c=>c.game.tickP99Ms)),maxTickMs:Math.max(...channels.map(c=>c.game.maxTickMs)),mainMaxPauseMs:main.maxPauseMs,mainPausesOver50Ms:main.pauseCountsOver50Ms.timer,channelPausesOver50Ms:channels.reduce((n,c)=>n+c.pauseCountsOver50Ms.timer,0),maxChannelPauseMs:Math.max(...channels.map(c=>c.maxPauseMs)),mainElu:main.elu,mainMaxRssBytes:main.maxRssBytes,resources:measured.resources}};
  if(report.sharedBoss&&!report.sharedBoss.passed)report.passed=false;
  if(report.populationFixture.equipment&&!report.populationFixture.boss&&report.equipmentKills<=0){report.passed=false;report.equipmentFailure='No persisted ordinary weapon kill counter exercised';}
  console.log(JSON.stringify({passed:report.passed,...report.summary}));assert(report.passed,'load correctness failed');
