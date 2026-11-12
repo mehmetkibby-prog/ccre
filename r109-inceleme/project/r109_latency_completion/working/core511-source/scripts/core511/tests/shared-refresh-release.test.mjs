@@ -6,3 +6,18 @@ test('changed foreign actor is refreshed and hydrated before any held actor unlo
 test('unknown metadata retains the conservative full refresh path',async()=>{const s=fixture();await s.bridge.release({token:'hold'});assert.deepEqual(s.events.slice(0,2),['read:a','read:b']);assert(s.events.indexOf('unlock:a')>s.events.indexOf('encounter:b'));});
 test('wrong epoch or foreign refresh list fences leases without any unlock',async()=>{for(const mode of ['epoch','scope']){const s=fixture();if(mode==='epoch')s.owners.set('b',{epoch:3});await assert.rejects(s.bridge.release({token:'hold',refreshActors:mode==='scope'?['foreign']:['b']}));assert(s.failed());assert(!s.events.some(e=>e.startsWith('unlock')));assert(s.held.actors.every(a=>a.p.externalHold==='hold'&&a.p.suspended));}});
 test('a borrowed global freeze keeps the actor quiesced with its exact epoch through shared release',async()=>{const s=fixture(),r=s.bridge.runtime,c=r.channel;for(const a of s.held.actors){a.borrowed=true;a.suspended=true;a.lease=null;}r.globalControl.held={token:'world-hold',phase:'freezing',actors:s.held.actors.map(a=>({id:a.id,epoch:a.epoch}))};c.state.assertOwner=(id,epoch,options={})=>{assert.equal(s.owners.get(id).epoch,epoch);if(!options.allowQuiesced)throw Object.assign(Error('owner_epoch_fenced'),{code:'owner_epoch_fenced'});};const ack=await s.bridge.release({token:'hold',refreshActors:[]});assert.equal(ack.released,true);assert(s.held.actors.every(a=>a.p.suspended&&!a.p.externalHold));assert.equal(r.globalControl.held.token,'world-hold');});
+
+
+test('audited unchanged actors resume while changed actors retain their cold-read barrier',async()=>{
+ const s=fixture(),c=s.bridge.channel;c.peer={channel:1,incarnation:'boot'};const a=s.held.actors[0],b=s.held.actors[1];
+ const early=await s.bridge.release({token:'hold',refreshActors:['b'],releaseUnchangedOnly:true});
+ assert.deepEqual(early,{token:'hold',channel:1,incarnation:'boot',unchangedReleased:[{id:'a',epoch:1}]});assert.deepEqual(s.events,['unlock:a']);
+ assert.equal(a.p.externalHold,null);assert.equal(a.p.suspended,false);assert.equal(b.p.externalHold,'hold');assert.equal(b.p.suspended,true);assert.deepEqual(s.held.actors,[b]);assert.equal(s.bridge.held,s.held);
+ await s.bridge.release({token:'hold',refreshActors:['b']});assert.deepEqual(s.events,['unlock:a','read:b','apply:b','checkpoint:b','encounter:b','unlock:b','mailbox']);assert.equal(s.bridge.held,null);
+});
+test('early release requires exact explicit audit and retains borrowed global suspension',async()=>{
+ for(const refreshActors of [null,['missing'],['b','b']]){const s=fixture();await assert.rejects(s.bridge.release({token:'hold',refreshActors,releaseUnchangedOnly:true}));assert(!s.events.some(x=>x.startsWith('unlock')));}
+ const s=fixture(),c=s.bridge.channel;c.peer={channel:1,incarnation:'boot'};for(const a of s.held.actors){a.borrowed=true;a.suspended=true;a.lease=null;}
+ s.bridge.runtime.globalControl.held={token:'global',phase:'freezing',actors:s.held.actors.map(a=>({id:a.id,epoch:a.epoch}))};
+ const a=s.held.actors[0];await s.bridge.release({token:'hold',refreshActors:['b'],releaseUnchangedOnly:true});assert.equal(a.p.suspended,true);assert.equal(a.p.externalHold,null);assert.equal(s.bridge.runtime.globalControl.held.token,'global');
+});

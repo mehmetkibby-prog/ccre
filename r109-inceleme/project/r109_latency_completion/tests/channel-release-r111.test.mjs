@@ -11,7 +11,7 @@ function fixture(t,{enabled=true}={}){
  const source={...peers[0],actor:'source',epoch:1},events=[],gates=peers.map(()=>deferred());
  const core={writer:{owners:new Map([['source',{...source,state:'active'}]])},reader:{query:async()=>({rows:{}})},process:peer=>{assert(peers.includes(peer),'channel_process_fenced');return peer;}};
  const world={core,global:{recover:()=>events.push('recover')},row:{exited:false,owner:{epoch:1},peer:{incarnation:'world'},control:{request:async method=>{events.push(method);return {finished:true};}}}};
- const bridge=new SharedCombatBridge(world);
+ const bridge=new SharedCombatBridge(world);bridge.unchangedReleaseR112=false; // Exercise the original whole-channel protocol separately.
  if(previous===undefined)delete process.env.CORE511_R111_CHANNEL_RELEASE;else process.env.CORE511_R111_CHANNEL_RELEASE=previous;
  const row={id:'terminal-operation',source,world:world.row,proof:'private-proof',phase:'leased',commandAck:{result:{sharedRefresh:{version:1,all:false,actors:['actor-2']}}}};
  const held={row,token:'hold',phase:'frozen',channels:peers.map((peer,i)=>({channel:{peer,control:{request:async(method,payload)=>{assert.equal(method,'shared_release');assert.equal(payload.token,'hold');events.push('release:'+peer.channel);return gates[i].promise;}}},answer:{actors:[{id:'actor-'+peer.channel,epoch:1,sequence:0}]}}))};

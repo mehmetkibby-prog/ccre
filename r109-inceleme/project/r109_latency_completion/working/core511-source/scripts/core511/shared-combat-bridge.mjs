@@ -19,7 +19,7 @@ import {sharedClaimMismatchR85} from './shared-claim-rejection-r85.mjs';
 // owner; this book retains authority until the source confirms local promotion.
 // A lost grant/finish/COMMIT acknowledgement retires all five OS owners.
 export class SharedCombatBridge {
- constructor(world,{set=setTimeout,clear=clearTimeout,clock=()=>performance.now()}={}){this.world=world;this.core=world.core;this.set=set;this.clear=clear;this.clock=clock;this.requests=new Map();this.terminal=null;this.waiters=new Set();this.idleWaiters=new Set();this.ownershipHolds=new Set();this.actorWaits=0;this.actorRejections=0;this.actorConflicts=[];this.channelReleaseR111=process.env.CORE511_R111_CHANNEL_RELEASE!=='0';}
+ constructor(world,{set=setTimeout,clear=clearTimeout,clock=()=>performance.now()}={}){this.world=world;this.core=world.core;this.set=set;this.clear=clear;this.clock=clock;this.requests=new Map();this.terminal=null;this.waiters=new Set();this.idleWaiters=new Set();this.ownershipHolds=new Set();this.actorWaits=0;this.actorRejections=0;this.actorConflicts=[];this.channelReleaseR111=process.env.CORE511_R111_CHANNEL_RELEASE!=='0';this.unchangedReleaseR112=process.env.CORE511_R112_RELEASE!=='0';}
  // A parent-only admission/retirement hold is acquired after accepted work
  // drains, outside the SQLite queue. It never grants a player write lease.
  reserveOwnership(){
@@ -150,7 +150,15 @@ export class SharedCombatBridge {
  }
  allows(id,peer,request){const held=this.terminal;return held?.phase==='frozen'&&request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation&&request.playerId===held.row.source.actor&&(held.channels.some(c=>c.answer.actors.some(a=>a.id===id))||this.stoppedAllows(id,peer,request));}
  stoppedAllows(id,peer,request){const h=this.terminal,p=h?.stopped?.get(id);return Boolean(p&&h.phase==='frozen'&&request.payload?.sharedLease===h.row.proof&&peer.incarnation===h.row.source.incarnation&&peer.channel===h.row.source.channel&&request.playerId===h.row.source.actor&&stoppedOwnerMatchesR533(this.core,p));}
- blocking(peer,request){const held=this.terminal;if(!held||held.phase==='freezing'||this.allows(request.playerId,peer,request)||request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation)return null;return held.channels.some(c=>c.answer.actors.some(a=>a.id===request.playerId)&&!(held.phase==='refreshing'&&c.releasedR111&&c.channel.peer.channel===peer.channel&&c.channel.peer.incarnation===peer.incarnation))?held:null;}
+ blocking(peer,request){
+  const held=this.terminal;if(!held||held.phase==='freezing'||request.payload?.sharedLease===held.row.proof&&peer.incarnation===held.row.source.incarnation)return null;
+  // Include all declared AND post-write audited players, not only the caller.
+  // A resumed actor cannot award, heal or damage a still-refreshing teammate.
+  const ids=new Set([request.playerId,...(request.payload?.resources??[]).filter(k=>k.startsWith('player:')).map(k=>k.slice(7))]);
+  return held.channels.some(c=>c.answer.actors.some(a=>ids.has(a.id)&&!(held.phase==='refreshing'&&c.channel.peer.channel===peer.channel&&c.channel.peer.incarnation===peer.incarnation&&(c.releasedR111||c.unchangedReleasedR112?.has(a.id)))))?held:null;
+ }
+ wakeWritable(){for(const waiter of this.waiters)if(waiter.peer&&!this.blocking(waiter.peer,waiter.request)){this.waiters.delete(waiter);waiter.resolve();}}
+
  conflict(kind,peer,request,held){
   if(kind==='wait')this.actorWaits++;else this.actorRejections++;
   const row={at:Date.now(),kind,operation:request.operation,action:request.payload?.input?.action??null,actor:request.playerId,epoch:request.epoch,sequence:request.sequence,channel:peer.channel,phase:held.phase,terminalOperation:held.row.id,sourceActor:held.row.source.actor,sourceChannel:held.row.source.channel};
@@ -272,11 +280,20 @@ export class SharedCombatBridge {
     const invalidation=row.commandAck.result.sharedRefresh;demand(!invalidation||invalidation.version===1&&Array.isArray(invalidation.actors)&&typeof invalidation.all==='boolean','shared_refresh_metadata');
     await Promise.all(held.channels.map(async entry=>{
      const {channel,answer}=entry;entry.refreshActors=!invalidation||invalidation.all?answer.actors.map(a=>a.id):answer.actors.filter(a=>invalidation.actors.includes(a.id)).map(a=>a.id);
+     if(this.unchangedReleaseR112&&invalidation?.all===false){
+      const expected=answer.actors.filter(a=>!entry.refreshActors.includes(a.id));
+      if(expected.length){
+       const early=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors,releaseUnchangedOnly:true});
+       demand(current(),'shared_finish_superseded');this.core.process(channel.peer);
+       demand(early?.token===held.token&&early.channel===channel.peer.channel&&early.incarnation===channel.peer.incarnation&&Array.isArray(early.unchangedReleased)&&early.unchangedReleased.length===expected.length&&new Set(early.unchangedReleased.map(a=>a.id)).size===expected.length&&expected.every(a=>early.unchangedReleased.some(b=>b.id===a.id&&b.epoch===a.epoch)),'shared_unchanged_release_ack');
+       entry.unchangedReleasedR112=new Set(expected.map(a=>a.id));this.wakeWritable();
+      }
+     }
      const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');
      // The existing channel protocol has now refreshed and unlocked all of
      // its held actors. Do not make their next normal kill wait for a slower
      // sibling. Shared ownership and the source world lease remain held.
-     if(this.channelReleaseR111){entry.releasedR111=true;for(const waiter of this.waiters)if(waiter.peer&&!this.blocking(waiter.peer,waiter.request)){this.waiters.delete(waiter);waiter.resolve();}}
+     if(this.channelReleaseR111){entry.releasedR111=true;this.wakeWritable();}
      (this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();
     }));
     demand(current(),'shared_finish_superseded');this.terminal=null;released=true;this.wake();

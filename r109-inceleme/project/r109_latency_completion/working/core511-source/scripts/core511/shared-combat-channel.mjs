@@ -257,7 +257,15 @@ export class SharedCombatChannel {
   for(const a of h.actors){if(a.lease)c.lanes.release(a.lease);a.p.externalHold=a.externalHold??null;a.p.suspended=c.quarantines?.entries.has(a.id)?true:a.suspended;}
   this.held=null;this.runtime.mailbox.resume(token);const ack={token,channel:c.peer.channel,incarnation:c.peer.incarnation,aborted:true};this.abortedHolds.set(token,ack);if(this.abortedHolds.size>128)this.abortedHolds.delete(this.abortedHolds.keys().next().value);return ack;
  }
- async release({token,refreshActors=null}){
+ releaseActors(h,actors){
+  const c=this.channel;
+  for(const a of actors){
+    if(a.lease)c.lanes.release(a.lease);a.p.externalHold=null;const global=this.runtime.globalControl.held;
+    if(a.quiesced&&global){if(global.phase==='frozen'){const lease=c.lanes.acquire(['player:'+a.id],global.token);demand(lease,'shared_return_global_resource');global.extraLeases.push(lease);}a.p.suspended=true;}
+    else if(a.quiesced)c.kernel.resume(a.id,a.epoch);else a.p.suspended=a.suspended;
+  }
+ }
+ async release({token,refreshActors=null,releaseUnchangedOnly=false}){
   const c=this.channel,h=this.held;demand(h?.token===token,'shared_release_scope');
   const started=performance.now();let read=null,applyMs=0;
   try{for(const a of h.actors){
@@ -268,6 +276,15 @@ export class SharedCombatChannel {
     demand(c.owners.get(a.id)?.epoch===a.epoch&&a.p.externalHold===token,'shared_release_actor_fenced');
    }
    demand(refreshActors===null||Array.isArray(refreshActors)&&new Set(refreshActors).size===refreshActors.length&&refreshActors.every(id=>h.actors.some(a=>a.id===id)),'shared_release_refresh_scope');
+   demand(typeof releaseUnchangedOnly==='boolean'&&(!releaseUnchangedOnly||refreshActors!==null),'shared_release_mode');
+   if(releaseUnchangedOnly){
+    // The parent has a durable write-set audit and reloaded the world owner.
+    // Unchanged actors need no cold image. Keep every changed actor and all
+    // borrowed global/cold holds fenced; acknowledge exact released epochs.
+    const unchanged=h.actors.filter(a=>!refreshActors.includes(a.id));
+    this.releaseActors(h,unchanged);h.actors=h.actors.filter(a=>refreshActors.includes(a.id));
+    return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,unchangedReleased:unchanged.map(a=>({id:a.id,epoch:a.epoch}))};
+   }
    const selected=refreshActors===null?h.actors:h.actors.filter(a=>refreshActors.includes(a.id));let bundles;
    const readAt=performance.now();bundles=[];
    if(PARALLEL_RELEASE){
@@ -282,11 +299,7 @@ export class SharedCombatChannel {
    read={query:'kernel511_actor_world',actors:selected.length,wallMs:performance.now()-readAt};
    demand(bundles.length===selected.length&&bundles.every((b,i)=>b.player.id===selected[i].id),'shared_release_bundle_order');
    const applyAt=performance.now();for(const bundle of bundles){c.applyBundle(bundle);c.checkpoints.hydrate(bundle.player);c.encounters.hydrate(bundle.player.id,bundle.engagement);}applyMs=performance.now()-applyAt;
-   for(const a of h.actors){
-    if(a.lease)c.lanes.release(a.lease);a.p.externalHold=null;const global=this.runtime.globalControl.held;
-    if(a.quiesced&&global){if(global.phase==='frozen'){const lease=c.lanes.acquire(['player:'+a.id],global.token);demand(lease,'shared_return_global_resource');global.extraLeases.push(lease);}a.p.suspended=true;}
-    else if(a.quiesced)c.kernel.resume(a.id,a.epoch);else a.p.suspended=a.suspended;
-   }this.held=null;this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs,read}};
+   this.releaseActors(h,h.actors);this.held=null;this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs,read}};
   }catch(error){for(const a of h.actors)if(a.lease?.state==='held')c.lanes.fence(a.lease);this.runtime.fail(error);throw error;}
  }
 }
