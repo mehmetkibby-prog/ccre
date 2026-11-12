@@ -1,7 +1,7 @@
 # R110 sonrası canlı CPU profilleri — 3, 7 ve 11 oyuncu
 
 Kullanıcı R110_HANDOFF1 kurulumundan sonra (kurulum çıktısı: "R110 TAKILMA
-DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır") iki 60 saniyelik ana süreç
+DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır") üç 60 saniyelik ana süreç
 profili gönderdi. Harita/etkinlik ve realm ayrıca belirtilmedi.
 
 | Dosya | Oyuncu | SHA256 |
