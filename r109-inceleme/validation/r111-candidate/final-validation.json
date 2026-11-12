@@ -1,0 +1,284 @@
+{
+  "package": {
+    "file": "delivery/r111-savas.zip",
+    "bytes": 758297,
+    "sha256": "85157f6bcbd9409d59020399c0045fe1abd07250ec057a6f77cdd2716720090f",
+    "sourceVersion": "R110_HANDOFF1",
+    "sourceCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+    "targetVersion": "R111_COMBAT1",
+    "targetCore": "23f618c8c94e42abc65c189bd12f6e669d900a0584ad038199a089b90faeb95b",
+    "changedCodeFiles": 14,
+    "newFiles": [
+      "core511-source/scripts/core511/ipc-replay-r111.mjs",
+      "core511-source/scripts/core511/slow-death-r111.mjs"
+    ],
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "focused"
+      ],
+      "exitCode": 0,
+      "log": "gate-focused-release.log",
+      "sha256": "866207b24586222c5a5a0c841039d88494f6e67905ca8104072bb1096fa69bf9",
+      "nodeTests": 56,
+      "pythonTests": 0
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "native"
+      ],
+      "exitCode": 0,
+      "log": "gate-native-release.log",
+      "sha256": "f786e21c73386658bbc183ada417180a8f163adaab7b81892827d596b6d1c334",
+      "nodeTests": 29,
+      "pythonTests": 0
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "captcha"
+      ],
+      "exitCode": 0,
+      "log": "gate-captcha-release.log",
+      "sha256": "f090e1688fd6c497e6b7c72f908e381b4693dc6143dab0d147d0d6db8af65c19",
+      "nodeTests": 20,
+      "pythonTests": 0
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "r110"
+      ],
+      "exitCode": 0,
+      "log": "gate-r110-release.log",
+      "sha256": "89aeedaee06c6d1935e928c8cb1ba749d70b2661ac22d93fe575af799872f378",
+      "nodeTests": 3,
+      "pythonTests": 16
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check.py",
+        "r111"
+      ],
+      "exitCode": 0,
+      "log": "gate-r111-release.log",
+      "sha256": "d7747ac16560a7112c11be80a28cea7597c9ea986b0ef6a3f76667b560562f6d",
+      "nodeTests": 40,
+      "pythonTests": 17
+    }
+  ],
+  "loads": [
+    {
+      "file": "loads-final/review-20261112222355-30.json",
+      "sha256": "ef69b2662a4a218d9bcccc9546a47515f0844276704d7acc63981424a9366989",
+      "players": 30,
+      "realm": "r1",
+      "scenario": "forest",
+      "durationMs": 120000,
+      "deaths": {
+        "count": 816,
+        "p50Ms": 58.76158299999952,
+        "p95Ms": 106.76923799999349,
+        "p99Ms": 152.73488299999735,
+        "maxMs": 192.5710489999983,
+        "over50": 525,
+        "over200": 0,
+        "over1000": 0
+      },
+      "summary": {
+        "tickP95Ms": 6.498138000002655,
+        "tickP99Ms": 11.51851799999713,
+        "maxTickMs": 124.7058509999988,
+        "mainMaxPauseMs": 69.402623,
+        "mainPausesOver50Ms": 4,
+        "channelPausesOver50Ms": 10,
+        "maxChannelPauseMs": 123.10030199999892,
+        "mainElu": 0.15002063034703908,
+        "mainMaxRssBytes": 657162240,
+        "resources": {
+          "cpuBudget": 4,
+          "totalCpuFraction": 0.22715460336328158,
+          "maxRssBytes": 1466613760
+        }
+      }
+    },
+    {
+      "file": "loads-final/review-20261112222621-30.json",
+      "sha256": "40e79ee936b5608f981dbca7e7e043ae7b24f024c2b3f5c282f403642de530cf",
+      "players": 30,
+      "realm": "r1",
+      "scenario": "mixed",
+      "durationMs": 60000,
+      "deaths": {
+        "count": 279,
+        "p50Ms": 86.73556099999769,
+        "p95Ms": 184.61735900000167,
+        "p99Ms": 309.8944580000025,
+        "maxMs": 348.51237299999775,
+        "over50": 261,
+        "over200": 10,
+        "over1000": 0
+      },
+      "summary": {
+        "tickP95Ms": 11.269670999998198,
+        "tickP99Ms": 19.422324999999546,
+        "maxTickMs": 90.85171000000264,
+        "mainMaxPauseMs": 77.135871,
+        "mainPausesOver50Ms": 4,
+        "channelPausesOver50Ms": 8,
+        "maxChannelPauseMs": 89.325567,
+        "mainElu": 0.23962675153477564,
+        "mainMaxRssBytes": 570744832,
+        "resources": {
+          "cpuBudget": 4,
+          "totalCpuFraction": 0.3243859892322354,
+          "maxRssBytes": 1368080384
+        }
+      }
+    },
+    {
+      "file": "loads-final/review-20261112222747-40.json",
+      "sha256": "ef00224803254e40786dee9f34cf35779d05c6feca79367f0d062f81b51378ad",
+      "players": 40,
+      "realm": "r1",
+      "scenario": "mixed",
+      "durationMs": 60000,
+      "deaths": {
+        "count": 292,
+        "p50Ms": 99.21968100000231,
+        "p95Ms": 162.82273300000088,
+        "p99Ms": 315.3571120000015,
+        "maxMs": 338.9758290000027,
+        "over50": 279,
+        "over200": 7,
+        "over1000": 0
+      },
+      "summary": {
+        "tickP95Ms": 11.584533000001102,
+        "tickP99Ms": 22.33199899999454,
+        "maxTickMs": 42.15298100000655,
+        "mainMaxPauseMs": 93.126655,
+        "mainPausesOver50Ms": 2,
+        "channelPausesOver50Ms": 4,
+        "maxChannelPauseMs": 106.627071,
+        "mainElu": 0.27072397254478253,
+        "mainMaxRssBytes": 616046592,
+        "resources": {
+          "cpuBudget": 4,
+          "totalCpuFraction": 0.36775456730630285,
+          "maxRssBytes": 1425895424
+        }
+      }
+    },
+    {
+      "file": "loads-final/review-20261112222916-40.json",
+      "sha256": "51efd0556aa140d94c9d5cc28953cfc1f6bb53a1be4672582eb474606d55892d",
+      "players": 40,
+      "realm": "r2",
+      "scenario": "mixed",
+      "durationMs": 60000,
+      "deaths": {
+        "count": 277,
+        "p50Ms": 104.59190700000181,
+        "p95Ms": 219.3651890000001,
+        "p99Ms": 360.06484799999816,
+        "maxMs": 461.191866000001,
+        "over50": 260,
+        "over200": 19,
+        "over1000": 0
+      },
+      "summary": {
+        "tickP95Ms": 12.56404399999883,
+        "tickP99Ms": 18.369743999999628,
+        "maxTickMs": 43.32795899999837,
+        "mainMaxPauseMs": 65.110015,
+        "mainPausesOver50Ms": 1,
+        "channelPausesOver50Ms": 0,
+        "maxChannelPauseMs": 31.244287,
+        "mainElu": 0.2653579769635386,
+        "mainMaxRssBytes": 574988288,
+        "resources": {
+          "cpuBudget": 4,
+          "totalCpuFraction": 0.3610295081646795,
+          "maxRssBytes": 1398759424
+        }
+      }
+    },
+    {
+      "file": "loads-final/review-20261112223045-30.json",
+      "sha256": "a68d7bc7bc4f7dbd9b1aaae79fec8ecac74b8e7a72f78cc3775f7f22f66dbaec",
+      "players": 30,
+      "realm": "r1",
+      "scenario": "shared_boss_terminal",
+      "durationMs": 60000,
+      "deaths": {
+        "count": 2,
+        "p50Ms": 617.9318950000015,
+        "p95Ms": 682.9124100000008,
+        "p99Ms": 682.9124100000008,
+        "maxMs": 682.9124100000008,
+        "over50": 2,
+        "over200": 2,
+        "over1000": 0
+      },
+      "summary": {
+        "tickP95Ms": 5.591442000004463,
+        "tickP99Ms": 10.490754999998899,
+        "maxTickMs": 41.172114000000875,
+        "mainMaxPauseMs": 68.485119,
+        "mainPausesOver50Ms": 1,
+        "channelPausesOver50Ms": 4,
+        "maxChannelPauseMs": 81.854463,
+        "mainElu": 0.16272885232873607,
+        "mainMaxRssBytes": 548950016,
+        "resources": {
+          "cpuBudget": 4,
+          "totalCpuFraction": 0.1857475249022,
+          "maxRssBytes": 1334083584
+        }
+      }
+    }
+  ],
+  "scope": "Synthetic fixtures in a 4-core-quota shared cloud host; no live deployment or zero-lag certification. Raw pauses, GC and control-probe gaps are retained.",
+  "knownLimitations": [
+    "The live two-second ordinary-monster incident has not been reproduced or conclusively attributed.",
+    "Short event-loop pauses remain; no claim that all pauses are eliminated.",
+    "30-player shared-boss terminal outcome reached 683 ms.",
+    "Earlier 10/50/100-player runs in load*-final.log used the candidate before the independent-channel-release change; they are not the final-package capacity proof."
+  ],
+  "intermediateFailures": [
+    {
+      "log": "focused.log",
+      "cause": "Command lazy fields were read twice by replay compaction; compaction now only applies to read snapshots.",
+      "resolvedBy": "eeabef3"
+    },
+    {
+      "log": "r111.log",
+      "cause": "Retained R110 ingress files were not source-pinned; three source pins were added.",
+      "resolvedBy": "27d8b3d"
+    },
+    {
+      "log": "r111-final.log",
+      "cause": "HTTP startup composition hash was stale; exact reviewed chat call-site hash now bound, guard retained.",
+      "resolvedBy": "b787e79"
+    },
+    {
+      "log": "chat-r110-reproduction.log",
+      "cause": "Expected R110 failure: plain chat blocked behind an actor durable acknowledgement."
+    },
+    {
+      "log": "channel-release-before.log",
+      "cause": "Expected pre-fix failure: a fully refreshed channel waited for another channel."
+    }
+  ]
+}

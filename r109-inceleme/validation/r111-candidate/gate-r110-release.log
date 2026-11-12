@@ -1,0 +1,87 @@
+test_already_installed_r110_is_not_applied_twice (__main__.Installation.test_already_installed_r110_is_not_applied_twice) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_changed_imports_resolve_inside_the_release (__main__.Installation.test_changed_imports_resolve_inside_the_release) ... ok
+test_code_contract_binds_every_reviewed_byte (__main__.Installation.test_code_contract_binds_every_reviewed_byte) ... ok
+test_exact_package_updates_only_reviewed_files_and_rollback_restores_r109 (__main__.Installation.test_exact_package_updates_only_reviewed_files_and_rollback_restores_r109) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_existing_options_file_is_not_overwritten (__main__.Installation.test_existing_options_file_is_not_overwritten) ... ok
+test_health_failure_restores_r109_code_and_preserves_player_progress (__main__.Installation.test_health_failure_restores_r109_code_and_preserves_player_progress) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_modified_installed_file_stops_before_maintenance (__main__.Installation.test_modified_installed_file_stops_before_maintenance) ... ok
+test_only_installed_r109_is_accepted_as_source (__main__.Installation.test_only_installed_r109_is_accepted_as_source) ... ok
+test_partial_code_write_restores_all_changes (__main__.Installation.test_partial_code_write_restores_all_changes) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected partial write
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_plan_is_the_reviewed_code_only_delta_from_r109 (__main__.Installation.test_plan_is_the_reviewed_code_only_delta_from_r109) ... ok
+test_power_loss_during_backup_requires_no_complete_backup_to_recover (__main__.Installation.test_power_loss_during_backup_requires_no_complete_backup_to_recover) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: power loss in backup
+ok
+test_prior_r109_install_record_retires_after_new_backup_is_valid (__main__.Installation.test_prior_r109_install_record_retires_after_new_backup_is_valid) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_r105_files_without_r109_are_rejected (__main__.Installation.test_r105_files_without_r109_are_rejected) ... ok
+test_readiness_requires_r110_and_accepts_exact_r109_for_rollback (__main__.Installation.test_readiness_requires_r110_and_accepts_exact_r109_for_rollback) ... ok
+test_unknown_files_are_preserved_by_retention (__main__.Installation.test_unknown_files_are_preserved_by_retention) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_unready_or_different_realm_blocks_cleanup (__main__.Installation.test_unready_or_different_realm_blocks_cleanup) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 23.398s
+
+OK
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R110 TAKILMA DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+/tmp/r110-installed-zs3t1ycl/release
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794522044894,"backupName":"before-pearl-reset-1794522044894-d7aac72e-e481-40ed-9f4e-81337e95c4d2.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794522046733,"backupName":"before-pearl-reset-1794522046733-6b9903c8-3da3-4572-99fd-9cddea7bd4b0.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 12551.26172
+  type: 'test'
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 104.782818
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794522065697,"backupName":"before-pearl-reset-1794522065697-cb19cc14-820e-4f96-80f2-e06874b327ae.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794522079539,"backupName":"before-pearl-reset-1794522079539-ee6c96e0-7890-4055-824d-1407585a29f5.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+ok 3 - installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+  ---
+  duration_ms: 21523.209992
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 53129.640698

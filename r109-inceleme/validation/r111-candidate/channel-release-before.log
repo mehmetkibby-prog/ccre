@@ -1,0 +1,89 @@
+TAP version 13
+# Subtest: a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing
+not ok 1 - a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing
+  ---
+  duration_ms: 3.761708
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:26:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    a fully released channel must not wait for another channel
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:33:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: no channel is released before durable command ACK and world reload
+not ok 2 - no channel is released before durable command ACK and world reload
+  ---
+  duration_ms: 23.023778
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:41:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert(completed)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:47:80)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-12T22:13:42.115Z","action":"shared_combat_failure","incident":1,"reason":"shared_release_ack","origin":"shared_combat_failure","requestMethod":"shared_finish","operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":273,"column":347},{"file":"shared-combat-bridge.mjs","line":273,"column":5},{"file":"channel-release-r111.test.mjs","line":58,"column":2}]}
+# Subtest: invalid release ACK never wakes its actor; recovery rejects command and ownership waiters
+ok 3 - invalid release ACK never wakes its actor; recovery rejects command and ownership waiters
+  ---
+  duration_ms: 5.601521
+  type: 'test'
+  ...
+# Subtest: a stale channel incarnation cannot use a valid release to cross the writer fence
+not ok 4 - a stale channel incarnation cannot use a valid release to cross the writer fence
+  ---
+  duration_ms: 0.845784
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:62:1'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Subtest: the fallback preserves the full terminal barrier even after one release ACK
+not ok 5 - the fallback preserves the full terminal barrier even after one release ACK
+  ---
+  duration_ms: 0
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/channel-release-r111.test.mjs:70:1'
+  failureType: 'cancelledByParent'
+  error: 'Promise resolution is still pending but the event loop has already resolved'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    process.emit (node:events:519:28)
+  ...
+# Error: Test "a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing" at tests/channel-release-r111.test.mjs:26:1 generated asynchronous activity after the test ended. This activity created the error "Error: fixture closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing" at tests/channel-release-r111.test.mjs:26:1 generated asynchronous activity after the test ended. This activity created the error "Error: fixture closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing" at tests/channel-release-r111.test.mjs:26:1 generated asynchronous activity after the test ended. This activity created the error "Error: fixture closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "no channel is released before durable command ACK and world reload" at tests/channel-release-r111.test.mjs:41:1 generated asynchronous activity after the test ended. This activity created the error "Error: fixture closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 2
+# cancelled 2
+# skipped 0
+# todo 0
+# duration_ms 379.880355
