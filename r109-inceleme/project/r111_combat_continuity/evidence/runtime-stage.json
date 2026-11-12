@@ -1,15 +1,15 @@
 {
-  "release": "/tmp/r111-installed-e_023ym1/release",
+  "release": "/tmp/r111-installed-ocev7s5s/release",
   "base": "R111 ZIP applied by its own installer to an installed R110_HANDOFF1 fixture",
   "package": {
     "file": "delivery/r111-savas.zip",
-    "bytes": 747020,
-    "sha256": "c0864854c8a7041422344ff37ac7981bd12f8a9a2ce3ba57549554fd34113608",
+    "bytes": 758297,
+    "sha256": "85157f6bcbd9409d59020399c0045fe1abd07250ec057a6f77cdd2716720090f",
     "sourceVersion": "R110_HANDOFF1",
     "sourceCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
     "targetVersion": "R111_COMBAT1",
-    "targetCore": "539fcd4593d08bff6feab8fb3d9634e276d40cc1c019c395db1c363c9bc285b9",
-    "changedCodeFiles": 12,
+    "targetCore": "23f618c8c94e42abc65c189bd12f6e669d900a0584ad038199a089b90faeb95b",
+    "changedCodeFiles": 14,
     "newFiles": [
       "core511-source/scripts/core511/ipc-replay-r111.mjs",
       "core511-source/scripts/core511/slow-death-r111.mjs"
@@ -18,7 +18,7 @@
     "namespace": "core511-1025c65a35480d96"
   },
   "installedVersion": "R111_COMBAT1",
-  "targetCore": "539fcd4593d08bff6feab8fb3d9634e276d40cc1c019c395db1c363c9bc285b9",
+  "targetCore": "23f618c8c94e42abc65c189bd12f6e669d900a0584ad038199a089b90faeb95b",
   "overlay": [
     {
       "path": "core511-source/scripts/core511/attack-commit-r53.mjs",
@@ -61,8 +61,16 @@
       "sha256": "a8732210b3d49166b84d51cbe4bb3f2a033dd941455f16e47014987a83f0832d"
     },
     {
+      "path": "core511-source/scripts/core511/shared-combat-bridge.mjs",
+      "sha256": "7fcd67a7bc9acbdfe8454609f5109ebed5561e522890bc530d4a780298ab389f"
+    },
+    {
       "path": "core511-source/scripts/core511/slow-death-r111.mjs",
       "sha256": "93236febae9765b77d14a8b731c58358360ff52f1a9745242dde5fc85cf5eb70"
+    },
+    {
+      "path": "core511-source/scripts/core511/tests/terminal-write-barrier.test.mjs",
+      "sha256": "bb018f7e15ea8f01e2bca82a2f3e459bcd1c168999adfd40b1470076e34cfc2b"
     },
     {
       "path": "http-runtime/dist-vds/server/index.js",
@@ -70,7 +78,7 @@
     },
     {
       "path": "core511-source/scripts/delivery511/install-operations.mjs",
-      "sha256": "ad8adf48d02f5058406f90c8ecd93d972bcdc768754691030b85f5b33b3866d1"
+      "sha256": "c3ceca8c10a73e1a3aead2c0f1fcbcc5f8e87d6652ed879cf510286a759d1db0"
     }
   ]
 }

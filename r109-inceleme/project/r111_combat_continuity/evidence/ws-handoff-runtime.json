@@ -1,5 +1,5 @@
 {
-  "release": "/tmp/r111-installed-e_023ym1/release",
+  "release": "/tmp/r111-installed-ocev7s5s/release",
   "overlay": [
     "core511-source/scripts/core511/attack-commit-r53.mjs",
     "core511-source/scripts/core511/combat-continuation-r57.mjs",
@@ -11,7 +11,9 @@
     "core511-source/scripts/core511/native-http-action.mjs",
     "core511-source/scripts/core511/native-http-bindings.mjs",
     "core511-source/scripts/core511/patch-native-social.mjs",
+    "core511-source/scripts/core511/shared-combat-bridge.mjs",
     "core511-source/scripts/core511/slow-death-r111.mjs",
+    "core511-source/scripts/core511/tests/terminal-write-barrier.test.mjs",
     "http-runtime/dist-vds/server/index.js",
     "core511-source/scripts/delivery511/install-operations.mjs"
   ],
@@ -23,29 +25,29 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 7,
-          "firstReplyMs": 9,
+          "openMs": 3,
+          "firstReplyMs": 5,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 2,
-          "openMs": 3,
-          "firstReplyMs": 5,
+          "openMs": 2,
+          "firstReplyMs": 4,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 3,
           "openMs": 3,
-          "firstReplyMs": 5,
+          "firstReplyMs": 4,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 4,
-          "openMs": 3,
-          "firstReplyMs": 4,
+          "openMs": 2,
+          "firstReplyMs": 3,
           "code": 1008,
           "ownerIsChannel": true
         }
@@ -54,7 +56,7 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 39
+        "maxFirstReplyMs": 33
       },
       "shutdown": {
         "code": 0,
@@ -67,8 +69,8 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 7,
-          "firstReplyMs": 13,
+          "openMs": 5,
+          "firstReplyMs": 8,
           "code": 1008,
           "ownerIsChannel": false
         },
@@ -81,15 +83,15 @@
         },
         {
           "channel": 3,
-          "openMs": 4,
+          "openMs": 3,
           "firstReplyMs": 5,
           "code": 1008,
           "ownerIsChannel": false
         },
         {
           "channel": 4,
-          "openMs": 3,
-          "firstReplyMs": 4,
+          "openMs": 5,
+          "firstReplyMs": 7,
           "code": 1008,
           "ownerIsChannel": false
         }
@@ -98,11 +100,11 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 46
+        "maxFirstReplyMs": 32
       },
       "shutdown": {
         "code": 0,
-        "ms": 145
+        "ms": 120
       }
     },
     {
@@ -111,8 +113,8 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 5,
-          "firstReplyMs": 6,
+          "openMs": 3,
+          "firstReplyMs": 5,
           "code": 1008,
           "ownerIsChannel": true
         },
@@ -125,15 +127,15 @@
         },
         {
           "channel": 3,
-          "openMs": 2,
-          "firstReplyMs": 4,
+          "openMs": 4,
+          "firstReplyMs": 6,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 4,
-          "openMs": 3,
-          "firstReplyMs": 4,
+          "openMs": 4,
+          "firstReplyMs": 5,
           "code": 1008,
           "ownerIsChannel": true
         }
@@ -142,11 +144,11 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 27
+        "maxFirstReplyMs": 79
       },
       "shutdown": {
         "code": 0,
-        "ms": 155
+        "ms": 158
       }
     }
   ]

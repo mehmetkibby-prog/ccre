@@ -33,8 +33,9 @@ elif group=='r110':
     raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
 elif group=='r111':
     subprocess.run([sys.executable,str(R/'tests/prepare-native-regression.py')],cwd=R,check=True)
-    cases=['combat-wake-r111.test.mjs','slow-death-r111.test.mjs','ipc-replay-r111.test.mjs','chat-continuity-r111.test.mjs']
-    rc=subprocess.run(runner+['--test','--test-concurrency=1',*[str(R/'tests'/f) for f in cases],str(R/'evidence/native-tests/native-http-social.test.mjs')],cwd=R,env=os.environ).returncode
+    cases=['combat-wake-r111.test.mjs','slow-death-r111.test.mjs','ipc-replay-r111.test.mjs','chat-continuity-r111.test.mjs','channel-release-r111.test.mjs']
+    shared=['terminal-write-barrier.test.mjs','shared-refresh-release.test.mjs','shared-world.test.mjs']
+    rc=subprocess.run(runner+['--test','--test-concurrency=1',*[str(R/'tests'/f) for f in cases],str(R/'evidence/native-tests/native-http-social.test.mjs'),*[str(R/'working/core511-source/scripts/core511/tests'/f) for f in shared]],cwd=R,env=os.environ).returncode
     if rc:raise SystemExit(rc)
     T=P/'r111_combat_continuity'
     rc=subprocess.run([sys.executable,str(T/'tests/installer_test.py'),'-v'],cwd=T,env=os.environ).returncode

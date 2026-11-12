@@ -56,7 +56,7 @@ for tree in TREES:
   name=file.relative_to(work).as_posix();b=file.read_bytes();old=base_bytes(name);before=sha(old) if old is not None else None
   if before==sha(b):continue
   rows[name]={'before':[before],'after':sha(b),'bytes':len(b)};data['payload/'+name]=b
-allowed={core+n for n in ('attack-commit-r53.mjs','combat-continuation-r57.mjs','coordinator.mjs','death-latency-r82.mjs','fixed-loop.mjs','ipc-replay-r111.mjs','slow-death-r111.mjs','native-http-action.mjs','patch-native-social.mjs','native-http-bindings.mjs','generated/native-http-composition-proof.json')}|{'http-runtime/dist-vds/server/index.js'}
+allowed={core+n for n in ('attack-commit-r53.mjs','combat-continuation-r57.mjs','coordinator.mjs','death-latency-r82.mjs','fixed-loop.mjs','ipc-replay-r111.mjs','slow-death-r111.mjs','native-http-action.mjs','patch-native-social.mjs','native-http-bindings.mjs','generated/native-http-composition-proof.json','shared-combat-bridge.mjs','tests/terminal-write-barrier.test.mjs')}|{'http-runtime/dist-vds/server/index.js'}
 assert set(rows)==allowed,set(rows)^allowed
 new={core+'ipc-replay-r111.mjs',core+'slow-death-r111.mjs'}
 assert all((r['before']==[None])==(n in new) for n,r in rows.items())
