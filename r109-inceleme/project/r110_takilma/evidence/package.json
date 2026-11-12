@@ -1,0 +1,15 @@
+{
+  "file": "/home/user/ccre/r109-inceleme/project/r110_takilma/delivery/r110-takilma.zip",
+  "bytes": 213919,
+  "sha256": "4fd1fbb8a36de2ae89fb693f5617ac3a8e697f2608f4a6b14464b6703a83bcc0",
+  "sourceVersion": "R109_LATENCY2",
+  "sourceCore": "1fb1a5cd28cbeec3a0b33bd1a262ecc165e07cf6a239d13f668a8b22f79a91df",
+  "targetVersion": "R110_HANDOFF1",
+  "targetCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+  "changedCodeFiles": 12,
+  "newFiles": [
+    "core511-source/scripts/core511/r110-options.mjs"
+  ],
+  "databaseScope": "none",
+  "namespace": "core511-1025c65a35480d96"
+}
