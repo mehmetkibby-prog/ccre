@@ -50,3 +50,12 @@ test('one eight-slot queue bounds all actor readers; queued work cannot cross a 
  assert.equal((await reader.query('kernel511_actor_world',params[0])).rows.actor,params[0][0]);assert.equal(backend.starts,2);assert.equal(other.slot,otherSlot);assert.equal(reader.ready,true);
  const slots=reader.readers.map(r=>r.slot);await reader.close();assert(slots.every(s=>s.ended));await assert.rejects(reader.query('kernel511_actor_world',params[0]),{code:'read_worker_closed'});
 });
+
+test('a burst for one shard cannot occupy the other shard slots or reorder a shard FIFO',async()=>{
+ const {BoundedReadQueue}=await import('../bounded-read-queue.mjs');const q=new BoundedReadQueue(),order=[],releases=[];
+ const submit=(key,i)=>q.run(()=>new Promise(resolve=>{order.push(key+i);releases.push(resolve);}),{key,limit:4});
+ const first=Array.from({length:20},(_,i)=>submit('a',i)),second=Array.from({length:4},(_,i)=>submit('b',i));await new Promise(r=>setImmediate(r));
+ assert.deepEqual(order,['a0','a1','a2','a3','b0','b1','b2','b3']);assert.equal(q.active,8);assert.equal(q.waiting.length,16);
+ while(order.length<24||q.active){for(const resolve of releases.splice(0))resolve();await new Promise(r=>setImmediate(r));}
+ await Promise.all([...first,...second]);assert.deepEqual(order.filter(x=>x.startsWith('a')),Array.from({length:20},(_,i)=>'a'+i));assert.equal(q.activeKeys.size,0);q.close();
+});

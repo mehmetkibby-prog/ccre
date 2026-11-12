@@ -5,20 +5,28 @@ import {demand,kernelError} from './contract.mjs';
 export class BoundedReadQueue {
  constructor({concurrency=8,maxQueued=128,waitMs=5000}={}){
   demand(Number.isSafeInteger(concurrency)&&concurrency>0&&Number.isSafeInteger(maxQueued)&&maxQueued>=0&&Number.isFinite(waitMs)&&waitMs>0,'read_queue_configuration');
-  Object.assign(this,{concurrency,maxQueued,waitMs});this.active=0;this.waiting=[];this.closed=false;
+  Object.assign(this,{concurrency,maxQueued,waitMs});this.active=0;this.waiting=[];this.closed=false;this.activeKeys=new Map();
  }
- run(operation){
+ runnable(task){return this.active<this.concurrency&&(task.key===null||(this.activeKeys.get(task.key)??0)<task.limit);}
+ run(operation,{key=null,limit=this.concurrency}={}){
   if(this.closed)return Promise.reject(kernelError('read_worker_closed'));
-  if(this.active>=this.concurrency&&this.waiting.length>=this.maxQueued)return Promise.reject(kernelError('read_worker_backpressure'));
+  if(!Number.isSafeInteger(limit)||limit<1)return Promise.reject(kernelError('read_queue_configuration'));
+  const task={operation,key,limit,timer:null};
+  if(!this.runnable(task)&&this.waiting.length>=this.maxQueued)return Promise.reject(kernelError('read_worker_backpressure'));
   return new Promise((resolve,reject)=>{
-   const task={operation,resolve,reject,timer:null};
-   if(this.active<this.concurrency)this.start(task);
+   Object.assign(task,{resolve,reject});
+   if(this.runnable(task))this.start(task);
    else{task.timer=setTimeout(()=>{const index=this.waiting.indexOf(task);if(index<0)return;this.waiting.splice(index,1);reject(kernelError('read_worker_queue_timeout'));},this.waitMs);this.waiting.push(task);}
   });
  }
  start(task){
-  clearTimeout(task.timer);this.active++;
-  Promise.resolve().then(task.operation).then(task.resolve,task.reject).finally(()=>{this.active--;const next=this.waiting.shift();if(next)this.start(next);});
+  clearTimeout(task.timer);this.active++;if(task.key!==null)this.activeKeys.set(task.key,(this.activeKeys.get(task.key)??0)+1);
+  Promise.resolve().then(task.operation).then(task.resolve,task.reject).finally(()=>{
+   this.active--;if(task.key!==null){const count=this.activeKeys.get(task.key)-1;if(count)this.activeKeys.set(task.key,count);else this.activeKeys.delete(task.key);}
+   // FIFO within each worker; skip only a saturated worker so another
+   // reader can use its capacity. One global backlog and deadline remain.
+   for(let i;(i=this.waiting.findIndex(t=>this.runnable(t)))>=0;)this.start(this.waiting.splice(i,1)[0]);
+  });
  }
  close(){this.closed=true;for(const task of this.waiting.splice(0)){clearTimeout(task.timer);task.reject(kernelError('read_worker_closed'));}}
 }

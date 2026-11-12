@@ -131,7 +131,7 @@ export class ReadWorker {
    // Do not silently replay guild cursors or old actor reads on a replacement.
    if(wasHealthy&&(backend.slot!==slot||slot.failed||slot.ended))throw kernelError('read_worker_process_changed');
    return backend.send({name,params});
-  });
+  },{key:backend,limit:backend===this?this.readQueue.concurrency:4});
  }
  measure(payload,{slot=this.slot}={}){if(slot!==this.slot||slot.failed||slot.ended)return Promise.reject(kernelError('read_measurement_process_changed'));return this.send({type:'load_measure',payload},{expectedSlot:slot,timeoutMs:5000,terminateOnTimeout:false}).then(result=>result.rows);}
  send(message,{expectedSlot=null,timeoutMs=this.timeoutMs,terminateOnTimeout=true}={}) {
