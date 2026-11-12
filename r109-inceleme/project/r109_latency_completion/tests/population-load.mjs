@@ -8,9 +8,11 @@ import {randomUUID,createHash} from 'node:crypto';
 import {MessageChannel} from 'node:worker_threads';
 import {PerformanceObserver,performance} from 'node:perf_hooks';
 import {Session} from 'node:inspector';
+import {writeHeapSnapshot} from 'node:v8';
 const root=path.resolve(import.meta.dirname,'..'),tree=process.env.STUTTER_TREE,core=tree+'/core511-source/scripts/core511';
 // Explicit local diagnostic only; the package and live launch flags are untouched.
 if(process.env.R111_TEST_STAGES==='1')process.env.CORE511_STAGE_TIMING='1';
+if(process.env.R111_TEST_REPLAY_STORAGE==='0')process.env.CORE511_R111_REPLAY_STORAGE='0';
 if(process.env.R108_TEST_READ_BATCH==='0')process.env.CORE511_READ_SNAPSHOT_BATCH='0';
 const capacity=process.env.CORE101_REALM_ID==='r2'?10:25;
 const N=Number(process.env.LOAD_PLAYERS),duration=Number(process.env.LOAD_MS||60000),label=process.env.LOAD_LABEL;
@@ -35,9 +37,9 @@ const pause=ms=>new Promise(r=>setTimeout(r,ms)),clean=[],actors=[],bridges=[],e
 const hostStats=()=>({...Object.fromEntries(['cpu.stat','cpu.pressure','memory.events','memory.pressure','io.pressure'].map(n=>[n,fs.existsSync('/sys/fs/cgroup/'+n)?fs.readFileSync('/sys/fs/cgroup/'+n,'utf8'):null])),procCpu:fs.readFileSync('/proc/stat','utf8').split('\n')[0]});
 const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null,census=null,framing=null;
 const inspect=(method,params={})=>new Promise((resolve,reject)=>inspector.post(method,params,(error,result)=>error?reject(error):resolve(result)));
- let s,timer,panel,measuring=false,report={players:N,label,realm:process.env.CORE101_REALM_ID||'r1',durationRequestedMs:duration,workload:process.env.POPULATION_MODE||'mixed',fixture:{monsterHp:85,monsterDamage:9,playerStatHp:1000000,channelCapacity:capacity,channelDistribution:process.env.LOAD_DISTRIBUTION==='packed'?'fill-each-channel-to-real-capacity':'balanced-four-channels',liveAccess:false,coLocatedBots:false,separateBotProcess:true}},runId=randomUUID();
+ let s,timer,panel,controlProbe,measuring=false,report={players:N,label,realm:process.env.CORE101_REALM_ID||'r1',durationRequestedMs:duration,workload:process.env.POPULATION_MODE||'mixed',fixture:{monsterHp:85,monsterDamage:9,playerStatHp:1000000,channelCapacity:capacity,channelDistribution:process.env.LOAD_DISTRIBUTION==='packed'?'fill-each-channel-to-real-capacity':'balanced-four-channels',liveAccess:false,coLocatedBots:false,separateBotProcess:true}},runId=randomUUID();
  const scope={after:f=>clean.push(f)},sharedAcquires={};
-report.runtimeFiles=Object.fromEntries(['adventure-channel.mjs','native-http-bindings.mjs','process-stream.mjs','cold-world.mjs','read-worker.mjs','slim-reload.mjs','combat-checkpoint.mjs','coordinator.mjs','reward-worker-r533.mjs','statement-boot-pool-r61.mjs','reward-sql-r531.mjs','death-batch-channel-r57.mjs','death-batch-single-r57.mjs'].map(name=>[name,createHash('sha256').update(fs.readFileSync(core+'/'+name)).digest('hex')]));
+report.runtimeFiles=Object.fromEntries(['adventure-channel.mjs','native-http-bindings.mjs','process-stream.mjs','cold-world.mjs','read-worker.mjs','slim-reload.mjs','combat-checkpoint.mjs','coordinator.mjs','reward-worker-r533.mjs','statement-boot-pool-r61.mjs','reward-sql-r531.mjs','death-batch-channel-r57.mjs','death-batch-single-r57.mjs','fixed-loop.mjs','combat-continuation-r57.mjs','attack-commit-r53.mjs','death-latency-r82.mjs','slow-death-r111.mjs','ipc-replay-r111.mjs'].filter(name=>fs.existsSync(core+'/'+name)).map(name=>[name,createHash('sha256').update(fs.readFileSync(core+'/'+name)).digest('hex')]));
 try{
  const listeners={},reservations=[];
  if(process.env.R108_WS_TRANSPORT!=='ipc'){
@@ -89,6 +91,7 @@ try{
  const ipcSends={sends:0,byteMessages:0,bytes:0};if(framing)for(const row of s.supervisor.rows.values()){const child=row.child,send=child.send;child.send=function(message,...rest){if(measuring){ipcSends.sends++;if(message?.type==='kernel511-bytes'&&message.bytes){ipcSends.byteMessages++;ipcSends.bytes+=message.bytes.length;}}return Reflect.apply(send,this,[message,...rest]);};}
  const remote=await remoteBots(scope,s,actors);console.log('remote bots',N,remote.pid);
  await pause(10000);assert.equal(s.faults.length,0,'warmup native faults');assert.equal(errors.length,0,'warmup command errors');
+ if(process.env.R111_TEST_CONTROL==='1'){const {createControlProbe}=await import(core+'/benchmark/control-probe.mjs');controlProbe=await createControlProbe();clean.push(()=>controlProbe.close());}
  const hostBefore=hostStats();gcObserver=new PerformanceObserver(list=>{for(const e of list.getEntries())if(gc.length<4096)gc.push({atMs:performance.timeOrigin+e.startTime,ms:e.duration,kind:e.detail.kind});});gcObserver.observe({entryTypes:['gc']});
  if(process.env.ALLOCATION_PROFILE==='1'||process.env.CPU_PROFILE==='1'){
   inspector=new Session();inspector.connect();await inspect('HeapProfiler.enable');
@@ -99,10 +102,15 @@ try{
  assert(profileChannels.every(n=>[1,2,3,4].includes(n))&&new Set(profileChannels).size===profileChannels.length,'diagnostic profile channels');
  if(profileChannels.length)fs.mkdirSync(core+'/evidence',{recursive:true});
  for(const n of profileChannels)await s.core.processes.get(n).control.request('benchmark_profile',{operation:'start',runId});
+ if(controlProbe)await controlProbe.request('begin',runId);
  await remote.call('begin');await s.core.diagnostics.beginLoad(runId);measuring=true;const started=Date.now();console.log('measurement',N,duration);
  await pause(duration);measuring=false;clearInterval(timer);timer=null;
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
+ if(controlProbe){report.independentControl=await controlProbe.request('end',runId);const {controlComparison}=await import(core+'/benchmark/control-probe.mjs');report.controlComparison=controlComparison(measured.measurement.eventLoops,report.independentControl);}
+ report.replayStorage=[...s.core.processes].map(([channel,row])=>({channel,rows:row.replay.rows.size,storage:row.replay.storage??null}));
+ report.heapAfterWindow=process.memoryUsage();
+ report.replayStorageEnabled=process.env.CORE511_R111_REPLAY_STORAGE!=='0';
  const diagnostics=await s.core.diagnostics.sample();
  report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51}))};
  if(census)report.sqlCensus=census.report();
@@ -139,5 +147,8 @@ try{
  if(report.sharedBoss&&!report.sharedBoss.passed)report.passed=false;
  if(report.populationFixture.equipment&&!report.populationFixture.boss&&report.equipmentKills<=0){report.passed=false;report.equipmentFailure='No persisted ordinary weapon kill counter exercised';}
  console.log(JSON.stringify({passed:report.passed,...report.summary}));assert(report.passed,'load correctness failed');
+ // Synthetic local fixture only, after all timed windows and correctness
+ // checks. This diagnostic stop is never included in acceptance measurements.
+ if(process.env.R111_TEST_HEAP==='1')report.heapSnapshot=writeHeapSnapshot(out.replace('.json','.heapsnapshot'));
 }catch(e){report.passed=false;report.failure={message:e.message,stack:e.stack};report.errors??=errors;report.faults??=s?.faults.map(f=>f.error?.message);console.error(e);process.exitCode=1;}
 finally{inspector?.disconnect();gcObserver?.disconnect();clearInterval(timer);fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');for(const a of actors)a.client?.dispose();for(const b of bridges)b.destroy();for(const f of clean.reverse())try{await f();}catch(e){console.error('cleanup',e.message);}}

@@ -40,6 +40,19 @@ export async function seedPopulation(host,actors,mode){
   if(q.prepare('SELECT 1 FROM monsters WHERE id=?').get(id))q.prepare('UPDATE monsters SET x=?,y=?,hp=?,max_hp=?,respawn_at=0 WHERE id=?').run(row.x,row.y,row.hp,row.max_hp,id);
   else put(q,'monsters',row);
  }
+ // Fast ordinary farming: distinct pockets avoid several clients competing
+ // over only twelve high-HP targets. Native cadence, AI, respawn, settlement
+ // and durability remain enabled. Synthetic low-HP mobs exercise more deaths.
+ const farmStress=process.env.POPULATION_FARM_STRESS==='1';
+ if(farmStress){
+  if(mode!=='forest')throw Error('farm_stress_requires_forest');
+  for(const a of actors){
+   const x=550+(a.index%5)*600,y=550+Math.floor(a.index/5)*600;
+   q.prepare('UPDATE players SET x=?,y=? WHERE id=?').run(x,y,a.id);
+   for(let i=0;i<12;i++)put(q,'monsters',{...template,id:'curuk-farm-'+a.channel+'-'+a.index+'-'+i,area:'forest',channel:a.channel,
+    x:x-60+(i%4)*40,y:y-40+Math.floor(i/4)*40,hp:85,max_hp:85,respawn_at:0});
+  }
+ }
  const services=new NativeGameServices(q);
  await host.database.atomic(()=>services.run({nowMs:Date.now(),seed:'7'.repeat(64)},()=>{
   const portals=new Map();
@@ -51,7 +64,7 @@ export async function seedPopulation(host,actors,mode){
  }));
  const equipment=process.env.POPULATION_EQUIPMENT==='1'?await seedPopulationEquipment(q,actors,{tree,bagItems:30,rotateRoles:true}):null;
  const boss=sharedBoss?seedSharedBoss(q,actors,{terminal:mode==='shared_boss_terminal'}):null;
- return {backgroundMonsters:background,monsters:q.prepare('SELECT count(*) n FROM monsters').get().n,zones:Object.fromEntries([...zones,'shared_boss'].map(z=>[z,actors.filter(a=>a.zone===z).length])),independentTowers:process.env.INDEPENDENT_TOWERS==='1',synthetic:true,equipment,boss};
+ return {backgroundMonsters:background,monsters:q.prepare('SELECT count(*) n FROM monsters').get().n,zones:Object.fromEntries([...zones,'shared_boss'].map(z=>[z,actors.filter(a=>a.zone===z).length])),independentTowers:process.env.INDEPENDENT_TOWERS==='1',synthetic:true,farmStress,equipment,boss};
 }
 export async function nativeRoute(scope){
  const temp=temporary(scope),serverDir=path.join(temp,'dist-vds/server');fs.mkdirSync(serverDir,{recursive:true});

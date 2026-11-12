@@ -34,14 +34,8 @@ async function send(a,input){
  }else if(r.status!==200)throw Error(JSON.stringify({operation:input.action,status:r.status,body:r.body}));
  return r.body;
 }
-async function act(a){
- const c=a.client,w=c.world,p=w?.players.find(p=>p.id===a.id);if(!c.ready||!p||a.busy)return;
- const now=Date.now();a.busy=true;
- try{
-  if(a.zone==='solo'){
-   const r=c.dungeon?.run,member=r?.members.find(m=>m.id===a.id),key=JSON.stringify([r?.id,r?.status,r?.stage,member?.hp<=0]);
-   if(key!==a.soloKey){a.soloKey=key;a.soloHistory.push({at:now,status:r?.status,stage:r?.stage,hp:member?.hp,maxHp:member?.maxHp,notice:c.dungeon?.notice,message:r?.message});}
-  }
+async function auxiliary(a){
+ const now=Date.now();
   // Fixed scenario cadence is reported; it is not inferred from live usage.
   if(now>=a.nextHttp){
    a.nextHttp=now+11000;const path=['/api/guild','/api/quests','/api/world?marketShop506=own'][a.httpStep++%3];
@@ -50,6 +44,20 @@ async function act(a){
   if(now>=a.nextChat){
    a.nextChat=now+30000;const r=await a.fetch('/api/chat',{method:'POST',body:JSON.stringify({body:'Population fixture '+a.n,scope:'world'})});count('chat');if(!r.ok)throw Error('chat '+r.status+' '+await r.text());await r.arrayBuffer();
   }
+}
+function background(a){
+ if(a.background)return;
+ a.background=auxiliary(a).catch(e=>{if(errors.length<100)errors.push({actor:a.n,phase:'http-chat',error:e.message});}).finally(()=>{a.background=null;});
+}
+async function act(a){
+ const c=a.client,w=c.world,p=w?.players.find(p=>p.id===a.id);if(!c.ready||!p||a.busy)return;
+ const now=Date.now();a.busy=true;
+ try{
+  if(a.zone==='solo'){
+   const r=c.dungeon?.run,member=r?.members.find(m=>m.id===a.id),key=JSON.stringify([r?.id,r?.status,r?.stage,member?.hp<=0]);
+   if(key!==a.soloKey){a.soloKey=key;a.soloHistory.push({at:now,status:r?.status,stage:r?.stage,hp:member?.hp,maxHp:member?.maxHp,notice:c.dungeon?.notice,message:r?.message});}
+  }
+  if(process.env.POPULATION_FARM_STRESS!=='1')await auxiliary(a);
   if(now>=a.nextPotion){
    a.nextPotion=now+(a.zone==='solo'?2000:23000);const r=c.dungeon?.run,m=r?.members.find(m=>m.id===a.id);
    if(a.zone!=='solo'?(!a.equipmentFixture||p.hp<p.max_hp):r&&['active','portal'].includes(r.status)&&m?.hp>0&&m.hp<m.maxHp*.65){await send(a,a.zone==='solo'?{action:'dungeon',command:{action:'potion'}}:{action:'use_potion'});count('potions');}
@@ -95,11 +103,12 @@ async function command(method,value){
   }
   const until=Date.now()+15000;while(actors.some(a=>a.zone==='solo'?!a.client.dungeon?.run:['tower','mist'].includes(a.zone)&&!a.client.world?.adventure511?.run)&&Date.now()<until)await sleep(25);
   for(const a of actors){if(a.zone==='solo')assert(a.client.dungeon?.run,'solo entered');if(['tower','mist'].includes(a.zone))assert(a.client.world?.adventure511?.run,a.zone+' entered');}
-  timer=setInterval(()=>{for(const a of actors)void act(a);},50);return {players:actors.length,pid:process.pid};
+  timer=setInterval(()=>{for(const a of actors){if(process.env.POPULATION_FARM_STRESS==='1')background(a);void act(a);}},50);return {players:actors.length,pid:process.pid};
  }
  if(method==='begin'){assert.deepEqual(errors,[]);measuring=true;cpu=process.cpuUsage();started=performance.now();for(const a of actors){a.nextHttp=Date.now()+1000+a.n*170;a.nextChat=Date.now()+3000+a.n*250;a.nextPotion=Date.now()+5000+a.n*180;}return {started:true};}
  if(method==='end'){
   measuring=false;clearInterval(timer);timer=null;
+  await Promise.all(actors.map(a=>a.background));
   const resources=snapshot().resources;
   try{endSettlement=await settlePopulationEnd(actors,send);}
   catch(error){endSettlement=error.endSettlement??{passed:false,completed:false,failure:{message:error.message}};errors.push({phase:'end-settlement',error:error.message});}
