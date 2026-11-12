@@ -153,7 +153,7 @@ export class CoreCoordinator {
   if(method==='heartbeat_schedule'){demand(this.heartbeatJobs,'heartbeat_world_required');return this.heartbeatJobs.schedule(peer,payload);}
   if(method==='read_channel_refresh'){demand(this.globalWorld,'global_world_unavailable');return this.globalWorld.readChannel(peer,payload);}
   if(method==='world_engagements'){demand(this.sharedWorld,'world_not_configured');return this.sharedWorld.engagements(peer,payload);}
-  if(method==='read_actor'){this.authority.assertSimulated(this.database.sqlite,peer,payload.actor,payload.epoch);return this.load(payload.actor,payload.revision,payload.slim);}
+  if(method==='read_actor'){this.authority.assertSimulated(this.database.sqlite,peer,payload.actor,payload.epoch);return this.load(payload.actor,payload.revision,payload.slim,{actorWire:true});}
   if(actorSectionReuseR52&&method==='read_actor_drops_r52'){
    demand(payload&&typeof payload.includeDrops==='boolean'&&Number.isSafeInteger(payload.cycle)&&payload.cycle>=0&&Array.isArray(payload.actors)&&payload.actors.length>=1&&payload.actors.length<=(sectionReadGroupR56?ACTOR_GROUP_READ_LIMITS_R56.actors:ACTOR_REFRESH_LIMITS_R52.readBatch),'actor_drop_read_parameters');
    const seen=new Set();for(const row of payload.actors){
@@ -219,13 +219,13 @@ export class CoreCoordinator {
  }
  snapshot(session,owner){return readSessionMirror({sql:this.database.sqlite,session,owner,revision:this.nextRevision(session.player.id),realm:this.realm,bot:this.bot,launch:this.launch,guild:this.guild,clock:this.clock});}
  identity(session,owner,origin){return {realm:this.realmId,channel:owner.channel,boot:owner.incarnation,actor:session.player.id,account:session.account.id,session:session.tokenHash,epoch:owner.epoch,securityVersion:session.securityVersion,origin};}
- async load(id,revision=0,slim=null){
+ async load(id,revision=0,slim=null,{actorWire=false}={}){
   const owner=this.authority.owner(id);demand(owner?.state==='active','actor_read_owner_fenced');const args=[id,owner.channel,owner.incarnation,owner.epoch,revision,this.clock()];
   if(!this.authority.admission(id))return (await this.reader.query('kernel511_actor_bundle',args)).rows;
   const s=this.sessions.get(id);demand(s&&s.identity.epoch===owner.epoch&&s.identity.boot===owner.incarnation,'actor_read_session_fenced');
   const access={account:s.session.account.id,chatAfterId:s.session.gamePresence.chatAfterId??0,starterReward:this.entry.starter.inspect(s.session.account.id,id),maintenance:this.realm?.maintenance?{revision:this.realm.maintenance.policy?.revision??0,view:this.realm.maintenance.view(s.session.account.id)}:null};
   if(slim)access.slim=slim;
-  const bundle=(await this.reader.query('kernel511_actor_world',[...args,access])).rows;return this.afkCheck?this.afkCheck.bundle(bundle):bundle;
+  const bundle=(await this.reader.query('kernel511_actor_world',[...args,access],{actorWire})).rows;return this.afkCheck?this.afkCheck.bundle(bundle):bundle;
  }
  async install(session,owner,request,{method='admit',frozen=null,rates=null,passive=false,securityUntil=null}={}){
   const id=session.player.id,origin=new URL(request.url).origin;demand(this.origins.has(origin),'origin_rejected');

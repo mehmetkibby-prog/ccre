@@ -1,4 +1,5 @@
 import {realmLoadLabConfigR101} from './realm-loadlab-r101.mjs';
+import {encodeActorReadR112} from './actor-read-wire-r112.mjs';
 import {readCastleBoot,readCastleGuild} from './castle-service-r59.mjs';
 import {mountEnabled} from './mounts-model.mjs';
 import {readMountBundle} from './mounts-service.mjs';
@@ -72,6 +73,7 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
    const limitBytes=(boot?32:4)*1024*1024;
    if(resultBytes>limitBytes)throw Object.assign(kernelError('read_worker_result_too_large'),{readInfo:{query:message.name,resultBytes,limitBytes}});
    if(boot&&resultBytes>4*1024*1024)console.warn(JSON.stringify({event:'core511_boot_read',query:message.name,resultBytes,limitBytes,repair:'R104_BOOT1'}));
+   if(message.actorWire===true){demand(message.name==='kernel511_actor_world','actor_read_wire_query');rows=encodeActorReadR112(rows,bytes);}
    const workMs=performance.now()-started;
    if(readWork){const row=readWork.queries[message.name]??={count:0,totalMs:0,maxMs:0};row.count++;row.totalMs+=workMs;row.maxMs=Math.max(row.maxMs,workMs);readWork.slowest.push({name:message.name,workMs,at:Date.now()});readWork.slowest.sort((a,b)=>b.workMs-a.workMs);readWork.slowest.length=Math.min(10,readWork.slowest.length);}
    // The snapshot and result-size guard have completed. Copying a large cold
@@ -122,7 +124,7 @@ export class ReadWorker {
   if(!this.recovery){const old=this.slot;this.recovery=(async()=>{await old.exit;if(this.closed)throw kernelError('read_worker_closed');if(this.slot===old)this.start();return this.slot;})().finally(()=>{this.recovery=null;});}
   return this.recovery;
  }
- query(name,params=[]) {
+ query(name,params=[],{actorWire=false}={}) {
   if(!this.readQueue)return this.send({name,params});
   const backend=name==='kernel511_actor_world'?this.actorReader(params?.[1]):this;
   const slot=backend.slot,wasHealthy=!slot.failed&&!slot.ended;
@@ -130,7 +132,7 @@ export class ReadWorker {
    // A queued request belongs to the incarnation on which it was accepted.
    // Do not silently replay guild cursors or old actor reads on a replacement.
    if(wasHealthy&&(backend.slot!==slot||slot.failed||slot.ended))throw kernelError('read_worker_process_changed');
-   return backend.send({name,params});
+   return backend.send({name,params,actorWire});
   },{key:backend,limit:backend===this?this.readQueue.concurrency:4});
  }
  measure(payload,{slot=this.slot}={}){if(slot!==this.slot||slot.failed||slot.ended)return Promise.reject(kernelError('read_measurement_process_changed'));return this.send({type:'load_measure',payload},{expectedSlot:slot,timeoutMs:5000,terminateOnTimeout:false}).then(result=>result.rows);}

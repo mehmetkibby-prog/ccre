@@ -59,3 +59,10 @@ test('a burst for one shard cannot occupy the other shard slots or reorder a sha
  while(order.length<24||q.active){for(const resolve of releases.splice(0))resolve();await new Promise(r=>setImmediate(r));}
  await Promise.all([...first,...second]);assert.deepEqual(order.filter(x=>x.startsWith('a')),Array.from({length:20},(_,i)=>'a'+i));assert.equal(q.activeKeys.size,0);q.close();
 });
+
+test('the read-only worker encodes the same owned snapshot without cloning its row graph into the parent',{timeout:20000},async t=>{
+ const {reader,params}=await fixture(t),{decodeActorReadR112,ACTOR_READ_WIRE_R112}=await import('../actor-read-wire-r112.mjs');
+ const plain=(await reader.query('kernel511_actor_world',params[0])).rows;
+ const wire=(await reader.query('kernel511_actor_world',params[0],{actorWire:true})).rows;
+ assert(wire[ACTOR_READ_WIRE_R112]);assert.equal(wire.projection,undefined);assert.deepEqual(decodeActorReadR112(wire,'read_actor'),JSON.parse(JSON.stringify(plain)));
+});

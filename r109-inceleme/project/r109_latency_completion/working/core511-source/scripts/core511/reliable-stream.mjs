@@ -1,4 +1,5 @@
 import {compactCombatIpcR52} from './r52-options.mjs';
+import {decodeActorReadR112} from './actor-read-wire-r112.mjs';
 import {replyWireR57} from './r57-options.mjs';
 import {REPLY_WIRE_MARKER_R57,prepareReplyWireR105,decodeReplyWireR57} from './reply-wire-r57.mjs';
 import {COMPACT_COMBAT_MARKER_R52,COMPACT_COMBAT_WIRE_BYTES_R52,compactCombatMethodR52,encodeCompactCombatReplyR52,decodeCompactCombatReplyR52} from './compact-combat-ipc-r52.mjs';
@@ -108,6 +109,7 @@ export class ReliableStream {
    if(Object.hasOwn(frame,REPLY_WIRE_MARKER_R57)){demand(row.replyWireR57&&compactCombatMethodR52(row.method),'ipc_reply_wire_not_negotiated');const decoded=decodeReplyWireR57(frame);frame=decoded.frame;wireBytes=decoded.wireBytes;}
    if(Object.hasOwn(frame,COMPACT_COMBAT_MARKER_R52)){demand(row.compactCombatR52&&compactCombatMethodR52(row.method),'ipc_compact_not_negotiated');frame=decodeCompactCombatReplyR52(frame,wireBytes);}
    const rejection=frame.ok===true?null:receiveActorRejection(kernelError(typeof frame.code==='string'?frame.code:'ipc_rejected'),frame.actorRejection,row.method,row.payload);
+   if(frame.ok===true)frame.value=decodeActorReadR112(frame.value,row.method);
    this.pending.delete(frame.id);
    frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(rejection,row.method,row.payload));
    this.flush();
