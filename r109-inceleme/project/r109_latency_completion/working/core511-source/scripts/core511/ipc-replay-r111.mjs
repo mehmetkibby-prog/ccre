@@ -6,7 +6,10 @@ import {demand} from './contract.mjs';
 // of live JS rows for each of 512 requests in every channel. This is private
 // process memory only; wire JSON and durable SQLite receipts do not change.
 // Pending promises and rejected errors (including provenance) stay original.
-const byteMethods=new Set(['command','system_command','read_actor','read_channel_refresh','read_actor_drops_r52']);
+// Reader replies are plain row snapshots already cloned across the reader
+// boundary. Do not traverse command outcomes a second time: they may contain
+// lazy getters, and the wire encoder owns their one serialization.
+const byteMethods=new Set(['read_actor','read_channel_refresh','read_actor_drops_r52']);
 export class IpcReplay {
  constructor({limit=512,compact=process.env.CORE511_R111_REPLAY_STORAGE!=='0'}={}){
   this.limit=limit;this.compact=compact;this.prefix=null;this.high=0;this.rows=new Map();
