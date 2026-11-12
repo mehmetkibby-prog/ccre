@@ -1,7 +1,7 @@
-# R110 sonrası canlı CPU profilleri — 3, 7 ve 11 oyuncu
+# R110 sonrası canlı CPU profilleri — 3, 7, 11 ve 15 oyuncu
 
 Kullanıcı R110_HANDOFF1 kurulumundan sonra (kurulum çıktısı: "R110 TAKILMA
-DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır") üç 60 saniyelik ana süreç
+DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır") dört 60 saniyelik ana süreç
 profili gönderdi. Harita/etkinlik ve realm ayrıca belirtilmedi.
 
 | Dosya | Oyuncu | SHA256 |
@@ -9,6 +9,7 @@ profili gönderdi. Harita/etkinlik ve realm ayrıca belirtilmedi.
 | `three-players-60s.cpuprofile.json` | 3 | `9e7bea1bc9f5688e7a2893f778897fc9d3972307adb5ecb4ae4b9f1b446e11ed` |
 | `seven-players-60s.cpuprofile.json` | 7 | `c5b46ba436feb90af3d7d6526464ff64fac243f4d803c14a529dffeb3a666729` |
 | `eleven-players-60s.cpuprofile.json` | 11 | `ebab92754eee1a9ea113af1388bffb41c29f8582323ae3dcb66c3cc961b5082d` |
+| `fifteen-players-60s.cpuprofile.json` | 15 | `1e31bd31f9719c266af52a20380e3a9107ea6a64eb7e050439da21ca69911e2c` |
 
 ## Karşılaştırma (örneklenmiş ana iş parçacığı; profiler başlangıcı hariç)
 
@@ -72,6 +73,18 @@ yoğun savaşta bu yol sınıra yaklaşabilir; sıradaki iyileştirme hedefi bud
 Oyuncu sayısı, etkinlik ve sürüm aynı anda değiştiği için nedensel
 karşılaştırma değildir.
 
+## 15 oyuncu
+
+Ana süreç meşguliyeti %35,4 (11 oyuncuda %32,9); 1 sn pencere medyan 35,0,
+p95 46,1, en yüksek 55,6; 5 sn en yüksek 39,4; %90'ı geçen pencere yok.
+WebSocket aktarımı 101 ms/dk, yazma işleri 8,3 s, yanıt JSON'u 1,4 s, GC
+1,17 s; en uzun kesintisiz GC örnek dizisi 37,3 ms. 100–230 ms'lik kesintisiz
+meşgul aralıklar tek bir bloklayıcı iş değildir: her birinde 27–47 kez giriş
+noktası değişiyor (canavar karşılığı, ödül SQL, oyuncu yazımı ve araya giren GC
+art arda). Bu aralıklarda ana sürece giden komut yanıtları gecikebilir; kanal
+yayınları ve hareket etkilenmez. Etkinlik farklı olduğu için 11 ↔ 15 oyuncu
+farkı nedensel değildir; oyuncu başına bölünüp kapasite tahmini yapılmaz.
+
 ## Sınırlar
 
 Bu kayıtlar nedensel önce/sonra testi değildir; oyuncu başına bölünüp 30–40
@@ -79,5 +92,5 @@ oyuncuya kapasite tahmini yapılmaz. CPU örnekleri tick p95/p99, >50 ms donma
 sayısı veya komut yanıt süresi değildir. 20–40 oyuncu varken, kurulumdan en az
 birkaç saat sonra yeni profil ve `vmstat 1 60` gerekir.
 
-Analiz: `evidence/profile-analysis-3p.json`, `-7p.json`, `-11p.json`
+Analiz: `evidence/profile-analysis-3p.json`, `-7p.json`, `-11p.json`, `-15p.json`
 (`scripts/analyze-profile.py`); GC dizileri `gc-spans.py`, `gc-runs.py`.
