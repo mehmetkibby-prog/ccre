@@ -11,7 +11,7 @@ export function patchNativeSocial(source){
  const original=source.slice(first.start,last.end),deferred='if (context) context.waitUntil(delivery);\n\t\telse await delivery;';if(original.split(deferred).length!==2)throw Error('native_chat_delivery_changed');
  // Keep the original persisted messages, item-link transaction and native
  // audience senders. Await their delivery capture before the scope closes.
- edits.push({start:first.start,end:last.end,original,replacement:`return await db().core511HttpAction.action(auth,{action:'native_chat'},${auth},async()=>{${original.replace(deferred,'await delivery;')}});`});
+ edits.push({start:first.start,end:last.end,original,replacement:`return await db().core511HttpAction.chat(auth,payload,${auth},async()=>{${original.replace(deferred,'await delivery;')}});`});
  for(const name of ['POST$21','POST$18']){
   const fn=ast.body.find(n=>n.id?.name===name),found=[];walk(fn,n=>{if(name==='POST$21'&&n.type==='CallExpression'&&n.callee.object?.type==='CallExpression'&&n.callee.object.callee.name==='guildSkillService'&&n.callee.property.name==='send')found.push(n);if(name==='POST$18'&&n.type==='VariableDeclarator'&&n.id.name==='result')found.push(n.init);});
   if(found.length!==1)throw Error('native_social_call_changed:'+name);const n=found[0],original=source.slice(n.start,n.end);edits.push({start:n.start,end:n.end,original,replacement:`(await db().core511HttpAction.player(auth,${auth},async()=>(${original}),true))`});

@@ -6,7 +6,7 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 core=root/'working/core511-source/scripts/core511'
 original=core/'tests';out=root/'evidence/native-tests';out.mkdir(exist_ok=True)
-files=['dungeon-native.test.mjs','dungeon-channel.test.mjs','native-http-trade-storage.test.mjs','additions-tower-process-r102.test.mjs']
+files=['dungeon-native.test.mjs','dungeon-channel.test.mjs','native-http-trade-storage.test.mjs','native-http-social.test.mjs','additions-tower-process-r102.test.mjs']
 for name in files:
  text=(original/name).read_text()
  text=re.sub(r"(['\"])(\.[^'\"]+\.mjs)\1",lambda m:repr(str((original/m[2]).resolve())),text)
@@ -23,6 +23,10 @@ for name in files:
   text="import {installBagLimit} from "+repr(str(core/'bag-limit.mjs'))+";\nimport {createTowerSchema} from "+repr(str(core/'tower-config.mjs'))+";\nimport {createAdventureSchema} from "+repr(str(core/'adventure-schema.mjs'))+";\nimport {createContentSchemaR102} from "+repr(str(core/'content-config-r102.mjs'))+";\n"+text
  if name=='native-http-trade-storage.test.mjs':
   text=text.replace("assert.equal((await p.http()).status,200);p.ticket=await p.http('transfer',{channel:p===b?s.ticket.channel:4});", "p.ticket=await p.http('character',{channel:p===b?s.ticket.channel:4});")
+ if name=='native-http-social.test.mjs':
+  # Current entry requires an explicit channel. Keep all private-delivery,
+  # ownership, debit, receipt and process-crash assertions unchanged.
+  text=text.replace("assert.equal((await other.http()).status,200);other.ticket=await other.http('transfer',{channel:4});", "other.ticket=await other.http('character',{channel:4});")
  if name=='additions-tower-process-r102.test.mjs':
   text=text.replace('hp:1000000,damage:0', 'hp:400,damage:0')
   start=text.index("const first=await send('attack'")

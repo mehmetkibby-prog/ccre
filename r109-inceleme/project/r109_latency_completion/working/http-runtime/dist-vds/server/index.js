@@ -33540,7 +33540,7 @@ async function POST$29(request) {
 		const payload = await readJsonObject(request, 1024);
 		const playerId = auth.player?.id ?? "";
 		if (!playerId) return Response.json({ error: "Önce karakterini oluştur." }, { status: 404 });
-		return await db().core511HttpAction.action(auth,{action:'native_chat'},async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>{const database = db();
+		return await db().core511HttpAction.chat(auth,payload,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>{const database = db();
 		if (payload.action === "resolve_peer") {
           await enforceRateLimit("chat-peer-lookup",auth.account.id,{limit:20,windowSeconds:60,blockSeconds:30});
           if(colLabIsPlayer(playerId))return Response.json({error:"Test hesabı özel mesaj kişisi arayamaz."},{status:403});
