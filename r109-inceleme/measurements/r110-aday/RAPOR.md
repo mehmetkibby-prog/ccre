@@ -160,6 +160,16 @@ yüzünden `passed:false` (B5); metrikleri tabloda bırakıldı.
   içe aktarıyor; yükleyici yalnız düz yolu eşliyordu. Bu ortamda captcha 9/20
   ve native 5/29 `channel_process_failed` ile kırılıyordu (`cff72b2`).
 
+### Ek kanıt dosyaları
+
+- `evidence/cpu-20261112125418-50.cpuprofile` (+ `.json`): R109, 50 oyuncu,
+  ana süreç CPU profili; sıcak nokta araması (SQL derleme, soket aktarımı)
+  buradan başladı. Örnekler kesin çağrı sayısı veya donma sayacı değildir.
+- `evidence/handoff-smoke-*-10.json`: devretmenin ilk 10 oyunculuk duman
+  koşuları (10/10 soket kanal sürecine geçti, hata 0).
+- `evidence/ws-handoff-runtime.json`: kurulu runtime-entry testi (r1/r2).
+- `evidence/browser-*-r110-*/report.json`: Chromium kule testleri.
+
 ### B5 — Bilinen test istemcisi sınırı (olumsuz sonuç olarak kayıtlı)
 
 - Bir A/B koşusunda (iki R110 bayrağı da kapalı) bot, sunucunun yasal

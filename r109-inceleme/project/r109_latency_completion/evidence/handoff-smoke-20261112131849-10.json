@@ -1,0 +1,5558 @@
+{
+  "players": 10,
+  "label": "handoff-smoke-20261112131849",
+  "realm": "r1",
+  "durationRequestedMs": 20000,
+  "workload": "mixed",
+  "fixture": {
+    "monsterHp": 85,
+    "monsterDamage": 9,
+    "playerStatHp": 1000000,
+    "channelCapacity": 25,
+    "channelDistribution": "balanced-four-channels",
+    "liveAccess": false,
+    "coLocatedBots": false,
+    "separateBotProcess": true
+  },
+  "runtimeFiles": {
+    "adventure-channel.mjs": "c12ddbd541059ba68a32a18f47e23ba693a641bfc813ecf890af1604d7f8f98d",
+    "native-http-bindings.mjs": "2ce5e1a469a58ae16b256e98e14da87e04f3d56aa4c0dda78220b9e90f3d0df0",
+    "process-stream.mjs": "efaec1a9ad7b8fe8fd31bb68506b58209cd1f20ea98fa160b927e5106e7176af",
+    "cold-world.mjs": "a9daddc4ed8ec7ac226ee10e6530b60f3196a49958e06cbc018ec545320709b9",
+    "read-worker.mjs": "60cb5e1b821fd8468c8eebdf89bc81484c2cf5e05522174ba639ca354d8c656d",
+    "slim-reload.mjs": "8ede096fe97c16f7b2ba3d10f38ce43fc26ef5ad7b58467b64d75ab8fc0fff1d",
+    "combat-checkpoint.mjs": "bb4a2d78e4d77df32c7f75872be358102fba2c931fc6d7fa14cc590c8b581562",
+    "coordinator.mjs": "0cfbb7f3e0a103759407240a8e4a770d052e58c2c34654ad3b4714b2d4911aec",
+    "reward-worker-r533.mjs": "6c6ed200c73d49b00850dff0fa4824e685a5179cb682c9be99d00bd47e191524",
+    "statement-boot-pool-r61.mjs": "5d4224b2211b66f0634634dbfd80d23c521230aa763696fc61df233b76f53c1d",
+    "reward-sql-r531.mjs": "f1fed1eaa7d5013ab381e768459edf0d76a658fbc390e9ba8a8c9b75ff04f789",
+    "death-batch-channel-r57.mjs": "4d74055db4247db59143a669c4e63e9b2d80cf193a9104b92d48ab1badf6ca0b",
+    "death-batch-single-r57.mjs": "73dc110d41c1bed3a65d0f2934ea1261b4c4f7866feaea8a28e2a40b98093d9b"
+  },
+  "webSocketTransport": "production-style-tcp-proxy",
+  "populationFixture": {
+    "backgroundMonsters": 6000,
+    "monsters": 6680,
+    "zones": {
+      "forest": 4,
+      "tower": 4,
+      "solo": 2,
+      "mist": 0,
+      "black": 0,
+      "rune_v2": 0,
+      "shared_boss": 0
+    },
+    "independentTowers": false,
+    "synthetic": true,
+    "equipment": {
+      "synthetic": true,
+      "liveDatabase": false,
+      "gearSource": "native prepareProfileDrops / current realm settings",
+      "enchantmentSelection": "native valid four-enchantment outcome",
+      "actors": [
+        {
+          "actor": 0,
+          "id": "real-1",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-0-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 1,
+          "id": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-1-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 2,
+          "id": "8aca667c-3980-46e4-88d2-668e50801ec9",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-2-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "id": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-3-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 4,
+          "id": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-4-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 5,
+          "id": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-5-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 6,
+          "id": "f642fe30-e7a9-4126-a1b1-04e7f619d28d",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-6-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 7,
+          "id": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-7-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 8,
+          "id": "294a14c6-ac34-487e-a187-f2a8458b7c05",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-8-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 9,
+          "id": "23df7f02-d437-4c0d-9c0b-4d30a88cd8e4",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-9-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        }
+      ],
+      "itemCount": 350,
+      "bagItemsPerActor": 30,
+      "roleRotation": true
+    },
+    "boss": null
+  },
+  "equipmentBefore": [
+    {
+      "actor": 0,
+      "id": "real-1",
+      "zone": "forest",
+      "weaponId": "population-equipped-0-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 1,
+      "id": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+      "zone": "forest",
+      "weaponId": "population-equipped-1-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 2,
+      "id": "8aca667c-3980-46e4-88d2-668e50801ec9",
+      "zone": "forest",
+      "weaponId": "population-equipped-2-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 3,
+      "id": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+      "zone": "forest",
+      "weaponId": "population-equipped-3-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 4,
+      "id": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+      "zone": "tower",
+      "weaponId": "population-equipped-4-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 5,
+      "id": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+      "zone": "tower",
+      "weaponId": "population-equipped-5-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 6,
+      "id": "f642fe30-e7a9-4126-a1b1-04e7f619d28d",
+      "zone": "tower",
+      "weaponId": "population-equipped-6-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 7,
+      "id": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+      "zone": "tower",
+      "weaponId": "population-equipped-7-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 8,
+      "id": "294a14c6-ac34-487e-a187-f2a8458b7c05",
+      "zone": "solo",
+      "weaponId": "population-equipped-8-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 9,
+      "id": "23df7f02-d437-4c0d-9c0b-4d30a88cd8e4",
+      "zone": "solo",
+      "weaponId": "population-equipped-9-weapon",
+      "kills": 0
+    }
+  ],
+  "measurement": {
+    "measurement": {
+      "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+      "eventLoops": [
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "main",
+          "incarnation": "a53b6933-ef01-4ed1-9717-b6e971affee8",
+          "pid": 9925,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549563.0168,
+          "endedAtMs": 1794489569571.0774,
+          "durationMs": 20008.060507,
+          "delaySamples": 16769,
+          "timerSamples": 16769,
+          "elu": 0.12061581078013603,
+          "histogramMaxPauseMs": 14.221311,
+          "timerMaxPauseMs": 14.213424999998097,
+          "maxPauseMs": 14.221311,
+          "processCpuMs": 5925.715,
+          "maxRssBytes": 532234240,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 14.213424999998097,
+              "elu": 0.1465062358748122
+            },
+            "normal": {
+              "timerMaxPauseMs": 11.580479000000196,
+              "elu": 0.09476898006706182
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.654094999998,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "world",
+          "incarnation": "9bdbec1d-6c46-4fc9-a467-d0e070f9b8c9",
+          "pid": 9945,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549563.597,
+          "endedAtMs": 1794489569571.8518,
+          "durationMs": 20008.254881,
+          "delaySamples": 17607,
+          "timerSamples": 17607,
+          "elu": 0.023606956451299607,
+          "histogramMaxPauseMs": 8.724479,
+          "timerMaxPauseMs": 8.760200999997323,
+          "maxPauseMs": 8.760200999997323,
+          "processCpuMs": 779.741,
+          "maxRssBytes": 90619904,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 8.760200999997323,
+              "elu": 0.026820201822738067
+            },
+            "normal": {
+              "timerMaxPauseMs": 5.774130999998306,
+              "elu": 0.020412640455527598
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.690799999998,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "channel-1",
+          "incarnation": "66125155-d185-4e82-b41d-7a3581975aa8",
+          "pid": 9956,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549562.8875,
+          "endedAtMs": 1794489569574.825,
+          "durationMs": 20011.937485000002,
+          "delaySamples": 16654,
+          "timerSamples": 16655,
+          "elu": 0.09191780318100744,
+          "histogramMaxPauseMs": 12.337151,
+          "timerMaxPauseMs": 12.335946999999578,
+          "maxPauseMs": 12.337151,
+          "processCpuMs": 2500.548,
+          "maxRssBytes": 193695744,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 12.335946999999578,
+              "elu": 0.10178470212926892
+            },
+            "normal": {
+              "timerMaxPauseMs": 7.719399000001431,
+              "elu": 0.08207988870334319
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.248398,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          },
+          "game": {
+            "ticks": 400,
+            "tickP95Ms": 5.387662999997701,
+            "tickP99Ms": 7.966219000001729,
+            "maxTickMs": 9.847616000002745,
+            "slowest": [
+              {
+                "startedAtMs": 1794489552872.1218,
+                "phases": {
+                  "movement": 0.7688639999978477,
+                  "respawn": 0.02853800000229967,
+                  "project": 1.2199740000032762
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.06046500000229571,
+                    "maxMs": 0.06046500000229571,
+                    "selfMs": 0.06046500000229571
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.28151900000011665,
+                    "maxMs": 0.28151900000011665,
+                    "selfMs": 0.28151900000011665
+                  }
+                },
+                "ms": 9.847616000002745,
+                "endedAtMs": 1794489552881.9695,
+                "at": 1794489552881.9695,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489552876.0107,
+                    "endedAtMs": 1794489552881.2454,
+                    "ms": 5.234540999867022,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 5.234619140625,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2199740000032762,
+                  "serializationMs": 0.06046500000229571,
+                  "sendMs": 0.28151900000011665,
+                  "gcMs": 5.234619140625
+                }
+              },
+              {
+                "startedAtMs": 1794489550123.3425,
+                "phases": {
+                  "combat": 4.074720999999045,
+                  "respawn": 0.031199999999444117,
+                  "project": 1.9264799999982642
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.3234260000008362,
+                    "maxMs": 0.13621100000091246,
+                    "selfMs": 0.3234260000008362
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.4464079999997921,
+                    "maxMs": 0.30827399999907357,
+                    "selfMs": 0.4464079999997921
+                  }
+                },
+                "ms": 8.894017000000531,
+                "endedAtMs": 1794489550132.2366,
+                "at": 1794489550132.2366,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 4.074720999999045,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.9264799999982642,
+                  "serializationMs": 0.3234260000008362,
+                  "sendMs": 0.4464079999997921,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489569372.0088,
+                "phases": {
+                  "combat": 1.0464629999987665,
+                  "respawn": 0.020419000000401866,
+                  "project": 1.4563339999949676
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.059181999997235835,
+                    "maxMs": 0.031700999999884516,
+                    "selfMs": 0.059181999997235835
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.22847100000217324,
+                    "maxMs": 0.17150599999877159,
+                    "selfMs": 0.22847100000217324
+                  }
+                },
+                "ms": 8.82395899999392,
+                "endedAtMs": 1794489569380.8328,
+                "at": 1794489569380.8328,
+                "segment": "normal",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489569376.1704,
+                    "endedAtMs": 1794489569380.427,
+                    "ms": 4.256469999905676,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 4.256591796875,
+                "breakdown": {
+                  "combatMs": 1.0464629999987665,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.4563339999949676,
+                  "serializationMs": 0.059181999997235835,
+                  "sendMs": 0.22847100000217324,
+                  "gcMs": 4.256591796875
+                }
+              },
+              {
+                "startedAtMs": 1794489557871.7788,
+                "phases": {
+                  "movement": 0.7095679999983986,
+                  "respawn": 0.02574800000002142,
+                  "project": 0.8262470000008761
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.05054799999925308,
+                    "maxMs": 0.05054799999925308,
+                    "selfMs": 0.05054799999925308
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.16390700000192737,
+                    "maxMs": 0.16390700000192737,
+                    "selfMs": 0.16390700000192737
+                  }
+                },
+                "ms": 8.088991000000533,
+                "endedAtMs": 1794489557879.868,
+                "at": 1794489557879.868,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489557874.1748,
+                    "endedAtMs": 1794489557879.2388,
+                    "ms": 5.064058999996632,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 5.06396484375,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.8262470000008761,
+                  "serializationMs": 0.05054799999925308,
+                  "sendMs": 0.16390700000192737,
+                  "gcMs": 5.06396484375
+                }
+              },
+              {
+                "startedAtMs": 1794489553221.9788,
+                "phases": {
+                  "respawn": 0.02056799999991199,
+                  "project": 1.6325080000024172
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.2804290000021865,
+                    "maxMs": 0.1470950000002631,
+                    "selfMs": 0.2804290000021865
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.2173449999972945,
+                    "maxMs": 0.1095019999993383,
+                    "selfMs": 0.2173449999972945
+                  }
+                },
+                "ms": 7.966219000001729,
+                "endedAtMs": 1794489553229.945,
+                "at": 1794489553229.945,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.6325080000024172,
+                  "serializationMs": 0.2804290000021865,
+                  "sendMs": 0.2173449999972945,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489560671.5625,
+                "phases": {
+                  "movement": 0.5033969999967667,
+                  "respawn": 0.018277999999554595,
+                  "project": 1.1379769999985
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.1387250000007043,
+                    "maxMs": 0.05266699999992852,
+                    "selfMs": 0.1387250000007043
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.34749399999782327,
+                    "maxMs": 0.25371399999858113,
+                    "selfMs": 0.34749399999782327
+                  }
+                },
+                "ms": 7.564218999999866,
+                "endedAtMs": 1794489560679.1267,
+                "at": 1794489560679.1267,
+                "segment": "normal",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489560674.1091,
+                    "endedAtMs": 1794489560678.4976,
+                    "ms": 4.388439999893308,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 4.388427734375,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.1379769999985,
+                  "serializationMs": 0.1387250000007043,
+                  "sendMs": 0.34749399999782327,
+                  "gcMs": 4.388427734375
+                }
+              },
+              {
+                "startedAtMs": 1794489550171.3977,
+                "phases": {
+                  "respawn": 0.03282099999887578,
+                  "project": 1.498715000001539
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.1871659999997064,
+                    "maxMs": 0.1428169999999227,
+                    "selfMs": 0.1871659999997064
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.21343500000148197,
+                    "maxMs": 0.15123700000003737,
+                    "selfMs": 0.21343500000148197
+                  }
+                },
+                "ms": 7.37514100000044,
+                "endedAtMs": 1794489550178.773,
+                "at": 1794489550178.773,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.498715000001539,
+                  "serializationMs": 0.1871659999997064,
+                  "sendMs": 0.21343500000148197,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489566272.242,
+                "phases": {
+                  "movement": 0.500330999999278,
+                  "respawn": 0.026311000001442153,
+                  "project": 2.1205140000056417
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.03702100000009523,
+                    "maxMs": 0.03702100000009523,
+                    "selfMs": 0.03702100000009523
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.27743499999996857,
+                    "maxMs": 0.27743499999996857,
+                    "selfMs": 0.27743499999996857
+                  }
+                },
+                "ms": 7.286965000002965,
+                "endedAtMs": 1794489566279.5288,
+                "at": 1794489566279.5288,
+                "segment": "normal",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489566275.6943,
+                    "endedAtMs": 1794489566279.0288,
+                    "ms": 3.3345089997164905,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 3.33447265625,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 2.1205140000056417,
+                  "serializationMs": 0.03702100000009523,
+                  "sendMs": 0.27743499999996857,
+                  "gcMs": 3.33447265625
+                }
+              },
+              {
+                "startedAtMs": 1794489555022.621,
+                "phases": {
+                  "movement": 1.512760999998136,
+                  "respawn": 0.027303000002575573,
+                  "project": 0.9999239999997371
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.13185299999895506,
+                    "maxMs": 0.07955799999763258,
+                    "selfMs": 0.13185299999895506
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 2.3409329999994952,
+                    "maxMs": 2.279307000000699,
+                    "selfMs": 2.3409329999994952
+                  }
+                },
+                "ms": 7.137662999997701,
+                "endedAtMs": 1794489555029.7588,
+                "at": 1794489555029.7588,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.9999239999997371,
+                  "serializationMs": 0.13185299999895506,
+                  "sendMs": 2.3409329999994952,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489551121.9143,
+                "phases": {
+                  "respawn": 0.020882000000710832,
+                  "project": 1.2839469999998983
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.08204599999953643,
+                    "maxMs": 0.060993999999482185,
+                    "selfMs": 0.08204599999953643
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.16564300000027288,
+                    "maxMs": 0.13204899999982445,
+                    "selfMs": 0.16564300000027288
+                  }
+                },
+                "ms": 7.105698000003031,
+                "endedAtMs": 1794489551129.02,
+                "at": 1794489551129.02,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2839469999998983,
+                  "serializationMs": 0.08204599999953643,
+                  "sendMs": 0.16564300000027288,
+                  "gcMs": 0
+                }
+              }
+            ],
+            "work": {
+              "transport.serialize": {
+                "count": 462,
+                "totalMs": 30.001522999997178,
+                "maxMs": 1.252014000001509,
+                "selfMs": 30.001522999997178
+              },
+              "transport.send": {
+                "count": 461,
+                "totalMs": 51.553179000036835,
+                "maxMs": 2.279307000000699,
+                "selfMs": 51.553179000036835
+              },
+              "control.sync.world_state": {
+                "count": 20,
+                "totalMs": 1.128660000002128,
+                "maxMs": 0.6785510000008799,
+                "selfMs": 1.128660000002128
+              },
+              "control.sync.freeze": {
+                "count": 3,
+                "totalMs": 0.5555680000034044,
+                "maxMs": 0.23842500000318978,
+                "selfMs": 0.5555680000034044
+              },
+              "control.sync.refresh_frozen": {
+                "count": 3,
+                "totalMs": 0.09066900000470923,
+                "maxMs": 0.03649000000223168,
+                "selfMs": 0.09066900000470923
+              },
+              "control.sync.resume": {
+                "count": 3,
+                "totalMs": 0.08172300000296673,
+                "maxMs": 0.030537000002368586,
+                "selfMs": 0.08172300000296673
+              },
+              "control.sync.notifications": {
+                "count": 10,
+                "totalMs": 0.7937680000031833,
+                "maxMs": 0.4105870000021241,
+                "selfMs": 0.7937680000031833
+              },
+              "control.sync.sessions_r53": {
+                "count": 3,
+                "totalMs": 0.3009600000041246,
+                "maxMs": 0.18142900000020745,
+                "selfMs": 0.3009600000041246
+              }
+            },
+            "slowWork": [],
+            "asyncWork": [
+              {
+                "name": "control.wait.freeze",
+                "startedAtMs": 1794489554567.823,
+                "ms": 32.43048699999781,
+                "endedAtMs": 1794489554600.273
+              },
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489553581.8262,
+                "ms": 21.795749000000797,
+                "endedAtMs": 1794489553603.6501
+              },
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489554616.8386,
+                "ms": 21.597157000000152,
+                "endedAtMs": 1794489554638.439
+              }
+            ],
+            "segments": {
+              "startup": {
+                "durationMs": 10000,
+                "ticks": 200,
+                "tickP95Ms": 6.1072800000001735,
+                "tickP99Ms": 8.088991000000533,
+                "maxTickMs": 9.847616000002745
+              },
+              "normal": {
+                "ticks": 200,
+                "tickP95Ms": 4.582224999998289,
+                "tickP99Ms": 7.286965000002965,
+                "maxTickMs": 8.82395899999392
+              }
+            },
+            "gcEvents": [
+              {
+                "startedAtMs": 1794489539074.8025,
+                "endedAtMs": 1794489539079.8628,
+                "ms": 5.060351999942213,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489539080.766,
+                "endedAtMs": 1794489539081.2537,
+                "ms": 0.48755700001493096,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489539104.6062,
+                "endedAtMs": 1794489539108.4128,
+                "ms": 3.806675999891013,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489541573.7056,
+                "endedAtMs": 1794489541577.9873,
+                "ms": 4.281691000331193,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489544327.5154,
+                "endedAtMs": 1794489544334.3079,
+                "ms": 6.79255299968645,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489547474.9395,
+                "endedAtMs": 1794489547479.1506,
+                "ms": 4.211147000081837,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489550313.549,
+                "endedAtMs": 1794489550319.2866,
+                "ms": 5.737449000123888,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489552876.0107,
+                "endedAtMs": 1794489552881.2454,
+                "ms": 5.234540999867022,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489555072.6873,
+                "endedAtMs": 1794489555077.7898,
+                "ms": 5.102475000079721,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489557874.1748,
+                "endedAtMs": 1794489557879.2388,
+                "ms": 5.064058999996632,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489560674.1091,
+                "endedAtMs": 1794489560678.4976,
+                "ms": 4.388439999893308,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489564123.1685,
+                "endedAtMs": 1794489564127.6494,
+                "ms": 4.481060000136495,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489564127.9482,
+                "endedAtMs": 1794489564128.6294,
+                "ms": 0.6812419998459518,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489564154.8533,
+                "endedAtMs": 1794489564158.508,
+                "ms": 3.6548200002871454,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489566275.6943,
+                "endedAtMs": 1794489566279.0288,
+                "ms": 3.3345089997164905,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489569376.1704,
+                "endedAtMs": 1794489569380.427,
+                "ms": 4.256469999905676,
+                "kind": 1
+              }
+            ],
+            "gcDropped": 0,
+            "notes": "Function totalMs is inclusive; selfMs excludes instrumented children. GC overlaps function wall times and must not be added twice. All profiling/instrumentation overhead remains in raw acceptance.",
+            "potionLatency": {
+              "rows": [
+                {
+                  "actor": "real-1",
+                  "startedAtMs": 1794489554575.0845,
+                  "stages": {
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489554577.1895,
+                        "endedAtMs": 1794489554600.9534,
+                        "ms": 23.763916015625
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489554601.1882,
+                        "endedAtMs": 1794489554602.0396,
+                        "ms": 0.851318359375
+                      }
+                    ]
+                  },
+                  "key": "action:a25713e5-ef2a-478d-9f69-c2fb024fda13:10",
+                  "settledAtMs": 1794489554602.2979,
+                  "sequence": 18,
+                  "sendQueuedAtMs": 1794489554623.9548
+                },
+                {
+                  "actor": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+                  "startedAtMs": 1794489555322.4087,
+                  "stages": {
+                    "actorCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555322.726,
+                        "endedAtMs": 1794489555333.1282,
+                        "ms": 10.402099609375
+                      }
+                    ],
+                    "combatCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555333.2368,
+                        "endedAtMs": 1794489555338.4888,
+                        "ms": 5.251953125
+                      }
+                    ],
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489555338.646,
+                        "endedAtMs": 1794489555348.4878,
+                        "ms": 9.841796875
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489555348.5264,
+                        "endedAtMs": 1794489555370.0693,
+                        "ms": 21.54296875
+                      }
+                    ]
+                  },
+                  "key": "action:a25713e5-ef2a-478d-9f69-c2fb024fda13:11",
+                  "settledAtMs": 1794489555370.278,
+                  "sequence": 62,
+                  "sendQueuedAtMs": 1794489555375.785
+                }
+              ],
+              "scope": "Potion checkpoint and writer/refresh await wall; nested/shared waits overlap. settledAtMs marks actual kernel result after durable/refresh, sendQueuedAtMs marks its encoded outbound send call."
+            },
+            "maxInputMs": 50.63158399999884,
+            "slowInputs": [
+              {
+                "at": 1794489544622,
+                "ms": 50.63158399999884,
+                "kind": "combat",
+                "action": "attack"
+              },
+              {
+                "at": 1794489557771,
+                "ms": 50.229402999997546,
+                "kind": "combat",
+                "action": "attack"
+              }
+            ],
+            "slowInputFlows": [
+              {
+                "started": 23158.883763,
+                "receivedAtMs": 1794489557724,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 50.119542999997066,
+                "completedAtMs": 1794489557774.9956
+              },
+              {
+                "started": 23257.883172,
+                "receivedAtMs": 1794489557823,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.66640499999994,
+                "completedAtMs": 1794489557872.5427
+              },
+              {
+                "started": 23508.490999,
+                "receivedAtMs": 1794489558074,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.59454999999798,
+                "completedAtMs": 1794489558122.077
+              },
+              {
+                "started": 23559.448346,
+                "receivedAtMs": 1794489558125,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.098164999999426,
+                "completedAtMs": 1794489558172.5378
+              },
+              {
+                "started": 23559.965508,
+                "receivedAtMs": 1794489558125,
+                "action": "dungeon",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.905737999997655,
+                "completedAtMs": 1794489558172.8604
+              },
+              {
+                "started": 24062.143698,
+                "receivedAtMs": 1794489558628,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 44.585675999998784,
+                "completedAtMs": 1794489558672.7205
+              },
+              {
+                "started": 24112.849879,
+                "receivedAtMs": 1794489558678,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 44.491580999998405,
+                "completedAtMs": 1794489558723.3323
+              },
+              {
+                "started": 23711.915954,
+                "receivedAtMs": 1794489558277,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 44.01884799999971,
+                "completedAtMs": 1794489558321.9255
+              },
+              {
+                "started": 23812.303652,
+                "receivedAtMs": 1794489558378,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 43.867050000000745,
+                "completedAtMs": 1794489558422.1619
+              },
+              {
+                "started": 24615.264036,
+                "receivedAtMs": 1794489559181,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.25397499999963,
+                "completedAtMs": 1794489559223.5098
+              },
+              {
+                "started": 24314.070342,
+                "receivedAtMs": 1794489558880,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.246516999999585,
+                "completedAtMs": 1794489558922.3699
+              },
+              {
+                "started": 24515.211944,
+                "receivedAtMs": 1794489559081,
+                "action": "dungeon",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.83350500000233,
+                "completedAtMs": 1794489559123.0364
+              },
+              {
+                "started": 24565.014172,
+                "receivedAtMs": 1794489559130,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.54523800000243,
+                "completedAtMs": 1794489559172.552
+              },
+              {
+                "started": 24715.109544,
+                "receivedAtMs": 1794489559281,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.40293799999927,
+                "completedAtMs": 1794489559322.5042
+              },
+              {
+                "started": 24816.602775,
+                "receivedAtMs": 1794489559382,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 39.33267999999953,
+                "completedAtMs": 1794489559421.9272
+              },
+              {
+                "started": 25468.746816,
+                "receivedAtMs": 1794489560034,
+                "action": "dungeon",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.98850500000117,
+                "completedAtMs": 1794489560073.7273
+              },
+              {
+                "started": 25317.806287,
+                "receivedAtMs": 1794489559883,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.63216100000136,
+                "completedAtMs": 1794489559922.4292
+              },
+              {
+                "started": 25068.58587,
+                "receivedAtMs": 1794489559634,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.43569800000114,
+                "completedAtMs": 1794489559673.0117
+              },
+              {
+                "started": 25568.462241,
+                "receivedAtMs": 1794489560134,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.093558999997185,
+                "completedAtMs": 1794489560172.547
+              },
+              {
+                "started": 25067.960916,
+                "receivedAtMs": 1794489559633,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 37.95173200000136,
+                "completedAtMs": 1794489559671.9038
+              }
+            ],
+            "minPlayers": 3,
+            "maxPlayers": 3,
+            "players": 3,
+            "inputs": 127,
+            "missed": 0,
+            "messages": 430,
+            "ackSamples": [
+              7.668990000000122,
+              9.8159940000005,
+              16.487977000000683,
+              6.215027999998711,
+              4.260501999999178,
+              7.527163999999175,
+              16.13459800000055,
+              6.272161000000779,
+              9.892644999999902,
+              5.318839999999909,
+              30.573249000000942,
+              15.049172999999428,
+              6.972643999997672,
+              6.61165500000061,
+              5.611671000002389,
+              6.433070999999472,
+              13.067895000000135,
+              16.893919000001915,
+              8.411205000000336,
+              6.609293000001344,
+              4.963446000001568,
+              11.188514999998006,
+              6.774739000000409,
+              9.577992999998969,
+              23.707572999999684,
+              7.358369000001403,
+              4.851763999999093,
+              9.811611999997695,
+              6.588001000000077,
+              15.867804000001343,
+              5.742497999999614,
+              6.891904000000068,
+              10.048823000000993,
+              9.973039000000426,
+              5.383858999997756,
+              12.677679000000353,
+              5.2185910000007425,
+              14.13292200000069,
+              7.99228999999832,
+              14.589797000000544,
+              5.675838999999542,
+              7.815834000000905,
+              8.568074999999226,
+              5.305135000002338,
+              6.24224200000026,
+              6.006463000001531,
+              17.113710999998148,
+              5.210446000000957,
+              5.32533599999806,
+              7.580677999998443,
+              7.545398000002024,
+              5.733266999999614,
+              5.851564999997208,
+              6.945889000002353,
+              8.841554999999062,
+              14.577406000000337,
+              5.824938999998267,
+              8.058826000000408,
+              7.872260000000097,
+              6.1156689999988885,
+              9.676128000002791,
+              18.79605299999821,
+              8.583626999999979,
+              10.447896999998193,
+              4.169126000000688,
+              7.973076999998739,
+              5.134953000000678,
+              11.877481999999873,
+              7.734225000000151,
+              6.534694000001764,
+              6.000506999997015,
+              4.038825999996334,
+              17.70126799999707,
+              4.041773999997531,
+              6.473704000003636,
+              8.393086000003677
+            ],
+            "hotSqlReads": 0,
+            "hotSqlProof": "native resident channel has no SQLite handle or synchronous DB port"
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "channel-2",
+          "incarnation": "dfb48eee-7590-46a7-a432-9ac92c55926a",
+          "pid": 9962,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549563.5847,
+          "endedAtMs": 1794489569571.952,
+          "durationMs": 20008.367209,
+          "delaySamples": 16836,
+          "timerSamples": 16836,
+          "elu": 0.08517439459687394,
+          "histogramMaxPauseMs": 13.721599,
+          "timerMaxPauseMs": 10.52396299999964,
+          "maxPauseMs": 13.721599,
+          "processCpuMs": 2397.345,
+          "maxRssBytes": 193814528,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 10.52396299999964,
+              "elu": 0.09638465222935275
+            },
+            "normal": {
+              "timerMaxPauseMs": 9.47648499999923,
+              "elu": 0.07398497229160698
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10001.035055,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          },
+          "game": {
+            "ticks": 400,
+            "tickP95Ms": 5.191294000000198,
+            "tickP99Ms": 7.533220000001165,
+            "maxTickMs": 10.725878000001103,
+            "slowest": [
+              {
+                "startedAtMs": 1794489553198.211,
+                "phases": {
+                  "respawn": 0.019260000000940636,
+                  "project": 1.562858999997843
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.30061399999976857,
+                    "maxMs": 0.17573500000071363,
+                    "selfMs": 0.30061399999976857
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.24579099999755272,
+                    "maxMs": 0.11509400000068126,
+                    "selfMs": 0.24579099999755272
+                  }
+                },
+                "ms": 10.725878000001103,
+                "endedAtMs": 1794489553208.9368,
+                "at": 1794489553208.9368,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.562858999997843,
+                  "serializationMs": 0.30061399999976857,
+                  "sendMs": 0.24579099999755272,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489553947.407,
+                "phases": {
+                  "combat": 1.6131120000027295,
+                  "respawn": 0.08216099999845028,
+                  "project": 0.8395159999963653
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.01995800000076997,
+                    "maxMs": 0.01995800000076997,
+                    "selfMs": 0.01995800000076997
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.2819710000003397,
+                    "maxMs": 0.2819710000003397,
+                    "selfMs": 0.2819710000003397
+                  }
+                },
+                "ms": 10.173699999999371,
+                "endedAtMs": 1794489553957.5806,
+                "at": 1794489553957.5806,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489553950.989,
+                    "endedAtMs": 1794489553956.8354,
+                    "ms": 5.846329000312835,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 5.846435546875,
+                "breakdown": {
+                  "combatMs": 1.6131120000027295,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.8395159999963653,
+                  "serializationMs": 0.01995800000076997,
+                  "sendMs": 0.2819710000003397,
+                  "gcMs": 5.846435546875
+                }
+              },
+              {
+                "startedAtMs": 1794489556296.5205,
+                "phases": {
+                  "respawn": 0.017740999999659834,
+                  "project": 1.6991320000015548
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.15647299999545794,
+                    "maxMs": 0.06343399999968824,
+                    "selfMs": 0.15647299999545794
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.3026570000038191,
+                    "maxMs": 0.23701900000014575,
+                    "selfMs": 0.3026570000038191
+                  }
+                },
+                "ms": 9.301110000000335,
+                "endedAtMs": 1794489556305.8215,
+                "at": 1794489556305.8215,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489556299.126,
+                    "endedAtMs": 1794489556305.1982,
+                    "ms": 6.072234000079334,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 6.072265625,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.6991320000015548,
+                  "serializationMs": 0.15647299999545794,
+                  "sendMs": 0.3026570000038191,
+                  "gcMs": 6.072265625
+                }
+              },
+              {
+                "startedAtMs": 1794489566047.0466,
+                "phases": {
+                  "movement": 0.6118639999986044,
+                  "combat": 0.7045190000026196,
+                  "respawn": 0.7899839999990945,
+                  "project": 1.6115890000000945
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.1543070000006992,
+                    "maxMs": 0.07242699999915203,
+                    "selfMs": 0.1543070000006992
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.3363130000034289,
+                    "maxMs": 0.19937399999980698,
+                    "selfMs": 0.3363130000034289
+                  }
+                },
+                "ms": 7.922566999997798,
+                "endedAtMs": 1794489566054.9692,
+                "at": 1794489566054.9692,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0.7045190000026196,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.6115890000000945,
+                  "serializationMs": 0.1543070000006992,
+                  "sendMs": 0.3363130000034289,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489559296.4531,
+                "phases": {
+                  "respawn": 0.065005000000383,
+                  "project": 1.5771939999976894
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.22990499999650638,
+                    "maxMs": 0.1177559999996447,
+                    "selfMs": 0.22990499999650638
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.3045989999991434,
+                    "maxMs": 0.2122060000001511,
+                    "selfMs": 0.3045989999991434
+                  }
+                },
+                "ms": 7.533220000001165,
+                "endedAtMs": 1794489559303.9863,
+                "at": 1794489559303.9863,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489559299.126,
+                    "endedAtMs": 1794489559303.4385,
+                    "ms": 4.312429000157863,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 4.3125,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.5771939999976894,
+                  "serializationMs": 0.22990499999650638,
+                  "sendMs": 0.3045989999991434,
+                  "gcMs": 4.3125
+                }
+              },
+              {
+                "startedAtMs": 1794489555697.3962,
+                "phases": {
+                  "respawn": 0.02683199999955832,
+                  "project": 1.3119499999993423
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.09389500000179396,
+                    "maxMs": 0.09389500000179396,
+                    "selfMs": 0.09389500000179396
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.17811100000108127,
+                    "maxMs": 0.17811100000108127,
+                    "selfMs": 0.17811100000108127
+                  }
+                },
+                "ms": 7.451028999999835,
+                "endedAtMs": 1794489555704.8472,
+                "at": 1794489555704.8472,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.3119499999993423,
+                  "serializationMs": 0.09389500000179396,
+                  "sendMs": 0.17811100000108127,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489554546.399,
+                "phases": {
+                  "movement": 0.5360490000020945,
+                  "respawn": 0.027694000000337837,
+                  "project": 1.3849650000011025
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.1565199999968172,
+                    "maxMs": 0.08354999999937718,
+                    "selfMs": 0.1565199999968172
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.13960899999801768,
+                    "maxMs": 0.10048699999970268,
+                    "selfMs": 0.13960899999801768
+                  }
+                },
+                "ms": 6.894342999999935,
+                "endedAtMs": 1794489554553.2932,
+                "at": 1794489554553.2932,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.3849650000011025,
+                  "serializationMs": 0.1565199999968172,
+                  "sendMs": 0.13960899999801768,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489569497.4187,
+                "phases": {
+                  "respawn": 0.023893999998108484,
+                  "project": 1.4647489999988466
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.1446330000035232,
+                    "maxMs": 0.08424100000411272,
+                    "selfMs": 0.1446330000035232
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.246634000002814,
+                    "maxMs": 0.1690359999993234,
+                    "selfMs": 0.246634000002814
+                  }
+                },
+                "ms": 6.804819999997562,
+                "endedAtMs": 1794489569504.2236,
+                "at": 1794489569504.2236,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.4647489999988466,
+                  "serializationMs": 0.1446330000035232,
+                  "sendMs": 0.246634000002814,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489564496.4348,
+                "phases": {
+                  "respawn": 0.024893000001611654,
+                  "project": 2.2191669999992882
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 3,
+                    "totalMs": 0.3620299999965937,
+                    "maxMs": 0.26422099999763304,
+                    "selfMs": 0.3620299999965937
+                  },
+                  "transport.send": {
+                    "count": 3,
+                    "totalMs": 0.21810500000356114,
+                    "maxMs": 0.12377200000264565,
+                    "selfMs": 0.21810500000356114
+                  }
+                },
+                "ms": 6.735992999998416,
+                "endedAtMs": 1794489564503.171,
+                "at": 1794489564503.171,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 2.2191669999992882,
+                  "serializationMs": 0.3620299999965937,
+                  "sendMs": 0.21810500000356114,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489557996.8142,
+                "phases": {
+                  "respawn": 0.024672999999893364,
+                  "project": 0.950025000001915
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.14730499999859603,
+                    "maxMs": 0.09332599999834201,
+                    "selfMs": 0.14730499999859603
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.16798900000139838,
+                    "maxMs": 0.1321459999999206,
+                    "selfMs": 0.16798900000139838
+                  }
+                },
+                "ms": 6.422438999998121,
+                "endedAtMs": 1794489558003.2366,
+                "at": 1794489558003.2366,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.950025000001915,
+                  "serializationMs": 0.14730499999859603,
+                  "sendMs": 0.16798900000139838,
+                  "gcMs": 0
+                }
+              }
+            ],
+            "work": {
+              "transport.serialize": {
+                "count": 395,
+                "totalMs": 25.336064000020997,
+                "maxMs": 0.37440500000229804,
+                "selfMs": 25.336064000020997
+              },
+              "transport.send": {
+                "count": 395,
+                "totalMs": 47.36169800000971,
+                "maxMs": 1.825130999999601,
+                "selfMs": 47.36169800000971
+              },
+              "control.sync.world_state": {
+                "count": 20,
+                "totalMs": 0.4609470000013971,
+                "maxMs": 0.02896599999803584,
+                "selfMs": 0.4609470000013971
+              },
+              "control.sync.notifications": {
+                "count": 10,
+                "totalMs": 0.44846099999995204,
+                "maxMs": 0.09069799999997485,
+                "selfMs": 0.44846099999995204
+              },
+              "control.sync.freeze": {
+                "count": 3,
+                "totalMs": 0.8728769999979704,
+                "maxMs": 0.3520360000002256,
+                "selfMs": 0.8728769999979704
+              },
+              "control.sync.refresh_frozen": {
+                "count": 3,
+                "totalMs": 0.08582700000260957,
+                "maxMs": 0.030794000002060784,
+                "selfMs": 0.08582700000260957
+              },
+              "control.sync.resume": {
+                "count": 3,
+                "totalMs": 0.09325399999943329,
+                "maxMs": 0.04108700000142562,
+                "selfMs": 0.09325399999943329
+              },
+              "control.sync.sessions_r53": {
+                "count": 2,
+                "totalMs": 0.35131299999920884,
+                "maxMs": 0.23321999999825493,
+                "selfMs": 0.35131299999920884
+              }
+            },
+            "slowWork": [],
+            "asyncWork": [
+              {
+                "name": "control.wait.freeze",
+                "startedAtMs": 1794489554820.741,
+                "ms": 28.45173900000009,
+                "endedAtMs": 1794489554849.2134
+              },
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489552879.647,
+                "ms": 26.26884599999903,
+                "endedAtMs": 1794489552905.9377
+              },
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489554863.503,
+                "ms": 23.5486770000025,
+                "endedAtMs": 1794489554887.0596
+              }
+            ],
+            "segments": {
+              "startup": {
+                "durationMs": 10000,
+                "ticks": 200,
+                "tickP95Ms": 5.250347000001057,
+                "tickP99Ms": 9.301110000000335,
+                "maxTickMs": 10.725878000001103
+              },
+              "normal": {
+                "ticks": 200,
+                "tickP95Ms": 4.670658000002732,
+                "tickP99Ms": 6.735992999998416,
+                "maxTickMs": 7.922566999997798
+              }
+            },
+            "gcEvents": [
+              {
+                "startedAtMs": 1794489536251.6904,
+                "endedAtMs": 1794489536252.267,
+                "ms": 0.5767199997790158,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489536283.2043,
+                "endedAtMs": 1794489536287.7642,
+                "ms": 4.559753000270575,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489539400.5923,
+                "endedAtMs": 1794489539404.5095,
+                "ms": 3.917122000362724,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489539405.103,
+                "endedAtMs": 1794489539405.6772,
+                "ms": 0.5741619998589158,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489539426.424,
+                "endedAtMs": 1794489539429.778,
+                "ms": 3.3539259997196496,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489542202.4119,
+                "endedAtMs": 1794489542205.891,
+                "ms": 3.4793390003032982,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489545024.7048,
+                "endedAtMs": 1794489545029.9705,
+                "ms": 5.265641999896616,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489548350.6484,
+                "endedAtMs": 1794489548356.239,
+                "ms": 5.590648999903351,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489551215.8853,
+                "endedAtMs": 1794489551221.8416,
+                "ms": 5.956369000021368,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489553950.989,
+                "endedAtMs": 1794489553956.8354,
+                "ms": 5.846329000312835,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489556299.126,
+                "endedAtMs": 1794489556305.1982,
+                "ms": 6.072234000079334,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489559299.126,
+                "endedAtMs": 1794489559303.4385,
+                "ms": 4.312429000157863,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489562326.7148,
+                "endedAtMs": 1794489562330.9075,
+                "ms": 4.192746999673545,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489565540.536,
+                "endedAtMs": 1794489565544.0923,
+                "ms": 3.556435000151396,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489565544.3042,
+                "endedAtMs": 1794489565544.9082,
+                "ms": 0.6039680000394583,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489565565.6582,
+                "endedAtMs": 1794489565569.1128,
+                "ms": 3.454530999995768,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489568749.5134,
+                "endedAtMs": 1794489568752.147,
+                "ms": 2.6336010000668466,
+                "kind": 1
+              }
+            ],
+            "gcDropped": 0,
+            "notes": "Function totalMs is inclusive; selfMs excludes instrumented children. GC overlaps function wall times and must not be added twice. All profiling/instrumentation overhead remains in raw acceptance.",
+            "potionLatency": {
+              "rows": [
+                {
+                  "actor": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+                  "startedAtMs": 1794489554797.452,
+                  "stages": {
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489554801.1501,
+                        "endedAtMs": 1794489554821.9363,
+                        "ms": 20.7861328125
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489554822.7148,
+                        "endedAtMs": 1794489554823.4902,
+                        "ms": 0.775390625
+                      }
+                    ]
+                  },
+                  "key": "action:1cef5498-1cee-46a6-a603-8cd395fd5fc9:10",
+                  "settledAtMs": 1794489554823.7307,
+                  "sequence": 18,
+                  "sendQueuedAtMs": 1794489554851.9448
+                },
+                {
+                  "actor": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+                  "startedAtMs": 1794489555497.5344,
+                  "stages": {
+                    "actorCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555497.8025,
+                        "endedAtMs": 1794489555506.4863,
+                        "ms": 8.683837890625
+                      }
+                    ],
+                    "combatCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555506.565,
+                        "endedAtMs": 1794489555517.7932,
+                        "ms": 11.228271484375
+                      }
+                    ],
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489555517.9683,
+                        "endedAtMs": 1794489555524.899,
+                        "ms": 6.9306640625
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489555524.9492,
+                        "endedAtMs": 1794489555542.6926,
+                        "ms": 17.743408203125
+                      }
+                    ]
+                  },
+                  "key": "action:1cef5498-1cee-46a6-a603-8cd395fd5fc9:11",
+                  "settledAtMs": 1794489555542.8804,
+                  "sequence": 62,
+                  "sendQueuedAtMs": 1794489555549.8018
+                }
+              ],
+              "scope": "Potion checkpoint and writer/refresh await wall; nested/shared waits overlap. settledAtMs marks actual kernel result after durable/refresh, sendQueuedAtMs marks its encoded outbound send call."
+            },
+            "maxInputMs": 50.773622000000614,
+            "slowInputs": [
+              {
+                "at": 1794489565397,
+                "ms": 50.773622000000614,
+                "kind": "combat",
+                "action": "attack"
+              }
+            ],
+            "slowInputFlows": [
+              {
+                "started": 29831.371403,
+                "receivedAtMs": 1794489565349,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 50.64789499999824,
+                "completedAtMs": 1794489565399.947
+              },
+              {
+                "started": 29931.052383,
+                "receivedAtMs": 1794489565448,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.42828600000212,
+                "completedAtMs": 1794489565498.4084
+              },
+              {
+                "started": 15533.555054,
+                "receivedAtMs": 1794489551051,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.38971599999968,
+                "completedAtMs": 1794489551100.8733
+              },
+              {
+                "started": 15733.762156,
+                "receivedAtMs": 1794489551251,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.06591599999956,
+                "completedAtMs": 1794489551300.7566
+              },
+              {
+                "started": 14680.687785,
+                "receivedAtMs": 1794489550198,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.67979000000014,
+                "completedAtMs": 1794489550247.2944
+              },
+              {
+                "started": 29130.969199,
+                "receivedAtMs": 1794489564648,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.392007000002195,
+                "completedAtMs": 1794489564697.288
+              },
+              {
+                "started": 29280.637943,
+                "receivedAtMs": 1794489564798,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.273912999997265,
+                "completedAtMs": 1794489564846.8381
+              },
+              {
+                "started": 29531.583727,
+                "receivedAtMs": 1794489565049,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.20479499999783,
+                "completedAtMs": 1794489565097.7156
+              },
+              {
+                "started": 29532.077436,
+                "receivedAtMs": 1794489565049,
+                "action": "dungeon",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.20399299999917,
+                "completedAtMs": 1794489565098.2075
+              },
+              {
+                "started": 30232.018565,
+                "receivedAtMs": 1794489565749,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.086802000001626,
+                "completedAtMs": 1794489565798.0347
+              },
+              {
+                "started": 15482.688399,
+                "receivedAtMs": 1794489551000,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.04823199999919,
+                "completedAtMs": 1794489551048.6646
+              },
+              {
+                "started": 30081.848697,
+                "receivedAtMs": 1794489565599,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.80475099999967,
+                "completedAtMs": 1794489565647.5825
+              },
+              {
+                "started": 29781.920925,
+                "receivedAtMs": 1794489565299,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.34181600000011,
+                "completedAtMs": 1794489565347.1887
+              },
+              {
+                "started": 15382.761643,
+                "receivedAtMs": 1794489550900,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.038016000000425,
+                "completedAtMs": 1794489550947.727
+              },
+              {
+                "started": 30483.918485,
+                "receivedAtMs": 1794489566001,
+                "action": "dungeon",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.59673600000315,
+                "completedAtMs": 1794489566048.4424
+              },
+              {
+                "started": 30483.47179,
+                "receivedAtMs": 1794489566001,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.30826100000195,
+                "completedAtMs": 1794489566047.7078
+              },
+              {
+                "started": 16284.528858,
+                "receivedAtMs": 1794489551802,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.12561099999948,
+                "completedAtMs": 1794489551848.5813
+              },
+              {
+                "started": 14833.01732,
+                "receivedAtMs": 1794489550350,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.09537299999829,
+                "completedAtMs": 1794489550397.0405
+              },
+              {
+                "started": 15633.737247,
+                "receivedAtMs": 1794489551151,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.01539500000035,
+                "completedAtMs": 1794489551197.6807
+              },
+              {
+                "started": 28984.55573,
+                "receivedAtMs": 1794489564502,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 45.78118499999982,
+                "completedAtMs": 1794489564548.2642
+              }
+            ],
+            "minPlayers": 3,
+            "maxPlayers": 3,
+            "players": 3,
+            "inputs": 125,
+            "missed": 0,
+            "messages": 365,
+            "ackSamples": [
+              9.352687000000515,
+              28.863563999999315,
+              14.788814000001366,
+              7.771276000001308,
+              6.197668999999223,
+              16.483265000000756,
+              5.397739000000001,
+              9.768785000000207,
+              9.325992999998562,
+              6.609903000000486,
+              10.535606999997981,
+              5.288834999999381,
+              21.076185999998415,
+              12.763306000000739,
+              25.049902000002476,
+              14.765246999999363,
+              7.233227000000625,
+              8.856681000001117,
+              9.178299999999581,
+              9.113455999999132,
+              20.67431299999953,
+              20.489269999998214,
+              7.372332999999344,
+              7.468872000001284,
+              11.005209000002651,
+              6.89042100000006,
+              5.891117999999551,
+              14.289372999999614,
+              4.860249000001204,
+              7.853307000001223,
+              6.929497999997693,
+              6.8652990000009595,
+              6.388165999997,
+              19.88388599999962,
+              9.1607010000007,
+              24.05061900000146,
+              15.106434000001173,
+              18.910595999997895,
+              7.720649999999296,
+              9.169119999998657,
+              5.580095000001165,
+              8.17989099999977,
+              5.629756000002089,
+              7.108768000001874,
+              13.514143000000331,
+              6.002156999998988,
+              6.4549540000007255,
+              8.397931999999855,
+              5.6892900000020745,
+              4.675790000001143,
+              13.552466000001004,
+              14.797675999998319,
+              24.542814000000362,
+              15.185342000000674,
+              7.692040999998426,
+              7.690142999999807,
+              12.925843999997596,
+              8.64784100000179,
+              9.175889000001916,
+              5.389090000000579,
+              8.29429700000037,
+              4.73666299999968,
+              7.923012999999628,
+              16.23220399999991,
+              7.867992000003142,
+              9.07851799999844,
+              9.01560800000152,
+              5.690224000005401,
+              8.625136000002385,
+              9.095093000003544,
+              18.910039000002143,
+              10.185165000002598
+            ],
+            "hotSqlReads": 0,
+            "hotSqlProof": "native resident channel has no SQLite handle or synchronous DB port"
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "channel-3",
+          "incarnation": "089d9d43-cd8f-45b9-8809-9cb487c05263",
+          "pid": 9972,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549563.6768,
+          "endedAtMs": 1794489569573.5227,
+          "durationMs": 20009.846161,
+          "delaySamples": 16981,
+          "timerSamples": 16981,
+          "elu": 0.07115019535598817,
+          "histogramMaxPauseMs": 8.962047,
+          "timerMaxPauseMs": 8.958235999998578,
+          "maxPauseMs": 8.962047,
+          "processCpuMs": 2077.571,
+          "maxRssBytes": 191479808,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 8.765771000000314,
+              "elu": 0.07867014244960083
+            },
+            "normal": {
+              "timerMaxPauseMs": 8.958235999998578,
+              "elu": 0.06365259387475859
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.7707,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          },
+          "game": {
+            "ticks": 400,
+            "tickP95Ms": 4.191616000000067,
+            "tickP99Ms": 7.464160999999876,
+            "maxTickMs": 10.30921699999817,
+            "slowest": [
+              {
+                "startedAtMs": 1794489559205.3909,
+                "phases": {
+                  "movement": 0.5854079999990063,
+                  "respawn": 0.09043699999892851,
+                  "project": 1.007712000002357
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.09622999999919557,
+                    "maxMs": 0.056715999999141786,
+                    "selfMs": 0.09622999999919557
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.24325300000418792,
+                    "maxMs": 0.20200100000147359,
+                    "selfMs": 0.24325300000418792
+                  }
+                },
+                "ms": 10.30921699999817,
+                "endedAtMs": 1794489559215.7002,
+                "at": 1794489559215.7002,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489559211.286,
+                    "endedAtMs": 1794489559215.2073,
+                    "ms": 3.921434000134468,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 3.92138671875,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.007712000002357,
+                  "serializationMs": 0.09622999999919557,
+                  "sendMs": 0.24325300000418792,
+                  "gcMs": 3.92138671875
+                }
+              },
+              {
+                "startedAtMs": 1794489569555.1707,
+                "phases": {
+                  "respawn": 1.4443959999989602,
+                  "project": 1.2472209999978077
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.08450599999923725,
+                    "maxMs": 0.08450599999923725,
+                    "selfMs": 0.08450599999923725
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.12314299999707146,
+                    "maxMs": 0.12314299999707146,
+                    "selfMs": 0.12314299999707146
+                  }
+                },
+                "ms": 7.975140000002284,
+                "endedAtMs": 1794489569563.1458,
+                "at": 1794489569563.1458,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2472209999978077,
+                  "serializationMs": 0.08450599999923725,
+                  "sendMs": 0.12314299999707146,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489550105.274,
+                "phases": {
+                  "combat": 1.4836240000004182,
+                  "respawn": 1.1284840000007534,
+                  "project": 0.4330659999995987
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.019759000000703963,
+                    "maxMs": 0.019759000000703963,
+                    "selfMs": 0.019759000000703963
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.14190899999994144,
+                    "maxMs": 0.14190899999994144,
+                    "selfMs": 0.14190899999994144
+                  }
+                },
+                "ms": 7.8318490000001475,
+                "endedAtMs": 1794489550113.1057,
+                "at": 1794489550113.1057,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 1.4836240000004182,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.4330659999995987,
+                  "serializationMs": 0.019759000000703963,
+                  "sendMs": 0.14190899999994144,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489551105.4329,
+                "phases": {
+                  "respawn": 5.2899300000008225,
+                  "project": 1.2950000000000728
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.07812399999966146,
+                    "maxMs": 0.07812399999966146,
+                    "selfMs": 0.07812399999966146
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.20103199999903154,
+                    "maxMs": 0.20103199999903154,
+                    "selfMs": 0.20103199999903154
+                  }
+                },
+                "ms": 7.561501999998654,
+                "endedAtMs": 1794489551112.9944,
+                "at": 1794489551112.9944,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2950000000000728,
+                  "serializationMs": 0.07812399999966146,
+                  "sendMs": 0.20103199999903154,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489552903.585,
+                "phases": {
+                  "respawn": 0.025969999998778803,
+                  "project": 1.0701640000006591
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.04957700000159093,
+                    "maxMs": 0.04957700000159093,
+                    "selfMs": 0.04957700000159093
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.22656399999686982,
+                    "maxMs": 0.22656399999686982,
+                    "selfMs": 0.22656399999686982
+                  }
+                },
+                "ms": 7.464160999999876,
+                "endedAtMs": 1794489552911.049,
+                "at": 1794489552911.049,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489552906.3157,
+                    "endedAtMs": 1794489552910.4922,
+                    "ms": 4.176424999721348,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 4.176513671875,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.0701640000006591,
+                  "serializationMs": 0.04957700000159093,
+                  "sendMs": 0.22656399999686982,
+                  "gcMs": 4.176513671875
+                }
+              },
+              {
+                "startedAtMs": 1794489554103.5679,
+                "phases": {
+                  "respawn": 0.018175999997765757,
+                  "project": 0.5646840000008524
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.03983100000186823,
+                    "maxMs": 0.03983100000186823,
+                    "selfMs": 0.03983100000186823
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.1546249999992142,
+                    "maxMs": 0.1546249999992142,
+                    "selfMs": 0.1546249999992142
+                  }
+                },
+                "ms": 6.860975999999937,
+                "endedAtMs": 1794489554110.429,
+                "at": 1794489554110.429,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.5646840000008524,
+                  "serializationMs": 0.03983100000186823,
+                  "sendMs": 0.1546249999992142,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489556903.9373,
+                "phases": {
+                  "movement": 0.5659859999977925,
+                  "respawn": 0.02677899999980582,
+                  "project": 1.456503999997949
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.11836899999980233,
+                    "maxMs": 0.07094399999914458,
+                    "selfMs": 0.11836899999980233
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.2365509999981441,
+                    "maxMs": 0.18284399999902234,
+                    "selfMs": 0.2365509999981441
+                  }
+                },
+                "ms": 6.206320999997843,
+                "endedAtMs": 1794489556910.1436,
+                "at": 1794489556910.1436,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.456503999997949,
+                  "serializationMs": 0.11836899999980233,
+                  "sendMs": 0.2365509999981441,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489553455.239,
+                "phases": {
+                  "respawn": 0.027571000002353685,
+                  "project": 1.0635789999978442
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.06787600000097882,
+                    "maxMs": 0.06787600000097882,
+                    "selfMs": 0.06787600000097882
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.15861500000028173,
+                    "maxMs": 0.15861500000028173,
+                    "selfMs": 0.15861500000028173
+                  }
+                },
+                "ms": 5.67250299999796,
+                "endedAtMs": 1794489553460.9116,
+                "at": 1794489553460.9116,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.0635789999978442,
+                  "serializationMs": 0.06787600000097882,
+                  "sendMs": 0.15861500000028173,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489568405.1897,
+                "phases": {
+                  "respawn": 0.023044999998091953,
+                  "project": 1.2143340000002354
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.15063999999983935,
+                    "maxMs": 0.08963500000027125,
+                    "selfMs": 0.15063999999983935
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.18867599999794038,
+                    "maxMs": 0.15084199999910197,
+                    "selfMs": 0.18867599999794038
+                  }
+                },
+                "ms": 5.501109999997425,
+                "endedAtMs": 1794489568410.691,
+                "at": 1794489568410.691,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2143340000002354,
+                  "serializationMs": 0.15063999999983935,
+                  "sendMs": 0.18867599999794038,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489563805.2644,
+                "phases": {
+                  "combat": 0.3937929999992775,
+                  "respawn": 0.09679800000230898,
+                  "project": 0.9536719999996421
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.06864400000267779,
+                    "maxMs": 0.06864400000267779,
+                    "selfMs": 0.06864400000267779
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.11220099999991362,
+                    "maxMs": 0.11220099999991362,
+                    "selfMs": 0.11220099999991362
+                  }
+                },
+                "ms": 5.459758000000875,
+                "endedAtMs": 1794489563810.724,
+                "at": 1794489563810.724,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0.3937929999992775,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.9536719999996421,
+                  "serializationMs": 0.06864400000267779,
+                  "sendMs": 0.11220099999991362,
+                  "gcMs": 0
+                }
+              }
+            ],
+            "work": {
+              "transport.serialize": {
+                "count": 235,
+                "totalMs": 11.725294000018039,
+                "maxMs": 0.4156589999984135,
+                "selfMs": 11.725294000018039
+              },
+              "transport.send": {
+                "count": 235,
+                "totalMs": 27.864611999944827,
+                "maxMs": 0.9781870000006165,
+                "selfMs": 27.864611999944827
+              },
+              "control.sync.world_state": {
+                "count": 20,
+                "totalMs": 0.5797220000040397,
+                "maxMs": 0.07564800000182004,
+                "selfMs": 0.5797220000040397
+              },
+              "control.sync.notifications": {
+                "count": 10,
+                "totalMs": 0.417407999997522,
+                "maxMs": 0.08576499999981024,
+                "selfMs": 0.417407999997522
+              },
+              "control.sync.freeze": {
+                "count": 2,
+                "totalMs": 0.522517000001244,
+                "maxMs": 0.30112300000109826,
+                "selfMs": 0.522517000001244
+              },
+              "control.sync.refresh_frozen": {
+                "count": 2,
+                "totalMs": 0.06715099999928498,
+                "maxMs": 0.044187999999849126,
+                "selfMs": 0.06715099999928498
+              },
+              "control.sync.resume": {
+                "count": 2,
+                "totalMs": 0.06859300000360236,
+                "maxMs": 0.039039000002958346,
+                "selfMs": 0.06859300000360236
+              },
+              "control.sync.sessions_r53": {
+                "count": 2,
+                "totalMs": 0.24683900000309222,
+                "maxMs": 0.13082200000280864,
+                "selfMs": 0.24683900000309222
+              }
+            },
+            "slowWork": [],
+            "asyncWork": [
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489553131.6685,
+                "ms": 26.054982000001473,
+                "endedAtMs": 1794489553157.7427
+              }
+            ],
+            "segments": {
+              "startup": {
+                "durationMs": 10000,
+                "ticks": 200,
+                "tickP95Ms": 4.916696000000229,
+                "tickP99Ms": 7.561501999998654,
+                "maxTickMs": 10.30921699999817
+              },
+              "normal": {
+                "ticks": 200,
+                "tickP95Ms": 3.9070970000029774,
+                "tickP99Ms": 5.459758000000875,
+                "maxTickMs": 7.975140000002284
+              }
+            },
+            "gcEvents": [
+              {
+                "startedAtMs": 1794489537097.5173,
+                "endedAtMs": 1794489537098.2534,
+                "ms": 0.7359919999726117,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489537141.479,
+                "endedAtMs": 1794489537146.704,
+                "ms": 5.225217000115663,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489541453.139,
+                "endedAtMs": 1794489541459.046,
+                "ms": 5.906936999876052,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489544806.0518,
+                "endedAtMs": 1794489544812.7983,
+                "ms": 6.74654999980703,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489548859.3386,
+                "endedAtMs": 1794489548862.9297,
+                "ms": 3.591004999820143,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489552906.3157,
+                "endedAtMs": 1794489552910.4922,
+                "ms": 4.176424999721348,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489555707.5579,
+                "endedAtMs": 1794489555712.694,
+                "ms": 5.136215000413358,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489559211.286,
+                "endedAtMs": 1794489559215.2073,
+                "ms": 3.921434000134468,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489562891.1252,
+                "endedAtMs": 1794489562894.616,
+                "ms": 3.490666000172496,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489566855.418,
+                "endedAtMs": 1794489566859.529,
+                "ms": 4.111076999921352,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489569055.9294,
+                "endedAtMs": 1794489569056.7046,
+                "ms": 0.7751730000600219,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489569082.507,
+                "endedAtMs": 1794489569090.5872,
+                "ms": 8.08009500009939,
+                "kind": 4
+              }
+            ],
+            "gcDropped": 0,
+            "notes": "Function totalMs is inclusive; selfMs excludes instrumented children. GC overlaps function wall times and must not be added twice. All profiling/instrumentation overhead remains in raw acceptance.",
+            "potionLatency": {
+              "rows": [
+                {
+                  "actor": "8aca667c-3980-46e4-88d2-668e50801ec9",
+                  "startedAtMs": 1794489555004.9104,
+                  "stages": {
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489555006.5005,
+                        "endedAtMs": 1794489555016.1487,
+                        "ms": 9.648193359375
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489555016.504,
+                        "endedAtMs": 1794489555017.0398,
+                        "ms": 0.535888671875
+                      }
+                    ]
+                  },
+                  "key": "action:3b6dbbdd-a0ca-498f-be50-ac7631d1ebf8:9",
+                  "settledAtMs": 1794489555017.2905,
+                  "sequence": 19,
+                  "sendQueuedAtMs": 1794489555056.0225
+                }
+              ],
+              "scope": "Potion checkpoint and writer/refresh await wall; nested/shared waits overlap. settledAtMs marks actual kernel result after durable/refresh, sendQueuedAtMs marks its encoded outbound send call."
+            },
+            "maxInputMs": 56.71640800000023,
+            "slowInputs": [
+              {
+                "at": 1794489539655,
+                "ms": 56.71640800000023,
+                "kind": "combat",
+                "action": "attack"
+              },
+              {
+                "at": 1794489552755,
+                "ms": 51.49691499999972,
+                "kind": "combat",
+                "action": "attack"
+              },
+              {
+                "at": 1794489553004,
+                "ms": 51.15463799999998,
+                "kind": "combat",
+                "action": "attack"
+              },
+              {
+                "at": 1794489539655,
+                "ms": 51.15436499999987,
+                "kind": "movement",
+                "action": "move"
+              },
+              {
+                "at": 1794489552055,
+                "ms": 50.53635000000031,
+                "kind": "combat",
+                "action": "attack"
+              },
+              {
+                "at": 1794489540605,
+                "ms": 50.46092200000021,
+                "kind": "combat",
+                "action": "attack"
+              }
+            ],
+            "slowInputFlows": [
+              {
+                "started": 16445.763039,
+                "receivedAtMs": 1794489552705,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 51.46218999999837,
+                "completedAtMs": 1794489552756.7285
+              },
+              {
+                "started": 16696.441522,
+                "receivedAtMs": 1794489552955,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 51.11875700000019,
+                "completedAtMs": 1794489553007.0642
+              },
+              {
+                "started": 15746.89018,
+                "receivedAtMs": 1794489552006,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 50.43383899999935,
+                "completedAtMs": 1794489552056.8264
+              },
+              {
+                "started": 30695.854431,
+                "receivedAtMs": 1794489566955,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.86769600000116,
+                "completedAtMs": 1794489567005.224
+              },
+              {
+                "started": 16246.660504,
+                "receivedAtMs": 1794489552506,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.844694999999774,
+                "completedAtMs": 1794489552555.0076
+              },
+              {
+                "started": 31948.199568,
+                "receivedAtMs": 1794489568207,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.484723000001395,
+                "completedAtMs": 1794489568256.1873
+              },
+              {
+                "started": 30847.610607,
+                "receivedAtMs": 1794489567107,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.65950800000064,
+                "completedAtMs": 1794489567154.7722
+              },
+              {
+                "started": 17498.588878,
+                "receivedAtMs": 1794489553758,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.46956300000238,
+                "completedAtMs": 1794489553805.5623
+              },
+              {
+                "started": 30999.271638,
+                "receivedAtMs": 1794489567258,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.4164810000002,
+                "completedAtMs": 1794489567306.1907
+              },
+              {
+                "started": 32900.301298,
+                "receivedAtMs": 1794489569159,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.4436760000026,
+                "completedAtMs": 1794489569206.247
+              },
+              {
+                "started": 17650.630837,
+                "receivedAtMs": 1794489553910,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.34594599999764,
+                "completedAtMs": 1794489553956.479
+              },
+              {
+                "started": 17398.972666,
+                "receivedAtMs": 1794489553658,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.04179699999804,
+                "completedAtMs": 1794489553704.5168
+              },
+              {
+                "started": 17600.492651,
+                "receivedAtMs": 1794489553859,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 45.1973399999988,
+                "completedAtMs": 1794489553905.1917
+              },
+              {
+                "started": 17902.078726,
+                "receivedAtMs": 1794489554161,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 43.66764400000102,
+                "completedAtMs": 1794489554205.248
+              },
+              {
+                "started": 18153.071016,
+                "receivedAtMs": 1794489554412,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 43.4052939999965,
+                "completedAtMs": 1794489554455.9783
+              },
+              {
+                "started": 18403.841584,
+                "receivedAtMs": 1794489554663,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.59921299999769,
+                "completedAtMs": 1794489554705.9424
+              },
+              {
+                "started": 18604.986109,
+                "receivedAtMs": 1794489554864,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.46851400000014,
+                "completedAtMs": 1794489554906.9573
+              },
+              {
+                "started": 18655.626904,
+                "receivedAtMs": 1794489554915,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 40.410125999998854,
+                "completedAtMs": 1794489554955.5398
+              },
+              {
+                "started": 18906.701514,
+                "receivedAtMs": 1794489555166,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.99187499999971,
+                "completedAtMs": 1794489555205.1953
+              },
+              {
+                "started": 18706.824841,
+                "receivedAtMs": 1794489554966,
+                "action": "use_potion",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 38.951686000000336,
+                "completedAtMs": 1794489555005.2773
+              }
+            ],
+            "minPlayers": 2,
+            "maxPlayers": 2,
+            "players": 2,
+            "inputs": 86,
+            "missed": 0,
+            "messages": 213,
+            "ackSamples": [
+              7.372510000001057,
+              7.050953999998455,
+              6.032640999999785,
+              9.138300999999046,
+              15.364904999998544,
+              6.933257999999114,
+              7.965408000000025,
+              18.921575000000303,
+              11.351818999999523,
+              27.965554000002157,
+              5.50804799999969,
+              21.224271999999473,
+              14.99937399999908,
+              13.692040999998426,
+              5.640258000003087,
+              6.030710999999428,
+              6.586300000002666,
+              9.600384000001213,
+              5.154253999997309,
+              11.280954999998357,
+              5.1079050000007555,
+              7.1271940000006,
+              8.00268800000049,
+              6.2724100000014005,
+              7.34775499999887,
+              5.78256699999838,
+              11.769798000001174,
+              5.6260330000004615,
+              9.409616000000824,
+              5.890858000002481,
+              13.907502999998542,
+              9.271081999999296,
+              7.319016999997984,
+              15.11909299999752,
+              22.726300000002084,
+              5.538934000000154,
+              8.305759999999282,
+              7.1407429999999295,
+              6.448483000000124,
+              5.00814100000207,
+              6.317857000001823,
+              7.227201999998215,
+              13.333606000000145,
+              5.8307090000016615,
+              6.229190999998536,
+              12.227364000002126,
+              6.127596000002086,
+              7.088127999999415,
+              7.251765000000887,
+              25.88732700000037,
+              11.301385000002483,
+              4.947577999999339,
+              6.461889999998675,
+              5.093375000000378,
+              5.5315799999989395,
+              6.282697999999073,
+              13.430673999999271,
+              6.037006999998994,
+              7.558120000001509,
+              6.034765000000334,
+              6.025332000001072,
+              5.92283899999893,
+              7.607601000003342
+            ],
+            "hotSqlReads": 0,
+            "hotSqlProof": "native resident channel has no SQLite handle or synchronous DB port"
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "channel-4",
+          "incarnation": "9167b5e4-84fd-4aa3-b36e-5813037d2be3",
+          "pid": 9978,
+          "threadId": 0,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549564.4805,
+          "endedAtMs": 1794489569572.504,
+          "durationMs": 20008.023302,
+          "delaySamples": 16832,
+          "timerSamples": 16833,
+          "elu": 0.07609180636625754,
+          "histogramMaxPauseMs": 10.625023,
+          "timerMaxPauseMs": 10.61384999999791,
+          "maxPauseMs": 10.625023,
+          "processCpuMs": 2183.045,
+          "maxRssBytes": 192757760,
+          "complete": true,
+          "slowGaps": [],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 10.000184000000445,
+              "elu": 0.08816918122317646
+            },
+            "normal": {
+              "timerMaxPauseMs": 10.61384999999791,
+              "elu": 0.0640374843627348
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.430875,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          },
+          "game": {
+            "ticks": 400,
+            "tickP95Ms": 4.40125899999839,
+            "tickP99Ms": 7.085653000000093,
+            "maxTickMs": 10.919780000000173,
+            "slowest": [
+              {
+                "startedAtMs": 1794489550138.2344,
+                "phases": {
+                  "combat": 1.3220630000014353,
+                  "respawn": 0.02335300000049756,
+                  "project": 2.431415000000925
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.29013499999746273,
+                    "maxMs": 0.1516909999991185,
+                    "selfMs": 0.29013499999746273
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 1.2955299999975978,
+                    "maxMs": 1.14810099999886,
+                    "selfMs": 1.2955299999975978
+                  }
+                },
+                "ms": 10.919780000000173,
+                "endedAtMs": 1794489550149.154,
+                "at": 1794489550149.154,
+                "segment": "startup",
+                "gc": [
+                  {
+                    "startedAtMs": 1794489550143.517,
+                    "endedAtMs": 1794489550147.5364,
+                    "ms": 4.019214999862015,
+                    "kind": 1
+                  }
+                ],
+                "gcOverlapMs": 4.019287109375,
+                "breakdown": {
+                  "combatMs": 1.3220630000014353,
+                  "retaliationMs": 0,
+                  "projectionMs": 2.431415000000925,
+                  "serializationMs": 0.29013499999746273,
+                  "sendMs": 1.2955299999975978,
+                  "gcMs": 4.019287109375
+                }
+              },
+              {
+                "startedAtMs": 1794489563988.4045,
+                "phases": {},
+                "work": {},
+                "ms": 9.775889000000461,
+                "endedAtMs": 1794489563998.1804,
+                "at": 1794489563998.1804,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0,
+                  "serializationMs": 0,
+                  "sendMs": 0,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489551238.4602,
+                "phases": {
+                  "combat": 0.7703370000017458,
+                  "respawn": 1.9863310000000638,
+                  "project": 0.9603850000003149
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.06528699999944365,
+                    "maxMs": 0.06528699999944365,
+                    "selfMs": 0.06528699999944365
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.1501509999998234,
+                    "maxMs": 0.1501509999998234,
+                    "selfMs": 0.1501509999998234
+                  }
+                },
+                "ms": 9.453142000000298,
+                "endedAtMs": 1794489551247.9133,
+                "at": 1794489551247.9133,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0.7703370000017458,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.9603850000003149,
+                  "serializationMs": 0.06528699999944365,
+                  "sendMs": 0.1501509999998234,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489553239.7932,
+                "phases": {
+                  "respawn": 0.024481999998897663,
+                  "project": 0.61938199999895
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.165037000000666,
+                    "maxMs": 0.10380000000077416,
+                    "selfMs": 0.165037000000666
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.21300000000155705,
+                    "maxMs": 0.1135790000007546,
+                    "selfMs": 0.21300000000155705
+                  }
+                },
+                "ms": 7.625607999998465,
+                "endedAtMs": 1794489553247.4187,
+                "at": 1794489553247.4187,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 0.61938199999895,
+                  "serializationMs": 0.165037000000666,
+                  "sendMs": 0.21300000000155705,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489553288.8923,
+                "phases": {
+                  "combat": 0.6158640000012383,
+                  "respawn": 2.1346210000010615,
+                  "project": 1.5345420000012382
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.20742900000186637,
+                    "maxMs": 0.13921900000059395,
+                    "selfMs": 0.20742900000186637
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.1819180000002234,
+                    "maxMs": 0.12142899999889778,
+                    "selfMs": 0.1819180000002234
+                  }
+                },
+                "ms": 7.085653000000093,
+                "endedAtMs": 1794489553295.978,
+                "at": 1794489553295.978,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0.6158640000012383,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.5345420000012382,
+                  "serializationMs": 0.20742900000186637,
+                  "sendMs": 0.1819180000002234,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489558138.4507,
+                "phases": {
+                  "combat": 1.0911919999998645,
+                  "respawn": 0.026490000000194414,
+                  "project": 1.2750830000004498
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.07004800000140676,
+                    "maxMs": 0.07004800000140676,
+                    "selfMs": 0.07004800000140676
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.11270199999853503,
+                    "maxMs": 0.11270199999853503,
+                    "selfMs": 0.11270199999853503
+                  }
+                },
+                "ms": 6.518918999998277,
+                "endedAtMs": 1794489558144.9695,
+                "at": 1794489558144.9695,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 1.0911919999998645,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.2750830000004498,
+                  "serializationMs": 0.07004800000140676,
+                  "sendMs": 0.11270199999853503,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489566188.0269,
+                "phases": {
+                  "movement": 0.6754230000005919,
+                  "respawn": 0.02335799999855226,
+                  "project": 1.1153709999998682
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.08366599999862956,
+                    "maxMs": 0.05255899999974645,
+                    "selfMs": 0.08366599999862956
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.21337399999902118,
+                    "maxMs": 0.18118699999831733,
+                    "selfMs": 0.21337399999902118
+                  }
+                },
+                "ms": 6.512316000000283,
+                "endedAtMs": 1794489566194.539,
+                "at": 1794489566194.539,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.1153709999998682,
+                  "serializationMs": 0.08366599999862956,
+                  "sendMs": 0.21337399999902118,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489555138.5898,
+                "phases": {
+                  "combat": 0.8400489999985439,
+                  "respawn": 1.776570999998512,
+                  "project": 1.0946749999966414
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.040357999998377636,
+                    "maxMs": 0.040357999998377636,
+                    "selfMs": 0.040357999998377636
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.14081700000315323,
+                    "maxMs": 0.14081700000315323,
+                    "selfMs": 0.14081700000315323
+                  }
+                },
+                "ms": 6.490734999999404,
+                "endedAtMs": 1794489555145.0806,
+                "at": 1794489555145.0806,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0.8400489999985439,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.0946749999966414,
+                  "serializationMs": 0.040357999998377636,
+                  "sendMs": 0.14081700000315323,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489560437.481,
+                "phases": {
+                  "movement": 0.5291620000025432,
+                  "respawn": 0.8938640000014857,
+                  "project": 1.4031749999994645
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 2,
+                    "totalMs": 0.08117800000400166,
+                    "maxMs": 0.04455200000302284,
+                    "selfMs": 0.08117800000400166
+                  },
+                  "transport.send": {
+                    "count": 2,
+                    "totalMs": 0.1567849999992177,
+                    "maxMs": 0.13096299999961047,
+                    "selfMs": 0.1567849999992177
+                  }
+                },
+                "ms": 6.40019200000097,
+                "endedAtMs": 1794489560443.881,
+                "at": 1794489560443.881,
+                "segment": "normal",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.4031749999994645,
+                  "serializationMs": 0.08117800000400166,
+                  "sendMs": 0.1567849999992177,
+                  "gcMs": 0
+                }
+              },
+              {
+                "startedAtMs": 1794489555387.7522,
+                "phases": {
+                  "respawn": 0.04017000000021653,
+                  "project": 1.8215220000020054
+                },
+                "work": {
+                  "transport.serialize": {
+                    "count": 1,
+                    "totalMs": 0.11475599999903352,
+                    "maxMs": 0.11475599999903352,
+                    "selfMs": 0.11475599999903352
+                  },
+                  "transport.send": {
+                    "count": 1,
+                    "totalMs": 0.1917890000004263,
+                    "maxMs": 0.1917890000004263,
+                    "selfMs": 0.1917890000004263
+                  }
+                },
+                "ms": 6.2299219999986235,
+                "endedAtMs": 1794489555393.9822,
+                "at": 1794489555393.9822,
+                "segment": "startup",
+                "gc": [],
+                "gcOverlapMs": 0,
+                "breakdown": {
+                  "combatMs": 0,
+                  "retaliationMs": 0,
+                  "projectionMs": 1.8215220000020054,
+                  "serializationMs": 0.11475599999903352,
+                  "sendMs": 0.1917890000004263,
+                  "gcMs": 0
+                }
+              }
+            ],
+            "work": {
+              "transport.serialize": {
+                "count": 253,
+                "totalMs": 14.6211420000418,
+                "maxMs": 0.5348569999987376,
+                "selfMs": 14.6211420000418
+              },
+              "transport.send": {
+                "count": 253,
+                "totalMs": 31.629365999984657,
+                "maxMs": 1.3282600000002276,
+                "selfMs": 31.629365999984657
+              },
+              "control.sync.world_state": {
+                "count": 20,
+                "totalMs": 0.6232010000039736,
+                "maxMs": 0.18748799999957555,
+                "selfMs": 0.6232010000039736
+              },
+              "control.sync.notifications": {
+                "count": 10,
+                "totalMs": 0.5445569999992586,
+                "maxMs": 0.11278200000015204,
+                "selfMs": 0.5445569999992586
+              },
+              "control.sync.freeze": {
+                "count": 2,
+                "totalMs": 0.4539519999998447,
+                "maxMs": 0.24896799999987707,
+                "selfMs": 0.4539519999998447
+              },
+              "control.sync.refresh_frozen": {
+                "count": 2,
+                "totalMs": 0.05905999999959022,
+                "maxMs": 0.034945999999763444,
+                "selfMs": 0.05905999999959022
+              },
+              "control.sync.resume": {
+                "count": 2,
+                "totalMs": 0.07245400000283553,
+                "maxMs": 0.04231700000309502,
+                "selfMs": 0.07245400000283553
+              },
+              "control.sync.sessions_r53": {
+                "count": 2,
+                "totalMs": 0.26727000000028056,
+                "maxMs": 0.14760499999829335,
+                "selfMs": 0.26727000000028056
+              }
+            },
+            "slowWork": [],
+            "asyncWork": [
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489553334.615,
+                "ms": 24.20675300000039,
+                "endedAtMs": 1794489553358.842
+              },
+              {
+                "name": "control.wait.refresh_frozen",
+                "startedAtMs": 1794489554338.5056,
+                "ms": 20.037771999999677,
+                "endedAtMs": 1794489554358.5593
+              }
+            ],
+            "segments": {
+              "startup": {
+                "durationMs": 10000,
+                "ticks": 200,
+                "tickP95Ms": 4.796457000000373,
+                "tickP99Ms": 7.625607999998465,
+                "maxTickMs": 10.919780000000173
+              },
+              "normal": {
+                "ticks": 200,
+                "tickP95Ms": 4.137614999999641,
+                "tickP99Ms": 6.40019200000097,
+                "maxTickMs": 9.775889000000461
+              }
+            },
+            "gcEvents": [
+              {
+                "startedAtMs": 1794489539691.2363,
+                "endedAtMs": 1794489539695.8435,
+                "ms": 4.607073999941349,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489539696.5603,
+                "endedAtMs": 1794489539697.0999,
+                "ms": 0.539478000253439,
+                "kind": 8
+              },
+              {
+                "startedAtMs": 1794489539720.783,
+                "endedAtMs": 1794489539725.232,
+                "ms": 4.448904999997467,
+                "kind": 4
+              },
+              {
+                "startedAtMs": 1794489542881.2646,
+                "endedAtMs": 1794489542884.3208,
+                "ms": 3.0562529996968806,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489546188.5762,
+                "endedAtMs": 1794489546192.6382,
+                "ms": 4.062109999824315,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489550143.517,
+                "endedAtMs": 1794489550147.5364,
+                "ms": 4.019214999862015,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489553092.1978,
+                "endedAtMs": 1794489553095.7114,
+                "ms": 3.5136400000192225,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489555855.3853,
+                "endedAtMs": 1794489555859.3926,
+                "ms": 4.007231999654323,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489558900.8616,
+                "endedAtMs": 1794489558908.2026,
+                "ms": 7.341157000046223,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489562066.9358,
+                "endedAtMs": 1794489562071.2485,
+                "ms": 4.312685000244528,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489565622.2478,
+                "endedAtMs": 1794489565627.0713,
+                "ms": 4.823437999933958,
+                "kind": 1
+              },
+              {
+                "startedAtMs": 1794489569440.53,
+                "endedAtMs": 1794489569445.5613,
+                "ms": 5.031250999774784,
+                "kind": 1
+              }
+            ],
+            "gcDropped": 0,
+            "notes": "Function totalMs is inclusive; selfMs excludes instrumented children. GC overlaps function wall times and must not be added twice. All profiling/instrumentation overhead remains in raw acceptance.",
+            "potionLatency": {
+              "rows": [
+                {
+                  "actor": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+                  "startedAtMs": 1794489555139.032,
+                  "stages": {
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489555144.251,
+                        "endedAtMs": 1794489555156.295,
+                        "ms": 12.0439453125
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489555156.545,
+                        "endedAtMs": 1794489555157.122,
+                        "ms": 0.5771484375
+                      }
+                    ]
+                  },
+                  "key": "action:0f0a2962-29d1-493c-9e4b-40654c2dd351:10",
+                  "settledAtMs": 1794489555157.3982,
+                  "sequence": 19,
+                  "sendQueuedAtMs": 1794489555189.807
+                },
+                {
+                  "actor": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+                  "startedAtMs": 1794489555841.6377,
+                  "stages": {
+                    "actorCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555841.7937,
+                        "endedAtMs": 1794489555848.975,
+                        "ms": 7.181396484375
+                      }
+                    ],
+                    "combatCheckpoint": [
+                      {
+                        "startedAtMs": 1794489555849.033,
+                        "endedAtMs": 1794489555854.5935,
+                        "ms": 5.560546875
+                      }
+                    ],
+                    "writerRoundTrip": [
+                      {
+                        "startedAtMs": 1794489555854.799,
+                        "endedAtMs": 1794489555863.7598,
+                        "ms": 8.960693359375
+                      }
+                    ],
+                    "refresh": [
+                      {
+                        "startedAtMs": 1794489555863.798,
+                        "endedAtMs": 1794489555880.1072,
+                        "ms": 16.30908203125
+                      }
+                    ]
+                  },
+                  "key": "action:0f0a2962-29d1-493c-9e4b-40654c2dd351:11",
+                  "settledAtMs": 1794489555880.2766,
+                  "sequence": 64,
+                  "sendQueuedAtMs": 1794489555890.9346
+                }
+              ],
+              "scope": "Potion checkpoint and writer/refresh await wall; nested/shared waits overlap. settledAtMs marks actual kernel result after durable/refresh, sendQueuedAtMs marks its encoded outbound send call."
+            },
+            "maxInputMs": 82.45590000000084,
+            "slowInputs": [
+              {
+                "at": 1794489553288,
+                "ms": 82.45590000000084,
+                "kind": "combat",
+                "action": "claim_rewards"
+              },
+              {
+                "at": 1794489561288,
+                "ms": 50.61505300000135,
+                "kind": "movement",
+                "action": "move"
+              },
+              {
+                "at": 1794489561889,
+                "ms": 50.60824000000139,
+                "kind": "combat",
+                "action": "attack"
+              }
+            ],
+            "slowInputFlows": [
+              {
+                "started": 16050.136858,
+                "receivedAtMs": 1794489553207,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": true,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 82.42900200000076,
+                "completedAtMs": 1794489553289.5742
+              },
+              {
+                "started": 24682.592414,
+                "receivedAtMs": 1794489561839,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 50.580698000001576,
+                "completedAtMs": 1794489561890.1814
+              },
+              {
+                "started": 24081.783387,
+                "receivedAtMs": 1794489561238,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 50.57646300000124,
+                "completedAtMs": 1794489561289.3672
+              },
+              {
+                "started": 24583.092185,
+                "receivedAtMs": 1794489561740,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.49040999999852,
+                "completedAtMs": 1794489561789.5896
+              },
+              {
+                "started": 24332.944722,
+                "receivedAtMs": 1794489561489,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.15924399999858,
+                "completedAtMs": 1794489561539.1116
+              },
+              {
+                "started": 23782.718817,
+                "receivedAtMs": 1794489560939,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.14225299999816,
+                "completedAtMs": 1794489560988.8682
+              },
+              {
+                "started": 24383.537838,
+                "receivedAtMs": 1794489561540,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 49.139579999999114,
+                "completedAtMs": 1794489561589.6843
+              },
+              {
+                "started": 24833.97138,
+                "receivedAtMs": 1794489561990,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.53888800000277,
+                "completedAtMs": 1794489562039.5168
+              },
+              {
+                "started": 24532.611865,
+                "receivedAtMs": 1794489561689,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 48.52932900000087,
+                "completedAtMs": 1794489561738.1482
+              },
+              {
+                "started": 25334.121386,
+                "receivedAtMs": 1794489562491,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 47.936595999999554,
+                "completedAtMs": 1794489562539.0647
+              },
+              {
+                "started": 26286.22045,
+                "receivedAtMs": 1794489563443,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 46.87272099999973,
+                "completedAtMs": 1794489563490.101
+              },
+              {
+                "started": 27339.966328,
+                "receivedAtMs": 1794489564496,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.792818000001716,
+                "completedAtMs": 1794489564539.766
+              },
+              {
+                "started": 27240.695613,
+                "receivedAtMs": 1794489564397,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 42.515063999999256,
+                "completedAtMs": 1794489564440.2175
+              },
+              {
+                "started": 27440.887099,
+                "receivedAtMs": 1794489564597,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.71662099999958,
+                "completedAtMs": 1794489564639.61
+              },
+              {
+                "started": 28192.443764,
+                "receivedAtMs": 1794489565349,
+                "action": "attack",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.46711200000209,
+                "completedAtMs": 1794489565390.918
+              },
+              {
+                "started": 13041.043241,
+                "receivedAtMs": 1794489550198,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 41.11744700000054,
+                "completedAtMs": 1794489550239.1682
+              },
+              {
+                "started": 13041.749797,
+                "receivedAtMs": 1794489550198,
+                "action": "claim_rewards",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 40.93236099999922,
+                "completedAtMs": 1794489550239.6897
+              },
+              {
+                "started": 27541.633001,
+                "receivedAtMs": 1794489564698,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 40.83206600000267,
+                "completedAtMs": 1794489564739.473
+              },
+              {
+                "started": 28492.39428,
+                "receivedAtMs": 1794489565649,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 39.98265199999878,
+                "completedAtMs": 1794489565689.3853
+              },
+              {
+                "started": 27791.738256,
+                "receivedAtMs": 1794489564948,
+                "action": "move",
+                "barrierOnEnqueue": false,
+                "suspendedOnEnqueue": false,
+                "deferAttempts": 0,
+                "ms": 39.78374899999835,
+                "completedAtMs": 1794489564988.5288
+              }
+            ],
+            "minPlayers": 2,
+            "maxPlayers": 2,
+            "players": 2,
+            "inputs": 104,
+            "missed": 0,
+            "messages": 233,
+            "ackSamples": [
+              5.954416000000492,
+              15.287361000000601,
+              20.57500699999946,
+              13.788598999999522,
+              13.376750999999786,
+              22.556338000000324,
+              30.63058699999965,
+              5.521423000000141,
+              9.735321000000113,
+              6.917562000000544,
+              10.541182999999364,
+              5.701279000000795,
+              6.554952000000412,
+              16.78219899999931,
+              8.979740000000675,
+              13.94228800000019,
+              19.40456599999925,
+              4.628975999999966,
+              11.336239000000205,
+              15.375688000000082,
+              11.98420299999998,
+              6.2205250000006345,
+              5.315883000002941,
+              8.908449999998993,
+              13.089418999999907,
+              8.355455000000802,
+              7.237109999998211,
+              6.871973999997863,
+              5.057210000002669,
+              11.055404000002454,
+              15.790847000000213,
+              6.58986300000106,
+              7.2639479999998,
+              13.125108999996883,
+              7.032611999999062,
+              9.141085000002931,
+              5.825475000001461,
+              7.458620000001247,
+              5.431057000001601,
+              6.219042000000627,
+              19.62911499999973,
+              11.189256000001478,
+              12.731296000001748,
+              8.771231000002444,
+              9.411742000000231,
+              8.216403999998874,
+              6.112986000000092,
+              5.354290999999648,
+              10.581005000000005,
+              12.373845000001893,
+              12.69833600000129,
+              5.864405000000261,
+              7.930628000001889,
+              13.481096999999863,
+              5.857885999997961,
+              8.497981000000436,
+              6.316412000000128,
+              6.288841999998112,
+              5.330425000000105,
+              14.784428999999363,
+              5.128248999997595,
+              13.896252999998978,
+              6.783631999998761,
+              5.845117000000755,
+              5.23363099999915,
+              6.227248999999574,
+              5.7588249999971595
+            ],
+            "hotSqlReads": 0,
+            "hotSqlProof": "native resident channel has no SQLite handle or synchronous DB port"
+          }
+        },
+        {
+          "protocol": "core511-load-window-v1",
+          "target": "reader",
+          "incarnation": "d175a14a-3e88-42dc-bb5e-da70d59c0f1a",
+          "pid": 9925,
+          "threadId": 6,
+          "runId": "266ea0a1-d114-488a-b94b-20f6152f3527",
+          "startedAtMs": 1794489549565.3943,
+          "endedAtMs": 1794489569571.9949,
+          "durationMs": 20006.600660000004,
+          "delaySamples": 16299,
+          "timerSamples": 16299,
+          "elu": 0.11204218202850023,
+          "histogramMaxPauseMs": 26.116095,
+          "timerMaxPauseMs": 26.031049999997776,
+          "maxPauseMs": 26.116095,
+          "processCpuMs": null,
+          "maxRssBytes": null,
+          "complete": true,
+          "slowGaps": [
+            {
+              "startedAtMs": 1794489550075.3857,
+              "endedAtMs": 1794489550101.4167,
+              "ms": 26.031049999997776
+            },
+            {
+              "startedAtMs": 1794489550101.4167,
+              "endedAtMs": 1794489550123.8342,
+              "ms": 22.417590000000928
+            },
+            {
+              "startedAtMs": 1794489553284.309,
+              "endedAtMs": 1794489553306.6042,
+              "ms": 22.29505600000266
+            },
+            {
+              "startedAtMs": 1794489551097.0151,
+              "endedAtMs": 1794489551119.2522,
+              "ms": 22.23705400000108
+            },
+            {
+              "startedAtMs": 1794489551128.0623,
+              "endedAtMs": 1794489551150.25,
+              "ms": 22.187803000000713
+            }
+          ],
+          "pauseWitnessVersion": 1,
+          "pauseWitnesses": [],
+          "droppedPauseWitnesses": 0,
+          "pauseCountsOver50Ms": {
+            "timer": 0,
+            "histogram": 0,
+            "dropped": 0,
+            "note": "Observer counts overlap; do not add them as distinct physical stalls."
+          },
+          "segments": {
+            "startup": {
+              "timerMaxPauseMs": 26.031049999997776,
+              "elu": 0.13714785369625307
+            },
+            "normal": {
+              "timerMaxPauseMs": 18.335479000001214,
+              "elu": 0.08695812727961205
+            },
+            "cutoffMs": 10000,
+            "eluBoundaryElapsedMs": 10000.276546000001,
+            "note": "Raw timer gaps crossing10s appear in both segments without clipping. Full-window histogram and timer maxima still decide acceptance."
+          },
+          "readWork": {
+            "queries": {
+              "kernel511_actor_world": {
+                "count": 121,
+                "totalMs": 1610.1114370000396,
+                "maxMs": 25.422529999999824
+              },
+              "kernel511_guild_war_due": {
+                "count": 20,
+                "totalMs": 6.298930000004475,
+                "maxMs": 0.5100519999978133
+              },
+              "kernel511_player_jobs": {
+                "count": 20,
+                "totalMs": 10.52462100000048,
+                "maxMs": 1.1520070000005944
+              },
+              "kernel511_guild_step": {
+                "count": 20,
+                "totalMs": 2.3989289999954053,
+                "maxMs": 0.23926299999584444
+              },
+              "kernel511_normal_recovery_r62": {
+                "count": 20,
+                "totalMs": 46.3143829999899,
+                "maxMs": 3.857164000000921
+              },
+              "kernel511_dungeon_lifecycle_due": {
+                "count": 20,
+                "totalMs": 6.772550000012416,
+                "maxMs": 0.4745760000005248
+              },
+              "kernel511_cleanup_batch": {
+                "count": 26,
+                "totalMs": 5.555917999998201,
+                "maxMs": 0.615537999998196
+              }
+            },
+            "slowest": [
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 25.422529999999824,
+                "at": 1794489550101
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 22.1486330000007,
+                "at": 1794489551119
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 22.064452999999048,
+                "at": 1794489551150
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 21.728469999998197,
+                "at": 1794489553306
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 18.686091999999917,
+                "at": 1794489550065
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 18.266867999998794,
+                "at": 1794489562886
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 18.2378069999977,
+                "at": 1794489552898
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 18.019915999997465,
+                "at": 1794489549981
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 17.48767399999997,
+                "at": 1794489558184
+              },
+              {
+                "name": "kernel511_actor_world",
+                "workMs": 16.91600699999981,
+                "at": 1794489567037
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "resources": {
+      "cpuBudget": 4,
+      "totalCpuFraction": 0.1982108022355926,
+      "maxRssBytes": 1394601984
+    }
+  },
+  "wsHandoff": {
+    "sent": 10,
+    "declined": 0,
+    "failed": 0
+  },
+  "channelProfiles": [],
+  "existingWorkDiagnostics": {
+    "scope": "bounded-existing-recorder-last-64-slow-events",
+    "workScope": "last-300-seconds-including-startup",
+    "recentSlowWork": [],
+    "work": {
+      "main_commit": {
+        "count": 596,
+        "meanMs": 0.2,
+        "maxMs": 3.7,
+        "over20": 0
+      },
+      "main_write_group": {
+        "count": 596,
+        "meanMs": 2.8,
+        "maxMs": 78.5,
+        "over20": 3
+      },
+      "sql_select_other": {
+        "count": 14,
+        "meanMs": 0.1,
+        "maxMs": 0.2,
+        "over20": 0
+      },
+      "sql_insert_other": {
+        "count": 57,
+        "meanMs": 0.1,
+        "maxMs": 0.5,
+        "over20": 0
+      },
+      "sql_select_monsters": {
+        "count": 1,
+        "meanMs": 0,
+        "maxMs": 0,
+        "over20": 0
+      },
+      "sql_update_world_state": {
+        "count": 1,
+        "meanMs": 0.1,
+        "maxMs": 0.1,
+        "over20": 0
+      },
+      "sql_select_accounts": {
+        "count": 31,
+        "meanMs": 0.1,
+        "maxMs": 0.2,
+        "over20": 0
+      },
+      "sql_select_auth_sessions": {
+        "count": 99,
+        "meanMs": 0.1,
+        "maxMs": 0.9,
+        "over20": 0
+      },
+      "sql_delete_other": {
+        "count": 2,
+        "meanMs": 0.2,
+        "maxMs": 0.3,
+        "over20": 0
+      },
+      "gc_minor": {
+        "count": 19,
+        "meanMs": 5.2,
+        "maxMs": 8,
+        "over20": 0
+      },
+      "sql_select_world_state": {
+        "count": 10,
+        "meanMs": 0.1,
+        "maxMs": 0.2,
+        "over20": 0
+      },
+      "sql_insert_messages": {
+        "count": 10,
+        "meanMs": 0.2,
+        "maxMs": 0.5,
+        "over20": 0
+      },
+      "sql_select_players": {
+        "count": 10,
+        "meanMs": 0.1,
+        "maxMs": 0.2,
+        "over20": 0
+      }
+    }
+  },
+  "existingCacheDiagnostics": {
+    "scope": "process-lifetime-including-startup; read after measurement only",
+    "checkpoints": {
+      "batches": 144,
+      "rows": 405,
+      "fallbacks": 0
+    },
+    "bootPool": {
+      "compiled": 134,
+      "compileFailures": 0,
+      "unsupported": 0,
+      "hits": 34,
+      "misses": 1544,
+      "lookups": 1578,
+      "remaining": 8,
+      "retainedRemaining": 8,
+      "lookupExpired": true,
+      "sqlBytes": 60458,
+      "compileMs": 98.17201300000033,
+      "invalidated": null
+    },
+    "prepared": {
+      "entries": 103,
+      "sqlBytes": 28092,
+      "hits": 18268,
+      "misses": 145,
+      "reentrantMisses": 0,
+      "invalidations": 871
+    }
+  },
+  "instrumentation": {
+    "execArgv": [
+      "--no-lazy"
+    ],
+    "allocationSampling": false,
+    "cpuSampling": false,
+    "sqlTiming": false,
+    "cpuClockOriginMs": null,
+    "readerBatchDisabledForDiagnostic": false,
+    "pid": 9925
+  },
+  "sqlDiagnostic": [],
+  "host": {
+    "before": {
+      "cpu.stat": null,
+      "cpu.pressure": null,
+      "memory.events": null,
+      "memory.pressure": null,
+      "io.pressure": null,
+      "procCpu": "cpu  215331 0 28781 838892 6158 0 14452 6984 0 0"
+    },
+    "after": {
+      "cpu.stat": null,
+      "cpu.pressure": null,
+      "memory.events": null,
+      "memory.pressure": null,
+      "io.pressure": null,
+      "procCpu": "cpu  216784 0 28896 845054 6181 0 14682 7080 0 0"
+    }
+  },
+  "mainGc": [
+    {
+      "atMs": 1794489550053.139,
+      "ms": 7.397958000190556,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489551107.1646,
+      "ms": 8.01019599987194,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489552752.4268,
+      "ms": 4.621094999834895,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489553284.7476,
+      "ms": 5.003591999877244,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489554323.5542,
+      "ms": 3.954803999979049,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489555227.861,
+      "ms": 5.37549200002104,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489556225.9468,
+      "ms": 3.8678250000812113,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489558335.4722,
+      "ms": 5.048758999910206,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489560022.6577,
+      "ms": 4.4890200002118945,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489561908.502,
+      "ms": 6.274466999806464,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489564402.2861,
+      "ms": 6.814511999953538,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489565476.7646,
+      "ms": 4.8262869999744,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489567215.0913,
+      "ms": 3.8301919996738434,
+      "kind": 1
+    },
+    {
+      "atMs": 1794489569387.7632,
+      "ms": 3.4469240000471473,
+      "kind": 1
+    }
+  ],
+  "writerStalls": {
+    "slowCommits": 0,
+    "lastCommitMs": 0.26,
+    "maxCommitMs": 2.67,
+    "lastSlowAtMs": null,
+    "checkpoint": {
+      "ready": true,
+      "fallback": null,
+      "pendingPages": 0
+    },
+    "queuedWrites": 0
+  },
+  "botDriver": {
+    "cpuMicros": {
+      "user": 718090,
+      "system": 68901
+    },
+    "durationMs": 20028.595894000002,
+    "maxRssBytes": 156184576,
+    "pid": 9988
+  },
+  "endSettlement": {
+    "passed": true,
+    "completed": true,
+    "timeoutMs": 10000,
+    "durationMs": 20.66312199999811,
+    "before": [
+      {
+        "actor": 0,
+        "id": "real-1",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 1,
+        "id": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 2,
+        "id": "8aca667c-3980-46e4-88d2-668e50801ec9",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 3,
+        "id": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 4,
+        "id": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 5,
+        "id": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 1,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 6,
+        "id": "f642fe30-e7a9-4126-a1b1-04e7f619d28d",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 7,
+        "id": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 1,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 8,
+        "id": "294a14c6-ac34-487e-a187-f2a8458b7c05",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 9,
+        "id": "23df7f02-d437-4c0d-9c0b-4d30a88cd8e4",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      }
+    ],
+    "after": [
+      {
+        "actor": 0,
+        "id": "real-1",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 1,
+        "id": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 2,
+        "id": "8aca667c-3980-46e4-88d2-668e50801ec9",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 3,
+        "id": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 4,
+        "id": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 5,
+        "id": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 6,
+        "id": "f642fe30-e7a9-4126-a1b1-04e7f619d28d",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 7,
+        "id": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 8,
+        "id": "294a14c6-ac34-487e-a187-f2a8458b7c05",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      },
+      {
+        "actor": 9,
+        "id": "23df7f02-d437-4c0d-9c0b-4d30a88cd8e4",
+        "ready": true,
+        "busy": false,
+        "queued": 0,
+        "active": 0,
+        "pendingTargets": [],
+        "claimTargets": []
+      }
+    ],
+    "reconciledTargets": [],
+    "claims": []
+  },
+  "equipmentAfter": [
+    {
+      "actor": 0,
+      "id": "real-1",
+      "zone": "forest",
+      "weaponId": "population-equipped-0-weapon",
+      "kills": 2
+    },
+    {
+      "actor": 1,
+      "id": "7fc179a4-6b35-4caf-b9a4-d9c02ab67d87",
+      "zone": "forest",
+      "weaponId": "population-equipped-1-weapon",
+      "kills": 3
+    },
+    {
+      "actor": 2,
+      "id": "8aca667c-3980-46e4-88d2-668e50801ec9",
+      "zone": "forest",
+      "weaponId": "population-equipped-2-weapon",
+      "kills": 2
+    },
+    {
+      "actor": 3,
+      "id": "2fb4dc30-3516-4db8-b38b-270de96705f3",
+      "zone": "forest",
+      "weaponId": "population-equipped-3-weapon",
+      "kills": 2
+    },
+    {
+      "actor": 4,
+      "id": "9768c36c-0d7b-465b-abc6-e2461877bb4b",
+      "zone": "tower",
+      "weaponId": "population-equipped-4-weapon",
+      "kills": 16
+    },
+    {
+      "actor": 5,
+      "id": "af20b6cf-1ee8-4a82-a78d-82f541175cd7",
+      "zone": "tower",
+      "weaponId": "population-equipped-5-weapon",
+      "kills": 15
+    },
+    {
+      "actor": 6,
+      "id": "f642fe30-e7a9-4126-a1b1-04e7f619d28d",
+      "zone": "tower",
+      "weaponId": "population-equipped-6-weapon",
+      "kills": 12
+    },
+    {
+      "actor": 7,
+      "id": "8126096f-e96f-4e4b-8bb7-694c4c824782",
+      "zone": "tower",
+      "weaponId": "population-equipped-7-weapon",
+      "kills": 15
+    },
+    {
+      "actor": 8,
+      "id": "294a14c6-ac34-487e-a187-f2a8458b7c05",
+      "zone": "solo",
+      "weaponId": "population-equipped-8-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 9,
+      "id": "23df7f02-d437-4c0d-9c0b-4d30a88cd8e4",
+      "zone": "solo",
+      "weaponId": "population-equipped-9-weapon",
+      "kills": 0
+    }
+  ],
+  "equipmentKills": 67,
+  "soloRows": [
+    {
+      "id": "36ad3a68-eb9f-444e-ac38-392ae065b64c",
+      "status": "active",
+      "stage": 1,
+      "message": "Kül Geçidi · Muhafızları yen ve geçide ilerle.",
+      "deadline": 1794491339423,
+      "members": [
+        {
+          "actor": 8,
+          "hp": 2293.2,
+          "maxHp": 2332.2
+        }
+      ]
+    },
+    {
+      "id": "4f6710d4-acfc-49bd-aeab-44d2ea2aa8dd",
+      "status": "active",
+      "stage": 1,
+      "message": "Kül Geçidi · Muhafızları yen ve geçide ilerle.",
+      "deadline": 1794491339496,
+      "members": [
+        {
+          "actor": 9,
+          "hp": 1636.2,
+          "maxHp": 1773.2
+        }
+      ]
+    }
+  ],
+  "passed": true,
+  "durationMs": 20043,
+  "counts": {
+    "replies": 224,
+    "soloAttacks": 43,
+    "forestAttacks": 84,
+    "pendingKills": 8,
+    "towerAttacks": 43,
+    "towerKills": 42,
+    "claims": 47,
+    "towerMoves": 219,
+    "http:/api/guild": 10,
+    "skill1": 12,
+    "chat": 10,
+    "skill2": 13,
+    "potions": 7,
+    "skill3": 8,
+    "http:/api/quests": 10
+  },
+  "provisionalOutcomes": [
+    {
+      "actor": 0,
+      "intentId": "1e9cd4a6-41d9-4a78-a7ff-5d7966926584",
+      "id": "curuk-pop-forest-1-5",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 0,
+      "intentId": "00b7dbe2-3f55-4f2a-a97d-a9fca7d90f53",
+      "id": "curuk-pop-forest-1-6",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 1,
+      "intentId": "968f8bdc-76c0-4c35-940c-cc95b516ec85",
+      "id": "curuk-pop-forest-2-5",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 1,
+      "intentId": "5687df77-f003-4caf-95bb-e95d7c08792f",
+      "id": "curuk-pop-forest-2-6",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 1,
+      "intentId": "831ae3c2-f5a2-4bcb-84ba-dbd725f37178",
+      "id": "curuk-pop-forest-2-5",
+      "spawnRound": 3,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 2,
+      "intentId": "f8107ebc-bc4e-4cff-92ad-0a5ec8b1d43f",
+      "id": "curuk-pop-forest-3-5",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 2,
+      "intentId": "36025256-7696-4ec7-847d-157a3820d118",
+      "id": "curuk-pop-forest-3-6",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 3,
+      "intentId": "e736a4cc-6e35-42e7-a674-91ba0704712d",
+      "id": "curuk-pop-forest-4-5",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    },
+    {
+      "actor": 3,
+      "intentId": "af229473-515a-4a5a-a46e-9a641cc542ae",
+      "id": "curuk-pop-forest-4-6",
+      "spawnRound": 2,
+      "type": "monster_result",
+      "killed": true,
+      "hp": 0
+    }
+  ],
+  "errors": [],
+  "faults": [],
+  "actors": [
+    {
+      "actor": 0,
+      "zone": "forest",
+      "channel": 1,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 21,
+      "acks": 24,
+      "latencyP95Ms": 73.83747099999891,
+      "maxLatencyMs": 76.2073249999994,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 1,
+      "zone": "forest",
+      "channel": 2,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 21,
+      "acks": 24,
+      "latencyP95Ms": 89.74932599999738,
+      "maxLatencyMs": 91.27149499999723,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 2,
+      "zone": "forest",
+      "channel": 3,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 21,
+      "acks": 24,
+      "latencyP95Ms": 87.01160199999867,
+      "maxLatencyMs": 94.83600300000035,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 3,
+      "zone": "forest",
+      "channel": 4,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 21,
+      "acks": 24,
+      "latencyP95Ms": 92.3284509999994,
+      "maxLatencyMs": 102.78303099999903,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 4,
+      "zone": "tower",
+      "channel": 1,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [
+        1,
+        2
+      ],
+      "currentFloor": 2,
+      "attacks": 11,
+      "acks": 23,
+      "latencyP95Ms": 124.90064899999925,
+      "maxLatencyMs": 127.43191900000056,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 5,
+      "zone": "tower",
+      "channel": 2,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [
+        1,
+        2
+      ],
+      "currentFloor": 2,
+      "attacks": 10,
+      "acks": 21,
+      "latencyP95Ms": 105.66966999999931,
+      "maxLatencyMs": 126.70187200000146,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 6,
+      "zone": "tower",
+      "channel": 3,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [
+        1,
+        2
+      ],
+      "currentFloor": 2,
+      "attacks": 12,
+      "acks": 20,
+      "latencyP95Ms": 103.70271400000092,
+      "maxLatencyMs": 105.16153500000291,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 7,
+      "zone": "tower",
+      "channel": 4,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [
+        1,
+        2
+      ],
+      "currentFloor": 2,
+      "attacks": 10,
+      "acks": 21,
+      "latencyP95Ms": 133.42053099999976,
+      "maxLatencyMs": 140.03736599999866,
+      "soloHistory": [],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 8,
+      "zone": "solo",
+      "channel": 1,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 22,
+      "acks": 22,
+      "latencyP95Ms": 45.05295099999785,
+      "maxLatencyMs": 50.35103600000002,
+      "soloStage": 1,
+      "soloHistory": [
+        {
+          "at": 1794489539606,
+          "status": "active",
+          "stage": 1,
+          "hp": 2332.2,
+          "maxHp": 2332.2,
+          "message": "Kül Geçidi · Muhafızları yen ve geçide ilerle."
+        }
+      ],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    },
+    {
+      "actor": 9,
+      "zone": "solo",
+      "channel": 2,
+      "ready": true,
+      "queued": 0,
+      "active": 0,
+      "busy": false,
+      "floors": [],
+      "attacks": 21,
+      "acks": 21,
+      "latencyP95Ms": 53.23038599999927,
+      "maxLatencyMs": 54.51445199999944,
+      "soloStage": 1,
+      "soloHistory": [
+        {
+          "at": 1794489539606,
+          "status": "active",
+          "stage": 1,
+          "hp": 1773.2,
+          "maxHp": 1773.2,
+          "message": "Kül Geçidi · Muhafızları yen ve geçide ilerle."
+        }
+      ],
+      "pendingKills": 0,
+      "pendingClaims": 0,
+      "pendingTargets": [],
+      "claimTargets": []
+    }
+  ],
+  "summary": {
+    "tickP95Ms": 5.387662999997701,
+    "tickP99Ms": 7.966219000001729,
+    "maxTickMs": 10.919780000000173,
+    "mainMaxPauseMs": 14.221311,
+    "mainPausesOver50Ms": 0,
+    "channelPausesOver50Ms": 0,
+    "maxChannelPauseMs": 13.721599,
+    "mainElu": 0.12061581078013603,
+    "mainMaxRssBytes": 532234240,
+    "resources": {
+      "cpuBudget": 4,
+      "totalCpuFraction": 0.1982108022355926,
+      "maxRssBytes": 1394601984
+    }
+  }
+}
