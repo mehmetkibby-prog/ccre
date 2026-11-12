@@ -1,0 +1,250 @@
+[
+  {
+    "atUtc": "2026-11-12T20:19:50.121000+00:00",
+    "sourceUrl": "https://r1.coreoflife.net/api/vds-health",
+    "ready": true,
+    "version": "R110_HANDOFF1",
+    "sameProcessAsFirst": true,
+    "channels": [
+      {
+        "channel": 1,
+        "ready": true,
+        "online": 0,
+        "capacity": 25
+      },
+      {
+        "channel": 2,
+        "ready": true,
+        "online": 1,
+        "capacity": 25
+      },
+      {
+        "channel": 3,
+        "ready": true,
+        "online": 5,
+        "capacity": 25
+      },
+      {
+        "channel": 4,
+        "ready": true,
+        "online": 8,
+        "capacity": 25
+      }
+    ],
+    "diagnostics": {
+      "protocol": "runtime-diagnostics-r80-v1",
+      "available": true,
+      "measuredAtMs": 1794514790121,
+      "scope": "server-process-and-durable-write-wait-not-player-ping",
+      "main": {
+        "status": "live",
+        "sampleSeconds": 2,
+        "sampledAtMs": 1794514789220,
+        "eventLoopBusyPercent": 40.91,
+        "eventLoopDelayMs": 23.9,
+        "cpu": {
+          "scope": "process-all-threads-one-core-is-100-percent",
+          "windowSeconds": 300,
+          "resolutionPercentPoints": 10,
+          "sampleCount": 150,
+          "meanPercent": 100,
+          "maxPercent": 190
+        }
+      },
+      "writerLane": {
+        "protocol": "single-writer-lane-v1",
+        "externalBusy": false,
+        "externalAgeMs": null,
+        "queuedWrites": 0,
+        "queuedExternal": 0,
+        "oldestQueuedAgeMs": null,
+        "nativeWrites": 0,
+        "completedExternal": 12527,
+        "maxExternalMs": 952.58
+      },
+      "walSync": {
+        "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+        "ready": true,
+        "fallback": false,
+        "running": false,
+        "queuedForNextFlush": 0,
+        "pumpedCallsTotal": 443979,
+        "syncs": 438259,
+        "meanMs": 1.73,
+        "maxMs": 103.46,
+        "totalMs": 758943,
+        "errors": 0,
+        "reopened": 0
+      },
+      "mainCommits": {
+        "scope": "main-connection-SQLite-COMMIT-wall-time",
+        "slowCommits": 0,
+        "lastCommitMs": 0.47,
+        "maxCommitMs": 26.64,
+        "lastSlowAtMs": null
+      },
+      "rewardWorker": {
+        "scope": "completed-worker-jobs-not-current-job-latency",
+        "pending": false,
+        "jobs": 11672,
+        "fallbacks": 847,
+        "replays": 0,
+        "rollbacks": 0,
+        "restarts": 0,
+        "maxWorkerMs": 136.59,
+        "maxPreflightMs": 114.22,
+        "maxReadyWaitMs": 949.96
+      }
+    },
+    "checkpoint": {
+      "ready": true,
+      "fallback": null,
+      "running": false,
+      "pendingPages": 0,
+      "retryR80": {
+        "state": "ready",
+        "attempts": 0,
+        "consecutiveAttempts": 0,
+        "maxAttempts": 5,
+        "nextRetryAtMs": null,
+        "recoveries": 0,
+        "lastFallback": null,
+        "lastRecoveredAtMs": null,
+        "retryAllowed": false
+      },
+      "recoveryProbe": {
+        "active": false,
+        "attempts": 0,
+        "healthyPasses": 0,
+        "requiredHealthyPasses": 2,
+        "nextProbeAtMs": null
+      },
+      "sqliteVersion": "3.53.4",
+      "nodeVersion": "v22.23.4"
+    }
+  },
+  {
+    "atUtc": "2026-11-12T20:21:15.578000+00:00",
+    "sourceUrl": "https://r1.coreoflife.net/api/vds-health",
+    "ready": true,
+    "version": "R110_HANDOFF1",
+    "sameProcessAsFirst": true,
+    "channels": [
+      {
+        "channel": 1,
+        "ready": true,
+        "online": 0,
+        "capacity": 25
+      },
+      {
+        "channel": 2,
+        "ready": true,
+        "online": 2,
+        "capacity": 25
+      },
+      {
+        "channel": 3,
+        "ready": true,
+        "online": 4,
+        "capacity": 25
+      },
+      {
+        "channel": 4,
+        "ready": true,
+        "online": 8,
+        "capacity": 25
+      }
+    ],
+    "diagnostics": {
+      "protocol": "runtime-diagnostics-r80-v1",
+      "available": true,
+      "measuredAtMs": 1794514875578,
+      "scope": "server-process-and-durable-write-wait-not-player-ping",
+      "main": {
+        "status": "live",
+        "sampleSeconds": 2,
+        "sampledAtMs": 1794514875251,
+        "eventLoopBusyPercent": 28.02,
+        "eventLoopDelayMs": 7.9,
+        "cpu": {
+          "scope": "process-all-threads-one-core-is-100-percent",
+          "windowSeconds": 300,
+          "resolutionPercentPoints": 10,
+          "sampleCount": 150,
+          "meanPercent": 100,
+          "maxPercent": 190
+        }
+      },
+      "writerLane": {
+        "protocol": "single-writer-lane-v1",
+        "externalBusy": false,
+        "externalAgeMs": null,
+        "queuedWrites": 0,
+        "queuedExternal": 0,
+        "oldestQueuedAgeMs": null,
+        "nativeWrites": 0,
+        "completedExternal": 12674,
+        "maxExternalMs": 952.58
+      },
+      "walSync": {
+        "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+        "ready": true,
+        "fallback": false,
+        "running": false,
+        "queuedForNextFlush": 0,
+        "pumpedCallsTotal": 446433,
+        "syncs": 440670,
+        "meanMs": 1.73,
+        "maxMs": 103.46,
+        "totalMs": 763654,
+        "errors": 0,
+        "reopened": 0
+      },
+      "mainCommits": {
+        "scope": "main-connection-SQLite-COMMIT-wall-time",
+        "slowCommits": 0,
+        "lastCommitMs": 0.49,
+        "maxCommitMs": 26.64,
+        "lastSlowAtMs": null
+      },
+      "rewardWorker": {
+        "scope": "completed-worker-jobs-not-current-job-latency",
+        "pending": false,
+        "jobs": 11819,
+        "fallbacks": 847,
+        "replays": 0,
+        "rollbacks": 0,
+        "restarts": 0,
+        "maxWorkerMs": 136.59,
+        "maxPreflightMs": 114.22,
+        "maxReadyWaitMs": 949.96
+      }
+    },
+    "checkpoint": {
+      "ready": true,
+      "fallback": null,
+      "running": false,
+      "pendingPages": 0,
+      "retryR80": {
+        "state": "ready",
+        "attempts": 0,
+        "consecutiveAttempts": 0,
+        "maxAttempts": 5,
+        "nextRetryAtMs": null,
+        "recoveries": 0,
+        "lastFallback": null,
+        "lastRecoveredAtMs": null,
+        "retryAllowed": false
+      },
+      "recoveryProbe": {
+        "active": false,
+        "attempts": 0,
+        "healthyPasses": 0,
+        "requiredHealthyPasses": 2,
+        "nextProbeAtMs": null
+      },
+      "sqliteVersion": "3.53.4",
+      "nodeVersion": "v22.23.4"
+    }
+  }
+]
