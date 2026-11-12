@@ -99,6 +99,7 @@ try{
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
  if(census)report.sqlCensus=census.report();
+ report.wsHandoff=s.supervisor.handoffStatsR110??null;if(report.wsHandoff?.sent)report.webSocketTransport='production-style-socket-handoff';
  report.channelProfiles=[];
  for(const n of profileChannels)report.channelProfiles.push({channel:n,...await s.core.processes.get(n).control.request('benchmark_profile',{operation:'end',runId})});
  // Read the existing bounded diagnostic recorder after the measured window.

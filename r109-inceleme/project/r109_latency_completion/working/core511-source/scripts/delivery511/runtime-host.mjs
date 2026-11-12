@@ -44,7 +44,7 @@ export async function startRuntime(config){
   if(config.realm.id==='r2'&&config.environment?.CORE101_REALM_ID==='r2'){academyVoice=startGuildVoiceProxy(g.__colGuildVoice,{port:globalThis.__colRealm.realm.ports.voice,upstreamPort:Number(config.environment?.CORE_VOICE_UPSTREAM_PORT??7880)});if(!academyVoice.server.listening)await once(academyVoice.server,'listening');}
   panel.attachHttp(host.nativeHttpServer.server);
   attachAdminEntry(host.nativeHttpServer.server,{runtime:globalThis.__colRealm,launch:globalThis.__colLaunch});
-  ingress=await startIngress({config,health:()=>host.nativeHttp.health(),acceptsPlay:()=>panel.acceptsPlay(),gateStatus:()=>panel.playGateStatus()});
+  ingress=await startIngress({config,health:()=>host.nativeHttp.health(),acceptsPlay:()=>panel.acceptsPlay(),gateStatus:()=>panel.playGateStatus(),handoff:(channel,socket,request)=>supervisor.handoffWebSocket(channel,socket,request)});
   return {host,core,ingress,close:async()=>{academyVoice?.close();try{await ingress.close();await panel.close();}finally{try{await host.close();}finally{loadlab?.close();}}}};
  }catch(e){academyVoice?.close();await ingress?.close().catch(()=>{});await panel?.close().catch(()=>{});await host.close().catch(()=>{});loadlab?.close();throw e;}
 }

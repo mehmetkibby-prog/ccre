@@ -5,6 +5,8 @@ import {once} from 'node:events';
 import {randomUUID} from 'node:crypto';
 import assert from 'node:assert/strict';
 const {ProcessStream}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/process-stream.mjs');
+// An R109 tree has no handoff module: the gateway then keeps its TCP proxy.
+const {wsHandoffR110}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/r110-options.mjs').catch(()=>({wsHandoffR110:false}));
 export async function remoteBots(scope,s,actors){
  const bridges=new Set(),sockets=new Set();let child,serial=0;const waiting=new Map();
  const server=http.createServer(async(req,res)=>{try{
@@ -15,6 +17,11 @@ export async function remoteBots(scope,s,actors){
  server.on('connection',socket=>{sockets.add(socket);socket.on('close',()=>sockets.delete(socket));});
  server.on('upgrade',async(req,socket,head)=>{try{
   const channel=Number(req.url.match(/^\/game\/channel\/([1-4])$/)?.[1]),row=s.supervisor.rows.get(channel);assert(row);
+  // Mirror the production ingress: hand the socket to the channel process.
+  if(wsHandoffR110&&s.testListeners?.[channel]&&s.supervisor.handoffWebSocket){
+   const a=actors[Number(req.headers['x-test-actor'])];assert(a,'known synthetic socket actor');const h={...req.headers,'x-real-ip':'198.51.100.'+(a.n+1),connection:'Upgrade',upgrade:'websocket'};delete h['x-test-actor'];
+   if(s.supervisor.handoffWebSocket(channel,socket,{url:req.url,headers:h,head}))return;
+  }
   const listener=s.testListeners?.[channel],stream='validation:'+randomUUID();
   const bridge=listener?net.connect({...listener,noDelay:true}):new ProcessStream(row.child,{stream});bridges.add(bridge);bridge.on('close',()=>bridges.delete(bridge));
   if(listener)await once(bridge,'connect');else await new Promise((resolve,reject)=>row.child.send({type:'validation-client',stream},e=>e?reject(e):resolve()));

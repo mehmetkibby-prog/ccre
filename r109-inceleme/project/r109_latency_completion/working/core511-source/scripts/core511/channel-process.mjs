@@ -14,6 +14,7 @@ import {demand,validChannel} from './contract.mjs';
 import {installRegistry} from './generated/cold-world-rules.mjs';
 import {startRuntimePerformance} from './generated/profiler-rules.mjs';
 import {assertInheritedHostLock} from './host-lock-protocol.mjs';
+import net from 'node:net';
 
 // The parent is the only source of bootstrap data and control frames. No
 // credentials are put in argv, environment variables, files or logs.
@@ -50,6 +51,14 @@ export async function runChannelProcess({afterCreate=null}={}){
   if(config.webSocketModule){
    demand(path.isAbsolute(config.webSocketModule),'channel_websocket_module');
    const {WebSocketServer}=await import(pathToFileURL(config.webSocketModule).href),endpoint=runtime.endpoint(WebSocketServer);
+   // R110: client sockets handed over by the realm ingress (parent IPC only).
+   // Always accepted here; CORE511_R110_WS_HANDOFF only decides whether the
+   // realm sends them, so a flag mismatch can never strand a client socket.
+   process.on('message',(message,handle)=>{
+    if(message?.type!=='kernel511-ws-handoff')return;
+    if(!(handle instanceof net.Socket)){try{handle?.close?.();}catch{}return;}
+    try{endpoint.adopt(handle,message);}catch{handle.destroy();}
+   });
    if(config.listen){
     demand(config.listen.host==='127.0.0.1'&&Number.isInteger(config.listen.port)&&config.listen.port>=1024&&config.listen.port<=65535,'channel_loopback_listener');
     await new Promise((resolve,reject)=>{endpoint.server.once('error',reject);endpoint.server.listen(config.listen.port,config.listen.host,()=>{endpoint.server.off('error',reject);resolve();});});

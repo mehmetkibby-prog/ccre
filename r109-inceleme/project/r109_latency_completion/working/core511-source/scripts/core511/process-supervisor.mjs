@@ -26,6 +26,26 @@ export class ChannelProcessSupervisor {
   demand(!core.channelSupervisor,'channel_supervisor_exists');core.channelSupervisor=this;const prior=core.onFault;this.priorFault=prior;this.faultHandler=issue=>{prior(issue);if(!issue.authentication)this.requestRecovery(issue);};core.onFault=this.faultHandler;
  }
  serial(work){const next=this.queue.then(work);this.queue=next.catch(()=>{});return next;}
+ // R110: give an ingress-validated WebSocket upgrade to its channel process.
+ // Returns false (caller keeps the original TCP proxy) unless the channel is
+ // running and connected and this process holds no unread client bytes (a
+ // compliant client sends nothing before the 101 response).
+ // The handle must stop reading HERE before the transfer: a paused net.Socket
+ // still reads into its buffer, and once sent Node discards this side's reads
+ // (handle.onread=nop) until the child's ACK closes it. Unread bytes stay in
+ // the kernel for the channel process. socket.server is cleared so the
+ // ingress server does not track a socket owned by another process;
+ // destroying the handle-less parent object only updates its connection count.
+ handoffWebSocket(channel,socket,{url,headers,head}={}){
+  const row=this.rows.get(channel),handle=socket?._handle,stats=this.handoffStatsR110??={sent:0,declined:0,failed:0};
+  if(this.closing||!row||!row.ready||row.exited||row.expected||row.state!=='running'||!row.child.connected||!handle||socket.destroyed||socket.readableLength||typeof handle.readStop!=='function'){stats.declined++;return false;}
+  socket.pause();
+  handle.reading=false;if(handle.readStop()!==0){stats.failed++;socket.destroy();return true;}
+  socket.server=null;
+  try{row.child.send({type:'kernel511-ws-handoff',url,headers,head:head?.length?head:null},socket,{keepOpen:false},error=>{if(error)stats.failed++;socket.destroy();});stats.sent++;}
+  catch{stats.failed++;socket.destroy();}
+  return true;
+ }
  start(){return this.serial(async()=>{demand(!this.closing&&this.rows.size===0,'supervisor_already_started');try{for(const channel of [1,2,3,4])await this.boot(channel);await this.core.nativeMaintenance?.activate();if(this.core.sharedWorld)await this.core.sharedWorld.startJobs();return this.snapshot();}catch(error){await Promise.all([...this.rows.values()].map(row=>this.terminate(row,{cause:recoveryCause(this.core,{error},'channel_start')})));this.rows.clear();throw error;}});}
  async boot(channel){
   demand(validChannel(channel)&&!this.closing&&!this.rows.has(channel),'supervisor_channel_exists');

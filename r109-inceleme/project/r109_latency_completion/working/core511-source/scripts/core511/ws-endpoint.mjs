@@ -43,7 +43,17 @@ export function createChannelWebSocketEndpoint({WebSocketServer,channel,boot,ori
  // Dungeon AI's native connected-player window is ten seconds. Five-second
  // pings maintain it without DB heartbeats; the session timeout stays 40 s.
  const heartbeat=setInterval(()=>connections.heartbeat(),5000);heartbeat.unref();
- return {server,webSockets,pending,close(){
+ // R110: the realm ingress has already checked the proxy token, host, client IP
+ // header and path, then handed the accepted client socket to this process. The
+ // exact same upgrade handler runs: method/path/query/Origin/loopback peer,
+ // X-Real-IP, pending bound, coordinator IP budget and ws handshake. The request
+ // object carries the headers the ingress would have written on its TCP hop.
+ const adopt=(socket,{url,headers,head}={})=>{
+  if(typeof url!=='string'||url.length>2048||!headers||typeof headers!=='object'||Array.isArray(headers)){socket.destroy();return;}
+  const request={method:'GET',url,headers,httpVersion:'1.1',httpVersionMajor:1,httpVersionMinor:1,socket};
+  server.emit('upgrade',request,socket,head?Buffer.from(head):Buffer.alloc(0));
+ };
+ return {server,webSockets,pending,adopt,close(){
   closing=true;clearInterval(heartbeat);for(const socket of pending)socket.destroy();connections.close();
   for(const socket of webSockets.clients)socket.terminate();webSockets.close();server.close();
  }};

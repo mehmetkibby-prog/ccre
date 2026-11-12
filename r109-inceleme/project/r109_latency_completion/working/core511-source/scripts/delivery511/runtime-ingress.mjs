@@ -5,8 +5,9 @@ import http from 'node:http';
 import net from 'node:net';
 import {timingSafeEqual} from 'node:crypto';
 import {proxyGameRequest} from '../../../native510-bb3a6cc689c6/vds-server/src/game-proxy.mjs';
+import {wsHandoffR110} from '../core511/r110-options.mjs';
 const privatePath=p=>/^\/(?:internal(?:\/|$)|api\/(?:realm\/(?:internal|maintenance)(?:\/|$)|loadtest(?:\/|$)))/.test(p);
-export async function startIngress({config,health,acceptsPlay=()=>true,gateStatus=null}){
+export async function startIngress({config,health,acceptsPlay=()=>true,gateStatus=null,handoff=null}){
  const d=config.delivery511,sockets=new Set();let closing=false;
  const gateReasons=new Set(['closing','control_error','opening_pending','world_recovery','world_unavailable','jobs_paused','jobs_starting']);
  let lastGateLog=0;
@@ -42,6 +43,9 @@ export async function startIngress({config,health,acceptsPlay=()=>true,gateStatu
   try{r=authorized(req);const m=/^\/game\/channel\/([1-4])$/.exec(r.pathname);if(!m||closing||String(req.headers.upgrade).toLowerCase()!=='websocket')throw Error('websocket_path');channel=Number(m[1]);}
   catch{socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');return;}
   const state=gate();if(!state.allowed){logGate(state,'websocket');socket.end('HTTP/1.1 503 Service Unavailable\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');return;}
+  // R110: after the same proxy/identity/path/gate checks, hand the socket to
+  // the channel process so player traffic never waits on this writer process.
+  if(handoff&&wsHandoffR110){try{if(handoff(channel,socket,{url:r.target,headers:{...r.headers,connection:'Upgrade',upgrade:'websocket'},head}))return;}catch{}}
   const upstream=net.connect({host:'127.0.0.1',port:d.channelPorts[channel-1],noDelay:true});sockets.add(upstream);upstream.once('close',()=>sockets.delete(upstream));
   const close=()=>{socket.destroy();upstream.destroy();};socket.on('error',close);upstream.on('error',close);socket.once('close',()=>upstream.destroy());upstream.once('close',()=>socket.destroy());
   upstream.once('connect',()=>{const headers={...r.headers,connection:'Upgrade',upgrade:'websocket'};upstream.write(`GET ${r.target} HTTP/1.1\r\n`+Object.entries(headers).map(([k,v])=>`${k}: ${v}\r\n`).join('')+'\r\n');if(head.length)upstream.write(head);socket.pipe(upstream).pipe(socket);});
