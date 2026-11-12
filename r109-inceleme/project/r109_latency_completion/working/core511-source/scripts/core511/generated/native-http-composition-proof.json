@@ -3,7 +3,7 @@
   "source": "dist-vds/server/index.js",
   "clientAssetNamespace": "core511-1025c65a35480d96",
   "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
-  "generatedSha256": "cf2c5353525b600ec52641953a8428c7b13bedb7bb1d3d0915ea8f8c7396dc59",
+  "generatedSha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056",
   "patches": [
     {
       "name": "patchNativeAdmin",
@@ -2014,5 +2014,10 @@
   "autoIpLimit": {
     "version": "R102_AUTO_IP1",
     "scope": "Server-side shared accounts authority; world auto and native island control; existing error alert scrolls into view; no schema change."
+  },
+  "r111ChatContinuity": {
+    "sourceSha256": "cf2c5353525b600ec52641953a8428c7b13bedb7bb1d3d0915ea8f8c7396dc59",
+    "callSiteReplacements": 1,
+    "scope": "Plain world/trade chat uses the bound continuity gate; all native filtering, SQL and notification code is unchanged."
   }
 }
