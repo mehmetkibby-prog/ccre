@@ -82,7 +82,7 @@ function genVillage(l: MapLayout, rng: Rng) {
       l.ground[idx(l, x, y)] = G.COBBLE; protect[idx(l, x, y)] = 1;
     }
   };
-  road(cx - 1, 3, cx + 1, cy); road(cx - 1, cy, cx + 1, h - 4); road(3, cy - 1, cx, cy + 1); road(cx, cy - 1, w - 4, cy + 1);
+  road(cx - 1, 3, cx + 1, cy); road(cx - 1, cy, cx + 1, Math.min(h - 4, 58)); road(3, cy - 1, cx, cy + 1); road(cx, cy - 1, w - 4, cy + 1);
   // Pazar Meydanı: oyuncuların tezgâh kurduğu geniş taş meydan (doğu yolu üstünde)
   const mk = l.def.market;
   if (mk) {
@@ -144,6 +144,49 @@ function genVillage(l: MapLayout, rng: Rng) {
     l.props.push({ k: 'lamp', x: x * TILE, y: y * TILE, v: 0, s: 1 });
   }
   for (const [x, y] of [[25, 12], [31, 12]] as const) l.props.push({ k: 'banner', x: x * TILE, y: y * TILE, v: 0, s: 1 });
+  // ── Tilki Korusu (güney): köyden çitle ayrılan, patikalı sık koru ──
+  const GY = 60;
+  if (h > GY + 10) {
+    for (let y = GY; y < h; y++) for (let x = 0; x < w; x++) {
+      const n = smoothNoise(x, y, 5, 811);
+      l.ground[idx(l, x, y)] = n > 0.45 ? G.LUSH : G.GRASS;
+    }
+    // giriş: köy yolu çitteki kapıdan patikaya döner
+    for (const [x0, y0, x1, y1] of [[cx, 58, cx, h - 7], [cx, 64, 12, 74], [cx, 66, 52, 76], [52, 76, 74, 68], [cx, 72, 40, 81]] as const) carvePath(l, rng, x0, y0, x1, y1, 1, G.DIRT, protect);
+    for (let x = 4; x < w - 4; x++) {
+      if (Math.abs(x - cx) <= 2) continue;
+      const i = idx(l, x, GY - 1);
+      if (l.blocked[i]) continue;
+      l.props.push({ k: 'fence', x: tc(x), y: tc(GY - 1), v: 0, s: 1 }); l.blocked[i] = 1;
+    }
+    for (const sx of [-3, 3]) l.props.push({ k: 'lamp', x: tc(cx + sx), y: tc(GY - 1), v: 0, s: 1 });
+    l.props.push({ k: 'banner', x: tc(cx - 3), y: tc(GY + 1), v: 0, s: 1 });
+    // ağaç kümeleri (açıklıklar inlere kalır)
+    for (let y = GY + 1; y < h - 3; y++) for (let x = 3; x < w - 3; x++) {
+      const i = idx(l, x, y);
+      if (protect[i] || l.blocked[i]) continue;
+      const dense = smoothNoise(x, y, 6, 1907 + 3);
+      const want = dense > 0.56 ? rng() < 0.6 : rng() < 0.035;
+      if (want && (x + y) % 2 === 0) {
+        l.props.push({ k: rng() < 0.4 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 24, y: tc(y) + (rng() - 0.5) * 18, v: (rng() * 4) | 0, s: 0.95 + rng() * 0.45 });
+        l.blocked[i] = 1;
+      }
+    }
+    // kütük, mantar, kaya, çalı
+    for (let n = 0; n < 170; n++) {
+      const x = 4 + ((rng() * (w - 8)) | 0), y = GY + 1 + ((rng() * (h - GY - 5)) | 0);
+      const i = idx(l, x, y);
+      if (protect[i] || l.blocked[i]) continue;
+      const r = rng();
+      const px = tc(x) + (rng() - 0.5) * 40, py = tc(y) + (rng() - 0.5) * 40;
+      if (r < 0.08 && isFree(l, x, y)) { l.props.push({ k: 'log', x: tc(x), y: tc(y), v: (rng() * 2) | 0, s: 1 }); l.blocked[i] = 1; }
+      else if (r < 0.14 && isFree(l, x, y)) { l.props.push({ k: 'stump', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+      else if (r < 0.2 && isFree(l, x, y)) { l.props.push({ k: 'rock', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.7 + rng() * 0.4 }); l.blocked[i] = 1; }
+      else if (r < 0.32 && isFree(l, x, y)) { l.props.push({ k: 'bush', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+      else if (r < 0.55) l.props.push({ k: 'mushroom', x: px, y: py, v: (rng() * 3) | 0, s: 1 });
+      else l.props.push({ k: rng() < 0.5 ? 'flowers' : 'grasstuft', x: px, y: py, v: (rng() * 5) | 0, s: 1 });
+    }
+  }
   // sınır ağaçları
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
     const edge = Math.min(x, y, w - 1 - x, h - 1 - y);
@@ -173,6 +216,7 @@ function genVillage(l: MapLayout, rng: Rng) {
   // çit
   for (let x = 12; x <= 20; x++) if (!protect[idx(l, x, 39)]) { l.props.push({ k: 'fence', x: tc(x), y: tc(39), v: 0, s: 1 }); l.blocked[idx(l, x, 39)] = 1; }
   l.spawn = { x: tc(cx), y: tc(cy + 3) };
+  if (l.def.spawns.length) placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 
 function genWild(l: MapLayout, rng: Rng) {
@@ -286,6 +330,7 @@ function regionOf(l: MapLayout, x: number, y: number): Region {
 }
 
 const ZONE_NAMES: Record<string, string[]> = {
+  wild_fox: ['Tilki İni', 'Kızıl Kuyruk Yuvası', 'Çalı Dibi', 'Böğürtlen Kovuğu', 'Yaprak Yatağı', 'Kızıl Pınar'],
   shadow_wolf: ['Kurt İni', 'Gölge Sürüsü', 'Uluma Tepesi', 'Kurt Pınarı', 'Kara Pati Yatağı'],
   rot_guard: ['Çürük Kamp', 'Yıkık Nöbet', 'Pas Karakolu', 'Çürük Mezarlık'],
   essence_eater: ['Öz Yuvası', 'Yutan Çukuru', 'Mor Bataklık', 'Öz Kuyusu'],
@@ -324,11 +369,13 @@ function placeSpawns(l: MapLayout, rng: Rng) {
       let cx = -1, cy = -1;
       for (let tries = 0; tries < 900; tries++) {
         const relax = tries > 600; // çok sıkışık haritada bölge koşulunu gevşet
-        const tx = 4 + ((rng() * (l.w - 8)) | 0), ty = 4 + ((rng() * (l.h - 8)) | 0);
+        const A = g.area;
+        const tx = A ? A[0] + ((rng() * (A[2] - A[0])) | 0) : 4 + ((rng() * (l.w - 8)) | 0), ty = A ? A[1] + ((rng() * (A[3] - A[1])) | 0) : 4 + ((rng() * (l.h - 8)) | 0);
         if (!isFree(l, tx, ty)) continue;
+        if (A && (tx - rT < A[0] || ty - rT < A[1] || tx + rT > A[2] || ty + rT > A[3])) continue; // in alanın dışına taşmasın
         const x = tc(tx), y = tc(ty);
         if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 900 + rT * TILE) continue;
-        if (!relax && g.region !== 'any' && regionOf(l, x, y) !== g.region) continue;
+        if (!relax && g.region !== 'any' && !A && regionOf(l, x, y) !== g.region) continue;
         if (l.zones.some((z) => Math.hypot(z.x - x, z.y - y) < z.r + rT * TILE + 2.5 * TILE)) continue;
         // dairenin çoğu yürünebilir olmalı
         let free = 0, all = 0;
@@ -346,6 +393,7 @@ function placeSpawns(l: MapLayout, rng: Rng) {
         const a = rng() * Math.PI * 2, d = (placed === 0 ? 0 : Math.sqrt(rng())) * rT;
         const tx = Math.round(cx + Math.cos(a) * d), ty = Math.round(cy + Math.sin(a) * d);
         if (tx < 2 || ty < 2 || tx >= l.w - 2 || ty >= l.h - 2 || !isFree(l, tx, ty)) continue;
+        if (g.area && (tx < g.area[0] || ty < g.area[1] || tx > g.area[2] || ty > g.area[3])) continue;
         const key = ty * l.w + tx;
         if (taken.has(key) && tries < n * 40) continue; // aynı karoya iki canavar koyma (gerekirse izin ver)
         taken.add(key);

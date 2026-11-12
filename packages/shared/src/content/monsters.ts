@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -19,6 +19,7 @@ export interface MonsterDef {
 }
 
 export const MONSTERS: MonsterDef[] = [
+  { id: 'wild_fox', name: 'Yabani Tilki', art: 'fox', hpBase: 34, hpPerLevel: 12, atkBase: 3, atkPerLevel: 1, def: 0, speed: 200, range: 60, attackMs: 1300, aggroRadius: 220, leash: 600, xpBase: 18, size: 0.8 },
   { id: 'shadow_wolf', name: 'Gölge Kurt', art: 'wolf', hpBase: 60, hpPerLevel: 26, atkBase: 7, atkPerLevel: 2.4, def: 2, speed: 190, range: 70, attackMs: 1400, aggroRadius: 300, leash: 700, xpBase: 14, size: 1 },
   { id: 'rot_guard', name: 'Çürük Muhafız', art: 'rotguard', hpBase: 110, hpPerLevel: 38, atkBase: 9, atkPerLevel: 2.8, def: 5, speed: 130, range: 80, attackMs: 1800, aggroRadius: 260, leash: 650, xpBase: 20, size: 1.15 },
   { id: 'essence_eater', name: 'Öz Yutan', art: 'devourer', hpBase: 80, hpPerLevel: 30, atkBase: 11, atkPerLevel: 3.1, def: 3, speed: 150, range: 260, attackMs: 2000, aggroRadius: 320, leash: 700, xpBase: 18, size: 1 },

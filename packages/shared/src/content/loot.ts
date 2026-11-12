@@ -10,6 +10,17 @@ export interface LootProfile {
 }
 
 export const LOOT_PROFILES: Record<string, LootProfile> = {
+  // Pazar Köyü / Tilki Korusu: başlangıç avı, az ama işe yarar ganimet
+  village: {
+    equipChance: 0.05,
+    rarityWeights: { white: 88, blue: 12 },
+    gems: [1, 3], essence: [0, 1],
+    materials: [
+      { id: 'red_potion', chance: 0.12, qty: [1, 1] },
+      { id: 'strong_branch', chance: 0.05, qty: [1, 1] },
+      { id: 'kor_seal', chance: 0.015, qty: [1, 1] },
+    ],
+  },
   forest: {
     equipChance: 0.075,
     rarityWeights: { white: 70, blue: 26, orange: 4 },

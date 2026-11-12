@@ -7,6 +7,8 @@ export interface SpawnGroup {
   level: [number, number];
   variants: [number, number, number]; // normal/agresif/katil ağırlıkları
   region: Region;
+  /** Yuvalar yalnız bu karo dikdörtgeninde kurulur: [x0, y0, x1, y1]. */
+  area?: [number, number, number, number];
 }
 export interface NpcDef { id: string; name: string; title: string; art: string; tx: number; ty: number; actions: string[] }
 export interface MapDef {
@@ -30,10 +32,12 @@ export interface MapDef {
 
 export const MAPS: Record<string, MapDef> = {
   bazaar: {
-    id: 'bazaar', name: 'Pazar Köyü', w: 88, h: 60, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
-    respawnMap: 'bazaar', spawns: [], travelable: true,
+    id: 'bazaar', name: 'Pazar Köyü', w: 88, h: 86, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
+    respawnMap: 'bazaar', travelable: true,
+    // köyün güneyindeki Tilki Korusu: 1. seviye başlangıç avı (tilkiler saldırılmadıkça dokunmaz)
+    spawns: [{ monster: 'wild_fox', count: 26, level: [1, 1], variants: [100, 0, 0], region: 'any', area: [5, 62, 82, 81] }],
     market: { tx: 67, ty: 24, rx: 14, ry: 11, name: 'Pazar Meydanı' },
-    desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar.',
+    desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar; güneydeki Tilki Korusu yeni başlayanların ilk avıdır.',
     npcs: [
       { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'shop_smith'] },
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },

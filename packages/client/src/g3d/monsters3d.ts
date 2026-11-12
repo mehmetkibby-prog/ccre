@@ -67,6 +67,61 @@ function quadPieces(kind: 'wolf' | 'lynx', variant: number): Piece[] {
   return P;
 }
 
+/**
+ * Yabani tilki: kurt iskeleti üzerine ince, alçak gövde; kızıl turuncu post, beyaz göğüs/yanak/kuyruk ucu,
+ * siyah uçlu iri kulaklar, siyah "çorap" bacaklar, uzun sivri burun ve gür kuyruk.
+ * Varyantlar: kızıl (normal), koyu pas (agresif), gümüş-kara (katil).
+ */
+function foxPieces(variant: number): Piece[] {
+  const P: Piece[] = [];
+  const top = [0xd8641e, 0xa8401a, 0x6a6a74][variant];
+  const sock = [0x2a1a14, 0x1e120c, 0x121216][variant];
+  const white = 0xf4eee4;
+  const fur = furColor(top, 0xf0e2d0, 17 + variant);
+  // sırtta koyu, yanlarda açık geçiş; karın beyaz
+  const coat = (p: THREE.Vector3, n: THREE.Vector3) => {
+    const c = fur(p, n);
+    if (n.y > 0.55) c.multiplyScalar(0.82);
+    return c;
+  };
+  const add = (g: THREE.BufferGeometry, bone: string, color: Piece['color'] = coat, glow = false) => P.push({ g, bone, color, glow });
+  const b = QW.body, c = QW.chest, h = QW.head;
+  // gövde: ince ve uzun
+  add(sph(0.18, b.x, b.y + 0.01, b.z + 0.03, 0.95, 0.9, 1.5), 'body');
+  add(sph(0.18, c.x, c.y - 0.01, c.z - 0.1, 0.95, 1.0, 1.15), 'chest');
+  // beyaz göğüs önlüğü
+  add(sph(0.12, c.x, c.y - 0.06, c.z + 0.02, 0.85, 1.15, 0.75), 'chest', white);
+  add(seg(c.clone().add(V3(0, 0.02, 0)), h.clone().add(V3(0, -0.03, -0.04)), 0.11, 0.085), 'neck');
+  // kafa: geniş yanaklar, sivri yüz
+  add(sph(0.105, h.x, h.y + 0.015, h.z - 0.005, 1.12, 0.9, 1.0), 'head');
+  for (const s2 of [1, -1]) add(sph(0.06, s2 * 0.06, h.y - 0.03, h.z + 0.03, 1, 0.8, 1), 'head', white); // beyaz yanaklar
+  add(seg(h.clone().add(V3(0, -0.005, 0.04)), h.clone().add(V3(0, -0.035, 0.25)), 0.062, 0.022), 'head');
+  add(seg(h.clone().add(V3(0, -0.04, 0.05)), h.clone().add(V3(0, -0.05, 0.22)), 0.045, 0.018), 'jaw', white);
+  add(sph(0.022, h.x, h.y - 0.033, h.z + 0.255), 'head', 0x141010); // burun
+  for (const s2 of [1, -1]) {
+    // iri üçgen kulaklar, siyah uçlu, içi açık
+    add(at(new THREE.ConeGeometry(0.055, 0.17, 4), s2 * 0.06, h.y + 0.13, h.z - 0.02, -0.1, Math.PI / 4, s2 * -0.18), 'head');
+    add(at(new THREE.ConeGeometry(0.026, 0.06, 4), s2 * 0.072, h.y + 0.205, h.z - 0.03, -0.1, Math.PI / 4, s2 * -0.18), 'head', sock);
+    add(at(new THREE.ConeGeometry(0.03, 0.1, 4), s2 * 0.058, h.y + 0.12, h.z + 0.005, -0.1, Math.PI / 4, s2 * -0.18, 1, 1, 0.4), 'head', 0xf2d8c8);
+    // badem gözler
+    add(sph(0.016, s2 * 0.048, h.y + 0.03, h.z + 0.085, 1.3, 0.7, 0.6), 'head', EYE[variant], true);
+  }
+  // gür kuyruk: kalınlaşıp incelir, ucu beyaz
+  add(seg(QW.tail1.clone().add(V3(0, 0.02, 0.06)), QW.tail2, 0.07, 0.13), 'tail1');
+  const t3 = QW.tail2.clone().add(V3(0, -0.03, -0.24));
+  add(seg(QW.tail2, t3, 0.13, 0.1), 'tail2');
+  add(seg(t3, t3.clone().add(V3(0, -0.01, -0.13)), 0.1, 0.02), 'tail2', white);
+  // bacaklar: üst kızıl, alt siyah çorap
+  for (const L of ['fl', 'fr', 'bl', 'br']) {
+    const u = QW[L + 'U'], l = QW[L + 'L'], p = QW[L + 'P'];
+    const back = L[0] === 'b';
+    add(seg(u.clone().add(V3(0, 0.06, 0)), l, back ? 0.085 : 0.065, 0.04), L + 'U');
+    add(seg(l, p, 0.036, 0.028), L + 'L', sock);
+    add(sph(0.036, p.x, p.y - 0.01, p.z + 0.025, 1, 0.6, 1.4), L + 'P', sock);
+  }
+  return P;
+}
+
 function quadAnimate(bones: Record<string, THREE.Bone>, body: THREE.Object3D, st: HState, t: number, k: number, phase: number) {
   for (const b of Object.values(bones)) b.rotation.set(0, 0, 0);
   body.rotation.set(0, 0, 0); body.position.set(0, 0, 0);
@@ -164,11 +219,23 @@ function tpl(key: string, build: () => THREE.Object3D) { let t = tpls.get(key); 
 export function createMonster(art: string, variant: number, size: number): MonsterRig {
   const s = size * (variant === 2 ? 1.12 : 1);
   const glow = EYE[variant];
-  if (art === 'wolf' || art === 'lynx') {
-    const t = tpl(art + variant, () => templateFromPieces(quadPieces(art, variant), QB, { glowColor: glow, texture: 'leather', clothRough: 0.9 }));
+  if (art === 'wolf' || art === 'lynx' || art === 'fox') {
+    const t = tpl(art + variant, () => templateFromPieces(art === 'fox' ? foxPieces(variant) : quadPieces(art, variant), QB, { glowColor: glow, texture: 'leather', clothRough: 0.9 }));
     const inst = instantiate(t);
-    inst.root.scale.setScalar(s * (art === 'wolf' ? 1.35 : 1.2));
-    return { root: inst.root, height: 1.1 * s, update: (st, tm, k, ph) => quadAnimate(inst.bones, inst.body, st, tm, k, ph) };
+    inst.root.scale.setScalar(s * (art === 'wolf' ? 1.35 : art === 'fox' ? 1.15 : 1.2));
+    const fox = art === 'fox';
+    return {
+      root: inst.root, height: (fox ? 0.85 : 1.1) * s,
+      update: (st, tm, k, ph) => {
+        quadAnimate(inst.bones, inst.body, st, tm, k, ph);
+        if (fox) {
+          // tilki: kuyruk yere paralel ve canlı sallanır, kulaklar dik; boşta ara ara başını yana eğer
+          inst.bones.tail1.rotation.x = 0.15; inst.bones.tail2.rotation.x = 0.05;
+          inst.bones.tail1.rotation.y = Math.sin(tm * (st === 'walk' ? 6 : 2.2)) * (st === 'walk' ? 0.35 : 0.22);
+          if (st === 'idle') inst.bones.head.rotation.z = Math.max(0, Math.sin(tm * 0.7)) ** 6 * 0.35;
+        }
+      },
+    };
   }
   if (art === 'rotguard' || art === 'golem' || art === 'seer') {
     const pieces = art === 'rotguard' ? treantPieces(variant) : art === 'golem' ? golemPieces(variant) : seerPieces(variant);
