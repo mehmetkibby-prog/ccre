@@ -13,4 +13,5 @@ export * from './content/items.ts';
 export * from './content/maps.ts';
 export * from './content/loot.ts';
 export * from './content/shops.ts';
+export * from './content/upgrade.ts';
 export * from './tuning.ts';

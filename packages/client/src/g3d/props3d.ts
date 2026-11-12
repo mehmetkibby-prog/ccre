@@ -268,6 +268,30 @@ const B: Partial<Record<PropKind, Builder>> = {
     parts.push({ g: at(box(0.4, 0.05, 0.1), 0, 0.98, 0), m: 'ember' });
     return group(parts);
   },
+  forge() {
+    const parts: { g: THREE.BufferGeometry; m: string }[] = [];
+    // taş ocak gövdesi ve kızgın kor yatağı
+    parts.push({ g: at(box(1.9, 0.95, 1.25, 0.7), 0, 0.475, 0), m: 'stonewall' });
+    parts.push({ g: at(box(1.5, 0.12, 0.85), 0, 1.0, 0), m: 'ember' });
+    parts.push({ g: at(box(0.8, 0.4, 0.06), 0, 0.42, 0.63), m: 'ember' });
+    for (const x of [-0.85, 0.85]) parts.push({ g: at(box(0.18, 0.5, 1.25, 0.7), x, 1.2, 0), m: 'stonewall' });
+    // davlumbaz ve baca
+    parts.push({ g: at(new THREE.CylinderGeometry(0.28, 1.05, 0.9, 4, 1), 0, 1.95, -0.05, 0, Math.PI / 4), m: 'stonewall' });
+    parts.push({ g: at(box(0.5, 1.7, 0.5, 0.7), 0, 3.2, -0.05), m: 'stonewall' });
+    parts.push({ g: at(box(0.6, 0.12, 0.6), 0, 4.08, -0.05), m: 'iron' });
+    // körük
+    parts.push({ g: at(box(0.55, 0.12, 0.85), -1.35, 0.72, 0.1, 0.18, 0, 0), m: 'timber' });
+    parts.push({ g: at(new THREE.CylinderGeometry(0.06, 0.06, 0.6, 6), -1.08, 0.7, 0.1, 0, 0, Math.PI / 2), m: 'iron' });
+    parts.push({ g: at(box(0.45, 0.18, 0.7), -1.35, 0.6, 0.1), m: 'cloth_red' });
+    // su fıçısı
+    parts.push({ g: at(cyl(0.34, 0.3, 0.7, 12), 1.35, 0.35, 0.45), m: 'planks' });
+    parts.push({ g: at(new THREE.CylinderGeometry(0.31, 0.31, 0.02, 16), 1.35, 0.66, 0.45), m: 'water_small' });
+    // silah askısı: iki direk, kiriş, üç kılıç
+    for (const z of [-0.55, 0.15]) parts.push({ g: at(box(0.08, 1.6, 0.08), 1.45, 0.8, z), m: 'timber' });
+    parts.push({ g: at(box(0.08, 0.08, 0.85), 1.45, 1.45, -0.2), m: 'timber' });
+    for (const z of [-0.45, -0.2, 0.05]) { parts.push({ g: at(box(0.03, 1.0, 0.08), 1.52, 0.85, z), m: 'metal' }); parts.push({ g: at(box(0.04, 0.05, 0.22), 1.52, 1.33, z), m: 'gold' }); }
+    return group(parts);
+  },
   crate() { return [{ geo: merge([at(box(0.9, 0.9, 0.9, 0.9), 0, 0.45, 0)]), mat: 'planks' }, { geo: merge([at(box(0.95, 0.1, 0.95, 0.6), 0, 0.88, 0), at(box(0.95, 0.1, 0.95, 0.6), 0, 0.05, 0)]), mat: 'timber' }]; },
   barrel() {
     return group([

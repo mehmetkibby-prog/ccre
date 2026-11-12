@@ -8,7 +8,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, hasModel, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
-import { armorFx, gearFxScale, gearRarity } from './gearfx.ts';
+import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, type MapLayout } from '@col/shared';
@@ -300,7 +300,7 @@ export class Renderer3D {
     const cls = this.g.cls;
     // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
-    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) this.dyn.remove(this.self.obj);
     this.selfWR = wr;
@@ -319,14 +319,15 @@ export class Renderer3D {
     let glb = designed ? createGlbChar(vid) : null;
     const apend = designed && !glb ? vid : null;
     glb ??= createGlbChar(modelId);
-    const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon) : null;
+    const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon, gr.plus) : null;
     if (glb) {
       prepDynamic(glb.root, 0.55);
       if (kind === Kind.PLAYER && !designed) equipArmor(glb, modelId, gr.armor);
       const aura = armorFx(gr.armor);
       if (aura) glb.root.add(aura);
+      if (gr.plus >= 6) glb.root.add(sigilFx());
       const gfx: THREE.Object3D[] = [];
-      if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx') gfx.push(o); });
+      if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx' || o.name === 'plus-fx') gfx.push(o); });
       return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend };
     }
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
@@ -336,11 +337,12 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
-    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== e.weapon) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
+    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8))) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
-      v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y, e.weapon);
-      (v as View & { wr?: number }).wr = e.weapon;
+      const gb = e.weapon | (Math.min(15, e.wplus) << 8);
+      v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y, gb);
+      (v as View & { wr?: number }).wr = gb;
     } else if (e.kind === Kind.MONSTER) {
       const def = MONSTERS[e.tpl];
       if (!def) return null;
@@ -605,7 +607,7 @@ export class Renderer3D {
     for (const v of this.npcViews) {
       const id = (v as unknown as { npc: string }).npc;
       const def = this.layout.def.npcs.find((d) => d.id === id);
-      if (def) tag(v.lx, v.ly, 2.25, def.name, '#ffd870', def.title, '#a8e0b0');
+      if (def) tag(v.lx, v.ly, 2.25, def.name, '#ffd870', def.actions.includes('upgrade') ? '⚒ ' + def.title + ' · Artı Bas' : def.title, def.actions.includes('upgrade') ? '#ffb454' : '#a8e0b0');
     }
     for (const e of g.ents.values()) {
       if (e.kind === Kind.LOOT) {

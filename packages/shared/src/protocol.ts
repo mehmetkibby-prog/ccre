@@ -16,7 +16,7 @@ export const enum Ev { DAMAGE = 1, CAST = 2, DEATH = 3, FX = 4, LEVELUP = 5, HEA
 export const enum DmgFlag { CRIT = 1, BLOCK = 2, MISS = 4 }
 export const enum Fx { TELEGRAPH_CIRCLE = 1, TELEGRAPH_RING = 2, TELEGRAPH_LINE = 3, TELEPORT = 4, LEVELUP = 5, AOE_BLAST = 6, HEAL_WAVE = 7, SHIELD = 8, PICKUP = 9 }
 
-export interface PlayerSpawn { kind: Kind.PLAYER; id: number; cls: number; name: string; level: number; x: number; y: number; dir: number; anim: number; hp: number; maxHp: number; flags: number; weapon: number; guild: string }
+export interface PlayerSpawn { kind: Kind.PLAYER; id: number; cls: number; name: string; level: number; x: number; y: number; dir: number; anim: number; hp: number; maxHp: number; flags: number; weapon: number; wplus: number; guild: string }
 export interface MonsterSpawn { kind: Kind.MONSTER; id: number; tpl: number; variant: number; level: number; x: number; y: number; dir: number; anim: number; hp: number; maxHp: number; flags: number }
 export interface LootSpawn { kind: Kind.LOOT; id: number; icon: string; rarity: number; x: number; y: number; owner: number; ttl: number; label: string }
 export type EntitySpawn = PlayerSpawn | MonsterSpawn | LootSpawn;
@@ -39,7 +39,7 @@ export function writeSpawn(w: BinWriter, s: EntitySpawn) {
   w.wU32(s.id); w.wU8(s.kind);
   if (s.kind === Kind.PLAYER) {
     w.wU8(s.cls); w.wStr(s.name); w.wU16(s.level); w.wU16(s.x); w.wU16(s.y); w.wU8(s.dir); w.wU8(s.anim);
-    w.wU32(s.hp); w.wU32(s.maxHp); w.wU8(s.flags); w.wU8(s.weapon); w.wStr(s.guild);
+    w.wU32(s.hp); w.wU32(s.maxHp); w.wU8(s.flags); w.wU8(s.weapon); w.wU8(s.wplus); w.wStr(s.guild);
   } else if (s.kind === Kind.MONSTER) {
     w.wU16(s.tpl); w.wU8(s.variant); w.wU16(s.level); w.wU16(s.x); w.wU16(s.y); w.wU8(s.dir); w.wU8(s.anim);
     w.wU32(s.hp); w.wU32(s.maxHp); w.wU8(s.flags);
@@ -76,7 +76,7 @@ export function readSnapshot(buf: ArrayBuffer): Snapshot {
   for (let i = 0; i < n; i++) {
     const id = r.u32(); const kind = r.u8_();
     if (kind === Kind.PLAYER) {
-      snap.spawns.push({ kind, id, cls: r.u8_(), name: r.str(), level: r.u16(), x: r.u16(), y: r.u16(), dir: r.u8_(), anim: r.u8_(), hp: r.u32(), maxHp: r.u32(), flags: r.u8_(), weapon: r.u8_(), guild: r.str() });
+      snap.spawns.push({ kind, id, cls: r.u8_(), name: r.str(), level: r.u16(), x: r.u16(), y: r.u16(), dir: r.u8_(), anim: r.u8_(), hp: r.u32(), maxHp: r.u32(), flags: r.u8_(), weapon: r.u8_(), wplus: r.u8_(), guild: r.str() });
     } else if (kind === Kind.MONSTER) {
       snap.spawns.push({ kind, id, tpl: r.u16(), variant: r.u8_(), level: r.u16(), x: r.u16(), y: r.u16(), dir: r.u8_(), anim: r.u8_(), hp: r.u32(), maxHp: r.u32(), flags: r.u8_() });
     } else {

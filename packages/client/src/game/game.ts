@@ -15,7 +15,7 @@ export interface CEnt {
   x: number; y: number; samples: Sample[];
   dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
-  name: string; cls: number; variant: number; tpl: number; weapon: number; guild: string;
+  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; guild: string;
   icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
   hurtUntil: number; spawnAt: number; deadAt: number;
 }
@@ -188,7 +188,7 @@ export class Game {
         id: sp.id, kind: sp.kind, x: sp.x, y: sp.y, samples: [{ t: s.t, x: sp.x, y: sp.y }], dir: 'dir' in sp ? sp.dir : 0, anim: 'anim' in sp ? sp.anim : 0, animStart: now,
         hp: 'hp' in sp ? sp.hp : 0, maxHp: 'maxHp' in sp ? sp.maxHp : 0, flags: 'flags' in sp ? sp.flags : 0, level: 'level' in sp ? sp.level : 0,
         name: sp.kind === Kind.PLAYER ? sp.name : sp.kind === Kind.MONSTER ? MONSTERS[sp.tpl]?.name ?? '?' : '', cls: sp.kind === Kind.PLAYER ? sp.cls : 0,
-        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
+        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, wplus: sp.kind === Kind.PLAYER ? sp.wplus : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
         icon: sp.kind === Kind.LOOT ? sp.icon : '', rarity: sp.kind === Kind.LOOT ? sp.rarity : 0, owner: sp.kind === Kind.LOOT ? sp.owner : 0,
         ttlEnd: sp.kind === Kind.LOOT ? now + sp.ttl : 0, label: sp.kind === Kind.LOOT ? sp.label : '', hurtUntil: 0, spawnAt: now, deadAt: 0,
       };

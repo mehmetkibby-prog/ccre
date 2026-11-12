@@ -21,16 +21,6 @@ export const SHOPS: Record<string, { name: string; npc: string; products: ShopPr
 };
 export const ESSENCE_TO_GEMS = { essence: 100, gems: 20 };
 
-export interface UpgradeStep { target: number; chance: number; korSeal: number; gems: number; mat: string; matQty: number }
-export const UPGRADE_TABLE: UpgradeStep[] = [
-  { target: 1, chance: 100, korSeal: 1, gems: 100, mat: 'strong_branch', matQty: 5 },
-  { target: 2, chance: 85, korSeal: 2, gems: 250, mat: 'strong_crystal', matQty: 10 },
-  { target: 3, chance: 65, korSeal: 3, gems: 500, mat: 'desert_herb', matQty: 15 },
-  { target: 4, chance: 45, korSeal: 4, gems: 1000, mat: 'master_scroll', matQty: 20 },
-  { target: 5, chance: 25, korSeal: 5, gems: 2000, mat: 'old_iron', matQty: 25 },
-];
-/** Ustalık Mührü göreli %30 artırır: %20 → %26. */
-export function masteryChance(base: number): number { return Math.min(100, Math.round(base * 1.3 * 10) / 10); }
 
 /** NPC'ye / çantadan doğrudan satış fiyatı (Mücevher); yönetim panelinden değişebilir (sellPrice). */
 export const SELL_PRICES: Record<string, number> = { white: 1, blue: 3, orange: 5, crimson: 15, unique: 25, infinite: 35, purple: 30, emerald: 50 };

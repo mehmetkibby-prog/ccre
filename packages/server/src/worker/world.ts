@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, UPGRADE_TABLE, masteryChance, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
+  SHOPS, sellPrice, masteryChance, MAX_PLUS, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
@@ -921,24 +921,29 @@ export class World {
   }
 
   private cmdUpgrade(p: Player, c: Extract<ClientCmd, { t: 'upgrade' }>) {
-    if (!this.nearNpc(p, 'haso')) return this.reply(p, c, false, 'Demirci Haso\'ya yaklaş.');
+    // her bölgede "upgrade" işi olan herhangi bir Demirci
+    const smith = p.zone.layout.npcs.find((n) => MAPS[p.zone.id]?.npcs.find((d) => d.id === n.id)?.actions.includes('upgrade') && dist(p, n) <= NPC_RANGE);
+    if (!smith) return this.reply(p, c, false, 'Demirciye yaklaş.');
     if (this.now < p.combatUntil) return this.reply(p, c, false, 'Savaş sırasında artı basılamaz.');
     if (this.seenReceipt(p, c.req)) return;
     const ch = p.char;
     const it = ch.bag.find((x) => x.id === c.item) ?? Object.values(ch.equip).find((x) => x?.id === c.item);
     if (!it) return this.reply(p, c, false, 'Eşya bulunamadı.');
+    if (!isUpgradable(ITEM_TPL.get(it.tpl)?.slot)) return this.reply(p, c, false, 'Yalnız silah ve zırha artı basılır.');
     if (it.plus !== c.expectPlus) return this.reply(p, c, false, 'Eşya durumu değişmiş, pencere yenilendi.');
-    const step = UPGRADE_TABLE.find((s) => s.target === it.plus + 1);
-    if (!step) return this.reply(p, c, false, 'Eşya en üst artıda.');
+    if (it.plus >= MAX_PLUS) return this.reply(p, c, false, `Eşya en üst artıda (+${MAX_PLUS}).`);
+    const step = upgradeStep(it.plus + 1);
+    if (!step) return this.reply(p, c, false, 'Bu kademe tanımlı değil.');
     const m = ch.materials;
-    if ((m.kor_seal ?? 0) < step.korSeal || (m[step.mat] ?? 0) < step.matQty || ch.gems < step.gems) return this.reply(p, c, false, 'Malzeme veya Mücevher yetersiz.');
+    if (ch.gems < step.gems || Object.entries(step.mats).some(([k, q]) => (m[k] ?? 0) < q)) return this.reply(p, c, false, 'Malzeme veya Mücevher yetersiz.');
     const useMastery = c.mastery && step.chance < 100 && (m.mastery_seal ?? 0) > 0;
     const chance = useMastery ? masteryChance(step.chance) : step.chance;
-    m.kor_seal -= step.korSeal; m[step.mat] -= step.matQty; ch.gems -= step.gems;
+    for (const [k, q] of Object.entries(step.mats)) m[k] -= q;
+    ch.gems -= step.gems;
     if (useMastery) m.mastery_seal -= 1;
     const ok = rnd() * 100 < chance;
     const before = it.plus;
-    it.plus = ok ? it.plus + 1 : Math.max(0, it.plus - 1);
+    it.plus = ok ? it.plus + 1 : upgradeFailDown() ? Math.max(0, it.plus - 1) : it.plus;
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'upgradeResult', req: c.req, ok, before, after: it.plus, chance, item: it.id });
@@ -1226,7 +1231,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), guild: '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), guild: '' };
   }
 
   private flushOut() {

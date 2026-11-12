@@ -4,7 +4,7 @@ import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, t
 import { Game } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
-import { SkillIcon, MenuIcon } from './icons.tsx';
+import { SkillIcon, MenuIcon, ClassIcon } from './icons.tsx';
 import { Panels } from './panels.tsx';
 import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
@@ -20,6 +20,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     const g = new Game(gl.current!, ov.current!, ticket, (reason) => onExit(reason));
     currentGame = g;
     (window as unknown as { __colGame?: Game }).__colGame = g;
+    (window as unknown as { __colStore?: typeof store }).__colStore = store;
     g.start();
     setGame(g);
     return () => { g.stop(); currentGame = null; };
@@ -110,7 +111,8 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
   return (
     <div className="hud">
       <TopBar />
-      <Wallet />
+      <PlayerPlate />
+      <XpLine />
       <AnnouncementBar />
       <Minimap game={game} />
       <Toasts />
@@ -139,14 +141,15 @@ function TopBar() {
   const t = useStore((s) => s.target);
   return (
     <div className="topbar">
-      <div className="frame worldhp" title="Ortak Dünya Sağlığı: Yaşam Özü bağışlarıyla artar, zamanla azalır.">
-        <div className="lbl"><span>DÜNYA SAĞLIĞI</span><span>%{wh.toFixed(1)}</span></div>
+      <div className="worldhp" title="Ortak Dünya Sağlığı: Yaşam Özü bağışlarıyla artar, zamanla azalır.">
+        <div className="lbl"><span>DÜNYA ÇEKİRDEĞİ</span><span>%{wh.toFixed(1)}</span></div>
         <div className="bar"><i style={{ width: `${wh}%` }} /></div>
       </div>
       {t && (
         <div className="frame target">
-          <div style={{ flex: 1 }}>
-            <div className="row"><span className="nm" style={{ color: t.variant === 2 ? '#ff7a6a' : t.variant === 1 ? '#ffb35a' : '#f2ecdc' }}>{t.variant === 2 ? 'Katil ' : t.variant === 1 ? 'Agresif ' : ''}{t.name}</span><div className="spacer" /><span className="muted" style={{ fontSize: 11, fontWeight: 800 }}>Sv. {t.level}</span></div>
+          <div className="gem"><b>{t.level}</b></div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="row"><span className="nm" style={{ color: t.variant === 2 ? '#ff7a8a' : t.variant === 1 ? '#ffc070' : '#eef2fa' }}>{t.variant === 2 ? 'Katil ' : t.variant === 1 ? 'Agresif ' : ''}{t.name}</span></div>
             <div className="bar"><i style={{ width: `${Math.max(0, (t.hp / Math.max(1, t.maxHp)) * 100)}%` }} /></div>
             <div className="hpt">{t.hp.toLocaleString('tr-TR')} / {t.maxHp.toLocaleString('tr-TR')}</div>
           </div>
@@ -167,20 +170,57 @@ function ModelBadge() {
   return <div className="meta" style={{ color: bad ? '#ff8a7a' : '#8fe08a', whiteSpace: 'normal', maxWidth: 260 }}>Model {m.loaded}/{m.total}{m.lastError ? ' · ' + m.lastError.slice(0, 90) : ''}</div>;
 }
 
-function Wallet() {
+/** Sol üst: çekirdek madalyonu (can ve deneyim halkaları, seviye), ad, can çubuğu, para birimleri. */
+function PlayerPlate() {
   const self = useStore((s) => s.self);
+  const char = useStore((s) => s.char);
+  const hp = useStore((s) => s.hp), max = useStore((s) => s.maxHp);
   const ping = useStore((s) => s.ping);
   const fps = useStore((s) => s.fps);
   const online = useStore((s) => s.online);
   const ch = useStore((s) => s.channel);
-  if (!self) return null;
+  if (!self || !char) return null;
+  const hk = Math.max(0, Math.min(1, hp / Math.max(1, max)));
+  const xk = Math.min(1, self.xp / Math.max(1, self.xpNext));
+  const C1 = 2 * Math.PI * 39, C2 = 2 * Math.PI * 44.5;
   return (
-    <div className="frame wallet">
-      <div className="w"><img src={iconUrl('gem')} alt="" />{self.gems.toLocaleString('tr-TR')} <span className="muted" style={{ fontSize: 10 }}>Mücevher</span></div>
-      <div className="w"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')} <span className="muted" style={{ fontSize: 10 }}>Öz</span></div>
-      <div className="w"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')} <span className="muted" style={{ fontSize: 10 }}>ÇP</span></div>
-      <div className="meta"><span>K{ch}</span><span>{online} çevrimiçi</span><span style={{ color: ping > 200 ? '#ff8a7a' : ping > 100 ? '#ffd27a' : '#8fe08a' }}>{ping} ms</span><span>{fps} fps</span></div>
-      <ModelBadge />
+    <div className="plate">
+      <div className="medal" title={`Can ${hp}/${max} · TP %${(xk * 100).toFixed(1)}`}>
+        <svg className="rings" viewBox="0 0 92 92">
+          <circle cx="46" cy="46" r="44.5" stroke="rgba(0,0,0,.6)" strokeWidth="3" fill="none" />
+          <circle cx="46" cy="46" r="44.5" stroke="#b48cff" strokeWidth="3" fill="none" strokeDasharray={C2} strokeDashoffset={C2 * (1 - xk)} style={{ filter: 'drop-shadow(0 0 3px #b48cff)' }} />
+          <circle cx="46" cy="46" r="39" stroke="rgba(0,0,0,.65)" strokeWidth="6" fill="rgba(7,10,18,.85)" />
+          <circle cx="46" cy="46" r="39" stroke={hk < 0.3 ? '#ff2a4a' : '#ff4767'} strokeWidth="6" fill="none" strokeDasharray={C1} strokeDashoffset={C1 * (1 - hk)} style={{ transition: 'stroke-dashoffset .15s', filter: 'drop-shadow(0 0 4px #ff4767)' }} />
+        </svg>
+        <div className="core"><ClassIcon cls={char.cls} size={34} /></div>
+        <div className="lvl">{self.level}</div>
+      </div>
+      <div className="frame pinfo">
+        <div className="nm">{char.name}<small>{CLASSES[char.cls as ClassId]?.name}</small></div>
+        <div className="bar hpbar"><i style={{ width: `${hk * 100}%` }} /></div>
+        <div className="hpt"><span>{hp.toLocaleString('tr-TR')} / {max.toLocaleString('tr-TR')}</span><span>%{(hk * 100).toFixed(0)}</span></div>
+        <div className="coins">
+          <span className="g" title="Mücevher"><img src={iconUrl('gem')} alt="" />{self.gems.toLocaleString('tr-TR')}</span>
+          <span className="e" title="Yaşam Özü"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')}</span>
+          <span className="c" title="Çekirdek Puanı"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')}</span>
+        </div>
+        <div className="netinfo"><span>K{ch}</span><span style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</span><span>{fps} fps</span><span>{online} çevrimiçi</span></div>
+        <ModelBadge />
+      </div>
+    </div>
+  );
+}
+
+/** Ekranın altında boydan boya deneyim çizgisi (onda birlik bölmeli). */
+function XpLine() {
+  const self = useStore((s) => s.self);
+  if (!self) return null;
+  const k = Math.min(1, self.xp / Math.max(1, self.xpNext));
+  return (
+    <div className="xpline" title="Deneyim">
+      <i style={{ width: `${k * 100}%` }} />
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} className="seg" style={{ left: `${n * 10}%` }} />)}
+      <span>Seviye {self.level} · {self.xp.toLocaleString('tr-TR')} / {self.xpNext.toLocaleString('tr-TR')} TP · %{(k * 100).toFixed(1)}</span>
     </div>
   );
 }
@@ -206,11 +246,11 @@ function Minimap({ game }: { game: Game }) {
     const iv = setInterval(() => {
       const cv = ref.current, bg = bgRef.current; if (!cv || !bg) return;
       const ctx = cv.getContext('2d')!;
-      const S = 164; cv.width = S * 2; cv.height = S * 2; ctx.scale(2, 2);
+      const S = 150; cv.width = S * 2; cv.height = S * 2; ctx.scale(2, 2);
       const scale = 4 / TILE * 1.4; // piksel/dünya
       const cx = game.dx * scale, cy = game.dy * scale;
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, S, S);
-      ctx.save(); ctx.beginPath(); ctx.arc(S / 2, S / 2, S / 2, 0, Math.PI * 2); ctx.clip();
+      ctx.save();
       ctx.drawImage(bg, S / 2 - cx, S / 2 - cy, bg.width * 1.4, bg.height * 1.4);
       const dot = (x: number, y: number, c: string, r = 2.2) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(S / 2 + (x * scale - cx), S / 2 + (y * scale - cy), r, 0, Math.PI * 2); ctx.fill(); };
       for (const z of game.layout.zones) { ctx.strokeStyle = 'rgba(255,110,80,.55)'; ctx.fillStyle = 'rgba(220,70,50,.12)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(S / 2 + (z.x * scale - cx), S / 2 + (z.y * scale - cy), z.r * scale, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
@@ -227,8 +267,8 @@ function Minimap({ game }: { game: Game }) {
     return () => clearInterval(iv);
   }, [game]);
   return (
-    <div className="frame mm" onClick={() => store.set({ panel: 'map' })}>
-      <canvas ref={ref} />
+    <div className="mm" onClick={() => store.set({ panel: 'map' })} title="Harita (M)">
+      <div className="dia"><canvas ref={ref} /></div>
       <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
     </div>
   );
@@ -277,45 +317,38 @@ function Chat() {
 function useNow(ms = 100) { const [, set] = useState(0); useEffect(() => { const iv = setInterval(() => set((x) => x + 1), ms); return () => clearInterval(iv); }, [ms]); return performance.now(); }
 
 function BottomBar({ game }: { game: Game }) {
-  const hp = useStore((s) => s.hp), max = useStore((s) => s.maxHp);
   const self = useStore((s) => s.self);
   const cds = useStore((s) => s.cooldowns);
   const cls = useStore((s) => s.char?.cls) as ClassId | undefined;
   const now = useNow(100);
   if (!self || !cls) return null;
   const pots = self.materials?.red_potion ?? 0;
-  const xpk = Math.min(1, self.xp / Math.max(1, self.xpNext));
   const slot = (s: number, key: string) => {
     const sk = classSkill(cls, s, self.spec);
     const locked = !sk || self.level < sk.unlock;
     const left = s > 0 ? Math.max(0, (cds[s] ?? 0) - now) : 0;
     return (
-      <button key={s} className={'slot' + (locked ? ' locked' : '')} title={sk ? `${sk.name} — ${sk.desc}${locked ? ` (Sv. ${sk.unlock})` : ''}` : 'Uzmanlık (Sv. 30)'}
+      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (locked ? ' locked' : '')} title={sk ? `${sk.name} — ${sk.desc}${locked ? ` (Sv. ${sk.unlock})` : ''}` : 'Uzmanlık (Sv. 30)'}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
         {sk ? <SkillIcon id={sk.id} /> : <SkillIcon id="" />}
-        {left > 0 && <div className="cd">{(left / 1000).toFixed(left < 3000 ? 1 : 0)}</div>}
+        {left > 0 && <div className="cd"><span>{(left / 1000).toFixed(left < 3000 ? 1 : 0)}</span></div>}
       </button>
     );
   };
   return (
     <div className="bottom">
-      <div className="orb" title="Can">
-        <div className="fill" style={{ height: `${Math.max(0, Math.min(100, (hp / Math.max(1, max)) * 100))}%` }} />
-        <div className="shine" />
-        <div className="t">{hp}<br />/{max}</div>
-      </div>
-      <div className="frame skillbar">
+      <div className="skillbar">
         <div className="slots">
-          {slot(0, '1')}{slot(1, '2')}{slot(2, '3')}{slot(3, '4')}
+          {slot(1, '2')}{slot(2, '3')}
+          {slot(0, '1')}
+          {slot(3, '4')}
           <button className="slot" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
-            <span className="key">Q</span><img src={iconUrl('potion_red')} style={{ width: 38, height: 38 }} alt="" /><span className="cnt">{pots}</span>
+            <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
           <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><MenuIcon k="pick" /></button>
         </div>
-        <div className="bar xp"><i style={{ width: `${xpk * 100}%` }} /></div>
-        <div className="xpl">Seviye {self.level} · TP {self.xp.toLocaleString('tr-TR')} / {self.xpNext.toLocaleString('tr-TR')} ({(xpk * 100).toFixed(1)}%)</div>
       </div>
     </div>
   );
@@ -328,16 +361,16 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
   const canAdmin = useCanAdmin();
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
   return (
-    <div className="frame menu">
-      <button title="Çanta (I)" onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small></button>
-      <button title="Karakter (C)" onClick={() => open('character')}><MenuIcon k="char" /><small>C</small>{statPts > 0 && <span style={{ position: 'absolute', top: -4, right: -4, background: '#c8302c', borderRadius: 8, fontSize: 10, padding: '0 4px', color: '#fff' }}>{statPts}</span>}</button>
-      <button title="Beceriler (K)" onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small></button>
-      <button title="Işınlan (T)" onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small></button>
-      <button title="Harita (M)" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small></button>
-      <button title="Ayarlar" onClick={() => open('settings')}><MenuIcon k="gear" /></button>
-      {canAdmin && <button title="Yönetim paneli" onClick={() => open('admin')}><MenuIcon k="admin" /></button>}
-      <button title="Sohbet" className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
-      <button title="Kanal değiştir / Çıkış" className="exit" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="lbl">Kanal / Çıkış</span></button>
+    <div className="menu">
+      <button onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
+      <button onClick={() => open('character')}><MenuIcon k="char" /><small>C</small><span className="tag">Karakter</span>{statPts > 0 && <span className="badge">{statPts}</span>}</button>
+      <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceriler</span></button>
+      <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
+      <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
+      <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
+      {canAdmin && <button onClick={() => open('admin')}><MenuIcon k="admin" /><span className="tag">Yönetim</span></button>}
+      <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
+      <button className="exit" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Kanal / Çıkış</span></button>
     </div>
   );
 }

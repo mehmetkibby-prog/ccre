@@ -1,4 +1,5 @@
 import { TUNING } from '../tuning.ts';
+import { isUpgradable, plusBonus } from './upgrade.ts';
 import type { ClassId } from './classes.ts';
 
 export type Slot = 'weapon' | 'armor' | 'helmet' | 'boots' | 'necklace' | 'earring' | 'bracelet';
@@ -92,9 +93,8 @@ export interface ItemInstance {
   src?: string; // edinim kaynağı
 }
 
-/** Artı basma: silah gücü ve diğer savunma ekleri (referans). */
-export const PLUS_WEAPON = [0, 3, 8, 15, 25, 40];
-export const PLUS_ARMOR = [0, 2, 6, 11, 18, 28];
+/** Eski sistemden artısı kalmış takı/çizme/kask için sabit ek (artık yalnız silah ve zırha basılır). */
+export const PLUS_LEGACY = [0, 2, 6, 11, 18, 28, 40];
 
 export function itemDisplayName(it: ItemInstance): string {
   const t = ITEM_TPL.get(it.tpl);
@@ -110,7 +110,7 @@ export function itemPower(it: ItemInstance): number {
   const r = RARITY[it.rarity], ov = TUNING.rarityPower[it.rarity];
   const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
   const base = Math.round(t.basePower * mult);
-  const plus = t.slot === 'weapon' ? PLUS_WEAPON[it.plus] ?? 0 : PLUS_ARMOR[it.plus] ?? 0;
+  const plus = isUpgradable(t.slot) ? plusBonus(t.slot, it.plus, base) : PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0;
   return base + plus;
 }
 

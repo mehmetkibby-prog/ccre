@@ -34,15 +34,19 @@ export interface GameTuning {
   rarityDrop: Record<string, number>;
   /** Nadirlik başına satış fiyatı (Mücevher). */
   sellPrice: Record<string, number>;
+  /** Artı basma: 6 kademelik tablo (boş = varsayılan) ve başarısızlıkta kademe düşmesi. */
+  upgrade: UpgradeTune;
 }
+export interface UpgradeStepTune { chance: number; gems: number; mats: Record<string, number>; weapon: number; armor: number }
+export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
   density: {}, bots: 8, worldDecayMul: 1, brightness: 1, announcement: '',
-  monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {},
+  monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05],
@@ -111,6 +115,17 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   }
   for (const [k, v] of Object.entries(obj(r.sellPrice))) { const n = num(v, 0, 1e7); if (key(k) && n !== undefined) out.sellPrice[k] = Math.round(n); }
   for (const [k, v] of Object.entries(obj(r.rarityDrop))) { const n = num(v, 0, 100); if (key(k) && n !== undefined && n !== 1) out.rarityDrop[k] = n; }
+  const up = obj(r.upgrade);
+  if (Array.isArray(up.steps) && up.steps.length === 6) {
+    const steps: UpgradeStepTune[] = [];
+    for (const raw of up.steps) {
+      const o = obj(raw), mats: Record<string, number> = {};
+      for (const [k, v] of Object.entries(obj(o.mats)).slice(0, 6)) { const n = num(v, 0, 9999); if (key(k) && n) mats[k] = Math.round(n); }
+      steps.push({ chance: num(o.chance, 0, 100) ?? 100, gems: Math.round(num(o.gems, 0, 1e7) ?? 0), mats, weapon: num(o.weapon, 0, 1000) ?? 0, armor: num(o.armor, 0, 1000) ?? 0 });
+    }
+    out.upgrade.steps = steps;
+  }
+  if (typeof up.failDown === 'boolean') out.upgrade.failDown = up.failDown;
   return out;
 }
 /** Ayarları yerinde günceller (aynı nesne; okuyanlar her seferinde güncel değeri görür). */

@@ -1,7 +1,7 @@
 import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
 import {
-  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, UPGRADE_TABLE, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
+  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
   classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import type { Game } from '../game/game.ts';
@@ -59,10 +59,12 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
         </div></div>
       )}
       {up && (
-        <div className="overlay" onClick={() => store.set({ upgradeResult: null })}><div className="frame dead">
-          <h2 style={{ color: up.ok ? '#b8f0a8' : '#ff8a7a' }}>{up.ok ? 'Başarılı!' : 'Başarısız'}</h2>
-          <div>+{up.before} → +{up.after} <span className="muted">(şans %{up.chance})</span></div>
-          <button className="btn primary" style={{ marginTop: 16 }}>Tamam</button>
+        <div className="overlay" onClick={() => store.set({ upgradeResult: null })}><div className={'frame dead result ' + (up.ok ? 'ok' : 'bad')}>
+          <h2>{up.ok ? 'Örs Şarkı Söyledi' : 'Kıvılcım Söndü'}</h2>
+          <div className="pips" style={{ margin: '10px 0' }}>{Array.from({ length: MAX_PLUS }, (_, i) => <i key={i} className={(i < up.after ? 'on' : '') + (i === 5 ? ' p6' : '')} />)}</div>
+          <div style={{ fontSize: 16 }}>+{up.before} → <b style={{ color: up.ok ? 'var(--ember2)' : 'var(--bad)' }}>+{up.after}</b> <span className="muted">(şans %{up.chance})</span></div>
+          {!up.ok && up.after === up.before && <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Eşyanın kademesi korundu.</div>}
+          <button className="btn primary" style={{ marginTop: 18 }}>Tamam</button>
         </div></div>
       )}
     </>
@@ -121,7 +123,7 @@ function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: st
   return (
     <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
       {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} alt="" /> : <span className="lbl">{label}</span>}
-      {it?.plus ? <span className="plus">+{it.plus}</span> : null}
+      {it?.plus ? <span className={'plus' + (it.plus >= 6 ? ' p6' : it.plus >= 5 ? ' p5' : '')}>+{it.plus}</span> : null}
       {it?.locked ? <span className="lock">🔒</span> : null}
     </div>
   );
@@ -365,7 +367,7 @@ function Settings() {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: 'Artı Bas (+0 → +5)', shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi (yakında)', fishing_shop: 'Olta al (yakında)' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi (yakında)', fishing_shop: 'Olta al (yakında)' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -375,15 +377,15 @@ function NpcDialog({ game }: { game: Game }) {
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {
-    haso: 'Ocak sıcak, örs hazır. Eşyanı güçlendirmek mi istiyorsun?', rauf: 'Eşyaların bende emanet, bir tanesi bile kaybolmaz.', nur: 'Çekirdeğin ışığı seni dilediğin yere taşır.',
+    haso: 'Ocak sıcak, örs hazır. Silahını ya da zırhını getir; artısını +6\'ya kadar ben dövüp çıkarırım. Güçlü Dal, mühür ve biraz da Mücevher lazım.', rauf: 'Eşyaların bende emanet, bir tanesi bile kaybolmaz.', nur: 'Çekirdeğin ışığı seni dilediğin yere taşır.',
     tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister.', bekci: 'Kapının ardında karanlık bekliyor.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.',
   };
   return (
     <div className="frame panel npcd" onPointerDown={(e) => e.stopPropagation()}>
       <div className="hd"><span className="title">{npc.name}</span><span className="muted" style={{ marginLeft: 8, fontSize: 12 }}>{npc.title}</span><button className="x" onClick={close}>✕</button></div>
       <div className="bd">
-        <div style={{ fontStyle: 'italic', marginBottom: 12 }}>“{greet[npc.id] ?? 'Hoş geldin, yolcu.'}”</div>
-        <div className="col">{npc.actions.concat(npc.id === 'haso' ? ['sell'] : []).map((a) => <button key={a} className="btn" onClick={() => act(a)}>{labels[a] ?? a}</button>)}</div>
+        <div className="npc-greet">“{greet[npc.id] ?? 'Hoş geldin, yolcu.'}”</div>
+        <div className="npc-acts">{npc.actions.concat(npc.id === 'haso' ? ['sell'] : []).map((a) => <button key={a} className={'btn' + (a === 'upgrade' ? ' ember' : '')} onClick={() => act(a)}>{labels[a] ?? a}</button>)}</div>
       </div>
     </div>
   );
@@ -432,37 +434,76 @@ function Shop({ game }: { game: Game }) {
   );
 }
 
+/** Demirci: silah ve zırhı +6'ya kadar güçlendirir. Malzeme, Mücevher ve şans yönetim panelinden gelir. */
 function Upgrade({ game }: { game: Game }) {
   const self = useStore((s) => s.self);
   const [sel, setSel] = useState<string | null>(null);
   const [mastery, setMastery] = useState(false);
+  const [hit, setHit] = useState(0);
+  const { tip, bind } = useTip();
   if (!self) return null;
-  const items = [...Object.values(self.equip).filter(Boolean) as ItemInstance[], ...self.bag];
-  const it = items.find((i) => i.id === sel);
-  const step = it ? UPGRADE_TABLE.find((s) => s.target === it.plus + 1) : null;
+  const all = [...Object.values(self.equip).filter(Boolean) as ItemInstance[], ...self.bag];
+  const items = all.filter((i) => isUpgradable(ITEM_TPL.get(i.tpl)?.slot));
+  const it = items.find((i) => i.id === sel) ?? null;
+  const tpl = it ? ITEM_TPL.get(it.tpl) : null;
+  const step = it && it.plus < MAX_PLUS ? upgradeStep(it.plus + 1) : null;
   const m = self.materials;
   const chance = step ? (mastery && step.chance < 100 ? masteryChance(step.chance) : step.chance) : 0;
-  const has = step ? (m.kor_seal ?? 0) >= step.korSeal && (m[step.mat] ?? 0) >= step.matQty && self.gems >= step.gems : false;
+  const lacks = step ? Object.entries(step.mats).filter(([k, q]) => (m[k] ?? 0) < q).length + (self.gems < step.gems ? 1 : 0) : 1;
+  const C = 2 * Math.PI * 52;
+  const next = it && step ? itemPower({ ...it, plus: it.plus + 1 }) : 0;
+  const equipped = new Set(Object.values(self.equip).map((x) => x?.id));
+  const go = () => { if (!it) return; setHit((h) => h + 1); sfx.play('ui'); game.send({ t: 'upgrade', item: it.id, expectPlus: it.plus, mastery, req: reqId() }); };
   return (
-    <Panel title="Haso — Artı Basma" width={720}>
-      <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Başarı bir kademe yükseltir; başarısızlık bir kademe düşürür (en az +0). Eşya asla yok olmaz. Ustalık Mührü şansı göreli %30 artırır.</div>
-      <div className="bag">{items.map((i) => <Cell key={i.id} it={i} sel={sel === i.id} onClick={() => setSel(i.id)} />)}</div>
-      {it && (
-        <div className="frame" style={{ padding: 12, marginTop: 12 }}>
-          <div style={{ color: RARITY[it.rarity].color, fontWeight: 900 }}>{itemDisplayName(it)}</div>
-          {step ? (
-            <>
-              <div style={{ marginTop: 6 }}>Hedef <b>+{step.target}</b> · Başarı şansı <b style={{ color: '#f0d080' }}>%{chance}</b></div>
-              <div className="mats">
-                {[['kor_seal', step.korSeal], [step.mat, step.matQty]].map(([k, n]) => <div key={k as string} className="mat"><img src={iconUrl(MATERIAL.get(k as string)?.icon ?? 'bag')} alt="" />{MATERIAL.get(k as string)?.name}<div className="spacer" /><span style={{ color: (m[k as string] ?? 0) >= (n as number) ? '#8fe08a' : '#ff8a7a' }}>{m[k as string] ?? 0}/{n}</span></div>)}
-                <div className="mat"><img src={iconUrl('gem')} alt="" />Mücevher<div className="spacer" /><span style={{ color: self.gems >= step.gems ? '#8fe08a' : '#ff8a7a' }}>{step.gems}</span></div>
-              </div>
-              <label className="row" style={{ fontSize: 13, marginTop: 8 }}><input type="checkbox" checked={mastery} disabled={!(m.mastery_seal > 0) || step.chance >= 100} onChange={(e) => setMastery(e.target.checked)} /> Ustalık Mührü kullan ({m.mastery_seal ?? 0} adet)</label>
-              <button className="btn primary" style={{ marginTop: 10 }} disabled={!has} onClick={() => game.send({ t: 'upgrade', item: it.id, expectPlus: it.plus, mastery, req: reqId() })}>Artı bas</button>
-            </>
-          ) : <div className="muted">Bu eşya en üst artıda (+5).</div>}
+    <Panel title="Demirci Haso · Örs" width={820}>
+      <div className="forge">
+        <div className="forge-pick">
+          <div className="sect">Silah ve zırhların</div>
+          <div className="bag">
+            {items.map((i) => <Cell key={i.id} it={i} sel={sel === i.id} bind={bind(i)} onClick={() => setSel(i.id)} />)}
+            {items.length === 0 && <div className="muted" style={{ gridColumn: '1 / -1', fontSize: 13 }}>Çantanda ya da üzerinde silah veya zırh yok.</div>}
+          </div>
+          <div className="muted" style={{ fontSize: 11.5 }}>{equipped.size ? 'Üzerindekiler de listede. ' : ''}Yalnız silah ve gövde zırhına artı basılır; en çok +{MAX_PLUS}. Silahta her artı saldırıyı, zırhta savunma ve canı artırır.</div>
+          <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
+          <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+            Başarıda eşya bir kademe yükselir. {upgradeFailDown() ? 'Başarısızlıkta bir kademe düşer (+0 altına inmez).' : 'Başarısızlıkta kademe korunur.'} Eşya hiçbir zaman yok olmaz.
+            Ustalık Mührü şansı göreli %30 artırır. +5'te silah alev halkası, +6'da yıldız ateşi kazanır.
+          </div>
         </div>
-      )}
+        <div className="anvil">
+          <div key={hit} className={'forge-fx' + (hit ? ' hit' : '')} />
+          {!it ? <div className="muted" style={{ textAlign: 'center', padding: '40px 10px' }}>Örse koymak için soldan bir silah ya da zırh seç.</div> : (
+            <>
+              <div className="stage">
+                <Cell it={it} bind={bind(it)} />
+                <span className="arrow">›</span>
+                <div className={'tplus' + (it.plus + 1 >= 6 ? ' p6' : '')}>{step ? `+${step.target}` : `+${it.plus}`}</div>
+              </div>
+              <div className="nm" style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</div>
+              <div className="pips">{Array.from({ length: MAX_PLUS }, (_, i) => <i key={i} className={(i < it.plus ? 'on' : '') + (i === 5 ? ' p6' : '')} />)}</div>
+              {step ? (
+                <>
+                  <div className="chance">
+                    <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" stroke="rgba(0,0,0,.5)" strokeWidth="8" fill="none" /><circle cx="60" cy="60" r="52" stroke={chance >= 70 ? '#5ef0a6' : chance >= 40 ? '#ffb454' : '#ff6b7d'} strokeWidth="8" fill="none" strokeDasharray={C} strokeDashoffset={C * (1 - chance / 100)} style={{ transition: 'stroke-dashoffset .3s' }} /></svg>
+                    <div className="v"><div><b>%{chance}</b><small>Başarı</small></div></div>
+                  </div>
+                  <div className="gain"><span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b>{next}</b></span></div>
+                  <div className="req">
+                    {Object.entries(step.mats).map(([k, q]) => {
+                      const have = m[k] ?? 0, md = MATERIAL.get(k);
+                      return <div key={k} className={'r ' + (have >= q ? 'have' : 'miss')} title={md?.desc}><img src={iconUrl(md?.icon ?? 'bag')} alt="" />{md?.name ?? k}<span className="q">{have.toLocaleString('tr-TR')} / {q}</span></div>;
+                    })}
+                    <div className={'r ' + (self.gems >= step.gems ? 'have' : 'miss')}><img src={iconUrl('gem')} alt="" />Mücevher<span className="q">{self.gems.toLocaleString('tr-TR')} / {step.gems.toLocaleString('tr-TR')}</span></div>
+                  </div>
+                  <label className="row" style={{ fontSize: 12.5, alignSelf: 'flex-start' }}><input type="checkbox" checked={mastery} disabled={!(m.mastery_seal > 0) || step.chance >= 100} onChange={(e) => setMastery(e.target.checked)} /> Ustalık Mührü ({m.mastery_seal ?? 0})</label>
+                  <button className="btn ember" style={{ width: '100%', padding: 12, fontSize: 15 }} disabled={lacks > 0} onClick={go}>{lacks > 0 ? 'Malzeme eksik' : `Döv · +${step.target}`}</button>
+                </>
+              ) : <div className="ok" style={{ textAlign: 'center' }}>Bu eşya en üst kademede (+{MAX_PLUS}).</div>}
+            </>
+          )}
+        </div>
+      </div>
+      {tip && <ItemTip {...tip} />}
     </Panel>
   );
 }

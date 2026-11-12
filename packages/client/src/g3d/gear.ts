@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { weaponModel, shieldModel, type HLook } from './humanoid.ts';
 import { attachToBone, boneRootPos, weaponGlb, type GlbChar } from './models.ts';
 import { glowTexture } from './textures.ts';
-import { weaponFx } from './gearfx.ts';
+import { weaponFx, plusFx } from './gearfx.ts';
 
 /**
  * Elin bağlanma pozundaki geometrisinden avuç çerçevesi (kök uzayında):
@@ -148,7 +148,7 @@ export function styleWeapon(g: THREE.Object3D, rarity: number, kind = 'sword', d
  * Karaktere silah ve kalkan takar. Nadir silahta tasarlanmış model kullanılır; model henüz yüklenmediyse
  * renklendirilmiş basit silah takılır ve beklenen modelin kimliği döner (gelince görünüm yeniden kurulur).
  */
-export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0): string | null {
+export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0, plus = 0): string | null {
   if (!L) return null;
   const { root, bones } = glb;
   const isBow = L.weapon === 'bow';
@@ -183,6 +183,7 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0): string
       q = new THREE.Quaternion();
     }
     styleWeapon(g, rarity, L.weapon, !!designed);
+    plusFx(g, plus, L.weapon ?? 'sword');
     attachToBone(root, hand, g, q, at);
   }
   if (L.shield && bones.foreArmL) {

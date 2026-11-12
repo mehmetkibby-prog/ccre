@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
 } from '@col/shared';
 import { configState, onConfig, saveConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -28,8 +28,8 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
 const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
-type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'harita' | 'oyuncu';
-const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];
+type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
+const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];
 const fmtN = (n: number, d = 2) => n.toLocaleString('tr-TR', { maximumFractionDigits: d });
 /** Canavarın göründüğü ilk haritanın teması → varsayılan ganimet profili. */
 function monsterTheme(id: string) {
@@ -93,6 +93,7 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
           {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={dis} />}
           {tab === 'ganimet' && <><RarityTable t={t} setT={setT} dis={dis} /><LootTab t={t} setMon={setMon} dis={dis} /></>}
           {tab === 'efsun' && <EnchantTab t={t} setT={setT} dis={dis} />}
+          {tab === 'arti' && <UpgradeTab t={t} setT={setT} dis={dis} />}
           {tab === 'harita' && <MapTab t={t} setT={setT} setSpawn={setSpawn} dis={dis} />}
           {tab === 'oyuncu' && <PlayerTab dis={dis} />}
           {msg && <div className={msg.ok ? 'okmsg' : 'err'}>{msg.text}</div>}
@@ -279,6 +280,60 @@ function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Pa
 }
 
 const CW_ROWS: [string, string][] = [['white', 'Sıradan'], ['blue', 'Mavi'], ['orange', 'Turuncu'], ['default', 'Kızıl ve üstü']];
+/** Demirci: 6 kademenin şansı, Mücevher bedeli, malzemeleri ve kazandırdığı güç. */
+function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const steps: UpgradeStepTune[] = t.upgrade.steps?.length === MAX_PLUS ? t.upgrade.steps : DEFAULT_UPGRADE.map(({ target, ...s }) => { void target; return structuredClone(s); });
+  const custom = t.upgrade.steps?.length === MAX_PLUS;
+  const put = (i: number, patch: Partial<UpgradeStepTune>) => {
+    const n = steps.map((s, j) => (j === i ? { ...s, ...patch } : s));
+    setT({ ...t, upgrade: { ...t.upgrade, steps: n } });
+  };
+  const setMat = (i: number, oldKey: string | null, key: string, qty: number) => {
+    const mats = { ...steps[i].mats };
+    if (oldKey && oldKey !== key) delete mats[oldKey];
+    if (key && qty > 0) mats[key] = qty; else if (key) delete mats[key];
+    put(i, { mats });
+  };
+  const matOpts = MATERIALS.filter((m) => !['red_potion', 'starter_chest', 'mastery_seal'].includes(m.id));
+  return (
+    <>
+      <section className="admin-sec">
+        <h4>Artı basma (Demirci)</h4>
+        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Yalnız silah ve gövde zırhına basılır, en çok +{MAX_PLUS}. "Güç %" o kademeye ulaşınca eşyanın temel gücüne eklenen <b>toplam</b> yüzdedir (silah saldırı, zırh savunma/can). Her kademede en çok 6 malzeme.</div>
+        <label className="row" style={{ fontSize: 13, marginBottom: 8 }}><input type="checkbox" disabled={dis} checked={t.upgrade.failDown ?? true} onChange={(e) => setT({ ...t, upgrade: { ...t.upgrade, failDown: e.target.checked } })} /> Başarısızlıkta eşya bir kademe düşsün</label>
+        <div className="row wrap">
+          <span className={'pill' + (custom ? '' : ' ok')}>{custom ? 'Özel tablo' : 'Varsayılan tablo'}</span>
+          {custom && <button className="btn small ghost" disabled={dis} onClick={() => setT({ ...t, upgrade: { ...t.upgrade, steps: undefined } })}>Varsayılana dön</button>}
+        </div>
+      </section>
+      <div className="adm-table-wrap"><table className="adm-table">
+        <thead><tr><th>Kademe</th><th>Şans %</th><th>Mücevher</th><th>Silah gücü %</th><th>Zırh gücü %</th><th>Malzemeler (ad · adet)</th></tr></thead>
+        <tbody>{steps.map((s, i) => (
+          <tr key={i}>
+            <td><b>+{i + 1}</b><small>{i === 4 ? '+5 efekti' : i === 5 ? '+6 efekti' : ''}</small></td>
+            <td><Num v={custom ? s.chance : undefined} def={s.chance} min={0} max={100} step={1} w={58} dis={dis} on={(v) => put(i, { chance: v ?? DEFAULT_UPGRADE[i].chance })} /></td>
+            <td><Num v={custom ? s.gems : undefined} def={s.gems} min={0} max={1e7} step={1} w={78} dis={dis} on={(v) => put(i, { gems: Math.round(v ?? DEFAULT_UPGRADE[i].gems) })} /></td>
+            <td><Num v={custom ? s.weapon : undefined} def={s.weapon} min={0} max={1000} step={1} w={58} dis={dis} on={(v) => put(i, { weapon: v ?? DEFAULT_UPGRADE[i].weapon })} /></td>
+            <td><Num v={custom ? s.armor : undefined} def={s.armor} min={0} max={1000} step={1} w={58} dis={dis} on={(v) => put(i, { armor: v ?? DEFAULT_UPGRADE[i].armor })} /></td>
+            <td>
+              <div className="col" style={{ gap: 4 }}>
+                {Object.entries(s.mats).map(([k, q]) => (
+                  <div key={k} className="row" style={{ gap: 4 }}>
+                    <select className="adm-sel" disabled={dis} value={k} onChange={(e) => setMat(i, k, e.target.value, q)}>{matOpts.map((m) => <option key={m.id} value={m.id} disabled={m.id !== k && m.id in s.mats}>{m.name}</option>)}</select>
+                    <Num v={q} def={q} min={0} max={9999} step={1} w={58} dis={dis} on={(v) => setMat(i, k, k, Math.round(v ?? 0))} />
+                    <button className="btn small ghost" disabled={dis} onClick={() => setMat(i, k, k, 0)} aria-label="Kaldır">✕</button>
+                  </div>
+                ))}
+                {Object.keys(s.mats).length < 6 && <button className="btn small ghost" disabled={dis} onClick={() => { const f = matOpts.find((m) => !(m.id in s.mats)); if (f) setMat(i, null, f.id, 1); }}>+ Malzeme</button>}
+              </div>
+            </td>
+          </tr>
+        ))}</tbody>
+      </table></div>
+    </>
+  );
+}
+
 function EnchantTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const et = t.enchants;
   const setEt = (p: Partial<GameTuning['enchants']>) => { const n = { ...et, ...p } as Record<string, unknown>; for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k]; setT({ ...t, enchants: n as GameTuning['enchants'] }); };

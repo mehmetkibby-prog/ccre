@@ -8,7 +8,7 @@ export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND
 
 export type PropKind =
   | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
-  | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
+  | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'forge' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
   | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
@@ -130,6 +130,8 @@ function genVillage(l: MapLayout, rng: Rng) {
   for (const [tx, ty, v] of stalls) { blockRect(l, tx, ty, 2, 1); l.props.push({ k: 'stall', x: (tx + 1) * TILE, y: (ty + 1) * TILE, v, s: 1 }); }
   // demirci örsü, depo sandıkları
   blockRect(l, 15, 13, 1, 1); l.props.push({ k: 'anvil', x: 15.5 * TILE, y: 14 * TILE, v: 0, s: 1 });
+  // demir ocağı: ocak, baca, körük, su fıçısı ve silah askısı (Demirci uzaktan seçilsin)
+  blockRect(l, 12, 13, 3, 2); l.props.push({ k: 'forge', x: 13.5 * TILE, y: 14 * TILE, v: 0, s: 1 });
   for (const [x, y] of [[40, 13], [41, 13], [40.5, 12.4]] as const) l.props.push({ k: 'crate', x: x * TILE, y: y * TILE + TILE, v: 0, s: 1 });
   blockRect(l, 40, 12, 2, 1);
   l.props.push({ k: 'barrel', x: 42.6 * TILE, y: 13.9 * TILE, v: 0, s: 1 });

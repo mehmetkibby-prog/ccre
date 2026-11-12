@@ -145,7 +145,7 @@ describe('dupe/hile korumaları', () => {
   });
 
   it('artı basma: beklenen artı uyuşmazsa malzeme harcanmaz', () => {
-    const it1 = makeItem('boots', 'blue', 't', 0);
+    const it1 = makeItem('a_guardian', 'blue', 't', 0);
     w.join(1, char({ bag: [it1], materials: { kor_seal: 5, strong_branch: 10 } }));
     const p = w.bySid.get(1)!;
     const npc = p.zone.layout.npcs.find((n) => n.id === 'haso')!;
