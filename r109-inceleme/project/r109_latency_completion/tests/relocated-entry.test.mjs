@@ -51,6 +51,7 @@ test('exact installed server starts both realms with eight real channels outside
   const context=await(await fetch('http://127.0.0.1:'+realm.ports.app+'/api/realm/context')).json();assert.equal(context.realm.id,realm.id);
   const ready=await(await fetch('http://127.0.0.1:'+realm.ports.proxy+'/full-readyz')).json();assert.equal(ready.ok,true);
   if(process.env.RUNTIME_EXPECT_R110==='1')assert.equal(health.realtimeHandoff,'R110_HANDOFF1',child.output);
+  if(process.env.RUNTIME_EXPECT_R111==='1')assert.equal(health.combatContinuity,'R111_COMBAT1',child.output);
   fs.writeFileSync(evidenceDir+'/'+label+'-'+realm.id+'.log',child.output);evidence.push({realm:realm.id,health,ingress:ready});
  }
  assert(calls>=2);for(const c of children){await stop(c);assert.equal(c.exitCode,0,c.output);}
