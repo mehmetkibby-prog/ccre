@@ -1,5 +1,6 @@
 import {createHash} from 'node:crypto';
 import {itemRefreshR57} from './r57-options.mjs';
+import {prepareCached477} from './writer-statements.mjs';
 // SQLite-owned per-transaction evidence. OLD and NEW owners, including native
 // trigger effects and savepoint rollback, are observed without changing items.
 const definitions=['INSERT','UPDATE','DELETE'].map(event=>{
@@ -14,4 +15,5 @@ export function initializeItemRefreshR57(sql){
  for(const d of definitions)sql.exec(d.sql.replace('CREATE TRIGGER','CREATE TEMP TRIGGER'));
 }
 export function clearItemRefreshR57(sql){if(itemRefreshR57)sql.exec('DELETE FROM temp.kernel511_refresh_item_actors');}
-export function readItemRefreshR57(sql){return itemRefreshR57?{itemActorsR57:sql.prepare('SELECT id FROM temp.kernel511_refresh_item_actors ORDER BY id').all().map(r=>r.id)}:{};}
+// R110: compiled once per connection through the writer LRU (schema-checked).
+export function readItemRefreshR57(sql){return itemRefreshR57?{itemActorsR57:prepareCached477(sql,'SELECT id FROM temp.kernel511_refresh_item_actors ORDER BY id').all().map(r=>r.id)}:{};}

@@ -1,5 +1,6 @@
 import {refreshTriggersR533} from './writer-audit-r533.mjs';
 import {demand} from './contract.mjs';
+import {prepareCached477} from './writer-statements.mjs';
 import {REFRESH_SCOPE_V2} from './performance-options.mjs';
 import {gameplayR60} from './r60-options.mjs';
 import {MOUNT_PRIVATE_TABLES_R60} from './reward-sections-r60.mjs';
@@ -83,7 +84,8 @@ export class SharedRefreshScope{
   clearItemRefreshR57(sql);
   sql.exec('DELETE FROM temp.kernel511_refresh_actors;DELETE FROM temp.kernel511_refresh_tables;UPDATE temp.kernel511_refresh_enabled SET v='+(global?2:1));
   try{const result=work();demand(!result?.then,'shared_refresh_synchronous');
-   const tables=sql.prepare('SELECT * FROM temp.kernel511_refresh_tables ORDER BY name').all(),actors=[...new Set([...sql.prepare('SELECT id FROM temp.kernel511_refresh_actors ORDER BY id').all().map(r=>r.id),...(global?[]:this.affectedActors?.()??[])])].sort();
+   // R110: compiled once per connection through the writer LRU (schema-checked).
+   const tables=prepareCached477(sql,'SELECT * FROM temp.kernel511_refresh_tables ORDER BY name').all(),actors=[...new Set([...prepareCached477(sql,'SELECT id FROM temp.kernel511_refresh_actors ORDER BY id').all().map(r=>r.id),...(global?[]:this.affectedActors?.()??[])])].sort();
    return {...result,sharedRefresh:{version:1,actors,all:tables.some(r=>r.all_actors===1),tables:tables.map(r=>r.name),...(tables.some(r=>r.name==='player_items')?readItemRefreshR57(sql):{})}};
   }finally{this.active=false;sql.exec('UPDATE temp.kernel511_refresh_enabled SET v=0;DELETE FROM temp.kernel511_refresh_actors;DELETE FROM temp.kernel511_refresh_tables');clearItemRefreshR57(sql);}
  }
