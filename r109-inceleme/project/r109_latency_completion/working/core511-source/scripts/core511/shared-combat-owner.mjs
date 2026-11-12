@@ -50,12 +50,16 @@ export class SharedCombatOwner {
   }catch(error){this.runtime.fail(error);throw error;}
  }
  async checkpoint(peer,{proof}){this.assert(peer,proof);await this.runtime.journal.drain();this.assert(peer,proof);return {sequence:this.runtime.writer.sequence};}
- reload(peer,{proof,snapshot}){
+ async reload(peer,{proof,snapshot}){
   this.assert(peer,proof);const r=this.runtime;demand(snapshot?.world?.cycle===r.initial.world.cycle&&!r.journal.pending&&Object.values(r.journal.snapshot()).every(rows=>!rows.length),'shared_reload_requires_checkpoint');
   demand(Array.isArray(snapshot.monsters)&&snapshot.monsters.every(m=>m.channel===0),'shared_reload_scope');
   r.view.monsters.clear();for(const row of snapshot.monsters)r.view.setMonster(row);
   for(const kind of ['monsters','participants','bossParticipants']){r.journal.base.get(kind).clear();r.journal.current.get(kind).clear();r.journal.hydrate(kind,snapshot[kind]??[]);}
-  r.fullNeeded=true;return {reloaded:true};
+  // This snapshot is read only after the native command's durable ACK.
+  // Publish its committed world HP now, while retaining the exclusive lease.
+  // Inventory hydration may take longer; it must not hide a committed death.
+  // No new shared cast is admitted until the existing finish/release protocol.
+  r.fullNeeded=true;await r.project({full:true});this.assert(peer,proof);return {reloaded:true};
  }
  async idle(){if(!this.authority.active&&!this.authority.queue.length)return;await new Promise(resolve=>this.waiters.add(resolve));}
  wake(){if(!this.authority.active&&!this.authority.queue.length){for(const resolve of this.waiters)resolve();this.waiters.clear();}}
