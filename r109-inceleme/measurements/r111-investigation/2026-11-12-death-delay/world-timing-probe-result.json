@@ -1,0 +1,11 @@
+{
+  "kind": "controlled-local-reproduction-not-live-cause",
+  "ordinaryWorldStatus": 428,
+  "baselineMarketMs": 3.1813600000004953,
+  "injectedCoordinatorHoldMs": 1600,
+  "marketElapsedMs": 1602.841031,
+  "marketServerTiming": "session;dur=1, response;dur=1600, total;dur=1601",
+  "heartbeatElapsedMs": 52.23660800000107,
+  "faults": 0,
+  "conclusion": "full world_timing with status 200 can be a market-only read delayed by the coordinator; it does not time monster death"
+}

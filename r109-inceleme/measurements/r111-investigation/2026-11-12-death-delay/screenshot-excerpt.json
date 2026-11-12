@@ -1,0 +1,24 @@
+{
+  "source": "14652.jpg, user attachment",
+  "extraction": "Manually transcribed visible rows; not complete journal",
+  "rows": [
+    {
+      "atUtc": "2026-11-12T19:40:52Z",
+      "mode": "full",
+      "status": 200,
+      "totalMs": 1613
+    },
+    {
+      "atUtc": "2026-11-12T19:41:17Z",
+      "mode": "full",
+      "status": 200,
+      "totalMs": 1085
+    },
+    {
+      "atUtc": "2026-11-12T19:53:22Z",
+      "mode": "full",
+      "status": 200,
+      "totalMs": 1377
+    }
+  ]
+}
