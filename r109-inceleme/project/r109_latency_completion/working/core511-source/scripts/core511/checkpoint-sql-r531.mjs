@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 import {checkpointSqlBatchR531} from './r531-options.mjs';
 import {prepareServerStatement} from './server-statements.mjs';
+import {preparedSchemaVersions477} from '../../../native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs';
 import {checkpointTriggerHashesR531} from './checkpoint-triggers-r531.mjs';
 import {checkpointTriggerHashesR54} from './checkpoint-triggers-r54.mjs';
 import {rewardIdleCostR54} from './r54-options.mjs';
@@ -10,7 +11,9 @@ export const checkpointSqlStatsR531=()=>({...stats});
 const quote=x=>'"'+x+'"';
 const tables=['monsters','monster_participants','boss_participants','combat_events'];
 function approved(sql){
- const main=prepareServerStatement(sql,'PRAGMA main.schema_version').get().schema_version,temp=prepareServerStatement(sql,'PRAGMA temp.schema_version').get().schema_version,old=schemas.get(sql);
+ // R110: same two PRAGMA values through the connection's already compiled
+ // schema statements (or its writer-lock snapshot); no per-call PRAGMA compile.
+ const {mainVersion:main,tempVersion:temp}=preparedSchemaVersions477(sql),old=schemas.get(sql);
  if(old?.main===main&&old.temp===temp)return old.ok;
  const list=tables.map(n=>"'"+n+"'").join(','),query="SELECT sql FROM %s WHERE type='trigger' AND tbl_name IN ("+list+")";
  const mains=prepareServerStatement(sql,query.replace('%s','main.sqlite_schema')).all(),temps=prepareServerStatement(sql,query.replace('%s','temp.sqlite_schema')).all();

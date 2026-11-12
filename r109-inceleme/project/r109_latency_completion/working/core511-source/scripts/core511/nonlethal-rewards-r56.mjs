@@ -11,6 +11,7 @@ import {createBulkHitsR56} from './bulk-hits-r56.mjs';
 import {bulkHitsR56} from './r56-options.mjs';
 import {createHash} from 'node:crypto';
 import {prepareServerStatement} from './server-statements.mjs';
+import {preparedSchemaVersions477} from '../../../native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs';
 import {nonlethalTriggersR56} from './nonlethal-triggers-r56.mjs';
 import {nonlethalRewardsR56} from './r56-options.mjs';
 import {itemRefreshTriggerHashesR57} from './item-refresh-audit-r57.mjs';
@@ -18,7 +19,8 @@ const certified=new WeakMap(),counters=new WeakMap();
 const hash=s=>createHash('sha256').update(s).digest('hex');
 export function nonlethalStatsR56(sql){return {...counters.get(sql)};}
 export function nonlethalSchemaR56(sql){
- const main=prepareServerStatement(sql,'PRAGMA main.schema_version').get().schema_version,temp=prepareServerStatement(sql,'PRAGMA temp.schema_version').get().schema_version,prior=certified.get(sql);
+ // R110: same PRAGMA values via the connection's compiled schema statements.
+ const {mainVersion:main,tempVersion:temp}=preparedSchemaVersions477(sql),prior=certified.get(sql);
  if(prior&&prior.main===main&&prior.temp===temp)return prior.ok;
  const rows=prepareServerStatement(sql,"SELECT 'main' scope,name,sql FROM main.sqlite_schema WHERE type='trigger' UNION ALL SELECT 'temp',name,sql FROM temp.sqlite_schema WHERE type='trigger'").all();
  const ok=rows.every(r=>(contentTriggerHashesR102[r.scope+':'+r.name]??nonlethalTriggersR56[r.scope+':'+r.name]??itemRefreshTriggerHashesR57[r.scope+':'+r.name]??castleAuditHashesR59[r.scope+':'+r.name]??dailyRewardTriggerHashesR76[r.scope+':'+r.name]??zumrutAuditHashesR93[r.scope+':'+r.name])===hash(r.sql)||(gameplayR60.rewardSections&&rewardAuditHashesR60[r.scope+':'+r.name]===hash(r.sql))||(castleEnabled()&&r.scope==='main'&&(r.name==='channel_capacity_reentry'&&hash(r.sql)===castleCapacityHashR59||r.name==='guild_member_capacity'&&hash(r.sql)===guildCapacityHashR59)));certified.set(sql,{main,temp,ok});return ok;
