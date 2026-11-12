@@ -1,4 +1,4 @@
-# R110 sonrası canlı CPU profilleri — 3 ve 7 oyuncu
+# R110 sonrası canlı CPU profilleri — 3, 7 ve 11 oyuncu
 
 Kullanıcı R110_HANDOFF1 kurulumundan sonra (kurulum çıktısı: "R110 TAKILMA
 DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır") iki 60 saniyelik ana süreç
@@ -8,6 +8,7 @@ profili gönderdi. Harita/etkinlik ve realm ayrıca belirtilmedi.
 |---|---:|---|
 | `three-players-60s.cpuprofile.json` | 3 | `9e7bea1bc9f5688e7a2893f778897fc9d3972307adb5ecb4ae4b9f1b446e11ed` |
 | `seven-players-60s.cpuprofile.json` | 7 | `c5b46ba436feb90af3d7d6526464ff64fac243f4d803c14a529dffeb3a666729` |
+| `eleven-players-60s.cpuprofile.json` | 11 | `ebab92754eee1a9ea113af1388bffb41c29f8582323ae3dcb66c3cc961b5082d` |
 
 ## Karşılaştırma (örneklenmiş ana iş parçacığı; profiler başlangıcı hariç)
 
@@ -48,6 +49,29 @@ profili gönderdi. Harita/etkinlik ve realm ayrıca belirtilmedi.
   durdurmaz; yalnız ana sürece giden komut yanıtlarını (saldırı sonucu, ödül)
   kısa süre geciktirebilir.
 
+## 11 oyuncu (R105 dönemi 10 oyunculu kayıtla)
+
+| | Eski · 10 oyuncu | R110 · 11 oyuncu |
+|---|---:|---:|
+| Ana süreç meşguliyeti | %21,9 | %32,9 |
+| 1 sn pencere medyan / en yüksek | 22,4 / 53,8 | 31,6 / 58,6 |
+| WebSocket aktarımı `ondata` (ms/dk) | 501 | 83 |
+| Yazma işleri `drainWrites` (ms) | 4.537 | 7.565 |
+| Savaş yazımı (`combat@writer-runtime`) | 1.919 | 3.475 |
+| Saldırı işleyici (`handle@attack-writer`) | 767 | 1.583 |
+| Canavar karşılığı (`atomicBatch@retaliation-writer`) | 430 | 1.154 |
+| Ödül SQL (`withRewardSqlR531`) | 784 | 1.632 |
+| Yanıt paketleme (`replyBytes`/`framed`) | 491 / 562 | 1.537 / 1.507 |
+| GC örnekleri (ms) / en uzun dizi | 990 / 41,1 | 1.235 / 50,0 |
+
+Artışın tamamı aynı savaş kodu yollarında (saldırı → canavar karşılığı →
+ödül SQL → yanıt): bu kayıtta oyuncular çok daha yoğun savaşmış. R110 bu
+yolları değiştirmedi; aktarım payı 501 → 83 ms/dk düştü. Hiçbir 1 sn pencere
+%59'u geçmedi. **Ana süreçteki asıl yük savaş kayıtlarıdır**; 30–40 oyuncu
+yoğun savaşta bu yol sınıra yaklaşabilir; sıradaki iyileştirme hedefi budur.
+Oyuncu sayısı, etkinlik ve sürüm aynı anda değiştiği için nedensel
+karşılaştırma değildir.
+
 ## Sınırlar
 
 Bu kayıtlar nedensel önce/sonra testi değildir; oyuncu başına bölünüp 30–40
@@ -55,5 +79,5 @@ oyuncuya kapasite tahmini yapılmaz. CPU örnekleri tick p95/p99, >50 ms donma
 sayısı veya komut yanıt süresi değildir. 20–40 oyuncu varken, kurulumdan en az
 birkaç saat sonra yeni profil ve `vmstat 1 60` gerekir.
 
-Analiz: `evidence/profile-analysis-3p.json`, `evidence/profile-analysis-7p.json`
+Analiz: `evidence/profile-analysis-3p.json`, `-7p.json`, `-11p.json`
 (`scripts/analyze-profile.py`); GC dizileri `gc-spans.py`, `gc-runs.py`.
