@@ -32,7 +32,7 @@ const {WebSocket}=await import('/tmp/core511-build-deps/node_modules/ws/wrapper.
 const hash=x=>createHash('sha256').update(x).digest('base64url');
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),clean=[],actors=[],bridges=[],errors=[],counts={attacks:0,moves:0,replies:0};
 const hostStats=()=>({...Object.fromEntries(['cpu.stat','cpu.pressure','memory.events','memory.pressure','io.pressure'].map(n=>[n,fs.existsSync('/sys/fs/cgroup/'+n)?fs.readFileSync('/sys/fs/cgroup/'+n,'utf8'):null])),procCpu:fs.readFileSync('/proc/stat','utf8').split('\n')[0]});
-const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null,census=null;
+const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null,census=null,framing=null;
 const inspect=(method,params={})=>new Promise((resolve,reject)=>inspector.post(method,params,(error,result)=>error?reject(error):resolve(result)));
  let s,timer,panel,measuring=false,report={players:N,label,realm:process.env.CORE101_REALM_ID||'r1',durationRequestedMs:duration,workload:process.env.POPULATION_MODE||'mixed',fixture:{monsterHp:85,monsterDamage:9,playerStatHp:1000000,channelCapacity:capacity,channelDistribution:process.env.LOAD_DISTRIBUTION==='packed'?'fill-each-channel-to-real-capacity':'balanced-four-channels',liveAccess:false,coLocatedBots:false,separateBotProcess:true}},runId=randomUUID();
  const scope={after:f=>clean.push(f)},sharedAcquires={};
@@ -53,6 +53,8 @@ try{
   const q=host.database.sqlite;
   // Test-only census below every runtime wrapper; counts the measured window only.
   if(process.env.SQL_CENSUS==='1'){const {installSqlCensus}=await import('./sql-census.mjs');census=installSqlCensus(q,{active:()=>measuring});}
+  // Test-only: realm-side IPC frame sizes/time per method (existing observer hook).
+  if(process.env.FRAMING_CENSUS==='1'){const {observeFraming}=await import(core+'/reliable-stream.mjs');framing=new Map();observeFraming(row=>{if(!measuring)return;const key=(row.type??'?')+':'+(row.method??'-');const r=framing.get(key)??{count:0,bytes:0,maxBytes:0,ms:0,jsonMs:0};r.count++;r.bytes+=row.bytes;r.maxBytes=Math.max(r.maxBytes,row.bytes);r.ms+=row.ms;r.jsonMs+=row.jsonMs;framing.set(key,r);});}
   if(process.env.SQL_DIAGNOSTIC==='1'){
    const original=q.prepare;
    q.prepare=function(query,...options){const statement=original.call(this,query,...options);for(const name of ['all','get','run']){const invoke=statement[name];statement[name]=function(...params){const at=performance.now();try{return invoke.apply(this,params);}finally{const ms=performance.now()-at;if(measuring&&ms>=1&&sqlDiagnostic.length<250){const row={query,method:name,ms,atMs:performance.timeOrigin+at};sqlDiagnostic.push(row);if(process.env.SQL_PLAN_DIAGNOSTIC==='1'&&query.includes('curve(level,total_xp,next_cost)'))row.plan=original.call(q,'EXPLAIN QUERY PLAN '+query).all(...params);}}};}return statement;};
@@ -82,6 +84,8 @@ try{
  if(report.populationFixture.equipment)report.equipmentBefore=populationWeaponCounterSnapshot(s.host.database.sqlite,actors);
  panel=attachPanelRuntime({host:s.host,core:s.core,world:s.world});clean.push(()=>panel.close());await s.world.startJobs();s.core.start();
  for(const row of s.supervisor.rows.values())row.child.setMaxListeners(150);
+ // Test-only (FRAMING_CENSUS): count realm→channel IPC sends and payload bytes.
+ const ipcSends={sends:0,byteMessages:0,bytes:0};if(framing)for(const row of s.supervisor.rows.values()){const child=row.child,send=child.send;child.send=function(message,...rest){if(measuring){ipcSends.sends++;if(message?.type==='kernel511-bytes'&&message.bytes){ipcSends.byteMessages++;ipcSends.bytes+=message.bytes.length;}}return Reflect.apply(send,this,[message,...rest]);};}
  const remote=await remoteBots(scope,s,actors);console.log('remote bots',N,remote.pid);
  await pause(10000);assert.equal(s.faults.length,0,'warmup native faults');assert.equal(errors.length,0,'warmup command errors');
  const hostBefore=hostStats();gcObserver=new PerformanceObserver(list=>{for(const e of list.getEntries())if(gc.length<4096)gc.push({atMs:performance.timeOrigin+e.startTime,ms:e.duration,kind:e.detail.kind});});gcObserver.observe({entryTypes:['gc']});
@@ -99,6 +103,7 @@ try{
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
  if(census)report.sqlCensus=census.report();
+ if(framing){report.framingCensus=Object.fromEntries([...framing].sort((a,b)=>b[1].ms-a[1].ms));report.ipcSendCensus=ipcSends;}
  report.wsHandoff=s.supervisor.handoffStatsR110??null;if(report.wsHandoff?.sent)report.webSocketTransport='production-style-socket-handoff';
  report.channelProfiles=[];
  for(const n of profileChannels)report.channelProfiles.push({channel:n,...await s.core.processes.get(n).control.request('benchmark_profile',{operation:'end',runId})});
