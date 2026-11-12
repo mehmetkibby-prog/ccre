@@ -44,6 +44,19 @@ elif group=='r111':
     stage=str(T/'evidence/runtime-stage.json')
     env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r111','RUNTIME_EXPECT_R110':'1','RUNTIME_EXPECT_R111':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
     raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
+elif group=='r112':
+    core=R/'working/core511-source/scripts/core511/tests'
+    cases=[R/'tests'/f for f in ['population-delivery-r111.test.mjs','committed-publish-r112.test.mjs','claim-scope-r112.test.mjs','actor-wire-r112.test.mjs','committed-world-r112.test.mjs','unchanged-release-r112.test.mjs','channel-release-r111.test.mjs']]
+    cases += [core/f for f in ['actor-read-pool-r112.test.mjs','read-worker-recovery.test.mjs','read-queue.test.mjs','shared-refresh-release.test.mjs','terminal-write-barrier.test.mjs','shared-world.test.mjs','shared-combat-owner.test.mjs']]
+    rc=subprocess.run(runner+['--test','--test-concurrency=1',*[str(f) for f in cases]],cwd=R,env=os.environ).returncode
+    if rc:raise SystemExit(rc)
+    T=P/'r112_runtime_flow'
+    rc=subprocess.run([sys.executable,str(T/'tests/installer_test.py'),'-v'],cwd=T,env=os.environ).returncode
+    if rc:raise SystemExit(rc)
+    subprocess.run([sys.executable,str(T/'tests/stage-runtime.py')],cwd=T,env=os.environ,check=True)
+    stage=str(T/'evidence/runtime-stage.json')
+    env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r112','RUNTIME_EXPECT_R110':'1','RUNTIME_EXPECT_R111':'1','RUNTIME_EXPECT_R112':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
+    raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
 elif group=='browser':cmd=runner+[str(R/'tests/tower-browser.mjs')]
 else:raise SystemExit('Unknown check group: '+group)
 raise SystemExit(subprocess.run(cmd,cwd=R,env=os.environ).returncode)
