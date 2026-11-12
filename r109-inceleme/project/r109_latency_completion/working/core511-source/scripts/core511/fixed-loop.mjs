@@ -10,7 +10,7 @@ import {actorRejection} from './actor-rejection.mjs';
 import {r44Options} from './r44-options.mjs';
 import {combatInputOrder} from './combat-input-order.mjs';
 import {isDeathPreviewR54} from './reward-reply-r54.mjs';
-import {queueCombatContinuationR57} from './combat-continuation-r57.mjs';
+import {queueCombatContinuationR57,queueAcceptedCombatR111} from './combat-continuation-r57.mjs';
 const quantile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.min(a.length-1,Math.ceil(a.length*p)-1)]:0;
 export const DEFER_INPUT=Symbol('core511.defer-input-until-next-tick');
 const emptyResults=Object.freeze([]);
@@ -41,6 +41,7 @@ export class FixedLoop {
   demand(kind==='movement'||kind==='combat','unknown_input_kind');
   demand(p.queue.length<64,'input_backpressure');
   p.lastAccepted=sequence;p.queue.push({sequence,kind,payload,at:this.clock(),receivedAtMs:this.wall(),order:this.metrics.inputs+1});this.metrics.inputs++;
+  queueAcceptedCombatR111(this,id,{kind,payload});
  }
  // Durable work is submitted asynchronously by the rule adapter. The actor is
  // fenced while it is pending. Other actors continue; no speculative reward ACK.
