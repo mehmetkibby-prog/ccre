@@ -18,7 +18,7 @@ export function joinedDeathR53(loop,{id,input,now,receivedAtMs,kernel,local,ids,
  let actors=[],combat=null,reservationR54=null,accepted=false,deathMotionR86=null;
  const cancel=()=>{for(const t of actors)if(t.entry.joinedR53===t)loop.checkpoints.finishR53(t);if(combat){loop.combatCheckpoints.finishR53(combat);combat=null;reservationR54=null;}else if(reservationR54){loop.combatCheckpoints.cancelReservationR54(reservationR54);reservationR54=null;}};
  kernel.durableGroup(ids,async()=>{
-  const totalR54=stageStartR51(),deathObservationR82=deathLatencyR82.begin();let phaseR54=totalR54,outcomeR82='failed';
+  const totalR54=stageStartR51(),deathObservationR82=deathLatencyR82.begin({inputWaitMs:Math.max(0,now-receivedAtMs),channel:kernel.state.channel});let phaseR54=totalR54,outcomeR82='failed';
   try{
    // Await existing double buffers only; do not submit another actor fsync,
    // channel-wide drain or shared prepare before the defeat transaction.

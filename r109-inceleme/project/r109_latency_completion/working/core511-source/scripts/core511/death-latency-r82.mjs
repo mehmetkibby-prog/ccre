@@ -1,4 +1,5 @@
 import {performance} from 'node:perf_hooks';
+import {reportSlowDeathR111} from './slow-death-r111.mjs';
 
 const SCOPE='local-monster-death-callback';
 const PHASES=['checkpoint','writer','refresh'];
@@ -17,7 +18,7 @@ const row=value=>value&&OUTCOMES.includes(value.outcome)&&['totalMs','checkpoint
 // attribute. It creates no timers, storage writes, network traffic or IDs.
 // Tokens stay private; snapshots contain only bounded measurements. Invalid
 // clocks discard an observation; timing must never decide a gameplay outcome.
-export function createDeathLatencyR82({now=()=>performance.now(),wall=()=>Date.now()}={}){
+export function createDeathLatencyR82({now=()=>performance.now(),wall=()=>Date.now(),report=()=>{}}={}){
  const active=new Map(),recent=[],slow=[];
  const counters={completed:0,rejected:0,failed:0,dropped:0};
  const increment=key=>{counters[key]=Math.min(Number.MAX_SAFE_INTEGER,counters[key]+1);};
@@ -29,10 +30,10 @@ export function createDeathLatencyR82({now=()=>performance.now(),wall=()=>Date.n
   item.ms[item.phase]+=at-item.last;item.last=at;return item;
  };
  return {
-  begin(){
+  begin({inputWaitMs=0,channel=null}={}){
    const at=clock(now);
    if(at===null||active.size>=MAX_ACTIVE){increment('dropped');return null;}
-   const token=Object.freeze({});active.set(token,{start:at,last:at,phase:'checkpoint',ms:{checkpoint:0,writer:0,refresh:0}});return token;
+   const token=Object.freeze({});active.set(token,{start:at,last:at,phase:'checkpoint',inputWaitMs:valid(inputWaitMs)?inputWaitMs:0,channel,ms:{checkpoint:0,writer:0,refresh:0}});return token;
   },
   phase(token,next){
    const item=active.get(token);if(!item)return;
@@ -48,6 +49,9 @@ export function createDeathLatencyR82({now=()=>performance.now(),wall=()=>Date.n
    if(!row(observed)){increment('dropped');return;}
    increment(outcome);recent.push(observed);if(recent.length>MAX_RECENT)recent.shift();
    if(observed.totalMs>=SLOW_MS){slow.push(observed);if(slow.length>MAX_SLOW)slow.shift();}
+   // Existing admin snapshot/schema stays unchanged; the bounded journal adds
+   // input-queue wait and channel for correlating an incident with UTC logs.
+   if(observed.totalMs+item.inputWaitMs>=500){try{report({...observed,inputWaitMs:item.inputWaitMs,channel:item.channel});}catch{}}
   },
   snapshot(){
    const at=clock(now),phaseActive={checkpoint:0,writer:0,refresh:0},phaseOldestMs={checkpoint:null,writer:null,refresh:null};
@@ -83,4 +87,4 @@ export function publicDeathLatencyR82(value){
  return result;
 }
 
-export const deathLatencyR82=createDeathLatencyR82();
+export const deathLatencyR82=createDeathLatencyR82({report:reportSlowDeathR111});
