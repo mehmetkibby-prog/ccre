@@ -98,13 +98,25 @@ export function withPreparedStatements477(sqlite,task,{schemaChecked=false}={}) 
   try{const result=task();if(result&&typeof result.then==='function')throw new TypeError('Synchronous prepared statement scope required');return result;}
   finally{state.depth--;}
 }
+// R110: calls made outside a writer scope on an instrumented connection used to
+// compile the same SQL natively on every call (about 10k compiles per minute at
+// 40 players). They now enter a one-call scope instead: the same schema-version
+// check, rollback/close/reentrancy/large-binding rules and LRU as the writer
+// scope, exactly like prepareServerStatement's coordinator reads. Only compiled
+// SQL is reused; rows, bindings and authority results never are. Set
+// CORE511_R110_SCOPED_FACADE=0 to restore the previous per-call compile.
+const scopedFacadeR110=process.env.CORE511_R110_SCOPED_FACADE!=='0';
 export function prepareCached477(sqlite,sql) {
   const state=states.get(sqlite);
-  if(!state?.depth||typeof sql!=='string'||!cacheable.test(sql)||schemaChange(sql)||sql.length>state.maxSqlLength||sql.length*2>state.maxSqlBytes)return sqlite.prepare(sql);
+  const outside=!state?.depth&&!(scopedFacadeR110&&state&&!state.closed);
+  if(outside||typeof sql!=='string'||!cacheable.test(sql)||schemaChange(sql)||sql.length>state.maxSqlLength||sql.length*2>state.maxSqlBytes)return sqlite.prepare(sql);
   // A facade never exposes mutable native options, expanded SQL, or an iterator
   // that could remain active after the synchronous scope. Bindings stay native.
   const invoke=(method,bindings)=>{
-    if(!state.depth){const statement=sqlite.prepare(sql);return Reflect.apply(statement[method],statement,bindings);}
+    if(!state.depth){
+      if(scopedFacadeR110&&!state.closed)return withPreparedStatements477(sqlite,()=>invoke(method,bindings));
+      const statement=sqlite.prepare(sql);return Reflect.apply(statement[method],statement,bindings);
+    }
     let entry=state.entries.get(sql),statement,temporary=false;
     if(largeBindings(bindings)){
       if(entry&&!entry.busy){state.entries.delete(sql);state.sqlBytes-=sql.length*2;}
