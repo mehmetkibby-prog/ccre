@@ -58,6 +58,17 @@ kullanılır. Bu bir anonim canlı DB kopyası değildir; pazar/lonca yazma traf
 bütün olasılıklarını temsil etmez. Canlı loglardan gerçek oran çıkarılmış değildir.
 Yeni karşılaştırmalarda aynı donanım/kota, veri, senaryo ve en az üç tekrar kullan.
 
+**R110 adayı (kurulu değil).** Bu dalda iki gecikme düzeltmesi ve ek testler
+var; rapor ve ölçümler `measurements/r110-aday/RAPOR.md`. Ek kontroller:
+
+```bash
+npm run test:handoff
+BROWSER_WS_TRANSPORT=handoff R102_TEST_REALM=r1 TOWER=1 PREVIEW_NAME=r110-pc npm run test:browser
+```
+
+`npm run verify` yalnız R109 tabanını doğrular; bu dalda değişen 10 runtime
+dosyasını ve çekirdek kimliğini bilerek "farklı" listeler.
+
 Ham canlı profili yeniden analiz etmek için:
 
 ```bash
