@@ -1,0 +1,75 @@
+{
+  "release": "/tmp/r110-installed-xc6dpgwu/release",
+  "base": "R110 ZIP applied by its own installer to an installed R109_LATENCY2 fixture",
+  "package": {
+    "file": "/home/user/ccre/r109-inceleme/project/r110_takilma/delivery/r110-takilma.zip",
+    "bytes": 213919,
+    "sha256": "4fd1fbb8a36de2ae89fb693f5617ac3a8e697f2608f4a6b14464b6703a83bcc0",
+    "sourceVersion": "R109_LATENCY2",
+    "sourceCore": "1fb1a5cd28cbeec3a0b33bd1a262ecc165e07cf6a239d13f668a8b22f79a91df",
+    "targetVersion": "R110_HANDOFF1",
+    "targetCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+    "changedCodeFiles": 12,
+    "newFiles": [
+      "core511-source/scripts/core511/r110-options.mjs"
+    ],
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "installedVersion": "R110_HANDOFF1",
+  "targetCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+  "overlay": [
+    {
+      "path": "core511-source/scripts/core511/channel-process.mjs",
+      "sha256": "0349989ea55066f39fa6478c1fe55e3f7f4d7c895cd4524884a4ae3d46783f0f"
+    },
+    {
+      "path": "core511-source/scripts/core511/checkpoint-sql-r531.mjs",
+      "sha256": "df6f5fec08c5797d0aa368407bc6226738767704831bdbe470433883a1357f37"
+    },
+    {
+      "path": "core511-source/scripts/core511/item-refresh-audit-r57.mjs",
+      "sha256": "ab9667b0ef1ee15efd85ff0a04d8b7f5979ee5ecbac23bc0c81fe7c2f7aa9668"
+    },
+    {
+      "path": "core511-source/scripts/core511/native-http-bindings.mjs",
+      "sha256": "d18c816ad0555c08be9d13a13817cb9442eb2230a10f936f95076a5c1517d56e"
+    },
+    {
+      "path": "core511-source/scripts/core511/nonlethal-rewards-r56.mjs",
+      "sha256": "25027d8a06b96b15776b13091b8ca072bc53956bfbd671e6a7913dddb19fc172"
+    },
+    {
+      "path": "core511-source/scripts/core511/process-supervisor.mjs",
+      "sha256": "bedd9dac3307f5093ce9c53303e224f79f37de275bc46f909f484c771f4afb0c"
+    },
+    {
+      "path": "core511-source/scripts/core511/r110-options.mjs",
+      "sha256": "fd6e4d11532ff0ae8cdcf14227efe7f25095a3858fc86310fbe17452e21b6fda"
+    },
+    {
+      "path": "core511-source/scripts/core511/shared-refresh-scope.mjs",
+      "sha256": "d018d3db8947977be95a8ede9b68036a8c547ab82f5856dacbb6e0b8a56f1966"
+    },
+    {
+      "path": "core511-source/scripts/core511/ws-endpoint.mjs",
+      "sha256": "066eb5b24e135bedc946cd51e94bb6dcfa85479d33350e12a39dcf3280ea5b87"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/runtime-host.mjs",
+      "sha256": "724233b7caab464a8b6732304ce45fdb6172c6df2ee34520374fc20ec13a1e10"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/runtime-ingress.mjs",
+      "sha256": "1989cddd06b7b978b90689efcb3d4912f313614afb39faab2f6bbbe41911e668"
+    },
+    {
+      "path": "native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+      "sha256": "1f6afe2466ebbab7a46e35f951e105a5b7785f735b04c30fd73d13a9d2b57885"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/install-operations.mjs",
+      "sha256": "1bca62eca9ba5edc637247725d972668869a95d9b36c1079674053a8ae3a746c"
+    }
+  ]
+}

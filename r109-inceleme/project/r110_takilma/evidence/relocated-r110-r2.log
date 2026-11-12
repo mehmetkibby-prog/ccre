@@ -1,0 +1,3 @@
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+[vinext] Production server running at http://127.0.0.1:39639
+{"core511Ready":true,"channels":4,"capacity":10,"pid":25287,"release":"release"}

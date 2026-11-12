@@ -7,8 +7,9 @@ import http from 'node:http';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {randomUUID,randomBytes,generateKeyPairSync} from 'node:crypto';
-const baseline=process.env.BOOT_BASELINE==='1',label=baseline?'relocated-baseline':'relocated';
-const root=path.resolve(import.meta.dirname,'..'),stage=JSON.parse(fs.readFileSync(root+(baseline?'/evidence/runtime-stage-baseline.json':'/evidence/runtime-stage.json'))),release=stage.release,core=release+'/core511-source/scripts/core511',native=release+'/native510-bb3a6cc689c6/vds-server/src';
+const baseline=process.env.BOOT_BASELINE==='1',label=process.env.RUNTIME_LABEL||(baseline?'relocated-baseline':'relocated');
+// RUNTIME_STAGE_FILE/RUNTIME_EVIDENCE_DIR let a later release (R110) start its own installed tree.
+const root=path.resolve(import.meta.dirname,'..'),evidenceDir=process.env.RUNTIME_EVIDENCE_DIR||root+'/evidence',stage=JSON.parse(fs.readFileSync(process.env.RUNTIME_STAGE_FILE||root+(baseline?'/evidence/runtime-stage-baseline.json':'/evidence/runtime-stage.json'))),release=stage.release,core=release+'/core511-source/scripts/core511',native=release+'/native510-bb3a6cc689c6/vds-server/src';
 const {RealmServiceVerifier}=await import(core+'/realm-service-auth-r101.mjs');
 const {createEmptyRealmWorld}=await import(native+'/realm-world-bootstrap.mjs');
 const {LocalDatabase}=await import(native+'/database.mjs');
@@ -49,10 +50,11 @@ test('exact installed server starts both realms with eight real channels outside
   if(realm.id==='r1')assert(child.output.includes('core511_boot_read'),'large boot limit was not exercised');
   const context=await(await fetch('http://127.0.0.1:'+realm.ports.app+'/api/realm/context')).json();assert.equal(context.realm.id,realm.id);
   const ready=await(await fetch('http://127.0.0.1:'+realm.ports.proxy+'/full-readyz')).json();assert.equal(ready.ok,true);
-  fs.writeFileSync(root+'/evidence/'+label+'-'+realm.id+'.log',child.output);evidence.push({realm:realm.id,health,ingress:ready});
+  if(process.env.RUNTIME_EXPECT_R110==='1')assert.equal(health.realtimeHandoff,'R110_HANDOFF1',child.output);
+  fs.writeFileSync(evidenceDir+'/'+label+'-'+realm.id+'.log',child.output);evidence.push({realm:realm.id,health,ingress:ready});
  }
  assert(calls>=2);for(const c of children){await stop(c);assert.equal(c.exitCode,0,c.output);}
- fs.writeFileSync(root+'/evidence/'+label+'-runtime.json',JSON.stringify({release,package:stage.package,live:false,accounts:'signed fixture',realRuntimeEntry:true,realChannels:8,realms:evidence,cleanShutdown:true},null,2));
+ fs.writeFileSync(evidenceDir+'/'+label+'-runtime.json',JSON.stringify({release,package:stage.package,live:false,accounts:'signed fixture',realRuntimeEntry:true,realChannels:8,realms:evidence,cleanShutdown:true},null,2));
 });
 
 test('relocated native captcha worker resolves its imports and produces a PNG',async t=>{

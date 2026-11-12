@@ -13,7 +13,7 @@ import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {randomUUID,randomBytes,generateKeyPairSync} from 'node:crypto';
 import {WebSocket} from '/tmp/core511-build-deps/node_modules/ws/wrapper.mjs';
-const root=path.resolve(import.meta.dirname,'..'),stage=JSON.parse(fs.readFileSync(root+'/evidence/runtime-stage-candidate.json')),release=stage.release,core=release+'/core511-source/scripts/core511',native=release+'/native510-bb3a6cc689c6/vds-server/src';
+const root=path.resolve(import.meta.dirname,'..'),stage=JSON.parse(fs.readFileSync(process.env.HANDOFF_STAGE_FILE||root+'/evidence/runtime-stage-candidate.json')),release=stage.release,core=release+'/core511-source/scripts/core511',native=release+'/native510-bb3a6cc689c6/vds-server/src';
 const {RealmServiceVerifier}=await import(core+'/realm-service-auth-r101.mjs');
 const {createEmptyRealmWorld}=await import(native+'/realm-world-bootstrap.mjs');
 const {LocalDatabase}=await import(native+'/database.mjs');
@@ -110,5 +110,5 @@ test('installed runtime hands player WebSockets to channel processes for both re
   assert.equal(stopped.code,0,child.output);assert(stopped.ms<8000,'shutdown '+stopped.ms);
   row.shutdown=stopped;evidence.push(row);
  }
- fs.writeFileSync(root+'/evidence/ws-handoff-runtime.json',JSON.stringify({release,overlay:stage.overlay.map(r=>r.path),realRuntimeEntry:true,results:evidence},null,2)+'\n');
+ fs.writeFileSync(process.env.HANDOFF_EVIDENCE_FILE||root+'/evidence/ws-handoff-runtime.json',JSON.stringify({release,overlay:stage.overlay.map(r=>r.path),realRuntimeEntry:true,results:evidence},null,2)+'\n');
 });

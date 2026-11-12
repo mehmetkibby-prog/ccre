@@ -22,6 +22,15 @@ elif group=='handoff':
     # R110 candidate: installed R109 release + this tree's changed runtime files.
     subprocess.run([sys.executable,str(R/'tests/stage-candidate.py')],cwd=R,env=os.environ,check=True)
     cmd=runner+['--test',str(R/'tests/ws-handoff-runtime.test.mjs')]
+elif group=='r110':
+    # R110 installer on an installed R109, then the tree it installs started for real.
+    T=P/'r110_takilma'
+    rc=subprocess.run([sys.executable,str(T/'tests/installer_test.py'),'-v'],cwd=T,env=os.environ).returncode
+    if rc:raise SystemExit(rc)
+    subprocess.run([sys.executable,str(T/'tests/stage-runtime.py')],cwd=T,env=os.environ,check=True)
+    stage=str(T/'evidence/runtime-stage.json')
+    env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r110','RUNTIME_EXPECT_R110':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
+    raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
 elif group=='browser':cmd=runner+[str(R/'tests/tower-browser.mjs')]
 else:raise SystemExit('Unknown check group: '+group)
 raise SystemExit(subprocess.run(cmd,cwd=R,env=os.environ).returncode)
