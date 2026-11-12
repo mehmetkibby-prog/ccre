@@ -1,0 +1,1 @@
+ALTER TABLE `game_settings` ADD `halloween_mode` integer DEFAULT 0 NOT NULL;

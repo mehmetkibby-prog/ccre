@@ -1,0 +1,13 @@
+{
+  "namespace": "core511-1025c65a35480d96",
+  "game": "game-client-core511-r105-4a0d3559a0e0e553.js",
+  "portal": "auth-portal-core511-r105-eab63de9b642530e.js",
+  "admin": "admin-client-core511-r103-d967d2e806534317.js",
+  "bridge": "core511-transport-r105-b25f3f5757b582f4.js",
+  "clientNew": [
+    "game-client-core511-r105-4a0d3559a0e0e553.js",
+    "auth-portal-core511-r105-eab63de9b642530e.js",
+    "admin-client-core511-r103-d967d2e806534317.js",
+    "core511-transport-r105-b25f3f5757b582f4.js"
+  ]
+}

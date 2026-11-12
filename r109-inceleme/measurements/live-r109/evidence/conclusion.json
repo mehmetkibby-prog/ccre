@@ -1,0 +1,15 @@
+{
+  "players": 6,
+  "populationSource": "user reply",
+  "captureRealm": null,
+  "captureActivities": null,
+  "mainSampledNonIdlePercent": 21.96238731400927,
+  "longestGcSampleSpanMs": 27.882999999999992,
+  "sourceSha256": "42f50688a62556e2dd874fac092b060aba015823ef9370743b6b014ea365fd3e",
+  "r1LiveR109Confirmed": true,
+  "r2LiveConfirmed": false,
+  "r2AccessFailure": "workspace proxy HTTP403, not a service health finding",
+  "liveCodeChanged": false,
+  "performanceTargetProven": false,
+  "zeroLagProven": false
+}

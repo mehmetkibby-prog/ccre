@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: external fallback reuses statements with fresh bindings, and only publishes after durability
+ok 1 - external fallback reuses statements with fresh bindings, and only publishes after durability
+  ---
+  duration_ms: 6.409195
+  type: 'test'
+  ...
+# Subtest: failed fallback rolls back and the next command keeps native ordering
+ok 2 - failed fallback rolls back and the next command keeps native ordering
+  ---
+  duration_ms: 1.149643
+  type: 'test'
+  ...
+# Subtest: fallback cache still observes MAIN/TEMP schema changes and trigger side effects
+ok 3 - fallback cache still observes MAIN/TEMP schema changes and trigger side effects
+  ---
+  duration_ms: 1.508124
+  type: 'test'
+  ...
+# Subtest: small groups retain all later heads and preserve seeds, sequences and FIFO
+ok 4 - small groups retain all later heads and preserve seeds, sequences and FIFO
+  ---
+  duration_ms: 2.951348
+  type: 'test'
+  ...
+# Subtest: full party leases remain complete and no later group is consumed
+ok 5 - full party leases remain complete and no later group is consumed
+  ---
+  duration_ms: 0.615537
+  type: 'test'
+  ...
+# Subtest: mixed area planning and accepted overlapping casts also retain later heads
+ok 6 - mixed area planning and accepted overlapping casts also retain later heads
+  ---
+  duration_ms: 0.404413
+  type: 'test'
+  ...
+# Subtest: foreign, held, missing, overdue and older waiters still block without consumption
+ok 7 - foreign, held, missing, overdue and older waiters still block without consumption
+  ---
+  duration_ms: 3.387568
+  type: 'test'
+  ...
+# Subtest: changed ownership or head invalidates the entire planned group
+ok 8 - changed ownership or head invalidates the entire planned group
+  ---
+  duration_ms: 1.018124
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 403.412156

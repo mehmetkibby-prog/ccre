@@ -1,0 +1,62 @@
+[
+  {
+    "name": "packed-1",
+    "players": 40,
+    "realm": "r1",
+    "mode": "mixed",
+    "distribution": "packed",
+    "exit": 0,
+    "seconds": 87.4,
+    "file": "r109-ready-packed-1-40.json"
+  },
+  {
+    "name": "boss-1",
+    "players": 40,
+    "realm": "r1",
+    "mode": "shared_boss_terminal",
+    "distribution": "balanced",
+    "exit": 0,
+    "seconds": 84.4,
+    "file": "r109-ready-boss-1-40.json"
+  },
+  {
+    "name": "balanced30",
+    "players": 30,
+    "realm": "r1",
+    "mode": "mixed",
+    "distribution": "balanced",
+    "exit": 0,
+    "seconds": 85.3,
+    "file": "r109-ready-balanced30-30.json"
+  },
+  {
+    "name": "academy40",
+    "players": 40,
+    "realm": "r2",
+    "mode": "mixed",
+    "distribution": "balanced",
+    "exit": 0,
+    "seconds": 86.6,
+    "file": "r109-ready-academy40-40.json"
+  },
+  {
+    "name": "packed-2",
+    "players": 40,
+    "realm": "r1",
+    "mode": "mixed",
+    "distribution": "packed",
+    "exit": 0,
+    "seconds": 85.0,
+    "file": "r109-ready-packed-2-40.json"
+  },
+  {
+    "name": "boss-2",
+    "players": 40,
+    "realm": "r1",
+    "mode": "shared_boss_terminal",
+    "distribution": "balanced",
+    "exit": 0,
+    "seconds": 84.0,
+    "file": "r109-ready-boss-2-40.json"
+  }
+]

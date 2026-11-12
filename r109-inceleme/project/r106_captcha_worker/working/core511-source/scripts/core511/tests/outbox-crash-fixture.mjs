@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {GameWriter} from '../writer-runtime.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),{peer,request}=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!file.includes('core511-isolated-')||!['before','after'].includes(phase))throw Error('isolated outbox test required');
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),{installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry();
+const database=new LocalDatabase(file,{groupWrites:true,asyncDurable:true});let writer;
+writer=new GameWriter(database,{realmId:'outbox-native-crash',clock:()=>request.payload.nowMs,ports:{guard:()=>true,assertResources:(sql,p,c)=>Boolean(writer.authority.assertAdmitted(sql,c.peer,c.actor,c.epoch)),affectedActors:()=>[],enforceRateLimit:()=>null,recordSecurityEvent:()=>{},mixedPorts:()=>({selectMixedMonsters473:()=>[]}),resolveRecipients:(_,r)=>r.actors??[request.playerId]}});await writer.initialize();
+const append=writer.notifications.append.bind(writer.notifications);writer.notifications.append=(sql,c,r)=>{const value=append(sql,c,r);if(!value.notifications.length)throw Error('native operation must emit a notification');if(phase==='before'){fs.writeFileSync(marker,'uncommitted_native_outbox');process.kill(process.pid,'SIGKILL');}return value;};
+await writer.command(peer,request);fs.writeFileSync(marker,'durable_native_outbox_before_ack');process.kill(process.pid,'SIGKILL');

@@ -1,0 +1,1 @@
+ALTER TABLE `market_settlements` ADD `applied_at_ms` integer DEFAULT 0 NOT NULL;

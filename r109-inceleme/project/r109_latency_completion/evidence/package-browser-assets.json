@@ -1,0 +1,18 @@
+{
+  "package": {
+    "file": "/workspace/ccre/r109_latency_completion/artifacts/R109_LATENCY_549b03ae.zip",
+    "bytes": 1347214,
+    "sha256": "c1bd26d3d77f40f2e2bf03eff1e4da044f8ec78343ac125831695ee2373a2e0e",
+    "sourceCore": "bd3891da70f7827ebbe0b62e8a9edf10444a2a86cde6fa0629a5f3bc07085fdd",
+    "targetCore": "1fb1a5cd28cbeec3a0b33bd1a262ecc165e07cf6a239d13f668a8b22f79a91df",
+    "changedCodeFiles": 20,
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "graph": {
+    "files": 57,
+    "edges": 140
+  },
+  "source": "exact installer output; unchanged R105 clients",
+  "fallback": false
+}

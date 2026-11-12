@@ -1,0 +1,36 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "files": [
+    {
+      "file": "package-lock.json",
+      "sha256": "9eedc11cd2b1aa129d154c932e7c50a7418f99bf542d23f971bccd3d2a1a768b"
+    },
+    {
+      "file": "vds-server/src/realm-runtime.mjs",
+      "sha256": "90920023e6256095f4acf6091dabb47f538c71ce687dcde6b734bdfee966f5f3"
+    },
+    {
+      "file": "vds-server/src/maintenance438.mjs",
+      "sha256": "d3e5428d33dd0acce1d52220237396039992955cc6fa27ef244d65c3ec34cdb8"
+    },
+    {
+      "file": "vds-server/src/loadtest-entry.mjs",
+      "sha256": "c613073fc9e8d6598237653e72e52189578b7d0d1bd7e3544422a9ae630e7cfa"
+    },
+    {
+      "file": "vds-server/src/site-visits457.mjs",
+      "sha256": "47777deaef31c707927ac2ba6958e235130d5106b1693ea773a6e7466a0267ff"
+    },
+    {
+      "file": "vds-server/src/http-timing.mjs",
+      "sha256": "98e2bdb83b95602c2facc038d2e30f5c9193be960692259eda61e866bec5a58b"
+    }
+  ],
+  "vinext": {
+    "version": "0.0.50",
+    "integrity": "sha512-uo72YNnq94NtogETWnhMdFSrkMLwWgeXh5PS6qh8ksajuvAaZX50bXYJ4a6dERQ/AnnXAlNByAGHCjjNxQrvig==",
+    "adapter": "node_modules/vinext/dist/server/prod-server.js",
+    "adapterSha256": "6cd31436a414b4bbb18bf5e5d1cd5c10b674748ffb5b19fbcbfb92b450e1421c"
+  },
+  "scope": "Native node_modules installed from the exact lockfile. Original Vinext HTTP/static/RSC/streaming adapter, realm endpoint guards and game read-only site visit route. Candidate startup and request lifetime tracking are separate bindings."
+}

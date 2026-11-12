@@ -1,0 +1,48 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {BASE,hash} from './helpers.mjs';
+import {setupPvp,put,update,json} from './pvp-fixture.mjs';
+import {createRetaliationRules} from '../generated/retaliation-rules.mjs';
+import {REST_REGEN_SQL} from '../generated/rest-regeneration-rules.mjs';
+import {HeartbeatMemory} from '../heartbeat-memory.mjs';
+import {createHeartbeatWriterHandler,readHeartbeatState,heartbeatRestFrame} from '../heartbeat-writer.mjs';
+import {CombatFrames,readCombatBundle} from '../combat-frames.mjs';
+import {OperationRandom} from '../operation-random.mjs';
+import {writerSettlement} from '../combat-settlement.mjs';
+import {readAttackFrame} from '../attack-writer.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {HeartbeatMaintenanceReader} from '../heartbeat-maintenance-reader.mjs';
+import {createAttackWriterRules} from '../generated/attack-writer-rules.mjs';
+import {seedGuildWar,captureGuildDatabase} from './guild-war-fixture.mjs';
+const proof=JSON.parse(fs.readFileSync(new URL('../generated/heartbeat-proof.json',import.meta.url))),source=fs.readFileSync(path.join(BASE,proof.source),'utf8');
+const nativeBatch=Function('REST_REGEN_SQL','return async function(database,playerId,regenSettings,heartbeatNowMs){'+source.slice(proof.batch.start,proof.batch.end)+';return heartbeat;}')(REST_REGEN_SQL);
+const nativeEvent=Function('return async function(heartbeat,heartbeatCycle,playerId,heartbeatNowMs,publishRealtimeRoomEvent,deliverRealtime){'+source.slice(proof.publication.start,proof.publication.end)+';}')();
+const nativeResponse=Function('Response','return function(heartbeat,pendingRetaliation,settledHeartbeat={current:null}){'+source.slice(proof.response.start,proof.response.end)+';}')({json:body=>({body,status:200})});
+test('heartbeat SQL phase, event, response and deferred maintenance retain native source proof',()=>{assert.equal(hash(source),proof.sourceSha256);for(const key of ['batch','publication','response','maintenance']){const p=proof[key];assert.equal(hash(source.slice(p.start,p.end)),p.sha256);}assert.equal(hash(fs.readFileSync(new URL('../generated/heartbeat-rules.mjs',import.meta.url))),proof.generatedSha256);});
+test('heartbeat memory and ordered native writer settle incoming hits before healing and preserve death, gear, queue and event semantics',async t=>{
+ const f=await setupPvp(t),{sql,id,nowMs,settings,globals}=f,monsterId='golge-heartbeat511',seed='b'.repeat(64),db={...f.db,worldLoop:{enabled:true},combat:{enabled:true}};put(sql,'monsters',{id:monsterId,name:'Heartbeat native fixture',area:'forest',channel:1,x:1000,y:1000,hp:100,max_hp:100,spawn_round:1,variant:'normal'});
+ const authority=new ChannelOwnership(f.f.database,{realmId:'heartbeat-native'});await authority.initialize();const peer={channel:1,incarnation:'heartbeat-owner'};await authority.registerProcess(1,peer.incarnation);const owner=await authority.admit(id,peer,{sessionId:'heartbeat-session',guard:()=>true});
+ const handler=createHeartbeatWriterHandler({settingsFor:()=>settings,globalsFor:()=>globals,assertOwnership:(sql,peer,id,epoch)=>Boolean(authority.assertAdmitted(sql,peer,id,epoch)),assertResources:()=>true,settleRetaliation:writerSettlement,clock:()=>nowMs});registerOwnedRule(authority,'heartbeat',handler);let sequence=0;
+ for(const scenario of ['rest','offline','moving','dead','incoming','lethal','gear','queue']){
+  sql.prepare('DELETE FROM player_items WHERE id=?').run('heartbeat-blue');const {view}=f.reset({area:'forest',actor:{hp:scenario==='dead'?0:scenario==='lethal'?1:500,max_hp:1000,last_regen_at:nowMs-4000,last_movement_at_ms:scenario==='moving'?nowMs:nowMs-20000,last_monster_hit_at:0,last_seen:Math.floor(nowMs/1000)-(scenario==='offline'?16:0),attack_one_at:0,attack_two_at:0,attack_three_at:0,attack_four_at:0}});
+  const rng=new OperationRandom(seed),nativeEvents=[],native=createRetaliationRules({globals,now:()=>nowMs,random:()=>rng.roll(),fourChannels:true,publish:(...args)=>nativeEvents.push(args)}),monster=sql.prepare('SELECT * FROM monsters WHERE id=?').get(monsterId);
+  if(['incoming','lethal'].includes(scenario))db.batch(native.preparePveEngagement(db,view.player(id),monster,nowMs-5000));
+  if(scenario==='gear'){put(sql,'player_items',{id:'heartbeat-blue',player_id:id,kind:'weapon',item_name:'Low-level heartbeat fixture',rarity:'blue',role:'avci',power:1,equipped:1,created_at:1});update(sql,'players',id,{level:1});}
+  const world=sql.prepare('SELECT * FROM world_state').get(),state=readHeartbeatState(sql,id);view.setPlayer(sql.prepare('SELECT * FROM players WHERE id=?').get(id));view.setMonster(monster);view.setEngagement(id,sql.prepare('SELECT * FROM pve_engagements WHERE player_id=?').get(id)??null);
+  const frames=new CombatFrames({view,settings:()=>settings,world:()=>world,party:()=>null,arena:()=>null,team:()=>null,participants:()=>false,now:()=>nowMs});frames.hydrate(readCombatBundle(sql,id,{revision:1,nowMs}));frames.setProfiles(sql.prepare('SELECT * FROM all_monster_combat_profiles').all(),1);
+  const expected={player:readAttackFrame(sql,id,'',globals).player,rest:heartbeatRestFrame(view.player(id)),settings,state};sql.exec('SAVEPOINT heartbeat_oracle');const pending=await native.settleAllNative(f.db,id,settings,nowMs),heartbeat=await nativeBatch(db,id,settings,nowMs);await nativeEvent(heartbeat,{cycle:world.cycle},id,nowMs,(...a)=>nativeEvents.push(a),value=>value);const answer=nativeResponse(heartbeat,pending),after={...sql.prepare('SELECT * FROM players WHERE id=?').get(id)},engagement=sql.prepare('SELECT * FROM pve_engagements WHERE player_id=?').get(id)??null,gear=sql.prepare("SELECT equipped FROM player_items WHERE id='heartbeat-blue'").get()??null;sql.exec('ROLLBACK TO heartbeat_oracle;RELEASE heartbeat_oracle');
+  const memory=new HeartbeatMemory({view,globals,frameFor:(...args)=>frames.retaliation(...args),settings:()=>settings,gearDue:()=>state.gearDue,queue:()=>scenario==='queue'?{}:state.queue,blocked:()=>false,cycle:()=>world.cycle}),mrng=new OperationRandom(seed),before=view.player(id),prepare=sql.prepare.bind(sql);let plan;sql.prepare=()=>{throw Error('SQL reached from heartbeat memory');};try{plan=memory.plan(id,nowMs,{random:()=>mrng.roll()});assert.equal(view.player(id),before);}finally{sql.prepare=prepare;}
+  if(['lethal','queue'].includes(scenario)||state.gearDue){assert(plan.durable,scenario);assert.equal(view.player(id),before);}else{assert.equal(plan.durable,false,scenario);memory.commit(plan);assert.deepEqual(json(view.player(id)),json(after),scenario);assert.deepEqual(json(view.engagements.get(id)??null),json(engagement),scenario);assert.deepEqual(json(plan.result),json(answer),scenario);assert.deepEqual(json(plan.events),json(nativeEvents),scenario);}
+  const request={playerId:id,epoch:owner.epoch,sequence:++sequence,operationId:'heartbeat-'+scenario,operation:'heartbeat',payload:{nowMs,seed,expected,resources:['player:'+id,'monster:'+monsterId]}},ack=await authority.command(peer,request);assert.deepEqual(json(ack.result.player),json(after),scenario);assert.deepEqual(json(ack.result.result),json(answer),scenario);assert.deepEqual(json(ack.result.events),json(nativeEvents),scenario);assert.deepEqual(json(sql.prepare("SELECT equipped FROM player_items WHERE id='heartbeat-blue'").get()??null),json(gear));assert.deepEqual(json(await authority.command(peer,request)),json(ack));
+ }
+});
+test('heartbeat background discovery is query-only and exactly follows native forfeit and pending-reward selection',async t=>{
+ const f=await setupPvp(t),{sql,id,nowMs,settings}=f,authority=new ChannelOwnership(f.f.database,{realmId:'heartbeat-discovery'});await authority.initialize();await authority.registerProcess(1,'discovery-owner');const owner=await authority.admit(id,{channel:1,incarnation:'discovery-owner'},{sessionId:'discovery-session',guard:()=>true}),rules=createAttackWriterRules({globals:{}}),reader=new HeartbeatMaintenanceReader(sql),cycle=sql.prepare('SELECT cycle FROM world_state').get().cycle;
+ const entry={actor:id,epoch:owner.epoch,cycle,nowMs,heartbeat:{area:'forest',arena_match_id:''}},scan=entries=>{sql.exec('PRAGMA query_only=ON');try{return reader.due(entries,{nowMs,cycle});}finally{sql.exec('PRAGMA query_only=OFF');}};assert.equal(scan([entry]),null);
+ const war=seedGuildWar(f);entry.heartbeat={area:'arena',arena_match_id:war};for(const online of [true,false])for(const age of [0,300000]){
+  update(sql,'players',f.targetId,{last_seen:online?Math.floor(nowMs/1000):1});sql.prepare('UPDATE arena_matches SET starts_at_ms=? WHERE id=?').run(nowMs-age,war);const before=captureGuildDatabase(sql);sql.exec('SAVEPOINT forfeit_oracle');const expected=Boolean(rules.tryFinishArenaForfeit(f.db,war,nowMs));sql.exec('ROLLBACK TO forfeit_oracle;RELEASE forfeit_oracle');assert.equal(Boolean(scan([entry])),expected,JSON.stringify({online,age}));assert.deepEqual(captureGuildDatabase(sql),before);
+ }
+ entry.heartbeat={area:'forest',arena_match_id:''};assert.equal(scan([entry]),null);const monster='pending-heartbeat511';put(sql,'normal_defeats',{monster_id:monster,spawn_round:1,defeated_at:Math.floor(nowMs/1000),x:1000,y:1000,xp_reward:1,essence_min:0,essence_span:0,rewards_completed_at:0});put(sql,'monster_participants',{monster_id:monster,spawn_round:1,player_id:id,created_at:Math.floor(nowMs/1000)});const before=captureGuildDatabase(sql);assert.equal(scan([entry]).actor,id);assert.deepEqual(captureGuildDatabase(sql),before);assert.equal(scan([{...entry,epoch:owner.epoch+1}]),null);
+});

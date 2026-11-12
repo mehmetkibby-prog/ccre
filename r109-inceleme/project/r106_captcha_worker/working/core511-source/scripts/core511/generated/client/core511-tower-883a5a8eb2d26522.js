@@ -1,0 +1,687 @@
+// adventure-maps.mjs
+var AREA = /^(kadim|sis)_([a-f0-9]{32})(?:_(0[1-9]|10))?$/;
+var ADVENTURE_ACTIONS = Object.freeze(["adventure_tower_enter", "adventure_next", "adventure_leave", "adventure_mist_enter", "adventure_chest", "adventure_tower_chest", "adventure_refine"]);
+function adventureArea(area) {
+  if (typeof area !== "string") return null;
+  const m = AREA.exec(area);
+  if (!m || m[1] === "kadim" && !m[3] || m[1] === "sis" && m[3]) return null;
+  return { kind: m[1] === "kadim" ? "tower" : "mist", run: m[2], floor: m[3] ? Number(m[3]) : 1 };
+}
+var isAdventureArea = (area) => adventureArea(area) !== null;
+var isMistArea = (area) => adventureArea(area)?.kind === "mist";
+var ADVENTURE_BOUNDS = Object.freeze({ width: 1600, height: 1100 });
+var ADVENTURE_ENTRY = Object.freeze({ x: 800, y: 940 });
+function adventureWalkable(area, x, y) {
+  return isAdventureArea(area) && Number.isFinite(x) && Number.isFinite(y) && x >= 80 && x <= 1520 && y >= 100 && y <= 1020;
+}
+function adventureSegment(area, x, y, tx, ty) {
+  return adventureWalkable(area, x, y) && adventureWalkable(area, tx, ty);
+}
+function adventureLabel(area) {
+  const a = adventureArea(area);
+  return a ? a.kind === "tower" ? `Kadim Kulesi \xB7 ${a.floor}. Kat` : "Sis Yar\u0131\u011F\u0131" : null;
+}
+
+// adventure-client.mjs
+var images = /* @__PURE__ */ new Map();
+var profiles = /* @__PURE__ */ new WeakMap();
+var ADVENTURE_DOCK = Object.freeze({ width: 96, buttonHeight: 44, gap: 6, inset: 10 });
+function adventureDockBounds(width, height, hasRun = true, chatOpen = false) {
+  const d = ADVENTURE_DOCK, h = d.buttonHeight * (hasRun ? 2 : 1) + (hasRun ? d.gap : 0);
+  return { x: width - (chatOpen && height <= 500 && width >= 600 ? Math.min(360, width - 16) + 16 : d.inset) - d.width, y: (height - h) / 2, width: d.width, height: h };
+}
+var ADVENTURE_DOCK_CSS = `.tower20-dock{position:fixed;right:max(${ADVENTURE_DOCK.inset}px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:35;display:grid;gap:${ADVENTURE_DOCK.gap}px;width:${ADVENTURE_DOCK.width}px;pointer-events:auto}.tower20-dock button{box-sizing:border-box;width:100%;height:${ADVENTURE_DOCK.buttonHeight}px;min-height:${ADVENTURE_DOCK.buttonHeight}px;margin:0;padding:4px 6px;border:1px solid #a98b52;border-radius:9px;background:#0d211deb;color:#f0dfb5;font:700 12px/1.25 system-ui;cursor:pointer;touch-action:manipulation}.tower20-dock button:disabled{opacity:.55}.tower20-dock small{display:block;font:10px/1.2 system-ui;color:#d0c7af}.tower20-dock .tower20-leave{background:#321d22ed}.tower20-expedition{display:grid;gap:10px}.tower20-expedition h3,.tower20-expedition p{margin:0}.tower20-expedition-actions{display:flex;gap:8px;flex-wrap:wrap}.tower20-expedition-actions button{flex:1 1 140px;min-height:44px}.tower18-dialog{box-sizing:border-box;max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);overscroll-behavior:contain}.tower20-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-height:500px) and (min-width:600px){body:has(.game-shell .chat-panel.open) .tower20-dock{right:calc(min(360px,100vw - 16px) + 16px)}}`;
+function adventureImage(url) {
+  if (typeof Image === "undefined") return null;
+  let image = images.get(url);
+  if (!image) {
+    image = new Image();
+    image.decoding = "async";
+    image.src = url;
+    images.set(url, image);
+  }
+  return image.complete && image.naturalWidth ? image : null;
+}
+function adventureTexture(area) {
+  const a = adventureArea(area);
+  if (!a) return null;
+  return adventureImage(a.kind === "tower" ? "/assets/tower-r18/floor-" + (a.floor < 4 ? 1 : a.floor < 7 ? 4 : a.floor < 10 ? 7 : 10) + ".webp" : "/assets/mist-r19/map.png");
+}
+function preloadAdventureTextures(area) {
+  const a = adventureArea(area);
+  if (!a) return;
+  adventureTexture(area);
+  if (a.kind === "tower" && a.floor < 10) {
+    const next = a.floor + 1;
+    adventureImage("/assets/tower-r18/floor-" + (next < 4 ? 1 : next < 7 ? 4 : next < 10 ? 7 : 10) + ".webp");
+  }
+}
+function adventureProfile(world, id) {
+  const data = world?.adventure511;
+  if (!data) return null;
+  let map = profiles.get(data);
+  if (!map) {
+    map = new Map(data.profiles ?? []);
+    profiles.set(data, map);
+  }
+  return map.get(id) ?? null;
+}
+function drawAdventurePlaceholder(ctx, enemy, selected) {
+  const hp = Number(enemy?.hp) || 0, max = Math.max(1, Number(enemy?.maxHp ?? enemy?.max_hp) || hp);
+  ctx.save();
+  ctx.translate(enemy.x, enemy.y);
+  ctx.fillStyle = "#23312be6";
+  ctx.strokeStyle = selected ? "#e2c583" : "#9ba995";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.ellipse(0, -30, 22, 32, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.textAlign = "center";
+  ctx.font = "700 12px system-ui";
+  ctx.fillStyle = "#eee1bc";
+  ctx.strokeStyle = "#07110e";
+  ctx.lineWidth = 3;
+  ctx.strokeText(enemy.name ?? "Sefer d\xFC\u015Fman\u0131", 0, -73);
+  ctx.fillText(enemy.name ?? "Sefer d\xFC\u015Fman\u0131", 0, -73);
+  ctx.fillStyle = "#17211a";
+  ctx.fillRect(-40, -67, 80, 5);
+  ctx.fillStyle = "#bc8465";
+  ctx.fillRect(-40, -67, 80 * Math.max(0, Math.min(1, hp / max)), 5);
+  ctx.restore();
+}
+function drawAdventureEnemy(ctx, enemy, profile, selected, now, moving, attack, travel, direction, drawTower, nativeRig, area) {
+  if (!profile) {
+    if (isAdventureArea(area ?? enemy?.area) && /^(?:curuk|yutan|golge)-adv-[a-f0-9]{32}$/.test(enemy?.id ?? "")) {
+      drawAdventurePlaceholder(ctx, enemy, selected);
+      return true;
+    }
+    return false;
+  }
+  const decorated = { ...enemy, maxHp: enemy.max_hp, direction };
+  if (profile.feature === "tower") return drawTower(ctx, { ...decorated, towerKind: profile.kind }, selected, now, moving, attack, travel, nativeRig);
+  const kinds = ["claw", "guard", "spirit", "seal", "keeper", "rare", "gold"], index = kinds.indexOf(profile.kind), img = adventureImage("/assets/mist-r19/enemies.png");
+  if (index < 0) return false;
+  if (!img) {
+    drawAdventurePlaceholder(ctx, decorated, selected);
+    return true;
+  }
+  const sw = img.naturalWidth / 4, sh = img.naturalHeight / 2, boss = profile.boss, size = boss ? 250 : profile.stationary ? 170 : 155, step = moving && !profile.stationary ? Math.sin(travel / 18 * Math.PI / 2) : 0, phase = attack > 0 ? Math.sin(Math.min(1, attack) * Math.PI) : 0;
+  ctx.save();
+  ctx.fillStyle = selected ? "#c1e2c366" : "#0007";
+  ctx.beginPath();
+  ctx.ellipse(enemy.x, enemy.y + 8, size * 0.23, 13, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.translate(enemy.x, enemy.y + 8 - Math.abs(step) * 4);
+  ctx.scale(direction?.x > 0.1 ? -1 : 1, 1 - phase * 0.04);
+  ctx.rotate(profile.stationary ? 0 : step * 0.018 + phase * 0.075);
+  ctx.drawImage(img, index % 4 * sw, Math.floor(index / 4) * sh, sw, sh, -size / 2, -size, size, size);
+  ctx.restore();
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.font = "700 12px system-ui";
+  ctx.strokeStyle = "#071510";
+  ctx.fillStyle = boss ? "#e9ce8a" : "#c4eee1";
+  ctx.lineWidth = 3;
+  ctx.strokeText(enemy.name, enemy.x, enemy.y - size + 2);
+  ctx.fillText(enemy.name, enemy.x, enemy.y - size + 2);
+  ctx.fillStyle = "#08231f";
+  ctx.fillRect(enemy.x - 45, enemy.y - size + 8, 90, 5);
+  ctx.fillStyle = "#78b9ab";
+  ctx.fillRect(enemy.x - 45, enemy.y - size + 8, 90 * Math.max(0, Math.min(1, enemy.hp / Math.max(1, enemy.max_hp))), 5);
+  ctx.restore();
+  return true;
+}
+function drawAdventureScene(ctx, world, nowMs) {
+  const data = world?.adventure511;
+  if (!data) return;
+  for (const portal of data.portals ?? []) {
+    if (portal.area !== world.area || portal.closes_ms <= nowMs) continue;
+    ctx.save();
+    ctx.translate(portal.x, portal.y);
+    ctx.strokeStyle = portal.gold ? "#e8c575" : "#86d7d1";
+    ctx.fillStyle = portal.gold ? "#b9914933" : "#65bebe33";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.ellipse(0, -45, 38 + Math.sin(nowMs / 600) * 2, 60, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.font = "600 13px system-ui";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#e8f3df";
+    ctx.fillText(portal.gold ? "Alt\u0131n Sis Yar\u0131\u011F\u0131" : "Sis Yar\u0131\u011F\u0131", 0, -116);
+    ctx.restore();
+  }
+  const run = data.run;
+  if (!run || run.area !== world.area) return;
+  const h = run.hazard;
+  if (h && h.at > nowMs) {
+    ctx.save();
+    ctx.translate(h.x, h.y);
+    ctx.rotate(h.angle ?? 0);
+    ctx.strokeStyle = "#ffc783";
+    ctx.fillStyle = "#d43b494a";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    if (h.kind === "line") ctx.rect(-h.radius, -65, h.radius * 2, 130);
+    else {
+      ctx.arc(0, 0, h.radius, 0, Math.PI * 2);
+      if (h.kind === "ring") {
+        ctx.moveTo(Math.max(0, h.radius - 110), 0);
+        ctx.arc(0, 0, Math.max(0, h.radius - 110), 0, Math.PI * 2, true);
+      }
+    }
+    ctx.fill("evenodd");
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (run.clear) {
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.font = "700 18px system-ui";
+    ctx.fillStyle = "#e7cf8b";
+    ctx.strokeStyle = "#09251e";
+    ctx.lineWidth = 4;
+    const label = run.kind === "tower" ? run.floor < 10 ? "Kat tamamland\u0131 \xB7 Sonraki kat" : "Azrail yenildi \xB7 Sand\u0131\u011F\u0131n \xE7antanda" : "G\xF6rev tamamland\u0131 \xB7 Sis Sand\u0131\u011F\u0131";
+    ctx.strokeText(label, 800, 140);
+    ctx.fillText(label, 800, 140);
+    ctx.restore();
+  }
+}
+function createAdventureUI(React, { Dialog, Content, Header, Title, Description, Portal, Icon, css: css2, TOWER_ITEMS: TOWER_ITEMS2 = [] } = {}) {
+  const h = React.createElement;
+  function Entry({ world, own, post, onChange, onTravel, uiSuspended }) {
+    const data = world?.adventure511, run = data?.run, info = data?.towerInfo, config = info?.config, items = info?.inventory ?? {}, area = own?.area ?? world?.area;
+    const [open, setOpen] = React.useState(false), [tab, setTab] = React.useState("tower"), [busy, setBusy] = React.useState(false), [message, setMessage] = React.useState(""), [now, setNow] = React.useState(Date.now()), [notice, setNotice] = React.useState("");
+    const lock = React.useRef(false), pending = React.useRef(null), seen = React.useRef(/* @__PURE__ */ new Set()), alive = React.useRef(true);
+    React.useEffect(() => {
+      alive.current = true;
+      const show = () => {
+        adventureImage("/assets/tower-r18/floor-1.webp");
+        setOpen(true);
+        setTab("tower");
+      }, end = () => setOpen(false);
+      window.addEventListener("tower-open", show);
+      window.addEventListener("coreoflife:game-session-ended", end);
+      return () => {
+        alive.current = false;
+        window.removeEventListener("tower-open", show);
+        window.removeEventListener("coreoflife:game-session-ended", end);
+      };
+    }, []);
+    React.useEffect(() => {
+      if (uiSuspended) setOpen(false);
+    }, [uiSuspended]);
+    React.useEffect(() => {
+      preloadAdventureTextures(area);
+    }, [area]);
+    React.useEffect(() => {
+      if (!run && !data?.portals?.length) return;
+      const timer = setInterval(() => setNow(Date.now()), 1e3);
+      return () => clearInterval(timer);
+    }, [!!run, !!data?.portals?.length]);
+    React.useEffect(() => {
+      for (const p of data?.portals ?? []) {
+        if (!seen.current.has(p.id)) {
+          seen.current.add(p.id);
+          setNotice("Yak\u0131nda bir " + (p.gold ? "Alt\u0131n Sis Yar\u0131\u011F\u0131" : "Sis Yar\u0131\u011F\u0131") + " a\xE7\u0131ld\u0131!");
+        }
+      }
+      if (seen.current.size > 128) seen.current = new Set((data?.portals ?? []).map((p) => p.id));
+    }, [data?.portals]);
+    async function act(action, extra = {}) {
+      if (lock.current) return;
+      const key = JSON.stringify([action, extra]);
+      if (pending.current && pending.current.key !== key) {
+        setMessage("\xD6nce \xF6nceki i\u015Flemi ayn\u0131 d\xFC\u011Fmeyle yeniden sorgula.");
+        return;
+      }
+      lock.current = true;
+      setBusy(true);
+      setMessage("");
+      pending.current ??= { key, id: crypto.randomUUID() };
+      try {
+        const result = await post("/api/action", { action, ...extra, requestId: pending.current.id });
+        if (result.error) throw Error(result.error);
+        pending.current = null;
+        if (alive.current) {
+          setMessage(result.message ?? "Tamamland\u0131.");
+          if (["adventure_tower_enter", "adventure_next", "adventure_leave", "adventure_mist_enter"].includes(action)) setOpen(false);
+          onChange?.();
+        }
+      } catch (error) {
+        if (error?.status >= 400 && error.status < 500 && error?.payload?.code !== "command_outcome_unknown") pending.current = null;
+        if (alive.current) {
+          setMessage(error?.message ?? "\u0130\u015Flem tamamlanamad\u0131. Ayn\u0131 d\xFC\u011Fmeyle yeniden sorgula.");
+          setTab("expedition");
+          setOpen(true);
+        }
+      } finally {
+        lock.current = false;
+        if (alive.current) setBusy(false);
+      }
+    }
+    const portals = (data?.portals ?? []).filter((p) => p.area === area && p.closes_ms > now && p.entered < p.capacity), remaining = Math.max(0, Math.ceil(((run?.deadline ?? now) - now) / 1e3));
+    const summary = run ? run.kind === "tower" ? run.floor + ". Kat \xB7 " + run.name : (run.gold ? "Alt\u0131n " : "") + "Sis Yar\u0131\u011F\u0131" : null;
+    const clock = Math.floor(remaining / 60) + ":" + String(remaining % 60).padStart(2, "0");
+    const expedition = h("section", { className: "tower20-expedition" }, run ? h(React.Fragment, null, h("h3", null, summary), h("p", null, "Kalan s\xFCre: " + clock), h("p", null, run.kind === "tower" ? "Dalga " + run.wave + " / " + run.waves : { clear: "Canavarlar\u0131 temizle, sand\u0131\u011F\u0131 a\xE7.", seals: "\xDC\xE7 m\xFChr\xFC k\u0131r, bossu yen.", hunt: "Gezgin Sis Avc\u0131s\u0131\u2019n\u0131 yakala." }[run.objective]), run.kind === "mist" && h("strong", null, "PVP A\xC7IK"), h("div", { className: "tower20-expedition-actions" }, run.clear && run.kind === "tower" && run.floor < 10 && h("button", { disabled: busy, onClick: () => act("adventure_next") }, "Sonraki kata ge\xE7"), run.clear && run.kind === "mist" && h("button", { disabled: busy, onClick: () => act("adventure_chest") }, "Sis Sand\u0131\u011F\u0131\u2019n\u0131 a\xE7"), h("button", { disabled: busy, onClick: () => act("adventure_leave") }, "Seferden \xE7\u0131k"))) : h(React.Fragment, null, notice && h("p", { role: "status" }, notice), ...portals.map((p) => h("button", { key: p.id, disabled: busy || !own || Math.hypot(own.x - p.x, own.y - p.y) > 150, onClick: () => act("adventure_mist_enter", { portalId: p.id }) }, (p.gold ? "Alt\u0131n " : "") + "Sis Yar\u0131\u011F\u0131 \xB7 " + p.entered + "/" + p.capacity + " \xB7 " + Math.ceil((p.closes_ms - now) / 1e3) + " sn", h("small", null, " Yakla\u015F ve gir \xB7 PvP a\xE7\u0131k"))), !portals.length && h("p", null, "Aktif seferin yok.")));
+    const body = h("div", { className: "tower18-body" }, h("nav", { className: "tower18-nav" }, ...[...run || portals.length ? ["expedition"] : [], "tower", "items"].map((x) => h("button", { key: x, onClick: () => setTab(x), "aria-pressed": tab === x }, x === "expedition" ? "Sefer" : x === "tower" ? "Kadim Kulesi" : "Kule \xC7antas\u0131"))), message && h("p", { role: "status" }, message), tab === "expedition" ? expedition : tab === "tower" ? h(React.Fragment, null, h("div", { className: "tower18-hero" }, h("img", { src: "/assets/tower-r18/entrance.webp", alt: "Kadim Kulesi" }), h("div", null, h("h3", null, "Kadim Kulesi"), h("p", null, "10 kat. Dalgalar\u0131 tamamla, bir sonraki kata ge\xE7. \u0130stedi\u011Fin zaman \xE7\u0131kabilirsin."))), h("div", { className: "tower18-floor-grid" }, ...(config?.floors ?? []).map((f, i) => h("div", { className: "tower18-floor", key: i }, h("b", null, i + 1 + ". kat"), f.name, " \xB7 " + f.waves + " dalga"))), run ? h("button", { onClick: () => setOpen(false) }, "Seferine d\xF6n") : area !== "bazaar" ? h("button", { onClick: () => {
+      setOpen(false);
+      onTravel?.();
+    } }, "Pazar K\xF6y\xFC\u2019ne git") : h("button", { disabled: busy || !config?.enabled, onClick: () => act("adventure_tower_enter") }, config?.enabled ? "Kule giri\u015Finden i\xE7eri gir" : "Kule kapal\u0131")) : h("div", { className: "tower18-items" }, ...TOWER_ITEMS2.map(([kind, name, forge]) => h("div", { className: "tower18-item", key: kind }, Icon && h(Icon, { kind }), h("span", null, name, h("small", null, (items[kind] ?? 0) + " adet")), kind === "tower_azrail_chest" && h("button", { disabled: busy || !!run || !(items[kind] > 0), onClick: () => act("adventure_tower_chest") }, "A\xE7"), forge > 0 && h("button", { disabled: busy || !!run || area !== "bazaar" || !(items[kind] > 0), onClick: () => act("adventure_refine", { kind, amount: 1 }) }, forge + " Kor M\xFChr\xFC")))));
+    const dock = !uiSuspended && (run || portals.length > 0) && h("aside", { className: "tower20-dock", "aria-label": "Sefer kontrolleri" }, h("button", { type: "button", "aria-label": run ? "Sefer bilgileri: " + summary : "Yak\u0131ndaki Sis Yar\u0131klar\u0131", "aria-expanded": open && tab === "expedition", onClick: () => {
+      setTab("expedition");
+      setOpen(true);
+    } }, run ? run.kind === "tower" ? run.floor + ". Kat" : "Sis Yar\u0131\u011F\u0131" : "Sis Yar\u0131\u011F\u0131", h("small", null, run ? run.clear ? "Tamamland\u0131 \xB7 \u0130ncele" : clock + " \xB7 Sefer" : "Yak\u0131nda a\xE7\u0131ld\u0131")), run && h("button", { type: "button", className: "tower20-leave", disabled: busy, onClick: () => act("adventure_leave") }, "Seferden \xE7\u0131k"), notice && h("span", { className: "tower20-sr", role: "status" }, notice));
+    return h(React.Fragment, null, h("style", null, css2), dock && (Portal ? Portal(dock, document.body) : dock), Dialog ? h(Dialog, { open: open && !uiSuspended, onOpenChange: setOpen }, h(Content, { className: "tower18-dialog" }, h(Header, null, h(Title, null, tab === "expedition" ? "Sefer" : "Kadim Kulesi"), h(Description, null, tab === "expedition" ? "\u0130lerleme, ge\xE7itler ve \xE7\u0131k\u0131\u015F" : "Katlar ve kule \xE7antas\u0131")), body)) : open ? h("div", { className: "tower18-dialog", role: "dialog" }, h("button", { onClick: () => setOpen(false) }, "Kapat"), body) : null);
+  }
+  return { Entry };
+}
+
+// mist-admin-client.mjs
+function createMistAdmin(React, css2) {
+  const h = React.createElement;
+  return function MistAdmin({ act, busy: outerBusy }) {
+    const [draft, setDraft] = React.useState(null), [meta, setMeta] = React.useState({}), [busy, setBusy] = React.useState(false), [message, setMessage] = React.useState(""), [tab, setTab] = React.useState("general"), [kind, setKind] = React.useState("claw"), [spawn, setSpawn] = React.useState({ area: "forest", channel: 1, x: 1800, y: 1100, gold: false, when: "" });
+    const lock = React.useRef(false), mounted = React.useRef(true);
+    const call = async (action, extra = {}) => {
+      if (lock.current) return;
+      lock.current = true;
+      setBusy(true);
+      setMessage("");
+      try {
+        const r = await act({ action, ...extra });
+        if (!r?.mist?.config) throw Error(r?.error ?? "Sis Yar\u0131\u011F\u0131 ayarlar\u0131 al\u0131namad\u0131.");
+        if (mounted.current) {
+          setDraft(structuredClone(r.mist.config));
+          setMeta(r.mist);
+          setMessage(action === "sis_mist_get" ? "" : "\u0130\u015Flem kaydedildi.");
+        }
+      } catch (e2) {
+        if (mounted.current) setMessage(e2.message);
+      } finally {
+        lock.current = false;
+        if (mounted.current) setBusy(false);
+      }
+    };
+    React.useEffect(() => {
+      mounted.current = true;
+      void call("sis_mist_get");
+      return () => {
+        mounted.current = false;
+      };
+    }, []);
+    const edit = (fn) => setDraft((old) => {
+      const next = structuredClone(old);
+      fn(next);
+      return next;
+    }), disabled = busy || outerBusy;
+    const num = (label, value, change, min = 0, max = 1e8, step = 1) => h("label", null, label, h("input", { type: "number", min, max, step, value, disabled, onChange: (e2) => change(Number(e2.target.value)) }));
+    const check = (label, value, change) => h("label", null, h("span", null, h("input", { type: "checkbox", checked: value, disabled, onChange: (e2) => change(e2.target.checked) }), " " + label));
+    const drops = (rows, change) => h("div", null, ...rows.map((r, i) => h("div", { className: "tower18-drop", key: i }, h("label", null, "E\u015Fya", h("select", { disabled, value: r.itemId, onChange: (e2) => change((a) => {
+      a[i].itemId = e2.target.value;
+    }) }, ...(meta.catalog ?? []).map((c) => h("option", { key: c.id, value: c.id }, c.name)))), num("\u015Eans %", r.chance, (v) => change((a) => {
+      a[i].chance = v;
+    }), 0, 100, 0.01), num("En az", r.min, (v) => change((a) => {
+      a[i].min = v;
+    }), 1, 1e3), num("En \xE7ok", r.max, (v) => change((a) => {
+      a[i].max = v;
+    }), 1, 1e3), h("button", { disabled, onClick: () => change((a) => a.splice(i, 1)) }, "Kald\u0131r"))), h("button", { disabled: disabled || rows.length >= 16, onClick: () => {
+      const item = meta.catalog.find((c) => !rows.some((r) => r.itemId === c.id));
+      if (item) change((a) => a.push({ itemId: item.id, chance: 10, min: 1, max: 1 }));
+    } }, "\xD6d\xFCl ekle"));
+    if (!draft) return h("section", { className: "admin-card tower18-admin" }, h("style", null, css2), h("h2", null, "Sis Yar\u0131\u011F\u0131"), h("p", null, message || "Y\xFCkleniyor\u2026"), h("button", { onClick: () => call("sis_mist_get") }, "Yeniden y\xFCkle"));
+    const e = draft.enemies[kind];
+    return h("section", { className: "admin-card tower18-admin" }, h("style", null, css2), h("h2", null, "Sis Yar\u0131\u011F\u0131"), h("p", { role: "status" }, message), h("nav", { className: "tower18-nav" }, ...Object.entries({ general: "Genel", enemies: "D\xFC\u015Fmanlar ve ganimet", chest: "Sis Sand\u0131klar\u0131", spawn: "Portal g\xF6nder / planla" }).map(([k, label]) => h("button", { key: k, onClick: () => setTab(k), "aria-pressed": tab === k }, label))), tab === "general" ? h(React.Fragment, null, check("Portal \xFCretimi a\xE7\u0131k", draft.enabled, (v) => edit((d) => d.enabled = v)), h("div", { className: "tower18-fields" }, ...Object.entries({ minLevel: ["Asgari seviye", 1, 100, 1], chancePercent: ["Kesim ba\u015F\u0131na portal %", 0, 100, 0.01], goldChancePercent: ["Alt\u0131n portal %", 0, 100, 0.01], portalSeconds: ["Portal a\xE7\u0131k kalma (sn)", 5, 300, 1], durationSeconds: ["\u0130\xE7eride s\xFCre (sn)", 60, 3600, 1], maxPlayers: ["Oyuncu s\u0131n\u0131r\u0131", 1, 4, 1], maxActivePerChannel: ["Kanal ba\u015F\u0131na yar\u0131k s\u0131n\u0131r\u0131", 1, 25, 1], killCooldownSeconds: ["Kanal ba\u015F\u0131na portal aral\u0131\u011F\u0131 (sn)", 0, 3600, 1], xpMultiplier: ["XP \xE7arpan\u0131", 0, 10, 0.1], essenceMultiplier: ["\xD6z \xE7arpan\u0131", 0, 10, 0.1] }).map(([key, [label, min, max, step]]) => h(React.Fragment, { key }, num(label, draft[key], (v) => edit((d) => d[key] = v), min, max, step)))), h("fieldset", null, h("legend", null, "Portal \xE7\u0131kabilecek haritalar"), ...Object.entries(meta.maps).map(([k, label]) => h(React.Fragment, { key: k }, check(label, draft.maps.includes(k), (v) => edit((d) => {
+      d.maps = v ? [...d.maps, k] : d.maps.filter((x) => x !== k);
+    }))))), h("fieldset", null, h("legend", null, "G\xF6revler"), ...Object.entries({ clear: "Canavarlar\u0131 temizle", seals: "\xDC\xE7 m\xFCh\xFCr ve boss", hunt: "Gezgin nadir yarat\u0131k" }).map(([k, label]) => h(React.Fragment, { key: k }, check(label, draft.objectives[k], (v) => edit((d) => d.objectives[k] = v))))), h("fieldset", null, h("legend", null, "Oyuncuya g\xF6re d\xFC\u015Fman \xF6l\xE7e\u011Fi"), h("p", null, "\u0130lk girenin seviyesi, azami can\u0131 ve sald\u0131r\u0131s\u0131 \xFCzerinden; tur boyunca sabit."), h("div", { className: "tower18-fields" }, ...Object.entries({ level: "Seviye katsay\u0131s\u0131", hp: "Can katsay\u0131s\u0131", attack: "Sald\u0131r\u0131 katsay\u0131s\u0131", maximum: "Azami \xE7arpan" }).map(([key, label]) => h(React.Fragment, { key }, num(label, draft.scale[key], (v) => edit((d) => d.scale[key] = v), key === "maximum" ? 1 : 0, key === "maximum" ? 100 : key === "hp" ? 0.1 : 1, key === "maximum" ? 1 : 1e-5)))))) : tab === "enemies" ? h(React.Fragment, null, h("nav", { className: "tower18-nav" }, ...Object.entries(meta.kinds).map(([k, label]) => h("button", { key: k, onClick: () => setKind(k), "aria-pressed": kind === k }, label))), h("div", { className: "tower18-fields" }, ...Object.entries({ count: ["Say\u0131", 1, 30], hp: ["Can", 1, 1e8], damage: ["Hasar", 0, 1e6], speed: ["H\u0131z", 0, 240], attackMs: ["Sald\u0131r\u0131 aral\u0131\u011F\u0131 (ms)", 600, 6e4], xp: ["XP", 0, 1e6], essence: ["\xD6z", 0, 1e5], gems: ["M\xFCcevher", 0, 1e5] }).map(([key, [label, min, max]]) => h(React.Fragment, { key }, kind === "seal" && key === "count" ? h("p", null, "M\xFCh\xFCr say\u0131s\u0131: 3") : num(label, e[key], (v) => edit((d) => d.enemies[kind][key] = v), min, max)))), h("h3", null, "D\xFC\u015Fen e\u015Fyalar"), drops(e.drops, (fn) => edit((d) => fn(d.enemies[kind].drops)))) : tab === "chest" ? h(React.Fragment, null, h("h3", null, "Sis Sand\u0131\u011F\u0131"), drops(draft.chest, (fn) => edit((d) => fn(d.chest))), h("h3", null, "Alt\u0131n Sis Sand\u0131\u011F\u0131"), drops(draft.goldChest, (fn) => edit((d) => fn(d.goldChest))), h("p", null, "Kuleye \xF6zel malzemeler bu listede bulunmaz. Bitirme \xF6d\xFCl\xFC m\xFCcadeleye kat\u0131lan oyuncuya bir kez verilir.")) : h(React.Fragment, null, h("div", { className: "tower18-fields" }, h("label", null, "Harita", h("select", { value: spawn.area, onChange: (e2) => setSpawn((s) => ({ ...s, area: e2.target.value })) }, ...Object.entries(meta.maps).map(([k, label]) => h("option", { key: k, value: k }, label)))), num("Kanal", spawn.channel, (v) => setSpawn((s) => ({ ...s, channel: v })), 1, 4), num("X", spawn.x, (v) => setSpawn((s) => ({ ...s, x: v }))), num("Y", spawn.y, (v) => setSpawn((s) => ({ ...s, y: v }))), check("Alt\u0131n portal", spawn.gold, (v) => setSpawn((s) => ({ ...s, gold: v }))), h("label", null, "Tarih ve saat (bu cihaz\u0131n saati)", h("input", { type: "datetime-local", value: spawn.when, onChange: (e2) => setSpawn((s) => ({ ...s, when: e2.target.value })) }))), h("button", { disabled, onClick: () => call("sis_mist_spawn", spawn) }, "\u015Eimdi g\xF6nder"), h("button", { disabled: disabled || !spawn.when, onClick: () => call("sis_mist_schedule", { ...spawn, at_ms: new Date(spawn.when).getTime() }) }, "Planla"), ...(meta.schedules ?? []).map((s) => h("p", { key: s.id }, meta.maps[s.area] + " \xB7 Kanal " + s.channel + " \xB7 " + new Date(s.at_ms).toLocaleString(), h("button", { disabled, onClick: () => call("sis_mist_cancel", { id: s.id }) }, "\u0130ptal")))), tab !== "spawn" && h("div", { className: "tower18-save" }, h("button", { disabled, onClick: () => call("sis_mist_save", { revision: meta.revision, config: draft }) }, "Sis Yar\u0131\u011F\u0131 ayarlar\u0131n\u0131 kaydet"), h("small", null, "Yeni ayarlar yeni yar\u0131klara uygulan\u0131r.")));
+  };
+}
+
+// tower-client.mjs
+var TOWER_KINDS = { guard: "Zincirli N\xF6bet\xE7i", acolyte: "K\xFCl Vaizi", claw: "Yar\u0131k Pen\xE7e", stone: "Kadim Sinsi Ta\u015F", warden: "K\xF6r Gardiyan", mourner: "Matem Rahibesi", azrail: "Azrail" };
+var TOWER_ENTRANCE = Object.freeze({ x: 2070, y: 430, width: 280, height: 420 });
+var TOWER_NAMES = ["M\xFCh\xFCr Avlusu", "K\xFCl Koridoru", "Pen\xE7e Ge\xE7idi", "Zincir Salonu", "Gardiyan\u0131n Zindan\u0131", "K\u0131r\u0131k Ruhlar", "Matem Mabedi", "Sessiz \xC7\u0131\u011Fl\u0131k", "Son M\xFCh\xFCr", "Azrail\u2019in Taht\u0131"];
+var TOWER_ITEMS = [["tower_seal_shard", "Kadim Kat M\xFChr\xFC", 1], ["tower_chain_ore", "Ruh Zinciri Halkas\u0131", 3], ["tower_mourning_essence", "Sinsi Ta\u015F \xC7ekirde\u011Fi", 5], ["tower_azrail_seal", "Matem \u0130pe\u011Fi", 10], ["tower_azrail_chest", "Azrail Sand\u0131\u011F\u0131", 0], ["tower_azrail_hook", "AZRA\u0130L KANCASI", 0]];
+var ART = "/assets/tower-r18/";
+var TOWER_ICON_RECTS = [[40, 24, 500, 480], [544, 24, 480, 480], [1024, 24, 512, 480], [16, 512, 520, 496], [544, 512, 480, 496], [1024, 512, 512, 496]];
+var TOWER_TINTS = [null, null, "rgba(33,27,20,0.05)", "rgba(89,28,10,0.06)", null, "rgba(25,33,52,0.06)", "rgba(65,29,15,0.06)", null, "rgba(25,17,62,0.06)", "rgba(79,16,43,0.06)", null];
+var tinted = null;
+var cache = /* @__PURE__ */ new Map();
+function towerImage(url) {
+  if (typeof Image === "undefined") return null;
+  let image = cache.get(url);
+  if (!image) {
+    image = new Image();
+    image.decoding = "async";
+    image.src = url;
+    cache.set(url, image);
+  }
+  return image.complete && image.naturalWidth ? image : null;
+}
+function towerMap(run) {
+  if (run?.mode !== "tower") return null;
+  const stage = Math.max(1, Math.min(10, run.stage));
+  return { name: run.tower?.floorName ?? TOWER_NAMES[stage - 1], image: ART + "floor-" + (stage < 4 ? 1 : stage < 7 ? 4 : stage < 10 ? 7 : 10) + ".webp" };
+}
+function towerMapTexture(run) {
+  const map = towerMap(run);
+  if (!map) return null;
+  const image = towerImage(map.image);
+  if (!image) return null;
+  const color = TOWER_TINTS[run.stage];
+  if (!color || typeof document === "undefined") return image;
+  if (tinted?.stage === run.stage) return tinted.canvas;
+  const canvas = document.createElement("canvas");
+  canvas.width = image.naturalWidth;
+  canvas.height = image.naturalHeight;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return image;
+  ctx.drawImage(image, 0, 0);
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  Object.assign(canvas, { complete: true, naturalWidth: canvas.width, naturalHeight: canvas.height });
+  tinted = { stage: run.stage, canvas };
+  return canvas;
+}
+function towerEntranceHit(x, y) {
+  const t = TOWER_ENTRANCE;
+  return Math.abs(x - t.x) <= t.width / 2 && y >= t.y - t.height && y <= t.y + 24;
+}
+function drawTowerEntrance(ctx, now) {
+  const t = TOWER_ENTRANCE, img = towerImage(ART + "entrance.webp");
+  if (!img) return;
+  ctx.save();
+  ctx.drawImage(img, t.x - t.width / 2, t.y - t.height, t.width, t.height);
+  ctx.font = "700 16px system-ui";
+  ctx.textAlign = "center";
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#06130e";
+  ctx.fillStyle = "#e5c989";
+  ctx.strokeText("Kadim Kulesi", t.x, t.y + 24);
+  ctx.fillText("Kadim Kulesi", t.x, t.y + 24);
+  ctx.font = "12px system-ui";
+  ctx.strokeText("10 kat \xB7 Giri\u015F", t.x, t.y + 41);
+  ctx.fillText("10 kat \xB7 Giri\u015F", t.x, t.y + 41);
+  ctx.restore();
+}
+function towerMotionPose(kind, now, moving, attack, travel) {
+  const stone = kind === "stone", boss = ["warden", "mourner", "azrail"].includes(kind);
+  const phase = attack > 0 ? Math.sin(Math.min(1, Math.max(0, attack)) * Math.PI) : 0;
+  const step = moving && !stone ? Math.sin((Number(travel) || 0) / 78 * Math.PI * 2) : 0;
+  const breath = Math.sin((Number(now) || 0) / (boss ? 760 : 620));
+  return { phase, step, upperX: stone ? 0 : step * 3 + phase * (boss ? 15 : 10), upperY: stone ? 0 : breath * 0.7 - Math.abs(step) * 2 - phase * 4, middleX: stone ? 0 : -step * 1.8 + phase * 4, middleY: stone ? 0 : -Math.abs(step) * 0.8 - phase * 1.5 };
+}
+function drawTowerEnemy(ctx, enemy, selected, now, moving, attack, travel, nativeRig) {
+  if (!enemy?.towerKind) return false;
+  const row = Object.keys(TOWER_KINDS).indexOf(enemy.towerKind), img = towerImage(ART + "enemies.webp");
+  if (row < 0) return false;
+  if (!img) {
+    drawAdventurePlaceholder(ctx, enemy, selected);
+    return true;
+  }
+  const boss = ["warden", "mourner", "azrail"].includes(enemy.towerKind), stone = enemy.towerKind === "stone", size = enemy.towerKind === "azrail" ? 300 : boss ? 250 : stone ? 220 : 170, sw = img.naturalWidth / 4, sh = img.naturalHeight / 2, sx = row % 4 * sw, sy = Math.floor(row / 4) * sh, pose = towerMotionPose(enemy.towerKind, now, moving, attack, travel), face = enemy.direction?.x > 0.1 ? -1 : 1;
+  ctx.save();
+  ctx.fillStyle = selected ? "#c4a26766" : "#0006";
+  ctx.beginPath();
+  ctx.ellipse(enemy.x, enemy.y + 9, size * 0.25, 14, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.translate(enemy.x, enemy.y + size * (1 - (boss ? 0.86 : 0.94)));
+  ctx.scale(face, 1);
+  if (stone) {
+    ctx.scale(1 + pose.phase * 0.025, 1 + Math.sin(now / 800) * 4e-3);
+    ctx.drawImage(img, sx, sy, sw, sh, -size / 2, -size, size, size);
+  } else if (!nativeRig?.(ctx, img, sx, sy, sw, sh, 0, 0, size, size, pose)) {
+    for (const [start, height, x, y] of [[0.8, 0.2, 0, 0], [0.55, 0.27, pose.middleX, pose.middleY], [0, 0.58, pose.upperX, pose.upperY]]) ctx.drawImage(img, sx, sy + sh * start, sw, sh * height, -size / 2 + x, -size + size * start + y, size, size * height);
+  }
+  ctx.restore();
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.font = "700 12px system-ui";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#130d19";
+  ctx.fillStyle = boss ? "#f1cc83" : "#d9e5d8";
+  ctx.strokeText(enemy.name ?? TOWER_KINDS[enemy.towerKind], enemy.x, enemy.y - size - 3);
+  ctx.fillText(enemy.name ?? TOWER_KINDS[enemy.towerKind], enemy.x, enemy.y - size - 3);
+  const w = boss ? 125 : 90;
+  ctx.fillStyle = "#130e19";
+  ctx.fillRect(enemy.x - w / 2, enemy.y - size + 3, w, 6);
+  ctx.fillStyle = stone ? "#7fe4bf" : boss ? "#cba14f" : "#bb665c";
+  ctx.fillRect(enemy.x - w / 2, enemy.y - size + 3, w * Math.max(0, Math.min(1, enemy.hp / Math.max(1, enemy.maxHp))), 6);
+  ctx.restore();
+  return true;
+}
+function towerItemIndex(kind) {
+  return TOWER_ITEMS.findIndex((row) => row[0] === kind);
+}
+function drawTowerLoot(ctx, loot) {
+  const index = towerItemIndex(loot.kind), img = towerImage(ART + "items.webp");
+  if (index < 0) return false;
+  if (!img) return true;
+  const [x, y, w, h] = TOWER_ICON_RECTS[index];
+  ctx.drawImage(img, x, y, w, h, loot.x - 25, loot.y - 45, 50, 50);
+  return true;
+}
+var css = ADVENTURE_DOCK_CSS + `.tower18-dialog{width:min(790px,95vw);max-height:88dvh;overflow:auto;color:#e7e5d6;background:#0d1a16;border:1px solid #806c40}.tower18-body{display:grid;gap:14px}.tower18-hero{display:flex;gap:18px;align-items:center;padding:12px;background:linear-gradient(110deg,#10231d,#231c27);border:1px solid #705f3f;border-radius:12px}.tower18-hero img{width:110px;height:150px;object-fit:contain}.tower18-hero h3{font-size:24px;color:#e6c781;margin:0 0 9px}.tower18-muted{color:#b0b7a9;font-size:13px;line-height:1.5}.tower18-dialog button,.tower18-admin button{min-height:38px;border:1px solid #75653f;background:#193329;color:#f0e5c5;padding:8px 12px;border-radius:7px;cursor:pointer}.tower18-dialog button:disabled,.tower18-admin button:disabled{opacity:.45;cursor:default}.tower18-nav{display:flex;gap:7px;flex-wrap:wrap}.tower18-nav [aria-pressed=true]{background:#6d552e}.tower18-floor-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.tower18-floor{background:#17251f;border:1px solid #48533e;border-radius:7px;padding:8px;font-size:11px}.tower18-floor b{display:block;color:#e6c781;font-size:16px}.tower18-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.tower18-item{display:flex;gap:8px;align-items:center;background:#17251f;border:1px solid #42523d;border-radius:8px;padding:9px;flex-wrap:wrap}.tower18-item small{display:block;color:#b3bdac}.tower18-icon{width:54px;height:54px;display:inline-block;flex-shrink:0;background-image:url(/assets/tower-r18/items.webp);background-size:300% 200%;background-repeat:no-repeat}.tower18-status{padding:9px;border-left:3px solid #cbaa68;white-space:pre-wrap}.tower18-admin{grid-column:1 / -1;display:grid;gap:15px;min-width:0}.tower18-admin .tower18-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}.tower18-admin label{display:grid;gap:4px;color:#ccd8c7;font-size:12px}.tower18-admin input,.tower18-admin select{width:100%;min-width:0;color:#eff1e6;background:#10221a;border:1px solid #49634b;padding:8px;border-radius:5px}.tower18-admin input[type=checkbox]{width:auto}.tower18-admin fieldset{border:1px solid #516344;border-radius:9px;padding:13px;min-width:0}.tower18-admin legend{color:#e5c886;padding:0 7px}.tower18-drop{display:grid;grid-template-columns:minmax(150px,2fr) repeat(3,minmax(64px,1fr)) auto;gap:7px;align-items:end;margin:8px 0}.tower18-admin h3{color:#e6c781;margin:4px 0}.tower18-admin .tower18-save{position:sticky;bottom:0;display:flex;gap:12px;align-items:center;padding:12px;background:#10231ff5;border:1px solid #73613a;z-index:2}.tower18-objective{font-size:13px;color:#e2cc96}@media(max-width:600px){.tower18-items{grid-template-columns:repeat(2,minmax(0,1fr))}.tower18-floor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tower18-drop{grid-template-columns:repeat(2,minmax(0,1fr))}.tower18-drop label:first-child{grid-column:1 / -1}.tower18-hero img{width:75px;height:110px}.tower18-hero h3{font-size:20px}}`;
+function createTowerUI(React, ui = {}) {
+  const h = React.createElement;
+  function Icon({ kind }) {
+    const i = towerItemIndex(kind);
+    if (i < 0) return null;
+    const [x, y, w, height] = TOWER_ICON_RECTS[i];
+    return h("span", { className: "tower18-icon", role: "img", "aria-label": TOWER_ITEMS[i][1], style: { backgroundSize: 1536 / w * 100 + "% " + 1024 / height * 100 + "%", backgroundPosition: x / (1536 - w) * 100 + "% " + y / (1024 - height) * 100 + "%" } });
+  }
+  function Entry({ snapshot, post, area, playerId, onResult, onChange, onTravel, uiSuspended }) {
+    const [open, setOpen] = React.useState(false), [tab, setTab] = React.useState("tower"), [busy, setBusy] = React.useState(false), [message, setMessage] = React.useState("");
+    const lock = React.useRef(false), pending = React.useRef(null), live = React.useRef(true);
+    React.useEffect(() => {
+      live.current = true;
+      const show = () => {
+        setOpen(true);
+        setMessage("");
+      }, end = () => setOpen(false);
+      window.addEventListener("tower-open", show);
+      window.addEventListener("coreoflife:game-session-ended", end);
+      return () => {
+        live.current = false;
+        window.removeEventListener("tower-open", show);
+        window.removeEventListener("coreoflife:game-session-ended", end);
+      };
+    }, []);
+    React.useEffect(() => {
+      if (uiSuspended) setOpen(false);
+    }, [uiSuspended]);
+    const info = snapshot?.towerInfo, config = info?.config, run = snapshot?.run, items = info?.inventory ?? snapshot?.materials ?? {}, inTower = run?.mode === "tower";
+    React.useEffect(() => {
+      if (inTower && pending.current?.key === JSON.stringify(["create_tower", {}])) pending.current = null;
+    }, [inTower, run?.id]);
+    async function act(action, extra = {}) {
+      if (lock.current) return;
+      const key = JSON.stringify([action, extra]);
+      if (pending.current && pending.current.key !== key) {
+        setMessage("\xD6nce belirsiz kalan i\u015Flemi ayn\u0131 d\xFC\u011Fmeyle yeniden sorgula.");
+        return;
+      }
+      lock.current = true;
+      setBusy(true);
+      setMessage("");
+      pending.current ??= { key, id: crypto.randomUUID() };
+      try {
+        const result = await post("/api/dungeon", { action, ...extra, requestId: pending.current.id });
+        if (result.error) throw Error(result.error);
+        pending.current = null;
+        if (!live.current) return;
+        onResult(result);
+        onChange?.();
+        setMessage(result.message ?? "\u0130\u015Flem tamamland\u0131.");
+        if (action === "create_tower" || action === "leave") setOpen(false);
+      } catch (error) {
+        if (Number.isInteger(error?.status) && error.status >= 400 && error.status < 500 && error?.payload?.code !== "command_outcome_unknown") pending.current = null;
+        if (live.current) setMessage(error?.message ?? "\u0130\u015Flem tamamlanamad\u0131. Ayn\u0131 d\xFC\u011Fmeyle yeniden sorgula.");
+      } finally {
+        lock.current = false;
+        if (live.current) setBusy(false);
+      }
+    }
+    const count = (kind) => Number(Array.isArray(items) ? items.find((x) => x.kind === kind)?.amount ?? 0 : items[kind] ?? 0);
+    const body = h("div", { className: "tower18-body" }, h("nav", { className: "tower18-nav" }, ...["tower", "items"].map((t) => h("button", { key: t, type: "button", "aria-pressed": tab === t, onClick: () => setTab(t) }, t === "tower" ? "Kadim Kulesi" : "Kule \xC7antas\u0131"))), message && h("p", { className: "tower18-status", role: "status" }, message), tab === "tower" ? h(React.Fragment, null, h("div", { className: "tower18-hero" }, h("img", { src: ART + "entrance.webp", alt: "Kadim Kulesi" }), h("div", null, h("h3", null, "On Kat, Son Bir M\xFCh\xFCr"), h("p", { className: "tower18-muted" }, "Dalgalar\u0131 ve Sinsi Ta\u015Flar\u0131 temizle. Kat tamamlan\u0131nca ge\xE7ide y\xFCr\xFCyerek bir \xFCst kata \xE7\u0131k. Azrail son katta seni bekliyor."), h("b", null, (config?.minLevel ?? "\u2026") + ". seviye \xB7 " + Math.round((config?.durationSeconds ?? 3600) / 60) + " dakika"))), h("div", { className: "tower18-floor-grid" }, ...(config?.floors ?? TOWER_NAMES.map((name) => ({ name }))).map((floor, i) => h("div", { className: "tower18-floor", key: i }, h("b", null, i + 1 + ". Kat"), floor.name, floor.waves && h("small", null, " \xB7 " + floor.waves + " dalga")))), h("p", { className: "tower18-muted" }, "Son kat Azrail her tamamlanan turda 1 Azrail Sand\u0131\u011F\u0131 verir. AZRA\u0130L KANCASI bu sand\u0131ktan %10 olas\u0131l\u0131kla \xE7\u0131kar."), run ? h("button", { type: "button", onClick: () => {
+      setOpen(false);
+      window.dispatchEvent(new Event("dungeon-keeper"));
+    } }, inTower ? "Kule turuna d\xF6n" : "Devam eden zindan\u0131na d\xF6n") : area !== "bazaar" ? h("button", { type: "button", disabled: busy, onClick: () => {
+      setOpen(false);
+      onTravel?.();
+    } }, "\xD6nce Pazar K\xF6y\xFC\u2019ne git") : h("button", { type: "button", disabled: busy || !config?.enabled, onClick: () => act("create_tower") }, busy ? "Giriliyor\u2026" : !config ? "Kule bilgisi y\xFCkleniyor\u2026" : config.enabled ? "Kadim Kulesi\u2019ne gir" : "Kule \u015Fu an kapal\u0131")) : h(React.Fragment, null, h("div", { className: "tower18-items" }, ...TOWER_ITEMS.map(([kind, name, forge]) => h("div", { className: "tower18-item", key: kind }, h(Icon, { kind }), h("span", null, h("strong", null, name), h("small", null, count(kind) + " adet"), forge > 0 && h("small", null, "1 adet \u2192 " + forge + " Kor M\xFChr\xFC")), kind === "tower_azrail_chest" && h("button", { type: "button", disabled: busy || count(kind) < 1 || !!run, onClick: () => act("tower_open_chest") }, "Sand\u0131\u011F\u0131 a\xE7"), forge > 0 && h("button", { type: "button", disabled: busy || count(kind) < 1 || !!run || area !== "bazaar", onClick: () => act("tower_refine", { kind, amount: 1 }) }, "1 adet d\xF6n\xFC\u015Ft\xFCr")))), h("p", { className: "tower18-muted" }, "Art\u0131 basma malzemelerini Pazar K\xF6y\xFC\u2019nde Demirci Haso\u2019nun yan\u0131nda Kor M\xFChr\xFC\u2019ne d\xF6n\xFC\u015Ft\xFCrebilirsin. Sand\u0131\u011F\u0131 turdan \xE7\u0131kt\u0131ktan sonra a\xE7.")));
+    return h(React.Fragment, null, h("style", null, css), inTower && !uiSuspended && h("aside", { className: "tower18-exit", "aria-label": "Kuleden \xE7\u0131k\u0131\u015F" }, h("button", { type: "button", disabled: busy, onClick: () => act("leave") }, busy ? "\xC7\u0131k\u0131l\u0131yor\u2026" : "Kuleden \xE7\u0131k"), message && !open && h("p", { role: "status" }, message)), h("button", { type: "button", className: "action-tile dungeon-shortcut", "aria-label": "Kadim Kulesi", title: "Kadim Kulesi / Kule \xC7antas\u0131", onClick: () => setOpen(true) }, h("span", null, "\u265C"), h("span", null, "Kadim Kulesi")), ui.Dialog ? h(ui.Dialog, { open: open && !uiSuspended, onOpenChange: setOpen }, h(ui.Content, { className: "tower18-dialog" }, h(ui.Header, null, h(ui.Title, null, "Kadim Kulesi"), h(ui.Description, null, "Katlar, ganimetler ve kule e\u015Fyalar\u0131")), body)) : open ? h("div", { role: "dialog", className: "tower18-dialog", "aria-label": "Kadim Kulesi" }, h("button", { onClick: () => setOpen(false) }, "Kapat"), body) : null);
+  }
+  function Objective({ run }) {
+    return run?.mode === "tower" ? h("p", { className: "tower18-objective" }, run.stage + ". kat / 10 \xB7 Dalga " + (run.tower?.wave ?? run.wave) + " / " + (run.tower?.waves ?? "?") + " \xB7 Kalan hedef: " + (run.tower?.remaining ?? run.enemies.filter((e) => e.hp > 0).length)) : null;
+  }
+  function Admin({ act, busy: outerBusy }) {
+    const [draft, setDraft] = React.useState(null), [catalog, setCatalog] = React.useState([]), [revision, setRevision] = React.useState(null), [floor, setFloor] = React.useState(0), [tab, setTab] = React.useState("floors"), [busy, setBusy] = React.useState(false), [message, setMessage] = React.useState(""), [dirty, setDirty] = React.useState(false);
+    const lock = React.useRef(false), alive = React.useRef(true);
+    const accept = (result) => {
+      const value = result?.tower;
+      if (!value?.config) throw Error("Kule ayarlar\u0131 al\u0131namad\u0131.");
+      setDraft(structuredClone(value.config));
+      setRevision(value.revision ?? value.config.revision);
+      setCatalog(value.catalog ?? []);
+      setDirty(false);
+    };
+    const read = async () => {
+      if (lock.current) return;
+      lock.current = true;
+      setBusy(true);
+      setMessage("");
+      try {
+        const result = await act({ action: "kadim_tower_get" });
+        if (alive.current) accept(result);
+      } catch (error) {
+        if (alive.current) setMessage(error.message ?? "Ayarlar y\xFCklenemedi.");
+      } finally {
+        lock.current = false;
+        if (alive.current) setBusy(false);
+      }
+    };
+    React.useEffect(() => {
+      alive.current = true;
+      void read();
+      return () => {
+        alive.current = false;
+      };
+    }, []);
+    const edit = (change) => {
+      setDraft((d) => {
+        const next = structuredClone(d);
+        change(next);
+        return next;
+      });
+      setDirty(true);
+    };
+    const locked = busy || outerBusy;
+    const num = (label, value, set, min = 0, max = 1e8, step = 1, fixed = false) => h("label", null, label, h("input", { type: "number", value, min, max, step, disabled: locked || fixed, onChange: (e) => set(Number(e.target.value)) }));
+    const save = async () => {
+      if (lock.current || !draft) return;
+      lock.current = true;
+      setBusy(true);
+      setMessage("");
+      try {
+        const result = await act({ action: "kadim_tower_save", revision, config: draft });
+        if (alive.current) {
+          accept(result);
+          setMessage("Kaydedildi. Ayarlar yeni kule turlar\u0131nda uygulan\u0131r.");
+        }
+      } catch (error) {
+        if (alive.current) setMessage(error.message ?? "Kaydedilemedi.");
+      } finally {
+        lock.current = false;
+        if (alive.current) setBusy(false);
+      }
+    };
+    function Drops({ rows, change, chest = false }) {
+      const options = catalog.filter((c) => c.id !== "tower:azrail_chest" && (chest || c.id !== "tower:azrail_hook"));
+      return h("div", null, ...rows.map((row, index) => {
+        const hook = row.itemId === "tower:azrail_hook";
+        return h("div", { className: "tower18-drop", key: index }, h("label", null, "E\u015Fya", h("select", { value: row.itemId, disabled: locked || hook, onChange: (e) => change((next) => {
+          next[index].itemId = e.target.value;
+        }) }, ...options.map((c) => h("option", { value: c.id, key: c.id }, c.name)))), num("Olas\u0131l\u0131k %", row.chance, (v) => !hook && change((next) => {
+          next[index].chance = v;
+        }), 0, 100, 0.01, hook), num("En az", row.min, (v) => !hook && change((next) => {
+          next[index].min = v;
+        }), 1, 1e3, 1, hook), num("En \xE7ok", row.max, (v) => !hook && change((next) => {
+          next[index].max = v;
+        }), 1, 1e3, 1, hook), h("button", { type: "button", disabled: locked || hook, onClick: () => change((next) => next.splice(index, 1)) }, hook ? "Sabit %10" : "Kald\u0131r"));
+      }), h("button", { type: "button", disabled: locked || rows.length >= 16, onClick: () => {
+        const next = options.find((c) => !rows.some((r) => r.itemId === c.id));
+        if (next) change((r) => r.push({ itemId: next.id, chance: 10, min: 1, max: 1 }));
+      } }, "\xD6d\xFCl ekle"));
+    }
+    if (!draft) return h("section", { className: "admin-card tower18-admin" }, h("style", null, css), h("h2", null, "Kadim Kulesi"), h("p", { role: "status" }, message || "Ayarlar y\xFCkleniyor\u2026"), h("button", { disabled: locked, onClick: read }, "Yeniden y\xFCkle"));
+    const f = draft.floors[floor];
+    return h("section", { className: "admin-card tower18-admin" }, h("style", null, css), h("h2", null, "Kadim Kulesi \xB7 10 Kat"), h("p", { className: "tower18-muted" }, "Her kat\u0131 ayr\u0131 d\xFCzenle. Canavarlar her dalgada; Sinsi Ta\u015Flar kat ba\u015F\u0131nda; bosslar son dalgada \xE7\u0131kar. Devam eden turlar kendi ayarlar\u0131n\u0131 korur."), h("div", { className: "tower18-fields" }, h("label", null, h("span", null, h("input", { type: "checkbox", checked: draft.enabled, disabled: locked, onChange: (e) => edit((d) => {
+      d.enabled = e.target.checked;
+    }) }), " Kuleye giri\u015F a\xE7\u0131k")), num("Asgari seviye", draft.minLevel, (v) => edit((d) => {
+      d.minLevel = v;
+    }), 1, 100), num("Tur s\xFCresi (sn)", draft.durationSeconds, (v) => edit((d) => {
+      d.durationSeconds = v;
+    }), 300, 14400)), h("nav", { className: "tower18-nav" }, ...["floors", "patterns", "chest"].map((t) => h("button", { key: t, type: "button", "aria-pressed": tab === t, onClick: () => setTab(t) }, t === "floors" ? "Katlar ve D\xFC\u015Fmanlar" : t === "patterns" ? "Azrail Sald\u0131r\u0131 Alanlar\u0131" : "Azrail Sand\u0131\u011F\u0131"))), message && h("p", { className: "tower18-status", role: "status" }, message), tab === "floors" ? h(React.Fragment, null, h("nav", { className: "tower18-nav" }, ...draft.floors.map((f2, i) => h("button", { key: i, type: "button", "aria-pressed": floor === i, onClick: () => setFloor(i) }, i + 1 + ". Kat"))), h("div", { className: "tower18-fields" }, h("label", null, "Kat ad\u0131", h("input", { value: f.name, maxLength: 60, disabled: locked, onChange: (e) => edit((d) => {
+      d.floors[floor].name = e.target.value;
+    }) })), num("Dalga say\u0131s\u0131", f.waves, (v) => edit((d) => {
+      d.floors[floor].waves = v;
+    }), 1, 10), num("Dalgalar aras\u0131 (ms)", f.waveDelayMs, (v) => edit((d) => {
+      d.floors[floor].waveDelayMs = v;
+    }), 500, 3e4)), ...f.spawns.map((s, i) => h("fieldset", { key: i }, h("legend", null, TOWER_KINDS[s.kind]), h("div", { className: "tower18-fields" }, h("label", null, "T\xFCr", h("select", { value: s.kind, disabled: locked, onChange: (e) => edit((d) => {
+      d.floors[floor].spawns[i].kind = e.target.value;
+    }) }, ...Object.entries(TOWER_KINDS).filter(([kind]) => kind !== "azrail" || floor === 9).map(([kind, label]) => h("option", { value: kind, key: kind }, label)))), ...Object.entries({ count: ["Adet", 0, 30], hp: ["Can", 1, 1e8], damage: ["Hasar", 0, 1e6], speed: ["H\u0131z", 0, 240], attackMs: ["Sald\u0131r\u0131 aral\u0131\u011F\u0131 (ms)", 600, 6e4], range: ["Menzil", 60, 650], telegraphMs: ["Alan i\u015Fareti s\xFCresi (ms)", 300, 1e4], radius: ["Alan yar\u0131\xE7ap\u0131", 40, 650] }).map(([key, [label, min, max]]) => h(React.Fragment, { key }, num(label, s[key], (v) => edit((d) => {
+      d.floors[floor].spawns[i][key] = v;
+    }), min, max)))), h("h3", null, "Bu d\xFC\u015Fman\u0131n ganimeti"), Drops({ rows: s.drops, change: (fn) => edit((d) => {
+      fn(d.floors[floor].spawns[i].drops);
+    }) }), h("button", { type: "button", disabled: locked || s.kind === "azrail", onClick: () => edit((d) => {
+      d.floors[floor].spawns.splice(i, 1);
+    }) }, "D\xFC\u015Fman grubunu kald\u0131r"))), h("button", { type: "button", disabled: locked || f.spawns.length >= 14, onClick: () => edit((d) => {
+      d.floors[floor].spawns.push({ kind: "guard", count: 1, hp: 1e3, damage: 20, speed: 100, attackMs: 2200, range: 150, telegraphMs: 900, radius: 105, drops: [] });
+    }) }, "Canavar / ta\u015F / boss ekle")) : tab === "patterns" ? h(React.Fragment, null, h("p", { className: "tower18-muted" }, "En az bir sald\u0131r\u0131 alan\u0131 a\xE7\u0131k kal\u0131r. \u0130\u015Faretlenen alandan s\xFCre bitmeden \xE7\u0131kmayan oyuncu sunucuda hasar al\u0131r."), ...Object.entries(draft.patterns).map(([kind, p]) => h("fieldset", { key: kind }, h("legend", null, { circle: "Ruh \xC7emberi", line: "\xD6l\xFCm Hatt\u0131", ring: "Matem Halkas\u0131" }[kind]), h("label", null, h("span", null, h("input", { type: "checkbox", checked: p.enabled, disabled: locked, onChange: (e) => edit((d) => {
+      d.patterns[kind].enabled = e.target.checked;
+    }) }), " Etkin")), h("div", { className: "tower18-fields" }, ...Object.entries({ damage: ["Hasar", 0, 1e6], telegraphMs: ["Ka\xE7\u0131\u015F s\xFCresi (ms)", 400, 1e4], cooldownMs: ["Tekrar aral\u0131\u011F\u0131 (ms)", 1e3, 6e4], radius: ["Alan boyutu", 60, 650] }).map(([key, [label, min, max]]) => h(React.Fragment, { key }, num(label, p[key], (v) => edit((d) => {
+      d.patterns[kind][key] = v;
+    }), min, max))))))) : h(React.Fragment, null, h("p", null, "10. kat Azrail\u2019den 1 Azrail Sand\u0131\u011F\u0131 kesin d\xFC\u015Fer. Sand\u0131k i\xE7eri\u011Fini a\u015Fa\u011F\u0131da ayarla. AZRA\u0130L KANCASI %10 / 1 adet sabittir."), Drops({ rows: draft.chest, chest: true, change: (fn) => edit((d) => {
+      fn(d.chest);
+    }) })), h("div", { className: "tower18-save" }, h("button", { type: "button", disabled: locked || !dirty, onClick: save }, busy ? "Kaydediliyor\u2026" : "Kule ayarlar\u0131n\u0131 kaydet"), h("button", { type: "button", disabled: locked, onClick: () => {
+      if (!dirty || confirm("Kaydedilmemi\u015F de\u011Fi\u015Fiklikler silinsin mi?")) read();
+    } }, "Canl\u0131 ayarlar\u0131 y\xFCkle")));
+  }
+  return { ...createAdventureUI(React, { ...ui, Icon, css, TOWER_ITEMS }), Admin, Icon, Objective, MistAdmin: createMistAdmin(React, css) };
+}
+export {
+  ADVENTURE_BOUNDS,
+  ADVENTURE_DOCK,
+  ADVENTURE_DOCK_CSS,
+  TOWER_ENTRANCE,
+  TOWER_ICON_RECTS,
+  TOWER_ITEMS,
+  TOWER_KINDS,
+  TOWER_NAMES,
+  adventureArea,
+  adventureDockBounds,
+  adventureImage,
+  adventureLabel,
+  adventureProfile,
+  adventureSegment,
+  adventureTexture,
+  createAdventureUI,
+  createTowerUI,
+  drawAdventureEnemy,
+  drawAdventurePlaceholder,
+  drawAdventureScene,
+  drawTowerEnemy,
+  drawTowerEntrance,
+  drawTowerLoot,
+  isAdventureArea,
+  isMistArea,
+  preloadAdventureTextures,
+  towerEntranceHit,
+  towerImage,
+  towerItemIndex,
+  towerMap,
+  towerMapTexture,
+  towerMotionPose
+};

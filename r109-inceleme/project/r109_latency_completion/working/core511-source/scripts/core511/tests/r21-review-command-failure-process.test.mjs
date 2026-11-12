@@ -1,0 +1,44 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {randomUUID} from 'node:crypto';
+import {nativeHttpHost} from './native-http-host-fixture.mjs';
+import {extraPlayer} from './process-fixture.mjs';
+import {until} from './helpers.mjs';
+const monster='golge-review21-fail';
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+test('R21 deterministic native kill SQL failure is durably rejected once and other player continues',{timeout:60000},async t=>{
+ const s=await nativeHttpHost(t,{realmSetup:async(host,seed)=>{
+  const q=host.database.sqlite;
+  q.prepare('UPDATE bot_due SET due_ms=? WHERE account_id=?').run(Date.now()+180000,seed.account.id);
+  q.prepare("UPDATE players SET role='avci',area='forest',channel=1,x=2700,y=2025,hp=1000000,max_hp=1000000,level=40,is_gm=0,loadlab_run_id='',attack_one_at=0,stun_until_ms=0,root_until_ms=0 WHERE id=?").run(seed.id);
+  q.prepare("INSERT INTO monsters(id,name,area,channel,x,y,hp,max_hp,spawn_round,respawn_at) VALUES(?,'Review injection','forest',1,2800,2025,1,1,1,0)").run(monster);
+ }});
+ const {f}=s,other=extraPlayer(s,91,'review-other');await s.host.database.atomic(()=>{globalThis.__colLaunch.grant(f.account.id,true);globalThis.__colLaunch.grant('shared-account-91',true);});
+ f.sql.prepare('UPDATE bot_due SET due_ms=? WHERE account_id=?').run(Date.now()+180000,'shared-account-91');
+ const ticket=await s.http('character',{channel:1});assert.equal(ticket.status,200,JSON.stringify(ticket));const live=await s.connect(ticket);
+ const ticket2=await other.http('character',{channel:1});assert.equal(ticket2.status,200,JSON.stringify(ticket2));const neighbor=await s.connect(ticket2);
+ const failures=()=>s.faults.map(f=>f.error?.stack??String(f)).join('\n');
+ for(const row of s.supervisor.rows.values())row.child.on('message',m=>{if(m?.type==='test-native-failure')s.faults.push({error:Error(m.stack)});});
+ let attempts=0;const diagnostics=[];s.writer.commandFailures.diagnostic=r=>diagnostics.push(r);
+ f.sql.function('r21_attempt',()=>{attempts++;return 1;});
+ f.sql.exec(`CREATE TEMP TRIGGER r21_fail_defeat AFTER INSERT ON main.normal_defeats WHEN NEW.monster_id='${monster}' BEGIN SELECT r21_attempt(); SELECT RAISE(ABORT,'r21 deterministic test constraint'); END`);
+ const snapshots=()=>({player:f.sql.prepare('SELECT xp,quest_kills438 FROM players WHERE id=?').get(f.id),monster:f.sql.prepare('SELECT hp,spawn_round FROM monsters WHERE id=?').get(monster),defeats:f.sql.prepare('SELECT COUNT(*) n FROM normal_defeats WHERE monster_id=?').get(monster).n,claims:f.sql.prepare('SELECT COUNT(*) n FROM normal_reward_claims WHERE monster_id=?').get(monster).n});
+ const before=snapshots(),pid=s.supervisor.rows.get(1).child.pid;let captured=null;
+ const command=s.writer.command.bind(s.writer);s.writer.command=async(peer,request)=>{if(request.operation==='attack')captured={peer,request:structuredClone(request)};return command(peer,request);};
+ const sent=new Map();async function send(client,sequence,payload){const frame={type:'input',sequence,payload:{requestId:randomUUID(),...payload}};sent.set(client,frame);client.ws.send(JSON.stringify(frame));await until(()=>client.packets.some(p=>p.results?.some(r=>r.sequence===sequence))||s.faults.length,10000);assert.equal(s.faults.length,0,failures());return client.packets.flatMap(p=>p.results??[]).find(r=>r.sequence===sequence);}
+ s.core.start();
+ const rejected=await send(live,1,{action:'attack',ability:0,targetId:monster,spawnRound:1,intentId:randomUUID()});
+ assert.equal(rejected.status,409,JSON.stringify(rejected));assert.equal(rejected.body.code,'command_sql_rolled_back');assert.deepEqual(snapshots(),before);assert.equal(attempts,1);assert.equal(diagnostics.length,1);assert.equal(diagnostics[0].family,'insert_normal_defeats');
+ assert(captured,'actual attack writer request captured');const receipt=f.sql.prepare('SELECT response FROM kernel511_channel_receipts WHERE player_id=? AND operation_id=?').get(f.id,captured.request.operationId);assert(receipt,'negative receipt persisted');
+ const replay=await command(captured.peer,captured.request);assert.equal(replay.result.result.body.code,'command_sql_rolled_back');assert.equal(attempts,1,'same durable operation must never execute a second time');
+ const movement=await send(neighbor,1,{action:'move',x:2710,y:2025,area:'forest',basePositionRevision:f.sql.prepare('SELECT position_revision FROM players WHERE id=?').get(other.id).position_revision});assert.equal(movement.status,200,JSON.stringify(movement));assert.equal(s.supervisor.rows.get(1).child.pid,pid);
+ live.ws.terminate();await live.closed;const resumedTicket=await s.http('ticket');assert.equal(resumedTicket.status,200,JSON.stringify(resumedTicket));const resumed=await s.connect(resumedTicket);const ready=resumed.packets.find(p=>p.type==='ready');assert(ready.results.some(r=>r.sequence===1&&r.body?.code==='command_sql_rolled_back'),JSON.stringify(ready));assert.equal(attempts,1);
+ f.sql.exec('DROP TRIGGER r21_fail_defeat');await wait(750);
+ const success=await send(resumed,2,{action:'attack',ability:0,targetId:monster,spawnRound:1,intentId:randomUUID()});assert.equal(success.status,200,JSON.stringify(success));assert.equal(snapshots().defeats,1);assert.equal(snapshots().monster.hp,0);assert.equal(attempts,1);
+ const afterKill=snapshots();await command(captured.peer,captured.request);assert.deepEqual(snapshots(),afterKill,'successful native kill replay cannot duplicate XP or quest credit');
+ const claimed=await send(resumed,3,{action:'claim_rewards',rewardTargets:[{id:monster,spawnRound:1}]});assert.equal(claimed.status,200,JSON.stringify(claimed));const afterClaim=snapshots();assert.equal(afterClaim.claims,1);await send(resumed,4,{action:'claim_rewards',rewardTargets:[{id:monster,spawnRound:1}]});assert.deepEqual(snapshots(),afterClaim,'claim replay cannot duplicate reward credit');
+ const secondMove=await send(neighbor,2,{action:'move',x:2710,y:2025,area:'forest',basePositionRevision:movement.data?.positionRevision??movement.body?.positionRevision??1});assert.equal(secondMove.status,200);
+ const proof={scope:'Real native SQLite kill/constraint, GameWriter, 4 channel child processes + world child, actual WS framing over fixture IPC; not browser or live VDS',before,rejected,diagnostics,attempts,replayCode:replay.result.result.body.code,reconnectReplays:ready.results.filter(r=>r.sequence===1).length,unrelatedMoveStatuses:[movement.status,secondMove.status],sameChannelPid:s.supervisor.rows.get(1).child.pid===pid,successfulNewKill:snapshots(),faults:s.faults.length};
+ fs.writeFileSync(process.env.R21_REVIEW_PROCESS_OUT??'/tmp/r21-review-command-failure-process.json',JSON.stringify(proof,null,2));t.diagnostic(JSON.stringify(proof));
+});

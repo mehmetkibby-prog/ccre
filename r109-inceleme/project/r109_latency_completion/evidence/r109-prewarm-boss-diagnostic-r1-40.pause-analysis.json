@@ -1,0 +1,1173 @@
+{
+  "source": "evidence/r109-prewarm-boss-diagnostic-r1-40.json",
+  "diagnosticOnly": true,
+  "samplingGapInterpretation": "Intervals >10ms are reported as unobserved, not charged to a JS function.",
+  "samplesStartedAtMs": 1794470634661.9045,
+  "measurementStartedAtMs": 1794470634926.3628,
+  "pauses": [
+    {
+      "gap": {
+        "startedAtMs": 1794470644017.856,
+        "endedAtMs": 1794470644077.2778,
+        "ms": 59.421919000000344
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 19.567138671875,
+          "function": "all",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 3.418212890625,
+          "function": "writeReceipt",
+          "file": "compact-receipt.mjs",
+          "line": 24
+        },
+        {
+          "sampledMs": 3.390869140625,
+          "function": "run",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 3.14208984375,
+          "function": "prepare",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 2.27001953125,
+          "function": "assertCommandOutputSize",
+          "file": "command-output-guard.mjs",
+          "line": 11
+        },
+        {
+          "sampledMs": 1.4599609375,
+          "function": "adventureMonsterId",
+          "file": "adventure-maps.mjs",
+          "line": 46
+        },
+        {
+          "sampledMs": 1.375,
+          "function": "isMistArea",
+          "file": "adventure-maps.mjs",
+          "line": 12
+        },
+        {
+          "sampledMs": 1.136962890625,
+          "function": "",
+          "file": "command-failure-scope.mjs",
+          "line": 28
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 59.421875,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "",
+          "file": "receipt-authority.mjs",
+          "line": 27
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "",
+          "file": "ownership.mjs",
+          "line": 135
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "",
+          "file": "guild-state.mjs",
+          "line": 16
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "",
+          "file": "market-state.mjs",
+          "line": 20
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "",
+          "file": "world-state.mjs",
+          "line": 37
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "work",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 51
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "withPreparedStatements477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+          "line": 92
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "prepared",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 52
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "atomic",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 44
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "perform",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 477
+        },
+        {
+          "sampledMs": 58.751220703125,
+          "function": "withPreparedStatements477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+          "line": 92
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470644835.3386,
+        "endedAtMs": 1794470644878.9487,
+        "ms": 43.61027699999977
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 9.883056640625,
+          "function": "all",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 5.363037109375,
+          "function": "run",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 2.943603515625,
+          "function": "",
+          "file": "command-failure-scope.mjs",
+          "line": 28
+        },
+        {
+          "sampledMs": 2.177001953125,
+          "function": "",
+          "file": "command-failure-scope.mjs",
+          "line": 28
+        },
+        {
+          "sampledMs": 2.161865234375,
+          "function": "assertCommandOutputSize",
+          "file": "command-output-guard.mjs",
+          "line": 11
+        },
+        {
+          "sampledMs": 1.1630859375,
+          "function": "rollEnchantments",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 2028
+        },
+        {
+          "sampledMs": 1.15087890625,
+          "function": "prepare",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.14794921875,
+          "function": "word",
+          "file": "operation-random.mjs",
+          "line": 15
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 43.610107421875,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "",
+          "file": "world-state.mjs",
+          "line": 37
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "work",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 51
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "withPreparedStatements477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+          "line": 92
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "prepared",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 52
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "atomic",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 44
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "perform",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 477
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "withPreparedStatements477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+          "line": 92
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "scoped",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 479
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "withWriterSqlTiming477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/writer-sql-timing477.mjs",
+          "line": 110
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "measureWriterSql477",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/writer-sql-timing477.mjs",
+          "line": 131
+        },
+        {
+          "sampledMs": 43.291015625,
+          "function": "drainWrites",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 456
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470692046.5005,
+        "endedAtMs": 1794470692084.792,
+        "ms": 38.29136699999799
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 5.408935546875,
+          "function": "nativeAttack",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 4506
+        },
+        {
+          "sampledMs": 5.384033203125,
+          "function": "all",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 3.40771484375,
+          "function": "handle",
+          "file": "attack-writer.mjs",
+          "line": 62
+        },
+        {
+          "sampledMs": 2.197998046875,
+          "function": "pveDamage",
+          "file": "generated/retaliation-rules.mjs",
+          "line": 367
+        },
+        {
+          "sampledMs": 1.228759765625,
+          "function": "(garbage collector)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.177978515625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs",
+          "line": 54
+        },
+        {
+          "sampledMs": 1.14306640625,
+          "function": "",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.12890625,
+          "function": "all",
+          "file": "",
+          "line": 0
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 38.29150390625,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "drainWrites",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 456
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 32
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "",
+          "file": "writer-lane-r533.mjs",
+          "line": 29
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "run",
+          "file": "node:internal/async_local_storage/async_hooks",
+          "line": 77
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "processImmediate",
+          "file": "node:internal/timers",
+          "line": 436
+        },
+        {
+          "sampledMs": 37.062744140625,
+          "function": "callbackTrampoline",
+          "file": "node:internal/async_hooks",
+          "line": 118
+        },
+        {
+          "sampledMs": 35.884765625,
+          "function": "",
+          "file": "receipt-authority.mjs",
+          "line": 27
+        },
+        {
+          "sampledMs": 35.884765625,
+          "function": "",
+          "file": "ownership.mjs",
+          "line": 135
+        },
+        {
+          "sampledMs": 35.884765625,
+          "function": "",
+          "file": "guild-state.mjs",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470668174.7605,
+        "endedAtMs": 1794470668211.315,
+        "ms": 36.55444200000056
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 6.5,
+          "function": "all",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 3.282958984375,
+          "function": "handle",
+          "file": "attack-writer.mjs",
+          "line": 62
+        },
+        {
+          "sampledMs": 1.87841796875,
+          "function": "",
+          "file": "command-failure-scope.mjs",
+          "line": 28
+        },
+        {
+          "sampledMs": 1.541015625,
+          "function": "native",
+          "file": "writer-runtime.mjs",
+          "line": 110
+        },
+        {
+          "sampledMs": 1.137939453125,
+          "function": "cauldronDropSnapshot488",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/lib/cauldron488.mjs",
+          "line": 39
+        },
+        {
+          "sampledMs": 1.10693359375,
+          "function": "prepare",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.10498046875,
+          "function": "prepareMonsterHit",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 4739
+        },
+        {
+          "sampledMs": 1.10498046875,
+          "function": "prepareCached477",
+          "file": "writer-statements.mjs",
+          "line": 6
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 36.554443359375,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "drainWrites",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 456
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 32
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "",
+          "file": "writer-lane-r533.mjs",
+          "line": 29
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "run",
+          "file": "node:internal/async_local_storage/async_hooks",
+          "line": 77
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "processImmediate",
+          "file": "node:internal/timers",
+          "line": 436
+        },
+        {
+          "sampledMs": 36.258056640625,
+          "function": "callbackTrampoline",
+          "file": "node:internal/async_hooks",
+          "line": 118
+        },
+        {
+          "sampledMs": 35.158935546875,
+          "function": "",
+          "file": "receipt-authority.mjs",
+          "line": 27
+        },
+        {
+          "sampledMs": 35.158935546875,
+          "function": "",
+          "file": "ownership.mjs",
+          "line": 135
+        },
+        {
+          "sampledMs": 35.158935546875,
+          "function": "",
+          "file": "guild-state.mjs",
+          "line": 16
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470668982.5793,
+        "endedAtMs": 1794470669015.4722,
+        "ms": 32.89275700000144
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 4.22998046875,
+          "function": "run",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 3.5859375,
+          "function": "",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 1140
+        },
+        {
+          "sampledMs": 2.1650390625,
+          "function": "assertCommandOutputSize",
+          "file": "command-output-guard.mjs",
+          "line": 11
+        },
+        {
+          "sampledMs": 2.156005859375,
+          "function": "writeReceipt",
+          "file": "compact-receipt.mjs",
+          "line": 24
+        },
+        {
+          "sampledMs": 1.569091796875,
+          "function": "uuid",
+          "file": "operation-random.mjs",
+          "line": 39
+        },
+        {
+          "sampledMs": 1.43408203125,
+          "function": "balanceFromSnapshot487",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/lib/level-balance487.mjs",
+          "line": 32
+        },
+        {
+          "sampledMs": 1.172119140625,
+          "function": "",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 3280
+        },
+        {
+          "sampledMs": 1.14111328125,
+          "function": "",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 1938
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 32.892822265625,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "drainWrites",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 456
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 32
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "",
+          "file": "writer-lane-r533.mjs",
+          "line": 29
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "run",
+          "file": "node:internal/async_local_storage/async_hooks",
+          "line": 77
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "processImmediate",
+          "file": "node:internal/timers",
+          "line": 436
+        },
+        {
+          "sampledMs": 32.4921875,
+          "function": "callbackTrampoline",
+          "file": "node:internal/async_hooks",
+          "line": 118
+        },
+        {
+          "sampledMs": 31.382080078125,
+          "function": "",
+          "file": "ownership.mjs",
+          "line": 135
+        },
+        {
+          "sampledMs": 31.382080078125,
+          "function": "",
+          "file": "guild-state.mjs",
+          "line": 16
+        },
+        {
+          "sampledMs": 31.382080078125,
+          "function": "",
+          "file": "market-state.mjs",
+          "line": 20
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470651004.8665,
+        "endedAtMs": 1794470651032.2158,
+        "ms": 27.349395999997796
+      },
+      "mainGc": [
+        {
+          "atMs": 1794470651004.9526,
+          "ms": 25.31071900576353,
+          "kind": 4
+        }
+      ],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 25.018310546875,
+          "function": "(garbage collector)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.14111328125,
+          "function": "observerCallback",
+          "file": "node:internal/perf/observe",
+          "line": 530
+        },
+        {
+          "sampledMs": 1.090087890625,
+          "function": "(program)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 0.099853515625,
+          "function": "set removed",
+          "file": "node:internal/event_target",
+          "line": 531
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 27.349365234375,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 25.018310546875,
+          "function": "(garbage collector)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.14111328125,
+          "function": "observerCallback",
+          "file": "node:internal/perf/observe",
+          "line": 530
+        },
+        {
+          "sampledMs": 1.090087890625,
+          "function": "(program)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 0.099853515625,
+          "function": "set removed",
+          "file": "node:internal/event_target",
+          "line": 531
+        },
+        {
+          "sampledMs": 0.099853515625,
+          "function": "remove",
+          "file": "node:internal/event_target",
+          "line": 543
+        },
+        {
+          "sampledMs": 0.099853515625,
+          "function": "removeEventListener",
+          "file": "node:internal/event_target",
+          "line": 710
+        },
+        {
+          "sampledMs": 0.099853515625,
+          "function": "",
+          "file": "node:internal/deps/undici/undici",
+          "line": 9981
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470641181.8042,
+        "endedAtMs": 1794470641205.3535,
+        "ms": 23.549510999997437
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 2.214111328125,
+          "function": "prepare",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.241943359375,
+          "function": "lookupPublicResource",
+          "file": "node:internal/async_hooks",
+          "line": 177
+        },
+        {
+          "sampledMs": 1.2041015625,
+          "function": "toString",
+          "file": "node:buffer",
+          "line": 839
+        },
+        {
+          "sampledMs": 1.196044921875,
+          "function": "get",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.173095703125,
+          "function": "setupReadableByteStreamController",
+          "file": "node:internal/webstreams/readablestream",
+          "line": 3257
+        },
+        {
+          "sampledMs": 1.14697265625,
+          "function": "invalidate",
+          "file": "security-renewal-r50.mjs",
+          "line": 59
+        },
+        {
+          "sampledMs": 1.135986328125,
+          "function": "get",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.114990234375,
+          "function": "",
+          "file": "node:internal/validators",
+          "line": 251
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 23.54931640625,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 20.422607421875,
+          "function": "processTimers",
+          "file": "node:internal/timers",
+          "line": 506
+        },
+        {
+          "sampledMs": 18.16064453125,
+          "function": "listOnTimeout",
+          "file": "node:internal/timers",
+          "line": 526
+        },
+        {
+          "sampledMs": 17.821044921875,
+          "function": "refresh",
+          "file": "security-renewal-r50.mjs",
+          "line": 30
+        },
+        {
+          "sampledMs": 17.821044921875,
+          "function": "",
+          "file": "coordinator.mjs",
+          "line": 417
+        },
+        {
+          "sampledMs": 14.405029296875,
+          "function": "renew",
+          "file": "security-renewal-r50.mjs",
+          "line": 44
+        },
+        {
+          "sampledMs": 12.2509765625,
+          "function": "call",
+          "file": "generated/native-realm-runtime.mjs",
+          "line": 76
+        },
+        {
+          "sampledMs": 12.2509765625,
+          "function": "readSecurity",
+          "file": "generated/native-realm-runtime.mjs",
+          "line": 88
+        },
+        {
+          "sampledMs": 12.2509765625,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs",
+          "line": 73
+        },
+        {
+          "sampledMs": 12.2509765625,
+          "function": "refresh",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs",
+          "line": 70
+        },
+        {
+          "sampledMs": 8.72802734375,
+          "function": "",
+          "file": "tests/native-realm-startup-fixture.mjs",
+          "line": 16
+        },
+        {
+          "sampledMs": 8.72802734375,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/tests/population-load.mjs",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470681186.458,
+        "endedAtMs": 1794470681208.4458,
+        "ms": 21.987779999995837
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 4.979736328125,
+          "function": "prepare",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.998046875,
+          "function": "augment",
+          "file": "game-presence.mjs",
+          "line": 24
+        },
+        {
+          "sampledMs": 1.248046875,
+          "function": "isReadableStreamLocked",
+          "file": "node:internal/webstreams/readablestream",
+          "line": 1995
+        },
+        {
+          "sampledMs": 1.156982421875,
+          "function": "objectComparisonStart",
+          "file": "node:internal/util/comparisons",
+          "line": 267
+        },
+        {
+          "sampledMs": 1.112060546875,
+          "function": "URL",
+          "file": "node:internal/url",
+          "line": 802
+        },
+        {
+          "sampledMs": 1.092041015625,
+          "function": "AbortSignal",
+          "file": "node:internal/abort_controller",
+          "line": 176
+        },
+        {
+          "sampledMs": 1.087890625,
+          "function": "encode",
+          "file": "node:internal/encoding",
+          "line": 351
+        },
+        {
+          "sampledMs": 1.083984375,
+          "function": "get",
+          "file": "",
+          "line": 0
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 21.98779296875,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 14.76171875,
+          "function": "processTimers",
+          "file": "node:internal/timers",
+          "line": 506
+        },
+        {
+          "sampledMs": 12.440673828125,
+          "function": "",
+          "file": "coordinator.mjs",
+          "line": 417
+        },
+        {
+          "sampledMs": 12.440673828125,
+          "function": "listOnTimeout",
+          "file": "node:internal/timers",
+          "line": 526
+        },
+        {
+          "sampledMs": 11.352783203125,
+          "function": "refresh",
+          "file": "security-renewal-r50.mjs",
+          "line": 30
+        },
+        {
+          "sampledMs": 9.354736328125,
+          "function": "call",
+          "file": "generated/native-realm-runtime.mjs",
+          "line": 76
+        },
+        {
+          "sampledMs": 9.354736328125,
+          "function": "readSecurity",
+          "file": "generated/native-realm-runtime.mjs",
+          "line": 88
+        },
+        {
+          "sampledMs": 9.354736328125,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs",
+          "line": 73
+        },
+        {
+          "sampledMs": 9.354736328125,
+          "function": "refresh",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs",
+          "line": 70
+        },
+        {
+          "sampledMs": 9.354736328125,
+          "function": "renew",
+          "file": "security-renewal-r50.mjs",
+          "line": 44
+        },
+        {
+          "sampledMs": 7.19580078125,
+          "function": "",
+          "file": "tests/native-realm-startup-fixture.mjs",
+          "line": 16
+        },
+        {
+          "sampledMs": 7.19580078125,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/tests/population-load.mjs",
+          "line": 51
+        }
+      ]
+    },
+    {
+      "gap": {
+        "startedAtMs": 1794470692723.895,
+        "endedAtMs": 1794470692744.7415,
+        "ms": 20.84637999998813
+      },
+      "mainGc": [],
+      "otherTargets": [],
+      "unobservedSampleIntervals": [],
+      "topSelf": [
+        {
+          "sampledMs": 4.311279296875,
+          "function": "run",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.1689453125,
+          "function": "exec",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 1.1640625,
+          "function": "adventureMonsterId",
+          "file": "adventure-maps.mjs",
+          "line": 46
+        },
+        {
+          "sampledMs": 1.135986328125,
+          "function": "rollEnchantmentValue",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 1943
+        },
+        {
+          "sampledMs": 1.10498046875,
+          "function": "",
+          "file": "command-failure-scope.mjs",
+          "line": 28
+        },
+        {
+          "sampledMs": 1.10009765625,
+          "function": "normalizedRandom",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 1243
+        },
+        {
+          "sampledMs": 1.093994140625,
+          "function": "rollEnchantments",
+          "file": "generated/attack-writer-rules.mjs",
+          "line": 2028
+        },
+        {
+          "sampledMs": 1.093994140625,
+          "function": "run",
+          "file": "shared-refresh-scope.mjs",
+          "line": 80
+        }
+      ],
+      "topInclusive": [
+        {
+          "sampledMs": 20.846435546875,
+          "function": "(root)",
+          "file": "",
+          "line": 0
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "drainWrites",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 456
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "",
+          "file": "reward-group-commit-r53.mjs",
+          "line": 32
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "",
+          "file": "writer-lane-r533.mjs",
+          "line": 29
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "run",
+          "file": "node:internal/async_local_storage/async_hooks",
+          "line": 77
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "",
+          "file": "file:///workspace/ccre/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/database.mjs",
+          "line": 431
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "processImmediate",
+          "file": "node:internal/timers",
+          "line": 436
+        },
+        {
+          "sampledMs": 20.767333984375,
+          "function": "callbackTrampoline",
+          "file": "node:internal/async_hooks",
+          "line": 118
+        },
+        {
+          "sampledMs": 19.598388671875,
+          "function": "",
+          "file": "receipt-authority.mjs",
+          "line": 27
+        },
+        {
+          "sampledMs": 19.598388671875,
+          "function": "",
+          "file": "ownership.mjs",
+          "line": 135
+        },
+        {
+          "sampledMs": 19.598388671875,
+          "function": "",
+          "file": "guild-state.mjs",
+          "line": 16
+        }
+      ]
+    }
+  ]
+}

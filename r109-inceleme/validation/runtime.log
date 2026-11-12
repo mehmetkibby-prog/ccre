@@ -1,0 +1,29 @@
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+/tmp/r102-relocated-9qv2r3cl/release
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794486270844,"backupName":"before-pearl-reset-1794486270844-dcb059ae-7729-4525-bab5-63c65cd5f5c0.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794486272147,"backupName":"before-pearl-reset-1794486272147-fb15a148-abee-49d0-9e35-e5fc1e19b0b2.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 10617.347218
+  type: 'test'
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 92.666392
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19039.900805

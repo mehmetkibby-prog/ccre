@@ -1,0 +1,20 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "bodies": [
+    {
+      "name": "enforceLocalActionRate",
+      "sha256": "1de6878c31847b16c4b694c5704b98daa4cb87d418add9c51864c8643c42460d"
+    },
+    {
+      "name": "rate",
+      "sha256": "d55533962764f4c24983c10de2ed02a8fa256590c8fee4ab8ac1e42a665ec6de"
+    }
+  ],
+  "generatedSha256": "ab4c8e950b7f5bf4f59fa01a4e07fce19c4dd240beafeb4fa302eb0b4bf4dd81",
+  "edits": [
+    "Exact native action category thresholds and dungeon 25/second function; injected monotonic test clock only",
+    "Transfer carries server-owned windows without resetting their counts"
+  ]
+}

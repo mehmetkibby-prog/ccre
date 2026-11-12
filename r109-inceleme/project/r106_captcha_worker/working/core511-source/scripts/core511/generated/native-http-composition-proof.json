@@ -1,0 +1,2018 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/index.js",
+  "clientAssetNamespace": "core511-1025c65a35480d96",
+  "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "generatedSha256": "cf2c5353525b600ec52641953a8428c7b13bedb7bb1d3d0915ea8f8c7396dc59",
+  "patches": [
+    {
+      "name": "patchNativeAdmin",
+      "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+      "patchedSha256": "590a2d51c1349cee0b1f650bc03fa2eacbb4efe1042ece7d13422fecab762a5b",
+      "edits": [
+        {
+          "start": 1565732,
+          "end": 1565871,
+          "kind": "profile",
+          "replacement": "db().core511Admin.profile({operation:new URL(request.url).searchParams.get('cpu_profile507'),id:new URL(request.url).searchParams.get('id')})",
+          "original": "adminCpuProfile507(db(),{operation:new URL(request.url).searchParams.get('cpu_profile507'),id:new URL(request.url).searchParams.get('id')})"
+        },
+        {
+          "start": 1566046,
+          "end": 1566153,
+          "kind": "load",
+          "replacement": "await db().core511Admin.load()",
+          "original": "Response.json(adminLoadSnapshot(db(),env.CORE_RUNTIME_SNAPSHOT?.()),{headers:{'cache-control':'no-store'}})"
+        },
+        {
+          "start": 1567733,
+          "end": 1567799,
+          "kind": "profile",
+          "replacement": "db().core511Admin.profile({operation:'start',target:payload.target})",
+          "original": "adminCpuProfile507(db(),{operation:'start',target:payload.target})"
+        }
+      ],
+      "scope": "Three diagnostic call expressions only; native admin authorization, Origin/body guards, routes and other actions unchanged"
+    },
+    {
+      "name": "patchNativeAuth",
+      "function": "getGameSessionByHash",
+      "sourceSha256": "590a2d51c1349cee0b1f650bc03fa2eacbb4efe1042ece7d13422fecab762a5b",
+      "nativeBodySha256": "e4b8eeb67b1b8ffc1a64fed9c83427eb186be0b65d5c099480901f9534362631",
+      "patchedSha256": "56e1ce5c5ac008e9275c14db33d43084aee5360296735f3d84ab2c4456646fc0",
+      "edit": "Only final session return overlays same-session, same-instance, epoch-fenced authenticated WS presence; all original authorization follows unchanged"
+    },
+    {
+      "name": "patchNativeLogout",
+      "sourceSha256": "56e1ce5c5ac008e9275c14db33d43084aee5360296735f3d84ab2c4456646fc0",
+      "patchedSha256": "0f047f72c286be9837c4fe2a3e44edd6119761ec7b7688b522dc8f916db6aed0",
+      "edits": [
+        {
+          "start": 1046370,
+          "end": 1046593,
+          "original": "database.batch([database.prepare(\"DELETE FROM auth_sessions WHERE token_hash=?\").bind(tokenHash), ...realmRuntime().role === \"game\" ? [database.prepare(\"DELETE FROM game_presence WHERE token_hash=?\").bind(tokenHash)] : []])",
+          "replacement": "(realmRuntime()?.role === \"accounts\" ? database.batch([database.prepare(\"DELETE FROM auth_sessions WHERE token_hash=?\").bind(tokenHash), ...realmRuntime().role === \"game\" ? [database.prepare(\"DELETE FROM game_presence WHERE token_hash=?\").bind(tokenHash)] : []]) : database.core511Logout.batch([database.prepare(\"DELETE FROM auth_sessions WHERE token_hash=?\").bind(tokenHash), ...realmRuntime().role === \"game\" ? [database.prepare(\"DELETE FROM game_presence WHERE token_hash=?\").bind(tokenHash)] : []], tokenHash))"
+        },
+        {
+          "start": 1046716,
+          "end": 1047114,
+          "original": "database.batch([\n\t\tdatabase.prepare(`UPDATE accounts SET security_version = security_version + 1, updated_at = ?\n       WHERE id = (SELECT account_id FROM auth_sessions WHERE token_hash = ?)`).bind(nowSeconds(), tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM auth_sessions WHERE token_hash = ?\").bind(tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM game_presence WHERE token_hash = ?\").bind(tokenHash)\n\t])",
+          "replacement": "(realmRuntime()?.role === \"accounts\" ? database.batch([\n\t\tdatabase.prepare(`UPDATE accounts SET security_version = security_version + 1, updated_at = ?\n       WHERE id = (SELECT account_id FROM auth_sessions WHERE token_hash = ?)`).bind(nowSeconds(), tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM auth_sessions WHERE token_hash = ?\").bind(tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM game_presence WHERE token_hash = ?\").bind(tokenHash)\n\t]) : database.core511Logout.batch([\n\t\tdatabase.prepare(`UPDATE accounts SET security_version = security_version + 1, updated_at = ?\n       WHERE id = (SELECT account_id FROM auth_sessions WHERE token_hash = ?)`).bind(nowSeconds(), tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM auth_sessions WHERE token_hash = ?\").bind(tokenHash),\n\t\tdatabase.prepare(\"DELETE FROM game_presence WHERE token_hash = ?\").bind(tokenHash)\n\t], tokenHash))"
+        }
+      ],
+      "scope": "Only two native logout batch calls; original route/auth/SQL/cookies/realm policy unchanged"
+    },
+    {
+      "name": "patchNativeSession",
+      "sourceSha256": "0f047f72c286be9837c4fe2a3e44edd6119761ec7b7688b522dc8f916db6aed0",
+      "patchedSha256": "205a955ca967b13b396b2b886840fba984773364097b17fffd4cd2e07349481e",
+      "edits": [
+        {
+          "start": 1044774,
+          "end": 1045777,
+          "original": "database.batch([\n\t\tdatabase.prepare(\"DELETE FROM auth_sessions WHERE expires_at <= ?\").bind(now),\n\t\tdatabase.prepare(`UPDATE accounts SET security_version = security_version + 1, updated_at = ? WHERE id = ?\n      AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(now, accountId, accountId, nowMs),\n\t\tdatabase.prepare(`DELETE FROM auth_sessions WHERE account_id = ?\n      AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(accountId, accountId, nowMs),\n\t\tdatabase.prepare(`INSERT INTO auth_sessions (token_hash, account_id, csrf_hash, security_version, created_at, last_seen_at, expires_at)\n       SELECT ?, id, ?, security_version, ?, ?, ? FROM accounts\n       WHERE id = ? AND permanently_banned = 0 AND suspended_until_ms <= ?\n         AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(tokenHash, csrfHash, now, now, expiresAt, accountId, nowMs, accountId, nowMs)\n\t])",
+          "replacement": "database.core511Session.batch([\n\t\tdatabase.prepare(\"DELETE FROM auth_sessions WHERE expires_at <= ?\").bind(now),\n\t\tdatabase.prepare(`UPDATE accounts SET security_version = security_version + 1, updated_at = ? WHERE id = ?\n      AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(now, accountId, accountId, nowMs),\n\t\tdatabase.prepare(`DELETE FROM auth_sessions WHERE account_id = ?\n      AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(accountId, accountId, nowMs),\n\t\tdatabase.prepare(`INSERT INTO auth_sessions (token_hash, account_id, csrf_hash, security_version, created_at, last_seen_at, expires_at)\n       SELECT ?, id, ?, security_version, ?, ?, ? FROM accounts\n       WHERE id = ? AND permanently_banned = 0 AND suspended_until_ms <= ?\n         AND NOT EXISTS (SELECT 1 FROM game_presence WHERE account_id = ? AND expires_at_ms > ?)`).bind(tokenHash, csrfHash, now, now, expiresAt, accountId, nowMs, accountId, nowMs)\n\t], accountId, nowMs)"
+        }
+      ],
+      "scope": "Only native non-accounts createSession batch call; native statements/auth/token/realm semantics unchanged"
+    },
+    {
+      "name": "patchNativePresence",
+      "sourceSha256": "205a955ca967b13b396b2b886840fba984773364097b17fffd4cd2e07349481e",
+      "patchedSha256": "272675e6fe14f6396ff308cb73bbb49dbb31e46ac558a46dd613fad7cb1fd0c1",
+      "edits": [
+        {
+          "start": 1749714,
+          "end": 1749867,
+          "first": false,
+          "original": "db.prepare(\"DELETE FROM game_presence WHERE account_id = ? AND token_hash = ? AND instance_id = ?\").bind(auth.account.id, auth.tokenHash, instance).run()",
+          "replacement": "db.core511Presence.execute(db.prepare(\"DELETE FROM game_presence WHERE account_id = ? AND token_hash = ? AND instance_id = ?\").bind(auth.account.id, auth.tokenHash, instance), {accountId:auth.account.id,tokenHash:auth.tokenHash,instance,action:body.action,nowMs:now,first:false})"
+        },
+        {
+          "start": 1750001,
+          "end": 1750495,
+          "first": true,
+          "original": "db.prepare(`UPDATE game_presence SET expires_at_ms = ${maintenanceExpiry492>0?'MIN(?, CASE WHEN EXISTS (SELECT 1 FROM players p WHERE p.account_id=game_presence.account_id AND p.is_gm=1) THEN 9223372036854775807 ELSE '+maintenanceExpiry492+' END)':'?'}\n        WHERE account_id = ? AND token_hash = ? AND instance_id = ? AND expires_at_ms > ?\n        RETURNING chat_after_id`).bind(Math.min(now + GAME_PRESENCE_MS,maintenanceDeadline491), auth.account.id, auth.tokenHash, instance, now).first()",
+          "replacement": "db.core511Presence.execute(db.prepare(`UPDATE game_presence SET expires_at_ms = ${maintenanceExpiry492>0?'MIN(?, CASE WHEN EXISTS (SELECT 1 FROM players p WHERE p.account_id=game_presence.account_id AND p.is_gm=1) THEN 9223372036854775807 ELSE '+maintenanceExpiry492+' END)':'?'}\n        WHERE account_id = ? AND token_hash = ? AND instance_id = ? AND expires_at_ms > ?\n        RETURNING chat_after_id`).bind(Math.min(now + GAME_PRESENCE_MS,maintenanceDeadline491), auth.account.id, auth.tokenHash, instance, now), {accountId:auth.account.id,tokenHash:auth.tokenHash,instance,action:body.action,nowMs:now,first:true})"
+        },
+        {
+          "start": 1750547,
+          "end": 1751823,
+          "first": true,
+          "original": "db.prepare(`INSERT INTO game_presence (account_id, token_hash, instance_id, expires_at_ms, chat_after_id)\n        SELECT a.id, ?, ?, ?, COALESCE((SELECT MAX(id) FROM messages), 0) FROM accounts a\n        JOIN auth_sessions s ON s.account_id = a.id AND s.token_hash = ?\n        WHERE a.id = ? AND s.security_version = a.security_version AND s.expires_at > ?\n          AND a.permanently_banned = 0 AND a.suspended_until_ms <= ?\n          ${maintenanceExpiry492>0?\"AND EXISTS (SELECT 1 FROM players p WHERE p.account_id=a.id AND p.is_gm=1)\":\"\"}\n        ON CONFLICT(account_id) DO UPDATE SET token_hash = excluded.token_hash, instance_id = excluded.instance_id,\n          expires_at_ms = excluded.expires_at_ms,\n          chat_after_id = CASE WHEN game_presence.expires_at_ms > ? AND game_presence.instance_id = excluded.instance_id\n            AND game_presence.token_hash = excluded.token_hash THEN game_presence.chat_after_id ELSE excluded.chat_after_id END\n        WHERE game_presence.expires_at_ms <= ? OR (game_presence.instance_id = excluded.instance_id AND game_presence.token_hash = excluded.token_hash)\n        RETURNING chat_after_id`).bind(auth.tokenHash, instance, now + GAME_PRESENCE_MS, auth.tokenHash, auth.account.id, Math.floor(now / 1e3), now, now, now).first()",
+          "replacement": "db.core511Presence.execute(db.prepare(`INSERT INTO game_presence (account_id, token_hash, instance_id, expires_at_ms, chat_after_id)\n        SELECT a.id, ?, ?, ?, COALESCE((SELECT MAX(id) FROM messages), 0) FROM accounts a\n        JOIN auth_sessions s ON s.account_id = a.id AND s.token_hash = ?\n        WHERE a.id = ? AND s.security_version = a.security_version AND s.expires_at > ?\n          AND a.permanently_banned = 0 AND a.suspended_until_ms <= ?\n          ${maintenanceExpiry492>0?\"AND EXISTS (SELECT 1 FROM players p WHERE p.account_id=a.id AND p.is_gm=1)\":\"\"}\n        ON CONFLICT(account_id) DO UPDATE SET token_hash = excluded.token_hash, instance_id = excluded.instance_id,\n          expires_at_ms = excluded.expires_at_ms,\n          chat_after_id = CASE WHEN game_presence.expires_at_ms > ? AND game_presence.instance_id = excluded.instance_id\n            AND game_presence.token_hash = excluded.token_hash THEN game_presence.chat_after_id ELSE excluded.chat_after_id END\n        WHERE game_presence.expires_at_ms <= ? OR (game_presence.instance_id = excluded.instance_id AND game_presence.token_hash = excluded.token_hash)\n        RETURNING chat_after_id`).bind(auth.tokenHash, instance, now + GAME_PRESENCE_MS, auth.tokenHash, auth.account.id, Math.floor(now / 1e3), now, now, now), {accountId:auth.account.id,tokenHash:auth.tokenHash,instance,action:body.action,nowMs:now,first:true})"
+        }
+      ],
+      "scope": "Only three native game-presence statement execution calls; all other native bytes and SQL unchanged"
+    },
+    {
+      "name": "patchNativeBootstrap",
+      "sourceSha256": "272675e6fe14f6396ff308cb73bbb49dbb31e46ac558a46dd613fad7cb1fd0c1",
+      "patchedSha256": "370d7aff686e68fa1c844b15f4746f32ee7b6b9fbd227204d20fe8f9fba5f979",
+      "edits": [
+        {
+          "start": 1747879,
+          "end": 1748482,
+          "original": "{\n await ensureWorldSeed();const database=db(),now=nowSeconds$1();\n const [counts,settings]=await Promise.all([database.prepare(\"SELECT channel, COUNT(*) AS count FROM players WHERE channel BETWEEN 1 AND ? AND last_seen >= ? GROUP BY channel\").bind(3,now-30).all(),getGameSettings()]);\n const byChannel=new Map(counts.results.map(row=>[Number(row.channel),Number(row.count)]));\n return {capacity:settings.channel_capacity,channels:Array.from({length:3},(_,index)=>({id:index+1,name:'Kanal '+(index+1),online:byChannel.get(index+1)??0,capacity:channelCapacity510(index+1,settings.channel_capacity)}))};\n}",
+          "replacement": "{return db().core511Bootstrap.read();}"
+        }
+      ],
+      "scope": "Only legacy channel-bootstrap display body; original HTTP caller and authorization unchanged"
+    },
+    {
+      "name": "patchNativeConfiguration",
+      "sourceSha256": "370d7aff686e68fa1c844b15f4746f32ee7b6b9fbd227204d20fe8f9fba5f979",
+      "patchedSha256": "0c7de0e3e7b4862329595cb6d63bb66ffca2ffb8cc8c65edfe681ad14da8b8f8",
+      "edits": [
+        {
+          "start": 1569984,
+          "end": 1570000,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1570837,
+          "end": 1570853,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1571458,
+          "end": 1571474,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1571634,
+          "end": 1571650,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1571813,
+          "end": 1571829,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1571994,
+          "end": 1572010,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1572165,
+          "end": 1572181,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1572490,
+          "end": 1572506,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        },
+        {
+          "start": 1572771,
+          "end": 1572787,
+          "original": "channelPermanent",
+          "replacement": "database.core511Configuration.run"
+        }
+      ],
+      "scope": "Nine native admin configuration call targets only; native arguments/callbacks, security and all other bundle bytes unchanged"
+    },
+    {
+      "name": "patchNativeRuneConfiguration",
+      "sourceSha256": "0c7de0e3e7b4862329595cb6d63bb66ffca2ffb8cc8c65edfe681ad14da8b8f8",
+      "patchedSha256": "0e32e210ed599ebab97dc935f77766ecc7613d17d27200d6a17a78769dd9ec60",
+      "edits": [
+        {
+          "start": 1571200,
+          "end": 1571235,
+          "original": "globalThis.__colRuneV2HealthSave485",
+          "replacement": "database.core511Configuration?.saveRuneV2"
+        },
+        {
+          "start": 1571332,
+          "end": 1571400,
+          "original": "globalThis.__colRuneV2HealthSave485(payload.config,payload.revision)",
+          "replacement": "database.core511Configuration.saveRuneV2(service,payload.config,payload.revision)"
+        }
+      ],
+      "scope": "Original Rune V2 service and arguments retained; only hook availability and call use the private all-owner configuration barrier"
+    },
+    {
+      "name": "patchNativeWorldStartup",
+      "sourceSha256": "0e32e210ed599ebab97dc935f77766ecc7613d17d27200d6a17a78769dd9ec60",
+      "patchedSha256": "f6328715dc0f1de105b4600cc0006539920b2b8360a2b1561406ab6ecd26465d",
+      "edits": [
+        {
+          "name": "ensureWorldSeed",
+          "start": 933444,
+          "end": 933666,
+          "original": "{\n\tawait ensureMonsterBalanceInitialized();\n\tif (worldSeeded) return;\n\tif (!worldSeedJob) worldSeedJob = seedWorld().then(() => {\n\t\tworldSeeded = true;\n\t}).finally(() => {\n\t\tworldSeedJob = null;\n\t});\n\tawait worldSeedJob;\n}",
+          "replacement": "{return db().core511WorldSeed.ensure();}"
+        },
+        {
+          "name": "ensureMonsterBalanceInitialized",
+          "start": 875802,
+          "end": 877594,
+          "original": "{\n\tif (balanceInitialized) return;\n\tconst database = env.DB;\n\tif (!database) return;\n\tawait (async () => {\n\t\tconst [configResult, profileResult] = await database.batch([database.prepare(\"SELECT id FROM monster_combat_config WHERE id = 1\"), database.prepare(\"SELECT profile_key FROM all_monster_combat_profiles\")]);\n\t\tconst storedKeys = new Set(profileResult.results.flatMap((row) => isMonsterBalanceKey(row.profile_key) ? [row.profile_key] : []));\n\t\tconst hasConfig = Boolean(configResult.results[0]);\n\t\tconst missing = MONSTER_BALANCE_DEFINITIONS.filter((definition) => !storedKeys.has(definition.key));\n\t\tif (!hasConfig || missing.length) {\n\t\t\tconst settings = missing.length ? await database.prepare(`SELECT shadow_wolf_hp, rotten_guardian_hp, essence_devourer_hp,\n                aggressive_variant_hp_scale, killer_variant_hp_scale,\n                regular_monster_damage_scale, normal_variant_damage_scale,\n                aggressive_variant_damage_scale, killer_variant_damage_scale\n         FROM game_settings WHERE id = 1`).first() : null;\n\t\t\tawait database.batch([database.prepare(\"INSERT OR IGNORE INTO monster_combat_config (id, revision, update_token, updated_at) VALUES (1, 0, '', 0)\"), ...missing.map((definition) => {\n\t\t\t\tconst values = legacyProfileValues(settings, definition);\n\t\t\t\treturn database.prepare(`INSERT OR IGNORE INTO ${definition.area === \"afk\" ? \"afk_monster_combat_profiles\" : definition.area === \"ancient\" ? \"ancient_monster_combat_profiles\" : \"monster_combat_profiles\"}\n               (profile_key, area, family, variant, max_hp, hit_damage, updated_at)\n             VALUES (?, ?, ?, ?, ?, ?, 0)`).bind(definition.key, definition.area, definition.family, definition.variant, values.maxHp, values.hitDamage);\n\t\t\t})]);\n\t\t}\n\t\tbalanceInitialized = true;\n\t})();\n}",
+          "replacement": "{return db().core511WorldSeed.ensure();}"
+        }
+      ],
+      "scope": "Two warmup entry points check the sole host durable startup proof; all other native bytes unchanged"
+    },
+    {
+      "name": "patchNativeGuildAuth",
+      "sourceSha256": "f6328715dc0f1de105b4600cc0006539920b2b8360a2b1561406ab6ecd26465d",
+      "nativeFunctionSha256": "4cccf31fb5c21f7520b7e3d557dd995171afbaeabb6af86a15380aa4d4e46f4b",
+      "patchedSha256": "c19550cb9e89cadf80ad292481bd95736df51b730b051f30d3cf87503449f8ec",
+      "edits": [
+        {
+          "start": 1039969,
+          "end": 1040017,
+          "original": "guildVillageService()?.repair(session.player.id)",
+          "replacement": "guildVillageService() ? await authDatabase().core511GuildAuth.repair(guildVillageService(), session.player.id) : undefined"
+        },
+        {
+          "start": 1040088,
+          "end": 1040119,
+          "original": "publishGuildEjections([repair])",
+          "replacement": "authDatabase().core511GuildAuth.publish([repair])"
+        }
+      ],
+      "scope": "Only repair and publisher call expressions; original authorization, guard order and session result remain unchanged"
+    },
+    {
+      "name": "patchNativeGuildVillage",
+      "sourceSha256": "c19550cb9e89cadf80ad292481bd95736df51b730b051f30d3cf87503449f8ec",
+      "nativeRouteSha256": "3b98ec7b838912c17fd1ecd6f70beec5969163ad97b54a29bbd2d851db3fc242",
+      "patchedSha256": "80191abd94202e4ecc6828400a5b2ed8cc12df5833f3146bcf77b6ce5f6bacce",
+      "edits": [
+        {
+          "start": 1760060,
+          "end": 1760135,
+          "original": "channelPermanent([auth.player.id], () => service.act(auth.player.id, body))",
+          "replacement": "(body.action === \"revoke\" ? authDatabase().core511GuildVillage.revoke(service, auth.player.id, body) : channelPermanent([auth.player.id], () => service.act(auth.player.id, body)))"
+        },
+        {
+          "start": 1760139,
+          "end": 1760218,
+          "original": "if (body.action === \"revoke\") await publishGuildEjections(service.repairAll());",
+          "replacement": "/* Revoke repairs and notices are committed by the owned adapter. */"
+        }
+      ],
+      "scope": "Only revoke execution and its post-callback repair/publication; original auth, CSRF, rates, body limit, all other actions and response/error formatting unchanged"
+    },
+    {
+      "name": "patchNativeGuildConfiguration",
+      "sourceSha256": "80191abd94202e4ecc6828400a5b2ed8cc12df5833f3146bcf77b6ce5f6bacce",
+      "nativeBranchSha256": "bf1a320fd35d15c447ccf110519389549f495e6df5c250b132735579eaa48142",
+      "patchedSha256": "836eefbfa1797e1196ae2bf1b6986b9e2b444b96d05eb55897f3614f76297099",
+      "edits": [
+        {
+          "start": 1582757,
+          "end": 1582843,
+          "original": "guildVillageService().save(payload.guildVillageEnabled, payload.guildVillageRevision);",
+          "replacement": "await database.core511GuildVillage.configure(guildVillageService(), payload.guildVillageEnabled, payload.guildVillageRevision);"
+        },
+        {
+          "start": 1582847,
+          "end": 1582910,
+          "original": "await publishGuildEjections(guildVillageService().repairAll());",
+          "replacement": "/* Original settings, repairs and room events share the owned transaction. */"
+        }
+      ],
+      "scope": "Only native save_guild_village save and repair/publication; native admin identity, Origin, body, snapshot, errors and all other branches unchanged"
+    },
+    {
+      "name": "patchNativeGuildMembership",
+      "sourceSha256": "836eefbfa1797e1196ae2bf1b6986b9e2b444b96d05eb55897f3614f76297099",
+      "nativeRouteSha256": "ae791871f8d1975a055e6009721c8c00e0101f1563ac6e739862274e605dffe1",
+      "patchedSha256": "e5287968e63df812da596f82e6a31d7d0b609dd4ade818b78a3c8065de5929f5",
+      "edits": [
+        {
+          "start": 1753368,
+          "end": 1753407,
+          "original": "guildAction(db(), auth.player.id, body)",
+          "replacement": "([\"create\", \"invite\", \"accept\", \"decline\", \"leave\", \"disband\", \"kick\", \"permission\", \"transfer\", \"tax\", \"withdraw\", \"challenge\", \"war_decline\", \"war_accept\", \"war_join\"].includes(body.action) ? db().core511GuildVillage.membership(guildVillageService(), auth.player.id, body) : guildAction(db(), auth.player.id, body))"
+        },
+        {
+          "start": 1753411,
+          "end": 1753692,
+          "original": "if ([\n\t\t\t\"leave\",\n\t\t\t\"kick\",\n\t\t\t\"disband\"\n\t\t].includes(String(body.action))) {\n\t\t\tconst { guildVillageService, publishGuildEjections } = await Promise.resolve().then(() => guild_village_runtime_exports);\n\t\t\tawait publishGuildEjections(guildVillageService()?.repairAll() ?? []);\n\t\t}",
+          "replacement": "/* Owned membership changes commit original guild repairs and notices together. */"
+        },
+        {
+          "start": 1753695,
+          "end": 1755123,
+          "original": "try {\n\t\t\tconst cycle = await db().prepare(\"SELECT cycle FROM world_state WHERE id=1\").first();\n\t\t\tconst onlyJoiner = body.action === \"war_join\" && !(\"started\" in result && result.started);\n\t\t\tconst recipients = onlyJoiner ? { results: [] } : await db().prepare(`SELECT player_id FROM guild_members WHERE guild_id IN(SELECT guild_id FROM guild_members WHERE player_id=? UNION SELECT id FROM guilds WHERE id=? UNION SELECT challenger FROM guild_wars WHERE id=? UNION SELECT defender FROM guild_wars WHERE id=?)`).bind(auth.player.id, typeof body.target === \"string\" ? body.target : \"\", typeof body.id === \"string\" ? body.id : \"\", typeof body.id === \"string\" ? body.id : \"\").all();\n\t\t\tconst ids = [...new Set([\n\t\t\t\tauth.player.id,\n\t\t\t\t...\"notifyPlayerIds\" in result ? result.notifyPlayerIds : [],\n\t\t\t\t...onlyJoiner ? [] : [body.target, ...recipients.results.map((r) => r.player_id)]\n\t\t\t].filter((id) => typeof id === \"string\" && /^[A-Za-z0-9_-]{1,80}$/.test(id)))];\n\t\t\tconst players = await db().prepare(`SELECT id,channel,area,arena_match_id FROM players WHERE id IN (${ids.map(() => \"?\").join(\",\")})`).bind(...ids).all();\n\t\t\tconst delivery = publishRealtimeGuildEvent(cycle?.cycle ?? 1, players.results, {\n\t\t\t\ttype: \"guild_changed\",\n\t\t\t\teventId: crypto.randomUUID(),\n\t\t\t\tserverAt: Date.now()\n\t\t\t});\n\t\t\tconst context = getRequestExecutionContext();\n\t\t\tif (context) context.waitUntil(delivery);\n\t\t\telse await delivery;\n\t\t} catch {}",
+          "replacement": "if (![\"create\", \"invite\", \"accept\", \"decline\", \"leave\", \"disband\", \"kick\", \"permission\", \"transfer\", \"tax\", \"withdraw\", \"challenge\", \"war_decline\", \"war_accept\", \"war_join\"].includes(body.action)) try {\n\t\t\tconst cycle = await db().prepare(\"SELECT cycle FROM world_state WHERE id=1\").first();\n\t\t\tconst onlyJoiner = body.action === \"war_join\" && !(\"started\" in result && result.started);\n\t\t\tconst recipients = onlyJoiner ? { results: [] } : await db().prepare(`SELECT player_id FROM guild_members WHERE guild_id IN(SELECT guild_id FROM guild_members WHERE player_id=? UNION SELECT id FROM guilds WHERE id=? UNION SELECT challenger FROM guild_wars WHERE id=? UNION SELECT defender FROM guild_wars WHERE id=?)`).bind(auth.player.id, typeof body.target === \"string\" ? body.target : \"\", typeof body.id === \"string\" ? body.id : \"\", typeof body.id === \"string\" ? body.id : \"\").all();\n\t\t\tconst ids = [...new Set([\n\t\t\t\tauth.player.id,\n\t\t\t\t...\"notifyPlayerIds\" in result ? result.notifyPlayerIds : [],\n\t\t\t\t...onlyJoiner ? [] : [body.target, ...recipients.results.map((r) => r.player_id)]\n\t\t\t].filter((id) => typeof id === \"string\" && /^[A-Za-z0-9_-]{1,80}$/.test(id)))];\n\t\t\tconst players = await db().prepare(`SELECT id,channel,area,arena_match_id FROM players WHERE id IN (${ids.map(() => \"?\").join(\",\")})`).bind(...ids).all();\n\t\t\tconst delivery = publishRealtimeGuildEvent(cycle?.cycle ?? 1, players.results, {\n\t\t\t\ttype: \"guild_changed\",\n\t\t\t\teventId: crypto.randomUUID(),\n\t\t\t\tserverAt: Date.now()\n\t\t\t});\n\t\t\tconst context = getRequestExecutionContext();\n\t\t\tif (context) context.waitUntil(delivery);\n\t\t\telse await delivery;\n\t\t} catch {}"
+        }
+      ],
+      "scope": "All fifteen native guild actions and their notification paths; repairAll remains limited to leave/kick/disband, native auth/CSRF/rates/body/result/error preserved; war owner epochs follow native movement in the same COMMIT"
+    },
+    {
+      "name": "patchNativeDatabase",
+      "sourceSha256": "e5287968e63df812da596f82e6a31d7d0b609dd4ade818b78a3c8065de5929f5",
+      "patchedSha256": "ebc2e8a2cdc722947e7e54c225414f93006854ddf2109df5a886a10e5463e04b",
+      "edits": [
+        {
+          "start": 721126,
+          "end": 721368,
+          "original": "return globalThis[databaseKey] ??= new LocalDatabase(process.env.CORE_DATABASE_PATH, {\n\t\tgroupWrites: process.env.CORE_GROUP_WRITES !== \"0\",\n\t\tasyncDurable: process.env.CORE_GROUP_WRITES !== \"0\" && process.env.CORE_ASYNC_WAL_SYNC !== \"0\"\n\t});",
+          "replacement": "{ const binding = globalThis[Symbol.for(\"coreoflife.core511.httpBindings\")]; if (!binding) throw new Error(\"native_http_binding_required\"); return binding.database(); }"
+        }
+      ],
+      "scope": "Only native env.DB fallback; require the existing sole host binding"
+    },
+    {
+      "name": "patchNativeHttpAction",
+      "sourceSha256": "ebc2e8a2cdc722947e7e54c225414f93006854ddf2109df5a886a10e5463e04b",
+      "patchedSha256": "85797867c4949f0b1d4f3bcf5a79fcf8186f72ef4b5a195570e14d408ea819f7",
+      "edits": [
+        {
+          "start": 1494764,
+          "end": 1495768,
+          "original": "()=>{\n                // Existing players enter through channel-http before owner\n                // admission. Only the ownerless coordinator creation path\n                // needs this lane; movement/combat/world never wait here.\n                const operation=payload.action==='join'&&db().coordinatorOnly\n                    ?runEntryAdmission477('characterJoin',auth.account.id,request.signal,async()=>{\n                        const current=await requireGameSession(request);\n                        await assertCsrf(request,current);\n                        if(current.account.id!==auth.account.id)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');\n                        auth=current;\n                        return executeAuthorized();\n                    }):executeAuthorized();\n                return operation.catch(error=>{const rejected=entryAdmissionResponse477(error)??colLabFailureResponse(error);if(rejected)return rejected;throw error;});\n            }",
+          "replacement": "()=>db().core511HttpAction.action(auth,payload,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');\n auth=current;return current;\n},executeAuthorized)"
+        },
+        {
+          "start": 851336,
+          "end": 851336,
+          "original": "",
+          "replacement": "\n if(db().core511HttpAction?.active)return db().core511HttpAction.publish([cycle,channel,area,event,arenaMatchId]);\n if(db().core511Gm?.active)return db().core511Gm.event([cycle,channel,area,event,arenaMatchId]);\n"
+        },
+        {
+          "start": 852966,
+          "end": 852966,
+          "original": "",
+          "replacement": "\n if(db().core511HttpAction?.active)return db().core511HttpAction.publish([cycle,channels,area,event]);\n if(db().core511Gm?.active)return db().core511Gm.event([cycle,channels,area,event]);\n"
+        },
+        {
+          "start": 853944,
+          "end": 853944,
+          "original": "",
+          "replacement": "\n if(db().core511HttpAction?.active)return db().core511HttpAction.publish([cycle,channel,area,audiencePlayerIds,event,arenaMatchId]);\n if(db().core511Gm?.active)return db().core511Gm.event([cycle,channel,area,audiencePlayerIds,event,arenaMatchId]);\n"
+        },
+        {
+          "start": 851944,
+          "end": 851944,
+          "original": "",
+          "replacement": "\n if(db().core511HttpAction?.active)return db().core511HttpAction.publish([cycle,rooms,event]);\n if(db().core511Gm?.active)return db().core511Gm.event([cycle,rooms,event]);\n"
+        }
+      ],
+      "scope": "Cold action ownership dispatch and four scoped notification hooks; all native action bodies, SQL, authentication/CSRF/rates/results unchanged"
+    },
+    {
+      "name": "patchNativeChannelList",
+      "sourceSha256": "85797867c4949f0b1d4f3bcf5a79fcf8186f72ef4b5a195570e14d408ea819f7",
+      "patchedSha256": "5fefbb8b06dcbebef0a74daf7eb080ec05195b4128a314011a0c796b017d9c97",
+      "edits": [
+        {
+          "start": 1727505,
+          "end": 1728916,
+          "original": "await ensureWorldSeed();\n\t\tconst database = db();\n\t\tconst now = nowSeconds$1();\n\t\tconst [counts, settings] = await Promise.all([database.prepare(\"SELECT channel, COUNT(*) AS count FROM players WHERE channel BETWEEN 1 AND ? AND last_seen >= ? GROUP BY channel\").bind(3, now - 30).all(), getGameSettings()]);\n\t\tconst byChannel = new Map(counts.results.map((row) => [Number(row.channel), Number(row.count)]));\n        const player504=channelFeature504('channelBalance')&&auth504.player?await database.prepare('SELECT channel,area,hp,last_seen,respawn_at_ms,combat_lock_until_ms,arena_match_id FROM players WHERE id=? AND account_id=?').bind(auth504.player.id,auth504.account.id).first():null;\n        const lab504=Boolean(globalThis.__colLoadLab?.accountRun(auth504.account.id));\n\t\treturn Response.json({\n\t\t\tcapacity: settings.channel_capacity,\n            ...channelBalanceView504(counts.results,player504,Date.now(),lab504||Boolean(auth504.player&&!player504)),\n\t\t\tchannels: Array.from({ length: 3 }, (_, index) => ({\n\t\t\t\tid: index + 1,\n\t\t\t\tname: `Kanal ${index + 1}`,\n\t\t\t\tonline: byChannel.get(index + 1) ?? 0,\n                capacity:channelCapacity510(index+1,settings.channel_capacity),\n                ...((feature510('channelBalance')||channelFeature504('channelBalance'))?{occupancy504:channelOccupancy504(byChannel.get(index+1)??0,channelCapacity510(index+1,settings.channel_capacity))}:{})\n\t\t\t}))\n\t\t});",
+          "replacement": "return Response.json(await db().core511Bootstrap.channels(auth504));"
+        }
+      ],
+      "scope": "Native channel listing after unchanged authorization uses four actual admission counts/cap25 and current-owner reconnect semantics; native feature/occupancy/eligibility helpers retained"
+    },
+    {
+      "name": "patchNativeHotHttp",
+      "sourceSha256": "5fefbb8b06dcbebef0a74daf7eb080ec05195b4128a314011a0c796b017d9c97",
+      "patchedSha256": "42619c3fe61c537ba59a841a2957b1bc1bdddb7267f99462c8fec85808c8a8be",
+      "edits": [
+        {
+          "start": 1870678,
+          "end": 1870765,
+          "original": "await readMarketShop506(database,playerId,requestUrl.searchParams.get(\"marketShop506\"))",
+          "replacement": "await db().core511HttpAction.readMarket(auth,()=>readMarketShop506(database,playerId,requestUrl.searchParams.get(\"marketShop506\")))"
+        },
+        {
+          "start": 1870766,
+          "end": 1870766,
+          "original": "",
+          "replacement": "\nreturn db().core511HttpAction.upgrade();\n"
+        },
+        {
+          "start": 1740772,
+          "end": 1740867,
+          "original": "return Response.json(dungeonService().snapshot(auth.player.id), { headers: noStoreHeaders() });",
+          "replacement": "return db().core511HttpAction.upgrade();"
+        },
+        {
+          "start": 1741445,
+          "end": 1741445,
+          "original": "",
+          "replacement": "\nreturn db().core511HttpAction.upgrade();\n"
+        },
+        {
+          "start": 1811716,
+          "end": 1811716,
+          "original": "",
+          "replacement": "\nreturn db().core511HttpAction.upgrade();\n"
+        }
+      ],
+      "scope": "Fence legacy world/dungeon/ticket simulation after original guards; preserve bounded cold market detail under current owner drain"
+    },
+    {
+      "name": "patchNativeHttpPremium",
+      "sourceSha256": "42619c3fe61c537ba59a841a2957b1bc1bdddb7267f99462c8fec85808c8a8be",
+      "patchedSha256": "935a2c4bf4acdb425aa7143fc8e8ee06469c82b82d225d69b23c871b9962c2fc",
+      "edits": [
+        {
+          "start": 1793066,
+          "end": 1793150,
+          "original": "channelPermanent([auth.player.id], () => service$3().command(auth.player.id, input))",
+          "replacement": "db().core511HttpAction.premium(auth,input,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');\n return current;\n},() => service$3().command(auth.player.id, input))"
+        }
+      ],
+      "scope": "Only premium command participant binding; native auth/CSRF/rates/service/SQL/receipts/results and read-only wheel status unchanged"
+    },
+    {
+      "name": "patchNativeHttpRewards",
+      "sourceSha256": "935a2c4bf4acdb425aa7143fc8e8ee06469c82b82d225d69b23c871b9962c2fc",
+      "patchedSha256": "f544c19fd3ef1c7eb3340709c61f259805ddf778612a12c9d17bfa052cdad83c",
+      "edits": [
+        {
+          "start": 1743477,
+          "end": 1743616,
+          "original": "redeemEpin({\n\t\t\tcode: typeof payload.code === \"string\" ? payload.code : \"\",\n\t\t\taccountId: auth.account.id,\n\t\t\tplayerId: auth.player.id\n\t\t})",
+          "replacement": "db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>redeemEpin({\n\t\t\tcode: typeof payload.code === \"string\" ? payload.code : \"\",\n\t\t\taccountId: auth.account.id,\n\t\t\tplayerId: auth.player.id\n\t\t}),true)"
+        },
+        {
+          "start": 1821127,
+          "end": 1821172,
+          "original": "service.open(auth.account.id, auth.player.id)",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>service.open(auth.account.id, auth.player.id),false)"
+        },
+        {
+          "start": 1774233,
+          "end": 1774265,
+          "original": "service$4().read(auth.player.id)",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>service$4().read(auth.player.id),false)"
+        },
+        {
+          "start": 1774893,
+          "end": 1774955,
+          "original": "service$4().advance(auth.player.id, String(input.event ?? \"\"))",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>service$4().advance(auth.player.id, String(input.event ?? \"\")),false)"
+        },
+        {
+          "start": 1795157,
+          "end": 1795190,
+          "original": "service$2().claim(auth.player.id)",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>service$2().claim(auth.player.id),false)"
+        },
+        {
+          "start": 1800944,
+          "end": 1801003,
+          "original": "rankService().equip(auth.player.id, body.slot, body.reward)",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>rankService().equip(auth.player.id, body.slot, body.reward),false)"
+        },
+        {
+          "start": 1739475,
+          "end": 1739542,
+          "original": "service.claim(auth.account.id, auth.player.id, body.id, body.stage)",
+          "replacement": "await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},()=>service.claim(auth.account.id, auth.player.id, body.id, body.stage),false)"
+        }
+      ],
+      "scope": "Seven native single-player operations: E-PIN, starter chest, onboarding read/advance, legacy first-evolution claim, rank equipment and community reward; original calls/guards/rates/results retained"
+    },
+    {
+      "name": "patchNativeBotCheck",
+      "sourceSha256": "f544c19fd3ef1c7eb3340709c61f259805ddf778612a12c9d17bfa052cdad83c",
+      "patchedSha256": "d8aad5cc1e0499f4872b3455ae6a7ef97149cf750de57ad149abf19744562e9a",
+      "edits": [
+        {
+          "start": 1726074,
+          "end": 1726103,
+          "original": "bot.required(auth.account.id)",
+          "replacement": "(await db().core511BotCheck.call(auth,async()=>{\n const current=await requireGameSession(request);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},bot,()=>bot.required(auth.account.id)))"
+        },
+        {
+          "start": 1726255,
+          "end": 1726436,
+          "original": "Response.json({\n\t\t\trequired,\n\t\t\tdueAt: bot.deadline(auth.account.id),\n\t\t\t...required ? bot.challenge(auth.account.id, \"game\") : {}\n\t\t}, { headers: { \"Cache-Control\": \"no-store\" } })",
+          "replacement": "(await db().core511BotCheck.call(auth,async()=>{\n const current=await requireGameSession(request);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},bot,()=>Response.json({\n\t\t\trequired,\n\t\t\tdueAt: bot.deadline(auth.account.id),\n\t\t\t...required ? bot.challenge(auth.account.id, \"game\") : {}\n\t\t}, { headers: { \"Cache-Control\": \"no-store\" } })))"
+        },
+        {
+          "start": 1726856,
+          "end": 1726913,
+          "original": "bot.verify(auth.account.id, \"game\", data.id, data.answer)",
+          "replacement": "(await db().core511BotCheck.call(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},bot,()=>bot.verify(auth.account.id, \"game\", data.id, data.answer)))"
+        },
+        {
+          "start": 1727029,
+          "end": 1727148,
+          "original": "Response.json({\n\t\t\tok: true,\n\t\t\tdueAt: bot.deadline(auth.account.id)\n\t\t}, { headers: { \"Cache-Control\": \"no-store\" } })",
+          "replacement": "(await db().core511BotCheck.call(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},bot,()=>Response.json({\n\t\t\tok: true,\n\t\t\tdueAt: bot.deadline(auth.account.id)\n\t\t}, { headers: { \"Cache-Control\": \"no-store\" } })))"
+        }
+      ],
+      "scope": "Native game CAPTCHA read/verify calls and response construction only; original attempts, challenge generation, single-use, authentication, CSRF and rates retained"
+    },
+    {
+      "name": "patchNativeAfkControl",
+      "sourceSha256": "d8aad5cc1e0499f4872b3455ae6a7ef97149cf750de57ad149abf19744562e9a",
+      "patchedSha256": "071055bb29676896d97b866f2f98b2b8f03cf114f8ad171ec6a1f2e48838a414",
+      "edits": [
+        {
+          "start": 1698668,
+          "end": 1698839,
+          "original": "const { database, now } = await ready(auth.player.id);\n\t\treturn Response.json(await snapshot(database, auth.player.id, now), { headers: { \"Cache-Control\": \"no-store\" } });",
+          "replacement": "return await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},async()=>{const { database, now } = await ready(auth.player.id);\n\t\treturn Response.json(await snapshot(database, auth.player.id, now), { headers: { \"Cache-Control\": \"no-store\" } });},true);"
+        },
+        {
+          "start": 1699448,
+          "end": 1701296,
+          "original": "const { database, now, day } = await ready(auth.player.id);\n\t\tconst player = await database.prepare(\"SELECT area,level,hp,is_gm FROM players WHERE id=?\").bind(auth.player.id).first();\n\t\tif (!player) return Response.json({ error: \"Karakter bulunamadı.\" }, { status: 409 });\n\t\tif (action === \"start\") {\n\t\t\tconst enabled = await database.prepare(\"SELECT afk_island_enabled FROM combat_settings WHERE id=1\").first();\n\t\t\tif (player.area !== \"afk\" || player.level < 30 || player.hp <= 0 || !enabled?.afk_island_enabled && !player.is_gm) return Response.json({ error: \"Oto av yalnızca açık adada, 30. seviyeden itibaren kullanılabilir.\" }, { status: 403 });\n\t\t}\n\t\tif (action === \"tick\" || action === \"stop\") await database.prepare(`UPDATE afk_hunt_state SET\n       used_ms=MIN(14400000,used_ms+CASE WHEN active=1 AND tick_at_ms>0 AND ?-tick_at_ms BETWEEN 0 AND 15000\n         AND EXISTS(SELECT 1 FROM players WHERE id=? AND area='afk' AND hp>0) THEN MIN(?-tick_at_ms,7200000+bonus_ms-used_ms) ELSE 0 END),\n       tick_at_ms=?,active=CASE WHEN ?='stop' OR ?-tick_at_ms>15000 OR used_ms+MAX(0,?-tick_at_ms)>=7200000+bonus_ms\n         OR NOT EXISTS(SELECT 1 FROM players WHERE id=? AND area='afk' AND hp>0) THEN 0 ELSE active END\n       WHERE player_id=? AND day=?`).bind(now, auth.player.id, now, now, action, now, now, auth.player.id, auth.player.id, day).run();\n\t\tif (action === \"start\") {\n\t\t\tif (!await database.prepare(`UPDATE afk_hunt_state SET active=1,tick_at_ms=? WHERE player_id=? AND day=?\n       AND used_ms<7200000+bonus_ms RETURNING player_id`).bind(now, auth.player.id, day).first()) return Response.json({ error: \"Bugünkü otomatik av süren doldu. Nesne Market biletiyle 2 saat ekleyebilirsin.\" }, { status: 409 });\n\t\t}\n\t\treturn Response.json(await snapshot(database, auth.player.id, Date.now()), { headers: { \"Cache-Control\": \"no-store\" } });",
+          "replacement": "return await db().core511HttpAction.player(auth,async()=>{\n const current=await requireGameSession(request);await assertCsrf(request,current);\n if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;\n},async()=>{const { database, now, day } = await ready(auth.player.id);\n\t\tconst player = await database.prepare(\"SELECT area,level,hp,is_gm FROM players WHERE id=?\").bind(auth.player.id).first();\n\t\tif (!player) return Response.json({ error: \"Karakter bulunamadı.\" }, { status: 409 });\n\t\tif (action === \"start\") {\n\t\t\tconst enabled = await database.prepare(\"SELECT afk_island_enabled FROM combat_settings WHERE id=1\").first();\n\t\t\tif (player.area !== \"afk\" || player.level < 30 || player.hp <= 0 || !enabled?.afk_island_enabled && !player.is_gm) return Response.json({ error: \"Oto av yalnızca açık adada, 30. seviyeden itibaren kullanılabilir.\" }, { status: 403 });\n\t\t}\n\t\tif (action === \"tick\" || action === \"stop\") await database.prepare(`UPDATE afk_hunt_state SET\n       used_ms=MIN(14400000,used_ms+CASE WHEN active=1 AND tick_at_ms>0 AND ?-tick_at_ms BETWEEN 0 AND 15000\n         AND EXISTS(SELECT 1 FROM players WHERE id=? AND area='afk' AND hp>0) THEN MIN(?-tick_at_ms,7200000+bonus_ms-used_ms) ELSE 0 END),\n       tick_at_ms=?,active=CASE WHEN ?='stop' OR ?-tick_at_ms>15000 OR used_ms+MAX(0,?-tick_at_ms)>=7200000+bonus_ms\n         OR NOT EXISTS(SELECT 1 FROM players WHERE id=? AND area='afk' AND hp>0) THEN 0 ELSE active END\n       WHERE player_id=? AND day=?`).bind(now, auth.player.id, now, now, action, now, now, auth.player.id, auth.player.id, day).run();\n\t\tif (action === \"start\") {\n\t\t\tif (!await database.prepare(`UPDATE afk_hunt_state SET active=1,tick_at_ms=? WHERE player_id=? AND day=?\n       AND used_ms<7200000+bonus_ms RETURNING player_id`).bind(now, auth.player.id, day).first()) return Response.json({ error: \"Bugünkü otomatik av süren doldu. Nesne Market biletiyle 2 saat ekleyebilirsin.\" }, { status: 409 });\n\t\t}\n\t\treturn Response.json(await snapshot(database, auth.player.id, Date.now()), { headers: { \"Cache-Control\": \"no-store\" } });},true);"
+        }
+      ],
+      "scope": "Two native AFK control blocks under existing durable actor gate; original daily/time/level/area/GM/HP rules and responses unchanged; no channel tick SQL"
+    },
+    {
+      "name": "patchNativeSocial",
+      "sourceSha256": "071055bb29676896d97b866f2f98b2b8f03cf114f8ad171ec6a1f2e48838a414",
+      "patchedSha256": "192da2b0ced5ff9ccfef0ffd3d4e0e3f6c355ae86c0af6675a63e6d4c67d4b40",
+      "edits": [
+        {
+          "start": 1731429,
+          "end": 1740352,
+          "original": "const database = db();\n\t\tif (payload.action === \"resolve_peer\") {\n          await enforceRateLimit(\"chat-peer-lookup\",auth.account.id,{limit:20,windowSeconds:60,blockSeconds:30});\n          if(colLabIsPlayer(playerId))return Response.json({error:\"Test hesabı özel mesaj kişisi arayamaz.\"},{status:403});\n          const peer=await resolvePeer487(database,payload.name,playerId);\n          if(!peer||colLabIsPlayer(peer.id))return Response.json({error:\"Bu isimde oyuncu bulunamadı. Karakterin tam adını yaz.\"},{status:404});\n          return Response.json({ok:true,peer},{headers:{\"Cache-Control\":\"no-store\"}});\n        }\n        if (payload.action === \"dismiss_thread\") {\n\t\t\tawait enforceRateLimit(\"chat-dismiss\", auth.account.id, {\n\t\t\t\tlimit: 30,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 30\n\t\t\t});\n\t\t\tconst peerId = safeId(payload.peerId);\n\t\t\tconst requestedThroughId = Number(payload.throughId);\n\t\t\tif (!peerId || peerId === playerId) return Response.json({ error: \"Özel mesaj kişisi geçersiz.\" }, { status: 400 });\n\t\t\tif (!Number.isSafeInteger(requestedThroughId) || requestedThroughId < 1) return Response.json({ error: \"Kapatılacak mesaj aralığı geçersiz.\" }, { status: 400 });\n\t\t\tconst latest = await database.prepare(`SELECT MAX(id) AS max_id FROM messages\n         WHERE recipient_id IS NOT NULL\n           AND ((player_id = ? AND recipient_id = ?) OR (player_id = ? AND recipient_id = ?))`).bind(playerId, peerId, peerId, playerId).first();\n\t\t\tconst dismissedThroughId = Math.max(0, Math.min(requestedThroughId, Number(latest?.max_id ?? 0)));\n\t\t\tif (dismissedThroughId > 0) {\n\t\t\t\tconst dismissal = await database.prepare(`INSERT INTO direct_message_dismissals (player_id, peer_id, dismissed_through_id, updated_at)\n           VALUES (?, ?, ?, ?)\n           ON CONFLICT(player_id, peer_id) DO UPDATE SET\n             dismissed_through_id = MAX(direct_message_dismissals.dismissed_through_id, excluded.dismissed_through_id),\n             updated_at = excluded.updated_at\n           RETURNING dismissed_through_id`).bind(playerId, peerId, dismissedThroughId, nowSeconds$1()).first();\n\t\t\t\treturn Response.json({\n\t\t\t\t\tok: true,\n\t\t\t\t\tpeerId,\n\t\t\t\t\tdismissedThroughId: Math.max(dismissedThroughId, Number(dismissal?.dismissed_through_id ?? 0))\n\t\t\t\t});\n\t\t\t}\n\t\t\treturn Response.json({\n\t\t\t\tok: true,\n\t\t\t\tpeerId,\n\t\t\t\tdismissedThroughId\n\t\t\t});\n\t\t}\n\t\tif (typeof payload.body === \"string\" && /^\\/pm(?:\\s|$)/iu.test(payload.body.trim())) return Response.json({error:\"Özel mesaj için /pm Karakter Adı komutunu kullan.\"},{status:400});\n\t\tif (payload.action !== void 0) return Response.json({ error: \"Mesaj işlemi geçersiz.\" }, { status: 400 });\n\t\tlet recipientId = safeId(payload.recipientId);\n\t\tif (payload.itemId && payload.recipientName) {\n\t\t\tconst target = await database.prepare(\"SELECT id FROM players WHERE name=? LIMIT 1\").bind(String(payload.recipientName).trim().slice(0, 18)).first();\n\t\t\tif (!target) return Response.json({ error: \"Bu isimde oyuncu bulunamadı.\" }, { status: 404 });\n\t\t\trecipientId = target.id;\n\t\t}\n\t\tconst rawBody = typeof payload.body === \"string\" ? payload.body.replace(/[<>]/g, \"\").trim().slice(0, 140) : \"\";\n\t\tif (!rawBody) return Response.json({ error: \"Mesaj boş olamaz.\" }, { status: 400 });\n\t\tif (payload.recipientId !== void 0 && !recipientId) return Response.json({ error: \"Özel mesaj alıcısı geçersiz.\" }, { status: 400 });\n\t\tconst [body, player] = await Promise.all([\n\t\t\tfilterChatText(rawBody),\n\t\t\tdatabase.prepare(`SELECT p.name, p.area, p.channel, p.arena_match_id,\n           COALESCE((SELECT cycle FROM world_state WHERE id = 1), 1) AS cycle\n         FROM players p WHERE p.id = ?`).bind(playerId).first(),\n\t\t\tenforceRateLimit(\"chat-burst\", auth.account.id, {\n\t\t\t\tlimit: 5,\n\t\t\t\twindowSeconds: 5,\n\t\t\t\tblockSeconds: 10\n\t\t\t}),\n\t\t\tenforceRateLimit(\"chat-minute\", auth.account.id, {\n\t\t\t\tlimit: 30,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 60\n\t\t\t})\n\t\t]);\n\t\tif (!body) return Response.json({ error: \"Mesaj boş olamaz.\" }, { status: 400 });\n\t\tif (!player) return Response.json({ error: \"Oyuncu bulunamadı.\" }, { status: 404 });\n\t\tlet recipient = null;\n\t\tif (recipientId) {\n\t\t\trecipient = await database.prepare(\"SELECT id, name, area, channel, arena_match_id FROM players WHERE id = ?\").bind(recipientId).first();\n\t\t\tif (!recipient) return Response.json({ error: \"Mesaj göndereceğin oyuncu bulunamadı.\" }, { status: 404 });\n\t\t}\n\t\tconst scope = recipientId ? \"direct\" : payload.scope === \"regional\" ? \"regional\" : payload.scope === \"trade\" ? \"trade\" : \"world\";\n\t\tconst createdAt = scope === \"world\" || scope === \"trade\" ? Date.now() / 1e3 : nowSeconds$1();\n\t\tconst regionalArea = player.area === \"arena\" && player.arena_match_id ? `arena:${player.arena_match_id}` : player.area;\n\t\tconst linkService = globalThis.__colItemLinks;\n\t\tif (payload.itemId && !linkService) return Response.json({ error: \"Eşya yansıtma şu anda kullanılamıyor.\" }, { status: 503 });\n\t\tlet inserted;\n\t\tif (payload.itemId) try {\n\t\t\tinserted = linkService.send(playerId, {\n\t\t\t\trequestId: payload.requestId,\n\t\t\t\titemId: safeId(payload.itemId),\n\t\t\t\trecipientId,\n\t\t\t\tscope,\n\t\t\t\tarea: scope === \"regional\" ? regionalArea : null,\n\t\t\t\tchannel: player.channel,\n\t\t\t\tbody,\n\t\t\t\tcreatedAt\n\t\t\t});\n\t\t} catch (e) {\n\t\t\tif (isWorldChatCooldownError(e)) throw e;\n\t\t\treturn Response.json({ error: e instanceof Error ? e.message : \"Eşya paylaşılamadı.\" }, { status: 409 });\n\t\t}\n\t\telse inserted = await database.prepare(INSERT_CHAT_SQL).bind(playerId, player.name, recipientId || null, scope, scope === \"regional\" ? regionalArea : null, player.channel, body, createdAt, scope, playerId, createdAt - 5).first();\n\t\tif (!inserted && (scope === \"world\" || scope === \"trade\")) throw new WorldChatCooldownError(worldChatRetryAfter((await database.prepare(LAST_WORLD_CHAT_SQL).bind(playerId).first())?.sent_at, createdAt));\n\t\tif (!inserted) throw new Error(\"Mesaj kalıcı olarak kaydedilemedi.\");\n\t\tconst wireMessage = {\n\t\t\t...inserted,\n\t\t\tcreated_at: Math.floor(inserted.created_at)\n\t\t};\n\t\tconst message = recipient ? {\n\t\t\t...wireMessage,\n\t\t\trecipient_name: recipient.name\n\t\t} : wireMessage;\n\t\tconst cycle = Math.max(1, Math.floor(Number(player.cycle)) || 1);\n\t\tconst delivery = (async () => {\n\t\t\tif (recipient) try {\n\t\t\t\tconst rooms = /* @__PURE__ */ new Map();\n\t\t\t\trooms.set(`${player.channel}:${player.area}:${player.arena_match_id}`, {\n\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\tarea: player.area,\n\t\t\t\t\tarenaMatchId: player.arena_match_id || void 0\n\t\t\t\t});\n\t\t\t\trooms.set(`${recipient.channel}:${recipient.area}:${recipient.arena_match_id}`, {\n\t\t\t\t\tchannel: recipient.channel,\n\t\t\t\t\tarea: recipient.area,\n\t\t\t\t\tarenaMatchId: recipient.arena_match_id || void 0\n\t\t\t\t});\n\t\t\t\tawait Promise.all([...rooms.values()].map((room) => publishRealtimePlayerEvent(cycle, room.channel, room.area, [playerId, recipient.id], {\n\t\t\t\t\ttype: \"direct_message\",\n\t\t\t\t\teventId: `direct-message:${inserted.id}`,\n\t\t\t\t\tmessage,\n\t\t\t\t\tserverAt: Date.now()\n\t\t\t\t}, room.arenaMatchId)));\n\t\t\t} catch (error) {\n\t\t\t\tconsole.warn(\"Direct message realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t}\n\t\t\telse {\n\t\t\t\tconst realtimeEvent = {\n\t\t\t\t\ttype: \"chat_message\",\n\t\t\t\t\teventId: `chat-message:${inserted.id}`,\n\t\t\t\t\tchatScope: scope,\n\t\t\t\t\tcycle,\n\t\t\t\t\t...scope === \"regional\" ? {\n\t\t\t\t\t\tarea: player.area,\n\t\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\t\tarenaMatchId: player.arena_match_id || \"\"\n\t\t\t\t\t} : {},\n\t\t\t\t\tmessage,\n\t\t\t\t\tserverAt: Date.now()\n\t\t\t\t};\n\t\t\t\tif (scope === \"regional\") try {\n\t\t\t\t\tawait publishRealtimeRoomEvent(cycle, player.channel, player.area, realtimeEvent, player.arena_match_id || void 0);\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.warn(\"Regional chat realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t\t}\n\t\t\t\telse {\n\t\t\t\t\tconst occupiedRooms = [{\n\t\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\t\tarea: player.area,\n\t\t\t\t\t\tarenaMatchId: player.arena_match_id || void 0\n\t\t\t\t\t}];\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst activeRooms = await database.prepare(`SELECT DISTINCT channel, area, arena_match_id FROM players\n             WHERE last_seen >= ?`).bind(createdAt - 30).all();\n\t\t\t\t\t\tfor (const room of activeRooms.results) occupiedRooms.push({\n\t\t\t\t\t\t\tchannel: Number(room.channel),\n\t\t\t\t\t\t\tarea: String(room.area),\n\t\t\t\t\t\t\tarenaMatchId: room.arena_match_id || void 0\n\t\t\t\t\t\t});\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.warn(\"World chat room discovery failed; dedicated delivery and sender-room fallback remain active.\", error);\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\tawait publishRealtimeWorldEvent(cycle, occupiedRooms, realtimeEvent);\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.warn(\"World chat realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t})().catch((error) => console.warn(\"Chat delivery deferred; persisted reconciliation remains available.\", error));\n\t\tconst context = getRequestExecutionContext();\n\t\tif (context) context.waitUntil(delivery);\n\t\telse await delivery;\n\t\treturn Response.json({\n\t\t\tok: true,\n\t\t\tmessage\n\t\t});",
+          "replacement": "return await db().core511HttpAction.action(auth,{action:'native_chat'},async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>{const database = db();\n\t\tif (payload.action === \"resolve_peer\") {\n          await enforceRateLimit(\"chat-peer-lookup\",auth.account.id,{limit:20,windowSeconds:60,blockSeconds:30});\n          if(colLabIsPlayer(playerId))return Response.json({error:\"Test hesabı özel mesaj kişisi arayamaz.\"},{status:403});\n          const peer=await resolvePeer487(database,payload.name,playerId);\n          if(!peer||colLabIsPlayer(peer.id))return Response.json({error:\"Bu isimde oyuncu bulunamadı. Karakterin tam adını yaz.\"},{status:404});\n          return Response.json({ok:true,peer},{headers:{\"Cache-Control\":\"no-store\"}});\n        }\n        if (payload.action === \"dismiss_thread\") {\n\t\t\tawait enforceRateLimit(\"chat-dismiss\", auth.account.id, {\n\t\t\t\tlimit: 30,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 30\n\t\t\t});\n\t\t\tconst peerId = safeId(payload.peerId);\n\t\t\tconst requestedThroughId = Number(payload.throughId);\n\t\t\tif (!peerId || peerId === playerId) return Response.json({ error: \"Özel mesaj kişisi geçersiz.\" }, { status: 400 });\n\t\t\tif (!Number.isSafeInteger(requestedThroughId) || requestedThroughId < 1) return Response.json({ error: \"Kapatılacak mesaj aralığı geçersiz.\" }, { status: 400 });\n\t\t\tconst latest = await database.prepare(`SELECT MAX(id) AS max_id FROM messages\n         WHERE recipient_id IS NOT NULL\n           AND ((player_id = ? AND recipient_id = ?) OR (player_id = ? AND recipient_id = ?))`).bind(playerId, peerId, peerId, playerId).first();\n\t\t\tconst dismissedThroughId = Math.max(0, Math.min(requestedThroughId, Number(latest?.max_id ?? 0)));\n\t\t\tif (dismissedThroughId > 0) {\n\t\t\t\tconst dismissal = await database.prepare(`INSERT INTO direct_message_dismissals (player_id, peer_id, dismissed_through_id, updated_at)\n           VALUES (?, ?, ?, ?)\n           ON CONFLICT(player_id, peer_id) DO UPDATE SET\n             dismissed_through_id = MAX(direct_message_dismissals.dismissed_through_id, excluded.dismissed_through_id),\n             updated_at = excluded.updated_at\n           RETURNING dismissed_through_id`).bind(playerId, peerId, dismissedThroughId, nowSeconds$1()).first();\n\t\t\t\treturn Response.json({\n\t\t\t\t\tok: true,\n\t\t\t\t\tpeerId,\n\t\t\t\t\tdismissedThroughId: Math.max(dismissedThroughId, Number(dismissal?.dismissed_through_id ?? 0))\n\t\t\t\t});\n\t\t\t}\n\t\t\treturn Response.json({\n\t\t\t\tok: true,\n\t\t\t\tpeerId,\n\t\t\t\tdismissedThroughId\n\t\t\t});\n\t\t}\n\t\tif (typeof payload.body === \"string\" && /^\\/pm(?:\\s|$)/iu.test(payload.body.trim())) return Response.json({error:\"Özel mesaj için /pm Karakter Adı komutunu kullan.\"},{status:400});\n\t\tif (payload.action !== void 0) return Response.json({ error: \"Mesaj işlemi geçersiz.\" }, { status: 400 });\n\t\tlet recipientId = safeId(payload.recipientId);\n\t\tif (payload.itemId && payload.recipientName) {\n\t\t\tconst target = await database.prepare(\"SELECT id FROM players WHERE name=? LIMIT 1\").bind(String(payload.recipientName).trim().slice(0, 18)).first();\n\t\t\tif (!target) return Response.json({ error: \"Bu isimde oyuncu bulunamadı.\" }, { status: 404 });\n\t\t\trecipientId = target.id;\n\t\t}\n\t\tconst rawBody = typeof payload.body === \"string\" ? payload.body.replace(/[<>]/g, \"\").trim().slice(0, 140) : \"\";\n\t\tif (!rawBody) return Response.json({ error: \"Mesaj boş olamaz.\" }, { status: 400 });\n\t\tif (payload.recipientId !== void 0 && !recipientId) return Response.json({ error: \"Özel mesaj alıcısı geçersiz.\" }, { status: 400 });\n\t\tconst [body, player] = await Promise.all([\n\t\t\tfilterChatText(rawBody),\n\t\t\tdatabase.prepare(`SELECT p.name, p.area, p.channel, p.arena_match_id,\n           COALESCE((SELECT cycle FROM world_state WHERE id = 1), 1) AS cycle\n         FROM players p WHERE p.id = ?`).bind(playerId).first(),\n\t\t\tenforceRateLimit(\"chat-burst\", auth.account.id, {\n\t\t\t\tlimit: 5,\n\t\t\t\twindowSeconds: 5,\n\t\t\t\tblockSeconds: 10\n\t\t\t}),\n\t\t\tenforceRateLimit(\"chat-minute\", auth.account.id, {\n\t\t\t\tlimit: 30,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 60\n\t\t\t})\n\t\t]);\n\t\tif (!body) return Response.json({ error: \"Mesaj boş olamaz.\" }, { status: 400 });\n\t\tif (!player) return Response.json({ error: \"Oyuncu bulunamadı.\" }, { status: 404 });\n\t\tlet recipient = null;\n\t\tif (recipientId) {\n\t\t\trecipient = await database.prepare(\"SELECT id, name, area, channel, arena_match_id FROM players WHERE id = ?\").bind(recipientId).first();\n\t\t\tif (!recipient) return Response.json({ error: \"Mesaj göndereceğin oyuncu bulunamadı.\" }, { status: 404 });\n\t\t}\n\t\tconst scope = recipientId ? \"direct\" : payload.scope === \"regional\" ? \"regional\" : payload.scope === \"trade\" ? \"trade\" : \"world\";\n\t\tconst createdAt = scope === \"world\" || scope === \"trade\" ? Date.now() / 1e3 : nowSeconds$1();\n\t\tconst regionalArea = player.area === \"arena\" && player.arena_match_id ? `arena:${player.arena_match_id}` : player.area;\n\t\tconst linkService = globalThis.__colItemLinks;\n\t\tif (payload.itemId && !linkService) return Response.json({ error: \"Eşya yansıtma şu anda kullanılamıyor.\" }, { status: 503 });\n\t\tlet inserted;\n\t\tif (payload.itemId) try {\n\t\t\tinserted = linkService.send(playerId, {\n\t\t\t\trequestId: payload.requestId,\n\t\t\t\titemId: safeId(payload.itemId),\n\t\t\t\trecipientId,\n\t\t\t\tscope,\n\t\t\t\tarea: scope === \"regional\" ? regionalArea : null,\n\t\t\t\tchannel: player.channel,\n\t\t\t\tbody,\n\t\t\t\tcreatedAt\n\t\t\t});\n\t\t} catch (e) {\n\t\t\tif (isWorldChatCooldownError(e)) throw e;\n\t\t\treturn Response.json({ error: e instanceof Error ? e.message : \"Eşya paylaşılamadı.\" }, { status: 409 });\n\t\t}\n\t\telse inserted = await database.prepare(INSERT_CHAT_SQL).bind(playerId, player.name, recipientId || null, scope, scope === \"regional\" ? regionalArea : null, player.channel, body, createdAt, scope, playerId, createdAt - 5).first();\n\t\tif (!inserted && (scope === \"world\" || scope === \"trade\")) throw new WorldChatCooldownError(worldChatRetryAfter((await database.prepare(LAST_WORLD_CHAT_SQL).bind(playerId).first())?.sent_at, createdAt));\n\t\tif (!inserted) throw new Error(\"Mesaj kalıcı olarak kaydedilemedi.\");\n\t\tconst wireMessage = {\n\t\t\t...inserted,\n\t\t\tcreated_at: Math.floor(inserted.created_at)\n\t\t};\n\t\tconst message = recipient ? {\n\t\t\t...wireMessage,\n\t\t\trecipient_name: recipient.name\n\t\t} : wireMessage;\n\t\tconst cycle = Math.max(1, Math.floor(Number(player.cycle)) || 1);\n\t\tconst delivery = (async () => {\n\t\t\tif (recipient) try {\n\t\t\t\tconst rooms = /* @__PURE__ */ new Map();\n\t\t\t\trooms.set(`${player.channel}:${player.area}:${player.arena_match_id}`, {\n\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\tarea: player.area,\n\t\t\t\t\tarenaMatchId: player.arena_match_id || void 0\n\t\t\t\t});\n\t\t\t\trooms.set(`${recipient.channel}:${recipient.area}:${recipient.arena_match_id}`, {\n\t\t\t\t\tchannel: recipient.channel,\n\t\t\t\t\tarea: recipient.area,\n\t\t\t\t\tarenaMatchId: recipient.arena_match_id || void 0\n\t\t\t\t});\n\t\t\t\tawait Promise.all([...rooms.values()].map((room) => publishRealtimePlayerEvent(cycle, room.channel, room.area, [playerId, recipient.id], {\n\t\t\t\t\ttype: \"direct_message\",\n\t\t\t\t\teventId: `direct-message:${inserted.id}`,\n\t\t\t\t\tmessage,\n\t\t\t\t\tserverAt: Date.now()\n\t\t\t\t}, room.arenaMatchId)));\n\t\t\t} catch (error) {\n\t\t\t\tconsole.warn(\"Direct message realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t}\n\t\t\telse {\n\t\t\t\tconst realtimeEvent = {\n\t\t\t\t\ttype: \"chat_message\",\n\t\t\t\t\teventId: `chat-message:${inserted.id}`,\n\t\t\t\t\tchatScope: scope,\n\t\t\t\t\tcycle,\n\t\t\t\t\t...scope === \"regional\" ? {\n\t\t\t\t\t\tarea: player.area,\n\t\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\t\tarenaMatchId: player.arena_match_id || \"\"\n\t\t\t\t\t} : {},\n\t\t\t\t\tmessage,\n\t\t\t\t\tserverAt: Date.now()\n\t\t\t\t};\n\t\t\t\tif (scope === \"regional\") try {\n\t\t\t\t\tawait publishRealtimeRoomEvent(cycle, player.channel, player.area, realtimeEvent, player.arena_match_id || void 0);\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.warn(\"Regional chat realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t\t}\n\t\t\t\telse {\n\t\t\t\t\tconst occupiedRooms = [{\n\t\t\t\t\t\tchannel: player.channel,\n\t\t\t\t\t\tarea: player.area,\n\t\t\t\t\t\tarenaMatchId: player.arena_match_id || void 0\n\t\t\t\t\t}];\n\t\t\t\t\ttry {\n\t\t\t\t\t\tconst activeRooms = await database.prepare(`SELECT DISTINCT channel, area, arena_match_id FROM players\n             WHERE last_seen >= ?`).bind(createdAt - 30).all();\n\t\t\t\t\t\tfor (const room of activeRooms.results) occupiedRooms.push({\n\t\t\t\t\t\t\tchannel: Number(room.channel),\n\t\t\t\t\t\t\tarea: String(room.area),\n\t\t\t\t\t\t\tarenaMatchId: room.arena_match_id || void 0\n\t\t\t\t\t\t});\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.warn(\"World chat room discovery failed; dedicated delivery and sender-room fallback remain active.\", error);\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\tawait publishRealtimeWorldEvent(cycle, occupiedRooms, realtimeEvent);\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.warn(\"World chat realtime delivery failed; stored message reconciliation remains active.\", error);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t})().catch((error) => console.warn(\"Chat delivery deferred; persisted reconciliation remains available.\", error));\n\t\tconst context = getRequestExecutionContext();\n\t\tawait delivery;\n\t\treturn Response.json({\n\t\t\tok: true,\n\t\t\tmessage\n\t\t});});"
+        },
+        {
+          "start": 1758794,
+          "end": 1758862,
+          "original": "guildSkillService().send(auth.player.id, await filterChatText(body))",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>(guildSkillService().send(auth.player.id, await filterChatText(body))),true))"
+        },
+        {
+          "start": 1763454,
+          "end": 1763631,
+          "original": "body.action === \"join\" ? await service.join(auth) : body.action === \"renew\" ? await service.renew(auth, String(body.identity)) : await service.leave(auth, String(body.identity))",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>(body.action === \"join\" ? await service.join(auth) : body.action === \"renew\" ? await service.renew(auth, String(body.identity)) : await service.leave(auth, String(body.identity))),true))"
+        }
+      ],
+      "scope": "Native chat/item-link actor ownership and awaited native audience capture; guild chat and voice calls under fresh native session gate; original body/rates/filter/SQL/receipts/token rules retained"
+    },
+    {
+      "name": "patchNativeGm",
+      "sourceSha256": "192da2b0ced5ff9ccfef0ffd3d4e0e3f6c355ae86c0af6675a63e6d4c67d4b40",
+      "patchedSha256": "46f41a6064adbf7cc3138c2f85456bd2e2dcfa5358e54058cf9f684354cd8f86",
+      "edits": [
+        {
+          "start": 1753272,
+          "end": 1753950,
+          "original": "const payload = await readJsonObject(request, 2048);\n\t\tif (payload.action === \"set_visibility\") {\n\t\t\tawait enforceRateLimit(\"gm-visibility\", session.account.id, {\n\t\t\t\tlimit: 20,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 3\n\t\t\t});\n\t\t\treturn Response.json(await setGmVisibility(player.id, session.account.id, payload.enabled), { headers: noStoreHeaders() });\n\t\t}\n\t\tawait enforceRateLimit(\"gm-announcement\", session.account.id, {\n\t\t\tlimit: 12,\n\t\t\twindowSeconds: 60,\n\t\t\tblockSeconds: 5\n\t\t});\n\t\treturn Response.json(await sendGmAnnouncement({\n\t\t\tplayerId: player.id,\n\t\t\tname: player.name,\n\t\t\taccountId: session.account.id,\n\t\t\towner: false\n\t\t}, payload), { headers: noStoreHeaders() });",
+          "replacement": "return await db().core511Gm.player(session,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);return current;},async()=>{const payload = await readJsonObject(request, 2048);\n\t\tif (payload.action === \"set_visibility\") {\n\t\t\tawait enforceRateLimit(\"gm-visibility\", session.account.id, {\n\t\t\t\tlimit: 20,\n\t\t\t\twindowSeconds: 60,\n\t\t\t\tblockSeconds: 3\n\t\t\t});\n\t\t\treturn Response.json(await setGmVisibility(player.id, session.account.id, payload.enabled), { headers: noStoreHeaders() });\n\t\t}\n\t\tawait enforceRateLimit(\"gm-announcement\", session.account.id, {\n\t\t\tlimit: 12,\n\t\t\twindowSeconds: 60,\n\t\t\tblockSeconds: 5\n\t\t});\n\t\treturn Response.json(await sendGmAnnouncement({\n\t\t\tplayerId: player.id,\n\t\t\tname: player.name,\n\t\t\taccountId: session.account.id,\n\t\t\towner: false\n\t\t}, payload), { headers: noStoreHeaders() });});"
+        },
+        {
+          "start": 1667732,
+          "end": 1669269,
+          "original": "const payload = await readJsonObject(request, 2048);\n\t\tif (payload.action === \"announce\") return Response.json(await sendGmAnnouncement({\n\t\t\tplayerId: \"game-owner\",\n\t\t\tname: \"Oyun Yönetimi\",\n\t\t\taccountId: identity,\n\t\t\towner: true\n\t\t}, payload), { headers: noStoreHeaders() });\n\t\tif (payload.action !== \"set_gm\" || typeof payload.enabled !== \"boolean\") throw new AuthRequestError(400, \"invalid_gm_action\", \"GM işlemi geçersiz.\");\n\t\tconst playerId = safeId(payload.playerId);\n\t\tconst database = db();\n\t\tconst now = Date.now();\n\t\tconst [updated] = await database.batch([database.prepare(`UPDATE players SET is_gm = ?, gm_invisible = 0, gm_visibility_revision = gm_visibility_revision + 1 WHERE id = ? AND account_id IN (SELECT id FROM accounts)\n        RETURNING id, name, is_gm, gm_invisible, gm_visibility_revision, channel, area, arena_match_id`).bind(payload.enabled ? 1 : 0, playerId), database.prepare(`INSERT INTO admin_audit_events (id, admin_account_id, action, target_account_id, detail_json, created_at_ms)\n        SELECT ?, ?, ?, account_id, json_object('playerId', id, 'enabled', is_gm), ?\n        FROM players WHERE id = ? AND account_id IN (SELECT id FROM accounts)`).bind(crypto.randomUUID(), identity, payload.enabled ? \"gm_grant\" : \"gm_revoke\", now, playerId)]);\n\t\tif (!updated.results.length) throw new AuthRequestError(404, \"player_not_found\", \"Oyuncu bulunamadı.\");\n\t\tawait publishGmVisibility(updated.results[0]);\n\t\treturn Response.json({\n\t\t\tok: true,\n\t\t\tplayer: updated.results[0]\n\t\t}, { headers: noStoreHeaders() });",
+          "replacement": "return await db().core511Gm.admin(identity,async()=>{const current=await owner$1();assertSameOrigin(request);return current;},async()=>{const payload = await readJsonObject(request, 2048);\n\t\tif (payload.action === \"announce\") return Response.json(await sendGmAnnouncement({\n\t\t\tplayerId: \"game-owner\",\n\t\t\tname: \"Oyun Yönetimi\",\n\t\t\taccountId: identity,\n\t\t\towner: true\n\t\t}, payload), { headers: noStoreHeaders() });\n\t\tif (payload.action !== \"set_gm\" || typeof payload.enabled !== \"boolean\") throw new AuthRequestError(400, \"invalid_gm_action\", \"GM işlemi geçersiz.\");\n\t\tconst playerId = safeId(payload.playerId);\n\t\tconst database = db();\n\t\tconst now = Date.now();\n\t\tconst [updated] = await database.batch([database.prepare(`UPDATE players SET is_gm = ?, gm_invisible = 0, gm_visibility_revision = gm_visibility_revision + 1 WHERE id = ? AND account_id IN (SELECT id FROM accounts)\n        RETURNING id, name, is_gm, gm_invisible, gm_visibility_revision, channel, area, arena_match_id`).bind(payload.enabled ? 1 : 0, playerId), database.prepare(`INSERT INTO admin_audit_events (id, admin_account_id, action, target_account_id, detail_json, created_at_ms)\n        SELECT ?, ?, ?, account_id, json_object('playerId', id, 'enabled', is_gm), ?\n        FROM players WHERE id = ? AND account_id IN (SELECT id FROM accounts)`).bind(crypto.randomUUID(), identity, payload.enabled ? \"gm_grant\" : \"gm_revoke\", now, playerId)]);\n\t\tif (!updated.results.length) throw new AuthRequestError(404, \"player_not_found\", \"Oyuncu bulunamadı.\");\n\t\tawait publishGmVisibility(updated.results[0]);\n\t\treturn Response.json({\n\t\t\tok: true,\n\t\t\tplayer: updated.results[0]\n\t\t}, { headers: noStoreHeaders() });});"
+        },
+        {
+          "start": 1683770,
+          "end": 1685750,
+          "original": "const payload = await readJsonObject(request, 2048);\n\t\tif (typeof payload.enabled !== \"boolean\" || typeof payload.previewPlayerId !== \"string\" || payload.previewPlayerId.length > 100 || !Number.isSafeInteger(payload.revision) || Number(payload.revision) < 0) throw new AuthRequestError(400, \"invalid_update\", \"Güncelleme ayarları geçersiz.\");\n\t\tif (payload.enabled && !await dedicatedRealtimeReady(\"ancient\")) throw new AuthRequestError(409, \"update_transport_required\", \"Yeni haritanın VDS kurulumu henüz tamamlanmadı. Kurulumdan sonra tekrar dene.\");\n\t\tconst database = db();\n\t\tif (payload.previewPlayerId && !await database.prepare(\"SELECT id FROM players WHERE id=? AND is_gm=1\").bind(payload.previewPlayerId).first()) throw new AuthRequestError(400, \"gm_required\", \"Önizleme için mevcut bir GM seç.\");\n\t\tconst revision = Number(payload.revision);\n\t\tif (!(await database.batch([database.prepare(`UPDATE game_settings SET expansion65_enabled=?,expansion65_preview_player_id=?,expansion65_revision=expansion65_revision+1 WHERE id=1 AND expansion65_revision=? RETURNING id`).bind(payload.enabled ? 1 : 0, payload.previewPlayerId, revision), database.prepare(`UPDATE players SET area='bazaar',arena_match_id='',x=1200,y=920,movement_checked_at_ms=?,movement_debt_ms=0,motion_stream_id='',motion_sequence=0,position_revision=position_revision+1,realtime_scope_version=realtime_scope_version+1,combat_lock_until_ms=0\n   WHERE area='ancient' AND EXISTS(SELECT 1 FROM game_settings WHERE id=1 AND expansion65_revision=?) AND (level<50 OR NOT EXISTS(SELECT 1 FROM game_settings s WHERE s.id=1 AND (s.expansion65_enabled=1 OR (players.is_gm=1 AND players.id=s.expansion65_preview_player_id))))`).bind(Date.now(), revision + 1)]))[0].results.length) throw new AuthRequestError(409, \"update_conflict\", \"Ayarlar başka bir sekmede değişti. Güncel durumu yükle.\");\n\t\tinvalidateGameSettingsCache();\n\t\treturn Response.json({\n\t\t\t...await read(),\n\t\t\tok: true\n\t\t}, { headers: noStoreHeaders() });",
+          "replacement": "return await db().core511Gm.admin(id,async()=>{const current=await owner();assertSameOrigin(request);return current;},async()=>{const payload = await readJsonObject(request, 2048);\n\t\tif (typeof payload.enabled !== \"boolean\" || typeof payload.previewPlayerId !== \"string\" || payload.previewPlayerId.length > 100 || !Number.isSafeInteger(payload.revision) || Number(payload.revision) < 0) throw new AuthRequestError(400, \"invalid_update\", \"Güncelleme ayarları geçersiz.\");\n\t\tif (payload.enabled && !await db().core511Bootstrap.dedicatedReady(\"ancient\")) throw new AuthRequestError(409, \"update_transport_required\", \"Yeni haritanın VDS kurulumu henüz tamamlanmadı. Kurulumdan sonra tekrar dene.\");\n\t\tconst database = db();\n\t\tif (payload.previewPlayerId && !await database.prepare(\"SELECT id FROM players WHERE id=? AND is_gm=1\").bind(payload.previewPlayerId).first()) throw new AuthRequestError(400, \"gm_required\", \"Önizleme için mevcut bir GM seç.\");\n\t\tconst revision = Number(payload.revision);\n\t\tif (!(await database.batch([database.prepare(`UPDATE game_settings SET expansion65_enabled=?,expansion65_preview_player_id=?,expansion65_revision=expansion65_revision+1 WHERE id=1 AND expansion65_revision=? RETURNING id`).bind(payload.enabled ? 1 : 0, payload.previewPlayerId, revision), database.prepare(`UPDATE players SET area='bazaar',arena_match_id='',x=1200,y=920,movement_checked_at_ms=?,movement_debt_ms=0,motion_stream_id='',motion_sequence=0,position_revision=position_revision+1,realtime_scope_version=realtime_scope_version+1,combat_lock_until_ms=0\n   WHERE area='ancient' AND EXISTS(SELECT 1 FROM game_settings WHERE id=1 AND expansion65_revision=?) AND (level<50 OR NOT EXISTS(SELECT 1 FROM game_settings s WHERE s.id=1 AND (s.expansion65_enabled=1 OR (players.is_gm=1 AND players.id=s.expansion65_preview_player_id))))`).bind(Date.now(), revision + 1)]))[0].results.length) throw new AuthRequestError(409, \"update_conflict\", \"Ayarlar başka bir sekmede değişti. Güncel durumu yükle.\");\n\t\tinvalidateGameSettingsCache();\n\t\treturn Response.json({\n\t\t\t...await read(),\n\t\t\tok: true\n\t\t}, { headers: noStoreHeaders() });});"
+        },
+        {
+          "start": 1657731,
+          "end": 1657883,
+          "original": "const body = await readJsonObject(request, 8192);\n\t\treturn Response.json(service$5().manage(actor, body), { headers: { \"Cache-Control\": \"no-store\" } });",
+          "replacement": "return await db().core511Gm.admin(actor,async()=>{const current=await admin$1();assertSameOrigin(request);return current;},async()=>{const body = await readJsonObject(request, 8192);\n\t\treturn Response.json(service$5().manage(actor, body), { headers: { \"Cache-Control\": \"no-store\" } });});"
+        },
+        {
+          "start": 1663215,
+          "end": 1663770,
+          "original": "{\n\tconst invisible = player.is_gm === 1 && player.gm_invisible === 1;\n\tglobalThis.__colDungeon?.setPlayerVisibility(player.id, invisible, player.gm_visibility_revision);\n\tconst world = await db().prepare(\"SELECT cycle FROM world_state WHERE id = 1\").first();\n\tif (!world) return false;\n\treturn publishRealtimeRoomEvent(world.cycle, player.channel, player.area, {\n\t\ttype: \"gm_visibility\",\n\t\tmaintenanceGm492: player.is_gm === 1,\n\t\tplayerId: player.id,\n\t\tinvisible,\n\t\tvisibilityRevision: player.gm_visibility_revision\n\t}, player.arena_match_id || void 0);\n}",
+          "replacement": "{return db().core511Gm.visibility(player);}"
+        }
+      ],
+      "scope": "Original GM, owner-GM, community configuration and expansion gate route bodies under exact private async global barrier; original SQL/revisions/rollback retained. Expansion readiness uses the four current owners, native visibility uses acknowledged channel+dungeon control."
+    },
+    {
+      "name": "patchNativePayment",
+      "sourceSha256": "46f41a6064adbf7cc3138c2f85456bd2e2dcfa5358e54058cf9f684354cd8f86",
+      "patchedSha256": "4cf23a3867b279142e643cf1801394803e18a08b2df8b4f145328b0471a6fbc3",
+      "edits": [
+        {
+          "start": 1515512,
+          "end": 1518229,
+          "original": "\n\tconst database = db();\n\tconst order = await database.prepare(`SELECT id, player_id, provider, product_code, amount_kurus, currency, status\n     FROM payment_orders WHERE id = ? LIMIT 1`).bind(input.orderId).first();\n\tif (!order || order.provider !== input.provider || order.product_code !== SUPPORT_PACK.code) return {\n\t\taccepted: false,\n\t\treason: \"unknown_order\"\n\t};\n\tif (order.amount_kurus !== input.paidAmountKurus || order.currency !== SUPPORT_PACK.currency) return {\n\t\taccepted: false,\n\t\treason: \"amount_mismatch\"\n\t};\n\tif (order.status !== \"pending\" && order.status !== \"failed\" && order.status !== \"paid\") return {\n\t\taccepted: false,\n\t\treason: \"terminal_order\"\n\t};\n\tconst now = nowSeconds$1();\n\tconst eventToken = crypto.randomUUID();\n\tconst payloadHash = await sha256(input.rawPayload);\n\tconst results = await database.batch([\n\t\tdatabase.prepare(`INSERT OR IGNORE INTO payment_events\n        (event_id, order_id, provider, event_token, payload_hash, created_at)\n       VALUES (?, ?, ?, ?, ?, ?)`).bind(input.eventId, order.id, input.provider, eventToken, payloadHash, now),\n\t\tdatabase.prepare(`UPDATE payment_orders SET status = 'paid', provider_payment_id = ?, paid_at = ?, updated_at = ?\n       WHERE id = ? AND status IN ('pending', 'failed')\n         AND EXISTS (SELECT 1 FROM payment_events WHERE event_token = ?)`).bind(input.providerPaymentId, now, now, order.id, eventToken),\n\t\tdatabase.prepare(`INSERT OR IGNORE INTO support_pack_grants (order_id, player_id, grant_token, product_code, granted_at)\n       SELECT id, player_id, ?, product_code, ? FROM payment_orders\n       WHERE id = ? AND status = 'paid'\n         AND EXISTS (SELECT 1 FROM payment_events WHERE event_token = ?)`).bind(eventToken, now, order.id, eventToken),\n\t\tdatabase.prepare(`UPDATE players SET\n         xp_ring_until = MAX(xp_ring_until, ?) + ?,\n         drop_charm_until = MAX(drop_charm_until, ?) + ?,\n         wings_expires_at_ms = MAX(wings_expires_at_ms, ?) + 604800000,\n         has_wings = 1,\n         wings_equipped = 1\n       WHERE id = ? AND EXISTS (SELECT 1 FROM support_pack_grants WHERE grant_token = ?)`).bind(now, SUPPORT_PACK.durationSeconds, now, SUPPORT_PACK.durationSeconds, now * 1e3, order.player_id, eventToken)\n\t]);\n\tconst granted = Number(results.at(-1)?.meta?.changes ?? 0) > 0;\n\tconst confirmed = await database.prepare(`SELECT o.status, CASE WHEN g.order_id IS NULL THEN 0 ELSE 1 END AS has_grant\n     FROM payment_orders o LEFT JOIN support_pack_grants g ON g.order_id = o.id\n     WHERE o.id = ? LIMIT 1`).bind(order.id).first();\n\tif (confirmed?.status !== \"paid\" || confirmed.has_grant !== 1) return {\n\t\taccepted: false,\n\t\treason: \"grant_not_confirmed\"\n\t};\n\treturn {\n\t\taccepted: true,\n\t\tgranted\n\t};\n",
+          "replacement": "return db().core511HttpAction.payment(input,async()=>{\n\tconst database = db();\n\tconst order = await database.prepare(`SELECT id, player_id, provider, product_code, amount_kurus, currency, status\n     FROM payment_orders WHERE id = ? LIMIT 1`).bind(input.orderId).first();\n\tif (!order || order.provider !== input.provider || order.product_code !== SUPPORT_PACK.code) return {\n\t\taccepted: false,\n\t\treason: \"unknown_order\"\n\t};\n\tif (order.amount_kurus !== input.paidAmountKurus || order.currency !== SUPPORT_PACK.currency) return {\n\t\taccepted: false,\n\t\treason: \"amount_mismatch\"\n\t};\n\tif (order.status !== \"pending\" && order.status !== \"failed\" && order.status !== \"paid\") return {\n\t\taccepted: false,\n\t\treason: \"terminal_order\"\n\t};\n\tconst now = nowSeconds$1();\n\tconst eventToken = crypto.randomUUID();\n\tconst payloadHash = await sha256(input.rawPayload);\n\tconst results = await database.batch([\n\t\tdatabase.prepare(`INSERT OR IGNORE INTO payment_events\n        (event_id, order_id, provider, event_token, payload_hash, created_at)\n       VALUES (?, ?, ?, ?, ?, ?)`).bind(input.eventId, order.id, input.provider, eventToken, payloadHash, now),\n\t\tdatabase.prepare(`UPDATE payment_orders SET status = 'paid', provider_payment_id = ?, paid_at = ?, updated_at = ?\n       WHERE id = ? AND status IN ('pending', 'failed')\n         AND EXISTS (SELECT 1 FROM payment_events WHERE event_token = ?)`).bind(input.providerPaymentId, now, now, order.id, eventToken),\n\t\tdatabase.prepare(`INSERT OR IGNORE INTO support_pack_grants (order_id, player_id, grant_token, product_code, granted_at)\n       SELECT id, player_id, ?, product_code, ? FROM payment_orders\n       WHERE id = ? AND status = 'paid'\n         AND EXISTS (SELECT 1 FROM payment_events WHERE event_token = ?)`).bind(eventToken, now, order.id, eventToken),\n\t\tdatabase.prepare(`UPDATE players SET\n         xp_ring_until = MAX(xp_ring_until, ?) + ?,\n         drop_charm_until = MAX(drop_charm_until, ?) + ?,\n         wings_expires_at_ms = MAX(wings_expires_at_ms, ?) + 604800000,\n         has_wings = 1,\n         wings_equipped = 1\n       WHERE id = ? AND EXISTS (SELECT 1 FROM support_pack_grants WHERE grant_token = ?)`).bind(now, SUPPORT_PACK.durationSeconds, now, SUPPORT_PACK.durationSeconds, now * 1e3, order.player_id, eventToken)\n\t]);\n\tconst granted = Number(results.at(-1)?.meta?.changes ?? 0) > 0;\n\tconst confirmed = await database.prepare(`SELECT o.status, CASE WHEN g.order_id IS NULL THEN 0 ELSE 1 END AS has_grant\n     FROM payment_orders o LEFT JOIN support_pack_grants g ON g.order_id = o.id\n     WHERE o.id = ? LIMIT 1`).bind(order.id).first();\n\tif (confirmed?.status !== \"paid\" || confirmed.has_grant !== 1) return {\n\t\taccepted: false,\n\t\treason: \"grant_not_confirmed\"\n\t};\n\treturn {\n\t\taccepted: true,\n\t\tgranted\n\t};\n});"
+        }
+      ],
+      "scope": "Exact native payment grant body under stored-order owner drain; PayTR/Shopier HMAC, amounts, currency, event receipts, paid/failed/test policy and SQL unchanged"
+    },
+    {
+      "name": "patchNativeTradeStorage",
+      "sourceSha256": "4cf23a3867b279142e643cf1801394803e18a08b2df8b4f145328b0471a6fbc3",
+      "patchedSha256": "2e8a68121dcecc78e8cd895b937dcf76f5919c3f77b4160ee2256620d5f6718f",
+      "edits": [
+        {
+          "start": 1839711,
+          "end": 1840767,
+          "original": "const peer = input.action === \"invite\" ? String(input.target ?? \"\") : (await db().prepare(\"SELECT CASE WHEN a=? THEN b ELSE a END AS id FROM player_trades WHERE id=? AND (a=? OR b=?)\").bind(auth.player.id, String(input.id ?? \"\"), auth.player.id, auth.player.id).first())?.id;\n\t\tconst result = await channelPermanent([auth.player.id, ...peer ? [peer] : []], () => service().act(auth.player.id, input));\n\t\ttry {\n\t\t\tconst row = await db().prepare(\"SELECT area,channel,COALESCE((SELECT cycle FROM world_state WHERE id=1),1) AS cycle FROM players WHERE id=?\").bind(auth.player.id).first();\n\t\t\tif (row) {\n\t\t\t\tconst delivery = publishRealtimePlayerEvent(row.cycle, row.channel, row.area, result.recipients, {\n\t\t\t\t\ttype: \"trade_changed\",\n\t\t\t\t\teventId: `trade:${result.trade.id}:${crypto.randomUUID()}`\n\t\t\t\t}).catch(() => false);\n\t\t\t\tconst ctx = getRequestExecutionContext();\n\t\t\t\tif (ctx) ctx.waitUntil(delivery);\n\t\t\t}\n\t\t} catch {}\n\t\tconst { recipients, ...publicResult } = result;\n\t\treturn Response.json(publicResult, { headers: { \"cache-control\": \"no-store\" } });",
+          "replacement": "return await db().core511HttpAction.trade(auth,input,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>{\n\t\tconst result = service().act(auth.player.id, input);\n\t\ttry {\n\t\t\tconst row = await db().prepare(\"SELECT area,channel,COALESCE((SELECT cycle FROM world_state WHERE id=1),1) AS cycle FROM players WHERE id=?\").bind(auth.player.id).first();\n\t\t\tif (row) {\n\t\t\t\tconst delivery = publishRealtimePlayerEvent(row.cycle, row.channel, row.area, result.recipients, {\n\t\t\t\t\ttype: \"trade_changed\",\n\t\t\t\t\teventId: `trade:${result.trade.id}:${crypto.randomUUID()}`\n\t\t\t\t}).catch(() => false);\n\t\t\t\tconst ctx = getRequestExecutionContext();\n\t\t\t\tawait delivery;\n\t\t\t}\n\t\t} catch {}\n\t\tconst { recipients, ...publicResult } = result;\n\t\treturn Response.json(publicResult, { headers: { \"cache-control\": \"no-store\" } });});"
+        },
+        {
+          "start": 1828658,
+          "end": 1828755,
+          "original": "channelPermanent([auth.player.id], () => service$1().act(auth.player.id, input, auth.account.id))",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},() => service$1().act(auth.player.id, input, auth.account.id)))"
+        },
+        {
+          "start": 1761098,
+          "end": 1761185,
+          "original": "channelPermanent([auth.player.id], () => guildSkillService().act(auth.player.id, body))",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},() => guildSkillService().act(auth.player.id, body)))"
+        },
+        {
+          "start": 1828131,
+          "end": 1828167,
+          "original": "service$1().snapshot(auth.player.id)",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},()=>(service$1().snapshot(auth.player.id))))"
+        },
+        {
+          "start": 1839108,
+          "end": 1839187,
+          "original": "service().snapshot(auth.player.id, new URL(request.url).searchParams.get(\"id\"))",
+          "replacement": "(await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},()=>(service().snapshot(auth.player.id, new URL(request.url).searchParams.get(\"id\")))))"
+        }
+      ],
+      "scope": "Native two-party trade gate and private notices; fresh native storage/guild-skill mutation authorization and owned storage/trade snapshots; original SQL, receipts, rule guards and guild sync retained"
+    },
+    {
+      "name": "patchNativeClientReference",
+      "sourceSha256": "2e8a68121dcecc78e8cd895b937dcf76f5919c3f77b4160ee2256620d5f6718f",
+      "patchedSha256": "530e31700fde86cd4f337b7c53511b3589ba9792166b7134d9f080346a246a03",
+      "edits": [
+        {
+          "start": 646063,
+          "end": 646131,
+          "original": "game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
+          "replacement": "game-client-core511-2495ae4bfc24742e.js"
+        },
+        {
+          "start": 2179475,
+          "end": 2179543,
+          "original": "game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
+          "replacement": "game-client-core511-2495ae4bfc24742e.js"
+        },
+        {
+          "start": 2179396,
+          "end": 2179464,
+          "original": "auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
+          "replacement": "auth-portal-core511-cbaf319063fec569.js"
+        }
+      ],
+      "scope": "Only pinned game-client preload/RSC reference and its unchanged auth portal importer; both renamed by content hash"
+    },
+    {
+      "name": "patchNativeHttpRouter",
+      "sourceSha256": "530e31700fde86cd4f337b7c53511b3589ba9792166b7134d9f080346a246a03",
+      "patchedSha256": "404ef8c52da2f8510e4fcf3f8098e1bb2874c5f52288a30b9b7869c9d6d1bd7e",
+      "edits": [
+        {
+          "start": 2190887,
+          "end": 2190920,
+          "original": "_virtual_vinext_rsc_entry_default",
+          "replacement": "core511NativeHttpDefault"
+        },
+        {
+          "start": 2198782,
+          "end": 2198782,
+          "original": "",
+          "replacement": "\nasync function core511NativeHttpDefault(...args){const binding=globalThis[Symbol.for(\"coreoflife.core511.httpBindings\")];if(!binding)throw new Error(\"native_http_binding_required\");return binding.route(args[0],()=>_virtual_vinext_rsc_entry_default(...args));}\n"
+        }
+      ],
+      "scope": "Native RSC handler unchanged; default export adds sole-host kernel routes, native realm route policy, current readiness and graceful request drain"
+    },
+    {
+      "name": "R106 asynchronous captcha",
+      "sourceSha256": "0dabba357d5c7f967a05a064f11e6348c9f3d9fe6bb59f5ccebaa141de5e6414",
+      "patchedSha256": "cf2c5353525b600ec52641953a8428c7b13bedb7bb1d3d0915ea8f8c7396dc59",
+      "scope": "Registration awaits worker then durable commit; game status releases coordinator/writer while rendering and reauthorizes before commit; existing CSRF, rate, attempts and expiry rules retained."
+    }
+  ],
+  "scope": "Pinned native HTTP source composition only; runtime route, ownership and listener evidence is recorded separately. Remaining native routes and full acceptance are not implied.",
+  "clientPredictionHotfix": {
+    "version": "attack-target-lock-r17",
+    "canonicalReferenceBaseline": "r16",
+    "priorGeneratedSha256": "4d56ccd834a8e15bf11f987d506ba6514d0301f87d424155c2f2715e9da832f8",
+    "replacement": [
+      [
+        "core511-48bcf0cf1cf07f07",
+        "core511-42f669f5d09db4ce"
+      ],
+      [
+        "game-client-core511-f169d44e72735705.js",
+        "game-client-core511-b202eb0c38c045cc.js"
+      ],
+      [
+        "auth-portal-core511-616563dedfd368e3.js",
+        "auth-portal-core511-9aac80a6fa035873.js"
+      ],
+      [
+        "core511-transport-0cb008c4c24a21d0.js",
+        "core511-transport-0cb008c4c24a21d0.js"
+      ]
+    ],
+    "referencesByBaseline": {
+      "r16": {
+        "priorGeneratedSha256": "4d56ccd834a8e15bf11f987d506ba6514d0301f87d424155c2f2715e9da832f8",
+        "replacement": [
+          [
+            "core511-48bcf0cf1cf07f07",
+            "core511-42f669f5d09db4ce"
+          ],
+          [
+            "game-client-core511-f169d44e72735705.js",
+            "game-client-core511-b202eb0c38c045cc.js"
+          ],
+          [
+            "auth-portal-core511-616563dedfd368e3.js",
+            "auth-portal-core511-9aac80a6fa035873.js"
+          ],
+          [
+            "core511-transport-0cb008c4c24a21d0.js",
+            "core511-transport-0cb008c4c24a21d0.js"
+          ]
+        ]
+      },
+      "r15": {
+        "priorGeneratedSha256": "0b4179ffbfee690961f7ad62d29f93831b26a4482bb94ff0cc8d547397e66855",
+        "replacement": [
+          [
+            "core511-634ce0ee0c6be234",
+            "core511-42f669f5d09db4ce"
+          ],
+          [
+            "game-client-core511-4542959c4f83dad9.js",
+            "game-client-core511-b202eb0c38c045cc.js"
+          ],
+          [
+            "auth-portal-core511-0deb05a3d6851a64.js",
+            "auth-portal-core511-9aac80a6fa035873.js"
+          ],
+          [
+            "core511-transport-2a91663869e2b5fb.js",
+            "core511-transport-0cb008c4c24a21d0.js"
+          ]
+        ]
+      }
+    },
+    "scope": "Exact immutable client asset reference substitutions only; server behavior unchanged. Common R17 client composition for exact R15/R16 baselines."
+  },
+  "kadimTowerR18": {
+    "version": "kadim-tower-r18",
+    "priorGeneratedSha256": "446a78b0ed0ddf2f976b93374cbfcaaa57930fdaafe3c7f7e72845dc4ddcc4ae",
+    "replacement": [
+      [
+        "core511-42f669f5d09db4ce",
+        "core511-a314e1351f302dd6"
+      ],
+      [
+        "game-client-core511-b202eb0c38c045cc.js",
+        "game-client-core511-6e6f592e5144736c.js"
+      ],
+      [
+        "auth-portal-core511-9aac80a6fa035873.js",
+        "auth-portal-core511-a153aac3c433ec81.js"
+      ],
+      [
+        "core511-transport-0cb008c4c24a21d0.js",
+        "core511-transport-0703f63c3a09dbac.js"
+      ],
+      [
+        "admin-client-B_LbmWSV-ga4172-v418ws--e510-8225403c2fcc-88ffa15660.js",
+        "admin-client-core511-tower-1aeccdb95b4dbefc.js"
+      ],
+      [
+        "/assets/tower-r18/",
+        "/assets/core511-a314e1351f302dd6/tower-r18/"
+      ]
+    ],
+    "scope": "Kadim Tower feature and immutable client namespace; exact R17 baseline."
+  },
+  "adventureR19": {
+    "version": "adventure-r19",
+    "priorGeneratedSha256": "6f67066d4a7cf110b20f77e56b82cee0712d91df2f49385ec51c88cdb192faf1",
+    "replacement": [
+      [
+        "core511-a314e1351f302dd6",
+        "core511-17ac17e5a0624984"
+      ],
+      [
+        "game-client-core511-6e6f592e5144736c.js",
+        "game-client-core511-b6962e83e779377f.js"
+      ],
+      [
+        "auth-portal-core511-a153aac3c433ec81.js",
+        "auth-portal-core511-01ee4e150327c46b.js"
+      ],
+      [
+        "core511-transport-0703f63c3a09dbac.js",
+        "core511-transport-4019b64e19d5563a.js"
+      ],
+      [
+        "core511-tower-a189355ae96e0b3d.js",
+        "core511-tower-5e20c54aec794efd.js"
+      ],
+      [
+        "admin-client-core511-tower-1aeccdb95b4dbefc.js",
+        "admin-client-core511-tower-9c95cd1f8c11931d.js"
+      ],
+      [
+        "/assets/tower-r18/",
+        "/assets/core511-17ac17e5a0624984/tower-r18/"
+      ],
+      [
+        "/assets/mist-r19/",
+        "/assets/core511-17ac17e5a0624984/mist-r19/"
+      ]
+    ],
+    "scope": "R19 normal-map tower, Mist and isolated guild reads; exact R18 baseline."
+  },
+  "combatR20": {
+    "version": "combat-r20",
+    "priorGeneratedSha256": "f1c259d4cc339a3b0fc2ffd3893128e0df53cc86b0a3c0ada472293995976258",
+    "replacement": [
+      [
+        "core511-17ac17e5a0624984",
+        "core511-c2094cfb35f6f361"
+      ],
+      [
+        "game-client-core511-b6962e83e779377f.js",
+        "game-client-core511-4a86ab24ede91545.js"
+      ],
+      [
+        "auth-portal-core511-01ee4e150327c46b.js",
+        "auth-portal-core511-0e1d307761955619.js"
+      ],
+      [
+        "core511-transport-4019b64e19d5563a.js",
+        "core511-transport-d84c1df61fc98225.js"
+      ],
+      [
+        "core511-tower-5e20c54aec794efd.js",
+        "core511-tower-214f8204bbe88ac7.js"
+      ],
+      [
+        "admin-client-core511-tower-9c95cd1f8c11931d.js",
+        "admin-client-core511-tower-4f6dc0ca3a268d66.js"
+      ],
+      [
+        "/assets/tower-r18/",
+        "/assets/core511-c2094cfb35f6f361/tower-r18/"
+      ],
+      [
+        "/assets/mist-r19/",
+        "/assets/core511-c2094cfb35f6f361/mist-r19/"
+      ]
+    ],
+    "scope": "R20 combat/state synchronization, negotiated movement pipeline, panel readiness and native-map tower presentation/damage corrections; exact delivered R19 baseline."
+  },
+  "auditR21": {
+    "version": "audit-r21",
+    "priorGeneratedSha256": "4506beacc6f947776133de782952fa051b31267d1883d6281e3d87b78661571e",
+    "replacement": [
+      [
+        "core511-c2094cfb35f6f361",
+        "core511-54528d61c50752fe"
+      ],
+      [
+        "game-client-core511-4a86ab24ede91545.js",
+        "game-client-core511-687e168b70369a3e.js"
+      ],
+      [
+        "auth-portal-core511-0e1d307761955619.js",
+        "auth-portal-core511-e17a9b1b8ee7c16f.js"
+      ],
+      [
+        "core511-transport-d84c1df61fc98225.js",
+        "core511-transport-ada59ecc1cc72895.js"
+      ],
+      [
+        "core511-tower-214f8204bbe88ac7.js",
+        "core511-tower-883a5a8eb2d26522.js"
+      ],
+      [
+        "admin-client-core511-tower-4f6dc0ca3a268d66.js",
+        "admin-client-core511-tower-7a5d920f9b242293.js"
+      ],
+      [
+        "/assets/tower-r18/",
+        "/assets/core511-54528d61c50752fe/tower-r18/"
+      ],
+      [
+        "/assets/mist-r19/",
+        "/assets/core511-54528d61c50752fe/mist-r19/"
+      ]
+    ],
+    "scope": "R21 V510 parity audit and verified fixes; exact delivered R19/R20 baselines."
+  },
+  "mistR24": {
+    "version": "mist-r24",
+    "priorGeneratedSha256": "eee40f333dd9bc23976d4f74653fac0ea680f98aeb751f300b40df790a72da94",
+    "replacement": [
+      [
+        "core511-54528d61c50752fe",
+        "core511-396a79b1b465969a"
+      ],
+      [
+        "game-client-core511-687e168b70369a3e.js",
+        "game-client-core511-8157ed046436808d.js"
+      ],
+      [
+        "auth-portal-core511-e17a9b1b8ee7c16f.js",
+        "auth-portal-core511-4ac65fde00c1b6ad.js"
+      ],
+      [
+        "admin-client-core511-tower-7a5d920f9b242293.js",
+        "admin-client-core511-tower-26b36cbe0f097a4b.js"
+      ],
+      [
+        "core511-tower-883a5a8eb2d26522.js",
+        "core511-tower-0cc61a7954f91869.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR25": {
+    "version": "client-r25",
+    "priorGeneratedSha256": "a4354534ea03ffe6b3764a97fc735cbbea886c76c723d0dd6e5c4fd205bd3ef5",
+    "replacement": [
+      [
+        "core511-396a79b1b465969a",
+        "core511-e1ce372903a2e818"
+      ],
+      [
+        "game-client-core511-8157ed046436808d.js",
+        "game-client-core511-b4da60762a22c761.js"
+      ],
+      [
+        "auth-portal-core511-4ac65fde00c1b6ad.js",
+        "auth-portal-core511-3f6f1f364807cf86.js"
+      ],
+      [
+        "admin-client-core511-tower-26b36cbe0f097a4b.js",
+        "admin-client-core511-tower-089ecd7425615cab.js"
+      ],
+      [
+        "core511-tower-0cc61a7954f91869.js",
+        "core511-tower-e71ee32c620d5d9c.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR26": {
+    "version": "client-r26",
+    "priorGeneratedSha256": "5e19d28906a60745d530231fe901038dccddd3dbfcb2ee4fdec4e322fc2a427e",
+    "replacement": [
+      [
+        "core511-e1ce372903a2e818",
+        "core511-1eb6c4ed434e910f"
+      ],
+      [
+        "game-client-core511-b4da60762a22c761.js",
+        "game-client-core511-1d95714ad2c262ff.js"
+      ],
+      [
+        "auth-portal-core511-3f6f1f364807cf86.js",
+        "auth-portal-core511-6ba6111eb64d342f.js"
+      ],
+      [
+        "admin-client-core511-tower-089ecd7425615cab.js",
+        "admin-client-core511-tower-8b75f268d094a334.js"
+      ],
+      [
+        "core511-tower-e71ee32c620d5d9c.js",
+        "core511-tower-03c17a08a07307f5.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR27": {
+    "version": "client-r27",
+    "priorGeneratedSha256": "b440509bf106065d6ec4df271b4091dfb564dfff69239ca6938a59c89ba45f63",
+    "replacement": [
+      [
+        "core511-1eb6c4ed434e910f",
+        "core511-4c1348de4a2bffad"
+      ],
+      [
+        "game-client-core511-1d95714ad2c262ff.js",
+        "game-client-core511-a17540effc0e1c93.js"
+      ],
+      [
+        "auth-portal-core511-6ba6111eb64d342f.js",
+        "auth-portal-core511-48fee479632971f3.js"
+      ],
+      [
+        "admin-client-core511-tower-8b75f268d094a334.js",
+        "admin-client-core511-tower-5d97850bca96bd02.js"
+      ],
+      [
+        "core511-tower-03c17a08a07307f5.js",
+        "core511-tower-a9fea4efdcb8795b.js"
+      ],
+      [
+        "core511-transport-ada59ecc1cc72895.js",
+        "core511-transport-1131bd5e929d762d.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR28": {
+    "version": "client-r28",
+    "priorGeneratedSha256": "701cc83697a6f91976d97cbce39ae650d4563c574992597bd99349009f3a174b",
+    "replacement": [
+      [
+        "core511-4c1348de4a2bffad",
+        "core511-70ee70fed251562d"
+      ],
+      [
+        "game-client-core511-a17540effc0e1c93.js",
+        "game-client-core511-bb2169ce63d26941.js"
+      ],
+      [
+        "auth-portal-core511-48fee479632971f3.js",
+        "auth-portal-core511-4f1809880185c8ba.js"
+      ],
+      [
+        "admin-client-core511-tower-5d97850bca96bd02.js",
+        "admin-client-core511-tower-fea158a9331cd77f.js"
+      ],
+      [
+        "core511-tower-a9fea4efdcb8795b.js",
+        "core511-tower-d995c3e218f7de6e.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR29": {
+    "version": "client-r29",
+    "priorGeneratedSha256": "e14bfa8a80cead5dc29fed09e07c72e8e8120ec6bee7c89177869b1dd11b8a4a",
+    "replacement": [
+      [
+        "core511-70ee70fed251562d",
+        "core511-3c7e114be408a4ea"
+      ],
+      [
+        "auth-portal-core511-4f1809880185c8ba.js",
+        "auth-portal-core511-8e0053963ceae635.js"
+      ]
+    ],
+    "scope": "Exact immutable asset references only; native HTTP behavior and authorization unchanged."
+  },
+  "clientR31": {
+    "version": "client-r31",
+    "priorGeneratedSha256": "cc4bdcb8b5488a07640ee8471db679410a7bf4d9ac6c0c3a90a6cb4807189e33",
+    "replacement": [
+      [
+        "core511-3c7e114be408a4ea",
+        "core511-1964a6e3f814be62"
+      ],
+      [
+        "game-client-core511-bb2169ce63d26941.js",
+        "game-client-core511-7745f5f689c9c02b.js"
+      ],
+      [
+        "auth-portal-core511-8e0053963ceae635.js",
+        "auth-portal-core511-1bd770df7c9ac450.js"
+      ],
+      [
+        "admin-client-core511-tower-fea158a9331cd77f.js",
+        "admin-client-core511-tower-2960d2eddd429b89.js"
+      ],
+      [
+        "core511-tower-d995c3e218f7de6e.js",
+        "core511-tower-0fd926810ba551cc.js"
+      ],
+      [
+        "core511-transport-1131bd5e929d762d.js",
+        "core511-transport-d78d0fe646eb3b04.js"
+      ]
+    ],
+    "scope": "Exact immutable client references plus pinned, reversible admin-only Azrail route insertion.",
+    "adminRoute": {
+      "sourceSha256": "cc4bdcb8b5488a07640ee8471db679410a7bf4d9ac6c0c3a90a6cb4807189e33",
+      "patchedSha256": "c6d9e9e45f7cc0331751283317b4a28ee1a5c0e668520f5d82205c541df78de5",
+      "edits": [
+        {
+          "start": 1562446,
+          "end": 1562446,
+          "original": "",
+          "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='azrail-grant'){\n   try{\n    const payload=await readJsonObject(request);\n    if(payload.action!=='grant_azrail_chests')return Response.json({error:'Geçersiz sandık gönderme işlemi.'},{status:400,headers:{'cache-control':'no-store'}});\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511AzrailGrant;if(!service)return Response.json({error:'Sandık gönderimi henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const azrailGrant=await service.grant(payload,{adminId:identity.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}});\n    return Response.json({adminRefreshRequired508:true,azrailGrant},{headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Sandık gönderimi doğrulanamadı. Aynı işlemi yeniden sorgula.':error.message},{status,headers:{'cache-control':'no-store'}});}\n  }"
+        }
+      ],
+      "scope": "Additive admin-only Azrail grant after unchanged native requireAdmin and same-Origin guards; original 16KiB JSON reader; authenticated provider identity rechecked inside the serial queue; target-only durable writer service."
+    },
+    "adminRouteSourceSha256": "8af41302cd32442c7816fcbc23693cb042aef0bb93d67ad08dff49a9ed231016"
+  },
+  "clientR32": {
+    "version": "client-r32",
+    "priorGeneratedSha256": "44870a17c7a8dd0db7fe64b67f32d5a1cab90499c9a39edaad85135887f4b54f",
+    "replacement": [
+      [
+        "core511-1964a6e3f814be62",
+        "core511-e55ca4c0fb4504f8"
+      ],
+      [
+        "game-client-core511-7745f5f689c9c02b.js",
+        "game-client-core511-f01650de27194d12.js"
+      ],
+      [
+        "auth-portal-core511-1bd770df7c9ac450.js",
+        "auth-portal-core511-9505870824ed70f2.js"
+      ],
+      [
+        "core511-transport-d78d0fe646eb3b04.js",
+        "core511-transport-a33590dbdc3d2471.js"
+      ]
+    ],
+    "scope": "Exact immutable movement client references only; R31 HTTP routes and authorization remain unchanged."
+  },
+  "clientR33": {
+    "version": "client-r33",
+    "priorGeneratedSha256": "45378565a64198e36b61d759fc6bc00179be275afc44fbcbeb74968e0b63d6ff",
+    "replacement": [
+      [
+        "core511-e55ca4c0fb4504f8",
+        "core511-5e7e2a0119d81307"
+      ],
+      [
+        "game-client-core511-f01650de27194d12.js",
+        "game-client-core511-19059e4691f31505.js"
+      ],
+      [
+        "auth-portal-core511-9505870824ed70f2.js",
+        "auth-portal-core511-5613640e224c448a.js"
+      ],
+      [
+        "core511-transport-a33590dbdc3d2471.js",
+        "core511-transport-5dda17a16428eb33.js"
+      ]
+    ],
+    "scope": "Exact immutable movement client references only; R31 HTTP routes and authorization remain unchanged."
+  },
+  "clientR34": {
+    "version": "client-r34",
+    "priorGeneratedSha256": "3c935e9b811e091cf65d82c75510362bbdb63f036a7b8f22785009f338424795",
+    "replacement": [
+      [
+        "core511-5e7e2a0119d81307",
+        "core511-731772380de101f6"
+      ],
+      [
+        "game-client-core511-19059e4691f31505.js",
+        "game-client-core511-d06b5d88b64ced7f.js"
+      ],
+      [
+        "auth-portal-core511-5613640e224c448a.js",
+        "auth-portal-core511-6db9f584c0fe7526.js"
+      ],
+      [
+        "admin-client-core511-tower-2960d2eddd429b89.js",
+        "admin-client-core511-tower-e422940c8dd67f84.js"
+      ],
+      [
+        "core511-transport-5dda17a16428eb33.js",
+        "core511-transport-eef779dbd19520ab.js"
+      ]
+    ],
+    "scope": "Immutable client references and additive AFK/motion admin routes under unchanged native authorization.",
+    "afkRoute": {
+      "sourceSha256": "3c935e9b811e091cf65d82c75510362bbdb63f036a7b8f22785009f338424795",
+      "patchedSha256": "22fc4bacbccdfcbef4a137c0efe91295d61a32b67693898c1051dc84f63ddd67",
+      "edits": [
+        {
+          "start": 1560546,
+          "end": 1560546,
+          "original": "",
+          "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='afk'){\n   try{\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511AfkAdmin;if(!service)return Response.json({error:'Doğrulama hizmeti henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const query=Object.fromEntries(new URL(request.url).searchParams);\n    if(!['list','detail','settings','online'].includes(query.action??'list'))return Response.json({error:'Geçersiz doğrulama sorgusu.'},{status:400,headers:{'cache-control':'no-store'}});\n    return Response.json(await service.read(query,{adminId:identity.id,adminName:identity.displayName??identity.id}),{headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Doğrulama kayıtları okunamadı.':error.message},{status,headers:{'cache-control':'no-store'}});}\n  }"
+        },
+        {
+          "start": 1562446,
+          "end": 1562446,
+          "original": "",
+          "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='afk'){\n   try{\n    const payload=await readJsonObject(request);\n    if(!['force','unlock','clean','watch','settings'].includes(payload.action))return Response.json({error:'Geçersiz doğrulama işlemi.'},{status:400,headers:{'cache-control':'no-store'}});\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511AfkAdmin;if(!service)return Response.json({error:'Doğrulama hizmeti henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const result=await service.mutate(payload,{adminId:identity.id,adminName:identity.displayName??identity.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}});\n    return Response.json(result?.body??result,{status:result?.status??200,headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Doğrulama işlemi tamamlanamadı. Kayıtları yenileyerek sonucu kontrol et.':error.message},{status,headers:{'cache-control':'no-store'}});}\n  }"
+        }
+      ],
+      "scope": "Additive admin AFK GET/POST branches after unchanged native admin authorization and mutation Origin guard. Original 16 KiB JSON reader and queue-time reauthorization; no snapshot or gameplay mutation."
+    },
+    "motionRoute": {
+      "sourceSha256": "22fc4bacbccdfcbef4a137c0efe91295d61a32b67693898c1051dc84f63ddd67",
+      "patchedSha256": "32c7c4aaf27815b77f102175929c92b2533494ecab478c55c527506c3c367340",
+      "edits": [
+        {
+          "start": 1560546,
+          "end": 1560546,
+          "original": "",
+          "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='motion'){\n   try{\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511MotionAdmin;if(!service)return Response.json({error:'Hareket ayarı hizmeti henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const query=Object.fromEntries(new URL(request.url).searchParams);\n    if(!['settings'].includes(query.action??'settings'))return Response.json({error:'Geçersiz hareket ayarı sorgusu.'},{status:400,headers:{'cache-control':'no-store'}});\n    return Response.json(await service.read(query,{adminId:identity.id,adminName:identity.displayName??identity.id}),{headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Hareket ayarı kayıtları okunamadı.':error.message},{status,headers:{'cache-control':'no-store'}});}\n  }"
+        },
+        {
+          "start": 1563566,
+          "end": 1563566,
+          "original": "",
+          "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='motion'){\n   try{\n    const payload=await readJsonObject(request);\n    if(!['settings'].includes(payload.action))return Response.json({error:'Geçersiz hareket ayarı işlemi.'},{status:400,headers:{'cache-control':'no-store'}});\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511MotionAdmin;if(!service)return Response.json({error:'Hareket ayarı hizmeti henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const result=await service.mutate(payload,{adminId:identity.id,adminName:identity.displayName??identity.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}});\n    return Response.json(result?.body??result,{status:result?.status??200,headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Hareket ayarı işlemi tamamlanamadı. Kayıtları yenileyerek sonucu kontrol et.':error.message},{status,headers:{'cache-control':'no-store'}});}\n  }"
+        }
+      ],
+      "scope": "Additive admin motion proximity GET/POST branches after unchanged native admin authorization and mutation Origin guard. Original 16 KiB JSON reader and queue-time reauthorization; no snapshot or gameplay mutation."
+    },
+    "afkRouteSourceSha256": "088f507a020374628e7a2e55eb0190e625682bea1fd6f1eaf663fac1e5b8ae44",
+    "motionRouteSourceSha256": "3c4617cfcfa03ac49e6bd0bbb33a9b796be8b9234c04fe82ad2ef21b5737a35a"
+  },
+  "clientR40": {
+    "version": "client-r40",
+    "priorGeneratedSha256": "d40b10620228e57eefee08a0b11c407da6cd9be1bf3139f5efe90a904117a424",
+    "replacement": [
+      [
+        "core511-731772380de101f6",
+        "core511-7dad8c9927e0da43"
+      ],
+      [
+        "game-client-core511-d06b5d88b64ced7f.js",
+        "game-client-core511-84800e83d43aebc7.js"
+      ],
+      [
+        "auth-portal-core511-6db9f584c0fe7526.js",
+        "auth-portal-core511-c73b7a58800fd2fa.js"
+      ],
+      [
+        "core511-tower-0fd926810ba551cc.js",
+        "core511-tower-82aad0eddc05ec97.js"
+      ],
+      [
+        "core511-transport-eef779dbd19520ab.js",
+        "core511-transport-4744fba7c4e82e6a.js"
+      ]
+    ],
+    "priorClientProofSha256": "2275936e683d4646f5df0d2d6b814817dec514f6cd9875e8997d41961f450eaf",
+    "clientProofSha256": "9717139c9471601d40ea9a41233f006598f8c39abdf741be86698445e43b6a87",
+    "scope": "Exact immutable asset references; requested behavior is gated in client/core sources."
+  },
+  "clientR41Bag": {
+    "version": "client-r41-bag-1",
+    "priorGeneratedSha256": "751270f0e8db5a2ada74e22af2c6b0421fe24996183815751abb7faed684e134",
+    "replacement": [
+      [
+        "core511-7dad8c9927e0da43",
+        "core511-44c6ddc7eb47aca1"
+      ],
+      [
+        "game-client-core511-84800e83d43aebc7.js",
+        "game-client-core511-d35a5765091a8a02.js"
+      ],
+      [
+        "auth-portal-core511-c73b7a58800fd2fa.js",
+        "auth-portal-core511-06f858c5b9a9c5b7.js"
+      ]
+    ],
+    "priorClientProofSha256": "9717139c9471601d40ea9a41233f006598f8c39abdf741be86698445e43b6a87",
+    "clientProofSha256": "9658d7ff30c8ba66a91aaacddaeeb4dd78a5f6a0de3011cc9e7c28d3bcaa04c5",
+    "scope": "Authorized auto-collection selection/warning and pending bag counter; R40 movement/render and other fixes retained."
+  },
+  "clientR43": {
+    "version": "client-r43-1",
+    "priorGeneratedSha256": "cbb1d5a44c073629d60b48c26b62d5ddba978bd05d1347117f35282ac401fef1",
+    "replacement": [
+      [
+        "core511-44c6ddc7eb47aca1",
+        "core511-3fe773354911df42"
+      ],
+      [
+        "game-client-core511-d35a5765091a8a02.js",
+        "game-client-core511-868af9961897e862.js"
+      ],
+      [
+        "auth-portal-core511-06f858c5b9a9c5b7.js",
+        "auth-portal-core511-f12dbe4ef1880d94.js"
+      ],
+      [
+        "core511-transport-4744fba7c4e82e6a.js",
+        "core511-transport-ec59822b3102eed7.js"
+      ]
+    ],
+    "priorClientProofSha256": "9658d7ff30c8ba66a91aaacddaeeb4dd78a5f6a0de3011cc9e7c28d3bcaa04c5",
+    "clientProofSha256": "5af02950e55f1e801c748efb931c0ac0cf61c347f1ec42fa029051ec1b893d8b",
+    "scope": "R43 tower material parser and authorized PvP input, remote pose and motion presentation; native SQL and authority unchanged."
+  },
+  "clientR44": {
+    "version": "client-r44-1",
+    "priorGeneratedSha256": "ad8aec6b204071955e8e21ab37f3146fbbf909b58f2bc517e2e80358f3079bda",
+    "replacement": [
+      [
+        "core511-3fe773354911df42",
+        "core511-9a32cad5676734d5"
+      ],
+      [
+        "game-client-core511-868af9961897e862.js",
+        "game-client-core511-deab4a2db886e8b6.js"
+      ],
+      [
+        "auth-portal-core511-f12dbe4ef1880d94.js",
+        "auth-portal-core511-cba4fe4242ff9f4a.js"
+      ],
+      [
+        "core511-transport-ec59822b3102eed7.js",
+        "core511-transport-a41d98ef44614573.js"
+      ]
+    ],
+    "priorClientProofSha256": "5af02950e55f1e801c748efb931c0ac0cf61c347f1ec42fa029051ec1b893d8b",
+    "clientProofSha256": "29c02c29578a65a7c3b74a57c6c9c7ab91eecdc8291b900df28921a0504b9612",
+    "scope": "Authorized auto-collection selection/warning and pending bag counter; R43 movement/render and other fixes retained."
+  },
+  "clientR45": {
+    "version": "client-r45-1",
+    "priorGeneratedSha256": "2cc1af426444bcaf65c4afffef9fb55e4d4d2a25f2a42f6425eb85a56b4c48a9",
+    "replacement": [
+      [
+        "core511-9a32cad5676734d5",
+        "core511-1a14d475490627f0"
+      ],
+      [
+        "game-client-core511-deab4a2db886e8b6.js",
+        "game-client-core511-c319bdc7c26a73cf.js"
+      ],
+      [
+        "auth-portal-core511-cba4fe4242ff9f4a.js",
+        "auth-portal-core511-544d863b68a44358.js"
+      ],
+      [
+        "core511-transport-a41d98ef44614573.js",
+        "core511-transport-f4cb97c87256787f.js"
+      ]
+    ],
+    "priorClientProofSha256": "29c02c29578a65a7c3b74a57c6c9c7ab91eecdc8291b900df28921a0504b9612",
+    "clientProofSha256": "38dc4e4e67b1230eb0551c42681a41ac3a964b66e14c9872687223229979e296",
+    "scope": "R45 continuous remote presentation across checkpoint and sparse-preview delivery; authority unchanged."
+  },
+  "clientR46": {
+    "version": "client-r46-1",
+    "priorGeneratedSha256": "4232ae891f5d1c6fff53f55a9e98f05db9a7cb378cc83e896229d4aa016d9202",
+    "replacement": [
+      [
+        "core511-1a14d475490627f0",
+        "core511-878ddf58d21b2d3b"
+      ],
+      [
+        "game-client-core511-c319bdc7c26a73cf.js",
+        "game-client-core511-5422c10d9b97da3e.js"
+      ],
+      [
+        "auth-portal-core511-544d863b68a44358.js",
+        "auth-portal-core511-0cb36e7e2131e948.js"
+      ],
+      [
+        "core511-transport-f4cb97c87256787f.js",
+        "core511-transport-aa935bdb3e6bd8ea.js"
+      ]
+    ],
+    "priorClientProofSha256": "38dc4e4e67b1230eb0551c42681a41ac3a964b66e14c9872687223229979e296",
+    "clientProofSha256": "fc96bd777f47c10ab1c2e012a9b36bcdf5dd9963c8b4dbc1b5301f2dc9d2f38a",
+    "scope": "R46 source RAF presentation clock; authority and receipt-time validation unchanged."
+  },
+  "clientR49": {
+    "version": "client-r49-1",
+    "priorGeneratedSha256": "0421fe79447ef025658800afb5d032533918b7f6fccc99256d1bc6eb6348125c",
+    "replacement": [
+      [
+        "core511-878ddf58d21b2d3b",
+        "core511-dcfcbd8d5b08430a"
+      ],
+      [
+        "game-client-core511-5422c10d9b97da3e.js",
+        "game-client-core511-523abd1b22f77083.js"
+      ],
+      [
+        "auth-portal-core511-0cb36e7e2131e948.js",
+        "auth-portal-core511-fa52ad8a5808dfb9.js"
+      ],
+      [
+        "admin-client-core511-tower-e422940c8dd67f84.js",
+        "admin-client-core511-mount-68d89c19066517d7.js"
+      ]
+    ],
+    "priorClientProofSha256": "fc96bd777f47c10ab1c2e012a9b36bcdf5dd9963c8b4dbc1b5301f2dc9d2f38a",
+    "clientProofSha256": "8c52fde75e45e589965e26fc57703683551cd133b5b0abb0db2f9cda2ebfa42b",
+    "adminRoute": {
+      "sourceSha256": "0421fe79447ef025658800afb5d032533918b7f6fccc99256d1bc6eb6348125c",
+      "patchedSha256": "044eae4d9fb09c65f1a5bfa1d58536138ec71309590566953f2d3c5f16f85bc6",
+      "admin": {
+        "sourceSha256": "0421fe79447ef025658800afb5d032533918b7f6fccc99256d1bc6eb6348125c",
+        "patchedSha256": "da6710e4904bf605d609b11a88e83f1490986655d5aa6155fb9f6cdc340ac74d",
+        "edits": [
+          {
+            "start": 1565175,
+            "end": 1565175,
+            "original": "",
+            "replacement": "\n  if(new URL(request.url).searchParams.get('core511')==='mounts'){\n   try{\n    const payload=await readJsonObject(request);\n    if(payload.action!=='grant_mount_material_r49')return Response.json({error:'Geçersiz binek malzemesi gönderme işlemi.'},{status:400,headers:{'cache-control':'no-store'}});\n    const identity=await getChatGPTUser();if(typeof identity?.id!=='string'||!identity.id)return Response.json({error:'Yönetici kimliği doğrulanamadı.'},{status:403,headers:{'cache-control':'no-store'}});\n    const service=db().core511MountGrantR49;if(!service)return Response.json({error:'Binek malzemesi gönderimi henüz hazır değil.'},{status:503,headers:{'cache-control':'no-store'}});\n    const mountGrant=await service.grant(payload,{adminId:identity.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}});\n    return Response.json({adminRefreshRequired508:true,mountGrant},{headers:{'cache-control':'no-store'}});\n   }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'Gönderim doğrulanamadı. Aynı işlemi yeniden sorgula.':error.message,...(status!==500&&typeof error?.gameCode==='string'?{code:error.gameCode}:{})},{status,headers:{'cache-control':'no-store'}});}\n  }"
+          }
+        ],
+        "scope": "Additive mount-material grant after unchanged native admin/same-origin guards, original bounded JSON reader, provider identity rechecked inside serial queue, target-only durable writer and shared mount receipt."
+      },
+      "player": {
+        "sourceSha256": "da6710e4904bf605d609b11a88e83f1490986655d5aa6155fb9f6cdc340ac74d",
+        "patchedSha256": "044eae4d9fb09c65f1a5bfa1d58536138ec71309590566953f2d3c5f16f85bc6",
+        "edits": [
+          {
+            "start": 2215244,
+            "end": 2215286,
+            "original": "_virtual_vinext_rsc_entry_default(...args)",
+            "replacement": "(new URL(args[0].url).pathname==='/api/mount-r49'?core511MountHttpRouteR49(args[0]):_virtual_vinext_rsc_entry_default(...args))"
+          },
+          {
+            "start": 1019652,
+            "end": 1019652,
+            "original": "",
+            "replacement": "if(path==='/api/mount-r49')return true;"
+          },
+          {
+            "start": 2215290,
+            "end": 2215290,
+            "original": "",
+            "replacement": "\nasync function core511MountHttpRouteR49(request){\n const headers=noStoreHeaders();\n if(!['GET','POST'].includes(request.method)){headers.set('Allow','GET, POST');return Response.json({error:'Geçersiz HTTP yöntemi.'},{status:405,headers});}\n try{\n  const auth=await requireGameSession(request);\n  if(request.method==='POST')await assertCsrf(request,auth);\n  if(!auth.player)return Response.json({error:'Karakter gerekli.',code:'mount_character_required'},{status:409,headers});\n  const input=request.method==='GET'?{action:'status'}:await readJsonObject(request,2048);\n  await enforceRateLimit(input.action==='status'?'mount-status-r49':'mount-command-r49',auth.account.id,input.action==='status'?{limit:20,windowSeconds:10,blockSeconds:10}:{limit:8,windowSeconds:10,blockSeconds:10});\n  const service=db().core511MountR49;\n  if(!service)return Response.json({error:'Binek hizmeti henüz hazır değil.',code:'mount_unavailable'},{status:503,headers});\n  const result=await service.execute(auth,input,async()=>{const current=await requireGameSession(request);if(request.method==='POST')await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yeniden aç.');return current;});\n  const status=result?.ok===false&&[400,403,404,409,422,423,429,503].includes(result.status)?result.status:200;\n  return Response.json(result,{status,headers});\n }catch(error){\n  if(error instanceof AuthRequestError)return authErrorResponse(error);\n  if(error?.mountRule===true){const status=[400,401,403,404,409,422,423,429,503].includes(error.status)?error.status:409;return Response.json({ok:false,error:error.message,code:error.gameCode},{status,headers});}\n  return Response.json({ok:false,error:'İşlem sonucu henüz doğrulanamadı. Aynı işlemi yeniden sorgula.',code:'command_outcome_unknown'},{status:503,headers});\n }\n}\n"
+          }
+        ],
+        "scope": "Dedicated mount route inside existing native fallback; unchanged native session/maintenance/bot/CSRF/body/rate helpers; path added to native game-instance validation; fresh auth inside target writer queue."
+      },
+      "scope": "R49 additive admin grant and authenticated player mount endpoints; exact inverse supplied."
+    },
+    "adminRouteModuleSha256": "3c6af78d907988ba23a1411825e0c0f3e5f02f028cf862aa3014c481a06e8a3a",
+    "scope": "R49 earned mount UI, graphics and admin player-item grant references; exact reversible HTTP composition."
+  },
+  "clientR50Claim": {
+    "version": "client-r50-claim-1",
+    "priorGeneratedSha256": "0d021f679ec4ce7aaad00ddce75608deda544715bdc85befa7cbba25f66baa4f",
+    "replacement": [
+      [
+        "core511-dcfcbd8d5b08430a",
+        "core511-42f07b09fdc3ad9e"
+      ],
+      [
+        "game-client-core511-523abd1b22f77083.js",
+        "game-client-core511-e06361842ac68ac0.js"
+      ],
+      [
+        "auth-portal-core511-fa52ad8a5808dfb9.js",
+        "auth-portal-core511-db0847ffa825905d.js"
+      ],
+      [
+        "core511-transport-aa935bdb3e6bd8ea.js",
+        "core511-transport-56e6285d06611c3a.js"
+      ]
+    ],
+    "priorClientProofSha256": "8c52fde75e45e589965e26fc57703683551cd133b5b0abb0db2f9cda2ebfa42b",
+    "clientProofSha256": "ef5416b40c04f43883eab7616d4e81b85c8eb688a7624b3a4c267eb57f32240f",
+    "scope": "R50 bounded claim batches and claim-only timeout; exact reversible immutable client references, no movement or mount edits."
+  },
+  "clientR55Gameplay": {
+    "version": "client-r55-gameplay-1",
+    "priorGeneratedSha256": "4f1153523a091475c230c7defe5b5bff03b9426a618681b29858abeb8c2bf635",
+    "replacement": [
+      [
+        "core511-42f07b09fdc3ad9e",
+        "core511-a235a9ca9ac29dc7"
+      ],
+      [
+        "game-client-core511-e06361842ac68ac0.js",
+        "game-client-core511-c03c215f6b74a4e5.js"
+      ],
+      [
+        "auth-portal-core511-db0847ffa825905d.js",
+        "auth-portal-core511-466b1c35366a9228.js"
+      ],
+      [
+        "admin-client-core511-mount-68d89c19066517d7.js",
+        "admin-client-core511-r55-a9b449d1de148a36.js"
+      ]
+    ],
+    "priorClientProofSha256": "ef5416b40c04f43883eab7616d4e81b85c8eb688a7624b3a4c267eb57f32240f",
+    "clientProofSha256": "cb76e67fc002078037f5419685e2227ebbdc1b3588ec3050dea5e56f617fc535",
+    "scope": "R55 gameplay fixes; authenticated admin material and mount settings route; exact reversible immutable client references."
+  },
+  "clientR58Gameplay": {
+    "version": "client-r58-gameplay-1",
+    "priorGeneratedSha256": "584e5c619b32e2aacd46f752d150a2d0befdceb50582b35f9cc4a09dbeefb0f3",
+    "replacement": [
+      [
+        "core511-a235a9ca9ac29dc7",
+        "core511-acaa405aa978feff"
+      ],
+      [
+        "game-client-core511-c03c215f6b74a4e5.js",
+        "game-client-core511-175b36dc319ebabf.js"
+      ],
+      [
+        "auth-portal-core511-466b1c35366a9228.js",
+        "auth-portal-core511-dbcfa63db52a6fd4.js"
+      ],
+      [
+        "admin-client-core511-r55-a9b449d1de148a36.js",
+        "admin-client-core511-r58-4f88992ba49f968d.js"
+      ]
+    ],
+    "priorClientProofSha256": "cb76e67fc002078037f5419685e2227ebbdc1b3588ec3050dea5e56f617fc535",
+    "clientProofSha256": "08953c760cc29df437b9a6107d1d5a28acdfa7f98191163ba136966540e24c1b",
+    "scope": "R58 gameplay fixes; authenticated Sis/Sinsi loot preview; exact reversible immutable client references."
+  },
+  "clientR59Gameplay": {
+    "version": "client-r59-gameplay-1",
+    "priorGeneratedSha256": "7d2c7563d6c5331f9a0ad804809e7de47ada7a1ba4c695e30a10d9ca50114516",
+    "replacement": [
+      [
+        "core511-acaa405aa978feff",
+        "core511-325eb25e79d4d6a2"
+      ],
+      [
+        "game-client-core511-175b36dc319ebabf.js",
+        "game-client-core511-e3ffadcfa8797a18.js"
+      ],
+      [
+        "auth-portal-core511-dbcfa63db52a6fd4.js",
+        "auth-portal-core511-46f7b05b3126bd78.js"
+      ],
+      [
+        "admin-client-core511-r58-4f88992ba49f968d.js",
+        "admin-client-core511-r59-f5c1b1e8701acbd3.js"
+      ],
+      [
+        "core511-transport-56e6285d06611c3a.js",
+        "core511-transport-r59-823c80078bca5438.js"
+      ],
+      [
+        "core511-tower-82aad0eddc05ec97.js",
+        "core511-tower-r59-452c294fa63f2c02.js"
+      ]
+    ],
+    "priorClientProofSha256": "08953c760cc29df437b9a6107d1d5a28acdfa7f98191163ba136966540e24c1b",
+    "clientProofSha256": "b2726aa400f6572a3b18a821b095b4d8c5d4f209b3de57b7cedb27aa4b728689",
+    "scope": "R59 gameplay fixes; authenticated Sis/Sinsi loot preview; exact reversible immutable client references."
+  },
+  "clientR60Gameplay": {
+    "version": "client-r60-gameplay-1",
+    "priorGeneratedSha256": "7fba70a6fda17c5214bdd008d1e03119a919fc020b63910881e7a6c37aa95864",
+    "replacement": [
+      [
+        "core511-325eb25e79d4d6a2",
+        "core511-ce7b964eaab97ff8"
+      ],
+      [
+        "game-client-core511-e3ffadcfa8797a18.js",
+        "game-client-core511-fb45acef70d1b333.js"
+      ],
+      [
+        "auth-portal-core511-46f7b05b3126bd78.js",
+        "auth-portal-core511-8aee3ee860205a58.js"
+      ],
+      [
+        "core511-tower-r59-452c294fa63f2c02.js",
+        "core511-tower-r60-93f5eafdb8fed403.js"
+      ]
+    ],
+    "priorClientProofSha256": "b2726aa400f6572a3b18a821b095b4d8c5d4f209b3de57b7cedb27aa4b728689",
+    "clientProofSha256": "f62662dee777d7f4f07e76b37681d24a42514d2b012768436f72edeba70686df",
+    "scope": "R60 gameplay fixes; stackable mount materials, riding state and daily castle notices; exact reversible immutable client references."
+  },
+  "clientR61Audio": {
+    "version": "client-r61-audio-1",
+    "priorGeneratedSha256": "4917e6f5e9fee6816d020896eb26b47b69259356d943de985d9056b01131bc15",
+    "replacement": [
+      [
+        "core511-ce7b964eaab97ff8",
+        "core511-c2f173cf2145e0ae"
+      ],
+      [
+        "game-client-core511-fb45acef70d1b333.js",
+        "game-client-core511-d1966ca3eb09ce44.js"
+      ],
+      [
+        "auth-portal-core511-8aee3ee860205a58.js",
+        "auth-portal-core511-1327c58a8b279fa7.js"
+      ]
+    ],
+    "priorClientProofSha256": "f62662dee777d7f4f07e76b37681d24a42514d2b012768436f72edeba70686df",
+    "clientProofSha256": "fc684e864af345b385c20326c3f6e567a8933df2f7fa0b3d737745dc73d29113",
+    "scope": "R61 gameplay fixes; stackable mount materials, riding state and daily castle notices; exact reversible immutable client references."
+  },
+  "clientR62Polish": {
+    "version": "client-r62-polish-1",
+    "priorGeneratedSha256": "f3bbc4d46ff412de9c11cc71a149882efc8972f680f350d4e1ac72d495e86c70",
+    "replacement": [
+      [
+        "core511-c2f173cf2145e0ae",
+        "core511-4df7e80175d8d45e"
+      ],
+      [
+        "game-client-core511-d1966ca3eb09ce44.js",
+        "game-client-core511-4b42be76aa93f01c.js"
+      ],
+      [
+        "auth-portal-core511-1327c58a8b279fa7.js",
+        "auth-portal-core511-0f0e6524ee433608.js"
+      ],
+      [
+        "core511-tower-r60-93f5eafdb8fed403.js",
+        "core511-tower-r62-d25862551937995b.js"
+      ]
+    ],
+    "priorClientProofSha256": "fc684e864af345b385c20326c3f6e567a8933df2f7fa0b3d737745dc73d29113",
+    "clientProofSha256": "0424a89d23f752012f9e0a89b2bd6125e6b28abde5372b31aa746a44b83668dc",
+    "scope": "R62 gameplay fixes; stackable mount materials, riding state and daily castle notices; exact reversible immutable client references."
+  },
+  "adminSettingsR65": {
+    "sourceSha256": "0283d8f0f9c774e54b1472c2f55efc5b45f1018dc28a2faf038b948b2bee08fe",
+    "patchedSha256": "1af6bfd1ed1adc20850164226aeb3ca5833a541ed5e7bd5a732d8b534b14836d",
+    "edits": [
+      {
+        "start": 1577695,
+        "end": 1577695,
+        "original": "",
+        "replacement": "\nconst runAdminSettingsBodyR65=async()=>{\n"
+      },
+      {
+        "start": 1665873,
+        "end": 1665873,
+        "original": "",
+        "replacement": "\n};\nreturn await ([\"save_settings\",\"save_level_curve\",\"save_level_balance487\",\"save_fishing_chances482\",\"save_specialist_skills459\",\"save_events\",\"event_start\",\"event_schedule\",\"event_stop\",\"enhancement_settings491\",\"cauldron_settings488\",\"save_forest_loot_policy\",\"beta_schedule\",\"beta_start\",\"set_decor_layout\",\"reset_decor_layout\",\"set_map_theme\",\"set_new_year_mode\",\"set_halloween_mode\"].includes(payload.action)?database.core511Configuration.runAdminSettingsR65(payload.action,runAdminSettingsBodyR65,async()=>{if(!await requireAdmin())throw new AuthRequestError(403,\"admin_required\",\"Bu alan yalnızca oyun yöneticisine açık.\");assertSameOrigin(request);}):runAdminSettingsBodyR65());\n"
+      }
+    ],
+    "actions": [
+      "save_settings",
+      "save_level_curve",
+      "save_level_balance487",
+      "save_fishing_chances482",
+      "save_specialist_skills459",
+      "save_events",
+      "event_start",
+      "event_schedule",
+      "event_stop",
+      "enhancement_settings491",
+      "cauldron_settings488",
+      "save_forest_loot_policy",
+      "beta_schedule",
+      "beta_start",
+      "set_decor_layout",
+      "reset_decor_layout",
+      "set_map_theme",
+      "set_new_year_mode",
+      "set_halloween_mode"
+    ],
+    "scope": "Legacy settings writes now drain, commit and refresh all four channels and shared world; original route bodies and authorization retained."
+  },
+  "adminSavesR66": {
+    "sourceSha256": "1af6bfd1ed1adc20850164226aeb3ca5833a541ed5e7bd5a732d8b534b14836d",
+    "patchedSha256": "337bfdd35776991afac6420016d773a72b0829d7bd91119af454731c607bef22",
+    "edits": [
+      {
+        "from": "[\"save_settings\",\"save_level_curve\",\"save_level_balance487\",\"save_fishing_chances482\",\"save_specialist_skills459\",\"save_events\",\"event_start\",\"event_schedule\",\"event_stop\",\"enhancement_settings491\",\"cauldron_settings488\",\"save_forest_loot_policy\",\"beta_schedule\",\"beta_start\",\"set_decor_layout\",\"reset_decor_layout\",\"set_map_theme\",\"set_new_year_mode\",\"set_halloween_mode\"].includes(payload.action)?database.core511Configuration.runAdminSettingsR65",
+        "to": "[\"save_settings\",\"save_level_curve\",\"save_level_balance487\",\"save_fishing_chances482\",\"save_specialist_skills459\",\"save_events\",\"event_start\",\"event_schedule\",\"event_stop\",\"enhancement_settings491\",\"cauldron_settings488\",\"save_forest_loot_policy\",\"beta_schedule\",\"beta_start\",\"set_decor_layout\",\"reset_decor_layout\",\"set_map_theme\",\"set_new_year_mode\",\"set_halloween_mode\",\"save_broken_core464\"].includes(payload.action)?database.core511Configuration.runAdminSettingsR65"
+      },
+      {
+        "from": "try{return await channelPermanent(payload.action==='save_broken_core464'?[]:[payload.playerId],()=>adminNativeCore464(globalThis.__colPremium?.db??database.sqlite,payload,adminId));}",
+        "to": "try{if(payload.action==='save_broken_core464')return adminNativeCore464(globalThis.__colPremium?.db??database.sqlite,payload,adminId);return await channelPermanent([payload.playerId],()=>adminNativeCore464(globalThis.__colPremium?.db??database.sqlite,payload,adminId));}"
+      }
+    ],
+    "scope": "Broken-core global save uses authenticated all-owner settings barrier; native validation, transaction, receipt, send and revoke remain unchanged."
+  },
+  "adminR66": {
+    "oldNamespace": "core511-4df7e80175d8d45e",
+    "namespace": "core511-1dcba344a28bee4d",
+    "oldName": "admin-client-core511-r59-f5c1b1e8701acbd3.js",
+    "name": "admin-client-core511-r66-2d71c96186ebc647.js",
+    "sourceSha256": "337bfdd35776991afac6420016d773a72b0829d7bd91119af454731c607bef22",
+    "scope": "Immutable admin asset references; separate adminSavesR66 proof records the global broken-core save correction."
+  },
+  "r67Onboarding": {
+    "oldNamespace": "core511-1dcba344a28bee4d",
+    "namespace": "core511-5e9e96bae6314ca5",
+    "oldName": "game-client-core511-4b42be76aa93f01c.js",
+    "name": "game-client-core511-r67-6bed7e102778aff4.js",
+    "inverseEqual": true,
+    "scope": "Only immutable client asset references; HTTP route logic unchanged."
+  },
+  "r68Launch": {
+    "oldNamespace": "core511-5e9e96bae6314ca5",
+    "namespace": "core511-9a8be44fd94d6b58",
+    "oldName": "game-client-core511-r67-6bed7e102778aff4.js",
+    "name": "game-client-core511-r68-bb8cdac0ab671593.js",
+    "inverseEqual": true,
+    "scope": "Only immutable client references; HTTP routes unchanged."
+  },
+  "r69Gameplay": {
+    "oldNamespace": "core511-9a8be44fd94d6b58",
+    "namespace": "core511-8b269ff6e23e0bd1",
+    "oldName": "game-client-core511-r68-bb8cdac0ab671593.js",
+    "name": "game-client-core511-r69-c4c0efca60d06513.js",
+    "inverseEqual": true,
+    "scope": "Immutable browser references only; native HTTP transactions retained."
+  },
+  "r70Gameplay": {
+    "oldNamespace": "core511-8b269ff6e23e0bd1",
+    "namespace": "core511-decc6090f9189d31",
+    "oldName": "game-client-core511-r69-c4c0efca60d06513.js",
+    "name": "game-client-core511-r70-acc4856781dba977.js",
+    "oldAdmin": "admin-client-core511-r66-2d71c96186ebc647.js",
+    "adminName": "admin-client-core511-r70-5a63a308e7bfabda.js",
+    "inverseEqual": true,
+    "scope": "Immutable browser references; existing authoritative HTTP mutations retained."
+  },
+  "r71Gameplay": {
+    "oldNamespace": "core511-decc6090f9189d31",
+    "namespace": "core511-a50e00a2bf31ba67",
+    "oldName": "game-client-core511-r70-acc4856781dba977.js",
+    "name": "game-client-core511-r71-efdc48cbecfa0289.js",
+    "inverseEqual": true,
+    "scope": "Immutable browser references; authoritative HTTP mutations retained."
+  },
+  "r72TradeIdle": {
+    "sourceSha256": "f8e9e56b6a1fe08456e07b39cffe5c84a594a645d7b807cfc8204108c40bb353",
+    "patchedSha256": "32376b96261f1ebb54e214ceddf00a6e5c5ff6e4c269809e271e3d79045b8987",
+    "edits": [
+      {
+        "from": "db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},()=>(service().snapshot(auth.player.id, new URL(request.url).searchParams.get(\"id\"))))",
+        "to": "db().core511HttpAction.tradeSnapshot(auth,new URL(request.url).searchParams.get(\"id\"),async()=>{const current=await requireGameSession(request);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},()=>(service().snapshot(auth.player.id, new URL(request.url).searchParams.get(\"id\"))))"
+      }
+    ],
+    "inverseEqual": true,
+    "scope": "Authenticated idle trade invitation reads avoid actor drain; active, expired and explicit-ID snapshots retain original permanent gate and native trade service."
+  },
+  "r72VoiceRenew": {
+    "sourceSha256": "32376b96261f1ebb54e214ceddf00a6e5c5ff6e4c269809e271e3d79045b8987",
+    "patchedSha256": "8674f8c0d25719251e97c8dae9619cef4e795ae25c81b7ecbe84b0d76aebdfd8",
+    "inverseEqual": true,
+    "edits": [
+      {
+        "from": "await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>(body.action === \"join\" ? await service.join(auth) : body.action === \"renew\" ? await service.renew(auth, String(body.identity)) : await service.leave(auth, String(body.identity))),true)",
+        "to": "(body.action === \"renew\" ? await db().core511HttpAction.voiceRenew(auth,String(body.identity),async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;}) : await db().core511HttpAction.player(auth,async()=>{const current=await requireGameSession(request);await assertCsrf(request,current);if(current.account.id!==auth.account.id||current.player?.id!==auth.player?.id||current.tokenHash!==auth.tokenHash)throw new AuthRequestError(409,'game_instance_expired','Oyun oturumunu yenile.');return current;},async()=>(body.action === \"join\" ? await service.join(auth) : body.action === \"renew\" ? await service.renew(auth, String(body.identity)) : await service.leave(auth, String(body.identity))),true))"
+      }
+    ],
+    "scope": "Guild voice renew only uses the bound native service after unchanged fresh session, CSRF, account and actor checks. Join and leave retain the permanent gate; native service body and authorization are unchanged."
+  },
+  "r72Gameplay": {
+    "oldNamespace": "core511-a50e00a2bf31ba67",
+    "namespace": "core511-cdeff96124f35273",
+    "oldName": "game-client-core511-r71-efdc48cbecfa0289.js",
+    "name": "game-client-core511-r72-10f67c795498b37b.js",
+    "inverseEqual": true,
+    "scope": "Versioned browser imports, authenticated idle trade reads and bound guild voice lease renewal; authoritative HTTP mutations retained."
+  },
+  "r73Gameplay": {
+    "oldNamespace": "core511-cdeff96124f35273",
+    "namespace": "core511-494fa4c69d8d7da4",
+    "oldName": "game-client-core511-r72-10f67c795498b37b.js",
+    "name": "game-client-core511-r73-be706e266c9b01a4.js",
+    "inverseEqual": true,
+    "scope": "Versioned browser imports for peer presentation; R72 native services and HTTP routes retained."
+  },
+  "r75Gameplay": {
+    "oldNamespace": "core511-494fa4c69d8d7da4",
+    "namespace": "core511-2508e34c37d0c574",
+    "oldName": "game-client-core511-r73-be706e266c9b01a4.js",
+    "name": "game-client-core511-r75-b69215a7f9a7341d.js",
+    "inverseEqual": true,
+    "scope": "Cache-versioned peer-facing browser import; no HTTP route or server rule change."
+  },
+  "r76Gameplay": {
+    "oldNamespace": "core511-2508e34c37d0c574",
+    "namespace": "core511-18019f7f0e36edcc",
+    "oldName": "game-client-core511-r75-b69215a7f9a7341d.js",
+    "name": "game-client-core511-r76-63da43f1e5d71be7.js",
+    "admin": {
+      "sourceSha256": "6d1042cb0e5a4965388cea76e5c12f76d2a3dd187aa8182922a00e0959be035f",
+      "patchedSha256": "bf3fe704a2d65e22798a822d95d2821878dd7d50286f945d930d6ec5a5210f2b",
+      "edits": [
+        {
+          "from": "};\nreturn await ([\"save_settings\",\"save_level_curve\"",
+          "to": "};\nif([\"grant_rank\",\"grant_core_coins\",\"grant_starter_chest\",\"grant_gems\",\"grant_stone_books\",\"set_weapon_evolution_points\",\"grant_evolution_scrolls\",\"grant_item\",\"update_player\"].includes(payload.action)){\n const identityAdminR76=await getChatGPTUser();\n return await database.core511HttpAction.adminPlayer(payload,{adminId:identityAdminR76?.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())throw new AuthRequestError(403,\"admin_required\",\"Bu alan yalnızca oyun yöneticisine açık.\");return (await getChatGPTUser())?.id??null;}},runAdminSettingsBodyR65);\n}\nreturn await ([\"save_settings\",\"save_level_curve\""
+        }
+      ],
+      "actions": [
+        "grant_rank",
+        "grant_core_coins",
+        "grant_starter_chest",
+        "grant_gems",
+        "grant_stone_books",
+        "set_weapon_evolution_points",
+        "grant_evolution_scrolls",
+        "grant_item",
+        "update_player"
+      ],
+      "scope": "Native actor-targeted admin body and all original validation/SQL unchanged; current actor drains, commits, refreshes, resumes; queued admin authorization rechecked."
+    },
+    "inverseEqual": true,
+    "scope": "Actor-safe native admin player mutations and cache-versioned daily leaderboard UI."
+  },
+  "r77Gameplay": {
+    "oldNamespace": "core511-18019f7f0e36edcc",
+    "namespace": "core511-b967e098ebff18df",
+    "oldName": "game-client-core511-r76-63da43f1e5d71be7.js",
+    "name": "game-client-core511-r77-b2743163841c6721.js",
+    "oldAdminName": "admin-client-core511-r70-5a63a308e7bfabda.js",
+    "adminName": "admin-client-core511-r77-cd330aeddc742cd8.js",
+    "inverseEqual": true,
+    "scope": "Versioned four-image AFK and event island admin clients; all native HTTP route bodies unchanged."
+  },
+  "r79Gameplay": {
+    "oldNamespace": "core511-b967e098ebff18df",
+    "namespace": "core511-ef15c9c67ad1ae14",
+    "oldName": "game-client-core511-r77-b2743163841c6721.js",
+    "name": "game-client-core511-r79-51fbce3bd7351cf0.js",
+    "inverseEqual": true,
+    "scope": "Only immutable browser namespace and game asset references; HTTP route bodies unchanged."
+  },
+  "r82Gameplay": {
+    "oldNamespace": "core511-ef15c9c67ad1ae14",
+    "namespace": "core511-022e5be3a720e972",
+    "oldName": "game-client-core511-r79-51fbce3bd7351cf0.js",
+    "name": "game-client-core511-r82-b75bd56f90806564.js",
+    "sourceSha256": "9aa47af0b1be2cf7c2431eba5fad03a05769ff721e2099478540350a52fa4536",
+    "generatedSha256": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Only immutable browser namespace and game asset references. All R79 HTTP route bodies, authorization and mutation paths retained."
+  },
+  "r84Gameplay": {
+    "oldNamespace": "core511-022e5be3a720e972",
+    "namespace": "core511-6770c36eb6029ff7",
+    "oldName": "game-client-core511-r82-b75bd56f90806564.js",
+    "name": "game-client-core511-r84-1295951c6cf23767.js",
+    "sourceSha256": "286e89f0b37a46ef79c5b7fead2b20341fac9025ae79a9a814e2049208f07662",
+    "generatedSha256": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Only immutable browser namespace and game asset references; existing HTTP route/auth/mutation bodies retained."
+  },
+  "r85Gameplay": {
+    "oldNamespace": "core511-6770c36eb6029ff7",
+    "namespace": "core511-32083f0f5b1149bc",
+    "oldName": "game-client-core511-r84-1295951c6cf23767.js",
+    "name": "game-client-core511-r85-b25e12cf61072ebe.js",
+    "sourceSha256": "c4c1f4c08345f4aaffcde30de40b93bd9578a42cc9c1b8b1d0b3b4326651f320",
+    "generatedSha256": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Immutable R85 game client references only; native HTTP routes unchanged."
+  },
+  "r87Gameplay": {
+    "oldNamespace": "core511-32083f0f5b1149bc",
+    "namespace": "core511-27dfe29036d78e12",
+    "oldName": "game-client-core511-r85-b25e12cf61072ebe.js",
+    "name": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "sourceSha256": "7e1b743b1f3e47dcdf3af4485906388422c18f1fc4758afcb1f99d2298dad1a1",
+    "generatedSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Immutable R87 game client references only; native HTTP routes unchanged."
+  },
+  "r88Movement": {
+    "oldNamespace": "core511-27dfe29036d78e12",
+    "namespace": "core511-cf3191131d993da1",
+    "oldName": "game-client-core511-r87-aaf06f246f8a616a.js",
+    "name": "game-client-core511-r88-aa6aed7dd8933fa4.js",
+    "sourceSha256": "37d72374fb8a0eb697a45a681320045008397c6be25e8f4fa2e9a1b7b857529c",
+    "generatedSha256": "c73f9f0414365fa6d93aa1d356053d022a3300e1ce69140162120bc19ca6e973",
+    "inverseEqual": true,
+    "namespaceReplacements": 351,
+    "gameNameReplacements": 2,
+    "scope": "Immutable R88 game client/transport references only; native HTTP routes unchanged."
+  },
+  "r93Zumrut": {
+    "adminRoute": {
+      "name": "R93 authenticated Zümrüt map administration",
+      "sourceSha256": "c56523db871538ec6e6f615fdaecdbaeeef6aff029002f564887633de2aedbc1",
+      "patchedSha256": "3d3cbf19061191c29e220f5d092eb55ff709878d405f467cd0203105c8211a5b",
+      "scope": "Inserted dedicated bounded admin request after existing requireAdmin and same-origin guards; fresh authorization inside the existing serial writer."
+    },
+    "market": {
+      "sourceSha256": "3d3cbf19061191c29e220f5d092eb55ff709878d405f467cd0203105c8211a5b",
+      "patchedSha256": "2b0bb6b68b1858b966c9b56e0c5151c1c0d5a2a406cec6dbc65456239d2b87aa",
+      "edits": [
+        {
+          "from": "function parseDungeonMaterial(value) {",
+          "to": "function parseDungeonMaterial(value) {\n const zumrutMaterialNamesR93={\"zumrut_wood_r93\":\"Odun\",\"zumrut_stone_r93\":\"Taş\",\"zumrut_axe_r93\":\"Balta\",\"zumrut_pickaxe_r93\":\"Kazma\",\"mount_talisman_r93\":\"Binek Tılsımı\"};\n if(typeof value==='string'&&Object.hasOwn(zumrutMaterialNamesR93,value))return {label:zumrutMaterialNamesR93[value],key:value,kind:value,value:0,percent:false};",
+          "count": 1
+        },
+        {
+          "from": "database.prepare(`UPDATE ${resourceTable} SET amount=amount-? WHERE player_id=? AND kind=? AND amount>=? AND changes()>0`).bind(amount, playerId, stone.key, amount)",
+          "to": "database.prepare(`UPDATE ${resourceTable} SET amount=amount-? WHERE player_id=? AND kind=? AND amount>=? AND changes()>0`).bind(amount, playerId, stone.key, amount),\n ...((isMaterial&&(stone.key==='zumrut_axe_r93'||stone.key==='zumrut_pickaxe_r93'))?[database.prepare(\"UPDATE zumrut_tools_r93 SET equipped='' WHERE player_id=? AND equipped=? AND changes()>0 AND NOT EXISTS(SELECT 1 FROM dungeon_materials WHERE player_id=? AND kind=? AND amount>0)\").bind(playerId,stone.key==='zumrut_axe_r93'?'axe':'pickaxe',playerId,stone.key)]:[])",
+          "count": 1
+        }
+      ],
+      "scope": "Five valley inventory material kinds use the existing native player market. The same escrow transaction clears a selected tool only when its last owned unit is listed. Original prices, sale, cancellation, durability and replay SQL stay unchanged."
+    },
+    "rod": {
+      "sourceSha256": "2b0bb6b68b1858b966c9b56e0c5151c1c0d5a2a406cec6dbc65456239d2b87aa",
+      "patchedSha256": "4151808f2f26b7cf721983799cdda6c504ea58e40e6f3a6e363371d8c7fb3352",
+      "edits": [
+        {
+          "from": "if (payload.action === \"equip_rod\") {\n\t\t\t\t\tif (!player.has_rod) return Response.json({ error: \"Önce Balıkçı Hasan'dan bir olta almalısın.\" }, { status: 400 });\n\t\t\t\t\tawait database.batch([database.prepare(\"UPDATE player_items SET equipped = 0 WHERE player_id = ? AND kind = 'weapon'\").bind(playerId), database.prepare(`UPDATE players SET rod_equipped = 1, hp_revision=hp_revision+CASE WHEN max_hp!=${effectiveMaxHpSql} OR hp>${effectiveMaxHpSql} THEN 1 ELSE 0 END, hp=MIN(hp,${effectiveMaxHpSql}),max_hp=${effectiveMaxHpSql},last_seen = ? WHERE id = ? AND hp > 0`).bind(now, playerId)]);\n\t\t\t\t\treturn Response.json({\n\t\t\t\t\t\tok: true,\n\t\t\t\t\t\trodEquipped: 1,\n\t\t\t\t\t\tmessage: \"Olta kuşanıldı; silahın güvenle çantana kaldırıldı.\"\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t\t",
+          "to": "if (payload.action === \"equip_rod\") {\n\t\t\t\t\tif (!player.has_rod) return Response.json({ error: \"Önce Balıkçı Hasan'dan bir olta almalısın.\" }, { status: 400 });\n\t\t\t\t\tawait database.batch([database.prepare(\"UPDATE player_items SET equipped = 0 WHERE player_id = ? AND kind = 'weapon'\").bind(playerId), database.prepare(`UPDATE players SET rod_equipped = 1, hp_revision=hp_revision+CASE WHEN max_hp!=${effectiveMaxHpSql} OR hp>${effectiveMaxHpSql} THEN 1 ELSE 0 END, hp=MIN(hp,${effectiveMaxHpSql}),max_hp=${effectiveMaxHpSql},last_seen = ? WHERE id = ? AND hp > 0`).bind(now, playerId), database.prepare(\"UPDATE zumrut_tools_r93 SET equipped='' WHERE player_id=? AND changes()>0 AND EXISTS(SELECT 1 FROM players WHERE id=? AND rod_equipped=1 AND hp>0)\").bind(playerId,playerId)]);\n\t\t\t\t\treturn Response.json({\n\t\t\t\t\t\tok: true,\n\t\t\t\t\t\trodEquipped: 1,\n\t\t\t\t\t\tmessage: \"Olta kuşanıldı; silahın güvenle çantana kaldırıldı.\"\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t\t",
+          "count": 1
+        }
+      ],
+      "scope": "Existing rod equip transaction clears the selected gathering tool after successful rod equip. Original rod ownership guard, weapon unequip and player health update are retained."
+    },
+    "replacements": {
+      "admin-client-core511-r77-cd330aeddc742cd8.js": "admin-client-core511-r93-b85db78b65f40592.js",
+      "core511-admin-nav-r66-712de6ba4040fcaa.js": "core511-admin-nav-r93-4f779f8d53c0d0ba.js",
+      "core511-transport-r88-f2a907c787e721a0.js": "core511-transport-r93-62294b6312b28d6c.js"
+    },
+    "referenceCounts": {
+      "namespace": 351,
+      "game": 2,
+      "admin": 1
+    }
+  },
+  "r93EntryRecovery": {
+    "oldNamespace": "core511-d343c949eb3597d3",
+    "namespace": "core511-e18deba57c6199ea",
+    "portal": "auth-portal-core511-r93-86b3e50ebe04e1f5.js",
+    "portalSHA256": "86b3e50ebe04e1f57370b5f7e5f288914208fc75ed41d792225c33142b8b6053",
+    "scope": "Only immutable client namespace and portal reference change; all server route bodies unchanged."
+  },
+  "r95ZumrutVisual": {
+    "httpBefore": "c1f0bd124700c4a44b2c477b9b013ad36604865146971551e1c6cf1c2bd3fffc",
+    "referenceCounts": {
+      "namespace": 351,
+      "game": 2,
+      "portal": 1
+    },
+    "replacements": {
+      "core511-zumrut-r93-21768da268431861.js": "core511-zumrut-r95-2d30aadd7fdc4f12.js",
+      "auth-portal-core511-r93-86b3e50ebe04e1f5.js": "auth-portal-core511-r95-6cded6000e1eb458.js"
+    }
+  },
+  "r96ZumrutUI": {
+    "httpBefore": "0e88dca0700e892c2d22a4080a3c816bdccd3bfc7a14ca951c5b6b2c0583affd",
+    "referenceCounts": {
+      "namespace": 351,
+      "game": 2,
+      "portal": 1
+    },
+    "replacements": {
+      "core511-zumrut-r95-2d30aadd7fdc4f12.js": "core511-zumrut-r96-d7d6004f18423911.js",
+      "auth-portal-core511-r95-6cded6000e1eb458.js": "auth-portal-core511-r96-ecefa3a2645c0086.js"
+    }
+  },
+  "r97EntryAndForge": {
+    "httpBefore": "4f60112a46431371ac1527c0569ace12e39675f45b81e410da5af0d42a0b0bd1",
+    "referenceCounts": {
+      "namespace": 351,
+      "game": 2,
+      "portal": 1
+    },
+    "replacements": {
+      "auth-portal-core511-r96-ecefa3a2645c0086.js": "auth-portal-core511-r97-1048a912e1beff79.js"
+    },
+    "serverRoutesUnchanged": true
+  },
+  "r98Dungeon": {
+    "httpBeforeSHA256": "cb9e6be6edb5bda49a2183277b6c4a0d91dc02bfe2cb16bf810e96febfc4a232",
+    "httpAfterSHA256": "0e30df4da53729e1ed28d8c7cbed3a95dbd2c15f45093ac01c4955f386445d71",
+    "serverRoutesUnchanged": true
+  },
+  "r99Input": {
+    "httpBeforeSHA256": "0e30df4da53729e1ed28d8c7cbed3a95dbd2c15f45093ac01c4955f386445d71",
+    "httpAfterSHA256": "e8a9b51cc430de757391531eff2a708ee3560d0a8d4291b73adb88f7f3ff8410",
+    "serverRoutesUnchanged": true
+  },
+  "r100Input": {
+    "httpBeforeSHA256": "e8a9b51cc430de757391531eff2a708ee3560d0a8d4291b73adb88f7f3ff8410",
+    "httpAfterSHA256": "cc0a5e857e5521f229d2ac45ea8e96a3dc40e442f74c15cd9540b9354e14fa30",
+    "serverRoutesUnchanged": true
+  },
+  "r100FollowupInput": {
+    "httpBeforeSHA256": "72b1f649fed0cc90014d4ff650ee78a259166d2d22b0bebb9f1e377a158ca1ab",
+    "httpAfterSHA256": "e55d3128cdf463f317c2fb934d4dad1768a32a8590f199321f6d860f08b020ce",
+    "serverRoutesUnchanged": true
+  },
+  "r101": true,
+  "r102": {
+    "routes": [
+      "content-r102"
+    ],
+    "sharedRealms": true
+  },
+  "adminHotfix": "R102_ADMIN1",
+  "rankingHotfix": "R102_RANK1",
+  "entryHotfix": "R102_ENTRY1",
+  "championLabelHotfix": "R102_LABEL1",
+  "autoIpLimit": {
+    "version": "R102_AUTO_IP1",
+    "scope": "Server-side shared accounts authority; world auto and native island control; existing error alert scrolls into view; no schema change."
+  }
+}

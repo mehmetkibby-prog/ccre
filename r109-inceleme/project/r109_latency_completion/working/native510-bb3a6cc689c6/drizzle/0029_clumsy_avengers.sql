@@ -1,0 +1,1 @@
+ALTER TABLE `combat_settings` ADD `player_max_hp` integer DEFAULT 100 NOT NULL;

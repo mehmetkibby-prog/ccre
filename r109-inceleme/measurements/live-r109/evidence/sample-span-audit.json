@@ -1,0 +1,1501 @@
+{
+  "old_10_players": {
+    "source": "/tmp/codex-remote-attachments/01a16fbd-091f-71a5-923e-6bb701b9105f/73822b7b-402f-4425-9689-b18b887a1626/1-coreoflife-main-e353cb5b-df54-4a35-a232-4adc8358820e.cpuprofile.json",
+    "sha256": "bfab49485e30c1d38dc21d1c86330fa5b55b027eac57af8383ca6b4e65d3f2e2",
+    "durationMs": 60992.886,
+    "sampledMs": 60992.536,
+    "unobservedTailMs": 0.35,
+    "initialInspectorSampleMs": 990.381,
+    "afterInspectorSampledMs": 60002.155,
+    "afterInspectorNonIdlePercent": 21.877170911611422,
+    "nativeSqlLeafMs": 2844.617,
+    "nativePrepareLeafMs": 514.877,
+    "gcSampledMs": 990.442,
+    "gcSampleSpans": [
+      {
+        "startMs": 58379.962,
+        "sampleSpanMs": 41.059000000000005,
+        "samples": 19
+      },
+      {
+        "startMs": 58282.269,
+        "sampleSpanMs": 40.39,
+        "samples": 19
+      },
+      {
+        "startMs": 58498.274,
+        "sampleSpanMs": 34.330999999999996,
+        "samples": 16
+      },
+      {
+        "startMs": 14645.998,
+        "sampleSpanMs": 33.21,
+        "samples": 15
+      },
+      {
+        "startMs": 58331.398,
+        "sampleSpanMs": 29.573999999999998,
+        "samples": 14
+      },
+      {
+        "startMs": 14483.15,
+        "sampleSpanMs": 28.736,
+        "samples": 13
+      },
+      {
+        "startMs": 14440.643,
+        "sampleSpanMs": 27.561,
+        "samples": 13
+      },
+      {
+        "startMs": 14609.354,
+        "sampleSpanMs": 21.587,
+        "samples": 10
+      },
+      {
+        "startMs": 58257.037,
+        "sampleSpanMs": 21.037000000000003,
+        "samples": 9
+      },
+      {
+        "startMs": 14406.37,
+        "sampleSpanMs": 19.351,
+        "samples": 9
+      },
+      {
+        "startMs": 41087.498,
+        "sampleSpanMs": 16.576,
+        "samples": 4
+      },
+      {
+        "startMs": 50046.019,
+        "sampleSpanMs": 14.920000000000002,
+        "samples": 7
+      },
+      {
+        "startMs": 14539.174,
+        "sampleSpanMs": 14.702000000000002,
+        "samples": 7
+      },
+      {
+        "startMs": 59304.34,
+        "sampleSpanMs": 14.627000000000002,
+        "samples": 7
+      },
+      {
+        "startMs": 14513.967,
+        "sampleSpanMs": 14.518,
+        "samples": 7
+      },
+      {
+        "startMs": 56334.515,
+        "sampleSpanMs": 11.78,
+        "samples": 5
+      },
+      {
+        "startMs": 60240.166,
+        "sampleSpanMs": 11.012,
+        "samples": 5
+      },
+      {
+        "startMs": 38596.254,
+        "sampleSpanMs": 10.941,
+        "samples": 5
+      },
+      {
+        "startMs": 14427.848,
+        "sampleSpanMs": 10.679,
+        "samples": 5
+      },
+      {
+        "startMs": 25254.408,
+        "sampleSpanMs": 10.587,
+        "samples": 4
+      },
+      {
+        "startMs": 15535.185,
+        "sampleSpanMs": 10.508000000000001,
+        "samples": 5
+      },
+      {
+        "startMs": 58423.149,
+        "sampleSpanMs": 10.492,
+        "samples": 5
+      },
+      {
+        "startMs": 14563.691,
+        "sampleSpanMs": 9.774000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 10490.872,
+        "sampleSpanMs": 9.651,
+        "samples": 4
+      },
+      {
+        "startMs": 55065.867,
+        "sampleSpanMs": 9.191,
+        "samples": 4
+      },
+      {
+        "startMs": 14386.815,
+        "sampleSpanMs": 9.022,
+        "samples": 4
+      },
+      {
+        "startMs": 37898.927,
+        "sampleSpanMs": 9.013000000000002,
+        "samples": 4
+      },
+      {
+        "startMs": 9791.59,
+        "sampleSpanMs": 8.879999999999999,
+        "samples": 4
+      },
+      {
+        "startMs": 7701.333,
+        "sampleSpanMs": 8.841000000000001,
+        "samples": 4
+      },
+      {
+        "startMs": 16501.452,
+        "sampleSpanMs": 8.827,
+        "samples": 4
+      },
+      {
+        "startMs": 50952.245,
+        "sampleSpanMs": 8.786999999999999,
+        "samples": 3
+      },
+      {
+        "startMs": 8385.217,
+        "sampleSpanMs": 8.732000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 49301.856,
+        "sampleSpanMs": 8.499,
+        "samples": 4
+      },
+      {
+        "startMs": 5204.182,
+        "sampleSpanMs": 8.440999999999999,
+        "samples": 4
+      },
+      {
+        "startMs": 14588.219,
+        "sampleSpanMs": 8.436,
+        "samples": 4
+      },
+      {
+        "startMs": 45202.656,
+        "sampleSpanMs": 8.434,
+        "samples": 4
+      },
+      {
+        "startMs": 14598.765,
+        "sampleSpanMs": 8.432,
+        "samples": 4
+      },
+      {
+        "startMs": 27959.15,
+        "sampleSpanMs": 8.4,
+        "samples": 4
+      },
+      {
+        "startMs": 44483.148,
+        "sampleSpanMs": 8.372,
+        "samples": 4
+      },
+      {
+        "startMs": 1039.054,
+        "sampleSpanMs": 8.367,
+        "samples": 4
+      },
+      {
+        "startMs": 24460.588,
+        "sampleSpanMs": 8.361,
+        "samples": 4
+      },
+      {
+        "startMs": 58369.612,
+        "sampleSpanMs": 8.253,
+        "samples": 4
+      },
+      {
+        "startMs": 27300.741,
+        "sampleSpanMs": 8.155,
+        "samples": 3
+      },
+      {
+        "startMs": 28657.032,
+        "sampleSpanMs": 7.847,
+        "samples": 3
+      },
+      {
+        "startMs": 36963.103,
+        "sampleSpanMs": 7.526,
+        "samples": 3
+      },
+      {
+        "startMs": 34853.662,
+        "sampleSpanMs": 7.507,
+        "samples": 3
+      },
+      {
+        "startMs": 39163.604,
+        "sampleSpanMs": 7.463,
+        "samples": 3
+      },
+      {
+        "startMs": 3273.764,
+        "sampleSpanMs": 7.456,
+        "samples": 3
+      },
+      {
+        "startMs": 13808.886,
+        "sampleSpanMs": 7.407,
+        "samples": 3
+      },
+      {
+        "startMs": 43543.387,
+        "sampleSpanMs": 7.401,
+        "samples": 3
+      },
+      {
+        "startMs": 48512.905,
+        "sampleSpanMs": 6.997,
+        "samples": 3
+      },
+      {
+        "startMs": 32704.114,
+        "sampleSpanMs": 6.981000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 26139.943,
+        "sampleSpanMs": 6.835999999999999,
+        "samples": 3
+      },
+      {
+        "startMs": 57075.213,
+        "sampleSpanMs": 6.792000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 51868.488,
+        "sampleSpanMs": 6.791,
+        "samples": 2
+      },
+      {
+        "startMs": 18049.476,
+        "sampleSpanMs": 6.693,
+        "samples": 3
+      },
+      {
+        "startMs": 22085.309,
+        "sampleSpanMs": 6.678000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 53448.697,
+        "sampleSpanMs": 6.612,
+        "samples": 3
+      },
+      {
+        "startMs": 23357.371,
+        "sampleSpanMs": 6.545,
+        "samples": 3
+      },
+      {
+        "startMs": 29513.891,
+        "sampleSpanMs": 6.469,
+        "samples": 3
+      },
+      {
+        "startMs": 4033.318,
+        "sampleSpanMs": 6.45,
+        "samples": 3
+      },
+      {
+        "startMs": 21126.415,
+        "sampleSpanMs": 6.447,
+        "samples": 3
+      },
+      {
+        "startMs": 18860.744,
+        "sampleSpanMs": 6.416,
+        "samples": 3
+      },
+      {
+        "startMs": 11105.876,
+        "sampleSpanMs": 6.361000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 41961.103,
+        "sampleSpanMs": 6.3549999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 14575.579,
+        "sampleSpanMs": 6.332000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 9151.207,
+        "sampleSpanMs": 6.3309999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 14397.942,
+        "sampleSpanMs": 6.3229999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 17182.433,
+        "sampleSpanMs": 6.3180000000000005,
+        "samples": 3
+      },
+      {
+        "startMs": 5930.532,
+        "sampleSpanMs": 6.317,
+        "samples": 3
+      },
+      {
+        "startMs": 36163.877,
+        "sampleSpanMs": 6.316000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 33444.96,
+        "sampleSpanMs": 6.307,
+        "samples": 3
+      },
+      {
+        "startMs": 30675.088,
+        "sampleSpanMs": 6.306,
+        "samples": 3
+      },
+      {
+        "startMs": 47581.59,
+        "sampleSpanMs": 6.2989999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 2585.219,
+        "sampleSpanMs": 6.298,
+        "samples": 3
+      },
+      {
+        "startMs": 6975.18,
+        "sampleSpanMs": 6.296,
+        "samples": 3
+      },
+      {
+        "startMs": 12623.655,
+        "sampleSpanMs": 6.295,
+        "samples": 3
+      },
+      {
+        "startMs": 40261.868,
+        "sampleSpanMs": 6.2829999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 42755.954,
+        "sampleSpanMs": 6.28,
+        "samples": 3
+      },
+      {
+        "startMs": 46432.293,
+        "sampleSpanMs": 6.263999999999999,
+        "samples": 3
+      },
+      {
+        "startMs": 34195.075,
+        "sampleSpanMs": 6.263,
+        "samples": 3
+      },
+      {
+        "startMs": 52761.072,
+        "sampleSpanMs": 6.228,
+        "samples": 3
+      },
+      {
+        "startMs": 22939.954,
+        "sampleSpanMs": 5.960000000000001,
+        "samples": 2
+      },
+      {
+        "startMs": 20046.889,
+        "sampleSpanMs": 5.414,
+        "samples": 3
+      },
+      {
+        "startMs": 1665.835,
+        "sampleSpanMs": 5.4110000000000005,
+        "samples": 2
+      },
+      {
+        "startMs": 58468.249,
+        "sampleSpanMs": 4.606,
+        "samples": 1
+      },
+      {
+        "startMs": 31600.028,
+        "sampleSpanMs": 4.441,
+        "samples": 2
+      },
+      {
+        "startMs": 14639.51,
+        "sampleSpanMs": 4.396,
+        "samples": 1
+      },
+      {
+        "startMs": 11876.323,
+        "sampleSpanMs": 4.3100000000000005,
+        "samples": 2
+      },
+      {
+        "startMs": 14532.854,
+        "sampleSpanMs": 4.215,
+        "samples": 2
+      },
+      {
+        "startMs": 55638.899,
+        "sampleSpanMs": 4.2,
+        "samples": 2
+      },
+      {
+        "startMs": 54891.366,
+        "sampleSpanMs": 2.533,
+        "samples": 1
+      },
+      {
+        "startMs": 58324.556,
+        "sampleSpanMs": 2.338,
+        "samples": 1
+      },
+      {
+        "startMs": 14633.054,
+        "sampleSpanMs": 2.244,
+        "samples": 1
+      },
+      {
+        "startMs": 29077.031,
+        "sampleSpanMs": 2.206,
+        "samples": 1
+      },
+      {
+        "startMs": 41779.212,
+        "sampleSpanMs": 2.153,
+        "samples": 1
+      },
+      {
+        "startMs": 60847.896,
+        "sampleSpanMs": 2.13,
+        "samples": 1
+      },
+      {
+        "startMs": 58534.681,
+        "sampleSpanMs": 2.127,
+        "samples": 1
+      },
+      {
+        "startMs": 18822.911,
+        "sampleSpanMs": 2.123,
+        "samples": 1
+      },
+      {
+        "startMs": 49642.012,
+        "sampleSpanMs": 2.113,
+        "samples": 1
+      },
+      {
+        "startMs": 56176.218,
+        "sampleSpanMs": 2.112,
+        "samples": 1
+      },
+      {
+        "startMs": 28175.165,
+        "sampleSpanMs": 2.11,
+        "samples": 1
+      },
+      {
+        "startMs": 14584.008,
+        "sampleSpanMs": 2.095,
+        "samples": 1
+      },
+      {
+        "startMs": 23183.141,
+        "sampleSpanMs": 2.091,
+        "samples": 1
+      },
+      {
+        "startMs": 58463.159,
+        "sampleSpanMs": 2.09,
+        "samples": 1
+      },
+      {
+        "startMs": 55474.387,
+        "sampleSpanMs": 2.089,
+        "samples": 1
+      },
+      {
+        "startMs": 58180.674,
+        "sampleSpanMs": 2.089,
+        "samples": 1
+      },
+      {
+        "startMs": 9209.401,
+        "sampleSpanMs": 2.088,
+        "samples": 1
+      },
+      {
+        "startMs": 57358.259,
+        "sampleSpanMs": 2.087,
+        "samples": 1
+      },
+      {
+        "startMs": 58474.959,
+        "sampleSpanMs": 2.086,
+        "samples": 1
+      },
+      {
+        "startMs": 58437.862,
+        "sampleSpanMs": 2.085,
+        "samples": 1
+      },
+      {
+        "startMs": 42862.43,
+        "sampleSpanMs": 2.083,
+        "samples": 1
+      },
+      {
+        "startMs": 27313.148,
+        "sampleSpanMs": 2.08,
+        "samples": 1
+      },
+      {
+        "startMs": 54971.13,
+        "sampleSpanMs": 2.075,
+        "samples": 1
+      },
+      {
+        "startMs": 14741.387,
+        "sampleSpanMs": 2.068,
+        "samples": 1
+      },
+      {
+        "startMs": 47979.93,
+        "sampleSpanMs": 2.059,
+        "samples": 1
+      },
+      {
+        "startMs": 28039.864,
+        "sampleSpanMs": 2.055,
+        "samples": 1
+      },
+      {
+        "startMs": 23011.72,
+        "sampleSpanMs": 1.948,
+        "samples": 1
+      }
+    ],
+    "frameFamilies": {
+      "captcha": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "checkSchema": {
+        "nodes": 5,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 35.955
+      },
+      "checkPreparedSchema477": {
+        "nodes": 10,
+        "selfMs": 11.702,
+        "inclusiveUnionMs": 71.288
+      },
+      "writer-sql-timing477": {
+        "nodes": 264,
+        "selfMs": 563.645,
+        "inclusiveUnionMs": 4896.424
+      },
+      "reward-worker-r533": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "shared-terminal": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "tower": {
+        "nodes": 9,
+        "selfMs": 27.286,
+        "inclusiveUnionMs": 52.949
+      },
+      "adventure": {
+        "nodes": 17,
+        "selfMs": 12.575,
+        "inclusiveUnionMs": 201.332
+      },
+      "dungeon": {
+        "nodes": 18,
+        "selfMs": 118.847,
+        "inclusiveUnionMs": 306.17
+      },
+      "drainWrites": {
+        "nodes": 4,
+        "selfMs": 34.702,
+        "inclusiveUnionMs": 4558.531
+      },
+      "command-failure-scope.mjs": {
+        "nodes": 254,
+        "selfMs": 12.503,
+        "inclusiveUnionMs": 4306.462
+      },
+      "reliable-stream.mjs": {
+        "nodes": 66,
+        "selfMs": 682.929,
+        "inclusiveUnionMs": 1624.805
+      },
+      "prepareReplyWireR105": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      }
+    },
+    "limits": [
+      "A contiguous GC sample span is not a measured GC event or proof of event-loop delay.",
+      "Self and inclusive figures overlap; never sum inclusive families.",
+      "Only the main thread is sampled. Player population and current version are not in this file.",
+      "Different populations/actions preclude causal before/after performance claims."
+    ]
+  },
+  "previous_1_player": {
+    "source": "/tmp/codex-remote-attachments/01a16fbd-091f-71a5-923e-6bb701b9105f/d42cb91a-9e69-4406-82c7-94446ec12862/1-coreoflife-main-f280c6dc-e42e-49b0-886f-921b0863171c.cpuprofile.json",
+    "sha256": "d69c1df8f4531c77f6a098e6d6280749c72229e28018d3fe789d9164fbd996b9",
+    "durationMs": 60453.804,
+    "sampledMs": 60453.457,
+    "unobservedTailMs": 0.347,
+    "initialInspectorSampleMs": 450.557,
+    "afterInspectorSampledMs": 60002.9,
+    "afterInspectorNonIdlePercent": 2.884097268632016,
+    "nativeSqlLeafMs": 331.638,
+    "nativePrepareLeafMs": 25.156,
+    "gcSampledMs": 204.78999999999996,
+    "gcSampleSpans": [
+      {
+        "startMs": 6775.817,
+        "sampleSpanMs": 103.02699999999996,
+        "samples": 49
+      },
+      {
+        "startMs": 6742.129,
+        "sampleSpanMs": 16.817,
+        "samples": 7
+      },
+      {
+        "startMs": 9055.273,
+        "sampleSpanMs": 4.497999999999999,
+        "samples": 2
+      },
+      {
+        "startMs": 6761.066,
+        "sampleSpanMs": 4.232,
+        "samples": 2
+      },
+      {
+        "startMs": 15146.397,
+        "sampleSpanMs": 4.188000000000001,
+        "samples": 2
+      },
+      {
+        "startMs": 30779.433,
+        "sampleSpanMs": 3.4379999999999997,
+        "samples": 2
+      },
+      {
+        "startMs": 45123.189,
+        "sampleSpanMs": 3.017,
+        "samples": 1
+      },
+      {
+        "startMs": 2575.872,
+        "sampleSpanMs": 2.354,
+        "samples": 1
+      },
+      {
+        "startMs": 4797.518,
+        "sampleSpanMs": 2.324,
+        "samples": 1
+      },
+      {
+        "startMs": 37081.743,
+        "sampleSpanMs": 2.298,
+        "samples": 1
+      },
+      {
+        "startMs": 47357.912,
+        "sampleSpanMs": 2.242,
+        "samples": 1
+      },
+      {
+        "startMs": 32086.024,
+        "sampleSpanMs": 2.229,
+        "samples": 1
+      },
+      {
+        "startMs": 36434.32,
+        "sampleSpanMs": 2.185,
+        "samples": 1
+      },
+      {
+        "startMs": 52552.323,
+        "sampleSpanMs": 2.183,
+        "samples": 1
+      },
+      {
+        "startMs": 43061.465,
+        "sampleSpanMs": 2.157,
+        "samples": 1
+      },
+      {
+        "startMs": 54041.613,
+        "sampleSpanMs": 2.121,
+        "samples": 1
+      },
+      {
+        "startMs": 42069.301,
+        "sampleSpanMs": 2.117,
+        "samples": 1
+      },
+      {
+        "startMs": 6769.531,
+        "sampleSpanMs": 2.108,
+        "samples": 1
+      },
+      {
+        "startMs": 54064.753,
+        "sampleSpanMs": 2.107,
+        "samples": 1
+      },
+      {
+        "startMs": 42081.957,
+        "sampleSpanMs": 2.102,
+        "samples": 1
+      },
+      {
+        "startMs": 43139.619,
+        "sampleSpanMs": 2.102,
+        "samples": 1
+      },
+      {
+        "startMs": 36975.248,
+        "sampleSpanMs": 2.099,
+        "samples": 1
+      },
+      {
+        "startMs": 54047.972,
+        "sampleSpanMs": 2.097,
+        "samples": 1
+      },
+      {
+        "startMs": 49784.883,
+        "sampleSpanMs": 2.096,
+        "samples": 1
+      },
+      {
+        "startMs": 12078.764,
+        "sampleSpanMs": 2.095,
+        "samples": 1
+      },
+      {
+        "startMs": 22086.486,
+        "sampleSpanMs": 2.095,
+        "samples": 1
+      },
+      {
+        "startMs": 52078.069,
+        "sampleSpanMs": 2.094,
+        "samples": 1
+      },
+      {
+        "startMs": 4778.272,
+        "sampleSpanMs": 2.088,
+        "samples": 1
+      },
+      {
+        "startMs": 31800.203,
+        "sampleSpanMs": 2.087,
+        "samples": 1
+      },
+      {
+        "startMs": 57087.285,
+        "sampleSpanMs": 2.087,
+        "samples": 1
+      },
+      {
+        "startMs": 575.199,
+        "sampleSpanMs": 2.081,
+        "samples": 1
+      },
+      {
+        "startMs": 52156.339,
+        "sampleSpanMs": 2.08,
+        "samples": 1
+      },
+      {
+        "startMs": 53068.376,
+        "sampleSpanMs": 2.077,
+        "samples": 1
+      },
+      {
+        "startMs": 39795.209,
+        "sampleSpanMs": 2.074,
+        "samples": 1
+      },
+      {
+        "startMs": 32877.183,
+        "sampleSpanMs": 2.072,
+        "samples": 1
+      },
+      {
+        "startMs": 59373.229,
+        "sampleSpanMs": 2.069,
+        "samples": 1
+      },
+      {
+        "startMs": 46783.226,
+        "sampleSpanMs": 1.973,
+        "samples": 1
+      },
+      {
+        "startMs": 54082.033,
+        "sampleSpanMs": 1.68,
+        "samples": 1
+      }
+    ],
+    "frameFamilies": {
+      "captcha": {
+        "nodes": 5,
+        "selfMs": 25.819,
+        "inclusiveUnionMs": 27.787
+      },
+      "checkSchema": {
+        "nodes": 2,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 8.413
+      },
+      "checkPreparedSchema477": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "writer-sql-timing477": {
+        "nodes": 2,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 357.817
+      },
+      "reward-worker-r533": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "shared-terminal": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "tower": {
+        "nodes": 6,
+        "selfMs": 4.13,
+        "inclusiveUnionMs": 8.408
+      },
+      "adventure": {
+        "nodes": 2,
+        "selfMs": 2.099,
+        "inclusiveUnionMs": 2.099
+      },
+      "dungeon": {
+        "nodes": 14,
+        "selfMs": 12.549,
+        "inclusiveUnionMs": 38.334
+      },
+      "drainWrites": {
+        "nodes": 3,
+        "selfMs": 6.729,
+        "inclusiveUnionMs": 469.335
+      },
+      "command-failure-scope.mjs": {
+        "nodes": 37,
+        "selfMs": 69.513,
+        "inclusiveUnionMs": 407.331
+      },
+      "reliable-stream.mjs": {
+        "nodes": 25,
+        "selfMs": 36.401,
+        "inclusiveUnionMs": 130.088
+      },
+      "prepareReplyWireR105": {
+        "nodes": 1,
+        "selfMs": 4.18,
+        "inclusiveUnionMs": 14.629
+      }
+    },
+    "limits": [
+      "A contiguous GC sample span is not a measured GC event or proof of event-loop delay.",
+      "Self and inclusive figures overlap; never sum inclusive families.",
+      "Only the main thread is sampled. Player population and current version are not in this file.",
+      "Different populations/actions preclude causal before/after performance claims."
+    ]
+  },
+  "new_6_players": {
+    "source": "/tmp/codex-remote-attachments/01a16fbd-091f-71a5-923e-6bb701b9105f/1e9bdfab-3436-4eb1-8699-1029192d9a06/1-coreoflife-main-df19d3d8-0759-4de0-ba1c-39f1e592537f.cpuprofile.json",
+    "sha256": "42f50688a62556e2dd874fac092b060aba015823ef9370743b6b014ea365fd3e",
+    "durationMs": 60433.162,
+    "sampledMs": 60432.836,
+    "unobservedTailMs": 0.326,
+    "initialInspectorSampleMs": 426.486,
+    "afterInspectorSampledMs": 60006.35,
+    "afterInspectorNonIdlePercent": 21.96238731400927,
+    "nativeSqlLeafMs": 3024.067,
+    "nativePrepareLeafMs": 335.033,
+    "gcSampledMs": 672.519,
+    "gcSampleSpans": [
+      {
+        "startMs": 6246.243,
+        "sampleSpanMs": 27.882999999999992,
+        "samples": 13
+      },
+      {
+        "startMs": 6175.618,
+        "sampleSpanMs": 26.930999999999994,
+        "samples": 13
+      },
+      {
+        "startMs": 35359.315,
+        "sampleSpanMs": 19.006,
+        "samples": 9
+      },
+      {
+        "startMs": 35286.689,
+        "sampleSpanMs": 18.742000000000004,
+        "samples": 9
+      },
+      {
+        "startMs": 35380.48,
+        "sampleSpanMs": 16.834999999999997,
+        "samples": 8
+      },
+      {
+        "startMs": 6229.611,
+        "sampleSpanMs": 14.566,
+        "samples": 7
+      },
+      {
+        "startMs": 6126.417,
+        "sampleSpanMs": 13.849,
+        "samples": 5
+      },
+      {
+        "startMs": 35220.749,
+        "sampleSpanMs": 13.614999999999998,
+        "samples": 4
+      },
+      {
+        "startMs": 37712.735,
+        "sampleSpanMs": 12.703,
+        "samples": 6
+      },
+      {
+        "startMs": 23004.515,
+        "sampleSpanMs": 10.687000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 12993.387,
+        "sampleSpanMs": 10.524999999999999,
+        "samples": 5
+      },
+      {
+        "startMs": 35345.762,
+        "sampleSpanMs": 10.438,
+        "samples": 5
+      },
+      {
+        "startMs": 56231.273,
+        "sampleSpanMs": 9.516,
+        "samples": 3
+      },
+      {
+        "startMs": 24340.405,
+        "sampleSpanMs": 9.431000000000001,
+        "samples": 4
+      },
+      {
+        "startMs": 4089.799,
+        "sampleSpanMs": 8.791999999999998,
+        "samples": 4
+      },
+      {
+        "startMs": 28450.66,
+        "sampleSpanMs": 8.718,
+        "samples": 4
+      },
+      {
+        "startMs": 46338.136,
+        "sampleSpanMs": 8.536999999999999,
+        "samples": 4
+      },
+      {
+        "startMs": 42080.899,
+        "sampleSpanMs": 8.516,
+        "samples": 4
+      },
+      {
+        "startMs": 7225.154,
+        "sampleSpanMs": 8.492,
+        "samples": 4
+      },
+      {
+        "startMs": 8458.841,
+        "sampleSpanMs": 8.429,
+        "samples": 4
+      },
+      {
+        "startMs": 34031.731,
+        "sampleSpanMs": 8.415999999999999,
+        "samples": 4
+      },
+      {
+        "startMs": 14754.99,
+        "sampleSpanMs": 8.415,
+        "samples": 4
+      },
+      {
+        "startMs": 35335.432,
+        "sampleSpanMs": 8.18,
+        "samples": 4
+      },
+      {
+        "startMs": 5030.276,
+        "sampleSpanMs": 8.039,
+        "samples": 3
+      },
+      {
+        "startMs": 16920.51,
+        "sampleSpanMs": 7.74,
+        "samples": 3
+      },
+      {
+        "startMs": 11406.957,
+        "sampleSpanMs": 7.679,
+        "samples": 3
+      },
+      {
+        "startMs": 59815.084,
+        "sampleSpanMs": 7.6,
+        "samples": 3
+      },
+      {
+        "startMs": 33452.049,
+        "sampleSpanMs": 7.391,
+        "samples": 3
+      },
+      {
+        "startMs": 27549.497,
+        "sampleSpanMs": 7.228,
+        "samples": 3
+      },
+      {
+        "startMs": 17516.17,
+        "sampleSpanMs": 7.222,
+        "samples": 3
+      },
+      {
+        "startMs": 26607.973,
+        "sampleSpanMs": 7.216,
+        "samples": 3
+      },
+      {
+        "startMs": 2710.427,
+        "sampleSpanMs": 7.106,
+        "samples": 2
+      },
+      {
+        "startMs": 494.195,
+        "sampleSpanMs": 7.071000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 42598.265,
+        "sampleSpanMs": 7.052,
+        "samples": 3
+      },
+      {
+        "startMs": 43575.145,
+        "sampleSpanMs": 6.970000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 31425.106,
+        "sampleSpanMs": 6.906000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 23788.898,
+        "sampleSpanMs": 6.8469999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 57725.457,
+        "sampleSpanMs": 6.82,
+        "samples": 3
+      },
+      {
+        "startMs": 44336.673,
+        "sampleSpanMs": 6.814,
+        "samples": 3
+      },
+      {
+        "startMs": 16058.882,
+        "sampleSpanMs": 6.779,
+        "samples": 3
+      },
+      {
+        "startMs": 40121.408,
+        "sampleSpanMs": 6.754,
+        "samples": 3
+      },
+      {
+        "startMs": 48527.777,
+        "sampleSpanMs": 6.713,
+        "samples": 3
+      },
+      {
+        "startMs": 55427.456,
+        "sampleSpanMs": 6.6450000000000005,
+        "samples": 3
+      },
+      {
+        "startMs": 30097.494,
+        "sampleSpanMs": 6.494,
+        "samples": 3
+      },
+      {
+        "startMs": 10528.585,
+        "sampleSpanMs": 6.374,
+        "samples": 3
+      },
+      {
+        "startMs": 21065.39,
+        "sampleSpanMs": 6.3580000000000005,
+        "samples": 3
+      },
+      {
+        "startMs": 36998.288,
+        "sampleSpanMs": 6.349,
+        "samples": 3
+      },
+      {
+        "startMs": 19688.918,
+        "sampleSpanMs": 6.3309999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 45422.461,
+        "sampleSpanMs": 6.3309999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 47625.28,
+        "sampleSpanMs": 6.33,
+        "samples": 3
+      },
+      {
+        "startMs": 56825.699,
+        "sampleSpanMs": 6.323,
+        "samples": 3
+      },
+      {
+        "startMs": 47085.552,
+        "sampleSpanMs": 6.322000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 15176.196,
+        "sampleSpanMs": 6.319000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 1056.808,
+        "sampleSpanMs": 6.314000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 32525.336,
+        "sampleSpanMs": 6.312999999999999,
+        "samples": 3
+      },
+      {
+        "startMs": 1614.472,
+        "sampleSpanMs": 6.307,
+        "samples": 3
+      },
+      {
+        "startMs": 9482.737,
+        "sampleSpanMs": 6.3069999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 30818.286,
+        "sampleSpanMs": 6.300000000000001,
+        "samples": 3
+      },
+      {
+        "startMs": 54923.348,
+        "sampleSpanMs": 6.299,
+        "samples": 3
+      },
+      {
+        "startMs": 48995.424,
+        "sampleSpanMs": 6.292,
+        "samples": 3
+      },
+      {
+        "startMs": 6142.351,
+        "sampleSpanMs": 6.289,
+        "samples": 3
+      },
+      {
+        "startMs": 59057.685,
+        "sampleSpanMs": 6.2860000000000005,
+        "samples": 3
+      },
+      {
+        "startMs": 22305.922,
+        "sampleSpanMs": 6.2829999999999995,
+        "samples": 3
+      },
+      {
+        "startMs": 52311.791,
+        "sampleSpanMs": 6.276,
+        "samples": 3
+      },
+      {
+        "startMs": 50224.784,
+        "sampleSpanMs": 6.261,
+        "samples": 3
+      },
+      {
+        "startMs": 6204.679,
+        "sampleSpanMs": 6.241999999999999,
+        "samples": 3
+      },
+      {
+        "startMs": 3554.363,
+        "sampleSpanMs": 6.194,
+        "samples": 2
+      },
+      {
+        "startMs": 25177.686,
+        "sampleSpanMs": 5.779,
+        "samples": 2
+      },
+      {
+        "startMs": 29316.311,
+        "sampleSpanMs": 5.366,
+        "samples": 2
+      },
+      {
+        "startMs": 12276.795,
+        "sampleSpanMs": 4.554,
+        "samples": 2
+      },
+      {
+        "startMs": 19083.074,
+        "sampleSpanMs": 4.470000000000001,
+        "samples": 2
+      },
+      {
+        "startMs": 38761.743,
+        "sampleSpanMs": 4.261,
+        "samples": 2
+      },
+      {
+        "startMs": 35328.345,
+        "sampleSpanMs": 4.258,
+        "samples": 2
+      },
+      {
+        "startMs": 18519.956,
+        "sampleSpanMs": 4.237,
+        "samples": 2
+      },
+      {
+        "startMs": 41010.899,
+        "sampleSpanMs": 4.231999999999999,
+        "samples": 2
+      },
+      {
+        "startMs": 53787.891,
+        "sampleSpanMs": 4.2219999999999995,
+        "samples": 2
+      },
+      {
+        "startMs": 441.636,
+        "sampleSpanMs": 4.215,
+        "samples": 1
+      },
+      {
+        "startMs": 51537.085,
+        "sampleSpanMs": 4.203,
+        "samples": 2
+      },
+      {
+        "startMs": 13797.677,
+        "sampleSpanMs": 4.182,
+        "samples": 2
+      },
+      {
+        "startMs": 35276.268,
+        "sampleSpanMs": 4.167,
+        "samples": 2
+      },
+      {
+        "startMs": 53056.585,
+        "sampleSpanMs": 4.151,
+        "samples": 2
+      },
+      {
+        "startMs": 6217.165,
+        "sampleSpanMs": 4.148,
+        "samples": 2
+      },
+      {
+        "startMs": 6156.992,
+        "sampleSpanMs": 4.111000000000001,
+        "samples": 2
+      },
+      {
+        "startMs": 11423.109,
+        "sampleSpanMs": 2.13,
+        "samples": 1
+      },
+      {
+        "startMs": 9077.452,
+        "sampleSpanMs": 2.112,
+        "samples": 1
+      },
+      {
+        "startMs": 29883.387,
+        "sampleSpanMs": 2.076,
+        "samples": 1
+      },
+      {
+        "startMs": 6223.384,
+        "sampleSpanMs": 2.072,
+        "samples": 1
+      },
+      {
+        "startMs": 20984.781,
+        "sampleSpanMs": 2.072,
+        "samples": 1
+      },
+      {
+        "startMs": 6165.251,
+        "sampleSpanMs": 2.069,
+        "samples": 1
+      },
+      {
+        "startMs": 35282.533,
+        "sampleSpanMs": 2.068,
+        "samples": 1
+      },
+      {
+        "startMs": 21984.532,
+        "sampleSpanMs": 2.056,
+        "samples": 1
+      }
+    ],
+    "frameFamilies": {
+      "captcha": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "checkSchema": {
+        "nodes": 3,
+        "selfMs": 10.487,
+        "inclusiveUnionMs": 40.23
+      },
+      "checkPreparedSchema477": {
+        "nodes": 5,
+        "selfMs": 10.431,
+        "inclusiveUnionMs": 33.322
+      },
+      "writer-sql-timing477": {
+        "nodes": 3,
+        "selfMs": 12.7,
+        "inclusiveUnionMs": 5016.493
+      },
+      "reward-worker-r533": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "shared-terminal": {
+        "nodes": 0,
+        "selfMs": 0.0,
+        "inclusiveUnionMs": 0.0
+      },
+      "tower": {
+        "nodes": 11,
+        "selfMs": 21.435,
+        "inclusiveUnionMs": 43.224
+      },
+      "adventure": {
+        "nodes": 5,
+        "selfMs": 6.403,
+        "inclusiveUnionMs": 48.068
+      },
+      "dungeon": {
+        "nodes": 20,
+        "selfMs": 73.06,
+        "inclusiveUnionMs": 201.59
+      },
+      "drainWrites": {
+        "nodes": 3,
+        "selfMs": 41.038,
+        "inclusiveUnionMs": 5450.493
+      },
+      "command-failure-scope.mjs": {
+        "nodes": 226,
+        "selfMs": 662.078,
+        "inclusiveUnionMs": 4994.422
+      },
+      "reliable-stream.mjs": {
+        "nodes": 33,
+        "selfMs": 786.539,
+        "inclusiveUnionMs": 1681.697
+      },
+      "prepareReplyWireR105": {
+        "nodes": 1,
+        "selfMs": 155.545,
+        "inclusiveUnionMs": 314.393
+      }
+    },
+    "limits": [
+      "A contiguous GC sample span is not a measured GC event or proof of event-loop delay.",
+      "Self and inclusive figures overlap; never sum inclusive families.",
+      "Only the main thread is sampled. Player population and current version are not in this file.",
+      "Different populations/actions preclude causal before/after performance claims."
+    ]
+  }
+}

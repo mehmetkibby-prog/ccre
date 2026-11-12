@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {createActionWriterHandler} from '../action-writer.mjs';
+import {DurableWorldState} from '../world-state.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),{request,peer,settings}=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!['before','after'].includes(phase)||!file.includes('core511-isolated-'))throw Error('Isolated action crash fixture required');
+const {installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry();
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'action-crash'});await authority.initialize();
+if(request.payload.input.action==='donate')await new DurableWorldState(db).initialize();
+const handler=createActionWriterHandler({settingsFor:()=>settings,globalsFor:()=>({}),assertOwnership:(sql,p,id,epoch)=>Boolean(authority.assertAdmitted(sql,p,id,epoch)),assertResources:()=>true,affectedActors:()=>[],settleRetaliation:()=>null,enforceRateLimit:()=>{},clock:()=>request.payload.nowMs});
+registerOwnedRule(authority,'native_action',(sql,payload,ctx)=>{const result=handler(sql,payload,ctx);if(result.result.body.ok!==true)throw Error(JSON.stringify(result.result));if(phase==='before'){fs.writeFileSync(marker,'uncommitted_action');process.kill(process.pid,'SIGKILL');}return result;});
+await authority.command(peer,request);fs.writeFileSync(marker,'durable_action_before_ack');process.kill(process.pid,'SIGKILL');

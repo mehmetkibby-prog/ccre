@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+ <defs>
+  <linearGradient id="steel" x1="34" y1="29" x2="86" y2="102" gradientUnits="userSpaceOnUse"><stop stop-color="#727a79"/><stop offset=".28" stop-color="#454f50"/><stop offset=".65" stop-color="#293238"/><stop offset="1" stop-color="#171e23"/></linearGradient>
+  <linearGradient id="cloth" x1="33" y1="36" x2="81" y2="115" gradientUnits="userSpaceOnUse"><stop stop-color="#7e3532"/><stop offset="1" stop-color="#391e24"/></linearGradient>
+  <linearGradient id="trim" x1="42" y1="23" x2="89" y2="101" gradientUnits="userSpaceOnUse"><stop stop-color="#d7bd80"/><stop offset="1" stop-color="#806340"/></linearGradient>
+ </defs>
+ <ellipse cx="64" cy="116" rx="40" ry="5" fill="#11191b" opacity=".35"/>
+ <path d="m35 29-9 11-9 65 20-6 5 17 22-9 23 9 5-17 19 6-9-65-9-11Z" fill="url(#cloth)" stroke="#281e20" stroke-width="2.5"/>
+ <path d="m34 41-7 52m63-52 9 52M49 78l-4 28m34-28 5 28" stroke="#a34f46" stroke-width="2" opacity=".65"/>
+ <path d="m48 23 6-10h21l6 10 1 13-34 1Z" fill="url(#steel)" stroke="#bd9e63" stroke-width="2"/>
+ <path d="m54 16 2 14 8 5 9-5 1-14" stroke="#172126" stroke-width="3"/>
+ <path d="m43 28 9 9h26l9-9 16 11 5 15-20 10-5-9 1 27-20 10-21-10 1-27-5 9-20-10 4-15Z" fill="url(#steel)" stroke="#192125" stroke-width="3" stroke-linejoin="round"/>
+ <path d="m27 39 15-7 8 10-7 12-19-5m63-17 15 7 3 10-20 5-7-12 9-10ZM45 57l19 9 18-9M45 78l19 9 18-9" stroke="url(#trim)" stroke-width="1.8" stroke-linejoin="round"/>
+ <path d="m35 57-13-3-6 25 15 7 10-19m47-10 15-3 9 25-15 7-10-19" fill="url(#steel)" stroke="#182126" stroke-width="2.5"/>
+ <path d="m19 69 15 6m59 0 16-6M16 79l15 6m66 0 15-6" stroke="#a58c61" stroke-width="2"/>
+ <path d="m43 84-6 23 14 7 13-14 13 14 15-7-7-23-21 8Z" fill="url(#steel)" stroke="#171e23" stroke-width="2.5"/>
+ <path d="m43 94 10 4m22 0 10-4m-21 6V90" stroke="url(#trim)" stroke-width="1.7"/>
+ <path d="m41 78 23 9 23-9v9l-23 9-23-9Z" fill="#4a3628" stroke="#1d2020" stroke-width="2"/>
+ <rect x="59" y="85" width="11" height="10" rx="2" fill="#a68d5d" stroke="#ddc487" stroke-width="1.5"/>
+ <path d="m64 43 4 7 8 2-7 5-5 8-5-8-7-5 8-2Z" fill="url(#trim)" stroke="#e0cb97" stroke-width="1"/>
+ <path d="m64 48 2 5-2 5-2-5Z" fill="#75433b"/>
+</svg>

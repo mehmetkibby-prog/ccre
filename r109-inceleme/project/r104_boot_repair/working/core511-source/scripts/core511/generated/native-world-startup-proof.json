@@ -1,0 +1,545 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "sources": [
+    {
+      "file": "dist-vds/server/channel-runtime/index.mjs",
+      "sha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "sha256": "7ebc7448b7185313146e99368a2929db197e5385142121dcf5aee2af95048c72"
+    },
+    {
+      "file": "lib/runes.mjs",
+      "sha256": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "sha256": "7ebc7448b7185313146e99368a2929db197e5385142121dcf5aee2af95048c72"
+    },
+    {
+      "file": "lib/runes.mjs",
+      "sha256": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "ENCHANT_TIERS",
+      "start": 112720,
+      "end": 113457,
+      "sha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35"
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "start": 113463,
+      "end": 113506,
+      "sha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a"
+    },
+    {
+      "name": "tierKeys",
+      "start": 113512,
+      "end": 113590,
+      "sha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918"
+    },
+    {
+      "name": "ENCHANT_TIER_DEFAULTS",
+      "start": 113596,
+      "end": 113725,
+      "sha256": "766a22d6bdfd19fa397b0622508b90494eff8a6e37517ecd99b65e9526f383f8"
+    },
+    {
+      "name": "DRAGON_WORLD",
+      "start": 133294,
+      "end": 133354,
+      "sha256": "c123307e08d4f2b8a9b9cde920875cb9424d6a3a1827c27b8ea245c539c25c79"
+    },
+    {
+      "name": "ANCIENT_WORLD",
+      "start": 138242,
+      "end": 138304,
+      "sha256": "06c5eb4d182808ece971b17177098b8f756389dfd8ad0f2ed14257f8c8b074a8"
+    },
+    {
+      "name": "ANCIENT_FAMILIES",
+      "start": 138369,
+      "end": 138659,
+      "sha256": "e415e244cec85669beb2c7dfb4f6bf7b377a4901ac799b85993c185675224e1d"
+    },
+    {
+      "name": "GUILD_VILLAGE_WORLD",
+      "start": 139895,
+      "end": 139963,
+      "sha256": "01a02060c5c5d7f0ff2fcf9d1dda26699bd8620e11b37264ea11a58ecd3a6ae9"
+    },
+    {
+      "name": "GUILD_HALL_WORLD",
+      "start": 139969,
+      "end": 140034,
+      "sha256": "39bdff0e9f46c25b4f8d0529028413e273858c2b06b4eb628115df2812ade9b1"
+    },
+    {
+      "name": "GUILD_PLOTS",
+      "start": 140118,
+      "end": 140551,
+      "sha256": "a617caf21b3462aff4e7c9231f4a0e0e53017b5c040d42a7ccaa62b133a36558"
+    },
+    {
+      "name": "guildArea",
+      "start": 140951,
+      "end": 141290,
+      "sha256": "a2a1a8da83f9d2ff79ca503dc9ed6a2ab0efd568bbcbbf74338a85e45f59c303"
+    },
+    {
+      "name": "guildWalkable",
+      "start": 141291,
+      "end": 141667,
+      "sha256": "1bc64fa610e1f3d12131b0290e159997da427c31c2586e5c9c433d05936cd68b"
+    },
+    {
+      "name": "AFK_WORLD",
+      "start": 142047,
+      "end": 142105,
+      "sha256": "95315a72f9a334c75ba1046953dd8af9c3b9b16d9e2a25caffb07e44cf8b3a27"
+    },
+    {
+      "name": "FOREST_CORE_OBSTACLE",
+      "start": 143414,
+      "end": 143504,
+      "sha256": "120057d0c0e50c9c9721d9c0185bbc1408dd1cd6d6b3ca7c5f3dd313b3796956"
+    },
+    {
+      "name": "insideForestCore",
+      "start": 143506,
+      "end": 143647,
+      "sha256": "8cb97f02e0593099a4841a95a066f070e8ef5c58cbfbd17826fa411b21673a5f"
+    },
+    {
+      "name": "ANCIENT_CORE_OBSTACLE",
+      "start": 144292,
+      "end": 144381,
+      "sha256": "12912a8b48a90d4704ef9394769e14868ee520a8aa7b7dcb49eed3fcb6bb377e"
+    },
+    {
+      "name": "insideAncientCore",
+      "start": 144383,
+      "end": 144526,
+      "sha256": "8177a6b2510b45bef8807415a773cae0df6f33b9f9bd2a774bd1577fd39ba8ae"
+    },
+    {
+      "name": "FROZEN_WATER_SPAWN",
+      "start": 145123,
+      "end": 145181,
+      "sha256": "95499883bf0c094079d4eba082f097c0f1ec04d4065f4ee8787af56fd16e6296"
+    },
+    {
+      "name": "WAR_WORLD",
+      "start": 145270,
+      "end": 145313,
+      "sha256": "5d879fa5dd4d594d185edeae7389dd7c53bd6bf93cf3dae23f059e4f6d872da6"
+    },
+    {
+      "name": "COMMON_WORLD",
+      "start": 145522,
+      "end": 145568,
+      "sha256": "3f6ad12e730e01ab50eb83406140e77fdf4ae9b22e6bce23238b808d97df8652"
+    },
+    {
+      "name": "BLACK_WORLD",
+      "start": 145574,
+      "end": 145619,
+      "sha256": "beaad12481945895842f37f90f4dda3ca6dc20924a60ebff71f0c3db06a1e650"
+    },
+    {
+      "name": "BLACK_SPAWN",
+      "start": 145625,
+      "end": 145661,
+      "sha256": "8152ce476452f40c8f8b0eed3046514eedc99df45c427770b43dc996658602aa"
+    },
+    {
+      "name": "FOREST_WORLD",
+      "start": 145667,
+      "end": 145713,
+      "sha256": "a847638d517a0e26fe854da5dc44b8101a5553875aee36af0cce5b3b8b9ae17f"
+    },
+    {
+      "name": "FROZEN_WORLD",
+      "start": 145719,
+      "end": 145764,
+      "sha256": "6a1ef6aa50663f73e1b006d6562472bb7217515d4f0dc417d07d55fbb01c4db3"
+    },
+    {
+      "name": "FOREST_CORE",
+      "start": 145770,
+      "end": 145808,
+      "sha256": "9292507b3ec52730985056561a8f0259a88794ce770bcb362b7da6258e6be89c"
+    },
+    {
+      "name": "FOREST_SPAWN",
+      "start": 145814,
+      "end": 145851,
+      "sha256": "1b6ab8969d006aa418a1c78f986aaa03f2d6d5a0ab8d71db1d65a83f4a8236c0"
+    },
+    {
+      "name": "FROZEN_SPAWN",
+      "start": 145899,
+      "end": 145936,
+      "sha256": "854e8c0cb08384593655f066a4fc24e27db503dbd364ec4ac24257805dc33fc0"
+    },
+    {
+      "name": "FROZEN_BOSS_SPAWN",
+      "start": 145942,
+      "end": 145984,
+      "sha256": "e0f26abf430efbc52026200111ffd07be86aa2cb341fc0306617a6bdd16992f3"
+    },
+    {
+      "name": "FROZEN_LAKE",
+      "start": 145990,
+      "end": 146055,
+      "sha256": "fd1ec734fd7417d8d20b92061049eaaf795ca9495b5213d2214136a5929b082d"
+    },
+    {
+      "name": "FISHING_LAKE$1",
+      "start": 146061,
+      "end": 146129,
+      "sha256": "ade9b421e3aa8c7ca73e13e4e945b06db5c4ba724b88ae7df4fb2b0b42f43982"
+    },
+    {
+      "name": "FOREST_WALKABLE_POLYGON",
+      "start": 146135,
+      "end": 146215,
+      "sha256": "6368b349f6bce6a8cbfb7999274f2e7acf2fd1291d7fddd2443680fabdbdbb04"
+    },
+    {
+      "name": "areaWorld",
+      "start": 146217,
+      "end": 146746,
+      "sha256": "1921f21f3801c8d8469378486fe9a6d4b300fd0aaf3001b6f818d6a4fdcff796"
+    },
+    {
+      "name": "insideForestBounds",
+      "start": 146747,
+      "end": 147424,
+      "sha256": "42c0a770ca108acc584fd188ff2a2f8413ba696c401d1ef7e969f296fa10c931"
+    },
+    {
+      "name": "isForestWalkablePosition",
+      "start": 147425,
+      "end": 147529,
+      "sha256": "a13f3a6610942f63fabed0d50a64d0ab08fe7900a6eb5911b4ba7b2d7929ef1e"
+    },
+    {
+      "name": "isFrozenWalkablePosition",
+      "start": 147530,
+      "end": 147849,
+      "sha256": "1fe6f867f64a32ba75b1f1c98c3bac2c472fc354eeaa8de3041f1d93674ec0eb"
+    },
+    {
+      "name": "isAreaWalkablePosition",
+      "start": 147850,
+      "end": 148670,
+      "sha256": "e40e830f885db933196f6cf1dba1a61999429a51c17deedb3adb2b347aa21a1e"
+    },
+    {
+      "name": "HUNTING_COUNTS",
+      "start": 230572,
+      "end": 230629,
+      "sha256": "daf7721c5c4428dad16c51179b8a65db9ccc70c2273e646982bd471e7790c9e9"
+    },
+    {
+      "name": "huntingPositions",
+      "start": 230631,
+      "end": 231384,
+      "sha256": "1f713c0ef56e5761fabbea400c5b078a0d5564175153f50d7cf5bc186432125c"
+    },
+    {
+      "name": "expandHuntingWorld",
+      "start": 231385,
+      "end": 233825,
+      "sha256": "6f237ff91da0cba97b1e30fa0d59d69d94eeb6e7c94502cfd5c68dc405f48d40"
+    },
+    {
+      "name": "EVOLUTION_DEFAULTS",
+      "start": 233877,
+      "end": 234353,
+      "sha256": "7f070f947405a4117f05ed9759202a5de3af8f5149c8085737e4f2075480aba1"
+    },
+    {
+      "name": "families",
+      "start": 236599,
+      "end": 236642,
+      "sha256": "f638eddb58a9edb2133e27888d073027247c8e48139f9d039b05da82b9853ea1"
+    },
+    {
+      "name": "names",
+      "start": 236648,
+      "end": 236726,
+      "sha256": "41b875d775f2eea6cb281b1c6d7a48241950aceccaa2a8bfa7bae06d2c64e291"
+    },
+    {
+      "name": "counters",
+      "start": 236732,
+      "end": 236778,
+      "sha256": "e9342d362019bbddb87252407e9442b848bca5e20cd882ee30a349f6a66e3be8"
+    },
+    {
+      "name": "EXPANDED_FOREST_SPAWNS",
+      "start": 236784,
+      "end": 237396,
+      "sha256": "765dcefc27e1a5bddbd0169d06f1f3a82540cf437918aa6332aa41136bb6b49a"
+    },
+    {
+      "name": "FOREST_SPAWN_UPSERT_SQL",
+      "start": 237402,
+      "end": 238043,
+      "sha256": "568ebf56893f701ab6b68b9f757d28b3a910f8363040b477b7dab7d831726681"
+    },
+    {
+      "name": "MONSTER_BALANCE_HP_MAX",
+      "start": 238049,
+      "end": 238077,
+      "sha256": "3e8caeaa93b60760cbcf6b9540e4ef2a47b9e4df2550fedd521576ce2caa0f6e"
+    },
+    {
+      "name": "MONSTER_BALANCE_DAMAGE_MAX",
+      "start": 238083,
+      "end": 238115,
+      "sha256": "9334eb6fcfe5a43199d610a60d3b8c3960982c0f495dbf36dce23032ffcea3bd"
+    },
+    {
+      "name": "AREAS",
+      "start": 238121,
+      "end": 238149,
+      "sha256": "1e0135a2c69311cd6e9c894dabb62b0ab76261d7fdf3703d1f4014e5cf338111"
+    },
+    {
+      "name": "FAMILIES",
+      "start": 238155,
+      "end": 238198,
+      "sha256": "3d5445a23077f7d82c07e2572a2feb6cac8b213448aec2dde9dc401560d7ff26"
+    },
+    {
+      "name": "VARIANTS",
+      "start": 238204,
+      "end": 238250,
+      "sha256": "b03ff9fb138afb857dd123035c24702614534b77f6d9533270c8fe3ec2adb3d3"
+    },
+    {
+      "name": "FAMILY_LABELS",
+      "start": 238256,
+      "end": 238449,
+      "sha256": "dfdb7abf8ff36c0d75dbef83621d70e02f291d626ca17de918f42da2fedc4629"
+    },
+    {
+      "name": "VARIANT_LABELS",
+      "start": 238455,
+      "end": 238531,
+      "sha256": "c4230a0b6ceafb56987fe5263271a75cefe21f9b5a1bb16ffb6e9fd71536742e"
+    },
+    {
+      "name": "FOREST_DEFAULTS",
+      "start": 238537,
+      "end": 238780,
+      "sha256": "fa0f955fee6c6691e24bd21d91326fd03e84c3a7672ce5cfd3fdbff9e7cc9a9c"
+    },
+    {
+      "name": "FROZEN_DEFAULTS",
+      "start": 238786,
+      "end": 238819,
+      "sha256": "f132ccb8228a83dc8b5ae0b35a1f288570777f492dbc791c03105fd0fbbdf02e"
+    },
+    {
+      "name": "REGULAR_BALANCE_DEFINITIONS",
+      "start": 238825,
+      "end": 239264,
+      "sha256": "5fede55633af729d973f67408f4fcda4026d547d4f11b551b0bb2048be19dbfc"
+    },
+    {
+      "name": "BLACK_FAMILIES",
+      "start": 239270,
+      "end": 239369,
+      "sha256": "81d41ab4d7e6d35f1a13405403012559967333af36712545074d8a050c0b081e"
+    },
+    {
+      "name": "BLACK_NAMES",
+      "start": 239375,
+      "end": 239463,
+      "sha256": "0ff754dc4fc51f1b325e015bd5fd39bb23b73d0b1d4089d78e7d76756b2d4cbf"
+    },
+    {
+      "name": "MONSTER_BALANCE_DEFINITIONS",
+      "start": 239469,
+      "end": 240379,
+      "sha256": "32231c525a3c12e5b22988047ef203965fd038e9d8bb7db898f5a2fa8290cc6c"
+    },
+    {
+      "name": "DEFINITION_BY_KEY",
+      "start": 240385,
+      "end": 240482,
+      "sha256": "2e0c62d6efb1549e124951238348935abb197d7bf9953e3fdce9d1bdebdbe898"
+    },
+    {
+      "name": "LEGACY_DAMAGE_DEFAULTS",
+      "start": 240488,
+      "end": 240550,
+      "sha256": "aa9e14f4d467cddc37f9c3d888d0c14afcb37d61c3798ee573353343498fa688"
+    },
+    {
+      "name": "LEGACY_HP_SETTING",
+      "start": 240556,
+      "end": 240665,
+      "sha256": "d8f37d88f1c5ff54ade4ca3c0ec1e5915e04939d3b082974ee77cbb4e9b7e6df"
+    },
+    {
+      "name": "LEGACY_HP_SCALE_SETTING",
+      "start": 240671,
+      "end": 240775,
+      "sha256": "a941423d4a5ff14331bebe3ea9d7770979c02172e88aed566710426f895b92da"
+    },
+    {
+      "name": "LEGACY_DAMAGE_SCALE_SETTING",
+      "start": 240781,
+      "end": 240937,
+      "sha256": "c2e56ce5404bf151cf245213dbb6a615df0b0c5bd125f68bce584a2bef1a2245"
+    },
+    {
+      "name": "LEGACY_SETTING_DEFAULTS",
+      "start": 240943,
+      "end": 241255,
+      "sha256": "7b97d784e38b39d9638249a27b827754fb5ff14dfcfd27d2d3234bfa36f3d351"
+    },
+    {
+      "name": "legacySetting",
+      "start": 241257,
+      "end": 241409,
+      "sha256": "fc243f16a5c72015a74a109be0994d2c3432955f4d9eaa4d15288b4c1a67f51d"
+    },
+    {
+      "name": "legacyProfileValues",
+      "start": 241410,
+      "end": 242402,
+      "sha256": "9588fbe6f341f50f65d045adeabdea07d4ed786610a25815d1e971ddf5553202"
+    },
+    {
+      "name": "balanceInitialized",
+      "start": 242407,
+      "end": 242433,
+      "sha256": "88ef938eab4a7956400c5cc38af2e93b61a3c04a66062f33da7178e288b395ef"
+    },
+    {
+      "name": "ensureMonsterBalanceInitialized",
+      "start": 242435,
+      "end": 244276,
+      "sha256": "7fc2d14a1a0839d689c99f8d945209131340f26b61754b64a032e0ee3264681c"
+    },
+    {
+      "name": "isMonsterBalanceKey",
+      "start": 244277,
+      "end": 244383,
+      "sha256": "4e76ee33cc48bca9faa951f4f71dbe9989352758d497af35464284fcdadc7464"
+    },
+    {
+      "name": "BOSS_SPAWN",
+      "start": 245448,
+      "end": 245482,
+      "sha256": "f5a5260b994fdb2c31fbd914595db71ff82662ee29584645e7d94f2fff3d7776"
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "start": 245790,
+      "end": 245822,
+      "sha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364"
+    },
+    {
+      "name": "FROZEN_WATER_ID_PREFIX",
+      "start": 245868,
+      "end": 245909,
+      "sha256": "9c3afbaab98417245a719f38aa9261351e9cb9276882e43e5dac6f8d3ab5eb68"
+    },
+    {
+      "name": "DEFAULT_SETTINGS",
+      "start": 246297,
+      "end": 253864,
+      "sha256": "878f8488090fd8865cc4f0462fa756f3f4e36326b963b9f8215f92507600fc55"
+    },
+    {
+      "name": "db",
+      "start": 260312,
+      "end": 260409,
+      "sha256": "9809905c0b1800d4ca698c3179edede650ff552d411ebe3dd5e92eebbb3ecd0f"
+    },
+    {
+      "name": "nowSeconds$1",
+      "start": 261141,
+      "end": 261206,
+      "sha256": "896dc874bc2ab79594d0bebce4f5ca6b42d8c1b657f261c7ed86efc64c297171"
+    },
+    {
+      "name": "seeds",
+      "start": 263386,
+      "end": 263980,
+      "sha256": "1a48d212aef3348170bb1b6d9fb7d711a958d1349a4f19f130eb897a3a7cab6e"
+    },
+    {
+      "name": "forestSpawnSeeds",
+      "start": 263986,
+      "end": 264517,
+      "sha256": "5ef360a575103925aee42995b4e6a768775fa607a3efcb1b57ee15dc328eac05"
+    },
+    {
+      "name": "frozenSpawnSeeds",
+      "start": 264523,
+      "end": 265153,
+      "sha256": "6e7d3f2be9241e19e6b6bc23e926cee27d2b4d0a0c31e9f828747ed1eda1b79a"
+    },
+    {
+      "name": "sinsiStoneSeeds",
+      "start": 265159,
+      "end": 265290,
+      "sha256": "3d615aa5e66eaa09a0ab7fec6dd454d3e7783df87f1611287ea388d92ee6db15"
+    },
+    {
+      "name": "worldSeeded",
+      "start": 265296,
+      "end": 265315,
+      "sha256": "993297fd14eea2b04f9ec2cd1dc5f8cf786acfa2f975b99a117b220169e7f94c"
+    },
+    {
+      "name": "worldSeedJob",
+      "start": 265321,
+      "end": 265340,
+      "sha256": "e7179b844d8e9e20606e87dc3b9b4ecb73119448459b9efd799e4aa938285fe9"
+    },
+    {
+      "name": "seedWorld",
+      "start": 265342,
+      "end": 289507,
+      "sha256": "05b050901b428f7f05d39d37535bf6957d39f6406adbfbb078e540aee5e5f367"
+    },
+    {
+      "name": "ensureWorldSeed",
+      "start": 289508,
+      "end": 289763,
+      "sha256": "d3fb03157ed01d757a0e20f5ae0b55f8b0d000eb5438efc72cf5cbf40d8032de"
+    }
+  ],
+  "generatedSha256": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+  "bodies": {
+    "ensureWorldSeed": "aac20ca733301737f410421179f5a6b3b7a71a80c324938e82ddf542a2235d46",
+    "ensureMonsterBalanceInitialized": "7e6ee8f0d1fbc7a7de36a48adef2af7d536d11658fb5aef8cd4ffcbb09bcc279"
+  },
+  "changes": [
+    "Native asynchronous startup declarations and SQL unchanged",
+    "Only env.DB and the server clock are bound; no HTTP, simulation or timer code imported",
+    "Outer host must prove current nonempty layout and no owners before invocation"
+  ],
+  "r93Zumrut": {
+    "scope": "Normal shared map dispatch, native travel and river fishing eligibility only; no separate simulation or economy loop.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "594da1076c88fe8b89d5deda3e898094c793bd079b036c349fc5a2d826b91f5a",
+        "current": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+        "file": "native-world-startup.mjs"
+      }
+    }
+  }
+}

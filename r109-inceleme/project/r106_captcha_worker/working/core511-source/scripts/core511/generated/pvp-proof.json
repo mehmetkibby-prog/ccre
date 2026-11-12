@@ -1,0 +1,124 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "nativeBodySha256": "f48f6832a9dd9c480e635aab10994fda1897232f569a6512db62e09a368e337e",
+  "memoryBodySha256": "8ab6b88e40988e6182d6ac3519284e8dd96eb576b9adfdc55fa62684b633255d",
+  "extractedMemoryBodySha256": "790312bf5e9099a65ae9824fef7479aa809c4a1678a55bbdb779d46a8fea7264",
+  "adventureAdapterSha256": "7befc664cd8fdcc9b5b0a12743d55d1c492949005fd8f0130178a66605cedbab",
+  "storageEdits": [
+    {
+      "label": "terminal-only-arena",
+      "sourceSha256": "3c55497d1c8e0bb571d929e182cb4bc98e5ba5395ea18dd86007cc0f54d89ec2"
+    },
+    {
+      "label": "terminal-only-arena",
+      "sourceSha256": "60ef7fff76ef1354c89bbf800fcb8329fafb3b4cc041df48aea312ee382c39b1"
+    },
+    {
+      "label": "batchWrites",
+      "sourceSha256": "f1cdaa487109af89e22a7c7c79823cb20e4a2618b547141b787a96a8826972e7"
+    },
+    {
+      "label": "warEconomyWrites",
+      "sourceSha256": "dcfb7fcb6e3d38c98abf15b2f38108c24abdfc73e4e29128a96aef645d1dd93a"
+    },
+    {
+      "label": "arenaScoreWrites",
+      "sourceSha256": "b8c166a99c7990aa60213fc93b4b4d52b920e0f0f565a9b0322ace4e6faf635b"
+    },
+    {
+      "label": "eventInsert",
+      "sourceSha256": "306801f26a7354387e4945d679c023f759463a685cb0f38152f448cdef37f594"
+    },
+    {
+      "label": "targetUpdate",
+      "sourceSha256": "01a565fba16ddcc24e713a178661629dce9c2978288e14a69c106ea6c45122d0"
+    },
+    {
+      "label": "wouldKill",
+      "sourceSha256": "db239d7cc2a8b59f913c454706143efa4cc1aaeda6b9dd5fdfddbefab66b3c0d"
+    },
+    {
+      "label": "defenderDragon",
+      "sourceSha256": "52177163a068bf3fde1a61f39166e8efe2b5e105b18182505d0e125b96c28ff2"
+    },
+    {
+      "label": "pvpCooldownStatement",
+      "sourceSha256": "08770c3e08b2f02b1dbca3fa3ce2faab2c9595825698aaeac102f7482881b94a"
+    },
+    {
+      "label": "terminal-only-arena",
+      "sourceSha256": "59a799ed43f2c4db7934091792c107099bf3c6d85d3d0fa78e9ecf5e89496086"
+    },
+    {
+      "label": "terminal-only-arena",
+      "sourceSha256": "c5da9b9198d2440ef8809f848c089fd3d1f093ab9985916c4a6cd8aff9f4563c"
+    },
+    {
+      "label": "committed472",
+      "sourceSha256": "fcb1396a104cf1a4dbfcf0f3f29c73f8845d5102abd337aa0c10d55735a5e317"
+    },
+    {
+      "label": "terminal-only-arena",
+      "sourceSha256": "cd04b534afdca7d56f6f061b7a515622c17e94917a8339b70c754f79088d8866"
+    },
+    {
+      "label": "eventInserts472",
+      "sourceSha256": "061b15ab97058d598a0d0a4d33d6279bb37d7df54d6e898b92df22eaa5b7a881"
+    },
+    {
+      "label": "targetUpdates472",
+      "sourceSha256": "ed44a39d2a9ed76c9dd11dddd6909bfca66080ab3982067d741e78715f13a045"
+    },
+    {
+      "label": "areaGuard472",
+      "sourceSha256": "a8fec9a2ff2a4e12a1e63302eb2963f8bd3a6699011767b6dddafd136530973c"
+    },
+    {
+      "label": "warEconomyWrites",
+      "sourceSha256": "dcfb7fcb6e3d38c98abf15b2f38108c24abdfc73e4e29128a96aef645d1dd93a"
+    },
+    {
+      "label": "arenaScoreWrites",
+      "sourceSha256": "3318e192cbbc1cdf42d2847bdd7ab90a553f32160f7aff9beb97fe67dd80e1a6"
+    },
+    {
+      "label": "wouldKill",
+      "sourceSha256": "db239d7cc2a8b59f913c454706143efa4cc1aaeda6b9dd5fdfddbefab66b3c0d"
+    },
+    {
+      "label": "defenderDragon",
+      "sourceSha256": "69f60690fafb02be9cfde0a8ff807b06d406e33c7ea9315e345ae056ad4d805d"
+    },
+    {
+      "label": "areaRows472",
+      "sourceSha256": "1c0ac2aa7eff57e517b64e9039f35f6273082fa4d93ddf30d2b7b3bb22d9b393"
+    },
+    {
+      "label": "control",
+      "sourceSha256": "4a048a1851e713aa8f9835a0c2b24e8492009701cedf302d0abcfbac28421e2e"
+    },
+    {
+      "label": "boundary",
+      "sourceSha256": "800600ba08df218ae49211c30b8c663465ec9d9bc103e901b59d2cb40778a3d6"
+    },
+    {
+      "label": "boundary",
+      "sourceSha256": "94beb23459ae0e0d403d38853b1135e8fae8d325fcfbb03b89aa5d0c0fdbc1c5"
+    }
+  ],
+  "nativeContinuitySha256": "c21f7f54322818a7b4c83ca2df382f2d8f33526c106fea9e2edaadf2c8f38d89",
+  "fullProductionIntegration": false,
+  "r31": {
+    "beforeMemoryBodySha256": "3e43472540a05171110c1e93fa0bf767b7175551b7db127be5d7eab76f4fb0cc",
+    "edits": [
+      {
+        "from": "(player.jewelry_pvp||0)",
+        "to": "((player.jewelry_pvp||0)+(player.belt_pvp_r31||0))",
+        "count": 2
+      }
+    ],
+    "reason": "Single equipped sovereign belt adds 10 strong_players to the same native damage formula; no SQL/async added to resident combat"
+  }
+}

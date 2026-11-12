@@ -1,0 +1,250 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "sourceNativeMethodSha256": "08484a487d736fb34d12ff717eca30a295a903fe893d24c6510b3fea7af753c3",
+  "nativeMethodSha256": "9ed54787f9dd571526a9839c8678a4af2f8137a78e64d134f71760650cddc1f2",
+  "runeDamage": {
+    "start": 2650,
+    "end": 3221,
+    "sha256": "903d015816e22932f86a934fb1d5aec7aa4c454347caae4c4c49c527b0861948"
+  },
+  "nativeCommitSha256": "09684c49390c5d993508bfc39abedec4985a54cd18ac929311a25a95fe0a5ba3",
+  "generatedSha256": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+  "declarations": [
+    {
+      "name": "colRuneFactor",
+      "sha256": "289683a852b2d39e0805f42c141fa9515bc734d900614104dc65c5e1044b7ab4"
+    },
+    {
+      "name": "validEnchantments",
+      "sha256": "2ab2e2b0b9c825d2c6c2f105c7758e02de09150f057de4be95c53050a942c2a8"
+    },
+    {
+      "name": "weaponForbiddenEnchantments",
+      "sha256": "6b0f2c7108f5260be3da3b21e5d3640d6740f31465f5bfd9e55c39998e535eec"
+    },
+    {
+      "name": "enchantmentFitsItem",
+      "sha256": "334279171e5825c314a3a828fe3d8b65b56595d5b422fcdd7b6957ab44a8d1fa"
+    },
+    {
+      "name": "parseEnchantments",
+      "sha256": "e52d8891e7a2ebebb525459abbb78d864b72b1f38d932957027aec7708235508"
+    },
+    {
+      "name": "totalParsedEnchantments",
+      "sha256": "66fa764c52c291beecb7dff3e0a311f698fb60fa3b1d4abce7d0258e825e9ed0"
+    },
+    {
+      "name": "colEnhancementEntries491",
+      "sha256": "4347a8f0d749137ed67a14fd5ae84e55dea8fecfc2b2c7562a4c5d94e8ea8c2d"
+    },
+    {
+      "name": "createEnchantmentTotals",
+      "sha256": "92ae6297b2a1c0a9f1b8e8e10da80a7bdfa94f08a187b95635a3831dabf6a53e"
+    },
+    {
+      "name": "attackIsBlocked",
+      "sha256": "28f55dc19ff1587cd3dbfe4275a7735458944b40d887ce4a81a359dac298dcc7"
+    },
+    {
+      "name": "EMPTY_RANK_BONUSES",
+      "sha256": "3a74615ee7b227fe36fbeda420344f403dd02cf1bd9bdbbf6ebb0bfaed64fe3a"
+    },
+    {
+      "name": "DRAGON_WORLD",
+      "sha256": "c123307e08d4f2b8a9b9cde920875cb9424d6a3a1827c27b8ea245c539c25c79"
+    },
+    {
+      "name": "rankService",
+      "sha256": "42d35ea69fec61c2b598a313e7f7a28bfaec44d4e8927e915c8ca9d408ec3314"
+    },
+    {
+      "name": "serverRankBonuses",
+      "sha256": "fa29270bdc18b512db269269299c4eea500cb70c542e55dd95f7f1d2baf2dee7"
+    },
+    {
+      "name": "ANCIENT_WORLD",
+      "sha256": "06c5eb4d182808ece971b17177098b8f756389dfd8ad0f2ed14257f8c8b074a8"
+    },
+    {
+      "name": "GUILD_VILLAGE_WORLD",
+      "sha256": "01a02060c5c5d7f0ff2fcf9d1dda26699bd8620e11b37264ea11a58ecd3a6ae9"
+    },
+    {
+      "name": "GUILD_HALL_WORLD",
+      "sha256": "39bdff0e9f46c25b4f8d0529028413e273858c2b06b4eb628115df2812ade9b1"
+    },
+    {
+      "name": "GUILD_PLOTS",
+      "sha256": "a617caf21b3462aff4e7c9231f4a0e0e53017b5c040d42a7ccaa62b133a36558"
+    },
+    {
+      "name": "guildArea",
+      "sha256": "a2a1a8da83f9d2ff79ca503dc9ed6a2ab0efd568bbcbbf74338a85e45f59c303"
+    },
+    {
+      "name": "guildWalkable",
+      "sha256": "1bc64fa610e1f3d12131b0290e159997da427c31c2586e5c9c433d05936cd68b"
+    },
+    {
+      "name": "AFK_WORLD",
+      "sha256": "95315a72f9a334c75ba1046953dd8af9c3b9b16d9e2a25caffb07e44cf8b3a27"
+    },
+    {
+      "name": "FOREST_CORE_OBSTACLE",
+      "sha256": "120057d0c0e50c9c9721d9c0185bbc1408dd1cd6d6b3ca7c5f3dd313b3796956"
+    },
+    {
+      "name": "insideForestCore",
+      "sha256": "8cb97f02e0593099a4841a95a066f070e8ef5c58cbfbd17826fa411b21673a5f"
+    },
+    {
+      "name": "ANCIENT_CORE_OBSTACLE",
+      "sha256": "12912a8b48a90d4704ef9394769e14868ee520a8aa7b7dcb49eed3fcb6bb377e"
+    },
+    {
+      "name": "insideAncientCore",
+      "sha256": "8177a6b2510b45bef8807415a773cae0df6f33b9f9bd2a774bd1577fd39ba8ae"
+    },
+    {
+      "name": "WAR_WORLD",
+      "sha256": "5d879fa5dd4d594d185edeae7389dd7c53bd6bf93cf3dae23f059e4f6d872da6"
+    },
+    {
+      "name": "COMMON_WORLD",
+      "sha256": "3f6ad12e730e01ab50eb83406140e77fdf4ae9b22e6bce23238b808d97df8652"
+    },
+    {
+      "name": "BLACK_WORLD",
+      "sha256": "beaad12481945895842f37f90f4dda3ca6dc20924a60ebff71f0c3db06a1e650"
+    },
+    {
+      "name": "FOREST_WORLD",
+      "sha256": "a847638d517a0e26fe854da5dc44b8101a5553875aee36af0cce5b3b8b9ae17f"
+    },
+    {
+      "name": "FROZEN_WORLD",
+      "sha256": "6a1ef6aa50663f73e1b006d6562472bb7217515d4f0dc417d07d55fbb01c4db3"
+    },
+    {
+      "name": "FROZEN_LAKE",
+      "sha256": "fd1ec734fd7417d8d20b92061049eaaf795ca9495b5213d2214136a5929b082d"
+    },
+    {
+      "name": "FISHING_LAKE$1",
+      "sha256": "ade9b421e3aa8c7ca73e13e4e945b06db5c4ba724b88ae7df4fb2b0b42f43982"
+    },
+    {
+      "name": "FOREST_WALKABLE_POLYGON",
+      "sha256": "6368b349f6bce6a8cbfb7999274f2e7acf2fd1291d7fddd2443680fabdbdbb04"
+    },
+    {
+      "name": "areaWorld",
+      "sha256": "1921f21f3801c8d8469378486fe9a6d4b300fd0aaf3001b6f818d6a4fdcff796"
+    },
+    {
+      "name": "insideForestBounds",
+      "sha256": "42c0a770ca108acc584fd188ff2a2f8413ba696c401d1ef7e969f296fa10c931"
+    },
+    {
+      "name": "isForestWalkablePosition",
+      "sha256": "a13f3a6610942f63fabed0d50a64d0ab08fe7900a6eb5911b4ba7b2d7929ef1e"
+    },
+    {
+      "name": "isFrozenWalkablePosition",
+      "sha256": "1fe6f867f64a32ba75b1f1c98c3bac2c472fc354eeaa8de3041f1d93674ec0eb"
+    },
+    {
+      "name": "isAreaWalkablePosition",
+      "sha256": "e40e830f885db933196f6cf1dba1a61999429a51c17deedb3adb2b347aa21a1e"
+    },
+    {
+      "name": "armorDamageReduction",
+      "sha256": "4cde3e8aa1d7e813f82021ad570d1251d082aa5e69990598e9100a72708fadb9"
+    },
+    {
+      "name": "isBlackStoneBoss476",
+      "sha256": "fda81d8c6ce2a0bacac43756d06138c3d4fc96a5b3cb7cdde7c63e254184db1e"
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "sha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364"
+    },
+    {
+      "name": "isFrozenBossId",
+      "sha256": "db02393a2e9efd9f65ed6697ad3b533b897dd46adf519a0af5b48762e672d52c"
+    },
+    {
+      "name": "isFrozenWaterId",
+      "sha256": "14773bf9a2b9ffeaadb6a52e8eebf20e06e5a5bc939af52c66e30dd3ad80b647"
+    },
+    {
+      "name": "hasWingBonus",
+      "sha256": "d19376cbbcd625bf54c0cf9791e01a328279b786122101195d652bd71ae3f78a"
+    },
+    {
+      "name": "monsterCombatPosition",
+      "sha256": "25b51f2433d1e62a38f72d42de2ce704018100c821eed33626bcbecb1d11c321"
+    },
+    {
+      "name": "monsterIsInPlayerWorld",
+      "sha256": "dc909e989e7c7b76490d38a9b1970bce2de48abedde64e1ced796b34c9d02a85"
+    },
+    {
+      "name": "pveAggroRange",
+      "sha256": "cb1f714e26953ba287d1fb933a15dacde11dcc946539f594dffeb3362e3cc98e"
+    },
+    {
+      "name": "pveAttackCadenceMs",
+      "sha256": "631d931054579ae5e2d395998ca6294e4a04cd153b507b71d103ba5eac8dacde"
+    },
+    {
+      "name": "pveDamage",
+      "sha256": "b535eca238caa5f723789facf3ab74e4b625d457b527ca6f86cf8e632dfd8a68"
+    },
+    {
+      "name": "preparePveEngagement",
+      "sha256": "260f28f33c6c346be10538a7156e1d5f37137d791201d32b2089f6615fdb45a5"
+    },
+    {
+      "name": "settlePveOne489",
+      "sha256": "08484a487d736fb34d12ff717eca30a295a903fe893d24c6510b3fea7af753c3"
+    }
+  ],
+  "edits": [
+    "memory: clear/hit/publish storage boundaries replaced; synchronous execution",
+    "writer: async/await removed inside existing atomic job; native SQL unchanged",
+    "terminal publication follows durable ACK; nonterminal memory hits remain transient",
+    "explicit fourChannels mode extends black/rune boss classifiers to channel4",
+    "R19 strict adventure geometry/profile bindings retained; stationary adventure encounters invalidate identically in native, resident and writer settlement"
+  ],
+  "channel4BossFamiliesComplete": true,
+  "fullAiIntegrationComplete": false,
+  "r24Geometry": {
+    "scope": "Only mist-specific bounds; native combat, movement and ownership rules preserved. Tower bounds unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "088e1a469e26446eb1410f701d34f2e7d6a0483436d8ae856aa9b8f628484ae8",
+        "current": "19f15313dfb99f3108e3ebe1e66e2be05267366ea33081ea892c76fcac79627c",
+        "file": "retaliation-rules.mjs"
+      }
+    }
+  },
+  "r53MemoryAdapter": {
+    "priorGeneratedSha256": "19f15313dfb99f3108e3ebe1e66e2be05267366ea33081ea892c76fcac79627c",
+    "currentGeneratedSha256": "c01e8872b745918dbd586546817ea1d374a29cf95fa5711676798ae9e1e3974c",
+    "scope": "Only memory lookup/engagement representation adapters. Native attack/retaliation formula bodies, reward rules and writer extraction are unchanged. Exact inverse patch in R53 evidence."
+  },
+  "r93Zumrut": {
+    "scope": "Normal shared map dispatch, native travel and river fishing eligibility only; no separate simulation or economy loop.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "c01e8872b745918dbd586546817ea1d374a29cf95fa5711676798ae9e1e3974c",
+        "current": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+        "file": "retaliation-rules.mjs"
+      }
+    }
+  }
+}

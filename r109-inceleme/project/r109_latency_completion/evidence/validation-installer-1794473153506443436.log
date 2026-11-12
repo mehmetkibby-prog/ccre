@@ -1,0 +1,80 @@
+test_code_contract_binds_every_reviewed_byte (__main__.Installation.test_code_contract_binds_every_reviewed_byte) ... ok
+test_corrupted_current_backup_prevents_retiring_previous (__main__.Installation.test_corrupted_current_backup_prevents_retiring_previous) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_exact_package_updates_both_clients_and_only_backs_up_changed_code (__main__.Installation.test_exact_package_updates_both_clients_and_only_backs_up_changed_code) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_failure_restores_both_code_trees_but_keeps_player_progress_then_retry_retains_one (__main__.Installation.test_failure_restores_both_code_trees_but_keeps_player_progress_then_retry_retains_one) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_independent_rollback_keeps_new_player_progress_and_foreign_repair_records (__main__.Installation.test_independent_rollback_keeps_new_player_progress_and_foreign_repair_records) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_independent_site_edits_are_preserved (__main__.Installation.test_independent_site_edits_are_preserved) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_interrupted_retirement_resumes_without_removing_new_record (__main__.Installation.test_interrupted_retirement_resumes_without_removing_new_record) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+ok
+test_missing_installed_client_asset_is_rejected_before_service_stop (__main__.Installation.test_missing_installed_client_asset_is_rejected_before_service_stop) ... ok
+test_missing_lazy_dependency_blocks_release (__main__.Installation.test_missing_lazy_dependency_blocks_release) ... ok
+test_modified_native_captcha_file_stops_before_maintenance (__main__.Installation.test_modified_native_captcha_file_stops_before_maintenance) ... ok
+test_native_captcha_code_is_pinned_backed_up_and_restored_with_both_realms (__main__.Installation.test_native_captcha_code_is_pinned_backed_up_and_restored_with_both_realms) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_native_payload_never_follows_a_symlink_into_another_release (__main__.Installation.test_native_payload_never_follows_a_symlink_into_another_release) ... ok
+test_new_worker_files_are_removed_on_rollback (__main__.Installation.test_new_worker_files_are_removed_on_rollback) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_obsolete_game_reference_fails_before_any_service_stop (__main__.Installation.test_obsolete_game_reference_fails_before_any_service_stop) ... ok
+test_optional_historical_source_keeps_identity (__main__.Installation.test_optional_historical_source_keeps_identity) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_partial_code_write_restores_all_changes (__main__.Installation.test_partial_code_write_restores_all_changes) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected partial write
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_power_loss_during_backup_requires_no_complete_backup_to_recover (__main__.Installation.test_power_loss_during_backup_requires_no_complete_backup_to_recover) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: power loss in backup
+ok
+test_prior_admin_code_record_can_retire_after_new_rollback_backup_is_valid (__main__.Installation.test_prior_admin_code_record_can_retire_after_new_rollback_backup_is_valid) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_readiness_requires_both_fixes_and_accepts_exact_previous_version_for_rollback (__main__.Installation.test_readiness_requires_both_fixes_and_accepts_exact_previous_version_for_rollback) ... ok
+test_selected_r106_health_failure_restores_code_and_preserves_player_progress (__main__.Installation.test_selected_r106_health_failure_restores_code_and_preserves_player_progress) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_selected_r106_updates_only_reviewed_game_files_and_restores_exact_previous_source (__main__.Installation.test_selected_r106_updates_only_reviewed_game_files_and_restores_exact_previous_source) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_unknown_files_are_preserved_by_retention (__main__.Installation.test_unknown_files_are_preserved_by_retention) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_unready_or_different_realm_patch_blocks_cleanup (__main__.Installation.test_unready_or_different_realm_patch_blocks_cleanup) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R109 GECİKME DÜZELTMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_unselected_readiness_release_is_not_accepted_as_a_source (__main__.Installation.test_unselected_readiness_release_is_not_accepted_as_a_source) ... ok
+test_unversioned_preload_reference_blocks_release (__main__.Installation.test_unversioned_preload_reference_blocks_release) ... ok
+test_worker_dependency_must_match_installed_manifest_before_service_stop (__main__.Installation.test_worker_dependency_must_match_installed_manifest_before_service_stop) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 35.586s
+
+OK

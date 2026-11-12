@@ -1,0 +1,9 @@
+pearl_reset {"applied":true,"appliedAtMs":1794472783585,"backupName":"before-pearl-reset-1794472783585-6e606234-7d31-402d-b9b0-8a40b0b14b64.sqlite"}
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+Error: channel_full
+    at put (file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/tests/pvp-fixture.mjs:13:156)
+    at file:///workspace/ccre/r109_latency_completion/experiments/xp-join/check.mjs:16:3 {
+  code: 'ERR_SQLITE_ERROR',
+  errcode: 1811,
+  errstr: 'constraint failed'
+}

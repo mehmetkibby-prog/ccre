@@ -1,0 +1,260 @@
+--- original/project/r109_latency_completion/tests/installer_test.py
++++ project/r109_latency_completion/tests/installer_test.py
+@@ -6,11 +6,15 @@
+ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'deployment/modules'))
+ import installer as m
+ from storage import encoded,digest,descriptor,atomic
+-BASE=ROOT.parent/'r105_performance_review/working';NODE=ROOT.parent/'r79_stability_work/runtime/node-v22.23.4-linux-x64/bin/node'
++BASE=ROOT.parent/'r105_performance_review/working';NODE=Path(os.environ.get('REVIEW_NODE') or shutil.which('node'))
+ class Fixture:
+  def __init__(self,source='R105_PERF1'):
+   self.tmp=tempfile.TemporaryDirectory(prefix='r102-install-test-');self.home=Path(self.tmp.name);self.releases=self.home/'releases';self.releases.mkdir();self.root=self.releases/'r101';shutil.copytree(BASE,self.root,copy_function=shutil.copy2,symlinks=True)
+   native=self.root/'native510-bb3a6cc689c6';assert native.is_dir() and not native.is_symlink()
++  # Disposable fixture is outside the checkout; rebind only its dependency link.
++  modules=native/'node_modules'
++  if modules.is_symlink():modules.unlink()
++  modules.symlink_to(ROOT.parents[1]/'node_modules',target_is_directory=True)
+   self.control=self.home/'r102';self.statefile=self.home/'state.json';self.systemd=self.home/'systemd';self.scope=contextlib.ExitStack();self.z=zipfile.ZipFile(json.loads((ROOT/'evidence/package.json').read_text())['file']);self.plan=json.loads(self.z.read('plan.json'))
+   if source=='R106_CAPTCHA1':
+    with zipfile.ZipFile(ROOT.parent/'r106_captcha_worker/delivery/r106-captcha.zip') as prior:
+--- original/project/r109_latency_completion/tests/stage-runtime.py
++++ project/r109_latency_completion/tests/stage-runtime.py
+@@ -10,7 +10,7 @@
+  native=out/'native510-bb3a6cc689c6'
+  assert native.is_dir() and not native.is_symlink(),'staged native code must be independent'
+  (native/'node_modules').mkdir(exist_ok=True)
+- if not(native/'node_modules/ws').exists():(native/'node_modules/ws').symlink_to('/tmp/core511-build-deps/node_modules/ws',target_is_directory=True)
++ if not(native/'node_modules/ws').exists():(native/'node_modules/ws').symlink_to(str(ROOT.parents[1]/'node_modules/ws'),target_is_directory=True)
+  for runtime in ('http-runtime','accounts-runtime'):
+   for name in ('lib','vds-server','node_modules'):
+    p=out/runtime/name
+--- original/project/r109_latency_completion/tests/monster-snapshot.test.mjs
++++ project/r109_latency_completion/tests/monster-snapshot.test.mjs
+@@ -1,6 +1,8 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+-const tree=process.env.STUTTER_TREE||'/workspace/ccre/r105_performance_review/working';
++const tree=process.env.STUTTER_TREE||(reviewWorkspace+'r105_performance_review/working');
+ const {ResidentChannel}=await import(tree+'/core511-source/scripts/core511/resident-channel.mjs');
+ const area='kadim_0123456789abcdef0123456789abcdef_01';
+ function scenario(){
+--- original/project/r109_latency_completion/tests/sql-timing.test.mjs
++++ project/r109_latency_completion/tests/sql-timing.test.mjs
+@@ -1,3 +1,5 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import {DatabaseSync} from 'node:sqlite';
+@@ -6,7 +8,7 @@
+ import path from 'node:path';
+ const native=path.resolve(import.meta.dirname,'../working/native510-bb3a6cc689c6/vds-server/src');
+ const candidate=await import(native+'/writer-sql-timing477.mjs');
+-const baseline=await import('/workspace/ccre/r88_release_work/working/native510-bb3a6cc689c6/vds-server/src/writer-sql-timing477.mjs');
++const baseline=await import((reviewWorkspace+'r88_release_work/working/native510-bb3a6cc689c6/vds-server/src/writer-sql-timing477.mjs'));
+ const {LocalDatabase}=await import(native+'/database.mjs');
+ const {installRewardGroupCommitR53}=await import('../working/core511-source/scripts/core511/reward-group-commit-r53.mjs');
+ const wait=async f=>{const end=Date.now()+5000;while(!f()){assert(Date.now()<end);await new Promise(r=>setTimeout(r,5));}};
+--- original/project/r109_latency_completion/tests/neighbour-kill.mjs
++++ project/r109_latency_completion/tests/neighbour-kill.mjs
+@@ -1,9 +1,11 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import fs from 'node:fs';
+ import http from 'node:http';
+ import {randomUUID,createHash} from 'node:crypto';
+-const root='/workspace/ccre/r105_performance_review',tree=process.env.STUTTER_TREE||root+'/working',c=tree+'/core511-source/scripts/core511';
++const root=(reviewWorkspace+'r105_performance_review'),tree=process.env.STUTTER_TREE||root+'/working',c=tree+'/core511-source/scripts/core511';
+ const {nativeHttpHost}=await import(c+'/tests/native-http-host-fixture.mjs');
+ const {put}=await import(c+'/tests/pvp-fixture.mjs');
+ const {until}=await import(c+'/tests/helpers.mjs');
+--- original/project/r109_latency_completion/tests/run-population.py
++++ project/r109_latency_completion/tests/run-population.py
+@@ -11,7 +11,7 @@
+  env={**os.environ,'STUTTER_TREE':tree,'LOAD_PLAYERS':str(players),'LOAD_MS':'60000','LOAD_LABEL':name,'POPULATION_MODE':os.environ.get('POPULATION_MODE','mixed'),'BACKGROUND_MONSTERS':'6000','R102_TEST_REALM':realm}
+  started=time.time()
+  with output.open('w') as log:
+-  result=subprocess.run(['python3','/workspace/ccre/r102_content/tests/run.py',str(root/'tests/population-load.mjs')],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=300)
++  result=subprocess.run(['python3',str(REVIEW_PROJECT / 'r102_content/tests/run.py'),str(root/'tests/population-load.mjs')],env=env,stdout=log,stderr=subprocess.STDOUT,timeout=300)
+  record={'label':name,'players':players,'exit':result.returncode,'seconds':round(time.time()-started,1)}
+  f=output.with_suffix('.json')
+  if f.exists():
+--- original/project/r109_latency_completion/tests/recovery.test.mjs
++++ project/r109_latency_completion/tests/recovery.test.mjs
+@@ -1,6 +1,8 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+-const tree=process.env.CLIENT_TREE||'/workspace/ccre/r105_performance_review/working';
++const tree=process.env.CLIENT_TREE||(reviewWorkspace+'r105_performance_review/working');
+ const {Core511Transport,CLIENT_PROTOCOL:P}=await import(tree+'/core511-source/scripts/core511/client-transport.mjs');
+ const ticket={protocol:P,playerId:'p',channel:1,epoch:1,url:'/game/channel/1',ticket:'opaque'};
+ const pause=ms=>new Promise(r=>setTimeout(r,ms));
+--- original/project/r109_latency_completion/tests/run-r109-loads.py
++++ project/r109_latency_completion/tests/run-r109-loads.py
+@@ -1,5 +1,6 @@
+ import json,os,subprocess,time
+ from pathlib import Path
++REVIEW_PROJECT=Path(__file__).resolve().parents[2]
+ root=Path(__file__).resolve().parents[1]
+ # Single load at a time, six explicit 60s windows, no profiling/instrumentation.
+ scenarios=[('packed-1',40,'r1','mixed','packed'),('boss-1',40,'r1','shared_boss_terminal','balanced'),('balanced30',30,'r1','mixed','balanced'),('academy40',40,'r2','mixed','balanced'),('packed-2',40,'r1','mixed','packed'),('boss-2',40,'r1','shared_boss_terminal','balanced')]
+@@ -9,6 +10,6 @@
+  env={**os.environ,'STUTTER_TREE':str(root/'working'),'LOAD_PLAYERS':str(n),'LOAD_MS':'60000','LOAD_LABEL':label,'POPULATION_MODE':mode,'POPULATION_EQUIPMENT':'1','BACKGROUND_MONSTERS':'6000','LOAD_DISTRIBUTION':distribution,'R108_WS_TRANSPORT':'tcp','R108_TEST_READ_BATCH':'1','R102_TEST_REALM':realm,'CPU_PROFILE':'0','ALLOCATION_PROFILE':'0','SQL_DIAGNOSTIC':'0'}
+  for key in ['PROFILE_CHANNELS','SQL_PLAN_DIAGNOSTIC','R108_BOSS_PREWARM_SHAPE_TEST']:env.pop(key,None)
+  start=time.time()
+- with log.open('w') as f:r=subprocess.run(['python3','/workspace/ccre/r102_content/tests/run.py',str(root/'tests/population-load.mjs')],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=240)
++ with log.open('w') as f:r=subprocess.run(['python3',str(REVIEW_PROJECT / 'r102_content/tests/run.py'),str(root/'tests/population-load.mjs')],cwd=root,env=env,stdout=f,stderr=subprocess.STDOUT,timeout=240)
+  item={'name':name,'players':n,'realm':realm,'mode':mode,'distribution':distribution,'exit':r.returncode,'seconds':round(time.time()-start,1),'file':f'{label}-{n}.json'};progress.append(item);(root/'evidence/r109-ready-load-progress.json').write_text(json.dumps(progress,indent=2)+'\n');print(json.dumps(item),flush=True)
+  if r.returncode:raise SystemExit(r.returncode)
+--- original/project/r109_latency_completion/tests/ipc-copy-benchmark.mjs
++++ project/r109_latency_completion/tests/ipc-copy-benchmark.mjs
+@@ -1,10 +1,12 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ import {fork} from 'node:child_process';
+ import {once} from 'node:events';
+ import {pathToFileURL} from 'node:url';
+ import {performance,PerformanceObserver} from 'node:perf_hooks';
+ import fs from 'node:fs';
+ import assert from 'node:assert/strict';
+-const paths={before:'/workspace/ccre/r107_population_stability/working/core511-source/scripts/core511/process-stream.mjs',after:new URL('../working/core511-source/scripts/core511/process-stream.mjs',import.meta.url).pathname};
++const paths={before:(reviewWorkspace+'r107_population_stability/working/core511-source/scripts/core511/process-stream.mjs'),after:new URL('../working/core511-source/scripts/core511/process-stream.mjs',import.meta.url).pathname};
+ // Experimental incoming-view variant exists only under evidence, never shipped.
+ paths.both=new URL('../evidence/process-stream-both-copies.mjs',import.meta.url).pathname;
+ fs.writeFileSync(paths.both,fs.readFileSync(paths.after,'utf8').replace('this.push(Buffer.from(message.bytes));','this.push(Buffer.from(message.bytes.buffer,message.bytes.byteOffset,message.bytes.byteLength));'));
+--- original/project/r109_latency_completion/tests/profile-reader.py
++++ project/r109_latency_completion/tests/profile-reader.py
+@@ -11,12 +11,13 @@
+ import json
+ import os
+ from pathlib import Path
++REVIEW_PROJECT=Path(__file__).resolve().parents[2]
+ import shutil
+ import subprocess
+ import tempfile
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-RUNNER = Path('/workspace/ccre/r102_content/tests/run.py')
++RUNNER = Path(str(REVIEW_PROJECT / 'r102_content/tests/run.py'))
+ RELATIVE_READER = Path('scripts/core511/read-worker.mjs')
+ ANCHOR = "const rows=await loadWindow.command(message.payload);"
+ WORKER_ANCHOR = "if(!isMainThread&&workerData?.kernel511ReadWorker===true) {"
+@@ -82,7 +83,7 @@
+ 
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument('--source', type=Path, default=Path('/workspace/ccre/r106_captcha_worker/working'))
++    parser.add_argument('--source', type=Path, default=Path(str(REVIEW_PROJECT / 'r106_captcha_worker/working')))
+     parser.add_argument('--label', required=True, help='Unique lowercase label; automatically prefixed reader-diag-.')
+     parser.add_argument('--players', type=int, choices=(10, 30, 40, 50, 100), default=40)
+     parser.add_argument('--realm', choices=('r1', 'r2'), default='r1')
+--- original/project/r109_latency_completion/tests/tower-browser.mjs
++++ project/r109_latency_completion/tests/tower-browser.mjs
+@@ -1,3 +1,5 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ // R93 full generated game app, genuine local native HTTP / SQLite / channel
+ // processes. Only accounts boundary and cached public static assets are fixtures.
+ // Run only after parent finishes generated R93 client/HTTP proofs:
+@@ -13,7 +15,7 @@
+ 
+ const root=path.resolve(import.meta.dirname,'..'),baseline=process.env.CHAT_BASELINE==='1',working=process.env.STUTTER_TREE||(baseline?root+'/../r103_release/working':root+'/working'),coreRoot=working+'/core511-source/scripts/core511';
+ const assetRoot=process.env.AUDIT_ASSETS||(baseline?root+'/../r103_release':root)+'/evidence/chat-browser-assets';
+-const cache='/workspace/ccre/r60_mount_work/design-r60/live-assets',out=root+'/evidence/browser-'+(process.env.CORE101_REALM_ID||'r1')+'-hud'+(process.env.CHAMPION_DEMO==='1'?'-champion':'')+(process.env.LAYOUT_BEFORE==='1'?'-before':'')+(process.env.MODE==='mobile'?'-mobile':'')+'-'+(process.env.PREVIEW_NAME||'chat-r103');
++const cache=(reviewWorkspace+'r60_mount_work/design-r60/live-assets'),out=root+'/evidence/browser-'+(process.env.CORE101_REALM_ID||'r1')+'-hud'+(process.env.CHAMPION_DEMO==='1'?'-champion':'')+(process.env.LAYOUT_BEFORE==='1'?'-before':'')+(process.env.MODE==='mobile'?'-mobile':'')+'-'+(process.env.PREVIEW_NAME||'chat-r103');
+ fs.mkdirSync(out,{recursive:true});for(const file of fs.readdirSync(out))if(file.endsWith('.jsonl'))fs.unlinkSync(out+'/'+file);
+ const proof=JSON.parse(fs.readFileSync(coreRoot+'/generated/native-client-proof.json'));
+ const {CLIENT_ASSET_NAMESPACE}=await import(coreRoot+'/client-assets.mjs');
+@@ -105,9 +107,9 @@
+  fs.writeFileSync(path.join(serverDir,'__vite_rsc_assets_manifest.js'),'export default {serverResources:{},clientReferenceDeps:{}};\n');
+  fs.copyFileSync(working+'/http-runtime/dist-vds/server/index.js',path.join(serverDir,'index.js'));
+  const native=await import(pathToFileURL(path.join(serverDir,'index.js')));
+- const aliases=JSON.parse(fs.readFileSync('/workspace/ccre/qa40_player_work/asset-aliases.json'));
++ const aliases=JSON.parse(fs.readFileSync((reviewWorkspace+'qa40_player_work/asset-aliases.json')));
+  for(const row of Object.values(aliases))assert.equal(createHash('sha256').update(fs.readFileSync(row.file)).digest('hex'),row.sha256,'exact cached media alias');
+- const asset=p=>['/workspace/ccre/r105_performance_review/evidence/public-media'+p,'/workspace/ccre/r105_performance_review/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),'/workspace/ccre/r105_tower_recovery/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),root+'/evidence/public-media'+p,root+'/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),'/workspace/ccre/r102_content/evidence/public-media'+p,'/workspace/ccre/r100_hud_refresh/evidence/hud-media'+p,'/workspace/ccre/r100_hud_refresh/evidence/public-media'+p,'/workspace/ccre/r100_attack_fix/evidence/public-media'+p,cache+p,'/workspace/ccre/general_promo_video/assets'+p,...(aliases[p]?[aliases[p].file]:[]),...(p==='/favicon.svg'?['/workspace/ccre/site_launch_v2/public/favicon.svg']:[])].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile())??null;
++ const asset=p=>[(reviewWorkspace+'r105_performance_review/evidence/public-media')+p,(reviewWorkspace+'r105_performance_review/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r105_tower_recovery/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),root+'/evidence/public-media'+p,root+'/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r102_content/evidence/public-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/hud-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/public-media')+p,(reviewWorkspace+'r100_attack_fix/evidence/public-media')+p,cache+p,(reviewWorkspace+'general_promo_video/assets')+p,...(aliases[p]?[aliases[p].file]:[]),...(p==='/favicon.svg'?[(reviewWorkspace+'site_launch_v2/public/favicon.svg')]:[])].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile())??null;
+  const nativeRequest=(url,method,body,instance)=>new Request(s.f.origin+url,{method,headers:{Origin:s.f.origin,Cookie:'__Host-yasam-session='+s.f.token+'; __Host-yasam-csrf='+s.f.csrf,'X-CSRF-Token':s.f.csrf,'X-Game-Instance':instance,'Content-Type':'application/json','X-Real-IP':'198.51.100.93'},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  server=http.createServer(async(req,res)=>{try{
+   const url=new URL(req.url,'http://fixture');
+@@ -137,7 +139,7 @@
+   const headers={...req.headers,origin:s.f.origin,'x-real-ip':'198.51.100.93'};bridge.write('GET '+req.url+' HTTP/1.1\r\n'+Object.entries(headers).map(([k,v])=>k+': '+v).join('\r\n')+'\r\n\r\n');if(head.length)bridge.write(head);socket.pipe(lag()).pipe(bridge).pipe(lag()).pipe(socket);socket.on('error',()=>bridge.destroy());bridge.on('error',()=>socket.destroy());
+  }catch(error){errors.push({kind:'websocket',message:error.message});socket.destroy();}});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+- browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
++ browser=await chromium.launch({executablePath:process.env.REVIEW_CHROMIUM||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+  const mobile=process.env.MODE==='mobile',compact=mobile; const context=await browser.newContext({viewport:compact?{width:844,height:390}:{width:1280,height:800},deviceScaleFactor:2,isMobile:compact,hasTouch:compact,serviceWorkers:'block',...(process.env.IPHONE==='1'?{userAgent:'Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1'}:{})}),page=await context.newPage(),touch=await context.newCDPSession(page);page.setDefaultTimeout(10000);
+  const captureResponsive=async(name,width=390,height=844)=>{await page.setViewportSize({width,height});await pause(300);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,name+' horizontal overflow');await page.screenshot({path:out+'/'+name+'.png'});};
+  const tap=async locator=>{await locator.scrollIntoViewIfNeeded();const b=await locator.boundingBox();assert(b,'touch target missing');await touch.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:b.x+b.width/2,y:b.y+b.height/2}]});await touch.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});};
+--- original/project/r109_latency_completion/tests/three-browser.mjs
++++ project/r109_latency_completion/tests/three-browser.mjs
+@@ -1,3 +1,5 @@
++import {fileURLToPath as reviewFilePath} from 'node:url';
++const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
+ // R93 full generated game app, genuine local native HTTP / SQLite / channel
+ // processes. Only accounts boundary and cached public static assets are fixtures.
+ // Run only after parent finishes generated R93 client/HTTP proofs:
+@@ -11,9 +13,9 @@
+ import assert from 'node:assert/strict';
+ import {chromium} from '/workspace/ccre/r60_mount_work/tooling/node_modules/playwright/index.mjs';
+ 
+-const root=path.resolve(import.meta.dirname,'..'),working=process.env.STUTTER_TREE||'/workspace/ccre/r104_boot_repair/working',coreRoot=working+'/core511-source/scripts/core511';
+-const assetRoot=process.env.AUDIT_ASSETS||'/workspace/ccre/r104_boot_repair/evidence/chat-browser-assets';
+-const cache='/workspace/ccre/r60_mount_work/design-r60/live-assets',out=root+'/evidence/three-browser-'+(process.env.AUDIT_NAME||'baseline');
++const root=path.resolve(import.meta.dirname,'..'),working=process.env.STUTTER_TREE||(reviewWorkspace+'r104_boot_repair/working'),coreRoot=working+'/core511-source/scripts/core511';
++const assetRoot=process.env.AUDIT_ASSETS||(reviewWorkspace+'r104_boot_repair/evidence/chat-browser-assets');
++const cache=(reviewWorkspace+'r60_mount_work/design-r60/live-assets'),out=root+'/evidence/three-browser-'+(process.env.AUDIT_NAME||'baseline');
+ const actors=[],browsers=[];const hash=x=>createHash('sha256').update(x).digest('base64url');
+ fs.mkdirSync(out,{recursive:true});for(const file of fs.readdirSync(out))if(file.endsWith('.jsonl'))fs.unlinkSync(out+'/'+file);
+ const proof=JSON.parse(fs.readFileSync(coreRoot+'/generated/native-client-proof.json'));
+@@ -73,9 +75,9 @@
+  fs.writeFileSync(path.join(serverDir,'__vite_rsc_assets_manifest.js'),'export default {serverResources:{},clientReferenceDeps:{}};\n');
+  fs.copyFileSync(working+'/http-runtime/dist-vds/server/index.js',path.join(serverDir,'index.js'));
+  const native=await import(pathToFileURL(path.join(serverDir,'index.js')));
+- const aliases=JSON.parse(fs.readFileSync('/workspace/ccre/qa40_player_work/asset-aliases.json'));
++ const aliases=JSON.parse(fs.readFileSync((reviewWorkspace+'qa40_player_work/asset-aliases.json')));
+  for(const row of Object.values(aliases))assert.equal(createHash('sha256').update(fs.readFileSync(row.file)).digest('hex'),row.sha256,'exact cached media alias');
+- const asset=p=>['/workspace/ccre/r105_performance_review/evidence/public-media'+p,'/workspace/ccre/r105_performance_review/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),'/workspace/ccre/r105_tower_recovery/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),root+'/evidence/public-media'+p,root+'/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),'/workspace/ccre/r102_content/evidence/public-media'+p,'/workspace/ccre/r100_hud_refresh/evidence/hud-media'+p,'/workspace/ccre/r100_hud_refresh/evidence/public-media'+p,'/workspace/ccre/r100_attack_fix/evidence/public-media'+p,cache+p,'/workspace/ccre/general_promo_video/assets'+p,...(aliases[p]?[aliases[p].file]:[]),...(p==='/favicon.svg'?['/workspace/ccre/site_launch_v2/public/favicon.svg']:[])].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile())??null;
++ const asset=p=>[(reviewWorkspace+'r105_performance_review/evidence/public-media')+p,(reviewWorkspace+'r105_performance_review/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r105_tower_recovery/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),root+'/evidence/public-media'+p,root+'/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r102_content/evidence/public-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/hud-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/public-media')+p,(reviewWorkspace+'r100_attack_fix/evidence/public-media')+p,cache+p,(reviewWorkspace+'general_promo_video/assets')+p,...(aliases[p]?[aliases[p].file]:[]),...(p==='/favicon.svg'?[(reviewWorkspace+'site_launch_v2/public/favicon.svg')]:[])].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile())??null;
+  const nativeRequest=(actor,url,method,body,instance)=>new Request(s.f.origin+url,{method,headers:{Origin:s.f.origin,Cookie:'__Host-yasam-session='+actor.token+'; __Host-yasam-csrf='+actor.csrf,'X-CSRF-Token':actor.csrf,'X-Game-Instance':instance,'Content-Type':'application/json','X-Real-IP':'198.51.100.93'},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  server=http.createServer(async(req,res)=>{try{
+   const url=new URL(req.url,'http://fixture'),actor=actors[Number(req.headers.cookie?.match(/qa_actor=(\d)/)?.[1]??0)];
+@@ -107,7 +109,7 @@
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+ 
+  for(const actor of actors){
+-  const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});browsers.push(browser);
++  const browser=await chromium.launch({executablePath:process.env.REVIEW_CHROMIUM||undefined,headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});browsers.push(browser);
+   const context=await browser.newContext({viewport:{width:1100,height:700},serviceWorkers:'block'});await context.addCookies([{name:'qa_actor',value:String(actor.n),url:origin}]);
+   const page=await context.newPage();actor.page=page;page.setDefaultTimeout(15000);
+   page.on('pageerror',e=>{const row={actor:actor.n,kind:'browser',message:e.message,stack:e.stack};errors.push(row);log('faults',row);});
+--- original/project/r109_latency_completion/tests/validate-population-release.py
++++ project/r109_latency_completion/tests/validate-population-release.py
+@@ -1,8 +1,9 @@
+ """Sequential release checks; run only after performance windows have ended."""
+ import json,os,subprocess,time,sys
+ from pathlib import Path
++REVIEW_PROJECT=Path(__file__).resolve().parents[2]
+ root=Path(__file__).resolve().parents[1]
+-runner=['python3','/workspace/ccre/r102_content/tests/run.py']
++runner=['python3',str(REVIEW_PROJECT / 'r102_content/tests/run.py')]
+ env={**os.environ,'STUTTER_TREE':str(root/'working'),'CLIENT_TREE':str(root/'working'),'R102_TEST_REALM':'r1'}
+ results=[]
+ start_from=sys.argv[1] if len(sys.argv)>1 else None
+--- original/project/r109_latency_completion/tests/tower-media.mjs
++++ project/r109_latency_completion/tests/tower-media.mjs
+@@ -17,7 +17,7 @@
+ const urls=new Set(report.missingAssets),server=http.createServer((req,res)=>{if(!urls.has(req.url)){res.writeHead(404);res.end();return;}res.writeHead(200,{'content-type':'image/webp'});res.end(fs.readFileSync(assets+req.url));});
+ server.listen(0,'127.0.0.1');await once(server,'listening');let browser;
+ try{
+- browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage']});const page=await browser.newPage();
++ browser=await chromium.launch({headless:true,executablePath:process.env.REVIEW_CHROMIUM||undefined,args:['--no-sandbox','--disable-dev-shm-usage']});const page=await browser.newPage();
+  const base='http://127.0.0.1:'+server.address().port,decoded=await page.evaluate(async urls=>Promise.all(urls.map(async src=>{const img=new Image();img.src=src;await img.decode();return {src,width:img.naturalWidth,height:img.naturalHeight};})),[...urls].map(p=>base+p));
+  assert(decoded.every(i=>i.width>128&&i.height>128));
+  const result={passed:true,combatReport:'three-browser-perf-final-r1/report.json',combatPassed:true,independentBrowsers:3,tenFloorsEach:true,commandErrors:0,spontaneousDisconnects:0,nativeFaults:0,mediaRetest:decoded,scope:'Original full combat run passed all gameplay assertions; only missing unchanged fixture media failed. Those media are now served from exact installer asset_updates and decoded in real Chromium; production source SHA matches.'};

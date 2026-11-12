@@ -1,0 +1,22 @@
+ALTER TABLE `game_settings` ADD `normal_variant_damage_scale` real DEFAULT 1 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `aggressive_variant_damage_scale` real DEFAULT 1.45 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `killer_variant_damage_scale` real DEFAULT 2 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `regular_red_chance` real DEFAULT 0.001 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `boss_red_chance` real DEFAULT 0.01 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `item_sale_red` integer DEFAULT 100 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `white_weapon_power_min` integer DEFAULT 5 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `white_weapon_power_max` integer DEFAULT 12 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `white_armor_power_min` integer DEFAULT 5 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `white_armor_power_max` integer DEFAULT 12 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `blue_weapon_power_min` integer DEFAULT 15 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `blue_weapon_power_max` integer DEFAULT 25 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `blue_armor_power_min` integer DEFAULT 15 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `blue_armor_power_max` integer DEFAULT 25 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `orange_weapon_power_min` integer DEFAULT 30 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `orange_weapon_power_max` integer DEFAULT 45 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `orange_armor_power_min` integer DEFAULT 30 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `orange_armor_power_max` integer DEFAULT 45 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `red_weapon_power_min` integer DEFAULT 60 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `red_weapon_power_max` integer DEFAULT 85 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `red_armor_power_min` integer DEFAULT 60 NOT NULL;--> statement-breakpoint
+ALTER TABLE `game_settings` ADD `red_armor_power_max` integer DEFAULT 85 NOT NULL;

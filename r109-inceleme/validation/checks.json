@@ -1,0 +1,58 @@
+{
+  "focused": {
+    "passed": true,
+    "tests": 54
+  },
+  "captcha": {
+    "passed": true,
+    "tests": 20
+  },
+  "native": {
+    "passed": true,
+    "tests": 29
+  },
+  "installer": {
+    "passed": true,
+    "tests": 26
+  },
+  "runtime": {
+    "passed": true,
+    "tests": 2
+  },
+  "browser-r1": {
+    "passed": true,
+    "checks": 4,
+    "missingAssets": [],
+    "nativeFaults": [],
+    "errors": []
+  },
+  "browser-r2": {
+    "passed": true,
+    "checks": 4,
+    "missingAssets": [],
+    "nativeFaults": [],
+    "errors": []
+  },
+  "load-smoke": {
+    "passed": true,
+    "players": 10,
+    "durationRequestedMs": 10000,
+    "summary": {
+      "tickP95Ms": 5.742155999996612,
+      "tickP99Ms": 14.401878999999099,
+      "maxTickMs": 55.01206100000127,
+      "mainMaxPauseMs": 26.836991,
+      "mainPausesOver50Ms": 0,
+      "channelPausesOver50Ms": 1,
+      "maxChannelPauseMs": 51.367521000000124,
+      "mainElu": 0.1430608649115494,
+      "mainMaxRssBytes": 514699264,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.20065757198783546,
+        "maxRssBytes": 1278935040
+      }
+    },
+    "capacityCertification": false
+  }
+}

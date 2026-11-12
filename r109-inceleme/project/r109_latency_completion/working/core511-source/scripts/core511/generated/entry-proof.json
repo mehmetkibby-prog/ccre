@@ -1,0 +1,569 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "generatedSha256": "1a964df732cf4be3a1580fb75a56fa65268bce4c1f1efb72b59af8ecef3a19d6",
+  "join": {
+    "start": 497768,
+    "end": 503257,
+    "sha256": "94edbbf802aeea76f1bc6aa50beb5e93f53e734ec92681a9f48c48d62cc8c343"
+  },
+  "creation": {
+    "slices": [
+      {
+        "start": 497052,
+        "end": 497088,
+        "sha256": "dea1304dc8e768d2d996427314952cb820f9ff0b5dd4c891685d6e1fef739277"
+      },
+      {
+        "start": 497094,
+        "end": 497274,
+        "sha256": "91189fc1b37099ddc4b8bb7e6a074f54c672aba2e973d1cb55a25ec3f433b0d5"
+      },
+      {
+        "start": 503263,
+        "end": 503299,
+        "sha256": "1502dc9d2873b2f003546cdaa42ba25bc45147f3130ee2e243dc44e0e632332f"
+      },
+      {
+        "start": 503305,
+        "end": 503470,
+        "sha256": "42d6b43e17a7dd7f49c01dda8e1e283426b5443c706c40ed7c44d96e97c23278"
+      },
+      {
+        "start": 503476,
+        "end": 503515,
+        "sha256": "0af014ae1fb425011272b29b2693b0ac46718104aa6207ce54b8a4dad567491a"
+      },
+      {
+        "start": 503521,
+        "end": 503591,
+        "sha256": "eb6ce408b5e523257374f9494bbe0b5e04a6a082b48457d1eedbd975284ac931"
+      },
+      {
+        "start": 503597,
+        "end": 503704,
+        "sha256": "e66772e5e0a7a2b38e02bc7c64bb6a9e0473abdc63969916d5b0c7164906e764"
+      },
+      {
+        "start": 503710,
+        "end": 503743,
+        "sha256": "e27fa919fb16d0f35070cc2d13cde54c5a361668b690b13a0d701a61c8d8feef"
+      },
+      {
+        "start": 503749,
+        "end": 503794,
+        "sha256": "d0fbe586560e53671e59d602d58abdb21031a28d3f2289a46f400e81454a098e"
+      },
+      {
+        "start": 503800,
+        "end": 503937,
+        "sha256": "541dbff081d279d04a5a91e2d36db294d67de837ef66d83d0d1ea01eae1e2559"
+      },
+      {
+        "start": 503943,
+        "end": 504246,
+        "sha256": "ead287bae87d184a825bd431c6d5f6ecafa76440e73f724819b2595f34d0e2e5"
+      },
+      {
+        "start": 504252,
+        "end": 505631,
+        "sha256": "ce422eafcde3307b0817b944a589ff5bb0e5819d8375f7ec51676031490fc780"
+      },
+      {
+        "start": 505637,
+        "end": 505810,
+        "sha256": "428e6f0198af4cdb64a64bc4ed108d851f36955c5821e90ef0427f1f97775f9b"
+      },
+      {
+        "start": 505816,
+        "end": 506203,
+        "sha256": "5d75f4138121ed128e9628beccf2119fa5d05b1eff9c8bf7534881319af6bdd9"
+      },
+      {
+        "start": 506209,
+        "end": 506297,
+        "sha256": "b003abf8792cf3c16a7712bc4cc0e123a22b83210cf382810aed27a084005908"
+      },
+      {
+        "start": 506303,
+        "end": 506610,
+        "sha256": "a5e812d6fa3379ebe3516cd403c022e0a35b127f0b4564e6770e1280f6de41c7"
+      }
+    ],
+    "wrapperSha256": "d0d7a2677d35b4030f09aab8ac76152f6b5746f3a8a67e6670bec4e2e822a852"
+  },
+  "declarations": [
+    {
+      "name": "colRepairRuneAccess",
+      "sha256": "47e5a8906d7783fcb14447317dcb2d80c9e237c7c14d32428af8da2af5df50f1"
+    },
+    {
+      "name": "colRepairRuneV2Access",
+      "sha256": "565fe819c20603ac2b8683f4ef1fe6c9ec611e350a0f4296ed83268f2d4e0bb9"
+    },
+    {
+      "name": "ENCHANT_TIERS",
+      "sha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35"
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "sha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a"
+    },
+    {
+      "name": "tierKeys",
+      "sha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918"
+    },
+    {
+      "name": "ENCHANT_TIER_DEFAULTS",
+      "sha256": "766a22d6bdfd19fa397b0622508b90494eff8a6e37517ecd99b65e9526f383f8"
+    },
+    {
+      "name": "ENCHANT_TIER_KEYS",
+      "sha256": "b023ae2edae5091529e553d9390add8431e625299dadad9787d902886f49f74f"
+    },
+    {
+      "name": "STARTER_CHARACTER_GRANT_SQL",
+      "sha256": "82b34b3ad4dc127ac9f0a65da6c74e925752f74efe48ab249c86d9f1b572449a"
+    },
+    {
+      "name": "DRAGON_WORLD",
+      "sha256": "c123307e08d4f2b8a9b9cde920875cb9424d6a3a1827c27b8ea245c539c25c79"
+    },
+    {
+      "name": "ANCIENT_WORLD",
+      "sha256": "06c5eb4d182808ece971b17177098b8f756389dfd8ad0f2ed14257f8c8b074a8"
+    },
+    {
+      "name": "GUILD_VILLAGE_WORLD",
+      "sha256": "01a02060c5c5d7f0ff2fcf9d1dda26699bd8620e11b37264ea11a58ecd3a6ae9"
+    },
+    {
+      "name": "GUILD_HALL_WORLD",
+      "sha256": "39bdff0e9f46c25b4f8d0529028413e273858c2b06b4eb628115df2812ade9b1"
+    },
+    {
+      "name": "GUILD_PLOTS",
+      "sha256": "a617caf21b3462aff4e7c9231f4a0e0e53017b5c040d42a7ccaa62b133a36558"
+    },
+    {
+      "name": "guildArea",
+      "sha256": "a2a1a8da83f9d2ff79ca503dc9ed6a2ab0efd568bbcbbf74338a85e45f59c303"
+    },
+    {
+      "name": "guildWalkable",
+      "sha256": "1bc64fa610e1f3d12131b0290e159997da427c31c2586e5c9c433d05936cd68b"
+    },
+    {
+      "name": "AFK_WORLD",
+      "sha256": "95315a72f9a334c75ba1046953dd8af9c3b9b16d9e2a25caffb07e44cf8b3a27"
+    },
+    {
+      "name": "FOREST_CORE_OBSTACLE",
+      "sha256": "120057d0c0e50c9c9721d9c0185bbc1408dd1cd6d6b3ca7c5f3dd313b3796956"
+    },
+    {
+      "name": "insideForestCore",
+      "sha256": "8cb97f02e0593099a4841a95a066f070e8ef5c58cbfbd17826fa411b21673a5f"
+    },
+    {
+      "name": "ANCIENT_CORE_OBSTACLE",
+      "sha256": "12912a8b48a90d4704ef9394769e14868ee520a8aa7b7dcb49eed3fcb6bb377e"
+    },
+    {
+      "name": "insideAncientCore",
+      "sha256": "8177a6b2510b45bef8807415a773cae0df6f33b9f9bd2a774bd1577fd39ba8ae"
+    },
+    {
+      "name": "WAR_WORLD",
+      "sha256": "5d879fa5dd4d594d185edeae7389dd7c53bd6bf93cf3dae23f059e4f6d872da6"
+    },
+    {
+      "name": "COMMON_WORLD",
+      "sha256": "3f6ad12e730e01ab50eb83406140e77fdf4ae9b22e6bce23238b808d97df8652"
+    },
+    {
+      "name": "BLACK_WORLD",
+      "sha256": "beaad12481945895842f37f90f4dda3ca6dc20924a60ebff71f0c3db06a1e650"
+    },
+    {
+      "name": "FOREST_WORLD",
+      "sha256": "a847638d517a0e26fe854da5dc44b8101a5553875aee36af0cce5b3b8b9ae17f"
+    },
+    {
+      "name": "FROZEN_WORLD",
+      "sha256": "6a1ef6aa50663f73e1b006d6562472bb7217515d4f0dc417d07d55fbb01c4db3"
+    },
+    {
+      "name": "FOREST_SPAWN",
+      "sha256": "1b6ab8969d006aa418a1c78f986aaa03f2d6d5a0ab8d71db1d65a83f4a8236c0"
+    },
+    {
+      "name": "BAZAAR_SPAWN",
+      "sha256": "287dbcaecf4cdcbbca3d851a55731654505edfd7927bd5b69a1fd9f871ddb75c"
+    },
+    {
+      "name": "FROZEN_SPAWN",
+      "sha256": "854e8c0cb08384593655f066a4fc24e27db503dbd364ec4ac24257805dc33fc0"
+    },
+    {
+      "name": "FROZEN_LAKE",
+      "sha256": "fd1ec734fd7417d8d20b92061049eaaf795ca9495b5213d2214136a5929b082d"
+    },
+    {
+      "name": "FISHING_LAKE$1",
+      "sha256": "ade9b421e3aa8c7ca73e13e4e945b06db5c4ba724b88ae7df4fb2b0b42f43982"
+    },
+    {
+      "name": "FOREST_WALKABLE_POLYGON",
+      "sha256": "6368b349f6bce6a8cbfb7999274f2e7acf2fd1291d7fddd2443680fabdbdbb04"
+    },
+    {
+      "name": "areaWorld",
+      "sha256": "1921f21f3801c8d8469378486fe9a6d4b300fd0aaf3001b6f818d6a4fdcff796"
+    },
+    {
+      "name": "insideForestBounds",
+      "sha256": "42c0a770ca108acc584fd188ff2a2f8413ba696c401d1ef7e969f296fa10c931"
+    },
+    {
+      "name": "isForestWalkablePosition",
+      "sha256": "a13f3a6610942f63fabed0d50a64d0ab08fe7900a6eb5911b4ba7b2d7929ef1e"
+    },
+    {
+      "name": "isFrozenWalkablePosition",
+      "sha256": "1fe6f867f64a32ba75b1f1c98c3bac2c472fc354eeaa8de3041f1d93674ec0eb"
+    },
+    {
+      "name": "isAreaWalkablePosition",
+      "sha256": "e40e830f885db933196f6cf1dba1a61999429a51c17deedb3adb2b347aa21a1e"
+    },
+    {
+      "name": "repairAncientAccess",
+      "sha256": "d3ac9bd76e0f76a760fd260d1498d4fb6cc67a1f9609ed5598c56cdd2b23ec14"
+    },
+    {
+      "name": "DEFAULT_BLOCKED_WORDS",
+      "sha256": "006c0b21740fbed9342042d5cf25507cb2f634212ee1fc826feabbaa491d0566"
+    },
+    {
+      "name": "aliases",
+      "sha256": "5242fbbeabaded2811786104613798d551fc27cbc02c80306808d72d1dc8f658"
+    },
+    {
+      "name": "fold",
+      "sha256": "082091933dceed2d7c750abb7ae0e00986a949af2c5b878b663fc6474c5185d4"
+    },
+    {
+      "name": "normalizeBlockedWord",
+      "sha256": "7843e1f883d540496225e77b22255aadc442d2387e68b28aeeb569d94d663c49"
+    },
+    {
+      "name": "maskProfanity",
+      "sha256": "aa447380b19dd4d0dddf7b270c8deb0b58c8e62744c91b6cf001802e4cfbad26"
+    },
+    {
+      "name": "hasForbiddenCharacterName",
+      "sha256": "8fdd0bda2ff863289bfe35155e98174baeddc47dc482f2d7ca49d306db42e321"
+    },
+    {
+      "name": "EVOLUTION_DEFAULTS",
+      "sha256": "7f070f947405a4117f05ed9759202a5de3af8f5149c8085737e4f2075480aba1"
+    },
+    {
+      "name": "DEFAULT_SETTINGS",
+      "sha256": "878f8488090fd8865cc4f0462fa756f3f4e36326b963b9f8215f92507600fc55"
+    },
+    {
+      "name": "GAME_SETTINGS_SQL",
+      "sha256": "f77c463b3c5d94e59f13ecf21fd5ff26a88c849be785f6865b1c4cee9b1e0daf"
+    },
+    {
+      "name": "ECONOMY_SETTINGS_SQL",
+      "sha256": "f77777e71159fb17990c20d56a2a93723e3bc5bbfd2fb88a23897b98ea51c576"
+    },
+    {
+      "name": "COMBAT_SETTINGS_SQL",
+      "sha256": "165e4c790830af206a4830209ecedac693858f0a0034462a36955c8ef78b08f9"
+    },
+    {
+      "name": "db",
+      "sha256": "9809905c0b1800d4ca698c3179edede650ff552d411ebe3dd5e92eebbb3ecd0f"
+    },
+    {
+      "name": "GAME_SETTINGS_CACHE_MS",
+      "sha256": "2053ecd3be6c4b7bb8170c2b63a0363665a00a5dbf4ec878d5668f0b3ecc485e"
+    },
+    {
+      "name": "gameSettingsCache",
+      "sha256": "791b0dd50eaf801faab6837333494ade733584f0aa04e4d95a5619f1e4ef5bdf"
+    },
+    {
+      "name": "gameSettingsCacheGeneration",
+      "sha256": "6287486e77aa53f2422048a9ca36a62ca4dc22c2d9ad53c07271bf0dfe4efede"
+    },
+    {
+      "name": "nativeSettingsReads",
+      "sha256": "a1a73be3c0a83b16543909d36666177b408938c60128831dccfa0690f693036b"
+    },
+    {
+      "name": "readGameSettings",
+      "sha256": "e8aa11de4491562c240881ffb373411799d99e57af47d18cde494ff236cab10d"
+    },
+    {
+      "name": "getGameSettings",
+      "sha256": "64ffa1412851004935453a27fef3b83941520b671156c68fd1b97eea1d67d5af"
+    },
+    {
+      "name": "safeName",
+      "sha256": "6d997afef1251a453221308ce3c2649b3d4d3d4f9b9d64c29b8ac48b1533dc35"
+    },
+    {
+      "name": "loadBlockedWords",
+      "sha256": "b2a5b64390d509e9409af9524fe2c20e9f4bc7c5f6567b2e880229f17f57987a"
+    },
+    {
+      "name": "readGameInstance",
+      "sha256": "137c00c273bd3839773c11c9d6806d7ea5982e81cf2c91264f160a1ec40fa411"
+    },
+    {
+      "name": "isGameApi",
+      "sha256": "ef21b3169486a1d86b6b782fddfbf9a41f40ade13aad5fa37d5ad7d473c9312c"
+    },
+    {
+      "name": "SESSION_COOKIE_NAME",
+      "sha256": "28ecdd97a97ac283327d7fe3c8b57450568785cb0de39938954ba37ec282a836"
+    },
+    {
+      "name": "CSRF_COOKIE_NAME",
+      "sha256": "e86b940d55d32c69b307297d211e0036fb31cbe5f5c7b3ba695d6b1b418829d3"
+    },
+    {
+      "name": "LOCAL_SESSION_COOKIE_NAME",
+      "sha256": "6cd2061bcf7585980df8f4bc4fd478c35e03b44fabcc6a826516f4183ac5e410"
+    },
+    {
+      "name": "LOCAL_CSRF_COOKIE_NAME",
+      "sha256": "ab66dd455a83d2bd04e685eb9338b0388579e0c75aa350f95bfa25e046e94c83"
+    },
+    {
+      "name": "SESSION_TOUCH_INTERVAL_SECONDS",
+      "sha256": "001efeca05082e3f4ae87da95fa85f91f8432ddf27d6e4eda57624a6d9fce22d"
+    },
+    {
+      "name": "encoder",
+      "sha256": "cfdb3b591a22b2c9c29156dd6971deb5ac7c1bc27b3faf47ec6e95c5b2a6e9d6"
+    },
+    {
+      "name": "AuthRequestError",
+      "sha256": "ddd1d6184696adb2f2d975e2170c4f04cecaad3f1b9aeb733ff5f4f94287e950"
+    },
+    {
+      "name": "realmRuntime",
+      "sha256": "e0a1fa5ca9f9a1ec529440ec48540fde1a91dc301dc119205a0f8630deb326b8"
+    },
+    {
+      "name": "authDatabase",
+      "sha256": "4917ae0c0f91e039031417f640f665e58a8c5a2f3f164add3c25f7e12433a2cc"
+    },
+    {
+      "name": "nowSeconds",
+      "sha256": "ba6b5d070b48b37101d7689c0a99c079b407c75e58a5c3d1cc59c24dd8b3ccac"
+    },
+    {
+      "name": "bytesToBase64Url",
+      "sha256": "f75b6edc8c42582d74bddb4db4e3c6f5bb42a29ddb119a840784d78351939cb6"
+    },
+    {
+      "name": "sha256",
+      "sha256": "95c200582e2f1a069a63391419a0a97cac07f358281c4ac3dacc072e9ebd9a28"
+    },
+    {
+      "name": "timingSafeEqual",
+      "sha256": "3e708754f92ef47cc2cf147eedd1454346bdefbbe75e0b5e3a0072a3f4037c49"
+    },
+    {
+      "name": "assertSameOrigin",
+      "sha256": "bec4740ed389a50584a9de1c40998d2203cd6ab4f6767c59ae44c6a2b4c0145e"
+    },
+    {
+      "name": "readJsonObject",
+      "sha256": "8c77190524d5e6ad9e2dbd2991ce9709f7d6482769c97d6a7590268b5b3644a6"
+    },
+    {
+      "name": "cookieValue",
+      "sha256": "88765815a70d3d0f3e0e5231e3068f59b0dee98aa5486a27f27414685616ba47"
+    },
+    {
+      "name": "requestUsesSecureCookies",
+      "sha256": "59ad21c7943b539155ced2b75407b8ea18db33a72f56dd93659b5090c10858d1"
+    },
+    {
+      "name": "authCookieNames",
+      "sha256": "ed4e46908bbcc1fcf8f4b8317cbdccacb46e262060b47e23a5b0a310af8eb433"
+    },
+    {
+      "name": "validOpaqueToken",
+      "sha256": "7be7fcddd8ef98d3bd832c0737d7266004a774702f0c23fea2c1e43bc112ade7"
+    },
+    {
+      "name": "csrfTokenFromRequest",
+      "sha256": "f918f030586f272653bd93c8730e366477895ccb60179f25264ed7160fc5e878"
+    },
+    {
+      "name": "requestSessionHashes465",
+      "sha256": "e4952de598d4ed8d8003cc1fe97dad37d15c8ad6a2a981524db544700d15b23d"
+    },
+    {
+      "name": "getGameSession",
+      "sha256": "ab487dfe4a9ea4d396137839ded7eb79569ff0cccb4cdf9ec58066a6f361136c"
+    },
+    {
+      "name": "getGameSessionByHash",
+      "sha256": "e4b8eeb67b1b8ffc1a64fed9c83427eb186be0b65d5c099480901f9534362631"
+    },
+    {
+      "name": "requireGameSession",
+      "sha256": "24edd56605dff1537c8ef6596ae3e701581fdd781d2643f0d5ca61839fa06145"
+    },
+    {
+      "name": "requireRealtimeGameSession",
+      "sha256": "a2fdc3ae67a2dd902bd71a146009b98ae5249dde9c50e7719355679f00a25def"
+    },
+    {
+      "name": "validateGameSession",
+      "sha256": "dbee7aad153f3494578eba7e72db18df336a37c318d68d531398a14326fde915"
+    },
+    {
+      "name": "assertCsrf",
+      "sha256": "58529de3099b96906a5bd72b8bee0696e2f36284999b97dc553b909b6a24e1ee"
+    },
+    {
+      "name": "noStoreHeaders",
+      "sha256": "5793f7aedc62f28866c58d54bd02a7f3608a6c7f42eb2bba417b8d0f5bdf6986"
+    },
+    {
+      "name": "nextRateLimitCleanupAt",
+      "sha256": "fbad5b93b9a4187c58d91f217557cbdd4f26ed69eea7b43c442e57e49de8ffbe"
+    },
+    {
+      "name": "enforceRateLimit",
+      "sha256": "41b2f426e5fb876bd7e38d5d4a2685bf57aa102084c6fc7b65ac09fdab55e031"
+    },
+    {
+      "name": "authErrorResponse",
+      "sha256": "695f4594de60fdf80aec986e6f24405a45c22a712c57d7f81a3ed788f2c98435"
+    },
+    {
+      "name": "characterNameKey",
+      "sha256": "6a2d91ea1cacb3fbd38fe6ea0e8b199401b9e8286577cbce32031e65648dff59"
+    },
+    {
+      "name": "roles",
+      "sha256": "62f3962d3b0912e64abea7221f028c1c9c9a5d68a492bab1c59345b848ace1c7"
+    },
+    {
+      "name": "ensureStarterWeapon",
+      "sha256": "ab594aa8914a27597cb6678de95ade7089c0667a7deadb472aa41ca7cc74fdbe"
+    }
+  ],
+  "imports": [
+    "colLabHttpAuth",
+    "safeLoadLabAuthCodeR12",
+    "colLabIsPlayer",
+    "eventWalkable444",
+    "runeWalkable",
+    "EVENT_WORLD444",
+    "RUNE_WORLD"
+  ],
+  "edits": [
+    "Native existing-character join/auth/CSRF/realm/bot rules extracted mechanically",
+    "Native creation registration gate, normalized name, role, capacity, spawn, starter ledger and weapon statements extracted mechanically",
+    "Writer facade removes await/async; native auth uses asynchronous facade",
+    "Writer reads original settings SELECTs/defaults/policy without asynchronous cache or Promise.all",
+    "Per-channel capacity is exactly25; coordinator supplies selected ownership channel",
+    "Guild dynamic import points to the identical manifest-pinned module",
+    "Async auth binds its original guild repair and ejection calls to the current owner/durable outbox; every other native auth byte and guard order retained"
+  ],
+  "productionBootstrapBound": false,
+  "adventureEntry": {
+    "scope": "R19 strict adventure bounds and walkability preserved in both native copies; all other geometry remains pinned V510",
+    "edits": [
+      [
+        "function areaWorld(area) {",
+        "function areaWorld(area) {if(isAdventureArea(area))return ADVENTURE_BOUNDS;"
+      ],
+      [
+        "function isAreaWalkablePosition(area, x, y) {",
+        "function isAreaWalkablePosition(area, x, y) {if(isAdventureArea(area))return adventureWalkable(area,x,y);"
+      ]
+    ]
+  },
+  "initialEntry": {
+    "scope": "Only first entry with no admission/simulation and authenticated last_seen at least40s old; active transfer and arena/damage guards unchanged",
+    "edits": [
+      [
+        "if (existing.combat_lock_until_ms > requestReceivedAtMs)",
+        "if (!initialEntry && existing.combat_lock_until_ms > requestReceivedAtMs)"
+      ],
+      [
+        "AND (channel = ? OR combat_lock_until_ms <= ?)",
+        "AND (channel = ? OR combat_lock_until_ms <= ? OR ? = 1)"
+      ],
+      [
+        "requestedChannel, requestReceivedAtMs, requestedChannel, now - 30",
+        "requestedChannel, requestReceivedAtMs, initialEntry ? 1 : 0, requestedChannel, now - 30"
+      ]
+    ]
+  },
+  "guildAuth": {
+    "sourceSha256": "dbee7aad153f3494578eba7e72db18df336a37c318d68d531398a14326fde915",
+    "nativeFunctionSha256": "dbee7aad153f3494578eba7e72db18df336a37c318d68d531398a14326fde915",
+    "patchedSha256": "60d1e84bac0d3b457fce916c4274dd38ebacb5b3b0f62a4ffb789970833ffc30",
+    "edits": [
+      {
+        "start": 2850,
+        "end": 2898,
+        "original": "guildVillageService()?.repair(session.player.id)",
+        "replacement": "guildVillageService() ? await authDatabase().core511GuildAuth.repair(guildVillageService(), session.player.id) : undefined"
+      },
+      {
+        "start": 2969,
+        "end": 3000,
+        "original": "publishGuildEjections([repair])",
+        "replacement": "authDatabase().core511GuildAuth.publish([repair])"
+      }
+    ],
+    "scope": "Only repair and publisher call expressions; original authorization, guard order and session result remain unchanged"
+  },
+  "r24Geometry": {
+    "scope": "Only mist-specific bounds; native combat, movement and ownership rules preserved. Tower bounds unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "e8fb506c9c66326d9426f8ab27de2b6ed1a6c5cdeb76af54e5754242c6fc156a",
+        "current": "dbe62a5f11660a17eb20661a78be198b166b3b0dbe2baa696ef7371e738ad875",
+        "file": "entry-rules.mjs"
+      }
+    }
+  },
+  "r93Zumrut": {
+    "scope": "Normal shared map dispatch, native travel and river fishing eligibility only; no separate simulation or economy loop.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "dbe62a5f11660a17eb20661a78be198b166b3b0dbe2baa696ef7371e738ad875",
+        "current": "48f7059b502c10c4e537eb0b7092b17ad0e8dbba3d3e10bc10f8fe3fdee978d6",
+        "file": "entry-rules.mjs"
+      }
+    }
+  },
+  "r101": {
+    "scope": "Realm capacity from validated contract (Efsane 25, Akademi 10), session-bound owned character selection and pre-presence character list/select authentication; gameplay bot checks and original combat eligibility guards remain.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "48f7059b502c10c4e537eb0b7092b17ad0e8dbba3d3e10bc10f8fe3fdee978d6",
+        "current": "1a964df732cf4be3a1580fb75a56fa65268bce4c1f1efb72b59af8ecef3a19d6",
+        "file": "entry-rules.mjs"
+      }
+    }
+  }
+}

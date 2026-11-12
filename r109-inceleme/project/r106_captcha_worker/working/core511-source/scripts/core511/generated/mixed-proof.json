@@ -1,0 +1,62 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "functions": [
+    {
+      "name": "commitMixedBlack473",
+      "sha256": "84dec1740c5bc5df46721dcbf27530f97b039971fc4740b2f3acb50984ddba55"
+    },
+    {
+      "name": "selectMixedMonsters473",
+      "sha256": "4671ba76f11f8ebb50ba64feaaa648ba4bf1fa54e68bb7e76ee456bda49a5e0a"
+    },
+    {
+      "name": "prepareMixedPlayers473",
+      "sha256": "0eb4e9c734081159e2cd46952cbc761974c30343d26eeb3b7535f9be39c7cc19"
+    },
+    {
+      "name": "runMixedBlack473",
+      "sha256": "c8f15e3ac6d60396e70d3f1be7103c37a7d8c0874cc29bf5974559cc07899e80"
+    }
+  ],
+  "storage": [
+    {
+      "label": "recent473",
+      "sha256": "3523f0eaeb18b5a644ecf1d3dd204fbba62ff98c2df50826069c78717f7969cd"
+    },
+    {
+      "label": "all473",
+      "sha256": "35ce976fae6d8f4d713db232f25f323fc3f1310cf76d9a6d1f137a2c69beaf3e"
+    },
+    {
+      "label": "rows473",
+      "sha256": "c0b9010bcbd1ebf4e779ab72ac38642070f00cbd8c937afa83988e0785690941"
+    },
+    {
+      "label": "storage",
+      "sha256": "d0b92f72652a1458e0f04323804c66634653f918d6b701eb03762f645541a500"
+    },
+    {
+      "label": "storage",
+      "sha256": "10a0184184b61dee502957d515674f3483b774ea66c1b349541efe89332fd6a6"
+    },
+    {
+      "label": "storage",
+      "sha256": "394c6006dbb0d9bd4a6663fff0eeec7a4665d67ec60f4e358324a16134186724"
+    },
+    {
+      "label": "storage",
+      "sha256": "164f837c8f05f577888ec208c32201fd04bfee8353d60e61e9aa4cb3f219afaf"
+    },
+    {
+      "label": "storage",
+      "sha256": "74de42c2052a8b2257949c928b98195ad36f6d1be4d3c84a518882f28491a47a"
+    },
+    {
+      "label": "storage",
+      "sha256": "eedbc7428c1a92a62d2085222104f873efb066779f5ff5791a06cb56ea277782"
+    }
+  ],
+  "fullProductionIntegration": false
+}

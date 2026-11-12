@@ -1,0 +1,1 @@
+ALTER TABLE `combat_settings` ADD `forest_monster_respawn_seconds` integer DEFAULT 18 NOT NULL;

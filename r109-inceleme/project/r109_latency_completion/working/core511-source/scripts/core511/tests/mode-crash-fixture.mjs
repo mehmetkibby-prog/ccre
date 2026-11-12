@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {NativeModeServices} from '../mode-services.mjs';
+import {createModeWriterHandler} from '../mode-writer.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),{request,peer}=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!['before','after'].includes(phase)||!file.includes('core511-isolated-'))throw Error('Isolated mode crash fixture required');
+const {installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry({now:()=>request.payload.nowMs});
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'mode-crash'});await authority.initialize();
+const services=new NativeModeServices(db.sqlite,{clock:()=>request.payload.nowMs,globals:{__colDungeon:{locked:id=>Boolean(db.sqlite.prepare('SELECT 1 FROM dungeon_members WHERE player_id=?').get(id))}}});
+const handler=createModeWriterHandler({services,assertOwnership:(sql,p,id,e)=>Boolean(authority.assertAdmitted(sql,p,id,e)),assertResources:()=>true});
+registerOwnedRule(authority,'mode',(sql,payload,context)=>{const result=handler(sql,payload,context);if(phase==='before'){fs.writeFileSync(marker,'uncommitted_mode');process.kill(process.pid,'SIGKILL');}return result;});
+await authority.command(peer,request);fs.writeFileSync(marker,'durable_mode_before_ack');process.kill(process.pid,'SIGKILL');

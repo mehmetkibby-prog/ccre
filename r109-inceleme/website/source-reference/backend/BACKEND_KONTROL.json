@@ -1,0 +1,31 @@
+{
+  "status": "PASS",
+  "total": 23,
+  "suites": {
+    "launch-config.test.mjs": 17,
+    "native-prereg-integration.test.mjs": 3,
+    "native-panel-integration.test.mjs": 3
+  },
+  "opening": "2026-10-30T20:00:00+03:00",
+  "openingEpochMs": 1793379600000,
+  "proof": [
+    "actual native launch service over SQLite",
+    "native compiled authentication handlers over local HTTP",
+    "real account creation/password hashing/session reuse",
+    "T-1ms blocked; T open; permanent opening",
+    "existing native CAPTCHA/origin/rate/CSRF/one-use SSO enforced",
+    "existing native panel health and readiness guard",
+    "durable receipts, CAS, idempotence, failure recovery, later admin edits preserved"
+  ],
+  "limits": [
+    "No live VDS access or deployment",
+    "Channel health represented by fixture in native panel guard test",
+    "Random CAPTCHA answer seeded only in disposable test database"
+  ],
+  "files": {
+    "native-prereg-integration.test.mjs": "78ec6c4bea53be0cc9660feeafae3639ea711ef6aafe9a5d4d91db94d7363eb9",
+    "native-panel-integration.test.mjs": "d17208f70be3e0147db601f032bddae7ab12cd76369a06a9c3b215f68b3b11be",
+    "launch-config.test.mjs": "c5baab3c5204071b677c7c22708a46109838b1881ce2e2a733a4885f6d396cd1",
+    "launch-config.mjs": "421c0e4b6ba6ebca4eb241a95f3b40d1155bff58a61f400eea0a2ed95b862d05"
+  }
+}

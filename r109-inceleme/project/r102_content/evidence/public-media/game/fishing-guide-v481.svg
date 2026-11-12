@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+ <defs>
+  <linearGradient id="cover" x1="32" y1="16" x2="105" y2="103" gradientUnits="userSpaceOnUse"><stop stop-color="#357363"/><stop offset=".5" stop-color="#174f48"/><stop offset="1" stop-color="#0c302f"/></linearGradient>
+  <linearGradient id="gold" x1="37" y1="24" x2="87" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#fff0b4"/><stop offset=".47" stop-color="#cca65a"/><stop offset="1" stop-color="#8d632e"/></linearGradient>
+  <linearGradient id="paper" x1="33" y1="93" x2="76" y2="114" gradientUnits="userSpaceOnUse"><stop stop-color="#f0e6cb"/><stop offset="1" stop-color="#b7a580"/></linearGradient>
+ </defs>
+ <ellipse cx="65" cy="113" rx="40" ry="6" fill="#101a18" opacity=".3"/>
+ <path d="M27 27 87 14q6-1 9 5l15 78q1 6-4 8l-62 14q-13 1-16-10L15 42q-2-11 12-15Z" fill="#0d2928" stroke="#0a211f" stroke-width="3"/>
+ <path d="m33 93 63-14 7 23-60 13q-11 2-13-8t3-14Z" fill="url(#paper)" stroke="#695533" stroke-width="2"/>
+ <path d="m39 99 58-13M38 104l60-13m-59 18 60-13" stroke="#a48f65" stroke-width="1.4"/>
+ <path d="m88 16 15 79-63 14q-9 2-12-8L15 39q-2-10 10-13Z" fill="url(#cover)" stroke="#ba9650" stroke-width="2.2"/>
+ <path d="m26 27 15 80M30 31l53-12 14 71-52 12Z" stroke="#d8bd7b" stroke-width="1.3" opacity=".7"/>
+ <path d="m17 38 12-3m-9 16 12-3m-7 42 12-3m-9 16 12-3" stroke="#c8a259" stroke-width="4"/>
+ <path d="m39 33 6-2m-5 2 1 6m40-14 3 6m-3-5-6 1m-28 63 1 6 6-1m36-11-5 1m5-1-1-6" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+ <path d="m56 103 3 17 6-5 7 2-3-16" fill="#b6573e" stroke="#693328" stroke-width="1.3"/>
+ <g transform="translate(64 61) rotate(-13)">
+  <ellipse rx="22" ry="23" stroke="url(#gold)" stroke-width="1.4"/>
+  <path d="M-15 1q11-14 23-2l8-7v16L8 2Q-4 15-15 1Z" fill="url(#gold)" stroke="#ead799" stroke-width=".8"/>
+  <path d="M-3-5q5 6 0 11M-2-5l1-6 7 7" stroke="#28574e" stroke-width="1.5"/>
+  <circle cx="-8" cy="0" r="1.5" fill="#214f46"/>
+  <path d="M-12 15q5-3 9 0t9 0 8 0" stroke="#d6be7c" stroke-width="1.5" stroke-linecap="round"/>
+ </g>
+</svg>

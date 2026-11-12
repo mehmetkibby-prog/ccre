@@ -1,0 +1,308 @@
+[
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/auth-portal-BarRL7qp.css",
+    "file": "client/auth-portal-BarRL7qp.css",
+    "bytes": 3033,
+    "sha256": "568583837668f249ef4efadc0ded52fc44d98ac92b94053902dfbfe87049e96d"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/auth-portal-core511-46f7b05b3126bd78.js",
+    "file": "client/auth-portal-core511-46f7b05b3126bd78.js",
+    "bytes": 72617,
+    "sha256": "ae2a8e51ff2b38724eb793dfafc20f749b3489aeb25adc6bc7218aee2d54ca6e"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/circle-check-CykMSVzB-ga4172.js",
+    "file": "client/circle-check-CykMSVzB-ga4172.js",
+    "bytes": 185,
+    "sha256": "d1dd9d07960b02a87446911b418f48a4c659df6833f76ea687b64630ebf4385a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/combat-scope-c739df23588e-2ccab1ae461d-ent-r13-5800bb6a0478-a1fab4eb.js",
+    "file": "client/combat-scope-c739df23588e-2ccab1ae461d-ent-r13-5800bb6a0478-a1fab4eb.js",
+    "bytes": 7868,
+    "sha256": "0320f511db341bcbf73bed3cb99573f5688f06fef28e245f68b6ab6f3655e3a7"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-afk-admin-r32-abb1bb7ecdb247a0.js",
+    "file": "client/core511-afk-admin-r32-abb1bb7ecdb247a0.js",
+    "bytes": 30947,
+    "sha256": "abb1bb7ecdb247a07c2ca6418490f06c03b0b2cdadb4153960955ce57caddf93"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-afk-r32-94273dc1b6b50e04.js",
+    "file": "client/core511-afk-r32-94273dc1b6b50e04.js",
+    "bytes": 11256,
+    "sha256": "94273dc1b6b50e04a96c5a02997c87ec3e837fa03b24d0e2b9867dc5746ee29d"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-belt-r31-cf8d0676c9ed605b.js",
+    "file": "client/core511-belt-r31-cf8d0676c9ed605b.js",
+    "bytes": 20976,
+    "sha256": "f84ad682619730c487dec963162dc7c589f29468cc1efa77ea9e750febbc8696"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-castle-admin-r59-100832b6836a087b.js",
+    "file": "client/core511-castle-admin-r59-100832b6836a087b.js",
+    "bytes": 6956,
+    "sha256": "100832b6836a087b93716e4bb98a63cf59ddb3f705af9c9e1e307d53eabf1814"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-claim-r50-55137f395b664a58.js",
+    "file": "client/core511-claim-r50-55137f395b664a58.js",
+    "bytes": 8534,
+    "sha256": "55137f395b664a58e91900c12870bddbaa583d18cd0473c29e9c87d7fc468e44"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-gameplay-r60-6a8cf0b17c2d291b.js",
+    "error": "curl: (22) The requested URL returned error: 404"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-motion-admin-r34-85bc86838e29a3fd.js",
+    "file": "client/core511-motion-admin-r34-85bc86838e29a3fd.js",
+    "bytes": 2678,
+    "sha256": "85bc86838e29a3fdddbc74ebce4b0c289d2c04718068320b1db413aad891c872"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-r40-9f5f284069ff5cd9.js",
+    "file": "client/core511-r40-9f5f284069ff5cd9.js",
+    "bytes": 9011,
+    "sha256": "9f5f284069ff5cd929c46a6e7b56167f3713d0670077a587a1f531a5b7750ef5"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-r41-bag-b5492e12d6a6356c.js",
+    "file": "client/core511-r41-bag-b5492e12d6a6356c.js",
+    "bytes": 3894,
+    "sha256": "b5492e12d6a6356cb5993fa7a188c384d64680610ec211ecfbce6878c3bc41a5"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-r43-ui-d5b46c3741f4dc3f.js",
+    "file": "client/core511-r43-ui-d5b46c3741f4dc3f.js",
+    "bytes": 3662,
+    "sha256": "d5b46c3741f4dc3f7bd7f30818da5f18705ff0c1f574ca4564b2efce0440622f"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-tower-0fd926810ba551cc.js",
+    "file": "client/core511-tower-0fd926810ba551cc.js",
+    "bytes": 120597,
+    "sha256": "4808f2ecf6de908bbcf0ac192b628761e5184f9d83933d5b722d138628d26adf"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-tower-r60-93f5eafdb8fed403.js",
+    "error": "curl: (22) The requested URL returned error: 404"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-transport-r59-823c80078bca5438.js",
+    "file": "client/core511-transport-r59-823c80078bca5438.js",
+    "bytes": 87118,
+    "sha256": "823c80078bca54381e48fcc30d5c384bf041d8dec14b63eb1a4a3d7a48c8845b"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/createLucideIcon-BiVFlVzr-ga4172.js",
+    "file": "client/createLucideIcon-BiVFlVzr-ga4172.js",
+    "bytes": 1441,
+    "sha256": "f8538f7a819bce8cd1e06af7a70cf3dbc6665013e5f857c661aa16936bd09e16"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/framework-CXnKph_e-ga4172.js",
+    "file": "client/framework-CXnKph_e-ga4172.js",
+    "bytes": 189812,
+    "sha256": "94d54e43b7cdd7fe6794c820aa50ddb4b5b3620b5a083f2d56b8ff404150ba1a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/game-client-core511-53eb583ca4d6fe90.js",
+    "error": "curl: (22) The requested URL returned error: 404"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/game-client-core511-e3ffadcfa8797a18.js",
+    "file": "client/game-client-core511-e3ffadcfa8797a18.js",
+    "bytes": 1610262,
+    "sha256": "a6778f839213fdaa5853faccda80473a55f1736d80bc631d1403f692c725eb6a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/game-instance-559vKpBT-ga4172-prereg-1788d-e486-48ff1d5b32ef-6a1e68bc.js",
+    "file": "client/game-instance-559vKpBT-ga4172-prereg-1788d-e486-48ff1d5b32ef-6a1e68bc.js",
+    "bytes": 8489,
+    "sha256": "437372f7910da9f02cada0e1c13368187b7e23f042d95f5856de57e841fc7067"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/index-0YW8q32Y-6c0df9c9-2793d6a2-a7e-e503-ffc2780268cc-37a0ce72f3.css",
+    "file": "client/index-0YW8q32Y-6c0df9c9-2793d6a2-a7e-e503-ffc2780268cc-37a0ce72f3.css",
+    "bytes": 858862,
+    "sha256": "37a0ce72f3aa71ecea30e38c322bb2cd3fb31d33c4ab6da3ce995f941f0c9825"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+    "file": "client/index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+    "bytes": 83225,
+    "sha256": "08aa891bd4b53c4df1e6ed3c1fd49abbf741ead7ebbbaac54e88117828cf768a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/launch-landing-CAftBWzJ.css",
+    "file": "client/launch-landing-CAftBWzJ.css",
+    "bytes": 15580,
+    "sha256": "c8b819a5062701ab58f6f21ad1b0fa2048d67b342c929a639e1ecb534c7afc6d"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/launch-landing-qVKrjo7K-ga4172-prereg-1788-e486-48ff1d5b32ef-74b8821e.js",
+    "file": "client/launch-landing-qVKrjo7K-ga4172-prereg-1788-e486-48ff1d5b32ef-74b8821e.js",
+    "bytes": 114220,
+    "sha256": "9da1e1bc7b3cbc69c707597c56230cee2f9c97ceff01310bb37da2f32e0a67c8"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/layout-segment-context-Z9wEnLYj-ga41-e510-8225403c2fcc-9faeb96e10.js",
+    "file": "client/layout-segment-context-Z9wEnLYj-ga41-e510-8225403c2fcc-9faeb96e10.js",
+    "bytes": 353,
+    "sha256": "d71bf84bc12ffc4386d15223c6882ead848e1757c8045d8759fc1f02ba0d7729"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/link-C6WHyGA8-ga4172-v418ws-3c02836f-e510-8225403c2fcc-9c637f1178.js",
+    "file": "client/link-C6WHyGA8-ga4172-v418ws-3c02836f-e510-8225403c2fcc-9c637f1178.js",
+    "bytes": 9945,
+    "sha256": "8d70d1e6dcc45e46526599d3a6b4080acb59858a346b96ed94f9b1a0b2984a79"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/livekit-client.esm-BKoz8lx2-ga4172.js",
+    "file": "client/livekit-client.esm-BKoz8lx2-ga4172.js",
+    "bytes": 518170,
+    "sha256": "538a67fbe18867b318796ac310a8334c855b1a91d5bb5744b7aca8caf37b956a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/monster-loot-a2QO0cPh-ga4172-92bdd7a4-bab8-e499-fab4fcb1e1b2-f4f682b8.js",
+    "file": "client/monster-loot-a2QO0cPh-ga4172-92bdd7a4-bab8-e499-fab4fcb1e1b2-f4f682b8.js",
+    "bytes": 109771,
+    "sha256": "56ad864026d12d3d9f7fd80a5f939d8f0ef33a85be611f57752c247f39faf8c8"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/rolldown-runtime-S-ySWqyJ-ga4172.js",
+    "file": "client/rolldown-runtime-S-ySWqyJ-ga4172.js",
+    "bytes": 694,
+    "sha256": "5db5ba82eef00d1dee7e86e663098c9427d01183a88d357437daff295aec3e75"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/seasonal-renderer453-ce66cee5738c-entry453-757f73732393-0fc89cd5-cb766166d025-entry473-2324044b58af.js",
+    "file": "client/seasonal-renderer453-ce66cee5738c-entry453-757f73732393-0fc89cd5-cb766166d025-entry473-2324044b58af.js",
+    "bytes": 36468,
+    "sha256": "33265a008aafdb26153bbe4bb2c061c3dd4a942eaa0cda536f8cf7ae41bb5708"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-gameplay-r59-28ab7af900ed2acb.js",
+    "file": "client/core511-gameplay-r59-28ab7af900ed2acb.js",
+    "bytes": 57157,
+    "sha256": "de5a1c087fc03c11d7b5e61476f352ab3c76beca0ae30efe98008962c7ffc49a"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-r40-icons-d8553ea731a56b89.js",
+    "file": "client/core511-r40-icons-d8553ea731a56b89.js",
+    "bytes": 3952,
+    "sha256": "d8553ea731a56b899bdb23468433de48557969730ed2ea09227f955a8b7f1596"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-r43-materials-0c10ea33dc2cc813.js",
+    "file": "client/core511-r43-materials-0c10ea33dc2cc813.js",
+    "bytes": 334,
+    "sha256": "0c10ea33dc2cc813bc17086b15aa901b1f72c1c0cae8053d7a80474a68ae37e7"
+  },
+  {
+    "url": "https://r1.coreoflife.net/assets/core511-325eb25e79d4d6a2/core511-tower-r59-452c294fa63f2c02.js",
+    "file": "client/core511-tower-r59-452c294fa63f2c02.js",
+    "bytes": 114344,
+    "sha256": "73a32b6261cfb0c1f9ff9c966bd484353101f386b356db10a837b4fcc6fe1ba6"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/emerald-armor-v447.webp",
+    "file": "game/emerald-armor-v447.webp",
+    "bytes": 28904,
+    "sha256": "466e815cab969f3aa92cfe25ce5ac5746e7800c2ae3f96420d66ede11cdd235c"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/emerald-bracelet-v456.webp",
+    "file": "game/emerald-bracelet-v456.webp",
+    "bytes": 20124,
+    "sha256": "c801d2a07754e4174dfbb228822e70f34dd0407892831820e8a6da5aeec927e7"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/emerald-earrings-v456.webp",
+    "file": "game/emerald-earrings-v456.webp",
+    "bytes": 22828,
+    "sha256": "37a61eadbf0996bab8c2150d92ad099548ee621fd8c3ca480a54a746c28d41d0"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/emerald-set-v447.webp",
+    "file": "game/emerald-set-v447.webp",
+    "bytes": 199300,
+    "sha256": "62ae6d6c39b7d0ebd8b26e396325fd91277fac8e62d561a9de18f5adcdcb4e15"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/fishing-rod-v29-premium.webp",
+    "file": "game/fishing-rod-v29-premium.webp",
+    "bytes": 29186,
+    "sha256": "c08dd1691763abb426c300f89f9197cf6f17e5987f1f8cc7da606cf546854464"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/halloween-pumpkin-v456.webp",
+    "file": "game/halloween-pumpkin-v456.webp",
+    "bytes": 26076,
+    "sha256": "0b52e4ad1274f094df7720bae8b4ec50f2e938c33fed209810ac2995deb5900c"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/hero-motion-emerald-v447.webp",
+    "file": "game/hero-motion-emerald-v447.webp",
+    "bytes": 518372,
+    "sha256": "cc33b0667cce4a1aae461c80693ac07983da4998a87c9d22bb203b71104fb512"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/premium-weapons.webp",
+    "file": "game/premium-weapons.webp",
+    "bytes": 134128,
+    "sha256": "9e792e0198b662e9a385f2542d8864cef60ada9b6de11ea5738508114abf9ab1"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/pumpkin-knight-icon499.webp",
+    "file": "game/pumpkin-knight-icon499.webp",
+    "bytes": 83966,
+    "sha256": "c451262d80ff9f9bf404a71f12165547c124a4d07eca35ccd24284571c631158"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/pumpkin-knight-motion499.webp",
+    "file": "game/pumpkin-knight-motion499.webp",
+    "bytes": 875840,
+    "sha256": "8d4c821b3cdb5ea8ae56ae4fed19cdb3a22e61c788de11cf8dc2157cc8eec049"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/pumpkin-knight-weapons499.webp",
+    "file": "game/pumpkin-knight-weapons499.webp",
+    "bytes": 59074,
+    "sha256": "f50164b70db74375ba60d7aaca56569598fc69838e629bd24fe9f6a5cd3d3997"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/purple-weapons-v349.webp",
+    "file": "game/purple-weapons-v349.webp",
+    "bytes": 204760,
+    "sha256": "67e79ed29f06112cb0b4b5e99867986608706da53e6083d12fbdf15a38671dc2"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/rank-executioner-weapons.webp",
+    "file": "game/rank-executioner-weapons.webp",
+    "bytes": 70182,
+    "sha256": "8c4ef1c2eb99905746b928eb21f6fcad6781f293bfea294f0602bc32a0520bc1"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/rank-hunter-weapons.webp",
+    "file": "game/rank-hunter-weapons.webp",
+    "bytes": 66832,
+    "sha256": "9f9b88d31c1b2ea26dfa6ccde67591dbfba75cd75d93f2a6b83e5e9ae9df080e"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/weapon-atlas-v2.webp",
+    "file": "game/weapon-atlas-v2.webp",
+    "bytes": 441692,
+    "sha256": "84c86bcc8c80a802a0b1835ec5e9de26081a831e351166277ffdedb2c2534bdf"
+  },
+  {
+    "url": "https://r1.coreoflife.net/game/infinite-weapons-v202.webp",
+    "file": "game/infinite-weapons-v202.webp",
+    "bytes": 182110,
+    "sha256": "e9c4519aec2759748f6ff6cd646bcb80b67a3e7becba94c97e823e654fdf986d"
+  }
+]

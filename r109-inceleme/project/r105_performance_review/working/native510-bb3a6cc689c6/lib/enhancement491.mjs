@@ -1,0 +1,25 @@
+// Shared, bounded rules. No database, timers, world reads or economy side effects.
+export const ENHANCEMENT_KINDS491=Object.freeze(['weapon','armor','helmet','shoes','necklace','earring','bracelet']);
+export const ENHANCEMENT_BONUSES491=Object.freeze({weapon:Object.freeze([0,3,8,15,25,40]),defense:Object.freeze([0,2,6,11,18,28])});
+export function enhancementLevel491(item){if(!ENHANCEMENT_KINDS491.includes(item?.kind))return 0;return Number(/^\+([0-5]) /u.exec(String(item?.item_name??''))?.[1]??0);}
+export function enhancementBonus491(kind,level){if(!ENHANCEMENT_KINDS491.includes(kind)||!Number.isInteger(level)||level<0||level>5)return 0;return ENHANCEMENT_BONUSES491[kind==='weapon'?'weapon':'defense'][level];}
+export function enhancementBaseName491(name){return String(name??'').replace(/^(?:\+[0-5] )+/u,'');}
+export function enhancementName491(item){return ENHANCEMENT_KINDS491.includes(item?.kind)?`+${enhancementLevel491(item)} ${enhancementBaseName491(item.item_name)}`:String(item?.item_name??'');}
+const counters491={gems:'Mücevher',essence:'Yaşam Özü',pearls:'Beyaz İnci',red_pearls:'Kırmızı İnci',potions:'Kırmızı İksir',stone_dust:'Taş Tozu',fish_sokan:'Sokan Balığı',fish_levrek:'Levrek',fish_zargana:'Zargana',talisman_stones:'Tılsım Taşı',item_link_orbs:'Eşya Yansıtma',enchant_scrolls:'Efsun Değiştirme Parşömeni',enchant_add_scrolls:'Efsun Artırma Nesnesi',fifth_enchant_scrolls:'5. Efsun Nesnesi',rename_scrolls:'İsim Değiştirme Parşömeni',arena_coins:'Arena Coin'};
+const materials491={forge_ember491:'Kor Mührü',strong_branch:'Güçlü Dal',strong_crystal:'Güçlü Kristal',desert_plant:'Çöl Bitkisi',master_scroll:'Usta Parşömeni',weathered_iron:'Eskitilmiş Demir Parçası',solo_key:'Zindan Anahtarı',wing:'Kanat Parçası',infinite:'Sonsuz Taşı Parçası',pet:'Ejderha Parçası',rune_attack:'Kızıl Kudret Parçası',rune_defense:'Safir Siper Parçası',rune_hp:'Zümrüt Yaşam Parçası',halloween_pumpkin:'Bal Kabağı',witch_wand:'Cadının Sihirli Değneği',halloween_candy:'Cadı Şekeri',specialization_reset_scroll463:'Uzmanlık Sıfırlama Parşömeni'};
+const stones491={book:'Taş Sanatı Kitabı',evolution_scroll:'Evrim Parşömeni',crystal_chest:'Kristal Sandığı',moonlight_chest:'Ayışığı Sandığı',critical:'Kritik Şansı Taşı · temel',attack:'Saldırı Gücü Taşı · temel',defense:'Savunma Taşı · temel',block:'Bloklama Taşı · temel'};
+for(const[kind,name,values]of [['critical','Kritik Şansı Taşı',[7,8,9,10]],['attack','Saldırı Gücü Taşı',[20,25,30]],['defense','Savunma Taşı',[30,40,50]],['block','Bloklama Taşı',[6,7,8]]])for(const n of values)stones491[`${kind}:${n}`]=`${name} ${kind==='critical'||kind==='block'?'%':'+'}${n}`;
+export const ENHANCEMENT_CATALOG491=Object.freeze([
+ ...Object.entries(counters491).map(([column,name])=>Object.freeze({id:'resource:'+column,name,group:'Kaynaklar',table:'players',column})),
+ ...Object.entries(materials491).map(([kind,name])=>Object.freeze({id:'material:'+kind,name,group:'Malzemeler',table:'dungeon_materials',kind})),
+ ...Object.entries(stones491).map(([kind,name])=>Object.freeze({id:'stone:'+kind,name,group:'Taşlar ve sandıklar',table:'player_stones',kind})),
+]);
+export const ENHANCEMENT_BY_ID491=new Map(ENHANCEMENT_CATALOG491.map(row=>[row.id,row]));
+export function defaultEnhancementConfig491(){return {enabled:false,dropPercent:0,stages:[100,85,65,45,25].map((successPercent,i)=>({level:i+1,successPercent,requirements:[{id:'material:forge_ember491',amount:i+1},{id:'resource:gems',amount:[100,250,500,1000,2000][i]},{id:'material:'+['strong_branch','strong_crystal','desert_plant','master_scroll','weathered_iron'][i],amount:[5,10,15,20,25][i]}]}))};}
+export function validateEnhancementConfig491(input){
+ const fail=()=>{throw Error('Artı basma ayarları geçersiz. Beş aşama, %0–100 başarı ve geçerli malzeme adetleri gerekli.');};
+ if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(k=>!['enabled','stages','dropPercent'].includes(k))||typeof input.enabled!=='boolean'||!Number.isFinite(input.dropPercent)||input.dropPercent<0||input.dropPercent>100||Math.abs(input.dropPercent*100-Math.round(input.dropPercent*100))>1e-7||!Array.isArray(input.stages)||input.stages.length!==5)fail();
+ const stages=input.stages.map((s,i)=>{if(!s||typeof s!=='object'||Array.isArray(s)||Object.keys(s).some(k=>!['level','successPercent','requirements'].includes(k))||s.level!==i+1||!Number.isFinite(s.successPercent)||s.successPercent<0||s.successPercent>100||Math.abs(s.successPercent*100-Math.round(s.successPercent*100))>1e-7||!Array.isArray(s.requirements)||s.requirements.length>12)fail();
+  const seen=new Set(),requirements=s.requirements.map(r=>{if(!r||typeof r!=='object'||Array.isArray(r)||Object.keys(r).some(k=>!['id','amount'].includes(k))||!ENHANCEMENT_BY_ID491.has(r.id)||seen.has(r.id)||!Number.isSafeInteger(r.amount)||r.amount<1||r.amount>1000000)fail();seen.add(r.id);return {id:r.id,amount:r.amount};});return {level:i+1,successPercent:s.successPercent,requirements};});
+ return {enabled:input.enabled,dropPercent:input.dropPercent,stages};
+}

@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-15",
+  "status": "LOCAL_INSTALLER_PASS_VDS_GATES_DEFERRED_BY_USER",
+  "baseVersion": 698,
+  "baseCommit": "b905c12ff3bd1f6d22bc873a8eac7ef258a9e153",
+  "handoffVersion": 699,
+  "handoffCommit": "a2ac59ff22a2a20afa1b688d1064365b77f173fd",
+  "runtimeSha256": "ee1f1e5c0085f63de8df52fd892dd27cf9a65029176c2c0fc3db69f0d07680f4",
+  "baselineSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "baselineVerifiedFiles": 3097,
+  "priorEvidenceVerifiedFiles": 151,
+  "previousGatesRepeated": false,
+  "liveVdsTouched": false,
+  "deploymentPerformed": false,
+  "performanceChanges": false,
+  "scratchDriverOnly": true,
+  "strictGate": {
+    "passed": null,
+    "status": "required-on-first-VDS-installation-step",
+    "channelReaderPauseMs": 150,
+    "mainWorldPauseMs": 200,
+    "systemd": "static validated here; real manager/network gate on VDS"
+  },
+  "scratchAcceptance": {
+    "passed": true,
+    "failures": [],
+    "scope": "local-only; raw retained"
+  },
+  "sourceUnchanged": true,
+  "remaining": [
+    "Real systemd/network verification and strict canary on VDS, performed by installer when user runs installation",
+    "Whole VDS OS/services RAM accounting in that same VDS canary"
+  ],
+  "stopPolicy": "No game changes or load reruns. Failed real VDS gate automatically rolls back old code with CURRENT DB and maintenance; rollback errors remain explicit.",
+  "localPauseLimitMs": 300,
+  "installer": {
+    "directProcesses": "PASS",
+    "fourChannels": 4,
+    "channelCapacity": 25,
+    "manualCurrentDbRollback": "PASS",
+    "automaticFailedCanaryRollback": "PASS",
+    "explicitOpenAndRevisionCas": "PASS",
+    "systemdAnalyzeStatic": "PASS"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "batch": {
+    "start": 508212,
+    "end": 509334,
+    "sha256": "2a8f3ae8cdf6ac0702a36e34b80224a9d6fd9136cd2922cbc7686b17ad3aab80"
+  },
+  "publication": {
+    "start": 509549,
+    "end": 510038,
+    "sha256": "007386ce51a51f1008f773ac5a4b4ea305f1a4603678111ad5ee1e18092e1f76"
+  },
+  "response": {
+    "start": 512777,
+    "end": 513073,
+    "sha256": "67ca37e557c5716399766a7312f3a8d5412ceb4c577378029f9901b59b9adbb2"
+  },
+  "maintenance": {
+    "start": 509483,
+    "end": 512630,
+    "sha256": "5ef89239daf1c41295762b801f035c52163f08716a29c69fceb7c1a3e4c314d3"
+  },
+  "generatedSha256": "8e693cb5b19257d0fcc82fe48544d201e03820687c4c230a9f82a146878ca5b8",
+  "edits": [
+    "First three native batch statements and native event/response copied unchanged; async storage awaits removed inside sole writer transaction",
+    "Legacy monster-regeneration fallback is omitted because authoritative resident world/combat owners are always enabled",
+    "Background arena/reward body runs under all-owner freeze and single native transaction; first player_state publication is owned by the heartbeat phase; native tickWorld/cleanup delegate to independently bound shared-world schedules"
+  ]
+}

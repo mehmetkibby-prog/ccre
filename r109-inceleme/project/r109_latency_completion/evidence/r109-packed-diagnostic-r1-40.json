@@ -1,0 +1,2145 @@
+{
+  "players": 40,
+  "label": "r109-packed-diagnostic-r1",
+  "realm": "r1",
+  "durationRequestedMs": 60000,
+  "workload": "mixed",
+  "fixture": {
+    "monsterHp": 85,
+    "monsterDamage": 9,
+    "playerStatHp": 1000000,
+    "channelCapacity": 25,
+    "channelDistribution": "fill-each-channel-to-real-capacity",
+    "liveAccess": false,
+    "coLocatedBots": false,
+    "separateBotProcess": true
+  },
+  "runtimeFiles": {
+    "adventure-channel.mjs": "c12ddbd541059ba68a32a18f47e23ba693a641bfc813ecf890af1604d7f8f98d",
+    "native-http-bindings.mjs": "c26ef6318ad3b952580c4ca40aea4a96191b260c232f23c3075bfa2573a77115",
+    "process-stream.mjs": "efaec1a9ad7b8fe8fd31bb68506b58209cd1f20ea98fa160b927e5106e7176af",
+    "cold-world.mjs": "a9daddc4ed8ec7ac226ee10e6530b60f3196a49958e06cbc018ec545320709b9",
+    "read-worker.mjs": "60cb5e1b821fd8468c8eebdf89bc81484c2cf5e05522174ba639ca354d8c656d",
+    "slim-reload.mjs": "8ede096fe97c16f7b2ba3d10f38ce43fc26ef5ad7b58467b64d75ab8fc0fff1d",
+    "combat-checkpoint.mjs": "bb4a2d78e4d77df32c7f75872be358102fba2c931fc6d7fa14cc590c8b581562",
+    "coordinator.mjs": "0cfbb7f3e0a103759407240a8e4a770d052e58c2c34654ad3b4714b2d4911aec"
+  },
+  "webSocketTransport": "production-style-tcp-proxy",
+  "populationFixture": {
+    "backgroundMonsters": 6000,
+    "monsters": 6680,
+    "zones": {
+      "forest": 8,
+      "tower": 7,
+      "solo": 7,
+      "mist": 6,
+      "black": 6,
+      "rune_v2": 6,
+      "shared_boss": 0
+    },
+    "independentTowers": false,
+    "synthetic": true,
+    "equipment": {
+      "synthetic": true,
+      "liveDatabase": false,
+      "gearSource": "native prepareProfileDrops / current realm settings",
+      "enchantmentSelection": "native valid four-enchantment outcome",
+      "actors": [
+        {
+          "actor": 0,
+          "id": "real-1",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-0-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 1,
+          "id": "73d46fe0-4a06-4f78-8ea0-a24aaabcab66",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-1-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 2,
+          "id": "ff8f8ca3-dd7f-4562-ab4c-75642648a1d4",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-2-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 3,
+          "id": "056689c7-552e-431a-87eb-6bd6a31aafff",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-3-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 4,
+          "id": "56b452a1-6e3c-49bf-8322-4803fabdc003",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-4-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 5,
+          "id": "9d447ac6-5924-458d-8bd0-c19860a82675",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-5-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 6,
+          "id": "0a742df5-d5f0-40e0-883b-d89711f7696e",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-6-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 7,
+          "id": "2cbeb69f-15ee-4683-aa5f-0cacfe0453e8",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-7-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 8,
+          "id": "2c17b478-120c-4561-8ad7-d102082f9fe3",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-8-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 9,
+          "id": "e70f5ab9-8e1b-413e-965d-ecc3452dcb59",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-9-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 10,
+          "id": "f4379ad9-2826-4cf6-ae36-ac98439db9b6",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-10-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 11,
+          "id": "032cc6bb-9283-402b-8ba1-cfc7258dc380",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-11-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 12,
+          "id": "4216f38b-6ec4-43dc-8802-03738f933bdd",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-12-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 13,
+          "id": "fdc06abf-182a-4cd8-9602-ded8126e393e",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-13-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 14,
+          "id": "d388a981-0994-4187-9bbe-58f26a988950",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-14-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 15,
+          "id": "309f0061-a536-46bd-8652-412e34b3e9b9",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-15-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 16,
+          "id": "73854151-2ce3-49d5-9941-fa5d899caabb",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-16-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 17,
+          "id": "12da3d00-2bb3-4d97-b632-933949d548b3",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-17-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 18,
+          "id": "05710623-e57f-4f0b-8c8a-a61af97974af",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-18-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 19,
+          "id": "13179c42-1a31-4ec4-a60f-027e600a6a32",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-19-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 20,
+          "id": "5d5e8e78-aa19-41b4-a175-4a1f71898e5e",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-20-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 21,
+          "id": "fe6a5abf-8408-429c-a67d-b68aa401e160",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-21-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 22,
+          "id": "95188aa1-7df9-4ed9-a82f-7d74f2d0055e",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-22-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 23,
+          "id": "debbc614-ff71-43e1-9cad-90a7eca2a607",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-23-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 24,
+          "id": "d167a4e1-457f-407c-8c6e-24f6a26b5559",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-24-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 25,
+          "id": "1f159880-bf62-4d70-ba01-9db2d5977cdb",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-25-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 26,
+          "id": "40fa0bd5-fa7b-4d22-9d6e-bda66791de06",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-26-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 27,
+          "id": "964c39b7-521b-4d54-99f9-8520041751ac",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-27-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 28,
+          "id": "4c0232c8-c8b0-49bb-aaf7-631a4e481ce4",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-28-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 29,
+          "id": "a0f00a89-1b07-4e89-a987-78b7918adcd9",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-29-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 30,
+          "id": "40600748-6e96-4258-9769-1ff8f42ccfd8",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-30-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 31,
+          "id": "d4205c68-1596-453a-b6f3-cb1d30622a9d",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-31-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 32,
+          "id": "769279a1-a833-41eb-9c73-ea77b501188a",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-32-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 33,
+          "id": "e4e65541-e388-4dcf-9283-26853bf34a43",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-33-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 34,
+          "id": "14bb0e5d-ed4c-4151-b5f0-da5e0474d82b",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-34-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 35,
+          "id": "546d9165-951f-4f40-a4ed-30fee4abb123",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-35-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 36,
+          "id": "0a8e26be-f544-4fe5-97cf-cacd1b0feae9",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-36-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 37,
+          "id": "c0b70612-26c6-420b-b5cd-ad179667afd4",
+          "role": "avci",
+          "specialization": "avci_sharp",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-37-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 38,
+          "id": "4fa895f3-f7f7-4d99-bba2-1a1900f4d881",
+          "role": "arkanist",
+          "specialization": "arkanist_burst",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-38-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        },
+        {
+          "actor": 39,
+          "id": "d3d628b4-717e-496f-b51c-71e2288e7b77",
+          "role": "muhafiz",
+          "specialization": "muhafiz_strike",
+          "equippedCount": 5,
+          "bagItems": 30,
+          "pet": "starter",
+          "wings": true,
+          "weaponId": "population-equipped-39-weapon",
+          "abilities": [
+            {
+              "ability": 0,
+              "unlockLevel": 1,
+              "skillLevel": 5,
+              "baseCooldownMs": 650,
+              "available": true,
+              "safeCadenceMs": 750
+            },
+            {
+              "ability": 1,
+              "unlockLevel": 5,
+              "skillLevel": 5,
+              "baseCooldownMs": 10000,
+              "available": true,
+              "safeCadenceMs": 10100
+            },
+            {
+              "ability": 2,
+              "unlockLevel": 30,
+              "skillLevel": 5,
+              "baseCooldownMs": 12000,
+              "available": true,
+              "safeCadenceMs": 12100
+            },
+            {
+              "ability": 3,
+              "unlockLevel": 30,
+              "skillLevel": 1,
+              "baseCooldownMs": 18000,
+              "available": true,
+              "safeCadenceMs": 18100
+            }
+          ]
+        }
+      ],
+      "itemCount": 1400,
+      "bagItemsPerActor": 30,
+      "roleRotation": true
+    },
+    "boss": null
+  },
+  "equipmentBefore": [
+    {
+      "actor": 0,
+      "id": "real-1",
+      "zone": "forest",
+      "weaponId": "population-equipped-0-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 1,
+      "id": "73d46fe0-4a06-4f78-8ea0-a24aaabcab66",
+      "zone": "tower",
+      "weaponId": "population-equipped-1-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 2,
+      "id": "ff8f8ca3-dd7f-4562-ab4c-75642648a1d4",
+      "zone": "solo",
+      "weaponId": "population-equipped-2-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 3,
+      "id": "056689c7-552e-431a-87eb-6bd6a31aafff",
+      "zone": "mist",
+      "weaponId": "population-equipped-3-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 4,
+      "id": "56b452a1-6e3c-49bf-8322-4803fabdc003",
+      "zone": "black",
+      "weaponId": "population-equipped-4-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 5,
+      "id": "9d447ac6-5924-458d-8bd0-c19860a82675",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-5-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 6,
+      "id": "0a742df5-d5f0-40e0-883b-d89711f7696e",
+      "zone": "forest",
+      "weaponId": "population-equipped-6-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 7,
+      "id": "2cbeb69f-15ee-4683-aa5f-0cacfe0453e8",
+      "zone": "tower",
+      "weaponId": "population-equipped-7-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 8,
+      "id": "2c17b478-120c-4561-8ad7-d102082f9fe3",
+      "zone": "solo",
+      "weaponId": "population-equipped-8-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 9,
+      "id": "e70f5ab9-8e1b-413e-965d-ecc3452dcb59",
+      "zone": "mist",
+      "weaponId": "population-equipped-9-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 10,
+      "id": "f4379ad9-2826-4cf6-ae36-ac98439db9b6",
+      "zone": "black",
+      "weaponId": "population-equipped-10-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 11,
+      "id": "032cc6bb-9283-402b-8ba1-cfc7258dc380",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-11-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 12,
+      "id": "4216f38b-6ec4-43dc-8802-03738f933bdd",
+      "zone": "forest",
+      "weaponId": "population-equipped-12-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 13,
+      "id": "fdc06abf-182a-4cd8-9602-ded8126e393e",
+      "zone": "tower",
+      "weaponId": "population-equipped-13-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 14,
+      "id": "d388a981-0994-4187-9bbe-58f26a988950",
+      "zone": "solo",
+      "weaponId": "population-equipped-14-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 15,
+      "id": "309f0061-a536-46bd-8652-412e34b3e9b9",
+      "zone": "mist",
+      "weaponId": "population-equipped-15-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 16,
+      "id": "73854151-2ce3-49d5-9941-fa5d899caabb",
+      "zone": "black",
+      "weaponId": "population-equipped-16-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 17,
+      "id": "12da3d00-2bb3-4d97-b632-933949d548b3",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-17-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 18,
+      "id": "05710623-e57f-4f0b-8c8a-a61af97974af",
+      "zone": "forest",
+      "weaponId": "population-equipped-18-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 19,
+      "id": "13179c42-1a31-4ec4-a60f-027e600a6a32",
+      "zone": "tower",
+      "weaponId": "population-equipped-19-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 20,
+      "id": "5d5e8e78-aa19-41b4-a175-4a1f71898e5e",
+      "zone": "solo",
+      "weaponId": "population-equipped-20-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 21,
+      "id": "fe6a5abf-8408-429c-a67d-b68aa401e160",
+      "zone": "mist",
+      "weaponId": "population-equipped-21-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 22,
+      "id": "95188aa1-7df9-4ed9-a82f-7d74f2d0055e",
+      "zone": "black",
+      "weaponId": "population-equipped-22-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 23,
+      "id": "debbc614-ff71-43e1-9cad-90a7eca2a607",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-23-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 24,
+      "id": "d167a4e1-457f-407c-8c6e-24f6a26b5559",
+      "zone": "forest",
+      "weaponId": "population-equipped-24-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 25,
+      "id": "1f159880-bf62-4d70-ba01-9db2d5977cdb",
+      "zone": "forest",
+      "weaponId": "population-equipped-25-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 26,
+      "id": "40fa0bd5-fa7b-4d22-9d6e-bda66791de06",
+      "zone": "tower",
+      "weaponId": "population-equipped-26-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 27,
+      "id": "964c39b7-521b-4d54-99f9-8520041751ac",
+      "zone": "solo",
+      "weaponId": "population-equipped-27-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 28,
+      "id": "4c0232c8-c8b0-49bb-aaf7-631a4e481ce4",
+      "zone": "mist",
+      "weaponId": "population-equipped-28-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 29,
+      "id": "a0f00a89-1b07-4e89-a987-78b7918adcd9",
+      "zone": "black",
+      "weaponId": "population-equipped-29-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 30,
+      "id": "40600748-6e96-4258-9769-1ff8f42ccfd8",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-30-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 31,
+      "id": "d4205c68-1596-453a-b6f3-cb1d30622a9d",
+      "zone": "forest",
+      "weaponId": "population-equipped-31-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 32,
+      "id": "769279a1-a833-41eb-9c73-ea77b501188a",
+      "zone": "tower",
+      "weaponId": "population-equipped-32-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 33,
+      "id": "e4e65541-e388-4dcf-9283-26853bf34a43",
+      "zone": "solo",
+      "weaponId": "population-equipped-33-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 34,
+      "id": "14bb0e5d-ed4c-4151-b5f0-da5e0474d82b",
+      "zone": "mist",
+      "weaponId": "population-equipped-34-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 35,
+      "id": "546d9165-951f-4f40-a4ed-30fee4abb123",
+      "zone": "black",
+      "weaponId": "population-equipped-35-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 36,
+      "id": "0a8e26be-f544-4fe5-97cf-cacd1b0feae9",
+      "zone": "rune_v2",
+      "weaponId": "population-equipped-36-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 37,
+      "id": "c0b70612-26c6-420b-b5cd-ad179667afd4",
+      "zone": "forest",
+      "weaponId": "population-equipped-37-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 38,
+      "id": "4fa895f3-f7f7-4d99-bba2-1a1900f4d881",
+      "zone": "tower",
+      "weaponId": "population-equipped-38-weapon",
+      "kills": 0
+    },
+    {
+      "actor": 39,
+      "id": "d3d628b4-717e-496f-b51c-71e2288e7b77",
+      "zone": "solo",
+      "weaponId": "population-equipped-39-weapon",
+      "kills": 0
+    }
+  ],
+  "channelProfiles": [],
+  "passed": false,
+  "failure": {
+    "message": "ipc_control_failed",
+    "stack": "Error: ipc_control_failed\n    at kernelError (file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)\n    at StreamControl.receive (file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/reliable-stream.mjs:158:264)\n    at file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/reliable-stream.mjs:182:84\n    at ProcessStream.<anonymous> (file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/reliable-stream.mjs:64:5)\n    at ProcessStream.emit (node:events:519:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at ProcessStream.push (node:internal/streams/readable:392:5)\n    at ChildProcess.<anonymous> (file:///workspace/ccre/r109_latency_completion/working/core511-source/scripts/core511/process-stream.mjs:7:245)\n    at ChildProcess.emit (node:events:531:35)"
+  },
+  "errors": [],
+  "faults": []
+}

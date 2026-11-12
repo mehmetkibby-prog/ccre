@@ -1,0 +1,94 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "sources": [
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "sha256": "250de403a2102968c546cc799965f0d5f6b791dd64dd2413e0a33fcdad26407f"
+    },
+    {
+      "file": "dist-vds/server/channel-runtime/index.mjs",
+      "sha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b"
+    }
+  ],
+  "bodies": [
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "MAX_EVENT_BYTES",
+      "start": 1453,
+      "end": 1484,
+      "sha256": "cdaa94c1a172bd47cf671b00d70835879d22e800bd6e0d33c0c5f367d301ab07"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "roomKey",
+      "start": 5547,
+      "end": 5949,
+      "sha256": "78889a665cd47057238d8559bca294dc5c0f9d4414ff0ac357268e5efb753ab1"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "safeArea",
+      "start": 3943,
+      "end": 4200,
+      "sha256": "58b4d5de58b3c0cc13c6636bf55c618f952839245537074cdc9756f03134aeb8"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "send",
+      "start": 6211,
+      "end": 7142,
+      "sha256": "476aaff6a6e157e70b26af57beb76df65e30e76fae0404136992270fb49cb78c"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "broadcast",
+      "start": 7638,
+      "end": 8479,
+      "sha256": "0f3ff78837097d614d1d365f09c07c55e8b1019139e1e05ea87e18820fda513a"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "broadcastWorldEvent",
+      "start": 27862,
+      "end": 29452,
+      "sha256": "b9b645bf404e7fa94db377e88016126ab970ed35d22c8b88a1cdcf4b6b2cee56"
+    },
+    {
+      "file": "realtime-server/src/rooms.mjs",
+      "name": "broadcastPlayerEvent",
+      "start": 30676,
+      "end": 34629,
+      "sha256": "049bae7a40a0b8df4cb27e97893c20b752dd298581201a63befec5425105b527"
+    },
+    {
+      "file": "dist-vds/server/channel-runtime/index.mjs",
+      "name": "safeArenaMatchId",
+      "start": 217143,
+      "end": 217265,
+      "sha256": "43ba27a3c03de9c6653539a696254d9a8244167474a4cdc1f1f56cb887278220"
+    },
+    {
+      "file": "dist-vds/server/channel-runtime/index.mjs",
+      "name": "realtimeRoomName",
+      "start": 217266,
+      "end": 217830,
+      "sha256": "09f3d37b41297e8678273f084f05aed4c39ad30bdb9894860a783573c901c7c3"
+    }
+  ],
+  "generatedSha256": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+  "edits": [
+    "Original9 native declaration source hashes retained; safeArea and realtimeRoomName additionally recognize strict adventure IDs",
+    "Authenticated snapshot sockets and sender capture injected; no network or mutable socket ownership",
+    "Native private audience limits, private world scope, GM filtering and24000-byte limit preserved"
+  ],
+  "r93Zumrut": {
+    "scope": "Normal shared map dispatch, native travel and river fishing eligibility only; no separate simulation or economy loop.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "45f177b6180c5a968b26219eef3832d804ad4a034d06238569fe8440f4c618e4",
+        "current": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+        "file": "notification-rules.mjs"
+      }
+    }
+  }
+}

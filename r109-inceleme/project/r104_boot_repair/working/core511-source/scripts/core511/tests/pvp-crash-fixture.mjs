@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {createPvpWriterHandler} from '../pvp-writer.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),data=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!['before','after'].includes(phase)||!file.includes('core511-isolated-'))throw Error('Isolated PvP crash fixture required');
+const {installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry();
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'pvp-crash'});await authority.initialize();
+const handler=createPvpWriterHandler({settingsFor:()=>data.settings,globalsFor:()=>({}),assertResources:()=>true,assertOwnership:(sql,peer,id,epoch)=>Boolean(authority.assertAdmitted(sql,peer,id,epoch)),clock:()=>data.request.payload.nowMs});
+registerOwnedRule(authority,'pvp_attack',(sql,payload,ctx)=>{const result=handler(sql,payload,ctx);if(phase==='before'){fs.writeFileSync(marker,'uncommitted_pvp');process.kill(process.pid,'SIGKILL');}return result;});
+await authority.command(data.peer,data.request);fs.writeFileSync(marker,'durable_pvp_before_ack');process.kill(process.pid,'SIGKILL');

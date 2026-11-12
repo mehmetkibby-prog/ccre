@@ -1,0 +1,375 @@
+{
+  "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
+  "client": "game-client-core511-r105-4a0d3559a0e0e553.js",
+  "checks": [
+    {
+      "name": "native normal entry",
+      "area": "forest",
+      "channels": 4
+    },
+    {
+      "name": "In-game Discord URL",
+      "urls": [
+        "https://discord.gg/pBywtjhTN"
+      ]
+    },
+    {
+      "name": "Exact compiled game recovers lost tower stream and durable attack receipt without F5 or replay",
+      "floor": 2,
+      "ready": true,
+      "connection": 3,
+      "queued": 0
+    },
+    {
+      "name": "actual portal lazy import, character admission, channel 1, live world and rendered game HUD"
+    }
+  ],
+  "passed": true,
+  "durationMs": 47833,
+  "requests": [
+    {
+      "at": 1794485925941,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "ms": 5
+    },
+    {
+      "at": 1794485926031,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/realm/characters",
+      "status": 200,
+      "ms": 6
+    },
+    {
+      "at": 1794485926966,
+      "phase": "native-entry",
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 12
+    },
+    {
+      "at": 1794485927165,
+      "phase": "native-entry",
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 94,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485927367,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-r46-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794485927381,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-r45-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794485927382,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-r44-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794485927391,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794485927393,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-r43-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794485927810,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-r49-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794485927812,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794485927803,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 25,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485927806,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/onboarding",
+      "status": 200,
+      "ms": 40,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485927832,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 24,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485928160,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 26,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485929379,
+      "phase": "native-entry",
+      "method": "POST",
+      "path": "/api/realtime/core511-character",
+      "status": 200,
+      "ms": 67,
+      "action": "join",
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485929870,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 2,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485930211,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 42
+    },
+    {
+      "at": 1794485930255,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 237,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485930353,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 156,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485930514,
+      "phase": "native-entry",
+      "method": "POST",
+      "path": "/api/mount-r49",
+      "status": 200,
+      "ms": 37,
+      "action": "status",
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485932688,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 23,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485932719,
+      "phase": "native-entry",
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 9,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485937096,
+      "phase": "tower-recovery",
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 6,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485941618,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 4,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485941619,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 3,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485941620,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 6,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485942621,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485946200,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 2,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485947067,
+      "phase": "tower-recovery",
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 8,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485947624,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 1,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485951645,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 3,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485952642,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 4,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485956112,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 12,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485957071,
+      "phase": "tower-recovery",
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 9,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485957641,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485958363,
+      "phase": "tower-recovery",
+      "method": "POST",
+      "path": "/api/realtime/core511-ticket",
+      "status": 200,
+      "ms": 9,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    },
+    {
+      "at": 1794485961808,
+      "phase": "tower-recovery",
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 10,
+      "instance": "81fc89c6-b189-433f-b415-cd3dec12cbe1"
+    }
+  ],
+  "errors": [],
+  "nativeFaults": [],
+  "missingAssets": []
+}

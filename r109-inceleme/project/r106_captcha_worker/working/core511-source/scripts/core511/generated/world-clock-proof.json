@@ -1,0 +1,105 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/world-loop.mjs",
+  "sourceSha256": "c036a52e4959150f4aa5f2799e89090e99da3de2f6dbda154bef305f28fe7185",
+  "slices": [
+    {
+      "name": "regenerate",
+      "start": 11343,
+      "end": 12399,
+      "sha256": "8d0d90147212326a162a05d5db1fc6696bd5c857902aca196e52c58acc698d3f",
+      "edits": [
+        [
+          "this.channel>1&&m.channel===0",
+          "!this.owns(m)||this.blocked(m.id)"
+        ],
+        [
+          "this.combat.updateMonster(m,{hp,last_regen_at_ms:nowMs});",
+          "if(this.combat.updateMonster(m,{hp,last_regen_at_ms:nowMs})===false)this.regenClocks.set(id,last);"
+        ]
+      ]
+    },
+    {
+      "name": "due",
+      "start": 6807,
+      "end": 7079,
+      "sha256": "09a2ccfef9c90067fc35c2836cc60deb87b478787fad959fa6c140debe4c7c7a",
+      "edits": [
+        [
+          "(!this.channel||this.channel===1||m.channel!==0)",
+          "this.owns(m)"
+        ]
+      ]
+    },
+    {
+      "name": "needsRepair",
+      "start": 7081,
+      "end": 7957,
+      "sha256": "9366c8b7338cf9618a4a30e4326089573a9218b85f9850b9a1e41f3a8176ce9d",
+      "edits": [
+        [
+          "this.channel>1&&m.channel===0",
+          "!this.owns(m)"
+        ],
+        [
+          "id==='stone-boss-black-c3'",
+          "id==='stone-boss-black-c3'||id==='stone-boss-black-c4'"
+        ],
+        [
+          "if(!colLabMonsterActive(m)||id==='dragon-world-1'",
+          "if(isAdventureArea(m.area)||!colLabMonsterActive(m)||id==='dragon-world-1'"
+        ]
+      ]
+    },
+    {
+      "name": "needsDespawn",
+      "start": 7959,
+      "end": 8135,
+      "sha256": "f8325140ac0a49d5e7cd825b7ace48412892c049a0605b36e5f810009ace06f5",
+      "edits": [
+        [
+          "if(m.is_boss",
+          "if(this.owns(m)&&m.is_boss"
+        ]
+      ]
+    },
+    {
+      "name": "dragonDue",
+      "start": 8137,
+      "end": 8526,
+      "sha256": "08b0636127482c90ac8c00627ec945b7d5435d7a5f814c5cbfc3bfc13d427850",
+      "edits": [
+        [
+          "if(!m||!row)",
+          "if(!m||!this.owns(m)||!row)"
+        ]
+      ]
+    }
+  ],
+  "derived": [
+    {
+      "name": "repairCandidates",
+      "sourceMethod": "needsRepair",
+      "generatedSha256": "2a9f08db9a6d44392f5c8bab951e5d35f3ada0d0a75e74476a23b42a2bf7e4a4",
+      "edits": [
+        "collect every matching native predicate instead of returning after the first"
+      ]
+    },
+    {
+      "name": "despawnCandidates",
+      "sourceMethod": "needsDespawn",
+      "generatedSha256": "f5820d000703441031388042e879ea27229cc25e149f1603fdf3282e539d61be",
+      "edits": [
+        "collect every matching native predicate instead of returning after the first"
+      ]
+    }
+  ],
+  "generatedSha256": "4ba0cda5ebb9f0c3c34bc70e142130f185b078dd14605aea0f6181be6abd5b9d",
+  "extractedSha256": "aa8c977111cf5382ed14a23690ff78249e0ebf263d874c65513f9f948eb0b3d8",
+  "adaptation": "count-checked R19 ordinary-map adventure hooks",
+  "notes": [
+    "Explicit independent ownership replaces CH1 shared ownership",
+    "Regeneration defers monsters held by a durable operation without advancing their clocks",
+    "All formulas, rounding, limits, engagement expiry and loadlab guards preserved"
+  ]
+}

@@ -1,0 +1,320 @@
+{
+  "version": "R109_LATENCY2",
+  "functionalChecksPassed": true,
+  "performanceTargetMet": false,
+  "allProcessesUnder50ms": false,
+  "zeroLagGuaranteed": false,
+  "liveInstalled": false,
+  "liveDatabase": false,
+  "cpuQuota": 4,
+  "liveVdsCpu": 8,
+  "sources": [
+    "R105_PERF1",
+    "R106_CAPTCHA1"
+  ],
+  "changedFiles": [
+    "core511-source/scripts/core511/adventure-channel.mjs",
+    "core511-source/scripts/core511/cold-world.mjs",
+    "core511-source/scripts/core511/combat-checkpoint.mjs",
+    "core511-source/scripts/core511/coordinator.mjs",
+    "core511-source/scripts/core511/death-batch-channel-r57.mjs",
+    "core511-source/scripts/core511/death-batch-single-r57.mjs",
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+    "core511-source/scripts/core511/native-bot-check.mjs",
+    "core511-source/scripts/core511/native-http-bindings.mjs",
+    "core511-source/scripts/core511/process-stream.mjs",
+    "core511-source/scripts/core511/read-worker.mjs",
+    "core511-source/scripts/core511/reward-sql-r531.mjs",
+    "core511-source/scripts/core511/reward-worker-r533.mjs",
+    "core511-source/scripts/core511/slim-reload.mjs",
+    "core511-source/scripts/core511/statement-boot-pool-r61.mjs",
+    "http-runtime/dist-vds/server/index.js",
+    "accounts-runtime/dist-vds/server/index.js",
+    "native510-bb3a6cc689c6/vds-server/src/bot-check.mjs",
+    "native510-bb3a6cc689c6/vds-server/src/captcha-renderer-r106.mjs",
+    "native510-bb3a6cc689c6/vds-server/src/captcha-worker-r106.mjs"
+  ],
+  "tests": [
+    {
+      "name": "focused",
+      "exit": 0,
+      "seconds": 27.29,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-focused.log",
+      "sha256": "6965365f4c097690ebb445acf7f837ae1df15028c3caa762a3ee47b4a57a2f12",
+      "tests": 54
+    },
+    {
+      "name": "boss-prewarm",
+      "exit": 0,
+      "seconds": 4.07,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-boss-prewarm.log",
+      "sha256": "a2d696a36280a15b3af27fe9bf4937732d958b4069c3841374ec139f8ef802c9",
+      "tests": 8
+    },
+    {
+      "name": "cold-worker-regression",
+      "exit": 0,
+      "seconds": 6.16,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-cold-worker-regression.log",
+      "sha256": "ddca960ee55b48db91d723ec55bb212f1e067c9454e8f9ebf0911b451d4a6d73",
+      "tests": 2
+    },
+    {
+      "name": "native-fixtures",
+      "exit": 0,
+      "seconds": 0.03,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-native-fixtures.log",
+      "sha256": "1e7990001faca7241b87c819280acaf1b19f0886c55d66b00efe1ea2f7a7d438",
+      "tests": null
+    },
+    {
+      "name": "native-current",
+      "exit": 0,
+      "seconds": 96.59,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-native-current.log",
+      "sha256": "bb1f0891f551a20c8ef546fae07d8c091c88f081517d9df7b0701273b0709cb2",
+      "tests": 29
+    },
+    {
+      "name": "captcha",
+      "exit": 0,
+      "seconds": 73.74,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-captcha.log",
+      "sha256": "3651b882d15a49b102552ca2ab282c56c3ffc8b44178da681b8a42ff282dafba",
+      "tests": 20
+    },
+    {
+      "name": "package-build",
+      "exit": 0,
+      "seconds": 2.69,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-package-build.log",
+      "sha256": "d0f5e98ee11c34f82edcff8a5648d612fbe08709846db75dd526d7a3d2d1821b",
+      "tests": null
+    },
+    {
+      "name": "installer",
+      "exit": 0,
+      "seconds": 35.8,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-installer-1794473153506443436.log",
+      "sha256": "10ba1b15cf2acc29417814d64c8c90d689cf309ec02d59d8c072d0f7b92e95a4",
+      "tests": null
+    },
+    {
+      "name": "runtime-stage",
+      "exit": 0,
+      "seconds": 2.63,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-runtime-stage.log",
+      "sha256": "07afd79c19467db59e0bae47c092f1e555b6f503d6c687ccfa5f79a296a857cf",
+      "tests": null
+    },
+    {
+      "name": "relocated-runtime",
+      "exit": 0,
+      "seconds": 18.35,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-relocated-runtime.log",
+      "sha256": "a1f8137fcdc8c0cf2d3ac3c3569fbb962091a32fc6199b248869372494e22122",
+      "tests": 2
+    },
+    {
+      "name": "browser-assets",
+      "exit": 0,
+      "seconds": 1.77,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-browser-assets.log",
+      "sha256": "750751c595fbf9c098001c5291c3d1171394cf838fac27929d47e7614f56baa1",
+      "tests": null
+    },
+    {
+      "name": "browser-r1",
+      "exit": 0,
+      "seconds": 38.32,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-browser-r1.log",
+      "sha256": "069de066ec7e1219b92508dfd845295cd98188e78587ec96d320d489a0ae978c",
+      "tests": null
+    },
+    {
+      "name": "browser-r2",
+      "exit": 0,
+      "seconds": 33.19,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-browser-r2.log",
+      "sha256": "77fc3ba0105efdb8f5987f9ee9bebf9ea2307f00e2fcb4264b1f6224989cd14e",
+      "tests": null
+    },
+    {
+      "name": "three-browser-tower",
+      "exit": 0,
+      "seconds": 241.7,
+      "log": "/workspace/ccre/r109_latency_completion/evidence/validation-three-browser-tower.log",
+      "sha256": "2fed1f87d85c7f30bd3727eafe2739245e77755260fac5c31c9c0716c172b414",
+      "tests": null
+    }
+  ],
+  "browsers": [
+    {
+      "file": "/workspace/ccre/r109_latency_completion/evidence/browser-r1-hud-r109-latency/report.json",
+      "sha256": "75d88ae03fd2ef93da2b9becf551c6fdf1bcb5d76531f7a89ceb98e2b5383982",
+      "passed": true
+    },
+    {
+      "file": "/workspace/ccre/r109_latency_completion/evidence/browser-r2-hud-mobile-r109-latency/report.json",
+      "sha256": "46fc6fd38e7a053fc180ce29c4bc47e5bda07b827b03f608c57086f8170ae1a3",
+      "passed": true
+    },
+    {
+      "file": "/workspace/ccre/r109_latency_completion/evidence/three-browser-r109-latency/report.json",
+      "sha256": "30dbdac00b786a508702b3a4f4393c67d01853d9707e24955636e73fdd41a9eb",
+      "passed": true
+    }
+  ],
+  "loads": [
+    {
+      "file": "r109-ready-packed-1-40.json",
+      "sha256": "9b414c42237a8cca5c66c29e9c648adfc25df01b58fac3b57af5f6d694b9e52b",
+      "realm": "r1",
+      "players": 40,
+      "passed": true,
+      "tickP95Ms": 18.935401000002457,
+      "tickP99Ms": 29.403545999997732,
+      "maxTickMs": 46.510168000000704,
+      "mainMaxPauseMs": 30.375935,
+      "mainPausesOver50Ms": 0,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 43.646975,
+      "mainElu": 0.21163612031427756,
+      "mainMaxRssBytes": 667422720,
+      "medianActorReplyP95Ms": 135.92311999999583,
+      "maxActorReplyP95Ms": 254.06925799999954,
+      "maxReplyMs": 578.8441680000033,
+      "allLoopsMaxPauseMs": 55.017471,
+      "endSettlementMs": 82.38953800000309
+    },
+    {
+      "file": "r109-ready-boss-1-40.json",
+      "sha256": "7610f98e4063827537c9f37962bab4242eca5d23fed1c663859f92741c5ffdb9",
+      "realm": "r1",
+      "players": 40,
+      "passed": true,
+      "tickP95Ms": 7.552778000004764,
+      "tickP99Ms": 14.107629999998608,
+      "maxTickMs": 35.166213999997126,
+      "mainMaxPauseMs": 70.647807,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 4,
+      "maxChannelPauseMs": 57.376767,
+      "mainElu": 0.22650675810344578,
+      "mainMaxRssBytes": 436133888,
+      "medianActorReplyP95Ms": 486.0314885000007,
+      "maxActorReplyP95Ms": 783.0240840000042,
+      "maxReplyMs": 1309.9919010000012,
+      "allLoopsMaxPauseMs": 70.647807,
+      "endSettlementMs": 0.54891700000735
+    },
+    {
+      "file": "r109-ready-balanced30-30.json",
+      "sha256": "38a773ba8418de6644e9c7d0a06473556225249d526330e192c90d6041797232",
+      "realm": "r1",
+      "players": 30,
+      "passed": true,
+      "tickP95Ms": 10.406490000001213,
+      "tickP99Ms": 17.13931700000103,
+      "maxTickMs": 79.42715399998997,
+      "mainMaxPauseMs": 60.325887,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 5,
+      "maxChannelPauseMs": 75.563007,
+      "mainElu": 0.24694624656034803,
+      "mainMaxRssBytes": 581169152,
+      "medianActorReplyP95Ms": 111.87098600000172,
+      "maxActorReplyP95Ms": 176.25770500000363,
+      "maxReplyMs": 557.2817749999995,
+      "allLoopsMaxPauseMs": 75.563007,
+      "endSettlementMs": 152.78181799998856
+    },
+    {
+      "file": "r109-ready-academy40-40.json",
+      "sha256": "4691c03a7c6474cb0990340d998dd72e67e5c4685bee21f7fa763ed0bb8c76c9",
+      "realm": "r2",
+      "players": 40,
+      "passed": true,
+      "tickP95Ms": 12.128422000001592,
+      "tickP99Ms": 19.819259000003512,
+      "maxTickMs": 36.224669999999605,
+      "mainMaxPauseMs": 45.940735,
+      "mainPausesOver50Ms": 0,
+      "channelPausesOver50Ms": 1,
+      "maxChannelPauseMs": 98.238463,
+      "mainElu": 0.28026862602332925,
+      "mainMaxRssBytes": 532099072,
+      "medianActorReplyP95Ms": 120.74480349999976,
+      "maxActorReplyP95Ms": 225.60679900000105,
+      "maxReplyMs": 418.11319300000105,
+      "allLoopsMaxPauseMs": 98.238463,
+      "endSettlementMs": 228.39259800000582
+    },
+    {
+      "file": "r109-ready-packed-2-40.json",
+      "sha256": "ad64e7e2c3d349a552afd2c58030ebc929a85af72af2f7c13cdb24e1a735a517",
+      "realm": "r1",
+      "players": 40,
+      "passed": true,
+      "tickP95Ms": 18.495461999998952,
+      "tickP99Ms": 30.133288999997603,
+      "maxTickMs": 72.96334000000206,
+      "mainMaxPauseMs": 67.698687,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 34.078719,
+      "mainElu": 0.21784406198004125,
+      "mainMaxRssBytes": 513888256,
+      "medianActorReplyP95Ms": 131.67100849999952,
+      "maxActorReplyP95Ms": 337.28279500000644,
+      "maxReplyMs": 509.62262499999997,
+      "allLoopsMaxPauseMs": 67.698687,
+      "endSettlementMs": 10.225851000010152
+    },
+    {
+      "file": "r109-ready-boss-2-40.json",
+      "sha256": "c244e3712a0580f6b0a8bf0057386e89e16e3dbc80605222d1fecc5a85c7d781",
+      "realm": "r1",
+      "players": 40,
+      "passed": true,
+      "tickP95Ms": 8.089799999997922,
+      "tickP99Ms": 17.969647999998415,
+      "maxTickMs": 111.06454499999927,
+      "mainMaxPauseMs": 121.831423,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 17,
+      "maxChannelPauseMs": 186.908671,
+      "mainElu": 0.23142750642780574,
+      "mainMaxRssBytes": 439676928,
+      "medianActorReplyP95Ms": 622.947748999999,
+      "maxActorReplyP95Ms": 763.3222680000035,
+      "maxReplyMs": 1172.576079999999,
+      "allLoopsMaxPauseMs": 186.908671,
+      "endSettlementMs": 0.8489839999965625
+    }
+  ],
+  "testedPackage": {
+    "file": "/workspace/ccre/r109_latency_completion/artifacts/R109_LATENCY_549b03ae.zip",
+    "bytes": 1347214,
+    "sha256": "c1bd26d3d77f40f2e2bf03eff1e4da044f8ec78343ac125831695ee2373a2e0e",
+    "sourceCore": "bd3891da70f7827ebbe0b62e8a9edf10444a2a86cde6fa0629a5f3bc07085fdd",
+    "targetCore": "1fb1a5cd28cbeec3a0b33bd1a262ecc165e07cf6a239d13f668a8b22f79a91df",
+    "changedCodeFiles": 20,
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "finalPackage": {
+    "file": "/workspace/ccre/r109_latency_completion/artifacts/R109_LATENCY_f8d2fb9a.zip",
+    "bytes": 1350459,
+    "sha256": "1ba96d415891f8d474188edb64331b87b7bc12fdfb54733f49918a906e6ef068",
+    "sourceCore": "bd3891da70f7827ebbe0b62e8a9edf10444a2a86cde6fa0629a5f3bc07085fdd",
+    "targetCore": "1fb1a5cd28cbeec3a0b33bd1a262ecc165e07cf6a239d13f668a8b22f79a91df",
+    "changedCodeFiles": 20,
+    "databaseScope": "none",
+    "namespace": "core511-1025c65a35480d96"
+  },
+  "documentationOnlyChanges": [
+    "PERFORMANS_RAPORU.md"
+  ],
+  "testedExecutableBytesMatchFinal": true
+}

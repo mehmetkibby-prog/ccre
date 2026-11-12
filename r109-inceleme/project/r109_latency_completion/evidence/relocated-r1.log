@@ -1,0 +1,4 @@
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+{"event":"core511_boot_read","query":"kernel511_channel_boot","resultBytes":6108380,"limitBytes":33554432,"repair":"R104_BOOT1"}
+[vinext] Production server running at http://127.0.0.1:41693
+{"core511Ready":true,"channels":4,"capacity":25,"pid":99539,"release":"release"}

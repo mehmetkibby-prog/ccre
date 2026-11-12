@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {createQuestWriterHandler} from '../quest-writer.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),{request,peer}=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!['before','after'].includes(phase)||!file.includes('core511-isolated-'))throw Error('Isolated quest crash fixture required');
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'quest-crash'});await authority.initialize();
+const handler=createQuestWriterHandler({globalsFor:()=>({}),assertOwnership:(sql,p,id,epoch)=>Boolean(authority.assertAdmitted(sql,p,id,epoch)),assertResources:()=>true,clock:()=>request.payload.nowMs});
+registerOwnedRule(authority,'quest',(sql,payload,context)=>{const result=handler(sql,payload,context);if(phase==='before'){fs.writeFileSync(marker,'uncommitted_quest');process.kill(process.pid,'SIGKILL');}return result;});
+await authority.command(peer,request);fs.writeFileSync(marker,'durable_quest_before_ack');process.kill(process.pid,'SIGKILL');

@@ -1,0 +1,74 @@
+[
+  {
+    "path": "/assets/tower-r18/floor-1.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/assets/tower-r18/floor-4.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/assets/tower-r18/floor-7.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/assets/tower-r18/floor-10.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/assets/tower-r18/entrance.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/assets/tower-r18/items.webp",
+    "code": 22,
+    "bytes": null,
+    "error": "curl: (22) The requested URL returned error: 404\n"
+  },
+  {
+    "path": "/dungeon/seal-forest-v202.webp",
+    "code": 0,
+    "bytes": 588566,
+    "error": ""
+  },
+  {
+    "path": "/dungeon/core-valley-v202.webp",
+    "code": 0,
+    "bytes": 648200,
+    "error": ""
+  },
+  {
+    "path": "/dungeon/royal-court-v202.webp",
+    "code": 0,
+    "bytes": 564418,
+    "error": ""
+  },
+  {
+    "path": "/guide-art/forge.webp",
+    "code": 0,
+    "bytes": 33960,
+    "error": ""
+  },
+  {
+    "path": "/guide-art/stones.webp",
+    "code": 0,
+    "bytes": 24908,
+    "error": ""
+  },
+  {
+    "path": "/guide-art/materials.webp",
+    "code": 0,
+    "bytes": 43270,
+    "error": ""
+  }
+]

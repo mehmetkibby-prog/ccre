@@ -1,0 +1,19 @@
+{
+  "scanned": 863,
+  "missing": [
+    {
+      "file": "core511-source/scripts/core511/native-http-server.mjs",
+      "import": "../../../native510-bb3a6cc689c6/node_modules/vinext/dist/server/prod-server.js"
+    },
+    {
+      "file": "native510-bb3a6cc689c6/vds-server/src/channel-compute-worker.mjs",
+      "import": "../../dist-vds/server/channel-logic/index.mjs"
+    }
+  ],
+  "errors": [],
+  "notes": [
+    "Initial syntax/static-import audit; no parse errors.",
+    "Vinext 0.0.50 was subsequently added and its adapter SHA256 verified by setup.",
+    "The missing channel-logic import belongs to the archived V510 three-channel worker. R109 uses delivery511/runtime-entry.mjs and four core511 channel processes. Do not start the legacy vds-server app."
+  ]
+}

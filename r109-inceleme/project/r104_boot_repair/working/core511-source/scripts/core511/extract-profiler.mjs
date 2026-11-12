@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {parse} from '../perf-r11/tests/parser.mjs';
+const root=process.env.COL_CORE511_BASE??path.resolve(import.meta.dirname,'../../../native510-bb3a6cc689c6'),out=path.join(import.meta.dirname,'generated'),hash=x=>createHash('sha256').update(x).digest('hex'),baseline='bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b';
+const bytes=fs.readFileSync(path.join(root,'realm-package-manifest.json'));if(hash(bytes)!==baseline)throw Error('Exact V510 required');const manifest=JSON.parse(bytes),sources=[];
+function read(file){const source=fs.readFileSync(path.join(root,file),'utf8');if(manifest.files.find(r=>r.path===file)?.sha256!==hash(source))throw Error('Native profiler mismatch '+file);sources.push({file,sha256:hash(source)});return source;}
+let generated=read('vds-server/src/cpu-profile507.mjs');const nativeAdmin=parse(generated,{ecmaVersion:'latest',sourceType:'module'}).body.find(n=>n.type==='ExportNamedDeclaration'&&n.declaration?.id?.name==='adminCpuProfile507').declaration,adminBody=generated.slice(nativeAdmin.start,nativeAdmin.end);const edits=[['/^(main|channel-[1-3])$/','/^(main|world|channel-[1-4])$/'],['Number(job.target.slice(-1))',"(job.target==='world'?0:Number(job.target.slice(-1)))"],['Number(target.slice(-1))',"(target==='world'?0:Number(target.slice(-1)))"]];
+for(const [from,to]of edits){if(generated.split(from).length!==2)throw Error('Profiler adapter drift '+from);generated=generated.replace(from,to);}
+for(const file of ['vds-server/src/runtime-performance.mjs','vds-server/src/slow-work504.mjs','vds-server/src/host-resources.mjs','vds-server/src/features504.mjs'])read(file);
+generated+='\nexport {runtimePerformance,startRuntimePerformance,reportRuntimeWork} from '+JSON.stringify(path.relative(out,path.join(root,'vds-server/src/runtime-performance.mjs')))+';\n';
+// Retain the original HTTP success/error/download response verbatim while
+// binding it to this host's already fenced six-owner coordinator.
+generated+='\nexport function createAdminProfileResponder507(coordinate){const coordinator=(_database,input)=>coordinate(input);\n'+adminBody+'\nreturn adminCpuProfile507;\n}\n';
+parse(generated,{ecmaVersion:'latest',sourceType:'module'});fs.writeFileSync(path.join(out,'profiler-rules.mjs'),generated);fs.writeFileSync(path.join(out,'profiler-proof.json'),JSON.stringify({baselineManifestSha256:baseline,sources,generatedSha256:hash(generated),edits,adminResponder:{nativeDeclarationSha256:hash(adminBody),binding:'Unchanged adminCpuProfile507 body closes over the provided current-host coordinator'},notes:['Native inspector capture, sanitization,60s duration,120s cooldown,5min TTL and size/chunk limits unchanged','Only main coordinator targets extend to channel4 and independent world index0','Native process/GC/ELU/CPU/stall sampler is imported unchanged; no acceptance threshold is relaxed','Additional factory retains the exact native HTTP response/error/download function; authorization remains in the native router']},null,2)+'\n');

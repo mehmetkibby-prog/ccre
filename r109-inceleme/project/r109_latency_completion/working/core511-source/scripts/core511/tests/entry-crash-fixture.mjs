@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership} from '../ownership.mjs';
+import {NativeGameServices} from '../game-services.mjs';
+import {EntryWriter} from '../entry-writer.mjs';
+const [file,input,phase,marker]=process.argv.slice(2),{options,peer}=JSON.parse(fs.readFileSync(input,'utf8'));
+if(!['before','after'].includes(phase)||!file.includes('core511-isolated-'))throw Error('Isolated character crash fixture required');
+const {installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry({now:()=>options.nowMs});
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'entry-crash',now:()=>options.nowMs});
+const services=new NativeGameServices(db.sqlite,{clock:()=>options.nowMs}),entry=new EntryWriter({database:db,services,clock:()=>options.nowMs});
+await db.atomic(sql=>{const created=entry.create(sql,options);if(!created.accepted)throw Error('Native character was not created: '+JSON.stringify(created.result));authority.admitIn(sql,created.session.player.id,peer,{sessionId:options.session.tokenHash,guard:()=>true});if(phase==='before'){fs.writeFileSync(marker,'uncommitted_character');process.kill(process.pid,'SIGKILL');}});
+fs.writeFileSync(marker,'durable_character_before_ack');process.kill(process.pid,'SIGKILL');

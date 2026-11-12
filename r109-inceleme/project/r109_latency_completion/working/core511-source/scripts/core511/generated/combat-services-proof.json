@@ -1,0 +1,55 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "sources": [
+    {
+      "file": "vds-server/src/runes.mjs",
+      "sha256": "0c73c5efc5cdc0ba4ec11eec83b8724fb34796b3cc0b7386eaf2a83fda229ebc"
+    },
+    {
+      "file": "vds-server/src/ranks.mjs",
+      "sha256": "8ebe32dc996896946c5c82871091f742857503066af362d3e72364ec20c3d701"
+    },
+    {
+      "file": "vds-server/src/ranks.mjs",
+      "sha256": "8ebe32dc996896946c5c82871091f742857503066af362d3e72364ec20c3d701"
+    },
+    {
+      "file": "vds-server/src/ranks.mjs",
+      "sha256": "8ebe32dc996896946c5c82871091f742857503066af362d3e72364ec20c3d701"
+    },
+    {
+      "file": "lib/runes.mjs",
+      "sha256": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae"
+    },
+    {
+      "file": "lib/rune-v2.mjs",
+      "sha256": "be3553161f000ce60b8131fec1fb26e638ace7db04f2a10043f5162b5711b6bb"
+    },
+    {
+      "file": "vds-server/src/extra-products.mjs",
+      "sha256": "7b4c296de72fceec1077322f8f7a4e2e76f689a43a100d0bbaea0a2d8ab3ae92"
+    },
+    {
+      "file": "lib/guild-skill.mjs",
+      "sha256": "c4e267723477c1a542881c3e9b82430c5769f92853c7d1bad6f7a6081bf2bfdc"
+    },
+    {
+      "file": "lib/infinite-power.mjs",
+      "sha256": "b062684f787e7a8900c7bc87c312bf8d70908808edaefc27edfec6945a8bf277"
+    }
+  ],
+  "nativeRuneFactorSha256": "97edaaf8e59b2e1f8e95086bb000931ee6294310c3f5579609a6b533ed56a6d8",
+  "nativeRankBonusesSha256": "24ea43debacbaf36df5b7ba024119ee9f39b3b610d8933c858abbcd4bcbf7e61",
+  "nativeRankProjectionSha256": "34f436253c98b3cf43efc54ebb467baa3fd1ea8549aba1dd3cc40edd273db7af",
+  "nativeRankInfoSha256": "1a60b9623345006d5a83a7429306200a048a3683389ad225a7f8712e8043efa0",
+  "generatedSha256": "1a8b3f11d047bdd2e9725b9d80acb41bd71f58c19d02b21a0f95025e98d7802a",
+  "edits": [
+    "rank SELECT replaced by resident player lookup; cache invalidates on every native rank input change",
+    "rank cache forgets detached actors and never retains absent-player lookups",
+    "original rank project/info retained; bulk SELECT replaced by bounded resident player lookup",
+    "rune/status factor uses original method and original statusBonus",
+    "rune/v2 classifiers extend channel set to4",
+    "event profiles use hydrated immutable Map"
+  ],
+  "productionHydrationBound": true
+}

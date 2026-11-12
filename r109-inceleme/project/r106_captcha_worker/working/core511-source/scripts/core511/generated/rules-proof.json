@@ -1,0 +1,779 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "baselineRuleBundleSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "roots": [
+    "evaluateMovementBudget",
+    "movementPathDistance",
+    "isAreaWalkableSegment",
+    "validArea",
+    "armorDamageReduction",
+    "equipmentSetBonuses",
+    "calculateEquipmentStats",
+    "createEnchantmentTotals",
+    "effectiveAttackCooldownMs",
+    "attackIsBlocked",
+    "monsterCombatPosition",
+    "areaSkillPoint",
+    "monsterXpReward",
+    "pveDamage",
+    "lifeStealAmount",
+    "rollLootProfile",
+    "resolveLootItemName",
+    "rollLootPower",
+    "buildDefaultLootProfile",
+    "prepareProfileDrops",
+    "enforceLocalActionRate"
+  ],
+  "declarations": [
+    {
+      "name": "colTransferLevel491",
+      "sha256": "c82bf59eaf6633d6924acc74fd385e86dc3a747c6d3586836290aaad1828f4f2",
+      "bytes": 235
+    },
+    {
+      "name": "colTransferBonus491",
+      "sha256": "0777e11b4e402699b09689aedf4c990d550602ddbf37f80300a8e25aafdbefb0",
+      "bytes": 128
+    },
+    {
+      "name": "colJewelry456",
+      "sha256": "8b3e088de54f80689cdf04d9ab9d542294f41efddadecdc8b484ae551e8ba9a8",
+      "bytes": 419
+    },
+    {
+      "name": "EMERALD_SET444",
+      "sha256": "c6f67d41dd37d578cc0f89a4ed06d4212e9f013bc8f31b78c411ec447771efd6",
+      "bytes": 182
+    },
+    {
+      "name": "emeraldName444",
+      "sha256": "d5d7e9f3876d438782e7b242e0f4e11d6851cdbc54b9862ec4650ccc41157da3",
+      "bytes": 371
+    },
+    {
+      "name": "emeraldPower444",
+      "sha256": "2a3de4783df74ff5d0b9827343b69de5df54318fd02e3f3cf2eb94eb67670e06",
+      "bytes": 734
+    },
+    {
+      "name": "colRuneFactor",
+      "sha256": "289683a852b2d39e0805f42c141fa9515bc734d900614104dc65c5e1044b7ab4",
+      "bytes": 80
+    },
+    {
+      "name": "PROGRESSION_MATERIALS",
+      "sha256": "83e0af04c695c4d0fde2b743faf80ef2d53d487ca3c7216d747821697c2d0061",
+      "bytes": 1627
+    },
+    {
+      "name": "UPGRADE_MATERIAL_KINDS",
+      "sha256": "74ca08017476adbfcb7f0ed7acc26075500b878fd98cb8ae7a990427aae8eeba",
+      "bytes": 119
+    },
+    {
+      "name": "progressionMaterial",
+      "sha256": "9365caeb3c40a4a9e8e7ecd05273fd21b86fbc1980f57e3533410c4704066d05",
+      "bytes": 155
+    },
+    {
+      "name": "materialForSource",
+      "sha256": "96ac0144bff3b748d68eb6f933af2fd8312514ff3f9a9e5e8828520aff4bd272",
+      "bytes": 172
+    },
+    {
+      "name": "LOOT_PPM",
+      "sha256": "7c236424fed45a3ae40d0197b43fa2f66f173e7eee9810229cfe2a6a1fc28a0e",
+      "bytes": 19
+    },
+    {
+      "name": "LOOT_BPS",
+      "sha256": "9e40495527cd11633e38f95048619da2fea995c8580db9d9863c4bce85dbc84e",
+      "bytes": 19
+    },
+    {
+      "name": "LOOT_GEAR_KINDS",
+      "sha256": "f906f26f4f2acdb459f3ef105cb2d04c4a85ef8517534dc2d893f9122afe93d1",
+      "bytes": 80
+    },
+    {
+      "name": "OPEN_WORLD_LOOT_GEAR_KINDS",
+      "sha256": "7417bedae71cc88e8544899bb2ed118350408f1027f9fbc18a30469686c8bc88",
+      "bytes": 80
+    },
+    {
+      "name": "SPECIAL_LOOT_RESOURCES",
+      "sha256": "cd265de628d3ac3b0676e138120714ad1c35a59008ada5a44abc8ae4c311e8dc",
+      "bytes": 53
+    },
+    {
+      "name": "LOOT_SOURCE_DEFINITIONS",
+      "sha256": "9fa51986db999f2b1b4ae8ff82734b696a062fac1f323f3abb629bfebb49b5d4",
+      "bytes": 3827
+    },
+    {
+      "name": "SIMPLE_LOOT_BUCKET_IDS",
+      "sha256": "b04b3b41e0e73f0a68b3a93458dad0adb2cd80063ed30d68d2902e5883752584",
+      "bytes": 149
+    },
+    {
+      "name": "FOREST_SIMPLE_LOOT_CHANCES",
+      "sha256": "be32124b75c0b14a853bc3afc34743d12817b9073fc1a305427b695c0bd2b0d2",
+      "bytes": 176
+    },
+    {
+      "name": "FROZEN_SIMPLE_LOOT_CHANCES",
+      "sha256": "d0265cf25960fa6f35fd7a172fa15f70899592fe723f90fcd3bcfd00c575d659",
+      "bytes": 183
+    },
+    {
+      "name": "ANCIENT_SIMPLE_LOOT_CHANCES",
+      "sha256": "2b84b0fd2c9d427b9bd0a841237c1d3132b9bfcbcc416067e178d4a9007006af",
+      "bytes": 182
+    },
+    {
+      "name": "lootSourceDefinition",
+      "sha256": "29f707cbc62cb2e2eb959c10a2382614a2f7086bc7b5e8f30236e39b6b83e7d3",
+      "bytes": 106
+    },
+    {
+      "name": "finiteNumber",
+      "sha256": "3d8820b93fbe3bcd16a41294b3cc99ace5269be387b51de7b1993d4891d2a4d1",
+      "bytes": 130
+    },
+    {
+      "name": "chanceToPpm",
+      "sha256": "42f6c5a0ebdfd8a552eee2d5ad7beb0df06a04030226f4aa293adbe486828a94",
+      "bytes": 109
+    },
+    {
+      "name": "weightedSplit",
+      "sha256": "c402ecebc9a9ece777ebd6ba6bb630d26249431bf81751d77967d9f34bfa90f5",
+      "bytes": 800
+    },
+    {
+      "name": "kindWeights",
+      "sha256": "1b0712c9129a1c3b57ec298f97020cc9e4a53e76f7f0db4ab8290ca5edad99d8",
+      "bytes": 194
+    },
+    {
+      "name": "legacyRarityPpms",
+      "sha256": "2705aa15af917c9ca1ba9e98a108ce3a015dc58eccb887a8d543205b9be31a02",
+      "bytes": 423
+    },
+    {
+      "name": "gearOutcomes",
+      "sha256": "203121107002df86b0835b91e90d01cd1a1d41ca9e8b1acb948236be39ad43c0",
+      "bytes": 761
+    },
+    {
+      "name": "SIMPLE_BUCKET_KINDS",
+      "sha256": "c7f0c44d3b3dd51453109e28191496c15a94e609162f60f17d15b4671fe24366",
+      "bytes": 317
+    },
+    {
+      "name": "SIMPLE_BUCKET_RARITY",
+      "sha256": "48ef353425e46f14c25cc03d5d6a53bfa4227b89aeff7a9225339ec8df518a77",
+      "bytes": 194
+    },
+    {
+      "name": "normalizedSimpleChance",
+      "sha256": "96b93f652fd585eff3504fda698b15a6e8a1268414a12f2f6075554f1c18beb4",
+      "bytes": 116
+    },
+    {
+      "name": "simpleGearOutcomes",
+      "sha256": "d8497b9a11c5b6cfa2a6862d19460861f4b899c3b9860c4ca135ba5087d481fa",
+      "bytes": 907
+    },
+    {
+      "name": "extractSimpleLootChances",
+      "sha256": "0eb8f83c917456e5ef727fe8e0ec47b1b562ec2e1497957bc25fbc93f7834cfe",
+      "bytes": 722
+    },
+    {
+      "name": "simpleLootTotalChancePpm",
+      "sha256": "67c0964eeb594a5cfd0d6009deafc15c68c7b2a3cbb0de3e7ecfbd0ac3749148",
+      "bytes": 144
+    },
+    {
+      "name": "rescaleSimpleLootChances",
+      "sha256": "47a1dcc589f528de4d9fb88bfe320ab1d805332d9456a2e8a9e1ce3a5a9faf8d",
+      "bytes": 450
+    },
+    {
+      "name": "withSimpleLootChances",
+      "sha256": "7447149aa395664e66e0df3851396298949c391bc203438ece935e55fd57242f",
+      "bytes": 471
+    },
+    {
+      "name": "withEquipmentDropChance",
+      "sha256": "a8355f9eff4c59b7e78b119957117a126337d1eca567af2b8a1f55a61a146ca5",
+      "bytes": 492
+    },
+    {
+      "name": "balanceWhiteLootChances",
+      "sha256": "16aa7de9e31468b9d0fffbbfd88d4bda426ed5cff5d658112dc1b2abd28bc054",
+      "bytes": 427
+    },
+    {
+      "name": "upgradeEquipmentDropProfile",
+      "sha256": "e1167dbb6c68d9d73c27e4980732835dceb1a21b9c32267e6dabe803518e93ce",
+      "bytes": 558
+    },
+    {
+      "name": "allowsSpecialLootResources",
+      "sha256": "49054e53e2d1fef29539615f03c88f244ff4679e4af95ab213105d8bc4644c58",
+      "bytes": 228
+    },
+    {
+      "name": "allowsProfileResource",
+      "sha256": "ce69fa2116381d8e009c851f0e8883fe61e9383abe3889f6e5bf43efefe119bf",
+      "bytes": 351
+    },
+    {
+      "name": "resourceOutcome",
+      "sha256": "77fed23e4adc70fe2c47fb6d484b918dd7fcaefd92d4917572e68e36c298e969",
+      "bytes": 268
+    },
+    {
+      "name": "rareResourceOutcome",
+      "sha256": "471d30778b0bc94f8b861bf173c6530d1836165fd1911db864a5af43d4fae560",
+      "bytes": 362
+    },
+    {
+      "name": "variantEssenceRange",
+      "sha256": "ae3e9225cefe28afe8cf286068ec91eb19664e03d361da3abd5174dad93909ee",
+      "bytes": 195
+    },
+    {
+      "name": "regularProfile",
+      "sha256": "9ba6d6e7964a21cdc77fd522b7522df66e1615df7e548c370f60ad33d91b8326",
+      "bytes": 824
+    },
+    {
+      "name": "frozenEliteProfile",
+      "sha256": "46d1d227f283f60bb32e972a8b7170791e786a352c877618e2611ef27997ce16",
+      "bytes": 1570
+    },
+    {
+      "name": "worldBossProfile",
+      "sha256": "474b90baae7221d1ee5824282b05ebada505b1a15e3a291038ec4ba3f5674706",
+      "bytes": 1084
+    },
+    {
+      "name": "sinsiStoneProfile",
+      "sha256": "dacda9fc91b4bf2e5f7eb105083b4ecc7824e3161f150146914798f5cb283a4c",
+      "bytes": 1065
+    },
+    {
+      "name": "buildDefaultLootProfile",
+      "sha256": "8a8fe2be3c3048541f54e6bf5d11361d930c8d128397f1162ac17b02658a8e8a",
+      "bytes": 1022
+    },
+    {
+      "name": "getBossEffectiveLootGroups",
+      "sha256": "abd5c620cc0e752435b4fed7e66d448365ce2ec0b55bfed29763986bba5143ae",
+      "bytes": 2757
+    },
+    {
+      "name": "getEffectiveLootGroups",
+      "sha256": "88dea2d78f384b5f997fc2d663cbc5af267a7eaf49da606beac14a5f90fb57b0",
+      "bytes": 3084
+    },
+    {
+      "name": "normalizedRandom",
+      "sha256": "011b063ea39c161cc48ba2eb5a84b11e45f7dfe4c4bac84d5e7e4fcecdd60ab4",
+      "bytes": 162
+    },
+    {
+      "name": "rollLootProfile",
+      "sha256": "24df226b111b8d0329bb0a2b98147c46ecbfef8ee73577de5cf5ee0bd2e078b8",
+      "bytes": 3617
+    },
+    {
+      "name": "GENERIC_GEAR_NAMES",
+      "sha256": "10e9b4a40a27393ffb5db15597ec691bfb130002e409aed4cfe18e8dcb19b961",
+      "bytes": 2250
+    },
+    {
+      "name": "SINSI_GEAR_NAMES",
+      "sha256": "d265c94a8275d9c521432506ec86e86dc20d3b72672456b402768d9e44d2172b",
+      "bytes": 259
+    },
+    {
+      "name": "rollLootRole",
+      "sha256": "7cf990c29587902206f36dd4bcb58aab488fd531ed60e3625e006f2f35968c1b",
+      "bytes": 149
+    },
+    {
+      "name": "resolveLootItemName",
+      "sha256": "6956ac1d50b1071ba05b90bb54734bff1a1f1bfc6c28d4bb613fa29b47a62c1a",
+      "bytes": 1312
+    },
+    {
+      "name": "resolveLootPowerRange",
+      "sha256": "93d8723054a9a642a9158965b1856e4eb95665fce90eb4fd2a16457eee70f49c",
+      "bytes": 921
+    },
+    {
+      "name": "rollLootPower",
+      "sha256": "665c83ae4547775d0c53a8f09133fbe760497a15fab7418b94b42422d4f87d18",
+      "bytes": 206
+    },
+    {
+      "name": "withLegacyHelmetDrops",
+      "sha256": "f756d88ff593084bf4ce446d1758b6c10f0f8db7ff5c41740c1275019e5666fb",
+      "bytes": 971
+    },
+    {
+      "name": "withUpgradeMaterialDrops",
+      "sha256": "2caf3cbb58704f9f543a6af9b2a933debd9c579632f83e769ea02a92317ebff4",
+      "bytes": 749
+    },
+    {
+      "name": "EQUIPMENT_SETS",
+      "sha256": "2fa2866dcd32ac50ee6a10d38be2756da070929a95271809c361f6801adb8d56",
+      "bytes": 794
+    },
+    {
+      "name": "equipmentSetState",
+      "sha256": "969ce3f90bc9c4dc8e95fb47745a13a61e2213a952d09a05fdafcd94c4475a2b",
+      "bytes": 706
+    },
+    {
+      "name": "colEquipmentSetThreshold473",
+      "sha256": "db9551ba82ec263d862a56f3834132f8c90c61fcf6c58e3b4b36c7d3d84367a3",
+      "bytes": 375
+    },
+    {
+      "name": "equipmentSetBonuses",
+      "sha256": "f0d51fb0646136e55b94d94fd7e588cf3d82c260802c6439944b69d46996c970",
+      "bytes": 318
+    },
+    {
+      "name": "effectiveAttackCooldownMs",
+      "sha256": "a3f8c4e68dcbdfefc9df5a5063e52f3ef7e969212cf770a03009b8d7774506cb",
+      "bytes": 278
+    },
+    {
+      "name": "validEnchantments",
+      "sha256": "2ab2e2b0b9c825d2c6c2f105c7758e02de09150f057de4be95c53050a942c2a8",
+      "bytes": 507
+    },
+    {
+      "name": "weaponForbiddenEnchantments",
+      "sha256": "6b0f2c7108f5260be3da3b21e5d3640d6740f31465f5bfd9e55c39998e535eec",
+      "bytes": 146
+    },
+    {
+      "name": "enchantmentFitsItem",
+      "sha256": "334279171e5825c314a3a828fe3d8b65b56595d5b422fcdd7b6957ab44a8d1fa",
+      "bytes": 835
+    },
+    {
+      "name": "isGearKind",
+      "sha256": "a225a00e5ee77a232ab46621258d1257264c53560e089a4115f724f4ff3647c8",
+      "bytes": 193
+    },
+    {
+      "name": "parseEnchantments",
+      "sha256": "e52d8891e7a2ebebb525459abbb78d864b72b1f38d932957027aec7708235508",
+      "bytes": 1705
+    },
+    {
+      "name": "totalParsedEnchantments",
+      "sha256": "66fa764c52c291beecb7dff3e0a311f698fb60fa3b1d4abce7d0258e825e9ed0",
+      "bytes": 979
+    },
+    {
+      "name": "colEnhancementEntries491",
+      "sha256": "4347a8f0d749137ed67a14fd5ae84e55dea8fecfc2b2c7562a4c5d94e8ea8c2d",
+      "bytes": 705
+    },
+    {
+      "name": "createEnchantmentTotals",
+      "sha256": "92ae6297b2a1c0a9f1b8e8e10da80a7bdfa94f08a187b95635a3831dabf6a53e",
+      "bytes": 340
+    },
+    {
+      "name": "attackIsBlocked",
+      "sha256": "28f55dc19ff1587cd3dbfe4275a7735458944b40d887ce4a81a359dac298dcc7",
+      "bytes": 205
+    },
+    {
+      "name": "calculateEquipmentStats",
+      "sha256": "cf99a2a5bd49d1a7d18e9c4610e60c940562d052275d197721bcfdd09de6bfe0",
+      "bytes": 2890
+    },
+    {
+      "name": "ENCHANT_TIERS",
+      "sha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35",
+      "bytes": 777
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "sha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a",
+      "bytes": 48
+    },
+    {
+      "name": "tierKeys",
+      "sha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918",
+      "bytes": 83
+    },
+    {
+      "name": "enchantTierValues",
+      "sha256": "446b0406bb557060ce08550920dff1188dddcf5d84500772684e41cbd33dea48",
+      "bytes": 1009
+    },
+    {
+      "name": "rollEnchantmentValue",
+      "sha256": "e4734c8fd9df48dc4fac4022534222a73bb731462d18fea8a98fdf55928b594f",
+      "bytes": 206
+    },
+    {
+      "name": "clamp$2",
+      "sha256": "693fd0451576ae8fc258ae30270a13a5348d5267e68370d53695488930279365",
+      "bytes": 71
+    },
+    {
+      "name": "enchantKinds",
+      "sha256": "35c43209359fd6d3136f58edb68bdec590e2ada44368cd1ec17cb131144858c8",
+      "bytes": 1769
+    },
+    {
+      "name": "rollEnchantments",
+      "sha256": "bf58fb561b07aa83e57565186d4042f9188aa32fbd0aa3e914f56ca0cd1fa3f9",
+      "bytes": 1130
+    },
+    {
+      "name": "DRAGON_WORLD",
+      "sha256": "c123307e08d4f2b8a9b9cde920875cb9424d6a3a1827c27b8ea245c539c25c79",
+      "bytes": 65
+    },
+    {
+      "name": "ANCIENT_WORLD",
+      "sha256": "06c5eb4d182808ece971b17177098b8f756389dfd8ad0f2ed14257f8c8b074a8",
+      "bytes": 67
+    },
+    {
+      "name": "GUILD_VILLAGE_WORLD",
+      "sha256": "01a02060c5c5d7f0ff2fcf9d1dda26699bd8620e11b37264ea11a58ecd3a6ae9",
+      "bytes": 73
+    },
+    {
+      "name": "GUILD_HALL_WORLD",
+      "sha256": "39bdff0e9f46c25b4f8d0529028413e273858c2b06b4eb628115df2812ade9b1",
+      "bytes": 70
+    },
+    {
+      "name": "GUILD_PLOTS",
+      "sha256": "a617caf21b3462aff4e7c9231f4a0e0e53017b5c040d42a7ccaa62b133a36558",
+      "bytes": 460
+    },
+    {
+      "name": "guildArea",
+      "sha256": "a2a1a8da83f9d2ff79ca503dc9ed6a2ab0efd568bbcbbf74338a85e45f59c303",
+      "bytes": 339
+    },
+    {
+      "name": "guildWalkable",
+      "sha256": "1bc64fa610e1f3d12131b0290e159997da427c31c2586e5c9c433d05936cd68b",
+      "bytes": 376
+    },
+    {
+      "name": "guildSegment",
+      "sha256": "b5cc66b6624a696a2858026bb95eea28dac1e47d47c5395459ff1914f6250cc0",
+      "bytes": 332
+    },
+    {
+      "name": "AFK_WORLD",
+      "sha256": "95315a72f9a334c75ba1046953dd8af9c3b9b16d9e2a25caffb07e44cf8b3a27",
+      "bytes": 63
+    },
+    {
+      "name": "FOREST_CORE_OBSTACLE",
+      "sha256": "120057d0c0e50c9c9721d9c0185bbc1408dd1cd6d6b3ca7c5f3dd313b3796956",
+      "bytes": 95
+    },
+    {
+      "name": "insideForestCore",
+      "sha256": "8cb97f02e0593099a4841a95a066f070e8ef5c58cbfbd17826fa411b21673a5f",
+      "bytes": 141
+    },
+    {
+      "name": "forestCoreSegment",
+      "sha256": "bc5fa81bec6ade5c5370693217819b1c4705fdfd4dab0cea45f5e337d0b795c6",
+      "bytes": 536
+    },
+    {
+      "name": "ANCIENT_CORE_OBSTACLE",
+      "sha256": "12912a8b48a90d4704ef9394769e14868ee520a8aa7b7dcb49eed3fcb6bb377e",
+      "bytes": 94
+    },
+    {
+      "name": "insideAncientCore",
+      "sha256": "8177a6b2510b45bef8807415a773cae0df6f33b9f9bd2a774bd1577fd39ba8ae",
+      "bytes": 143
+    },
+    {
+      "name": "ancientCoreSegment",
+      "sha256": "0b30a41d315a89ede3bb6fe53686ed04c30d3da72dba2e6735b2842ebfd756d2",
+      "bytes": 538
+    },
+    {
+      "name": "WAR_WORLD",
+      "sha256": "5d879fa5dd4d594d185edeae7389dd7c53bd6bf93cf3dae23f059e4f6d872da6",
+      "bytes": 48
+    },
+    {
+      "name": "COMMON_WORLD",
+      "sha256": "3f6ad12e730e01ab50eb83406140e77fdf4ae9b22e6bce23238b808d97df8652",
+      "bytes": 51
+    },
+    {
+      "name": "BLACK_WORLD",
+      "sha256": "beaad12481945895842f37f90f4dda3ca6dc20924a60ebff71f0c3db06a1e650",
+      "bytes": 50
+    },
+    {
+      "name": "FOREST_WORLD",
+      "sha256": "a847638d517a0e26fe854da5dc44b8101a5553875aee36af0cce5b3b8b9ae17f",
+      "bytes": 51
+    },
+    {
+      "name": "FROZEN_WORLD",
+      "sha256": "6a1ef6aa50663f73e1b006d6562472bb7217515d4f0dc417d07d55fbb01c4db3",
+      "bytes": 50
+    },
+    {
+      "name": "FROZEN_LAKE",
+      "sha256": "fd1ec734fd7417d8d20b92061049eaaf795ca9495b5213d2214136a5929b082d",
+      "bytes": 70
+    },
+    {
+      "name": "FISHING_LAKE$1",
+      "sha256": "ade9b421e3aa8c7ca73e13e4e945b06db5c4ba724b88ae7df4fb2b0b42f43982",
+      "bytes": 73
+    },
+    {
+      "name": "FOREST_WALKABLE_POLYGON",
+      "sha256": "6368b349f6bce6a8cbfb7999274f2e7acf2fd1291d7fddd2443680fabdbdbb04",
+      "bytes": 85
+    },
+    {
+      "name": "areaWorld",
+      "sha256": "1921f21f3801c8d8469378486fe9a6d4b300fd0aaf3001b6f818d6a4fdcff796",
+      "bytes": 529
+    },
+    {
+      "name": "insideForestBounds",
+      "sha256": "42c0a770ca108acc584fd188ff2a2f8413ba696c401d1ef7e969f296fa10c931",
+      "bytes": 677
+    },
+    {
+      "name": "isForestWalkablePosition",
+      "sha256": "a13f3a6610942f63fabed0d50a64d0ab08fe7900a6eb5911b4ba7b2d7929ef1e",
+      "bytes": 104
+    },
+    {
+      "name": "isFrozenWalkablePosition",
+      "sha256": "1fe6f867f64a32ba75b1f1c98c3bac2c472fc354eeaa8de3041f1d93674ec0eb",
+      "bytes": 319
+    },
+    {
+      "name": "isAreaWalkablePosition",
+      "sha256": "e40e830f885db933196f6cf1dba1a61999429a51c17deedb3adb2b347aa21a1e",
+      "bytes": 820
+    },
+    {
+      "name": "isAreaWalkableSegment",
+      "sha256": "c3b8d30b3213f4c18749988212800aedee398c54d0d8c6c5f5c9b87ffdc3bf2b",
+      "bytes": 1420
+    },
+    {
+      "name": "armorDamageReduction",
+      "sha256": "4cde3e8aa1d7e813f82021ad570d1251d082aa5e69990598e9100a72708fadb9",
+      "bytes": 420
+    },
+    {
+      "name": "forestLootMultiplier",
+      "sha256": "482a03bb186ccebe7c53c5170ff068a05cddeb12039d1f71f85d39ff4eda538c",
+      "bytes": 526
+    },
+    {
+      "name": "isBlackStoneBoss476",
+      "sha256": "fda81d8c6ce2a0bacac43756d06138c3d4fc96a5b3cb7cdde7c63e254184db1e",
+      "bytes": 124
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "sha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364",
+      "bytes": 37
+    },
+    {
+      "name": "isFrozenBossId",
+      "sha256": "db02393a2e9efd9f65ed6697ad3b533b897dd46adf519a0af5b48762e672d52c",
+      "bytes": 62
+    },
+    {
+      "name": "isFrozenWaterId",
+      "sha256": "14773bf9a2b9ffeaadb6a52e8eebf20e06e5a5bc939af52c66e30dd3ad80b647",
+      "bytes": 99
+    },
+    {
+      "name": "bonusAmount",
+      "sha256": "03cb0f7cf695310189c2240007b990c3fdc1d9822c62ffe5cc245ab2f4fe9b76",
+      "bytes": 177
+    },
+    {
+      "name": "hasWingBonus",
+      "sha256": "d19376cbbcd625bf54c0cf9791e01a328279b786122101195d652bd71ae3f78a",
+      "bytes": 99
+    },
+    {
+      "name": "lifeStealAmount",
+      "sha256": "f298cc006bd2dc98bfe16ab458d2d28354fefd785af144931ebf1ab584d3a138",
+      "bytes": 129
+    },
+    {
+      "name": "localWindows",
+      "sha256": "e5ee1098ce376659b83ff0ce75d9114ca7cde5d05239749f2e2811db850d26b6",
+      "bytes": 45
+    },
+    {
+      "name": "nextLocalCleanupAtMs",
+      "sha256": "37b90c33f626514428db19051c54f8227839a6caa223b37950c12cc2eef5e224",
+      "bytes": 29
+    },
+    {
+      "name": "enforceLocalActionRate",
+      "sha256": "1de6878c31847b16c4b694c5704b98daa4cb87d418add9c51864c8643c42460d",
+      "bytes": 1758
+    },
+    {
+      "name": "movementSpeedForRole",
+      "sha256": "21117b8b53b478855684fd9052e44417df89c87560c9308b9dd15085d37fac77",
+      "bytes": 85
+    },
+    {
+      "name": "evaluateMovementBudget",
+      "sha256": "89bd4097ed3661f6f46204f52e2456e0a1235a120869e657d0e269b320012cb7",
+      "bytes": 668
+    },
+    {
+      "name": "movementPathDistance",
+      "sha256": "96df0831f4cbc70473c7c6c9e126851e18825c83615223eaf2bdb4873d809ead",
+      "bytes": 1296
+    },
+    {
+      "name": "validArea",
+      "sha256": "61e07f4720bdd7e4ff6b6b7faf2179bcff9b0c45903856f316a91eb34778352c",
+      "bytes": 239
+    },
+    {
+      "name": "areaSkillPoint",
+      "sha256": "802f6bcff6cb55b514405c41f07551fc55fe24c7a485b94309a0a31088979c6a",
+      "bytes": 920
+    },
+    {
+      "name": "monsterCombatPosition",
+      "sha256": "25b51f2433d1e62a38f72d42de2ce704018100c821eed33626bcbecb1d11c321",
+      "bytes": 1075
+    },
+    {
+      "name": "droppedGearName",
+      "sha256": "dbc8626119878bc71e427005d7ca046466ab8bf2abb1c3d354edd5b76de09291",
+      "bytes": 611
+    },
+    {
+      "name": "prepareProfileDrops",
+      "sha256": "ca84ea7018cfff7188ca0e7891e93ba890941babd829cd47c9d309314a017965",
+      "bytes": 5682
+    },
+    {
+      "name": "monsterXpReward",
+      "sha256": "cfb21234fbb91fd4c10ab2b140581afe88b2e1de53b3f113f9267d70557cd1af",
+      "bytes": 2279
+    },
+    {
+      "name": "pveDamage",
+      "sha256": "b535eca238caa5f723789facf3ab74e4b625d457b527ca6f86cf8e632dfd8a68",
+      "bytes": 2836
+    }
+  ],
+  "imports": [
+    "eventSegment444",
+    "runeWalkableSegment",
+    "eventWalkable444",
+    "runeWalkable",
+    "EVENT_WORLD444",
+    "RUNE_WORLD",
+    "optimizeR18",
+    "equipmentTotalsR18",
+    "isRuneV2Boss",
+    "colSpec456",
+    "scaleLootGroups487",
+    "materialLevelItem498",
+    "colLabMonsterSource",
+    "balanceFromSnapshot487",
+    "balanceArea487",
+    "prepareRuneDrops",
+    "balanceFactor487",
+    "catalogMultiplier487",
+    "materialLevelPolicy498",
+    "eventKind444"
+  ],
+  "libraries": [
+    {
+      "file": "lib/rune-drops.mjs",
+      "sourceSha256": "cb9229bf6d387c042d5d2773ee061cac1fb96dec0e3edd7682923b2f6fd85b25",
+      "name": "prepareRuneDrops",
+      "nativeSha256": "0e4fcd1031de8854b4ead4bda3c3182ffc3629b82c681d920e3ca9f4a7f53221",
+      "generatedSha256": "0e4fcd1031de8854b4ead4bda3c3182ffc3629b82c681d920e3ca9f4a7f53221"
+    },
+    {
+      "file": "lib/event-island444.mjs",
+      "sourceSha256": "7ebc7448b7185313146e99368a2929db197e5385142121dcf5aee2af95048c72",
+      "name": "eventKind444",
+      "nativeSha256": "6d8e37dd9b69400e95f88c30f058b5d5b52f71b4f20a9b567bcb9e830466d408",
+      "generatedSha256": "b129c3989c8eaff4dd822e3d52529059d1e2b917e4c8599cba8ff43277d1ca75"
+    }
+  ],
+  "generatedSha256": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+  "adventureAdapter": {
+    "version": "r21-reproducible-existing-r19-r20",
+    "nativeOutputSha256": "e5e28bb713345685a2356d9b6a52e60482af4462f6c7e4a74a9a8593a208df6d",
+    "checkedReplacementCount": 7,
+    "ordinaryMapRulesChanged": false
+  },
+  "gameplayIntegrationComplete": false,
+  "r24Geometry": {
+    "scope": "Only mist-specific bounds; native combat, movement and ownership rules preserved. Tower bounds unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "dcff340ec77e27773a1bffbb4c4b4412f59c58293aeecf5f882c1c73f0322084",
+        "current": "6d33caaeb1c805af4db98288f3e2604d462a25f41359c9fa63ee411640ac0e1c",
+        "file": "rules.mjs"
+      }
+    }
+  },
+  "r31": {
+    "fromRelease": "R30",
+    "previousGeneratedHashes": {
+      "generatedSha256": "6d33caaeb1c805af4db98288f3e2604d462a25f41359c9fa63ee411640ac0e1c"
+    },
+    "changes": [
+      "canonical single-slot belt stat and XP integration"
+    ]
+  },
+  "r93Zumrut": {
+    "scope": "Normal shared map dispatch, native travel and river fishing eligibility only; no separate simulation or economy loop.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "fa411bc0993a1d4850a7ab6bc9743b917e9c12b32457d710d4995fc96faf6385",
+        "current": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+        "file": "rules.mjs"
+      }
+    }
+  }
+}

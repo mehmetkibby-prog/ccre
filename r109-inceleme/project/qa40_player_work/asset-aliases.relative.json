@@ -1,0 +1,32 @@
+{
+  "/guide-art/forest.webp": {
+    "file": "r60_mount_work/design-r60/live-assets/game/north-forest-v3.webp",
+    "sha256": "9d52ae51115617225d2c31cd47e99f1e2d40e6de047367757369f2bc9f59c627",
+    "bytes": 599078
+  },
+  "/guide-art/pet-bird.webp": {
+    "file": "general_promo_video/assets/game/pet-bird-icon-v186.webp",
+    "sha256": "94638ae16c4194a6c3de95a7b6115d2655cef92cfd07b86358cec974433e6dff",
+    "bytes": 14474
+  },
+  "/game/crafted-stones.webp": {
+    "file": "general_promo_video/assets/guide-art/stones.webp",
+    "sha256": "aa22b892ce104f932dd728d6a33a9811a8facc77cc8987bdebbbf44830b45e6c",
+    "bytes": 24908
+  },
+  "/game/materials-v186.webp": {
+    "file": "general_promo_video/assets/guide-art/materials.webp",
+    "sha256": "2ad639274321e076dadb01f0aac2ecf377bc87f82e0ccd932edff2ad2e1c875b",
+    "bytes": 43270
+  },
+  "/game/haso-forge-v186.webp": {
+    "file": "general_promo_video/assets/guide-art/forge.webp",
+    "sha256": "d929fb4e693d0897b33c1da45100fd067cb39230f8e4f08c9888d26d4918c8ff",
+    "bytes": 33960
+  },
+  "/guide-art/bazaar.webp": {
+    "file": "r60_mount_work/design-r60/live-assets/game/bazaar-village.webp",
+    "sha256": "1eb494666cbeb82509ad8406a718a55532f91e596f1ebe84536b1541123157b9",
+    "bytes": 579766
+  }
+}

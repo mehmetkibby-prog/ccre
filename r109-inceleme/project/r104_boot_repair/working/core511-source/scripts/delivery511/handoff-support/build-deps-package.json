@@ -1,0 +1,7 @@
+{
+  "name": "coreoflife-kernel511-development",
+  "private": true,
+  "type": "module",
+  "description": "Unreleased kernel development. Not an installable game release.",
+  "devDependencies": {"acorn": "8.15.0", "eslint-scope": "8.4.0", "ws": "8.21.3"}
+}

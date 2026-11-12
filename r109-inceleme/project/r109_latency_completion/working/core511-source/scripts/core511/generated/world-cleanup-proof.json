@@ -1,0 +1,14 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "vds-server/src/world-cleanup.mjs",
+  "sourceSha256": "724a61dbe363d5815a0d5b747f80d311d844b8d900e45ac52d2f2492e5428853",
+  "start": 177,
+  "end": 3314,
+  "sliceSha256": "2a93b52a83d2ff548e998af864b1498792662508e39c82861a2b7e47c0f6fefb",
+  "generatedSha256": "6a7ac8fe63f82221f83034a5e22d26718d6556bbc6a757a55e18a6638bc29fbf",
+  "edits": [
+    "Original ordered retention table, guards, index definitions and bounded deletion SQL unchanged",
+    "Native candidate-before-guard cursor strategy implemented in query-only read worker",
+    "Each bounded deletion uses sole writer and process receipt; resident resource leases protect mutable contributions and fishing"
+  ]
+}

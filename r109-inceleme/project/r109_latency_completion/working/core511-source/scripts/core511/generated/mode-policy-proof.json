@@ -1,0 +1,49 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "dist-vds/server/index.js",
+  "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "bodies": [
+    {
+      "name": "POST$9",
+      "scope": "rank-equip",
+      "kinds": [
+        "rune",
+        "arena_market",
+        "battle_pass",
+        "quest",
+        "cauldron"
+      ],
+      "start": 1800186,
+      "end": 1800295,
+      "sha256": "52d5a14cf2212e0098d8df3b62487bbd240e380c834e544096c6e4c2e38ce6b6"
+    },
+    {
+      "name": "POST$28",
+      "scope": "community-claim",
+      "kinds": [
+        "community_claim"
+      ],
+      "start": 1741189,
+      "end": 1741303,
+      "sha256": "d1f889f940bf2c9d7b16842884bdfe3985eae05653c1952040cc300286b3269b"
+    },
+    {
+      "name": "POST$19",
+      "start": 1760955,
+      "end": 1761003,
+      "sha256": "143bef9afd8a726adfedf31675a92c95bef6761115006efffdce7f8477c92b6e"
+    },
+    {
+      "name": "recordSecurityEvent",
+      "start": 1054999,
+      "end": 1055064,
+      "sha256": "91abc33aaceb289cfc97d04d8b9f5b945fdb3575a5a3dc0593631da61f548114"
+    }
+  ],
+  "generatedSha256": "95b2a5cf6a50778701224247e4a669b0dc1fc119688da87766f1441c2ad75679",
+  "edits": [
+    "Extract native literal rate scopes/options; preserve shared rank key and separate community key",
+    "Guild uses original local guild category",
+    "Native security event body is exactly empty; remove async for synchronous lane"
+  ]
+}

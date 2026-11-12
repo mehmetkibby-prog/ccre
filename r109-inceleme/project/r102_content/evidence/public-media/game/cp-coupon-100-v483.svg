@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+<title id="title">100 Çekirdek Parası Kuponu · Yeşim</title>
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#165c4b"/><stop offset=".4" stop-color="#0b3830"/><stop offset="1" stop-color="#165c4b"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b4f5c9"/><stop offset=".3" stop-color="#ceb980"/><stop offset=".57" stop-color="#b4f5c9"/><stop offset="1" stop-color="#8dac70"/></linearGradient>
+ <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#45d4a1"/><stop offset="1" stop-color="#116d61"/></linearGradient>
+</defs>
+<!-- Folded, notched coupon silhouette; all shadows are simple filled paths. -->
+<path d="M30 13h65l14 14v21c-9 4-9 14 0 18v38l-10 16H29l-9-13V66c9-4 9-14 0-18V27Z" fill="#000" opacity=".4" transform="translate(0 3)"/>
+<g fill="url(#metal)" stroke="#0b3830" stroke-width="1.4"><path d="m17 48 7-9 2 18-5 10-4-6Zm94 0-7-9-2 18 5 10 4-6Z"/></g>
+<path d="M30 10h64l14 14v21c-10 4-10 15 0 19v39l-11 15H30l-10-12V64c10-4 10-15 0-19V24Z" fill="url(#paper)" stroke="#ceb980" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M31 16h60l11 11v15c-12 7-12 18 0 25v34l-8 10H33l-7-8V67c12-7 12-18 0-25V27Z" fill="none" stroke="#8dac70" stroke-width="1.2"/>
+<path d="M30 10v14H20m74-14v14h14M30 118v-13H20m77 13v-15h11" fill="none" stroke="#b4f5c9" stroke-width="1.4" opacity=".8"/>
+<path d="m32 24 7 5-7 5m64-10-7 5 7 5M34 99l5 3-5 3m60-6-5 3 5 3" fill="none" stroke="#ceb980" stroke-width="1.5"/>
+<path d="M41 36H30m68 0H87M31 69h14m38 0h14" stroke="#b4f5c9" stroke-width="1" opacity=".6"/>
+<!-- Two tails and a cut-gem core seal. -->
+<path d="m47 53-3 20 12-7 8 8 3-22m14 1 3 20-12-7-8 8-3-22" fill="#1c755f" stroke="#8dac70" stroke-width="1.3"/>
+
+<path d="m64 19 8 6 10 1 3 10 6 8-6 8-3 10-10 1-8 6-8-6-10-1-3-10-6-8 6-8 3-10 10-1Z" fill="#0b3830" stroke="url(#metal)" stroke-width="2.7"/>
+<circle cx="64" cy="44" r="19" fill="url(#seal)" stroke="#8dac70" stroke-width="1.5"/>
+<path d="m64 26 12 16-12 21-12-21Z" fill="#45d4a1" stroke="#e3fff1" stroke-width="1.2"/>
+<path d="m64 26-4 16 4 21 12-21Z" fill="#116d61"/>
+<path d="m64 26-12 16h8Zm0 0 12 16H60Z" fill="#e3fff1" opacity=".87"/>
+<path d="m60 42 4 21 3-21Z" fill="#e3fff1" opacity=".66"/>
+<path d="M43 44h-7m49 0h7m-28-7v-7" stroke="#e3fff1" stroke-width="1" opacity=".7"/>
+<!-- Large denomination plaque remains legible at a 48px inventory size. -->
+<path d="m27 75 9-4h56l9 4-4 28-8 6H39l-8-6Z" fill="#0a0f13" stroke="url(#metal)" stroke-width="2"/>
+<path d="M36 76h56M39 104h50" stroke="#8dac70" stroke-width=".8" opacity=".8"/>
+<g fill="#000" opacity=".8" transform="translate(34 78.5) scale(.97 .91)" fill-rule="evenodd"><path d="M2 5 8.2 0H13v23h4v5H1v-5h5.5V8H2Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<g fill="#b4f5c9" transform="translate(34 77) scale(.97 .91)" fill-rule="evenodd"><path d="M2 5 8.2 0H13v23h4v5H1v-5h5.5V8H2Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<path d="m55 110-4 3 4 3m18-6 4 3-4 3M57 114h14" fill="none" stroke="#ceb980" stroke-width="1.3"/>
+</svg>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Core of Life · Oyun durumu</title>
+<link rel="stylesheet" href="/site-assets/admin-status.css">
+<script src="/site-assets/admin-status.js" defer></script>
+</head>
+<body>
+<main>
+<p class="eyebrow">CORE OF LIFE · YÖNETİM</p>
+<h1>Oyun durumu</h1>
+<section class="current" aria-label="Kaydedilen oyun durumu">
+<h2 id="state" role="status">Oturum kontrol ediliyor…</h2>
+<p id="detail"></p><p id="reason"></p>
+</section>
+<form id="settings-form">
+<fieldset id="settings-fields" disabled>
+<legend>Oyuncuların göreceği ekran</legend>
+<div class="options">
+<label><input type="radio" name="mode" value="closed"><span><strong>Elle kapalı · Ön kayıt</strong><small>Yeni ön kayıt ekranı gösterilir. Sen açana kadar oyun kapalı kalır.</small></span></label>
+<label><input type="radio" name="mode" value="scheduled"><span><strong>Otomatik açılış</strong><small>Ön kayıt ve geri sayım gösterilir. Seçtiğin saatte oyuncu girişi açılır.</small></span></label>
+<label><input type="radio" name="mode" value="open"><span><strong>Oyun açık</strong><small>Oyuncular mevcut hesaplarıyla giriş yapar; yeni oyuncular kayıt olabilir.</small></span></label>
+<label><input type="radio" name="mode" value="maintenance"><span><strong>Bakım modu</strong><small>Oyuncu erişimi sunucunun mevcut bakım kurallarına göre kapatılır.</small></span></label>
+</div>
+<div id="opening-field" hidden>
+<label class="field" for="opening">Açılış tarihi ve saati · Türkiye saati (UTC+3)</label>
+<input id="opening" name="opening" type="datetime-local" min="2000-01-01T00:00" max="2099-12-31T23:59" step="60" aria-describedby="opening-note">
+<p id="opening-note" class="hint">Bilgisayarının saat dilimi farklı olsa da bu alan Türkiye saatini kullanır.</p>
+<p id="countdown" role="timer" aria-live="off"></p>
+</div>
+<label class="field" for="maintenance-text">Bakım açıklaması</label>
+<textarea id="maintenance-text" name="maintenance" rows="3" maxlength="2000"></textarea>
+<p class="hint">Seçimlerin yalnızca Kaydet düğmesine bastığında uygulanır.</p>
+<button id="save" type="submit">Oyun durumunu kaydet</button>
+</fieldset>
+</form>
+<p id="message" role="status" aria-live="polite"></p>
+<nav aria-label="Yönetim bağlantıları"><button id="refresh" type="button">Durumu yenile</button><a href="/admin">Ana yönetim paneli</a><a href="/admin-login">Yönetici girişi</a></nav>
+<p class="hint">Dünya zamanı uyarısı varsa ana panelde Dünya Canı ayarını kaydet. Dünya Döngüsünü Sıfırla düğmesini kullanmana gerek yok.</p>
+</main>
+</body>
+</html>

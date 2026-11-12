@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+<title id="title">500 Çekirdek Parası Kuponu · Hükümdar</title>
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#793923"/><stop offset=".4" stop-color="#3e1c12"/><stop offset="1" stop-color="#793923"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe9a5"/><stop offset=".3" stop-color="#f4c866"/><stop offset=".57" stop-color="#ffe9a5"/><stop offset="1" stop-color="#dca347"/></linearGradient>
+ <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7c49"/><stop offset="1" stop-color="#b93039"/></linearGradient>
+</defs>
+<!-- Folded, notched coupon silhouette; all shadows are simple filled paths. -->
+<path d="M30 13h65l14 14v21c-9 4-9 14 0 18v38l-10 16H29l-9-13V66c9-4 9-14 0-18V27Z" fill="#000" opacity=".4" transform="translate(0 3)"/>
+<g fill="url(#metal)" stroke="#3e1c12" stroke-width="1.4"><path d="m9 39 16-6-3 12-10 7Zm0 19 14-10 1 15-8 9Zm5 20 12-11 2 16-7 8Zm105-39-16-6 3 12 10 7Zm0 19-14-10-1 15 8 9Zm-5 20-12-11-2 16 7 8Z"/></g>
+<path d="M30 10h64l14 14v21c-10 4-10 15 0 19v39l-11 15H30l-10-12V64c10-4 10-15 0-19V24Z" fill="url(#paper)" stroke="#f4c866" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M31 16h60l11 11v15c-12 7-12 18 0 25v34l-8 10H33l-7-8V67c12-7 12-18 0-25V27Z" fill="none" stroke="#dca347" stroke-width="1.2"/>
+<path d="M30 10v14H20m74-14v14h14M30 118v-13H20m77 13v-15h11" fill="none" stroke="#ffe9a5" stroke-width="1.4" opacity=".8"/>
+<path d="m32 24 7 5-7 5m64-10-7 5 7 5M34 99l5 3-5 3m60-6-5 3 5 3" fill="none" stroke="#f4c866" stroke-width="1.5"/>
+<path d="M41 36H30m68 0H87M31 69h14m38 0h14" stroke="#ffe9a5" stroke-width="1" opacity=".6"/>
+<!-- Two tails and a cut-gem core seal. -->
+<path d="m47 53-3 20 12-7 8 8 3-22m14 1 3 20-12-7-8 8-3-22" fill="#a44a29" stroke="#dca347" stroke-width="1.3"/>
+<path d="m43 28-3-12 14 5 10-13 10 13 14-5-3 12Z" fill="url(#metal)" stroke="#332416" stroke-width="1.5"/><path d="m48 24 7 2 9-10 9 10 7-2" fill="none" stroke="#fff2c6" stroke-width="1.4"/>
+<path d="m64 19 8 6 10 1 3 10 6 8-6 8-3 10-10 1-8 6-8-6-10-1-3-10-6-8 6-8 3-10 10-1Z" fill="#3e1c12" stroke="url(#metal)" stroke-width="2.7"/>
+<circle cx="64" cy="44" r="19" fill="url(#seal)" stroke="#dca347" stroke-width="1.5"/>
+<path d="m64 26 12 16-12 21-12-21Z" fill="#ff7c49" stroke="#fff2bb" stroke-width="1.2"/>
+<path d="m64 26-4 16 4 21 12-21Z" fill="#b93039"/>
+<path d="m64 26-12 16h8Zm0 0 12 16H60Z" fill="#fff2bb" opacity=".87"/>
+<path d="m60 42 4 21 3-21Z" fill="#fff2bb" opacity=".66"/>
+<path d="M43 44h-7m49 0h7m-28-7v-7" stroke="#fff2bb" stroke-width="1" opacity=".7"/>
+<!-- Large denomination plaque remains legible at a 48px inventory size. -->
+<path d="m27 75 9-4h56l9 4-4 28-8 6H39l-8-6Z" fill="#0a0f13" stroke="url(#metal)" stroke-width="2"/>
+<path d="M36 76h56M39 104h50" stroke="#dca347" stroke-width=".8" opacity=".8"/>
+<g fill="#000" opacity=".8" transform="translate(34 78.5) scale(.97 .91)" fill-rule="evenodd"><path d="M1 0h16v5.3H6.3l-.6 5.3c1.4-.8 2.9-1.1 4.5-1.1 4.8 0 8 3.2 8 8.7C18.2 24.4 14.7 28 8.8 28c-4.3 0-7.4-1.8-8.8-4.9l4.6-2.7c.9 1.8 2.3 2.6 4.2 2.6 2.6 0 3.9-1.7 3.9-4.6 0-2.8-1.5-4.3-4-4.3-1.7 0-3 .6-4 1.5L0 13.8Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<g fill="#ffe9a5" transform="translate(34 77) scale(.97 .91)" fill-rule="evenodd"><path d="M1 0h16v5.3H6.3l-.6 5.3c1.4-.8 2.9-1.1 4.5-1.1 4.8 0 8 3.2 8 8.7C18.2 24.4 14.7 28 8.8 28c-4.3 0-7.4-1.8-8.8-4.9l4.6-2.7c.9 1.8 2.3 2.6 4.2 2.6 2.6 0 3.9-1.7 3.9-4.6 0-2.8-1.5-4.3-4-4.3-1.7 0-3 .6-4 1.5L0 13.8Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<path d="m55 110-4 3 4 3m18-6 4 3-4 3M57 114h14" fill="none" stroke="#f4c866" stroke-width="1.3"/>
+</svg>

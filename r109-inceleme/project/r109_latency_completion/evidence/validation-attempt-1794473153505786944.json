@@ -1,0 +1,50 @@
+[
+  {
+    "name": "focused",
+    "exit": 0,
+    "seconds": 27.29,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-focused.log"
+  },
+  {
+    "name": "boss-prewarm",
+    "exit": 0,
+    "seconds": 4.07,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-boss-prewarm.log"
+  },
+  {
+    "name": "cold-worker-regression",
+    "exit": 0,
+    "seconds": 6.16,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-cold-worker-regression.log"
+  },
+  {
+    "name": "native-fixtures",
+    "exit": 0,
+    "seconds": 0.03,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-native-fixtures.log"
+  },
+  {
+    "name": "native-current",
+    "exit": 0,
+    "seconds": 96.59,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-native-current.log"
+  },
+  {
+    "name": "captcha",
+    "exit": 0,
+    "seconds": 73.74,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-captcha.log"
+  },
+  {
+    "name": "package-build",
+    "exit": 0,
+    "seconds": 2.69,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-package-build.log"
+  },
+  {
+    "name": "installer",
+    "exit": 1,
+    "seconds": 34.43,
+    "log": "/workspace/ccre/r109_latency_completion/evidence/validation-installer.log"
+  }
+]

@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import {native} from './helpers.mjs';
+import {ChannelOwnership,registerOwnedRule} from '../ownership.mjs';
+import {createAttackWriterHandler,createMonsterRewardHandler} from '../attack-writer.mjs';
+import {AdventureService} from '../adventure-service.mjs';
+const [file,inputFile,mode,marker]=process.argv.slice(2),{request,peer,settings}=JSON.parse(fs.readFileSync(inputFile,'utf8'));
+if(!['before','after'].includes(mode)||!file.includes('core511-isolated-'))throw Error('Isolated outgoing attack crash fixture required');
+const {LocalDatabase}=await native('vds-server/src/database.mjs'),{installRegistry}=await native('vds-server/src/loadlab/registry.mjs');installRegistry();
+const db=new LocalDatabase(file,{groupWrites:true,asyncDurable:true}),authority=new ChannelOwnership(db,{realmId:'attack-crash'});await authority.initialize();
+const globals={};globals.__colAdventure=new AdventureService(db.sqlite,{now:()=>request.payload.nowMs,random:()=>.5,uuid:()=> 'isolated-adventure-crash',globals});
+const options={settingsFor:()=>settings,globalsFor:()=>globals,assertResources:()=>true,clock:()=>request.payload.nowMs,assertOwnership:(sql,p,id,epoch)=>Boolean(authority.assertAdmitted(sql,p,id,epoch)),settleRetaliation:()=>null};
+const actual=request.operation==='attack'?createAttackWriterHandler(options):createMonsterRewardHandler(options);
+registerOwnedRule(authority,request.operation,(sql,payload,context)=>{const result=actual(sql,payload,context);if(mode==='before'){fs.writeFileSync(marker,'uncommitted_'+request.operation);process.kill(process.pid,'SIGKILL');}return result;});
+await authority.command(peer,request);fs.writeFileSync(marker,'durable_'+request.operation+'_before_ack');process.kill(process.pid,'SIGKILL');

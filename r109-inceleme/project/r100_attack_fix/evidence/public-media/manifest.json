@@ -1,0 +1,32 @@
+[
+  {
+    "path": "forest-monsters-motion-v248.webp",
+    "url": "https://r1.coreoflife.net/game/forest-monsters-motion-v248.webp",
+    "sha256": "2e83414361e7352d003a6ac2a990ca8b8329f990788661116348ab666a38ec57",
+    "bytes": 532314
+  },
+  {
+    "path": "loot-sack-v410.webp",
+    "url": "https://r1.coreoflife.net/game/loot-sack-v410.webp",
+    "sha256": "fd77a2e6a3d133d9b5c69ec4883afbc8833a6333800465af1707dec287011490",
+    "bytes": 7106
+  },
+  {
+    "path": "fishing-water-ambience.mp3",
+    "url": "https://r1.coreoflife.net/game/fishing-water-ambience.mp3",
+    "sha256": "aa0f70c2205b4b40c202d9b3996ee8b83dd5c0a28f402cd5829f83bbf892ad6a",
+    "bytes": 959574
+  },
+  {
+    "path": "battle-theme.mp3",
+    "url": "https://r1.coreoflife.net/game/battle-theme.mp3",
+    "sha256": "e14d728ec565be71b1c6e78f03b56349cc73fa549e88fea1afb86eb6f8f53b6f",
+    "bytes": 4678108
+  },
+  {
+    "path": "enemy-atlas.webp",
+    "url": "https://r1.coreoflife.net/game/enemy-atlas.webp",
+    "sha256": "9a36f1afe58e96c35c7b575916ddede77abdc1f9635b84ecb7fcbb4943dfb17c",
+    "bytes": 235056
+  }
+]

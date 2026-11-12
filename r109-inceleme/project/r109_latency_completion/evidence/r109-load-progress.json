@@ -1,0 +1,12 @@
+[
+  {
+    "name": "packed-1",
+    "players": 40,
+    "realm": "r1",
+    "mode": "mixed",
+    "distribution": "packed",
+    "exit": 1,
+    "seconds": 98.1,
+    "file": "r109-final-packed-1-40.json"
+  }
+]

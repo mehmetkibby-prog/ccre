@@ -1,0 +1,29 @@
+{
+  "baselineSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "originalFunctionSha256": "1348dd67793b70c66327f0f646e9230ba7d7ede173daf17964bb97eee515fe8a",
+  "outputSha256": "ab75de0c280d2e72c4b586ae2f3f38db05c980f8a07ae421a8c5e0f528b5c667",
+  "storageRewriteCounts": {
+    "await": 4,
+    "checkpoint": 1,
+    "moved": 1
+  },
+  "wrapperSha256": "bc99bd419ffac7467be5ac99412c91e00ca6d65759a78e4a343bc787c33e3c97",
+  "generatedActionSha256": "573a461895234f14b6e999e137af2901d35c969638a51576a58ffdac01b3d44e",
+  "fullMovementIntegration": false,
+  "remaining": "Admission/session/dungeon/access-repair guards are bound by the production router, outside executeMovementAction.",
+  "r24Geometry": {
+    "scope": "Only mist-specific bounds; native combat, movement and ownership rules preserved. Tower bounds unchanged.",
+    "hashes": {
+      "outputSha256": {
+        "previous": "e05916b40bb5c0d1baa00bbc8e59da3f690def4018fbd9c35a278cd8bf67cee2",
+        "current": "ab75de0c280d2e72c4b586ae2f3f38db05c980f8a07ae421a8c5e0f528b5c667",
+        "file": "movement.mjs"
+      },
+      "generatedActionSha256": {
+        "previous": "fd0667102d513cd959c0dfacfadd16808a14105fb38b0731b15e63d24c5e0619",
+        "current": "573a461895234f14b6e999e137af2901d35c969638a51576a58ffdac01b3d44e",
+        "file": "movement-action.mjs"
+      }
+    }
+  }
+}

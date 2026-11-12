@@ -1,0 +1,24 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {setup,combatState} from './process-fixture.mjs';
+import {guildSkillHandler,guildSkillService} from './native-permanent-fixture.mjs';
+import {until} from './helpers.mjs';
+
+test('ordinary native guild-skill rejection refreshes and releases the owner before its original HTTP error',{timeout:35000},async t=>{
+ const s=await setup(t,{shared:true}),{f,core,world,supervisor,http,connect,faults}=s;await world.stopJobs();const ticket=await http('ticket'),live=await connect(ticket),route=guildSkillHandler(s),before=f.sql.prepare('SELECT essence FROM players WHERE id=?').get(f.id);
+ const response=await route(f.request({path:'/api/guild-skill',body:{action:'donate',amount:1,requestId:randomUUID()}}));assert.equal(response.status,409);assert.deepEqual(await response.json(),{error:'Loncanızın bir şatosu olmalı.'});assert.equal(f.sql.isTransaction,false);assert.deepEqual(f.sql.prepare('SELECT essence FROM players WHERE id=?').get(f.id),before);
+ assert.equal(core.permanent.entries.size,0);assert.equal((await combatState(supervisor.rows.get(ticket.channel))).players.find(p=>p.id===f.id).suspended,false);assert.equal(faults.length,0,faults.map(f=>f.error?.stack).join('\n'));
+ live.ws.send(JSON.stringify({type:'input',sequence:1,payload:{action:'use_potion'}}));await until(()=>live.packets.some(p=>p.results?.some(r=>r.sequence===1))||faults.length,8000);assert.equal(faults.length,0);assert.equal((await http('ticket')).status,200);
+});
+
+for(const phase of ['before','after'])test('native guild donation source SIGKILL '+phase+' COMMIT recovers CURRENT DB and replays one native receipt',{timeout:45000},async t=>{
+ const s=await setup(t,{shared:true}),{f,core,world,writer,supervisor,http,connect}=s;await world.stopJobs();const ticket=await http('ticket');await connect(ticket);const source=supervisor.rows.get(ticket.channel),others=[...supervisor.rows.values()].filter(r=>r!==source),oldWorld=world.row;
+ await core.permanentPlayers([f.id],()=>{f.sql.prepare('INSERT INTO guilds(id,name,name_key,leader_id,created_at) VALUES(?,?,?,?,1)').run('permanent-guild511','Permanent guild','permanent guild',f.id);f.sql.prepare('INSERT INTO guild_members(player_id,guild_id,joined_at) VALUES(?,?,1) ON CONFLICT(player_id) DO UPDATE SET guild_id=excluded.guild_id').run(f.id,'permanent-guild511');f.sql.prepare('INSERT INTO guild_castles(guild_id,district,slot,purchased_by,purchased_at) VALUES(?,1,1,?,1)').run('permanent-guild511',f.id);f.sql.prepare("UPDATE players SET area='guild_hall_permanent-guild511',x=790,y=650,hp=100,essence=100 WHERE id=?").run(f.id);});
+ const input={action:'donate',amount:7,requestId:randomUUID()},read=()=>({essence:f.sql.prepare('SELECT essence FROM players WHERE id=?').get(f.id).essence,donations:f.sql.prepare('SELECT COUNT(*) n FROM guild_skill_donations WHERE player_id=?').get(f.id).n,receipts:f.sql.prepare('SELECT COUNT(*) n FROM guild_skill_receipts WHERE player_id=? AND request_id=?').get(f.id,input.requestId).n});let killed=false,observed;
+ const database=new Proxy(f.sql,{get(target,key){if(key==='exec')return sql=>{if(phase==='before'&&sql==='COMMIT'&&!killed){killed=true;source.child.kill('SIGKILL');throw Error('native-donation-before-commit');}return target.exec(sql);};const value=Reflect.get(target,key,target);return typeof value==='function'?value.bind(target):value;}}),service=guildSkillService(f,database),act=service.act;
+ service.act=(...args)=>{try{const result=act(...args);if(phase==='after'&&!killed){killed=true;observed=read();source.child.kill('SIGKILL');throw Error('native-donation-after-commit');}return result;}catch(error){if(phase==='before'&&killed)observed=read();throw error;}};
+ const route=guildSkillHandler({...s,service}),request=()=>f.request({path:'/api/guild-skill',body:input}),response=await route(request());assert.equal(response.status,409);assert(killed);assert.deepEqual(observed,phase==='before'?{essence:100,donations:0,receipts:0}:{essence:93,donations:1,receipts:1});
+ await until(()=>source.exited&&supervisor.rows.get(ticket.channel)!==source&&supervisor.rows.get(ticket.channel)?.state==='running'&&!core.permanent.entries.has(f.id),20000);assert.equal(source.child.signalCode,'SIGKILL');assert.equal(world.row,oldWorld);assert(others.every(r=>supervisor.rows.get(r.peer.channel)===r));
+ const restored=await http('ticket');assert.equal(restored.status,200);assert.equal(restored.channel,ticket.channel);assert(restored.epoch>ticket.epoch);await connect(restored);assert.equal((await route(request())).status,200);assert.deepEqual(read(),{essence:93,donations:1,receipts:1});assert.equal((await route(request())).status,200);assert.deepEqual(read(),{essence:93,donations:1,receipts:1});assert.equal(writer.authority.admission(f.id).channel,ticket.channel);
+});

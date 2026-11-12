@@ -1,0 +1,1 @@
+ALTER TABLE `fishing_sessions` ADD `proof_seed` integer DEFAULT 0 NOT NULL;

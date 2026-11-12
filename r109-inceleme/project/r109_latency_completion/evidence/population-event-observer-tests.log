@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: two provisional kills settle on late world updates and native claim ACK, without new combat
+ok 1 - two provisional kills settle on late world updates and native claim ACK, without new combat
+  ---
+  duration_ms: 41.150817
+  type: 'test'
+  ...
+# Subtest: never-settling provisional kills time out with exact IDs and remain failed
+ok 2 - never-settling provisional kills time out with exact IDs and remain failed
+  ---
+  duration_ms: 35.615905
+  type: 'test'
+  ...
+# Subtest: durable event before 202 settles exactly once
+ok 3 - durable event before 202 settles exactly once
+  ---
+  duration_ms: 2.244283
+  type: 'test'
+  ...
+# Subtest: durable event after 202 settles exactly once
+ok 4 - durable event after 202 settles exactly once
+  ---
+  duration_ms: 0.343616
+  type: 'test'
+  ...
+# Subtest: native monster_reject surviving/rejected outcome is never called a kill
+ok 5 - native monster_reject surviving/rejected outcome is never called a kill
+  ---
+  duration_ms: 0.165216
+  type: 'test'
+  ...
+# Subtest: native monster_result surviving/rejected outcome is never called a kill
+ok 6 - native monster_result surviving/rejected outcome is never called a kill
+  ---
+  duration_ms: 0.160003
+  type: 'test'
+  ...
+# Subtest: unmatched or missing terminal event cannot make the test pass
+ok 7 - unmatched or missing terminal event cannot make the test pass
+  ---
+  duration_ms: 0.279793
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 300.701304

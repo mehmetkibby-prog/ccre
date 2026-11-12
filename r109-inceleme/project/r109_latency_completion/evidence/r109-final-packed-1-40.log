@@ -1,0 +1,21 @@
+pearl_reset {"applied":true,"appliedAtMs":1794471985895,"backupName":"before-pearl-reset-1794471985895-62224204-52b7-412f-b3ee-95d5cbde2bdf.sqlite"}
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+remote bots 40 96224
+measurement 40 60000
+{"event":"core511_slow_commit_r79","atMs":1794472075279,"durationMs":108.66,"slowCommits":1,"lastCommitMs":108.66,"maxCommitMs":108.66,"lastSlowAtMs":1794472075279,"checkpoint":{"ready":true,"fallback":null,"pendingPages":0},"queuedWrites":0,"scope":"main-thread SQLite COMMIT wall time; not network ping"}
+{"passed":false,"tickP95Ms":18.896660000002157,"tickP99Ms":31.7994740000031,"maxTickMs":64.87546500000099,"mainMaxPauseMs":59.047935,"mainPausesOver50Ms":2,"channelPausesOver50Ms":5,"maxChannelPauseMs":64.782335,"mainElu":0.22017221373396106,"mainMaxRssBytes":518651904,"resources":{"cpuBudget":4,"totalCpuFraction":0.27945728664181024,"maxRssBytes":1231077376}}
+AssertionError [ERR_ASSERTION]: load correctness failed
+    at file:///workspace/ccre/r109_latency_completion/tests/population-load.mjs:129:72
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+{"event":"core511_recovery_cause","at":"2026-11-12T08:27:58.107Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":1,"pid":96196,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"35d8663b2e3b22ff892274e8"}
+{"event":"core511_recovery_cause","at":"2026-11-12T08:27:58.108Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":2,"pid":96201,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3617c3eeb6af11e5232ed543"}
+{"event":"core511_recovery_cause","at":"2026-11-12T08:27:58.110Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":3,"pid":96210,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3f1febdc35bbac3af86043a3"}
+{"event":"core511_recovery_cause","at":"2026-11-12T08:27:58.110Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":115,"column":44},{"file":"process-supervisor.mjs","line":152,"column":168},{"file":"process-supervisor.mjs","line":152,"column":154}],"channel":4,"pid":96215,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5b732a10779914bd851ba314"}
+{"event":"core511_recovery_cause","at":"2026-11-12T08:27:58.132Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":96187,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"10f693b2c7fe95eccad8eec5"}

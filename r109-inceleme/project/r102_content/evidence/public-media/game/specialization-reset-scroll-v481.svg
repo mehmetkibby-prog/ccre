@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+ <defs>
+  <linearGradient id="paper" x1="35" y1="19" x2="96" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#fff1c9"/><stop offset=".47" stop-color="#e8d3a2"/><stop offset="1" stop-color="#b6955c"/></linearGradient>
+  <linearGradient id="roll" x1="23" y1="15" x2="34" y2="37" gradientUnits="userSpaceOnUse"><stop stop-color="#f8df9e"/><stop offset=".4" stop-color="#e2bf79"/><stop offset="1" stop-color="#79522d"/></linearGradient>
+  <radialGradient id="seal"><stop stop-color="#39877c"/><stop offset="1" stop-color="#164a48"/></radialGradient>
+ </defs>
+ <ellipse cx="65" cy="113" rx="39" ry="6" fill="#101a18" opacity=".3"/>
+ <g transform="rotate(-9 64 64)">
+  <path d="M34 17h61q11 0 11 11v69q0 15-16 15H29q-11 0-11-10 0-9 12-10V28q0-11 4-11Z" fill="#533e2b" stroke="#352b21" stroke-width="3"/>
+  <path d="M32 17h60q11 0 11 11v71q0 10-12 11H31q10-4 10-12V28q0-11-9-11Z" fill="url(#paper)" stroke="#9c7746" stroke-width="2"/>
+  <path d="M31 17q-12 0-12 11t12 11h17V28q0-11-17-11Z" fill="url(#roll)" stroke="#8d673a" stroke-width="2"/>
+  <path d="M31 39q8 0 8-10 0-5-7-5t-7 5q0 4 5 4" stroke="#926738" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 92h53q-8 3-8 10t10 8H30q-12 0-12-9t12-9Z" fill="url(#roll)" stroke="#8d673a" stroke-width="2"/>
+  <path d="M86 25h8M48 84h14m-9-7h10M47 44v-4h9m31 36v7h-8" stroke="#ac8950" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M70 70V57m0 0-13-10m13 10 13-10m-13 10V41" stroke="#365d60" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m70 34 4 7-4 7-4-7 4-7Zm-17 6 5 6-5 5-5-5 5-6Zm34 0 5 6-5 5-5-5 5-6Z" fill="#678983" stroke="#375957" stroke-width="1.5"/>
+  <path d="M83 63a15 15 0 1 1-29-6m0 0-2 8m2-8 8 2" stroke="#94733e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m88 91-5 28 10-6 7 5 1-28" fill="#934531" stroke="#593225" stroke-width="1.5"/>
+  <path d="m89 78 5-2 5 3 6 1 2 6 3 5-3 6-1 5-7 2-4 3-5-3-6-1-2-6-3-5 3-6 1-5Z" fill="url(#seal)" stroke="#ba9857" stroke-width="2"/>
+  <circle cx="95" cy="92" r="9" stroke="#c1ae77" stroke-width="1"/>
+  <path d="M98 88a5 5 0 1 0 1 6m-1-6h-4m4 0v-4" stroke="#e5d1a0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+</svg>

@@ -1,0 +1,77 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "modules": [
+    {
+      "source": "vds-server/src/channel-protocol.mjs",
+      "sourceSha256": "8b408e51d35f7c39b21871b6d6bd4806447bbb435a85cc8612579a0dce895ff4",
+      "generated": "owner-protocol.mjs",
+      "generatedSha256": "04a404898b05dc918739bddb6b2eb8541c007f43c0d45504b9d97b9406744d20",
+      "edits": [
+        {
+          "from": "'col-channel-ipc-v1'",
+          "to": "'col-kernel511-owner-v1'",
+          "count": 1
+        },
+        {
+          "from": "CHANNEL_COUNT = 3",
+          "to": "CHANNEL_COUNT = 4",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source": "vds-server/src/channel-authority.mjs",
+      "sourceSha256": "0d9ff7a685e35fbb3eaef22766b171c8cec0ee0ee3569a0ae9bde44da277f9f5",
+      "generated": "owner-authority.mjs",
+      "generatedSha256": "800b39f12c9a384b1f2ab0bf612d6058c61eeaa237e422a0b377ba25624c65af",
+      "edits": [
+        {
+          "from": "'./prepared-statements477.mjs'",
+          "to": "\"../../../../native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs\"",
+          "count": 1
+        },
+        {
+          "from": "'./channel-protocol.mjs'",
+          "to": "'./owner-protocol.mjs'",
+          "count": 1
+        },
+        {
+          "from": "channel BETWEEN 1 AND 3",
+          "to": "channel BETWEEN 1 AND 4",
+          "count": 2
+        },
+        {
+          "from": "channel_processes",
+          "to": "kernel511_channel_processes",
+          "count": 5
+        },
+        {
+          "from": "channel_owners",
+          "to": "kernel511_channel_owners",
+          "count": 12
+        },
+        {
+          "from": "channel_receipts",
+          "to": "kernel511_channel_receipts",
+          "count": 6
+        },
+        {
+          "from": "channel_write_streams",
+          "to": "kernel511_channel_write_streams",
+          "count": 1
+        },
+        {
+          "from": "channel_owner_channel",
+          "to": "kernel511_channel_owner_channel",
+          "count": 1
+        },
+        {
+          "from": "channel_receipt_expiry",
+          "to": "kernel511_channel_receipt_expiry",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "integrationComplete": false
+}

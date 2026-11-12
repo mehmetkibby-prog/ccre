@@ -1,0 +1,27 @@
+{
+  "name": "core-of-life-r109-review",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4 <23"
+  },
+  "scripts": {
+    "setup": "python3 scripts/setup.py",
+    "verify": "python3 scripts/verify.py",
+    "test": "python3 scripts/check.py focused",
+    "test:captcha": "python3 scripts/check.py captcha",
+    "test:native": "python3 scripts/check.py native",
+    "test:installer": "python3 scripts/check.py installer",
+    "test:browser": "python3 scripts/check.py browser",
+    "load": "python3 scripts/load.py"
+  },
+  "dependencies": {
+    "acorn": "8.15.0",
+    "esbuild": "0.28.0",
+    "eslint-scope": "8.4.0",
+    "livekit-server-sdk": "2.19.1",
+    "playwright": "1.51.1",
+    "vinext": "0.0.50",
+    "ws": "8.21.3"
+  }
+}

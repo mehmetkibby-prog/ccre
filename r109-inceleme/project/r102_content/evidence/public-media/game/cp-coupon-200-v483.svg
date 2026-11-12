@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+<title id="title">200 Çekirdek Parası Kuponu · Safir</title>
+<defs>
+ <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#303f77"/><stop offset=".4" stop-color="#151d45"/><stop offset="1" stop-color="#303f77"/></linearGradient>
+ <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c8d9ff"/><stop offset=".3" stop-color="#ced5ec"/><stop offset=".57" stop-color="#c8d9ff"/><stop offset="1" stop-color="#849dcf"/></linearGradient>
+ <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#76a8ff"/><stop offset="1" stop-color="#3541a4"/></linearGradient>
+</defs>
+<!-- Folded, notched coupon silhouette; all shadows are simple filled paths. -->
+<path d="M30 13h65l14 14v21c-9 4-9 14 0 18v38l-10 16H29l-9-13V66c9-4 9-14 0-18V27Z" fill="#000" opacity=".4" transform="translate(0 3)"/>
+<g fill="url(#metal)" stroke="#151d45" stroke-width="1.4"><path d="m13 44 13-9-2 14-7 9Zm0 17 12-9 1 14-6 10Zm102-17-13-9 2 14 7 9Zm0 17-12-9-1 14 6 10Z"/></g>
+<path d="M30 10h64l14 14v21c-10 4-10 15 0 19v39l-11 15H30l-10-12V64c10-4 10-15 0-19V24Z" fill="url(#paper)" stroke="#ced5ec" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M31 16h60l11 11v15c-12 7-12 18 0 25v34l-8 10H33l-7-8V67c12-7 12-18 0-25V27Z" fill="none" stroke="#849dcf" stroke-width="1.2"/>
+<path d="M30 10v14H20m74-14v14h14M30 118v-13H20m77 13v-15h11" fill="none" stroke="#c8d9ff" stroke-width="1.4" opacity=".8"/>
+<path d="m32 24 7 5-7 5m64-10-7 5 7 5M34 99l5 3-5 3m60-6-5 3 5 3" fill="none" stroke="#ced5ec" stroke-width="1.5"/>
+<path d="M41 36H30m68 0H87M31 69h14m38 0h14" stroke="#c8d9ff" stroke-width="1" opacity=".6"/>
+<!-- Two tails and a cut-gem core seal. -->
+<path d="m47 53-3 20 12-7 8 8 3-22m14 1 3 20-12-7-8 8-3-22" fill="#4e54a8" stroke="#849dcf" stroke-width="1.3"/>
+
+<path d="m64 19 8 6 10 1 3 10 6 8-6 8-3 10-10 1-8 6-8-6-10-1-3-10-6-8 6-8 3-10 10-1Z" fill="#151d45" stroke="url(#metal)" stroke-width="2.7"/>
+<circle cx="64" cy="44" r="19" fill="url(#seal)" stroke="#849dcf" stroke-width="1.5"/>
+<path d="m64 26 12 16-12 21-12-21Z" fill="#76a8ff" stroke="#f2f7ff" stroke-width="1.2"/>
+<path d="m64 26-4 16 4 21 12-21Z" fill="#3541a4"/>
+<path d="m64 26-12 16h8Zm0 0 12 16H60Z" fill="#f2f7ff" opacity=".87"/>
+<path d="m60 42 4 21 3-21Z" fill="#f2f7ff" opacity=".66"/>
+<path d="M43 44h-7m49 0h7m-28-7v-7" stroke="#f2f7ff" stroke-width="1" opacity=".7"/>
+<!-- Large denomination plaque remains legible at a 48px inventory size. -->
+<path d="m27 75 9-4h56l9 4-4 28-8 6H39l-8-6Z" fill="#0a0f13" stroke="url(#metal)" stroke-width="2"/>
+<path d="M36 76h56M39 104h50" stroke="#849dcf" stroke-width=".8" opacity=".8"/>
+<g fill="#000" opacity=".8" transform="translate(34 78.5) scale(.97 .91)" fill-rule="evenodd"><path d="M.5 7C1.2 2.5 4.5 0 9 0c5.5 0 9 2.8 9 7.5 0 4.4-3 7.1-7.1 10.5L6 22.5h12V28H0v-4.8l8.1-7.8c3.4-3.2 4.4-4.9 4.4-7.2 0-2.1-1.3-3.2-3.6-3.2-2 0-3.2 1.2-3.7 3.4Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<g fill="#c8d9ff" transform="translate(34 77) scale(.97 .91)" fill-rule="evenodd"><path d="M.5 7C1.2 2.5 4.5 0 9 0c5.5 0 9 2.8 9 7.5 0 4.4-3 7.1-7.1 10.5L6 22.5h12V28H0v-4.8l8.1-7.8c3.4-3.2 4.4-4.9 4.4-7.2 0-2.1-1.3-3.2-3.6-3.2-2 0-3.2 1.2-3.7 3.4Z" transform="translate(0 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(22 0)"/><path d="M9 0C2.5 0 0 5.6 0 14S2.5 28 9 28s9-5.6 9-14S15.5 0 9 0Zm0 5c2.6 0 3.5 3.5 3.5 9S11.6 23 9 23s-3.5-3.5-3.5-9S6.4 5 9 5Z" transform="translate(44 0)"/></g>
+<path d="m55 110-4 3 4 3m18-6 4 3-4 3M57 114h14" fill="none" stroke="#ced5ec" stroke-width="1.3"/>
+</svg>

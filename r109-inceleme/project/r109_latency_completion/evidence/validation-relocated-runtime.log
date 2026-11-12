@@ -1,0 +1,26 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794473193774,"backupName":"before-pearl-reset-1794473193774-9802b997-aa9f-4436-a557-5fc3a43550d4.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794473195271,"backupName":"before-pearl-reset-1794473195271-8361a591-3aa3-4bba-b81f-fc400a111409.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 9612.263069
+  type: 'test'
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 64.846592
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17877.781751

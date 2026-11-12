@@ -1,0 +1,124 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "file": "vds-server/src/realm-runtime.mjs",
+  "sourceSha256": "90920023e6256095f4acf6091dabb47f538c71ce687dcde6b734bdfee966f5f3",
+  "generatedSha256": "7bb4bf028c6d0c399622f435f6a717761ec5d52656c2bb74f59f18ed0872e401",
+  "edits": [
+    {
+      "start": 0,
+      "end": 75,
+      "original": "import {attachRealtimeMaintenance491} from './maintenance-realtime491.mjs';",
+      "replacement": "// Maintenance delivery belongs to the current four channel owners."
+    },
+    {
+      "start": 1763,
+      "end": 1785,
+      "original": "'./maintenance438.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/maintenance438.mjs\""
+    },
+    {
+      "start": 1815,
+      "end": 1837,
+      "original": "'./loadtest-entry.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/loadtest-entry.mjs\""
+    },
+    {
+      "start": 1866,
+      "end": 1887,
+      "original": "'./realm-control.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-control.mjs\""
+    },
+    {
+      "start": 1923,
+      "end": 1950,
+      "original": "'./realm-admin-service.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-admin-service.mjs\""
+    },
+    {
+      "start": 2050,
+      "end": 2072,
+      "original": "'./realm-manifest.mjs'",
+      "replacement": "\"./native-realm-manifest.mjs\""
+    },
+    {
+      "start": 2104,
+      "end": 2129,
+      "original": "'./realm-entry-store.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-entry-store.mjs\""
+    },
+    {
+      "start": 2190,
+      "end": 2216,
+      "original": "'./realm-service-auth.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-service-auth.mjs\""
+    },
+    {
+      "start": 2250,
+      "end": 2277,
+      "original": "'./realm-security-gate.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs\""
+    },
+    {
+      "start": 2308,
+      "end": 2331,
+      "original": "'./realm-admission.mjs'",
+      "replacement": "\"./native-realm-admission.mjs\""
+    },
+    {
+      "start": 2375,
+      "end": 2406,
+      "original": "'./realm-database-identity.mjs'",
+      "replacement": "\"../../../../native510-bb3a6cc689c6/vds-server/src/realm-database-identity.mjs\""
+    },
+    {
+      "start": 5907,
+      "end": 5945,
+      "original": "attachRealtimeMaintenance491(runtime);",
+      "replacement": "database.core511RealmStartup.capture(runtime);"
+    },
+    {
+      "start": 8280,
+      "end": 8336,
+      "original": "void acceptMaintenance438(req,res,globalThis.__colRealm)",
+      "replacement": "void globalThis[Symbol.for('coreoflife.core511.httpBindings')].privateRequest(req,res,()=>acceptMaintenance438(req,res,globalThis.__colRealm))"
+    },
+    {
+      "start": 8387,
+      "end": 8499,
+      "original": "void loadtestEntry(req,res,globalThis.__colRealm).catch(()=>{if(!res.headersSent)res.writeHead(500);res.end();})",
+      "replacement": "void globalThis[Symbol.for('coreoflife.core511.httpBindings')].privateRequest(req,res,()=>loadtestEntry(req,res,globalThis.__colRealm).catch(()=>{if(!res.headersSent)res.writeHead(500);res.end();}))"
+    },
+    {
+      "start": 5110,
+      "end": 5166,
+      "original": "body,signal:startupSignal445??AbortSignal.timeout(2500)}",
+      "replacement": "body,signal:startupSignal445??AbortSignal.timeout(pathname==='/internal/admin'&&data?.resource==='launch'&&data?.method==='POST'&&data?.body?.action==='save'?12000:2500)}"
+    },
+    {
+      "original": "// Maintenance delivery belongs to the current four channel owners.\nasync function readInitialMaintenance445(call,{now=()=>performance.now(),setTimer=setTimeout,clearTimer=clearTimeout}={}){\n",
+      "replacement": "import {academyCatalogR101} from '../academy-access-r101.mjs';\n// Maintenance delivery belongs to the current four channel owners.\nasync function readInitialMaintenance445(call,{now=()=>performance.now(),setTimer=setTimeout,clearTimer=clearTimeout}={}){\n",
+      "phase": "r101"
+    },
+    {
+      "original": "import {validateRealmManifest,publicRealmCatalog} from \"./native-realm-manifest.mjs\";\nimport {RealmEntryStore} from \"../../../../native510-bb3a6cc689c6/vds-server/src/realm-entry-store.mjs\";\nimport {RealmServiceVerifier,signRealmServiceRequest} from \"../../../../native510-bb3a6cc689c6/vds-server/src/realm-service-auth.mjs\";\nimport {RealmSecurityGate} from \"../../../../native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs\";\nimport {RealmAdmission} from \"./native-realm-admission.mjs\";\n",
+      "replacement": "import {validateRealmManifest,publicRealmCatalog} from \"./native-realm-manifest.mjs\";\nimport {RealmEntryStore} from \"../../../../native510-bb3a6cc689c6/vds-server/src/realm-entry-store.mjs\";\nimport {RealmServiceVerifier,signRealmServiceRequest} from \"../realm-service-auth-r101.mjs\";\nimport {RealmSecurityGate} from \"../../../../native510-bb3a6cc689c6/vds-server/src/realm-security-gate.mjs\";\nimport {RealmAdmission} from \"./native-realm-admission.mjs\";\n",
+      "phase": "r101"
+    },
+    {
+      "original": "  runtime.store=store;runtime.verifier=verifier;runtime.maintenancePublisher438=createMaintenancePublisher438(runtime,keys);\n  runtime.admin=(actorId,input)=>realmAdminOperation(runtime,actorId,input,{launch:globalThis.__colLaunch,mail:globalThis.__colLaunchEmail});\n  runtime.catalog=async({includeHidden=false}={})=>{\n   const visible=currentManifest.realms.filter(realm=>includeHidden||realm.id===currentManifest.primaryRealmId);\n   const rows=await Promise.all(visible.map(async realm=>{\n    try{const response=await fetch(`http://127.0.0.1:${realm.ports.app}/api/vds-health`,{signal:AbortSignal.timeout(1500)});\n     if(!response.ok)return [realm.id,null];const health=await response.json();return [realm.id,health.realm];\n    }catch{return[realm.id,null];}\n   }));return publicRealmCatalog({...currentManifest,realms:visible},new Map(rows));\n  };\n } else {\n",
+      "replacement": "  runtime.store=store;runtime.verifier=verifier;runtime.maintenancePublisher438=createMaintenancePublisher438(runtime,keys);\n  runtime.admin=(actorId,input)=>realmAdminOperation(runtime,actorId,input,{launch:globalThis.__colLaunch,mail:globalThis.__colLaunchEmail});\n  runtime.catalog=async({includeHidden=false,accountId}={})=>{\n   const visible=currentManifest.realms.filter(realm=>currentManifest.phase==='101'||includeHidden||realm.id===currentManifest.primaryRealmId);\n   const rows=await Promise.all(visible.map(async realm=>{\n    try{const response=await fetch(`http://127.0.0.1:${realm.ports.app}/api/vds-health`,{signal:AbortSignal.timeout(1500)});\n     if(!response.ok)return [realm.id,null];const health=await response.json();return [realm.id,health.realm];\n    }catch{return[realm.id,null];}\n   }));const catalog=publicRealmCatalog({...currentManifest,realms:visible.map(realm=>{const policy=runtime.launchFor?.(realm.id)?.status(accountId);return policy&&!policy.canPlay?{...realm,status:policy.phase==='maintenance'?'maintenance':'closed'}:realm;})},new Map(rows),Date.now(),{includeCounts:includeHidden});\n   return currentManifest.phase==='101'?academyCatalogR101(catalog,{accountId,includeHidden,launchFor:runtime.launchFor,security:runtime.scopedSecurity}):catalog;\n  };\n } else {\n",
+      "phase": "r101"
+    },
+    {
+      "original": "   const response=await fetch(`http://127.0.0.1:${manifest.authPort}/api/realm/internal`,{\n    method:'POST',headers:{...headers,'content-type':'application/json','x-col-service-path':pathname},body,signal:startupSignal445??AbortSignal.timeout(pathname==='/internal/admin'&&data?.resource==='launch'&&data?.method==='POST'&&data?.body?.action==='save'?12000:2500)});\n   if(!response.ok){let message='Hesap doğrulaması tamamlanamadı.';if(pathname==='/internal/admin'){try{message=(await response.json()).error??message;}catch{}}throw Object.assign(new Error(message),{status:response.status});}\n   return response.json();\n  };\n",
+      "replacement": "   const response=await fetch(`http://127.0.0.1:${manifest.authPort}/api/realm/internal`,{\n    method:'POST',headers:{...headers,'content-type':'application/json','x-col-service-path':pathname},body,signal:startupSignal445??AbortSignal.timeout(pathname==='/internal/admin'&&data?.resource==='launch'&&data?.method==='POST'&&data?.body?.action==='save'?12000:2500)});\n   if(!response.ok){let message='Hesap doğrulaması tamamlanamadı.';if(pathname==='/internal/admin'||pathname.startsWith('/internal/epin/')){try{message=(await response.json()).error??message;}catch{}}throw Object.assign(new Error(message),{status:response.status});}\n   return response.json();\n  };\n",
+      "phase": "r101"
+    },
+    {
+      "original": "export function realmRouteAllowed(role,pathname) {\n if(!pathname.startsWith('/api/'))return true;\n if(role==='accounts')return /^\\/api\\/(auth\\/(login|register|logout|me|forgot-password|reset-password|challenge)|realm\\/(catalog|issue|internal|admin)|launch|launch-email|registration-challenge|vds-health)$/.test(pathname);\n return !/^\\/api\\/auth\\/(login|register|forgot-password|reset-password)$/.test(pathname)&&!pathname.startsWith('/api/admin/vds-migration')&&!['/api/realm/internal','/api/realm/issue','/api/realm/catalog'].includes(pathname);\n}\n",
+      "replacement": "export function realmRouteAllowed(role,pathname) {\n if(!pathname.startsWith('/api/'))return true;\n if(role==='accounts')return /^\\/api\\/(auth\\/(login|register|logout|me|forgot-password|reset-password|challenge)|realm\\/(catalog|issue|internal|admin|academy-registration)|launch|launch-email|registration-challenge|vds-health)$/.test(pathname);\n return !/^\\/api\\/auth\\/(login|register|forgot-password|reset-password)$/.test(pathname)&&!pathname.startsWith('/api/admin/vds-migration')&&!['/api/realm/internal','/api/realm/issue','/api/realm/catalog'].includes(pathname);\n}\n",
+      "phase": "r101"
+    }
+  ],
+  "scope": "Signed calls retain authentication and bodies; only launch-save requests wait 12000ms for the existing six-second readiness confirmation. Other calls keep 2500ms, startup signals are preserved, and startup identity/security and private endpoint checks are unchanged. Rebase imports, bind candidate RealmAdmission, replace legacy maintenance attachment with locked-host capture and track two private HTTP operations through shutdown. Candidate manifest adds explicit CORE511 four-channel metadata while preserving legacy three-channel realms; central account deployment still requires the matching manifest module."
+}

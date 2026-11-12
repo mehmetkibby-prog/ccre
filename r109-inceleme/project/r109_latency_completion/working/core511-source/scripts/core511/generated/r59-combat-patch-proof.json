@@ -1,0 +1,110 @@
+{
+  "attack-rules.mjs": {
+    "sourceSha256": "bd702a44c94457b37907755547a832d3327902d12cddab411a947c01d45d8317",
+    "patchedSha256": "bbcf5271678ef11e54b3cf7eb0db7c6a775a0ce3d75a7f8bc9b8169ba3a66de9",
+    "edits": [
+      {
+        "from": "import {attackIndexR53} from '../r53-options.mjs';\n",
+        "to": "import {CASTLE_AREA,castleEnabled} from '../castle-model-r59.mjs';\nimport {attackIndexR53} from '../r53-options.mjs';\n",
+        "count": 1
+      },
+      {
+        "from": "if (control?.same_party497) return rejectPvpAttack(\"Parti arkada\u015f\u0131na sald\u0131ramazs\u0131n.\", 400);",
+        "to": "if(player.area===CASTLE_AREA&&!globalThis.__colCastle?.mayDamage(player,target,Date.now()))return rejectPvpAttack(\"Kalede yaln\u0131z sava\u015f saatinde rakip loncaya sald\u0131rabilirsin.\",423);\nif (player.area!==CASTLE_AREA&&control?.same_party497) return rejectPvpAttack(\"Parti arkada\u015f\u0131na sald\u0131ramazs\u0131n.\", 400);",
+        "count": 2
+      },
+      {
+        "from": "if (!isMistArea(player.area) && player.area !== \"war\"",
+        "to": "if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== \"war\"",
+        "count": 2
+      },
+      {
+        "from": "NOT EXISTS(SELECT 1 FROM party_members party_actor497 JOIN party_members party_peer497 ON party_peer497.party_id=party_actor497.party_id WHERE party_actor497.player_id=?1 AND party_peer497.player_id=players.id)",
+        "to": "(players.area='guild_castle' OR NOT EXISTS(SELECT 1 FROM party_members party_actor497 JOIN party_members party_peer497 ON party_peer497.party_id=party_actor497.party_id WHERE party_actor497.player_id=?1 AND party_peer497.player_id=players.id)) AND (players.area!='guild_castle' OR EXISTS(SELECT 1 FROM guild_members castle_actor59 JOIN guild_members castle_peer59 ON castle_actor59.guild_id!=castle_peer59.guild_id WHERE castle_actor59.player_id=?1 AND castle_peer59.player_id=players.id))",
+        "count": 2
+      },
+      {
+        "from": "const respawnArea = player.area==='rune_v2'?",
+        "to": "const respawnArea = player.area===CASTLE_AREA||player.area==='rune_v2'?",
+        "count": 1
+      },
+      {
+        "from": "const friendly=player.area==='arena'?",
+        "to": "const friendly=player.area===CASTLE_AREA?\"p.arena_match_id='' AND EXISTS(SELECT 1 FROM guild_members mine JOIN guild_members peer ON peer.guild_id=mine.guild_id WHERE mine.player_id=? AND peer.player_id=p.id)\":player.area==='arena'?",
+        "count": 1
+      },
+      {
+        "from": "center472.x,center472.x,center472.y,center472.y).all()).results;\n  const rejectArea472=",
+        "to": "center472.x,center472.x,center472.y,center472.y).all()).results.filter(row=>!castleEnabled()||player.area!==CASTLE_AREA||ports.castlePvpTargetR59(row.id));\n  const rejectArea472=",
+        "count": 1
+      }
+    ]
+  },
+  "attack-writer-rules.mjs": {
+    "sourceSha256": "8fe36c92e1bef097e9e5ed2cd906032ff7fa11afd3bbeef4b64f8126aeb37c92",
+    "patchedSha256": "a8a5a828b6a10ce2a3769c60482960bd5e90e8d941f2830ebaf4530b417ee22c",
+    "edits": [
+      {
+        "from": "import {groundLoot30s,GROUND_LOOT_SECONDS,groundLootExpired} from '../ground-loot-expiry.mjs';\n",
+        "to": "import {CASTLE_AREA,castleEnabled} from '../castle-model-r59.mjs';\nimport {groundLoot30s,GROUND_LOOT_SECONDS,groundLootExpired} from '../ground-loot-expiry.mjs';\n",
+        "count": 1
+      },
+      {
+        "from": "if (control?.same_party497) return rejectPvpAttack(\"Parti arkada\u015f\u0131na sald\u0131ramazs\u0131n.\", 400);",
+        "to": "if(player.area===CASTLE_AREA&&!globalThis.__colCastle?.mayDamage(player,target,Date.now()))return rejectPvpAttack(\"Kalede yaln\u0131z sava\u015f saatinde rakip loncaya sald\u0131rabilirsin.\",423);\nif (player.area!==CASTLE_AREA&&control?.same_party497) return rejectPvpAttack(\"Parti arkada\u015f\u0131na sald\u0131ramazs\u0131n.\", 400);",
+        "count": 2
+      },
+      {
+        "from": "if (!isMistArea(player.area) && player.area !== \"war\"",
+        "to": "if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== \"war\"",
+        "count": 2
+      },
+      {
+        "from": "NOT EXISTS(SELECT 1 FROM party_members party_actor497 JOIN party_members party_peer497 ON party_peer497.party_id=party_actor497.party_id WHERE party_actor497.player_id=?1 AND party_peer497.player_id=players.id)",
+        "to": "(players.area='guild_castle' OR NOT EXISTS(SELECT 1 FROM party_members party_actor497 JOIN party_members party_peer497 ON party_peer497.party_id=party_actor497.party_id WHERE party_actor497.player_id=?1 AND party_peer497.player_id=players.id)) AND (players.area!='guild_castle' OR EXISTS(SELECT 1 FROM guild_members castle_actor59 JOIN guild_members castle_peer59 ON castle_actor59.guild_id!=castle_peer59.guild_id WHERE castle_actor59.player_id=?1 AND castle_peer59.player_id=players.id))",
+        "count": 2
+      },
+      {
+        "from": "players.area NOT GLOB 'sis_*'",
+        "to": "players.area NOT GLOB 'sis_*' AND players.area!='guild_castle'",
+        "count": 2
+      },
+      {
+        "from": "AND area NOT GLOB 'sis_*'",
+        "to": "AND area NOT GLOB 'sis_*' AND area!='guild_castle'",
+        "count": 6
+      },
+      {
+        "from": "const respawnArea = player.area==='rune_v2'?",
+        "to": "const respawnArea = player.area===CASTLE_AREA||player.area==='rune_v2'?",
+        "count": 1
+      },
+      {
+        "from": "const friendly=player.area==='arena'?",
+        "to": "const friendly=player.area===CASTLE_AREA?\"p.arena_match_id='' AND EXISTS(SELECT 1 FROM guild_members mine JOIN guild_members peer ON peer.guild_id=mine.guild_id WHERE mine.player_id=? AND peer.player_id=p.id)\":player.area==='arena'?",
+        "count": 1
+      },
+      {
+        "from": "center472.x,center472.x,center472.y,center472.y).all()).results;\n  const rejectArea472=",
+        "to": "center472.x,center472.x,center472.y,center472.y).all()).results.filter(row=>!castleEnabled()||player.area!==CASTLE_AREA||ports.castlePvpTargetR59(row.id));\n  const rejectArea472=",
+        "count": 1
+      }
+    ]
+  },
+  "action-names.mjs": {
+    "sourceSha256": "33b5fed543e10a1723b1ef46c4b16be165c8b0bf076fd4f9ed8bf5801858e15f",
+    "patchedSha256": "e26a50eb8e3a0184b1e65d40b97dce31fd17feda448c26fd7b41073745c85bb7",
+    "edits": [
+      {
+        "from": "import {ADVENTURE_ACTIONS}",
+        "to": "import {castleEnabled} from '../castle-model-r59.mjs';\nimport {ADVENTURE_ACTIONS}",
+        "count": 1
+      },
+      {
+        "from": "Object.freeze([...ADVENTURE_ACTIONS,",
+        "to": "Object.freeze([...(castleEnabled()?['castle_enter_r59','castle_leave_r59']:[]),...ADVENTURE_ACTIONS,",
+        "count": 1
+      }
+    ]
+  }
+}

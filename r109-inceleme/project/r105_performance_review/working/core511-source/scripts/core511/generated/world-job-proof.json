@@ -1,0 +1,90 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "upkeep": [
+    {
+      "start": 302968,
+      "end": 303184,
+      "sha256": "f8e1a3b6304c60419403322ee8ed0566b3f43324bca3341b0fdfb301cfa16c2b"
+    },
+    {
+      "start": 303523,
+      "end": 304100,
+      "sha256": "d76c74e4d5af98896c49caf21d9910fd271422501402337eed2a57adce100582"
+    },
+    {
+      "start": 304126,
+      "end": 304337,
+      "sha256": "22a14e025323099767e6aaeaad87f95963926c5e4d34e63c6db9392325e30a95"
+    }
+  ],
+  "reset": {
+    "start": 304439,
+    "end": 314094,
+    "sha256": "3305a803e63785cc72158cfa108f508782b32bb33e5a536a106548d721266509"
+  },
+  "guardian": {
+    "start": 314096,
+    "end": 315966,
+    "sha256": "cff0e4bbc94f1a6157c525295b14e153b4ac0cba832a2f4072d2872f0cff0b9f"
+  },
+  "dependencies": [
+    {
+      "name": "ANCIENT_BOSS_SPAWN",
+      "start": 144228,
+      "end": 144286,
+      "sha256": "8d4def082eacdba125a85aa49a65b6ecdcae1aa720a5ac9db5cd5069e48a3333"
+    },
+    {
+      "name": "FROZEN_WATER_SPAWN",
+      "start": 145123,
+      "end": 145181,
+      "sha256": "95499883bf0c094079d4eba082f097c0f1ec04d4065f4ee8787af56fd16e6296"
+    },
+    {
+      "name": "BAZAAR_SPAWN",
+      "start": 145857,
+      "end": 145893,
+      "sha256": "287dbcaecf4cdcbbca3d851a55731654505edfd7927bd5b69a1fd9f871ddb75c"
+    },
+    {
+      "name": "FROZEN_BOSS_SPAWN",
+      "start": 145942,
+      "end": 145984,
+      "sha256": "e0f26abf430efbc52026200111ffd07be86aa2cb341fc0306617a6bdd16992f3"
+    },
+    {
+      "name": "BOSS_SPAWN",
+      "start": 245448,
+      "end": 245482,
+      "sha256": "f5a5260b994fdb2c31fbd914595db71ff82662ee29584645e7d94f2fff3d7776"
+    },
+    {
+      "name": "FROZEN_BOSS_ID",
+      "start": 245790,
+      "end": 245822,
+      "sha256": "1cde98ad35aaf459a5d5f8925f1733e6410cce8657c20754d7c522629ffd8364"
+    },
+    {
+      "name": "ANCIENT_BOSS_ID",
+      "start": 245828,
+      "end": 245862,
+      "sha256": "5a8d3138b52f741e7a656ed2266b6f9cbe0de9be0772f61c646ac86d1ace574d"
+    },
+    {
+      "name": "FROZEN_WATER_ID_PREFIX",
+      "start": 245868,
+      "end": 245909,
+      "sha256": "9c3afbaab98417245a719f38aa9261351e9cb9276882e43e5dac6f8d3ab5eb68"
+    }
+  ],
+  "generatedSha256": "d9937e3ba2d37ad3da58fc49fb6f35705e42cf439e2c27913a9313668bdf27e9",
+  "edits": [
+    "native upkeep health/market SQL arrays unchanged",
+    "native guardian/reset branches unchanged except async storage keywords",
+    "explicit operation clock/UUID",
+    "reset adapter extends only C4 black-stone IDs",
+    "global transition requires external all-owner drain/freeze; no timer started here"
+  ]
+}

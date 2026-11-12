@@ -1,0 +1,18 @@
+{
+  "sources": [
+    {
+      "file": "motion-buffer.ts",
+      "sha256": "5a6a89e60134629ee5bbf1cde0b26a73137e13732d619842f26835136d7dd00d"
+    },
+    {
+      "file": "motion-preview.ts",
+      "sha256": "99dd1418b08332e0775e614404ab044caa9b53367a55d5c4de7b109b538c9aeb"
+    },
+    {
+      "file": "remote-motion.ts",
+      "sha256": "99e9c82bb3142a6ed307a2dcce1ab842ae68346e9e7199ee5bbb978263d68c55"
+    }
+  ],
+  "outputSha256": "3e954c4d2e260fb5a59270980753ae110ff81af6a9c44ad8362b38450ad24b56",
+  "method": "esbuild 0.25.5, exact R31 native TypeScript sources, no semantic edits"
+}

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "beforeSha256": "a8a5a828b6a10ce2a3769c60482960bd5e90e8d941f2830ebaf4530b417ee22c",
+  "afterSha256": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
+  "adapterSha256": "4b6cb8c2337010ea329d6863a3bf8a5a4a26246ac4b36dff48659efa2ab5f11e",
+  "helperSha256": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc",
+  "scope": "Writer-only deterministic loot profile derivation. Existing factory-local mutable result identity remains; separate factories can copy private immutable known-shape templates keyed by exact frozen primitive settings identity and complete fallback/source/revision/raw snapshot JSON. No player rows, RNG, claims, rolls or SQL are cached. Exact adapter inverse and generated native body unchanged.",
+  "edits": [
+    {
+      "from": "const ambient=globalThis;",
+      "to": "import {createLootProfileCacheR61} from '../loot-profile-cache-r61.mjs';\nconst ambient=globalThis;"
+    },
+    {
+      "from": "const env={CORE_RUNTIME:\"vds\"},realtime=null,timing={mark(){}};",
+      "to": "const lootProfileCacheR61=createLootProfileCacheR61();\nconst env={CORE_RUNTIME:\"vds\"},realtime=null,timing={mark(){}};"
+    },
+    {
+      "from": "function profileFromDefeat(defeat, fallbackKey, settings) {",
+      "to": "function profileFromDefeat(defeat, fallbackKey, settings) {\n if(!lootProfileCacheR61)return profileFromDefeatUncachedR61(defeat,fallbackKey,settings);\n return lootProfileCacheR61(defeat,fallbackKey,settings,()=>profileFromDefeatUncachedR61(defeat,fallbackKey,settings));\n}\nfunction profileFromDefeatUncachedR61(defeat, fallbackKey, settings) {"
+    }
+  ]
+}

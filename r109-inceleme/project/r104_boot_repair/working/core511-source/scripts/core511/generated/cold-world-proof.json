@@ -1,0 +1,221 @@
+{
+  "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
+  "source": "dist-vds/server/channel-runtime/index.mjs",
+  "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
+  "fullWorldBodySha256": "66d1e1aed9648e04ccf6a7618910ffa627a7cda358a2682c0efbebe4e355e495",
+  "decorationSha256": "de467a6a430868c5d44ffcd32172d8a3ad89556e3f9e35e311856e3c9fb1cf25",
+  "generatedSha256": "93961891c8c5cb52ec3c86e5dac042bd49f8240553b39a716e06f21576ba9c44",
+  "declarations": [
+    {
+      "name": "halloweenEventView456",
+      "sha256": "18c3a052dbeb76c3a49b9e67bf7513d11de8fa022f94bd112c9ecd4806ffb807"
+    },
+    {
+      "name": "readEventsConfig",
+      "sha256": "1681f3a58fc7e5f6e4739aeee8b73f42b6423bdbd32f2a741672bde260061866"
+    },
+    {
+      "name": "parseEvents",
+      "sha256": "f2058415a7680da5460d6fa42948e0188038e9239e751823e5c79bffc0d7f940"
+    },
+    {
+      "name": "validateEvents",
+      "sha256": "d1adf67545d1ca60c762af92721edf05a056209b620bc6871c4bc42c470ddc12"
+    },
+    {
+      "name": "defaultEvents",
+      "sha256": "6d91c38b3f63acc2a369cf124097d39751f512d05dd0428df974d3a561df5350"
+    },
+    {
+      "name": "EVENT_KINDS",
+      "sha256": "796300970fb041f08f4309084a3ddad54df007948ab85f9d96da1bd4dd72a335"
+    },
+    {
+      "name": "CHEST_PRIZES",
+      "sha256": "da743001435b28a3b3cffaa49eeb55ccda4e604365395a6b63e4566c4ea441c6"
+    },
+    {
+      "name": "MOONLIGHT_PRIZES",
+      "sha256": "959b16688cc695cffb4ba23e37f1b9f0ae40beb55d69c720030898c54b5282b6"
+    },
+    {
+      "name": "FISHING_EVENT_PRIZES",
+      "sha256": "285a510544796bb8e1db3c0ca8ed90a5ed7d16616e86e0159596f904a63876f2"
+    },
+    {
+      "name": "defaultFishingCatch482",
+      "sha256": "73045bbe45205837a5e78d6b94d0c3e61e2028b06a7cb0c3dae1d6f107291784"
+    },
+    {
+      "name": "EVENT_LABELS",
+      "sha256": "5e21e32f2d96168562d28ca11cd3a05c85afada967656e3aefd1cb3588703389"
+    },
+    {
+      "name": "validateFishingCatch482",
+      "sha256": "2c00c4454be8a597fbf19492a31251508fb47885a6d50b289694877add13afbe"
+    },
+    {
+      "name": "cachedEventsRaw",
+      "sha256": "8f9f5c2483aca40123804a9469f04ad679359262399fffdd2dd91a3da3c5edc5"
+    },
+    {
+      "name": "cachedEventsConfig",
+      "sha256": "40ee46bf07b65a5300b24b8dd69e6f1cf51d149c241ddc65fda3aa7d190de0ef"
+    },
+    {
+      "name": "deepFreeze",
+      "sha256": "c93fb45d7b702d4823146ecab8898e13f885d8ad835579eac59dfc24d478079c"
+    },
+    {
+      "name": "colDecor453",
+      "sha256": "46e75c5d39467c48b0491fc19e03f2581e44eedc4f56f455dd1a4cc6447a521e"
+    },
+    {
+      "name": "OWNER_PLAYER_SQL",
+      "sha256": "1b73e854c533e5648de0352ea596f7d84e91f73b14ed6658cbe1d585c1b1d838"
+    },
+    {
+      "name": "ACTIVE_PLAYERS_SQL",
+      "sha256": "730d64bae44f4a59f44ea675f7d06851eb5a08b084c279ee1fd0505ce27cfaab"
+    },
+    {
+      "name": "worldBatch",
+      "sha256": "86fee6720c59a2417930a0fc6a1d2c04d425577750cd7e3d754621158d9ecdfc"
+    },
+    {
+      "name": "arenaStatements",
+      "sha256": "dc95ad641730e091e5a5020fdea85f103e434d6ba9b9d88717915c6984b967cd"
+    },
+    {
+      "name": "ARENA_QUEUE_TTL_MS",
+      "sha256": "77d20aaf35cad83a38eed384260110f6c3e6db8724855e8f6d114a17752753aa"
+    },
+    {
+      "name": "PVP_REWARD_COOLDOWN_MS",
+      "sha256": "de5d8e2d253000d01bf9b886eb0147d52ea86b8257fd29560882b4191fb07a9d"
+    },
+    {
+      "name": "ACTIVE_GM_ANNOUNCEMENT_SQL",
+      "sha256": "8ce76f92cfc5e84250a5f762b7ff380f18f95a845a97cf506ba341ffbf7a4648"
+    },
+    {
+      "name": "arenaPayloadFromResults",
+      "sha256": "8c6c85b1dc0bc9c236826099811767ebf9332abfeb0692885e9f6576ea1ecf1d"
+    },
+    {
+      "name": "MONSTERS_SQL",
+      "sha256": "21235702a40be798295e44dc218264254973025c195244d15bb5e0138a104808"
+    },
+    {
+      "name": "WORLD_CHAT_SQL",
+      "sha256": "ac7362f2ba38b298bb501dbc074fcd14f5c89d4bcf563699b142c3d99bbcc43c"
+    },
+    {
+      "name": "DROPS_SQL",
+      "sha256": "523c737ed745ce47cc9eef254a4b118b0e23ec0c9ace93d81fee3e8cd022177f"
+    },
+    {
+      "name": "MARKET_LISTINGS_SQL",
+      "sha256": "8c0f1acae43a7564aa2d88b0d87552e621222287e0fa482c4205e4928f68668e"
+    },
+    {
+      "name": "COMBAT_EVENTS_SQL",
+      "sha256": "208d5f002a8eece6c925d9f2d7ccd709f7ca659fa128bf5daa1e2d2b28d9744c"
+    },
+    {
+      "name": "GAME_SETTINGS_SQL",
+      "sha256": "f77c463b3c5d94e59f13ecf21fd5ff26a88c849be785f6865b1c4cee9b1e0daf"
+    },
+    {
+      "name": "ECONOMY_SETTINGS_SQL",
+      "sha256": "f77777e71159fb17990c20d56a2a93723e3bc5bbfd2fb88a23897b98ea51c576"
+    },
+    {
+      "name": "COMBAT_SETTINGS_SQL",
+      "sha256": "165e4c790830af206a4830209ecedac693858f0a0034462a36955c8ef78b08f9"
+    },
+    {
+      "name": "ENCHANT_TIER_KEYS",
+      "sha256": "b023ae2edae5091529e553d9390add8431e625299dadad9787d902886f49f74f"
+    },
+    {
+      "name": "ENCHANT_TIER_DEFAULTS",
+      "sha256": "766a22d6bdfd19fa397b0622508b90494eff8a6e37517ecd99b65e9526f383f8"
+    },
+    {
+      "name": "ENCHANT_TIERS",
+      "sha256": "9c8246ee4268059ee4839d4f8b23ab9d1f448f2bc15b7c3ce5e09b56169d1d35"
+    },
+    {
+      "name": "tierKeys",
+      "sha256": "c2955b112b149999fe637aa5c2f159e9614e0e59d3d06876d1fe1d303a46a918"
+    },
+    {
+      "name": "TIER_SUFFIXES",
+      "sha256": "b3ecbb36e61164556bc368a64e162252f6a95538d78cab46457a3280cfb7ba3a"
+    },
+    {
+      "name": "BOSS_LEADERS_SQL",
+      "sha256": "0d4f31e30125d23c8e4fc34846a2d747db9e27c536127417cb18767f593f0a21"
+    },
+    {
+      "name": "REGIONAL_CHAT_SQL",
+      "sha256": "37514b168f7f1365550e3729d0fdd5974d14d3216b3c056474cbe1b13dfc3ce9"
+    },
+    {
+      "name": "DEFAULT_SETTINGS",
+      "sha256": "878f8488090fd8865cc4f0462fa756f3f4e36326b963b9f8215f92507600fc55"
+    },
+    {
+      "name": "EVOLUTION_DEFAULTS",
+      "sha256": "7f070f947405a4117f05ed9759202a5de3af8f5149c8085737e4f2075480aba1"
+    },
+    {
+      "name": "withRankPlayers",
+      "sha256": "bea3991586591ef8cf64d06ad8355a3f6ac1d877774f4de380a9a189de4cfeda"
+    },
+    {
+      "name": "rankService",
+      "sha256": "42d35ea69fec61c2b598a313e7f7a28bfaec44d4e8927e915c8ca9d408ec3314"
+    },
+    {
+      "name": "guildSkillService",
+      "sha256": "64370835cf024ecf2356795b74034dc3db7dcf081f2e1db8c9875ebfcd5b3bb2"
+    },
+    {
+      "name": "dragonService",
+      "sha256": "e6e23b12f3d35efa4ee3ea15757dd9865aa1caff49e7839e586b5f53c2a48d39"
+    },
+    {
+      "name": "parseMarketPrices",
+      "sha256": "ceb3f7b554e3efcc91faf0ef1dfea4c4bd0f77f2c6c6c4856a0818cea2273fc6"
+    },
+    {
+      "name": "MARKET_PRODUCTS",
+      "sha256": "87dfea19d8ba0f2448b1523af69af6a5e2c1a097ab1913606a41e1b8a5c47616"
+    },
+    {
+      "name": "PREMIUM_ITEMS",
+      "sha256": "4e582b8ae8edb25ab8a17cb8abb6d464fc3fb9e336a3d51c32bd7a66da3e8424"
+    },
+    {
+      "name": "EXTRA_PRODUCTS",
+      "sha256": "08892de996f6db25c4ba971e05ef43596df30fe80d37c0128a84ae57276c4637"
+    }
+  ],
+  "edits": [
+    "Only original full snapshot query/projection/decorator bodies; no HTTP, authentication, repair, subscription or writer functions",
+    "Starter reward is an explicit already-committed admission value",
+    "Channel four included in original rune-boss private-puzzle exclusion"
+  ],
+  "productionAdmissionBound": false,
+  "r31": {
+    "fromRelease": "R30",
+    "previousGeneratedHashes": {
+      "generatedSha256": "8c41f8d1f8378397c1598e079fedc8ddaf39bdbe608dacc8c6ef22575383339c"
+    },
+    "changes": [
+      "canonical single-slot belt stat and XP integration"
+    ]
+  }
+}
