@@ -12,8 +12,7 @@ import {demand} from './contract.mjs';
 import {recoveryWatchdog} from './r47-options.mjs';
 import {captureReturnSessions,rehomeWorldActors} from './global-return.mjs';
 import {coldSettlementResources} from './settlement-resources.mjs';
-import {foregroundClaimScopeR85,foregroundClaimTargetsR85} from './reward-actor-scope-r85.mjs';
-import {sharedClaimMismatchR85} from './shared-claim-rejection-r85.mjs';
+import {foregroundClaimTargetsR85,foregroundScopeR112,assertClaimRefreshR112} from './reward-actor-scope-r85.mjs';
 
 // Private parent pipe. HP and contribution proposals live only in the world
 // owner; this book retains authority until the source confirms local promotion.
@@ -88,12 +87,13 @@ export class SharedCombatBridge {
   try{
    const channels=[...this.core.processes.values()].filter(c=>c.online);demand(channels.length===4,'shared_terminal_channels');
    // Keep the same signed world lease, source durable barrier, native command
-   // and receipt. Only an audited, completed boss/stone claim may select fewer
-   // resident holds. Drain shared contributions before deriving its SQL scope.
-   if(actorFaultIsolation&&sourcePlayers.length===1&&foregroundClaimTargetsR85(payload.foregroundClaimR85)){
+   // and receipt. Audited attack/claim scopes select only affected residents.
+   // Drain shared contributions before deriving the authoritative SQL scope.
+   const scopedInput=payload.foregroundAttackR112?.action==='attack'?payload.foregroundAttackR112:sourcePlayers.length===1&&foregroundClaimTargetsR85(payload.foregroundClaimR85)?payload.foregroundClaimR85:null;
+   if(actorFaultIsolation&&scopedInput){
     await row.world.control.request('shared_checkpoint',{peer:row.source,proof:row.proof});demand(current(),'shared_prepare_superseded');
-    const scope=foregroundClaimScopeR85(this.core.database.sqlite,payload.foregroundClaimR85,row.source.actor,peer.channel);
-    if(scope)held.foregroundClaimR85={scope,input:JSON.stringify(payload.foregroundClaimR85)};
+    const scope=foregroundScopeR112(this.core.database.sqlite,scopedInput,row.source.actor,peer.channel);
+    if(scope&&sourcePlayers.every(p=>scope.actors.includes(p.id)))held.foregroundClaimR85={scope,input:JSON.stringify(scopedInput),operation:scopedInput.action==='attack'?'attack':'native_action'};
    }
    if(held.foregroundClaimR85){
     const selected=held.foregroundClaimR85.only=new Map(channels.map(c=>[c.peer.channel,[]]));
@@ -143,7 +143,7 @@ export class SharedCombatBridge {
  }
  assertWrite(sql,payload,context){
   const held=this.terminal,row=held?.row;demand(held?.phase==='frozen'&&row.source.actor===context.actor&&row.source.epoch===context.epoch&&row.source.incarnation===context.peer.incarnation&&payload.sharedLease===row.proof,'shared_terminal_writer_fenced');
-  this.assertClaimCommand(held,payload,'native_action');
+  this.assertClaimCommand(held,payload,held.foregroundClaimR85?.operation??'native_action');
   for(const p of held.stopped?.values()??[])demand(stoppedOwnerMatchesR533(this.core,p,sql),'shared_stopped_actor_changed');
   for(const {channel,answer}of held.channels)for(const actor of answer.actors){const current=this.core.authority.owner(actor.id,sql);demand(current?.channel===channel.peer.channel&&current.incarnation===channel.peer.incarnation&&current.epoch===actor.epoch&&current.sequence===actor.sequence,'shared_terminal_actor_changed');}
   return true;
@@ -170,12 +170,12 @@ export class SharedCombatBridge {
   // other global terminalIdle() waiters still join EVERY channel release.
   for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);if(recoveryWatchdog)demand(!this.core.recoveringWorld,'global_world_busy');await new Promise((resolve,reject)=>this.waiters.add({resolve,reject,peer,request}));this.core.process(peer);}
  }
- assertRefresh(payload,result,context){const h=this.terminal,claim=h?.foregroundClaimR85;if(!claim)return true;const audit=result?.sharedRefresh;if(!(payload.sharedLease===h.row.proof&&audit?.version===1&&audit.all===false&&Array.isArray(audit.actors)&&audit.actors.every(id=>claim.scope.actors.includes(id))))throw sharedClaimMismatchR85(payload,context);return true;}
- claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||JSON.stringify(foregroundClaimScopeR85(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
+ assertRefresh(payload,result,context){const h=this.terminal;return assertClaimRefreshR112(h?.foregroundClaimR85,h?.row.proof,payload,result,context);}
+ claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||JSON.stringify(foregroundScopeR112(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
  assertClaimCommand(held,payload,operation){
   const claim=held?.foregroundClaimR85;if(!claim)return;
   const actors=new Set(claim.scope.actors),resources=payload.resources??[],ids=resources.filter(k=>k.startsWith('player:')).map(k=>k.slice(7));
-  demand(operation==='native_action'&&JSON.stringify(payload.input)===claim.input&&ids.every(id=>actors.has(id))&&claim.scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
+  demand(operation===(claim.operation??'native_action')&&JSON.stringify(payload.input)===claim.input&&ids.every(id=>actors.has(id))&&claim.scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
  }
  guard(peer,request){
   const active=this.terminal;
@@ -294,7 +294,7 @@ export class SharedCombatBridge {
      // its held actors. Do not make their next normal kill wait for a slower
      // sibling. Shared ownership and the source world lease remain held.
      if(this.channelReleaseR111){entry.releasedR111=true;this.wakeWritable();}
-     (this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();
+     (this.refreshTrace??=[]).push({at:Date.now(),operation:row.id,kind:row.commandRequest?.operation??null,action:row.commandRequest?.payload?.input?.action??null,scoped:!!held.foregroundClaimR85,channel:channel.peer.channel,heldActors:answer.actors.length,refreshActors:entry.refreshActors.length,tables:invalidation?.tables??null,...ack.refresh});if(this.refreshTrace.length>2048)this.refreshTrace.shift();
     }));
     demand(current(),'shared_finish_superseded');this.terminal=null;released=true;this.wake();
    }

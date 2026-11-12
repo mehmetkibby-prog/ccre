@@ -1,3 +1,4 @@
+import {assertClaimWorkerScopeR112,assertClaimRefreshR112} from './reward-actor-scope-r85.mjs';
 import {statSync} from 'node:fs';
 import {deathBatchWorkerCallR57} from './death-batch-writer-r57.mjs';
 import {statementBootPoolR61,prepareCombatStatementBootR61} from './statement-boot-pool-r61.mjs';
@@ -34,7 +35,8 @@ export async function runRewardWorkerR533({hook=()=>{}}={}){
   return true;
  };
  writer.sharedCombat={
-  assertWrite(db,payload,context){const h=current?.shared;demand(h&&payload.sharedLease===h.proof&&context.actor===current.request.playerId&&context.epoch===current.request.epoch,'reward_worker_shared_scope');for(const p of h.owners){const o=writer.authority.owner(p.id,db);demand(o&&['channel','incarnation','epoch','sequence','state'].every(k=>o[k]===p[k]),'shared_terminal_actor_changed');}return true;},
+  assertWrite(db,payload,context){const h=current?.shared;demand(h&&payload.sharedLease===h.proof&&context.actor===current.request.playerId&&context.epoch===current.request.epoch,'reward_worker_shared_scope');assertClaimWorkerScopeR112(db,h.claimR112,payload,context);for(const p of h.owners){const o=writer.authority.owner(p.id,db);demand(o&&['channel','incarnation','epoch','sequence','state'].every(k=>o[k]===p[k]),'shared_terminal_actor_changed');}return true;},
+  assertRefresh(payload,result,context){const h=current?.shared;return assertClaimRefreshR112(h?.claimR112,h?.proof,payload,result,context);},
   allows(id,peer,request){const h=current?.shared;return Boolean(h&&request.payload?.sharedLease===h.proof&&request.playerId===current.request.playerId&&peer.channel===current.peer.channel&&peer.incarnation===current.peer.incarnation&&h.actors.includes(id));}
  };
  await writer.initialize();

@@ -32,6 +32,15 @@ export async function drainCombatCheckpoints(channel,ids){
  const failed=(retiredActorIsolation&&settled.find(result=>result.status==='rejected'&&!rejectedCheckpoint(result.reason,channel,ids)))||settled.find(result=>result.status==='rejected');if(failed)throw failed.reason;
 }
 
+// Scoped holds leave unrelated maps running. Their channel journal may still
+// be acknowledging a checkpoint after the native terminal COMMIT. Join that
+// exact ACK before installing the new baseline; never clear pending or bypass
+// its error. Target monster lanes remain held throughout this operation.
+export async function commitSharedCombatR112(channel,local){
+ if(channel.combatCheckpoints.pending)await channel.combatCheckpoints.pending;
+ channel.attackMemory.committed(local);channel.combatCheckpoints.committed(local);
+}
+
 export class SharedCombatChannel {
  constructor(runtime){this.runtime=runtime;this.channel=runtime.channel;this.pending=new Map();this.planning=null;this.held=null;this.abortedHolds=new Map();}
  async idle(){await Promise.all([...new Set(this.pending.values())].map(row=>row.completion));}
@@ -149,13 +158,13 @@ export class SharedCombatChannel {
      // Submit both drains together so the native writer can group their fsync;
      // every receipt still finishes before the terminal barrier/kill begins.
      await drainCombatCheckpoints(c,ids);c.lanes.assert(row.lease);
-     row.prepareStarted=true;const prepared=await this.runtime.request('shared_prepare',this.scope(row,{players:ids}));if(actorFaultIsolation&&prepared?.prepared===false&&prepared.rejected===true)return await this.rejectedPreparation(row);demand(prepared.prepared,'shared_terminal_prepare');const fresh=frame(),resources=[...new Set([...row.lease.keys,...prepared.players.map(pid=>'player:'+pid)])],payload={nowMs:now,receivedAtMs,seed:row.seed,input,resources,sharedLease:row.proof,...(input.action==='attack'?{expected:{player:fresh.player,monster:fresh.preloadedAttackMonster,settings:fresh.settings}}:{expected:fresh.actionSnapshot,originalSnapshot:original.originalSnapshot??original.actionSnapshot})};
+     row.prepareStarted=true;const prepared=await this.runtime.request('shared_prepare',this.scope(row,{players:ids,...(input.action==='attack'?{foregroundAttackR112:input}:{})}));if(actorFaultIsolation&&prepared?.prepared===false&&prepared.rejected===true)return await this.rejectedPreparation(row);demand(prepared.prepared,'shared_terminal_prepare');const fresh=frame(),resources=[...new Set([...row.lease.keys,...prepared.players.map(pid=>'player:'+pid)])],payload={nowMs:now,receivedAtMs,seed:row.seed,input,resources,sharedLease:row.proof,...(input.action==='attack'?{expected:{player:fresh.player,monster:fresh.preloadedAttackMonster,settings:fresh.settings}}:{expected:fresh.actionSnapshot,originalSnapshot:original.originalSnapshot??original.actionSnapshot})};
      const ack=await c.writer.submit({actor:id,key:'shared:'+row.id,kind:input.action,payload});demand(ack.key==='shared:'+row.id&&ack.result,'shared_terminal_ack');c.lanes.assert(row.lease);const value=this.residentResult(ack.result,prepared);
      demand((value.players??[]).every(p=>!c.owners.has(p.id)||ids.includes(p.id)||prepared.players.includes(p.id)),'shared_terminal_unlocked_actor');
      // The shared projection is published by its owner after durable reload.
      row.returnMoves=value.moves?.length?value.moves:null;const moved=new Set((row.returnMoves??[]).map(m=>m.id));
      await c.applyCommit({...value,players:(value.players??[]).filter(p=>!moved.has(p.id)),monsters:(value.monsters??[]).filter(m=>m.channel!==0)});
-     const local={monsters:(value.monsters??[]).filter(m=>m.channel!==0),participants:(value.participants??[]).filter(p=>!row.sharedIds.has(p.monster_id)),bossParticipants:(value.bossParticipants??[]).filter(p=>!row.snapshot.monsters.some(m=>m.is_boss&&m.spawn_round===p.boss_round))};c.attackMemory.committed(local);c.combatCheckpoints.committed(local);
+     const local={monsters:(value.monsters??[]).filter(m=>m.channel!==0),participants:(value.participants??[]).filter(p=>!row.sharedIds.has(p.monster_id)),bossParticipants:(value.bossParticipants??[]).filter(p=>!row.snapshot.monsters.some(m=>m.is_boss&&m.spawn_round===p.boss_round))};await commitSharedCombatR112(c,local);
      for(const p of value.players??[])if(ids.includes(p.id)&&!moved.has(p.id))c.checkpoints.hydrate(c.view.player(p.id));if(value.encounters){for(const [pid,e]of value.encounters)if(!moved.has(pid))c.encounters.hydrateCommitted(pid,e);}else c.encounters.hydrateCommitted(id,value.engagement);
      if(row.returnMoves){demand(this.held,'shared_return_hold_missing');row.suspension=new Map(ids.map(pid=>[pid,kernel.players.get(pid).suspended]));for(const pid of ids){const p=kernel.players.get(pid);p.externalHold=this.held.token;p.suspended=true;}}
      result={result:value.result,events:value.events};const finished=await this.runtime.request('shared_finish',this.scope(row,{changes:empty()}));if(row.returnMoves)demand(finished.returning&&finished.token===this.held.token,'shared_return_finish_ack');

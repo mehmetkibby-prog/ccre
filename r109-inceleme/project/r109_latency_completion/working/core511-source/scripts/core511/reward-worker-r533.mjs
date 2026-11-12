@@ -51,7 +51,7 @@ export class RewardWorkerR533 {
   const ids=new Set([...c.actorIsolation.entries.keys(),...c.actorIsolation.unknownActors.keys(),...c.permanent.entries.keys(),...c.transitions.keys()]);
   for(const id of ids){const key='player:'+id,probe=request.payload.resources.includes(key)?request:{...request,payload:{...request.payload,resources:[...request.payload.resources,key]}};try{c.authority.commandGuard(sql,peer,probe);}catch(error){demand(scopeCodes.has(error.code),'reward_worker_guard_snapshot');blocked.push([id,error.code]);}}
   let snapshot=null;
-  if(request.payload.sharedLease){shared.assertWrite(sql,request.payload,context);const actors=[...new Set([...h.channels.flatMap(ch=>ch.answer.actors.map(p=>p.id)),...(h.stopped?.keys()??[])])];snapshot={proof:h.row.proof,actors,owners:actors.map(id=>({id,...Object.fromEntries(['channel','incarnation','epoch','sequence','state'].map(k=>[k,c.authority.owner(id,sql)[k]]))}))};}
+  if(request.payload.sharedLease){shared.assertWrite(sql,request.payload,context);const actors=[...new Set([...h.channels.flatMap(ch=>ch.answer.actors.map(p=>p.id)),...(h.stopped?.keys()??[])])];snapshot={proof:h.row.proof,claimR112:h.foregroundClaimR85?{scope:h.foregroundClaimR85.scope,input:h.foregroundClaimR85.input}:null,actors,owners:actors.map(id=>({id,...Object.fromEntries(['channel','incarnation','epoch','sequence','state'].map(k=>[k,c.authority.owner(id,sql)[k]]))}))};}
   const registry=globalThis.__colLoadLab;demand(registry?.snapshot&&registry.faults,'reward_worker_registry');
   return {peer,request,clockNow:c.clock(),presence:stamps,blocked,shared:snapshot,registry:registry.snapshot(),registryFaults:registry.faults()};
  }

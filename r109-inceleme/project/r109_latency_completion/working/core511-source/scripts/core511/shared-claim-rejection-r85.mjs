@@ -7,15 +7,15 @@ import {kernelError} from './contract.mjs';
 const mismatches=new WeakMap(),rolledBack=new WeakSet();
 export function sharedClaimMismatchR85(payload,context){
  const error=kernelError('shared_terminal_actor_fenced');
- if(payload?.input?.action==='claim_rewards'&&typeof payload.sharedLease==='string'&&context?.peer){
-  mismatches.set(error,{actor:context.actor,epoch:context.epoch,key:context.key,sequence:context.sequence,channel:context.peer.channel,incarnation:context.peer.incarnation,sharedLease:payload.sharedLease});
+ if(['claim_rewards','attack'].includes(payload?.input?.action)&&typeof payload.sharedLease==='string'&&context?.peer){
+  mismatches.set(error,{operation:payload.input.action==='attack'?'attack':'native_action',actor:context.actor,epoch:context.epoch,key:context.key,sequence:context.sequence,channel:context.peer.channel,incarnation:context.peer.incarnation,sharedLease:payload.sharedLease});
  }
  return error;
 }
 export const isSharedClaimMismatchR85=error=>mismatches.has(error);
 export function markSharedClaimRollbackR85(error){if(mismatches.has(error))rolledBack.add(error);}
 export function sharedClaimRollbackProofR85(error,peer,request){
- if(!rolledBack.has(error)||error?.code!=='shared_terminal_actor_fenced'||request.operation!=='native_action'||request.payload?.input?.action!=='claim_rewards')return null;
+ if(!rolledBack.has(error)||error?.code!=='shared_terminal_actor_fenced'||!['native_action','attack'].includes(request.operation))return null;
  const p=mismatches.get(error);
- return p&&p.actor===request.playerId&&p.epoch===request.epoch&&p.key===request.operationId&&p.sequence===request.sequence&&p.channel===peer.channel&&p.incarnation===peer.incarnation&&p.sharedLease===request.payload.sharedLease?p:null;
+ return p&&p.operation===request.operation&&p.actor===request.playerId&&p.epoch===request.epoch&&p.key===request.operationId&&p.sequence===request.sequence&&p.channel===peer.channel&&p.incarnation===peer.incarnation&&p.sharedLease===request.payload.sharedLease?p:null;
 }

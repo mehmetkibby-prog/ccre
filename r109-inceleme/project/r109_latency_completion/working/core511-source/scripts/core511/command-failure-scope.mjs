@@ -41,7 +41,7 @@ export class CommandFailureScope {
   sql.exec('SAVEPOINT core511_owned_command');state.active=scope;
   try{const result=work();demand(!result?.then,'command_failure_async');assertCommandOutputSize(result,context);sql.exec('RELEASE core511_owned_command');return result;}
   catch(error){
-   if(kind==='native_action'&&isSharedClaimMismatchR85(error)&&sql.isTransaction){
+   if(['native_action','attack'].includes(kind)&&isSharedClaimMismatchR85(error)&&sql.isTransaction){
     sql.exec('ROLLBACK TO core511_owned_command; RELEASE core511_owned_command');
     this.onRollback(checkpoint);for(const preserve of scope.preserved)demand(!preserve()?.then,'command_failure_async_preserve');
     markSharedClaimRollbackR85(error);throw error;
