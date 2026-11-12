@@ -3,7 +3,6 @@ import {sharedClaimMismatchR85} from './shared-claim-rejection-r85.mjs';
 import {demand} from './contract.mjs';
 import {prepareCached477} from './writer-statements.mjs';
 import {normalizeClaimTargets} from './claim-chunks.mjs';
-import {dungeonFreezeActorsR71} from './dungeon-freeze-scope-r71.mjs';
 
 // The same recipient superset serves background delivery and foreground
 // claims. Keep native eligibility/reward SQL authoritative: historical paid
@@ -19,6 +18,22 @@ export function scopedRewardActorsR79(sql,target){
  const ids=new Set(actors);
  if(target.kind!=='drops')for(const id of actors)for(const row of prepareCached477(sql,`SELECT team.player_id AS id FROM party_members mine JOIN party_members team ON team.party_id=mine.party_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?`).all(id))ids.add(row.id);
  return [...ids].filter(id=>prepareCached477(sql,'SELECT 1 FROM players WHERE id=?').get(id)).sort();
+}
+
+
+// Compute the complete relation component, not one pass through each group.
+// Otherwise an unheld party mate of a selected guild/room member could start
+// a reward that writes a held actor. The realm bound remains conservative.
+export function expandRewardActorsR112(sql,initial){
+ const actors=new Set(initial),queue=[...actors];if(actors.size>100)return null;
+ const related=prepareCached477(sql,`SELECT p.id FROM (
+  SELECT team.player_id AS id FROM party_members mine JOIN party_members team ON team.party_id=mine.party_id WHERE mine.player_id=?
+  UNION SELECT team.player_id FROM guild_members mine JOIN guild_members team ON team.guild_id=mine.guild_id WHERE mine.player_id=?
+  UNION SELECT team.player_id FROM dungeon_members mine JOIN dungeon_members team ON team.run_id=mine.run_id WHERE mine.player_id=?
+  UNION SELECT team.player_id FROM adventure_members mine JOIN adventure_members team ON team.run_id=mine.run_id WHERE mine.player_id=? AND mine.departed=0 AND team.departed=0
+ ) related JOIN players p ON p.id=related.id`);
+ for(let i=0;i<queue.length;i++)for(const {id}of related.all(queue[i],queue[i],queue[i],queue[i]))if(!actors.has(id)){actors.add(id);if(actors.size>100)return null;queue.push(id);}
+ return [...actors].sort();
 }
 
 // A bounded, explicitly audited native claim only. Mixed/oversized requests,
@@ -56,12 +71,7 @@ export function foregroundClaimScopeR85(sql,input,actor,channel){
   for(const id of scopedRewardActorsR79(sql,boss?{kind:'boss',round:target.spawnRound}:{kind:'sinsi',id:target.id,round:target.spawnRound}))actors.add(id);
   if(actors.size>100)return null;
  }
- // Guild reward projections invalidate every current guild member, including
- // offline members. Include them before freezing, then recheck inside SQL.
- for(const id of [...actors])for(const row of prepareCached477(sql,'SELECT team.player_id AS id FROM guild_members mine JOIN guild_members team ON team.guild_id=mine.guild_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?').all(id))actors.add(row.id);
- if(actors.size>100)return null;
- let expanded;
- try{expanded=dungeonFreezeActorsR71(sql,[...actors]);}catch(error){if(error?.code==='permanent_dungeon_scope_capacity')return null;throw error;}
+ const expanded=expandRewardActorsR112(sql,actors);if(!expanded)return null;
  if(expanded.some(id=>!prepareCached477(sql,'SELECT 1 FROM players WHERE id=?').get(id)))return null;
  return {cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,targets,actors:expanded.sort()};
 }
@@ -72,7 +82,7 @@ export function foregroundClaimScopeR85(sql,input,actor,channel){
 // World-ending targets retain the broad path. Tower/mist rooms also require
 // the existing active-run/cycle/member/profile proof and every current member.
 export function foregroundAttackScopeR112(sql,input,actor,channel){
- if(input?.action!=='attack')return null;
+ if(input?.action!=='attack'||typeof input.targetId!=='string'||!/^[a-z0-9-]{1,64}$/.test(input.targetId))return null;
  const p=prepareCached477(sql,'SELECT area,channel,arena_match_id FROM players WHERE id=?').get(actor);
  if(!p||p.channel!==channel||p.arena_match_id||!['forest','frozen','ancient','black','rune_v2'].includes(p.area)&&!instanceRewardAreaR71(p.area))return null;
  const m=prepareCached477(sql,'SELECT id,area,channel,spawn_round FROM monsters WHERE id=?').get(input.targetId);
@@ -85,10 +95,7 @@ export function foregroundAttackScopeR112(sql,input,actor,channel){
  // Include all historic participants in all potentially affected local/shared
 // mobs. No distance approximation and no mutable cached party membership.
  for(const r of prepareCached477(sql,`SELECT DISTINCT mp.player_id AS id FROM monster_participants mp JOIN monsters m ON m.id=mp.monster_id AND m.spawn_round=mp.spawn_round JOIN players p ON p.id=mp.player_id WHERE m.area=? AND m.channel IN (0,?)`).all(p.area,channel))actors.add(r.id);
- for(const id of [...actors])for(const r of prepareCached477(sql,'SELECT team.player_id AS id FROM party_members mine JOIN party_members team ON team.party_id=mine.party_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?').all(id))actors.add(r.id);
- for(const id of [...actors])for(const r of prepareCached477(sql,'SELECT team.player_id AS id FROM guild_members mine JOIN guild_members team ON team.guild_id=mine.guild_id JOIN players p ON p.id=team.player_id WHERE mine.player_id=?').all(id))actors.add(r.id);
- if(actors.size>100)return null;
- let expanded;try{expanded=dungeonFreezeActorsR71(sql,[...actors]);}catch(e){if(e?.code==='permanent_dungeon_scope_capacity')return null;throw e;}
+ const expanded=expandRewardActorsR112(sql,actors);if(!expanded)return null;
  return {cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,area:p.area,target:{id:m.id,spawnRound:m.spawn_round},actors:expanded.sort()};
 }
 export const foregroundScopeR112=(sql,input,actor,channel)=>input?.action==='attack'?foregroundAttackScopeR112(sql,input,actor,channel):foregroundClaimScopeR85(sql,input,actor,channel);

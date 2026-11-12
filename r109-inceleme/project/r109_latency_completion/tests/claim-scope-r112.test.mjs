@@ -10,7 +10,7 @@ function fixture(t){
  CREATE TABLE monsters(id TEXT PRIMARY KEY,channel INTEGER,is_boss INTEGER,is_stone INTEGER,area TEXT,spawn_round INTEGER);
  CREATE TABLE normal_defeats(monster_id TEXT,spawn_round INTEGER,loot_source_key TEXT);
  CREATE TABLE monster_participants(monster_id TEXT,spawn_round INTEGER,player_id TEXT);
- CREATE TABLE party_members(party_id TEXT,player_id TEXT);CREATE TABLE guild_members(guild_id TEXT,player_id TEXT);CREATE TABLE dungeon_members(run_id TEXT,player_id TEXT);
+ CREATE TABLE party_members(party_id TEXT,player_id TEXT);CREATE TABLE guild_members(guild_id TEXT,player_id TEXT);CREATE TABLE dungeon_members(run_id TEXT,player_id TEXT);CREATE TABLE adventure_members(run_id TEXT,player_id TEXT,departed INTEGER);
  CREATE TABLE loadlab_boss_rounds_v1(monster_id TEXT,boss_round INTEGER);
  CREATE TABLE player_items(id TEXT PRIMARY KEY,player_id TEXT,item_type TEXT);
  INSERT INTO players VALUES('source','forest',1,NULL),('mate','forest',2,NULL),('guild','forest',3,NULL),('room','forest',4,NULL),('unrelated','forest',4,NULL);
@@ -72,9 +72,17 @@ test('a scoped shared commit joins an unrelated in-flight journal without losing
 
 test('tower and mist scope follows the exact active run and includes a member on another floor',t=>{
  const s=fixture(t),run='abcdef00-0000-0000-0000-000000000000',area='kadim_abcdef00000000000000000000000000_01';
- s.sql.exec('CREATE TABLE adventure_runs(id TEXT,kind TEXT,area TEXT,channel INTEGER,cycle INTEGER,status TEXT);CREATE TABLE adventure_members(run_id TEXT,player_id TEXT,departed INTEGER);CREATE TABLE adventure_monsters(id TEXT,run_id TEXT,area TEXT,profile TEXT)');
+ s.sql.exec('CREATE TABLE adventure_runs(id TEXT,kind TEXT,area TEXT,channel INTEGER,cycle INTEGER,status TEXT);CREATE TABLE adventure_monsters(id TEXT,run_id TEXT,area TEXT,profile TEXT)');
  s.sql.prepare('INSERT INTO adventure_runs VALUES(?,?,?,?,?,?)').run(run,'tower',area,1,5,'active');s.sql.prepare('INSERT INTO adventure_members VALUES(?,?,0)').run(run,'source');s.sql.prepare('INSERT INTO adventure_members VALUES(?,?,0)').run(run,'unrelated');s.sql.prepare('INSERT INTO adventure_monsters VALUES(?,?,?,?)').run('normal-1',run,area,JSON.stringify({runId:run,feature:'tower'}));
  s.sql.prepare('UPDATE players SET area=? WHERE id=?').run(area,'source');s.sql.prepare('UPDATE monsters SET area=?').run(area);
  const input={action:'attack',targetId:'normal-1',spawnRound:7};assert(foregroundAttackScopeR112(s.sql,input,'source',1).actors.includes('unrelated'));
  s.sql.exec('UPDATE adventure_runs SET cycle=6');assert.equal(foregroundAttackScopeR112(s.sql,input,'source',1),null);
+});
+
+
+test('group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path',t=>{
+ const s=fixture(t);s.sql.exec("INSERT INTO party_members VALUES('other-party','room'),('other-party','unrelated')");
+ assert(s.scope().actors.includes('unrelated'));
+ assert(foregroundAttackScopeR112(s.sql,{action:'attack',targetId:'normal-1'},'source',1).actors.includes('unrelated'));
+ for(const targetId of [null,undefined,{},'x'.repeat(65)])assert.equal(foregroundAttackScopeR112(s.sql,{action:'attack',targetId},'source',1),null);
 });
