@@ -93,7 +93,7 @@ async function command(method,value){
    // actor's socket while measuring (a frozen relay shows up as a long gap).
    class Socket extends WebSocket{constructor(url){super(url,{origin:serverOrigin,headers:{'X-Test-Actor':String(a.n)}});this.on('close',()=>{a.lastMessageAt=undefined;count('socketCloses');});this.on('error',()=>count('socketErrors'));this.on('message',()=>{const now=performance.now();if(measuring){a.messages++;if(a.lastMessageAt!==undefined)a.messageGaps.push(now-a.lastMessageAt);}a.lastMessageAt=now;});}}
    a.fetch=(url,opt={})=>fetch(origin+new URL(url,origin).pathname+new URL(url,origin).search,{...opt,headers:{origin:serverOrigin,cookie:'__Host-yasam-session='+a.token+'; __Host-yasam-csrf='+a.csrf,'X-CSRF-Token':a.csrf,'X-Game-Instance':a.instance,'X-Real-IP':'198.51.100.'+(a.n+1),'content-type':'application/json'}});
-   a.client=new Core511Transport({WebSocket:Socket,origin,headers:()=>({}),fetch:a.fetch,notify:(kind,v)=>{if(kind==='event'){observePopulationFinalEvent(a,v);delivery.event(a.n,v,performance.now());}if(kind==='error'&&errors.length<100)errors.push({actor:a.n,kind,value:v});}});
+   a.client=new Core511Transport({WebSocket:Socket,origin,headers:()=>({}),fetch:a.fetch,notify:(kind,v)=>{if(kind==='world')delivery.world(a.n,v,performance.now());if(kind==='event'){observePopulationFinalEvent(a,v);delivery.event(a.n,v,performance.now());}if(kind==='error'&&errors.length<100)errors.push({actor:a.n,kind,value:v});}});
    await a.client.replace('character',{channel:a.channel});await a.client.image();assert(a.client.ready,'ready actor '+a.n);
   }
   for(const a of actors){
