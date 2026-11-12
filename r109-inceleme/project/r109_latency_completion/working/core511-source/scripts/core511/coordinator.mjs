@@ -52,20 +52,8 @@ import {SignedSecurityRenewal,securityRenewalR50} from './security-renewal-r50.m
 // Per-incarnation sequence watermarks make eviction fail closed: an old IPC
 // request can never become a fresh budget reservation or notification ACK.
 // Durable game commands additionally retain their original SQLite receipts.
-export class IpcReplay {
- constructor({limit=512}={}){this.limit=limit;this.prefix=null;this.high=0;this.rows=new Map();}
- run(id,method,payload,work){
-  const match=typeof id==='string'&&/^([a-f0-9-]{36}):([1-9][0-9]{0,14})$/.exec(id);demand(match,'ipc_request_identity');
-  const serial=Number(match[2]);demand(Number.isSafeInteger(serial)&&(!this.prefix||this.prefix===match[1]),'ipc_request_identity');
-  const fingerprint=JSON.stringify([method,payload]),old=this.rows.get(serial);
-  if(old){demand(old.fingerprint===fingerprint,'ipc_request_id_reused');return old.promise;}
-  demand(serial>this.high&&serial<=this.high+128,'ipc_request_retired');
-  this.prefix=match[1];this.high=serial;
-  const row={fingerprint,done:false,promise:null};this.rows.set(serial,row);
-  row.promise=Promise.resolve().then(work).finally(()=>{row.done=true;for(const [key,value]of this.rows){if(this.rows.size<=this.limit)break;if(value.done)this.rows.delete(key);}});
-  return row.promise;
- }
-}
+import {IpcReplay} from './ipc-replay-r111.mjs';
+export {IpcReplay};
 
 // The coordinator owns authentication, four process identities, tickets and
 // cold transitions. No gameplay timer or duplicate simulation runs here.
