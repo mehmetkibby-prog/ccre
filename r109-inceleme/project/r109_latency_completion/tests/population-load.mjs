@@ -32,7 +32,7 @@ const {WebSocket}=await import('/tmp/core511-build-deps/node_modules/ws/wrapper.
 const hash=x=>createHash('sha256').update(x).digest('base64url');
 const pause=ms=>new Promise(r=>setTimeout(r,ms)),clean=[],actors=[],bridges=[],errors=[],counts={attacks:0,moves:0,replies:0};
 const hostStats=()=>({...Object.fromEntries(['cpu.stat','cpu.pressure','memory.events','memory.pressure','io.pressure'].map(n=>[n,fs.existsSync('/sys/fs/cgroup/'+n)?fs.readFileSync('/sys/fs/cgroup/'+n,'utf8'):null])),procCpu:fs.readFileSync('/proc/stat','utf8').split('\n')[0]});
-const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null;
+const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null,census=null;
 const inspect=(method,params={})=>new Promise((resolve,reject)=>inspector.post(method,params,(error,result)=>error?reject(error):resolve(result)));
  let s,timer,panel,measuring=false,report={players:N,label,realm:process.env.CORE101_REALM_ID||'r1',durationRequestedMs:duration,workload:process.env.POPULATION_MODE||'mixed',fixture:{monsterHp:85,monsterDamage:9,playerStatHp:1000000,channelCapacity:capacity,channelDistribution:process.env.LOAD_DISTRIBUTION==='packed'?'fill-each-channel-to-real-capacity':'balanced-four-channels',liveAccess:false,coLocatedBots:false,separateBotProcess:true}},runId=randomUUID();
  const scope={after:f=>clean.push(f)},sharedAcquires={};
@@ -51,6 +51,8 @@ try{
   const original=globalThis.fetch;clean.push(()=>{globalThis.fetch=original;});
   globalThis.fetch=(url,opt)=>opt?.headers?.['x-col-service-path']==='/internal/launch/status'?Promise.resolve(Response.json({phase:'normal',showLanding:false,canPlay:true,registrationOpen:true,serverTime:Date.now()})):original(url,opt);
   const q=host.database.sqlite;
+  // Test-only census below every runtime wrapper; counts the measured window only.
+  if(process.env.SQL_CENSUS==='1'){const {installSqlCensus}=await import('./sql-census.mjs');census=installSqlCensus(q,{active:()=>measuring});}
   if(process.env.SQL_DIAGNOSTIC==='1'){
    const original=q.prepare;
    q.prepare=function(query,...options){const statement=original.call(this,query,...options);for(const name of ['all','get','run']){const invoke=statement[name];statement[name]=function(...params){const at=performance.now();try{return invoke.apply(this,params);}finally{const ms=performance.now()-at;if(measuring&&ms>=1&&sqlDiagnostic.length<250){const row={query,method:name,ms,atMs:performance.timeOrigin+at};sqlDiagnostic.push(row);if(process.env.SQL_PLAN_DIAGNOSTIC==='1'&&query.includes('curve(level,total_xp,next_cost)'))row.plan=original.call(q,'EXPLAIN QUERY PLAN '+query).all(...params);}}};}return statement;};
@@ -96,6 +98,7 @@ try{
  await pause(duration);measuring=false;clearInterval(timer);timer=null;
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
+ if(census)report.sqlCensus=census.report();
  report.channelProfiles=[];
  for(const n of profileChannels)report.channelProfiles.push({channel:n,...await s.core.processes.get(n).control.request('benchmark_profile',{operation:'end',runId})});
  // Read the existing bounded diagnostic recorder after the measured window.
