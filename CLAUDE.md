@@ -1,5 +1,16 @@
 # Claude için başlangıç
 
+## GÜNCEL CANLI DURUM (12 Kasım 2026) — önce bunu oku
+
+Canlıda artık **R110_HANDOFF1** kurulu (Efsane + Akademi). Ne yapıldığı,
+hangi dosyaların değiştiği, testler ve sonraki paket için şablon:
+`r109-inceleme/CHATGPT_DEVIR_R110.md`. Güncel kod yine
+`r109-inceleme/project/r109_latency_completion/working` (içerik R110).
+Sonraki kurulum paketinin kaynak sürümü R110_HANDOFF1 olmalıdır; R109/R110
+ZIP'leri tekrar uygulanmaz. Aşağıda geçen "R110/R111 denemeleri" ifadesi
+`measurements/not-installed/` altındaki eski, kurulmamış denemeleri anlatır;
+kurulu R110_HANDOFF1 ile karıştırma.
+
 Kullanıcı oyundaki donma/gecikme sorunlarını bulup düzeltmeni istiyor. Başlangıç
 **R109_LATENCY2**, kod `r109-inceleme/project/r109_latency_completion/working`.
 Diğer `project/r*` dizinleri eski karşılaştırma/kurulum girdileridir; onları güncel
