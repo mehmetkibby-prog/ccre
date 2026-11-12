@@ -1,0 +1,45 @@
+[
+  {
+    "name": "focused",
+    "command": [
+      "npm",
+      "test"
+    ],
+    "exit": 0,
+    "seconds": 38.43,
+    "log": "validation/r111-baseline/focused.log"
+  },
+  {
+    "name": "native",
+    "command": [
+      "npm",
+      "run",
+      "test:native"
+    ],
+    "exit": 0,
+    "seconds": 134.7,
+    "log": "validation/r111-baseline/native.log"
+  },
+  {
+    "name": "captcha",
+    "command": [
+      "npm",
+      "run",
+      "test:captcha"
+    ],
+    "exit": 0,
+    "seconds": 129.91,
+    "log": "validation/r111-baseline/captcha.log"
+  },
+  {
+    "name": "r110",
+    "command": [
+      "npm",
+      "run",
+      "test:r110"
+    ],
+    "exit": 0,
+    "seconds": 81.9,
+    "log": "validation/r111-baseline/r110.log"
+  }
+]

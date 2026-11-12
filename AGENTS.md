@@ -16,3 +16,7 @@ template). The active tree still lives in
 r109-inceleme/project/r109_latency_completion/working (its content is R110).
 A next installer must use R110_HANDOFF1 as its source. The older
 measurements/not-installed/r110_* and r111_* experiments were never installed.
+
+For the Codex continuation, read r109-inceleme/R111_BASLANGIC.md after the
+R110 handoff. It records the verified R110 baseline and local test evidence;
+it does not represent a released or installed R111 version.

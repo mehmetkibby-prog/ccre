@@ -1,4 +1,10 @@
-# R109 inceleme dosyaları
+# Core of Life inceleme dosyaları — güncel taban R110_HANDOFF1
+
+12 Kasım 2026 devir bilgisine göre Efsane ve Akademi'de R110_HANDOFF1 kurulu.
+Önce [CHATGPT_DEVIR_R110.md](CHATGPT_DEVIR_R110.md), ardından kökteki
+`AGENTS.md` / `CLAUDE.md` ve [R111 başlangıç kaydını](R111_BASLANGIC.md) oku.
+`project/r109_latency_completion/working` dizininin adı R109 olsa da içeriği
+R110'dur. Aşağıdaki R109 kimlikleri tarihsel tabanı anlatır.
 
 ## Hızlı başlangıç
 
@@ -8,14 +14,14 @@ ve `nvm use 22.23.4` kullanılabilir. Ayrı Node dosyası kullanıyorsan
 `REVIEW_NODE=/tam/yol/node` tanımla.
 
 ```bash
-git clone --branch r109-claude-inceleme --single-branch https://github.com/mehmetkibby-prog/ccre.git
+git clone --branch claude/r110-takilma-duzeltmeleri --single-branch https://github.com/mehmetkibby-prog/ccre.git
 cd ccre/r109-inceleme
 npm ci
 npm run setup
-npm run verify
 npm test
 npm run test:captcha
 npm run test:native
+npm run test:r110
 npm run test:installer
 python3 scripts/check.py runtime
 ```
@@ -58,7 +64,7 @@ kullanılır. Bu bir anonim canlı DB kopyası değildir; pazar/lonca yazma traf
 bütün olasılıklarını temsil etmez. Canlı loglardan gerçek oran çıkarılmış değildir.
 Yeni karşılaştırmalarda aynı donanım/kota, veri, senaryo ve en az üç tekrar kullan.
 
-**R110 (canlıya kurulmadı).** Bu dalda iki gecikme düzeltmesi, ek testler ve
+**R110_HANDOFF1 (devir bilgisine göre iki sunucuda kurulu).** Bu dalda iki gecikme düzeltmesi, ek testler ve
 R109 kurulu sunucu için kurulum paketi `project/r110_takilma/delivery/r110-takilma.zip`
 var (adımlar: `project/r110_takilma/KURULUM.md`). Rapor ve ölçümler
 `measurements/r110-aday/RAPOR.md`. Ek kontroller (`test:r110` kurucuyu ve
@@ -70,7 +76,7 @@ npm run test:r110
 BROWSER_WS_TRANSPORT=handoff R102_TEST_REALM=r1 TOWER=1 PREVIEW_NAME=r110-pc npm run test:browser
 ```
 
-`npm run verify` yalnız R109 tabanını doğrular; bu dalda değişen 10 runtime
+`npm run verify` yalnız R109 tabanını doğrular; bu dalda değişen/eklenen 12 runtime
 dosyasını ve çekirdek kimliğini bilerek "farklı" listeler.
 
 Ham canlı profili yeniden analiz etmek için:
