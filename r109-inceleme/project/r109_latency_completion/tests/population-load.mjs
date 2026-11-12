@@ -39,7 +39,7 @@ const gc=[],sqlDiagnostic=[];let gcObserver,inspector,cpuClockOriginMs=null,cens
 const inspect=(method,params={})=>new Promise((resolve,reject)=>inspector.post(method,params,(error,result)=>error?reject(error):resolve(result)));
  let s,timer,panel,controlProbe,measuring=false,report={players:N,label,realm:process.env.CORE101_REALM_ID||'r1',durationRequestedMs:duration,workload:process.env.POPULATION_MODE||'mixed',fixture:{monsterHp:85,monsterDamage:9,playerStatHp:1000000,channelCapacity:capacity,channelDistribution:process.env.LOAD_DISTRIBUTION==='packed'?'fill-each-channel-to-real-capacity':'balanced-four-channels',liveAccess:false,coLocatedBots:false,separateBotProcess:true}},runId=randomUUID();
  const scope={after:f=>clean.push(f)},sharedAcquires={};
-report.runtimeFiles=Object.fromEntries(['adventure-channel.mjs','native-http-bindings.mjs','process-stream.mjs','cold-world.mjs','read-worker.mjs','slim-reload.mjs','combat-checkpoint.mjs','coordinator.mjs','reward-worker-r533.mjs','statement-boot-pool-r61.mjs','reward-sql-r531.mjs','death-batch-channel-r57.mjs','death-batch-single-r57.mjs','fixed-loop.mjs','combat-continuation-r57.mjs','attack-commit-r53.mjs','death-latency-r82.mjs','slow-death-r111.mjs','ipc-replay-r111.mjs'].filter(name=>fs.existsSync(core+'/'+name)).map(name=>[name,createHash('sha256').update(fs.readFileSync(core+'/'+name)).digest('hex')]));
+report.runtimeFiles=Object.fromEntries(['adventure-channel.mjs','native-http-bindings.mjs','process-stream.mjs','cold-world.mjs','read-worker.mjs','slim-reload.mjs','combat-checkpoint.mjs','coordinator.mjs','reward-worker-r533.mjs','statement-boot-pool-r61.mjs','reward-sql-r531.mjs','death-batch-channel-r57.mjs','death-batch-single-r57.mjs','fixed-loop.mjs','combat-continuation-r57.mjs','attack-commit-r53.mjs','death-latency-r82.mjs','slow-death-r111.mjs','ipc-replay-r111.mjs','shared-combat-bridge.mjs'].filter(name=>fs.existsSync(core+'/'+name)).map(name=>[name,createHash('sha256').update(fs.readFileSync(core+'/'+name)).digest('hex')]));
 try{
  const listeners={},reservations=[];
  if(process.env.R108_WS_TRANSPORT!=='ipc'){
@@ -113,6 +113,7 @@ try{
  report.replayStorageEnabled=process.env.CORE511_R111_REPLAY_STORAGE!=='0';
  const diagnostics=await s.core.diagnostics.sample();
  report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51}))};
+ report.sharedTerminal={scope:'existing bounded records, read after timed window; synthetic actors only',channelRelease:s.world.combat.channelReleaseR111,actorWaits:s.world.combat.actorWaits,actorRejections:s.world.combat.actorRejections,conflicts:s.world.combat.actorConflicts,refreshes:s.world.combat.refreshTrace??[]};
  if(census)report.sqlCensus=census.report();
  if(framing){report.framingCensus=Object.fromEntries([...framing].sort((a,b)=>b[1].ms-a[1].ms));report.ipcSendCensus=ipcSends;}
  report.wsHandoff=s.supervisor.handoffStatsR110??null;if(report.wsHandoff?.sent)report.webSocketTransport='production-style-socket-handoff';

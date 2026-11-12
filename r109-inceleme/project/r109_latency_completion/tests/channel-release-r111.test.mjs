@@ -74,3 +74,11 @@ test('the fallback preserves the full terminal barrier even after one release AC
  assert.throws(()=>s.bridge.guard(s.peers[3],s.request(4)),/shared_terminal_actor_fenced/);
  for(let i=1;i<=3;i++)s.open(i);await Promise.all([pending,finish]);assert.equal(writes,1);
 });
+
+test('shared return and ownership moves keep every channel fenced for the existing rehome protocol',{timeout:5000},async t=>{
+ const s=fixture(t);s.row.commandAck.result.moves=[{id:'different-actor',target:{channel:2,incarnation:'boot-2',epoch:2}}];
+ const answer=await s.finish();assert.deepEqual(answer,{returning:true,token:'hold'});
+ assert.equal(s.row.phase,'returning');assert.equal(s.bridge.terminal,s.held);
+ assert(!s.events.some(e=>e.startsWith('release:')));
+ for(let i=1;i<=4;i++)assert.throws(()=>s.bridge.guard(s.peers[i-1],s.request(i)),/shared_terminal_actor_fenced/);
+});
