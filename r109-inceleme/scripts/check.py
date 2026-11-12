@@ -4,7 +4,7 @@ import os, subprocess, sys
 ROOT=Path(__file__).resolve().parents[1];P=ROOT/'project';R=P/'r109_latency_completion'
 runner=[sys.executable,str(ROOT/'scripts/run.py')]
 groups={
- 'focused':['adventure-scan.test.mjs','monster-snapshot.test.mjs','recovery.test.mjs','reply-wire.test.mjs','reply-wire-process.test.mjs','ipc-owned-buffer.test.mjs','slim-snapshot-reuse.test.mjs','cold-adventure-reuse-r108.test.mjs','combat-boss-validation.mjs','boot-pool-order-r108.test.mjs','reward-fallback-cache-r109.test.mjs','short-death-groups-r109.test.mjs'],
+ 'focused':['adventure-scan.test.mjs','monster-snapshot.test.mjs','recovery.test.mjs','reply-wire.test.mjs','reply-wire-process.test.mjs','ipc-owned-buffer.test.mjs','slim-snapshot-reuse.test.mjs','cold-adventure-reuse-r108.test.mjs','combat-boss-validation.mjs','boot-pool-order-r108.test.mjs','reward-fallback-cache-r109.test.mjs','short-death-groups-r109.test.mjs','ws-handoff-race.test.mjs'],
  'captcha':['captcha.test.mjs','captcha-native.test.mjs','captcha-regression.test.mjs','captcha-accounts.test.mjs'],
 }
 group=sys.argv[1] if len(sys.argv)>1 else 'focused'
