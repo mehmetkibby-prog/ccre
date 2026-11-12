@@ -13,6 +13,7 @@
     "test:native": "python3 scripts/check.py native",
     "test:installer": "python3 scripts/check.py installer",
     "test:browser": "python3 scripts/check.py browser",
+    "test:handoff": "python3 scripts/check.py handoff",
     "load": "python3 scripts/load.py"
   },
   "dependencies": {

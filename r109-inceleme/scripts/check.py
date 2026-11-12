@@ -18,6 +18,10 @@ elif group=='installer':cmd=[sys.executable,str(R/'tests/installer_test.py'),'-v
 elif group=='runtime':
     subprocess.run([sys.executable,str(R/'tests/stage-runtime.py')],cwd=R,env=os.environ,check=True)
     cmd=runner+['--test',str(R/'tests/relocated-entry.test.mjs')]
+elif group=='handoff':
+    # R110 candidate: installed R109 release + this tree's changed runtime files.
+    subprocess.run([sys.executable,str(R/'tests/stage-candidate.py')],cwd=R,env=os.environ,check=True)
+    cmd=runner+['--test',str(R/'tests/ws-handoff-runtime.test.mjs')]
 elif group=='browser':cmd=runner+[str(R/'tests/tower-browser.mjs')]
 else:raise SystemExit('Unknown check group: '+group)
 raise SystemExit(subprocess.run(cmd,cwd=R,env=os.environ).returncode)
