@@ -19,6 +19,11 @@ async function send(a,input){
  // received snapshot and potion execution. This exact legal no-op is counted,
  // not confused with a transport/ownership failure. Other rejections fail.
  if(input.action==='use_potion'&&r.status===400&&r.body?.error==='Canın zaten dolu.'){count('potionFullNoop');return r.body;}
+ // The server's basic attack cadence uses the time it ACCEPTED the previous
+ // attack. When that reply was late, this bot's own 950 ms clock can be early;
+ // the real client then shows "Saldırı ritmi eşitleniyor" and waits. Only this
+ // explicit legal answer with a bounded retryAfterMs is a wait, not an error.
+ if(input.action==='attack'&&r.status===429&&r.body?.code==='basic_attack_cadence'&&Number.isFinite(r.body.retryAfterMs)&&r.body.retryAfterMs>=0&&r.body.retryAfterMs<=2000){count('attackCadenceWait');a.lastAttack=Date.now()+r.body.retryAfterMs-950;return null;}
  if(r.status===202&&input.action==='attack'&&r.body?.combatPending===true){
   count('pendingKills');recordPopulationPending(a,input,r.body);
  }else if(r.status!==200)throw Error(JSON.stringify({operation:input.action,status:r.status,body:r.body}));
