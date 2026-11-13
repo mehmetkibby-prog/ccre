@@ -1,4 +1,8 @@
 import test from 'node:test';
+import {createAdventureSchema} from '../adventure-schema.mjs';
+import {createTowerSchema} from '../tower-config.mjs';
+import {createContentSchemaR102} from '../content-config-r102.mjs';
+import {installBagLimit} from '../bag-limit.mjs';
 import assert from 'node:assert/strict';
 import {setupPvp,put,json} from './pvp-fixture.mjs';
 import {GameWriter} from '../writer-runtime.mjs';
@@ -6,7 +10,7 @@ import {readAttackFrame} from '../attack-writer.mjs';
 import {settlementFootprint,settlementNeedsShared,coldSettlementResources} from '../settlement-resources.mjs';
 
 async function setup(t,{channel=1,dead=false,oldLife=false,otherArea=false,futureHead=false}={}){
- const f=await setupPvp(t);f.reset({area:'forest',actor:{hp:500,max_hp:1000,potions:3}});const writer=new GameWriter(f.f.database,{realmId:'settlement-scope',clock:()=>f.nowMs,ports:{guard:()=>true,assertResources:()=>true}});await writer.initialize();const peer={channel:1,incarnation:'settlement-scope-owner'};await writer.register(peer);const owner=await writer.admit(f.id,peer,{sessionId:'settlement-scope-session',guard:()=>true}),mid='golge-settlement-scope';
+ const f=await setupPvp(t);createTowerSchema(f.sql);createAdventureSchema(f.sql);createContentSchemaR102(f.sql);installBagLimit(f.sql);f.reset({area:'forest',actor:{hp:500,max_hp:1000,potions:3}});const writer=new GameWriter(f.f.database,{realmId:'settlement-scope',clock:()=>f.nowMs,ports:{guard:()=>true,assertResources:()=>true}});await writer.initialize();const peer={channel:1,incarnation:'settlement-scope-owner'};await writer.register(peer);const owner=await writer.admit(f.id,peer,{sessionId:'settlement-scope-session',guard:()=>true}),mid='golge-settlement-scope';
  put(f.sql,'monsters',{id:mid,name:'Settlement scope fixture',channel,area:otherArea?'black':'forest',x:1000,y:1000,hp:dead?0:1000,max_hp:1000,spawn_round:2,stun_until_ms:f.nowMs+2000});const entry={monster_id:mid,spawn_round:oldLife?1:2,next_hit_at_ms:f.nowMs-1,last_skill_at_ms:f.nowMs-2000},row={player_id:f.id,...entry,next_hit_at_ms:futureHead?f.nowMs+1000:entry.next_hit_at_ms,expires_at_ms:f.nowMs+8000,hit_sequence:0,updated_at_ms:f.nowMs,attackers489:JSON.stringify({[mid]:entry})};put(f.sql,'pve_engagements',row);
  const request={playerId:f.id,epoch:owner.epoch,sequence:1,operationId:'settlement-scope-potion',operation:'native_action',payload:{input:{action:'use_potion'},nowMs:f.nowMs,receivedAtMs:f.nowMs,seed:f.seed,resources:['player:'+f.id],expected:{player:readAttackFrame(f.sql,f.id,'',writer.services.globals).player,settings:f.settings}}};
  const capture=()=>json(Object.fromEntries(['players','monsters','pve_engagements','kernel511_channel_receipts'].map(table=>[table,f.sql.prepare('SELECT * FROM '+table).all()])));return {...f,writer,peer,owner,mid,row,request,capture};
@@ -17,7 +21,7 @@ for(const channel of [0,1])test('writer independently rejects unlocked '+(channe
  await assert.rejects(s.writer.command(s.peer,{...s.request,payload:{...s.request.payload,resources:[...s.request.payload.resources,'monster:unrelated-monster']}}),{code:'settlement_monster_unlocked'});assert.deepEqual(s.capture(),before);
  s.request.payload.resources.push('monster:'+s.mid);
  if(channel===0){await assert.rejects(s.writer.command(s.peer,s.request),{code:'shared_writer_lease_required'});assert.deepEqual(s.capture(),before);}
- else{const ack=await s.writer.command(s.peer,s.request);assert.equal(ack.result.result.body.hp,700);assert.equal(ack.result.result.body.potions,2);const after=s.capture();assert.deepEqual(json(await s.writer.command(s.peer,s.request)),json(ack));assert.deepEqual(s.capture(),after);}
+ else{const ack=await s.writer.command(s.peer,s.request);assert.equal(ack.result.result.body.hp,700);assert.equal(ack.result.result.body.potions,2);const after=s.capture();assert.deepEqual(json(await s.writer.command(s.peer,s.request)),json({...ack,result:{...ack.result,events:[]}}));assert.deepEqual(s.capture(),after);}
 });
 
 test('potion read ownership cannot authorize even a trigger-side monster mutation',async t=>{

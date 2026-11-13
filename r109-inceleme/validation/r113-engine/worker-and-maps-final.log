@@ -1,0 +1,115 @@
+TAP version 13
+# Subtest: private persistence admission excludes economic transitions and unbounded claims
+ok 1 - private persistence admission excludes economic transitions and unbounded claims
+  ---
+  duration_ms: 0.458978
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548927250,"backupName":"before-pearl-reset-1794548927250-cb5ccc9f-3a49-4269-9050-8fa19f755454.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:48:54.346Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":243990,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0d8a0143cea714f6f4324f6f"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:48:54.347Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":244066,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"83ae472be689669db6be043e"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:48:54.347Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":244072,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"66a9b03d767fa89a80cdb011"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:48:54.347Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":244078,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ef4db329575a304961f94adc"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:48:54.393Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":243958,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"d99d6be1569de69708c12821"}
+# Subtest: forest: native claim and potion persist in sole worker and replay exactly once
+ok 2 - forest: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 8734.675071
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548935872,"backupName":"before-pearl-reset-1794548935872-a218f0e0-ce62-4252-aaa0-7114abfb07d5.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:03.613Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":244109,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"399e20ec97062d491efc3cd7"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:03.613Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":244115,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ef43b73ad1f06f6ec0b59223"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:03.614Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":244125,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0c4d12eb23790795542b4557"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:03.614Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":244135,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"37cdb5234029e4c238e1c98d"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:03.635Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":244098,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"4018faf87ac2b79cacc24df4"}
+# Subtest: black: native claim and potion persist in sole worker and replay exactly once
+ok 3 - black: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 9262.894972
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548946281,"backupName":"before-pearl-reset-1794548946281-cd7f32fb-5ecd-4243-a09f-468f3c27292f.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:12.353Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":244166,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"cc407833b096d46f0d001420"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:12.353Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":244172,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"948de7f4e5dc974e6efa97fd"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:12.354Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":244182,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"87df0d9fe3a1751f9daa4df0"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:12.354Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":244188,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4ab06457ac10aec193501668"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:12.371Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":244155,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"754abc795196019ee0827552"}
+# Subtest: rune_v2: native claim and potion persist in sole worker and replay exactly once
+ok 4 - rune_v2: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 8718.529601
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548954723,"backupName":"before-pearl-reset-1794548954723-d5951494-2314-40b1-b707-71164a5bdcb2.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:20.356Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":244238,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ef44ac3cd8d79b2c4aeab84a"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:20.357Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":244244,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ccf7b086a16f9e44d1f28a57"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:20.357Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":244254,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f6b1ccf159fb87e07b796730"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:20.357Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":244260,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5e80650514b567d1650a46c5"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:49:20.378Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":244227,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"b2d25d72d4afd68da3372b97"}
+# Subtest: actual map owners: a held forest operation cannot stop a frozen-map death on another channel
+ok 5 - actual map owners: a held forest operation cannot stop a frozen-map death on another channel
+  ---
+  duration_ms: 7260.630075
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548962818,"backupName":"before-pearl-reset-1794548962818-3daf0eed-3df4-49cf-bfbe-1a8a5c756108.sqlite"}
+# Subtest: writer independently rejects unlocked shared incoming settlement despite permissive external callback
+ok 6 - writer independently rejects unlocked shared incoming settlement despite permissive external callback
+  ---
+  duration_ms: 1949.853492
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548964868,"backupName":"before-pearl-reset-1794548964868-e18f1593-2b31-4bb4-89fb-67e4ed432b0d.sqlite"}
+# Subtest: writer independently rejects unlocked local incoming settlement despite permissive external callback
+ok 7 - writer independently rejects unlocked local incoming settlement despite permissive external callback
+  ---
+  duration_ms: 2032.026413
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548966712,"backupName":"before-pearl-reset-1794548966712-bbe30ba8-4b1f-401f-9369-59dad68806a3.sqlite"}
+# Subtest: potion read ownership cannot authorize even a trigger-side monster mutation
+ok 8 - potion read ownership cannot authorize even a trigger-side monster mutation
+  ---
+  duration_ms: 1910.904137
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548968768,"backupName":"before-pearl-reset-1794548968768-8d943ebd-0b40-462c-98da-79c21ff286c3.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548970953,"backupName":"before-pearl-reset-1794548970953-9925f836-c4d3-49c9-85c3-1bc8c909412b.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548972808,"backupName":"before-pearl-reset-1794548972808-b2c21dba-33d3-417d-a458-c2164a0083c8.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548974686,"backupName":"before-pearl-reset-1794548974686-db476950-84bd-4900-9aff-5357da9bb6ce.sqlite"}
+# Subtest: native dead, old-life, foreign and absent-scope encounters still clear without borrowing another owner
+ok 9 - native dead, old-life, foreign and absent-scope encounters still clear without borrowing another owner
+  ---
+  duration_ms: 7955.34009
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548976742,"backupName":"before-pearl-reset-1794548976742-ca694543-b3bc-41e5-895a-0d7b3c716e70.sqlite"}
+# Subtest: settlement footprint uses original request time and head gate for all native travel branches without SQL
+ok 10 - settlement footprint uses original request time and head gate for all native travel branches without SQL
+  ---
+  duration_ms: 2012.738347
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548978739,"backupName":"before-pearl-reset-1794548978739-8f4266e6-4e52-4b7a-9ae7-ba1e81c15b23.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548980669,"backupName":"before-pearl-reset-1794548980669-c3d51d07-86ce-453f-af4d-a0906faedb72.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548982499,"backupName":"before-pearl-reset-1794548982499-753bf66e-beb0-45e1-8184-686d50dca9f6.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548984122,"backupName":"before-pearl-reset-1794548984122-70f9b979-86e1-4fb6-9580-a878068108c7.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548985653,"backupName":"before-pearl-reset-1794548985653-709179b5-28bc-49a9-b29a-c6b4d76371fc.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548987707,"backupName":"before-pearl-reset-1794548987707-604b0448-f728-40f4-84f9-b1fed4708495.sqlite"}
+# pearl_reset {"applied":true,"appliedAtMs":1794548989581,"backupName":"before-pearl-reset-1794548989581-63c4bf47-0d1a-4e2d-819a-2f6836455ccc.sqlite"}
+# Subtest: cold native reads include future current-life local/shared targets and preserve original stale-life and foreign clearing
+ok 11 - cold native reads include future current-life local/shared targets and preserve original stale-life and foreign clearing
+  ---
+  duration_ms: 12868.308467
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 65542.588611

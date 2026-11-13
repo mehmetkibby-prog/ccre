@@ -57,6 +57,11 @@ elif group=='r112':
     stage=str(T/'evidence/runtime-stage.json')
     env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r112','RUNTIME_EXPECT_R110':'1','RUNTIME_EXPECT_R111':'1','RUNTIME_EXPECT_R112':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
     raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
+elif group=='r113':
+    core=R/'working/core511-source/scripts/core511/tests'
+    cases=[R/'tests'/f for f in ['committed-result-r113.test.mjs','committed-death-process-r113.test.mjs','committed-replies-r113.test.mjs','independent-adventures-r113.test.mjs','partitions-r113.test.mjs','shared-partition-process-r113.test.mjs','persistence-crash-r113.test.mjs','private-persistence-r113.test.mjs','system-persistence-r113.test.mjs','population-arrivals-r113.test.mjs','ipc-replay-r111.test.mjs','reply-wire.test.mjs','reply-wire-process.test.mjs']]
+    cases += [core/f for f in ['client-transport.test.mjs','r20-movement-pipeline.test.mjs','r21-ordered-movement-client.test.mjs','r21-ordered-movement-server.test.mjs','settlement-resources.test.mjs']]
+    cmd=runner+['--test','--test-concurrency=1',*[str(f) for f in cases]]
 elif group=='browser':cmd=runner+[str(R/'tests/tower-browser.mjs')]
 else:raise SystemExit('Unknown check group: '+group)
 raise SystemExit(subprocess.run(cmd,cwd=R,env=os.environ).returncode)
