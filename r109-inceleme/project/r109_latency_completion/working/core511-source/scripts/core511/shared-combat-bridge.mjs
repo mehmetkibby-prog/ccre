@@ -225,17 +225,25 @@ export class SharedCombatBridge {
   const held=row.terminal;this.assertScope(row,held);demand(held&&ack?.key===row.commandRequest.operationId&&ack.result,'shared_command_receipt');
   if(row.commandAck)demand(row.commandAck.key===ack.key,'shared_command_receipt');else row.commandAck=ack;
   if(ack.result.passiveAdmissions?.length){row.passiveAdmission??=this.admitPassive(held,ack.result.passiveAdmissions);await row.passiveAdmission;}
-  this.assertScope(row,held);await this.reloadCommittedWorldR112(row,held);this.assertScope(row,held);this.clearUnknown(row);return row.commandAck;
+  this.assertScope(row,held);this.reloadCommittedWorldR112(row,held);this.clearUnknown(row);return row.commandAck;
  }
- // Publish committed shared HP/deaths before the source's cold inventory
- // reload. All mutation/ownership leases remain held until finish; this is
- // durable visual delivery, never speculative damage or a reward ACK.
+ // Start publishing committed shared HP/deaths alongside the source's cold
+ // inventory read. Both are read-only views of an already durable command.
+ // finish still awaits publication before any foreign actor is released;
+ // all mutation/ownership leases remain held. This internal writer ACK is
+ // not the final client reply and never acknowledges speculative damage.
  reloadCommittedWorldR112(row,held){
   this.assertScope(row,held);demand(row.commandAck,'shared_terminal_commit_missing');
-  return row.committedReloadR112??=(async()=>{
+  if(row.committedReloadR112)return row.committedReloadR112;
+  row.committedReloadR112=(async()=>{
    const snapshot=(await this.core.reader.query('kernel511_world_boot',[row.world.peer.incarnation,row.world.owner.epoch])).rows;
    this.assertScope(row,held);await row.world.control.request('shared_reload',{peer:row.source,proof:row.proof,snapshot});this.assertScope(row,held);
   })();
+  // Observe failures immediately even if the source disappears before finish.
+  // Keep the original rejected promise so finish/status cannot turn a failed
+  // publication into success. A replaced generation is never recovered here.
+  void row.committedReloadR112.catch(error=>this.failScope(row,error,'shared_committed_reload',held));
+  return row.committedReloadR112;
  }
  clearUnknown(row){if(row.commandWatchdog!==undefined&&row.commandWatchdog!==null)this.clear(row.commandWatchdog);row.commandWatchdog=null;row.commandUnknown=null;}
  stopUnknownTimers(){for(const row of this.requests.values())this.clearUnknown(row);}
