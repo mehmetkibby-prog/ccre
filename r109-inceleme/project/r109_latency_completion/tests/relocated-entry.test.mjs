@@ -53,6 +53,7 @@ test('exact installed server starts both realms with eight real channels outside
   if(process.env.RUNTIME_EXPECT_R110==='1')assert.equal(health.realtimeHandoff,'R110_HANDOFF1',child.output);
   if(process.env.RUNTIME_EXPECT_R111==='1')assert.equal(health.combatContinuity,'R111_COMBAT1',child.output);
   if(process.env.RUNTIME_EXPECT_R112==='1'){assert.equal(health.runtimeFlow,'R112_FLOW1',child.output);assert.equal(health.kernel511.readerReady,true,child.output);}
+  if(process.env.RUNTIME_EXPECT_R113==='1'){assert.equal(health.engineRework,'R113_ENGINE1',child.output);assert.equal(health.engineReadyR113,true,child.output);}
   fs.writeFileSync(evidenceDir+'/'+label+'-'+realm.id+'.log',child.output);evidence.push({realm:realm.id,health,ingress:ready});
  }
  assert(calls>=2);for(const c of children){await stop(c);assert.equal(c.exitCode,0,c.output);}

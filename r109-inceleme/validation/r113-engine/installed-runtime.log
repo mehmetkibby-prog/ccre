@@ -1,0 +1,72 @@
+
+> test:r113:installer
+> python3 scripts/check.py r113-installer
+
+test_apply_and_rollback_preserve_progress_and_all_old_assets (__main__.Installation.test_apply_and_rollback_preserve_progress_and_all_old_assets) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+R113 OYUN MOTORU GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_exact_r110_source_schema_scope_and_current_frontend_are_bound (__main__.Installation.test_exact_r110_source_schema_scope_and_current_frontend_are_bound) ... ok
+test_health_failure_restores_old_code_without_reverting_new_player_writes (__main__.Installation.test_health_failure_restores_old_code_without_reverting_new_player_writes) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_modified_backup_and_source_stop_before_destructive_work (__main__.Installation.test_modified_backup_and_source_stop_before_destructive_work) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+R113 OYUN MOTORU GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_partial_code_write_restores_previous_code_with_derived_tables_retained (__main__.Installation.test_partial_code_write_restores_previous_code_with_derived_tables_retained) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+Yama durdu: injected partial write
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_power_loss_after_schema_commit_recovers_before_publishing_new_code (__main__.Installation.test_power_loss_after_schema_commit_recovers_before_publishing_new_code) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_readiness_requires_engine_worker_and_keeps_r110_rollback_markers (__main__.Installation.test_readiness_requires_engine_worker_and_keeps_r110_rollback_markers) ... ok
+test_second_realm_migration_failure_does_not_publish_half_a_release (__main__.Installation.test_second_realm_migration_failure_does_not_publish_half_a_release) ... Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+Yama durdu: injected r2 schema failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 26.718s
+
+OK
+Değişen kod ve iki türetilmiş oyun tablosu doğrulanarak yedekleniyor; oyuncu verileri geri alınmayacak.
+R113 OYUN MOTORU GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+/tmp/r113-installed-jcbpf7oj/release
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794551889165,"backupName":"before-pearl-reset-1794551889165-732a58e1-f8a6-4608-a5f9-6450e7e07cbc.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794551890495,"backupName":"before-pearl-reset-1794551890495-91b86cb2-9d8d-41e4-812c-e36dfc4010f9.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 13511.735315
+  type: 'test'
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 96.451149
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794551911599,"backupName":"before-pearl-reset-1794551911599-9896afcf-325b-4f8a-829c-1f1e8b002c69.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794551930076,"backupName":"before-pearl-reset-1794551930076-b3452cf5-2394-4571-bbb8-f3ffc4bcab08.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+ok 3 - installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+  ---
+  duration_ms: 29096.804535
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61696.716077
