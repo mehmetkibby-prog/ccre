@@ -46,8 +46,8 @@ def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False,distribution='bal
  rows.append(row);save();print(json.dumps({'finished':key,**{k:row[k] for k in ['functional','summary','deaths','controlMaxPauseMs']}}),flush=True)
  if version=='R113' and not row['functional']:raise SystemExit('Candidate functional failure; matrix paused at '+key)
 
-# Pair the primary 40-player workload across versions within each repetition.
-# Other requested populations get three independent fresh starts per version.
+# User's latest scope is exactly 50 players. Pair the same workload across
+# versions and retain three independent fresh starts, including adverse runs.
 if a.farm_probe:
  for version in ['R110','R113']:run(version,50,'forest',1,farm=True)
  print(json.dumps({'farmProbeComplete':True,'runs':len(rows)}),flush=True);raise SystemExit(0)
