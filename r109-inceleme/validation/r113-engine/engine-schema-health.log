@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: engine health requires initialized schema and an acknowledged live writer worker
+ok 1 - engine health requires initialized schema and an acknowledged live writer worker
+  ---
+  duration_ms: 3.874585
+  type: 'test'
+  ...
+# Subtest: new migration backs up only affected derived state and never copies or restores players
+ok 2 - new migration backs up only affected derived state and never copies or restores players
+  ---
+  duration_ms: 10.011683
+  type: 'test'
+  ...
+# Subtest: existing compatible rows are backed up consistently and retained exactly
+ok 3 - existing compatible rows are backed up consistently and retained exactly
+  ---
+  duration_ms: 8.169454
+  type: 'test'
+  ...
+# Subtest: changed derived rows and corrupt backups are rejected before any schema mutation
+ok 4 - changed derived rows and corrupt backups are rejected before any schema mutation
+  ---
+  duration_ms: 6.03845
+  type: 'test'
+  ...
+# Subtest: incompatible schemas, symlinks and changed database identities fail closed
+ok 5 - incompatible schemas, symlinks and changed database identities fail closed
+  ---
+  duration_ms: 3.717189
+  type: 'test'
+  ...
+# Subtest: real process exit before_commit preserves source data and supports safe retry
+ok 6 - real process exit before_commit preserves source data and supports safe retry
+  ---
+  duration_ms: 181.563404
+  type: 'test'
+  ...
+# Subtest: real process exit after_commit preserves source data and supports safe retry
+ok 7 - real process exit after_commit preserves source data and supports safe retry
+  ---
+  duration_ms: 169.724331
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2247.530565

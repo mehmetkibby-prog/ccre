@@ -115,7 +115,7 @@ export class RewardWorkerR533 {
   slot.exit=new Promise(resolve=>slot.exited=resolve);slot.ready=new Promise((resolve,reject)=>{slot.resolveReady=resolve;slot.rejectReady=reject;});
   const fail=error=>{slot.error=error;void worker.terminate().catch(()=>{});};
   worker.on('message',message=>{
-   if(message.type==='ready'){slot.checkpointR79=message.checkpointR79??null;const ms=performance.now()-started;this.stats.maxStartupMs=Math.max(this.stats.maxStartupMs,ms);stageRecordR51('rewardWorker.startup',ms);slot.resolveReady();return;}
+   if(message.type==='ready'){slot.readyAckR113=true;slot.checkpointR79=message.checkpointR79??null;const ms=performance.now()-started;this.stats.maxStartupMs=Math.max(this.stats.maxStartupMs,ms);stageRecordR51('rewardWorker.startup',ms);slot.resolveReady();return;}
    if(message.type==='checkpoint_mode_r79'){slot.checkpointR79=message.checkpointR79;return;}
    if(message.type==='closed')return;
    if(message.type==='fatal'){fail(kernelError(message.code));return;}

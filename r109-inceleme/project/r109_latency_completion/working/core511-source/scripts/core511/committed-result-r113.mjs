@@ -18,10 +18,13 @@ const covered=new Set(['players','player_items','player_storage_items','player_p
 for(const table of ['monsters','monster_participants','boss_participants','combat_events','boss_defeats','monster_defeats','sinsi_defeats','normal_defeats','mount_inventory_r49','mount_reward_claims_r49'])covered.add(table);
 for(const table of ['dungeon_runs','dungeon_members','dungeon_finalizations','solo_daily_entries','solo_entry_receipts','dungeon_receipts'])covered.add(table);
 
+const initializedR113=new WeakSet();
+export const committedSchemaReadyR113=sql=>committedResultsR113&&initializedR113.has(sql);
 export function initializeCommittedResultsR113(sql){
  if(!committedResultsR113)return;
  sql.exec('CREATE TABLE IF NOT EXISTS kernel511_actor_revision_r113(actor TEXT PRIMARY KEY,revision INTEGER NOT NULL CHECK(revision>=0)) WITHOUT ROWID');
  initializeCommittedStoreR113(sql);
+ initializedR113.add(sql);
 }
 
 
