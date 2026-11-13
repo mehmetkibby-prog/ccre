@@ -2,6 +2,14 @@
 
 Komutları sırayla, root olarak çalıştır. `ALAN_ADIN.com` yerine kendi alan adını yaz.
 
+## 0. Küçük sunucu (2 çekirdek / 2 GB RAM) notları
+- Derleme (`npm run build`) 2 GB RAM'de bellek yetmezliğine düşebilir: önce 2 GB takas alanı aç.
+```bash
+fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo '/swapfile none swap sw 0 0' >> /etc/fstab
+```
+- 4. adımda `coreoflife.env.example` yerine `coreoflife.env.small` kopyala (1 kanal, 120 oyuncu, Node 900 MB).
+- PostgreSQL ayarı (2 GB RAM): `shared_buffers = 256MB`, `effective_cache_size = 768MB`, `max_connections = 30`.
+
 ## 1. Paketler
 ```bash
 apt update && apt install -y curl git nginx postgresql postgresql-contrib certbot python3-certbot-nginx
@@ -28,7 +36,7 @@ systemctl restart postgresql
 useradd -r -m -d /opt/coreoflife coreoflife
 ```
 ```bash
-mkdir -p /opt/coreoflife/releases && cd /opt/coreoflife/releases && git clone REPO_ADRESIN r1
+mkdir -p /opt/coreoflife/releases && cd /opt/coreoflife/releases && git clone -b tugra-online https://github.com/mehmetkibby-prog/ccre r1
 ```
 ```bash
 cd /opt/coreoflife/releases/r1 && npm ci && npm run build
@@ -39,7 +47,7 @@ ln -sfn /opt/coreoflife/releases/r1 /opt/coreoflife/current && chown -R coreofli
 
 ## 4. Ortam ve servis
 ```bash
-cp /opt/coreoflife/current/deploy/coreoflife.env.example /etc/coreoflife.env && nano /etc/coreoflife.env
+cp /opt/coreoflife/current/deploy/coreoflife.env.small /etc/coreoflife.env && nano /etc/coreoflife.env
 ```
 ```bash
 chmod 600 /etc/coreoflife.env
@@ -95,7 +103,7 @@ journalctl -u coreoflife -n 100 --no-pager
 sudo -u postgres pg_dump -Fc coreoflife > /var/backups/coreoflife-$(date +%F-%H%M).dump
 ```
 ```bash
-cd /opt/coreoflife/releases && git clone REPO_ADRESIN r2 && cd r2 && npm ci && npm run build
+cd /opt/coreoflife/releases && git clone -b tugra-online https://github.com/mehmetkibby-prog/ccre r2 && cd r2 && npm ci && npm run build
 ```
 ```bash
 ln -sfn /opt/coreoflife/releases/r2 /opt/coreoflife/current && systemctl restart coreoflife
