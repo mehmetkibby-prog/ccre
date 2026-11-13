@@ -55,6 +55,7 @@ test('exact installed server starts both realms with eight real channels outside
   if(process.env.RUNTIME_EXPECT_R112==='1'){assert.equal(health.runtimeFlow,'R112_FLOW1',child.output);assert.equal(health.kernel511.readerReady,true,child.output);}
   if(process.env.RUNTIME_EXPECT_R113==='1'){assert.equal(health.engineRework,'R113_ENGINE1',child.output);assert.equal(health.engineReadyR113,true,child.output);}
   if(process.env.RUNTIME_EXPECT_R114==='1')assert.equal(health.runeForum,'R114_RUNE_FORUM1',child.output);
+  if(process.env.RUNTIME_EXPECT_R115==='1')assert.equal(health.sharedScope,'R115_SHARED_SCOPE1',child.output);
   fs.writeFileSync(evidenceDir+'/'+label+'-'+realm.id+'.log',child.output);evidence.push({realm:realm.id,health,ingress:ready});
  }
  assert(calls>=2);for(const c of children){await stop(c);assert.equal(c.exitCode,0,c.output);}
