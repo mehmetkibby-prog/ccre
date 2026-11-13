@@ -5,6 +5,16 @@ import {ProcessStream} from '../process-stream.mjs';
 await runChannelProcess({afterCreate(runtime){
  const fatal=runtime.onFatal;runtime.onFatal=error=>{process.send({type:'test-native-failure',stack:error.stack});fatal(error);};
  process.on('message',message=>{
+  if(message?.type==='test-potion-burst-r113'){
+   try{
+    const inputs=message.actors.map(id=>{const p=runtime.channel.kernel.players.get(id);if(!p)throw Error('missing_fixture_actor');return {id,epoch:p.epoch,sequence:p.lastAccepted+1};});
+    // Synchronous delivery makes the existing potion batch deterministic.
+    // Admission, native writer guards, journals and receipts stay real.
+    for(const p of inputs)runtime.channel.kernel.enqueue(p.id,{epoch:p.epoch,sequence:p.sequence,kind:'combat',payload:{action:'use_potion'}});
+    process.send({type:message.type,request:message.request,inputs});
+   }catch(error){process.send({type:message.type,request:message.request,error:error.message});}
+   return;
+  }
   if(message?.type==='test-system-command-r113'){runtime.channel.systemWriter.submit(message.command).then(ack=>process.send({type:message.type,request:message.request,ack}),error=>process.send({type:message.type,request:message.request,error:{code:error.code,message:error.message}}));return;}
   if(message?.type==='test-configuration-snapshot'){const c=runtime.channel,m=c.view.monster(message.monster);process.send({type:message.type,request:message.request,snapshot:{revision:runtime.services.revision,config:runtime.services.config,settings:c.settings,cycle:c.world.cycle,monster:m,profile:m?.area==='rune'?runtime.services.globals.__colRunes.monster(m):null,clocks:[...c.worldClock.regenClocks],dungeon:[...runtime.dungeon.resident.runs.keys()]}});return;}
   if(message?.type==='test-combat-state'){const c=runtime.channel;process.send({type:message.type,request:message.request,snapshot:{failure:c.kernel.failure?.message,stopped:c.kernel.stopped,global:runtime.globalControl.held?.phase,sharedHold:runtime.sharedCombat.held?.token,players:[...c.kernel.players].map(([id,p])=>({id,suspended:p.suspended,barrier:!!p.barrier,external:p.externalHold,quiescing:!!p.quiescer,queue:p.queue.length,accepted:p.lastAccepted,applied:p.lastApplied,hp:c.view.player(id)?.hp,xp:c.view.player(id)?.xp,potions:c.view.player(id)?.potions,essence:c.view.player(id)?.essence,essenceRemainder:c.view.player(id)?.essence_bonus_remainder,area:c.view.player(id)?.area,match:c.view.player(id)?.arena_match_id,guard:runtime.sessions.check(c.identities.get(id)),owner:c.state.owners.get(id)?.state})),parties:[...c.parties],arenas:[...c.arenas],teams:[...c.teams],pending:[...runtime.sharedCombat.pending].map(([id,p])=>({id,phase:p.phase})),lanes:[...new Set([...c.lanes.held.keys(),...c.lanes.readers.keys()])]}});return;}

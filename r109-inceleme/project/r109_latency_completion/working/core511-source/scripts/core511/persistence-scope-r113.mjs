@@ -11,6 +11,11 @@ export function dungeonWriteR113(request){
 // transition is admitted by this predicate.
 export function privateCombatWriteR113(request){
  const p=request?.payload,input=p?.input;
- return request?.operation==='native_action'&&(input?.action==='use_potion'||input?.action==='claim_rewards'&&Array.isArray(input.rewardTargets)&&input.rewardTargets.length<=10);
+ // The persistence worker's native-action security port binds one exact
+ // actor/payload. Multi-actor potion batches have their own per-entry native
+ // guards and journals; keep the complete existing batch in the coordinator's
+ // same sole-writer FIFO. Do not delegate it to a single-actor security port,
+ // split it into independent writes, or loosen the worker guard on rejection.
+ return request?.operation==='native_action'&&p.batchPotionsR61===undefined&&(input?.action==='use_potion'||input?.action==='claim_rewards'&&Array.isArray(input.rewardTargets)&&input.rewardTargets.length<=10);
 }
 export function workerOperationR113(request){return request?.operation==='attack'||privateCombatWriteR113(request)||dungeonWriteR113(request);}

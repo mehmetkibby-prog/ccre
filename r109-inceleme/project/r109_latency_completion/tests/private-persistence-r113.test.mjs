@@ -1,16 +1,45 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createAdventureSchema} from '../working/core511-source/scripts/core511/adventure-schema.mjs';
-import {setup} from '../working/core511-source/scripts/core511/tests/process-fixture.mjs';
+import {setup,extraPlayer} from '../working/core511-source/scripts/core511/tests/process-fixture.mjs';
 import {until} from '../working/core511-source/scripts/core511/tests/helpers.mjs';
 import {privateCombatWriteR113} from '../working/core511-source/scripts/core511/persistence-scope-r113.mjs';
 
 test('private persistence admission excludes economic transitions and unbounded claims',()=>{
  const q=input=>({operation:'native_action',payload:{input}});
  assert(privateCombatWriteR113(q({action:'use_potion'})));
+ assert(!privateCombatWriteR113({operation:'native_action',payload:{input:{action:'use_potion'},batchPotionsR61:[]}}));
  assert(privateCombatWriteR113(q({action:'claim_rewards',rewardTargets:[{id:'x',spawnRound:1}]})));
  for(const action of ['trade','collect','guild','equip','donate','dungeon'])assert(!privateCombatWriteR113(q({action})));
  assert(!privateCombatWriteR113(q({action:'claim_rewards',rewardTargets:Array(11).fill({id:'x',spawnRound:1})})));
+});
+
+test('simultaneous potions retain native batch guards and settle both actors exactly once',{timeout:45000},async t=>{
+ const s=await setup(t,{shared:true}),{f,core,writer,world,http,connect,supervisor,faults}=s;
+ await world.stopJobs();const other=extraPlayer(s,711),ids=[f.id,other.id];
+ const a=await http('character',{channel:4}),b=await other.http('character',{channel:4});
+ assert.equal(a.status,200);assert.equal(b.status,200);
+ const clients=[await connect(a),await connect(b)];
+ await core.permanentPlayers(ids,()=>{for(const id of ids)f.sql.prepare("UPDATE players SET area='forest',x=2700,y=2025,hp=100,max_hp=100000,potions=5,level=40,combat_lock_until_ms=0,last_seen=? WHERE id=?").run(Math.floor(f.clock()/1000),id);});
+ const original=writer.command.bind(writer);let record,error;
+ writer.command=async(peer,q)=>{
+  if(!q.payload.batchPotionsR61)return original(peer,q);
+  try{const ack=await original(peer,q);record={peer,q,ack};return ack;}catch(e){error=e;throw e;}
+ };
+ const workerJobs=writer.rewardWorkerR533.stats.jobs;
+ supervisor.rows.get(4).child.send({type:'test-potion-burst-r113',request:'potion-regression',actors:ids});
+ await until(()=>record||error||faults.length,10000);
+ assert.equal(error,undefined,error?.stack);assert.equal(faults.length,0,faults.map(x=>x.error?.stack).join('\n'));assert(record,'the real channel must form a native potion batch');
+ assert.equal(record.q.payload.batchPotionsR61.length,2);
+ assert.equal(writer.rewardWorkerR533.stats.jobs,workerJobs,'multi-actor potion policy remains in its original guarded writer');
+ const state=()=>ids.map(id=>f.sql.prepare('SELECT hp,potions FROM players WHERE id=?').get(id));
+ const after=state();for(const p of after){assert(p.hp>100);assert.equal(p.potions,4);}
+ assert.equal(f.sql.prepare('SELECT count(*) n FROM kernel511_channel_receipts WHERE operation_id=?').get(record.q.operationId).n,1);
+ await original(record.peer,record.q);assert.deepEqual(state(),after,'replay cannot consume a second potion');
+ for(const client of clients)await until(()=>client.packets.some(p=>(p.results??[]).some(r=>r.sequence===1)),10000);
+ for(const client of clients)client.ws.send(JSON.stringify({type:'input',sequence:2,payload:{action:'heartbeat'}}));
+ for(const client of clients)await until(()=>client.packets.some(p=>(p.results??[]).some(r=>r.sequence===2)),10000);
+ assert.equal(faults.length,0);assert.equal(writer.rewardWorkerR533.stats.jobs,workerJobs);
 });
 
 for(const area of ['forest','black','rune_v2'])test(area+': native claim and potion persist in sole worker and replay exactly once',{timeout:60000},async t=>{
