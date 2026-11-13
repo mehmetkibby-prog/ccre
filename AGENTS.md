@@ -31,3 +31,7 @@ R113 continuation: `r109-inceleme/R113_DEVIR.md` supersedes the candidate-state
 notes above. The active tree contains the R113 engine candidate; confirmed live
 is still R110_HANDOFF1. Latest requested population testing is ONLY 50 players.
 Preserve failed measurements and do not equate functional success with zero lag.
+
+R114 continuation: `r109-inceleme/R114_DEVIR.md` records the unpublished rune
+geometry and standalone forum draft. The active working tree adds those changes
+on R113; no R114 installer exists yet. The user requested preview before updating.

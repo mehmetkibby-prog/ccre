@@ -1,0 +1,18 @@
+[
+  {
+    "group": "focused",
+    "exit": 0
+  },
+  {
+    "group": "native",
+    "exit": 0
+  },
+  {
+    "group": "captcha",
+    "exit": 0
+  },
+  {
+    "group": "r110",
+    "exit": 0
+  }
+]

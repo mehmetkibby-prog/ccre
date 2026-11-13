@@ -1,0 +1,77 @@
+{
+  "rune-tests": {
+    "tests": [
+      7
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "forum-tests": {
+    "tests": [
+      7
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "focused": {
+    "tests": [
+      60
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "native": {
+    "tests": [
+      29
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "captcha": {
+    "tests": [
+      20
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "r110": {
+    "tests": [
+      3
+    ],
+    "failed": [
+      0
+    ]
+  },
+  "browser": {
+    "passed": true,
+    "checks": [
+      "desktop categories and official-only labels",
+      "no horizontal overflow 360",
+      "no horizontal overflow 390",
+      "no horizontal overflow 768",
+      "no horizontal overflow 1440",
+      "mobile real registration and PNG CAPTCHA",
+      "member composer exposes only player categories",
+      "stored content rendered as text, no HTML execution",
+      "member topic and reply",
+      "readonly admin category on mobile",
+      "admin login and announcement publishing",
+      "admin moderation"
+    ],
+    "errors": [],
+    "live": false
+  },
+  "preview": {
+    "passed": true,
+    "errors": [],
+    "interactiveReadOnly": true,
+    "noBackendRequests": true,
+    "fileProtocol": "blocked by managed browser policy; self-contained HTML tested over localhost"
+  },
+  "scope": "local draft; no live deployment; no population test"
+}
