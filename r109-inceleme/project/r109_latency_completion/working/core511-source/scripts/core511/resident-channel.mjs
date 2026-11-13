@@ -92,7 +92,7 @@ export class ResidentChannel {
   }});
   this.skills=new SkillMemory({view:this.view,globals,party,arena,team,blocked,changed});
   this.actions=new ActionLoop({...common,footprint:(id,input,receivedAtMs)=>{const value=ports.footprint(id,input);return {...value,resources:[...value.resources,...settlementFootprint(this.view,id,input,receivedAtMs)]};},frameFor:id=>({player:this.frames.frame(id),settings:this.settings})});
-  this.kernel=new FixedLoop({state:this.state,wall,send,onFatal:e=>onFatal(e),rules:{
+  this.kernel=new FixedLoop({state:this.state,wall,send,onFatal:e=>onFatal(e),commitRepliesR113:process.env.CORE511_R113_COMMITTED_REPLIES!=='0',rules:{
    movement:ctx=>this.action(ctx),combat:ctx=>this.action(ctx),
    ai:ctx=>{this.retaliation.tick(ctx);demand(!ports.modeTick(ctx)?.then,'async_mode_tick');},
    aiSteps:ctx=>{const r=this;return (function*(){yield* r.retaliation.tickSteps(ctx);demand(!ports.modeTick(ctx)?.then,'async_mode_tick');})();},

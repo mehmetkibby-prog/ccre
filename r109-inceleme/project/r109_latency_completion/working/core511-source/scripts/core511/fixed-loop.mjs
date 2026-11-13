@@ -1,4 +1,5 @@
 import {mayProcessDeathMovementR86,isDeathMovementReplyR86} from './death-movement-r86.mjs';
+import {queueCommittedRepliesR113} from './committed-replies-r113.mjs';
 import {residentCapacityR59,channelAdmissionR59,castleResumeR59} from './castle-capacity-r59.mjs';
 import {tickSlicesR53} from './r53-options.mjs';
 import {quarantineDrainR531} from './r531-options.mjs';
@@ -15,11 +16,11 @@ const quantile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.min(a.length-1,Math.
 export const DEFER_INPUT=Symbol('core511.defer-input-until-next-tick');
 const emptyResults=Object.freeze([]);
 export class FixedLoop {
- constructor({state,rules,send,clock=()=>performance.now(),wall=Date.now,tickMs=TICK_MS,onFatal=()=>{}}) {
+ constructor({state,rules,send,clock=()=>performance.now(),wall=Date.now,tickMs=TICK_MS,onFatal=()=>{},commitRepliesR113=false}) {
   demand(tickMs===TICK_MS,'tick_must_be_20hz');
   for(const phase of ['movement','combat','ai','respawn','project'])demand(typeof rules?.[phase]==='function','missing_rule_phase_'+phase);
   this.state=state;this.rules=rules;this.send=send;this.clock=clock;this.wall=wall;this.onFatal=onFatal;
-  this.players=new Map();this.nextAt=0;this.timer=null;this.running=false;this.stopped=true;this.failure=null;
+  this.players=new Map();this.nextAt=0;this.timer=null;this.running=false;this.stopped=true;this.failure=null;this.commitRepliesR113=commitRepliesR113;
   this.tickScratch={events:new Map(),deferred:new Set(),processed:new Map()};
   this.metrics={ticks:0,missed:0,inputs:0,messages:0,totalMs:0,maxMs:0,maxInputMs:0,slowest:[],slowInputs:[],samples:[]};
  }
@@ -76,7 +77,7 @@ export class FixedLoop {
     for(const result of replies){this.settled(p,result);p.results.push(result);}
     p.deferred.length=0;if(id===replyTo&&emitReceipt)p.results.push({type:'durable',value});p.barrier=null;owner.pending--;
    }
-   queueCombatContinuationR57(this);
+   queueCommittedRepliesR113(this);queueCombatContinuationR57(this);
   },rejected).catch(fatal);
   return pending;
  }
@@ -129,7 +130,7 @@ export class FixedLoop {
    this.running=false;
   }
   const complete=()=>{
-   this.flushing=false;if(!this.failure)this.finishQuiescing();
+   this.flushing=false;if(!this.failure)this.finishQuiescing();if(this.commitReplyDeferredR113)queueCommittedRepliesR113(this);
    const elapsed=this.clock()-started,m=this.metrics;m.totalMs+=elapsed;m.maxMs=Math.max(m.maxMs,elapsed);
    if(m.samples.length===16384)m.samples.shift();m.samples.push(elapsed);
    m.slowest.push({tick:m.ticks,at:now,ms:elapsed,players:this.activeCount});m.slowest.sort((a,b)=>b.ms-a.ms);m.slowest.length=Math.min(10,m.slowest.length);
@@ -158,7 +159,7 @@ export class FixedLoop {
  }
  finishQuiescing(){
   if(this.flushing)return;
-  const ready=(id,p)=>p.quiescer&&!p.externalHold&&!p.queue.length&&!p.barrier&&!p.results.length&&!p.deferred.length&&!this.state.owners.get(id)?.pending;
+  const ready=(id,p)=>p.quiescer&&!p.externalHold&&!p.queue.length&&!p.barrier&&!p.results.length&&!p.deferred.length&&!p.replyPendingR113&&!this.state.owners.get(id)?.pending;
   const finish=(id,p)=>{this.state.quiesce(id,p.epoch);p.suspended=true;const waiter=p.quiescer;p.quiescer=null;waiter.resolve({id,epoch:p.epoch,lastApplied:p.lastApplied});};
   const visited=new Set();
   for(const [id,p]of this.players){

@@ -1,4 +1,5 @@
 import {mayProcessDeathMovementR86,isDeathMovementReplyR86} from './death-movement-r86.mjs';
+import {queueCommittedRepliesR113} from './committed-replies-r113.mjs';
 import {earlyCombatReplyR531,tickHoldR531} from './r531-options.mjs';
 import {memoryCombatR53,normalPlayerR53,normalMonsterR53} from './r53-options.mjs';
 import {ordinaryRuneRewardR87} from './rune-reward-scope-r87.mjs';
@@ -97,7 +98,7 @@ function* tickBodyR53() {
    this.running=false;
   }
   const complete=()=>{
-   this.flushing=false;if(!this.failure)this.finishQuiescing();
+   this.flushing=false;if(!this.failure)this.finishQuiescing();if(this.commitReplyDeferredR113)queueCommittedRepliesR113(this);
    const elapsed=this.clock()-started,m=this.metrics;m.totalMs+=elapsed;m.maxMs=Math.max(m.maxMs,elapsed);
    if(m.samples.length===16384)m.samples.shift();m.samples.push(elapsed);
    m.slowest.push({tick:m.ticks,at:now,ms:elapsed,players:this.activeCount});m.slowest.sort((a,b)=>b.ms-a.ms);m.slowest.length=Math.min(10,m.slowest.length);

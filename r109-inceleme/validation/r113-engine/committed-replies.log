@@ -1,0 +1,58 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794546891881,"backupName":"before-pearl-reset-1794546891881-995797f5-a284-49bf-85ec-3eefe438ee23.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:15:00.051Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":236619,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3968c99b34b171018c02c84d"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:15:00.052Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":236629,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"13f3a4a697a95c32167e0852"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:15:00.052Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":236635,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bf2a95deb4bcfdbf1152b590"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:15:00.053Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":236645,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"117a21604d31d034d8a780c1"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:15:00.079Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":236608,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"1bf26bf0247f0c81bfa7bbba"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 9977.387743
+  type: 'test'
+  ...
+# Subtest: R113 committed result is sent without another tick, never before COMMIT, and replays exactly once
+ok 2 - R113 committed result is sent without another tick, never before COMMIT, and replays exactly once
+  ---
+  duration_ms: 6.001534
+  type: 'test'
+  ...
+# Subtest: R113 unknown COMMIT cannot emit a result or clear its owner barrier
+ok 3 - R113 unknown COMMIT cannot emit a result or clear its owner barrier
+  ---
+  duration_ms: 1.825705
+  type: 'test'
+  ...
+# Subtest: R113 publication waits out a logical tick and never leaks private durable receipts
+ok 4 - R113 publication waits out a logical tick and never leaks private durable receipts
+  ---
+  duration_ms: 2.559188
+  type: 'test'
+  ...
+# Subtest: slow-death journal has a strict rate and fixed public fields
+ok 5 - slow-death journal has a strict rate and fixed public fields
+  ---
+  duration_ms: 0.461233
+  type: 'test'
+  ...
+# Subtest: queue, checkpoint, writer and refresh waits are measured without changing the admin schema
+ok 6 - queue, checkpoint, writer and refresh waits are measured without changing the admin schema
+  ---
+  duration_ms: 1.314061
+  type: 'test'
+  ...
+# Subtest: report failure and backwards clocks cannot alter a kill observation or leave a token active
+ok 7 - report failure and backwards clocks cannot alter a kill observation or leave a token active
+  ---
+  duration_ms: 0.189406
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11723.927578
