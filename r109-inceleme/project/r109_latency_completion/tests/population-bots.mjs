@@ -4,15 +4,16 @@ import {randomUUID} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import {activePopulationInputs,settlePopulationEnd} from './population-end-settlement.mjs';
 import {observePopulationFinalEvent,recordPopulationPending} from './population-final-events.mjs';
+import {offerPopulationAttackR113} from './population-arrivals-r113.mjs';
 import {PopulationDelivery} from './population-delivery-r111.mjs';
 import {WebSocket} from '/tmp/core511-build-deps/node_modules/ws/wrapper.mjs';
 const {Core511Transport}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/client-transport.mjs');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const delivery=new PopulationDelivery();
+const delivery=new PopulationDelivery(),openArrivalR113=process.env.POPULATION_OPEN_ARRIVAL==='1';
 let actors=[],timer,measuring=false,counts={},errors=[],cpu,started,endSettlement=null;
 const count=k=>{if(measuring)counts[k]=(counts[k]||0)+1;};
 const quantile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.ceil(a.length*p)-1]:0;
-const snapshot=()=>({pid:process.pid,counts,errors,endSettlement,combatDelivery:delivery.snapshot(),provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
+const snapshot=()=>({pid:process.pid,counts,errors,endSettlement,combatDelivery:delivery.snapshot(),provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,arrivalsR113:a.arrivalsR113,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
 async function send(a,input){
  if(input.action==='attack'){a.observedAttackIntents??=new Set();a.observedAttackIntents.add(input.intentId);if(a.observedAttackIntents.size>256){const oldest=a.observedAttackIntents.values().next().value;if([...a.pendingKills.values()].some(t=>t.intentId===oldest))throw Error('population_unresolved_intent_overflow');a.observedAttackIntents.delete(oldest);a.finalAttackEvents?.delete(oldest);}}
  const at=performance.now();
@@ -68,7 +69,7 @@ async function act(a){
    const enemy=run.enemies.filter(m=>m.hp>0).sort((x,y)=>Math.hypot(x.x-member.x,x.y-member.y)-Math.hypot(y.x-member.x,y.y-member.y))[0];if(!enemy)return;
    const d=Math.hypot(enemy.x-member.x,enemy.y-member.y);
    if(d>125&&now-a.lastMove>=250){a.lastMove=now;await send(a,{action:'dungeon',command:{action:'move',x:(enemy.x-member.x)/d,y:(enemy.y-member.y)/d,sequence:++a.moveSequence,followTarget:enemy.id}});count('soloMoves');}
-   else if(d<=125&&now-a.lastAttack>=950){a.lastAttack=now;await send(a,{action:'dungeon',command:{action:'attack',target:enemy.id,skill:0}});count('soloAttacks');if(measuring)a.attacks++;}
+   else if(!openArrivalR113&&d<=125&&now-a.lastAttack>=950){a.lastAttack=now;await send(a,{action:'dungeon',command:{action:'attack',target:enemy.id,skill:0}});count('soloAttacks');if(measuring)a.attacks++;}
    return;
   }
   const run=w.adventure511?.run;if(run)a.floors.add(run.floor);
@@ -77,7 +78,7 @@ async function act(a){
  const enemy=a.targetId?w.monsters.find(m=>m.id===a.targetId&&m.hp>0):w.monsters.filter(m=>m.hp>0).sort((x,y)=>Math.hypot(x.x-p.x,x.y-p.y)-Math.hypot(y.x-p.x,y.y-p.y))[0];if(!enemy)return;
   const distance=Math.hypot(enemy.x-p.x,enemy.y-p.y);
   if(distance>150&&now-a.lastMove>=250){a.lastMove=now;const step=Math.min(30,distance-140);c.move({action:'move',x:p.x+(enemy.x-p.x)/distance*step,y:p.y+(enemy.y-p.y)/distance*step,area:w.area,basePositionRevision:p.position_revision,requestId:randomUUID()});count(a.zone+'Moves');}
-  else if(distance<=150&&now-a.lastAttack>=950){
+  else if(!openArrivalR113&&distance<=150&&now-a.lastAttack>=950){
    const ability=(a.equipmentFixture?.abilities??[]).filter(s=>s.ability>0&&s.available&&(a.abilityNext?.[s.ability]??0)<=now).sort((x,y)=>y.ability-x.ability)[0];
    a.lastAttack=now;const r=await send(a,{action:'attack',targetId:enemy.id,spawnRound:enemy.spawn_round,ability:ability?.ability??0,requestId:randomUUID(),intentId:randomUUID()});count(a.zone+'Attacks');if(measuring)a.attacks++;
    if(ability){(a.abilityNext??={})[ability.ability]=Date.now()+ability.safeCadenceMs;count('skill'+ability.ability);}
@@ -103,9 +104,9 @@ async function command(method,value){
   }
   const until=Date.now()+15000;while(actors.some(a=>a.zone==='solo'?!a.client.dungeon?.run:['tower','mist'].includes(a.zone)&&!a.client.world?.adventure511?.run)&&Date.now()<until)await sleep(25);
   for(const a of actors){if(a.zone==='solo')assert(a.client.dungeon?.run,'solo entered');if(['tower','mist'].includes(a.zone))assert(a.client.world?.adventure511?.run,a.zone+' entered');}
-  timer=setInterval(()=>{for(const a of actors){if(process.env.POPULATION_FARM_STRESS==='1')background(a);void act(a);}},50);return {players:actors.length,pid:process.pid};
+  timer=setInterval(()=>{for(const a of actors){if(process.env.POPULATION_FARM_STRESS==='1')background(a);if(openArrivalR113)offerPopulationAttackR113(a,{measuring,isMeasuring:()=>measuring,send,count,onError:e=>{if(errors.length<100)errors.push({actor:a.n,zone:a.zone,phase:'open-arrival',error:e.message});}});void act(a);}},50);return {players:actors.length,pid:process.pid};
  }
- if(method==='begin'){assert.deepEqual(errors,[]);measuring=true;cpu=process.cpuUsage();started=performance.now();for(const a of actors){a.nextHttp=Date.now()+1000+a.n*170;a.nextChat=Date.now()+3000+a.n*250;a.nextPotion=Date.now()+5000+a.n*180;}return {started:true};}
+ if(method==='begin'){assert.deepEqual(errors,[]);measuring=true;cpu=process.cpuUsage();started=performance.now();for(const a of actors){a.arrivalsR113=null;a.nextOfferR113=Date.now()+a.n*17;a.nextHttp=Date.now()+1000+a.n*170;a.nextChat=Date.now()+3000+a.n*250;a.nextPotion=Date.now()+5000+a.n*180;}return {started:true};}
  if(method==='end'){
   measuring=false;clearInterval(timer);timer=null;
   await Promise.all(actors.map(a=>a.background));

@@ -16,7 +16,7 @@ if(process.env.R111_TEST_REPLAY_STORAGE==='0')process.env.CORE511_R111_REPLAY_ST
 if(process.env.R108_TEST_READ_BATCH==='0')process.env.CORE511_READ_SNAPSHOT_BATCH='0';
 const capacity=process.env.CORE101_REALM_ID==='r2'?10:25;
 const N=Number(process.env.LOAD_PLAYERS),duration=Number(process.env.LOAD_MS||60000),label=process.env.LOAD_LABEL;
-assert([10,15,30,40,50,100].includes(N));assert(N<=capacity*4,'respect realm admission capacity');assert(duration>=10000&&duration<=180000);assert(/^[a-z0-9-]+$/.test(label));
+assert([10,15,30,40,50,100].includes(N));assert(N<=capacity*4,'respect realm admission capacity');assert(duration>=10000&&duration<=3600000);assert(/^[a-z0-9-]+$/.test(label));
 const out=root+'/evidence/'+label+'-'+N+'.json';assert(!fs.existsSync(out),'keep earlier results immutable');
 const {nativeHttpHost}=await import(core+'/tests/native-http-host-fixture.mjs');
 const {currentRealmFixture}=await import('./current-realm-fixture.mjs');
@@ -80,7 +80,7 @@ try{
    if(index%5===0)put(q,'parties',{id:party,leader_id:id,created_at:Math.floor(now/1000)});
    put(q,'party_members',{party_id:party,player_id:id,joined_at:Math.floor(now/1000)});
   }
-  report.populationFixture=await seedPopulation(host,actors,mode);
+  report.arrivalPolicyR113=process.env.POPULATION_OPEN_ARRIVAL==='1'?'fixed 950ms attack offers, bounded two-input backlog; idle/movement/blocked slots reported':'closed-loop legacy comparator';report.populationFixture=await seedPopulation(host,actors,mode);
  }});
  s.testListeners=listeners;s.route=await nativeRoute(scope);
  if(report.populationFixture.boss){const acquire=s.world.combat.acquire.bind(s.world.combat);s.world.combat.acquire=(peer,...args)=>{sharedAcquires[peer.channel]=(sharedAcquires[peer.channel]??0)+1;return acquire(peer,...args);};}
