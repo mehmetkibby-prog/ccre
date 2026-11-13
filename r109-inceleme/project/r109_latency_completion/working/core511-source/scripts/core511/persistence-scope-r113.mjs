@@ -1,5 +1,17 @@
 import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
 export const combatAreaR113=area=>['forest','frozen','ancient','black','rune_v2'].includes(area)||instanceRewardAreaR71(area);
+// Only the native sanctuary boss. Its existing global signed lease and every
+// actor hold remain in force; this selects the execution connection, not a new
+// authority. Other world-ending/administrative operations keep their old path.
+export function canonicalBossWriteR113(request){
+ const p=request?.payload,player=p?.expected?.player,input=p?.input;
+ if(!p?.sharedLease||player?.area!=='sanctum'||player.arena_match_id||player.instance_id||p.batchPotionsR61!==undefined||p.batchAttacksR57!==undefined)return false;
+ if(request.operation==='attack'){
+  const m=p.expected.monster;
+  return input?.action==='attack'&&input.targetId==='dunya-bosu-1'&&m?.id===input.targetId&&m.channel===0&&m.is_boss===1&&m.area==='sanctum'&&!m.loadlab_run_id;
+ }
+ return request.operation==='native_action'&&input?.action==='claim_rewards'&&Array.isArray(input.rewardTargets)&&input.rewardTargets.length>0&&input.rewardTargets.length<=10&&input.rewardTargets.every(t=>t?.id==='dunya-bosu-1'&&Number.isSafeInteger(t.spawnRound)&&t.spawnRound>0);
+}
 // Established rooms are owned by one channel. Cross-channel entry/return and
 // world-ending jobs retain their coordinator transition, never a worker shortcut.
 export function dungeonWriteR113(request){

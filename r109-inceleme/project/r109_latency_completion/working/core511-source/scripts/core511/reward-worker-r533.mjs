@@ -1,5 +1,5 @@
 import {Worker} from 'node:worker_threads';
-import {combatAreaR113,dungeonWriteR113,privateCombatWriteR113} from './persistence-scope-r113.mjs';
+import {combatAreaR113,dungeonWriteR113,privateCombatWriteR113,canonicalBossWriteR113} from './persistence-scope-r113.mjs';
 import {guardDeathBatchActorsR57} from './death-batch-writer-r57.mjs';
 import {statSync,realpathSync} from 'node:fs';
 import {rewardWorkerR533} from './r533-options.mjs';
@@ -31,6 +31,7 @@ export class RewardWorkerR533 {
  candidate(request){
   if(!rewardWorkerR533||!this.file||this.closed)return false;
   if(dungeonWriteR113(request))return true;
+  if(canonicalBossWriteR113(request))return true;
   const p=request.payload,player=p?.expected?.player;
   if(!player||!combatAreaR113(player.area)||player.arena_match_id||player.instance_id)return false;
   return request.operation==='attack'&&p.input?.action==='attack'&&!p.expected?.monster?.is_boss||privateCombatWriteR113(request);
@@ -42,12 +43,15 @@ export class RewardWorkerR533 {
   if(this.core.permanent.blocksWorkerR113()||this.lane.nativeWrites)return false;
   const p=request.payload,keys=p.resources;if(!Array.isArray(keys)||keys.length>2048)return false;
   if(dungeonWriteR113(request))return p.actors.every(id=>keys.includes('player:'+id))&&keys.every(k=>k.startsWith('player:')||k==='dungeon:'+p.run.id);
+  const boss=canonicalBossWriteR113(request);
+  if(boss){const held=this.core.sharedWorld?.combat?.global?.terminal;if(held?.phase!=='frozen'||held.row.proof!==p.sharedLease)return false;}
   const ids=keys.filter(k=>k.startsWith('monster:')).map(k=>k.slice(8));
   // The same native handlers and audited resource set execute in the sole
-  // persistence lane. Global world bosses and unsupported maps retain their
-  // transition path; shared local targets require the existing signed lease.
+  // persistence lane. The canonical boss retains its GLOBAL transition and
+  // all-owner holds; only its native SQL moves here. Unsupported targets keep
+  // the old execution path. Shared targets still need their signed lease.
   const rows=sql.prepare('SELECT m.id,m.hp,m.area,m.channel,m.is_boss FROM json_each(?) j JOIN monsters m ON m.id=j.value WHERE m.hp>0').all(JSON.stringify(ids));
-  if(rows.some(m=>m.is_boss||!combatAreaR113(m.area)||m.channel===0&&!p.sharedLease))return false;
+  if(rows.some(m=>(m.is_boss?!boss||m.id!=='dunya-bosu-1'||m.area!=='sanctum'||m.channel!==0:!combatAreaR113(m.area))||m.channel===0&&!p.sharedLease))return false;
   return true;
  }
  envelope(peer,request,context,stamps){
