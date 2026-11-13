@@ -1,4 +1,5 @@
 import {isZumrutActionR93} from './zumrut-actions-r93.mjs';
+import {ORDERED_ACTIONS_R113,orderedActionR113} from './ordered-actions-r113.mjs';
 import {egressPacingR531} from './r531-options.mjs';
 import {r37Options} from './r37-options.mjs';
 import {demand,PROTOCOL} from './contract.mjs';
@@ -70,6 +71,7 @@ export class ChannelConnections {
      demand(message?.type==='auth'&&!record.authPending,'authentication_required');record.authPending=true;
      record.botChallengeEnabled=Array.isArray(message.capabilities)&&message.capabilities.includes(BOT_CHALLENGE);
      record.orderedMovement=Array.isArray(message.capabilities)&&message.capabilities.includes(ORDERED_MOVEMENT);
+     record.orderedActionsR113=record.orderedMovement&&message.capabilities.includes(ORDERED_ACTIONS_R113);
      record.backgroundMovement=record.orderedMovement&&message.capabilities.includes('background-movement-v1');
      record.movementPipeline=record.orderedMovement||Array.isArray(message.capabilities)&&message.capabilities.includes(MOVEMENT_PIPELINE);
      record.motionEnabled=Boolean(this.motion&&Array.isArray(message.capabilities)&&message.capabilities.includes(MOTION));
@@ -84,7 +86,7 @@ export class ChannelConnections {
       if(prior&&prior!==socket){this.sockets.get(prior).revoked=true;prior.close(4009,'Reconnected');}
       const actor=this.kernel.players.get(identity.actor);demand(actor&&!actor.passive&&actor.epoch===identity.epoch,'actor_not_admitted');
       this.presence(identity);
-      const motionStreamId=record.motionEnabled?this.motion.ready(identity,record):null,capabilities=[...(record.movementPipeline?[MOVEMENT_PIPELINE,...record.orderedMovement?[ORDERED_MOVEMENT]:[]]:[]),...(motionStreamId?[MOTION]:[]),...(record.botChallengeEnabled?[BOT_CHALLENGE]:[]),...(record.backgroundMovement?['background-movement-v1']:[])];
+      const motionStreamId=record.motionEnabled?this.motion.ready(identity,record):null,capabilities=[...(record.movementPipeline?[MOVEMENT_PIPELINE,...record.orderedMovement?[ORDERED_MOVEMENT]:[]]:[]),...(motionStreamId?[MOTION]:[]),...(record.botChallengeEnabled?[BOT_CHALLENGE]:[]),...(record.backgroundMovement?['background-movement-v1']:[]),...(record.orderedActionsR113?[ORDERED_ACTIONS_R113]:[])];
       socket.send(JSON.stringify({type:'ready',protocol:PROTOCOL,channel:this.kernel.state.channel,epoch:identity.epoch,lastAccepted:actor.lastAccepted,lastApplied:actor.lastApplied,results:this.kernel.replayResults?.(identity.actor)??[],...(capabilities.length?{capabilities}:{}),...(motionStreamId?{motionStreamId}:{})}));
       await this.ready(identity,record);
      }).catch(()=>close());return;
@@ -106,12 +108,12 @@ export class ChannelConnections {
     const identity=record.identity,kind=message.payload.action==='move'?'movement':'combat';
     if(Object.hasOwn(message,'dependsOn')){
      const parent=record.lastInput;
-     demand(record.orderedMovement&&Number.isSafeInteger(message.dependsOn)&&message.sequence===message.dependsOn+1&&parent?.sequence===message.dependsOn&&(kind==='movement'&&parent.followMovement||kind==='combat'&&parent.kind==='movement'&&allowsFollowingMovement(message.payload,record.backgroundMovement)),'invalid_input_dependency');
+     demand(record.orderedMovement&&Number.isSafeInteger(message.dependsOn)&&message.sequence===message.dependsOn+1&&parent?.sequence===message.dependsOn&&(kind==='movement'&&parent.followMovement||kind==='combat'&&parent.kind==='movement'&&allowsFollowingMovement(message.payload,record.backgroundMovement)||record.orderedActionsR113&&kind==='combat'&&parent.followActionR113&&orderedActionR113(message.payload)),'invalid_input_dependency');
      if(!parent.accepted){socket.send(JSON.stringify({type:'not_queued',protocol:PROTOCOL,epoch:identity.epoch,sequence:message.sequence,dependsOn:message.dependsOn,code:'dependency_not_queued',durable:false}));return;}
     }
     // Store only one prior wire input. It is a dependency admission decision,
     // never an execution/durability result, and cannot cross a reconnect.
-    const input={sequence:message.sequence,kind,followMovement:kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement),accepted:false};record.lastInput=input;
+    const input={sequence:message.sequence,kind,followMovement:kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement),followActionR113:kind==='combat'&&orderedActionR113(message.payload),accepted:false};record.lastInput=input;
     if(this.guard(identity,message.payload)!==true){
      const challenged=this.challenge(identity),actor=this.kernel.players.get(identity.actor);
      if(challenged&&record.botChallengeEnabled&&actor?.epoch===identity.epoch){
@@ -133,7 +135,7 @@ export class ChannelConnections {
      const outstanding=actor.lastAccepted-actor.lastApplied,prior=pipeline.inputs.get(actor.lastAccepted);
      // A reconnect inherits the actor's accepted queue, not a new socket's
      // allowance. Unknown legacy work cannot grant an extra movement slot.
-     if(outstanding>=2||outstanding===1&&!(kind==='movement'&&prior?.kind==='combat'&&prior.followMovement&&(!prior.backgroundOnly||record.backgroundMovement)||record.orderedMovement&&kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement)&&prior?.kind==='movement')){
+     if(outstanding>=2||outstanding===1&&!(kind==='movement'&&prior?.kind==='combat'&&prior.followMovement&&(!prior.backgroundOnly||record.backgroundMovement)||record.orderedMovement&&kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement)&&prior?.kind==='movement'||record.orderedActionsR113&&kind==='combat'&&prior?.followActionR113&&orderedActionR113(message.payload))){
       socket.send(JSON.stringify({type:'retry',sequence:message.sequence,code:'input_backpressure'}));return;
      }
     }
@@ -145,7 +147,7 @@ export class ChannelConnections {
     catch(error){if(['actor_draining','input_backpressure'].includes(error.code)){socket.send(JSON.stringify({type:'retry',sequence:message.sequence,code:error.code}));return;}throw error;}
     input.accepted=true;this.acceptedInput?.(identity,message.payload);
     if(record.movementPipeline){
-     pipeline.inputs.set(message.sequence,{kind,followMovement:kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement),backgroundOnly:record.backgroundMovement&&!allowsFollowingMovement(message.payload)});
+     pipeline.inputs.set(message.sequence,{kind,followMovement:kind==='combat'&&allowsFollowingMovement(message.payload,record.backgroundMovement),followActionR113:kind==='combat'&&orderedActionR113(message.payload),backgroundOnly:record.backgroundMovement&&!allowsFollowingMovement(message.payload)});
      // Queue admission is deliberately NOT a result or a durable ACK. Only
      // the unchanged writer/FixedLoop result path can confirm execution.
      socket.send(JSON.stringify({type:'queued',protocol:PROTOCOL,epoch:identity.epoch,sequence:message.sequence,kind,accepted:true,durable:false}));

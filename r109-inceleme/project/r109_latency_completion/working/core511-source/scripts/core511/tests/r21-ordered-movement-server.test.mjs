@@ -18,7 +18,7 @@ class Socket extends EventEmitter {
 }
 function fixture(t){
  const identity={actor:'test-actor',account:'test-account',session:'test-session',epoch:1},owner={epoch:1,pending:0};
- const state={channel:1,owners:new Map([[identity.actor,owner]]),assertOwner(id,epoch){demand(id===identity.actor&&epoch===owner.epoch,'owner_epoch_fenced');return owner;},changes(){return {};}};
+ const state={channel:1,read:()=>null,owners:new Map([[identity.actor,owner]]),assertOwner(id,epoch){demand(id===identity.actor&&epoch===owner.epoch,'owner_epoch_fenced');return owner;},changes(){return {};}};
  const committed=defer();let commits=0,rateCalls=0,retryAfter=0,allowed=true,connections;
  const kernel=new FixedLoop({state,rules:{
   movement:()=>({type:'action',status:200,body:{moved:true}}),
@@ -28,11 +28,31 @@ function fixture(t){
  kernel.admit(identity.actor,1);kernel.stopped=false;
  connections=new ChannelConnections({kernel,tickets:{consume:()=>({...identity})},budget:{activate:async()=>{},release:async()=>{}},admit:async()=>{},guard:()=>allowed,rate:()=>{rateCalls++;return retryAfter;},disconnected:async()=>{}});
  t.after(()=>{connections.close();kernel.stop();});
- async function connect({negotiated=true,immediate=true}={}){const socket=new Socket();connections.attach(socket,{lease:'lease',boot:'boot',origin:'https://fixture.invalid'});socket.emit('message',Buffer.from(JSON.stringify({type:'auth',ticket:'fixture',...(negotiated?{capabilities:[capability,...immediate?[ordered]:[]]}:{})})),false);await turn();return socket;}
+ async function connect({negotiated=true,immediate=true,actions=false}={}){const socket=new Socket();connections.attach(socket,{lease:'lease',boot:'boot',origin:'https://fixture.invalid'});socket.emit('message',Buffer.from(JSON.stringify({type:'auth',ticket:'fixture',...(negotiated?{capabilities:[capability,...immediate?[ordered]:[],...actions?['ordered-actions-r113']:[]]}:{})})),false);await turn();return socket;}
  return {identity,owner,kernel,connections,connect,committed,commits:()=>commits,rateCalls:()=>rateCalls,setRate:n=>{retryAfter=n;},setAllowed:value=>{allowed=value;},actor:()=>kernel.players.get(identity.actor)};
 }
 const receipts=socket=>socket.sent.filter(p=>p.type==='queued');
 const results=socket=>socket.sent.flatMap(p=>p.results??[]).filter(p=>p.type==='action');
+
+test('R113 admits two combat actions but retains execution, rate, reconnect and economy fences',async t=>{
+ const f=fixture(t),socket=await f.connect({actions:true});
+ assert(socket.sent[0].capabilities.includes('ordered-actions-r113'));
+ socket.input(1,{action:'attack',ability:1});socket.input(2,{action:'attack',ability:2},{dependsOn:1});
+ assert.equal(f.actor().lastAccepted,2);assert.equal(f.rateCalls(),2);
+ socket.input(3,{action:'attack',ability:3});assert.equal(socket.sent.at(-1).type,'retry');assert.equal(f.rateCalls(),2);
+ f.kernel.tick();assert.equal(f.commits(),1);assert.equal(results(socket).length,0);
+ const replacement=await f.connect({actions:true});replacement.input(3,{action:'attack',ability:3});assert.equal(replacement.sent.at(-1).type,'retry');
+ f.committed.resolve();await turn();f.kernel.tick();await turn();f.kernel.tick();
+ assert.equal(f.commits(),2);assert.equal(f.actor().lastApplied,2);
+ replacement.input(3,{action:'attack',ability:1});replacement.input(4,{action:'donate',amount:100});
+ assert.equal(replacement.sent.at(-1).type,'retry');assert.equal(f.actor().lastAccepted,3);
+});
+test('R113 rejected first action cannot authorize a dependent second attack',async t=>{
+ const f=fixture(t),socket=await f.connect({actions:true});f.setRate(1);
+ socket.input(1,{action:'attack',ability:1});socket.input(2,{action:'attack',ability:2},{dependsOn:1});
+ assert.equal(socket.sent.at(-1).type,'not_queued');assert.equal(f.actor().lastAccepted,0);assert.equal(f.rateCalls(),1);
+ f.setRate(0);socket.input(1,{action:'attack',ability:1});assert.equal(f.actor().lastAccepted,1);
+});
 
 
 test('ordered dependent movement skips enqueue roundtrip but still waits for durable command completion',async t=>{
@@ -68,7 +88,7 @@ for(const [name,parent,extra,immediate] of [
  ['wrong predecessor',{action:'attack'},{dependsOn:0},true],
  ['skill',{action:'attack',ability:1},{dependsOn:1},true],
  ['teleport',{action:'teleport'},{dependsOn:1},true],
- ['potion',{action:'use_potion'},{dependsOn:1},true],
+ ['potion',{action:'donate'},{dependsOn:1},true],
 ])test('dependency refuses '+name,async t=>{
  const f=fixture(t),socket=await f.connect({immediate});socket.input(1,parent);socket.input(2,{action:'move'},extra);assert.equal(f.actor().lastAccepted,1);assert.equal(socket.closed.code,1008);
 });
@@ -84,7 +104,7 @@ for(const payload of [{action:'attack',ability:0},{action:'claim_rewards'},{acti
  socket.input(3,{action:'move'});assert.equal(f.actor().lastAccepted,3);assert.equal(f.actor().lastAccepted-f.actor().lastApplied,2);assert.equal(f.owner.pending,1);
  f.committed.resolve();await turn();f.kernel.tick();assert.equal(f.actor().lastApplied,3);assert.equal(f.commits(),1);assert.equal(results(socket).filter(r=>r.body.rewardOnce).length,1);
 });
-for(const payload of [{action:'teleport'},{action:'attack',ability:1},{action:'use_potion'},{action:'select_channel'},{action:'dungeon'}])test('movement cannot grant unsafe dependent '+payload.action+' '+payload.ability,async t=>{
+for(const payload of [{action:'teleport'},{action:'attack',ability:1},{action:'donate'},{action:'select_channel'},{action:'dungeon'}])test('movement cannot grant unsafe dependent '+payload.action+' '+payload.ability,async t=>{
  const f=fixture(t),socket=await f.connect();socket.input(1,{action:'move'});socket.input(2,payload,{dependsOn:1});assert.equal(f.actor().lastAccepted,1);assert.equal(socket.closed.code,1008);
 });
 test('rate rejected movement cannot cause dependent reward to execute; retry has original sequence',async t=>{

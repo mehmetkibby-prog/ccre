@@ -1,4 +1,5 @@
 import {rewardClaimCandidateR50,rewardClaimEnabledR50,claimRewardsR50,cancelRewardClaimsR50} from './reward-claim-client-r50.mjs';
+import {ORDERED_ACTIONS_R113,orderedActionR113} from './ordered-actions-r113.mjs';
 import {readR46ClientOptions} from './r46-client.mjs';
 import {applyWorldDelta} from '../../../native510-bb3a6cc689c6/lib/world-push.mjs';
 import {NATIVE_ACTIONS} from './generated/action-names.mjs';
@@ -17,7 +18,7 @@ import {RemoteMovement} from './remote-movement.mjs';
 export {BufferedInterpolation as PositionInterpolation};
 
 export class Core511Transport {
- constructor({fetch,WebSocket,origin,headers,now=()=>performance.now(),notify=()=>{}}){Object.assign(this,{fetch,WebSocket,origin,headers,now,notify});this.entrySelected=false;this.listeners=new Set();this.interpolation=new RemoteMovement();this.motionStreamId=null;this.motionLast=null;this.motionStopped=true;this.prediction=new OwnPrediction();this.queue=[];this.active=null;this.ws=null;this.epoch=null;this.lastAccepted=0;this.connection=0;this.world=null;this.dungeon=null;this.cursor=null;this.seen=new Set();this.ackIds=new Set();this.ackPending=null;this.disposed=false;this.halted=false;this.haltFailure=null;this.botRequired=false;this.botChallenges=false;this.botRevision=0;this.retry=0;this.movementBehind=null;this.queuedMovement=false;this.orderedMovement=false;this.backgroundMovement=false;}
+ constructor({fetch,WebSocket,origin,headers,now=()=>performance.now(),notify=()=>{}}){Object.assign(this,{fetch,WebSocket,origin,headers,now,notify});this.entrySelected=false;this.listeners=new Set();this.interpolation=new RemoteMovement();this.motionStreamId=null;this.motionLast=null;this.motionStopped=true;this.prediction=new OwnPrediction();this.queue=[];this.active=null;this.ws=null;this.epoch=null;this.lastAccepted=0;this.connection=0;this.world=null;this.dungeon=null;this.cursor=null;this.seen=new Set();this.ackIds=new Set();this.ackPending=null;this.disposed=false;this.halted=false;this.haltFailure=null;this.botRequired=false;this.botChallenges=false;this.botRevision=0;this.retry=0;this.movementBehind=null;this.queuedMovement=false;this.orderedMovement=false;this.backgroundMovement=false;this.orderedActionsR113=false;}
  emit(kind,value){if(this.disposed)return;if(kind==='event')this.receiveMovementEvent(value);this.notify(kind,value);for(const f of this.listeners)f(kind,value);}
  // Viewport metadata only; normal movement, ACKs and prediction are untouched.
  motionViewport({area,width,height}){
@@ -65,16 +66,16 @@ export class Core511Transport {
  }
  async ensure(replacementInternal=false){if(!replacementInternal)while(this.replacing)await this.replacing;this.assertAvailable();if(this.ready)return;if(this.connecting)return this.connecting;const task=(async()=>{const delay=Math.max(0,(this.reconnectAt??0)-this.now());if(delay)await new Promise(resolve=>setTimeout(resolve,delay));this.assertAvailable();if(!this.ready)return this.open(await this.endpoint('ticket'));})();this.connecting=task;try{await task;}finally{if(this.connecting===task)this.connecting=null;}}
  async open(ticket){
-  this.assertAvailable();this.resetMovement();this.botRequired=false;this.botChallenges=false;this.botRevision=0;this.motionStreamId=null;this.queuedMovement=false;this.orderedMovement=false;this.backgroundMovement=false;for(const row of this.pendingInputs())clearTimeout(row.retryTimer);clearTimeout(this.reconnectTimer);this.reconnectTimer=null;clearTimeout(this.watchdogTimer);const generation=++this.connection,old=this.ws;this.ready=false;this.cursor=null;this.world=null;this.dungeon=null;this.afkCheck=undefined;this.interpolation.clear();this.ackIds.clear();this.ackPending=null;
+  this.assertAvailable();this.resetMovement();this.botRequired=false;this.botChallenges=false;this.botRevision=0;this.motionStreamId=null;this.queuedMovement=false;this.orderedMovement=false;this.backgroundMovement=false;this.orderedActionsR113=false;for(const row of this.pendingInputs())clearTimeout(row.retryTimer);clearTimeout(this.reconnectTimer);this.reconnectTimer=null;clearTimeout(this.watchdogTimer);const generation=++this.connection,old=this.ws;this.ready=false;this.cursor=null;this.world=null;this.dungeon=null;this.afkCheck=undefined;this.interpolation.clear();this.ackIds.clear();this.ackPending=null;
   const url=new URL(ticket.url,this.origin);url.protocol=url.protocol==='https:'?'wss:':'ws:';const socket=new this.WebSocket(url.href);this.ws=socket;this.playerId=ticket.playerId??this.playerId;old?.close(1000,'Connection replaced');
   return new Promise((resolve,reject)=>{
    let completed=false;const timer=setTimeout(()=>{reject(failure('connection_timeout'));socket.close();},10000),current=()=>!this.disposed&&this.connection===generation&&this.ws===socket;
-   socket.addEventListener('open',()=>{if(current())socket.send(JSON.stringify({type:'auth',ticket:ticket.ticket,capabilities:[QUEUED_MOVEMENT,ORDERED_MOVEMENT,MOTION,BOT_CHALLENGE,'background-movement-v1']}));else socket.close();});
+   socket.addEventListener('open',()=>{if(current())socket.send(JSON.stringify({type:'auth',ticket:ticket.ticket,capabilities:[QUEUED_MOVEMENT,ORDERED_MOVEMENT,MOTION,BOT_CHALLENGE,'background-movement-v1',ORDERED_ACTIONS_R113]}));else socket.close();});
    socket.addEventListener('message',event=>{if(!current())return;try{const p=JSON.parse(typeof event.data==='string'?event.data:event.data.toString());
     if(p.type==='ready'){
      if(p.protocol!==CLIENT_PROTOCOL||p.channel!==ticket.channel||p.epoch!==ticket.epoch||!Number.isSafeInteger(p.lastAccepted)||!Number.isSafeInteger(p.lastApplied))throw failure('ready_protocol');
      if(this.epoch!==null&&this.epoch!==p.epoch){this.rejectActive('command_outcome_unknown');this.rejectQueue('owner_changed');}
-     this.epoch=p.epoch;this.lastAccepted=p.lastAccepted;this.botChallenges=Array.isArray(p.capabilities)&&p.capabilities.includes(BOT_CHALLENGE);this.queuedMovement=Array.isArray(p.capabilities)&&p.capabilities.includes(QUEUED_MOVEMENT);this.orderedMovement=this.queuedMovement&&p.capabilities.includes(ORDERED_MOVEMENT);this.backgroundMovement=this.orderedMovement&&p.capabilities.includes('background-movement-v1');this.motionStreamId=p.capabilities?.includes(MOTION)&&typeof p.motionStreamId==='string'&&/^[A-Za-z0-9-]{16,80}$/.test(p.motionStreamId)?p.motionStreamId:null;this.ready=true;this.startedAtR105=this.worldAtR105=this.checkedAtR105=this.now();this.wakeUntilR105=0;this.startWatchdogR105(generation);clearTimeout(timer);completed=true;resolve();
+     this.epoch=p.epoch;this.lastAccepted=p.lastAccepted;this.botChallenges=Array.isArray(p.capabilities)&&p.capabilities.includes(BOT_CHALLENGE);this.queuedMovement=Array.isArray(p.capabilities)&&p.capabilities.includes(QUEUED_MOVEMENT);this.orderedMovement=this.queuedMovement&&p.capabilities.includes(ORDERED_MOVEMENT);this.backgroundMovement=this.orderedMovement&&p.capabilities.includes('background-movement-v1');this.orderedActionsR113=this.orderedMovement&&p.capabilities.includes(ORDERED_ACTIONS_R113);this.motionStreamId=p.capabilities?.includes(MOTION)&&typeof p.motionStreamId==='string'&&/^[A-Za-z0-9-]{16,80}$/.test(p.motionStreamId)?p.motionStreamId:null;this.ready=true;this.startedAtR105=this.worldAtR105=this.checkedAtR105=this.now();this.wakeUntilR105=0;this.startWatchdogR105(generation);clearTimeout(timer);completed=true;resolve();
      // Replay can contain either slot in either order. Never schedule new input
      // until both saved receipts and the server's enqueue watermark are known.
      for(const result of p.results??[])this.result(result,false);
@@ -230,12 +231,13 @@ export class Core511Transport {
  pump(){
   if(!this.ready||this.botRequired)return;
   // Negotiated ordered admission (or a legacy enqueue receipt) permits only
-  // one movement beside an eligible command. No second combat/economy command can pass either occupied slot.
+  // one complementary movement/action, or two negotiated combat actions. No third input can pass either occupied slot.
   if(this.active){
    // v2 can alternate one movement and one eligible command. Only wire
    // admission overlaps; FixedLoop still applies them in sequence and retains
-   // every durable barrier. Terminal/economy/skill transitions never pipeline.
-   if(this.orderedMovement&&this.active.movement&&(this.active.dependsOn===undefined||this.active.queued||this.active.parentResultApplied===true)&&!this.active.pipelineUsed&&!this.movementBehind&&this.mayPipelineMovement(this.queue[0]?.payload)){
+   // every durable barrier. Economy and ownership transitions never pipeline.
+   const actionPair=this.orderedActionsR113&&!this.active.movement&&orderedActionR113(this.active.payload)&&orderedActionR113(this.queue[0]?.payload)&&!this.prediction.batch();
+   if((this.orderedMovement&&this.active.movement&&this.mayPipelineMovement(this.queue[0]?.payload)||actionPair)&&(this.active.dependsOn===undefined||this.active.queued||this.active.parentResultApplied===true)&&!this.active.pipelineUsed&&!this.movementBehind){
     const primary=this.active,row=this.queue.shift();row.sequence=primary.sequence+1;if(!primary.queued)row.dependsOn=primary.sequence;
     primary.pipelineUsed=true;this.movementBehind=row;this.lastScheduledKind='command';this.sendInput(row);return;
    }

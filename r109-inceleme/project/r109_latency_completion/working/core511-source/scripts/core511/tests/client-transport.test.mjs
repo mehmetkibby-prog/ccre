@@ -7,12 +7,29 @@ const image=(x=0,seq=0)=>({world:{cycle:1},channel:2,area:'bazaar',players:[{id:
 function fixture(){
  class Socket extends EventTarget{static all=[];constructor(url){super();this.url=url;this.sent=[];this.bufferedAmount=0;this.readyState=1;Socket.all.push(this);queueMicrotask(()=>this.dispatchEvent(new Event('open')));}send(text){this.sent.push(JSON.parse(text));}packet(value){this.dispatchEvent(new MessageEvent('message',{data:JSON.stringify(value)}));}close(){if(this.readyState===3)return;this.readyState=3;this.dispatchEvent(new Event('close'));}}
  let at=0;const events=[],core=new Core511Transport({fetch:async()=>Response.json({ok:true,protocol:PROTOCOL,playerId:'player-511',channel:2,epoch:1,url:'/game/channel/2',ticket:'opaque'}),WebSocket:Socket,origin:'https://game.invalid',headers:()=>({}),now:()=>at,notify:(...args)=>events.push(args)});
- const ready=async(epoch=1,lastAccepted=0,lastApplied=0,results=[])=>{const before=Socket.all.length,work=core.ensure();await until(()=>Socket.all.length>before&&Socket.all.at(-1)?.sent.some(p=>p.type==='auth'));const socket=Socket.all.at(-1);socket.packet({type:'ready',protocol:PROTOCOL,channel:2,epoch,lastAccepted,lastApplied,results});await work;return socket;};
+ const ready=async(epoch=1,lastAccepted=0,lastApplied=0,results=[],capabilities=[])=>{const before=Socket.all.length,work=core.ensure();await until(()=>Socket.all.length>before&&Socket.all.at(-1)?.sent.some(p=>p.type==='auth'));const socket=Socket.all.at(-1);socket.packet({type:'ready',protocol:PROTOCOL,channel:2,epoch,lastAccepted,lastApplied,results,capabilities});await work;return socket;};
  return {core,Socket,ready,events,time:value=>at=value};
 }
+test('R113 combat window is bounded to two and social/world reads never wait for a combat ACK',async()=>{
+ const s=fixture();try{
+  const ws=await s.ready(1,0,0,[],['queued-movement-v1','ordered-movement-v2','ordered-actions-r113']);
+  ws.packet({type:'frame',protocol:PROTOCOL,world:{type:'world_snapshot',data:image()}});
+  let finished=0;const pending=[1,2,3].map(ability=>s.core.command({action:'attack',ability}).then(r=>(finished++,r)));
+  await until(()=>ws.sent.filter(p=>p.type==='input').length===2);assert.equal(finished,0);
+  assert.deepEqual(ws.sent.filter(p=>p.type==='input').map(p=>p.sequence),[1,2]);assert.equal(ws.sent.at(-1).dependsOn,1);
+  assert.equal((await s.core.request('/api/world',{},()=>assert.fail())).status,200);
+  assert.equal((await s.core.request('/api/chat',{method:'POST',body:'{}'},async()=>Response.json({sent:true}))).status,200);
+  ws.packet({type:'queued',protocol:PROTOCOL,epoch:1,sequence:1,kind:'combat',accepted:true,durable:false});
+  ws.packet({type:'queued',protocol:PROTOCOL,epoch:1,sequence:2,kind:'combat',accepted:true,durable:false});assert.equal(finished,0);
+  ws.packet({type:'frame',protocol:PROTOCOL,results:[{sequence:1,status:200,body:{ok:true}}]});
+  await until(()=>ws.sent.filter(p=>p.type==='input').length===3);assert.equal(s.core.pendingInputs().length,2);
+  ws.packet({type:'frame',protocol:PROTOCOL,results:[{sequence:2,status:200,body:{ok:true}},{sequence:3,status:200,body:{ok:true}}]});
+  await Promise.all(pending);assert.equal(finished,3);
+ }finally{s.core.dispose();}
+});
 test('client applies native deltas, bounds interpolation and waits for durable mailbox ACK before sending another batch',async()=>{
- assert.equal(CLIENT_PROTOCOL,PROTOCOL);const s=fixture();try{const ws=await s.ready();ws.packet({type:'frame',protocol:PROTOCOL,world:{type:'world_snapshot',data:image()}});s.time(100);ws.packet({type:'frame',protocol:PROTOCOL,world:{type:'world_delta',protocol:'world-delta-v1',epoch:'projection-1',room:'room-1',seq:1,serverTime:1,snapshotAtMs:100,entities:{players:{upsert:[{id:'player-511',x:10}],remove:[]}},fields:{}}});
- assert.equal(s.core.position('players',s.core.world.players[0],125).x,5);assert.equal(s.core.position('players',s.core.world.players[0],1000).x,10);assert.equal(s.core.world.players[0].x,10);
+ assert.equal(CLIENT_PROTOCOL,PROTOCOL);const s=fixture();try{const ws=await s.ready();ws.packet({type:'frame',protocol:PROTOCOL,world:{type:'world_snapshot',data:{...image(),players:[...image().players,{...image().players[0],id:"remote-511"}]}}});s.time(100);ws.packet({type:'frame',protocol:PROTOCOL,world:{type:'world_delta',protocol:'world-delta-v1',epoch:'projection-1',room:'room-1',seq:1,serverTime:1,snapshotAtMs:100,entities:{players:{upsert:[{id:'remote-511',x:10}],remove:[]}},fields:{}}});
+ const between=s.core.position('players',s.core.world.players[1],125).x;assert(between>0&&between<10);assert.equal(s.core.position('players',s.core.world.players[1],1000).x,10);assert.equal(s.core.world.players[1].x,10);
  const a='a'.repeat(64),b='b'.repeat(64);for(const id of [a,a,b])ws.packet({type:'event',id,payload:{event:{type:'trade_changed',id}}});assert.equal(s.events.filter(e=>e[0]==='event').length,2);assert.equal(ws.sent.filter(p=>p.type==='event_ack').length,1);ws.packet({type:'event_acked',ids:[a]});assert.equal(ws.sent.filter(p=>p.type==='event_ack').length,2);assert.deepEqual(ws.sent.at(-1).ids,[b]);ws.packet({type:'event_acked',ids:[a]});assert.equal(ws.sent.filter(p=>p.type==='event_ack').length,2);
  ws.packet({type:'gm_visibility',playerId:'other',invisible:true,visibilityRevision:2});assert(s.events.some(([type,e])=>type==='event'&&e.type==='gm_visibility'));
  }finally{s.core.dispose();}

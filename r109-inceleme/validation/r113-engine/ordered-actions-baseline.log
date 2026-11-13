@@ -1,0 +1,1355 @@
+TAP version 13
+# Subtest: R113 combat window is bounded to two and social/world reads never wait for a combat ACK
+not ok 1 - R113 combat window is bounded to two and social/world reads never wait for a combat ACK
+  ---
+  duration_ms: 3094.00913
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/client-transport.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: 'Test timed out'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    until (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/helpers.mjs:17:145)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/client-transport.test.mjs:18:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: client applies native deltas, bounds interpolation and waits for durable mailbox ACK before sending another batch
+not ok 2 - client applies native deltas, bounds interpolation and waits for durable mailbox ACK before sending another batch
+  ---
+  duration_ms: 8.538121
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/client-transport.test.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 5
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 5
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/client-transport.test.mjs:32:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: single input queue keeps sequence after rejection and never acknowledges an economy command before its server result
+ok 3 - single input queue keeps sequence after rejection and never acknowledges an economy command before its server result
+  ---
+  duration_ms: 11.272473
+  type: 'test'
+  ...
+# Subtest: reconnect consumes the saved result without replaying a committed debit; changed owner leaves an unknown result
+ok 4 - reconnect consumes the saved result without replaying a committed debit; changed owner leaves an unknown result
+  ---
+  duration_ms: 1525.794441
+  type: 'test'
+  ...
+# Subtest: closing socket before close event retains unsent input and mailbox ACK until safe reconnect
+ok 5 - closing socket before close event retains unsent input and mailbox ACK until safe reconnect
+  ---
+  duration_ms: 518.183443
+  type: 'test'
+  ...
+# Error: Test "R113 combat window is bounded to two and social/world reads never wait for a combat ACK" at working/core511-source/scripts/core511/tests/client-transport.test.mjs:13:1 generated asynchronous activity after the test ended. This activity created the error "Error: game_instance_expired" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "R113 combat window is bounded to two and social/world reads never wait for a combat ACK" at working/core511-source/scripts/core511/tests/client-transport.test.mjs:13:1 generated asynchronous activity after the test ended. This activity created the error "Error: game_instance_expired" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "R113 combat window is bounded to two and social/world reads never wait for a combat ACK" at working/core511-source/scripts/core511/tests/client-transport.test.mjs:13:1 generated asynchronous activity after the test ended. This activity created the error "Error: game_instance_expired" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Subtest: pipeline frame order 2,1 waits for actual results and reconciles movement before world
+not ok 6 - pipeline frame order 2,1 waits for actual results and reconciles movement before world
+  ---
+  duration_ms: 105.691313
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:25:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:27:30)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: pipeline frame order 1,2 waits for actual results and reconciles movement before world
+not ok 7 - pipeline frame order 1,2 waits for actual results and reconciles movement before world
+  ---
+  duration_ms: 6.280688
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:25:34'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:27:30)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: movement result before combat in a separate frame cannot free another movement or economy slot
+not ok 8 - movement result before combat in a separate frame cannot free another movement or economy slot
+  ---
+  duration_ms: 5.977769
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:33:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:34:50)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unaccepted movement rate rejection preserves the primary and reuses only the rejected sequence
+not ok 9 - unaccepted movement rate rejection preserves the primary and reuses only the rejected sequence
+  ---
+  duration_ms: 5.748363
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:38:50)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: movement retry targets only its own row; accepted receipt cancels retry without resolving combat
+not ok 10 - movement retry targets only its own row; accepted receipt cancels retry without resolving combat
+  ---
+  duration_ms: 5.935651
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:41:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:42:50)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect accepted=1 waits accepted rows and cancels only unaccepted movement
+not ok 11 - reconnect accepted=1 waits accepted rows and cancels only unaccepted movement
+  ---
+  duration_ms: 5.616578
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:45:29'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:46:48)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect accepted=2 waits accepted rows and cancels only unaccepted movement
+not ok 12 - reconnect accepted=2 waits accepted rows and cancels only unaccepted movement
+  ---
+  duration_ms: 5.613307
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:45:29'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:46:48)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect replay of committed primary waits for already accepted trailing movement before next command
+not ok 13 - reconnect replay of committed primary waits for already accepted trailing movement before next command
+  ---
+  duration_ms: 5.373618
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:49:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:50:40)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: changed owner rejects both old slots and never resends old gameplay
+not ok 14 - changed owner rejects both old slots and never resends old gameplay
+  ---
+  duration_ms: 7.505727
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:53:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:54:40)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: negotiation and eligible command allowlist are required; movement remains <=5Hz and <=350ms
+not ok 15 - negotiation and eligible command allowlist are required; movement remains <=5Hz and <=350ms
+  ---
+  duration_ms: 5.030999
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:59:46)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ensureIdle waits for both pipeline results before its drain heartbeat completes
+not ok 16 - ensureIdle waits for both pipeline results before its drain heartbeat completes
+  ---
+  duration_ms: 9.709658
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:64:42)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect applied watermark without the primary receipt reports unknown and never reruns it
+not ok 17 - reconnect applied watermark without the primary receipt reports unknown and never reruns it
+  ---
+  duration_ms: 6.499636
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:67:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:68:40)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: scope relocation clears prediction and a late old movement result cannot resurrect it
+not ok 18 - scope relocation clears prediction and a late old movement result cannot resurrect it
+  ---
+  duration_ms: 5.088655
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:71:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:13:292)
+    async Object.pipeline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:21:37)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:72:42)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Error: Test "pipeline frame order 2,1 waits for actual results and reconciles movement before world" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:25:34 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "pipeline frame order 1,2 waits for actual results and reconciles movement before world" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:25:34 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "movement result before combat in a separate frame cannot free another movement or economy slot" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:33:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "unaccepted movement rate rejection preserves the primary and reuses only the rejected sequence" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:37:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "movement retry targets only its own row; accepted receipt cancels retry without resolving combat" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:41:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect accepted=1 waits accepted rows and cancels only unaccepted movement" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:45:29 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect accepted=2 waits accepted rows and cancels only unaccepted movement" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:45:29 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect replay of committed primary waits for already accepted trailing movement before next command" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:49:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "changed owner rejects both old slots and never resends old gameplay" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:53:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "negotiation and eligible command allowlist are required; movement remains <=5Hz and <=350ms" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:57:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "ensureIdle waits for both pipeline results before its drain heartbeat completes" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:63:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect applied watermark without the primary receipt reports unknown and never reruns it" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:67:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "scope relocation clears prediction and a late old movement result cannot resurrect it" at working/core511-source/scripts/core511/tests/r20-movement-pipeline.test.mjs:71:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Subtest: immediate ordered movement waits for real command result, not enqueue receipt
+not ok 19 - immediate ordered movement waits for real command result, not enqueue receipt
+  ---
+  duration_ms: 65.08199
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:26:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:27:33)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: old negotiated server retains receipt wait and receives no dependency field
+not ok 20 - old negotiated server retains receipt wait and receives no dependency field
+  ---
+  duration_ms: 6.156058
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:35:50)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: rejected parent plus explicitly unqueued movement preserves sequence, speculative path and next command
+not ok 21 - rejected parent plus explicitly unqueued movement preserves sequence, speculative path and next command
+  ---
+  duration_ms: 5.863105
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:38:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:39:33)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: explicit movement retry removes socket dependency and never resends primary
+not ok 22 - explicit movement retry removes socket dependency and never resends primary
+  ---
+  duration_ms: 5.532547
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:44:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:45:33)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect before admission receipts with 0 accepted slots never replays accepted movement
+not ok 23 - reconnect before admission receipts with 0 accepted slots never replays accepted movement
+  ---
+  duration_ms: 5.966548
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:49:31)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect before admission receipts with 1 accepted slots never replays accepted movement
+not ok 24 - reconnect before admission receipts with 1 accepted slots never replays accepted movement
+  ---
+  duration_ms: 5.832151
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:49:31)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: reconnect before admission receipts with 2 accepted slots never replays accepted movement
+not ok 25 - reconnect before admission receipts with 2 accepted slots never replays accepted movement
+  ---
+  duration_ms: 6.427531
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:49:31)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: move -> reward -> move advances within two slots without settling reward early or starving it
+not ok 26 - move -> reward -> move advances within two slots without settling reward early or starving it
+  ---
+  duration_ms: 5.608579
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:55:36)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unqueued reward after rejected movement is known unsubmitted and sent once at original sequence
+not ok 27 - unqueued reward after rejected movement is known unsubmitted and sent once at original sequence
+  ---
+  duration_ms: 5.977125
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:58:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:59:36)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: move-first reconnect with 0 accepted slots preserves eligible command exactly once
+not ok 28 - move-first reconnect with 0 accepted slots preserves eligible command exactly once
+  ---
+  duration_ms: 6.006684
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:63:34)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: move-first reconnect with 1 accepted slots preserves eligible command exactly once
+not ok 29 - move-first reconnect with 1 accepted slots preserves eligible command exactly once
+  ---
+  duration_ms: 5.494068
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:63:34)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: move-first reconnect with 2 accepted slots preserves eligible command exactly once
+not ok 30 - move-first reconnect with 2 accepted slots preserves eligible command exactly once
+  ---
+  duration_ms: 6.318323
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:63:34)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: combat retried parent regains one secondary slot only after its new admission receipt
+not ok 31 - combat retried parent regains one secondary slot only after its new admission receipt
+  ---
+  duration_ms: 5.200295
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:66:42'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:67:91)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: movement retried parent regains one secondary slot only after its new admission receipt
+not ok 32 - movement retried parent regains one secondary slot only after its new admission receipt
+  ---
+  duration_ms: 5.329377
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:66:42'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        'queued-movement-v1',
+        'ordered-movement-v2',
+    +   'validated-motion-v1',
+    +   'bot-challenge-v1',
+    +   'background-movement-v1'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+  actual:
+    0: 'queued-movement-v1'
+    1: 'ordered-movement-v2'
+    2: 'validated-motion-v1'
+    3: 'bot-challenge-v1'
+    4: 'background-movement-v1'
+  operator: 'deepStrictEqual'
+  stack: |-
+    Object.connect (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:13:292)
+    async moveFirst (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:52:38)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:67:63)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Error: Test "immediate ordered movement waits for real command result, not enqueue receipt" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:26:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "old negotiated server retains receipt wait and receives no dependency field" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:34:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "rejected parent plus explicitly unqueued movement preserves sequence, speculative path and next command" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:38:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "explicit movement retry removes socket dependency and never resends primary" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:44:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect before admission receipts with 0 accepted slots never replays accepted movement" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect before admission receipts with 1 accepted slots never replays accepted movement" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "reconnect before admission receipts with 2 accepted slots never replays accepted movement" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:48:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "move -> reward -> move advances within two slots without settling reward early or starving it" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:54:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "unqueued reward after rejected movement is known unsubmitted and sent once at original sequence" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:58:1 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "move-first reconnect with 0 accepted slots preserves eligible command exactly once" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "move-first reconnect with 1 accepted slots preserves eligible command exactly once" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "move-first reconnect with 2 accepted slots preserves eligible command exactly once" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:62:31 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "combat retried parent regains one secondary slot only after its new admission receipt" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:66:42 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Error: Test "movement retried parent regains one secondary slot only after its new admission receipt" at working/core511-source/scripts/core511/tests/r21-ordered-movement-client.test.mjs:66:42 generated asynchronous activity after the test ended. This activity created the error "Error: connection_closed" and would have caused the test to fail, but instead triggered an unhandledRejection event.
+# Subtest: R113 admits two combat actions but retains execution, rate, reconnect and economy fences
+not ok 33 - R113 admits two combat actions but retains execution, rate, reconnect and economy fences
+  ---
+  duration_ms: 16.0374
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert(socket.sent[0].capabilities.includes('ordered-actions-r113'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:39:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: R113 rejected first action cannot authorize a dependent second attack
+not ok 34 - R113 rejected first action cannot authorize a dependent second attack
+  ---
+  duration_ms: 1.721637
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:50:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'rejected'
+    - 'not_queued'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'not_queued'
+  actual: 'rejected'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:53:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ordered dependent movement skips enqueue roundtrip but still waits for durable command completion
+not ok 35 - ordered dependent movement skips enqueue roundtrip but still waits for durable command completion
+  ---
+  duration_ms: 5.926743
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:58:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 2
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 2
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:61:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: rate rejected parent explicitly discards dependent movement without accepting a sequence or consuming its rate budget
+ok 36 - rate rejected parent explicitly discards dependent movement without accepting a sequence or consuming its rate budget
+  ---
+  duration_ms: 1.905251
+  type: 'test'
+  ...
+# Subtest: draining parent discards dependent movement and exact primary sequence can resume only once
+ok 37 - draining parent discards dependent movement and exact primary sequence can resume only once
+  ---
+  duration_ms: 2.71871
+  type: 'test'
+  ...
+# Subtest: accepted ordered movement retains exact movement rate and session guards
+not ok 38 - accepted ordered movement retains exact movement rate and session guards
+  ---
+  duration_ms: 1.505382
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:79:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'ready'
+    - 'rejected'
+         ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'rejected'
+  actual: 'ready'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:81:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: dependency refuses no capability
+ok 39 - dependency refuses no capability
+  ---
+  duration_ms: 3.522062
+  type: 'test'
+  ...
+# Subtest: dependency refuses wrong predecessor
+ok 40 - dependency refuses wrong predecessor
+  ---
+  duration_ms: 1.621088
+  type: 'test'
+  ...
+# Subtest: dependency refuses skill
+ok 41 - dependency refuses skill
+  ---
+  duration_ms: 1.496078
+  type: 'test'
+  ...
+# Subtest: dependency refuses teleport
+ok 42 - dependency refuses teleport
+  ---
+  duration_ms: 1.58634
+  type: 'test'
+  ...
+# Subtest: dependency refuses potion
+not ok 43 - dependency refuses potion
+  ---
+  duration_ms: 0.947214
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:92:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:93:125)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: dependency cannot cross socket replacement and cannot grant a third outstanding slot
+ok 44 - dependency cannot cross socket replacement and cannot grant a third outstanding slot
+  ---
+  duration_ms: 7.21969
+  type: 'test'
+  ...
+# Subtest: movement then attack can alternate back to movement within two accepted slots
+not ok 45 - movement then attack can alternate back to movement within two accepted slots
+  ---
+  duration_ms: 0.851633
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:101:96'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    'queued' !== 'retry'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'retry'
+  actual: 'queued'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:102:271)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: movement then claim_rewards can alternate back to movement within two accepted slots
+ok 46 - movement then claim_rewards can alternate back to movement within two accepted slots
+  ---
+  duration_ms: 1.108145
+  type: 'test'
+  ...
+# Subtest: movement then collect can alternate back to movement within two accepted slots
+ok 47 - movement then collect can alternate back to movement within two accepted slots
+  ---
+  duration_ms: 0.792765
+  type: 'test'
+  ...
+# Subtest: movement cannot grant unsafe dependent teleport undefined
+ok 48 - movement cannot grant unsafe dependent teleport undefined
+  ---
+  duration_ms: 0.605526
+  type: 'test'
+  ...
+# Subtest: movement cannot grant unsafe dependent attack 1
+ok 49 - movement cannot grant unsafe dependent attack 1
+  ---
+  duration_ms: 0.555865
+  type: 'test'
+  ...
+# Subtest: movement cannot grant unsafe dependent use_potion undefined
+not ok 50 - movement cannot grant unsafe dependent use_potion undefined
+  ---
+  duration_ms: 0.698773
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:107:139'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/r21-ordered-movement-server.test.mjs:108:123)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: movement cannot grant unsafe dependent select_channel undefined
+ok 51 - movement cannot grant unsafe dependent select_channel undefined
+  ---
+  duration_ms: 0.985391
+  type: 'test'
+  ...
+# Subtest: movement cannot grant unsafe dependent dungeon undefined
+ok 52 - movement cannot grant unsafe dependent dungeon undefined
+  ---
+  duration_ms: 0.562274
+  type: 'test'
+  ...
+# Subtest: rate rejected movement cannot cause dependent reward to execute; retry has original sequence
+ok 53 - rate rejected movement cannot cause dependent reward to execute; retry has original sequence
+  ---
+  duration_ms: 0.545509
+  type: 'test'
+  ...
+1..53
+# tests 53
+# suites 0
+# pass 17
+# fail 36
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6784.722655
