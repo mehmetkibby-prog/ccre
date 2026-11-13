@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r105-4a0d3559a0e0e553.js",
+  "name": "game-client-core511-r113-8155bcfd86b7c656.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -241,9 +241,9 @@
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r105-eab63de9b642530e.js",
+    "name": "auth-portal-core511-r113-0785ac76c950bc14.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "eab63de9b642530e09507ff232000674bf668b6435c7ed25c0979dfaa4dbd12b",
+    "patchedSha256": "0785ac76c950bc1494a4e037172717ff02d727890c00efa15e6940eb6ece7e8a",
     "entryProof": {
       "edits": [
         {
@@ -278,11 +278,11 @@
       "gameReferences": 2
     }
   },
-  "transportSourceSha256": "90f463116287bfb3f81e574494c8e96e8d30cdb1d9fc6fb2a8095af9ed8884b0",
-  "bridgeSha256": "b25f3f5757b582f47b1cb1478baf16290613314a1a3790f9cd20d6a735cca959",
+  "transportSourceSha256": "c25035c4c07a2ada5013409ca269a5a8bd77f93b36e06ef91e6ba56b10ca7ad7",
+  "bridgeSha256": "c4b375542991f78195f0d50f33889a1ee10c86a5583341208d065cf2a2df2f46",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "4a0d3559a0e0e5538977c2da86911abc2c8d4bf51d5180b9cf273559e550db2b",
-  "bridge": "core511-transport-r105-b25f3f5757b582f4.js",
+  "patchedSha256": "8155bcfd86b7c6568fc912a7bcd6a4da1078614be7f9d12874df594467671e7e",
+  "bridge": "core511-transport-r113-c4b375542991f781.js",
   "edits": [
     {
       "start": 0,
@@ -5448,5 +5448,14 @@
     "requestDeadlineMs": 10000,
     "stableBackoffMs": 15000,
     "scope": "Recover lost world stream and preserve receipt-based command ordering. No gameplay or database rule changes."
+  },
+  "engineR113": {
+    "version": 1,
+    "baseline": {
+      "name": "game-client-core511-r105-4a0d3559a0e0e553.js",
+      "bridge": "core511-transport-r105-b25f3f5757b582f4.js",
+      "portal": "auth-portal-core511-r105-eab63de9b642530e.js"
+    },
+    "orderedActions": 2
   }
 }
