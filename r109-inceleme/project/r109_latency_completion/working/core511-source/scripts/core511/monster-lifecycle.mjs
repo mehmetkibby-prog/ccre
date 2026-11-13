@@ -77,7 +77,7 @@ export class MonsterLifecycle {
   const lease=this.lanes.acquire(monsters.map(m=>'monster:'+m.id),this.incarnation);if(!lease)return;
   const kind=mode==='dragon'?'dragon_tick':mode==='respawn'?'monster_respawn':'monster_repair',key=mode+':'+this.incarnation+':'+(++this.serial),payload={monsters:monsters.map(mode==='respawn'?respawnBase:repairBase),nowMs,...(['respawn','dragon'].includes(mode)?{seed:OperationRandom.seed()}:{mode})};
   this.pending=Promise.resolve().then(async()=>{
-   await this.journal.drain();this.lanes.assert(lease);
+   if(this.journal.drainTargetsR531)await this.journal.drainTargetsR531(monsters.map(m=>m.id),monsters.filter(m=>m.is_boss).map(m=>m.spawn_round));else await this.journal.drain();this.lanes.assert(lease);
    const ack=await this.submit({key,kind,payload}),ids=[...(ack?.result?.monsters??[]).map(m=>m.id),...ack?.result?.removed??[]];demand(ack?.key===key&&ids.length===monsters.length&&new Set(ids).size===ids.length&&ids.every(id=>lease.keys.includes('monster:'+id)),'respawn_ack');
    // Other monsters may have checkpointed while this response was in flight.
    // Await that receipt before replacing only these leased journal entries.

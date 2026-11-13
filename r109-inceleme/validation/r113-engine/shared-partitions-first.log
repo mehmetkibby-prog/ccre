@@ -1,0 +1,94 @@
+TAP version 13
+# Subtest: a committed shared death reaches replicas before cold hydration without granting the next borrower
+ok 1 - a committed shared death reaches replicas before cold hydration without granting the next borrower
+  ---
+  duration_ms: 2.380492
+  type: 'test'
+  ...
+# Subtest: stale leases and wrong world cycles cannot publish a committed projection
+ok 2 - stale leases and wrong world cycles cannot publish a committed projection
+  ---
+  duration_ms: 1.25393
+  type: 'test'
+  ...
+# Subtest: shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+ok 3 - shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+  ---
+  duration_ms: 9.131622
+  type: 'test'
+  ...
+# Subtest: native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+ok 4 - native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+  ---
+  duration_ms: 5.569169
+  type: 'test'
+  ...
+# Subtest: continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+ok 5 - continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+  ---
+  duration_ms: 1.762789
+  type: 'test'
+  ...
+# Subtest: four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+ok 6 - four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+  ---
+  duration_ms: 2.977285
+  type: 'test'
+  ...
+# Subtest: shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+ok 7 - shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+  ---
+  duration_ms: 3.168213
+  type: 'test'
+  ...
+# Subtest: world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+ok 8 - world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+  ---
+  duration_ms: 0.633038
+  type: 'test'
+  ...
+# Subtest: changed foreign actor is refreshed and hydrated before any held actor unlocks; unchanged actor is retained
+ok 9 - changed foreign actor is refreshed and hydrated before any held actor unlocks; unchanged actor is retained
+  ---
+  duration_ms: 4.752171
+  type: 'test'
+  ...
+# Subtest: unknown metadata retains the conservative full refresh path
+ok 10 - unknown metadata retains the conservative full refresh path
+  ---
+  duration_ms: 0.752527
+  type: 'test'
+  ...
+# Subtest: wrong epoch or foreign refresh list fences leases without any unlock
+ok 11 - wrong epoch or foreign refresh list fences leases without any unlock
+  ---
+  duration_ms: 0.892497
+  type: 'test'
+  ...
+# Subtest: a borrowed global freeze keeps the actor quiesced with its exact epoch through shared release
+ok 12 - a borrowed global freeze keeps the actor quiesced with its exact epoch through shared release
+  ---
+  duration_ms: 0.308423
+  type: 'test'
+  ...
+# Subtest: audited unchanged actors resume while changed actors retain their cold-read barrier
+ok 13 - audited unchanged actors resume while changed actors retain their cold-read barrier
+  ---
+  duration_ms: 0.471506
+  type: 'test'
+  ...
+# Subtest: early release requires exact explicit audit and retains borrowed global suspension
+ok 14 - early release requires exact explicit audit and retains borrowed global suspension
+  ---
+  duration_ms: 0.79209
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1205.513186

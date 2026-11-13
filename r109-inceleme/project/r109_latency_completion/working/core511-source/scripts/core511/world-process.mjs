@@ -23,7 +23,7 @@ export async function runWorldProcess(){
    if(method==='activate')return runtime.activate();
    if(method==='quiesce_process')return runtime.drain();
    if(method==='engagements'){runtime.view.receive(payload);return {applied:true};}
-   if(method==='shared_acquire')return runtime.sharedCombat.acquire(payload.peer,payload.id);
+   if(method==='shared_acquire')return runtime.sharedCombat.acquire(payload.peer,payload.id,payload.area??null);
    if(method==='shared_finish')return runtime.sharedCombat.finish(payload.peer,payload);
    if(method==='shared_checkpoint')return runtime.sharedCombat.checkpoint(payload.peer,payload);
    if(method==='shared_reload')return runtime.sharedCombat.reload(payload.peer,payload);

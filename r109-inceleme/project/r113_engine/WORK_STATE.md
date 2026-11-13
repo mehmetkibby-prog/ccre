@@ -79,3 +79,22 @@ The main loop no longer imports the producer via the consumer module. Atomic
 image rollback, ownership fencing, retention and size tests pass; real ordinary
 death, shared release and maintenance regressions pass. Cross-map integration
 and realistic load gates remain outstanding.
+
+Shared map ownership now uses bounded per-area native signed authorities and
+parent relation reservations. Different maps can progress together; overlapping
+party/guild/recipient sets remain ordered. World-ending boss/global operations
+retain an exclusive all-map barrier. Channel holds are keyed by token and checked
+for actor overlap. Scoped reloads/checkpoints preserve other maps' dirty HP and
+contributions; respawn and regeneration operate on unlocked targets. Unknown
+outcomes retain leases until actual owner recovery. 14 existing shared tests,
+5 partition/process tests, and the later 15-test catalog/partition/respawn set
+pass. No final architecture acceptance claim yet.
+
+First 40-player mixed 30 s run passed gameplay invariants, but FAILED latency
+acceptance: tick p99 22.73 ms; final death p99 258.51 ms (143 kills), max 263.94;
+main >50 ms pauses 3, channel 2; main ELU 39.20%, total RSS 1.59 GB. This improves
+death delivery versus R112's three-run median 371.41 ms, but ELU regresses from
+25.09%. Single-run comparison only. Full catalog reads in committed capture were
+removed after this measurement; the first catalog test incorrectly disallowed
+bounded profile joins as well, then was narrowed to the actual full SELECT.
+Main-thread result construction still needs measured offload/optimization.

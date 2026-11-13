@@ -168,7 +168,7 @@ export class ChannelRuntime {
  // Read-only eligibility for cosmetic packets while SharedCombat owns an
  // ordinary resource hold. No hold, lane, actor or queue is changed here.
  heldMotion(id){
-  const c=this.channel,h=this.sharedCombat.held,p=c.kernel.players.get(id),owner=c.owners.get(id),resident=c.state.owners.get(id),a=h?.actors.find(entry=>entry.id===id),lease=a?.lease;
+  const c=this.channel,h=this.sharedCombat.heldFor(id),p=c.kernel.players.get(id),owner=c.owners.get(id),resident=c.state.owners.get(id),a=h?.actors.find(entry=>entry.id===id),lease=a?.lease;
   return Boolean(this.started&&!this.stopping&&!this.globalControl.held&&!c.control.entries.has(id)&&!this.sharedCombat.pending.get(id)?.returnMoves&&h&&a&&a.p===p&&p?.accepting&&p.suspended&&!p.quiescer&&p.externalHold===h.token&&a.suspended===false&&a.borrowed===false&&!a.cold&&!a.quiesced&&a.epoch===p.epoch&&a.epoch===owner?.epoch&&a.epoch===resident?.epoch&&resident.state==='active'&&lease?.state==='held'&&lease.owner===h.token&&c.lanes.held.get('player:'+id)===lease&&c.lanes.tokens.has(lease));
  }
  hydrate(bundle){this.bagCollect.forget(bundle.player.id);this.slimReload.capture(bundle);this.afkCheck?.hydrate(bundle);this.maintenance.hydrate(bundle.player);this.services.hydrate(bundle);this.castle.hydrate(bundle);this.adventure.refresh(bundle);this.dungeon.refreshActor(bundle);if(bundle.projection){const access=bundle.projection.guildAccess;demand(access?.area===bundle.player.area&&(access.deadlineMs===null||Number.isSafeInteger(access.deadlineMs)),'guild_access_snapshot');this.guildAccess.set(bundle.player.id,Object.freeze({...access}));this.world.update(bundle.player.id,bundle.projection.data,{friends:bundle.projection.friends,marketRevision:bundle.projection.marketRevision});}}
@@ -223,7 +223,7 @@ export class ChannelRuntime {
   const cold=c.control?.entries.get(pid),global=this.globalControl?.held,globalActor=global?.actors.find(a=>a.id===pid&&a.epoch===p.epoch);
   if(cold&&(cold.id!==pid||cold.epoch!==p.epoch||typeof cold.token!=='string'||!['freezing','frozen'].includes(cold.phase)||cold.lease&&!held(cold.lease,cold.token)||cold.phase==='frozen'&&!held(cold.lease,cold.token)))return false;
   if(globalActor&&(!['freezing','frozen'].includes(global.phase)||global.lease&&!held(global.lease,global.token)&&!global.extraLeases?.some(lease=>held(lease,global.token))))return false;
-  const shared=this.sharedCombat?.held,actor=shared?.actors.find(a=>a.id===pid&&a.epoch===p.epoch&&a.p===p);
+  const shared=this.sharedCombat?.heldFor(pid),actor=shared?.actors.find(a=>a.id===pid&&a.epoch===p.epoch&&a.p===p);
   const sharedHeld=actor&&p.externalHold===shared.token&&(held(actor.lease,shared.token)||actor.borrowed&&(cold?.phase==='frozen'&&actor.cold?.token===cold.token||globalActor));
   if(p.externalHold&&!sharedHeld)return false;
   if(p.suspended)return Boolean((cold||globalActor||sharedHeld)&&['active','draining','quiesced'].includes(resident.state));

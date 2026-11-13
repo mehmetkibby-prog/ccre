@@ -26,8 +26,13 @@ const key=(kind,p)=>JSON.stringify(kind==='participants'?[p.monster_id,p.spawn_r
 function rejectedCheckpoint(error,channel,ids){
  const r=actorRejection(error);return r?.operation==='actor_checkpoint'&&r.outcome==='not_executed'&&ids.includes(r.actor)&&channel.owners.get(r.actor)?.epoch===r.epoch&&r.channel===channel.peer.channel&&r.incarnation===channel.peer.incarnation?r:null;
 }
-export async function drainCombatCheckpoints(channel,ids){
- const settled=await Promise.allSettled([...ids.map(id=>Promise.resolve().then(()=>channel.checkpoints.drain(id))),Promise.resolve().then(()=>channel.combatCheckpoints.drain())]);
+export async function drainCombatCheckpoints(channel,ids,{scopedR113=false}={}){
+ const combat=async()=>{if(!scopedR113)return channel.combatCheckpoints.drain();
+  if(channel.combatCheckpoints.pending)await channel.combatCheckpoints.pending;
+  const areas=new Set(ids.map(id=>channel.view.player(id)?.area)),monsters=[...channel.view.monsters.values()].filter(m=>m.channel===channel.peer.channel&&areas.has(m.area));
+  return channel.combatCheckpoints.flush({targetsR531:new Set(monsters.map(m=>m.id)),bossRoundsR113:new Set(monsters.filter(m=>m.is_boss).map(m=>m.spawn_round))});
+ };
+ const settled=await Promise.allSettled([...ids.map(id=>Promise.resolve().then(()=>channel.checkpoints.drain(id))),Promise.resolve().then(combat)]);
  // A known actor rollback must never conceal a sibling's unknown durable
  // outcome. Every started drain has settled before selecting the error.
  const failed=(retiredActorIsolation&&settled.find(result=>result.status==='rejected'&&!rejectedCheckpoint(result.reason,channel,ids)))||settled.find(result=>result.status==='rejected');if(failed)throw failed.reason;
@@ -43,7 +48,11 @@ export async function commitSharedCombatR112(channel,local){
 }
 
 export class SharedCombatChannel {
- constructor(runtime){this.runtime=runtime;this.channel=runtime.channel;this.pending=new Map();this.planning=null;this.held=null;this.abortedHolds=new Map();}
+ constructor(runtime){this.runtime=runtime;this.channel=runtime.channel;this.pending=new Map();this.planning=null;this.holds=new Map();this.abortedHolds=new Map();}
+ get held(){return this.holds.values().next().value??null;}
+ set held(value){this.holds.clear();if(value)this.holds.set(value.token,value);}
+ heldFor(id){return [...this.holds.values()].find(h=>h.actors.some(a=>a.id===id)||h.phase==='reserving'&&(!h.only||h.only.some(a=>a.id===id)))??null;}
+ sourceHold(row){return [...this.holds.values()].find(h=>h.except?.some(a=>a.id===row.actor&&a.epoch===row.epoch))??null;}
  async idle(){await Promise.all([...new Set(this.pending.values())].map(row=>row.completion));}
  async rejectBeforePrepare(row,error){
   const rejected=actorFaultIsolation&&actorRejection(error);
@@ -148,7 +157,7 @@ export class SharedCombatChannel {
   const row={id:randomUUID(),actor:id,epoch,ids,now,input,receivedAtMs,seed:seed??attackSeedR57(context),phase:'waiting',lease:null,memory:input.action==='attack'?c.attackMemory:c.pvpMemory};for(const pid of ids)this.pending.set(pid,row);
   const pending=kernel.durableGroup(ids,async()=>{
    try{
-    const grant=await this.runtime.request('shared_acquire',this.scope(row));row.proof=grant.proof;row.snapshot=grant.snapshot;row.sharedIds=new Set(grant.snapshot.monsters.map(m=>m.id));demand(grant.snapshot.cycle===c.world.cycle,'shared_channel_cycle');
+    const grant=await this.runtime.request('shared_acquire',this.scope(row,{partitionAttackR113:input}));row.proof=grant.proof;row.snapshot=grant.snapshot;row.sharedIds=new Set(grant.snapshot.monsters.map(m=>m.id));demand(grant.snapshot.cycle===c.world.cycle,'shared_channel_cycle');
     const keys=[...ids.map(pid=>'player:'+pid),...grant.snapshot.monsters.map(m=>'monster:'+m.id),...[...c.view.monsters.values()].filter(m=>m.channel===c.peer.channel&&m.area===area).map(m=>'monster:'+m.id)];
     while(!(row.lease=c.lanes.acquire(keys,row.id)))await c.lanes.available(keys);row.phase='executing';
     // load() published and acknowledged this exact shared image before grant.
@@ -158,7 +167,7 @@ export class SharedCombatChannel {
      // Actor/encounter and nonterminal combat snapshots write disjoint rows.
      // Submit both drains together so the native writer can group their fsync;
      // every receipt still finishes before the terminal barrier/kill begins.
-     await drainCombatCheckpoints(c,ids);c.lanes.assert(row.lease);
+     await drainCombatCheckpoints(c,ids,{scopedR113:typeof grant.snapshot.areaR113==='string'});c.lanes.assert(row.lease);
      row.prepareStarted=true;const prepared=await this.runtime.request('shared_prepare',this.scope(row,{players:ids,...(input.action==='attack'?{foregroundAttackR112:input}:{})}));if(actorFaultIsolation&&prepared?.prepared===false&&prepared.rejected===true)return await this.rejectedPreparation(row);demand(prepared.prepared,'shared_terminal_prepare');const fresh=frame(),resources=[...new Set([...row.lease.keys,...prepared.players.map(pid=>'player:'+pid)])],payload={nowMs:now,receivedAtMs,seed:row.seed,input,resources,sharedLease:row.proof,...(input.action==='attack'?{expected:{player:fresh.player,monster:fresh.preloadedAttackMonster,settings:fresh.settings}}:{expected:fresh.actionSnapshot,originalSnapshot:original.originalSnapshot??original.actionSnapshot})};
      const ack=await c.writer.submit({actor:id,key:'shared:'+row.id,kind:input.action,payload});demand(ack.key==='shared:'+row.id&&ack.result,'shared_terminal_ack');c.lanes.assert(row.lease);const value=this.residentResult(ack.result,prepared);
      demand((value.players??[]).every(p=>!c.owners.has(p.id)||ids.includes(p.id)||prepared.players.includes(p.id)),'shared_terminal_unlocked_actor');
@@ -167,8 +176,8 @@ export class SharedCombatChannel {
      await c.applyCommit({...value,players:(value.players??[]).filter(p=>!moved.has(p.id)),monsters:(value.monsters??[]).filter(m=>m.channel!==0)});
      const local={monsters:(value.monsters??[]).filter(m=>m.channel!==0),participants:(value.participants??[]).filter(p=>!row.sharedIds.has(p.monster_id)),bossParticipants:(value.bossParticipants??[]).filter(p=>!row.snapshot.monsters.some(m=>m.is_boss&&m.spawn_round===p.boss_round))};await commitSharedCombatR112(c,local);
      for(const p of value.players??[])if(ids.includes(p.id)&&!moved.has(p.id))c.checkpoints.hydrate(c.view.player(p.id));if(value.encounters){for(const [pid,e]of value.encounters)if(!moved.has(pid))c.encounters.hydrateCommitted(pid,e);}else c.encounters.hydrateCommitted(id,value.engagement);
-     if(row.returnMoves){demand(this.held,'shared_return_hold_missing');row.suspension=new Map(ids.map(pid=>[pid,kernel.players.get(pid).suspended]));for(const pid of ids){const p=kernel.players.get(pid);p.externalHold=this.held.token;p.suspended=true;}}
-     result={result:value.result,events:value.events};const finished=await this.runtime.request('shared_finish',this.scope(row,{changes:empty()}));if(row.returnMoves)demand(finished.returning&&finished.token===this.held.token,'shared_return_finish_ack');
+     if(row.returnMoves){demand(this.sourceHold(row),'shared_return_hold_missing');row.suspension=new Map(ids.map(pid=>[pid,kernel.players.get(pid).suspended]));for(const pid of ids){const p=kernel.players.get(pid);p.externalHold=this.sourceHold(row).token;p.suspended=true;}}
+     result={result:value.result,events:value.events};const finished=await this.runtime.request('shared_finish',this.scope(row,{changes:empty()}));if(row.returnMoves)demand(finished.returning&&finished.token===this.sourceHold(row).token,'shared_return_finish_ack');
     }else{
      const changes=result.changes,rounds=new Set(row.snapshot.monsters.filter(m=>m.is_boss).map(m=>m.spawn_round)),shared={monsters:changes.monsters.filter(m=>row.sharedIds.has(m.id)),participants:changes.participants.filter(p=>row.sharedIds.has(p.monster_id)),bossParticipants:changes.bossParticipants.filter(p=>rounds.has(p.boss_round)),combatEvents:changes.combatEvents.filter(e=>row.sharedIds.has(e.target_id))};
      await this.runtime.request('shared_finish',this.scope(row,{changes:shared}));c.lanes.assert(row.lease);row.memory.commit(result,{sharedIds:row.sharedIds});
@@ -181,29 +190,30 @@ export class SharedCombatChannel {
   row.completion=pending.then(()=>row.returnMoves?this.returnSource(row):undefined);void row.completion.catch(error=>this.runtime.fail(error));return {type:'action'};
  }
  async returnSource(row){
-  const c=this.channel,h=this.held;demand(h&&row.returnMoves&&row.ids.every(id=>!c.kernel.players.get(id)?.barrier),'shared_return_source_pending');
+  const c=this.channel,h=this.sourceHold(row);demand(h&&row.returnMoves&&row.ids.every(id=>!c.kernel.players.get(id)?.barrier),'shared_return_source_pending');
   c.lanes.release(row.lease);
   for(const id of row.ids){const p=c.kernel.players.get(id),owner=c.owners.get(id);demand(p?.externalHold===h.token&&!h.actors.some(a=>a.id===id),'shared_return_source_hold');const lease=c.lanes.acquire(['player:'+id],h.token);demand(lease,'shared_return_source_resource');h.actors.push({id,epoch:owner.epoch,p,suspended:row.suspension.get(id),lease,borrowed:false});}
   const actors=row.ids.map(id=>({id,epoch:c.owners.get(id).epoch,sequence:c.writer.finalSequence(id),rates:c.owners.get(id).passive===1?null:this.runtime.rates.snapshot(c.identities.get(id))}));
   await this.runtime.request('shared_return',this.scope(row,{actors}));await this.runtime.request('shared_complete',this.scope(row));for(const id of row.ids)if(this.pending.get(id)===row)this.pending.delete(id);
  }
  async export({token,id,source,target,retired=false}){
-  const r=this.runtime,c=this.channel,h=this.held,a=h?.actors.find(a=>a.id===id);demand(h?.token===token&&a?.epoch===source.epoch&&source.channel===c.peer.channel&&source.incarnation===c.peer.incarnation,'shared_export_owner');
+  const r=this.runtime,c=this.channel,h=this.holds.get(token),a=h?.actors.find(a=>a.id===id);demand(h?.token===token&&a?.epoch===source.epoch&&source.channel===c.peer.channel&&source.incarnation===c.peer.incarnation,'shared_export_owner');
   const global=r.globalControl.held;if(global)global.actors=global.actors.filter(row=>row.id!==id);
   if(a.cold)c.control.retireFrozen(a.cold);
   const packet=c.kernel.retireScope(id,source.epoch,token),final=[];if(packet.results.length)final.push({type:'frame',protocol:PROTOCOL,...packet});
   final.push({type:'channel_changed',protocol:PROTOCOL,channel:target.channel,epoch:target.epoch,retired});await r.connections.retire(id,final);c.detach(id);if(a.lease)c.lanes.release(a.lease);h.actors=h.actors.filter(row=>row!==a);return {token,id,exported:true};
  }
  async admit(payload){
-  const r=this.runtime,c=this.channel,h=this.held,token=payload.frozen?.token,{identity}=payload;demand(h?.token===token&&!h.actors.some(a=>a.id===identity.actor),'shared_admit_scope');const lease=c.lanes.acquire(['player:'+identity.actor],token);demand(lease,'shared_admit_resource');
+  const r=this.runtime,c=this.channel,token=payload.frozen?.token,h=this.holds.get(token),{identity}=payload;demand(h?.token===token&&!h.actors.some(a=>a.id===identity.actor),'shared_admit_scope');const lease=c.lanes.acquire(['player:'+identity.actor],token);demand(lease,'shared_admit_resource');
   await r.mailbox.hold(token,[identity.actor]);const global=r.globalControl.held;if(global)await r.mailbox.hold(global.token,[identity.actor]);
   await r.control(payload.bundle.owner.passive===1?'admit_passive':'admit',payload);await c.kernel.quiesce(identity.actor,identity.epoch);const p=c.kernel.players.get(identity.actor);p.externalHold=token;
   h.actors.push({id:identity.actor,epoch:identity.epoch,p,lease,borrowed:false,quiesced:true,suspended:Boolean(global)});if(global)global.actors.push({id:identity.actor,epoch:identity.epoch});return {token,id:identity.actor,epoch:identity.epoch,admitted:true};
  }
  async hold({token,except,freezes=[],stopped=[],only=null}){
-  demand(!this.held&&typeof token==='string'&&Array.isArray(except),'shared_hold_scope');const c=this.channel;
+  demand(!this.holds.has(token)&&typeof token==='string'&&Array.isArray(except),'shared_hold_scope');const c=this.channel;
   demand(only===null||Array.isArray(only)&&new Set(only.map(a=>a.id)).size===only.length&&only.every(a=>typeof a.id==='string'&&Number.isSafeInteger(a.epoch)&&c.owners.get(a.id)?.epoch===a.epoch),'shared_hold_selected_scope');
-  const h={token,actors:[],stoppedActors:[],phase:'reserving',except,only};if(actorFaultIsolation)h.interrupted=new Promise(resolve=>h.interrupt=resolve);this.held=h;
+  const selected=new Set(only?.map(a=>a.id)??c.owners.keys());demand([...this.holds.values()].every(h=>h.only&&only&&h.only.every(a=>!selected.has(a.id))),'shared_hold_overlap');
+  const h={token,actors:[],stoppedActors:[],phase:'reserving',except,only};if(actorFaultIsolation)h.interrupted=new Promise(resolve=>h.interrupt=resolve);this.holds.set(token,h);
   try{
    await this.runtime.flushPresence();await this.runtime.mailbox.hold(token,only?only.map(a=>a.id):[...c.owners.keys()]);if(this.runtime.sharedPending)await this.runtime.sharedPending;
    for(const [id,owner]of c.owners){if(only&&!only.some(p=>p.id===id&&p.epoch===owner.epoch)||except.some(p=>p.id===id&&p.epoch===owner.epoch))continue;
@@ -218,7 +228,7 @@ export class SharedCombatChannel {
        try{await Promise.race([barrier,h.interrupted.then(()=>{throw h.interruptError;})]);}
        catch(error){
         const rejected=sharedHoldRollback(error,id,owner.epoch,c,members);
-        if(rejected&&this.held===h&&h.phase==='reserving'&&c.owners.get(id)===owner&&c.kernel.players.get(id)===p&&p.epoch===owner.epoch){
+        if(rejected&&this.holds.get(token)===h&&h.phase==='reserving'&&c.owners.get(id)===owner&&c.kernel.players.get(id)===p&&p.epoch===owner.epoch){
          this.abortHold({token});return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,actors:[],aborted:true,rejected};
         }throw error;
        }
@@ -241,7 +251,7 @@ export class SharedCombatChannel {
     }
     const entry={id,epoch:owner.epoch,p,suspended:p.suspended,...(actorFaultIsolation?{externalHold:p.externalHold}:{}),lease,borrowed,cold:coldRequest};h.actors.push(entry);p.externalHold=token;p.suspended=true;
    }
-   h.phase='draining';if(!only||h.actors.length)await drainCombatCheckpoints(c,h.actors.map(a=>a.id));h.phase='held';
+   h.phase='draining';if(!only||h.actors.length)await drainCombatCheckpoints(c,h.actors.map(a=>a.id),{scopedR113:only!==null});h.phase='held';
    return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,...(h.stoppedActors.length?{stoppedActors:h.stoppedActors}:{}),actors:h.actors.map(a=>({id:a.id,epoch:a.epoch,sequence:c.writer.finalSequence(a.id),rates:c.owners.get(a.id).passive===1?null:this.runtime.rates.snapshot(c.identities.get(a.id))}))};
   }catch(error){
    const rejected=actorFaultIsolation&&actorRejection(error);
@@ -253,7 +263,7 @@ export class SharedCombatChannel {
   }
  }
  pendingActor(id,epoch){
-  const h=this.held;if(!actorFaultIsolation||h?.phase!=='reserving'||h.except.some(a=>a.id===id&&a.epoch===epoch)||h.only&&!h.only.some(a=>a.id===id&&a.epoch===epoch))return;
+  const h=this.heldFor(id);if(!actorFaultIsolation||h?.phase!=='reserving'||h.except.some(a=>a.id===id&&a.epoch===epoch)||h.only&&!h.only.some(a=>a.id===id&&a.epoch===epoch))return;
   const q=retiredActorIsolation&&this.channel.quarantines?.entries.get(id),proof=q&&actorRejection(q.error),quarantined=q?.epoch===epoch&&proof?.actor===id&&proof.epoch===epoch;
   if(!quarantined&&!this.runtime.commandRecovery?.hasActor(id,{confirmedOnly:true}))return;
   // Only reservation can be cancelled. No entered shared command is undone.
@@ -261,11 +271,11 @@ export class SharedCombatChannel {
   if(!h.interruptError){h.interruptActor={actor:id,epoch,code,...(quarantined?{reason:q.error.code}:{})};h.interruptError=Object.assign(Error(code),{code});h.interrupt();}
  }
  abortHold({token}){
-  demand(actorFaultIsolation,'shared_abort_disabled');const c=this.channel,h=this.held,old=this.abortedHolds.get(token);if(old)return old;
+  demand(actorFaultIsolation,'shared_abort_disabled');const c=this.channel,h=this.holds.get(token),old=this.abortedHolds.get(token);if(old)return old;
   demand(h?.token===token,'shared_abort_scope');
   for(const a of h.actors){demand(c.kernel.players.get(a.id)===a.p&&c.owners.get(a.id)?.epoch===a.epoch&&a.p.externalHold===token,'shared_abort_actor_fenced');if(a.lease)c.lanes.assert(a.lease);}
   for(const a of h.actors){if(a.lease)c.lanes.release(a.lease);a.p.externalHold=a.externalHold??null;a.p.suspended=c.quarantines?.entries.has(a.id)?true:a.suspended;}
-  this.held=null;this.runtime.mailbox.resume(token);const ack={token,channel:c.peer.channel,incarnation:c.peer.incarnation,aborted:true};this.abortedHolds.set(token,ack);if(this.abortedHolds.size>128)this.abortedHolds.delete(this.abortedHolds.keys().next().value);return ack;
+  this.holds.delete(token);this.runtime.mailbox.resume(token);const ack={token,channel:c.peer.channel,incarnation:c.peer.incarnation,aborted:true};this.abortedHolds.set(token,ack);if(this.abortedHolds.size>128)this.abortedHolds.delete(this.abortedHolds.keys().next().value);return ack;
  }
  releaseActors(h,actors){
   const c=this.channel;
@@ -276,7 +286,7 @@ export class SharedCombatChannel {
   }
  }
  async release({token,refreshActors=null,releaseUnchangedOnly=false,committedResult=null}){
-  const c=this.channel,h=this.held;demand(h?.token===token,'shared_release_scope');
+  const c=this.channel,h=this.holds.get(token);demand(h?.token===token,'shared_release_scope');
   const started=performance.now();let read=null,applyMs=0;
   try{for(const a of h.actors){
     const global=this.runtime.globalControl.held,cold=a.cold&&c.control.entries.get(a.id);
@@ -304,7 +314,7 @@ export class SharedCombatChannel {
     const ids=new Set(fresh.map(a=>a.id)),players=committedResult.players.filter(p=>ids.has(p.id));
     if(selected.every(a=>parts.has(a.id))&&players.length===fresh.length&&(!fresh.length||await installCommittedResultR113(this.runtime,{...committedResult,players,monsters:[]}))){
      for(const a of fresh){c.checkpoints.hydrate(c.view.player(a.id));c.encounters.hydrate(a.id,c.view.engagements.get(a.id)??null);}
-     this.releaseActors(h,h.actors);this.held=null;this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs:performance.now()-started,read:{query:'committed_r113',actors:fresh.length}}};
+     this.releaseActors(h,h.actors);this.holds.delete(token);this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs:performance.now()-started,read:{query:'committed_r113',actors:fresh.length}}};
     }
    }
    const readAt=performance.now();bundles=[];
@@ -320,7 +330,7 @@ export class SharedCombatChannel {
    read={query:'kernel511_actor_world',actors:selected.length,wallMs:performance.now()-readAt};
    demand(bundles.length===selected.length&&bundles.every((b,i)=>b.player.id===selected[i].id),'shared_release_bundle_order');
    const applyAt=performance.now();for(const bundle of bundles){c.applyBundle(bundle);c.checkpoints.hydrate(bundle.player);c.encounters.hydrate(bundle.player.id,bundle.engagement);}applyMs=performance.now()-applyAt;
-   this.releaseActors(h,h.actors);this.held=null;this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs,read}};
+   this.releaseActors(h,h.actors);this.holds.delete(token);this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs,read}};
   }catch(error){for(const a of h.actors)if(a.lease?.state==='held')c.lanes.fence(a.lease);this.runtime.fail(error);throw error;}
  }
 }

@@ -46,7 +46,7 @@ export class SharedCombatBridge {
  async reserve(source,id,coldGroup=null){
   const world=this.world.row;demand(typeof id==='string'&&id.length>=16&&id.length<=160&&!this.requests.has(id)&&world?.state==='running'&&!world.exited,'shared_bridge_request');
   const row={id,source,world,phase:'acquiring',proof:null,coldGroup,local:[]};this.requests.set(row.id,row);
-  try{const grant=await world.control.request('shared_acquire',{peer:source,id:row.id});demand(this.scopeCurrent(row),'shared_world_replaced');row.proof=grant.proof;row.phase='leased';return grant;}catch(error){this.failScope(row,error,'shared_reserve');throw error;}
+  try{await this.acquirePartitionR113?.(row);demand(this.scopeCurrent(row),'shared_world_replaced');const grant=await world.control.request('shared_acquire',{peer:source,id:row.id,area:this.partitionAreaR113??null});demand(this.scopeCurrent(row),'shared_world_replaced');row.proof=grant.proof;await this.beforeGrantR113?.(row,grant);demand(this.scopeCurrent(row),'shared_world_replaced');row.phase='leased';return grant;}catch(error){this.failScope(row,error,'shared_reserve');throw error;}
  }
  // Parent-only read lease for native transfer/entry. It never enters the
  // channel command protocol or authorizes a shared monster mutation. Keep
@@ -75,7 +75,7 @@ export class SharedCombatBridge {
   this.assertCold(row,group);
   try{
    await Promise.all(row.local.map(async({target,token,cycle})=>{this.core.process(target.peer);const ack=await target.control.request('settlement_resume',{token});this.core.process(target.peer);demand(ack?.token===token&&ack.cycle===cycle&&ack.channel===target.peer.channel&&ack.incarnation===target.peer.incarnation&&ack.resumed,'shared_cold_local_resume_ack');}));this.assertCold(row,group);row.local=[];
-   const ack=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});this.assertCold(row,group);row.phase='finished';this.requests.delete(row.id);this.wake();return ack;
+   const ack=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});this.assertCold(row,group);row.phase='finished';this.requests.delete(row.id);this.releasePartitionR113?.(row);this.wake();return ack;
   }catch(error){this.failScope(row,error,'shared_finishCold');throw error;}
  }
  async prepare(peer,payload){
@@ -95,7 +95,9 @@ export class SharedCombatBridge {
     const scope=foregroundScopeR112(this.core.database.sqlite,scopedInput,row.source.actor,peer.channel);
     if(scope&&sourcePlayers.every(p=>scope.actors.includes(p.id)))held.foregroundClaimR85={scope,input:JSON.stringify(scopedInput),operation:scopedInput.action==='attack'?'attack':'native_action'};
    }
+   if(row.partitionActorsR113)demand(held.foregroundClaimR85,'shared_partition_scope_changed');
    if(held.foregroundClaimR85){
+    if(row.partitionActorsR113)demand(held.foregroundClaimR85.scope.actors.every(id=>row.partitionActorsR113.includes(id)),'shared_partition_actor_changed');
     const selected=held.foregroundClaimR85.only=new Map(channels.map(c=>[c.peer.channel,[]]));
     for(const id of held.foregroundClaimR85.scope.actors){
      const stopped=held.stoppedCandidates.get(id);
@@ -334,7 +336,7 @@ export class SharedCombatBridge {
    const answer=await row.world.control.request('shared_finish',{peer:row.source,proof:row.proof,changes:{monsters:[],participants:[],bossParticipants:[],combatEvents:[]}});this.assertScope(row,h,'shared_return_superseded');row.phase='finished';this.terminal=null;this.wake();return answer;
   }catch(error){this.failScope(row,error,'shared_returnReady',h);throw error;}
  }
- complete(peer,payload){const row=this.entry(peer,payload);demand(row.phase==='finished','shared_complete_phase');this.requests.delete(row.id);this.wake();return {completed:true};}
+ complete(peer,payload){const row=this.entry(peer,payload);demand(row.phase==='finished','shared_complete_phase');this.requests.delete(row.id);this.releasePartitionR113?.(row);this.wake();return {completed:true};}
  abort(error){this.stopUnknownTimers();for(const set of [this.waiters,this.idleWaiters]){for(const waiter of set)waiter.reject(error);set.clear();}}
  fail(error,context={error}){const cause=recoveryCause(this.core,context,'shared_combat_failure');recoveryDiagnostic(this.core,'shared_combat_failure',cause);this.abort(error);this.core.recoveringWorld=true;this.world.global.recover({error,sharedCombat:true,recoveryCause:cause});}
  recovered(){this.stopUnknownTimers();for(const hold of this.ownershipHolds)hold.release();this.requests.clear();this.terminal=null;this.wake();}

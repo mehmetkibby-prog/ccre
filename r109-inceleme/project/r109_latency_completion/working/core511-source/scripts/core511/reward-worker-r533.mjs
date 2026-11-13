@@ -47,7 +47,7 @@ export class RewardWorkerR533 {
   return true;
  }
  envelope(peer,request,context,stamps){
-  const c=this.core,sql=this.database.sqlite,shared=c.sharedWorld?.combat,h=shared?.terminal,blocked=[];
+  const c=this.core,sql=this.database.sqlite,shared=c.sharedWorld?.combat,h=request.payload.sharedLease&&shared?.heldFor?shared.heldFor(request.payload.sharedLease):shared?.terminal,blocked=[];
   const ids=new Set([...c.actorIsolation.entries.keys(),...c.actorIsolation.unknownActors.keys(),...c.permanent.entries.keys(),...c.transitions.keys()]);
   for(const id of ids){const key='player:'+id,probe=request.payload.resources.includes(key)?request:{...request,payload:{...request.payload,resources:[...request.payload.resources,key]}};try{c.authority.commandGuard(sql,peer,probe);}catch(error){demand(scopeCodes.has(error.code),'reward_worker_guard_snapshot');blocked.push([id,error.code]);}}
   let snapshot=null;

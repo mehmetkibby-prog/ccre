@@ -167,10 +167,10 @@ export class CombatCheckpoints {
   this.deadlinesR531?.cancel(token.payload.monsters);for(const id of token.ids)this.reservedR53.delete(id);
  }
  acknowledgeDeadlineR531(payload){if(!this.deadlinesR531)return;this.deadlinesR531.acknowledged(payload.monsters,id=>this.current.get('monsters').get(key('monsters',{id})),(a,b)=>same('monsters',a,b));for(const {current}of payload.monsters)this.base.get('monsters').set(key('monsters',current),current);}
- flush({targetsR531=null}={}){
+ flush({targetsR531=null,bossRoundsR113=null}={}){
   demand(!this.failure,'combat_checkpoint_fenced');if(this.pending)return this.pending;
   const payload=this.snapshot(),capturedAt=this.clock();
-  if(targetsR531){payload.monsters=payload.monsters.filter(r=>targetsR531.has(r.current.id));payload.participants=payload.participants.filter(r=>targetsR531.has(r.current.monster_id));payload.bossParticipants=[];payload.combatEvents=payload.combatEvents.filter(r=>targetsR531.has(r.target_id));}
+  if(targetsR531){payload.monsters=payload.monsters.filter(r=>targetsR531.has(r.current.id));payload.participants=payload.participants.filter(r=>targetsR531.has(r.current.monster_id));payload.bossParticipants=bossRoundsR113?payload.bossParticipants.filter(r=>bossRoundsR113.has(r.current.boss_round)):[];payload.combatEvents=payload.combatEvents.filter(r=>targetsR531.has(r.target_id));}
   if(this.reservedR53.size){payload.monsters=payload.monsters.filter(r=>!this.reservedR53.has(r.current.id));payload.participants=payload.participants.filter(r=>!this.reservedR53.has(r.current.monster_id));payload.combatEvents=payload.combatEvents.filter(r=>!this.reservedR53.has(r.target_id));}
   if(Object.values(payload).every(rows=>rows.length===0)){if(!targetsR531&&!this.reservedR53.size)this.at=this.clock();return Promise.resolve({unchanged:true});}
   const actor=this.actor?.();if(this.actor)demand(typeof actor==='string'&&actor,'combat_checkpoint_actor_missing');
@@ -208,6 +208,6 @@ export class CombatCheckpoints {
   const interval=memoryCombatR53?(large?500:R53_CHECKPOINT_START_MS):CHECKPOINT_MS;
   if(!this.failure&&!this.pending&&this.clock()-this.at>=interval)void this.flush().catch(()=>{});
  }
- async drainTargetsR531(ids){demand(Array.isArray(ids)&&ids.length<=1024,'combat_scoped_drain_targets');if(this.pending)await this.pending;return this.flush({targetsR531:new Set(ids)});}
+ async drainTargetsR531(ids,bossRoundsR113=[]){demand(Array.isArray(ids)&&ids.length<=1024&&Array.isArray(bossRoundsR113),'combat_scoped_drain_targets');if(this.pending)await this.pending;return this.flush({targetsR531:new Set(ids),bossRoundsR113:new Set(bossRoundsR113)});}
  async drain(){if(this.pending)await this.pending;return this.flush();}
 }

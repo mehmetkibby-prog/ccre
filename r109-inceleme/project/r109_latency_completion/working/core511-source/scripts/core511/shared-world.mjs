@@ -9,7 +9,7 @@ import {MonsterLifecycle} from './monster-lifecycle.mjs';
 import {acceptWorldPoint} from './world-state.mjs';
 import {SharedWorldJobs} from './shared-world-jobs.mjs';
 import {ResidentCleanup} from './resident-cleanup.mjs';
-import {SharedCombatOwner} from './shared-combat-owner.mjs';
+import {SharedPartitionsR113} from './shared-partitions-r113.mjs';
 import {SharedConfiguration} from './shared-configuration.mjs';
 
 export class SharedWorldMemory {
@@ -50,7 +50,7 @@ export class SharedWorldRuntime {
   this.cleanupControl=new ResidentCleanup({peer,cycle:()=>this.initial.world.cycle,lanes:this.lanes,journal:this.journal,writer:this.writer,onFatal:error=>this.fail(error)});
   this.rules=new WorldClock({view:this.view,owns:m=>m.channel===0,blocked:id=>this.lanes.busy(['monster:'+id]),clock,changed:changes=>{this.journal.changed(changes);for(const row of changes.monsters)this.changed.set(row.id,row);}});
   this.lifecycle=new MonsterLifecycle({clock:this.rules,settings:()=>this.initial.settings,view:this.view,lanes:this.lanes,journal:this.journal,submit:e=>this.writer.submit(e),committed:result=>{for(const id of result.removed??[]){this.view.monsters.delete(id);this.rules.forget(id);this.changed.delete(id);this.fullNeeded=true;}for(const m of result.monsters){this.view.setMonster(m);this.changed.set(m.id,m);}},onFatal:e=>this.fail(e)});
-  this.sharedCombat=new SharedCombatOwner(this);
+  this.sharedCombat=new SharedPartitionsR113(this);
   this.configuration=new SharedConfiguration(this);
   for(const [key,row]of Object.entries(initial.config??{}))this.rules.config.set(key,row);
  }
@@ -65,7 +65,15 @@ export class SharedWorldRuntime {
  setWorld(point){if(acceptWorldPoint(this.worldPoint,point)){demand(point.world.cycle===this.initial.world.cycle,'world_state_cycle_requires_reset');this.worldPoint=point;this.initial.world={...point.world};}return {revision:this.worldPoint.revision};}
  tick(){
   if(!this.started||this.failure)return;const at=performance.now(),now=this.clock();
-  try{this.jobs?.tick(now);if(!this.jobs?.blocked&&!this.sharedCombat.busy){this.lifecycle.tick(now);if(now>=this.nextRegen){this.nextRegen=now+1000;this.rules.regenerate(this.initial.settings,now);}this.journal.poll();void this.project().catch(()=>{});}}
+  try{this.jobs?.tick(now);if(!this.jobs?.blocked&&!this.sharedCombat.globalBusy){
+   this.lifecycle.tick(now);if(now>=this.nextRegen){this.nextRegen=now+1000;this.rules.regenerate(this.initial.settings,now);}
+   if(!this.sharedCombat.busy)this.journal.poll();
+   else if(!this.journal.pending&&performance.now()>=(this.nextIdleCheckpointR113??0)){
+    this.nextIdleCheckpointR113=performance.now()+1000;const free=[...this.view.monsters.values()].filter(m=>!this.lanes.busy(['monster:'+m.id]));
+    void this.journal.flush({targetsR531:new Set(free.map(m=>m.id)),bossRoundsR113:new Set(free.filter(m=>m.is_boss).map(m=>m.spawn_round))}).catch(()=>{});
+   }
+   void this.project().catch(()=>{});
+  }}
   catch(error){this.fail(error);throw error;}
   finally{const ms=performance.now()-at,m=this.metrics;m.ticks++;m.maxMs=Math.max(m.maxMs,ms);m.samples.push(ms);if(m.samples.length>16384)m.samples.shift();m.slowest.push({tick:m.ticks,at:now,ms});m.slowest.sort((a,b)=>b.ms-a.ms);m.slowest.length=Math.min(10,m.slowest.length);}
  }

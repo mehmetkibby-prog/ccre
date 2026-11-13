@@ -13,7 +13,7 @@ import {GlobalWorldCoordinator} from './global-world-coordinator.mjs';
 import {WorldCleanupCoordinator} from './world-cleanup-coordinator.mjs';
 import {WorldPlayerJobs} from './world-player-jobs.mjs';
 import {HeartbeatJobs} from './heartbeat-jobs.mjs';
-import {SharedCombatBridge} from './shared-combat-bridge.mjs';
+import {SharedBridgePartitionsR113} from './shared-bridge-partitions-r113.mjs';
 import {recoveryWatchdog} from './r47-options.mjs';
 import {RecoveryRetry} from './recovery-retry.mjs';
 import {actorFaultIsolation} from './r48-options.mjs';
@@ -26,7 +26,7 @@ export class WorldProcessSupervisor {
   demand(core?.writer?.system&&!core.sharedWorld,'world_supervisor_dependencies');Object.assign(this,{core,execPath,bootTimeoutMs,onFault});core.sharedWorld=this;this.row=null;this.queue=Promise.resolve();this.closing=false;this.monsters=new Map();this.projection=null;this.deliveries=new Map();
   this.global=new GlobalWorldCoordinator(core,core.channelSupervisor,this);
   if(recoveryWatchdog)this.retry=new RecoveryRetry(()=>this.retryRecovery(),{scope:'world',onError:error=>this.deferRecovery(error)});
-  this.combat=new SharedCombatBridge(this);core.writer.sharedCombat=this.combat;core.permanent.sharedCombat=this.combat;
+  this.combat=new SharedBridgePartitionsR113(this);core.writer.sharedCombat=this.combat;core.permanent.sharedCombat=this.combat;
   this.cleanup=new WorldCleanupCoordinator(this);
   this.playerJobs=new WorldPlayerJobs(this);
   this.heartbeatJobs=new HeartbeatJobs(this);
