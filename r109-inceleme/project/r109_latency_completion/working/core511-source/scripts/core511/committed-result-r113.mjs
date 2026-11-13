@@ -15,6 +15,7 @@ const kinds=new Set(['attack','pvp_attack','monster_reward','retaliation_death',
 // it may never silently certify an incomplete result.
 const covered=new Set(['players','player_items','player_storage_items','player_pets','player_stones','afk_hunt_state','fishing_sessions','pve_engagements','dungeon_materials','dungeon_wings','world_drops','monster_xp_claims','normal_reward_claims','monster_reward_claims','boss_reward_claims','sinsi_reward_claims','arena_reward_claims','pvp_reward_cooldowns','auth_rate_limits','guilds','guild_members','guild_skills','guild_monster_claims','guild_essence_rewards','community_kills','adventure_runs','adventure_members','adventure_monsters','adventure_awards','adventure_chests','adventure_portals','adventure_entries','adventure_receipts','adventure_schedule','content_champion_rewards_r102','content_forge_r102','content_battlefield_r102','content_receipts_r102','content_battlefield_claims_r102']);
 for(const table of ['monsters','monster_participants','boss_participants','combat_events','boss_defeats','monster_defeats','sinsi_defeats','normal_defeats','mount_inventory_r49','mount_reward_claims_r49'])covered.add(table);
+for(const table of ['dungeon_runs','dungeon_members','dungeon_finalizations','solo_daily_entries','solo_entry_receipts','dungeon_receipts'])covered.add(table);
 
 export function initializeCommittedResultsR113(sql){
  if(!committedResultsR113)return;

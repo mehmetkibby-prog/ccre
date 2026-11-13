@@ -1,4 +1,5 @@
 import {Worker} from 'node:worker_threads';
+import {combatAreaR113,dungeonWriteR113} from './persistence-scope-r113.mjs';
 import {guardDeathBatchActorsR57} from './death-batch-writer-r57.mjs';
 import {statSync,realpathSync} from 'node:fs';
 import {rewardWorkerR533} from './r533-options.mjs';
@@ -30,9 +31,10 @@ export class RewardWorkerR533 {
  }
  candidate(request){
   if(!rewardWorkerR533||!this.file||this.closed)return false;
+  if(dungeonWriteR113(request))return true;
   const p=request.payload,player=p?.expected?.player;
-  if(!player||!areas.has(player.area)||player.arena_match_id||player.instance_id)return false;
-  return request.operation==='attack'&&p.input?.action==='attack'&&!p.expected?.monster?.is_boss&&!p.expected?.monster?.is_stone||request.operation==='native_action'&&p.input?.action==='claim_rewards'&&Array.isArray(p.input.rewardTargets)&&p.input.rewardTargets.length<=10;
+  if(!player||!combatAreaR113(player.area)||player.arena_match_id||player.instance_id)return false;
+  return request.operation==='attack'&&p.input?.action==='attack'&&!p.expected?.monster?.is_boss||areas.has(player.area)&&request.operation==='native_action'&&p.input?.action==='claim_rewards'&&Array.isArray(p.input.rewardTargets)&&p.input.rewardTargets.length<=10;
  }
  safeScope(sql,request){
   // Native HTTP services may own synchronous SQLite transactions outside
@@ -40,10 +42,13 @@ export class RewardWorkerR533 {
   // the cold callback awaits any worker already in flight before entering SQL.
   if(this.core.permanent.entries.size||this.lane.nativeWrites)return false;
   const p=request.payload,keys=p.resources;if(!Array.isArray(keys)||keys.length>2048)return false;
+  if(dungeonWriteR113(request))return p.actors.every(id=>keys.includes('player:'+id))&&keys.every(k=>k.startsWith('player:')||k==='dungeon:'+p.run.id);
   const ids=keys.filter(k=>k.startsWith('monster:')).map(k=>k.slice(8));
-  // Native special maps, shared monsters, bosses and stones keep their existing
-  // writer path. This also fences a mixed AoE whose primary target is ordinary.
-  if(sql.prepare("SELECT 1 FROM json_each(?) j JOIN monsters m ON m.id=j.value WHERE m.hp>0 AND (m.is_boss<>0 OR m.is_stone<>0 OR m.channel=0 OR m.area NOT IN ('forest','frozen','ancient')) LIMIT 1").get(JSON.stringify(ids)))return false;
+  // The same native handlers and audited resource set execute in the sole
+  // persistence lane. Global world bosses and unsupported maps retain their
+  // transition path; shared local targets require the existing signed lease.
+  const rows=sql.prepare('SELECT m.id,m.hp,m.area,m.channel,m.is_boss FROM json_each(?) j JOIN monsters m ON m.id=j.value WHERE m.hp>0').all(JSON.stringify(ids));
+  if(rows.some(m=>m.is_boss||!combatAreaR113(m.area)||m.channel===0&&!p.sharedLease))return false;
   return true;
  }
  envelope(peer,request,context,stamps){
@@ -63,8 +68,8 @@ export class RewardWorkerR533 {
     this.stats.fallbacks++;stamps=w.presence.materialize(db);written=stamps;return w.authority.operations[request.operation].execute(db,source);
    }
    demand(w.ports.guard(db,request.payload,context,request.operation)===true,'game_writer_security');
-   guardDeathBatchActorsR57(db,request.payload,context,w.ports.guard);
-   assertNativeWriteResources(db,request.payload,context,{authority:w.authority,shared:w.sharedCombat});assertSettlementResources(db,request.payload,context);
+   if(dungeonWriteR113(request)){for(const id of request.payload.actors)w.authority.assertSimulated(db,peer,id,request.payload.epochs?.[id],{allowDraining:true});}
+   else{guardDeathBatchActorsR57(db,request.payload,context,w.ports.guard);assertNativeWriteResources(db,request.payload,context,{authority:w.authority,shared:w.sharedCombat});assertSettlementResources(db,request.payload,context);}
    stamps=[...w.presence.rows.values()];envelope=this.envelope(peer,request,context,stamps);throw marker;
   },atomic:work=>this.lane.run(async()=>{
    const started=performance.now();let value,delegated=false;

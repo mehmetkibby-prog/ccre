@@ -1,4 +1,5 @@
 import {assertClaimWorkerScopeR112,assertClaimRefreshR112} from './reward-actor-scope-r85.mjs';
+import {workerOperationR113} from './persistence-scope-r113.mjs';
 import {statSync} from 'node:fs';
 import {deathBatchWorkerCallR57} from './death-batch-writer-r57.mjs';
 import {statementBootPoolR61,prepareCombatStatementBootR61} from './statement-boot-pool-r61.mjs';
@@ -52,7 +53,7 @@ export async function runRewardWorkerR533({hook=()=>{}}={}){
   demand(message.type==='run'&&Number.isSafeInteger(message.id)&&message.id>serial&&!current,'reward_worker_protocol');serial=message.id;current=message.envelope;clock=current.clockNow;written=[];
   const started=performance.now();
   try{
-   demand(['attack','native_action'].includes(current.request.operation)&&(current.request.operation==='attack'||current.request.payload.input?.action==='claim_rewards'),'reward_worker_operation');
+   demand(workerOperationR113(current.request),'reward_worker_operation');
    registry.registry.apply(current.registry);for(const fault of current.registryFaults??[])registry.registry.stop(fault.runId,{code:fault.code});
    writer.refreshOwners(current.presence);writer.services.refresh({rankRefreshR85,serviceRefreshR89});writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
    hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);serviceRefreshR89.afterCommand(ack);hook('after_command',{database,current,ack});

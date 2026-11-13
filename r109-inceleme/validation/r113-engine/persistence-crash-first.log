@@ -1,0 +1,34 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794544813781,"backupName":"before-pearl-reset-1794544813781-a56dcd0c-ecd6-4a58-90c7-9b625e8e80ef.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:22.474Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":230261,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3f61f1f20825cae303c70701"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:22.476Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":230271,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a2c6c6e63e9703ec3ce85300"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:22.476Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":230281,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3b8428d83d2d4b5040927240"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:22.476Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":230291,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d478df08950b04c7afeb494d"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:22.500Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":230250,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"ac54dceb1ac9ad764f9f3ca3"}
+# Subtest: sole persistence worker exits before_commit: receipt, reward and committed image stay atomic
+ok 1 - sole persistence worker exits before_commit: receipt, reward and committed image stay atomic
+  ---
+  duration_ms: 10408.434646
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794544824001,"backupName":"before-pearl-reset-1794544824001-67a16559-ecb4-40ad-b02b-658a0c0675cd.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:31.532Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":230330,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ce1273f5c04f6392a894f8da"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:31.532Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":230345,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1d483e9c83647edb935a070e"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:31.532Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":230355,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e2e9ead208e0f2122fdaf27f"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:31.533Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":230365,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7c97dffbb1404d3f1f4e7012"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:40:31.551Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":230319,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"e65ce5a305f221fa63be64ca"}
+# Subtest: sole persistence worker exits after_commit: receipt, reward and committed image stay atomic
+ok 2 - sole persistence worker exits after_commit: receipt, reward and committed image stay atomic
+  ---
+  duration_ms: 9043.936982
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20441.040026
