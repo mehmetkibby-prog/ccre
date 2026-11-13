@@ -1,6 +1,6 @@
 import {prepareCached477} from './writer-statements.mjs';
 import {demand} from './contract.mjs';
-import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
+import {encodeCommittedActorR113,decodeCommittedImageR113} from './committed-codec-r113.mjs';
 
 // Immutable derived images share the reward transaction. Large fan-out does
 // not enlarge the 256 KiB command receipt. Expired images are recoverable by
@@ -26,7 +26,7 @@ export function readCommittedImagesR113(sql,{operationId,channel,incarnation,act
  demand(typeof operationId==='string'&&operationId.length<=240&&Number.isInteger(channel)&&typeof incarnation==='string'&&Array.isArray(actors)&&actors.length<=25,'committed_image_read');
  const read=prepareCached477(sql,'SELECT image FROM kernel511_committed_images_r113 WHERE operation_id=? AND actor=? AND epoch=? AND channel=? AND incarnation=?');
  const parts=[];let bytes=0;
- for(const a of actors){const row=read.get(operationId,a.id,a.epoch,channel,incarnation);if(!row)return null;bytes+=Buffer.byteLength(row.image);if(bytes>3*1024*1024)return null;parts.push(encoded?{...a,image:row.image}:JSON.parse(row.image));}
+ for(const a of actors){const row=read.get(operationId,a.id,a.epoch,channel,incarnation);if(!row)return null;bytes+=Buffer.byteLength(row.image);if(bytes>3*1024*1024)return null;const part=encoded?{...a,image:row.image}:decodeCommittedImageR113(row.image);if(!part)return null;parts.push(part);}
  return parts;
 }
 export function pruneCommittedImagesR113(sql,before,limit){

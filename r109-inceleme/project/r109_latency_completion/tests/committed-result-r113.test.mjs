@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {randomBytes} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {setupPvp,update,put} from '../working/core511-source/scripts/core511/tests/pvp-fixture.mjs';
 import {GameWriter} from '../working/core511-source/scripts/core511/writer-runtime.mjs';
@@ -9,7 +10,7 @@ import {createAdventureSchema} from '../working/core511-source/scripts/core511/a
 import {readCommitRevisionR113} from '../working/core511-source/scripts/core511/commit-revision-r113.mjs';
 import {applyCommittedResultR113} from '../working/core511-source/scripts/core511/committed-apply-r113.mjs';
 import {readCommittedImagesR113,pruneCommittedImagesR113} from '../working/core511-source/scripts/core511/committed-store-r113.mjs';
-import {decodeCommittedActorR113} from '../working/core511-source/scripts/core511/committed-codec-r113.mjs';
+import {decodeCommittedActorR113,encodeCommittedActorR113,decodeCommittedImageR113} from '../working/core511-source/scripts/core511/committed-codec-r113.mjs';
 const wire=v=>JSON.parse(JSON.stringify(v));
 async function scene(t){
  const f=await setupPvp(t);f.reset({area:'forest'});createTowerSchema(f.sql);createAdventureSchema(f.sql);
@@ -58,7 +59,7 @@ test('consumer rejects a revision gap before changing any actor',()=>{
 test('large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards',async t=>{
  const s=await scene(t),read=s.writer.committedR113.rules.readCommittedSectionsR113;
  // Exercise the fan-out/size boundary independently of the native bag cap.
- s.writer.committedR113.rules.readCommittedSectionsR113=(...args)=>({...read(...args),storageItems:Array.from({length:250},(_,i)=>({id:String(i),name:'x'.repeat(1000)}))});
+ s.writer.committedR113.rules.readCommittedSectionsR113=(...args)=>({...read(...args),storageItems:Array.from({length:250},(_,i)=>({id:String(i),name:randomBytes(900).toString('base64')}))});
  const result=await s.f.database.atomic(()=>s.capture()),d=result.committedR113;
  assert(d.indirect);assert(Buffer.byteLength(JSON.stringify(result))<224*1024);assert.equal(d.actors[0].bundle,undefined);
  const params={operationId:d.operationId,channel:1,incarnation:s.peer.incarnation,actors:d.actors};
@@ -70,6 +71,15 @@ test('large committed output uses a small receipt and an atomic, owner-fenced im
  const player=s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id);
  await s.f.database.atomic(()=>pruneCommittedImagesR113(s.sql,d.at+1,1));
  assert.equal(readCommittedImagesR113(s.sql,params),null);assert.deepEqual(s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id),player);assert.equal(readCommitRevisionR113(s.sql,s.id),1);
+});
+
+test('packed actor images preserve exact state and reject corruption or unbounded inflation',()=>{
+ const part={id:'a',base:4,next:5,bundle:{owner:{epoch:2,channel:3,incarnation:'native'},player:{id:'a',name:'Şampiyon',hp:120}},sections:{owner:{id:'a'},items:Array.from({length:150},(_,i)=>({id:String(i),name:'Kadim zümrüt',enchantments:[1,2,3],deleted:null}))}};
+ const packed=encodeCommittedActorR113(part),plain=encodeCommittedActorR113(part,{compress:false});
+ assert(packed.image.startsWith('z1:'));assert(packed.image.length<plain.image.length/2);
+ assert.deepEqual(decodeCommittedActorR113(packed),part);assert.deepEqual(decodeCommittedActorR113(plain),part);
+ const [version,size,hash,data]=packed.image.split(':');
+ for(const image of [`${version}:1:${hash}:${data}`,`${version}:1048577:${hash}:${data}`,`${version}:${size}:${'0'.repeat(64)}:${data}`,`${version}:${size}:${hash}:${data.slice(1)}`,packed.image.slice(0,-4),'🙂'.repeat(300000)])assert.equal(decodeCommittedImageR113(image),null);
 });
 
 // Encoded images retain all deletes/nulls, but cannot substitute another owner.
