@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: room scheduling parity across deaths, owners, seals, hazards, expiry and explicit refusal
+ok 1 - room scheduling parity across deaths, owners, seals, hazards, expiry and explicit refusal
+  ---
+  duration_ms: 227.565207
+  type: 'test'
+  ...
+# Subtest: mutations between ticks are immediately visible; no retained room/member cache
+ok 2 - mutations between ticks are immediately visible; no retained room/member cache
+  ---
+  duration_ms: 3.332566
+  type: 'test'
+  ...
+# Subtest: whole-world monster iteration is independent of occupied room count
+ok 3 - whole-world monster iteration is independent of occupied room count
+  ---
+  duration_ms: 19.610394
+  type: 'test'
+  ...
+# Subtest: four independent room transitions progress concurrently, and a fifth waits for bounded capacity
+ok 4 - four independent room transitions progress concurrently, and a fifth waits for bounded capacity
+  ---
+  duration_ms: 6.277597
+  type: 'test'
+  ...
+# Subtest: draining a player waits only for that player’s run, while global drain waits for all
+ok 5 - draining a player waits only for that player’s run, while global drain waits for all
+  ---
+  duration_ms: 1.588131
+  type: 'test'
+  ...
+# Subtest: an unknown failed write retains only its own resource lease until recovery
+ok 6 - an unknown failed write retains only its own resource lease until recovery
+  ---
+  duration_ms: 2.416894
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 965.942319

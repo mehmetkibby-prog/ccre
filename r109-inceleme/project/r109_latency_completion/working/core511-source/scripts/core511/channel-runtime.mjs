@@ -107,8 +107,8 @@ export class ChannelRuntime {
    modeAction:context=>context.input.action==='heartbeat'?this.heartbeat.act(context):context.input.action==='dungeon'?this.dungeon.action(context):this.modes.action(context),
    modeTick:context=>{if(this.globalControl?.held)return;this.afkCheck?.tick(context.now);this.runeBoss.tick(context.now);this.adventure.tick(context.now);this.castle.tick(context.now);this.dungeon.tick(context);void this.flushShared().catch(error=>{if(!['world_engagements_unavailable','ipc_control_outcome_unknown','world_process_fenced'].includes(error.code))this.fail(error);});},
    monsterLifecycleCommitted:result=>this.world.lifecycleCommitted(result),
-   mistLootCommitted:snapshot=>this.adventure.refreshLoot(snapshot),hydrateMode:bundle=>this.hydrate(bundle),dropMode:id=>this.drop(id),drainMode:async id=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain();await this.dungeon.drain(id);},
-   drainModeGroup:async ids=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain();await this.dungeon.drainActors(ids);}
+   mistLootCommitted:snapshot=>this.adventure.refreshLoot(snapshot),hydrateMode:bundle=>this.hydrate(bundle),dropMode:id=>this.drop(id),drainMode:async id=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain([id]);await this.dungeon.drain(id);},
+   drainModeGroup:async ids=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain(ids);await this.dungeon.drainActors(ids);}
   }});
   this.dungeon=new DungeonChannel(this.channel,{globals,progressionSettings:()=>globals.__colProgression.snapshot(),initial:initial.dungeon,clock,actorsFor:(id,input)=>{
    if(input?.action!=='create')return [id];const party=this.channel.parties.get(id);return party?[...this.channel.parties].filter(([,p])=>p===party).map(([id])=>id):[id];
@@ -182,7 +182,7 @@ export class ChannelRuntime {
  async rejectedActorIdle(id,error){
   // Await already-started mode work only. Never run a new checkpoint with the
   // rejected base, and never retry a native economic action during quarantine.
-  const tasks=[this.dungeon.pending.get(id)?.promise,this.dungeon.resident.pending.get(id)?.promise,this.adventure.pending,this.runeBoss.pending];
+  const tasks=[this.dungeon.pending.get(id)?.promise,this.dungeon.resident.pending.get(id)?.promise,this.adventure.pendingFor(id),this.runeBoss.pending];
   for(const task of new Set(tasks.filter(t=>typeof t?.then==='function')))try{await task;}catch(e){const r=actorRejection(e);if(!r||r.actor!==id||r.epoch!==actorRejection(error)?.epoch)throw e;}
  }
  localKill(id,result){

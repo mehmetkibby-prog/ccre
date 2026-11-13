@@ -56,3 +56,14 @@ lacked kadim_tower_settings; first process fixture lacked adventure_monsters.
 The new test uses explicit schema setup and character selection, and awaits the
 final killed event, not the already-existing speculative 202 response. No R113
 performance claim yet.
+
+Independent adventure scheduling now permits four disjoint run transitions per
+channel, with per-run ownership and actor-specific drains. Native tower/mist
+rules and committed-death process checks pass (7 tests); scheduling isolation
+and eligibility parity pass (6 tests). The first parity run failed because a
+refused scheduled portal continued into room scanning; original refusal ordering
+was restored. This does not yet partition the global shared-combat owner.
+
+Preliminary 10-player forest run (15 s, four-CPU quota): tick p99 9.11 ms,
+no main/channel pauses over 50 ms, confirmed death p99 188.33 ms (17 kills).
+This small single run does not meet or establish the final 40-player target.

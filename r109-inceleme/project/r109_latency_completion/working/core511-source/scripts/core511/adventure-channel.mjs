@@ -9,20 +9,20 @@ import {actorRejection} from './actor-rejection.mjs';
 // Only map objectives and deadlines. Movement, targeting, combat, retaliation,
 // rewards and world projection use the ordinary channel implementations.
 export class AdventureChannel {
- constructor(runtime,initial={}){this.runtime=runtime;this.channel=runtime.channel;this.pending=null;this.bundles=new Map();this.sent=new Map();this.reset(initial);}
+ constructor(runtime,initial={}){this.runtime=runtime;this.channel=runtime.channel;this.pending=new Map();this.maxPending=4;this.bundles=new Map();this.sent=new Map();this.reset(initial);}
  reset(initial={}){this.lootRevisions=new Map(initial.lootRevisions??[]);this.loot=new Map((initial.loot??[]).map(c=>[c.id,c]));this.runs=new Map((initial.runs??[]).map(r=>[r.id,r]));this.portals=new Map((initial.portals??[]).map(p=>[p.id,p]));this.schedules=new Map((initial.schedules??[]).map(s=>[s.id,s]));this.scheduleRetryAt=new Map();this.nextScheduleAttempt=0;this.projectionCache=null;for(const [id,p]of initial.profiles??[])this.runtime.services.adventureProfiles.set(id,Object.freeze(p));this.sent.clear();}
  refresh(bundle){const b=bundle.adventure;if(!b)return;this.projectionCache=null;this.bundles.set(bundle.player.id,b);if(b.run)this.refreshLoot({runId:b.run.id,revision:b.lootRevision??0,loot:b.loot??[]});if(b.retiredRunId){this.refreshLoot({runId:b.retiredRunId,revision:(this.lootRevisions.get(b.retiredRunId)??0)+1,loot:[]});this.runs.delete(b.retiredRunId);for(const [id,p]of this.portals)if(p.run_id===b.retiredRunId)this.portals.delete(id);}if(b.run)this.runs.set(b.run.id,b.run);for(const p of b.portals)this.portals.set(p.id,p);this.sent.delete(bundle.player.id);}
  refreshLoot(snapshot){if(!snapshot?.runId||!Array.isArray(snapshot.loot))return;const revision=snapshot.revision??0;if(!Number.isSafeInteger(revision)||revision<(this.lootRevisions.get(snapshot.runId)??0))return;this.lootRevisions.set(snapshot.runId,revision);for(const [id,chest]of this.loot)if(chest.runId===snapshot.runId)this.loot.delete(id);for(const chest of snapshot.loot)this.loot.set(chest.id,chest);this.sent.clear();}
  forget(id){this.bundles.delete(id);this.sent.delete(id);}
  tick(now){
-  const c=this.channel;if(this.pending||c.backgroundPaused)return;
+  const c=this.channel;if(this.pending.size>=this.maxPending||c.backgroundPaused)return;let started=0;
   if(now>=(this.pruneAt??0)){this.pruneAt=now+1000;for(const [id,p]of this.portals)if(p.closes_ms<=now&&(!this.runs.has(p.run_id)||this.runs.get(p.run_id).status!=='active'||this.runs.get(p.run_id).deadline_ms>0))this.portals.delete(id);
    const occupied=new Set([...c.view.players.values()].map(p=>p.area)),idle=[];
    for(const m of c.view.monsters.values())if(isAdventureArea(m.area)&&!occupied.has(m.area)&&!c.lanes.busy(['monster:'+m.id])){idle.push(m.id);if(idle.length===128)break;}
    const removed=c.combatCheckpoints.retireIdleMonsters(idle);for(const id of removed){c.view.removeMonster(id);c.state.remove('monsters',id);c.worldClock.forget(id);this.runtime.services.adventureProfiles.delete(id);}if(removed.length)c.attackMemory.committed({monsters:[],participants:[],bossParticipants:[],removed});
   }
-  let scheduled=null;if(now>=this.nextScheduleAttempt)for(const s of this.schedules.values())if(s.at_ms<=now&&(this.scheduleRetryAt.get(s.id)??0)<=now){scheduled=s;break;}
-  if(scheduled)return this.execute([],null,scheduled.id,now);
+  let scheduled=null;if(now>=this.nextScheduleAttempt)for(const s of this.schedules.values())if(!this.pending.has('schedule:'+s.id)&&s.at_ms<=now&&(this.scheduleRetryAt.get(s.id)??0)<=now){scheduled=s;break;}
+  if(scheduled){const value=this.execute([],null,scheduled.id,now);if(value!==true)return value;started++;}
   // Build only this synchronous tick's room view. Do not copy/filter the whole
   // world for every room; members and living monsters are visited once. Nothing
   // is retained across ticks, so deaths, floor changes and owner changes remain
@@ -38,26 +38,29 @@ export class AdventureChannel {
   for(const run of this.runs.values())if(run.status==='active'&&members.get(run.id)?.length)living.set(run.area,[]);
   if(living.size)for(const monster of c.view.monsters.values())if(monster.hp>0){const room=living.get(monster.area);if(room)room.push(monster);}
   for(const run of this.runs.values()){
+   if(started>=this.maxPending||this.pending.size>=this.maxPending)return;
+   if(this.pending.has('run:'+run.id))continue;
    if(run.status!=='active'){if(!members.has(run.id))this.runs.delete(run.id);continue;}
    const ids=members.get(run.id)??[];
-   if(!ids.length){const portal=[...this.portals.values()].find(p=>p.run_id===run.id);if(!run.deadline_ms&&portal?.closes_ms<=now||run.deadline_ms&&run.deadline_ms<=now||run.cycle!==c.world.cycle)if(this.execute([],run,null,now)!==false)return;continue;}
+   if(!ids.length){const portal=[...this.portals.values()].find(p=>p.run_id===run.id);if(!run.deadline_ms&&portal?.closes_ms<=now||run.deadline_ms&&run.deadline_ms<=now||run.cycle!==c.world.cycle){const value=this.execute([],run,null,now);if(value!==false&&value!==true)return;if(value)started++;}continue;}
    const dead=ids.some(id=>c.view.player(id)?.hp<=0),monsters=living.get(run.area);
    const hazard=run.state.hazard,pattern=run.kind==='tower'&&run.state.floor===10&&Object.values(run.config.patterns??{}).some(p=>p.enabled)&&monsters.some(m=>this.runtime.services.adventureProfiles.get(m.id)?.kind==='azrail');
    const autoFloor=run.kind==='tower'&&run.state.clear&&run.state.floor<10&&!monsters.length&&(!run.state.autoNextAt||now>=run.state.autoNextAt);
    const due=dead||autoFloor||ids.some(id=>towerNeedsCatchup(run,c.view.player(id)))||run.deadline_ms<=now||run.cycle!==c.world.cycle||!run.state.clear&&!monsters.length&&(!run.state.nextWaveAt||run.state.nextWaveAt<=now)||run.state.objective==='seals'&&!run.state.bossSpawned&&!monsters.some(m=>this.runtime.services.adventureProfiles.get(m.id)?.kind==='seal')||pattern&&(hazard?now>=hazard.at:now>=(run.state.nextHazardAt??0));
-   // Only an explicit pre-submission refusal permits trying another room.
-   // A started or unknown outcome retains the one-operation tick boundary.
-   if(due&&this.execute(ids,run,null,now)!==false)return;
+   // Independent rooms have independent progress barriers. Keep a bounded
+   // number of active transactions; never start the same run twice.
+   if(due){const value=this.execute(ids,run,null,now);if(value!==false&&value!==true)return;if(value)started++;}
   }
  }
  execute(ids,run,scheduleId,now){
+  const key=run?'run:'+run.id:'schedule:'+scheduleId;if(this.pending.has(key)||this.pending.size>=this.maxPending)return false;
   const c=this.channel;if(ids.some(id=>{const p=c.kernel.players.get(id);return !p||p.barrier||p.suspended||p.quiescer;}))return false;
   const monsterIds=run?[...c.view.monsters.values()].filter(m=>m.area===run.area).map(m=>m.id):[];
   const lease=c.lanes.acquire(['adventure:'+(run?.id??scheduleId),...ids.map(id=>'player:'+id),...monsterIds.map(id=>'monster:'+id)],'adventure:'+randomUUID());if(!lease)return false;
   let submitted=false;
   const actorRejected=error=>{const rejected=actorFaultIsolation&&!submitted?actorRejection(error):null;return rejected&&ids.includes(rejected.actor)&&c.owners.get(rejected.actor)?.epoch===rejected.epoch;};
   const work=async()=>{try{
-   await Promise.all(ids.map(id=>c.checkpoints.drain(id)));await c.combatCheckpoints.drain();c.lanes.assert(lease);
+   await Promise.all(ids.map(id=>c.checkpoints.drain(id)));if(run&&c.combatCheckpoints.drainTargetsR531)await c.combatCheckpoints.drainTargetsR531(monsterIds);else await c.combatCheckpoints.drain();c.lanes.assert(lease);
    submitted=true;let result=await this.write(ids,run,scheduleId,now);
    if(result.run?.state.hazard&&result.run.state.hazard.at-this.runtime.clock()<500)result=await this.write(ids,result.run,null,this.runtime.clock(),true);
    if(scheduleId){if(result.schedulePending){this.nextScheduleAttempt=this.runtime.clock()+5000;this.scheduleRetryAt.set(scheduleId,this.nextScheduleAttempt);}else{this.schedules.delete(scheduleId);this.scheduleRetryAt.delete(scheduleId);}}
@@ -79,7 +82,7 @@ export class AdventureChannel {
    }
    this.sent.clear();this.projectionCache=null;c.lanes.release(lease);return result;
   }catch(error){if(actorFaultIsolation&&submitted&&actorRejection(error))error=Object.assign(Error('adventure_step_outcome_unknown'),{code:'adventure_step_outcome_unknown',cause:error});if(lease.state==='held'){if(actorRejected(error))c.lanes.reject(lease,error);else c.lanes.fence(lease);}throw error;}};
-  const task=ids.length?c.kernel.durableGroup(ids,work,{emitReceipt:false}):work();this.pending=task;task.catch(e=>{if(!actorRejected(e))c.fail(e);}).finally(()=>{if(this.pending===task)this.pending=null;});return true;
+  const task=ids.length?c.kernel.durableGroup(ids,work,{emitReceipt:false}):work();const entry={task,ids:new Set(ids),runId:run?.id??null};this.pending.set(key,entry);task.catch(e=>{if(!actorRejected(e))c.fail(e);}).finally(()=>{if(this.pending.get(key)===entry)this.pending.delete(key);});return true;
  }
  write(ids,run,scheduleId,nowMs,cancel=false){const c=this.channel,key='adventure:'+randomUUID(),payload={runId:run?.id??null,revision:run?.revision??null,scheduleId,nowMs,cancel,seed:OperationRandom.seed(),actors:ids.map(id=>({id,epoch:c.owners.get(id).epoch,sequence:c.writer.finalSequence(id)}))};return c.systemWriter.submit({key,kind:'adventure_step',payload}).then(ack=>{demand(ack.key===key&&ack.result,'adventure_ack_mismatch');return ack.result;});}
  // All subscribers share one bounded scan per 100 ms; per-player projections
@@ -100,5 +103,6 @@ export class AdventureChannel {
   const data=publicAdventure({...bundle,loot},progress);
   return data;
  }
- async drain(){if(this.pending)await this.pending;}
+ pendingFor(id){return [...this.pending.values()].find(entry=>entry.ids.has(id))?.task??null;}
+ async drain(ids=null){const selected=ids===null?null:new Set(ids);const tasks=[...this.pending.values()].filter(entry=>!selected||[...entry.ids].some(id=>selected.has(id))).map(entry=>entry.task);await Promise.all(tasks);}
 }

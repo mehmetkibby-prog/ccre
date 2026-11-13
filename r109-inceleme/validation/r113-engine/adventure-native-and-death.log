@@ -1,0 +1,62 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794543114374,"backupName":"before-pearl-reset-1794543114374-20c32f76-1259-4370-8f69-0d2457f327c2.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:12:01.721Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":226229,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1e0ff7b9847ee604508e2ce0"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:12:01.722Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":226239,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"effa0b4a3456a8d55a237887"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:12:01.722Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":226245,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5dee66cd5501989d79d7e263"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:12:01.723Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":226255,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9ffbfd680f4eb200c4aa33c1"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:12:01.740Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":226218,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"0283c484388f52bd4fa42166"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 9091.658787
+  type: 'test'
+  ...
+# Subtest: strict ten-floor map IDs and same world geometry predicates
+ok 2 - strict ten-floor map IDs and same world geometry predicates
+  ---
+  duration_ms: 0.815251
+  type: 'test'
+  ...
+# Subtest: mist limits, prohibited tower loot and three seals
+ok 3 - mist limits, prohibited tower loot and three seals
+  ---
+  duration_ms: 0.824226
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543123966,"backupName":"before-pearl-reset-1794543123966-93223e0c-cadb-40cb-adf1-bd0261134687.sqlite"}
+# Subtest: tower enters native player.area, never dungeon_members; floor order and exit always allowed
+ok 4 - tower enters native player.area, never dungeon_members; floor order and exit always allowed
+  ---
+  duration_ms: 1850.298275
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543125566,"backupName":"before-pearl-reset-1794543125566-12ae48ea-abf2-4623-98be-e2df2426a299.sqlite"}
+# Subtest: all ten tower floors use native monsters and keep Azrail chest once on lethal award
+ok 5 - all ten tower floors use native monsters and keep Azrail chest once on lethal award
+  ---
+  duration_ms: 1901.085769
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543127746,"backupName":"before-pearl-reset-1794543127746-10ce8e40-02e2-464c-93fe-324f4fbb1081.sqlite"}
+# Subtest: mist entry is portal-, distance-, channel-, capacity- and replay-checked
+ok 6 - mist entry is portal-, distance-, channel-, capacity- and replay-checked
+  ---
+  duration_ms: 1928.664462
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543129374,"backupName":"before-pearl-reset-1794543129374-9f7b3c33-38a8-4f96-aa3d-cb39142319ef.sqlite"}
+# Subtest: death ejects to market, expiry returns origin, unfinished completion cannot claim loot
+ok 7 - death ejects to market, expiry returns origin, unfinished completion cannot claim loot
+  ---
+  duration_ms: 1554.44456
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17771.966789
