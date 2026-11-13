@@ -1,0 +1,3 @@
+(node:340663) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{"passed":true,"checks":["desktop categories and official-only labels","no horizontal overflow 360","no horizontal overflow 390","no horizontal overflow 768","no horizontal overflow 1440","mobile real registration and PNG CAPTCHA","one-time account recovery key shown on mobile","member composer exposes only player categories","stored content rendered as text, no HTML execution","member topic and reply","readonly admin category on mobile","mobile password recovery and old key rotation","admin login and announcement publishing","admin moderation"],"errors":[]}

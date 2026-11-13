@@ -1,0 +1,21 @@
+{
+  "packageSHA256": "68dad6638a1b6911d0d499d2b3042e6d99dc1f51862567e6325654304bbcf2cf",
+  "checks": [
+    {
+      "name": "runtime",
+      "exitCode": 0,
+      "seconds": 56.03
+    },
+    {
+      "name": "browser-r1",
+      "exitCode": 0,
+      "seconds": 40.38
+    },
+    {
+      "name": "browser-r2",
+      "exitCode": 0,
+      "seconds": 40.66
+    }
+  ],
+  "live": false
+}

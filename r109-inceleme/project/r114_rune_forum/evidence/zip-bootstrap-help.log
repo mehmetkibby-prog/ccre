@@ -1,0 +1,14 @@
+usage: R114_FORUM_47c1d3316429.zip [-h]
+                                   (--check | --apply | --recover | --rollback | --cleanup | --status | --forum-admin)
+
+R114 rün haritaları ve forum (kurulu R113 üzerine)
+
+options:
+  -h, --help     show this help message and exit
+  --check
+  --apply
+  --recover
+  --rollback
+  --cleanup
+  --status
+  --forum-admin

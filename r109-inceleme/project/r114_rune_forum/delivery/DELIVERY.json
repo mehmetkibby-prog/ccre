@@ -1,0 +1,8 @@
+{
+  "file": "r114-forum-run.zip",
+  "source": "artifacts/R114_FORUM_47c1d3316429.zip",
+  "sha256": "68dad6638a1b6911d0d499d2b3042e6d99dc1f51862567e6325654304bbcf2cf",
+  "bytes": 1252485,
+  "urlAfterInstallation": "https://coreoflife.net/forum",
+  "installed": false
+}

@@ -1,0 +1,16 @@
+test_zip_bootstrap_private_umask_still_allows_forum_user_to_read_code (__main__.Installation.test_zip_bootstrap_private_umask_still_allows_forum_user_to_read_code) ... Değişen oyun kodu ve site ayarları yedekleniyor; oyun veritabanlarına işlem yapılmıyor.
+R114 TAMAMLANDI. İki sunucunun rün haritaları ve https://coreoflife.net/forum hazır. Bakım ayarın korundu. Forum yöneticisi için aynı ZIP ile --forum-admin çalıştır.
+FAIL
+
+======================================================================
+FAIL: test_zip_bootstrap_private_umask_still_allows_forum_user_to_read_code (__main__.Installation.test_zip_bootstrap_private_umask_still_allows_forum_user_to_read_code)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r114_rune_forum/tests/installer_test.py", line 186, in test_zip_bootstrap_private_umask_still_allows_forum_user_to_read_code
+    self.assertEqual(directory.stat().st_mode&0o777,0o755,str(directory))
+AssertionError: 448 != 493 : /tmp/r114-install-test-dmd2_n28/forum-code
+
+----------------------------------------------------------------------
+Ran 1 test in 3.991s
+
+FAILED (failures=1)

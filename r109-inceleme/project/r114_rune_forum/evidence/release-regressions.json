@@ -1,0 +1,32 @@
+[
+  {
+    "check": "focused",
+    "exitCode": 0,
+    "seconds": 35.47
+  },
+  {
+    "check": "native",
+    "exitCode": 0,
+    "seconds": 111.51
+  },
+  {
+    "check": "captcha",
+    "exitCode": 0,
+    "seconds": 96.2
+  },
+  {
+    "check": "r110",
+    "exitCode": 0,
+    "seconds": 84.33
+  },
+  {
+    "check": "rune",
+    "exitCode": 0,
+    "seconds": 1.55
+  },
+  {
+    "check": "forum",
+    "exitCode": 0,
+    "seconds": 5.15
+  }
+]

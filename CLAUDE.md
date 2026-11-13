@@ -57,3 +57,8 @@ performans motoru, protokol, SQL ve mevcut istemci kodunu incelemeye engel deği
 
 İlk adımın yeni bir sürüm yayımlamak değil, mevcut kod ve ölçümler üzerinde
 yeniden üretilebilir bir bulgu çıkarmak olmalı. Canlı erişim bilgileri bu repoda yok.
+
+13 Kasım R114 devamı: kullanıcı forum taslağını onayladı. Güncel devir
+`r109-inceleme/R114_DEVIR.md`. Salt okunur Efsane sağlığında R113_ENGINE1
+çalışıyor; R114 kurucusu tam son R113 kaynak kimliğini ister. Eski R110 kaynak
+notu bu kurucuya uygulanmaz. R114 burada canlıya kurulmadı.

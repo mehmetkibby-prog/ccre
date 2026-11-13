@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "width": 360,
+      "overflow": false,
+      "forumLink": true
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "forumLink": true
+    },
+    {
+      "width": 768,
+      "overflow": false,
+      "forumLink": true
+    },
+    {
+      "width": 1100,
+      "overflow": false,
+      "forumLink": true
+    },
+    {
+      "width": 1280,
+      "overflow": false,
+      "forumLink": true
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "forumLink": true
+    }
+  ],
+  "missing": [],
+  "packageSHA256": "68dad6638a1b6911d0d499d2b3042e6d99dc1f51862567e6325654304bbcf2cf",
+  "live": false
+}

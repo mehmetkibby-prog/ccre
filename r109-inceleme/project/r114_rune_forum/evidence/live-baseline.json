@@ -1,0 +1,9 @@
+{
+  "source": "read-only https://r1.coreoflife.net/api/vds-health",
+  "observedAt": "2026-11-13T13:42:28.532000+00:00",
+  "realm": "r1",
+  "engineRework": "R113_ENGINE1",
+  "engineReadyR113": true,
+  "realtimeHandoff": "R110_HANDOFF1",
+  "note": "Public health confirms advertised R113; installer still verifies both exact source trees and identities before mutation."
+}

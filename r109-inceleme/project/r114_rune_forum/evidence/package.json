@@ -1,0 +1,30 @@
+{
+  "file": "artifacts/R114_FORUM_47c1d3316429.zip",
+  "bytes": 1252485,
+  "sha256": "68dad6638a1b6911d0d499d2b3042e6d99dc1f51862567e6325654304bbcf2cf",
+  "sourceVersion": "R113_ENGINE1",
+  "sourceCore": "41fb08d699eafa8d8e0f3a1da64b2d8c465f7fc7fce4b1b90f4d71569972ce94",
+  "targetVersion": "R114_RUNE_FORUM1",
+  "targetCore": "5839b7a3fb0f0f6ba1e1656333cc149ea4469816a641a7c25d1a5f5105e3d342",
+  "changedCodeFiles": 8,
+  "forumFiles": 17,
+  "databaseScope": "none",
+  "namespace": "core511-4698e897914580f4",
+  "acceptance": "functional-and-recovery-checks-passed",
+  "deployed": false,
+  "checks": {
+    "focused": 60,
+    "native": 29,
+    "captcha": 20,
+    "r110": 3,
+    "rune": 8,
+    "forum": 9,
+    "r114Installer": 11,
+    "exactInstalledRuntime": 3,
+    "forumBrowserChecks": 14,
+    "mainSiteViewports": 6,
+    "realHttpsProxy": 1,
+    "gameBrowser_r1": 4,
+    "gameBrowser_r2": 4
+  }
+}

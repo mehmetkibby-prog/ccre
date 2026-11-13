@@ -1,32 +1,39 @@
-# R114 taslak devir — 13 Kasım 2026
+# R114 devir — 13 Kasım 2026
 
-Dal: `codex/r114-rune-forum`, taban R113 `9da665d`.
-Kullanıcı R114 için iki rün haritasındaki yürüme engellerinin kaldırılmasını
-ve `coreoflife.net/forum` taslağını istedi. **Taslağı inceleyip sonra
-güncelleyeceğini belirtti. Canlı yayın veya kurulum yapılmadı.**
+Dal: `codex/r114-rune-forum`, taban son R113 `9da665d`.
+Kullanıcı forum taslağını **“Onayladım hadi”** diyerek onayladı.
+Çalışma: `project/r114_rune_forum/README.md`; VDS adımları `KURULUM.md`.
 
-Aktif oyun ağacı yine `project/r109_latency_completion/working`.
-R114 artık bu ağaca yalnız rün geometrisi ve yeni içerik adresli istemci/portal
-ekler. R113 performans çalışmalarını korur. Önceki yedi maddelik mimari plan
-bu işte uygulanmadı. Canlı R113 kurulumu henüz kullanıcı tarafından teyit
-edilmedi; yeni kurucu hazırlamadan kaynak sürüm doğrulanmalı.
+Aktif oyun ağacı: `project/r109_latency_completion/working`.
+İçerik: R113 + yalnız rün geometrisi, yeni içerik adresli oyun/portal,
+R114 sağlık işareti. Önceki yedi maddelik büyük mimari plan uygulanmadı.
 
-Çalışma: `project/r114_rune_forum/README.md`.
+Efsane'nin canlı sağlık yanıtında **R113_ENGINE1 / engineReadyR113=true**
+görüldü. Yeni kurucu kaynak sürümü **R113_ENGINE1** ve tam dosya kimliğidir.
+Akademi aynı kaynağı kullanmalı; kurucu her iki realm'i doğrular. Eski R110
+kaynaklı kurucular bu yeni R114 yerine kullanılmaz. R114 burada canlıya
+kurulmadı; VDS erişimi yok. Paket kullanıcıya verilir, Drive linkinden kısa
+SHA256 doğrulamalı `--check` / bakım sonrası `--apply` komutları hazırlanır.
+Eski ZIP'ler ve SHA değerleri değiştirilmez.
 
-- Kadim Rün Sahili / Karanlık Rün Sahili: kıyı ve iç engeller kaldırıldı;
-  dünya sınırı ve diğer hareket/giriş korumaları korunuyor. Bağımsız commit.
-- Forum: ayrı SQLite + ayrı Node servisi, yöneticiye özel duyurular,
-  oyuncu bölümleri, kayıt/giriş, PNG CAPTCHA, konu/yanıt ve moderasyon.
-- `delivery/r114-forum-taslak.html` tüm varlıkları içinde taşıyan, yalnız
-  örnek içerikle gezilen taslak. İndirilen HTML gerçek hesap oluşturmaz.
-- Yerel gerçek servis `forum/server.mjs --demo` ile çalışır; varsayılan
-  admin parolası yok. Kayıt herkese yalnız member rolü verir.
-- Görseller ve doğrulama sonuçları `evidence/` içinde. Test veritabanları
-  `/tmp` altındadır; repoya veya teslim dosyalarına eklenmez.
-- `evidence/game-regressions.json` odaklı/native/captcha/R110 kontrol çıkışları;
-  R110 testleri tarihsel kurucuya aittir, R114 kurulum doğrulaması değildir.
-- Yeni yük testi yapılmadı. Nüfus testi gerektiğinde kullanıcı yalnız 50 ister.
+Forum: ayrı servis + DB + CAPTCHA worker; yalnız adminin yazdığı resmî
+bölümler ve oyuncu bölümleri; üyelik, kurtarma anahtarı, konu/yanıt,
+moderasyon, günlük doğrulanmış yedek. Gerçek yayın Caddy üzerinden
+`https://coreoflife.net/forum`; ana siteye menü bağlantısı eklenir.
+Demo örnekleri üretime taşınmaz. Admin kullanıcısı ZIP'in `--forum-admin`
+komutuyla yerelde gizli parolayla oluşturulur. Forum hesabı oyundan ayrıdır.
 
-Yayın öncesi: tasarım onayı, e-posta doğrulama/parola kurtarma akışı,
-üretim admin ve TLS/ters vekil/DB yedek düzeni, R114 kurucu/geri dönüş ve
-iki sunucunun yeni istemci grafiğiyle gerçek giriş testleri. Ayrıntılar README.
+Oyun DB/şeması değişmez. Kurucu önceki kodu/ayarları doğrulayarak yedekler;
+başarısızlıkta eski sürüme döner. Forum üyeleri/yazıları geri dönüşte silinmez.
+İki realm/sekiz kanal ve forum HTTPS açılışı doğrulanmadan başarı göstermez.
+Kaynak farklıysa başlamadan durur. R113 performans, ödül, sahiplik,
+kalıcılık ve bakım/ön kayıt korumaları korunur.
+
+Son paket/kanıt: `project/r114_rune_forum/evidence/package.json`,
+`verification-release.json`, `release-regressions.json`, `release-runtime.json`.
+Kurucu testlerinin OS/Caddy yönetimi adaptördür; ayrı gerçek Caddy/TLS testi
+ve paketin kurduğu gerçek oyun süreçleri/tarayıcı testleri vardır. Canlı VDS
+sonucu değildir. Popülasyon testi yapılmadı; gerekirse yalnız 50 oyuncu.
+
+Çalışma öncesinden gelen r110/r112 günlükleri ve eski deney kanıtları kirliydi;
+R114 commit'lerine alınmadı, geri çevrilmedi veya silinmedi.

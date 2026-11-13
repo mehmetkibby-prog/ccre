@@ -35,3 +35,9 @@ Preserve failed measurements and do not equate functional success with zero lag.
 R114 continuation: `r109-inceleme/R114_DEVIR.md` records the unpublished rune
 geometry and standalone forum draft. The active working tree adds those changes
 on R113; no R114 installer exists yet. The user requested preview before updating.
+
+R114 approval/production continuation (13 Nov 2026): the user approved the forum.
+`r109-inceleme/R114_DEVIR.md` now supersedes the draft-only and old live-source
+notes. Read-only Efsane health confirms R113_ENGINE1. R114 accepts the exact
+final R113 artifact as source, applies code-only rune changes and hosts the forum
+separately. The package is locally verified; R114 live installation is unconfirmed.

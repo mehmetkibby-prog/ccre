@@ -1,0 +1,36 @@
+{
+  "version": "R114_RUNE_FORUM1",
+  "packageSHA256": "68dad6638a1b6911d0d499d2b3042e6d99dc1f51862567e6325654304bbcf2cf",
+  "passed": true,
+  "counts": {
+    "focused": 60,
+    "native": 29,
+    "captcha": 20,
+    "r110": 3,
+    "rune": 8,
+    "forum": 9,
+    "r114Installer": 11,
+    "exactInstalledRuntime": 3,
+    "forumBrowserChecks": 14,
+    "mainSiteViewports": 6,
+    "realHttpsProxy": 1,
+    "gameBrowser_r1": 4,
+    "gameBrowser_r2": 4
+  },
+  "scope": [
+    "rune/rune_v2 geometry",
+    "standalone forum",
+    "main-site navigation",
+    "two-realm installation and rollback"
+  ],
+  "live": false,
+  "loadTestRun": false,
+  "limits": [
+    "systemd installer lifecycle uses local adapters; generated units passed systemd-analyze verify",
+    "real Caddy/TLS and real forum tested separately",
+    "r1/r2 are synthetic local databases, not live VDS",
+    "no zero-lag or capacity claim"
+  ],
+  "regressionCaughtBeforeDelivery": "ZIP umask 0077: explicit 0755 code folders, database folder stays 0700; dedicated installer regression now required",
+  "historicalPackagesUnmodified": true
+}

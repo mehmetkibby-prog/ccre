@@ -1,0 +1,438 @@
+{
+  "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
+  "client": "game-client-core511-r114-3a57abcac795f120.js",
+  "checks": [
+    {
+      "name": "native normal entry",
+      "area": "forest",
+      "channels": 4
+    },
+    {
+      "name": "In-game Discord URL",
+      "urls": [
+        "https://discord.gg/pBywtjhTN"
+      ]
+    },
+    {
+      "name": "Exact compiled game recovers lost tower stream and durable attack receipt without F5 or replay",
+      "floor": 2,
+      "ready": true,
+      "connection": 3,
+      "queued": 0
+    },
+    {
+      "name": "actual portal lazy import, character admission, channel 1, live world and rendered game HUD"
+    }
+  ],
+  "webSocketTransport": "production-style-socket-handoff",
+  "passed": true,
+  "durationMs": 38638,
+  "webSocketHandoffs": 2,
+  "handoffStats": {
+    "sent": 2,
+    "declined": 0,
+    "failed": 0
+  },
+  "requests": [
+    {
+      "at": 1794579215280,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "ms": 5
+    },
+    {
+      "at": 1794579215323,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/realm/characters",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794579215700,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r46-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794579215702,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r45-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794579215703,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r44-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794579215704,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794579215707,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r43-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794579215783,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 15
+    },
+    {
+      "at": 1794579215826,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 12,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579216305,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 14,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579216324,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r49-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794579216326,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794579216322,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/onboarding",
+      "status": 200,
+      "ms": 22,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579216327,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 25,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579216637,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 6,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579217783,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-character",
+      "status": 200,
+      "ms": 131,
+      "action": "join",
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579218272,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 3,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579218361,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 6
+    },
+    {
+      "at": 1794579218369,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 20,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579218371,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 25,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579218377,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/mount-r49",
+      "status": 200,
+      "ms": 21,
+      "action": "status",
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579218372,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 27,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579221164,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 4,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579221203,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 9,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579223839,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 7,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579226491,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579226481,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 16,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579226494,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 4,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579228765,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 7,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579228942,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 8,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579231158,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579233978,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 6,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579235825,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 7,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579236156,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579236308,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 3,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579238798,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 6,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579239026,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 10,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579241188,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 5,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579242829,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-ticket",
+      "status": 200,
+      "ms": 9,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    },
+    {
+      "at": 1794579244732,
+      "phase": "tower-recovery",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 5,
+      "instance": "0e0175d1-1c65-4f90-8963-c6c6b1ba77a1"
+    }
+  ],
+  "errors": [],
+  "nativeFaults": [],
+  "missingAssets": []
+}
