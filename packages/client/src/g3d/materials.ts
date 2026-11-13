@@ -145,6 +145,12 @@ export function mat(key: string): THREE.Material {
     case 'flower': m = addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.7 }), 0.04, 0.4); break;
     case 'mushroom': m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.5 }); break;
     case 'bone': m = new THREE.MeshStandardMaterial({ color: 0xe0d8c0, roughness: 0.7 }); break;
+    case 'marble': m = texMat('plaster', { color: 0xf1e9da, roughness: 0.38 }, 0.7); break;
+    case 'tile_iznik': m = iznikTile(); break;
+    case 'fwater_basin': m = fountainWater(1.72, 8, Math.PI / 8); break;
+    case 'fwater_bowl': m = fountainWater(0.84, 6, 0); break;
+    case 'fwater_top': m = fountainWater(0, 0, 0); break;
+    case 'fountain_jet': m = fountainJet(); break;
     case 'waterfall': m = new THREE.MeshStandardMaterial({ color: 0xd8f4ff, emissive: 0x204050, transparent: true, opacity: 0.85, roughness: 0.1 }); break;
     default: m = new THREE.MeshStandardMaterial({ color: 0xff00ff });
   }
@@ -152,7 +158,7 @@ export function mat(key: string): THREE.Material {
   cache.set(key, m);
   return m;
 }
-const CUT = new Set(['canopy', 'canopy_low', 'bark', 'bark_dead', 'leaves', 'leaves_autumn', 'needles', 'needles_snow', 'bush', 'pine_core', 'pine_core_snow', 'snow', 'rock', 'rock_dark', 'plaster', 'timber', 'stonewall', 'roof_red', 'roof_slate', 'roof_green', 'roof_blue', 'planks', 'glass_warm', 'cloth_red', 'cloth_green', 'cloth_cream', 'hay', 'iron', 'crystal', 'ice']);
+const CUT = new Set(['marble', 'tile_iznik', 'canopy', 'canopy_low', 'bark', 'bark_dead', 'leaves', 'leaves_autumn', 'needles', 'needles_snow', 'bush', 'pine_core', 'pine_core_snow', 'snow', 'rock', 'rock_dark', 'plaster', 'timber', 'stonewall', 'roof_red', 'roof_slate', 'roof_green', 'roof_blue', 'planks', 'glass_warm', 'cloth_red', 'cloth_green', 'cloth_cream', 'hay', 'iron', 'crystal', 'ice']);
 
 /** Ağaç taçlarına üç yönlü (UV gerektirmeyen) yaprak dokusu: köşe rengini yaprak öbekleriyle böler. */
 export function addCanopyLeaves(m: THREE.Material, scale = 1.1) {
@@ -177,6 +183,73 @@ export function addCanopyLeaves(m: THREE.Material, scale = 1.1) {
           diffuseColor.rgb *= mix(0.62, 1.22, t.r);
           diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.18, 1.1, 0.7), t.g * 0.6);
         }`);
+  });
+  return m;
+}
+
+/** Çeşme suyu: merkezden yayılan yavaş dalga + su şeritlerinin düştüğü noktalarda halka halka köpük. */
+function fountainWater(landR: number, jets: number, phase: number) {
+  const m = new THREE.MeshStandardMaterial({ color: 0x3d9cbc, roughness: 0.06, metalness: 0.15, transparent: true, opacity: 0.88 });
+  patch(m, `fwater${landR}|${jets}`, (sh) => {
+    sh.uniforms.uTime = shared.time;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLoc;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLoc = position;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLoc; uniform float uTime;')
+      .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      {
+        vec2 p = vLoc.xz; float r = length(p);
+        float w = sin(r * 7.0 - uTime * 1.8) * 0.5 + 0.5;
+        float w2 = sin(p.x * 3.1 + uTime * 0.9) * sin(p.y * 2.7 - uTime * 0.7) * 0.5 + 0.5;
+        float spl = 0.0;
+        for (int i = 0; i < ${Math.max(1, jets)}; i++) {
+          float a = float(i) * ${(Math.PI * 2 / Math.max(1, jets)).toFixed(5)} + ${phase.toFixed(5)};
+          vec2 c = vec2(cos(a), sin(a)) * ${landR.toFixed(3)};
+          float d = length(p - c);
+          spl += (sin(d * 30.0 - uTime * 8.0) * 0.5 + 0.5) * exp(-d * 6.0) ${jets ? '' : '* 0.0'};
+        }
+        float foam = smoothstep(0.35, 0.95, spl);
+        diffuseColor.rgb = mix(diffuseColor.rgb * (0.78 + 0.3 * w + 0.12 * w2), vec3(0.93, 0.98, 1.0), foam * 0.75);
+        totalEmissiveRadiance += vec3(0.03, 0.09, 0.12) * w + vec3(0.22, 0.27, 0.3) * foam;
+      }`);
+  });
+  return m;
+}
+/** Dökülen su: akış yönünde kayan yarı saydam şeritler. */
+function fountainJet() {
+  const m = new THREE.MeshStandardMaterial({ color: 0xd2f0ff, emissive: 0x4a90b0, emissiveIntensity: 0.55, roughness: 0.05, transparent: true, opacity: 0.75, depthWrite: false, side: THREE.DoubleSide });
+  patch(m, 'fjet', (sh) => {
+    sh.uniforms.uTime = shared.time;
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec2 vJ;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvJ = uv;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vJ; uniform float uTime;')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+      {
+        float s = sin(vJ.x * 34.0 - uTime * 9.0 + vJ.y * 18.85) * 0.5 + 0.5;
+        float s2 = sin(vJ.x * 13.0 - uTime * 5.0 - vJ.y * 12.57) * 0.5 + 0.5;
+        diffuseColor.a *= (0.35 + 0.45 * s + 0.2 * s2) * smoothstep(0.0, 0.06, vJ.x) * (1.0 - smoothstep(0.88, 1.0, vJ.x) * 0.6);
+        diffuseColor.rgb += vec3(0.12) * s;
+      }`);
+  });
+  return m;
+}
+/** İznik çinisi: beyaz zemin üzerinde turkuaz/lacivert yaprak ve kırmızı nokta deseni (doku yok, gölgelendiricide). */
+function iznikTile() {
+  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.25, metalness: 0.05 });
+  patch(m, 'iznik', (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vLoc;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvLoc = position;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vLoc;')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+      {
+        float ang = atan(vLoc.z, vLoc.x);
+        vec2 q = vec2(ang * 7.0 / 3.14159, (vLoc.y - 0.23) * 7.5);
+        vec2 f = fract(q) - 0.5; vec2 id = floor(q);
+        float leaf = smoothstep(0.34, 0.3, length(f * vec2(1.0, 1.8)));
+        float dot = smoothstep(0.12, 0.08, length(f - vec2(0.5, 0.0)));
+        float band = smoothstep(0.86, 0.9, abs(vLoc.y - 0.36) * 7.6);
+        vec3 c = vec3(0.95, 0.94, 0.9);
+        c = mix(c, mod(id.x, 2.0) < 1.0 ? vec3(0.12, 0.6, 0.6) : vec3(0.1, 0.2, 0.52), leaf);
+        c = mix(c, vec3(0.75, 0.12, 0.1), dot);
+        c = mix(c, vec3(0.1, 0.2, 0.52), band);
+        diffuseColor.rgb = c;
+      }`);
   });
   return m;
 }

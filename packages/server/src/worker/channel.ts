@@ -1,6 +1,6 @@
 import { parentPort, workerData } from 'node:worker_threads';
 import { performance } from 'node:perf_hooks';
-import { TICK_MS } from '@col/shared';
+import { TICK_MS, TUNING, MAPS, applyTuning } from '@col/shared';
 import { World } from './world.ts';
 import type { ToWorker, FromWorker } from '../types.ts';
 
@@ -17,6 +17,17 @@ port.on('message', (m: ToWorker) => {
     case 'leave': world.leave(m.sid); break;
     case 'world': world.setWorld(m.health, m.online); break;
     case 'market_load': world.loadMarket(m.state); break;
+    case 'tuning': {
+      const key = (map: string) => JSON.stringify([TUNING.density[map] ?? 1, Object.entries(TUNING.spawns).filter(([k]) => k.startsWith(map + ':')).sort()]);
+      const before = new Map(Object.keys(MAPS).map((id) => [id, key(id)] as const));
+      applyTuning(m.data);
+      for (const id of Object.keys(MAPS)) if (before.get(id) !== key(id)) world.reseedMonsters(id);
+      break;
+    }
+    case 'admin':
+      if (m.op === 'set') world.adminSetPlayer(m.charId, m.patch ?? {});
+      else world.adminResetPlayer(m.charId);
+      break;
     case 'shutdown':
       for (const sid of [...world.bySid.keys()]) world.leave(sid);
       post({ type: 'stats', data: world.stats() });

@@ -160,6 +160,18 @@ export class Gateway {
     this.channels.broadcast({ type: 'world', health: this.world.health, online: this.sessions.size });
   }
 
+  /** Yönetim: yeni oyun ayarlarını tüm kanallara ve oyunculara (duyuru, ışık) gönder. */
+  broadcastTuning(tuning: unknown) {
+    this.channels.broadcast({ type: 'tuning', data: tuning });
+    const msg = JSON.stringify({ t: 'tuning', tuning });
+    for (const s of this.sessions.values()) if (s.state === 'active' && s.ws.readyState === WebSocket.OPEN) s.ws.send(msg);
+  }
+  /** Karakter şu an hangi kanalda oyunda (yoksa 0). */
+  onlineChannel(charId: number) { for (const s of this.sessions.values()) if (s.charId === charId && s.state !== 'closing') return s.channel; return 0; }
+  onlineCharIds() { const out = new Set<number>(); for (const s of this.sessions.values()) if (s.state !== 'closing') out.add(s.charId); return out; }
+  /** Yönetim: hesabın açık oturumlarını düşür (yasaklama sonrası). */
+  kickAccount(accountId: number, reason: string) { for (const s of [...this.sessions.values()]) if (s.accountId === accountId) this.kick(s, reason); }
+
   /** Worker mesajları */
   onWorker(ch: number, m: FromWorker) {
     switch (m.type) {
@@ -196,12 +208,6 @@ export class Gateway {
       }
       case 'joined': {
         if (!m.ok) { const s = this.sessions.get(m.sid); if (s) { this.sendJson(s, { t: 'fatal', text: m.err ?? 'Giriş başarısız.' }); s.ws.close(); } }
-        break;
-      }
-      case 'donate': {
-        const gain = this.world.donate(m.charId, m.name, m.amount);
-        const s = this.sessions.get(m.sid);
-        if (s) this.sendJson(s, { t: 'notice', kind: 'ok', text: `${m.amount} Öz bağışlandı. Dünya Sağlığı +${gain.toFixed(2)}` });
         break;
       }
       default: break;

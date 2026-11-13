@@ -1,4 +1,4 @@
-import { AnnouncementBar, useCanAdmin } from '../admin/AdminPanel.tsx';
+import { AnnouncementBar } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, type ClassId } from '@col/shared';
 import { Game } from '../game/game.ts';
@@ -137,14 +137,10 @@ function ConnStatus() {
 }
 
 function TopBar() {
-  const wh = useStore((s) => s.worldHealth);
   const t = useStore((s) => s.target);
   return (
     <div className="topbar">
-      <div className="worldhp" title="Ortak Dünya Sağlığı: Yaşam Özü bağışlarıyla artar, zamanla azalır.">
-        <div className="lbl"><span>DÜNYA ÇEKİRDEĞİ</span><span>%{wh.toFixed(1)}</span></div>
-        <div className="bar"><i style={{ width: `${wh}%` }} /></div>
-      </div>
+
       {t && (
         <div className="frame target">
           <div className="gem"><b>{t.level}</b></div>
@@ -201,7 +197,6 @@ function PlayerPlate() {
         <div className="hpt"><span>{hp.toLocaleString('tr-TR')} / {max.toLocaleString('tr-TR')}</span><span>%{(hk * 100).toFixed(0)}</span></div>
         <div className="coins">
           <span className="g" title="Mücevher"><img src={iconUrl('gem')} alt="" />{self.gems.toLocaleString('tr-TR')}</span>
-          <span className="e" title="Yaşam Özü"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')}</span>
           <span className="c" title="Çekirdek Puanı"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')}</span>
         </div>
         <div className="netinfo"><span>K{ch}</span><span style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</span><span>{fps} fps</span><span>{online} çevrimiçi</span></div>
@@ -302,7 +297,7 @@ function Chat() {
   const names: Record<string, string> = { world: 'Dünya', trade: 'Ticaret', local: 'Bölge', sys: 'Sistem' };
   return (
     <div className={'frame chat' + (chatOpen ? ' open' : '')}>
-      <div className="tabs2">{['all', 'world', 'trade', 'local'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}</div>
+      <div className="tabs2">{['all', 'world', 'trade', 'local'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}<button className="chat-x" aria-label="Sohbeti kapat" onClick={() => store.set({ chatOpen: false })}>✕</button></div>
       <div className="msgs" ref={box}>
         {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined }}>{m.from}</b>: {m.text}</div>)}
       </div>
@@ -358,7 +353,6 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
   const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p })); };
   const self = useStore((s) => s.self);
   const unread = useStore((s) => s.unread);
-  const canAdmin = useCanAdmin();
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
   return (
     <div className="menu">
@@ -368,7 +362,6 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
-      {canAdmin && <button onClick={() => open('admin')}><MenuIcon k="admin" /><span className="tag">Yönetim</span></button>}
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
       <button className="exit" title="Kanal değiştir / çıkış" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Çıkış</span></button>
     </div>

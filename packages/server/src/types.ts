@@ -43,6 +43,10 @@ export type ToWorker =
   | { type: 'chat'; ch: string; from: string; text: string; cls: string }
   | { type: 'world'; health: number; online: number }
   | { type: 'market_load'; state: unknown }
+  /** Yönetim paneli: yeni oyun ayarları (canavar yoğunluğu değiştiyse harita yeniden kurulur). */
+  | { type: 'tuning'; data: unknown }
+  /** Yönetim paneli: bu kanaldaki çevrimiçi karakteri düzenle / sıfırla. */
+  | { type: 'admin'; op: 'set' | 'reset'; charId: number; patch?: { level?: number; gems?: number; potions?: number } }
   | { type: 'shutdown' };
 
 // worker → ana
@@ -57,7 +61,6 @@ export type FromWorker =
   | { type: 'left'; sid: number; char: CharState }
   | { type: 'joined'; sid: number; ok: boolean; err?: string }
   | { type: 'chat'; sid: number; ch: string; text: string }
-  | { type: 'donate'; sid: number; charId: number; name: string; amount: number }
   | { type: 'stats'; data: WorkerStats };
 
 export interface WorkerStats {

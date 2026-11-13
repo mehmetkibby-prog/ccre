@@ -1,4 +1,3 @@
-import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -40,7 +39,6 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'npc' && <NpcDialog game={game} />}
       {p === 'shop' && <Shop game={game} />}
       {p === 'upgrade' && <Upgrade game={game} />}
-      {p === 'admin' && <AdminPanel onClose={() => store.set({ panel: null })} />}
       {p === 'market' && <Market game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>

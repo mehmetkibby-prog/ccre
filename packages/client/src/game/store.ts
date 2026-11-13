@@ -54,7 +54,7 @@ function loadSettings(): UiState['settings'] {
 
 let state: UiState = {
   connected: false, status: '', map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
-  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: false, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
+  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, lootFeed: [], settings: loadSettings(),
 };
 const listeners = new Set<() => void>();

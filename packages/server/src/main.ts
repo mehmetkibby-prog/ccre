@@ -7,6 +7,7 @@ import { CharacterStore } from './store.ts';
 import { Gateway } from './gateway.ts';
 import { WorldState } from './worldstate.ts';
 import { OpeningState } from './opening.ts';
+import { TuningState } from './tuning.ts';
 import { buildApi, handleApi } from './api.ts';
 import { parseCookies, readBody, serveStatic, json, type Req } from './http.ts';
 
@@ -19,15 +20,17 @@ async function main() {
   await world.load();
   const opening = new OpeningState();
   await opening.load();
+  const tuning = new TuningState();
+  await tuning.load();
   let gateway!: Gateway;
   const channels = new ChannelManager({
     onMessage: (ch, m) => gateway.onWorker(ch, m),
     onCrash: (ch) => gateway.onCrash(ch),
-    onSpawn: (ch) => { store.loadMarket(ch).then((state) => channels.send(ch, { type: 'market_load', state })).catch((e) => console.error(`[ch${ch}] pazar yüklenemedi`, e)); },
+    onSpawn: (ch) => { channels.send(ch, { type: 'tuning', data: tuning.current() }); store.loadMarket(ch).then((state) => channels.send(ch, { type: 'market_load', state })).catch((e) => console.error(`[ch${ch}] pazar yüklenemedi`, e)); },
   });
   gateway = new Gateway(channels, store, world);
   channels.start();
-  const router = buildApi({ gateway, channels, opening, store, world });
+  const router = buildApi({ gateway, channels, opening, store, world, tuning });
 
   const server = http.createServer(async (raw, res) => {
     const url = new URL(raw.url ?? '/', 'http://x');
@@ -63,7 +66,7 @@ async function main() {
     await channels.stop();
     await new Promise((r) => setTimeout(r, 200));
     for (let i = 0; i < 20 && store.queueLength; i++) await store.flush();
-    await world.persist();
+
     await pool.end();
     console.log('[core-of-life] kapandı.');
     process.exit(0);

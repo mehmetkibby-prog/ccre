@@ -224,14 +224,36 @@ const B: Partial<Record<PropKind, Builder>> = {
     res.push({ geo: merge(goods, true), mat: 'vcolor' });
     return res;
   },
+  /** Şadırvan: sekizgen mermer havuz, çini kuşak, iki kat çanak; çanaklardan dökülen su şeritleri (canlı malzeme). */
   fountain() {
-    const parts: { g: THREE.BufferGeometry; m: string }[] = [];
-    parts.push({ g: lathe([[0, 0], [2.3, 0], [2.4, 0.15], [2.4, 0.7], [2.1, 0.75], [2.0, 0.3], [0, 0.3]], 32, 1.2), m: 'stonewall' });
-    parts.push({ g: at(new THREE.CylinderGeometry(2.05, 2.05, 0.05, 32), 0, 0.55, 0), m: 'water_small' });
-    parts.push({ g: lathe([[0, 0], [0.35, 0], [0.28, 0.4], [0.25, 1.6], [0.35, 1.8], [0, 1.8]], 16, 1), m: 'stonewall' });
-    parts.push({ g: at(lathe([[0, 0], [0.2, 0], [0.9, 0.3], [1.0, 0.45], [0.85, 0.45], [0, 0.25]], 24, 1), 0, 1.75, 0), m: 'stonewall' });
-    parts.push({ g: at(new THREE.CylinderGeometry(0.85, 0.85, 0.04, 24), 0, 2.15, 0), m: 'water_small' });
-    parts.push({ g: at(new THREE.OctahedronGeometry(0.32, 0), 0, 2.75, 0, 0, 0.4, 0, 1, 1.5, 1), m: 'rune_green' });
+    const parts: { g: THREE.BufferGeometry; m: string; shadow?: boolean }[] = [];
+    const O = 8; // sekizgen
+    // havuz: dış duvar, dudak, iç taban
+    parts.push({ g: lathe([[0, 0], [2.42, 0], [2.48, 0.08], [2.48, 0.62], [2.56, 0.66], [2.56, 0.8], [2.2, 0.8], [2.16, 0.72], [2.12, 0.3], [0, 0.3]], O, 1.2), m: 'marble' });
+    // İznik çinisi kuşak (havuz dış yüzü)
+    parts.push({ g: at(cyl(2.495, 2.495, 0.26, O, 1, true), 0, 0.36, 0), m: 'tile_iznik' });
+    // köşe taşları
+    for (let i = 0; i < O; i++) { const a = (i / O) * Math.PI * 2; parts.push({ g: at(box(0.22, 0.95, 0.22), Math.cos(a) * 2.5, 0.47, Math.sin(a) * 2.5, 0, -a), m: 'marble' }); parts.push({ g: at(new THREE.SphereGeometry(0.11, 8, 6), Math.cos(a) * 2.5, 1.0, Math.sin(a) * 2.5), m: 'gold' }); }
+    parts.push({ g: at(new THREE.CylinderGeometry(2.14, 2.14, 0.04, 40), 0, 0.6, 0), m: 'fwater_basin', shadow: false });
+    // gövde (sekizgen) ve orta çanak
+    parts.push({ g: lathe([[0, 0], [0.5, 0], [0.42, 0.18], [0.3, 0.3], [0.26, 1.2], [0.34, 1.32], [0, 1.32]], O, 1), m: 'marble' });
+    parts.push({ g: at(lathe([[0, 0], [0.25, 0], [1.05, 0.26], [1.18, 0.42], [1.1, 0.46], [0.98, 0.36], [0, 0.32]], 24, 1), 0, 1.22, 0), m: 'marble' });
+    parts.push({ g: at(new THREE.CylinderGeometry(1.0, 1.0, 0.03, 32), 0, 1.6, 0), m: 'fwater_bowl', shadow: false });
+    // üst gövde, üst çanak ve altın alem
+    parts.push({ g: at(lathe([[0, 0], [0.2, 0], [0.16, 0.6], [0.22, 0.7], [0, 0.7]], O, 1), 0, 1.55, 0), m: 'marble' });
+    parts.push({ g: at(lathe([[0, 0], [0.14, 0], [0.55, 0.16], [0.6, 0.26], [0.52, 0.28], [0, 0.2]], 20, 1), 0, 2.2, 0), m: 'marble' });
+    parts.push({ g: at(new THREE.CylinderGeometry(0.5, 0.5, 0.025, 24), 0, 2.44, 0), m: 'fwater_top', shadow: false });
+    parts.push({ g: at(lathe([[0, 0], [0.09, 0], [0.13, 0.12], [0.06, 0.3], [0.02, 0.42], [0, 0.42]], 12, 1), 0, 2.42, 0), m: 'gold' });
+    // su şeritleri: üst çanaktan ortaya, orta çanaktan havuza (u = akış yönü)
+    const jets: THREE.BufferGeometry[] = [];
+    const jet = (a: number, r0: number, y0: number, r1: number, y1: number, rad: number) => {
+      const c = Math.cos(a), sn = Math.sin(a);
+      const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(c * r0, y0, sn * r0), new THREE.Vector3(c * (r0 + (r1 - r0) * 0.75), y0 + 0.12, sn * (r0 + (r1 - r0) * 0.75)), new THREE.Vector3(c * r1, y1, sn * r1));
+      jets.push(new THREE.TubeGeometry(curve, 14, rad, 6, false));
+    };
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 + Math.PI / 8; jet(a, 1.12, 1.64, 1.72, 0.6, 0.05); }
+    for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; jet(a, 0.57, 2.46, 0.84, 1.6, 0.032); }
+    parts.push({ g: merge(jets), m: 'fountain_jet', shadow: false });
     return group(parts);
   },
   lamp() {

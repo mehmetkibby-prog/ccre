@@ -90,12 +90,12 @@ export function loadManifest(): Promise<void> {
   if (manifestPromise) return manifestPromise;
   manifestPromise = fetch(BASE + 'models.json', { cache: 'no-cache' })
     .then((r) => { if (!r.ok) { modelStatus.lastError = 'models.json HTTP ' + r.status; bumpStatus(); return {}; } return r.json(); })
-    .then((m) => { manifest = m && typeof m === 'object' ? (m as Record<string, ModelEntry>) : {}; })
+    .then((m) => { manifest = m && typeof m === 'object' ? (m as Record<string, ModelEntry>) : {}; bumpStatus(); })
     .catch((e) => { manifest = {}; modelStatus.lastError = 'models.json: ' + ((e as Error)?.message ?? e); bumpStatus(); });
   return manifestPromise;
 }
 /** Model bildirimde var ve henüz yükleniyor mu (yüklenemezse ya da hiç yoksa false). */
-export function modelPending(id: string) { return !!manifest?.[id] && !loaded.has(id) && !failed.has(id); }
+export function modelPending(id: string) { if (!manifest) return true; return !!manifest[id] && !loaded.has(id) && !failed.has(id); }
 /** Model bildirimde var mı (yüklenmiş olması gerekmez). */
 export function hasModel(id: string) { return !!manifest?.[id]; }
 /** Model yüklenince (ya da yüklenemezse null ile) çözülür. */

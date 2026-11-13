@@ -14,28 +14,26 @@ import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
-import { AdminPanel, AnnouncementBar, useCanAdmin } from './admin/AdminPanel.tsx';
+import { AnnouncementBar } from './admin/AdminPanel.tsx';
+import { AdminPage, isAdminRoute } from './admin/AdminPage.tsx';
 // Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
 if (OFFLINE) import('./admin/config.ts').then((m) => m.startConfigSync());
+// sunucu sürümü: yönetim ayarlarından istemciyi ilgilendirenler (duyuru, ışık)
+else import('./admin/config.ts').then((m) => api('/api/tuning').then(m.applyRemoteTuning).catch(() => {}));
 
 type Screen = { s: 'loading' } | { s: 'auth' } | { s: 'chars' } | { s: 'channels'; charId: number } | { s: 'game'; ticket: string; charId: number; channel: number };
 interface Me { account: { id: number; username: string; role: string }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
 
 function App() {
-  return <><AppScreens /><MenuAdmin /></>;
+  if (isAdminRoute()) return <AdminPage />;
+  return <><AppScreens /><MenuAnnounce /></>;
 }
 
-/** Menü ekranlarında (oyun dışında) yönetim düğmesi ve duyuru. */
-function MenuAdmin() {
-  const canAdmin = useCanAdmin();
-  const [open, setOpen] = useState(false);
+/** Menü ekranlarında (oyun dışında) duyuru şeridi. Yönetim paneli ayrı sayfada: /admin1997 */
+function MenuAnnounce() {
   const inGame = useStoreConnected();
   if (inGame) return null;
-  return <>
-    <AnnouncementBar />
-    {canAdmin && <button className="btn small primary admin-btn" onClick={() => setOpen(true)}>Yönetim Paneli</button>}
-    {open && <AdminPanel onClose={() => setOpen(false)} />}
-  </>;
+  return <AnnouncementBar />;
 }
 function useStoreConnected() { return useStore((s) => s.connected); }
 
@@ -78,31 +76,77 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     setBusy(false);
   };
   return (
-    <div className="screen live">
+    <div className="screen live auth-screen">
       <MenuBackdrop />
-      <div style={{ zIndex: 1 }}>
-        <div className="logo">Tuğra<small>ONLINE</small><em>Yaşam Çekirdeği Destanı</em></div>
-        {OFFLINE && <div className="frame auth" style={{ padding: '12px 16px', marginBottom: 12, fontSize: 13 }}><b className="title">Test sürümü</b><div className="muted" style={{ marginTop: 4 }}>Oyun sunucusu bu sürümde tarayıcının içinde çalışır. Hesabın ve karakterin yalnız bu cihazda saklanır. Köyde ve ormanda gördüğün diğer oyuncular test botlarıdır.</div></div>}
-        <form className="frame auth" onSubmit={submit}>
-          <div className="tabs">
-            <button type="button" className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş</button>
-            <button type="button" className={tab === 'register' ? 'on' : ''} onClick={() => setTab('register')}>Kayıt Ol</button>
+      <div className="ferman-wrap">
+        <form className="ferman" onSubmit={submit}>
+          <div className="ferman-roll top" aria-hidden />
+          <div className="ferman-body">
+            <TugraMark />
+            <h1 className="ferman-title">Tuğra<span>ONLINE</span></h1>
+            <div className="ferman-sub">Fermandır: kılıcını kuşan, pazara in, adını duyur.</div>
+            {OFFLINE && <div className="ferman-note"><b>Test sürümü.</b> Oyun tarayıcının içinde çalışır; hesabın yalnız bu cihazda saklanır, gördüğün diğer oyuncular test botlarıdır.</div>}
+            <div className="ferman-tabs">
+              <button type="button" className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş</button>
+              <i>❖</i>
+              <button type="button" className={tab === 'register' ? 'on' : ''} onClick={() => setTab('register')}>Kayıt Ol</button>
+            </div>
+            <label className="ink"><span>Kullanıcı adı</span><input autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /></label>
+            {tab === 'register' && <label className="ink"><span>E-posta (isteğe bağlı)</span><input type="email" value={f.email} onChange={set('email')} /></label>}
+            {tab === 'forgot' && <label className="ink"><span>Sıfırlama kodu (aldıysan)</span><input value={f.code} onChange={set('code')} /></label>}
+            {(tab !== 'forgot' || f.code) && <label className="ink"><span>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</span><input type="password" autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /></label>}
+            {tab === 'register' && <label className="ink"><span>Parola tekrar</span><input type="password" autoComplete="new-password" value={f.password2} onChange={set('password2')} /></label>}
+            {err && <div className="ferman-err">{err}</div>}
+            {info && <div className="ferman-ok">{info}</div>}
+            <button className="seal-btn" disabled={busy}>
+              <span className="seal" aria-hidden><svg viewBox="0 0 40 40"><path d="M20 7 L23 15 L32 15 L25 20 L28 29 L20 24 L12 29 L15 20 L8 15 L17 15 Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg></span>
+              <span>{busy ? 'Bekle…' : tab === 'login' ? 'Mühürle ve Gir' : tab === 'register' ? 'Hesabı Mühürle' : f.code ? 'Parolayı Değiştir' : 'Kod Gönder'}</span>
+            </button>
+            <a className="ferman-link" onClick={() => setTab(tab === 'forgot' ? 'login' : 'forgot')}>{tab === 'forgot' ? 'Girişe dön' : 'Parolamı unuttum'}</a>
+            <RealmLine />
           </div>
-          <div className="field"><label>Kullanıcı adı</label><input autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /></div>
-          {tab === 'register' && <div className="field"><label>E-posta (isteğe bağlı)</label><input type="email" value={f.email} onChange={set('email')} /></div>}
-          {tab === 'forgot' && <div className="field"><label>Sıfırlama kodu (aldıysan)</label><input value={f.code} onChange={set('code')} /></div>}
-          {(tab !== 'forgot' || f.code) && <div className="field"><label>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</label><input type="password" autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /></div>}
-          {tab === 'register' && <div className="field"><label>Parola tekrar</label><input type="password" autoComplete="new-password" value={f.password2} onChange={set('password2')} /></div>}
-          {err && <div className="err">{err}</div>}
-          {info && <div className="ok" style={{ fontSize: 13, marginBottom: 8 }}>{info}</div>}
-          <button className="btn primary" style={{ width: '100%', padding: 12, fontSize: 16 }} disabled={busy}>{busy ? 'Bekle…' : tab === 'login' ? 'Oyuna Gir' : tab === 'register' ? 'Hesap Oluştur' : f.code ? 'Parolayı Değiştir' : 'Kod Gönder'}</button>
-          <div className="row" style={{ marginTop: 10, justifyContent: 'center' }}>
-            <a className="muted" style={{ fontSize: 12, cursor: 'pointer' }} onClick={() => setTab(tab === 'forgot' ? 'login' : 'forgot')}>{tab === 'forgot' ? 'Girişe dön' : 'Parolamı unuttum'}</a>
-          </div>
+          <div className="ferman-roll bottom" aria-hidden />
         </form>
       </div>
     </div>
   );
+}
+
+/** Ferman tepesindeki amblem: tuğradan esinlenmiş özgün bir süs (üç direk, iç içe kavisler, alt kuyruk). */
+function TugraMark() {
+  return (
+    <svg className="tugra-mark" viewBox="0 0 220 120" aria-hidden>
+      <defs>
+        <linearGradient id="tg-gold" gradientUnits="userSpaceOnUse" x1="20" y1="10" x2="200" y2="110"><stop offset="0" stopColor="#f8e2a4" /><stop offset=".5" stopColor="#d9a441" /><stop offset="1" stopColor="#8a5e1c" /></linearGradient>
+      </defs>
+      <g fill="none" stroke="url(#tg-gold)" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M70 92 C40 92 22 74 26 56 C30 36 58 30 78 44 C96 57 92 84 70 92 Z" strokeWidth="3.2" />
+        <path d="M66 84 C48 82 38 70 41 58 C45 44 62 42 74 52 C84 61 80 80 66 84 Z" strokeWidth="2" opacity=".85" />
+        <path d="M112 96 L112 14" strokeWidth="4" />
+        <path d="M128 96 L128 20" strokeWidth="4" />
+        <path d="M144 96 L144 26" strokeWidth="4" />
+        <path d="M112 30 C120 22 132 26 140 18" strokeWidth="2" />
+        <path d="M128 38 C136 30 148 34 156 26" strokeWidth="2" />
+        <path d="M144 46 C152 38 164 42 172 34" strokeWidth="2" />
+        <path d="M70 92 C110 104 160 104 196 90 C206 86 210 78 204 74" strokeWidth="3" />
+        <path d="M88 104 C120 112 168 110 192 100" strokeWidth="1.6" opacity=".7" />
+      </g>
+      <circle cx="58" cy="64" r="4" fill="#c9442f" />
+    </svg>
+  );
+}
+
+/** Ferman altında sunucu durumu. */
+function RealmLine() {
+  const [st, setSt] = useState<{ online: number; open: boolean; msg: string } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const load = () => api('/api/status').then((r) => { if (alive) setSt({ online: r.online ?? 0, open: !r.opening || r.opening.mode === 'open', msg: r.opening?.message ?? '' }); }).catch(() => {});
+    load(); const id = setInterval(load, 15000);
+    return () => { alive = false; clearInterval(id); };
+  }, []);
+  if (!st) return null;
+  return <div className={'realm-line' + (st.open ? ' open' : '')}><i />{st.open ? `Sunucu açık · ${st.online} kişi oyunda` : st.msg || 'Sunucu şu an kapalı'}</div>;
 }
 
 /** Menü arka planı: Pazar Köyü'nün canlı 3B görüntüsü. Kamera meydanın çevresinde yavaşça döner, oyuncular dolaşır.

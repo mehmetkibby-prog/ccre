@@ -69,7 +69,7 @@ class Backend {
       let n = 0;
       while (now >= next && n < 3) { this.driveBots(); this.world.tick(); next += 50; n++; }
       if (now - next > 500) next = now + 50;
-      if (now - this.lastWorld > 5000) { this.lastWorld = now; this.health = Math.max(0, this.health - 0.015 * TUNING.worldDecayMul); this.broadcast(JSON.stringify({ t: 'world', health: Math.round(this.health * 100) / 100, online: this.sockets.size + this.bots.length })); this.world.setWorld(this.health, this.sockets.size + this.bots.length); }
+      if (now - this.lastWorld > 5000) { this.lastWorld = now; this.broadcast(JSON.stringify({ t: 'world', health: 100, online: this.sockets.size + this.bots.length })); this.world.setWorld(100, this.sockets.size + this.bots.length); }
       setTimeout(loop, Math.max(0, next - performance.now()));
     };
     loop();
@@ -85,12 +85,6 @@ class Backend {
         break;
       }
       case 'save': case 'left': if (m.char.id > 0) { const cur = db.chars[m.char.id]; if (!cur || cur.saveVersion <= m.char.saveVersion) { db.chars[m.char.id] = m.char; persist(); } } break;
-      case 'donate': {
-        const gain = m.amount * 0.02 * Math.max(0.15, (100 - this.health) / 100);
-        this.health = Math.min(100, this.health + gain);
-        this.sockets.get(m.sid)?.deliver(JSON.stringify({ t: 'notice', kind: 'ok', text: `${m.amount} Öz bağışlandı. Dünya Sağlığı +${gain.toFixed(2)}` }));
-        break;
-      }
     }
   }
   connect(s: FakeSocket, ticket: string) {

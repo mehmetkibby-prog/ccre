@@ -3,15 +3,13 @@ import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
   ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
 } from '@col/shared';
-import { configState, onConfig, saveConfig } from './config.ts';
+import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
-import type { AdminPlayer } from '../offline/local.ts';
 type NumKey = keyof typeof TUNING_LIMITS;
 const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[] = [
   { title: 'Ekonomi ve ödüller', items: [
     ['xpMul', 'Deneyim (TP) çarpanı', '2 = çift TP etkinliği'],
     ['gemMul', 'Mücevher çarpanı', 'Canavardan düşen mücevher'],
-    ['essenceMul', 'Öz çarpanı', 'Canavardan düşen öz'],
     ['dropMul', 'Eşya ve malzeme düşme', 'Ekipman ve malzeme düşme şansı'],
   ] },
   { title: 'Canavarlar', note: 'Can ve saldırı, yeni doğan canavarlara uygulanır.', items: [
@@ -20,8 +18,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['respawnMul', 'Yeniden doğma süresi', '0,5 = iki kat hızlı doğar'],
   ] },
   { title: 'Dünya', items: [
-    ['bots', 'Test botu sayısı', 'Köyde dolaşan / ormanda avlanan oyuncular'],
-    ['worldDecayMul', 'Dünya Sağlığı azalma hızı', '0 = hiç azalmaz'],
+    ...(OFFLINE ? [['bots', 'Test botu sayısı', 'Köyde dolaşan / ormanda avlanan oyuncular'] as [NumKey, string, string]] : []),
     ['brightness', 'Işık seviyesi', 'Bütün haritaların parlaklığı'],
   ] },
 ];
@@ -30,14 +27,14 @@ const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : v.toLocaleStri
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];
-const fmtN = (n: number, d = 2) => n.toLocaleString('tr-TR', { maximumFractionDigits: d });
+export const fmtN = (n: number, d = 2) => n.toLocaleString('tr-TR', { maximumFractionDigits: d });
 /** Canavarın göründüğü ilk haritanın teması → varsayılan ganimet profili. */
 function monsterTheme(id: string) {
   for (const m of Object.values(MAPS)) if (m.spawns.some((g) => g.monster === id)) return m.theme;
   return 'forest';
 }
 /** Boş = varsayılan. Sayı kutusu; yer tutucu varsayılanı gösterir. */
-function Num({ v, def, on, min, max, step = 0.01, w = 72, dis }: { v: number | undefined; def: number; on: (n: number | undefined) => void; min: number; max: number; step?: number; w?: number; dis?: boolean }) {
+export function Num({ v, def, on, min, max, step = 0.01, w = 72, dis }: { v: number | undefined; def: number; on: (n: number | undefined) => void; min: number; max: number; step?: number; w?: number; dis?: boolean }) {
   const [txt, setTxt] = useState(v === undefined ? '' : String(v));
   useEffect(() => { setTxt(v === undefined ? '' : String(v)); }, [v]);
   return <input className={'adm-num' + (v !== undefined ? ' set' : '')} style={{ width: w }} inputMode="decimal" disabled={dis} placeholder={fmtN(def)} value={txt}
@@ -45,79 +42,15 @@ function Num({ v, def, on, min, max, step = 0.01, w = 72, dis }: { v: number | u
     onBlur={() => setTxt(v === undefined ? '' : String(v))} step={step} />;
 }
 
-export function AdminPanel({ onClose }: { onClose: () => void }) {
-  const [t, setT] = useState<GameTuning>(() => structuredClone(TUNING));
-  const [base, setBase] = useState<string>(() => JSON.stringify(sanitizeTuning(TUNING)));
-  const [tab, setTab] = useState<Tab>('genel');
-  const [, force] = useState(0);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  useEffect(() => onConfig((next) => {
-    const fresh = JSON.stringify(sanitizeTuning(next));
-    setT((cur) => (JSON.stringify(sanitizeTuning(cur)) === base ? structuredClone(next) : cur));
-    setBase(fresh); force((n) => n + 1);
-  }), [base]);
-  const canEdit = configState.canEdit, dis = !canEdit;
-  const dirty = JSON.stringify(sanitizeTuning(t)) !== base;
-  const save = async () => {
-    setBusy(true); setMsg(null);
-    try { await saveConfig(t); setMsg({ ok: true, text: 'Kaydedildi. Oyundaki herkes yeni ayarları hemen kullanır.' }); }
-    catch (e) { setMsg({ ok: false, text: (e as Error).message }); }
-    setBusy(false);
-  };
-  const setMon = (id: string, patch: Partial<MonsterTune>) => setT((cur) => {
-    const m = { ...(cur.monsters[id] ?? {}), ...patch } as Record<string, unknown>;
-    for (const k of Object.keys(m)) if (m[k] === undefined) delete m[k];
-    const monsters = { ...cur.monsters }; if (Object.keys(m).length) monsters[id] = m as MonsterTune; else delete monsters[id];
-    return { ...cur, monsters };
-  });
-  const setSpawn = (key: string, patch: Partial<SpawnTune>) => setT((cur) => {
-    const m = { ...(cur.spawns[key] ?? {}), ...patch } as Record<string, unknown>;
-    for (const k of Object.keys(m)) if (m[k] === undefined) delete m[k];
-    const spawns = { ...cur.spawns }; if (Object.keys(m).length) spawns[key] = m as SpawnTune; else delete spawns[key];
-    return { ...cur, spawns };
-  });
-  return (
-    <div className="overlay admin-ov" onPointerDown={(e) => e.stopPropagation()}>
-      <div className="frame panel admin admin-wide" role="dialog" aria-label="Yönetim paneli">
-        <div className="hd"><span className="title">Yönetim Paneli</span><button className="x" onClick={onClose} aria-label="Kapat">✕</button></div>
-        <div className="adm-tabs" role="tablist">
-          {TABS.map(([k, l]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>)}
-        </div>
-        <div className="bd">
-          <div className="admin-status">
-            {canEdit ? <span className="pill ok">Yönetici</span> : <span className="pill">Yalnız görüntüleme</span>}
-            <span className="muted">{configState.live ? 'Ayarlar paylaşılan kayıtta. "Kaydet ve uygula" ile oyunu açan herkese geçer. Boş kutu = varsayılan.' : configState.error || 'Ayar kaydına bağlanılıyor…'}</span>
-          </div>
-          {tab === 'genel' && <GeneralTab t={t} setT={setT} dis={dis} />}
-          {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={dis} />}
-          {tab === 'ganimet' && <><RarityTable t={t} setT={setT} dis={dis} /><LootTab t={t} setMon={setMon} dis={dis} /></>}
-          {tab === 'efsun' && <EnchantTab t={t} setT={setT} dis={dis} />}
-          {tab === 'arti' && <UpgradeTab t={t} setT={setT} dis={dis} />}
-          {tab === 'harita' && <MapTab t={t} setT={setT} setSpawn={setSpawn} dis={dis} />}
-          {tab === 'oyuncu' && <PlayerTab dis={dis} />}
-          {msg && <div className={msg.ok ? 'okmsg' : 'err'}>{msg.text}</div>}
-        </div>
-        <div className="admin-ft">
-          <span className="muted" style={{ fontSize: 12 }}>{dirty ? 'Kaydedilmemiş değişiklik var' : 'Değişiklik yok'}</span>
-          <div className="spacer" />
-          <button className="btn small ghost" disabled={!dirty || busy} onClick={() => setT(JSON.parse(base))}>Geri al</button>
-          <button className="btn small primary" disabled={!canEdit || !dirty || busy} onClick={save}>{busy ? 'Kaydediliyor…' : 'Kaydet ve uygula'}</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-type SetT = React.Dispatch<React.SetStateAction<GameTuning>>;
-function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+export type SetT = React.Dispatch<React.SetStateAction<GameTuning>>;
+export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const preset = (p: Partial<GameTuning>) => setT({ ...t, ...p });
   return (
     <>
       <section className="admin-sec">
         <h4>Hazır ayarlar</h4>
         <div className="row wrap">
-          <button className="btn small" disabled={dis} onClick={() => preset({ xpMul: 2, gemMul: 1.5, essenceMul: 1.5 })}>Çift TP etkinliği</button>
+          <button className="btn small" disabled={dis} onClick={() => preset({ xpMul: 2, gemMul: 1.5 })}>Çift TP etkinliği</button>
           <button className="btn small" disabled={dis} onClick={() => preset({ dropMul: 2.5 })}>Bol ganimet</button>
           <button className="btn small" disabled={dis} onClick={() => preset({ monsterHpMul: 0.7, monsterAtkMul: 0.7 })}>Kolay canavarlar</button>
           <button className="btn small" disabled={dis} onClick={() => preset({ monsterHpMul: 1.6, monsterAtkMul: 1.4, xpMul: 1.5 })}>Zor mod</button>
@@ -148,7 +81,7 @@ function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean 
   );
 }
 
-function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Partial<MonsterTune>) => void; dis: boolean }) {
+export function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Partial<MonsterTune>) => void; dis: boolean }) {
   return (
     <section className="admin-sec">
       <h4>Canavar türleri</h4>
@@ -175,7 +108,7 @@ function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p:
 }
 
 /** Bütün canavarlar için nadirlik: düşme çarpanı, satış fiyatı, silah ve zırh gücü. */
-function RarityTable({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+export function RarityTable({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const setRec = (k: 'rarityDrop' | 'sellPrice', r: string, v: number | undefined) => { const n = { ...t[k] }; if (v === undefined) delete n[r]; else n[r] = v; setT({ ...t, [k]: n }); };
   const setPow = (r: string, f: 'weapon' | 'armor', v: number | undefined) => {
     const cur = { ...(t.rarityPower[r] ?? {}) }; if (v === undefined) delete cur[f]; else cur[f] = v;
@@ -202,7 +135,7 @@ function RarityTable({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean
   );
 }
 
-function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Partial<MonsterTune>) => void; dis: boolean }) {
+export function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Partial<MonsterTune>) => void; dis: boolean }) {
   const [id, setId] = useState(MONSTERS[0].id);
   const d = MONSTERS.find((x) => x.id === id)!;
   const theme = monsterTheme(id), prof = LOOT_PROFILES[theme] ?? LOOT_PROFILES.forest, m = t.monsters[id] ?? {};
@@ -247,7 +180,7 @@ function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Pa
       </section>
       <section className="admin-sec">
         <h4>Mücevher ve Öz (öldürme başına)</h4>
-        {(['gems', 'essence'] as const).map((k) => {
+        {(['gems'] as const).map((k) => {
           const cur = m[k] ?? prof[k];
           return (
             <label className="admin-row" key={k}><span className="lab"><b>{k === 'gems' ? 'Mücevher' : 'Öz'} en az / en çok</b><small>Genel çarpan: {fmtN(k === 'gems' ? t.gemMul : t.essenceMul)}×</small></span>
@@ -281,7 +214,7 @@ function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Pa
 
 const CW_ROWS: [string, string][] = [['white', 'Sıradan'], ['blue', 'Mavi'], ['orange', 'Turuncu'], ['default', 'Kızıl ve üstü']];
 /** Demirci: 6 kademenin şansı, Mücevher bedeli, malzemeleri ve kazandırdığı güç. */
-function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const steps: UpgradeStepTune[] = t.upgrade.steps?.length === MAX_PLUS ? t.upgrade.steps : DEFAULT_UPGRADE.map(({ target, ...s }) => { void target; return structuredClone(s); });
   const custom = t.upgrade.steps?.length === MAX_PLUS;
   const put = (i: number, patch: Partial<UpgradeStepTune>) => {
@@ -334,7 +267,7 @@ function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean 
   );
 }
 
-function EnchantTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+export function EnchantTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const et = t.enchants;
   const setEt = (p: Partial<GameTuning['enchants']>) => { const n = { ...et, ...p } as Record<string, unknown>; for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k]; setT({ ...t, enchants: n as GameTuning['enchants'] }); };
   const defCw = (r: string) => (ENCHANT_COUNT_WEIGHTS as Record<string, [number, number, number, number]>)[r] ?? ENCHANT_COUNT_WEIGHTS.default;
@@ -390,7 +323,7 @@ function EnchantTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean 
   );
 }
 
-function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; setSpawn: (k: string, p: Partial<SpawnTune>) => void; dis: boolean }) {
+export function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; setSpawn: (k: string, p: Partial<SpawnTune>) => void; dis: boolean }) {
   return (
     <>{Object.values(MAPS).filter((m) => m.spawns.length).map((m) => {
       const dens = t.density[m.id] ?? 1;
@@ -419,53 +352,6 @@ function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; setSpaw
         </section>
       );
     })}<div className="muted" style={{ fontSize: 11 }}>Kaydedince haritanın canavar yuvaları oyun açıkken yeniden kurulur.</div></>
-  );
-}
-
-function PlayerTab({ dis }: { dis: boolean }) {
-  const [list, setList] = useState<AdminPlayer[]>([]);
-  const [edit, setEdit] = useState<Record<number, { level?: number; gems?: number; essence?: number; potions?: number }>>({});
-  const [note, setNote] = useState('');
-  const [q, setQ] = useState('');
-  const [confirmReset, setConfirmReset] = useState<number | null>(null);
-  const api = useMemo(() => (OFFLINE ? import('../offline/local.ts') : null), []);
-  const reload = () => { api?.then((m) => setList(m.adminPlayers())); };
-  useEffect(() => { reload(); const iv = setInterval(reload, 4000); return () => clearInterval(iv); }, []);
-  if (!OFFLINE) return <div className="muted">Sunucu sürümünde oyuncular sunucu yönetim komutlarıyla düzenlenir: gm_set (seviye/para) ve gm_reset (karakteri sıfırla).</div>;
-  const shown = list.filter((p) => !q || p.name.toLocaleLowerCase('tr').includes(q.toLocaleLowerCase('tr')));
-  const apply = async (p: AdminPlayer) => { const m = await api!; setNote(`${p.name}: ${m.adminUpdatePlayer(p.id, edit[p.id] ?? {})}`); setEdit((e) => { const n = { ...e }; delete n[p.id]; return n; }); reload(); };
-  const reset = async (p: AdminPlayer) => { const m = await api!; setNote(`${p.name}: ${m.adminResetPlayer(p.id)}`); setConfirmReset(null); reload(); };
-  const set = (id: number, k: 'level' | 'gems' | 'essence' | 'potions', v: number | undefined) => setEdit((e) => ({ ...e, [id]: { ...(e[id] ?? {}), [k]: v } }));
-  return (
-    <section className="admin-sec">
-      <h4>Oyuncular</h4>
-      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Bu test sürümünde her ziyaretçinin karakteri kendi tarayıcısında durur: burada bu cihazdaki karakterler ve oyundaki botlar listelenir. Çevrimiçi oyuncu anında güncellenir (seviye değişince canı ve istatistikleri yeniden hesaplanır). <b>Sıfırla</b>: karakter seviye 1'e iner; çanta, eşyalar (beyaz başlangıç silahı ve zırhı verilir), para, malzemeler, statü ve beceriler sıfırlanır, köye ışınlanır.</div>
-      <input className="adm-search" placeholder="Oyuncu ara…" value={q} onChange={(e) => setQ(e.target.value)} />
-      <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Oyuncu</th><th>Seviye</th><th>Mücevher</th><th>Öz</th><th>İksir</th><th /></tr></thead>
-        <tbody>{shown.map((p) => {
-          const e = edit[p.id] ?? {};
-          return (
-            <tr key={p.id}>
-              <td><b>{p.name}</b><small>{p.online ? '● çevrimiçi' : 'çevrimdışı'}{p.bot ? ' · bot' : ''} · {MAPS[p.map]?.name ?? p.map}</small></td>
-              <td><Num v={e.level} def={p.level} min={1} max={50} step={1} dis={dis} w={52} on={(v) => set(p.id, 'level', v)} /></td>
-              <td><Num v={e.gems} def={p.gems} min={0} max={1e9} step={1} dis={dis} w={74} on={(v) => set(p.id, 'gems', v)} /></td>
-              <td><Num v={e.essence} def={p.essence} min={0} max={1e9} step={1} dis={dis} w={70} on={(v) => set(p.id, 'essence', v)} /></td>
-              <td><Num v={e.potions} def={p.potions} min={0} max={1e6} step={1} dis={dis} w={56} on={(v) => set(p.id, 'potions', v)} /></td>
-              <td>
-                <div className="row" style={{ gap: 4, flexWrap: 'nowrap' }}>
-                  <button className="btn small primary" disabled={dis || !edit[p.id] || !Object.values(edit[p.id]).some((x) => x !== undefined)} onClick={() => apply(p)}>Uygula</button>
-                  {!p.bot && (confirmReset === p.id
-                    ? <><button className="btn small red" disabled={dis} onClick={() => reset(p)}>Evet, sıfırla</button><button className="btn small ghost" onClick={() => setConfirmReset(null)}>Vazgeç</button></>
-                    : <button className="btn small ghost" disabled={dis} title="Seviye 1, başlangıç eşyaları; çanta, para, malzeme, statü ve beceriler sıfırlanır" onClick={() => setConfirmReset(p.id)}>Sıfırla</button>)}
-                </div>
-              </td>
-            </tr>
-          );
-        })}</tbody>
-      </table></div>
-      {note && <div className="okmsg">{note}</div>}
-    </section>
   );
 }
 

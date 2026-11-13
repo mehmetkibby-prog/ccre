@@ -125,9 +125,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     l.props.push({ k: 'house', x: (tx + 2) * TILE, y: (ty + 3) * TILE, v, s: 1 });
     for (let x = tx - 1; x <= tx + 4; x++) protect[idx(l, x, ty + 3)] = 1;
   }
-  // tezgâhlar
-  const stalls: [number, number, number][] = [[22, 17, 0], [25, 16, 1], [31, 16, 2], [34, 17, 3], [22, 27, 2], [34, 27, 0]];
-  for (const [tx, ty, v] of stalls) { blockRect(l, tx, ty, 2, 1); l.props.push({ k: 'stall', x: (tx + 1) * TILE, y: (ty + 1) * TILE, v, s: 1 }); }
+  // çeşme meydanı açık bırakılır (süs tezgâhları kaldırıldı; oyuncu tezgâhları Pazar Meydanı'nda)
   // demirci örsü, depo sandıkları
   blockRect(l, 15, 13, 1, 1); l.props.push({ k: 'anvil', x: 15.5 * TILE, y: 14 * TILE, v: 0, s: 1 });
   // demir ocağı: ocak, baca, körük, su fıçısı ve silah askısı (Demirci uzaktan seçilsin)

@@ -134,6 +134,8 @@ export class CharacterStore {
     }
   }
 
+  /** Bellekteki en yeni durum (oyunda olan ya da yazılmayı bekleyen), kopyalanmadan. */
+  peek(charId: number): CharState | undefined { return this.queue.get(charId) ?? this.cache.get(charId)?.char; }
   async load(charId: number): Promise<CharState | null> {
     const cached = this.queue.get(charId) ?? this.cache.get(charId)?.char;
     if (cached) return structuredClone(cached);

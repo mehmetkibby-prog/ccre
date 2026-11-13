@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, type ClassId } from '@col/shared';
+import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
 import { hashPassword, verifyPassword, createSession, destroySession, sessionAccount, isStaff, isAdmin, sha256, randomToken, invalidateAccountCache, type AuthAccount } from './auth.ts';
@@ -11,6 +11,8 @@ import type { ChannelManager } from './channels.ts';
 import type { OpeningState } from './opening.ts';
 import type { CharacterStore } from './store.ts';
 import type { WorldState } from './worldstate.ts';
+import type { TuningState } from './tuning.ts';
+import { resetCharState } from './worker/world.ts';
 import { RateLimiter } from './http.ts';
 import os from 'node:os';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
@@ -20,7 +22,7 @@ const loginLimiter = new RateLimiter(0.2, 8); // IP başına
 const registerLimiter = new RateLimiter(0.02, 3);
 const admissionLimiter = new RateLimiter(1, 5);
 
-export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: OpeningState; store: CharacterStore; world: WorldState }
+export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: OpeningState; store: CharacterStore; world: WorldState; tuning: TuningState }
 
 const eld = monitorEventLoopDelay({ resolution: 10 });
 eld.enable();
@@ -46,7 +48,7 @@ export function buildApi(d: ApiDeps): Router {
 
   r.get('/api/status', () => ({
     opening: { mode: d.opening.state.mode, openAt: d.opening.state.openAt, message: d.opening.state.message },
-    online: d.gateway.online(), worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
+    online: d.gateway.online(), serverTime: Date.now(),
   }));
 
   r.post('/api/register', async (req, res) => {
@@ -205,7 +207,6 @@ export function buildApi(d: ApiDeps): Router {
       persistence: { queue: d.store.queueLength, written: d.store.written, stale: d.store.stale, failures: d.store.failures, writeMs: d.store.writeHist.snapshot() },
       mainThread: { eventLoopDelayMs: { p50: eld.percentile(50) / 1e6, p99: eld.percentile(99) / 1e6, max: eld.max / 1e6 }, heapMB: Math.round(process.memoryUsage().heapUsed / 1048576), rssMB: Math.round(process.memoryUsage().rss / 1048576) },
       host: { cpus: os.cpus().length, loadavg: load, freeMemMB: Math.round(os.freemem() / 1048576), note: 'loadavg tüm VDS içindir; kanal ELU tek worker thread yüküdür.' },
-      worldHealth: d.world.health,
     };
   });
   r.get('/api/admin/opening', async (req) => { await requireAdmin(req); return d.opening.state; });
@@ -216,6 +217,123 @@ export function buildApi(d: ApiDeps): Router {
     const r2 = await d.opening.set({ mode, openAt: openAt ? Number(openAt) : null, message: String(message ?? '').slice(0, 300) }, Number(revision), a.id);
     if (!r2.ok) throw new HttpError(409, 'Başka bir yönetici bu ayarı değiştirdi. Sayfayı yenile.');
     return r2.state;
+  });
+
+  // ───────── oyun ayarları (herkes okur; duyuru ve ışık istemcide de kullanılır) ─────────
+  r.get('/api/tuning', () => d.tuning.current());
+  r.get('/api/admin/tuning', async (req) => { await requireAdmin(req); return { tuning: d.tuning.current(), revision: d.tuning.revision }; });
+  r.post('/api/admin/tuning', async (req) => {
+    const a = await requireAdmin(req);
+    const { tuning, revision } = req.body ?? {};
+    const out = await d.tuning.set(tuning, Number(revision), a.id);
+    if (!out.ok) throw new HttpError(409, 'Ayarlar bu arada başka bir yönetici tarafından değiştirildi. Sayfayı yenileyip tekrar dene.');
+    d.gateway.broadcastTuning(out.tuning);
+    return out;
+  });
+
+  // ───────── özet ─────────
+  r.get('/api/admin/summary', async (req) => {
+    await requireAdmin(req);
+    const counts = (await pool.query(`SELECT (SELECT count(*) FROM accounts) AS accounts, (SELECT count(*) FROM characters WHERE deleted_at IS NULL) AS chars,
+      (SELECT count(*) FROM accounts WHERE created_at > now() - interval '1 day') AS new_accounts,
+      (SELECT count(*) FROM characters WHERE last_seen > now() - interval '1 day') AS active_day`)).rows[0];
+    const mem = process.memoryUsage();
+    return {
+      online: d.gateway.online(), capacity: config.realmCapacity,
+      channels: d.channels.population.map((p, i) => i === 0 ? null : { id: i, population: p ?? 0, capacity: config.channelCapacity, alive: d.channels.alive(i), elu: d.channels.stats[i]?.elu ?? null }).filter(Boolean),
+      accounts: Number(counts.accounts), characters: Number(counts.chars), newAccounts: Number(counts.new_accounts), activeDay: Number(counts.active_day),
+      opening: d.opening.state, uptime: Math.round(process.uptime()), heapMB: Math.round(mem.heapUsed / 1048576), rssMB: Math.round(mem.rss / 1048576),
+      saveQueue: d.store.queueLength, saveFailures: d.store.failures, load: os.loadavg()[0], freeMemMB: Math.round(os.freemem() / 1048576),
+    };
+  });
+
+  // ───────── oyuncular ─────────
+  r.get('/api/admin/players', async (req) => {
+    await requireAdmin(req);
+    const q = String(req.query.get('q') ?? '').trim().toLowerCase().slice(0, 40);
+    const onlyOnline = req.query.get('online') === '1';
+    const online = d.gateway.onlineCharIds();
+    const like = '%' + q.replace(/[%_\\]/g, (m) => '\\' + m) + '%';
+    const rows = (await pool.query(
+      `SELECT c.id, c.name, c.cls, c.level, c.gems, c.map, c.kills, c.last_seen, c.account_id, a.username, a.role, a.banned_until, a.ban_reason,
+         COALESCE((SELECT qty FROM materials m WHERE m.char_id=c.id AND m.key='red_potion'), 0) AS potions
+       FROM characters c JOIN accounts a ON a.id=c.account_id
+       WHERE c.deleted_at IS NULL AND ($1 = '' OR c.name_norm LIKE $2 OR a.username_norm LIKE $2) ${onlyOnline ? 'AND c.id = ANY($3::bigint[])' : ''}
+       ORDER BY c.last_seen DESC NULLS LAST, c.level DESC LIMIT 60`,
+      onlyOnline ? [q, like, [...online]] : [q, like])).rows;
+    return rows.map((x) => {
+      const id = Number(x.id);
+      const live = d.store.peek(id);
+      return {
+        id, name: x.name, cls: x.cls, level: live?.level ?? x.level, gems: Number(live?.gems ?? x.gems), potions: Number(live?.materials.red_potion ?? x.potions), map: live?.map ?? x.map,
+        kills: Number(live?.kills ?? x.kills), lastSeen: x.last_seen, online: online.has(id), accountId: Number(x.account_id), username: x.username, role: x.role,
+        bannedUntil: x.banned_until && new Date(x.banned_until).getTime() > Date.now() ? x.banned_until : null, banReason: x.ban_reason,
+      };
+    });
+  });
+  const audit = (actor: number, action: string, detail: unknown) => pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES ($1,$2,$3)`, [actor, action, JSON.stringify(detail)]).catch(() => {});
+  r.post('/api/admin/player', async (req) => {
+    const a = await requireAdmin(req);
+    const { id, level, gems, potions } = req.body ?? {};
+    const charId = Number(id);
+    const num = (v: unknown, lo: number, hi: number) => (v === undefined || v === null || v === '' ? undefined : Math.min(hi, Math.max(lo, Math.round(Number(v)))));
+    const patch = { level: num(level, 1, 99), gems: num(gems, 0, 1e12), potions: num(potions, 0, 1e7) };
+    if (Object.values(patch).every((v) => v === undefined || Number.isNaN(v))) throw new HttpError(400, 'Değişiklik yok.');
+    const ch = d.gateway.onlineChannel(charId);
+    if (ch) { d.channels.send(ch, { type: 'admin', op: 'set', charId, patch }); await audit(a.id, 'player.set', { charId, patch }); return { ok: true, text: 'Oyunda, anında uygulandı.' }; }
+    const c = await d.store.load(charId);
+    if (!c) throw new HttpError(404, 'Karakter bulunamadı.');
+    if (patch.level !== undefined) { c.level = patch.level; c.xp = 0; c.hp = computeStats({ cls: c.cls, level: c.level, stats: c.stats, equip: c.equip }).maxHp; }
+    if (patch.gems !== undefined) c.gems = patch.gems;
+    if (patch.potions !== undefined) c.materials.red_potion = patch.potions;
+    c.saveVersion++;
+    d.store.enqueue(c, true);
+    await audit(a.id, 'player.set', { charId, patch });
+    return { ok: true, text: 'Kaydedildi (oyuncu çevrimdışı).' };
+  });
+  r.post('/api/admin/player/reset', async (req) => {
+    const a = await requireAdmin(req);
+    const charId = Number(req.body?.id);
+    const ch = d.gateway.onlineChannel(charId);
+    if (ch) { d.channels.send(ch, { type: 'admin', op: 'reset', charId }); await audit(a.id, 'player.reset', { charId }); return { ok: true, text: 'Oyunda sıfırlandı.' }; }
+    const c = await d.store.load(charId);
+    if (!c) throw new HttpError(404, 'Karakter bulunamadı.');
+    resetCharState(c);
+    c.hp = computeStats({ cls: c.cls, level: 1, stats: c.stats, equip: c.equip }).maxHp;
+    d.store.enqueue(c, true);
+    await audit(a.id, 'player.reset', { charId });
+    return { ok: true, text: 'Karakter sıfırlandı.' };
+  });
+  r.post('/api/admin/account', async (req) => {
+    const a = await requireAdmin(req);
+    const { accountId, role, banHours, banReason, unban } = req.body ?? {};
+    const acc = Number(accountId);
+    const cur = (await pool.query('SELECT role FROM accounts WHERE id=$1', [acc])).rows[0];
+    if (!cur) throw new HttpError(404, 'Hesap bulunamadı.');
+    if (acc === a.id) throw new HttpError(400, 'Kendi hesabında bu işlem yapılamaz.');
+    if (cur.role === 'owner' || (cur.role === 'admin' && a.role !== 'owner')) throw new HttpError(403, 'Bu hesaba yetkin yetmiyor.');
+    if (role !== undefined) {
+      if (!['player', 'moderator', 'gm', 'admin'].includes(role)) throw new HttpError(400, 'Geçersiz rol.');
+      if (role === 'admin' && a.role !== 'owner') throw new HttpError(403, 'Yönetici rolünü yalnız kurucu verebilir.');
+      await pool.query('UPDATE accounts SET role=$2 WHERE id=$1', [acc, role]);
+    }
+    if (unban) await pool.query('UPDATE accounts SET banned_until=NULL, ban_reason=NULL WHERE id=$1', [acc]);
+    else if (banHours) {
+      const h = Math.min(24 * 365 * 10, Math.max(1, Number(banHours)));
+      await pool.query(`UPDATE accounts SET banned_until=now() + ($2 || ' hours')::interval, ban_reason=$3 WHERE id=$1`, [acc, String(h), String(banReason ?? '').slice(0, 200)]);
+      await pool.query('DELETE FROM sessions WHERE account_id=$1', [acc]);
+      d.gateway.kickAccount(acc, 'Hesabın askıya alındı.' + (banReason ? ' ' + String(banReason).slice(0, 200) : ''));
+    }
+    invalidateAccountCache(acc);
+    await audit(a.id, 'account.update', { accountId: acc, role, banHours, unban: !!unban });
+    return { ok: true };
+  });
+  r.post('/api/admin/kick', async (req) => {
+    const a = await requireAdmin(req);
+    const acc = Number(req.body?.accountId);
+    d.gateway.kickAccount(acc, String(req.body?.reason ?? 'Yönetici tarafından oyundan çıkarıldın.').slice(0, 200));
+    await audit(a.id, 'account.kick', { accountId: acc });
+    return { ok: true };
   });
 
   return r;

@@ -24,6 +24,9 @@ function apply(raw: unknown) {
 // açılışta önbellekten (dünya kurulmadan önce)
 try { const c = localStorage.getItem(LS); if (c) applyTuning(JSON.parse(c)); } catch { /* depolama kapalı olabilir */ }
 
+/** Sunucudan gelen ayar (açılışta /api/tuning, oyunda 'tuning' mesajı): uygula ve dinleyicilere bildir. */
+export function applyRemoteTuning(raw: unknown) { applyTuning(raw); listeners.forEach((f) => f(TUNING)); }
+
 export function onConfig(f: Listener) { listeners.add(f); return () => { listeners.delete(f); }; }
 
 let started = false;

@@ -144,7 +144,8 @@ export class Game {
         store.set({ panel: null, npc: null, confirmTravel: null });
         break;
       }
-      case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
+      case 'world': store.set({ online: m.online }); break;
+      case 'tuning': import('../admin/config.ts').then((c) => c.applyRemoteTuning(m.tuning)); break;
       case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
       // ───────── pazar tezgâhları ─────────
       case 'stalls': store.set({ stalls: Array.isArray(m.list) ? m.list : [] }); break;
@@ -156,7 +157,6 @@ export class Game {
       case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
       case 'gain': {
         if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
-        if (m.essence) this.fx.text(m.x + 18, m.y, 1.2, `+${m.essence} Öz`, '#8ff4ff', 13, 1200);
         break;
       }
       case 'loot': pushLoot(m.name, m.rarity); sfx.play('loot'); break;
