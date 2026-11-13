@@ -44,3 +44,16 @@ test('replay preserves JSON wire data of rows, arrays, binary values and Unicode
  assert.equal(JSON.stringify(replay),JSON.stringify(value));replay.players[0].hp=999;
  assert.equal((await r.run(id,'read_actor',{},()=>assert.fail())).players[0].hp,0);
 });
+
+test('R113 retains already serialized command wire without another getter traversal and replays exact JSON',async()=>{
+ const r=new IpcReplay({limit:2}),prefix=randomUUID(),id=prefix+':1';let reads=0,calls=0;
+ const value=await r.run(id,'command',{sequence:1},()=>{calls++;return {get reward(){reads++;return {amount:7,player:'çığ'};}};});
+ assert.equal(reads,0);const text=JSON.stringify({type:'result',id,ok:true,value});assert.equal(reads,1);
+ r.retainSerializedR113(id,text);assert.equal(reads,1);assert.equal(r.rows.get(1).promise,null);
+ const reply=await r.run(id,'command',{sequence:1},()=>assert.fail());assert.deepEqual(reply,{reward:{amount:7,player:'çığ'}});assert.equal(calls,1);assert.equal(reads,1);
+ reply.reward.amount=99;assert.equal((await r.run(id,'command',{sequence:1},()=>assert.fail())).reward.amount,7);
+ assert.throws(()=>r.run(id,'command',{sequence:2},()=>assert.fail()),/ipc_request_id_reused/);
+ await r.run(prefix+':2','read_actor',{},()=>({id:2}));await r.run(prefix+':3','read_actor',{},()=>({id:3}));
+ assert.equal(r.storage.bytes,[...r.rows.values()].reduce((n,row)=>n+(row.bytes?.length??0)+(row.wire?.length??0),0));
+ assert.throws(()=>r.run(id,'command',{sequence:1},()=>assert.fail()),/ipc_request_retired/);
+});

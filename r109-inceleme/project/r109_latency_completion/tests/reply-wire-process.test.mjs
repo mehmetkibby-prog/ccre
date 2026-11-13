@@ -20,7 +20,7 @@ async function pipe(t,dispatch,{stream='kernel511',cutAtPart=null}={}){
   a.send=(message,callback)=>queueMicrotask(()=>{if(inspect(message,'request')!==false)b.emit('message',message);callback?.();});
   b.send=(message,callback)=>queueMicrotask(()=>{if(inspect(message,'reply')!==false)a.emit('message',message);callback?.();});
   const server=new ProcessStream(b,{stream,connect:false});servers.push(server);
-  acceptStreamSocket(server,{authenticate:hello=>hello.channel===peer.channel&&hello.incarnation===peer.incarnation?peer:null,dispatch:(p,method,payload,id)=>replay.run(id,method,payload,()=>dispatch(p,method,payload))});
+  acceptStreamSocket(server,{authenticate:hello=>hello.channel===peer.channel&&hello.incarnation===peer.incarnation?peer:null,dispatch:(p,method,payload,id)=>replay.run(id,method,payload,()=>dispatch(p,method,payload)),onSerializedR113:(p,id,text)=>replay.retainSerializedR113(id,text)});
   return new ProcessStream(a,{stream});
  },onState:(state,code)=>{states.push({state,code});if(state==='ready'){wire.ready++;ready();}}});
  t.after(()=>{client.close();for(const server of servers)server.destroy();});client.start();await connected;

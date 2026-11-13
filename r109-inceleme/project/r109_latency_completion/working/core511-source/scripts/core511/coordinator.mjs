@@ -136,7 +136,7 @@ export class CoreCoordinator {
  accept(socket){acceptStreamSocket(socket,{authenticate:hello=>{
   const row=this.processes.get(hello.channel);if(!row?.online||hello.realm!==this.realmId||hello.incarnation!==row.peer.incarnation||typeof hello.proof!=='string')return null;
   const a=Buffer.from(row.proof),b=Buffer.from(hello.proof);return a.length===b.length&&timingSafeEqual(a,b)?row.peer:null;
- },maxInflightFor:peer=>128*residentCapacityR59(peer.channel)/25,controlFor:peer=>this.process(peer).control,dispatch:(...args)=>this.dispatch(...args)});}
+ },maxInflightFor:peer=>128*residentCapacityR59(peer.channel)/25,controlFor:peer=>this.process(peer).control,dispatch:(...args)=>this.dispatch(...args),onSerializedR113:(peer,id,text)=>this.process(peer).replay.retainSerializedR113(id,text)});}
  dispatch(peer,method,payload,id){const row=this.process(peer);return row.replay.run(id,method,payload,()=>this.route(peer,method,payload));}
  async route(peer,method,payload){
   this.process(peer);

@@ -1,0 +1,101 @@
+TAP version 13
+# Subtest: pending requests share the exact promise; stored success replays without executing again
+ok 1 - pending requests share the exact promise; stored success replays without executing again
+  ---
+  duration_ms: 3.0196
+  type: 'test'
+  ...
+# Subtest: errors keep their identity and provenance and are never rerun
+ok 2 - errors keep their identity and provenance and are never rerun
+  ---
+  duration_ms: 0.142819
+  type: 'test'
+  ...
+# Subtest: eviction keeps original retirement and pending protections; byte accounting follows retained rows
+ok 3 - eviction keeps original retirement and pending protections; byte accounting follows retained rows
+  ---
+  duration_ms: 0.181246
+  type: 'test'
+  ...
+# Subtest: unsupported values and opt-out retain original cache semantics
+ok 4 - unsupported values and opt-out retain original cache semantics
+  ---
+  duration_ms: 0.42747
+  type: 'test'
+  ...
+# Subtest: command replies retain the original value without traversing lazy fields
+ok 5 - command replies retain the original value without traversing lazy fields
+  ---
+  duration_ms: 0.159838
+  type: 'test'
+  ...
+# Subtest: replay preserves JSON wire data of rows, arrays, binary values and Unicode
+ok 6 - replay preserves JSON wire data of rows, arrays, binary values and Unicode
+  ---
+  duration_ms: 0.163378
+  type: 'test'
+  ...
+# Subtest: R113 retains already serialized command wire without another getter traversal and replays exact JSON
+ok 7 - R113 retains already serialized command wire without another getter traversal and replays exact JSON
+  ---
+  duration_ms: 0.384527
+  type: 'test'
+  ...
+# Subtest: negotiated process reply, reconnect replay and status retain exact result and one dispatch
+ok 8 - negotiated process reply, reconnect replay and status retain exact result and one dispatch
+  ---
+  duration_ms: 22.991034
+  type: 'test'
+  ...
+# {"type":"core511_ipc_safe_stream","code":"ipc_frame_size","method":"command","bytes":1320093}
+# Subtest: non-kernel stream and unrelated methods keep existing uncompressed replies
+ok 9 - non-kernel stream and unrelated methods keep existing uncompressed replies
+  ---
+  duration_ms: 6.05289
+  type: 'test'
+  ...
+# Subtest: negotiated small reply serializes its value once; replies never share a mutable buffer
+ok 10 - negotiated small reply serializes its value once; replies never share a mutable buffer
+  ---
+  duration_ms: 1.959044
+  type: 'test'
+  ...
+# Subtest: large committed replies still transfer in bounded parts and replay once after interrupted transfer
+ok 11 - large committed replies still transfer in bounded parts and replay once after interrupted transfer
+  ---
+  duration_ms: 113.714788
+  type: 'test'
+  ...
+# Subtest: reply above the bounded transfer limit fails without dispatching twice
+ok 12 - reply above the bounded transfer limit fails without dispatching twice
+  ---
+  duration_ms: 204.69216
+  type: 'test'
+  ...
+# Subtest: live ACK, status replay and existing compact tables roundtrip without mutation
+ok 13 - live ACK, status replay and existing compact tables roundtrip without mutation
+  ---
+  duration_ms: 13.145992
+  type: 'test'
+  ...
+# Subtest: expansion, corruption, wrong request identity and malformed envelopes are rejected
+ok 14 - expansion, corruption, wrong request identity and malformed envelopes are rejected
+  ---
+  duration_ms: 6.595077
+  type: 'test'
+  ...
+# Subtest: small, incompressible, error and above-one-frame results use the old transport
+ok 15 - small, incompressible, error and above-one-frame results use the old transport
+  ---
+  duration_ms: 8.199279
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1500.517045
