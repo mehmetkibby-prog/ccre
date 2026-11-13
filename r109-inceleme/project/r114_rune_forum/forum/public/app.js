@@ -77,11 +77,13 @@ async function captcha(){
  try{const data=await api('/captcha');if(seq!==captchaSerial)return;$('#captcha-image').src=data.image;$('#auth-submit').disabled=false;}catch(e){if(seq===captchaSerial)$('#auth-error').textContent=e.message;}finally{if(seq===captchaSerial)$('#renew-captcha').disabled=false;}
 }
 async function auth(mode){
- state.authMode=mode;const register=mode==='register';$('#auth-form').reset();$('#auth-error').textContent='';
- $$('.register-only').forEach(el=>el.hidden=!register);$('#auth-email').required=register;$('#auth-repeat').required=register;$('#auth-terms').required=register;
+ state.authMode=mode;const register=mode==='register',recover=mode==='recover';$('#auth-form').reset();$('#auth-error').textContent='';
+ $$('.register-only').forEach(el=>el.hidden=!register);$('#auth-email').required=register;$('#auth-repeat').required=register||recover;$$('.repeat-only').forEach(el=>el.hidden=!(register||recover));$$('.recovery-only').forEach(el=>el.hidden=!recover);$('#auth-recovery').required=recover;$('#auth-terms').required=register;
  $('#auth-title').textContent=register?'Hikâyeye sen de katıl.':'Tekrar hoş geldin.';$('#auth-eyebrow').textContent=register?'TOPLULUĞA KATIL':'FORUM HESABIN';$('#auth-intro').textContent=register?'Forum hesabını oluştur, sohbetin bir parçası ol.':'Sohbetine ve yol arkadaşlarına geri dön.';
  $('#auth-submit').textContent=register?'Hesabımı oluştur →':'Giriş yap →';$('#auth-password').autocomplete=register?'new-password':'current-password';
  $('#auth-switch').innerHTML=register?'Zaten üye misin? <button class="text-button" data-auth="login">Giriş yap</button>':'Henüz üye değil misin? <button class="text-button" data-auth="register">Hesap oluştur</button>';
+ if(recover){$('#auth-title').textContent='Hesabına geri dön.';$('#auth-intro').textContent='Kurtarma anahtarını ve yeni parolanı gir. Eski oturumlar kapatılır.';$('#auth-submit').textContent='Yeni parolayı kaydet →';$('#auth-password').autocomplete='new-password';}
+ $('#auth-switch').innerHTML+=recover?' <button class="text-button" data-auth="login">Girişe dön</button>':' <button class="text-button" data-auth="recover">Parolamı unuttum</button>';
  if(!$('#auth-dialog').open)$('#auth-dialog').showModal();$('#auth-name').focus();await captcha();
 }
 function compose(){
@@ -107,10 +109,10 @@ document.addEventListener('click',async event=>{
 });
 $('#search-form').addEventListener('submit',e=>{e.preventDefault();location.hash='search/'+encodeURIComponent($('#search').value.trim());});
 $('#auth-form').addEventListener('submit',async e=>{
- e.preventDefault();const form=new FormData(e.target),register=state.authMode==='register';$('#auth-error').textContent='';
- if(register&&form.get('password')!==form.get('repeat')){$('#auth-error').textContent='Parolalar eşleşmiyor.';return;}
+ e.preventDefault();const form=new FormData(e.target),register=state.authMode==='register',recover=state.authMode==='recover';$('#auth-error').textContent='';
+ if((register||recover)&&form.get('password')!==form.get('repeat')){$('#auth-error').textContent='Parolalar eşleşmiyor.';return;}
  $('#auth-submit').disabled=true;
- try{const result=await api(register?'/register':'/login',{method:'POST',body:JSON.stringify({name:form.get('name'),password:form.get('password'),email:form.get('email'),terms:form.get('terms')==='on',captcha:form.get('captcha')})});state.user=result.user;state.csrf=result.csrf;e.target.reset();$('#auth-dialog').close();account();await refreshCategories();await render();toast(register?'Forum hesabın oluşturuldu. Hoş geldin!':'Hoş geldin, '+state.user.name+'.');}catch(error){$('#auth-error').textContent=error.message;await captcha();}finally{if($('#captcha-image').hasAttribute('src'))$('#auth-submit').disabled=false;}
+ try{const result=await api(register?'/register':recover?'/recover':'/login',{method:'POST',body:JSON.stringify({name:form.get('name'),recovery:form.get('recovery'),password:form.get('password'),email:form.get('email'),terms:form.get('terms')==='on',captcha:form.get('captcha')})});state.user=result.user;state.csrf=result.csrf;e.target.reset();$('#auth-dialog').close();if(result.recoveryCode){$('#recovery-code').value=result.recoveryCode;$('#recovery-dialog').showModal();}account();await refreshCategories();await render();toast(register?'Forum hesabın oluşturuldu. Hoş geldin!':'Hoş geldin, '+state.user.name+'.');}catch(error){$('#auth-error').textContent=error.message;await captcha();}finally{if($('#captcha-image').hasAttribute('src'))$('#auth-submit').disabled=false;}
 });
 $('#compose-form').addEventListener('submit',async e=>{
  e.preventDefault();const form=new FormData(e.target),button=e.target.querySelector('[type=submit]');button.disabled=true;$('#compose-error').textContent='';
@@ -120,6 +122,7 @@ document.addEventListener('submit',async e=>{
  if(e.target.id!=='reply-form')return;e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;
  try{await api('/topics/'+e.target.dataset.id+'/reply',{method:'POST',body:JSON.stringify({body:new FormData(e.target).get('body')})});await render();toast('Yanıtın yayınlandı.');}catch(error){$('#reply-error').textContent=error.message;button.disabled=false;}
 });
+$('#recovery-dialog').addEventListener('close',()=>{$('#recovery-code').value='';});
 window.addEventListener('hashchange',()=>{void render();mainScroll();});
 $$('[data-icon]').forEach(el=>el.insertAdjacentHTML('afterbegin',icon(el.dataset.icon)));
 async function boot(){try{const [session,,topics]=await Promise.all([api('/session'),refreshCategories(),api('/topics')]);Object.assign(state,session);state.topics=topics.topics;account();officialNews();await render();}catch(e){$('#forum-content').innerHTML=`<div class="empty-state"><p>${esc(e.message)}</p><button class="button outline" id="retry-forum">Tekrar dene</button></div>`;}}

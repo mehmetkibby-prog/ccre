@@ -11,6 +11,8 @@ import {categories,samples} from './catalog.mjs';
 const scrypt=promisify(scryptCallback),root=path.dirname(fileURLToPath(import.meta.url));
 const digest=s=>createHash('sha256').update(s).digest('hex');
 const token=()=>randomBytes(32).toString('hex');
+const recoveryToken=()=>randomBytes(24).toString('hex').match(/.{8}/g).join('-');
+const recoveryDigest=code=>digest(String(code??'').trim().toLowerCase().replaceAll('-',''));
 const safeEqual=(a,b)=>{if(typeof a!=='string'||typeof b!=='string')return false;const x=Buffer.from(a),y=Buffer.from(b);return x.length===y.length&&timingSafeEqual(x,y);};
 const issue=(status,message)=>Object.assign(new Error(message),{status});
 const publicUser=u=>u?{id:u.id,name:u.name,role:u.role}:null;
@@ -24,6 +26,8 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
  db.exec(`PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=3000;
  CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,name TEXT NOT NULL,name_key TEXT UNIQUE NOT NULL,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,role TEXT NOT NULL DEFAULT 'member' CHECK(role IN ('member','admin')),created INTEGER NOT NULL);
  CREATE TABLE IF NOT EXISTS sessions(hash TEXT PRIMARY KEY,user_id INTEGER NOT NULL REFERENCES users(id),csrf TEXT NOT NULL,expires INTEGER NOT NULL);
+ CREATE TABLE IF NOT EXISTS recovery(user_id INTEGER PRIMARY KEY REFERENCES users(id),hash TEXT UNIQUE NOT NULL);
+ CREATE INDEX IF NOT EXISTS sessions_user ON sessions(user_id);
  CREATE TABLE IF NOT EXISTS topics(id INTEGER PRIMARY KEY,category TEXT NOT NULL,title TEXT NOT NULL,body TEXT NOT NULL,user_id INTEGER NOT NULL REFERENCES users(id),realm TEXT NOT NULL,pinned INTEGER NOT NULL DEFAULT 0,locked INTEGER NOT NULL DEFAULT 0,hidden INTEGER NOT NULL DEFAULT 0,created INTEGER NOT NULL,updated INTEGER NOT NULL);
  CREATE INDEX IF NOT EXISTS topics_category ON topics(category,hidden,pinned DESC,updated DESC);
  CREATE TABLE IF NOT EXISTS replies(id INTEGER PRIMARY KEY,topic_id INTEGER NOT NULL REFERENCES topics(id),user_id INTEGER NOT NULL REFERENCES users(id),body TEXT NOT NULL,created INTEGER NOT NULL);
@@ -45,7 +49,7 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
  function budget(key,max,window=60000){
    const now=Date.now();let row=rates.get(key);
    if(!row||row.until<now){row={count:0,until:now+window};rates.set(key,row);}
-   if(++row.count>max)throw issue(429,'Çok hızlı işlem yapıyorsun. Biraz bekleyip tekrar dene.');
+   if(++row.count>max)throw Object.assign(issue(429,'Çok hızlı işlem yapıyorsun. Biraz bekleyip tekrar dene.'),{retryAfter:Math.max(1,Math.ceil((row.until-now)/1000))});
    if(rates.size>10000)throw issue(503,'Forum şu anda yoğun. Biraz sonra tekrar dene.');
  }
  async function passwordHash(password,salt=randomBytes(16).toString('hex')){
@@ -97,6 +101,7 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
      budget(ip+':all',240);
      if(req.method==='POST'&&req.headers.origin!==origin)throw issue(403,'İstek kaynağı doğrulanamadı. Sayfayı yenile.');
      const user=userSession(req);
+     if(req.method==='GET'&&route==='/forum/api/health')return json(res,200,{ok:sql('SELECT 1 AS ok').get().ok===1,version:'R114_RUNE_FORUM1',demo});
      if(req.method==='GET'&&route==='/forum/api/session')return json(res,200,{user:publicUser(user),csrf:user?.csrf??null,demo});
      if(req.method==='GET'&&route==='/forum/api/captcha'){
        budget(ip+':captcha',15);
@@ -107,12 +112,27 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
        setCookie(res,cookieNames.captcha,raw,180);
        return json(res,200,{image:'data:image/png;base64,'+Buffer.from(png).toString('base64')});
      }
-     if(req.method==='POST'&&['/forum/api/register','/forum/api/login'].includes(route)){
+     if(req.method==='POST'&&['/forum/api/register','/forum/api/login','/forum/api/recover'].includes(route)){
        budget(ip+':auth',10,600000);const data=await body(req);consumeCaptcha(req,res,data.captcha);
        const name=textField(data.name,3,24,'Kullanıcı adı'),password=data.password;
        if(typeof password!=='string'||password.length<10||password.length>128)throw issue(400,'Parola 10–128 karakter olmalı.');
        if(!/^[a-zA-Z0-9_]{3,24}$/.test(name))throw issue(400,'Kullanıcı adında yalnız harf, rakam ve alt çizgi kullan.');
        const key=name.toLowerCase();
+       if(route.endsWith('/recover')){
+         const existing=sql('SELECT u.id,u.name,u.role,r.hash FROM users u JOIN recovery r ON r.user_id=u.id WHERE u.name_key=?').get(key);
+         const hash=recoveryDigest(data.recovery);
+         if(!existing||!safeEqual(existing.hash,hash))throw issue(401,'Kullanıcı adı veya kurtarma anahtarı yanlış.');
+         const encoded=await passwordHash(password),recoveryCode=recoveryToken();
+         db.exec('BEGIN IMMEDIATE');try{
+           const consumed=sql('DELETE FROM recovery WHERE user_id=? AND hash=?').run(existing.id,hash);
+           if(consumed.changes!==1)throw issue(401,'Bu kurtarma anahtarı kullanılmış.');
+           sql('UPDATE users SET password=? WHERE id=?').run(encoded,existing.id);
+           sql('DELETE FROM sessions WHERE user_id=?').run(existing.id);
+           sql('INSERT INTO recovery VALUES(?,?)').run(existing.id,recoveryDigest(recoveryCode));
+           db.exec('COMMIT');
+         }catch(e){db.exec('ROLLBACK');throw e;}
+         return json(res,200,{...startSession(req,res,existing),recoveryCode});
+       }
        if(route.endsWith('/register')){
          if(['admin','administrator','coreadmin','coreyonetim','moderator','system'].includes(key))throw issue(400,'Bu kullanıcı adı kullanılamaz.');
          if(data.role!==undefined)throw issue(400,'Üyelik rolü istemciden belirlenemez.');
@@ -120,8 +140,9 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
          if(!/^\S+@\S+\.\S+$/.test(email)||data.terms!==true)throw issue(400,'Geçerli e-posta gir ve forum kurallarını kabul et.');
          if(sql('SELECT id FROM users WHERE name_key=? OR email=?').get(key,email))throw issue(409,'Bu bilgilerle kayıt oluşturulamadı. Giriş yapmayı dene.');
          const encoded=await passwordHash(password);
-         let id;try{id=Number(sql('INSERT INTO users(name,name_key,email,password,role,created) VALUES(?,?,?,?,?,?)').run(name,key,email,encoded,'member',now).lastInsertRowid);}catch(e){if(String(e.message).includes('UNIQUE'))throw issue(409,'Bu bilgilerle kayıt oluşturulamadı.');throw e;}
-         return json(res,201,startSession(req,res,{id,name,role:'member'}));
+         let id;const recoveryCode=recoveryToken();db.exec('BEGIN IMMEDIATE');
+         try{id=Number(sql('INSERT INTO users(name,name_key,email,password,role,created) VALUES(?,?,?,?,?,?)').run(name,key,email,encoded,'member',now).lastInsertRowid);sql('INSERT INTO recovery VALUES(?,?)').run(id,recoveryDigest(recoveryCode));db.exec('COMMIT');}catch(e){db.exec('ROLLBACK');if(String(e.message).includes('UNIQUE'))throw issue(409,'Bu bilgilerle kayıt oluşturulamadı.');throw e;}
+         return json(res,201,{...startSession(req,res,{id,name,role:'member'}),recoveryCode});
        }
        const existing=sql('SELECT * FROM users WHERE name_key=?').get(key);
        if(!await passwordMatches(password,existing?.password))throw issue(401,'Kullanıcı adı veya parola yanlış.');
@@ -181,14 +202,14 @@ export async function createForum({dbPath=':memory:',origin='http://127.0.0.1:81
      if(!relative||!file.startsWith(base)||!fs.existsSync(file)||!fs.statSync(file).isFile())throw issue(404,'Sayfa bulunamadı.');
      const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.webp':'image/webp','.woff2':'font/woff2'};
      res.writeHead(200,{'Content-Type':types[path.extname(file)]??'application/octet-stream'});if(req.method==='HEAD')res.end();else fs.createReadStream(file).pipe(res);
-   }catch(e){if(res.headersSent){res.destroy();return;}if(e.status===429)res.setHeader('Retry-After','60');if(!e.status)console.error('forum_request_failed',e.code??e.name);json(res,e.status??500,{error:e.status?e.message:'İşlem tamamlanamadı. Biraz sonra tekrar dene.'});}
+   }catch(e){if(res.headersSent){res.destroy();return;}if(e.status===429)res.setHeader('Retry-After',String(e.retryAfter??60));if(!e.status)console.error('forum_request_failed',e.code??e.name);json(res,e.status??500,{error:e.status?e.message:'İşlem tamamlanamadı. Biraz sonra tekrar dene.'});}
  });
  server.headersTimeout=10000;server.requestTimeout=15000;
- return{server,createAdmin,close:async()=>{await new Promise(resolve=>{server.close(resolve);server.closeAllConnections();});renderer.close();db.close();}};
+ return{server,createAdmin,close:async()=>{await new Promise(resolve=>{server.close(resolve);});renderer.close();db.close();}};
 }
 if(process.argv[1]===fileURLToPath(import.meta.url)){
  const port=Number(process.env.FORUM_PORT??8114),origin=process.env.FORUM_ORIGIN??`http://127.0.0.1:${port}`,demo=process.argv.includes('--demo');
  const app=await createForum({dbPath:process.env.FORUM_DB??path.join(root,'var/forum.sqlite'),origin,demo,trustProxy:process.env.FORUM_TRUST_PROXY==='1'});
- app.server.listen(port,'127.0.0.1',()=>console.log(`Forum preview: ${origin}/forum`));
+ app.server.listen(port,'127.0.0.1',()=>console.log(`Forum ${demo?'preview':'ready'}: ${origin}/forum`));
  for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>app.close().then(()=>process.exit(0)));
 }

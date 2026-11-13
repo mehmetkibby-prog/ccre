@@ -91,3 +91,29 @@ test('limits, security headers and nonpublic files',async t=>{
  for(let i=0;i<10;i++)await c.call('/login',{method:'POST',data:{name:'Player1',password:'Wrong-test-passphrase',captcha:'000000'}});
  assert.equal((await c.call('/login',{method:'POST',data:{}})).status,429);
 });
+test('single-use recovery changes password, rotates key, revokes every prior session and never stores raw key',async t=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'col-forum-recovery-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const dbPath=path.join(dir,'forum.sqlite');
+ const app=await fixture({dbPath});t.after(app.close);const first=app.client(),second=app.client();
+ const reg=await first.register();assert.match(reg.body.recoveryCode,/^[a-f0-9-]{53}$/);
+ await second.login('Player1');const originalSession=first.jar.get('col_forum_session');
+ const recover=app.client();
+ const data={name:'Player1',password:'A-new-test-password-114',recovery:reg.body.recoveryCode};
+ assert.equal((await recover.call('/recover',{method:'POST',data:{...data,recovery:'forged',captcha:await recover.code()}})).status,401);
+ const result=await recover.call('/recover',{method:'POST',data:{...data,captcha:await recover.code()}});assert.equal(result.status,200);assert.notEqual(result.body.recoveryCode,reg.body.recoveryCode);
+ assert.equal((await first.call('/session')).body.user,null);assert.equal((await second.call('/session')).body.user,null);
+ assert.equal((await second.login('Player1')).status,401);assert.equal((await second.login('Player1',data.password)).status,200);
+ assert.equal((await recover.call('/recover',{method:'POST',data:{...data,captcha:await recover.code()}})).status,401);
+ assert(!fs.readFileSync(dbPath).includes(Buffer.from(reg.body.recoveryCode)));assert(!fs.readFileSync(dbPath+'-wal').includes(Buffer.from(result.body.recoveryCode)));
+ assert.notEqual(first.jar.get('col_forum_session'),recover.jar.get('col_forum_session'));assert(originalSession);
+});
+test('online backup contains committed topics and preserves damaged old backup for investigation',async t=>{
+ const {backupForum}=await import('../forum/backup.mjs');const {DatabaseSync}=await import('node:sqlite');
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'col-forum-backup-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const dbPath=path.join(dir,'forum.sqlite');
+ const app=await fixture({dbPath});t.after(app.close);const c=app.client();await c.register();
+ await c.call('/topics',{method:'POST',data:{category:'meydan',title:'Yedekteki canlı konu',body:'Bağlantı açıkken alınan yedek.',realm:'Efsane'}});
+ const destination=path.join(dir,'backups');const first=await backupForum(dbPath,destination,{keep:1});
+ const db=new DatabaseSync(first.file,{readOnly:true});assert.equal(db.prepare('SELECT title FROM topics').get().title,'Yedekteki canlı konu');assert.equal(db.prepare('PRAGMA quick_check').get().quick_check,'ok');db.close();
+ const second=await backupForum(dbPath,destination,{keep:1});assert(!fs.existsSync(first.file));fs.writeFileSync(second.file+'.sha256','invalid\n');
+ await backupForum(dbPath,destination,{keep:1});assert(fs.existsSync(second.file));
+ assert.equal((await c.call('/health')).body.version,'R114_RUNE_FORUM1');
+});

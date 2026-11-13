@@ -1,6 +1,9 @@
 import {createForum} from './server.mjs';
-// Local operator-only bootstrap. No public route can create or promote admins.
-const {FORUM_DB,FORUM_ADMIN_NAME,FORUM_ADMIN_PASSWORD,FORUM_ADMIN_EMAIL}=process.env;
-if(!FORUM_DB||!FORUM_ADMIN_NAME||!FORUM_ADMIN_PASSWORD||!FORUM_ADMIN_EMAIL)throw Error('FORUM_DB ve FORUM_ADMIN_NAME/PASSWORD/EMAIL gerekli.');
-const app=await createForum({dbPath:FORUM_DB});
-try{await app.createAdmin(FORUM_ADMIN_NAME,FORUM_ADMIN_PASSWORD,FORUM_ADMIN_EMAIL);console.log('Forum yöneticisi oluşturuldu.');}finally{await app.close();}
+// Only the local operator can create an admin. Secrets arrive via stdin,
+// never in process arguments, environment variables, logs or the ZIP.
+const chunks=[];let bytes=0;
+for await(const chunk of process.stdin){bytes+=chunk.length;if(bytes>4096)throw Error('Admin girdisi fazla uzun.');chunks.push(chunk);}
+const {name,password,email}=JSON.parse(Buffer.concat(chunks));
+if(!process.env.FORUM_DB)throw Error('FORUM_DB gerekli.');
+const app=await createForum({dbPath:process.env.FORUM_DB});
+try{await app.createAdmin(name,password,email);console.log('Forum yöneticisi oluşturuldu.');}finally{await app.close();}
