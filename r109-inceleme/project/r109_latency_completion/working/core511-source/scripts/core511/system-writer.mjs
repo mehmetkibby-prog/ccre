@@ -55,12 +55,12 @@ export class SystemWriter {
   const service=systemService(peer),{epoch,sequence,key,kind,payload}=request??{};
   demand(Number.isSafeInteger(epoch)&&epoch>0&&Number.isSafeInteger(sequence)&&sequence>0&&typeof key==='string'&&/^[A-Za-z0-9:_.-]{1,240}$/.test(key)&&this.operations.has(kind),'system_command_fields');
   demand(Buffer.byteLength(JSON.stringify(payload)??'')<=262144,'system_command_size');
-  const digest=eventDigest({realm:this.realmId,service,incarnation:peer.incarnation,epoch,sequence,kind,payload});this.pending++;
-  try{return await timedAtomicR51(this.database,db=>{
+  const digest=eventDigest({realm:this.realmId,service,incarnation:peer.incarnation,epoch,sequence,kind,payload}),delegate=this.delegateR113?.(peer,request);this.pending++;
+  try{return await timedAtomicR51(delegate?{atomic:delegate.atomic}:this.database,db=>{
    const owner=this.assert(db,peer,epoch);if(this.commandGuard)demand(this.commandGuard(db,peer,request)===true,'system_command_fenced');const prior=prepareServerStatement(db,'SELECT * FROM kernel511_system_receipts WHERE operation_id=?').get(key);
    if(prior){demand(prior.digest===digest,'system_key_reused');return JSON.parse(prior.response);}
    demand(sequence===owner.sequence+1,sequence<=owner.sequence?'system_operation_retired':'system_sequence_gap');
-   const nativeResult=this.operations.get(kind)(db,payload,{peer,service,epoch,key,realm:this.realmId});demand(!nativeResult?.then,'system_async_operation');
+   const nativeResult=(delegate?.execute??this.operations.get(kind))(db,payload,{peer,service,epoch,key,realm:this.realmId});demand(!nativeResult?.then,'system_async_operation');
    const result=compactCheckpointAckR53(kind,payload,nativeResult);
    const ack={key,sequence,result},response=JSON.stringify(ack);demand(response&&Buffer.byteLength(response)<=262144,'system_response_size');
    prepareServerStatement(db,'INSERT INTO kernel511_system_receipts VALUES(?,?,?,?,?,?,?)').run(key,service,epoch,sequence,digest,response,this.clock());

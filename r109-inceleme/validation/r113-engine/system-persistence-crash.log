@@ -1,0 +1,64 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794545379024,"backupName":"before-pearl-reset-1794545379024-aebda3c0-c721-49a8-a1ca-54846e7866e6.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:50.205Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":232205,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a8af82839b169c446fd3bf54"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:50.206Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":232215,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e6c009b05cde44a9db1783c3"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:50.206Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":232221,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"63b203b3a760def6d7c6cd9c"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:50.209Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":232231,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"cb9bcd0bc8144b34279581ed"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:50.225Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":232194,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"1907dbf5bef068aedbc318c9"}
+# Subtest: instance persistence before_commit worker exit resolves one receipt and the next instance still progresses
+not ok 1 - instance persistence before_commit worker exit resolves one receipt and the next instance still progresses
+  ---
+  duration_ms: 13246.819972
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/system-persistence-r113.test.mjs:6:53'
+  failureType: 'testCodeFailure'
+  error: 'mode_operation_context'
+  code: 'mode_operation_context'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    NativeGameServices.run (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/mode-services.mjs:24:3)
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-writer.mjs:6:19
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/writer-runtime.mjs:94:120
+    SharedRefreshScope.run (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/shared-refresh-scope.mjs:86:20)
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/writer-runtime.mjs:94:92
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/system-writer.mjs:63:69
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/guild-state.mjs:16:261
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/market-state.mjs:20:261
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545392627,"backupName":"before-pearl-reset-1794545392627-860cb891-5373-4283-84f0-26170805f0e7.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:59.855Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":232270,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c88d35bd40ad0691e3fe63ef"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:59.855Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":232276,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a197c6ced5789275ba9e242f"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:59.855Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":232286,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"63f606d6dcb28a86ed88638b"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:59.856Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":232292,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dc76d46fc16fa65ff00eb036"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:49:59.874Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":232259,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"7d449531c78ee921fe5bee86"}
+# Subtest: instance persistence after_commit worker exit resolves one receipt and the next instance still progresses
+not ok 2 - instance persistence after_commit worker exit resolves one receipt and the next instance still progresses
+  ---
+  duration_ms: 9462.795203
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/system-persistence-r113.test.mjs:6:53'
+  failureType: 'testCodeFailure'
+  error: 'mode_operation_context'
+  code: 'mode_operation_context'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    NativeGameServices.run (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/mode-services.mjs:24:3)
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-writer.mjs:6:19
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/writer-runtime.mjs:94:120
+    SharedRefreshScope.run (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/shared-refresh-scope.mjs:86:20)
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/writer-runtime.mjs:94:92
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/system-writer.mjs:63:69
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/guild-state.mjs:16:261
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/market-state.mjs:20:261
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23722.623919

@@ -4,6 +4,7 @@ import {castleEnabled,CASTLE_CHANNEL,CASTLE_AREA} from './castle-model-r59.mjs';
 import {withEntryWritesR67} from './entry-write-window-r67.mjs';
 import {residentCapacityR59,channelAdmissionR59,castleResumeR59} from './castle-capacity-r59.mjs';
 import {installRewardWorkerR533} from './reward-worker-r533.mjs';
+import {systemPersistenceR113} from './system-persistence-r113.mjs';
 import {statementBootPoolR61,prepareCombatStatementBootR61} from './statement-boot-pool-r61.mjs';
 import {rewardWarmupR56,sectionReadGroupR56} from './r56-options.mjs';
 import {ACTOR_GROUP_READ_LIMITS_R56,ACTOR_REFRESH_LIMITS_R52} from './actor-section-reuse-r52.mjs';
@@ -110,6 +111,7 @@ export class CoreCoordinator {
   if(this.afkCheck)this.database.core511AfkAdmin=this.afkCheck.admin;
   if(securityRenewalR50)this.securityRenewal=new SignedSecurityRenewal(this);
   this.writer.rewardWorkerR533=installRewardWorkerR533(this);
+  this.writer.system.delegateR113=(peer,request)=>systemPersistenceR113(this.writer.rewardWorkerR533,peer,request);
  }
  serial(work,{duringGlobal=false}={}){if(this.stopping)return Promise.reject(kernelError('coordinator_stopping'));const queued=stageStartR51();const next=this.tail.then(async()=>{stageEndR51('coordinator.queue',queued);const terminal=stageStartR51();await this.sharedWorld?.combat.terminalIdle();stageEndR51('coordinator.terminalWait',terminal);demand(!this.closed,'coordinator_closed');demand(duringGlobal||!this.globalWorld?.held&&!this.recoveringWorld,'global_world_busy');return this.nativeRealmSecurity.inCoordinator(()=>this.nativeGuildAuth.inCoordinator(work));});this.tail=next.catch(()=>{});return observeStageR51('coordinator.total',queued,next);}
  async ownership(work){

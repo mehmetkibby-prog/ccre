@@ -1,0 +1,60 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794545425986,"backupName":"before-pearl-reset-1794545425986-a42d1cff-b16e-4b48-bdb6-2d70849ee461.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.082Z","action":"shutdown_abort","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.083Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":1,"pid":232375,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"38da72de0cf297e87980b4e3"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.083Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":2,"pid":232385,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"2b12e44435fc61780d3cecfb"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.083Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":3,"pid":232391,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"d35152b39c2694eb6f77a405"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.085Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":4,"pid":232397,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"c5e053fe2519d5ddcb779f6b"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:34.085Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":0,"pid":232364,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"4000932f6afcf3f1eb9ffd6d"}
+# Subtest: instance persistence before_commit worker exit resolves one receipt and the next instance still progresses
+not ok 1 - instance persistence before_commit worker exit resolves one receipt and the next instance still progresses
+  ---
+  duration_ms: 9997.051019
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/system-persistence-r113.test.mjs:6:53'
+  failureType: 'hookFailed'
+  error: 'process fixture cleanup failed'
+  code: 'ERR_TEST_FAILURE'
+  name: 'AggregateError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/process-fixture.mjs:41:423)
+    async TestHook.run (node:internal/test_runner/test:1054:7)
+    async Test.runHook (node:internal/test_runner/test:965:9)
+    async after (node:internal/test_runner/test:1005:9)
+    async Test.run (node:internal/test_runner/test:1070:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545435621,"backupName":"before-pearl-reset-1794545435621-2b4093ae-72e1-488d-9916-bfc57abc2aec.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.606Z","action":"shutdown_abort","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.606Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":1,"pid":232441,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"b05efd554fb21dbbfc754661"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.607Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":2,"pid":232447,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"887f56737818e8defad56808"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.607Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":3,"pid":232457,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"68ecec96506ec53e92552797"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.608Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":4,"pid":232463,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"f4b862c1e576a3544bed8b47"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:50:42.608Z","action":"signal","incident":1,"reason":"shutdown_system_drain_mismatch","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"process-drain.mjs","line":23,"column":3},{"file":"process-supervisor.mjs","line":172,"column":41}],"channel":0,"pid":232430,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"24d733bdb594ec9d2ddab438"}
+# Subtest: instance persistence after_commit worker exit resolves one receipt and the next instance still progresses
+not ok 2 - instance persistence after_commit worker exit resolves one receipt and the next instance still progresses
+  ---
+  duration_ms: 8515.762307
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/system-persistence-r113.test.mjs:6:53'
+  failureType: 'hookFailed'
+  error: 'process fixture cleanup failed'
+  code: 'ERR_TEST_FAILURE'
+  name: 'AggregateError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/process-fixture.mjs:41:423)
+    async TestHook.run (node:internal/test_runner/test:1054:7)
+    async Test.runHook (node:internal/test_runner/test:965:9)
+    async after (node:internal/test_runner/test:1005:9)
+    async Test.run (node:internal/test_runner/test:1070:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19541.118965

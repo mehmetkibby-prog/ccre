@@ -53,8 +53,13 @@ export async function runRewardWorkerR533({hook=()=>{}}={}){
   demand(message.type==='run'&&Number.isSafeInteger(message.id)&&message.id>serial&&!current,'reward_worker_protocol');serial=message.id;current=message.envelope;clock=current.clockNow;written=[];
   const started=performance.now();
   try{
-   demand(workerOperationR113(current.request),'reward_worker_operation');
+   demand(current.systemR113?current.request.kind==='adventure_step':workerOperationR113(current.request),'reward_worker_operation');
    registry.registry.apply(current.registry);for(const fault of current.registryFaults??[])registry.registry.stop(fault.runId,{code:fault.code});
+   if(current.systemR113){
+    writer.services.refresh({rankRefreshR85,serviceRefreshR89});writer.services.globals.__colAdventure.profileCache.clear();
+    hook('before_command',{database,current});const ack=await writer.system.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);serviceRefreshR89.afterCommand(ack);hook('after_command',{database,current,ack});
+    parentPort.postMessage({id:message.id,ok:true,ack,written:[],workMs:performance.now()-started});return;
+   }
    writer.refreshOwners(current.presence);writer.services.refresh({rankRefreshR85,serviceRefreshR89});writer.services.globals.__colAdventure.profileCache.clear();writer.presence.rows=new Map(current.presence.map(p=>[p.actor,p]));
    hook('before_command',{database,current});const ack=await writer.command(current.peer,current.request);rankRefreshR85.afterCommand(ack);serviceRefreshR89.afterCommand(ack);hook('after_command',{database,current,ack});
    parentPort.postMessage({id:message.id,ok:true,ack,written:written.map(p=>[p.actor,p.version]),workMs:performance.now()-started});
