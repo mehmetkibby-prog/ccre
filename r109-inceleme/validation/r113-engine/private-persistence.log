@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: private persistence admission excludes economic transitions and unbounded claims
+ok 1 - private persistence admission excludes economic transitions and unbounded claims
+  ---
+  duration_ms: 0.30625
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548324671,"backupName":"before-pearl-reset-1794548324671-a3b18f9b-cf10-48eb-acba-4da7b215d502.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:52.184Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":242096,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f0dc0610473f011ff55f1800"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:52.185Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":242106,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e8c12fedfba702963cf89b6d"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:52.186Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":242120,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ce54362e126b1f7924886d1f"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:52.186Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":242202,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"6645ed9db626fafdf4281ab4"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:52.205Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":242085,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"cec1279a176bd7c690c94f71"}
+# Subtest: forest: native claim and potion persist in sole worker and replay exactly once
+ok 2 - forest: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 9174.876647
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548333725,"backupName":"before-pearl-reset-1794548333725-0ea9e975-a608-4ce9-ae5d-ec7728cbc24b.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:59.834Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":242236,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"33d223dfef583bff73ba74b0"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:59.836Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":242242,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"df1c654b4879bba02a138aa1"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:59.836Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":242252,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"94090e81aa5feed17073db9e"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:59.836Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":242258,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a3c62794cb75ab51af153705"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:38:59.860Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":242225,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"b415ee35e5c6d57ae48e9866"}
+# Subtest: black: native claim and potion persist in sole worker and replay exactly once
+ok 3 - black: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 7660.715877
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794548341567,"backupName":"before-pearl-reset-1794548341567-f3d278eb-1472-4bd2-ac1e-36d700bd54fa.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:39:07.686Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":242289,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bd2e61f560fbeb3bc8f297de"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:39:07.687Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":242295,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"02a0a9a662fce75b506b412a"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:39:07.687Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":242305,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"740706a135866759ab613fac"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:39:07.687Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":242311,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"615dcad3e26925eb49d943ec"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T05:39:07.707Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":242278,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"e725e49fe94e6551fa179db7"}
+# Subtest: rune_v2: native claim and potion persist in sole worker and replay exactly once
+ok 4 - rune_v2: native claim and potion persist in sole worker and replay exactly once
+  ---
+  duration_ms: 7849.473005
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25747.446422

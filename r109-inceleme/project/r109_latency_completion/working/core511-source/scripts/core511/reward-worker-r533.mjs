@@ -1,5 +1,5 @@
 import {Worker} from 'node:worker_threads';
-import {combatAreaR113,dungeonWriteR113} from './persistence-scope-r113.mjs';
+import {combatAreaR113,dungeonWriteR113,privateCombatWriteR113} from './persistence-scope-r113.mjs';
 import {guardDeathBatchActorsR57} from './death-batch-writer-r57.mjs';
 import {statSync,realpathSync} from 'node:fs';
 import {rewardWorkerR533} from './r533-options.mjs';
@@ -16,7 +16,6 @@ import {readMarketRevision} from './market-state.mjs';
 import {readGuildRevision} from './guild-state.mjs';
 import {withPreparedStatements477} from '../../../native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs';
 
-const areas=new Set(['forest','frozen','ancient']);
 const scopeCodes=new Set(['owner_epoch_fenced','simulation_epoch_fenced','shared_terminal_actor_fenced','transition_actor_fenced','permanent_actor_fenced','actor_command_pending','global_world_busy']);
 const failShape=error=>({code:error?.code??'reward_worker_failed',message:error?.message??'reward_worker_failed'});
 export class RewardWorkerR533 {
@@ -34,7 +33,7 @@ export class RewardWorkerR533 {
   if(dungeonWriteR113(request))return true;
   const p=request.payload,player=p?.expected?.player;
   if(!player||!combatAreaR113(player.area)||player.arena_match_id||player.instance_id)return false;
-  return request.operation==='attack'&&p.input?.action==='attack'&&!p.expected?.monster?.is_boss||areas.has(player.area)&&request.operation==='native_action'&&p.input?.action==='claim_rewards'&&Array.isArray(p.input.rewardTargets)&&p.input.rewardTargets.length<=10;
+  return request.operation==='attack'&&p.input?.action==='attack'&&!p.expected?.monster?.is_boss||privateCombatWriteR113(request);
  }
  safeScope(sql,request){
   // Native HTTP services may own synchronous SQLite transactions outside
