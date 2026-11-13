@@ -31,6 +31,12 @@ export function applyCommittedResultR113(runtime,result,context){
  for(const row of needed){
   const part=parts.get(row.id),owner=c.owners.get(row.id),p=c.kernel.players.get(row.id),sub=runtime.world.subscribers.get(row.id),bundle=part?.bundle;
   if(bundle?.dungeon&&!Object.hasOwn(bundle.dungeon,'settings')){if(!settings)return recover();bundle.dungeon={...bundle.dungeon,settings};}
+  // Both the resident adventure image and the public tower panel used to
+  // repeat this exact current catalog. Keep their private inventory/run data;
+  // restore only configuration from the already verified immutable point.
+  for(const adventure of [bundle?.adventure,part?.sections?.adventure511])if(adventure?.towerInfo&&!Object.hasOwn(adventure.towerInfo,'config')){
+   if(!settings)return recover();adventure.towerInfo={...adventure.towerInfo,config:settings.kadim_tower_settings};
+  }
   if(!part||!bundle||bundle.player?.id!==row.id||bundle.owner?.epoch!==owner.epoch||bundle.owner?.incarnation!==owner.incarnation||bundle.owner?.channel!==owner.channel||bundle.world?.cycle!==c.world.cycle||
    !Number.isSafeInteger(part.base)||part.next!==part.base+1||c.commitRevisionsR113.get(row.id)!==part.base||
    !p||p.epoch!==owner.epoch||!p.barrier&&!p.externalHold||!c.lanes.busy(['player:'+row.id])||

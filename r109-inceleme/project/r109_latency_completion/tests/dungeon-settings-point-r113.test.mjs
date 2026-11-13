@@ -23,9 +23,9 @@ test('matching reference installs all private actors; missing or stale configura
  const point=readDungeonSettingsPointR113(fixture(t)),owner={epoch:1,incarnation:'c',channel:1},rows=['a','b'].map(id=>({id,area:'forest',channel:1}));let changed=[];
  const c={world:{cycle:1},owners:new Map(rows.map(p=>[p.id,owner])),kernel:{players:new Map(rows.map(p=>[p.id,{epoch:1,barrier:{}}]))},commitRevisionsR113:new Map(rows.map(p=>[p.id,0])),lanes:{busy:()=>true},applyBundle:b=>changed.push(b),revision:0};
  const runtime={channel:c,world:{subscribers:new Map(rows.map(p=>[p.id,{data:{area:'forest',channel:1}}])),commitPrivateR113(){}},slimReload:{forget(){}}};
- const result=()=>({players:rows,committedR113:{version:1,cycle:1,operationId:'operation',dungeonSettingsRefR113:point.ref,actors:rows.map(row=>({id:row.id,base:0,next:1,bundle:{player:row,owner,world:{cycle:1},combat:{},dungeon:{players:[row]}},sections:{owner:row}}))}});
+ const result=()=>({players:rows,committedR113:{version:1,cycle:1,operationId:'operation',dungeonSettingsRefR113:point.ref,actors:rows.map(row=>({id:row.id,base:0,next:1,bundle:{player:row,owner,world:{cycle:1},combat:{},dungeon:{players:[row]},adventure:{towerInfo:{inventory:{solo_key:7}}}},sections:{owner:row,adventure511:{towerInfo:{inventory:{solo_key:7}}}}}))}});
  assert.equal(applyCommittedResultR113(runtime,result()),false);assert.equal(changed.length,0);
  c.dungeonSettingsR113={ref:'f'.repeat(64),settings:point.settings};assert.equal(applyCommittedResultR113(runtime,result()),false);assert.equal(changed.length,0);
  c.dungeonSettingsR113=point;assert.equal(applyCommittedResultR113(runtime,result()),true);assert.equal(changed.length,2);
- for(const bundle of changed)assert.equal(bundle.dungeon.settings,point.settings);
+ for(const bundle of changed){assert.equal(bundle.dungeon.settings,point.settings);assert.equal(bundle.adventure.towerInfo.config,point.settings.kadim_tower_settings);assert.deepEqual(bundle.adventure.towerInfo.inventory,{solo_key:7});}
 });

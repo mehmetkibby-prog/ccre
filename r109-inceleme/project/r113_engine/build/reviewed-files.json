@@ -1,6 +1,7 @@
 [
   "core511-source/scripts/core511/actor-read-wire-r112.mjs",
   "core511-source/scripts/core511/adventure-channel.mjs",
+  "core511-source/scripts/core511/adventure-service.mjs",
   "core511-source/scripts/core511/attack-commit-r53.mjs",
   "core511-source/scripts/core511/bounded-read-queue.mjs",
   "core511-source/scripts/core511/channel-connections.mjs",

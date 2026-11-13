@@ -34,6 +34,7 @@ test('committed actor sections match the authoritative full snapshot after progr
   assert.equal(Object.hasOwn(part.bundle,'profiles'),false);assert.equal(Object.hasOwn(part.bundle,'settings'),false);
   assert.equal(Object.hasOwn(part.bundle.dungeon,'settings'),false,'shared settings must not be repeated in each actor image');
   const point=readDungeonSettingsPointR113(sql);assert.equal(result.committedR113.dungeonSettingsRefR113,point.ref);part.bundle.dungeon.settings=point.settings;
+  for(const a of [part.bundle.adventure,part.sections.adventure511]){assert.equal(Object.hasOwn(a.towerInfo,'config'),false);a.towerInfo.config=point.settings.kadim_tower_settings;}
   const fresh=await readActorWorldBundle(sql,[id,1,s.peer.incarnation,s.owner.epoch,0,result.committedR113.at,{account:part.bundle.player.account_id,chatAfterId:0,starterReward:null}],new ColdWorldReader(sql));
   for(const key of ['inventory','storageItems','stones','pets','dungeonMaterials','dungeonWings','drops','adventure511'])assert.deepEqual(wire(part.sections[key]),wire(fresh.projection.data[key]),key);
   const expected=fresh.projection.data.players.find(p=>p.id===id);
