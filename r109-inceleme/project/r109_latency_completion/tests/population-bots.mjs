@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import {activePopulationInputs,settlePopulationEnd} from './population-end-settlement.mjs';
 import {observePopulationFinalEvent,recordPopulationPending} from './population-final-events.mjs';
-import {offerPopulationAttackR113} from './population-arrivals-r113.mjs';
+import {offerPopulationAttackR113,observePopulationCooldownR113} from './population-arrivals-r113.mjs';
 import {PopulationDelivery} from './population-delivery-r111.mjs';
 import {WebSocket} from '/tmp/core511-build-deps/node_modules/ws/wrapper.mjs';
 const {Core511Transport}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/client-transport.mjs');
@@ -20,6 +20,7 @@ async function send(a,input){
  if(measuring)delivery.sent(a.n,input,at);
  const r=await a.client.command(input);
  delivery.reply(a.n,input,r,performance.now());
+ if(r.status===200||r.status===202)observePopulationCooldownR113(a,input,r.body);
  if(measuring){a.latencies.push(performance.now()-at);a.acks++;count('replies');}
  // With native regen/healing enchants, HP can reach its cap between the
  // received snapshot and potion execution. This exact legal no-op is counted,

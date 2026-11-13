@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: authoritative skill cooldown changes selection without delaying the independent offer clock
+ok 1 - authoritative skill cooldown changes selection without delaying the independent offer clock
+  ---
+  duration_ms: 0.453753
+  type: 'test'
+  ...
+# Subtest: fixed offered traffic keeps counting backlog while replies stall and never exceeds the two-input window
+ok 2 - fixed offered traffic keeps counting backlog while replies stall and never exceeds the two-input window
+  ---
+  duration_ms: 2.630937
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 237.054469

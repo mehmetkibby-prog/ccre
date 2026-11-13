@@ -1,6 +1,13 @@
 // Test-only fixed-cadence offers independent of previous command completion.
 // Never bypass the real client, input window, rate/ownership or native cadence.
 import {randomUUID} from 'node:crypto';
+export function observePopulationCooldownR113(a,input,body,now=Date.now()){
+ if(input.action!=='attack'||!(input.ability>0)||!Number.isFinite(body?.cooldownRemainingMs)||body.cooldownRemainingMs<0||body.cooldownRemainingMs>120000)return;
+ // Skill cooldown starts at authoritative execution, not the bot's offer.
+ // This only chooses which legal skill is offered; the 950 ms arrival clock
+ // continues independently and uses a basic attack while skills cool down.
+ const next=a.abilityNext??={};next[input.ability]=Math.max(next[input.ability]??0,now+body.cooldownRemainingMs+100);
+}
 export function offerPopulationAttackR113(a,{now=Date.now(),measuring=false,isMeasuring=()=>measuring,send,count,onError}){
  if(now<(a.nextOfferR113??0))return;
  const missed=a.nextOfferR113?Math.max(0,Math.floor((now-a.nextOfferR113)/950)):0;
