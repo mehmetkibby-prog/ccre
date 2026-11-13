@@ -427,17 +427,19 @@ function PlayerTab({ dis }: { dis: boolean }) {
   const [edit, setEdit] = useState<Record<number, { level?: number; gems?: number; essence?: number; potions?: number }>>({});
   const [note, setNote] = useState('');
   const [q, setQ] = useState('');
+  const [confirmReset, setConfirmReset] = useState<number | null>(null);
   const api = useMemo(() => (OFFLINE ? import('../offline/local.ts') : null), []);
   const reload = () => { api?.then((m) => setList(m.adminPlayers())); };
   useEffect(() => { reload(); const iv = setInterval(reload, 4000); return () => clearInterval(iv); }, []);
-  if (!OFFLINE) return <div className="muted">Sunucu sürümünde oyuncular sunucu yönetim komutuyla (gm_set) düzenlenir.</div>;
+  if (!OFFLINE) return <div className="muted">Sunucu sürümünde oyuncular sunucu yönetim komutlarıyla düzenlenir: gm_set (seviye/para) ve gm_reset (karakteri sıfırla).</div>;
   const shown = list.filter((p) => !q || p.name.toLocaleLowerCase('tr').includes(q.toLocaleLowerCase('tr')));
   const apply = async (p: AdminPlayer) => { const m = await api!; setNote(`${p.name}: ${m.adminUpdatePlayer(p.id, edit[p.id] ?? {})}`); setEdit((e) => { const n = { ...e }; delete n[p.id]; return n; }); reload(); };
+  const reset = async (p: AdminPlayer) => { const m = await api!; setNote(`${p.name}: ${m.adminResetPlayer(p.id)}`); setConfirmReset(null); reload(); };
   const set = (id: number, k: 'level' | 'gems' | 'essence' | 'potions', v: number | undefined) => setEdit((e) => ({ ...e, [id]: { ...(e[id] ?? {}), [k]: v } }));
   return (
     <section className="admin-sec">
       <h4>Oyuncular</h4>
-      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Bu test sürümünde her ziyaretçinin karakteri kendi tarayıcısında durur: burada bu cihazdaki karakterler ve oyundaki botlar listelenir. Çevrimiçi oyuncu anında güncellenir (seviye değişince canı ve istatistikleri yeniden hesaplanır).</div>
+      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Bu test sürümünde her ziyaretçinin karakteri kendi tarayıcısında durur: burada bu cihazdaki karakterler ve oyundaki botlar listelenir. Çevrimiçi oyuncu anında güncellenir (seviye değişince canı ve istatistikleri yeniden hesaplanır). <b>Sıfırla</b>: karakter seviye 1'e iner; çanta, eşyalar (beyaz başlangıç silahı ve zırhı verilir), para, malzemeler, statü ve beceriler sıfırlanır, köye ışınlanır.</div>
       <input className="adm-search" placeholder="Oyuncu ara…" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="adm-table-wrap"><table className="adm-table">
         <thead><tr><th>Oyuncu</th><th>Seviye</th><th>Mücevher</th><th>Öz</th><th>İksir</th><th /></tr></thead>
@@ -450,7 +452,14 @@ function PlayerTab({ dis }: { dis: boolean }) {
               <td><Num v={e.gems} def={p.gems} min={0} max={1e9} step={1} dis={dis} w={74} on={(v) => set(p.id, 'gems', v)} /></td>
               <td><Num v={e.essence} def={p.essence} min={0} max={1e9} step={1} dis={dis} w={70} on={(v) => set(p.id, 'essence', v)} /></td>
               <td><Num v={e.potions} def={p.potions} min={0} max={1e6} step={1} dis={dis} w={56} on={(v) => set(p.id, 'potions', v)} /></td>
-              <td><button className="btn small primary" disabled={dis || !edit[p.id] || !Object.values(edit[p.id]).some((x) => x !== undefined)} onClick={() => apply(p)}>Uygula</button></td>
+              <td>
+                <div className="row" style={{ gap: 4, flexWrap: 'nowrap' }}>
+                  <button className="btn small primary" disabled={dis || !edit[p.id] || !Object.values(edit[p.id]).some((x) => x !== undefined)} onClick={() => apply(p)}>Uygula</button>
+                  {!p.bot && (confirmReset === p.id
+                    ? <><button className="btn small red" disabled={dis} onClick={() => reset(p)}>Evet, sıfırla</button><button className="btn small ghost" onClick={() => setConfirmReset(null)}>Vazgeç</button></>
+                    : <button className="btn small ghost" disabled={dis} title="Seviye 1, başlangıç eşyaları; çanta, para, malzeme, statü ve beceriler sıfırlanır" onClick={() => setConfirmReset(p.id)}>Sıfırla</button>)}
+                </div>
+              </td>
             </tr>
           );
         })}</tbody>

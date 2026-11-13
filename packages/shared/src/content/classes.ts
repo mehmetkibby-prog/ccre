@@ -43,9 +43,9 @@ export const CLASSES: Record<ClassId, ClassDef> = {
     id: 'guardian', name: 'Muhafız', weapon: 'sword',
     desc: 'Kalkanı ve kılıcıyla ön safta durur. Düşmanı çeker, üstüne atılır, sersemletir.',
     baseHp: 280, hpPerLevel: 44, baseAtk: 15, atkPerLevel: 3.2, baseDef: 9, defPerLevel: 1.8,
-    speed: 225 * BASE_MULT, range: 175,
+    speed: 225 * BASE_MULT, range: 85,
     skills: [
-      { id: 'g_basic', name: 'Kılıç Darbesi', desc: 'Yakın mesafe kılıç vuruşu.', kind: 'melee', unlock: 1, cooldownMs: 650, range: 175, mult: 1 },
+      { id: 'g_basic', name: 'Kılıç Darbesi', desc: 'Yakın mesafe kılıç vuruşu.', kind: 'melee', unlock: 1, cooldownMs: 650, range: 85, mult: 1 },
       { id: 'g_pull', name: 'Zincir Çekişi', desc: 'Hedefi yanına çeker ve hasar verir.', kind: 'pull', unlock: 5, cooldownMs: 10_000, range: 720, mult: 1.6 },
       { id: 'g_dash', name: 'Kalkan Hücumu', desc: 'Hedefe atılır, çevresine hasar verip sersemletir.', kind: 'dash', unlock: 30, cooldownMs: 12_000, range: 600, mult: 2.0, radius: 160, stunMs: 1500, maxTargets: 6 },
     ],

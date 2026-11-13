@@ -4,7 +4,7 @@
  * API ve WebSocket taklit edilir; kayıtlar yalnız bu cihazın localStorage'ında tutulur.
  * Gerçek çok oyunculu sürüm VDS'teki sunucuyla çalışır; bu mod yalnız denemek içindir.
  */
-import { World, makeItem } from '../../../server/src/worker/world.ts';
+import { World, makeItem, resetCharState } from '../../../server/src/worker/world.ts';
 import type { CharState, FromWorker } from '../../../server/src/types.ts';
 import { TUNING, MAPS, MARKET_VALUE, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
@@ -314,6 +314,16 @@ export function adminPlayers(): AdminPlayer[] {
     out.set(c.id, { id: c.id, name: c.name, cls: c.cls, level: c.level, gems: c.gems, essence: c.essence, potions: c.materials.red_potion ?? 0, map: p.zone.id, online: true, bot: c.id < 0 });
   }
   return [...out.values()].sort((a, b) => Number(b.online) - Number(a.online) || a.name.localeCompare(b.name, 'tr'));
+}
+/** Karakteri sıfırla: seviye 1, başlangıç eşyaları, para ve malzemeler sıfır (çevrimiçiyse anında). */
+export function adminResetPlayer(id: number): string {
+  if (_backend?.world.adminResetPlayer(id)) return 'Karakter sıfırlandı (çevrimiçi, anında; kayıt dünya tarafından yazılır).';
+  const c = db.chars[id];
+  if (!c) return 'Karakter bulunamadı.';
+  resetCharState(c);
+  c.hp = computeStats({ cls: c.cls, level: 1, stats: { str: 0, res: 0, vit: 0 }, equip: {} }).maxHp;
+  persist();
+  return 'Karakter sıfırlandı; oyuncu oyuna girince geçerli.';
 }
 export function adminUpdatePlayer(id: number, patch: { level?: number; gems?: number; essence?: number; potions?: number }): string {
   if (_backend?.world.adminSetPlayer(id, patch)) return 'Çevrimiçi oyuncu anında güncellendi.';

@@ -15,13 +15,18 @@ export interface CEnt {
   x: number; y: number; samples: Sample[];
   dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
-  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; guild: string;
+  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; guild: string; combo?: number;
   icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
   hurtUntil: number; spawnAt: number; deadAt: number;
+  /** vuruşla geri sekme: yön (birim vektör) ve bitiş anı */
+  kbX?: number; kbY?: number; kbUntil?: number;
 }
 
 const INTERP_MS = 110;
 const seqDiff = (a: number, b: number) => ((a - b + 0x8000) & 0xffff) - 0x8000;
+
+/** Muhafız kılıcının hedefe değdiği an (saldırı animasyonunun başından, ms). */
+export const MELEE_IMPACT_MS = 170;
 
 export class Game {
   ws: WebSocket | null = null;
@@ -48,6 +53,9 @@ export class Game {
   moveTarget: { x: number; y: number } | null = null;
   interactNpc: string | null = null;
   autoAttack = false;
+  /** Yakın dövüş saldırısı başlayanlar: vuruş anını eşlemek ve kombo sırası için */
+  meleeCast = new Map<number, { at: number; combo: number }>();
+  selfCombo = 0;
   lastAttackSent = 0;
   inputAcc = 0;
   lastFrame = 0;
@@ -238,11 +246,30 @@ export class Game {
     const st = store.get().settings;
     switch (ev.e) {
       case Ev.DAMAGE: {
+        // yakın dövüş: hasar ve vuruş efekti kılıcın değdiği ana kaydırılır (sunucu hasarı vuruş başında uygular)
+        const mc = this.meleeCast.get(ev.src);
+        if (mc && now - mc.at < 80 && !(ev as { _late?: boolean })._late) {
+          const wait = Math.max(0, mc.at + MELEE_IMPACT_MS - now);
+          window.setTimeout(() => this.onEvent({ ...ev, _late: true } as typeof ev, performance.now()), wait);
+          break;
+        }
         const t = ev.tgt === this.selfId ? null : this.ents.get(ev.tgt);
         const pos = ev.tgt === this.selfId ? { x: this.dx, y: this.dy } : t ? this.entPos(t) : null;
         if (!pos) break;
         if (t) t.hurtUntil = now + 140;
         const mine = ev.src === this.selfId, onMe = ev.tgt === this.selfId;
+        if ((ev as { _late?: boolean })._late && t) {
+          // ağır vuruş hissi: hedef vuruş yönünde geri seker, iki taraf bir an donar, kamera sarsılır, kıvılcım yıldızı
+          const sp = mine ? { x: this.dx, y: this.dy } : (() => { const s2 = this.ents.get(ev.src); return s2 ? this.entPos(s2) : null; })();
+          if (sp) { const a = Math.atan2(pos.y - sp.y, pos.x - sp.x); t.kbX = Math.cos(a); t.kbY = Math.sin(a); t.kbUntil = now + 200; }
+          if (mine) {
+            const crit = (ev.flags & DmgFlag.CRIT) !== 0;
+            this.renderer.hitStop([this.selfId, ev.tgt], crit ? 110 : 70);
+            this.renderer.shake(crit ? 4.5 : 2.4);
+            this.fx.shapes.push({ kind: 'blast', x: pos.x, y: pos.y, r: crit ? 70 : 46, r2: 0, a: 0, t0: now, dur: 200, color: crit ? '#ffd84a' : '#fff4d8' });
+            this.fx.light(pos.x, pos.y, 1.1, '#ffe2b0', crit ? 4 : 2.5, 160);
+          }
+        }
         if (!st.showDamage && !mine && !onMe) break;
         if (ev.flags & DmgFlag.BLOCK) { this.fx.text(pos.x, pos.y, 2.0, 'Blok', '#cfe3ff', 15); break; }
         const crit = (ev.flags & DmgFlag.CRIT) !== 0;
@@ -269,7 +296,21 @@ export class Game {
         if (ev.skill === 9) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 420, kind: 'ice', color: '#8fe6ff' }); break; }
         if (clsIdx === 1 && (ev.skill === 0 || ev.skill === 2 || ev.skill === 3)) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); if (isSelf) sfx.play('bow'); }
         else if (clsIdx === 2 && ev.skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 260, kind: 'orb', color: '#7cf3ff' }); this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); if (isSelf) sfx.play('magic'); }
-        else if (clsIdx === 0 && ev.skill === 0) { this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 46, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 220, color: '#ffffff' }); if (isSelf) sfx.play('swing'); }
+        else if (clsIdx === 0 && ev.skill === 0) {
+          // Muhafız kombosu: 1) sağdan sola yatay, 2) ters yükselen, 3) tepeden iniş; kesik izi vuruş anında
+          const prev = this.meleeCast.get(ev.src);
+          const combo = prev && now - prev.at < 1500 ? (prev.combo + 1) % 3 : 0;
+          this.meleeCast.set(ev.src, { at: now, combo });
+          if (isSelf) this.selfCombo = combo;
+          else if (src) src.combo = combo;
+          const a = Math.atan2(ev.y - sp.y, ev.x - sp.x);
+          if (isSelf) sfx.play('swing');
+          window.setTimeout(() => {
+            const t2 = performance.now();
+            this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: combo === 2 ? 64 : 74, r2: combo, a: a + (combo === 1 ? 0.35 : combo === 0 ? -0.35 : 0), t0: t2, dur: 260, color: combo === 2 ? '#ffe2a0' : '#ffffff' });
+            if (combo === 2) this.fx.burst(ev.x, ev.y, 0.1, 14, '#d9c7a1', 2, 500, 0.2, 1);
+          }, MELEE_IMPACT_MS - 40);
+        }
         else if (ev.skill > 0 && isSelf) sfx.play('skill');
         if (clsIdx === 0 && ev.skill === 1) this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 70, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 300, color: '#ffd27a' });
         if (ev.skill > 0 && ev.skill < 9) this.skillFx(clsIdx, ev.skill, sp, ev, now);
@@ -416,18 +457,21 @@ export class Game {
     if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
     // saldırı: basılı tutma veya otomatik hedef
     const wantAttack = this.input.attackHeld || this.autoAttack;
-    if (wantAttack && dir === NO_DIR) {
+    if (wantAttack) {
+      // yürürken de vurulur: hedef menzildeyse saldırı gider, bacaklar yürümeye devam eder.
+      // Elle yürümüyorsan ve hedef menzil dışındaysa (ör. Muhafız uzakta) önce hedefe yürünür.
+      const manual = dir !== NO_DIR;
       let t = this.targetId ? this.ents.get(this.targetId) : undefined;
-      if (!t || t.hp <= 0 || t.deadAt) { const nt = this.nearestEnemy(700); if (nt) { this.setTarget(nt.id); t = nt; } }
+      if (!t || t.hp <= 0 || t.deadAt) { const nt = this.nearestEnemy(manual ? this.selfRange() + 60 : 700); if (nt) { this.setTarget(nt.id); t = nt; } }
       if (t) {
         const d = Math.hypot(t.x - this.px, t.y - this.py);
         const range = this.selfRange();
-        if (d > range - 8) { dir = dirIndexFromVector(t.x - this.px, t.y - this.py); }
+        if (d > range - 8) { if (!manual) dir = dirIndexFromVector(t.x - this.px, t.y - this.py); }
         else {
           const cd = attackCooldown(650, st.self?.combat?.atkSpeed ?? 0);
           const now = performance.now();
           if (now - this.lastAttackSent >= cd - 20) { this.lastAttackSent = now; this.send({ t: 'attack', id: t.id }); }
-          this.sdir = Math.round(Math.atan2(t.y - this.py, t.x - this.px) / (Math.PI * 2) * 256) & 255;
+          if (!manual) this.sdir = Math.round(Math.atan2(t.y - this.py, t.x - this.px) / (Math.PI * 2) * 256) & 255;
         }
       }
     } else if (dir === NO_DIR && this.moveTarget) {

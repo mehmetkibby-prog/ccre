@@ -45,10 +45,14 @@ const loop = (t: number) => {
   const dt = t - last; last = t;
   if (anim === 'walk') { g.lastMoveAt = t; g.dy += 0; for (const e of g.ents.values()) if (e.kind === Kind.MONSTER) e.anim = Anim.WALK; }
   if (anim === 'attack' && t - g.selfAnimStart > 900) { g.selfAnim = Anim.ATTACK; g.selfAnimStart = t; }
-  for (const e of g.ents.values()) if (e.kind !== Kind.LOOT && anim === 'attack' && t - e.animStart > 900) { e.anim = Anim.ATTACK; e.animStart = t; }
+  const period = Number(q.get('period') ?? 900);
+  for (const e of g.ents.values()) if (e.kind !== Kind.LOOT && anim === 'attack' && t - e.animStart > period) { e.anim = Anim.ATTACK; e.animStart = t; e.combo = ((e.combo ?? -1) + 1) % 3; if (q.get('combo')) e.combo = Number(q.get('combo')); }
+  for (const e of g.ents.values()) if (e.kind === Kind.PLAYER && anim === 'cast' && t - e.animStart > Number(q.get('period') ?? 1400)) { e.anim = Anim.CAST; e.animStart = t; e.skill = Number(q.get('skill') ?? 1); }
+  (window as any).__phase = [...g.ents.values()].map((e: CEnt) => Math.round(t - e.animStart));
   r.draw(t, dt);
   if (++frames >= maxFrames) { (window as any).done = true; return; }
   requestAnimationFrame(loop);
 };
 requestAnimationFrame(loop);
 (window as any).ready = true; (window as any).__r = r;
+(window as any).__pose = (kind: 'a' | 's', idx: number, t: number) => { for (const v of (r as any).views.values()) v.glb?.debugPose?.(kind, idx, t); };

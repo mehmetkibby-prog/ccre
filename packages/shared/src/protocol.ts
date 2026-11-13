@@ -144,6 +144,7 @@ export type ClientCmd =
   | { t: 'stall_open'; title: string; items: { id: string; price: number }[]; req: string }
   | { t: 'stall_close' }
   | { t: 'gm_set'; name: string; level?: number; gems?: number; essence?: number; potions?: number }
+  | { t: 'gm_reset'; name: string }
   | { t: 'stall_view'; stall: string }
   | { t: 'stall_buy'; stall: string; item: string; price: number; req: string }
   | { t: 'ping'; c: number }

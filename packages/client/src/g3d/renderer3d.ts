@@ -271,6 +271,10 @@ export class Renderer3D {
   }
 
   shake(n: number) { this.shakeAmt = Math.max(this.shakeAmt, n * 0.02); }
+  /** Vuruş duraklaması: verilen varlıkların animasyonu kısa süre donar (darbe ağırlığı hissi). */
+  private stops = new Map<number, number>();
+  hitStop(ids: number[], ms: number) { const until = performance.now() + ms; for (const id of ids) this.stops.set(id, until); }
+  private frozen(id: number, now: number) { const u = this.stops.get(id); if (u === undefined) return false; if (now < u) return true; this.stops.delete(id); return false; }
   clickMark(x: number, y: number) { this.clicks.push({ x, y, t: performance.now() }); }
 
   resize() {
@@ -464,8 +468,9 @@ export class Renderer3D {
     const selfDead = (g.selfFlags & EFlag.DEAD) !== 0;
     let sAnim = g.selfAnim;
     if (!((sAnim === Anim.ATTACK || sAnim === Anim.CAST) && now - g.selfAnimStart < (sAnim === Anim.CAST ? CAST_ANIM_MS : ATTACK_ANIM_MS) - 60)) sAnim = now - g.lastMoveAt < 120 ? Anim.WALK : Anim.IDLE;
-    (sv as View & { skill?: number }).skill = g.selfSkill;
-    this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, dt, selfDead);
+    // saldırıda "beceri" yuvası kombo sırasını taşır (1-2-3 vuruş farklı animasyon)
+    (sv as View & { skill?: number }).skill = sAnim === Anim.ATTACK ? g.selfCombo : g.selfSkill;
+    this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, this.frozen(g.selfId, now) ? 0 : dt, selfDead);
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
     const seen = new Set<number>();
@@ -483,13 +488,17 @@ export class Renderer3D {
         continue;
       }
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
-      (v as View & { skill?: number }).skill = e.skill;
-      this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, dt, dead);
+      (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
+      this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead);
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur
       if (e.kind === Kind.MONSTER && dead && v.deadAt) { const k = (now - v.deadAt) / 1500; v.obj.position.y -= Math.max(0, k - 0.5) * 0.8; }
       // isabet titreşimi
-      if (now < e.hurtUntil) { v.obj.position.x += (Math.random() - 0.5) * 0.05; v.obj.position.z += (Math.random() - 0.5) * 0.05; }
+      if (e.kbUntil && now < e.kbUntil) {
+        // vuruş yönünde geri sekme: hızlı itilip yavaşça yerine döner
+        const k = (e.kbUntil - now) / 200, push = Math.sin(k * Math.PI) * 0.16 * k;
+        v.obj.position.x += (e.kbX ?? 0) * push; v.obj.position.z += (e.kbY ?? 0) * push;
+      } else if (now < e.hurtUntil) { v.obj.position.x += (Math.random() - 0.5) * 0.04; v.obj.position.z += (Math.random() - 0.5) * 0.04; }
     }
     for (const [id, v] of this.views) if (!seen.has(id)) { this.dyn.remove(v.obj); this.views.delete(id); }
     // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)

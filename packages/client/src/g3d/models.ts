@@ -4,6 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
+import { guardianClips, bodyPart } from './charAnims.ts';
 
 /**
  * Hazır 3B modeller (GLB). `models/models.json` dosyasında listelenen modeller yüklenir;
@@ -167,7 +168,7 @@ export function model(id: string): Loaded | null {
 }
 
 export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
-export interface GlbChar { id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
+export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
 /**
@@ -275,6 +276,9 @@ export function weaponGlb(id: string): THREE.Object3D | null {
   return L ? L.scene.clone(true) : null;
 }
 
+/** Elle çizilmiş klipler (model kimliği başına bir kez). */
+const customClips = new Map<string, ReturnType<typeof guardianClips> | null>();
+
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
   if (!L) return null;
@@ -307,40 +311,80 @@ export function createGlbChar(id: string): GlbChar | null {
     sm.frustumCulled = true;
   });
   const byName = (n: string) => L.clips.find((c) => c.name === n);
+  const baseId = L.entry.animFrom ?? id;
+  // Muhafız: elle çizilmiş kombo ve beceri klipleri (model başına bir kez kurulur; kemik adlarıyla bağlanır)
+  let custom = customClips.get(id);
+  if (custom === undefined && baseId === 'guardian') { custom = guardianClips(inner, root); customClips.set(id, custom); }
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
-  const skillClips = SKILL_CLIPS[L.entry.animFrom ?? id] ?? {};
+  const skillClips = SKILL_CLIPS[baseId] ?? {};
   let attackN = 0, skillN = 0;
-  const play = (st: HState | 'run', once: boolean, skill = 0) => {
+  // saldırı/beceri üst gövdede; alt gövde duruşta vuruşun kendi bacakları, yürürken yürüme bacakları
+  let swingSet: { up: THREE.AnimationAction; low: THREE.AnimationAction; walk: THREE.AnimationAction | null } | null = null;
+  let walkMix = 0;
+  const endSwing = (fade: number) => { if (!swingSet) return; for (const a of [swingSet.up, swingSet.low, swingSet.walk]) a?.fadeOut(fade); swingSet = null; };
+  const play = (st: HState | 'run', once: boolean, skill = 0, moving = false) => {
     let clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
-    if (st === 'attack' && attackClips.length) clip = attackClips[attackN++ % attackClips.length];
-    if (st === 'cast') { const names = skillClips[skill] ?? []; const c = names.length ? byName(names[skillN++ % names.length]) : undefined; if (c) clip = c; }
-    if (!clip) return;
     const swing = once && (st === 'attack' || st === 'cast');
+    let designed = false;
+    if (st === 'attack' && custom) { clip = custom.attacks[((skill % 3) + 3) % 3]; designed = true; }
+    else if (st === 'attack' && attackClips.length) clip = attackClips[attackN++ % attackClips.length];
+    if (st === 'cast' && custom?.skills[skill]) { clip = custom.skills[skill]; designed = true; }
+    else if (st === 'cast') { const names = skillClips[skill] ?? []; const c = names.length ? byName(names[skillN++ % names.length]) : undefined; if (c) clip = c; }
+    if (!clip) return;
     const screenMs = st === 'attack' ? ATTACK_ANIM_MS : CAST_ANIM_MS;
-    if (swing) clip = activeClip(clip, screenMs, st === 'attack' ? 'attack' : 'cast');
+    if (swing && !designed) clip = activeClip(clip, screenMs, st === 'attack' ? 'attack' : 'cast');
+    // hazır klipler ekranda kalma süresine sığacak kadar hızlanır (en çok 2,2 kat); çizilenler zaten o süreye göre
+    const ts = swing && !designed ? THREE.MathUtils.clamp(clip.duration / (screenMs / 1000 * 0.92), 0.9, SWING_MAX_SPEED) : 1;
+    if (swing) {
+      endSwing(0.06);
+      const up = act(bodyPart(clip, true)), low = act(bodyPart(clip, false));
+      for (const a of [up, low]) { a.reset(); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.timeScale = ts; a.setEffectiveWeight(1); a.play(); }
+      const wc = L.map.walk ? bodyPart(L.map.walk, false) : null;
+      const walk = wc ? act(wc) : null;
+      if (walk) { walk.setLoop(THREE.LoopRepeat, Infinity); walk.enabled = true; walk.play(); }
+      walkMix = moving ? 1 : 0;
+      low.setEffectiveWeight(1 - walkMix); walk?.setEffectiveWeight(walkMix);
+      up.fadeIn(0.06); low.fadeIn(0.06);
+      if (current) { current.fadeOut(0.08); current = null; }
+      swingSet = { up, low, walk };
+      return;
+    }
     const a = act(clip);
-    if (a === current && !once) return;
+    if (a === current && !once && !swingSet) return;
     a.reset();
     a.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, once ? 1 : Infinity);
     a.clampWhenFinished = once;
-    // etkin bölüm ekranda kalma süresine sığacak kadar hızlanır; en çok 2,2 kat, en az 0,9 kat
-    if (swing) a.timeScale = THREE.MathUtils.clamp(clip.duration / (screenMs / 1000 * 0.92), 0.9, SWING_MAX_SPEED);
-    else a.timeScale = 1;
+    a.timeScale = 1;
+    a.setEffectiveWeight(1);
     a.play();
-    if (current && current !== a) current.crossFadeTo(a, swing ? 0.12 : once ? 0.1 : 0.2, false);
+    if (swingSet) { endSwing(0.16); a.fadeIn(0.16); if (current && current !== a) current.fadeOut(0.16); }
+    else if (current && current !== a) current.crossFadeTo(a, once ? 0.1 : 0.2, false);
     current = a;
   };
   play('idle', false);
   return {
     id, root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
+    /** Geliştirme: çizilmiş klibi verilen anda dondurur (kind: 'a' saldırı / 's' beceri). */
+    debugPose(kind: 'a' | 's', idx: number, t: number) {
+      const clip = kind === 'a' ? custom?.attacks[idx] : custom?.skills[idx];
+      if (!clip) return;
+      mixer.stopAllAction(); swingSet = null; current = null; curState = 'debug';
+      const a = mixer.clipAction(clip); a.reset(); a.setEffectiveWeight(1); a.play(); a.time = t; a.paused = true; mixer.update(0);
+    },
     update(st, dt, moving, speed, restart, skill) {
+      if (curState === 'debug') return;
       const want = st === 'walk' ? (L.map.run && speed > 3.5 ? 'run' : 'walk') : st;
       if (want !== curState || (restart && (want === 'attack' || want === 'cast'))) {
         curState = want;
-        play(want as HState, want === 'attack' || want === 'cast' || want === 'dead' || want === 'hurt', skill ?? 0);
+        play(want as HState, want === 'attack' || want === 'cast' || want === 'dead' || want === 'hurt', skill ?? 0, moving);
       }
       if ((want === 'walk' || want === 'run') && current) current.timeScale = THREE.MathUtils.clamp(speed / (want === 'run' ? 5.5 : 2.2), 0.6, 1.8);
-      void moving;
+      if (swingSet) {
+        // vuruş sürerken yürümeye başlanır/durulursa bacaklar yumuşakça geçer
+        walkMix += ((moving ? 1 : 0) - walkMix) * Math.min(1, dt / 90);
+        swingSet.low.setEffectiveWeight(1 - walkMix);
+        if (swingSet.walk) { swingSet.walk.setEffectiveWeight(walkMix); swingSet.walk.timeScale = THREE.MathUtils.clamp(speed / 2.2, 0.6, 1.8); }
+      }
       mixer.update(dt / 1000);
     },
   };

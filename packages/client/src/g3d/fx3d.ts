@@ -153,7 +153,18 @@ export class Fx3D {
         g.add(ring, disc); break;
       }
       case 'slash': {
-        const arc = new THREE.Mesh(new THREE.RingGeometry(0.85, 1.3, 24, 1, -0.9, 1.8), add(THREE.AdditiveBlending, sh.color, 0.85)); arc.name = 'arc';
+        // hilal kesik: ön kenar parlak, arkası söner; iç ve dış kenar yumuşak
+        const geo = new THREE.RingGeometry(0.62, 1.36, 36, 4, -1.15, 2.3);
+        const pa = geo.attributes.position, col = new Float32Array(pa.count * 3);
+        for (let i = 0; i < pa.count; i++) {
+          const x = pa.getX(i), y = pa.getY(i), th = Math.atan2(y, x), r = Math.hypot(x, y);
+          const u = THREE.MathUtils.clamp((th + 1.15) / 2.3, 0, 1), v = THREE.MathUtils.clamp((r - 0.62) / 0.74, 0, 1);
+          const k = Math.pow(u, 1.6) * Math.pow(Math.sin(v * Math.PI), 0.8) * (0.55 + 0.45 * v);
+          col.set([k, k, k], i * 3);
+        }
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        const m = add(THREE.AdditiveBlending, sh.color, 1) as THREE.MeshBasicMaterial; m.vertexColors = true; m.side = THREE.DoubleSide;
+        const arc = new THREE.Mesh(geo, m); arc.name = 'arc';
         g.add(arc); break;
       }
       case 'pillar': case 'teleport': {
@@ -203,9 +214,22 @@ export class Fx3D {
       case 'slash': {
         const arc = o.getObjectByName('arc')!;
         o.position.y += 1.1;
-        arc.rotation.set(-Math.PI / 2 + 0.3, 0, -sh.a + Math.PI / 2 + (t - 0.5) * 1.6);
-        ((arc as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = (1 - t) * 0.9;
-        arc.scale.setScalar((sh.r / 46) * (0.9 + t * 0.3));
+        const e = 1 - Math.pow(1 - Math.min(1, t * 1.6), 3); // hızlı savruluş, yavaş sönüş
+        if (sh.r2 === 2) {
+          // tepeden iniş: hedef yönünü içeren dikey düzlemde yukarıdan aşağı
+          arc.rotation.set(0, -sh.a, 1.5 - e * 2.3);
+          o.position.y += 0.15;
+        } else if (sh.r2 === 1) {
+          // ters kesik: soldan sağa yükselen çapraz
+          arc.rotation.set(-Math.PI / 2 + 0.75, 0, -sh.a + Math.PI / 2 - (e - 0.5) * 2.2);
+          arc.scale.x = -1;
+        } else {
+          // yatay kesik: sağdan sola
+          arc.rotation.set(-Math.PI / 2 + 0.25, 0, -sh.a + Math.PI / 2 + (e - 0.5) * 2.2);
+        }
+        ((arc as THREE.Mesh).material as THREE.MeshBasicMaterial).opacity = Math.pow(1 - t, 1.4);
+        const sc = (sh.r / 46) * (0.92 + t * 0.25);
+        arc.scale.set(sh.r2 === 1 ? -sc : sc, sc, sc);
         break;
       }
       case 'pillar': case 'teleport': {

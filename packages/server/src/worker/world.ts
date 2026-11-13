@@ -19,6 +19,7 @@ const rnd = Math.random;
 const randInt = (a: number, b: number) => a + Math.floor(rnd() * (b - a + 1));
 const MONSTER_RADIUS = 22;
 const RANGE_TOLERANCE = 48;
+const MELEE_TOLERANCE = 30;
 const NPC_RANGE = 260;
 const RECEIPT_KEEP = 64;
 
@@ -61,6 +62,23 @@ export class World {
     if (patch.essence !== undefined) c.essence = Math.max(0, Math.round(patch.essence));
     if (patch.potions !== undefined) c.materials.red_potion = Math.max(0, Math.round(patch.potions));
     p.selfDirty |= 1 | 2 | 4;
+    this.save(p, true);
+    return true;
+  }
+
+  /** Yönetim: çevrimiçi karakteri yeni açılmış hâline döndürür (seviye 1, başlangıç eşyaları, köyde). */
+  adminResetPlayer(charId: number): boolean {
+    let p: Player | undefined;
+    for (const q of this.bySid.values()) if (q.char.id === charId) { p = q; break; }
+    if (!p) return false;
+    resetCharState(p.char);
+    const town = this.zones.get('bazaar')!;
+    p.dead = false;
+    this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y);
+    p.recompute(false); p.hp = p.stats.maxHp;
+    p.dirty |= Upd.HP | Upd.MAXHP | Upd.LEVEL;
+    p.selfDirty |= 1 | 2 | 4;
+    this.notice(p, 'Karakterin yönetici tarafından sıfırlandı.', 'info');
     this.save(p, true);
     return true;
   }
@@ -137,6 +155,14 @@ export class World {
   private dispatch(p: Player, c: ClientCmd) {
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
     switch (c.t) {
+      case 'gm_reset': {
+        if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
+        let target: Player | undefined;
+        for (const q of this.bySid.values()) if (q.char.name.toLocaleLowerCase('tr') === String(c.name ?? '').toLocaleLowerCase('tr')) { target = q; break; }
+        if (!target) return this.notice(p, 'Oyuncu bu kanalda çevrimiçi değil.');
+        this.adminResetPlayer(target.char.id);
+        return this.notice(p, `${target.char.name} sıfırlandı.`, 'ok');
+      }
       case 'gm_set': {
         // yalnız yönetici rolü; hedef bu kanalda çevrimiçi oyuncu (ada göre)
         if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
@@ -434,7 +460,8 @@ export class World {
     if (!t) return;
     if (t instanceof Monster && t.state === MState.DEAD) return;
     if (t instanceof Player && !this.canPvp(p, t)) return;
-    if (dist(p, t) > sk.range + MONSTER_RADIUS + RANGE_TOLERANCE) return;
+    // yakın dövüş: ağ toleransı dar (uzaktan kılıç vurulmaz); menzilliler geniş
+    if (dist(p, t) > sk.range + MONSTER_RADIUS + (sk.kind === 'melee' ? MELEE_TOLERANCE : RANGE_TOLERANCE)) return;
     p.cooldowns[0] = this.now + cd;
     this.faceAndAnim(p, t.x, t.y, Anim.ATTACK, 380);
     p.zone.emit(p.x, p.y, { e: Ev.CAST, src: p.id, skill: 0, tgt: t.id, x: t.x | 0, y: t.y | 0 });
@@ -1274,6 +1301,23 @@ function lootSpawn(l: Loot, now: number): EntitySpawn {
 }
 
 /** Eşya üretimi: efsunlar uygun havuzdan, tür tekrar etmeden. */
+/**
+ * Karakteri yeni açılmış hâline döndürür (ad, sınıf, hesap ve rol korunur): seviye 1, statü/beceri sıfır,
+ * çanta boş, üzerinde beyaz başlangıç silahı ve zırhı, 5 Kırmızı İksir, para yok, Pazar Köyü'nde.
+ */
+export function resetCharState(c: CharState) {
+  const l = getLayout('bazaar');
+  c.level = 1; c.xp = 0; c.kills = 0; c.spec = null;
+  c.stats = { str: 0, res: 0, vit: 0 }; c.skills = [1, 1, 1, 1];
+  c.gems = 0; c.essence = 0; c.cp = 0; c.arenaCoin = 0;
+  c.bag = [];
+  c.equip = { weapon: makeItem(`w_${c.cls}`, 'white', 'starter', 0), armor: makeItem(`a_${c.cls}`, 'white', 'starter', 0) };
+  c.materials = { red_potion: 5 };
+  c.misc = {};
+  c.map = 'bazaar'; c.x = l.spawn.x; c.y = l.spawn.y;
+  c.saveVersion++;
+}
+
 export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?: number): ItemInstance {
   const tpl = ITEM_TPL.get(tplId)!;
   // canavardan düşen eşya: 1–4 rastgele efsun (nadirlik yükseldikçe çok efsun olasılığı artar)
