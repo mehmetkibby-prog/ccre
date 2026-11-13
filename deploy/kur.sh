@@ -69,9 +69,10 @@ git clone -q --depth 1 -b "$DAL" "$REPO" "$KOK/releases/$SURUM"
 cd "$KOK/releases/$SURUM"
 { npm ci --no-audit --no-fund --loglevel=error && NODE_OPTIONS=--max-old-space-size=1536 npm run build >/tmp/tugra-build.log 2>&1; } || {
   tail -30 /tmp/tugra-build.log 2>/dev/null; cd /; rm -rf "$KOK/releases/$SURUM"; hata "derleme başarısız (tam kayıt: /tmp/tugra-build.log)"; }
+ISLEM=$(git rev-parse --short HEAD)
 ln -sfn "$KOK/releases/$SURUM" "$KOK/current"
 chown -R coreoflife "$KOK"
-tamam "sürüm $SURUM ($(git rev-parse --short HEAD))"
+tamam "sürüm $SURUM ($ISLEM)"
 
 adim "5/9 Oyun servisi"
 if [ ! -f "$ENVF" ]; then
@@ -94,6 +95,7 @@ pem_oku() { # $1 dosya, $2 bitiş satırı
   while IFS= read -r satir; do
     satir=${satir%$'\r'}
     [ -z "$satir" ] && [ ! -s "$1" ] && continue
+    if [ ! -s "$1" ] && [[ "$satir" =~ ^[[:space:]]*[gG][[:space:]]*$ ]]; then rm -f "$SSL"/origin.*; hata "yapıştırma iptal edildi; betiği yeniden çalıştırıp 'g' seç"; fi
     printf '%s\n' "$satir" >> "$1"
     [[ "$satir" == $2 ]] && break
   done < /dev/tty
@@ -101,12 +103,17 @@ pem_oku() { # $1 dosya, $2 bitiş satırı
 if [ -s "$SSL/origin.pem" ] && [ -s "$SSL/origin.key" ]; then
   tamam "sertifika zaten var"
 else
-  echo "  Cloudflare Origin sertifikasını yapıştırmak için Enter'a bas."
-  echo "  Yapıştıramıyorsan (noVNC konsolu gibi) 'g' yaz ve Enter: geçici sertifika üretilir; Cloudflare'de SSL modu 'Full' olmalı."
-  IFS= read -r secim < /dev/tty || secim=""
+  while IFS= read -r -t 0.3 _ < /dev/tty; do :; done   # önceden basılmış Enter'ları yut
+  secim=""
+  while [ "$secim" != y ] && [ "$secim" != g ]; do
+    echo "  Cloudflare Origin sertifikasını YAPIŞTIRACAKSAN 'y' yaz ve Enter."
+    echo "  Yapıştıramıyorsan (noVNC konsolu gibi) 'g' yaz ve Enter: geçici sertifika üretilir; Cloudflare'de SSL modu 'Full' olmalı."
+    IFS= read -r secim < /dev/tty || secim=g
+    secim=$(printf '%s' "$secim" | tr -d '[:space:]' | tr 'YG' 'yg')
+  done
 fi
 if [ -s "$SSL/origin.pem" ] && [ -s "$SSL/origin.key" ]; then :
-elif [ "${secim:-}" = g ] || [ "${secim:-}" = G ]; then
+elif [ "${secim:-}" = g ]; then
   openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -subj "/CN=$ALAN" -addext "subjectAltName=DNS:$ALAN,DNS:www.$ALAN" \
     -keyout "$SSL/origin.key" -out "$SSL/origin.pem" 2>/dev/null
   chmod 600 "$SSL/origin.key"
