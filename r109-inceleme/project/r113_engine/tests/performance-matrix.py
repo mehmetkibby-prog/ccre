@@ -6,7 +6,7 @@ Functional success is not latency acceptance. Every raw failure is retained.
 import argparse,datetime,hashlib,json,os,pathlib,shutil,statistics,subprocess,sys,time
 ROOT=pathlib.Path(__file__).resolve().parents[1];REVIEW=ROOT.parent.parent
 SOURCE=REVIEW/'project/r109_latency_completion/evidence';OUT=ROOT/'evidence/matrix';OUT.mkdir(parents=True,exist_ok=True)
-p=argparse.ArgumentParser();p.add_argument('--baseline',required=True);p.add_argument('--soak-seconds',type=int,default=1800);p.add_argument('--resume',action='store_true');p.add_argument('--output');p.add_argument('--primary-only',action='store_true');p.add_argument('--farm-probe',action='store_true');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--baseline',required=True);p.add_argument('--soak-seconds',type=int,default=1800);p.add_argument('--resume',action='store_true');p.add_argument('--output');p.add_argument('--primary-only',action='store_true');p.add_argument('--farm-probe',action='store_true');p.add_argument('--candidate-confirmation',action='store_true');a=p.parse_args()
 if a.output:OUT=pathlib.Path(a.output).resolve();OUT.mkdir(parents=True,exist_ok=True)
 assert a.resume or not (OUT/'index.json').exists(),'Use --resume to retain all prior runs'
 baseline=pathlib.Path(a.baseline).resolve();assert (baseline/'core511-source/scripts/core511/coordinator.mjs').is_file()
@@ -45,6 +45,16 @@ def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False,distribution='bal
  row={'key':key,'version':version,'players':n,'mode':mode,'distribution':distribution,'farmStress':farm,'repeat':repeat,'realm':realm,'seconds':seconds,'source':str(src.relative_to(REVIEW)),'raw':dest.name,'log':log.name,'returncode':result.returncode,'elapsedSeconds':time.time()-start,'functional':value.get('passed',False),'summary':value.get('summary'),'deaths':value.get('combatDelivery',{}).get('deaths'),'controlMaxPauseMs':value.get('independentControl',{}).get('maxPauseMs')}
  rows.append(row);save();print(json.dumps({'finished':key,**{k:row[k] for k in ['functional','summary','deaths','controlMaxPauseMs']}}),flush=True)
  if version=='R113' and not row['functional']:raise SystemExit('Candidate functional failure; matrix paused at '+key)
+
+# After a narrow correctness repair, rerun the failing duration first, then
+# three independent mixed workloads and the crowded/shared terminal cases.
+# Keep prior baseline runs; never overwrite their raw results or identities.
+if a.candidate_confirmation:
+ run('R113',50,'forest',1,seconds=max(300,a.soak_seconds))
+ for repeat in range(1,4):run('R113',50,'mixed',repeat)
+ run('R113',50,'forest',1,distribution='packed')
+ run('R113',50,'shared_boss_terminal',1)
+ print(json.dumps({'candidateConfirmationComplete':True,'runs':len(rows),'acceptance':'evaluate raw pauses separately; prior failures retained'}),flush=True);raise SystemExit(0)
 
 # User's latest scope is exactly 50 players. Pair the same workload across
 # versions and retain three independent fresh starts, including adverse runs.
