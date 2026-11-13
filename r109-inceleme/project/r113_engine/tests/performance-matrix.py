@@ -3,7 +3,7 @@
 Do not run other builds, browsers, tests or load while this matrix is running.
 Functional success is not latency acceptance. Every raw failure is retained.
 """
-import argparse,datetime,json,os,pathlib,shutil,statistics,subprocess,sys,time
+import argparse,datetime,hashlib,json,os,pathlib,shutil,statistics,subprocess,sys,time
 ROOT=pathlib.Path(__file__).resolve().parents[1];REVIEW=ROOT.parent.parent
 SOURCE=REVIEW/'project/r109_latency_completion/evidence';OUT=ROOT/'evidence/matrix';OUT.mkdir(parents=True,exist_ok=True)
 p=argparse.ArgumentParser();p.add_argument('--baseline',required=True);p.add_argument('--soak-seconds',type=int,default=1800);p.add_argument('--resume',action='store_true');p.add_argument('--output');p.add_argument('--primary-only',action='store_true');p.add_argument('--farm-probe',action='store_true');a=p.parse_args()
@@ -14,13 +14,16 @@ sys.path.insert(0,str(ROOT/'deployment/modules'))
 from r63_support import core_identity
 candidate=REVIEW/'project/r109_latency_completion/working'
 frozen={name:core_identity(tree/'core511-source/scripts/core511') for name,tree in [('R110',baseline),('R113',candidate)]}
+harnessFiles=sorted((REVIEW/'project/r109_latency_completion/tests').glob('population-*.mjs'))+[REVIEW/'scripts/load.py']
+harnessIdentity=lambda:{str(p.relative_to(REVIEW)):hashlib.sha256(p.read_bytes()).hexdigest() for p in harnessFiles}
+frozenHarness=harnessIdentity()
 manifest=OUT/'runtime-manifest.json'
 if a.resume and manifest.exists():
- assert json.loads(manifest.read_text())['coreIdentities']==frozen,'Runtime changed: use a new output directory'
+ assert json.loads(manifest.read_text())['coreIdentities']==frozen and json.loads(manifest.read_text()).get('harnessIdentity')==frozenHarness,'Runtime changed: use a new output directory'
 elif a.resume and (OUT/'index.json').exists():
  raise SystemExit('Older matrix lacks source freeze; retain it and use a new output directory')
 else:
- manifest.write_text(json.dumps({'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'candidateCommit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REVIEW,text=True).strip(),'coreIdentities':frozen,'baseline':str(baseline),'candidate':str(candidate),'profiling':False,'liveDatabase':False},indent=2)+'\n')
+ manifest.write_text(json.dumps({'startedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'candidateCommit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=REVIEW,text=True).strip(),'coreIdentities':frozen,'harnessIdentity':frozenHarness,'uiPolling':True,'baseline':str(baseline),'candidate':str(candidate),'profiling':False,'liveDatabase':False},indent=2)+'\n')
 record=OUT/'index.json';rows=json.loads(record.read_text()) if a.resume and record.exists() else []
 assert a.resume or not record.exists(),'Use --resume to retain all prior runs'
 def save():
@@ -29,8 +32,9 @@ def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False,distribution='bal
  key=f'{version}-{realm}-{mode}{"-farm" if farm else ""}{"-packed" if distribution=="packed" else ""}-{n}-{repeat}-{seconds}'
  if (OUT/'STOP').exists():raise SystemExit('Stopped at run boundary; previous raw results retained')
  if any(r['key']==key for r in rows):return
+ assert harnessIdentity()==frozenHarness,'Harness changed during matrix'
  for name,tree in [('R110',baseline),('R113',candidate)]:assert core_identity(tree/'core511-source/scripts/core511')==frozen[name],'Runtime changed during matrix: '+name
- env={**os.environ};env.pop('STUTTER_TREE',None);env.pop('CLIENT_TREE',None);env.pop('R111_TEST_STAGES',None);env['POPULATION_FARM_STRESS']='1' if farm else '0';env['PROFILE_WRITER_R113']='0'
+ env={**os.environ};env.pop('STUTTER_TREE',None);env.pop('CLIENT_TREE',None);env.pop('R111_TEST_STAGES',None);env['POPULATION_FARM_STRESS']='1' if farm else '0';env['PROFILE_WRITER_R113']='0';env['POPULATION_UI_POLLING']='1'
  if version=='R110':env.update(STUTTER_TREE=str(baseline),CLIENT_TREE=str(baseline))
  before=set(SOURCE.glob('review-*.json'));start=time.time();log=OUT/(key+'.log')
  print(json.dumps({'starting':key,'at':datetime.datetime.now(datetime.timezone.utc).isoformat()}),flush=True)

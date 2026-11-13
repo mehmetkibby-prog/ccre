@@ -9,11 +9,11 @@ import {PopulationDelivery} from './population-delivery-r111.mjs';
 import {WebSocket} from '/tmp/core511-build-deps/node_modules/ws/wrapper.mjs';
 const {Core511Transport}=await import(process.env.STUTTER_TREE+'/core511-source/scripts/core511/client-transport.mjs');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const delivery=new PopulationDelivery(),openArrivalR113=process.env.POPULATION_OPEN_ARRIVAL==='1';
+const delivery=new PopulationDelivery(),openArrivalR113=process.env.POPULATION_OPEN_ARRIVAL==='1',uiPollingR113=process.env.POPULATION_UI_POLLING!=='0';
 let actors=[],timer,measuring=false,counts={},errors=[],cpu,started,endSettlement=null;
 const count=k=>{if(measuring)counts[k]=(counts[k]||0)+1;};
 const quantile=(a,p)=>a.length?[...a].sort((x,y)=>x-y)[Math.ceil(a.length*p)-1]:0;
-const snapshot=()=>({pid:process.pid,counts,errors,endSettlement,combatDelivery:delivery.snapshot(),provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,arrivalsR113:a.arrivalsR113,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
+const snapshot=()=>({pid:process.pid,uiPollingR113:{enabled:uiPollingR113,heartbeatMs:5000,dungeonGetMs:5000,source:'actual compiled browser trace; not live request ratios'},counts,errors,endSettlement,combatDelivery:delivery.snapshot(),provisionalOutcomes:actors.flatMap(a=>(a.provisionalOutcomes??[]).map(row=>({actor:a.n,...row}))),actors:actors.map(a=>({actor:a.n,zone:a.zone,arrivalsR113:a.arrivalsR113,channel:a.channel,ready:a.client.ready,queued:a.client.queue.length,active:activePopulationInputs(a),busy:a.busy,floors:[...a.floors],currentFloor:a.client.world?.adventure511?.run?.floor,attacks:a.attacks,acks:a.acks,latencyP95Ms:quantile(a.latencies,.95),maxLatencyMs:Math.max(0,...a.latencies),messages:a.messages,messageGapP99Ms:quantile(a.messageGaps,.99),maxMessageGapMs:Math.max(0,...a.messageGaps),messageGapsOver150Ms:a.messageGaps.filter(g=>g>150).length,soloStage:a.client.dungeon?.run?.stage,soloHistory:a.soloHistory,pendingKills:a.pendingKills.size,pendingClaims:a.claims.length,pendingTargets:[...a.pendingKills.values()],claimTargets:a.claims.map(t=>({...t}))})),resources:{cpuMicros:cpu?process.cpuUsage(cpu):null,durationMs:started?performance.now()-started:null,maxRssBytes:process.resourceUsage().maxRSS*1024}});
 async function send(a,input){
  if(input.action==='attack'){a.observedAttackIntents??=new Set();a.observedAttackIntents.add(input.intentId);if(a.observedAttackIntents.size>256){const oldest=a.observedAttackIntents.values().next().value;if([...a.pendingKills.values()].some(t=>t.intentId===oldest))throw Error('population_unresolved_intent_overflow');a.observedAttackIntents.delete(oldest);a.finalAttackEvents?.delete(oldest);}}
  const at=performance.now();
@@ -35,6 +35,25 @@ async function send(a,input){
   count('pendingKills');recordPopulationPending(a,input,r.body);
  }else if(r.status!==200)throw Error(JSON.stringify({operation:input.action,status:r.status,body:r.body}));
  return r.body;
+}
+// Match the five-second heartbeat/dungeon GET cadence observed in the actual
+// compiled browser (tower-browser input trace). These calls are independent of
+// the bot's attack loop and pass through the same transport request/queue path.
+// Keep at most one outstanding call of each kind, including during reconnect.
+function pollUiR113(a){
+ if(!uiPollingR113||!a.client.ready)return;
+ a.uiPollsR113??=new Map();const now=Date.now();
+ for(const kind of ['heartbeat','dungeon']){
+  const key=kind==='heartbeat'?'nextHeartbeatR113':'nextDungeonR113';
+  if(now<a[key]||a.uiPollsR113.has(kind))continue;
+  a[key]=now+5000;
+  const task=(async()=>{
+   if(kind==='heartbeat')await send(a,{action:'heartbeat'});
+   else{const response=await a.client.request('/api/dungeon',{method:'GET'},a.fetch);if(!response.ok)throw Error('dungeon poll '+response.status+' '+await response.text());await response.json();}
+   count('ui:'+kind);
+  })().catch(error=>{if(errors.length<100)errors.push({actor:a.n,phase:'ui-poll',kind,error:error.message});}).finally(()=>a.uiPollsR113.delete(kind));
+  a.uiPollsR113.set(kind,task);
+ }
 }
 async function auxiliary(a){
  const now=Date.now();
@@ -105,9 +124,10 @@ async function command(method,value){
   }
   const until=Date.now()+15000;while(actors.some(a=>a.zone==='solo'?!a.client.dungeon?.run:['tower','mist'].includes(a.zone)&&!a.client.world?.adventure511?.run)&&Date.now()<until)await sleep(25);
   for(const a of actors){if(a.zone==='solo')assert(a.client.dungeon?.run,'solo entered');if(['tower','mist'].includes(a.zone))assert(a.client.world?.adventure511?.run,a.zone+' entered');}
-  timer=setInterval(()=>{for(const a of actors){if(process.env.POPULATION_FARM_STRESS==='1')background(a);if(openArrivalR113)offerPopulationAttackR113(a,{measuring,isMeasuring:()=>measuring,send,count,onError:e=>{if(errors.length<100)errors.push({actor:a.n,zone:a.zone,phase:'open-arrival',error:e.message});}});void act(a);}},50);return {players:actors.length,pid:process.pid};
+  for(const a of actors){a.nextHeartbeatR113=Date.now()+1000+a.n*17;a.nextDungeonR113=Date.now()+1600+a.n*17;}
+  timer=setInterval(()=>{for(const a of actors){pollUiR113(a);if(process.env.POPULATION_FARM_STRESS==='1')background(a);if(openArrivalR113)offerPopulationAttackR113(a,{measuring,isMeasuring:()=>measuring,send,count,onError:e=>{if(errors.length<100)errors.push({actor:a.n,zone:a.zone,phase:'open-arrival',error:e.message});}});void act(a);}},50);return {players:actors.length,pid:process.pid};
  }
- if(method==='begin'){assert.deepEqual(errors,[]);measuring=true;cpu=process.cpuUsage();started=performance.now();for(const a of actors){a.arrivalsR113=null;a.nextOfferR113=Date.now()+a.n*17;a.nextHttp=Date.now()+1000+a.n*170;a.nextChat=Date.now()+3000+a.n*250;a.nextPotion=Date.now()+5000+a.n*180;}return {started:true};}
+ if(method==='begin'){assert.deepEqual(errors,[]);measuring=true;cpu=process.cpuUsage();started=performance.now();for(const a of actors){a.arrivalsR113=null;a.nextHeartbeatR113=Date.now()+1000+a.n*17;a.nextDungeonR113=Date.now()+1600+a.n*17;a.nextOfferR113=Date.now()+a.n*17;a.nextHttp=Date.now()+1000+a.n*170;a.nextChat=Date.now()+3000+a.n*250;a.nextPotion=Date.now()+5000+a.n*180;}return {started:true};}
  if(method==='end'){
   measuring=false;clearInterval(timer);timer=null;
   await Promise.all(actors.map(a=>a.background));

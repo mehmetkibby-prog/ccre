@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 export const activePopulationInputs=a=>Number(Boolean(a.client.active))+Number(Boolean(a.client.movementBehind));
 const queued=a=>a.client.queue.length;
-const inFlight=a=>a.busy||a.openTasksR113?.size>0||activePopulationInputs(a)>0||queued(a)>0;
+const inFlight=a=>a.uiPollsR113?.size>0||a.busy||a.openTasksR113?.size>0||activePopulationInputs(a)>0||queued(a)>0;
 const target=t=>({id:t.id,spawnRound:t.spawnRound});
 export function populationEndState(actors){return actors.map(a=>({actor:a.n,id:a.id,ready:a.client.ready,busy:a.busy,queued:queued(a),active:activePopulationInputs(a),pendingTargets:[...a.pendingKills.values()].map(target),claimTargets:a.claims.map(target)}));}
 
