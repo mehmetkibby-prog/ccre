@@ -1,5 +1,5 @@
 import type { ServerResponse } from 'node:http';
-import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, type ClassId } from '@col/shared';
+import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
 import { hashPassword, verifyPassword, createSession, destroySession, sessionAccount, isStaff, isAdmin, sha256, randomToken, invalidateAccountCache, type AuthAccount } from './auth.ts';
@@ -277,7 +277,7 @@ export function buildApi(d: ApiDeps): Router {
     const { id, level, gems, potions } = req.body ?? {};
     const charId = Number(id);
     const num = (v: unknown, lo: number, hi: number) => (v === undefined || v === null || v === '' ? undefined : Math.min(hi, Math.max(lo, Math.round(Number(v)))));
-    const patch = { level: num(level, 1, 99), gems: num(gems, 0, 1e12), potions: num(potions, 0, 1e7) };
+    const patch = { level: num(level, 1, LEVEL_CAP_BASE), gems: num(gems, 0, 1e12), potions: num(potions, 0, 1e7) };
     if (Object.values(patch).every((v) => v === undefined || Number.isNaN(v))) throw new HttpError(400, 'Değişiklik yok.');
     const ch = d.gateway.onlineChannel(charId);
     if (ch) { d.channels.send(ch, { type: 'admin', op: 'set', charId, patch }); await audit(a.id, 'player.set', { charId, patch }); return { ok: true, text: 'Oyunda, anında uygulandı.' }; }

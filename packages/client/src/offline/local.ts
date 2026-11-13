@@ -323,7 +323,7 @@ export function adminUpdatePlayer(id: number, patch: { level?: number; gems?: nu
   if (_backend?.world.adminSetPlayer(id, patch)) return 'Çevrimiçi oyuncu anında güncellendi.';
   const c = db.chars[id];
   if (!c) return 'Karakter bulunamadı.';
-  if (patch.level !== undefined) { c.level = Math.max(1, Math.min(50, Math.round(patch.level))); c.xp = 0; }
+  if (patch.level !== undefined) { c.level = Math.max(1, Math.min(65, Math.round(patch.level))); c.xp = 0; }
   if (patch.gems !== undefined) c.gems = Math.max(0, Math.round(patch.gems));
   if (patch.essence !== undefined) c.essence = Math.max(0, Math.round(patch.essence));
   if (patch.potions !== undefined) c.materials.red_potion = Math.max(0, Math.round(patch.potions));

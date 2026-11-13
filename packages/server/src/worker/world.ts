@@ -83,6 +83,16 @@ export class World {
     return true;
   }
 
+  /** Yönetim: TP tablosu değişirken oyundakilerin seviye içi ilerleme oranı korunur (önce oranlar alınır, sonra uygulanır). */
+  xpRatios() { const m = new Map<number, number>(); for (const p of this.bySid.values()) m.set(p.sid, p.char.xp / Math.max(1, xpToNext(p.char.level))); return m; }
+  applyXpRatios(m: Map<number, number>) {
+    for (const p of this.bySid.values()) {
+      const r = m.get(p.sid); if (r === undefined) continue;
+      const next = Math.max(1, Math.round(Math.min(0.999, r) * xpToNext(p.char.level)));
+      if (next !== p.char.xp) { p.char.xp = next; p.selfDirty |= 1; }
+    }
+  }
+
   /** Yönetim: haritanın canavar yuvalarını güncel yoğunlukla yeniden kurar (oyuncuların görüşünden çıkanlar istemciden düşer). */
   reseedMonsters(mapId: string) {
     const z = this.zones.get(mapId);
@@ -97,6 +107,8 @@ export class World {
   // ───────────────────────────── bağlantı ─────────────────────────────
   join(sid: number, char: CharState) {
     if (this.bySid.has(sid)) return;
+    char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
+    if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
     if (!this.zones.has(char.map)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
@@ -1318,7 +1330,9 @@ export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?:
   const et = TUNING.enchants;
   const pick = (w: readonly number[]) => { const tot = w.reduce((a, b) => a + b, 0); let r = rnd() * tot; for (let k = 0; k < w.length; k++) if ((r -= w[k]) <= 0) return k; return 0; };
   const cw = et.countWeights?.[rarity] ?? et.countWeights?.default ?? ENCHANT_COUNT_WEIGHTS[rarity] ?? ENCHANT_COUNT_WEIGHTS.default;
-  const n = enchCount ?? (src === 'drop' ? pick(cw) + 1 : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
+  const grp = et.chance && rarity in et.chance ? rarity : 'default';
+  const enchanted = src !== 'drop' || rnd() < (et.chance?.[grp] ?? 1);
+  const n = enchCount ?? (src === 'drop' ? (enchanted ? pick(cw) + 1 : 0) : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
   const off = new Set(et.disabled ?? []);
   const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => !ENCHANTS[k].legacy && !off.has(k) && ENCHANTS[k].slots.includes(tpl.slot));
   const ench: ItemInstance['ench'] = [];

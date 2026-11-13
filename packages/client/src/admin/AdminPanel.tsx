@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -212,7 +212,6 @@ export function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string
   );
 }
 
-const CW_ROWS: [string, string][] = [['white', 'Sıradan'], ['blue', 'Mavi'], ['orange', 'Turuncu'], ['default', 'Kızıl ve üstü']];
 /** Demirci: 6 kademenin şansı, Mücevher bedeli, malzemeleri ve kazandırdığı güç. */
 export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const steps: UpgradeStepTune[] = t.upgrade.steps?.length === MAX_PLUS ? t.upgrade.steps : DEFAULT_UPGRADE.map(({ target, ...s }) => { void target; return structuredClone(s); });
@@ -267,58 +266,177 @@ export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
   );
 }
 
+/** Paylar: toplamı 100 olan yüzdeler. Biri değişince diğerleri oranları korunarak 100'e tamamlanır. */
+function shares(w: readonly number[]) { const tot = w.reduce((a, b) => a + b, 0) || 1; return w.map((x) => (x / tot) * 100); }
+function reshare(cur: number[], i: number, pct: number) {
+  pct = Math.max(0, Math.min(100, pct));
+  const rest = cur.reduce((a, b, k) => (k === i ? a : a + b), 0);
+  const left = 100 - pct;
+  const out = cur.map((x, k) => (k === i ? pct : rest > 0 ? (x / rest) * left : left / (cur.length - 1)));
+  // tam sayıya yuvarla, farkı en büyük diğer paya yükle
+  const r = out.map((x) => Math.round(x)); const diff = 100 - r.reduce((a, b) => a + b, 0);
+  if (diff) { let m = -1; r.forEach((x, k) => { if (k !== i && (m < 0 || x > r[m])) m = k; }); if (m >= 0) r[m] = Math.max(0, r[m] + diff); }
+  return r;
+}
+const SHARE_COLORS = ['#9aa3b5', '#5fa8ff', '#e2b250', '#e2654c'];
+function ShareBar({ parts }: { parts: { v: number; c: string; l: string }[] }) {
+  return <div className="share-bar">{parts.filter((p) => p.v > 0.4).map((p, k) => <i key={k} style={{ width: `${p.v}%`, background: p.c }} title={`${p.l}: %${fmtN(p.v, 1)}`} />)}</div>;
+}
+function ShareRow({ label, pct, color, dis, on }: { label: string; pct: number; color: string; dis: boolean; on: (v: number) => void }) {
+  return (
+    <label className="share-row">
+      <span className="lab"><i style={{ background: color }} />{label}</span>
+      <input type="range" min={0} max={100} step={1} value={Math.round(pct)} disabled={dis} onChange={(e) => on(Number(e.target.value))} />
+      <span className="val">%{fmtN(pct, 0)}</span>
+    </label>
+  );
+}
+const ENCH_GROUPS: [string, string, string][] = [['white', 'Sıradan eşyalar', 'Beyaz'], ['blue', 'Mavi eşyalar', 'Mavi'], ['orange', 'Turuncu eşyalar', 'Turuncu'], ['default', 'Kızıl ve üstü', 'Kızıl, eşsiz…']];
+const TIER_NAMES = ['Zayıf (I)', 'Orta (II)', 'Güçlü (III)', 'Çok güçlü (IV)'];
+
+/** Efsunlar: sade düzen. Efsunlu düşme oranı + efsun sayısı payları (nadirlik başına), kademe payları, efsun listesi. */
 export function EnchantTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const et = t.enchants;
   const setEt = (p: Partial<GameTuning['enchants']>) => { const n = { ...et, ...p } as Record<string, unknown>; for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k]; setT({ ...t, enchants: n as GameTuning['enchants'] }); };
   const defCw = (r: string) => (ENCHANT_COUNT_WEIGHTS as Record<string, [number, number, number, number]>)[r] ?? ENCHANT_COUNT_WEIGHTS.default;
-  const setCw = (r: string, i: number, v: number | undefined) => {
-    const cur = [...(et.countWeights?.[r] ?? defCw(r))] as [number, number, number, number];
-    cur[i] = v ?? defCw(r)[i];
-    const cw = { ...(et.countWeights ?? {}) }; cw[r] = cur;
-    if (cur.every((x, k) => x === defCw(r)[k])) delete cw[r];
+  const cwOf = (r: string) => shares(et.countWeights?.[r] ?? defCw(r));
+  const setCw = (r: string, next: number[]) => {
+    const cw = { ...(et.countWeights ?? {}) };
+    const d = shares(defCw(r)).map((x) => Math.round(x));
+    if (next.every((x, k) => Math.abs(x - d[k]) < 0.5)) delete cw[r]; else cw[r] = next as [number, number, number, number];
     setEt({ countWeights: Object.keys(cw).length ? cw : undefined });
   };
-  const tw = et.tierWeights ?? (ENCHANT_TIER_WEIGHTS as unknown as [number, number, number, number]);
+  const chanceOf = (r: string) => (et.chance?.[r] ?? 1) * 100;
+  const setChance = (r: string, pct: number) => { const c = { ...(et.chance ?? {}) }; if (pct >= 100) delete c[r]; else c[r] = Math.max(0, pct) / 100; setEt({ chance: Object.keys(c).length ? c : undefined }); };
+  const tw = shares(et.tierWeights ?? ENCHANT_TIER_WEIGHTS);
+  const setTw = (next: number[]) => { const d = shares(ENCHANT_TIER_WEIGHTS).map((x) => Math.round(x)); setEt({ tierWeights: next.every((x, k) => Math.abs(x - d[k]) < 0.5) ? undefined : next as [number, number, number, number] }); };
   const off = new Set(et.disabled ?? []);
   const ids = Object.keys(ENCHANTS).filter((k) => !ENCHANTS[k as keyof typeof ENCHANTS].legacy);
+  const [openId, setOpenId] = useState<string | null>(null);
   return (
     <>
       <section className="admin-sec">
-        <h4>Düşen eşyada efsun sayısı</h4>
-        <div className="muted" style={{ fontSize: 11, marginBottom: 6 }}>Canavardan düşen her eşya 1, 2, 3 ya da 4 efsunlu olur. Ağırlıklar nadirliğe göre; yüzdeler otomatik hesaplanır.</div>
-        <div className="adm-table-wrap"><table className="adm-table">
-          <thead><tr><th>Nadirlik</th><th>1 efsun</th><th>2 efsun</th><th>3 efsun</th><th>4 efsun</th></tr></thead>
-          <tbody>{CW_ROWS.map(([r, l]) => {
-            const cur = et.countWeights?.[r] ?? defCw(r), sum = cur.reduce((a, b) => a + b, 0) || 1;
-            return <tr key={r}><td><b>{l}</b></td>{[0, 1, 2, 3].map((i) => <td key={i}><Num v={et.countWeights?.[r]?.[i]} def={defCw(r)[i]} min={0} max={1000} step={1} on={(v) => setCw(r, i, v)} dis={dis} w={54} /><small>%{fmtN(cur[i] / sum * 100, 0)}</small></td>)}</tr>;
-          })}</tbody>
-        </table></div>
-      </section>
-      <section className="admin-sec">
-        <h4>Kademe oranı</h4>
-        <div className="row wrap">{[0, 1, 2, 3].map((i) => (
-          <label key={i} className="row" style={{ gap: 6 }}><span>{i + 1}. kademe</span>
-            <Num v={et.tierWeights?.[i]} def={ENCHANT_TIER_WEIGHTS[i]} min={0} max={1000} step={1} dis={dis} w={56} on={(v) => { const n = [...tw] as [number, number, number, number]; n[i] = v ?? ENCHANT_TIER_WEIGHTS[i]; setEt({ tierWeights: n.every((x, k) => x === ENCHANT_TIER_WEIGHTS[k]) ? undefined : n }); }} />
-            <small className="muted">%{fmtN(tw[i] / (tw.reduce((a, b) => a + b, 0) || 1) * 100, 0)}</small></label>
-        ))}</div>
-      </section>
-      <section className="admin-sec">
-        <h4>Efsunlar ve kademe değerleri</h4>
-        <div className="adm-table-wrap"><table className="adm-table">
-          <thead><tr><th>Açık</th><th>Efsun</th><th>1.</th><th>2.</th><th>3.</th><th>4.</th></tr></thead>
-          <tbody>{ids.map((k) => {
-            const e = ENCHANTS[k as keyof typeof ENCHANTS], vals = et.values?.[k];
+        <h4>Efsunlu düşme</h4>
+        <div className="muted adm-hint">Canavardan düşen eşyanın efsunlu gelme olasılığı ve efsunluysa kaç efsun taşıyacağı. Bir kaydırıcıyı oynatınca diğerleri toplam %100 olacak şekilde kendiliğinden ayarlanır.</div>
+        <div className="ench-groups">
+          {ENCH_GROUPS.map(([r, title, sub]) => {
+            const ch = chanceOf(r), cw = cwOf(r);
+            const real = [100 - ch, ...cw.map((x) => (x * ch) / 100)];
             return (
-              <tr key={k} className={off.has(k) ? 'off' : ''}>
-                <td><input type="checkbox" checked={!off.has(k)} disabled={dis} onChange={(ev) => { const s = new Set(off); if (ev.target.checked) s.delete(k); else s.add(k); setEt({ disabled: s.size ? [...s] : undefined }); }} /></td>
-                <td><b>{e.name}</b><small>{e.desc}</small></td>
-                {[0, 1, 2, 3].map((i) => <td key={i}><Num v={vals?.[i]} def={e.tiers[i]} min={0} max={100000} step={1} dis={dis} w={56} on={(v) => { const cur = [...(vals ?? e.tiers)] as [number, number, number, number]; cur[i] = v ?? e.tiers[i]; const all = { ...(et.values ?? {}) }; if (cur.every((x, j) => x === e.tiers[j])) delete all[k]; else all[k] = cur; setEt({ values: Object.keys(all).length ? all : undefined }); }} /></td>)}
-              </tr>
+              <div className="ench-card" key={r}>
+                <div className="ench-hd"><b>{title}</b><small>{sub}</small></div>
+                <label className="share-row big">
+                  <span className="lab">Efsunlu düşme oranı</span>
+                  <input type="range" min={0} max={100} step={1} value={Math.round(ch)} disabled={dis} onChange={(e) => setChance(r, Number(e.target.value))} />
+                  <span className="val">%{fmtN(ch, 0)}</span>
+                </label>
+                <div className="ench-sub">Efsunlu düşenlerin efsun sayısı</div>
+                {[0, 1, 2, 3].map((k) => <ShareRow key={k} label={`${k + 1} efsunlu`} pct={cw[k]} color={SHARE_COLORS[k]} dis={dis} on={(v) => setCw(r, reshare(cw.map((x) => Math.round(x)), k, v))} />)}
+                <ShareBar parts={[{ v: real[0], c: '#3a2e22', l: 'Efsunsuz' }, ...cw.map((_, k) => ({ v: real[k + 1], c: SHARE_COLORS[k], l: `${k + 1} efsunlu` }))]} />
+                <div className="ench-sum">100 eşyadan ≈ {fmtN(real[0], 0)} efsunsuz · {real.slice(1).map((x, k) => `${fmtN(x, 0)} tanesi ${k + 1}`).join(' · ')} efsunlu</div>
+              </div>
             );
-          })}</tbody>
-        </table></div>
-        <div className="muted" style={{ fontSize: 11 }}>Değerler yeni düşen eşyalara uygulanır; mevcut eşyalar değişmez.</div>
+          })}
+        </div>
       </section>
+      <section className="admin-sec">
+        <h4>Efsun gücü</h4>
+        <div className="muted adm-hint">Her efsunun hangi güçte (kademede) geleceği. Değerler aşağıdaki listede.</div>
+        <div className="ench-card">
+          {[0, 1, 2, 3].map((k) => <ShareRow key={k} label={TIER_NAMES[k]} pct={tw[k]} color={SHARE_COLORS[k]} dis={dis} on={(v) => setTw(reshare(tw.map((x) => Math.round(x)), k, v))} />)}
+          <ShareBar parts={tw.map((v, k) => ({ v, c: SHARE_COLORS[k], l: TIER_NAMES[k] }))} />
+        </div>
+      </section>
+      <section className="admin-sec">
+        <h4>Efsun listesi</h4>
+        <div className="muted adm-hint">Kapalı efsunlar yeni düşen eşyalarda çıkmaz. Değerler yeni düşen eşyalara uygulanır; mevcut eşyalar değişmez.</div>
+        <div className="ench-list">
+          {ids.map((k) => {
+            const e = ENCHANTS[k as keyof typeof ENCHANTS], vals = et.values?.[k] ?? e.tiers, on = !off.has(k), open = openId === k;
+            return (
+              <div key={k} className={'ench-item' + (on ? '' : ' off')}>
+                <div className="ench-row">
+                  <button type="button" className={'switch' + (on ? ' on' : '')} disabled={dis} aria-pressed={on} aria-label={on ? 'Kapat' : 'Aç'} onClick={() => { const s2 = new Set(off); if (on) s2.add(k); else s2.delete(k); setEt({ disabled: s2.size ? [...s2] : undefined }); }}><i /></button>
+                  <button type="button" className="ench-name" onClick={() => setOpenId(open ? null : k)}>
+                    <b>{e.name}</b><small>{vals.map((v) => `${v}${e.unit}`).join(' / ')}</small>
+                  </button>
+                  <span className="chev">{open ? '▴' : '▾'}</span>
+                </div>
+                {open && (
+                  <div className="ench-edit">
+                    <div className="muted" style={{ fontSize: 11.5 }}>{e.desc}</div>
+                    <div className="adm-fields four">
+                      {[0, 1, 2, 3].map((i) => (
+                        <label key={i}><span>{TIER_NAMES[i]}</span><Num v={et.values?.[k]?.[i]} def={e.tiers[i]} min={0} max={100000} step={1} dis={dis} w={70} on={(v) => { const cur = [...(et.values?.[k] ?? e.tiers)] as [number, number, number, number]; cur[i] = v ?? e.tiers[i]; const all = { ...(et.values ?? {}) }; if (cur.every((x, j) => x === e.tiers[j])) delete all[k]; else all[k] = cur; setEt({ values: Object.keys(all).length ? all : undefined }); }} /></label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </>
+  );
+}
+
+// ───────── seviye kasılma dengesi ─────────
+const BRACKETS: [number, number, string][] = [
+  [1, 10, 'Hızlı başlangıç'], [10, 20, 'Kademeli ilerleme'], [20, 30, 'Kademeli ilerleme'], [30, 40, 'Kademeli ilerleme'],
+  [40, 45, 'Zorlu son seviyeler'], [45, 50, 'Zorlu son seviyeler'], [50, 55, 'Zorlu son seviyeler'], [55, 60, 'Zorlu son seviyeler'], [60, 65, 'Zorlu son seviyeler'],
+];
+const fmtMin = (m: number) => (m < 120 ? `${fmtN(m, 0)} dakika` : m < 60 * 48 ? `${Math.floor(m / 60)} sa ${Math.round(m % 60)} dk` : `${fmtN(m / 60 / 24, 1)} gün`);
+export function LevelTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const custom = t.xpTable?.length === LEVEL_CAP_BASE - 1;
+  const table = custom ? t.xpTable! : [...DEFAULT_XP_TABLE];
+  const [tpm, setTpm] = useState(() => { try { return Number(localStorage.getItem('adm_tpm')) || 300; } catch { return 300; } });
+  const [open, setOpen] = useState<number | null>(null);
+  const put = (next: number[]) => setT({ ...t, xpTable: next.every((v, i) => v === DEFAULT_XP_TABLE[i]) ? undefined : next });
+  const scale = (a: number, b: number, f: number) => put(table.map((v, i) => (i + 1 >= a && i + 1 < b ? Math.max(1, Math.round(v * f)) : v)));
+  const bad = table.map((v, i) => i > 0 && v < table[i - 1]);
+  const fixOrder = () => { const n = [...table]; for (let i = 1; i < n.length; i++) if (n[i] < n[i - 1]) n[i] = n[i - 1]; put(n); };
+  const sum = (a: number, b: number) => table.slice(a - 1, b - 1).reduce((x, y) => x + y, 0);
+  const total = sum(1, LEVEL_CAP_BASE);
+  return (
+    <>
+      <section className="admin-sec">
+        <h4>Seviye kasılma dengesi <span className="pill ok" style={{ marginLeft: 6 }}>En fazla {LEVEL_CAP_BASE}</span></h4>
+        <div className="muted adm-hint">İlk 10 seviye hızlı, son seviyeler zor. TP bedelini artırmak kasılmayı yavaşlatır. Kaydedince oyundaki oyuncuların seviyesi ve seviye içindeki ilerleme oranı korunur. Süreler tahminidir; ekipman, grup ve TP çarpanı sonucu değiştirir.</div>
+        <div className="row wrap" style={{ gap: 8 }}>
+          <button className="btn small" disabled={dis} onClick={() => scale(1, LEVEL_CAP_BASE, 0.9)}>Tümünü %10 kolaylaştır</button>
+          <button className="btn small" disabled={dis} onClick={() => scale(1, LEVEL_CAP_BASE, 1.1)}>Tümünü %10 zorlaştır</button>
+          <label className="adm-inline"><span>Tahmin için dakikada kazanılan TP</span><Num v={tpm} def={300} min={1} max={1e7} step={1} w={86} on={(v) => { const n = v ?? 300; setTpm(n); try { localStorage.setItem('adm_tpm', String(n)); } catch { /* */ } }} /></label>
+        </div>
+        <div className="lvl-total">1 → {LEVEL_CAP_BASE}: <b>{fmtN(total, 0)} TP</b> · ≈ {fmtMin(total / tpm)}{custom ? '' : ' · varsayılan tablo'}</div>
+        {bad.some(Boolean) && <div className="lvl-warn">Sıra bozuk: Sv. {bad.map((b, i) => (b ? i + 1 : 0)).filter(Boolean).join(', ')} bir önceki seviyeden daha ucuz. <button className="btn small" disabled={dis} onClick={fixOrder}>Sırayı düzelt</button></div>}
+      </section>
+      <div className="lvl-grid">
+        {BRACKETS.map(([a, b, label], bi) => {
+          const s = sum(a, b), hasBad = bad.slice(a - 1, b - 1).some(Boolean);
+          return (
+            <div className={'lvl-card' + (hasBad ? ' bad' : '')} key={a}>
+              <div className="lvl-hd"><b>{a} → {b}</b><small>{label}</small></div>
+              <div className="lvl-tp">{fmtN(s, 0)} TP</div>
+              <div className="muted lvl-time">Girilen hıza göre ≈ {fmtMin(s / tpm)}</div>
+              <div className="row" style={{ gap: 6 }}>
+                <button className="btn small" disabled={dis} onClick={() => scale(a, b, 0.9)}>%10 Kolaylaştır</button>
+                <button className="btn small" disabled={dis} onClick={() => scale(a, b, 1.1)}>%10 Zorlaştır</button>
+              </div>
+              <button type="button" className="lvl-more" onClick={() => setOpen(open === bi ? null : bi)}>{open === bi ? '▾' : '▸'} Seviyeleri tek tek düzenle</button>
+              {open === bi && (
+                <div className="lvl-rows">
+                  {table.slice(a - 1, b - 1).map((v, k) => {
+                    const L = a + k;
+                    return <label key={L} className={bad[L - 1] ? 'bad' : ''}><span>Sv. {L} → {L + 1}</span><Num v={custom ? v : undefined} def={v} min={1} max={1e9} step={1} dis={dis} w={110} on={(nv) => { const n = [...table]; n[L - 1] = Math.max(1, Math.round(nv ?? DEFAULT_XP_TABLE[L - 1])); put(n); }} /></label>;
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className="row" style={{ marginTop: 10 }}><button className="btn small ghost" disabled={dis || !custom} onClick={() => setT({ ...t, xpTable: undefined })}>Varsayılan tabloya dön</button></div>
     </>
   );
 }

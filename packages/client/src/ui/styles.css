@@ -505,7 +505,7 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .adm-table tr.off td { opacity: .45; }
 .adm-num { background: rgba(14, 9, 5, .8); color: var(--text); border: none; box-shadow: inset 0 0 0 1px var(--edge2); padding: 5px 7px; font: inherit; font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .adm-num::placeholder { color: #7f6a50; }
-.adm-num.set { box-shadow: inset 0 0 0 1px var(--ember); color: var(--ember2); font-weight: 600; }
+.adm-num.set { box-shadow: inset 0 0 0 1px var(--core); color: var(--core2); font-weight: 600; }
 .adm-num:focus { outline: none; box-shadow: inset 0 0 0 1px var(--core); }
 .adm-search { width: 100%; margin-bottom: 6px; background: rgba(14, 9, 5, .8); color: var(--text); border: none; box-shadow: inset 0 0 0 1px var(--edge2); padding: 8px 10px; font: inherit; font-size: 13px; }
 .adm-sel { background: rgba(14, 9, 5, .8); color: var(--text); border: none; box-shadow: inset 0 0 0 1px var(--edge2); padding: 5px 6px; font: inherit; font-size: 12.5px; }
@@ -669,6 +669,9 @@ a.btn { text-decoration: none; display: inline-block; }
   .adm-search-row { top: 53px; }
 }
 @media (max-width: 420px) {
+  .adm-savebar { gap: 6px; padding: 8px 8px 8px 12px; }
+  .adm-savebar > span { font-size: 12px; }
+  .adm-savebar .btn { padding: 9px 10px; font-size: 12.5px; }
   .adm-fields { grid-template-columns: 1fr 1fr; }
   .adm-me { display: none; }
   .adm-seg button small { display: none; }
@@ -735,4 +738,57 @@ a.btn { text-decoration: none; display: inline-block; }
   .ferman-body { padding: 14px 24px 18px; }
   .ferman-title { font-size: 34px; }
   .tugra-mark { width: 160px; }
+}
+
+/* ── yönetim: efsun payları ve seviye kartları ── */
+.ench-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.ench-card { padding: 12px; border-radius: 10px; background: rgba(0, 0, 0, .22); box-shadow: inset 0 0 0 1px var(--edge); display: flex; flex-direction: column; gap: 6px; }
+.ench-hd { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.ench-hd b { font-size: 14.5px; color: var(--core2); }
+.ench-hd small { font-size: 11px; color: var(--muted); }
+.ench-sub { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 6px; font-weight: 600; }
+.share-row { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(0, 1.6fr) 46px; align-items: center; gap: 10px; min-height: 34px; }
+.share-row .lab { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; }
+.share-row .lab i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.share-row input[type=range] { width: 100%; height: 26px; }
+.share-row .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.share-row.big .lab { font-size: 13.5px; color: var(--text); }
+.share-row.big .val { color: var(--core2); font-size: 15px; }
+.share-bar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; background: #2a2018; margin-top: 4px; }
+.share-bar i { display: block; height: 100%; transition: width .15s; }
+.ench-sum { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+.ench-list { display: flex; flex-direction: column; gap: 6px; }
+.ench-item { border-radius: 10px; background: rgba(0, 0, 0, .2); box-shadow: inset 0 0 0 1px var(--edge); }
+.ench-item.off { opacity: .55; }
+.ench-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+.ench-name { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; background: none; border: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; padding: 2px 0; }
+.ench-name b { font-size: 14px; font-weight: 600; }
+.ench-name small { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ench-row .chev { color: var(--muted); font-size: 12px; }
+.ench-edit { padding: 0 10px 12px 60px; display: flex; flex-direction: column; gap: 8px; }
+.adm-fields.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.adm-fields.four label { text-transform: none; letter-spacing: 0; }
+.switch { width: 42px; height: 24px; flex: none; border: none; border-radius: 12px; background: #3a2e22; position: relative; cursor: pointer; transition: background .15s; box-shadow: inset 0 0 0 1px var(--edge2); }
+.switch i { position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: #a8957a; transition: transform .15s, background .15s; }
+.switch.on { background: #3d6a32; }
+.switch.on i { transform: translateX(18px); background: #e8ffd8; }
+.lvl-total { margin-top: 10px; font-size: 13px; color: var(--muted); }
+.lvl-total b { color: var(--core2); }
+.lvl-warn { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: rgba(255, 107, 90, .1); box-shadow: inset 0 0 0 1px #7a2a20; color: #ffc2b8; font-size: 12.5px; }
+.lvl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.lvl-card { padding: 14px; border-radius: 12px; background: linear-gradient(180deg, var(--glass2), var(--glass)); box-shadow: inset 0 0 0 1px var(--edge); display: flex; flex-direction: column; gap: 6px; }
+.lvl-card.bad { box-shadow: inset 0 0 0 1px var(--bad); }
+.lvl-hd { display: flex; flex-direction: column; }
+.lvl-hd b { font: 400 19px var(--f-title); }
+.lvl-hd small { color: var(--core); font-size: 12px; }
+.lvl-tp { font: 700 20px var(--f-ui); font-variant-numeric: tabular-nums; margin-top: 4px; }
+.lvl-time { font-size: 12px; margin-bottom: 4px; }
+.lvl-more { background: none; border: none; color: var(--core2); font: 600 12.5px var(--f-ui); text-align: left; padding: 6px 0 0; cursor: pointer; }
+.lvl-rows { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.lvl-rows label { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--muted); }
+.lvl-rows label.bad span { color: var(--bad); }
+@media (max-width: 520px) {
+  .share-row { grid-template-columns: 84px minmax(0, 1fr) 40px; gap: 8px; }
+  .ench-edit { padding-left: 10px; }
+  .adm-fields.four { grid-template-columns: 1fr 1fr; }
 }

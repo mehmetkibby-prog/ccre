@@ -8,7 +8,7 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, MapTab, Num, fmtN } from './AdminPanel.tsx';
+import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, MapTab, LevelTab, Num, fmtN } from './AdminPanel.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -61,12 +61,12 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'oyuncu' | 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita';
+type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita';
 const TABS: [Tab, string, string][] = [
-  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['canavar', 'Canavarlar', '✶'],
+  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['seviye', 'Seviye', '▲'], ['canavar', 'Canavarlar', '✶'],
   ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['harita', 'Haritalar', '⌖'],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'canavar', 'ganimet', 'efsun', 'arti', 'harita']);
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'canavar', 'ganimet', 'efsun', 'arti', 'harita']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -171,6 +171,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
           <div className="adm-settings">
             <p className="muted adm-hint">Boş kutu = varsayılan değer. Değişiklikler <b>Kaydet</b> deyince oyundaki herkese anında uygulanır.</p>
             {tab === 'genel' && <GeneralTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'seviye' && <LevelTab t={t} setT={setTT} dis={busy} />}
             {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={busy} />}
             {tab === 'ganimet' && <><RarityTable t={t} setT={setTT} dis={busy} /><LootTab t={t} setMon={setMon} dis={busy} /></>}
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
@@ -324,7 +325,7 @@ function PlayerCard({ p, open, onToggle, toast, reload }: { p: APlayer; open: bo
             {seen && !p.online && <span className="tag">Son: {seen}</span>}
           </div>
           <div className="adm-fields">
-            <label><span>Seviye</span><Num v={edit.level} def={p.level} min={1} max={99} step={1} w={84} on={(v) => setEdit({ ...edit, level: v })} /></label>
+            <label><span>Seviye</span><Num v={edit.level} def={p.level} min={1} max={65} step={1} w={84} on={(v) => setEdit({ ...edit, level: v })} /></label>
             <label><span>Mücevher</span><Num v={edit.gems} def={p.gems} min={0} max={1e12} step={1} w={110} on={(v) => setEdit({ ...edit, gems: v })} /></label>
             <label><span>Kırmızı İksir</span><Num v={edit.potions} def={p.potions} min={0} max={1e7} step={1} w={84} on={(v) => setEdit({ ...edit, potions: v })} /></label>
           </div>

@@ -14,6 +14,8 @@ export interface MonsterTune {
 export interface SpawnTune { count?: number; level?: [number, number]; variants?: [number, number, number] }
 /** Efsun ayarı: düşen eşyada efsun sayısı ve kademe oranları, kademe değerleri, kapalı efsunlar. */
 export interface EnchantTune {
+  /** Nadirlik grubu başına efsunlu düşme olasılığı (0..1); boş = her düşen eşya efsunlu. */
+  chance?: Record<string, number>;
   countWeights?: Record<string, [number, number, number, number]>; // nadirlik (white/blue/orange/default) → 1..4 efsun ağırlığı
   tierWeights?: [number, number, number, number];
   values?: Record<string, [number, number, number, number]>;
@@ -36,6 +38,8 @@ export interface GameTuning {
   sellPrice: Record<string, number>;
   /** Artı basma: 6 kademelik tablo (boş = varsayılan) ve başarısızlıkta kademe düşmesi. */
   upgrade: UpgradeTune;
+  /** Seviye TP tablosu: 64 değer (1→2 … 64→65); boş = varsayılan tablo. */
+  xpTable?: number[];
 }
 export interface UpgradeStepTune { chance: number; gems: number; mats: Record<string, number>; weapon: number; armor: number }
 export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
@@ -46,7 +50,7 @@ export const DEFAULT_TUNING: GameTuning = {
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05],
@@ -106,6 +110,9 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   const vals: Record<string, [number, number, number, number]> = {};
   for (const [k, v] of Object.entries(obj(e.values))) { const q = quad(v, 0, 100000); if (key(k) && q) vals[k] = q; }
   if (Object.keys(vals).length) et.values = vals;
+  const ch: Record<string, number> = {};
+  for (const [k, v] of Object.entries(obj(e.chance))) { const n = num(v, 0, 1); if (key(k) && n !== undefined && n !== 1) ch[k] = n; }
+  if (Object.keys(ch).length) et.chance = ch;
   if (Array.isArray(e.disabled)) et.disabled = e.disabled.filter((x): x is string => typeof x === 'string' && key(x)).slice(0, 40);
   out.enchants = et;
   for (const [k, v] of Object.entries(obj(r.rarityPower))) {
@@ -126,6 +133,10 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     out.upgrade.steps = steps;
   }
   if (typeof up.failDown === 'boolean') out.upgrade.failDown = up.failDown;
+  if (Array.isArray(r.xpTable) && r.xpTable.length === 64) {
+    const xt = r.xpTable.map((x) => num(x, 1, 1e9));
+    if (!xt.some((x) => x === undefined)) out.xpTable = xt.map((x) => Math.round(x as number));
+  }
   return out;
 }
 /** Ayarları yerinde günceller (aynı nesne; okuyanlar her seferinde güncel değeri görür). */

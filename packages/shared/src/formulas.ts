@@ -1,14 +1,33 @@
 import { CLASSES, type ClassId } from './content/classes.ts';
+import { TUNING } from './tuning.ts';
 import { ITEM_TPL, itemPower, type ItemInstance, type Slot, type EnchantType } from './content/items.ts';
 
-export const LEVEL_CAP_BASE = 50;
+/** En yüksek seviye. */
+export const LEVEL_CAP_BASE = 65;
 export const LEVEL_CAP_EXPANSION = 65;
 export const STAT_MAX = 64;
 export const STAT_BONUS_AT_MAX = { str: 0.10, res: 0.10, vit: 0.12 }; // 64 puanda toplam katkı
 
-/** TP eğrisi (yönetimden ayarlanabilir; varsayılan). */
+/**
+ * Varsayılan TP tablosu: index 0 = 1→2 seviyesi için gereken TP … index 63 = 64→65.
+ * Düzen: ilk 10 seviye hızlı, 10–40 kademeli, son seviyeler zor (aralık toplamları yönetim panelinde görünür).
+ */
+export const DEFAULT_XP_TABLE: readonly number[] = [
+  18, 55, 100, 170, 240, 320, 400, 500, 600,
+  2000, 2300, 2600, 3000, 3400, 3700, 4200, 4600, 5000, 5500,
+  5500, 5500, 5600, 6000, 6500, 6900, 7400, 7800, 8300, 8800,
+  14000, 15000, 15000, 16000, 17000, 18000, 19000, 19000, 20000, 21000,
+  51000, 53000, 55000, 57000, 59000,
+  71000, 73000, 76000, 78000, 81000,
+  110000, 120000, 120000, 130000, 130000,
+  140000, 140000, 150000, 150000, 150000,
+  170000, 180000, 180000, 190000, 190000,
+];
+/** Bir sonraki seviye için gereken TP (yönetim panelindeki tablo, yoksa varsayılan). */
 export function xpToNext(level: number): number {
-  return Math.round(55 * Math.pow(level, 1.9) + 45 * level + 40);
+  const L = Math.max(1, Math.min(LEVEL_CAP_BASE - 1, Math.floor(level)));
+  const t = TUNING.xpTable;
+  return (t && t.length === LEVEL_CAP_BASE - 1 ? t : DEFAULT_XP_TABLE)[L - 1];
 }
 export function statBudget(level: number): number { return (level - 1) * 3; }
 export function skillUpgradeBudget(level: number): number { return Math.min(30, Math.max(3, level)); }
