@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: new migration backs up only affected derived state and never copies or restores players
+ok 1 - new migration backs up only affected derived state and never copies or restores players
+  ---
+  duration_ms: 10.325778
+  type: 'test'
+  ...
+# Subtest: existing compatible rows are backed up consistently and retained exactly
+ok 2 - existing compatible rows are backed up consistently and retained exactly
+  ---
+  duration_ms: 5.681453
+  type: 'test'
+  ...
+# Subtest: changed derived rows and corrupt backups are rejected before any schema mutation
+ok 3 - changed derived rows and corrupt backups are rejected before any schema mutation
+  ---
+  duration_ms: 5.548179
+  type: 'test'
+  ...
+# Subtest: incompatible schemas, symlinks and changed database identities fail closed
+ok 4 - incompatible schemas, symlinks and changed database identities fail closed
+  ---
+  duration_ms: 5.11167
+  type: 'test'
+  ...
+# Subtest: real process exit before_commit preserves source data and supports safe retry
+ok 5 - real process exit before_commit preserves source data and supports safe retry
+  ---
+  duration_ms: 170.143949
+  type: 'test'
+  ...
+# Subtest: real process exit after_commit preserves source data and supports safe retry
+ok 6 - real process exit after_commit preserves source data and supports safe retry
+  ---
+  duration_ms: 113.005114
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1103.87436
