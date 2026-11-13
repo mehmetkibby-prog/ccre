@@ -16,7 +16,13 @@ export const nativeTokenHash=token=>createHash('sha256').update(token).digest('b
 // session, account, Origin, CSRF, instance, realm, bot and lab-proof predicates.
 export function createNativeEntryAuth({database,globals,clock=Date.now,presence=null}){
  const environment={DB:database,CORE_RUNTIME:'vds',CORE_SHA256:nativeTokenHash};
- const rules=createEntryRules({environment,globals,clock});
+ const rules=createEntryRules({environment,globals,clock,ports:{guildRuntimeR113:()=>{
+  // Resolve lazily: the coordinator binds this adapter after auth construction.
+  // Never create a second service or skip repair when its binding is missing.
+  const core=database.core511GuildAuth?.assertBound();
+  demand(core&&typeof core.guild?.repair==='function','native_guild_auth_binding');
+  return {guildVillageService:()=>core.guild};
+ }}});
  return {rules,async session(request,{csrf=true,tokenHash=null}={}){
   let session=tokenHash?await rules.getGameSessionByHash(tokenHash,request,true):await rules.getGameSession(request);
   if(session&&presence)session=presence.augment(session);

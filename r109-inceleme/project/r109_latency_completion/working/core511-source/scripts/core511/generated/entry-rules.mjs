@@ -13,6 +13,7 @@ export function createEntryRules({environment,globals=ambient,clock=ambient.Date
 const globalThis=globals,env=environment,Date=class extends ambient.Date{static now(){return clock();}},crypto={...ambient.crypto,randomUUID:uuid,subtle:ambient.crypto.subtle},Response=response,channelCapacity510=()=>CAPACITY;
 const settlePveEngagement=(...args)=>{if(typeof ports.settlePveEngagement!=="function")throw Error("entry_port_unbound:settlePveEngagement");return ports.settlePveEngagement(...args);};
 const selectEntry504=(...args)=>{if(typeof ports.selectEntry504!=="function")throw Error("entry_port_unbound:selectEntry504");return ports.selectEntry504(...args);};
+const guildRuntimeR113=(...args)=>{if(typeof ports.guildRuntimeR113!=="function")throw Error("entry_port_unbound:guildRuntimeR113");return ports.guildRuntimeR113(...args);};
 async function colRepairRuneAccess(database,playerId){
  const current = await database.prepare("SELECT id,(level<65 OR rank_tier<1) AS underqualified FROM players WHERE id=? AND area='rune'").bind(playerId).first();
  const enabled = globalThis.__colRunes?.settings().config.enabled ? 1 : 0;
@@ -1038,7 +1039,7 @@ async function validateGameSession(request, session) {
 	}
 	if (botRequired465) throw new AuthRequestError(403, "bot_check_required", "Devam etmek için bot doğrulamasını tamamla.");
 	if (session.player && session.playerAccess?.area?.startsWith("guild_")) {
-		const { guildVillageService, publishGuildEjections } = await import("../../../../native510-bb3a6cc689c6/dist-vds/server/channel-runtime/assets/guild-village-runtime-Dke_G6YB.js");
+		const { guildVillageService, publishGuildEjections } = await guildRuntimeR113();
 		const repair = guildVillageService() ? await authDatabase().core511GuildAuth.repair(guildVillageService(), session.player.id) : undefined;
 		if (repair) {
 			session.playerAccess.area = repair.area;
@@ -1265,6 +1266,7 @@ export function createEntryWriterRules({environment,globals=ambient,clock=ambien
 const globalThis=globals,env=environment,Date=class extends ambient.Date{static now(){return clock();}},crypto={...ambient.crypto,randomUUID:uuid,subtle:ambient.crypto.subtle},Response=response,channelCapacity510=()=>CAPACITY;
 const settlePveEngagement=(...args)=>{if(typeof ports.settlePveEngagement!=="function")throw Error("entry_port_unbound:settlePveEngagement");return ports.settlePveEngagement(...args);};
 const selectEntry504=(...args)=>{if(typeof ports.selectEntry504!=="function")throw Error("entry_port_unbound:selectEntry504");return ports.selectEntry504(...args);};
+const guildRuntimeR113=(...args)=>{if(typeof ports.guildRuntimeR113!=="function")throw Error("entry_port_unbound:guildRuntimeR113");return ports.guildRuntimeR113(...args);};
  function colRepairRuneAccess(database,playerId){
  const current = database.prepare("SELECT id,(level<65 OR rank_tier<1) AS underqualified FROM players WHERE id=? AND area='rune'").bind(playerId).first();
  const enabled = globalThis.__colRunes?.settings().config.enabled ? 1 : 0;
@@ -2254,7 +2256,7 @@ const requestSessionHashes465 = new WeakMap();
 	}
 	if (botRequired465) throw new AuthRequestError(403, "bot_check_required", "Devam etmek için bot doğrulamasını tamamla.");
 	if (session.player && session.playerAccess?.area?.startsWith("guild_")) {
-		const { guildVillageService, publishGuildEjections } = import("../../../../native510-bb3a6cc689c6/dist-vds/server/channel-runtime/assets/guild-village-runtime-Dke_G6YB.js");
+		const { guildVillageService, publishGuildEjections } = guildRuntimeR113();
 		const repair = guildVillageService()?.repair(session.player.id);
 		if (repair) {
 			session.playerAccess.area = repair.area;
