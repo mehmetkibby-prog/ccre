@@ -115,7 +115,7 @@ try{
  report.heapAfterWindow=process.memoryUsage();
  report.replayStorageEnabled=process.env.CORE511_R111_REPLAY_STORAGE!=='0';
  const diagnostics=await s.core.diagnostics.sample();
- report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51,committed:t.metrics?.committedR113,sections:t.metrics?.r54?.actorSectionsR52}))};
+ report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51,committed:t.metrics?.committedR113,sections:t.metrics?.r52?.actorSections}))};
  report.sharedTerminal={scope:'existing bounded records, read after timed window; synthetic actors only',channelRelease:s.world.combat.channelReleaseR111,actorWaits:s.world.combat.actorWaits,actorRejections:s.world.combat.actorRejections,conflicts:s.world.combat.actorConflicts,refreshes:s.world.combat.refreshTrace??[]};
  if(census)report.sqlCensus=census.report();
  if(framing){report.framingCensus=Object.fromEntries([...framing].sort((a,b)=>b[1].ms-a[1].ms));report.ipcSendCensus=ipcSends;}
