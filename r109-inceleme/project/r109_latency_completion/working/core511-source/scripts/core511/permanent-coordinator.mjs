@@ -36,7 +36,7 @@ export class PermanentCoordinator {
  async operate(ids,operation,{owned=false,idleOnly=false}={}){
   demand(Array.isArray(ids)&&ids.length>0&&ids.length<=100&&ids.every(id=>typeof id==='string'&&id.length>0&&id.length<=160),'permanent_actor_set');
   demand(typeof operation==='function'&&(owned||operation.constructor.name!=='AsyncFunction'),'permanent_operation_must_be_synchronous');
-  const earlier=this.tail;let release;this.tail=new Promise(r=>release=r);await earlier;
+  const earlier=this.tail;let release;const settled=this.tail=new Promise(r=>release=r);await earlier;
   const held=[];let value,rejected=null,ownershipHold=null;
   try{
    while(this.sharedCombat?.terminal)await this.sharedCombat.terminalIdle();
@@ -46,7 +46,7 @@ export class PermanentCoordinator {
    for(const id of [...new Set(ids)].sort()){
     const owner=this.authority.owner(id),admission=this.authority.admission(id),simulation=this.authority.simulation?.(id),heldOwner=admission??simulation;
     demand(!heldOwner||owner?.state==='active'&&owner.epoch===heldOwner.epoch&&owner.channel===heldOwner.channel,'permanent_owner_fenced');
-    const entry={id,token:randomUUID(),owner:heldOwner?{...owner}:null,admission,simulation,phase:'freezing',endpoint:null,needsFreeze:Boolean(heldOwner)};
+    const entry={id,token:randomUUID(),owner:heldOwner?{...owner}:null,admission,simulation,phase:'freezing',endpoint:null,needsFreeze:Boolean(heldOwner),settled};
     this.entries.set(id,entry);held.push(entry);
    }
    let mayDeferIdle=idleOnly;

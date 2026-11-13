@@ -6,6 +6,7 @@ import {NATIVE_ACTIONS} from './generated/action-names.mjs';
 import {PROTOCOL,demand} from './contract.mjs';
 import {bagUnequipBlocked,bagFullBody,isBagFull} from './bag-limit.mjs';
 import {bagSpaceOperation,bagTradeOperation} from './bag-pending.mjs';
+import {CHAT_DEFERRED_R113,temporaryChatWaitR113,unavailableChatR113,waitChatFenceR113} from './chat-availability-r113.mjs';
 
 // These operations already have owned WS/entry implementations. An old HTTP
 // client must upgrade; it must never start a second simulation on the writer.
@@ -120,19 +121,28 @@ export class NativeHttpAction {
   });
  }
  trade(session,payload,reauthorize,operation){return this.#action(session,payload,reauthorize,operation,true);}
- chat(session,payload,reauthorize,operation){
+ async chat(session,payload,reauthorize,operation){
   // Only plain world/trade text has no simulation-owned mutation or room
   // snapshot. Item links consume owned orbs; private/regional messages and
   // thread operations retain their original full owner gate.
   const plain=payload&&typeof payload==='object'&&!payload.itemId&&!payload.recipientId&&!payload.recipientName&&payload.action===undefined&&payload.scope!=='regional';
   if(!plain||process.env.CORE511_R111_CHAT_CONTINUITY==='0')return this.action(session,{action:'native_chat'},reauthorize,operation);
   const c=this.assertBound();demand(session?.account?.id&&session.player?.id&&typeof reauthorize==='function'&&typeof operation==='function','native_http_chat_scope');
-  return c.serial(async()=>{
+  const deadline=performance.now()+5000;
+  for(;;){
+   let waiting=null;
+   const answer=await c.serial(async()=>{
    this.assertBound();const current=await reauthorize();
    demand(current?.account?.id===session.account.id&&current.player?.id===session.player.id&&current.tokenHash===session.tokenHash,'native_http_action_session_changed');
    const actor=current.player.id,sql=c.database.sqlite;
    demand(sql.prepare('SELECT account_id FROM players WHERE id=?').get(actor)?.account_id===current.account.id&&!c.transitions.has(actor),'native_http_action_actor');
-   c.permanent.assertAvailable([actor]);
+   try{c.permanent.assertAvailable([actor]);}
+   catch(error){
+    waiting=temporaryChatWaitR113(c,actor,error);
+    if(waiting)return CHAT_DEFERRED_R113;
+    if(['permanent_actor_fenced','actor_command_pending'].includes(error?.code))return unavailableChatR113();
+    throw error;
+   }
    const state={active:true,events:[],actor,account:current.account.id,payload:{action:'native_chat'},nativeCalled:false};
    let value,rejected=null,notificationActors=[];
    try{value=await this.#context.run(state,operation);}catch(error){rejected=error;}finally{state.active=false;}
@@ -142,7 +152,12 @@ export class NativeHttpAction {
    if(state.events.length){const result=await c.database.atomic(sql=>c.writer.notifications.append(sql,{realm:c.realmId,key:randomUUID()},{events:state.events}));notificationActors=result.notificationActors;}
    await c.database.durableAfterCommit();
    c.notify(notificationActors);if(rejected)throw rejected;return value;
-  });
+   });
+   if(answer!==CHAT_DEFERRED_R113)return answer;
+   // Release c.serial before waiting: the background operation may need that
+   // coordinator to finish. The native callback has not run, even once.
+   if(!await waitChatFenceR113(waiting,deadline-performance.now()))return unavailableChatR113();
+  }
  }
  action(session,payload,reauthorize,operation){return this.#action(session,payload,reauthorize,operation,false);}
  #action(session,payload,reauthorize,operation,trade){

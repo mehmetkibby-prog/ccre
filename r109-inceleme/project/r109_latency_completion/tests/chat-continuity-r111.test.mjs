@@ -64,3 +64,32 @@ test('a slow chat filter/delivery never holds a simulation owner or its accepted
  }finally{release();gate.chat=chat;}
  assert.equal(s.faults.length,0,s.faults.map(f=>f.error?.stack).join('\n'));
 });
+
+test('chat waits outside the coordinator for a background actor freeze, reauthorizes, and sends once',{timeout:45000},async t=>{
+ const s=await httpActionFixture(t),{core:c,f}=s,gate=c.nativeHttpAction,original=gate.chat.bind(gate);
+ let release,entered=false,answered=false,reauthorizations=0,operations=0;
+ const hold=new Promise(r=>release=r);
+ // Background maintenance/solo transitions can hold an actor independently
+ // of c.serial. A normal HTTP action through permanentPlayers would hide this race.
+ const transition=c.permanent.durablePlayers([f.id],async()=>{entered=true;await hold;return null;});
+ gate.chat=(session,payload,reauthorize,operation)=>original(session,payload,async()=>{reauthorizations++;return reauthorize();},async()=>{operations++;return operation();});
+ let sending;
+ try{
+  await until(()=>entered,5000);
+  sending=call(s,{body:'Gecisten sonra bir kez',scope:'world'}).then(r=>{answered=true;return r;});
+  await until(()=>reauthorizations>0,5000);
+  await new Promise(r=>setTimeout(r,100));assert.equal(answered,false,'temporary freeze must not become a chat HTTP500');assert.equal(operations,0);
+  let free=false;const independent=c.serial(()=>{free=true;});await until(()=>free,1000);await independent;
+  release();await transition;const response=await sending;assert.equal(response.status,200);await response.json();
+  assert(reauthorizations>=2,'waiting cannot retain stale session authorization');assert.equal(operations,1);
+  assert.equal(f.sql.prepare('SELECT count(*) n FROM messages WHERE player_id=? AND body=?').get(f.id,'Gecisten sonra bir kez').n,1);
+ }finally{release();await transition;await sending;gate.chat=original;}
+ assert.equal(s.faults.length,0,s.faults.map(f=>f.error?.stack).join('\n'));
+});
+
+test('a fenced error after native chat starts is never retried',{timeout:45000},async t=>{
+ const s=await httpActionFixture(t),gate=s.core.nativeHttpAction,original=gate.chat.bind(gate);let operations=0;
+ gate.chat=(session,payload,reauthorize)=>original(session,payload,reauthorize,async()=>{operations++;throw Object.assign(Error('permanent_actor_fenced'),{code:'permanent_actor_fenced'});});
+ try{assert.equal((await call(s,{body:'Islem yeniden oynatilmasin',scope:'world'})).status,500);assert.equal(operations,1);}
+ finally{gate.chat=original;}
+});
