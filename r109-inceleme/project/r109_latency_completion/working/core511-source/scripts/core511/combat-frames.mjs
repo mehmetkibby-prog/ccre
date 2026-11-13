@@ -1,3 +1,4 @@
+import {prepareCached477} from './writer-statements.mjs';
 import {nativeEngagementR53} from './r53-options.mjs';
 import {createAttackWriterRules} from './generated/attack-writer-rules.mjs';
 import {nativeAtomicStatements,readRetaliationFrame} from './retaliation-writer.mjs';
@@ -20,10 +21,10 @@ const runeReadRules=createRuneBossRules();
 export function readCombatBundle(sql,actor,{revision,nowMs=Date.now()}={}){
  demand(Number.isSafeInteger(revision)&&revision>=0,'combat_bundle_revision');const db=nativeAtomicStatements(sql),retaliation=readRetaliationFrame(sql,actor,[]);
  const actorFrame=admissionRules.hydrateAttack(db,actor,'').player,targetFrame=admissionRules.hydrateCombatTarget(db,actor);demand(actorFrame&&targetFrame&&retaliation.player,'combat_bundle_missing_actor');
- const lab=sql.prepare("SELECT length(loadlab_run_id)>0 OR EXISTS(SELECT 1 FROM loadlab_entities_v1 e WHERE e.id=players.id OR e.account_id=players.account_id) OR EXISTS(SELECT 1 FROM loadlab_admissions_v1 a WHERE a.account_id=players.account_id) AS associated FROM players WHERE id=?").get(actor);
- const runeRankEligible=sql.prepare(`SELECT CASE WHEN ${runeV2RealPlayerSql483('p')} THEN 1 ELSE 0 END AS eligible FROM players p WHERE p.id=?`).get(actor)?.eligible===1;
- const arenaLife=actorFrame.arena_match_id?sql.prepare('SELECT MAX(victim_hp_revision) AS revision FROM arena_kill_claims WHERE match_id=? AND victim_id=?').get(actorFrame.arena_match_id,actor).revision:null;
- return {actor,revision,at:nowMs,actorFrame,targetFrame,retaliationPlayer:retaliation.player,armorItems:retaliation.armorItems.results,heartbeatState:readHeartbeatState(sql,actor),runeRankEligible,arenaLife,runeArmorJson:runeReadRules.readPlayers(db,[actor],actorFrame.channel)[0]?.armor_json484??'[]',pets:sql.prepare('SELECT kind,acquired_at,equipped FROM player_pets WHERE player_id=? AND equipped=1').all(actor),labAssociated:Boolean(lab?.associated),afk:sql.prepare('SELECT day,used_ms,bonus_ms,active,tick_at_ms FROM afk_hunt_state WHERE player_id=?').get(actor)??null};
+ const lab=prepareCached477(sql,"SELECT length(loadlab_run_id)>0 OR EXISTS(SELECT 1 FROM loadlab_entities_v1 e WHERE e.id=players.id OR e.account_id=players.account_id) OR EXISTS(SELECT 1 FROM loadlab_admissions_v1 a WHERE a.account_id=players.account_id) AS associated FROM players WHERE id=?").get(actor);
+ const runeRankEligible=prepareCached477(sql,`SELECT CASE WHEN ${runeV2RealPlayerSql483('p')} THEN 1 ELSE 0 END AS eligible FROM players p WHERE p.id=?`).get(actor)?.eligible===1;
+ const arenaLife=actorFrame.arena_match_id?prepareCached477(sql,'SELECT MAX(victim_hp_revision) AS revision FROM arena_kill_claims WHERE match_id=? AND victim_id=?').get(actorFrame.arena_match_id,actor).revision:null;
+ return {actor,revision,at:nowMs,actorFrame,targetFrame,retaliationPlayer:retaliation.player,armorItems:retaliation.armorItems.results,heartbeatState:readHeartbeatState(sql,actor),runeRankEligible,arenaLife,runeArmorJson:runeReadRules.readPlayers(db,[actor],actorFrame.channel)[0]?.armor_json484??'[]',pets:prepareCached477(sql,'SELECT kind,acquired_at,equipped FROM player_pets WHERE player_id=? AND equipped=1').all(actor),labAssociated:Boolean(lab?.associated),afk:prepareCached477(sql,'SELECT day,used_ms,bonus_ms,active,tick_at_ms FROM afk_hunt_state WHERE player_id=?').get(actor)??null};
 }
 
 export class CombatFrames{

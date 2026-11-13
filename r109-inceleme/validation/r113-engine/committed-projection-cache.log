@@ -1,0 +1,141 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794545094219,"backupName":"before-pearl-reset-1794545094219-f79b955e-92b0-4554-89a9-742c76fd05f0.sqlite"}
+# {"event":"core511_fault","at":"2026-11-13T04:45:00.824Z","code":"committed_projection_read_only","channel":4,"source":"channel","requestMethod":"command","requestOperation":"attack","actorRef":"452d2bf7115b2d5991557ddf","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"reliable-stream.mjs","line":111,"column":63},{"file":"reliable-stream.mjs","line":65,"column":5},{"file":"process-stream.mjs","line":7,"column":245}]}
+# {"event":"core511_fault","at":"2026-11-13T04:45:00.824Z","code":"actor_command_outcome_pending","channel":4,"source":"channel","operation":"attack","requestEpoch":1,"sequence":1,"actorRef":"452d2bf7115b2d5991557ddf","stack":[]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.758Z","action":"shutdown_abort","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.761Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":1,"pid":231044,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"ccbdaccba62726cd32afa643"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.761Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":2,"pid":231054,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"bed06c25c91fd8502bdb3293"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.761Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":3,"pid":231060,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"d33f1ea9ed5c2b7dddfdbca8"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.762Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":4,"pid":231076,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"59a0c3d82d565b5d53c34937"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:45:17.763Z","action":"signal","incident":1,"reason":"channel_group_drain_timeout","origin":"shutdown_abort","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":17,"column":110}],"channel":0,"pid":231033,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"9157bc84b05b9408eec62c66"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+not ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 25202.005752
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-death-process-r113.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'Test timed out'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    until (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/helpers.mjs:17:145)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-death-process-r113.test.mjs:17:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545120126,"backupName":"before-pearl-reset-1794545120126-60f4cd42-fd45-4748-8708-112898828257.sqlite"}
+# Subtest: committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+not ok 2 - committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+  ---
+  duration_ms: 1955.512214
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'committed_projection_read_only'
+  code: 'committed_projection_read_only'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    Proxy.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:34:73)
+    installPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:72:21)
+    withPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:94:3)
+    Object.all (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/server-statements.mjs:14:97)
+    pendingBagStatus (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/bag-pending.mjs:65:331)
+    readAdventureBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-service.mjs:232:44)
+    readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:178:147)
+    CommittedResultProducerR113.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:51:17)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545121957,"backupName":"before-pearl-reset-1794545121957-7fbd84bc-0539-4d1c-a103-84a1e09dadfa.sqlite"}
+# Subtest: committed capture never reads the world-wide monster catalog
+not ok 3 - committed capture never reads the world-wide monster catalog
+  ---
+  duration_ms: 1704.251328
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: 'committed_projection_read_only'
+  code: 'committed_projection_read_only'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    Proxy.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:34:73)
+    installPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:72:21)
+    withPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:94:3)
+    Object.all (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/server-statements.mjs:14:97)
+    pendingBagStatus (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/bag-pending.mjs:65:331)
+    readAdventureBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-service.mjs:232:44)
+    readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:178:147)
+    CommittedResultProducerR113.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:51:17)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545123776,"backupName":"before-pearl-reset-1794545123776-4b1b928a-b572-41a8-8c9f-1a9ce2f940b7.sqlite"}
+# Subtest: rollback restores both reward rows and result revision; unknown effects cannot be certified
+not ok 4 - rollback restores both reward rows and result revision; unknown effects cannot be certified
+  ---
+  duration_ms: 1856.617254
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /abort-before-commit/. Input:
+    
+    'Error: committed_projection_read_only'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'committed_projection_read_only'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    Proxy.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:34:73)
+    installPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:72:21)
+    withPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:94:3)
+    Object.all (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/server-statements.mjs:14:97)
+    pendingBagStatus (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/bag-pending.mjs:65:331)
+    readAdventureBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-service.mjs:232:44)
+    readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:178:147)
+    CommittedResultProducerR113.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:51:17)
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:47:2)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: consumer rejects a revision gap before changing any actor
+ok 5 - consumer rejects a revision gap before changing any actor
+  ---
+  duration_ms: 0.423696
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794545125670,"backupName":"before-pearl-reset-1794545125670-6418c08d-55f0-493d-a95e-ecaaadc8e8d6.sqlite"}
+# Subtest: large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards
+not ok 6 - large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards
+  ---
+  duration_ms: 1851.04588
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: 'committed_projection_read_only'
+  code: 'committed_projection_read_only'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    Proxy.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:34:73)
+    installPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:72:21)
+    withPreparedStatements477 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:94:3)
+    Object.all (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/server-statements.mjs:14:97)
+    pendingBagStatus (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/bag-pending.mjs:65:331)
+    readAdventureBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-service.mjs:232:44)
+    readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:178:147)
+    CommittedResultProducerR113.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:51:17)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 1
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34285.613229
