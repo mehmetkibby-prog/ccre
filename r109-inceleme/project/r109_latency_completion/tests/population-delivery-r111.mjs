@@ -1,7 +1,7 @@
 // Test-only, bounded client measurement. A 202 is not a confirmed death.
 import {performance} from 'node:perf_hooks';
 const percent=(rows,p)=>rows.length?[...rows].sort((a,b)=>a-b)[Math.ceil(rows.length*p)-1]:0;
-const stats=rows=>({count:rows.length,p50Ms:percent(rows,.5),p95Ms:percent(rows,.95),p99Ms:percent(rows,.99),maxMs:Math.max(0,...rows),over50:rows.filter(x=>x>50).length,over200:rows.filter(x=>x>200).length,over1000:rows.filter(x=>x>1000).length});
+const stats=rows=>({count:rows.length,p50Ms:percent(rows,.5),p95Ms:percent(rows,.95),p99Ms:percent(rows,.99),maxMs:rows.reduce((max,value)=>Math.max(max,value),0),over50:rows.filter(x=>x>50).length,over200:rows.filter(x=>x>200).length,over1000:rows.filter(x=>x>1000).length});
 export class PopulationDelivery {
  constructor(){this.pending=new Map();this.replies=new Map();this.deaths=[];this.visibleDeaths=[];this.worldBeforeReply=0;this.slow=[];}
  sent(actor,input,at){

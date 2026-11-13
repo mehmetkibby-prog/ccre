@@ -10,13 +10,16 @@ test('actual map owners: a held forest operation cannot stop a frozen-map death 
   for(const area of ['forest','frozen'])f.sql.prepare('INSERT INTO monsters(id,name,area,channel,x,y,hp,max_hp,spawn_round,last_damaged_at_ms,last_regen_at_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?)').run('golge-r113-'+area,'Independent '+area+' mob',area,0,2700,2025,1,1,19,f.clock(),f.clock());
  }}),{f,writer,world,core,http,connect,faults}=s;
  await world.stopJobs();const other=extraPlayer(s,2);
- const firstTicket=await http('character',{channel:4}),secondTicket=await other.http('character',{channel:3});
- assert.equal(firstTicket.status,200);assert.equal(secondTicket.status,200);
- const a=await connect(firstTicket),b=await connect(secondTicket);
+ // Set both fixture locations before admission: an already simulated forest
+ // actor may have a valid encounter that a raw SQL teleport cannot carry over.
  await core.permanentPlayers([f.id,other.id],()=>{
   const q=f.sql.prepare('UPDATE players SET area=?,x=?,y=?,hp=100000,max_hp=100000,level=40,xp=0,attack_one_at=0,attack_two_at=0,attack_three_at=0,attack_four_at=0,combat_lock_until_ms=0,last_seen=? WHERE id=?');
   q.run('forest',2700,2025,Math.floor(f.clock()/1000),f.id);q.run('frozen',2700,2025,Math.floor(f.clock()/1000),other.id);
  });
+ const firstTicket=await http('character',{channel:4}),secondTicket=await other.http('character',{channel:3});
+ assert.equal(firstTicket.status,200);assert.equal(secondTicket.status,200);
+ const a=await connect(firstTicket),b=await connect(secondTicket);
+
  const bridge=core.sharedWorld.combat.bridge('forest'),originalGrant=bridge.beforeGrantR113;let release,held=false;
  const pause=new Promise(resolve=>release=resolve);t.after(()=>release());
  bridge.beforeGrantR113=async(...args)=>{await originalGrant(...args);held=true;await pause;};
