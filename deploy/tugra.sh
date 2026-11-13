@@ -50,7 +50,14 @@ case "${1:-}" in
     [ -n "$onceki" ] || { echo "dönülecek eski sürüm yok"; exit 1; }
     ln -sfn "$onceki" $KOK/current; systemctl restart coreoflife; echo "geri dönüldü: $(basename "$onceki")"
     ;;
+  kapasite)
+    [[ "${2:-}" =~ ^[0-9]+$ ]] || { echo "kullanım: tugra kapasite SAYI   (şu an: $(grep -E '^REALM_CAPACITY=' /etc/coreoflife.env | cut -d= -f2))"; exit 1; }
+    sed -i -E "s/^(CHANNEL_CAPACITY|REALM_CAPACITY)=.*/\1=$2/" /etc/coreoflife.env
+    grep -q '^REALM_CAPACITY=' /etc/coreoflife.env || echo "REALM_CAPACITY=$2" >> /etc/coreoflife.env
+    grep -q '^CHANNEL_CAPACITY=' /etc/coreoflife.env || echo "CHANNEL_CAPACITY=$2" >> /etc/coreoflife.env
+    systemctl restart coreoflife; echo "oyuncu sınırı: $2 (oyun yeniden başlatıldı)"
+    ;;
   yedek) yedek ;;
   kayit) journalctl -u coreoflife -n "${2:-100}" --no-pager ;;
-  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|guncelle|geri|yedek|kayit [satır]}"; exit 1 ;;
+  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]}"; exit 1 ;;
 esac

@@ -15,6 +15,10 @@ tugra yonetici KULLANICI_ADIN
 ```bash
 tugra ac
 ```
+Yönetim paneli: **https://tugraonline.net/admin1997** (kurucu/yönetici hesabıyla giriş). Oyunu açma/kapatma, duyuru, oyuncu düzenleme, rol, yasak ve tüm denge ayarları buradan; telefonda da kullanılır.
+
+Kapasite (2 çekirdek / 2 GB yük testi): 240 eşzamanlı oyuncuda tur süresi 11 ms (sınır 50 ms), 320'de 28 ms. Varsayılan sınır 200; değiştirmek için `tugra kapasite 250`.
+
 Diğer komutlar: `tugra durum`, `tugra kapat`, `tugra bakim "mesaj"`, `tugra guncelle` (yedek alır, derler, açılmazsa eskiye döner), `tugra geri`, `tugra yedek`, `tugra kayit`.
 
 ---
