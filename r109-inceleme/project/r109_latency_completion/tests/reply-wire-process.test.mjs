@@ -62,3 +62,12 @@ test('reply above the bounded transfer limit fails without dispatching twice',as
  let calls=0;const f=await pipe(t,()=>{calls++;return {data:'x'.repeat(8388608)};});
  await assert.rejects(f.request('command',{}),e=>e.code==='ipc_frame_size');assert.equal(calls,1);
 });
+
+test('R113 system checkpoint and shared snapshot replays keep the first wire value without retaining mutable graphs',async t=>{
+ for(const method of ['system_command','shared_acquire','world_engagements']){
+  let reads=0,calls=0;const row={hp:17};
+  const f=await pipe(t,()=>{calls++;return {get rows(){reads++;return [row];}};});
+  const id=f.client.requestPrefix+':1';assert.deepEqual(await f.request(method,{}, {id}),{rows:[{hp:17}]});
+  row.hp=999;f.client.socket.destroy();assert.deepEqual(await f.request(method,{}, {id}),{rows:[{hp:17}]});assert.equal(calls,1);assert.equal(reads,1);
+ }
+});

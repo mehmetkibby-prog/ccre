@@ -38,12 +38,13 @@ function framedTextR105(value,text,started=framingObserver?performance.now():0,e
 }
 // A response can exceed the frame limit AFTER its handler committed. Return a
 // coded transport failure, never forge a not_executed actor-rejection marker.
-function replyBytes(frame,method,parts=null,compact=null,preparedText=null){
+function replyBytes(frame,method,parts=null,compact=null,preparedText=null,onSerialized=null){
  let outgoing=compact??frame;
- try{return preparedText===null?framed(outgoing):framedTextR105(outgoing,preparedText);}catch(error){
+ const retain=bytes=>{if(frame.ok===true&&onSerialized)onSerialized(bytes.subarray(4));return bytes;};
+ try{return retain(preparedText===null?framed(outgoing):framedTextR105(outgoing,preparedText));}catch(error){
   // Compact envelopes above 4 MiB use the original bounded R50 transfer. With
   // at most 4 MiB of template expansion the decoder never exceeds its 8 MiB cap.
-  if(outgoing!==frame&&error?.code==='ipc_frame_size'&&error.bytes>COMPACT_COMBAT_WIRE_BYTES_R52){outgoing=frame;try{return framed(frame);}catch(original){error=original;}}
+  if(outgoing!==frame&&error?.code==='ipc_frame_size'&&error.bytes>COMPACT_COMBAT_WIRE_BYTES_R52){outgoing=frame;try{return retain(framed(frame));}catch(original){error=original;}}
   if(!ipcSafeStream||error?.code!=='ipc_frame_size')throw error;
   ipcDiagnostic('ipc_frame_size',{method,bytes:error.bytes});
   const retry=parts?.offer(frame.id,error.frameText);
@@ -168,7 +169,7 @@ export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128
   const send=(frame,encoded)=>{if(!closed){const bytes=encoded??framed(frame);if(socket.writableLength+bytes.length>(ipcSafeStream&&peer&&socket instanceof ProcessStream&&socket.name==='kernel511'?64:4)*MAX_FRAME){socket.destroy();return;}socket.write(bytes);}};
   const sendResult=(result,method,parts,compact=null,preparedText=null)=>{
    if(closed)return;
-   try{send(result,replyBytes(result,method,parts,compact,preparedText));}catch(error){if(error.code!=='ipc_read_parts_wait'||!parts)throw error;preparedText=null;return parts.wait(result.id,error.bytes).then(()=>sendResult(result,method,parts,compact));}
+   try{send(result,replyBytes(result,method,parts,compact,preparedText,onSerializedR113?text=>onSerializedR113(peer,result.id,text):null));}catch(error){if(error.code!=='ipc_read_parts_wait'||!parts)throw error;preparedText=null;return parts.wait(result.id,error.bytes).then(()=>sendResult(result,method,parts,compact));}
   };
   receiveFrames(socket,frame=>{
    if(!peer){
@@ -184,7 +185,7 @@ export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128
    if(frame.type==='control_result'){if(!control){socket.destroy();return;}control.receive(frame);return;}
    if(frame.type!=='request'||typeof frame.id!=='string'||frame.id.length>160||typeof frame.method!=='string'||++pending>(maxInflightFor?.(peer)??maxInflight)){socket.destroy();return;}
    Promise.resolve().then(()=>dispatch(peer,frame.method,frame.payload,frame.id))
-    .then(value=>{if(closed)return;const result={type:'result',id:frame.id,ok:true,value};if(ipcSafeStream){const nativePipe=socket instanceof ProcessStream&&socket.name==='kernel511',compact=compactCombatIpcR52&&frame.compactCombatR52===1&&compactCombatMethodR52(frame.method)&&nativePipe?encodeCompactCombatReplyR52(result):null;const compressed=replyWireR57&&frame.replyWireR57===1&&compactCombatMethodR52(frame.method)&&nativePipe?prepareReplyWireR105(compact??result):null;if(compressed?.sourceText&&onSerializedR113)onSerializedR113(peer,frame.id,compressed.sourceText);return sendResult(result,frame.method,frame.readParts===true&&readPartsMethod(frame.method)&&nativePipe?readParts:null,compressed?.frame??compact,compressed?.text??null);}send(result);},error=>{if(closed)return;const result={type:'result',id:frame.id,ok:false,code:failureCode(error,'ipc_handler_failed',frame.method),...(actorRejection(error)?{actorRejection:actorRejection(error)}:{})};send(result,ipcSafeStream?replyBytes(result,frame.method):undefined);})
+    .then(value=>{if(closed)return;const result={type:'result',id:frame.id,ok:true,value};if(ipcSafeStream){const nativePipe=socket instanceof ProcessStream&&socket.name==='kernel511',compact=compactCombatIpcR52&&frame.compactCombatR52===1&&compactCombatMethodR52(frame.method)&&nativePipe?encodeCompactCombatReplyR52(result):null;const compressed=replyWireR57&&frame.replyWireR57===1&&compactCombatMethodR52(frame.method)&&nativePipe?prepareReplyWireR105(compact??result):null;return sendResult(result,frame.method,frame.readParts===true&&readPartsMethod(frame.method)&&nativePipe?readParts:null,compressed?.frame??compact,compressed?.text??null);}send(result);},error=>{if(closed)return;const result={type:'result',id:frame.id,ok:false,code:failureCode(error,'ipc_handler_failed',frame.method),...(actorRejection(error)?{actorRejection:actorRejection(error)}:{})};send(result,ipcSafeStream?replyBytes(result,frame.method):undefined);})
     .finally(()=>pending--).catch(()=>socket.destroy());
   },()=>socket.destroy());
 }

@@ -18,10 +18,10 @@ export function prepareReplyWireR105(frame){
   if(frame?.type!=='result'||frame.ok!==true||Object.hasOwn(frame,REPLY_WIRE_MARKER_R57))return null;
   const text=JSON.stringify(frame),bytes=Buffer.byteLength(text);
   if(bytes>REPLY_WIRE_LIMIT_R57)return null;
-  if(bytes<32768)return {frame,text,sourceText:text};
+  if(bytes<32768)return {frame,text};
   const result={type:frame.type,id:frame.id,ok:true,[REPLY_WIRE_MARKER_R57]:{version:1,bytes,sha256:digest(text),data:deflateRawSync(text,{level:1}).toString('base64')}};
   const encoded=JSON.stringify(result);
-  return Buffer.byteLength(encoded)<=bytes*.85?{frame:result,text:encoded,sourceText:text}:{frame,text,sourceText:text};
+  return Buffer.byteLength(encoded)<=bytes*.85?{frame:result,text:encoded}:{frame,text};
  }catch{return null;}
 }
 export function decodeReplyWireR57(frame){

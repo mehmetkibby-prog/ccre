@@ -1,6 +1,7 @@
 import {serialize,deserialize} from 'node:v8';
 import {demand} from './contract.mjs';
 import {COMPACT_COMBAT_MARKER_R52,decodeCompactCombatReplyR52} from './compact-combat-ipc-r52.mjs';
+import {REPLY_WIRE_MARKER_R57,decodeReplyWireR57} from './reply-wire-r57.mjs';
 
 // Keep the exact same sequence window and fail-closed retirement policy.
 // Large successful RPC outcomes are retained as owned V8 bytes, not thousands
@@ -24,7 +25,7 @@ export class IpcReplay {
   if(!this.compact||process.env.CORE511_R113_WIRE_REPLAY==='0')return;
   const prefix=this.prefix+':';if(typeof id!=='string'||!id.startsWith(prefix))return;
   const row=this.rows.get(Number(id.slice(prefix.length)));
-  if(!row?.done||!['command','command_status'].includes(row.method)||typeof text!=='string')return;
+  if(!row?.done||typeof text!=='string'&&!Buffer.isBuffer(text))return;
   const bytes=Buffer.from(text);if(bytes.length>1048576)return;
   this.storage.bytes-=(row.bytes?.length??0)+(row.wire?.length??0);
   row.bytes=null;row.wire=bytes;row.promise=null;this.storage.bytes+=bytes.length;this.storage.wireEncodedR113++;
@@ -35,7 +36,7 @@ export class IpcReplay {
   const fingerprint=JSON.stringify([method,payload]),old=this.rows.get(serial);
   if(old){
    demand(old.fingerprint===fingerprint,'ipc_request_id_reused');
-   if(old.wire){this.storage.replayed++;let frame=JSON.parse(old.wire.toString('utf8'));if(Object.hasOwn(frame,COMPACT_COMBAT_MARKER_R52))frame=decodeCompactCombatReplyR52(frame);return Promise.resolve(frame.value);}
+   if(old.wire){this.storage.replayed++;let frame=JSON.parse(old.wire.toString('utf8'));if(Object.hasOwn(frame,REPLY_WIRE_MARKER_R57))frame=decodeReplyWireR57(frame).frame;if(Object.hasOwn(frame,COMPACT_COMBAT_MARKER_R52))frame=decodeCompactCombatReplyR52(frame);return Promise.resolve(frame.value);}
    if(old.bytes){this.storage.replayed++;return Promise.resolve(deserialize(old.bytes));}
    return old.promise;
   }
