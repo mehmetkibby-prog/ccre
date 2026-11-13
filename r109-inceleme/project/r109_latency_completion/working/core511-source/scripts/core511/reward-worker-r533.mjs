@@ -37,9 +37,9 @@ export class RewardWorkerR533 {
  }
  safeScope(sql,request){
   // Native HTTP services may own synchronous SQLite transactions outside
-  // atomic(). Once their freeze starts, keep all new jobs on the main lane;
-  // the cold callback awaits any worker already in flight before entering SQL.
-  if(this.core.permanent.entries.size||this.lane.nativeWrites)return false;
+  // atomic(). Their actual SQL phase waits for an in-flight worker and
+  // redirects new jobs; network freeze/refresh waits only fence affected actors.
+  if(this.core.permanent.blocksWorkerR113()||this.lane.nativeWrites)return false;
   const p=request.payload,keys=p.resources;if(!Array.isArray(keys)||keys.length>2048)return false;
   if(dungeonWriteR113(request))return p.actors.every(id=>keys.includes('player:'+id))&&keys.every(k=>k.startsWith('player:')||k==='dungeon:'+p.run.id);
   const ids=keys.filter(k=>k.startsWith('monster:')).map(k=>k.slice(8));

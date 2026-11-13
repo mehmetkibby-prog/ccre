@@ -25,6 +25,15 @@ export class PermanentCoordinator {
   demandFence(!this.closed&&ids.every(id=>!this.entries.has(id)),'permanent_actor_fenced',()=>{const entry=ids.map(id=>this.entries.get(id)).find(Boolean);return {operation:'admission',phase:this.closed?'closed':entry?.phase,actor:entry?.id,session:entry?.admission?.session_id,channel:entry?.owner?.channel,incarnation:entry?.owner?.incarnation,ownerEpoch:entry?.owner?.epoch,leaseKind:'permanent'};});
   if(this.sharedCombat?.terminal)throw Object.assign(kernelError('permanent_actor_fenced'),{sharedTerminal:true,fenceContext:{operation:'admission',phase:this.sharedCombat.terminal.phase,leaseKind:'shared'}});return true;
  }
+ // Freeze/refresh network waits fence their actors, not every other map.
+ // Only the native SQL/durability phase (or an unproven state) blocks the
+ // worker connection. We set frozen before awaiting lane.idle(), so no new
+ // worker can overtake that barrier. Actor command guards still apply.
+ blocksWorkerR113(){
+  if(this.closed)return true;
+  for(const entry of this.entries.values())if(!['freezing','refreshing','releasing'].includes(entry.phase))return true;
+  return false;
+ }
  permanentPlayers(ids,operation){return this.operate(ids,operation);}
  durablePlayers(ids,operation){return this.operate(ids,operation,{owned:true});}
  durablePlayersWhenIdle(ids,operation){return this.operate(ids,operation,{owned:true,idleOnly:true});}

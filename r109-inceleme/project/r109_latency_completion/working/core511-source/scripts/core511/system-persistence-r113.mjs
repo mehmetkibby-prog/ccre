@@ -11,7 +11,7 @@ export function systemPersistenceR113(worker,peer,request){
  const {database,writer,core,lane}=worker,system=writer.system,sql=database.sqlite,marker={};let envelope;
  const publish=value=>{worker.publishCommitted();writer.services.globals.__colAdventure.profileCache.clear();return value;};
  return {execute:(db,payload,context)=>{
-  if(core.permanent.entries.size||lane.nativeWrites)return system.operations.get(request.kind)(db,payload,context);
+  if(core.permanent.blocksWorkerR113()||lane.nativeWrites)return system.operations.get(request.kind)(db,payload,context);
   demand(db===sql&&db.isTransaction&&Array.isArray(payload.actors)&&payload.actors.length<=25,'system_persistence_scope');
   for(const a of payload.actors){const owner=core.authority.assertSimulated(db,peer,a.id,a.epoch,{allowDraining:true});demand(owner.sequence===a.sequence,'adventure_actor_sequence');}
   const registry=globalThis.__colLoadLab;demand(registry?.snapshot&&registry.faults,'system_persistence_registry');
