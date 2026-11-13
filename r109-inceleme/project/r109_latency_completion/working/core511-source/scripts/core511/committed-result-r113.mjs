@@ -1,7 +1,7 @@
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {prepareCached477} from './writer-statements.mjs';
-import {encodeCommittedActorR113,encodeCommittedImageR113} from './committed-codec-r113.mjs';
-import {readDungeonSettingsR113} from './dungeon-runtime.mjs';
+import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
+import {readDungeonSettingsPointR113} from './dungeon-settings-point-r113.mjs';
 import {readActorBundle} from './read-worker.mjs';
 import {createColdWorldRules} from './generated/cold-world-rules.mjs';
 import {readZumrutToolR93} from './zumrut-tools-r93.mjs';
@@ -57,11 +57,10 @@ export class CommittedResultProducerR113{
    actors.push(encodeCommittedActorR113({id,base,next,bundle,sections}));
   }
   let committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
-  // Every recipient sees the exact same settings at this transaction's WAL
-  // snapshot. Capture and encode them once per outcome, not once per player.
-  // No cross-command cache: admin edits (even without a revision bump), trigger
-  // effects, rollback and recovery all retain their authoritative current row.
-  if(actors.length)committedR113.dungeonSettingsR113=encodeCommittedImageR113(readDungeonSettingsR113(sql));
+  // The channel already owns a full configuration snapshot. Certify its exact
+  // contents, not a mutable revision number. A missing/different reference must
+  // recover through the existing current full snapshot before applying actors.
+  if(actors.length)committedR113.dungeonSettingsRefR113=readDungeonSettingsPointR113(sql).ref;
   if(payload.sharedLease){
    const world={system:prepareCached477(sql,"SELECT * FROM kernel511_system_owners WHERE service='world'").get(),world:prepareCached477(sql,'SELECT * FROM world_state WHERE id=1').get(),monsters:prepareCached477(sql,'SELECT * FROM monsters WHERE channel=0').all(),participants:prepareCached477(sql,'SELECT p.* FROM monster_participants p JOIN monsters m ON m.id=p.monster_id WHERE m.channel=0 AND m.spawn_round=p.spawn_round').all(),bossParticipants:prepareCached477(sql,'SELECT p.* FROM boss_participants p WHERE EXISTS(SELECT 1 FROM monsters m WHERE m.channel=0 AND m.is_boss=1 AND m.spawn_round=p.boss_round)').all()};
    // World-ending/global jobs retain the full native refresh protocol. This

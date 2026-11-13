@@ -8,6 +8,7 @@ import {CHECKPOINT_MS,demand,kernelError,validChannel} from './contract.mjs';
 import {actorFaultIsolation} from './r48-options.mjs';
 import {actorRejection} from './actor-rejection.mjs';
 import {prepareCached477} from './writer-statements.mjs';
+import {readDungeonSettingsPointR113,dungeonSettingsRefR113} from './dungeon-settings-point-r113.mjs';
 
 const wire=value=>JSON.parse(JSON.stringify(value));
 const blocked=()=>kernelError('dungeon_requires_writer');
@@ -157,8 +158,7 @@ export function createDungeonEntryWriterHandler({authority,assertShared,assertHe
 // Admission/checkpoint hydration is a writer/read-worker operation. The
 // resident adapter below has no SQLite object, SQL parser or prepare wrapper.
 export function readDungeonSettingsR113(sqlite){
- return wire({game_settings:one(sqlite,'SELECT * FROM game_settings WHERE id=1'),combat_settings:one(sqlite,'SELECT * FROM combat_settings WHERE id=1'),
-  dungeon_settings:JSON.parse(one(sqlite,'SELECT value FROM dungeon_settings WHERE id=1').value),kadim_tower_settings:towerConfigFromDatabase(sqlite)});
+ return wire(readDungeonSettingsPointR113(sqlite).settings);
 }
 export function readDungeonAdmission(sqlite,actorIds,{includeSettings=true}={}){
  // An empty channel still needs the original dungeon settings at boot. This
@@ -190,7 +190,8 @@ export class ResidentDungeon {
   for(const [id,rid]of snapshot.memberships)this.memberships.set(id,rid);
   for(const [id,materials]of snapshot.materials)this.materials.set(id,structuredClone(materials));
   for(const row of snapshot.runs){demand(row.run.members.filter(m=>!m.left).every(m=>this.players.has(m.id)),'dungeon_partial_room_admission');this.runs.set(row.run.id,structuredClone(row));this.versions.set(row.run.id,(this.versions.get(row.run.id)??0)+1);}
-  this.settings=structuredClone(snapshot.settings);
+  const settingsRef=dungeonSettingsRefR113(snapshot.settings);
+  if(this.settingsRefR113!==settingsRef){this.settings=structuredClone(snapshot.settings);this.settingsRefR113=settingsRef;}
  }
  runFor(id){return this.runs.get(this.memberships.get(id))?.run??null;}
  seen(id,at){demand(Number.isSafeInteger(at)&&this.players.has(id),'dungeon_presence_actor');this.presence.set(id,Math.max(this.presence.get(id)??0,at));const p=this.players.get(id);if(p.last_seen<Math.floor(at/1000))this.players.set(id,{...p,last_seen:Math.floor(at/1000)});}

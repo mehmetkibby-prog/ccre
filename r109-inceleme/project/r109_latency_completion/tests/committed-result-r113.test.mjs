@@ -11,6 +11,7 @@ import {readCommitRevisionR113} from '../working/core511-source/scripts/core511/
 import {applyCommittedResultR113} from '../working/core511-source/scripts/core511/committed-apply-r113.mjs';
 import {readCommittedImagesR113,pruneCommittedImagesR113} from '../working/core511-source/scripts/core511/committed-store-r113.mjs';
 import {decodeCommittedActorR113,encodeCommittedActorR113,decodeCommittedImageR113} from '../working/core511-source/scripts/core511/committed-codec-r113.mjs';
+import {readDungeonSettingsPointR113} from '../working/core511-source/scripts/core511/dungeon-settings-point-r113.mjs';
 const wire=v=>JSON.parse(JSON.stringify(v));
 async function scene(t){
  const f=await setupPvp(t);f.reset({area:'forest'});createTowerSchema(f.sql);createAdventureSchema(f.sql);
@@ -32,7 +33,7 @@ test('committed actor sections match the authoritative full snapshot after progr
   assert(result.committedR113);const part=decodeCommittedActorR113(result.committedR113.actors[0]);
   assert.equal(Object.hasOwn(part.bundle,'profiles'),false);assert.equal(Object.hasOwn(part.bundle,'settings'),false);
   assert.equal(Object.hasOwn(part.bundle.dungeon,'settings'),false,'shared settings must not be repeated in each actor image');
-  part.bundle.dungeon.settings=decodeCommittedImageR113(result.committedR113.dungeonSettingsR113);
+  const point=readDungeonSettingsPointR113(sql);assert.equal(result.committedR113.dungeonSettingsRefR113,point.ref);part.bundle.dungeon.settings=point.settings;
   const fresh=await readActorWorldBundle(sql,[id,1,s.peer.incarnation,s.owner.epoch,0,result.committedR113.at,{account:part.bundle.player.account_id,chatAfterId:0,starterReward:null}],new ColdWorldReader(sql));
   for(const key of ['inventory','storageItems','stones','pets','dungeonMaterials','dungeonWings','drops','adventure511'])assert.deepEqual(wire(part.sections[key]),wire(fresh.projection.data[key]),key);
   const expected=fresh.projection.data.players.find(p=>p.id===id);
@@ -49,15 +50,15 @@ test('committed capture never reads the world-wide monster catalog',async t=>{
 test('shared dungeon settings retain same-transaction changes, unchanged revisions and rollback',async t=>{
  const s=await scene(t),read=()=>JSON.parse(s.sql.prepare('SELECT value FROM kadim_tower_settings WHERE id=1').get().value);
  const original=read(),capture=async name=>{s.context.key=name;return s.f.database.atomic(()=>s.capture());};
- const first=await capture('settings-before'),before=decodeCommittedImageR113(first.committedR113.dungeonSettingsR113);
+ const first=await capture('settings-before'),before=readDungeonSettingsPointR113(s.sql).settings;
  const edited={...original,minLevel:original.minLevel+1};
  s.sql.prepare('UPDATE kadim_tower_settings SET value=? WHERE id=1').run(JSON.stringify(edited));
- const second=await capture('settings-after'),after=decodeCommittedImageR113(second.committedR113.dungeonSettingsR113);
+ const second=await capture('settings-after'),after=readDungeonSettingsPointR113(s.sql).settings;assert.notEqual(first.committedR113.dungeonSettingsRefR113,second.committedR113.dungeonSettingsRefR113);
  assert.equal(after.kadim_tower_settings.revision,before.kadim_tower_settings.revision);
  assert.equal(after.kadim_tower_settings.minLevel,before.kadim_tower_settings.minLevel+1);
  s.context.key='settings-rollback';await assert.rejects(s.f.database.atomic(()=>{s.sql.prepare('UPDATE kadim_tower_settings SET value=? WHERE id=1').run(JSON.stringify({...edited,minLevel:edited.minLevel+1}));s.capture();throw Error('rollback-settings');}),/rollback-settings/);
  assert.deepEqual(read(),edited);
- const third=await capture('settings-recovered');assert.deepEqual(decodeCommittedImageR113(third.committedR113.dungeonSettingsR113),after);
+ const third=await capture('settings-recovered');assert.equal(third.committedR113.dungeonSettingsRefR113,second.committedR113.dungeonSettingsRefR113);assert.deepEqual(readDungeonSettingsPointR113(s.sql).settings,after);
  // Decode/validate shared settings before installing even the first actor.
  let changed=0;const owner={epoch:1,incarnation:'c',channel:1},row={id:'a',area:'forest',channel:1};
  const channel={world:{cycle:1},owners:new Map([['a',owner]]),kernel:{players:new Map([['a',{epoch:1,barrier:{}}]])},commitRevisionsR113:new Map([['a',0]]),lanes:{busy:()=>true},applyBundle:()=>changed++,revision:0};
@@ -69,7 +70,7 @@ test('multiple recipients share one authoritative settings image without losing 
  const s=await scene(t);await s.writer.admit(s.targetId,s.peer,{sessionId:'second-settings-recipient',guard:()=>true});
  const ids=[s.id,s.targetId];
  const result=await s.f.database.atomic(()=>s.writer.committedR113.capture(s.sql,'attack',{},s.context,{players:ids.map(id=>s.sql.prepare('SELECT * FROM players WHERE id=?').get(id)),result:{status:200,body:{ok:true}},sharedRefresh:{version:1,actors:ids,tables:['players'],all:false}}));
- const d=result.committedR113;assert.equal(d.actors.length,2);const settings=decodeCommittedImageR113(d.dungeonSettingsR113);assert(settings.kadim_tower_settings.floors.length>0);
+ const d=result.committedR113;assert.equal(d.actors.length,2);const point=readDungeonSettingsPointR113(s.sql);assert.equal(d.dungeonSettingsRefR113,point.ref);assert(point.settings.kadim_tower_settings.floors.length>0);assert.equal(d.dungeonSettingsR113,undefined);
  for(const encoded of d.actors){const part=decodeCommittedActorR113(encoded);assert.equal(Object.hasOwn(part.bundle.dungeon,'settings'),false);assert.equal(part.sections.owner.id,part.id);assert.equal(part.bundle.dungeon.players.length,1);assert.equal(part.bundle.dungeon.players[0].id,part.id);}
 });
 test('rollback restores both reward rows and result revision; unknown effects cannot be certified',async t=>{

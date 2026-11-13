@@ -21,6 +21,7 @@
   "core511-source/scripts/core511/coordinator.mjs",
   "core511-source/scripts/core511/death-latency-r82.mjs",
   "core511-source/scripts/core511/dungeon-runtime.mjs",
+  "core511-source/scripts/core511/dungeon-settings-point-r113.mjs",
   "core511-source/scripts/core511/engine-health-r113.mjs",
   "core511-source/scripts/core511/fixed-loop.mjs",
   "core511-source/scripts/core511/generated/client/auth-portal-core511-r113-0785ac76c950bc14.js",

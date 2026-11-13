@@ -19,7 +19,12 @@ export function applyCommittedResultR113(runtime,result,context){
  const recover=()=>{committedResultMetricsR113.recovered++;return false;};
  if(delta.version!==1||delta.cycle!==c.world.cycle||typeof delta.operationId!=='string'||!Array.isArray(delta.actors)||!Array.isArray(result.players))return recover();
  const needed=result.players.filter(p=>c.owners.has(p.id)),parts=new Map();
- const settings=delta.dungeonSettingsR113===undefined?null:decodeCommittedImageR113(delta.dungeonSettingsR113);
+ let settings=delta.dungeonSettingsR113===undefined?null:decodeCommittedImageR113(delta.dungeonSettingsR113);
+ if(delta.dungeonSettingsRefR113!==undefined){
+  const ref=delta.dungeonSettingsRefR113;
+  if(typeof ref!=='string'||!/^[a-f0-9]{64}$/.test(ref)||c.dungeonSettingsR113?.ref!==ref)return recover();
+  settings=c.dungeonSettingsR113.settings;
+ }
  if(delta.dungeonSettingsR113!==undefined&&(!settings||!['game_settings','combat_settings','dungeon_settings','kadim_tower_settings'].every(k=>settings[k]&&typeof settings[k]==='object')))return recover();
  for(const encoded of delta.actors){const part=decodeCommittedActorR113(encoded);if(!part?.id||parts.has(part.id))return recover();parts.set(part.id,part);}
  const prepared=[];

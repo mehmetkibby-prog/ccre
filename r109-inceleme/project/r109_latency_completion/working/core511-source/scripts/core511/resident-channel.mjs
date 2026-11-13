@@ -1,4 +1,5 @@
 import {deathMovementPermitR86,mergeDeathBundleR86,mergeDeathRowR86} from './death-movement-r86.mjs';
+import {retainDungeonSettingsR113} from './dungeon-settings-point-r113.mjs';
 import {ordinaryPotionBatchR61} from './potion-batch-channel-r61.mjs';
 import {residentCapacityR59,channelAdmissionR59,castleResumeR59} from './castle-capacity-r59.mjs';
 import {CompletedClaimHintsR56} from './completed-claims-r56.mjs';
@@ -116,6 +117,7 @@ export class ResidentChannel {
   // Confirmed writer results still replace monsters explicitly in applyCommit.
   for(const m of bundle.adventure?.monsters??[])if(!this.view.monster(m.id))this.setMonster(m);
   this.frames.hydrate(bundle.combat);demand(!this.ports.hydrateMode(bundle)?.then,'async_mode_hydration');
+  if(bundle.dungeon?.settings)retainDungeonSettingsR113(this,bundle.dungeon.settings);
  }
  admit(bundle,identity){
   const {player,owner}=bundle,passive=owner?.passive===1;demand((passive||this.kernel.activeCount<residentCapacityR59(this.peer.channel))&&!this.owners.has(player.id)&&owner?.incarnation===this.peer.incarnation&&owner.channel===this.peer.channel&&identity.actor===player.id&&identity.account===player.account_id&&identity.epoch===owner.epoch,'resident_admission_scope');
