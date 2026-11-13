@@ -98,6 +98,8 @@ try{
   if(process.env.ALLOCATION_PROFILE==='1')await inspect('HeapProfiler.startSampling',{samplingInterval:32768,includeObjectsCollectedByMajorGC:true,includeObjectsCollectedByMinorGC:true});
   await inspect('Profiler.enable');cpuClockOriginMs=performance.timeOrigin+performance.now()-Number(process.hrtime.bigint())/1e6;await inspect('Profiler.start');
  }
+ const writerProfileR113=process.env.PROFILE_WRITER_R113==='1'?await (await import('./writer-profile-r113.mjs')).profileWriterR113(out):null;
+ if(writerProfileR113)clean.push(()=>writerProfileR113.close());
  const profileChannels=process.env.PROFILE_CHANNELS?process.env.PROFILE_CHANNELS.split(',').map(Number):[];
  assert(profileChannels.every(n=>[1,2,3,4].includes(n))&&new Set(profileChannels).size===profileChannels.length,'diagnostic profile channels');
  if(profileChannels.length)fs.mkdirSync(core+'/evidence',{recursive:true});
@@ -107,6 +109,7 @@ try{
  await pause(duration);measuring=false;clearInterval(timer);timer=null;
  const measured=await s.core.diagnostics.endLoad(runId);
  report.measurement=measured;
+ if(writerProfileR113)report.writerProfileR113=await writerProfileR113.stop();
  if(controlProbe){report.independentControl=await controlProbe.request('end',runId);const {controlComparison}=await import(core+'/benchmark/control-probe.mjs');report.controlComparison=controlComparison(measured.measurement.eventLoops,report.independentControl);}
  report.replayStorage=[...s.core.processes].map(([channel,row])=>({channel,rows:row.replay.rows.size,storage:row.replay.storage??null}));
  report.heapAfterWindow=process.memoryUsage();
