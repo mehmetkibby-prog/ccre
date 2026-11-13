@@ -5,8 +5,8 @@ const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 // Immutable publication images are serialized once on the authoritative writer.
 // Parent IPC/receipt caches retain text rather than duplicate native object graphs.
 // Only the owning channel decodes the image, immediately before revision validation.
-export function encodeCommittedActorR113(part,{compress=process.env.CORE511_R113_IMAGE_COMPRESSION!=='0'}={}){
- const o=part.bundle.owner;let image=JSON.stringify(part);
+export function encodeCommittedImageR113(value,{compress=process.env.CORE511_R113_IMAGE_COMPRESSION!=='0'}={}){
+ let image=JSON.stringify(value);
  const size=Buffer.byteLength(image);
  // Large committed images are carried opaquely through the parent. Compression
  // happens once, in the authoritative writer; only their owning channel opens
@@ -16,6 +16,10 @@ export function encodeCommittedActorR113(part,{compress=process.env.CORE511_R113
   const encoded='z1:'+size+':'+digest(bytes)+':'+packed.toString('base64');
   if(encoded.length<image.length*0.85)image=encoded;
  }
+ return image;
+}
+export function encodeCommittedActorR113(part,options){
+ const o=part.bundle.owner,image=encodeCommittedImageR113(part,options);
  return {id:part.id,base:part.base,next:part.next,epoch:o.epoch,channel:o.channel,incarnation:o.incarnation,image};
 }
 export function decodeCommittedImageR113(image){

@@ -160,7 +160,7 @@ export class ReadWorker {
 // A single read transaction provides all admitted/refresh inputs at one WAL
 // snapshot. Ownership is checked inside it. The thread has query_only and an
 // OS read-only SQLite handle; no migration or account creation can occur here.
-export function readActorBundle(sql,params,{insideTransaction=false,cache=null,includeCatalogs=true}={}){
+export function readActorBundle(sql,params,{insideTransaction=false,cache=null,includeCatalogs=true,includeDungeonSettings=true}={}){
  demand(Array.isArray(params)&&params.length===6,'actor_bundle_parameters');
  const [actor,channel,incarnation,epoch,revision,nowMs]=params;
  demand(typeof actor==='string'&&[1,2,3,4].includes(channel)&&typeof incarnation==='string'&&Number.isSafeInteger(epoch)&&epoch>0&&Number.isSafeInteger(revision)&&revision>=0&&Number.isSafeInteger(nowMs)&&nowMs>=0,'actor_bundle_parameters');
@@ -181,7 +181,7 @@ export function readActorBundle(sql,params,{insideTransaction=false,cache=null,i
    party,partyMembers:party?prepareCached477(sql,'SELECT m.*,COALESCE((SELECT a.channel FROM kernel511_admissions a WHERE a.player_id=m.player_id),(SELECT s.channel FROM kernel511_simulations s WHERE s.player_id=m.player_id),0) AS live_channel511 FROM party_members m WHERE m.party_id=?').all(party.id):[],
    guildSkill:prepareCached477(sql,'SELECT s.* FROM guild_skills s JOIN guild_members m ON m.guild_id=s.guild_id WHERE m.player_id=?').get(actor)??null,
    arena,arenaPlayers:arena?prepareCached477(sql,'SELECT * FROM arena_match_players WHERE match_id=?').all(arena.id):[],
-   profiles:includeCatalogs?readAll('SELECT * FROM all_monster_combat_profiles'):undefined,dungeon:readDungeonAdmission(sql,[actor])};
+   profiles:includeCatalogs?readAll('SELECT * FROM all_monster_combat_profiles'):undefined,dungeon:readDungeonAdmission(sql,[actor],{includeSettings:includeDungeonSettings})};
   if(mountEnabled()&&prepareCached477(sql,"SELECT 1 FROM sqlite_schema WHERE name='mount_profiles_r49'").get())result.mounts=readMountBundle(sql,actor,{now:nowMs});
   if(!insideTransaction)sql.exec('COMMIT');return result;
  }catch(error){if(!insideTransaction)sql.exec('ROLLBACK');throw error;}

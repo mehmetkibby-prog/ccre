@@ -156,7 +156,11 @@ export function createDungeonEntryWriterHandler({authority,assertShared,assertHe
 
 // Admission/checkpoint hydration is a writer/read-worker operation. The
 // resident adapter below has no SQLite object, SQL parser or prepare wrapper.
-export function readDungeonAdmission(sqlite,actorIds){
+export function readDungeonSettingsR113(sqlite){
+ return wire({game_settings:one(sqlite,'SELECT * FROM game_settings WHERE id=1'),combat_settings:one(sqlite,'SELECT * FROM combat_settings WHERE id=1'),
+  dungeon_settings:JSON.parse(one(sqlite,'SELECT value FROM dungeon_settings WHERE id=1').value),kadim_tower_settings:towerConfigFromDatabase(sqlite)});
+}
+export function readDungeonAdmission(sqlite,actorIds,{includeSettings=true}={}){
  // An empty channel still needs the original dungeon settings at boot. This
  // is a read-only snapshot limit; command membership checks remain nonempty.
  demand(Array.isArray(actorIds)&&actorIds.length<=25&&actorIds.every(id=>typeof id==='string'&&id.length>0),'invalid_dungeon_admission');
@@ -167,9 +171,9 @@ export function readDungeonAdmission(sqlite,actorIds){
   materials.push([id,Object.fromEntries(prepareCached477(sqlite,'SELECT kind,amount FROM dungeon_materials WHERE player_id=?').all(id).map(r=>[r.kind,r.amount]))]);
   if(rid&&!runs.has(rid)){const row=one(sqlite,'SELECT state,updated_at FROM dungeon_runs WHERE id=?',rid);demand(row,'dungeon_run_missing');runs.set(rid,{run:JSON.parse(row.state),stamp:row.updated_at,lastSave:row.updated_at});}
  }
- return wire({players,memberships,materials,runs:[...runs.values()],settings:{
-  game_settings:one(sqlite,'SELECT * FROM game_settings WHERE id=1'),combat_settings:one(sqlite,'SELECT * FROM combat_settings WHERE id=1'),
-  dungeon_settings:JSON.parse(one(sqlite,'SELECT value FROM dungeon_settings WHERE id=1').value),kadim_tower_settings:towerConfigFromDatabase(sqlite)}});
+ const image=wire({players,memberships,materials,runs:[...runs.values()]});
+ if(includeSettings)image.settings=readDungeonSettingsR113(sqlite);
+ return image;
 }
 
 export class ResidentDungeon {

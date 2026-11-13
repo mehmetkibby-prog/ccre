@@ -1,5 +1,5 @@
 import {mergeDeathBundleR86} from './death-movement-r86.mjs';
-import {decodeCommittedActorR113} from './committed-codec-r113.mjs';
+import {decodeCommittedActorR113,decodeCommittedImageR113} from './committed-codec-r113.mjs';
 import {committedResultsR113,committedResultMetricsR113} from './committed-protocol-r113.mjs';
 
 export async function installCommittedResultR113(runtime,result,context){
@@ -19,10 +19,13 @@ export function applyCommittedResultR113(runtime,result,context){
  const recover=()=>{committedResultMetricsR113.recovered++;return false;};
  if(delta.version!==1||delta.cycle!==c.world.cycle||typeof delta.operationId!=='string'||!Array.isArray(delta.actors)||!Array.isArray(result.players))return recover();
  const needed=result.players.filter(p=>c.owners.has(p.id)),parts=new Map();
+ const settings=delta.dungeonSettingsR113===undefined?null:decodeCommittedImageR113(delta.dungeonSettingsR113);
+ if(delta.dungeonSettingsR113!==undefined&&(!settings||!['game_settings','combat_settings','dungeon_settings','kadim_tower_settings'].every(k=>settings[k]&&typeof settings[k]==='object')))return recover();
  for(const encoded of delta.actors){const part=decodeCommittedActorR113(encoded);if(!part?.id||parts.has(part.id))return recover();parts.set(part.id,part);}
  const prepared=[];
  for(const row of needed){
   const part=parts.get(row.id),owner=c.owners.get(row.id),p=c.kernel.players.get(row.id),sub=runtime.world.subscribers.get(row.id),bundle=part?.bundle;
+  if(bundle?.dungeon&&!Object.hasOwn(bundle.dungeon,'settings')){if(!settings)return recover();bundle.dungeon={...bundle.dungeon,settings};}
   if(!part||!bundle||bundle.player?.id!==row.id||bundle.owner?.epoch!==owner.epoch||bundle.owner?.incarnation!==owner.incarnation||bundle.owner?.channel!==owner.channel||bundle.world?.cycle!==c.world.cycle||
    !Number.isSafeInteger(part.base)||part.next!==part.base+1||c.commitRevisionsR113.get(row.id)!==part.base||
    !p||p.epoch!==owner.epoch||!p.barrier&&!p.externalHold||!c.lanes.busy(['player:'+row.id])||

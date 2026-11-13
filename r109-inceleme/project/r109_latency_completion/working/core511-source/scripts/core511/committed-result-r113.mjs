@@ -1,6 +1,7 @@
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {prepareCached477} from './writer-statements.mjs';
-import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
+import {encodeCommittedActorR113,encodeCommittedImageR113} from './committed-codec-r113.mjs';
+import {readDungeonSettingsR113} from './dungeon-runtime.mjs';
 import {readActorBundle} from './read-worker.mjs';
 import {createColdWorldRules} from './generated/cold-world-rules.mjs';
 import {readZumrutToolR93} from './zumrut-tools-r93.mjs';
@@ -44,7 +45,7 @@ export class CommittedResultProducerR113{
    if(!owner)continue; // Offline recipients retain their already-committed reward.
    const base=readCommitRevisionR113(sql,id);demand(Number.isSafeInteger(base),'committed_revision_schema_missing');
    const next=base+1;demand(Number.isSafeInteger(next),'committed_revision_overflow');
-   const bundle=readActorBundle(sql,[id,owner.channel,owner.incarnation,owner.epoch,0,this.now],{insideTransaction:true,includeCatalogs:false});
+   const bundle=readActorBundle(sql,[id,owner.channel,owner.incarnation,owner.epoch,0,this.now],{insideTransaction:true,includeCatalogs:false,includeDungeonSettings:false});
    const read=(query,params=[])=>prepareCached477(sql,query).all(...params);
    const sections=this.rules.readCommittedSectionsR113(read,bundle.player,this.now);
    const tool=sections.dungeonMaterials.some(m=>m.amount>0&&['zumrut_axe_r93','zumrut_pickaxe_r93'].includes(m.kind))?readZumrutToolR93(sql,id):'';
@@ -56,6 +57,11 @@ export class CommittedResultProducerR113{
    actors.push(encodeCommittedActorR113({id,base,next,bundle,sections}));
   }
   let committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
+  // Every recipient sees the exact same settings at this transaction's WAL
+  // snapshot. Capture and encode them once per outcome, not once per player.
+  // No cross-command cache: admin edits (even without a revision bump), trigger
+  // effects, rollback and recovery all retain their authoritative current row.
+  if(actors.length)committedR113.dungeonSettingsR113=encodeCommittedImageR113(readDungeonSettingsR113(sql));
   if(payload.sharedLease){
    const world={system:prepareCached477(sql,"SELECT * FROM kernel511_system_owners WHERE service='world'").get(),world:prepareCached477(sql,'SELECT * FROM world_state WHERE id=1').get(),monsters:prepareCached477(sql,'SELECT * FROM monsters WHERE channel=0').all(),participants:prepareCached477(sql,'SELECT p.* FROM monster_participants p JOIN monsters m ON m.id=p.monster_id WHERE m.channel=0 AND m.spawn_round=p.spawn_round').all(),bossParticipants:prepareCached477(sql,'SELECT p.* FROM boss_participants p WHERE EXISTS(SELECT 1 FROM monsters m WHERE m.channel=0 AND m.is_boss=1 AND m.spawn_round=p.boss_round)').all()};
    // World-ending/global jobs retain the full native refresh protocol. This
