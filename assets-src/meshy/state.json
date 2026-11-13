@@ -119,6 +119,10 @@
       "prompt": "An old weathered fisherman with a white beard, thick knitted wool sweater, oiled canvas waders and boots, knitted cap, rope belt with a small knife. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
       "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a19676-6b35-708a-8d20-cafebbf5b96d_0.png?Expires=1793784946&Signature=HUc4EqOGZp1jYajRFGsJHWALK~BGJvALafYoRB5Y2ZKvYdAa7jwkAcNj5Hv8MNh0Rnlwq4C1pybUTniUK~xg8I3fGmjkFCwWrIf-teVu0tSdCAhZIibTQac2QfAs5C2YksBBZM74~YX5fdnrvuvIzNSzkeFYdYwEqP3lmpZYacTBYW1Sxa75ZetafV1VcQ9fwViTsOITM3S3KvQlV-0xUuWiP8c-rZeb-oziGPkS-bMI1~~JCj56Eyz6xVxUqY0TP9o8nFbLMNrz2viGJQYT9oqqR~xy3WusRM0J~GRpm0haoEPdW7nmPQ-hOSlsN5CheiWBy21LXu0rQ4BUNIJhRA__&Key-Pair-Id=K1VGYTHIYLM9UM",
       "file": "assets-src/meshy/concepts/n_fisher.png"
+    },
+    "fk1": {
+      "file": "assets-src/meshy/concepts/fk1.png",
+      "prompt": "tilki kral k1"
     }
   },
   "builds": {
@@ -350,6 +354,35 @@
         "Idle": {
           "task": "01a19681-98ed-7561-8169-6c07cb5d847d",
           "actionId": 0
+        }
+      }
+    },
+    "fox_king": {
+      "concept": "fk1",
+      "model": "01a1d6bb-8811-77a4-8067-240e4b633e8f",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1d6bb-8811-77a4-8067-240e4b633e8f/output/model.glb?Expires=1794863324&Signature=Kxej~UAy3zol23CKkwY~PissH6m7HR1ddFSTw~xMHzIvkaa72YePv6YYOhiyUrcHJVpppbrO3XdWdJGhyEjRWpfZBfPlqk2GZqCOR5Renb7T4ttQxrL5zmJxpb2em~7QeQEGiHBcB8wCwLMPeU8rCRTGhjS~BcMQwkytf3mmddCj7~q2cbLkFOvsmf0D6n78KpXs5qdGEX0ekddSzNKURLQbOdjPN2Fl5BMWqr98Jsm4S2XonTF97dqat7kKjdwERZKBzudfOZmOYjsccgY44TIIstGPRMTgvGHIHaWAHszLWTaRpE5QKPfR1xQLJSiykJ7Q-MgqFGN0Q0Ex9MFfYw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1d6bd-ceac-7124-8a04-1a1ea4ea85b0",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1d6be-28a7-744a-a05d-f41bdcb9a5ee",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1d6be-2a0f-76e3-b1b9-6b4ff3d44d7a",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1d6be-2b65-7360-9c0d-80a75c390a13",
+          "actionId": 97
+        },
+        "Cast Ground Slam": {
+          "task": "01a1d6be-2ce4-756a-a4ab-1e27c82d4d72",
+          "actionId": 127
+        },
+        "Death": {
+          "task": "01a1d6be-2e2c-75c0-bb3e-3752bffdb8de",
+          "actionId": 189
         }
       }
     }

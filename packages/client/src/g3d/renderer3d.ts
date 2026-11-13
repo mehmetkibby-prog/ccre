@@ -365,7 +365,8 @@ export class Renderer3D {
       const def = MONSTERS[e.tpl];
       if (!def) return null;
       const glb = createGlbChar(def.art);
-      if (glb) { glb.root.scale.multiplyScalar(def.size * (e.variant === 2 ? 1.12 : 1)); v = { kind: e.kind, obj: glb.root, glb, model: def.art, height: glb.height * def.size, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 }; }
+      if (!glb && modelPending(def.art)) v = { kind: e.kind, obj: new THREE.Group(), model: def.art, height: 2.6 * def.size, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, ph: true };
+      else if (glb) { glb.root.scale.multiplyScalar(def.size * (e.variant === 2 ? 1.12 : 1)); v = { kind: e.kind, obj: glb.root, glb, model: def.art, height: glb.height * def.size, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 }; }
       else {
         const mon = createMonster(def.art, e.variant, def.size);
         v = { kind: e.kind, obj: mon.root, mon, model: def.art, height: mon.height, phase: Math.random() * 6, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };

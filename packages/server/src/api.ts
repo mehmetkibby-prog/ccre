@@ -48,7 +48,7 @@ export function buildApi(d: ApiDeps): Router {
 
   r.get('/api/status', () => ({
     opening: { mode: d.opening.state.mode, openAt: d.opening.state.openAt, message: d.opening.state.message },
-    online: d.gateway.online(), serverTime: Date.now(),
+    online: d.gateway.online(), worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
   }));
 
   r.post('/api/register', async (req, res) => {
@@ -242,9 +242,18 @@ export function buildApi(d: ApiDeps): Router {
       online: d.gateway.online(), capacity: config.realmCapacity,
       channels: d.channels.population.map((p, i) => i === 0 ? null : { id: i, population: p ?? 0, capacity: config.channelCapacity, alive: d.channels.alive(i), elu: d.channels.stats[i]?.elu ?? null }).filter(Boolean),
       accounts: Number(counts.accounts), characters: Number(counts.chars), newAccounts: Number(counts.new_accounts), activeDay: Number(counts.active_day),
-      opening: d.opening.state, uptime: Math.round(process.uptime()), heapMB: Math.round(mem.heapUsed / 1048576), rssMB: Math.round(mem.rss / 1048576),
+      opening: d.opening.state, worldHealth: Math.round(d.world.health * 100) / 100, topDonors: d.world.top(5), uptime: Math.round(process.uptime()), heapMB: Math.round(mem.heapUsed / 1048576), rssMB: Math.round(mem.rss / 1048576),
       saveQueue: d.store.queueLength, saveFailures: d.store.failures, load: os.loadavg()[0], freeMemMB: Math.round(os.freemem() / 1048576),
     };
+  });
+
+  r.post('/api/admin/world', async (req) => {
+    const a = await requireAdmin(req);
+    const v = Number(req.body?.health);
+    if (!Number.isFinite(v)) throw new HttpError(400, 'Geçersiz değer.');
+    d.world.set(v); d.gateway.broadcastWorld();
+    await pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES ($1,'world.set',$2)`, [a.id, JSON.stringify({ health: v })]).catch(() => {});
+    return { ok: true, health: d.world.health };
   });
 
   // ───────── oyuncular ─────────

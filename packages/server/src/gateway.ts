@@ -210,6 +210,13 @@ export class Gateway {
         if (!m.ok) { const s = this.sessions.get(m.sid); if (s) { this.sendJson(s, { t: 'fatal', text: m.err ?? 'Giriş başarısız.' }); s.ws.close(); } }
         break;
       }
+      case 'donate': {
+        const gain = this.world.donate(m.charId, m.name, m.amount);
+        const s = this.sessions.get(m.sid);
+        if (s) this.sendJson(s, { t: 'notice', kind: 'ok', text: `${m.amount} Öz bağışlandı. Dünya Sağlığı +${gain.toFixed(2)}` });
+        this.broadcastWorld();
+        break;
+      }
       default: break;
     }
   }

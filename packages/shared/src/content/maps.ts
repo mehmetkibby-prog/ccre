@@ -32,12 +32,16 @@ export interface MapDef {
 
 export const MAPS: Record<string, MapDef> = {
   bazaar: {
-    id: 'bazaar', name: 'Pazar Köyü', w: 88, h: 116, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
+    id: 'bazaar', name: 'Pazar Köyü', w: 88, h: 132, theme: 'village', seed: 1907, safe: true, pvp: false, minLevel: 1,
     respawnMap: 'bazaar', travelable: true,
     // köyün güneyindeki Tilki Korusu: 1. seviye başlangıç avı (tilkiler saldırılmadıkça dokunmaz)
-    spawns: [{ monster: 'wild_fox', count: 70, level: [1, 1], variants: [100, 0, 0], region: 'any', area: [5, 62, 82, 111] }],
+    spawns: [
+      { monster: 'wild_fox', count: 70, level: [1, 1], variants: [100, 0, 0], region: 'any', area: [5, 62, 82, 111] },
+      // en güneydeki Tilki Kral Arenası (merkez 44,121; yarıçap 8 karo)
+      { monster: 'fox_king', count: 1, level: [20, 20], variants: [100, 0, 0], region: 'any', area: [39, 116, 49, 126] },
+    ],
     market: { tx: 67, ty: 24, rx: 14, ry: 11, name: 'Pazar Meydanı' },
-    desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar; güneydeki Tilki Korusu yeni başlayanların ilk avıdır.',
+    desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar; güneydeki Tilki Korusu yeni başlayanların ilk avıdır; korunun en ucundaki arenada Tilki Kral bekler.',
     npcs: [
       { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'shop_smith'] },
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },

@@ -40,6 +40,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'shop' && <Shop game={game} />}
       {p === 'upgrade' && <Upgrade game={game} />}
       {p === 'market' && <Market game={game} />}
+      {p === 'donate' && <Donate game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
           <div className="title" style={{ fontSize: 20, marginBottom: 8 }}>Dikkat: PvP bölgesi</div>
@@ -325,6 +326,30 @@ function Skills({ game }: { game: Game }) {
           </div>
         );
       })()}
+    </Panel>
+  );
+}
+
+/** Dünya Sağlığı'na Öz bağışı. */
+function Donate({ game }: { game: Game }) {
+  const wh = useStore((s) => s.worldHealth);
+  const ess = useStore((s) => s.self?.essence ?? 0);
+  const [amt, setAmt] = useState(Math.min(ess, 50));
+  useEffect(() => { if (amt > ess) setAmt(ess); }, [ess]); // eslint-disable-line react-hooks/exhaustive-deps
+  const go = (n: number) => { if (n <= 0) return; sfx.play('ui'); game.donate(n); };
+  return (
+    <Panel title="Dünya Sağlığı" width={420}>
+      <div className="donate">
+        <div className="donate-meter"><div className={'bar' + (wh < 30 ? ' low' : '')}><i style={{ width: `${wh}%` }} /></div><b>%{wh.toFixed(1)}</b></div>
+        <p className="muted" style={{ fontSize: 13, lineHeight: 1.5, margin: '10px 0 14px' }}>Dünyanın sağlığı zamanla azalır. Canavarlardan düşen <b style={{ color: 'var(--iznik)' }}>Öz</b>ü bağışladıkça artar; sağlık düştükçe her bağış daha çok iyileştirir.</p>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 8 }}><span className="muted">Elindeki Öz</span><b style={{ color: '#8ff4ff' }}><img src={iconUrl('essence')} alt="" style={{ width: 16, verticalAlign: -3, marginRight: 4 }} />{ess.toLocaleString('tr-TR')}</b></div>
+        <input type="range" min={0} max={Math.max(1, ess)} step={1} value={Math.min(amt, ess)} disabled={!ess} onChange={(e) => setAmt(Number(e.target.value))} style={{ width: '100%' }} />
+        <div className="row wrap" style={{ gap: 6, margin: '8px 0 12px' }}>
+          {[10, 50, 100].map((n) => <button key={n} className="btn small ghost" disabled={ess < n} onClick={() => setAmt(n)}>{n}</button>)}
+          <button className="btn small ghost" disabled={!ess} onClick={() => setAmt(ess)}>Tümü</button>
+        </div>
+        <button className="btn primary" style={{ width: '100%', padding: 12 }} disabled={!ess || amt <= 0} onClick={() => go(amt)}>{amt > 0 ? `${amt.toLocaleString('tr-TR')} Öz bağışla` : 'Bağışlanacak Öz yok'}</button>
+      </div>
     </Panel>
   );
 }

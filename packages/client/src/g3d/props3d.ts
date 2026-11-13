@@ -397,6 +397,16 @@ const B: Partial<Record<PropKind, Builder>> = {
     parts.push({ g: at(new THREE.PlaneGeometry(4, 6.5, 1, 6), 0, 3.0, -0.7, -0.15), m: 'waterfall' });
     return group(parts);
   },
+  /** Yazılı tabela: iki direk, ahşap levha; yazı iki yüzde (doku: materials.ts → sign_<v>). */
+  signpost(v) {
+    const parts: { g: THREE.BufferGeometry; m: string; shadow?: boolean }[] = [];
+    for (const x of [-1.25, 1.25]) parts.push({ g: at(box(0.16, 2.9, 0.16, 0.6), x, 1.45, 0), m: 'timber' });
+    parts.push({ g: at(box(2.75, 1.42, 0.1, 0.8), 0, 2.15, 0), m: 'planks' });
+    parts.push({ g: at(box(2.95, 0.1, 0.16, 0.8), 0, 2.9, 0), m: 'timber' });
+    parts.push({ g: at(new THREE.PlaneGeometry(2.6, 1.3), 0, 2.15, 0.056), m: 'sign_' + v, shadow: false });
+    parts.push({ g: at(new THREE.PlaneGeometry(2.6, 1.3), 0, 2.15, -0.056, 0, Math.PI, 0), m: 'sign_' + v, shadow: false });
+    return group(parts);
+  },
   banner() {
     return group([
       { g: at(cyl(0.05, 0.06, 4.2, 6), 0, 2.1, 0), m: 'timber' },
@@ -491,7 +501,7 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
     const [k, vs] = key.split('|');
     const model = propModel(k as PropKind, Number(vs));
     if (!model) continue;
-    const fixedRot = k === 'house' || k === 'stall' || k === 'fence' || k === 'dock' || k === 'waterfall' || k === 'tent' || k === 'banner' || k === 'portalstone' || k === 'well';
+    const fixedRot = k === 'signpost' || k === 'house' || k === 'stall' || k === 'fence' || k === 'dock' || k === 'waterfall' || k === 'tent' || k === 'banner' || k === 'portalstone' || k === 'well';
     for (const part of model) {
       const im = new THREE.InstancedMesh(part.geo, mat(part.mat), list.length);
       list.forEach((p, i) => {

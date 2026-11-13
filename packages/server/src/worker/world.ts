@@ -83,6 +83,15 @@ export class World {
     return true;
   }
 
+  /** Dünya Sağlığı'na Öz bağışı: Öz burada düşülür, sağlık ana süreçte artar. */
+  private cmdDonate(p: Player, amount: number, req: string) {
+    if (amount <= 0 || amount > p.char.essence) return this.notice(p, 'Geçersiz bağış miktarı.');
+    if (this.seenReceipt(p, req)) return;
+    p.char.essence -= amount;
+    p.selfDirty |= 1; this.save(p, true);
+    this.opt.post({ type: 'donate', sid: p.sid, charId: p.char.id, name: p.char.name, amount });
+  }
+
   /** Yönetim: TP tablosu değişirken oyundakilerin seviye içi ilerleme oranı korunur (önce oranlar alınır, sonra uygulanır). */
   xpRatios() { const m = new Map<number, number>(); for (const p of this.bySid.values()) m.set(p.sid, p.char.xp / Math.max(1, xpToNext(p.char.level))); return m; }
   applyXpRatios(m: Map<number, number>) {
@@ -204,7 +213,7 @@ export class World {
       case 'lock': return this.cmdLock(p, String(c.item), !!c.on);
       case 'sell': return this.cmdSell(p, Array.isArray(c.items) ? c.items.map(String).slice(0, 40) : [], String(c.req ?? ''));
       case 'buy': return this.cmdBuy(p, c);
-      case 'donate': return this.notice(p, 'Bu sistem kaldırıldı.');
+      case 'donate': return this.cmdDonate(p, Math.floor(Number(c.amount) || 0), String(c.req ?? ''));
       case 'upgrade': return this.cmdUpgrade(p, c);
       case 'npc': return this.cmdNpc(p, String(c.id));
       case 'use': return this.cmdUse(p, String(c.key), String(c.req ?? ''));
@@ -637,8 +646,9 @@ export class World {
     };
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
-    c.gems += gems; // Dünya Çekirdeği sistemi kaldırıldı: canavardan öz düşmez
-    this.sendJson(p, { t: 'gain', gems, essence: 0, x: m.x | 0, y: m.y | 0 });
+    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul);
+    c.gems += gems; c.essence += ess;
+    this.sendJson(p, { t: 'gain', gems, essence: ess, x: m.x | 0, y: m.y | 0 });
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {

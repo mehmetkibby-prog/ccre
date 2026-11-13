@@ -61,6 +61,7 @@ export type FromWorker =
   | { type: 'left'; sid: number; char: CharState }
   | { type: 'joined'; sid: number; ok: boolean; err?: string }
   | { type: 'chat'; sid: number; ch: string; text: string }
+  | { type: 'donate'; sid: number; charId: number; name: string; amount: number }
   | { type: 'stats'; data: WorkerStats };
 
 export interface WorkerStats {

@@ -138,8 +138,14 @@ function ConnStatus() {
 
 function TopBar() {
   const t = useStore((s) => s.target);
+  const wh = useStore((s) => s.worldHealth);
   return (
     <div className="topbar">
+      <button className="worldhp" title="Ortak Dünya Sağlığı: Öz bağışlarıyla artar, zamanla azalır. Bağış için dokun." onClick={() => store.set((s) => ({ panel: s.panel === 'donate' ? null : 'donate' }))}>
+        <div className="lbl"><span>DÜNYA SAĞLIĞI</span><span>%{wh.toFixed(1)}</span></div>
+        <div className={'bar' + (wh < 30 ? ' low' : '')}><i style={{ width: `${wh}%` }} /></div>
+        <span className="donate-cta">Öz Bağışla</span>
+      </button>
 
       {t && (
         <div className="frame target">
@@ -197,6 +203,7 @@ function PlayerPlate() {
         <div className="hpt"><span>{hp.toLocaleString('tr-TR')} / {max.toLocaleString('tr-TR')}</span><span>%{(hk * 100).toFixed(0)}</span></div>
         <div className="coins">
           <span className="g" title="Mücevher"><img src={iconUrl('gem')} alt="" />{self.gems.toLocaleString('tr-TR')}</span>
+          <span className="e" title="Yaşam Özü (Dünya Sağlığı'na bağışlanır)"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')}</span>
           <span className="c" title="Çekirdek Puanı"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')}</span>
         </div>
         <div className="netinfo"><span>K{ch}</span><span style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</span><span>{fps} fps</span><span>{online} çevrimiçi</span></div>
@@ -343,6 +350,7 @@ function BottomBar({ game }: { game: Game }) {
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
           <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><MenuIcon k="pick" /></button>
+          <button className="slot" title="Canavar seç / sıradakine geç (Tab)" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><span className="key">⇥</span><TargetIcon /></button>
         </div>
       </div>
     </div>
@@ -365,6 +373,17 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
       <button className="exit" title="Kanal değiştir / çıkış" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Çıkış</span></button>
     </div>
+  );
+}
+
+/** Hedef seçme simgesi: nişangâh. */
+function TargetIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="30" height="30" aria-hidden>
+      <circle cx="24" cy="24" r="13" fill="none" stroke="#f8e2a4" strokeWidth="3" />
+      <circle cx="24" cy="24" r="4" fill="#e43a4f" />
+      <path d="M24 4 V14 M24 34 V44 M4 24 H14 M34 24 H44" stroke="#f8e2a4" strokeWidth="3" strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -399,6 +418,7 @@ function MobileControls({ game }: { game: Game }) {
         {[1, 2, 3].map((s) => <button key={s} className={'s' + s} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{sk(s) ? <SkillIcon id={sk(s)!.id} /> : s + 1}{cd(s)}</button>)}
         <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><MenuIcon k="pick" /></button>
+        <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>
       </div>
     </>
   );

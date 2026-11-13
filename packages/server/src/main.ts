@@ -66,7 +66,7 @@ async function main() {
     await channels.stop();
     await new Promise((r) => setTimeout(r, 200));
     for (let i = 0; i < 20 && store.queueLength; i++) await store.flush();
-
+    await world.persist();
     await pool.end();
     console.log('[core-of-life] kapandı.');
     process.exit(0);

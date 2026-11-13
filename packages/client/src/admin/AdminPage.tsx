@@ -18,7 +18,7 @@ export interface APlayer {
 interface Opening { mode: 'closed' | 'scheduled' | 'open' | 'maintenance'; openAt: number | null; message: string; revision: number }
 interface Summary {
   online: number; capacity: number; channels: { id: number; population: number; capacity: number; alive: boolean; elu: number | null }[];
-  accounts: number; characters: number; newAccounts: number; activeDay: number; opening: Opening | null;
+  accounts: number; characters: number; newAccounts: number; activeDay: number; opening: Opening | null; worldHealth?: number; topDonors?: { name: string; amount: number }[];
   uptime: number; heapMB: number; rssMB: number; saveQueue: number; saveFailures: number; load: number; freeMemMB: number;
 }
 interface Backend {
@@ -26,6 +26,7 @@ interface Backend {
   saveTuning(t: GameTuning, revision: number): Promise<{ tuning: GameTuning; revision: number }>;
   summary(): Promise<Summary>;
   setOpening(o: Omit<Opening, 'revision'>, revision: number): Promise<Opening>;
+  setWorld?(health: number): Promise<number>;
   players(q: string, onlyOnline: boolean): Promise<APlayer[]>;
   updatePlayer(id: number, patch: { level?: number; gems?: number; potions?: number }): Promise<string>;
   resetPlayer(id: number): Promise<string>;
@@ -37,6 +38,7 @@ const serverBackend: Backend = {
   saveTuning: async (tuning, revision) => { const r = await api('/api/admin/tuning', { tuning, revision }); applyRemoteTuning(r.tuning); return r; },
   summary: () => api('/api/admin/summary'),
   setOpening: (o, revision) => api('/api/admin/opening', { ...o, revision }),
+  setWorld: async (health) => (await api('/api/admin/world', { health })).health,
   players: (q, on) => api(`/api/admin/players?q=${encodeURIComponent(q)}${on ? '&online=1' : ''}`),
   updatePlayer: async (id, patch) => (await api('/api/admin/player', { id, ...patch })).text,
   resetPlayer: async (id) => (await api('/api/admin/player/reset', { id })).text,
@@ -231,6 +233,8 @@ function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | 
         </section>
       )}
 
+      {s?.worldHealth !== undefined && <WorldCard s={s} toast={toast} reload={load} />}
+
       <section className="adm-card">
         <h3>Duyuru şeridi</h3>
         <p className="muted adm-hint">Oyunun en üstünde herkese görünen kısa mesaj. Boş bırakılırsa gizlenir.</p>
@@ -264,6 +268,26 @@ function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | 
         </section>
       )}
     </div>
+  );
+}
+function WorldCard({ s, toast, reload }: { s: Summary; toast: (x: { ok: boolean; text: string }) => void; reload: () => void }) {
+  const [v, setV] = useState<number | undefined>(undefined);
+  const wh = s.worldHealth ?? 100;
+  const set = async (n: number) => { try { await backend.setWorld!(n); toast({ ok: true, text: `Dünya Sağlığı %${fmtN(n, 1)} yapıldı.` }); setV(undefined); reload(); } catch (e) { toast({ ok: false, text: (e as Error).message }); } };
+  return (
+    <section className="adm-card">
+      <h3>Dünya Sağlığı</h3>
+      <div className="row" style={{ gap: 10 }}><div className={'bar wh' + (wh < 30 ? ' low' : '')} style={{ flex: 1, height: 10 }}><i style={{ width: `${wh}%` }} /></div><b style={{ fontVariantNumeric: 'tabular-nums' }}>%{fmtN(wh, 1)}</b></div>
+      <p className="muted adm-hint" style={{ marginTop: 8 }}>Azalma hızı ve bağış etkisi <b>Genel</b> sekmesinde.</p>
+      {backend.setWorld && (
+        <div className="row wrap" style={{ gap: 8 }}>
+          <Num v={v} def={Math.round(wh)} min={0} max={100} step={1} w={84} on={setV} />
+          <button className="btn small primary" disabled={v === undefined} onClick={() => v !== undefined && set(v)}>Ayarla</button>
+          <button className="btn small ghost" onClick={() => set(100)}>%100 yap</button>
+        </div>
+      )}
+      {!!s.topDonors?.length && <div className="adm-kv" style={{ marginTop: 12 }}>{s.topDonors.map((d) => <React.Fragment key={d.name}><span>{d.name}</span><b>{fmtN(d.amount, 0)} Öz</b></React.Fragment>)}</div>}
+    </section>
   );
 }
 function Stat({ k, v, sub, accent }: { k: string; v: string; sub?: string; accent?: boolean }) {

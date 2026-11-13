@@ -311,5 +311,20 @@
   "fox_mesh": {
     "url": "fox_mesh.glb",
     "scale": 1
+  },
+  "fox_king": {
+    "url": "fox_king.glb",
+    "height": 2.6,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash",
+      "Cast Ground Slam"
+    ]
   }
 }

@@ -98,8 +98,37 @@ function texMat(name: string, opts: THREE.MeshStandardMaterialParameters = {}, r
   return new THREE.MeshStandardMaterial({ map, normalMap: nor, roughness: 0.9, metalness: 0, ...opts });
 }
 
+/** Tabela yazıları (prop çeşidi = sıra). */
+const SIGN_TEXTS: { title: string; sub: string }[] = [
+  { title: 'PAZAR ALANI', sub: '(Değerli eşyalarınızı burada satın)' },
+];
+function signMaterial(v: number) {
+  const t = SIGN_TEXTS[v] ?? SIGN_TEXTS[0];
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512;
+  const c = cv.getContext('2d')!;
+  const g = c.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, '#8a5a32'); g.addColorStop(0.5, '#6e4426'); g.addColorStop(1, '#5a361c');
+  c.fillStyle = g; c.fillRect(0, 0, 1024, 512);
+  // tahta damarları ve tahta araları
+  c.globalAlpha = 0.18; c.strokeStyle = '#2a160a';
+  for (let i = 0; i < 46; i++) { c.lineWidth = 1 + (i % 3); c.beginPath(); const y = (i * 37) % 512; c.moveTo(0, y); c.bezierCurveTo(300, y + 8, 700, y - 10, 1024, y + 4); c.stroke(); }
+  c.globalAlpha = 0.45; c.lineWidth = 4; for (const y of [170, 340]) { c.beginPath(); c.moveTo(0, y); c.lineTo(1024, y); c.stroke(); }
+  c.globalAlpha = 1;
+  // çerçeve
+  c.strokeStyle = '#d9a441'; c.lineWidth = 14; c.strokeRect(22, 22, 980, 468);
+  c.strokeStyle = 'rgba(42,22,10,.8)'; c.lineWidth = 4; c.strokeRect(40, 40, 944, 432);
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 6; c.shadowOffsetY = 3;
+  c.fillStyle = '#f8e2a4'; c.font = 'bold 128px Georgia, "Times New Roman", serif';
+  c.fillText(t.title, 512, 205, 900);
+  c.fillStyle = '#f3e8d4'; c.font = 'italic 54px Georgia, "Times New Roman", serif';
+  c.fillText(t.sub, 512, 360, 900);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
+  return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, transparent: false });
+}
+
 export function mat(key: string): THREE.Material {
   let m = cache.get(key);
+  if (!m && key.startsWith('sign_')) { m = signMaterial(Number(key.slice(5)) || 0); cache.set(key, m); return m; }
   if (m) return m;
   switch (key) {
     case 'bark': m = texMat('bark', { color: 0xc8b8a8 }); break;

@@ -129,7 +129,8 @@
     "warden": 1.86,
     "stable": 1.78,
     "merchant": 1.74,
-    "fisher": 1.74
+    "fisher": 1.74,
+    "fox_king": 2.6
   },
   "animations": {
     "guardian": {
@@ -165,6 +166,13 @@
     },
     "npc": {
       "Idle": 0
+    },
+    "fox_king": {
+      "Idle": 0,
+      "Walk": 21,
+      "Attack Slash": 97,
+      "Cast Ground Slam": 127,
+      "Death": 189
     }
   }
 }

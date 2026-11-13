@@ -10,6 +10,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
   { title: 'Ekonomi ve ödüller', items: [
     ['xpMul', 'Deneyim (TP) çarpanı', '2 = çift TP etkinliği'],
     ['gemMul', 'Mücevher çarpanı', 'Canavardan düşen mücevher'],
+    ['essenceMul', 'Öz çarpanı', 'Canavardan düşen Öz (Dünya Sağlığı bağışı için)'],
     ['dropMul', 'Eşya ve malzeme düşme', 'Ekipman ve malzeme düşme şansı'],
   ] },
   { title: 'Canavarlar', note: 'Can ve saldırı, yeni doğan canavarlara uygulanır.', items: [
@@ -17,13 +18,17 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['monsterAtkMul', 'Canavar saldırısı', ''],
     ['respawnMul', 'Yeniden doğma süresi', '0,5 = iki kat hızlı doğar'],
   ] },
+  { title: 'Dünya Sağlığı', note: 'Sağlık zamanla azalır, oyuncuların Öz bağışıyla artar. Anlık değeri Durum sekmesinden ayarlayabilirsin.', items: [
+    ['worldDecayMul', 'Azalma hızı', '1 = günde yaklaşık %26 · 0 = hiç azalmaz'],
+    ['worldDonateGain', '1 Öz bağışının etkisi', 'Varsayılan 0,02 puan; sağlık düştükçe etki büyür'],
+  ] },
   { title: 'Dünya', items: [
     ...(OFFLINE ? [['bots', 'Test botu sayısı', 'Köyde dolaşan / ormanda avlanan oyuncular'] as [NumKey, string, string]] : []),
     ['brightness', 'Işık seviyesi', 'Bütün haritaların parlaklığı'],
   ] },
 ];
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
-const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
+const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];
@@ -64,7 +69,7 @@ export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
       {ROWS.map((sec) => (
         <section className="admin-sec" key={sec.title}>
           <h4>{sec.title === 'Canavarlar' ? 'Bütün canavarlar' : sec.title}</h4>
-          {sec.note && <div className="muted" style={{ fontSize: 11, marginTop: -4, marginBottom: 6 }}>{sec.note} Tür başına ayar "Canavarlar" bölmesinde.</div>}
+          {sec.note && <div className="muted" style={{ fontSize: 11, marginTop: -4, marginBottom: 6 }}>{sec.note}{sec.title === 'Canavarlar' ? ' Tür başına ayar "Canavarlar" bölmesinde.' : ''}</div>}
           {sec.items.map(([k, label, hint]) => {
             const [lo, hi, step] = TUNING_LIMITS[k];
             return (

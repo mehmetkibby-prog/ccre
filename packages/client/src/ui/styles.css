@@ -259,8 +259,11 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .xpline .seg { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(0, 0, 0, .6); }
 
 /* ── sohbet (sol alt) ── */
-.chat { position: absolute; left: 10px; bottom: 16px; width: min(380px, 40vw); padding: 8px; display: flex; flex-direction: column; gap: 5px; --cut: 9px; }
-.chat .msgs { height: 140px; overflow-y: auto; font-size: 12.5px; line-height: 1.4; padding-right: 4px; }
+.chat { position: absolute; left: 10px; bottom: 16px; width: min(340px, 36vw); padding: 7px; display: flex; flex-direction: column; gap: 4px; --cut: 9px; transition: opacity .2s; }
+.chat .msgs { height: 118px; overflow-y: auto; font-size: 12px; line-height: 1.38; padding-right: 4px; text-shadow: 0 1px 2px #000; }
+/* yalnız okurken (yazı kutusunda değilken) yarı saydam; yazarken ya da üstüne gelince tam görünür */
+.chat:not(:focus-within):not(:hover) { --glass: rgba(20, 13, 8, .38); --glass2: rgba(30, 20, 12, .42); }
+.chat:not(:focus-within):not(:hover) .in, .chat:not(:focus-within):not(:hover) .tabs2 { opacity: .55; }
 .chat .m b { cursor: pointer; font-weight: 600; }
 .chat .ch-world { color: #ffd08a; } .chat .ch-trade { color: #8ad8ff; } .chat .ch-local { color: #e2e8f4; } .chat .ch-sys { color: var(--core2); } .chat .ch-pm { color: #ff9ad8; }
 .chat .tabs2 { display: flex; gap: 2px; }
@@ -394,6 +397,9 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .mact .atk { width: 96px; height: 96px; right: 8px; bottom: 8px; font-size: 30px; color: #ffd0d8; background: radial-gradient(circle at 40% 35%, #c83a52, #4a0e1e); }
 .mact .s1 { width: 64px; height: 64px; right: 106px; bottom: 6px; } .mact .s2 { width: 64px; height: 64px; right: 96px; bottom: 78px; } .mact .s3 { width: 64px; height: 64px; right: 34px; bottom: 108px; }
 .mact .pot { width: 50px; height: 50px; right: 158px; bottom: 118px; } .mact .pick { width: 50px; height: 50px; right: 108px; bottom: 150px; }
+.mact .tgt { width: 56px; height: 56px; right: 4px; bottom: 166px; color: var(--core2); background: radial-gradient(circle at 40% 35%, #4a3220, #170f09); box-shadow: inset 0 0 0 1px var(--core-dim), 0 4px 10px rgba(0, 0, 0, .5); flex-direction: column; }
+.mact .tgt svg { width: 46%; height: 46%; }
+.mact .tgt small { font-size: 8.5px; font-weight: 700; margin-top: -2px; letter-spacing: .3px; }
 .mact .cdo { position: absolute; inset: 0; background: rgba(0, 0, 0, .62); display: grid; place-items: center; font-size: 13px; color: var(--core2); }
 
 /* ── dar ekran ── */
@@ -432,11 +438,12 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
   .menu button:hover { transform: none; }
   .menu .mob-only { display: flex; }
   /* sohbet: altta, joystick ile eylem düğmeleri arasında, yarı saydam; × ile kapanır, menüden açılır */
-  .chat { display: none; top: auto; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); width: min(480px, calc(100vw - 420px)); min-width: 240px; padding: 6px 8px;
-    --glass: rgba(20, 13, 8, .42); --glass2: rgba(30, 20, 12, .5); opacity: .92; }
+  .chat { display: none; top: auto; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); width: min(430px, calc(100vw - 420px)); min-width: 230px; padding: 5px 7px;
+    --glass: rgba(20, 13, 8, .42); --glass2: rgba(30, 20, 12, .5); }
+  .chat:not(:focus-within) { --glass: rgba(20, 13, 8, .26); --glass2: rgba(30, 20, 12, .3); }
   .chat.open { display: flex; }
   .chat .tabs2 .chat-x { display: block; }
-  .chat .msgs { height: 92px; font-size: 12px; text-shadow: 0 1px 2px #000; }
+  .chat .msgs { height: 80px; font-size: 11.5px; }
   .chat .in input, .chat .in select { background: rgba(10, 6, 3, .55); }
   .bottom { display: none; }
   .xpline { height: 4px; bottom: env(safe-area-inset-bottom, 0px); }
@@ -457,8 +464,10 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
   .menu button::after { display: none; }
   .menu button.exit { margin-top: 0; margin-left: 6px; }
   .menu { max-height: none; flex-wrap: nowrap; }
-  .chat { top: 74px; bottom: auto; left: calc(8px + env(safe-area-inset-left, 0px)); transform: none; width: min(46vw, 340px); min-width: 0; }
-  .chat .msgs { height: 70px; }
+  .chat { top: calc(96px + env(safe-area-inset-top, 0px)); bottom: auto; left: calc(8px + env(safe-area-inset-left, 0px)); transform: none; width: min(40vw, 300px); min-width: 0; padding: 4px 6px; }
+  .chat .msgs { height: 58px; font-size: 11px; }
+  .chat .tabs2 button { padding: 2px 6px; font-size: 9.5px; }
+  .chat .in input { padding: 4px 7px; font-size: 12px; }
   .joy { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 118px; height: 118px; }
   .joy i { left: 30px; top: 30px; }
   .mact { bottom: calc(4px + env(safe-area-inset-bottom, 0px)); transform: scale(.84); transform-origin: bottom right; }
@@ -792,3 +801,15 @@ a.btn { text-decoration: none; display: inline-block; }
   .ench-edit { padding-left: 10px; }
   .adm-fields.four { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Dünya Sağlığı çubuğu (dokununca bağış) ── */
+button.worldhp { border: none; cursor: pointer; font: inherit; color: inherit; padding: 2px 0; }
+.worldhp .bar > i, .donate-meter .bar > i, .bar.wh > i { background: linear-gradient(90deg, #1d6f66, var(--iznik) 40%, #c8f5ee); box-shadow: 0 0 10px var(--iznik); }
+.worldhp .bar.low > i, .donate-meter .bar.low > i, .bar.wh.low > i { background: linear-gradient(90deg, #6e1f16, var(--hp)); box-shadow: 0 0 10px var(--hp); }
+.worldhp .lbl { color: #bfeee7; }
+.donate-cta { font: 600 10px var(--f-ui); letter-spacing: 1.5px; color: var(--core2); text-transform: uppercase; opacity: .85; padding: 1px 8px; border-radius: 99px; box-shadow: inset 0 0 0 1px rgba(226, 178, 80, .45); background: rgba(14, 9, 5, .55); }
+button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(--core); }
+.donate-meter { display: flex; align-items: center; gap: 10px; }
+.donate-meter .bar { flex: 1; height: 12px; }
+.donate-meter b { font: 600 18px var(--f-ui); color: #bfeee7; font-variant-numeric: tabular-nums; }
+@media (pointer: coarse) { .donate-cta { font-size: 8.5px; letter-spacing: 1px; padding: 0 6px; } }

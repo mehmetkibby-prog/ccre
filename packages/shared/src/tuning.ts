@@ -26,6 +26,8 @@ export interface GameTuning {
   monsterHpMul: number; monsterAtkMul: number; respawnMul: number;
   density: Record<string, number>; // harita başına canavar yoğunluğu çarpanı
   bots: number; worldDecayMul: number; brightness: number;
+  /** Dünya Sağlığı: 1 Öz bağışının kazandırdığı puan (sağlık düştükçe etkisi artar). */
+  worldDonateGain: number;
   announcement: string;
   monsters: Record<string, MonsterTune>;
   spawns: Record<string, SpawnTune>;
@@ -46,14 +48,14 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, announcement: '',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, announcement: '',
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
 export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
-  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05],
+  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005],
 };
 export const DENSITY_LIMITS: [number, number, number] = [0.3, 3, 0.05];
 export const TUNING: GameTuning = structuredClone(DEFAULT_TUNING);

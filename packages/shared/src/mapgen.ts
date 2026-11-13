@@ -9,7 +9,7 @@ export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND
 export type PropKind =
   | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
   | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'forge' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
-  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay';
+  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
 export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number }
@@ -98,6 +98,8 @@ function genVillage(l: MapLayout, rng: Rng) {
       l.props.push({ k: 'lamp', x: fx * TILE, y: fy * TILE, v: 0, s: 1 });
     }
     for (const [ox, oy] of [[-0.72, -0.72], [0.72, -0.72], [-0.72, 0.72], [0.72, 0.72]] as const) l.props.push({ k: 'banner', x: (mk.tx + ox * mk.rx) * TILE, y: (mk.ty + oy * mk.ry) * TILE, v: 0, s: 1.1 });
+    // girişte tabela (yolun kuzey kenarında, yazısı güneye/kameraya dönük): v=0 → "PAZAR ALANI"
+    l.props.push({ k: 'signpost', x: (mk.tx - mk.rx - 3) * TILE, y: (cy - 1.6) * TILE, v: 0, s: 1 });
     // kenarda süs sandık ve fıçılar (yürüme alanının dışında)
     for (let k = 0; k < 10; k++) {
       const a = 0.4 + (k / 10) * Math.PI * 2;
@@ -151,7 +153,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     }
     // giriş: köy yolu çitteki kapıdan patikaya döner
     for (const [x0, y0, x1, y1] of [
-      [cx, 58, cx, h - 7], [cx, 64, 12, 74], [cx, 66, 52, 76], [52, 76, 74, 68], [cx, 72, 40, 81],
+      [cx, 58, cx, Math.min(h - 7, 110)], [cx, 64, 12, 74], [cx, 66, 52, 76], [52, 76, 74, 68], [cx, 72, 40, 81],
       [cx, 86, 12, 98], [12, 98, 20, 108], [cx, 90, 60, 100], [60, 100, 78, 88], [74, 68, 78, 88], [cx, 100, 46, 109],
     ] as const) carvePath(l, rng, x0, y0, x1, y1, 1, G.DIRT, protect);
     // korunun ortasında küçük bir gölet (tilkilerin su içtiği yer)
@@ -161,6 +163,26 @@ function genVillage(l: MapLayout, rng: Rng) {
       if (protect[i]) continue;
       if (d < 1) { l.ground[i] = d < 0.4 ? G.DEEP : G.WATER; l.blocked[i] = 1; }
       else if (d < 1.45) l.ground[i] = G.SAND;
+    }
+    // ── Tilki Kral Arenası: korunun en güney ucunda yuvarlak taş meydan ──
+    const AX = 44, AY = h - 11, AR = 8;
+    if (h >= 128) {
+      carvePath(l, rng, 46, 109, AX, AY - AR + 1, 1, G.DIRT, protect);
+      for (let y = AY - AR - 2; y <= AY + AR + 2; y++) for (let x = AX - AR - 2; x <= AX + AR + 2; x++) {
+        if (x < 2 || y < 2 || x >= w - 2 || y >= h - 2) continue;
+        const d = Math.hypot(x - AX, y - AY) / AR, i = idx(l, x, y);
+        if (d < 1.12) { l.ground[i] = d > 0.88 ? G.DIRT : G.COBBLE; l.blocked[i] = 0; protect[i] = 1; }
+      }
+      // kenarda taş halkası (kuzey girişi açık), fenerler ve dört sancak
+      for (let k = 0; k < 22; k++) {
+        const a = (k / 22) * Math.PI * 2;
+        if (Math.sin(a) < -0.9) continue; // kuzey: giriş
+        const fx = AX + Math.cos(a) * (AR + 0.9), fy = AY + Math.sin(a) * (AR + 0.9);
+        l.props.push({ k: k % 2 ? 'rock' : 'lamp', x: fx * TILE, y: fy * TILE, v: k % 3, s: k % 2 ? 0.9 : 1 });
+        if (k % 2) l.blocked[idx(l, Math.floor(fx), Math.floor(fy))] = 1;
+      }
+      for (const [ox, oy] of [[-0.62, -0.62], [0.62, -0.62], [-0.62, 0.62], [0.62, 0.62]] as const) l.props.push({ k: 'banner', x: (AX + ox * AR) * TILE, y: (AY + oy * AR) * TILE, v: 0, s: 1.2 });
+      for (const [ox, oy] of [[-2.4, 1.6], [2.2, 2.4], [0.6, -2.8]] as const) l.props.push({ k: 'bones', x: (AX + ox) * TILE, y: (AY + oy) * TILE, v: 0, s: 1 });
     }
     for (let x = 4; x < w - 4; x++) {
       if (Math.abs(x - cx) <= 2) continue;
@@ -347,6 +369,7 @@ const ZONE_NAMES: Record<string, string[]> = {
   ice_golem: ['Golem Kayalığı', 'Buz Ocağı', 'Donuk Taşlar'],
   blizzard_seer: ['Kâhin Çemberi', 'Tipi Sunağı', 'Ak Fırtına'],
   black_stone: ['Kara Taş'],
+  fox_king: ['Tilki Kral Arenası'],
 };
 /** Bir yuvada kaç canavar olur: kalabalık ama okunaklı sürüler. */
 const PACK = 9;

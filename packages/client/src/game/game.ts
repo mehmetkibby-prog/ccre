@@ -53,6 +53,8 @@ export class Game {
   moveTarget: { x: number; y: number } | null = null;
   interactNpc: string | null = null;
   autoAttack = false;
+  /** Saldırı basılıyken hedef öldü: yeni hedefe geçmek için tuş bırakılıp yeniden basılmalı (makro/ağırlıkla bot gibi kasılmayı önler). */
+  attackNeedsRelease = false;
   /** Yakın dövüş saldırısı başlayanlar: vuruş anını eşlemek ve kombo sırası için */
   meleeCast = new Map<number, { at: number; combo: number }>();
   selfCombo = 0;
@@ -144,7 +146,7 @@ export class Game {
         store.set({ panel: null, npc: null, confirmTravel: null });
         break;
       }
-      case 'world': store.set({ online: m.online }); break;
+      case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
       case 'tuning': import('../admin/config.ts').then((c) => c.applyRemoteTuning(m.tuning)); break;
       case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
       // ───────── pazar tezgâhları ─────────
@@ -157,6 +159,7 @@ export class Game {
       case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
       case 'gain': {
         if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
+        if (m.essence) this.fx.text(m.x + 18, m.y, 1.2, `+${m.essence} Öz`, '#8ff4ff', 13, 1200);
         break;
       }
       case 'loot': pushLoot(m.name, m.rarity); sfx.play('loot'); break;
@@ -319,7 +322,7 @@ export class Game {
       case Ev.DEATH: {
         const e = this.ents.get(ev.id);
         if (e) { e.deadAt = now; const p = this.entPos(e); this.fx.burst(p.x, p.y, 0.8, 26, e.kind === Kind.MONSTER ? '#9ffff0' : '#ff8a8a', 3, 900, 0.22, -1); if (ev.killer === this.selfId) sfx.play('kill'); }
-        if (ev.id === this.targetId) { this.autoAttack = false; this.setTarget(0); }
+        if (ev.id === this.targetId) { this.autoAttack = false; if (this.input.attackHeld) this.attackNeedsRelease = true; this.setTarget(0); }
         break;
       }
       case Ev.FX: {
@@ -456,13 +459,17 @@ export class Game {
     if (!mv.x && !mv.y) this.lastJoyDir = NO_DIR;
     if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
     // saldırı: basılı tutma veya otomatik hedef
-    const wantAttack = this.input.attackHeld || this.autoAttack;
+    const wantAttack = (this.input.attackHeld && !this.attackNeedsRelease) || this.autoAttack;
     if (wantAttack) {
       // yürürken de vurulur: hedef menzildeyse saldırı gider, bacaklar yürümeye devam eder.
       // Elle yürümüyorsan ve hedef menzil dışındaysa (ör. Muhafız uzakta) önce hedefe yürünür.
       const manual = dir !== NO_DIR;
       let t = this.targetId ? this.ents.get(this.targetId) : undefined;
-      if (!t || t.hp <= 0 || t.deadAt) { const nt = this.nearestEnemy(manual ? this.selfRange() + 60 : 700); if (nt) { this.setTarget(nt.id); t = nt; } }
+      if (t && (t.hp <= 0 || t.deadAt)) {
+        // hedef öldü: basılı tutulan saldırı kendiliğinden sıradaki canavara geçmez
+        t = undefined; this.autoAttack = false;
+        if (this.input.attackHeld) this.attackNeedsRelease = true;
+      } else if (!t && !this.attackNeedsRelease) { const nt = this.nearestEnemy(manual ? this.selfRange() + 60 : 700); if (nt) { this.setTarget(nt.id); t = nt; } }
       if (t) {
         const d = Math.hypot(t.x - this.px, t.y - this.py);
         const range = this.selfRange();
@@ -537,7 +544,9 @@ export class Game {
 
   // ───────── eylemler ─────────
   attackPressed(down: boolean) {
+    if (down && this.input.attackHeld) return; // klavye tekrarı yeni basış sayılmaz
     this.input.attackHeld = down;
+    if (!down) { this.attackNeedsRelease = false; return; }
     if (down) {
       const t = this.targetId ? this.ents.get(this.targetId) : null;
       if (!t || t.hp <= 0) { const nt = this.nearestEnemy(700); if (nt) this.setTarget(nt.id); }
@@ -582,6 +591,7 @@ export class Game {
     const m = this.layout.def.market;
     if (m) this.moveTarget = { x: m.tx * 64 + 32 - 200, y: m.ty * 64 + 32 + 60 };
   }
+  donate(amount: number) { this.send({ t: 'donate', amount: Math.floor(amount), req: reqId() }); }
   travel(map: string, confirm = false) { this.send({ t: 'travel', map, req: reqId(), confirm }); }
 
   /** Ekran tıklaması: hedef seç, NPC ile konuş, ganimet al veya yürü. */
