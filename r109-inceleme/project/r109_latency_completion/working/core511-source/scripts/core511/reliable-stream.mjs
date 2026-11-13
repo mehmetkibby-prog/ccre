@@ -1,7 +1,7 @@
 import {compactCombatIpcR52} from './r52-options.mjs';
 import {decodeActorReadR112} from './actor-read-wire-r112.mjs';
 import {replyWireR57} from './r57-options.mjs';
-import {REPLY_WIRE_MARKER_R57,prepareReplyWireR105,decodeReplyWireR57} from './reply-wire-r57.mjs';
+import {REPLY_WIRE_MARKER_R57,prepareReplyWireR113,decodeReplyWireR57} from './reply-wire-r57.mjs';
 import {COMPACT_COMBAT_MARKER_R52,COMPACT_COMBAT_WIRE_BYTES_R52,compactCombatMethodR52,encodeCompactCombatReplyR52,decodeCompactCombatReplyR52} from './compact-combat-ipc-r52.mjs';
 import {stageStartR51,observeStageR51} from './stage-timing-r51.mjs';
 import net from 'node:net';
@@ -185,7 +185,7 @@ export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128
    if(frame.type==='control_result'){if(!control){socket.destroy();return;}control.receive(frame);return;}
    if(frame.type!=='request'||typeof frame.id!=='string'||frame.id.length>160||typeof frame.method!=='string'||++pending>(maxInflightFor?.(peer)??maxInflight)){socket.destroy();return;}
    Promise.resolve().then(()=>dispatch(peer,frame.method,frame.payload,frame.id))
-    .then(value=>{if(closed)return;const result={type:'result',id:frame.id,ok:true,value};if(ipcSafeStream){const nativePipe=socket instanceof ProcessStream&&socket.name==='kernel511',compact=compactCombatIpcR52&&frame.compactCombatR52===1&&compactCombatMethodR52(frame.method)&&nativePipe?encodeCompactCombatReplyR52(result):null;const compressed=replyWireR57&&frame.replyWireR57===1&&compactCombatMethodR52(frame.method)&&nativePipe?prepareReplyWireR105(compact??result):null;return sendResult(result,frame.method,frame.readParts===true&&readPartsMethod(frame.method)&&nativePipe?readParts:null,compressed?.frame??compact,compressed?.text??null);}send(result);},error=>{if(closed)return;const result={type:'result',id:frame.id,ok:false,code:failureCode(error,'ipc_handler_failed',frame.method),...(actorRejection(error)?{actorRejection:actorRejection(error)}:{})};send(result,ipcSafeStream?replyBytes(result,frame.method):undefined);})
+    .then(async value=>{if(closed)return;const result={type:'result',id:frame.id,ok:true,value};if(ipcSafeStream){const nativePipe=socket instanceof ProcessStream&&socket.name==='kernel511',compact=compactCombatIpcR52&&frame.compactCombatR52===1&&compactCombatMethodR52(frame.method)&&nativePipe?encodeCompactCombatReplyR52(result):null;const compressed=replyWireR57&&frame.replyWireR57===1&&compactCombatMethodR52(frame.method)&&nativePipe?await prepareReplyWireR113(compact??result,onSerializedR113?text=>onSerializedR113(peer,result.id,text):null):null;return sendResult(result,frame.method,frame.readParts===true&&readPartsMethod(frame.method)&&nativePipe?readParts:null,compressed?.frame??compact,compressed?.text??null);}send(result);},error=>{if(closed)return;const result={type:'result',id:frame.id,ok:false,code:failureCode(error,'ipc_handler_failed',frame.method),...(actorRejection(error)?{actorRejection:actorRejection(error)}:{})};send(result,ipcSafeStream?replyBytes(result,frame.method):undefined);})
     .finally(()=>pending--).catch(()=>socket.destroy());
   },()=>socket.destroy());
 }
