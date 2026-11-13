@@ -1,3 +1,4 @@
+import {seedBrowserUsersR113,openIndependentTowersR113,advanceIndependentTowersR113} from './tower-browser-multi-r113.mjs';
 import {fileURLToPath as reviewFilePath} from 'node:url';
 const reviewWorkspace=reviewFilePath(new URL('../../',import.meta.url));
 // R93 full generated game app, genuine local native HTTP / SQLite / channel
@@ -29,7 +30,7 @@ const {currentRealmFixture:realmStartupConfig}=await import('./current-realm-fix
 const {ProcessStream}=await import(coreRoot+'/process-stream.mjs');
 const {BASE,temporary}=await import(coreRoot+'/tests/helpers.mjs');
 const {attachPanelRuntime}=await import(working+'/core511-source/scripts/delivery511/panel-control.mjs');
-let phase='preparation',browser,server,s,linkDelay=0,handoffs=0,started=Date.now();
+let phase='preparation',browser,server,s,linkDelay=0,handoffs=0,started=Date.now(),browserUsersR113=[],independentTowersR113=[];
 const lag=()=>new Transform({transform(chunk,enc,callback){const delay=linkDelay;setTimeout(()=>this.push(chunk),delay);callback();}});
 const report={scope:'Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.',client:proof.name,checks};
 report.webSocketTransport=process.env.BROWSER_WS_TRANSPORT==='handoff'?'production-style-socket-handoff':'test-process-bridge';
@@ -89,9 +90,10 @@ try{
   sql.exec('DELETE FROM messages');
   const demoMessages=[['AyIşığı','Herkese iyi oyunlar!'],['Kuzey','Zindana gelecek var mı?'],['Core Şövalyesi','Ben geliyorum, gruba al.']];
   for(const [i,[name,body]] of demoMessages.entries())sql.prepare("INSERT INTO messages(player_id,player_name,scope,channel,body,created_at) VALUES(?,?,'world',1,?,?)").run(i===2?seed.id:'hud-player-'+(i+1),name,body,Math.floor(Date.now()/1000)-10+i);
+  if(process.env.MULTI_BROWSER_R113==='1')browserUsersR113=seedBrowserUsersR113(sql,seed);
   // No nearby enemies in this isolated preview.
  }});
- await s.host.database.atomic(()=>globalThis.__colLaunch.grant(s.f.account.id,true));
+ await s.host.database.atomic(()=>{globalThis.__colLaunch.grant(s.f.account.id,true);for(const user of browserUsersR113){globalThis.__colLaunch.grant(user.account.id,true);s.f.bot.deadline(user.account.id);}});
  if(process.env.CHAMPION_DEMO==='1'){
   const {championThresholdR102}=await import(coreRoot+'/content-model-r102.mjs');
   const {CONTENT_DEFAULTS_R102}=await import(coreRoot+'/content-config-r102.mjs');
@@ -111,16 +113,17 @@ try{
  const aliases=JSON.parse(fs.readFileSync((reviewWorkspace+'qa40_player_work/asset-aliases.json')));
  for(const row of Object.values(aliases))assert.equal(createHash('sha256').update(fs.readFileSync(row.file)).digest('hex'),row.sha256,'exact cached media alias');
  const asset=p=>[(reviewWorkspace+'r105_performance_review/evidence/public-media')+p,(reviewWorkspace+'r105_performance_review/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r105_tower_recovery/evidence/public-media')+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),root+'/evidence/public-media'+p,root+'/evidence/public-media'+p.replace('/assets/'+CLIENT_ASSET_NAMESPACE+'/','/assets/'),(reviewWorkspace+'r102_content/evidence/public-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/hud-media')+p,(reviewWorkspace+'r100_hud_refresh/evidence/public-media')+p,(reviewWorkspace+'r100_attack_fix/evidence/public-media')+p,cache+p,(reviewWorkspace+'general_promo_video/assets')+p,...(aliases[p]?[aliases[p].file]:[]),...(p==='/favicon.svg'?[(reviewWorkspace+'site_launch_v2/public/favicon.svg')]:[])].find(f=>fs.existsSync(f)&&fs.statSync(f).isFile())??null;
- const nativeRequest=(url,method,body,instance)=>new Request(s.f.origin+url,{method,headers:{Origin:s.f.origin,Cookie:'__Host-yasam-session='+s.f.token+'; __Host-yasam-csrf='+s.f.csrf,'X-CSRF-Token':s.f.csrf,'X-Game-Instance':instance,'Content-Type':'application/json','X-Real-IP':'198.51.100.93'},...(body===undefined?{}:{body:JSON.stringify(body)})});
+ const nativeRequest=(url,method,body,instance,user=s.f)=>new Request(s.f.origin+url,{method,headers:{Origin:s.f.origin,Cookie:'__Host-yasam-session='+user.token+'; __Host-yasam-csrf='+user.csrf,'X-CSRF-Token':user.csrf,'X-Game-Instance':instance,'Content-Type':'application/json','X-Real-IP':'198.51.100.93'},...(body===undefined?{}:{body:JSON.stringify(body)})});
  server=http.createServer(async(req,res)=>{try{
   const url=new URL(req.url,'http://fixture');
   if(url.pathname.startsWith('/api/')||url.pathname.startsWith('/afk/')){
    const chunks=[];for await(const chunk of req)chunks.push(chunk);const raw=Buffer.concat(chunks).toString(),body=raw?JSON.parse(raw):undefined;
-   const request=nativeRequest(url.pathname+url.search,req.method,body,req.headers['x-game-instance']||s.f.instance),at=Date.now();
+   const user=browserUsersR113.find(u=>String(u.index)===req.headers['x-qa-player'])??s.f;
+   const request=nativeRequest(url.pathname+url.search,req.method,body,req.headers['x-game-instance']||user.instance,user),at=Date.now();
    const response=await s.bindings.route(request,()=>native.default(request));
    const failure=response.status>=400?await response.clone().json().catch(()=>null):null;
    const idle=url.pathname==='/api/game-presence'&&response.ok?(await response.clone().json()).idleExempt:undefined;
-   const record={at,phase,method:req.method,path:url.pathname,status:response.status,ms:Date.now()-at,action:body?.action,idleExempt:idle,instance:req.headers['x-game-instance'],...(failure?{code:failure.code,error:failure.error,message:failure.message}:{})};requests.push(record);log('http',record);
+   const record={at,phase,player:user.index??0,method:req.method,path:url.pathname,status:response.status,ms:Date.now()-at,action:body?.action,idleExempt:idle,instance:req.headers['x-game-instance'],...(failure?{code:failure.code,error:failure.error,message:failure.message}:{})};requests.push(record);log('http',record);
    res.statusCode=response.status;for(const[k,v]of response.headers)if(!['content-encoding','content-length','set-cookie'].includes(k))res.setHeader(k,v);res.end(Buffer.from(await response.arrayBuffer()));return;
   }
   let f;
@@ -189,14 +192,17 @@ try{
  await page.locator('canvas:visible').first().waitFor({state:'visible'});
  await page.locator('.primary-skill-bar button[data-ability="0"]').waitFor({state:'visible'});
  await pause(400);
+ if(browserUsersR113.length)independentTowersR113=await openIndependentTowersR113({browser,users:browserUsersR113,origin,requests,namespace:CLIENT_ASSET_NAMESPACE,bridge:proof.bridge,errors});
  phase='tower-recovery';
  const enter=await page.evaluate(()=>window.__qaReadCore.command({action:'adventure_tower_enter',requestId:crypto.randomUUID()}));assert.equal(enter.status,200,JSON.stringify(enter));
  await page.waitForFunction(()=>window.__qaReadCore.world?.adventure511?.run?.floor===1);
  const player=s.f.sql.prepare('SELECT * FROM players WHERE id=?').get(s.f.id),enemy=s.f.sql.prepare('SELECT * FROM monsters WHERE area=? AND hp>0').get(player.area);
  await s.core.permanentPlayers([s.f.id],()=>{s.f.sql.prepare('UPDATE players SET x=?,y=?,attack_one_at=0 WHERE id=?').run(enemy.x,enemy.y,s.f.id);});
  await page.screenshot({path:out+'/tower-before.png'});
+ const droppedAtR113=Date.now();
  await page.evaluate(enemy=>{window.__dropTowerSocket=window.__qaReadCore.ws;window.__towerAttackDone=false;window.__towerAttack=window.__qaReadCore.command({action:'attack',targetId:enemy.id,spawnRound:enemy.spawn_round,ability:0,intentId:crypto.randomUUID(),requestId:crypto.randomUUID()}).then(result=>{window.__towerAttackDone=true;window.__towerAttackResult=result;return result;});},enemy);
- await pause(4000);
+ if(independentTowersR113.length){await advanceIndependentTowersR113(s,independentTowersR113,out);checks.push({name:'Three independent browser accounts: two towers advance while the first loses messages',accounts:3});}
+ await pause(Math.max(0,4000-(Date.now()-droppedAtR113)));
  assert.equal(await page.evaluate(()=>window.__qaReadCore.world.adventure511.run.floor),1,'loss holds stale floor before recovery');
  assert.match(s.f.sql.prepare('SELECT area FROM players WHERE id=?').get(s.f.id).area,/_02$/,'server advanced');
  await page.waitForFunction(()=>window.__towerAttackDone&&window.__qaReadCore.world?.adventure511?.run?.floor===2,{},{timeout:25000});
