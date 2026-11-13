@@ -318,6 +318,10 @@ export class ChannelRuntime {
    else{demand(!this.sharedPaused||this.sharedPaused===payload.token,'global_pending_fenced');this.sharedPaused=null;}
    return {token:payload.token,pending:Boolean(this.sharedPaused)};
   }
+  if(method==='dungeon_lobby_state_r113'){
+   const identity=this.channel.identities.get(payload?.actor);demand(identity&&identity.epoch===payload?.epoch&&this.sessions.check(identity)===true,'dungeon_lobby_owner_fenced');
+   return {resident:this.dungeon.locked(identity.actor),notice:this.dungeon.resident.notices.get(identity.actor)?.message};
+  }
   if(method==='mount_state'){const identity=this.channel.identities.get(payload?.actor);if(!identity||identity.epoch!==payload?.epoch||this.sessions.check(identity)!==true)return {ok:false,status:409,code:'mount_owner_fenced',mount:null};return this.channel.mountToggle(payload);}
   if(method==='castle_config_r59')return this.castle.configure(payload);
   if(method==='motion_settings')return {ok:this.motion.configure(payload)};

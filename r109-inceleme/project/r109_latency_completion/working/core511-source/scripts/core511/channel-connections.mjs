@@ -1,3 +1,4 @@
+import {DUNGEON_LOBBY_READ_R113} from './dungeon-lobby-client-r113.mjs';
 import {isZumrutActionR93} from './zumrut-actions-r93.mjs';
 import {ORDERED_ACTIONS_R113,orderedActionR113} from './ordered-actions-r113.mjs';
 import {egressPacingR531} from './r531-options.mjs';
@@ -69,6 +70,7 @@ export class ChannelConnections {
     demand(!isBinary&&bytes.length<=(record.identity?r37Options.ingressBytes:8192),'invalid_payload');const message=JSON.parse(bytes.toString('utf8'));
     if(!record.identity){
      demand(message?.type==='auth'&&!record.authPending,'authentication_required');record.authPending=true;
+     record.dungeonLobbyReadR113=Array.isArray(message.capabilities)&&message.capabilities.includes(DUNGEON_LOBBY_READ_R113);
      record.botChallengeEnabled=Array.isArray(message.capabilities)&&message.capabilities.includes(BOT_CHALLENGE);
      record.orderedMovement=Array.isArray(message.capabilities)&&message.capabilities.includes(ORDERED_MOVEMENT);
      record.orderedActionsR113=record.orderedMovement&&message.capabilities.includes(ORDERED_ACTIONS_R113);
@@ -86,7 +88,7 @@ export class ChannelConnections {
       if(prior&&prior!==socket){this.sockets.get(prior).revoked=true;prior.close(4009,'Reconnected');}
       const actor=this.kernel.players.get(identity.actor);demand(actor&&!actor.passive&&actor.epoch===identity.epoch,'actor_not_admitted');
       this.presence(identity);
-      const motionStreamId=record.motionEnabled?this.motion.ready(identity,record):null,capabilities=[...(record.movementPipeline?[MOVEMENT_PIPELINE,...record.orderedMovement?[ORDERED_MOVEMENT]:[]]:[]),...(motionStreamId?[MOTION]:[]),...(record.botChallengeEnabled?[BOT_CHALLENGE]:[]),...(record.backgroundMovement?['background-movement-v1']:[]),...(record.orderedActionsR113?[ORDERED_ACTIONS_R113]:[])];
+      const motionStreamId=record.motionEnabled?this.motion.ready(identity,record):null,capabilities=[...(record.dungeonLobbyReadR113?[DUNGEON_LOBBY_READ_R113]:[]),...(record.movementPipeline?[MOVEMENT_PIPELINE,...record.orderedMovement?[ORDERED_MOVEMENT]:[]]:[]),...(motionStreamId?[MOTION]:[]),...(record.botChallengeEnabled?[BOT_CHALLENGE]:[]),...(record.backgroundMovement?['background-movement-v1']:[]),...(record.orderedActionsR113?[ORDERED_ACTIONS_R113]:[])];
       socket.send(JSON.stringify({type:'ready',protocol:PROTOCOL,channel:this.kernel.state.channel,epoch:identity.epoch,lastAccepted:actor.lastAccepted,lastApplied:actor.lastApplied,results:this.kernel.replayResults?.(identity.actor)??[],...(capabilities.length?{capabilities}:{}),...(motionStreamId?{motionStreamId}:{})}));
       await this.ready(identity,record);
      }).catch(()=>close());return;

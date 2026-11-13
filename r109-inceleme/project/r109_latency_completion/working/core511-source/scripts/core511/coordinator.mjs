@@ -1,3 +1,4 @@
+import {dungeonLobbyHttpR113} from './dungeon-lobby-http-r113.mjs';
 import {AutoIpClientR102} from './auto-ip-r102.mjs';
 import {dungeonFreezeActorsR71} from './dungeon-freeze-scope-r71.mjs';
 import {castleEnabled,CASTLE_CHANNEL,CASTLE_AREA} from './castle-model-r59.mjs';
@@ -408,6 +409,7 @@ export class CoreCoordinator {
 
  async revoke(scope){for(const [id,s]of this.sessions){if(scope.actor!==id&&scope.account!==s.identity.account&&scope.session!==s.identity.session)continue;this.presence.revoke({actor:id});s.security={...s.security,blocked:true};await this.processes.get(s.identity.channel).control.request('revoke',{actor:id,revision:this.nextRevision(id)});}}
  async http(request){
+  if(new URL(request.url).pathname==='/api/realtime/core511-dungeon-lobby')return dungeonLobbyHttpR113(this,request);
   const path=new URL(request.url).pathname,paths=['/api/realtime/core511-ticket','/api/realtime/core511-logout','/api/realtime/core511-transfer','/api/realtime/core511-character'];if(!paths.includes(path))return null;
   const headers=this.auth.rules.noStoreHeaders();if(request.method!=='POST')return Response.json({code:'method_not_allowed'},{status:405,headers});
   try{const payload=await this.auth.rules.readJsonObject(request);if(payload.protocol!==PROTOCOL)return Response.json({code:'core511_protocol_required',relogin:true},{status:428,headers});
