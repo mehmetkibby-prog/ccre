@@ -49,16 +49,18 @@ def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False,distribution='bal
 # Pair the primary 40-player workload across versions within each repetition.
 # Other requested populations get three independent fresh starts per version.
 if a.farm_probe:
- for version in ['R110','R113']:run(version,40,'forest',1,farm=True)
+ for version in ['R110','R113']:run(version,50,'forest',1,farm=True)
  print(json.dumps({'farmProbeComplete':True,'runs':len(rows)}),flush=True);raise SystemExit(0)
 for repeat in range(1,4):
- for n in ([40] if a.primary_only else [40,10,50,100]):
+ for n in [50]:
   for version in ['R110','R113']:run(version,n,'mixed',repeat)
- for n in [30,40]:run('R113',n,'forest',repeat)
- run('R113',40,'forest',repeat,distribution='packed')
+ run('R113',50,'forest',repeat)
+ run('R113',50,'forest',repeat,distribution='packed')
 if a.primary_only:
  print(json.dumps({'primaryMatrixComplete':True,'runs':len(rows)}),flush=True);raise SystemExit(0)
-run('R113',40,'mixed',1,'r2')
-run('R113',10,'shared_boss_terminal',1)
-if a.soak_seconds:run('R113',40,'forest',1,seconds=a.soak_seconds)
+# User requested only 50-player load. R2 has a real 40-player admission cap;
+# never bypass it to fabricate a 50-player result. Its functional/browser and
+# relocated-installer checks remain separate from population measurements.
+run('R113',50,'shared_boss_terminal',1)
+if a.soak_seconds:run('R113',50,'forest',1,seconds=a.soak_seconds)
 print(json.dumps({'matrixComplete':True,'runs':len(rows),'acceptance':'evaluate raw latency, pauses and offered/completed counts separately'}),flush=True)
