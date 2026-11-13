@@ -1,0 +1,140 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794524426471,"backupName":"before-pearl-reset-1794524426471-de0ed66f-9911-4541-927c-ea20272f9569.sqlite"}
+# Subtest: actor WAL reads run independently of a busy sibling and retain account/epoch fences
+not ok 1 - actor WAL reads run independently of a busy sibling and retain account/epoch fences
+  ---
+  duration_ms: 4074.740045
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'read_worker_failed'
+  code: 'read_worker_failed'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    ReadWorker.reject (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:112:127)
+    ReadWorker.fail (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:115:63)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:109:30)
+    Worker.emit (node:events:519:28)
+    [kOnErrorMessage] (node:internal/worker:329:10)
+    [kOnMessage] (node:internal/worker:340:37)
+    MessagePort.<anonymous> (node:internal/worker:235:57)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524429720,"backupName":"before-pearl-reset-1794524429720-4502084f-0c13-4909-b166-d7c6a039ae44.sqlite"}
+# Subtest: one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+not ok 2 - one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+  ---
+  duration_ms: 2810.14218
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: 'read_worker_failed'
+  code: 'read_worker_failed'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    ReadWorker.reject (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:112:127)
+    ReadWorker.fail (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:115:63)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:109:30)
+    Worker.emit (node:events:519:28)
+    [kOnErrorMessage] (node:internal/worker:329:10)
+    [kOnMessage] (node:internal/worker:340:37)
+    MessagePort.<anonymous> (node:internal/worker:235:57)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524433769,"backupName":"before-pearl-reset-1794524433769-c7fb7e7e-1bb3-48fe-9f39-c1ce1d8a53d2.sqlite"}
+# Subtest: owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+not ok 3 - owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+  ---
+  duration_ms: 2990.424225
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/cold-world.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'read_worker_failed'
+  code: 'read_worker_failed'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    ReadWorker.reject (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:112:127)
+    ReadWorker.fail (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:115:63)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:109:30)
+    Worker.emit (node:events:519:28)
+    [kOnErrorMessage] (node:internal/worker:329:10)
+    [kOnMessage] (node:internal/worker:340:37)
+    MessagePort.<anonymous> (node:internal/worker:235:57)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524439216,"backupName":"before-pearl-reset-1794524439216-5c2ee061-1ee3-4520-82f2-3536be4f518b.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:00:42.632Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":189942,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"6755509fefd83435415ca4a8"}
+# Subtest: actual five OS owners and read-only thread measure native SQL and world OS pauses without double-counting process CPU
+not ok 4 - actual five OS owners and read-only thread measure native SQL and world OS pauses without double-counting process CPU
+  ---
+  duration_ms: 6546.255635
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/load-measurement-process.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'ERR_SQLITE_ERROR'
+  code: 'ERR_SQLITE_ERROR'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:107:130)
+    Worker.emit (node:events:519:28)
+    MessagePort.<anonymous> (node:internal/worker:270:53)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+    MessagePort.callbackTrampoline (node:internal/async_hooks:130:17)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524444821,"backupName":"before-pearl-reset-1794524444821-1b6b542e-5a6c-4b53-86cb-996fb498b738.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:00:48.002Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":189965,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"267ac9a7160ca86850030249"}
+# Subtest: a changed actual read worker invalidates the interval instead of substituting its fresh measurements
+not ok 5 - a changed actual read worker invalidates the interval instead of substituting its fresh measurements
+  ---
+  duration_ms: 5373.203321
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/load-measurement-process.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: 'ERR_SQLITE_ERROR'
+  code: 'ERR_SQLITE_ERROR'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:107:130)
+    Worker.emit (node:events:519:28)
+    MessagePort.<anonymous> (node:internal/worker:270:53)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+    MessagePort.callbackTrampoline (node:internal/async_hooks:130:17)
+  ...
+# Subtest: 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+ok 6 - 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+  ---
+  duration_ms: 5.675941
+  type: 'test'
+  ...
+# Subtest: bounded cold read queue retains overload, timeout and close rejection
+ok 7 - bounded cold read queue retains overload, timeout and close rejection
+  ---
+  duration_ms: 20.660406
+  type: 'test'
+  ...
+# Subtest: actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+ok 8 - actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+  ---
+  duration_ms: 931.771147
+  type: 'test'
+  ...
+# Subtest: queued reads accepted on a retired generation fail without being replayed on its replacement
+ok 9 - queued reads accepted on a retired generation fail without being replayed on its replacement
+  ---
+  duration_ms: 4717.600838
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 4
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31605.047001

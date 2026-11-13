@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: a committed shared death reaches replicas before cold hydration without granting the next borrower
+ok 1 - a committed shared death reaches replicas before cold hydration without granting the next borrower
+  ---
+  duration_ms: 4.51177
+  type: 'test'
+  ...
+# Subtest: stale leases and wrong world cycles cannot publish a committed projection
+ok 2 - stale leases and wrong world cycles cannot publish a committed projection
+  ---
+  duration_ms: 1.248498
+  type: 'test'
+  ...
+# Subtest: shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+ok 3 - shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+  ---
+  duration_ms: 12.233545
+  type: 'test'
+  ...
+# Subtest: native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+ok 4 - native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+  ---
+  duration_ms: 6.115986
+  type: 'test'
+  ...
+# Subtest: continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+ok 5 - continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+  ---
+  duration_ms: 1.787701
+  type: 'test'
+  ...
+# Subtest: four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+ok 6 - four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+  ---
+  duration_ms: 3.579048
+  type: 'test'
+  ...
+# Subtest: shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+ok 7 - shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+  ---
+  duration_ms: 2.775003
+  type: 'test'
+  ...
+# Subtest: world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+ok 8 - world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+  ---
+  duration_ms: 0.315902
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 713.782769

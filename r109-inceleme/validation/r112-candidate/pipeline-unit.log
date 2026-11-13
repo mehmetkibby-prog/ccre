@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: durable shared publication and source reload overlap; final release still awaits publication exactly once
+ok 1 - durable shared publication and source reload overlap; final release still awaits publication exactly once
+  ---
+  duration_ms: 7.412482
+  type: 'test'
+  ...
+# Subtest: a replaced world cannot publish or complete a stale terminal result
+ok 2 - a replaced world cannot publish or complete a stale terminal result
+  ---
+  duration_ms: 1.766602
+  type: 'test'
+  ...
+# Subtest: publication failure is observed even without finish and cannot become a successful replay
+ok 3 - publication failure is observed even without finish and cannot become a successful replay
+  ---
+  duration_ms: 1.733684
+  type: 'test'
+  ...
+# Subtest: four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+ok 4 - four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+  ---
+  duration_ms: 0.577258
+  type: 'test'
+  ...
+# Subtest: shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+ok 5 - shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+  ---
+  duration_ms: 3.995487
+  type: 'test'
+  ...
+# Subtest: actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+ok 6 - actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+  ---
+  duration_ms: 2.043178
+  type: 'test'
+  ...
+# Subtest: freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+ok 7 - freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+  ---
+  duration_ms: 0.484706
+  type: 'test'
+  ...
+# Subtest: waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+ok 8 - waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+  ---
+  duration_ms: 0.379032
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 813.858411

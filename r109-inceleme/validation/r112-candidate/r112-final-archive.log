@@ -1,0 +1,446 @@
+TAP version 13
+# Subtest: actor snapshot wire preserves Unicode, inventory and parent-owned captcha state
+ok 1 - actor snapshot wire preserves Unicode, inventory and parent-owned captcha state
+  ---
+  duration_ms: 5.894787
+  type: 'test'
+  ...
+# Subtest: malformed, oversized, wrong-owner and wrong-method actor envelopes fail closed
+ok 2 - malformed, oversized, wrong-owner and wrong-method actor envelopes fail closed
+  ---
+  duration_ms: 32.937499
+  type: 'test'
+  ...
+# Subtest: encoded snapshot replay never reruns SQL or changes the original captcha/ownership snapshot
+ok 3 - encoded snapshot replay never reruns SQL or changes the original captcha/ownership snapshot
+  ---
+  duration_ms: 2.887292
+  type: 'test'
+  ...
+# Subtest: a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing
+ok 4 - a committed, fully refreshed channel resumes normal attacks while a different channel is still refreshing
+  ---
+  duration_ms: 3.159508
+  type: 'test'
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:47:50.396Z","action":"shared_combat_failure","incident":1,"reason":"shared_terminal_commit_missing","origin":"shared_combat_failure","requestMethod":"shared_finish","operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":234,"column":30},{"file":"shared-combat-bridge.mjs","line":287,"column":16},{"file":"channel-release-r111.test.mjs","line":21,"column":26},{"file":"channel-release-r111.test.mjs","line":49,"column":86}]}
+# Subtest: no channel is released before durable command ACK and world reload
+ok 5 - no channel is released before durable command ACK and world reload
+  ---
+  duration_ms: 2.569319
+  type: 'test'
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:47:50.398Z","action":"shared_combat_failure","incident":1,"reason":"shared_release_ack","origin":"shared_combat_failure","requestMethod":"shared_finish","operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":301,"column":117},{"file":"shared-combat-bridge.mjs","line":290,"column":5},{"file":"channel-release-r111.test.mjs","line":58,"column":2}]}
+# Subtest: invalid release ACK never wakes its actor; recovery rejects command and ownership waiters
+ok 6 - invalid release ACK never wakes its actor; recovery rejects command and ownership waiters
+  ---
+  duration_ms: 1.603508
+  type: 'test'
+  ...
+# Subtest: a stale channel incarnation cannot use a valid release to cross the writer fence
+ok 7 - a stale channel incarnation cannot use a valid release to cross the writer fence
+  ---
+  duration_ms: 1.067229
+  type: 'test'
+  ...
+# Subtest: the fallback preserves the full terminal barrier even after one release ACK
+ok 8 - the fallback preserves the full terminal barrier even after one release ACK
+  ---
+  duration_ms: 2.713141
+  type: 'test'
+  ...
+# Subtest: shared return and ownership moves keep every channel fenced for the existing rehome protocol
+ok 9 - shared return and ownership moves keep every channel fenced for the existing rehome protocol
+  ---
+  duration_ms: 2.336841
+  type: 'test'
+  ...
+# Subtest: ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+ok 10 - ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+  ---
+  duration_ms: 7.520714
+  type: 'test'
+  ...
+# Subtest: membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+ok 11 - membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+  ---
+  duration_ms: 3.630568
+  type: 'test'
+  ...
+# Subtest: an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+ok 12 - an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+  ---
+  duration_ms: 5.417503
+  type: 'test'
+  ...
+# Subtest: ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+ok 13 - ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+  ---
+  duration_ms: 1.592633
+  type: 'test'
+  ...
+# Subtest: out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+ok 14 - out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+  ---
+  duration_ms: 37.156708
+  type: 'test'
+  ...
+# Subtest: a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+ok 15 - a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+  ---
+  duration_ms: 140.7218
+  type: 'test'
+  ...
+# Subtest: tower and mist scope follows the exact active run and includes a member on another floor
+ok 16 - tower and mist scope follows the exact active run and includes a member on another floor
+  ---
+  duration_ms: 1.770092
+  type: 'test'
+  ...
+# Subtest: group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+ok 17 - group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+  ---
+  duration_ms: 1.785282
+  type: 'test'
+  ...
+# Subtest: durable shared deaths publish once before the source receives its cold-reload ACK; leases stay held
+ok 18 - durable shared deaths publish once before the source receives its cold-reload ACK; leases stay held
+  ---
+  duration_ms: 2.657538
+  type: 'test'
+  ...
+# Subtest: a replaced world cannot publish or complete a stale terminal result
+ok 19 - a replaced world cannot publish or complete a stale terminal result
+  ---
+  duration_ms: 0.777662
+  type: 'test'
+  ...
+# Subtest: a committed shared death reaches replicas before cold hydration without granting the next borrower
+ok 20 - a committed shared death reaches replicas before cold hydration without granting the next borrower
+  ---
+  duration_ms: 2.687322
+  type: 'test'
+  ...
+# Subtest: stale leases and wrong world cycles cannot publish a committed projection
+ok 21 - stale leases and wrong world cycles cannot publish a committed projection
+  ---
+  duration_ms: 1.477449
+  type: 'test'
+  ...
+# Subtest: pending visual reply cannot be counted as a committed death
+ok 22 - pending visual reply cannot be counted as a committed death
+  ---
+  duration_ms: 1.206212
+  type: 'test'
+  ...
+# Subtest: terminal result before ACK and nonlethal/rejected replies stay distinct
+ok 23 - terminal result before ACK and nonlethal/rejected replies stay distinct
+  ---
+  duration_ms: 0.190308
+  type: 'test'
+  ...
+# Subtest: authoritative dead HP may precede a terminal kill, but wrong rounds and another player death do not count
+ok 24 - authoritative dead HP may precede a terminal kill, but wrong rounds and another player death do not count
+  ---
+  duration_ms: 0.236604
+  type: 'test'
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:47:51.902Z","action":"shared_combat_failure","incident":1,"reason":"shared_unchanged_release_ack","origin":"shared_combat_failure","requestMethod":"shared_finish","operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":297,"column":8},{"file":"shared-combat-bridge.mjs","line":290,"column":5},{"file":"unchanged-release-r112.test.mjs","line":33,"column":2}]}
+# Subtest: only audited unchanged actors wake; cross-player writes and ownership wait for remaining refresh
+ok 25 - only audited unchanged actors wake; cross-player writes and ownership wait for remaining refresh
+  ---
+  duration_ms: 2.370157
+  type: 'test'
+  ...
+# Subtest: unproven early-release epochs never authorize a write
+ok 26 - unproven early-release epochs never authorize a write
+  ---
+  duration_ms: 2.950995
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794527274363,"backupName":"before-pearl-reset-1794527274363-791b3570-3079-4229-9241-caff2c7e7f0b.sqlite"}
+# Subtest: actor WAL reads run independently of a busy sibling and retain account/epoch fences
+ok 27 - actor WAL reads run independently of a busy sibling and retain account/epoch fences
+  ---
+  duration_ms: 3329.751009
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794527277324,"backupName":"before-pearl-reset-1794527277324-8d513a30-61df-404a-954b-c580788212f9.sqlite"}
+# Subtest: one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+ok 28 - one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+  ---
+  duration_ms: 2791.503814
+  type: 'test'
+  ...
+# Subtest: a burst for one shard cannot occupy the other shard slots or reorder a shard FIFO
+ok 29 - a burst for one shard cannot occupy the other shard slots or reorder a shard FIFO
+  ---
+  duration_ms: 3.324499
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794527280350,"backupName":"before-pearl-reset-1794527280350-0c67f5b5-1224-4b29-a20e-dd5968bd7ce6.sqlite"}
+# Subtest: the read-only worker encodes the same owned snapshot without cloning its row graph into the parent
+ok 30 - the read-only worker encodes the same owned snapshot without cloning its row graph into the parent
+  ---
+  duration_ms: 2498.914789
+  type: 'test'
+  ...
+# Subtest: 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+ok 31 - 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+  ---
+  duration_ms: 4.466211
+  type: 'test'
+  ...
+# Subtest: bounded cold read queue retains overload, timeout and close rejection
+ok 32 - bounded cold read queue retains overload, timeout and close rejection
+  ---
+  duration_ms: 20.119163
+  type: 'test'
+  ...
+# Subtest: actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+ok 33 - actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+  ---
+  duration_ms: 563.066713
+  type: 'test'
+  ...
+# Subtest: queued reads accepted on a retired generation fail without being replayed on its replacement
+ok 34 - queued reads accepted on a retired generation fail without being replayed on its replacement
+  ---
+  duration_ms: 993.864981
+  type: 'test'
+  ...
+# Subtest: an exited read-only worker restarts once for concurrent future reads of the current database
+ok 35 - an exited read-only worker restarts once for concurrent future reads of the current database
+  ---
+  duration_ms: 834.760887
+  type: 'test'
+  ...
+# Subtest: interrupted read requests reject without replay and an old generation cannot answer a new request
+ok 36 - interrupted read requests reject without replay and an old generation cannot answer a new request
+  ---
+  duration_ms: 392.379172
+  type: 'test'
+  ...
+# Subtest: a timed-out query keeps backpressure, retires its thread, and permits a later query after observed exit
+ok 37 - a timed-out query keeps backpressure, retires its thread, and permits a later query after observed exit
+  ---
+  duration_ms: 1158.590351
+  type: 'test'
+  ...
+# Subtest: explicit close cancels a waiting recovery and never creates another worker
+ok 38 - explicit close cancels a waiting recovery and never creates another worker
+  ---
+  duration_ms: 9.031777
+  type: 'test'
+  ...
+# Subtest: a read-only measurement timeout does not terminate or replay a live native query
+ok 39 - a read-only measurement timeout does not terminate or replay a live native query
+  ---
+  duration_ms: 737.229593
+  type: 'test'
+  ...
+# Subtest: shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+ok 40 - shared authority is the exact pinned native FIFO and signed lease with the sole public-channel extension
+  ---
+  duration_ms: 12.786161
+  type: 'test'
+  ...
+# Subtest: native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+ok 41 - native shared selector and its exact ability normalization agree on both primary routes and unknown targets
+  ---
+  duration_ms: 8.503196
+  type: 'test'
+  ...
+# Subtest: continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+ok 42 - continuous shared borrowers service an overdue checkpoint before the next image without creating per-hit receipts
+  ---
+  duration_ms: 1.791003
+  type: 'test'
+  ...
+# Subtest: four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+ok 43 - four channel proposals serialize on one world HP and checkpoint all contributions once without per-hit SQL
+  ---
+  duration_ms: 2.750078
+  type: 'test'
+  ...
+# Subtest: shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+ok 44 - shared finish waits for replica acknowledgement, fences wrong actor/epoch and rejects an entire terminal proposal
+  ---
+  duration_ms: 3.325239
+  type: 'test'
+  ...
+# Subtest: world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+ok 45 - world transition selects its final checkpoint and sequence only after channel freeze has drained accepted shared work
+  ---
+  duration_ms: 0.540188
+  type: 'test'
+  ...
+# Subtest: changed foreign actor is refreshed and hydrated before any held actor unlocks; unchanged actor is retained
+ok 46 - changed foreign actor is refreshed and hydrated before any held actor unlocks; unchanged actor is retained
+  ---
+  duration_ms: 7.791228
+  type: 'test'
+  ...
+# Subtest: unknown metadata retains the conservative full refresh path
+ok 47 - unknown metadata retains the conservative full refresh path
+  ---
+  duration_ms: 0.379058
+  type: 'test'
+  ...
+# Subtest: wrong epoch or foreign refresh list fences leases without any unlock
+ok 48 - wrong epoch or foreign refresh list fences leases without any unlock
+  ---
+  duration_ms: 0.600145
+  type: 'test'
+  ...
+# Subtest: a borrowed global freeze keeps the actor quiesced with its exact epoch through shared release
+ok 49 - a borrowed global freeze keeps the actor quiesced with its exact epoch through shared release
+  ---
+  duration_ms: 0.123788
+  type: 'test'
+  ...
+# Subtest: audited unchanged actors resume while changed actors retain their cold-read barrier
+ok 50 - audited unchanged actors resume while changed actors retain their cold-read barrier
+  ---
+  duration_ms: 0.369538
+  type: 'test'
+  ...
+# Subtest: early release requires exact explicit audit and retains borrowed global suspension
+ok 51 - early release requires exact explicit audit and retains borrowed global suspension
+  ---
+  duration_ms: 0.347013
+  type: 'test'
+  ...
+# Subtest: four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+ok 52 - four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+  ---
+  duration_ms: 0.53157
+  type: 'test'
+  ...
+# Subtest: shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+ok 53 - shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+  ---
+  duration_ms: 1.193663
+  type: 'test'
+  ...
+# Subtest: actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+ok 54 - actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+  ---
+  duration_ms: 2.389471
+  type: 'test'
+  ...
+# Subtest: freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+ok 55 - freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+  ---
+  duration_ms: 0.329023
+  type: 'test'
+  ...
+# Subtest: waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+ok 56 - waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+  ---
+  duration_ms: 0.211125
+  type: 'test'
+  ...
+1..56
+# tests 56
+# suites 0
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18578.194594
+test_already_installed_r111_is_not_applied_twice (__main__.Installation.test_already_installed_r111_is_not_applied_twice) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_changed_imports_resolve_inside_the_release (__main__.Installation.test_changed_imports_resolve_inside_the_release) ... ok
+test_code_contract_binds_every_reviewed_byte (__main__.Installation.test_code_contract_binds_every_reviewed_byte) ... ok
+test_exact_package_updates_only_reviewed_files_and_rollback_restores_r110 (__main__.Installation.test_exact_package_updates_only_reviewed_files_and_rollback_restores_r110) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_exact_r111_source_updates_and_rolls_back_without_replacing_unchanged_code (__main__.Installation.test_exact_r111_source_updates_and_rolls_back_without_replacing_unchanged_code) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_existing_options_file_is_not_overwritten (__main__.Installation.test_existing_options_file_is_not_overwritten) ... ok
+test_health_failure_restores_r110_code_and_preserves_player_progress (__main__.Installation.test_health_failure_restores_r110_code_and_preserves_player_progress) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_modified_installed_file_stops_before_maintenance (__main__.Installation.test_modified_installed_file_stops_before_maintenance) ... ok
+test_only_installed_r110_is_accepted_as_source (__main__.Installation.test_only_installed_r110_is_accepted_as_source) ... ok
+test_partial_code_write_restores_all_changes (__main__.Installation.test_partial_code_write_restores_all_changes) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected partial write
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_plan_is_the_reviewed_code_only_delta_from_r110 (__main__.Installation.test_plan_is_the_reviewed_code_only_delta_from_r110) ... ok
+test_power_loss_during_backup_requires_no_complete_backup_to_recover (__main__.Installation.test_power_loss_during_backup_requires_no_complete_backup_to_recover) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: power loss in backup
+ok
+test_prior_r110_install_record_retires_after_new_backup_is_valid (__main__.Installation.test_prior_r110_install_record_retires_after_new_backup_is_valid) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_r105_files_without_r109_are_rejected (__main__.Installation.test_r105_files_without_r109_are_rejected) ... ok
+test_readiness_requires_r111_and_accepts_exact_r110_for_rollback (__main__.Installation.test_readiness_requires_r111_and_accepts_exact_r110_for_rollback) ... ok
+test_retained_r110_ingress_and_sql_cache_remain_verified_after_install (__main__.Installation.test_retained_r110_ingress_and_sql_cache_remain_verified_after_install) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_unknown_files_are_preserved_by_retention (__main__.Installation.test_unknown_files_are_preserved_by_retention) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+test_unready_or_different_realm_blocks_cleanup (__main__.Installation.test_unready_or_different_realm_blocks_cleanup) ... Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 33.364s
+
+OK
+Yalnız değişen kod dosyaları yedekleniyor; veritabanı taraması ve sıkıştırma yok.
+R112 OYUN AKIŞI GÜNCELLEMESİ TAMAMLANDI. Efsane ve Akademi hazır. Bakım ayarın korundu.
+/tmp/r112-installed-0onv_yqv/release
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794527326437,"backupName":"before-pearl-reset-1794527326437-26c5e122-3698-47fc-a33d-4c84210b346e.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794527327779,"backupName":"before-pearl-reset-1794527327779-8ccfde69-24da-496d-be7f-b7bdd4e04fe5.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 11579.267334
+  type: 'test'
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 145.762488
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794527346577,"backupName":"before-pearl-reset-1794527346577-4378b51a-a6b8-44e0-810b-59584f1796a1.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794527362137,"backupName":"before-pearl-reset-1794527362137-42fd5248-345b-4098-91c0-6bca0f680b4a.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+ok 3 - installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+  ---
+  duration_ms: 24040.648983
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54503.767139

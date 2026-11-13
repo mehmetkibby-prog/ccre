@@ -1,0 +1,62 @@
+TAP version 13
+# file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-publish-r112.test.mjs:6
+#  const world={core,row:{peer:{incarnation:'world'},owner:{epoch:1},control:{request:async(method,p)=>{events.push(method);if(method==='shared_reload'){assert(p.snapshot.durable);await projected;}return {finished:true};}}},bridge=new SharedCombatBridge(world),row={id:'op',phase:'leased',source:{actor:'p',epoch:1,channel:1,incarnation:'channel'},world:world.row,proof:'proof',commandRequest:{operationId:'shared:op',sequence:1}},held={row,phase:'frozen',channels:[]};
+#                                                                                                                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# SyntaxError: Invalid shorthand property initializer
+#     at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+#     at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:110:18)
+#     at \#translate (node:internal/modules/esm/loader:559:20)
+#     at afterLoad (node:internal/modules/esm/loader:612:29)
+#     at async ModuleJob._link (node:internal/modules/esm/module_job:162:19)
+# Node.js v22.23.4
+# Subtest: /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-publish-r112.test.mjs
+not ok 1 - /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-publish-r112.test.mjs
+  ---
+  duration_ms: 162.050907
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-publish-r112.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+ok 2 - four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+  ---
+  duration_ms: 0.553732
+  type: 'test'
+  ...
+# Subtest: shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+ok 3 - shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+  ---
+  duration_ms: 1.134021
+  type: 'test'
+  ...
+# Subtest: actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+ok 4 - actual terminal finish resumes fully refreshed CH4 without waiting for unrelated release ACKs
+  ---
+  duration_ms: 5.373473
+  type: 'test'
+  ...
+# Subtest: freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+ok 5 - freezing drains accepted work; frozen and refreshing forbid unauthorized writes, including forged proofs
+  ---
+  duration_ms: 0.533472
+  type: 'test'
+  ...
+# Subtest: waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+ok 6 - waiting never suppresses a genuinely lost channel incarnation or unknown terminal outcome
+  ---
+  duration_ms: 0.265847
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 871.041053

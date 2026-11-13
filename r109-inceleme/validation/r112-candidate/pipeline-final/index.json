@@ -1,0 +1,548 @@
+[
+  {
+    "case": "r1-forest-30-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001440-30.json",
+    "summary": {
+      "tickP95Ms": 5.711263999997755,
+      "tickP99Ms": 12.355550000000221,
+      "maxTickMs": 57.82495200000267,
+      "mainMaxPauseMs": 59.080703,
+      "mainPausesOver50Ms": 2,
+      "channelPausesOver50Ms": 4,
+      "maxChannelPauseMs": 104.202239,
+      "mainElu": 0.10292733601554971,
+      "mainMaxRssBytes": 690171904,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.174029197043322,
+        "maxRssBytes": 1503920128
+      }
+    },
+    "deaths": {
+      "count": 82,
+      "p50Ms": 75.07747500000187,
+      "p95Ms": 142.37004399999933,
+      "p99Ms": 275.0347329999986,
+      "maxMs": 275.0347329999986,
+      "over50": 65,
+      "over200": 3,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 82,
+      "p50Ms": 72.21009900000354,
+      "p95Ms": 132.42274700000053,
+      "p99Ms": 159.31489399999919,
+      "maxMs": 159.31489399999919,
+      "over50": 64,
+      "over200": 0,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-forest-30-2",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001538-30.json",
+    "summary": {
+      "tickP95Ms": 5.345686999993632,
+      "tickP99Ms": 9.869394999997894,
+      "maxTickMs": 33.653785999998945,
+      "mainMaxPauseMs": 98.107391,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 31.539199,
+      "mainElu": 0.10665978187858959,
+      "mainMaxRssBytes": 687370240,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.16823628165632684,
+        "maxRssBytes": 1500647424
+      }
+    },
+    "deaths": {
+      "count": 82,
+      "p50Ms": 73.57584900000074,
+      "p95Ms": 131.8347759999997,
+      "p99Ms": 366.7249670000001,
+      "maxMs": 366.7249670000001,
+      "over50": 72,
+      "over200": 2,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 82,
+      "p50Ms": 73.55690200000026,
+      "p95Ms": 131.80978400000095,
+      "p99Ms": 219.78849499999887,
+      "maxMs": 219.78849499999887,
+      "over50": 72,
+      "over200": 2,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-forest-30-3",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001633-30.json",
+    "summary": {
+      "tickP95Ms": 7.50586900000053,
+      "tickP99Ms": 23.146490999999514,
+      "maxTickMs": 87.94330300000001,
+      "mainMaxPauseMs": 112.590847,
+      "mainPausesOver50Ms": 6,
+      "channelPausesOver50Ms": 21,
+      "maxChannelPauseMs": 106.889215,
+      "mainElu": 0.12617823237020484,
+      "mainMaxRssBytes": 689496064,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.19753475407620008,
+        "maxRssBytes": 1522360320
+      }
+    },
+    "deaths": {
+      "count": 81,
+      "p50Ms": 78.17833700000119,
+      "p95Ms": 185.31160300000192,
+      "p99Ms": 247.68684500000018,
+      "maxMs": 247.68684500000018,
+      "over50": 71,
+      "over200": 3,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 81,
+      "p50Ms": 75.50740799999767,
+      "p95Ms": 160.93740200000138,
+      "p99Ms": 210.5447090000016,
+      "maxMs": 210.5447090000016,
+      "over50": 71,
+      "over200": 1,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-40-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001729-40.json",
+    "summary": {
+      "tickP95Ms": 12.241226999998617,
+      "tickP99Ms": 25.385834999997314,
+      "maxTickMs": 106.34728399999949,
+      "mainMaxPauseMs": 51.052543,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 57.507839,
+      "mainElu": 0.23917550060505577,
+      "mainMaxRssBytes": 750641152,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.37046981322608386,
+        "maxRssBytes": 1571565568
+      }
+    },
+    "deaths": {
+      "count": 140,
+      "p50Ms": 108.00531899999987,
+      "p95Ms": 182.80430600000545,
+      "p99Ms": 371.41238499999963,
+      "maxMs": 488.4427080000023,
+      "over50": 135,
+      "over200": 6,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 140,
+      "p50Ms": 85.91267700000026,
+      "p95Ms": 153.60717899999872,
+      "p99Ms": 357.357509999998,
+      "maxMs": 488.4223180000008,
+      "over50": 135,
+      "over200": 3,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-40-2",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001831-40.json",
+    "summary": {
+      "tickP95Ms": 16.578153999998904,
+      "tickP99Ms": 31.3898560000016,
+      "maxTickMs": 103.77675199999794,
+      "mainMaxPauseMs": 99.942399,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 8,
+      "maxChannelPauseMs": 78.184447,
+      "mainElu": 0.27185783631934385,
+      "mainMaxRssBytes": 754003968,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.40910251644861195,
+        "maxRssBytes": 1597370368
+      }
+    },
+    "deaths": {
+      "count": 141,
+      "p50Ms": 123.80949099999998,
+      "p95Ms": 220.11224700000093,
+      "p99Ms": 404.5273019999986,
+      "maxMs": 534.7082579999988,
+      "over50": 137,
+      "over200": 9,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 141,
+      "p50Ms": 86.76912599999923,
+      "p95Ms": 190.40800200000376,
+      "p99Ms": 346.1869220000008,
+      "maxMs": 534.7082579999988,
+      "over50": 137,
+      "over200": 5,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-40-3",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113001930-40.json",
+    "summary": {
+      "tickP95Ms": 13.194527999999991,
+      "tickP99Ms": 27.00020500000028,
+      "maxTickMs": 64.18348600000172,
+      "mainMaxPauseMs": 74.448895,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 3,
+      "maxChannelPauseMs": 76.480511,
+      "mainElu": 0.25090880693432593,
+      "mainMaxRssBytes": 710381568,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.38886798545127194,
+        "maxRssBytes": 1540927488
+      }
+    },
+    "deaths": {
+      "count": 144,
+      "p50Ms": 107.23759400000199,
+      "p95Ms": 180.0565959999949,
+      "p99Ms": 344.1500730000007,
+      "maxMs": 448.759702000003,
+      "over50": 141,
+      "over200": 5,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 144,
+      "p50Ms": 85.41853799999808,
+      "p95Ms": 170.6993279999988,
+      "p99Ms": 296.8226619999987,
+      "maxMs": 448.7420420000017,
+      "over50": 140,
+      "over200": 3,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-shared_boss_terminal-30-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002029-30.json",
+    "summary": {
+      "tickP95Ms": 5.526192999997875,
+      "tickP99Ms": 13.399921000003815,
+      "maxTickMs": 28.6270680000016,
+      "mainMaxPauseMs": 73.007103,
+      "mainPausesOver50Ms": 1,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 48.267263,
+      "mainElu": 0.17681685617059,
+      "mainMaxRssBytes": 659787776,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.21374715330743424,
+        "maxRssBytes": 1467256832
+      }
+    },
+    "deaths": {
+      "count": 1,
+      "p50Ms": 651.015746000001,
+      "p95Ms": 651.015746000001,
+      "p99Ms": 651.015746000001,
+      "maxMs": 651.015746000001,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 1,
+      "p50Ms": 347.391391000001,
+      "p95Ms": 347.391391000001,
+      "p99Ms": 347.391391000001,
+      "maxMs": 347.391391000001,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-shared_boss_terminal-30-2",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002124-30.json",
+    "summary": {
+      "tickP95Ms": 6.196300999996311,
+      "tickP99Ms": 11.6917940000003,
+      "maxTickMs": 32.976980999999796,
+      "mainMaxPauseMs": 47.841279,
+      "mainPausesOver50Ms": 0,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 41.254911,
+      "mainElu": 0.1781095634281369,
+      "mainMaxRssBytes": 651567104,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.21389271512641148,
+        "maxRssBytes": 1452453888
+      }
+    },
+    "deaths": {
+      "count": 1,
+      "p50Ms": 573.8595780000032,
+      "p95Ms": 573.8595780000032,
+      "p99Ms": 573.8595780000032,
+      "maxMs": 573.8595780000032,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 1,
+      "p50Ms": 256.1048950000004,
+      "p95Ms": 256.1048950000004,
+      "p99Ms": 256.1048950000004,
+      "maxMs": 256.1048950000004,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-shared_boss_terminal-30-3",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002220-30.json",
+    "summary": {
+      "tickP95Ms": 6.126950999998371,
+      "tickP99Ms": 13.392391999997926,
+      "maxTickMs": 26.937631000000692,
+      "mainMaxPauseMs": 95.092735,
+      "mainPausesOver50Ms": 4,
+      "channelPausesOver50Ms": 6,
+      "maxChannelPauseMs": 94.175231,
+      "mainElu": 0.18887739598675438,
+      "mainMaxRssBytes": 674295808,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.22685105528118263,
+        "maxRssBytes": 1474338816
+      }
+    },
+    "deaths": {
+      "count": 1,
+      "p50Ms": 616.1603219999997,
+      "p95Ms": 616.1603219999997,
+      "p99Ms": 616.1603219999997,
+      "maxMs": 616.1603219999997,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 1,
+      "p50Ms": 261.27228599999944,
+      "p95Ms": 261.27228599999944,
+      "p99Ms": 261.27228599999944,
+      "maxMs": 261.27228599999944,
+      "over50": 1,
+      "over200": 1,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r2-mixed-40-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002316-40.json",
+    "summary": {
+      "tickP95Ms": 17.380275000003166,
+      "tickP99Ms": 25.95430800000031,
+      "maxTickMs": 93.00907400000142,
+      "mainMaxPauseMs": 76.283903,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 8,
+      "maxChannelPauseMs": 80.54473100000178,
+      "mainElu": 0.25380033671107277,
+      "mainMaxRssBytes": 749469696,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.39707455449509776,
+        "maxRssBytes": 1580339200
+      }
+    },
+    "deaths": {
+      "count": 141,
+      "p50Ms": 122.11536099999648,
+      "p95Ms": 200.0201040000029,
+      "p99Ms": 314.33568899999955,
+      "maxMs": 347.27264899999864,
+      "over50": 137,
+      "over200": 8,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 141,
+      "p50Ms": 86.07369199999812,
+      "p95Ms": 161.05630500000007,
+      "p99Ms": 256.14506000000074,
+      "maxMs": 302.16633999999976,
+      "over50": 137,
+      "over200": 5,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-10-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002415-10.json",
+    "summary": {
+      "tickP95Ms": 4.833936999999423,
+      "tickP99Ms": 7.571781999999075,
+      "maxTickMs": 18.66409300000305,
+      "mainMaxPauseMs": 39.714815,
+      "mainPausesOver50Ms": 0,
+      "channelPausesOver50Ms": 0,
+      "maxChannelPauseMs": 29.147135,
+      "mainElu": 0.09528569722789894,
+      "mainMaxRssBytes": 655556608,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.16431657825706583,
+        "maxRssBytes": 1435934720
+      }
+    },
+    "deaths": {
+      "count": 76,
+      "p50Ms": 80.01887200000056,
+      "p95Ms": 107.57332700000006,
+      "p99Ms": 142.7861240000002,
+      "maxMs": 142.7861240000002,
+      "over50": 73,
+      "over200": 0,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 76,
+      "p50Ms": 79.53378299999895,
+      "p95Ms": 102.93614300000081,
+      "p99Ms": 107.55860600000051,
+      "maxMs": 107.55860600000051,
+      "over50": 73,
+      "over200": 0,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-50-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002510-50.json",
+    "summary": {
+      "tickP95Ms": 16.4973030000001,
+      "tickP99Ms": 30.518377000000328,
+      "maxTickMs": 68.97746299999926,
+      "mainMaxPauseMs": 59.834367,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 4,
+      "maxChannelPauseMs": 71.630847,
+      "mainElu": 0.30215595695646214,
+      "mainMaxRssBytes": 749613056,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.4390591671265385,
+        "maxRssBytes": 1595453440
+      }
+    },
+    "deaths": {
+      "count": 175,
+      "p50Ms": 120.09392800000205,
+      "p95Ms": 206.5175960000015,
+      "p99Ms": 363.68756700000085,
+      "maxMs": 535.6334279999974,
+      "over50": 166,
+      "over200": 10,
+      "over1000": 0
+    },
+    "visibleDeaths": {
+      "count": 175,
+      "p50Ms": 89.05906600000162,
+      "p95Ms": 184.56402700000035,
+      "p99Ms": 363.68756700000085,
+      "maxMs": 492.03475999999864,
+      "over50": 166,
+      "over200": 7,
+      "over1000": 0
+    }
+  },
+  {
+    "case": "r1-mixed-100-1",
+    "exit": 0,
+    "passed": true,
+    "source": "project/r109_latency_completion/evidence/review-20261113002609-100.json",
+    "summary": {
+      "tickP95Ms": 35.51287600000069,
+      "tickP99Ms": 62.04306800000268,
+      "maxTickMs": 121.34979800000292,
+      "mainMaxPauseMs": 102.61081700000068,
+      "mainPausesOver50Ms": 8,
+      "channelPausesOver50Ms": 5,
+      "maxChannelPauseMs": 78.249983,
+      "mainElu": 0.5665105251426684,
+      "mainMaxRssBytes": 781467648,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.6893613774083677,
+        "maxRssBytes": 1708859392
+      }
+    },
+    "deaths": {
+      "count": 239,
+      "p50Ms": 155.9361510000017,
+      "p95Ms": 589.4138939999975,
+      "p99Ms": 1468.8495550000007,
+      "maxMs": 1687.9856370000016,
+      "over50": 236,
+      "over200": 78,
+      "over1000": 5
+    },
+    "visibleDeaths": {
+      "count": 239,
+      "p50Ms": 113.68409500000053,
+      "p95Ms": 382.2589910000024,
+      "p99Ms": 1397.7287680000009,
+      "maxMs": 1687.9431360000017,
+      "over50": 236,
+      "over200": 44,
+      "over1000": 5
+    }
+  }
+]

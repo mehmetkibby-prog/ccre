@@ -1,0 +1,79 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794524499527,"backupName":"before-pearl-reset-1794524499527-c15b23f1-0e72-42f8-8348-600b97bbf305.sqlite"}
+# kernel511_channel_boot Error: no such table: kadim_tower_settings
+#     at towerConfigFromDatabase (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tower-config.mjs:51:73)
+#     at readDungeonAdmission (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/dungeon-runtime.mjs:172:119)
+#     at readChannelBoot (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:210:17)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:55:89)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:19:29) {
+#   code: 'ERR_SQLITE_ERROR',
+#   errcode: 1,
+#   errstr: 'SQL logic error'
+# }
+# kernel511_channel_boot Error: no such table: kadim_tower_settings
+#     at towerConfigFromDatabase (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tower-config.mjs:51:73)
+#     at readDungeonAdmission (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/dungeon-runtime.mjs:172:119)
+#     at readChannelBoot (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:210:17)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:55:89)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:19:29) {
+#   code: 'ERR_SQLITE_ERROR',
+#   errcode: 1,
+#   errstr: 'SQL logic error'
+# }
+# kernel511_channel_boot Error: no such table: kadim_tower_settings
+#     at towerConfigFromDatabase (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tower-config.mjs:51:73)
+#     at readDungeonAdmission (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/dungeon-runtime.mjs:172:119)
+#     at readChannelBoot (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:210:17)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:55:89)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:19:29) {
+#   code: 'ERR_SQLITE_ERROR',
+#   errcode: 1,
+#   errstr: 'SQL logic error'
+# }
+# kernel511_channel_boot Error: no such table: kadim_tower_settings
+#     at towerConfigFromDatabase (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tower-config.mjs:51:73)
+#     at readDungeonAdmission (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/dungeon-runtime.mjs:172:119)
+#     at readChannelBoot (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:210:17)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:55:89)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:19:29) {
+#   code: 'ERR_SQLITE_ERROR',
+#   errcode: 1,
+#   errstr: 'SQL logic error'
+# }
+# kernel511_actor_world Error: no such table: adventure_members
+#     at readAdventureBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/adventure-service.mjs:230:23)
+#     at readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:173:94)
+#     at readActorWorldBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:189:16)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:53:94)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:23:32) {
+#   code: 'ERR_SQLITE_ERROR',
+#   errcode: 1,
+#   errstr: 'SQL logic error'
+# }
+# Subtest: owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+not ok 1 - owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+  ---
+  duration_ms: 2933.447621
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/cold-world.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: 'ERR_SQLITE_ERROR'
+  code: 'ERR_SQLITE_ERROR'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:107:130)
+    Worker.emit (node:events:519:28)
+    MessagePort.<anonymous> (node:internal/worker:270:53)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+    MessagePort.callbackTrampoline (node:internal/async_hooks:130:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3547.876619

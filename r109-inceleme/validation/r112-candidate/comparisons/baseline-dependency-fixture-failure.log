@@ -1,0 +1,19 @@
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'livekit-server-sdk' imported from /tmp/r112-r111-baseline/native510-bb3a6cc689c6/vds-server/src/guild-voice.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:772:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:989:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolve (file:///workspace/coreoflife-r111/r109-inceleme/scripts/dependency-loader.mjs:24:10)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    at handleMessage (node:internal/modules/esm/worker:199:24)
+    at Immediate.checkForMessages (node:internal/modules/esm/worker:141:28) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.23.4

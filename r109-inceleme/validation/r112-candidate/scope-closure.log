@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+ok 1 - ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+  ---
+  duration_ms: 4.198934
+  type: 'test'
+  ...
+# Subtest: membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+ok 2 - membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+  ---
+  duration_ms: 2.1455
+  type: 'test'
+  ...
+# Subtest: an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+ok 3 - an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+  ---
+  duration_ms: 3.507959
+  type: 'test'
+  ...
+# Subtest: ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+ok 4 - ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+  ---
+  duration_ms: 1.261649
+  type: 'test'
+  ...
+# Subtest: out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+ok 5 - out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+  ---
+  duration_ms: 62.615396
+  type: 'test'
+  ...
+# Subtest: a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+ok 6 - a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+  ---
+  duration_ms: 126.980365
+  type: 'test'
+  ...
+# Subtest: tower and mist scope follows the exact active run and includes a member on another floor
+ok 7 - tower and mist scope follows the exact active run and includes a member on another floor
+  ---
+  duration_ms: 1.775649
+  type: 'test'
+  ...
+# Subtest: group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+ok 8 - group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+  ---
+  duration_ms: 2.01803
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 481.470776

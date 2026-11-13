@@ -1,0 +1,17 @@
+[
+  {
+    "check": "rebuild",
+    "exit": 0,
+    "seconds": 2.437579365010606
+  },
+  {
+    "check": "native-final-closure",
+    "exit": 0,
+    "seconds": 106.62197156299953
+  },
+  {
+    "check": "r112-final-archive",
+    "exit": 0,
+    "seconds": 109.8264075420011
+  }
+]

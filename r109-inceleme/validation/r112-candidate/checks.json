@@ -1,0 +1,32 @@
+[
+  {
+    "group": "focused",
+    "exit": 0,
+    "seconds": 35.99403368300409,
+    "log": "validation/r112-candidate/final-focused.log"
+  },
+  {
+    "group": "native",
+    "exit": 0,
+    "seconds": 109.27310680999653,
+    "log": "validation/r112-candidate/final-native.log"
+  },
+  {
+    "group": "captcha",
+    "exit": 0,
+    "seconds": 90.3716494350083,
+    "log": "validation/r112-candidate/final-captcha.log"
+  },
+  {
+    "group": "r110",
+    "exit": 0,
+    "seconds": 87.29258773400215,
+    "log": "validation/r112-candidate/final-r110.log"
+  },
+  {
+    "group": "r112",
+    "exit": 0,
+    "seconds": 117.19306337900343,
+    "log": "validation/r112-candidate/final-r112.log"
+  }
+]

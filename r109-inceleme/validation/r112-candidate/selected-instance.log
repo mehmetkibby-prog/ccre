@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+ok 1 - ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+  ---
+  duration_ms: 5.465709
+  type: 'test'
+  ...
+# Subtest: membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+ok 2 - membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+  ---
+  duration_ms: 2.280862
+  type: 'test'
+  ...
+# Subtest: an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+ok 3 - an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+  ---
+  duration_ms: 5.678796
+  type: 'test'
+  ...
+# Subtest: ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+ok 4 - ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+  ---
+  duration_ms: 1.306766
+  type: 'test'
+  ...
+# Subtest: out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+ok 5 - out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+  ---
+  duration_ms: 44.68907
+  type: 'test'
+  ...
+# Subtest: a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+ok 6 - a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+  ---
+  duration_ms: 157.535539
+  type: 'test'
+  ...
+# Subtest: tower and mist scope follows the exact active run and includes a member on another floor
+ok 7 - tower and mist scope follows the exact active run and includes a member on another floor
+  ---
+  duration_ms: 1.936512
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 540.57043

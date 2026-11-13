@@ -1,0 +1,18 @@
+{
+  "file": "delivery/r112-akis.zip",
+  "bytes": 895786,
+  "sha256": "709bf4b43304c3323f4bbdf98e4997f4e177fa357b554a37b6f836eeace85b09",
+  "sourceVersion": "R110_HANDOFF1",
+  "sourceCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+  "targetVersion": "R112_FLOW1",
+  "targetCore": "7e0ff036166ba757db938efe234aabcf69d8b512992d0ff3581d8bc7f4c6c06a",
+  "changedCodeFiles": 32,
+  "newFiles": [
+    "core511-source/scripts/core511/actor-read-wire-r112.mjs",
+    "core511-source/scripts/core511/ipc-replay-r111.mjs",
+    "core511-source/scripts/core511/slow-death-r111.mjs",
+    "core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs"
+  ],
+  "databaseScope": "none",
+  "namespace": "core511-1025c65a35480d96"
+}

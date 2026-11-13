@@ -1,0 +1,124 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794524555131,"backupName":"before-pearl-reset-1794524555131-dab635a1-6f33-464d-b68f-bf0672ef38ac.sqlite"}
+# Subtest: actor WAL reads run independently of a busy sibling and retain account/epoch fences
+not ok 1 - actor WAL reads run independently of a busy sibling and retain account/epoch fences
+  ---
+  duration_ms: 2907.122899
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'actor_world_access'
+  code: 'actor_world_access'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:107:130)
+    Worker.emit (node:events:519:28)
+    MessagePort.<anonymous> (node:internal/worker:270:53)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+    MessagePort.callbackTrampoline (node:internal/async_hooks:130:17)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524557887,"backupName":"before-pearl-reset-1794524557887-51c83f22-ec91-4737-b004-e7662a4d709b.sqlite"}
+# Subtest: one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+not ok 2 - one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+  ---
+  duration_ms: 2587.001581
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    101 !== 100
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 100
+  actual: 101
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs:41:49)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524561008,"backupName":"before-pearl-reset-1794524561008-d062a90e-baec-4f11-9353-79bc545ea0e1.sqlite"}
+# Subtest: owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+ok 3 - owned cold world and all four boot snapshots run in the read-only worker with native private/public projections
+  ---
+  duration_ms: 2572.12588
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524564635,"backupName":"before-pearl-reset-1794524564635-21962657-aa53-48ee-b03c-3379b9e69027.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:51.636Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":190411,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5f8b1cbeafafd44acb9a6083"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:51.637Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":190421,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"09b81e6e4b3f9764b6bbf4f8"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:51.637Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":190427,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c1fa17aefaf57e80fe6810a3"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:51.637Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":190437,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"60d56159bbe1361610c926c2"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:51.656Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":190400,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"14ec945197e9d31bf6325f9d"}
+# Subtest: actual five OS owners and read-only thread measure native SQL and world OS pauses without double-counting process CPU
+not ok 4 - actual five OS owners and read-only thread measure native SQL and world OS pauses without double-counting process CPU
+  ---
+  duration_ms: 8839.255162
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/load-measurement-process.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert(failures.includes('runtime_pause:world'))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/load-measurement-process.test.mjs:11:220)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524573184,"backupName":"before-pearl-reset-1794524573184-aaa2633a-7eb9-4d24-8818-2a3b90773b70.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:59.614Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":190464,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d207643ac053047e8abe35e5"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:59.615Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":190470,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7cbc11599d1c23769481489c"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:59.615Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":190480,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0ad07d5142f0c565641c1353"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:59.615Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":190486,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d5d2663ab07926482a1234a0"}
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:02:59.632Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":190453,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"03ca546f1b6f3d3bbca02c9d"}
+# Subtest: a changed actual read worker invalidates the interval instead of substituting its fresh measurements
+ok 5 - a changed actual read worker invalidates the interval instead of substituting its fresh measurements
+  ---
+  duration_ms: 7971.113434
+  type: 'test'
+  ...
+# Subtest: 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+ok 6 - 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+  ---
+  duration_ms: 5.278201
+  type: 'test'
+  ...
+# Subtest: bounded cold read queue retains overload, timeout and close rejection
+ok 7 - bounded cold read queue retains overload, timeout and close rejection
+  ---
+  duration_ms: 21.448623
+  type: 'test'
+  ...
+# Subtest: actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+ok 8 - actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+  ---
+  duration_ms: 603.352643
+  type: 'test'
+  ...
+# Subtest: queued reads accepted on a retired generation fail without being replayed on its replacement
+ok 9 - queued reads accepted on a retired generation fail without being replayed on its replacement
+  ---
+  duration_ms: 4498.190307
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 6
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33254.887372

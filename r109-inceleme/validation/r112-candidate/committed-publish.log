@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: durable shared deaths publish once before the source receives its cold-reload ACK; leases stay held
+ok 1 - durable shared deaths publish once before the source receives its cold-reload ACK; leases stay held
+  ---
+  duration_ms: 3.326773
+  type: 'test'
+  ...
+# Subtest: a replaced world cannot publish or complete a stale terminal result
+ok 2 - a replaced world cannot publish or complete a stale terminal result
+  ---
+  duration_ms: 1.286029
+  type: 'test'
+  ...
+# {"event":"core511_recovery_cause","at":"2026-11-12T23:34:33.904Z","action":"shared_combat_failure","incident":1,"reason":"shared_unchanged_release_ack","origin":"shared_combat_failure","requestMethod":"shared_finish","operation":null,"actorRef":null,"sourceChannel":null,"phase":null,"stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":297,"column":8},{"file":"shared-combat-bridge.mjs","line":290,"column":5},{"file":"unchanged-release-r112.test.mjs","line":33,"column":2}]}
+# Subtest: only audited unchanged actors wake; cross-player writes and ownership wait for remaining refresh
+ok 3 - only audited unchanged actors wake; cross-player writes and ownership wait for remaining refresh
+  ---
+  duration_ms: 3.013933
+  type: 'test'
+  ...
+# Subtest: unproven early-release epochs never authorize a write
+ok 4 - unproven early-release epochs never authorize a write
+  ---
+  duration_ms: 2.088946
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 663.007769

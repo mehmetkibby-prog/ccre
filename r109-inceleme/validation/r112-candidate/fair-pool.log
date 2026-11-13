@@ -1,0 +1,54 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794524960975,"backupName":"before-pearl-reset-1794524960975-57702ebb-eea6-4ebf-998b-58c8f881dd70.sqlite"}
+# Subtest: actor WAL reads run independently of a busy sibling and retain account/epoch fences
+ok 1 - actor WAL reads run independently of a busy sibling and retain account/epoch fences
+  ---
+  duration_ms: 3048.886627
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794524963687,"backupName":"before-pearl-reset-1794524963687-3ebb82da-e0d4-4267-81ea-425cb54da81c.sqlite"}
+# Subtest: one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+ok 2 - one eight-slot queue bounds all actor readers; queued work cannot cross a retired shard incarnation
+  ---
+  duration_ms: 2538.364393
+  type: 'test'
+  ...
+# Subtest: a burst for one shard cannot occupy the other shard slots or reorder a shard FIFO
+ok 3 - a burst for one shard cannot occupy the other shard slots or reorder a shard FIFO
+  ---
+  duration_ms: 9.467709
+  type: 'test'
+  ...
+# Subtest: 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+ok 4 - 100 simultaneous cold read requests stay within eight in-flight slots and preserve FIFO
+  ---
+  duration_ms: 4.51748
+  type: 'test'
+  ...
+# Subtest: bounded cold read queue retains overload, timeout and close rejection
+ok 5 - bounded cold read queue retains overload, timeout and close rejection
+  ---
+  duration_ms: 20.849285
+  type: 'test'
+  ...
+# Subtest: actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+ok 6 - actual read-only SQLite worker accepts a 100-read burst without increasing its 16-message hard limit
+  ---
+  duration_ms: 1761.436252
+  type: 'test'
+  ...
+# Subtest: queued reads accepted on a retired generation fail without being replayed on its replacement
+ok 7 - queued reads accepted on a retired generation fail without being replayed on its replacement
+  ---
+  duration_ms: 4377.72701
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13173.226782
