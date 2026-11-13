@@ -1,3 +1,4 @@
+import {captureCommittedDeltaR113} from './committed-delta-r113.mjs';
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {prepareCached477} from './writer-statements.mjs';
 import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
@@ -39,7 +40,10 @@ export class CommittedResultProducerR113{
   if(!Array.isArray(tables))return result;
   const unknown=tables.filter(table=>!covered.has(table));
   if(unknown.length){for(const table of unknown)committedResultMetricsR113.unsupported[table]=(committedResultMetricsR113.unsupported[table]??0)+1;return result;}
-  const actors=[];this.now=Date.now();
+  this.now=Date.now();
+  const delta=captureCommittedDeltaR113(sql,kind,payload,context,result,this.now);
+  if(delta){committedResultMetricsR113.deltaCaptured++;return delta;}
+  const actors=[];
   for(const player of result.players){
    const id=player.id,owner=prepareCached477(sql,"SELECT o.* FROM kernel511_channel_owners o WHERE player_id=? AND state='active' AND (EXISTS(SELECT 1 FROM kernel511_admissions a WHERE a.player_id=o.player_id AND a.epoch=o.epoch) OR EXISTS(SELECT 1 FROM kernel511_simulations s WHERE s.player_id=o.player_id AND s.epoch=o.epoch))").get(id);
    if(!owner)continue; // Offline recipients retain their already-committed reward.

@@ -119,3 +119,26 @@ test('committed image encoding rejects corrupt text and mismatched envelope befo
  assert.equal(decodeCommittedActorR113(a).id,s.id);
  for(const altered of [{...a,image:'{'},{...a,id:'other'},{...a,epoch:a.epoch+1},{...a,next:a.next+1}])assert.equal(decodeCommittedActorR113(altered),null);
 });
+
+test('changed-state receipts skip full actor construction and roll back with the reward',async t=>{
+ const s=await scene(t),{sql,id,writer,context}=s,before=sql.prepare('SELECT xp FROM players WHERE id=?').get(id).xp;
+ writer.committedR113.rules.readCommittedSectionsR113=()=>{throw Error('full actor construction is forbidden for this audited delta');};
+ const produce=()=>{
+  sql.prepare('UPDATE players SET xp=xp+17 WHERE id=?').run(id);
+  return writer.committedR113.capture(sql,'attack',{localScope:{kind:'kill'}},context,{players:[sql.prepare('SELECT * FROM players WHERE id=?').get(id)],engagement:null,result:{status:200,body:{hits:[{killed:true}]}},sharedRefresh:{version:1,actors:[id],tables:['players'],all:false}});
+ };
+ await assert.rejects(s.f.database.atomic(()=>{const r=produce();assert.equal(r.committedR113.version,2);throw Error('delta-before-commit');}),/delta-before-commit/);
+ assert.equal(sql.prepare('SELECT xp FROM players WHERE id=?').get(id).xp,before);assert.equal(readCommitRevisionR113(sql,id),0);
+ const result=await s.f.database.atomic(produce),d=result.committedR113;
+ assert.equal(d.version,2);assert.equal(d.actors[0].base,0);assert.equal(d.actors[0].next,1);assert.equal(readCommitRevisionR113(sql,id),1);
+ assert.equal(d.actors.some(p=>p.bundle||p.image),false);assert(d.sections.complete);
+});
+
+test('a changed-state receipt cannot apply to a different revision, epoch or process',()=>{
+ const row={id:'a'},owner={epoch:2,channel:1,incarnation:'current'},c={world:{cycle:1},owners:new Map([['a',owner]]),commitRevisionsR113:new Map([['a',7]])};
+ const runtime={channel:c},part={id:'a',base:7,next:8,...owner};
+ for(const changed of [{base:6,next:7},{epoch:1},{incarnation:'retired'},{channel:2},{next:9}]){
+  const result={players:[row],committedR113:{version:2,kind:'actor-sections',operationId:'op',cycle:1,actors:[{...part,...changed}],scope:{},sections:{}}};
+  assert.equal(applyCommittedResultR113(runtime,result),false);assert.equal(c.commitRevisionsR113.get('a'),7);
+ }
+});

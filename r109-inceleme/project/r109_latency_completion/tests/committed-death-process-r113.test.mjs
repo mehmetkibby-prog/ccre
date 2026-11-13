@@ -17,8 +17,8 @@ test('native ordinary death applies the committed result without a cold actor re
  await until(()=>ack&&events().some(e=>e?.type==='monster_result'&&e.intentId==='r113-death'&&e.hits?.some(h=>h.killed))||faults.length,12000);
  assert.equal(faults.length,0,faults.map(f=>f.error?.stack).join('\n'));
  assert(events().some(e=>e?.type==='monster_result'&&e.hits?.some(h=>h.killed)),JSON.stringify(live.packets.slice(-6)));
- assert(ack.result.committedR113,JSON.stringify(ack.result.sharedRefresh));assert.equal(fullReads,0,'ordinary completion must not need a full snapshot');
+ assert(ack.result.committedR113,JSON.stringify(ack.result.sharedRefresh));assert.equal(ack.result.committedR113.version,2,JSON.stringify({scope:request.q.payload.localScope,tables:ack.result.sharedRefresh,result:ack.result.result,hasEncounter:Object.hasOwn(ack.result,'engagement')}));assert.equal(ack.result.committedR113.actors.some(p=>p.image||p.bundle),false,'no full actor image');assert.equal(fullReads,0,'ordinary completion must not need a full snapshot');
  const before=f.sql.prepare('SELECT hp,xp,gems FROM players WHERE id=?').get(f.id),state=await combatState(supervisor.rows.get(4));assert.equal(state.players.find(p=>p.id===f.id).xp,before.xp);
- await command(request.peer,request.q);assert.deepEqual(f.sql.prepare('SELECT hp,xp,gems FROM players WHERE id=?').get(f.id),before);
+ const replay=await command(request.peer,request.q);assert.deepEqual(replay.result.committedR113,ack.result.committedR113,'the exact delta is durable and replayable');assert.deepEqual(f.sql.prepare('SELECT hp,xp,gems FROM players WHERE id=?').get(f.id),before);
  assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM kernel511_channel_receipts WHERE operation_id=?').get(request.q.operationId).n,1);
 });
