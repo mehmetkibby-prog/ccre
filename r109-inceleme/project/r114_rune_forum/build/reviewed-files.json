@@ -1,0 +1,10 @@
+[
+  "core511-source/scripts/core511/engine-health-r113.mjs",
+  "core511-source/scripts/core511/generated/client/auth-portal-core511-r114-e8621310b1cae69d.js",
+  "core511-source/scripts/core511/generated/client/game-client-core511-r114-3a57abcac795f120.js",
+  "core511-source/scripts/core511/generated/native-client-proof.json",
+  "core511-source/scripts/core511/generated/reward-services-proof.json",
+  "core511-source/scripts/core511/generated/reward-services.mjs",
+  "native510-bb3a6cc689c6/lib/runes.mjs",
+  "native510-bb3a6cc689c6/realtime-server/src/rune-map.mjs"
+]
