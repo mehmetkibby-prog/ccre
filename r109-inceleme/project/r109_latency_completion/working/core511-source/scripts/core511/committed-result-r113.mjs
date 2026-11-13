@@ -1,5 +1,6 @@
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {prepareCached477} from './writer-statements.mjs';
+import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
 import {readActorBundle} from './read-worker.mjs';
 import {createColdWorldRules} from './generated/cold-world-rules.mjs';
 import {readZumrutToolR93} from './zumrut-tools-r93.mjs';
@@ -49,7 +50,7 @@ export class CommittedResultProducerR113{
    // These immutable catalogs/settings and shared world projections are already
    // installed independently. Never repeat them once per reward recipient.
    delete bundle.profiles;delete bundle.settings;
-   actors.push({id,base,next,bundle,sections});
+   actors.push(encodeCommittedActorR113({id,base,next,bundle,sections}));
   }
   let committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
   if(payload.sharedLease){
@@ -58,9 +59,10 @@ export class CommittedResultProducerR113{
    // committed image certifies the same HP/contribution inputs as world boot.
    if(world.system&&Buffer.byteLength(JSON.stringify(world))<=64*1024)committedR113.sharedWorld=world;
   }
-  if(actors.some(part=>Buffer.byteLength(JSON.stringify(part))>1024*1024)){committedResultMetricsR113.bounds++;return result;}
-  if(Buffer.byteLength(JSON.stringify({...result,committedR113}))>192*1024){committedR113=storeCommittedImagesR113(sql,committedR113);committedResultMetricsR113.indirect++;}
-  if(Buffer.byteLength(JSON.stringify({...result,committedR113}))>224*1024){committedResultMetricsR113.bounds++;return result;}
+  if(actors.some(part=>Buffer.byteLength(part.image)>1024*1024)){committedResultMetricsR113.bounds++;return result;}
+  let receiptBytes=Buffer.byteLength(JSON.stringify({...result,committedR113}));
+  if(receiptBytes>192*1024){committedR113=storeCommittedImagesR113(sql,committedR113);committedResultMetricsR113.indirect++;receiptBytes=Buffer.byteLength(JSON.stringify({...result,committedR113}));}
+  if(receiptBytes>224*1024){committedResultMetricsR113.bounds++;return result;}
   for(const {id,next}of actors)prepareCached477(sql,'INSERT INTO kernel511_actor_revision_r113 VALUES(?,?) ON CONFLICT(actor) DO UPDATE SET revision=excluded.revision').run(id,next);
   committedResultMetricsR113.captured++;committedResultMetricsR113.actors+=actors.length;
   return {...result,committedR113};

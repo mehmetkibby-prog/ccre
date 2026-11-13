@@ -9,6 +9,7 @@ import {createAdventureSchema} from '../working/core511-source/scripts/core511/a
 import {readCommitRevisionR113} from '../working/core511-source/scripts/core511/commit-revision-r113.mjs';
 import {applyCommittedResultR113} from '../working/core511-source/scripts/core511/committed-apply-r113.mjs';
 import {readCommittedImagesR113,pruneCommittedImagesR113} from '../working/core511-source/scripts/core511/committed-store-r113.mjs';
+import {decodeCommittedActorR113} from '../working/core511-source/scripts/core511/committed-codec-r113.mjs';
 const wire=v=>JSON.parse(JSON.stringify(v));
 async function scene(t){
  const f=await setupPvp(t);f.reset({area:'forest'});createTowerSchema(f.sql);createAdventureSchema(f.sql);
@@ -27,7 +28,7 @@ test('committed actor sections match the authoritative full snapshot after progr
  for(const deleted of [false,true]){
   if(deleted){sql.prepare('DELETE FROM player_items WHERE player_id=?').run(id);sql.prepare('DELETE FROM dungeon_materials WHERE player_id=?').run(id);}
   const result=await s.f.database.atomic(()=>s.capture(['players','player_items','dungeon_materials']));
-  assert(result.committedR113);const part=result.committedR113.actors[0];
+  assert(result.committedR113);const part=decodeCommittedActorR113(result.committedR113.actors[0]);
   assert.equal(Object.hasOwn(part.bundle,'profiles'),false);assert.equal(Object.hasOwn(part.bundle,'settings'),false);
   const fresh=await readActorWorldBundle(sql,[id,1,s.peer.incarnation,s.owner.epoch,0,result.committedR113.at,{account:part.bundle.player.account_id,chatAfterId:0,starterReward:null}],new ColdWorldReader(sql));
   for(const key of ['inventory','storageItems','stones','pets','dungeonMaterials','dungeonWings','drops','adventure511'])assert.deepEqual(wire(part.sections[key]),wire(fresh.projection.data[key]),key);
@@ -69,4 +70,12 @@ test('large committed output uses a small receipt and an atomic, owner-fenced im
  const player=s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id);
  await s.f.database.atomic(()=>pruneCommittedImagesR113(s.sql,d.at+1,1));
  assert.equal(readCommittedImagesR113(s.sql,params),null);assert.deepEqual(s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id),player);assert.equal(readCommitRevisionR113(s.sql,s.id),1);
+});
+
+// Encoded images retain all deletes/nulls, but cannot substitute another owner.
+test('committed image encoding rejects corrupt text and mismatched envelope before installation',async t=>{
+ const s=await scene(t);const result=await s.f.database.atomic(()=>s.capture());
+ const a=result.committedR113.actors[0];assert.equal(typeof a.image,'string');
+ assert.equal(decodeCommittedActorR113(a).id,s.id);
+ for(const altered of [{...a,image:'{'},{...a,id:'other'},{...a,epoch:a.epoch+1},{...a,next:a.next+1}])assert.equal(decodeCommittedActorR113(altered),null);
 });

@@ -1,5 +1,6 @@
 import {prepareCached477} from './writer-statements.mjs';
 import {demand} from './contract.mjs';
+import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
 
 // Immutable derived images share the reward transaction. Large fan-out does
 // not enlarge the 256 KiB command receipt. Expired images are recoverable by
@@ -15,16 +16,17 @@ export function storeCommittedImagesR113(sql,delta){
  demand(sql.isTransaction,'committed_image_transaction');
  const insert=prepareCached477(sql,'INSERT INTO kernel511_committed_images_r113 VALUES(?,?,?,?,?,?,?)');
  const actors=delta.actors.map(part=>{
-  const o=part.bundle.owner;insert.run(delta.operationId,part.id,o.epoch,o.channel,o.incarnation,delta.at,JSON.stringify(part));
-  return {id:part.id,base:part.base,next:part.next,epoch:o.epoch,channel:o.channel,incarnation:o.incarnation};
+  const encoded=Object.hasOwn(part,'image')?part:encodeCommittedActorR113(part);
+  const {image,...ref}=encoded;insert.run(delta.operationId,ref.id,ref.epoch,ref.channel,ref.incarnation,delta.at,image);
+  return ref;
  });
  return {...delta,actors,indirect:true};
 }
-export function readCommittedImagesR113(sql,{operationId,channel,incarnation,actors}){
+export function readCommittedImagesR113(sql,{operationId,channel,incarnation,actors},{encoded=false}={}){
  demand(typeof operationId==='string'&&operationId.length<=240&&Number.isInteger(channel)&&typeof incarnation==='string'&&Array.isArray(actors)&&actors.length<=25,'committed_image_read');
  const read=prepareCached477(sql,'SELECT image FROM kernel511_committed_images_r113 WHERE operation_id=? AND actor=? AND epoch=? AND channel=? AND incarnation=?');
  const parts=[];let bytes=0;
- for(const a of actors){const row=read.get(operationId,a.id,a.epoch,channel,incarnation);if(!row)return null;bytes+=Buffer.byteLength(row.image);if(bytes>3*1024*1024)return null;parts.push(JSON.parse(row.image));}
+ for(const a of actors){const row=read.get(operationId,a.id,a.epoch,channel,incarnation);if(!row)return null;bytes+=Buffer.byteLength(row.image);if(bytes>3*1024*1024)return null;parts.push(encoded?{...a,image:row.image}:JSON.parse(row.image));}
  return parts;
 }
 export function pruneCommittedImagesR113(sql,before,limit){

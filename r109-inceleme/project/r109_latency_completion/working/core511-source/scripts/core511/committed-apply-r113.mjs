@@ -1,4 +1,5 @@
 import {mergeDeathBundleR86} from './death-movement-r86.mjs';
+import {decodeCommittedActorR113} from './committed-codec-r113.mjs';
 import {committedResultsR113,committedResultMetricsR113} from './committed-protocol-r113.mjs';
 
 export async function installCommittedResultR113(runtime,result,context){
@@ -18,7 +19,7 @@ export function applyCommittedResultR113(runtime,result,context){
  const recover=()=>{committedResultMetricsR113.recovered++;return false;};
  if(delta.version!==1||delta.cycle!==c.world.cycle||typeof delta.operationId!=='string'||!Array.isArray(delta.actors)||!Array.isArray(result.players))return recover();
  const needed=result.players.filter(p=>c.owners.has(p.id)),parts=new Map();
- for(const part of delta.actors){if(!part?.id||parts.has(part.id))return recover();parts.set(part.id,part);}
+ for(const encoded of delta.actors){const part=decodeCommittedActorR113(encoded);if(!part?.id||parts.has(part.id))return recover();parts.set(part.id,part);}
  const prepared=[];
  for(const row of needed){
   const part=parts.get(row.id),owner=c.owners.get(row.id),p=c.kernel.players.get(row.id),sub=runtime.world.subscribers.get(row.id),bundle=part?.bundle;

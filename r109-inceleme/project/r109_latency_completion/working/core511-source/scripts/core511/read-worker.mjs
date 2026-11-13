@@ -55,7 +55,7 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
    const started=performance.now();let rows;
    if(workerData.actorBundles===true&&message.name==='kernel511_actor_bundle')rows=readActorBundle(sqlite,message.params);
    else if(workerData.actorBundles===true&&message.name==='kernel511_actor_world')rows=await readActorWorldBundle(sqlite,message.params,coldWorld,{insideTransaction});
-   else if(workerData.actorBundles===true&&message.name==='kernel511_committed_r113')rows=readCommittedImagesR113(sqlite,message.params);
+   else if(workerData.actorBundles===true&&message.name==='kernel511_committed_r113')rows=readCommittedImagesR113(sqlite,message.params,{encoded:true});
    else if(workerData.actorBundles===true&&message.name==='kernel511_actor_drops_r52')rows=readActorDropsR52(sqlite,message.params,{insideTransaction});
    else if(workerData.actorBundles===true&&message.name==='kernel511_channel_boot')rows=readChannelBoot(sqlite,message.params);
    else if(workerData.actorBundles===true&&message.name==='kernel511_world_boot')rows=readWorldBoot(sqlite,message.params);
