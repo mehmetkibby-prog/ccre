@@ -110,7 +110,7 @@ export class ChannelRuntime {
    mistLootCommitted:snapshot=>this.adventure.refreshLoot(snapshot),hydrateMode:bundle=>this.hydrate(bundle),dropMode:id=>this.drop(id),drainMode:async id=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain([id]);await this.dungeon.drain(id);},
    drainModeGroup:async ids=>{await this.heartbeat.drain();await this.runeBoss.drain();await this.adventure.drain(ids);await this.dungeon.drainActors(ids);}
   }});
-  this.dungeon=new DungeonChannel(this.channel,{globals,progressionSettings:()=>globals.__colProgression.snapshot(),initial:initial.dungeon,clock,actorsFor:(id,input)=>{
+  this.dungeon=new DungeonChannel(this.channel,{globals,progressionSettings:()=>globals.__colProgression.snapshot(),initial:initial.dungeon,clock,readLobby:payload=>request('read_dungeon_lobby_r113',payload),actorsFor:(id,input)=>{
    if(input?.action!=='create')return [id];const party=this.channel.parties.get(id);return party?[...this.channel.parties].filter(([,p])=>p===party).map(([id])=>id):[id];
   }});
   this.dungeonProjection=new DungeonProjection(this.dungeon.resident);this.modes=new ModeChannel(this.channel,{footprint:(...args)=>mechanics.footprint(...args)});

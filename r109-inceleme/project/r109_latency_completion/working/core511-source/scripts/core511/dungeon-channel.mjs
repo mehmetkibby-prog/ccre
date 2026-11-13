@@ -5,12 +5,13 @@ import {demand} from './contract.mjs';
 import {actorFaultIsolation} from './r48-options.mjs';
 import {actorRejection} from './actor-rejection.mjs';
 import {gameplayR55} from './r55-gameplay-options.mjs';
+import {DungeonLobbyChannelR113} from './dungeon-lobby-channel-r113.mjs';
 
 // The same actor leases used for open-world combat and legacy HTTP operations
 // also cover dungeon rooms. SQL and asynchronous cold reads only run behind a
 // durable barrier; entering a room cannot race a queued movement/checkpoint.
 export class DungeonChannel {
- constructor(channel,{globals,progressionSettings,initial,actorsFor,clock=Date.now,progressFix=gameplayR55.dungeonProgress}){
+ constructor(channel,{globals,progressionSettings,initial,actorsFor,clock=Date.now,progressFix=gameplayR55.dungeonProgress,readLobby=null}){
   demand(channel?.kernel&&typeof actorsFor==='function','dungeon_channel_dependencies');
   Object.assign(this,{channel,clock,progressFix});this.incarnation=randomUUID();this.pending=new Map();
   this.resident=new ResidentDungeon({channel:channel.peer.channel,globals,progressionSettings,clock,progressFix,
@@ -33,7 +34,7 @@ export class DungeonChannel {
     // are already authoritative before any room actor or rare-route can resume.
     for(const player of result.players)channel.encounters.hydrateCommitted(player.id,channel.view.engagements.get(player.id)??null);
    }
-  });this.resident.hydrate(initial);
+  });this.resident.hydrate(initial);this.lobbyR113=readLobby?new DungeonLobbyChannelR113(this,readLobby):null;
  }
  actors(id,input){const room=this.resident.runFor(id);return room?room.members.filter(p=>!p.left).map(p=>p.id):this.resident.actorsFor(id,input);}
  ready(ids,{draining=null}={}){
@@ -58,7 +59,7 @@ export class DungeonChannel {
    return {type:'dungeon',pending:true,completion:token.promise};
   }catch(error){if(lease.state==='held')this.channel.lanes.fence(lease);throw error;}
  }
- action(context){const {id,input,now}=context;if(actorFaultIsolation&&!(input.action==='dungeon'&&validDungeonCommand(input.command)))return {type:'action',status:400,body:{code:'dungeon_protocol_command',error:'Geçersiz kule işlemi.'}};demand(input.action==='dungeon'&&input.command&&typeof input.command==='object','dungeon_protocol_command');if(input.command.action==='create'&&!this.resident.runFor(id)&&this.channel.sharedCombat)return this.channel.sharedCombat.dungeonEntry(context);const result=this.start(id,{kind:'command',input:input.command},{now,reply:true});return result===DEFER_INPUT?result:result.pending?{type:'dungeon'}:result;}
+ action(context){const {id,input,now}=context;if(actorFaultIsolation&&!(input.action==='dungeon'&&validDungeonCommand(input.command)))return {type:'action',status:400,body:{code:'dungeon_protocol_command',error:'Geçersiz kule işlemi.'}};demand(input.action==='dungeon'&&input.command&&typeof input.command==='object','dungeon_protocol_command');const lobby=this.lobbyR113?.action(context);if(lobby!==undefined&&lobby!==null)return lobby;if(input.command.action==='create'&&!this.resident.runFor(id)&&this.channel.sharedCombat)return this.channel.sharedCombat.dungeonEntry(context);const result=this.start(id,{kind:'command',input:input.command},{now,reply:true});return result===DEFER_INPUT?result:result.pending?{type:'dungeon'}:result;}
  async applyEntry(value){
   demand(value.players.every(p=>this.channel.owners.has(p.id))&&(!value.run||value.run.members.every(p=>this.channel.owners.has(p.id))),'dungeon_entry_local_scope');
   this.resident.applyResult(value);await this.resident.onCommitted(value);

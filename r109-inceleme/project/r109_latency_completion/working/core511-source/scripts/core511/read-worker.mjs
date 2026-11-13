@@ -1,4 +1,5 @@
 import {prepareCached477} from './writer-statements.mjs';
+import {DungeonLobbyReaderR113} from './dungeon-lobby-read-r113.mjs';
 import {readCommittedImagesR113} from './committed-store-r113.mjs';
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {realmLoadLabConfigR101} from './realm-loadlab-r101.mjs';
@@ -43,7 +44,7 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
   demand(typeof name==='string'&&typeof sql==='string'&&/^\s*(SELECT|WITH)\b/i.test(sql),'invalid_read_worker_query');
   queries.set(name,sqlite.prepare(sql));
  }
- const coldWorld=new ColdWorldReader(sqlite),guildSync=new GuildSyncReader(sqlite),heartbeat=new HeartbeatMaintenanceReader(sqlite),loadWindow=new LoadWindow({target:workerData.target??'reader',incarnation:workerData.incarnation});let queue=Promise.resolve(),readWork=null;
+ const coldWorld=new ColdWorldReader(sqlite),guildSync=new GuildSyncReader(sqlite),heartbeat=new HeartbeatMaintenanceReader(sqlite),lobby=new DungeonLobbyReaderR113(sqlite),loadWindow=new LoadWindow({target:workerData.target??'reader',incarnation:workerData.incarnation});let queue=Promise.resolve(),readWork=null;
  const readMessage=async(message,{insideTransaction=false,post=reply=>parentPort.postMessage(reply)}={})=>{
   try {
    // A burst must not monopolize one promise/microtask drain. Yield between
@@ -56,6 +57,7 @@ if(!isMainThread&&workerData?.kernel511ReadWorker===true) {
    if(workerData.actorBundles===true&&message.name==='kernel511_actor_bundle')rows=readActorBundle(sqlite,message.params);
    else if(workerData.actorBundles===true&&message.name==='kernel511_actor_world')rows=await readActorWorldBundle(sqlite,message.params,coldWorld,{insideTransaction});
    else if(workerData.actorBundles===true&&message.name==='kernel511_committed_r113')rows=readCommittedImagesR113(sqlite,message.params,{encoded:true});
+   else if(workerData.actorBundles===true&&message.name==='kernel511_dungeon_lobby_r113')rows=lobby.read(message.params);
    else if(workerData.actorBundles===true&&message.name==='kernel511_actor_drops_r52')rows=readActorDropsR52(sqlite,message.params,{insideTransaction});
    else if(workerData.actorBundles===true&&message.name==='kernel511_channel_boot')rows=readChannelBoot(sqlite,message.params);
    else if(workerData.actorBundles===true&&message.name==='kernel511_world_boot')rows=readWorldBoot(sqlite,message.params);
@@ -130,7 +132,7 @@ export class ReadWorker {
  }
  query(name,params=[],{actorWire=false}={}) {
   if(!this.readQueue)return this.send({name,params});
-  const backend=name==='kernel511_actor_world'?this.actorReader(params?.[1]):name==='kernel511_committed_r113'?this.actorReader(params?.channel):this;
+  const backend=name==='kernel511_actor_world'?this.actorReader(params?.[1]):['kernel511_committed_r113','kernel511_dungeon_lobby_r113'].includes(name)?this.actorReader(params?.channel):this;
   const slot=backend.slot,wasHealthy=!slot.failed&&!slot.ended;
   return this.readQueue.run(()=>{
    // A queued request belongs to the incarnation on which it was accepted.

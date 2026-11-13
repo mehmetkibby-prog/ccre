@@ -156,6 +156,12 @@ export class CoreCoordinator {
   if(method==='read_channel_refresh'){demand(this.globalWorld,'global_world_unavailable');return this.globalWorld.readChannel(peer,payload);}
   if(method==='world_engagements'){demand(this.sharedWorld,'world_not_configured');return this.sharedWorld.engagements(peer,payload);}
   if(method==='read_actor'){this.authority.assertSimulated(this.database.sqlite,peer,payload.actor,payload.epoch);return this.load(payload.actor,payload.revision,payload.slim,{actorWire:true});}
+  if(method==='read_dungeon_lobby_r113'){
+   demand(payload&&typeof payload.actor==='string'&&payload.actor.length>0&&payload.actor.length<=160&&Number.isSafeInteger(payload.epoch)&&payload.epoch>0,'dungeon_lobby_parameters');
+   this.authority.assertAdmitted(this.database.sqlite,peer,payload.actor,payload.epoch);
+   const answer=await this.reader.query('kernel511_dungeon_lobby_r113',{actor:payload.actor,epoch:payload.epoch,channel:peer.channel,incarnation:peer.incarnation,nowMs:this.clock()});
+   this.process(peer);this.authority.assertAdmitted(this.database.sqlite,peer,payload.actor,payload.epoch);return answer.rows;
+  }
   if(method==='read_committed_r113'){
    demand(payload&&typeof payload.operationId==='string'&&Array.isArray(payload.actors)&&payload.actors.length<=25&&new Set(payload.actors.map(a=>a.id)).size===payload.actors.length,'committed_read_scope');
    for(const a of payload.actors){demand(a.channel===peer.channel&&a.incarnation===peer.incarnation,'committed_read_owner');this.authority.assertSimulated(this.database.sqlite,peer,a.id,a.epoch);}
