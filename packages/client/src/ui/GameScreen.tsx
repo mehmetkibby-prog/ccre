@@ -188,8 +188,8 @@ function PlayerPlate() {
       <div className="medal" title={`Can ${hp}/${max} · TP %${(xk * 100).toFixed(1)}`}>
         <svg className="rings" viewBox="0 0 92 92">
           <circle cx="46" cy="46" r="44.5" stroke="rgba(0,0,0,.6)" strokeWidth="3" fill="none" />
-          <circle cx="46" cy="46" r="44.5" stroke="#b48cff" strokeWidth="3" fill="none" strokeDasharray={C2} strokeDashoffset={C2 * (1 - xk)} style={{ filter: 'drop-shadow(0 0 3px #b48cff)' }} />
-          <circle cx="46" cy="46" r="39" stroke="rgba(0,0,0,.65)" strokeWidth="6" fill="rgba(7,10,18,.85)" />
+          <circle cx="46" cy="46" r="44.5" stroke="#49c6b7" strokeWidth="3" fill="none" strokeDasharray={C2} strokeDashoffset={C2 * (1 - xk)} style={{ filter: 'drop-shadow(0 0 3px #49c6b7)' }} />
+          <circle cx="46" cy="46" r="39" stroke="rgba(0,0,0,.65)" strokeWidth="6" fill="rgba(16,10,6,.88)" />
           <circle cx="46" cy="46" r="39" stroke={hk < 0.3 ? '#ff2a4a' : '#ff4767'} strokeWidth="6" fill="none" strokeDasharray={C1} strokeDashoffset={C1 * (1 - hk)} style={{ transition: 'stroke-dashoffset .15s', filter: 'drop-shadow(0 0 4px #ff4767)' }} />
         </svg>
         <div className="core"><ClassIcon cls={char.cls} size={34} /></div>
@@ -364,13 +364,13 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
     <div className="menu">
       <button onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
       <button onClick={() => open('character')}><MenuIcon k="char" /><small>C</small><span className="tag">Karakter</span>{statPts > 0 && <span className="badge">{statPts}</span>}</button>
-      <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceriler</span></button>
+      <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       {canAdmin && <button onClick={() => open('admin')}><MenuIcon k="admin" /><span className="tag">Yönetim</span></button>}
-      <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" />{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
-      <button className="exit" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Kanal / Çıkış</span></button>
+      <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
+      <button className="exit" title="Kanal değiştir / çıkış" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Çıkış</span></button>
     </div>
   );
 }

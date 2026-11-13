@@ -94,6 +94,8 @@ export function loadManifest(): Promise<void> {
     .catch((e) => { manifest = {}; modelStatus.lastError = 'models.json: ' + ((e as Error)?.message ?? e); bumpStatus(); });
   return manifestPromise;
 }
+/** Model bildirimde var ve henüz yükleniyor mu (yüklenemezse ya da hiç yoksa false). */
+export function modelPending(id: string) { return !!manifest?.[id] && !loaded.has(id) && !failed.has(id); }
 /** Model bildirimde var mı (yüklenmiş olması gerekmez). */
 export function hasModel(id: string) { return !!manifest?.[id]; }
 /** Model yüklenince (ya da yüklenemezse null ile) çözülür. */

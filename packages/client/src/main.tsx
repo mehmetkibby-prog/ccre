@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
-import { CLASSES, CLASS_IDS, MAPS, validateCharacterName, type ClassId } from '@col/shared';
+import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, validateCharacterName, type ClassId } from '@col/shared';
+import { Renderer3D } from './g3d/renderer3d.ts';
+import { shared as sharedU } from './g3d/materials.ts';
+import type { CEnt } from './game/game.ts';
 import { api } from './api.ts';
 import { store, useStore } from './game/store.ts';
 import { GameScreen } from './ui/GameScreen.tsx';
 import { createHumanoid, animateHumanoid, LOOKS } from './g3d/humanoid.ts';
-import { createGlbChar, loadManifest, onModelReady, type GlbChar } from './g3d/models.ts';
+import { createGlbChar, loadManifest, modelPending, onModelReady, onModelStatus, type GlbChar } from './g3d/models.ts';
 import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
@@ -75,7 +78,7 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     setBusy(false);
   };
   return (
-    <div className="screen">
+    <div className="screen live">
       <MenuBackdrop />
       <div style={{ zIndex: 1 }}>
         <div className="logo">Tuğra<small>ONLINE</small><em>Yaşam Çekirdeği Destanı</em></div>
@@ -102,8 +105,61 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
   );
 }
 
-/** Menü arka planı: yavaşça dönen 3B köy sahnesi yerine hafif sis ve kıvılcımlar (düşük maliyet). */
+/** Menü arka planı: Pazar Köyü'nün canlı 3B görüntüsü. Kamera meydanın çevresinde yavaşça döner, oyuncular dolaşır.
+ *  WebGL yoksa ya da sahne kurulamazsa hafif kıvılcımlı yedek arka plan. */
 function MenuBackdrop() {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const [fallback, setFallback] = useState(false);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    if (fallback) return;
+    const canvas = ref.current!;
+    let r: Renderer3D;
+    const l = getLayout('bazaar');
+    const sx = l.spawn.x, sy = l.spawn.y;
+    const g: any = { selfId: 1, cls: 'guardian', dx: sx, dy: sy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
+    try {
+      r = new Renderer3D(g, canvas, document.createElement('canvas'));
+      r.setLayout(l);
+    } catch (e) { console.warn('[menü] 3B sahne kurulamadı', e); setFallback(true); return; }
+    // meydanda dolaşan oyuncular: farklı yarıçap, hız ve yönde çember
+    const names = ['Defne', 'Mert', 'Ayşe', 'Kaan', 'Elif', 'Bora', 'Zeynep'];
+    const walkers = names.map((name, i) => ({ r: 150 + (i % 4) * 70, w: (0.05 + (i % 3) * 0.018) * (i % 2 ? 1 : -1), p: i * 0.9 }));
+    walkers.forEach((wk, i) => {
+      const x = sx + Math.cos(wk.p) * wk.r, y = sy + Math.sin(wk.p) * wk.r;
+      g.ents.set(10 + i, { id: 10 + i, kind: Kind.PLAYER, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: Anim.WALK, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 10 + i * 4, name: names[i], cls: i % 3, variant: 0, tpl: 0, weapon: [0, 3, 6, 9, 1, 4, 7][i], wplus: i % 3 === 0 ? 5 : 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0 } as unknown as CEnt);
+    });
+    const co = { x: sx, y: sy - 40, dist: 15, pitch: 0.42 };
+    const cut0 = sharedU.cutR.value; sharedU.cutR.value = 0; // oyuncu yok: kameranın önündeki nesneler saydamlaşmasın
+    (r as any).camOverride = co;
+    let raf = 0, last = performance.now(), frames = 0;
+    const t0 = last;
+    const loop = (t: number) => {
+      const dt = Math.min(100, t - last); last = t;
+      const s = (t - t0) / 1000;
+      r.camYaw = s * 0.045; // tam tur ≈ 2 dakika
+      walkers.forEach((wk, i) => {
+        const e = g.ents.get(10 + i);
+        const a = wk.p + s * wk.w;
+        const nx = sx + Math.cos(a) * wk.r, ny = sy + Math.sin(a) * wk.r;
+        const ang = Math.atan2(ny - e.y, nx - e.x);
+        e.dir = ((ang / (Math.PI * 2)) * 256 + 256) % 256;
+        e.x = nx; e.y = ny;
+      });
+      try { r.draw(t, dt); } catch (e) { console.warn('[menü] çizim hatası', e); setFallback(true); return; }
+      const self = (r as any).self; if (self) self.obj.visible = false; // kendi karakter yok
+      if (++frames === 3) setShown(true);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); sharedU.cutR.value = cut0; try { r.renderer.dispose(); r.renderer.forceContextLoss(); } catch { /* */ } };
+  }, [fallback]);
+  if (fallback) return <SparkBackdrop />;
+  return <><canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} /><div className="screen-vignette" /></>;
+}
+
+/** Yedek arka plan: hafif sis ve kıvılcımlar. */
+function SparkBackdrop() {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const c = ref.current!; const ctx = c.getContext('2d')!;
@@ -111,7 +167,7 @@ function MenuBackdrop() {
     const loop = () => {
       c.width = c.clientWidth; c.height = c.clientHeight;
       ctx.clearRect(0, 0, c.width, c.height);
-      for (const p of parts) { p.y -= p.v; if (p.y < 0) p.y = 1; ctx.fillStyle = `rgba(160,255,200,${0.25 + p.s * 0.15})`; ctx.beginPath(); ctx.arc(p.x * c.width, p.y * c.height, p.s, 0, Math.PI * 2); ctx.fill(); }
+      for (const p of parts) { p.y -= p.v; if (p.y < 0) p.y = 1; ctx.fillStyle = `rgba(255,214,140,${0.25 + p.s * 0.15})`; ctx.beginPath(); ctx.arc(p.x * c.width, p.y * c.height, p.s, 0, Math.PI * 2); ctx.fill(); }
       raf = requestAnimationFrame(loop);
     };
     loop();
@@ -123,7 +179,9 @@ function MenuBackdrop() {
 /** Karakter seçiminde dönen 3B sınıf önizlemesi. */
 function ClassPreview({ cls }: { cls: ClassId }) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const [waiting, setWaiting] = useState(true);
   useEffect(() => {
+    setWaiting(true);
     const canvas = ref.current!;
     const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.shadowMap.enabled = true;
@@ -135,25 +193,30 @@ function ClassPreview({ cls }: { cls: ClassId }) {
     const rim = new THREE.DirectionalLight(0x9fd0ff, 1.6); rim.position.set(-3, 2, -3); scene.add(rim);
     const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 48), new THREE.MeshStandardMaterial({ color: 0x2a3424, roughness: 0.9 }));
     floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
-    // Hazır gerçekçi model varsa onu, yoksa (yüklenene kadar) prosedürel modeli göster
+    // Asıl model yüklenene kadar bekleme göstergesi; model hiç yoksa ya da yüklenemezse prosedürel model
     let rig: ReturnType<typeof createHumanoid> | null = null;
     let glb: GlbChar | null = null;
+    let manifestReady = false;
     const show = () => {
+      if (glb) return;
       const g = createGlbChar(cls);
       if (g) {
         equipGlb(g, LOOKS[cls]);
         if (rig) scene.remove(rig.root);
         rig = null; glb = g;
         scene.add(g.root);
-      } else if (!rig) {
+        setWaiting(false);
+      } else if (!rig && manifestReady && !modelPending(cls)) {
+        setWaiting(false);
         rig = createHumanoid(LOOKS[cls]);
         rig.root.traverse((o) => { if ((o as THREE.Mesh).isMesh) o.castShadow = true; });
         scene.add(rig.root);
       }
     };
-    loadManifest().then(show);
+    loadManifest().then(() => { manifestReady = true; show(); });
     show();
     const off = onModelReady((id) => { if (id === cls && !glb) show(); });
+    const offSt = onModelStatus(show);
     let raf = 0; const t0 = performance.now(); let last = t0; let lastCyc = 0;
     const loop = (t: number) => {
       const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -170,9 +233,9 @@ function ClassPreview({ cls }: { cls: ClassId }) {
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); off(); r.dispose(); };
+    return () => { cancelAnimationFrame(raf); off(); offSt(); r.dispose(); };
   }, [cls]);
-  return <canvas ref={ref} className="preview3d" />;
+  return <div className="preview-wrap"><canvas ref={ref} className="preview3d" />{waiting && <div className="preview-wait"><i /><span>Karakter yükleniyor…</span></div>}</div>;
 }
 
 function CharScreen({ me, onPlay, onReload, onLogout, error }: { me: Me; onPlay: (id: number) => void; onReload: () => void; onLogout: () => void; error: string }) {

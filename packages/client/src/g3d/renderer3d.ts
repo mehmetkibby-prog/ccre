@@ -6,7 +6,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, hasModel, onModelReady, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
+import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
@@ -66,7 +66,7 @@ const THEME = {
 } as const;
 
 
-interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null }
+interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null; /** asıl model yüklenirken boş yer tutucu */ ph?: boolean }
 
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
@@ -144,6 +144,18 @@ export class Renderer3D {
     this.fx.heightAt = (x, y) => this.heightAt(x, y);
     this.setupComposer();
     loadManifest();
+    // model yüklenemezse boş yer tutucular prosedürel modelle yeniden kurulur
+    onModelStatus(() => {
+      for (const [eid, v] of this.views) if (v.ph && !modelPending(v.model!)) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      if (this.self?.ph && !modelPending(this.self.model!)) { this.dyn.remove(this.self.obj); this.self = null; }
+      this.npcViews = this.npcViews.map((v) => {
+        if (!v.ph || modelPending(v.model!)) return v;
+        const nv = this.humanView(v.model!, 99, v.lx, v.ly);
+        nv.obj.position.copy(v.obj.position); nv.yaw = v.yaw;
+        this.dyn.remove(v.obj); this.dyn.add(nv.obj);
+        return Object.assign(nv, { npc: (v as unknown as { npc: string }).npc });
+      });
+    });
     onModelReady((id) => {
       // model geldi: o modeli kullanan görünümleri yeniden kur
       for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
@@ -334,6 +346,8 @@ export class Renderer3D {
       if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx' || o.name === 'plus-fx') gfx.push(o); });
       return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend };
     }
+    // asıl model yükleniyorsa geçici prosedürel modeli gösterme: kısa bir süre boş kalsın, model gelince kurulur
+    if (modelPending(modelId)) return { kind, obj: new THREE.Group(), model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, ph: true };
     const rig = createHumanoid(LOOKS[modelId] ?? LOOKS.merchant);
     prepDynamic(rig.root, 0.55);
     return { kind, obj: rig.root, rig, model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0 };
@@ -510,7 +524,7 @@ export class Renderer3D {
       const a = toSelf ? Math.atan2(g.dx - v.lx, g.dy - v.ly) : 0;
       let d = a - v.yaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
       v.yaw += d * Math.min(1, dt / 300); v.obj.rotation.y = v.yaw;
-      if (v.glb) v.glb.update('idle', dt, false, 0); else animateHumanoid(v.rig!, 'idle', now / 1000 + v.lx, 0, 0);
+      if (v.glb) v.glb.update('idle', dt, false, 0); else if (v.rig) animateHumanoid(v.rig, 'idle', now / 1000 + v.lx, 0, 0);
     }
     // hedef halkası
     const tgt = g.targetId ? g.ents.get(g.targetId) : null;
