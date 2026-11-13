@@ -41,3 +41,11 @@ R114 approval/production continuation (13 Nov 2026): the user approved the forum
 notes. Read-only Efsane health confirms R113_ENGINE1. R114 accepts the exact
 final R113 artifact as source, applies code-only rune changes and hosts the forum
 separately. The package is locally verified; R114 live installation is unconfirmed.
+
+R115 incident continuation (13 Nov 2026): the user and read-only r1 health
+confirmed R114_RUNE_FORUM1 installed. R115 supersedes the stale live-source
+notes above. Read `r109-inceleme/R115_DEVIR.md`. The active tree fixes the
+shared_partition_actor_changed realm-wide recovery: initial recipient scope
+now includes historical local contributors, using the same closure as terminal
+validation. Three runtime files; source is exact R114_RUNE_FORUM1. No forum,
+client, schema or reward-rule changes. Preserve receipt/owner/durability guards.

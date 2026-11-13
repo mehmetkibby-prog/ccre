@@ -10,6 +10,56 @@
   "forumChanges": false,
   "databaseScope": "none",
   "namespace": "core511-4698e897914580f4",
-  "acceptance": "pending",
-  "deployed": false
+  "acceptance": "incident-regression-and-installation-checks-passed",
+  "deployed": false,
+  "checks": {
+    "node": {
+      "regression-r1": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0
+      },
+      "regression-r2": {
+        "tests": 4,
+        "pass": 4,
+        "fail": 0
+      },
+      "focused": {
+        "tests": 60,
+        "pass": 60,
+        "fail": 0
+      },
+      "native": {
+        "tests": 29,
+        "pass": 29,
+        "fail": 0
+      },
+      "captcha": {
+        "tests": 20,
+        "pass": 20,
+        "fail": 0
+      },
+      "r110": {
+        "tests": 3,
+        "pass": 3,
+        "fail": 0
+      },
+      "r113": {
+        "tests": 142,
+        "pass": 142,
+        "fail": 0
+      },
+      "installed-runtime": {
+        "tests": 3,
+        "pass": 3,
+        "fail": 0
+      }
+    },
+    "installerPython": 7,
+    "historicalR110InstallerPython": 16,
+    "loadRuns": 7,
+    "r115LoadRuns": 4,
+    "realChannels": 8
+  },
+  "zeroLagAchieved": false
 }

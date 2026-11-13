@@ -1,0 +1,403 @@
+{
+  "release": "/tmp/r115-installed-1d20f6vc/release",
+  "package": {
+    "file": "artifacts/R115_SHARED_SCOPE_a668b021b2e3.zip",
+    "bytes": 107743,
+    "sha256": "791858ebddc240c5330e663b569982305fb5acb0c8645adde77e86ed1a6603ea",
+    "sourceVersion": "R114_RUNE_FORUM1",
+    "sourceCore": "5839b7a3fb0f0f6ba1e1656333cc149ea4469816a641a7c25d1a5f5105e3d342",
+    "targetVersion": "R115_SHARED_SCOPE1",
+    "targetCore": "95dd77f5e5a15ceb5d5afa752545a8bd6483ab95bf2fa466265fd294e1eb4039",
+    "changedCodeFiles": 3,
+    "forumChanges": false,
+    "databaseScope": "none",
+    "namespace": "core511-4698e897914580f4",
+    "acceptance": "pending",
+    "deployed": false
+  },
+  "live": false,
+  "accounts": "signed fixture",
+  "realRuntimeEntry": true,
+  "realChannels": 8,
+  "realms": [
+    {
+      "realm": "r1",
+      "health": {
+        "ok": true,
+        "runtime": "vds-node-sqlite",
+        "loadlabProtocol": 1,
+        "releaseVersion": "511",
+        "updateVersion": "R102_CONTENT",
+        "adminHotfix": "R102_ADMIN1",
+        "rankingHotfix": "R102_RANK1",
+        "entryHotfix": "R102_ENTRY1",
+        "championLabelHotfix": "R102_LABEL1",
+        "autoIpLimit": "R102_AUTO_IP1",
+        "mobileHud": "R102_HUD_SLIM1",
+        "realmLoad": "R102_LOAD1",
+        "additionsHotfix": "R102_COMPLETE3",
+        "skillVisuals": "R103_SKILLS1",
+        "browserCompatibility": "R103_ABORT1",
+        "readerBoot": "R104_BOOT1",
+        "connectionRecovery": "R105_TOWER2",
+        "performanceReview": "R105_PERF1",
+        "captchaWorker": "R106_CAPTCHA1",
+        "populationStability": "R107_POPULATION1",
+        "latencyRepair": "R109_LATENCY2",
+        "realtimeHandoff": "R110_HANDOFF1",
+        "combatContinuity": "R111_COMBAT1",
+        "runtimeFlow": "R112_FLOW1",
+        "engineRework": "R113_ENGINE1",
+        "engineReadyR113": true,
+        "runeForum": "R114_RUNE_FORUM1",
+        "sharedScope": "R115_SHARED_SCOPE1",
+        "autoSession": "R103_AUTO_SESSION1",
+        "mobileChat": "R103_CHAT_ANCHOR2",
+        "academyPrereg": "R104_AKADEMI4",
+        "durable": true,
+        "protocol": "coreoflife-kernel-v1",
+        "startupId": "682943f6-2606-4933-86e0-ebd977b039b5",
+        "checkpointR79": {
+          "ready": true,
+          "fallback": null,
+          "running": false,
+          "pendingPages": 0,
+          "retryR80": {
+            "state": "ready",
+            "attempts": 0,
+            "consecutiveAttempts": 0,
+            "maxAttempts": 5,
+            "nextRetryAtMs": null,
+            "recoveries": 0,
+            "lastFallback": null,
+            "lastRecoveredAtMs": null,
+            "retryAllowed": false
+          },
+          "recoveryProbe": {
+            "active": false,
+            "attempts": 0,
+            "healthyPasses": 0,
+            "requiredHealthyPasses": 2,
+            "nextProbeAtMs": null
+          },
+          "sqliteVersion": "3.53.4",
+          "nodeVersion": "v22.23.4"
+        },
+        "runtimeDiagnosticsR80": {
+          "protocol": "runtime-diagnostics-r80-v1",
+          "available": true,
+          "measuredAtMs": 1794594150610,
+          "scope": "server-process-and-durable-write-wait-not-player-ping",
+          "main": {
+            "status": "unavailable",
+            "sampleSeconds": 2,
+            "sampledAtMs": null,
+            "eventLoopBusyPercent": null,
+            "eventLoopDelayMs": null,
+            "cpu": {
+              "scope": "process-all-threads-one-core-is-100-percent",
+              "windowSeconds": 300,
+              "resolutionPercentPoints": 10,
+              "sampleCount": 0,
+              "meanPercent": null,
+              "maxPercent": null
+            }
+          },
+          "writerLane": {
+            "protocol": "single-writer-lane-v1",
+            "externalBusy": false,
+            "externalAgeMs": null,
+            "queuedWrites": 0,
+            "queuedExternal": 0,
+            "oldestQueuedAgeMs": null,
+            "nativeWrites": 0,
+            "completedExternal": 4,
+            "maxExternalMs": 857.97
+          },
+          "walSync": {
+            "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+            "ready": true,
+            "fallback": false,
+            "running": false,
+            "queuedForNextFlush": 0,
+            "pumpedCallsTotal": 24,
+            "syncs": 24,
+            "meanMs": 1.45,
+            "maxMs": 6.01,
+            "totalMs": 35,
+            "errors": 0,
+            "reopened": 0
+          },
+          "mainCommits": {
+            "scope": "main-connection-SQLite-COMMIT-wall-time",
+            "slowCommits": 0,
+            "lastCommitMs": 0.25,
+            "maxCommitMs": 0.48,
+            "lastSlowAtMs": null
+          },
+          "rewardWorker": {
+            "scope": "completed-worker-jobs-not-current-job-latency",
+            "pending": false,
+            "jobs": 0,
+            "fallbacks": 0,
+            "replays": 0,
+            "rollbacks": 0,
+            "restarts": 0,
+            "maxWorkerMs": 0,
+            "maxPreflightMs": 0,
+            "maxReadyWaitMs": 856.77
+          }
+        },
+        "realm": {
+          "realmId": "r1",
+          "dbIdentity": "27907cc8-d896-464c-9c62-4b3576cd3ba3",
+          "protocol": "coreoflife-kernel-v1",
+          "ready": true,
+          "sampledAtMs": 1794594150610,
+          "channelCapacity": 25,
+          "channels": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "channelProcesses": {
+          "enabled": true,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 25
+            }
+          ]
+        },
+        "kernel511": {
+          "worldReady": true,
+          "readerReady": true,
+          "realmReady": true,
+          "ready": true,
+          "towerReady": true,
+          "adventureReady": true,
+          "guildReaderReady": true
+        }
+      },
+      "ingress": {
+        "ok": true,
+        "appReady": true,
+        "protocol": "col-fullsite-v1",
+        "releaseId": "CORE511",
+        "status": "active"
+      }
+    },
+    {
+      "realm": "r2",
+      "health": {
+        "ok": true,
+        "runtime": "vds-node-sqlite",
+        "loadlabProtocol": 1,
+        "releaseVersion": "511",
+        "updateVersion": "R102_CONTENT",
+        "adminHotfix": "R102_ADMIN1",
+        "rankingHotfix": "R102_RANK1",
+        "entryHotfix": "R102_ENTRY1",
+        "championLabelHotfix": "R102_LABEL1",
+        "autoIpLimit": "R102_AUTO_IP1",
+        "mobileHud": "R102_HUD_SLIM1",
+        "realmLoad": "R102_LOAD1",
+        "additionsHotfix": "R102_COMPLETE3",
+        "skillVisuals": "R103_SKILLS1",
+        "browserCompatibility": "R103_ABORT1",
+        "readerBoot": "R104_BOOT1",
+        "connectionRecovery": "R105_TOWER2",
+        "performanceReview": "R105_PERF1",
+        "captchaWorker": "R106_CAPTCHA1",
+        "populationStability": "R107_POPULATION1",
+        "latencyRepair": "R109_LATENCY2",
+        "realtimeHandoff": "R110_HANDOFF1",
+        "combatContinuity": "R111_COMBAT1",
+        "runtimeFlow": "R112_FLOW1",
+        "engineRework": "R113_ENGINE1",
+        "engineReadyR113": true,
+        "runeForum": "R114_RUNE_FORUM1",
+        "sharedScope": "R115_SHARED_SCOPE1",
+        "autoSession": "R103_AUTO_SESSION1",
+        "mobileChat": "R103_CHAT_ANCHOR2",
+        "academyPrereg": "R104_AKADEMI4",
+        "durable": true,
+        "protocol": "coreoflife-kernel-v1",
+        "startupId": "b8a63155-6840-4b83-a041-ef366838492d",
+        "checkpointR79": {
+          "ready": true,
+          "fallback": null,
+          "running": false,
+          "pendingPages": 0,
+          "retryR80": {
+            "state": "ready",
+            "attempts": 0,
+            "consecutiveAttempts": 0,
+            "maxAttempts": 5,
+            "nextRetryAtMs": null,
+            "recoveries": 0,
+            "lastFallback": null,
+            "lastRecoveredAtMs": null,
+            "retryAllowed": false
+          },
+          "recoveryProbe": {
+            "active": false,
+            "attempts": 0,
+            "healthyPasses": 0,
+            "requiredHealthyPasses": 2,
+            "nextProbeAtMs": null
+          },
+          "sqliteVersion": "3.53.4",
+          "nodeVersion": "v22.23.4"
+        },
+        "runtimeDiagnosticsR80": {
+          "protocol": "runtime-diagnostics-r80-v1",
+          "available": true,
+          "measuredAtMs": 1794594151604,
+          "scope": "server-process-and-durable-write-wait-not-player-ping",
+          "main": {
+            "status": "unavailable",
+            "sampleSeconds": 2,
+            "sampledAtMs": null,
+            "eventLoopBusyPercent": null,
+            "eventLoopDelayMs": null,
+            "cpu": {
+              "scope": "process-all-threads-one-core-is-100-percent",
+              "windowSeconds": 300,
+              "resolutionPercentPoints": 10,
+              "sampleCount": 0,
+              "meanPercent": null,
+              "maxPercent": null
+            }
+          },
+          "writerLane": {
+            "protocol": "single-writer-lane-v1",
+            "externalBusy": false,
+            "externalAgeMs": null,
+            "queuedWrites": 0,
+            "queuedExternal": 0,
+            "oldestQueuedAgeMs": null,
+            "nativeWrites": 0,
+            "completedExternal": 4,
+            "maxExternalMs": 902.13
+          },
+          "walSync": {
+            "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
+            "ready": true,
+            "fallback": false,
+            "running": false,
+            "queuedForNextFlush": 0,
+            "pumpedCallsTotal": 24,
+            "syncs": 24,
+            "meanMs": 0.45,
+            "maxMs": 2.89,
+            "totalMs": 11,
+            "errors": 0,
+            "reopened": 0
+          },
+          "mainCommits": {
+            "scope": "main-connection-SQLite-COMMIT-wall-time",
+            "slowCommits": 0,
+            "lastCommitMs": 0.09,
+            "maxCommitMs": 0.76,
+            "lastSlowAtMs": null
+          },
+          "rewardWorker": {
+            "scope": "completed-worker-jobs-not-current-job-latency",
+            "pending": false,
+            "jobs": 0,
+            "fallbacks": 0,
+            "replays": 0,
+            "rollbacks": 0,
+            "restarts": 0,
+            "maxWorkerMs": 0,
+            "maxPreflightMs": 0,
+            "maxReadyWaitMs": 899.79
+          }
+        },
+        "realm": {
+          "realmId": "r2",
+          "dbIdentity": "d57cd742-8a77-413d-94cf-9b1d572ca3c5",
+          "protocol": "coreoflife-kernel-v1",
+          "ready": true,
+          "sampledAtMs": 1794594151605,
+          "channelCapacity": 10,
+          "channels": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "channelProcesses": {
+          "enabled": true,
+          "channels": [
+            {
+              "channel": 1,
+              "ready": true,
+              "online": 0,
+              "capacity": 10
+            },
+            {
+              "channel": 2,
+              "ready": true,
+              "online": 0,
+              "capacity": 10
+            },
+            {
+              "channel": 3,
+              "ready": true,
+              "online": 0,
+              "capacity": 10
+            },
+            {
+              "channel": 4,
+              "ready": true,
+              "online": 0,
+              "capacity": 10
+            }
+          ]
+        },
+        "kernel511": {
+          "worldReady": true,
+          "readerReady": true,
+          "realmReady": true,
+          "ready": true,
+          "towerReady": true,
+          "adventureReady": true,
+          "guildReaderReady": true
+        }
+      },
+      "ingress": {
+        "ok": true,
+        "appReady": true,
+        "protocol": "col-fullsite-v1",
+        "releaseId": "CORE511",
+        "status": "active"
+      }
+    }
+  ],
+  "cleanShutdown": true
+}

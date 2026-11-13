@@ -1,0 +1,144 @@
+{
+  "release": "/tmp/r115-installed-1d20f6vc/release",
+  "overlay": [
+    "core511-source/scripts/core511/engine-health-r113.mjs",
+    "core511-source/scripts/core511/reward-actor-scope-r85.mjs",
+    "core511-source/scripts/core511/shared-bridge-partitions-r113.mjs",
+    "core511-source/scripts/delivery511/install-operations.mjs"
+  ],
+  "realRuntimeEntry": true,
+  "results": [
+    {
+      "realm": "r1",
+      "handoff": true,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 4,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 2,
+          "openMs": 3,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 3,
+          "openMs": 2,
+          "firstReplyMs": 3,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 4,
+          "openMs": 3,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 34
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 153
+      }
+    },
+    {
+      "realm": "r1",
+      "handoff": false,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 10,
+          "firstReplyMs": 12,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 2,
+          "openMs": 4,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 3,
+          "openMs": 5,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 4,
+          "openMs": 5,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": false
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 58
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 202
+      }
+    },
+    {
+      "realm": "r2",
+      "handoff": true,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 5,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 2,
+          "openMs": 4,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 3,
+          "openMs": 3,
+          "firstReplyMs": 4,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 4,
+          "openMs": 6,
+          "firstReplyMs": 10,
+          "code": 1008,
+          "ownerIsChannel": true
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 42
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 197
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "release": "/tmp/r115-installed-1d20f6vc/release",
+  "base": "R115 ZIP applied by its own installer to an installed R114_RUNE_FORUM1 fixture",
+  "package": {
+    "file": "artifacts/R115_SHARED_SCOPE_a668b021b2e3.zip",
+    "bytes": 107743,
+    "sha256": "791858ebddc240c5330e663b569982305fb5acb0c8645adde77e86ed1a6603ea",
+    "sourceVersion": "R114_RUNE_FORUM1",
+    "sourceCore": "5839b7a3fb0f0f6ba1e1656333cc149ea4469816a641a7c25d1a5f5105e3d342",
+    "targetVersion": "R115_SHARED_SCOPE1",
+    "targetCore": "95dd77f5e5a15ceb5d5afa752545a8bd6483ab95bf2fa466265fd294e1eb4039",
+    "changedCodeFiles": 3,
+    "forumChanges": false,
+    "databaseScope": "none",
+    "namespace": "core511-4698e897914580f4",
+    "acceptance": "pending",
+    "deployed": false
+  },
+  "installedVersion": "R115_SHARED_SCOPE1",
+  "targetCore": "95dd77f5e5a15ceb5d5afa752545a8bd6483ab95bf2fa466265fd294e1eb4039",
+  "overlay": [
+    {
+      "path": "core511-source/scripts/core511/engine-health-r113.mjs",
+      "sha256": "8b7d9d33b6b275b9608720643dc6e4eb1063f4d80bef4f1090d659eb60c3dd0c"
+    },
+    {
+      "path": "core511-source/scripts/core511/reward-actor-scope-r85.mjs",
+      "sha256": "ea7079a6025e406b60d59ad0830a749c9627864f20e109f75ce207ad40af64c0"
+    },
+    {
+      "path": "core511-source/scripts/core511/shared-bridge-partitions-r113.mjs",
+      "sha256": "a3a4808ddc360bee3f5bd295825fdd4d19ee715ccaf1ecf0834d64da2480e1bf"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/install-operations.mjs",
+      "sha256": "5a21a810bb0e8eea59930c4150dd1586ad80bf04ba2736add8c6c2e84743e0d9"
+    }
+  ]
+}

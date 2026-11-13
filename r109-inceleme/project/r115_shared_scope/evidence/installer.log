@@ -1,0 +1,23 @@
+test_apply_and_rollback_preserve_progress_client_site_and_forum (__main__.Installation.test_apply_and_rollback_preserve_progress_client_site_and_forum) ... Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R115 TAMAMLANDI. Efsane ve Akademi saldırı kapsamı düzeltmesi doğrulandı; sekiz kanal hazır. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_atomic_writer_honors_strict_root_umask (__main__.Installation.test_atomic_writer_honors_strict_root_umask) ... Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R115 TAMAMLANDI. Efsane ve Akademi saldırı kapsamı düzeltmesi doğrulandı; sekiz kanal hazır. Bakım ayarın korundu.
+ok
+test_exact_r114_source_and_three_code_files_only (__main__.Installation.test_exact_r114_source_and_three_code_files_only) ... ok
+test_failed_health_returns_to_exact_r114_without_reverting_progress (__main__.Installation.test_failed_health_returns_to_exact_r114_without_reverting_progress) ... Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_failure_after_code_write_recovers_both_realms (__main__.Installation.test_failure_after_code_write_recovers_both_realms) ... Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected interruption after code
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_modified_source_or_wrong_version_stops_before_writes (__main__.Installation.test_modified_source_or_wrong_version_stops_before_writes) ... ok
+test_readiness_requires_new_marker_in_both_realms_and_all_channels (__main__.Installation.test_readiness_requires_new_marker_in_both_realms_and_all_channels) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 12.143s
+
+OK

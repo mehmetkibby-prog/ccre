@@ -1,0 +1,35 @@
+{
+  "source": "user-provided journal screenshot, not full journal",
+  "installedVersion": "R114_RUNE_FORUM1",
+  "logAt": "2026-11-13T17:48:03Z",
+  "reason": "shared_partition_actor_changed",
+  "requestMethod": "shared_prepare",
+  "origin": "shared_combat_failure",
+  "signals": [
+    {
+      "channel": 1,
+      "signal": "SIGKILL"
+    },
+    {
+      "channel": 2,
+      "signal": "SIGKILL"
+    },
+    {
+      "channel": 3,
+      "signal": "SIGKILL"
+    },
+    {
+      "channel": 4,
+      "signal": "SIGKILL"
+    },
+    {
+      "channel": 0,
+      "signal": "SIGKILL"
+    }
+  ],
+  "secondaryAt": "2026-11-13T17:48:09Z",
+  "secondaryReason": "global_world_busy",
+  "livePlayerCommandKnown": false,
+  "sameFailureReproduced": true,
+  "originalArchiveChanged": false
+}

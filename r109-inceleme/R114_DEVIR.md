@@ -37,3 +37,7 @@ sonucu değildir. Popülasyon testi yapılmadı; gerekirse yalnız 50 oyuncu.
 
 Çalışma öncesinden gelen r110/r112 günlükleri ve eski deney kanıtları kirliydi;
 R114 commit'lerine alınmadı, geri çevrilmedi veya silinmedi.
+
+Sonraki durum (13 Kasım): kullanıcı R114 kurulduğunu bildirdi ve Efsane sağlık
+yanıtı R114_RUNE_FORUM1 işaretini doğruladı. Sonraki lag incelemesi ve aday
+onarım `R115_DEVIR.md` içinde; R114 ZIP ve SHA256 aynen korunur.

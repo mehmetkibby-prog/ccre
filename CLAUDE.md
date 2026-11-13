@@ -62,3 +62,8 @@ yeniden üretilebilir bir bulgu çıkarmak olmalı. Canlı erişim bilgileri bu 
 `r109-inceleme/R114_DEVIR.md`. Salt okunur Efsane sağlığında R113_ENGINE1
 çalışıyor; R114 kurucusu tam son R113 kaynak kimliğini ister. Eski R110 kaynak
 notu bu kurucuya uygulanmaz. R114 burada canlıya kurulmadı.
+
+13 Kasım R115: kullanıcı ve salt okunur Efsane sağlığı R114 kurulumu doğruladı.
+Yeni devir `r109-inceleme/R115_DEVIR.md`; R115 kurucusu tam R114 kaynaklıdır.
+`shared_partition_actor_changed` hatası eski yerel katılımcıyla yeniden üretildi
+ve iki realm için kapsam hesabı düzeltildi. Eski ZIP kimliklerini değiştirmeyin.

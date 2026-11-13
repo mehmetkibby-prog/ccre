@@ -1,0 +1,38 @@
+[
+  {
+    "name": "regression-r2",
+    "exit": 0,
+    "seconds": 10.16,
+    "log": "regression-r2.log"
+  },
+  {
+    "name": "focused",
+    "exit": 0,
+    "seconds": 33.47,
+    "log": "focused.log"
+  },
+  {
+    "name": "native",
+    "exit": 0,
+    "seconds": 112.18,
+    "log": "native.log"
+  },
+  {
+    "name": "captcha",
+    "exit": 0,
+    "seconds": 92.0,
+    "log": "captcha.log"
+  },
+  {
+    "name": "r110",
+    "exit": 0,
+    "seconds": 82.86,
+    "log": "r110.log"
+  },
+  {
+    "name": "r113",
+    "exit": 0,
+    "seconds": 294.53,
+    "log": "r113.log"
+  }
+]

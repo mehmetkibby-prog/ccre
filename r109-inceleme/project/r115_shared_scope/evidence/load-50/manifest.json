@@ -1,0 +1,25 @@
+{
+  "trees": {
+    "R114": "/tmp/r114-installed-hylrx2li/release",
+    "R115": "/tmp/r115-installed-1d20f6vc/release"
+  },
+  "runtimeHashes": {
+    "R114": {
+      "shared-bridge-partitions-r113.mjs": "a951978b85bdaa259c5d5b7e8a44af3bac637a339c62ca876dae492722bfd09c",
+      "reward-actor-scope-r85.mjs": "37a1b984fbc99ef01247dd2aeeb7a4e9a6daae767e77fd10f47ba8544e5529f6",
+      "engine-health-r113.mjs": "2b8b0d785de25d4e96bceb203471b4b5a977d33cf138b3eb198ab5a8d1f41d3c"
+    },
+    "R115": {
+      "shared-bridge-partitions-r113.mjs": "a3a4808ddc360bee3f5bd295825fdd4d19ee715ccaf1ecf0834d64da2480e1bf",
+      "reward-actor-scope-r85.mjs": "ea7079a6025e406b60d59ad0830a749c9627864f20e109f75ce207ad40af64c0",
+      "engine-health-r113.mjs": "8b7d9d33b6b275b9608720643dc6e4eb1063f4d80bef4f1090d659eb60c3dd0c"
+    }
+  },
+  "players": 50,
+  "seconds": 60,
+  "cpuMax": "400000 100000",
+  "live": false,
+  "synthetic": true,
+  "trace": false,
+  "profile": false
+}

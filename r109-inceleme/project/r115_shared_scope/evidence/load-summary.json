@@ -1,0 +1,97 @@
+{
+  "R114": {
+    "runs": 3,
+    "functionalFailures": 0,
+    "globalRecoveries": 0,
+    "metrics": {
+      "tickP99Ms": {
+        "median": 28.143874000001233,
+        "worst": 48.14350200000263
+      },
+      "mainMaxPauseMs": {
+        "median": 71.434239,
+        "worst": 138.936319
+      },
+      "mainPausesOver50Ms": {
+        "median": 4,
+        "worst": 17
+      },
+      "mainElu": {
+        "median": 0.31673216108995517,
+        "worst": 0.35826281661442827
+      },
+      "mainMaxRssBytes": {
+        "median": 755605504,
+        "worst": 758169600
+      }
+    }
+  },
+  "R115": {
+    "runs": 3,
+    "functionalFailures": 0,
+    "globalRecoveries": 0,
+    "metrics": {
+      "tickP99Ms": {
+        "median": 21.224876000000222,
+        "worst": 23.981481000002532
+      },
+      "mainMaxPauseMs": {
+        "median": 97.583103,
+        "worst": 100.532223
+      },
+      "mainPausesOver50Ms": {
+        "median": 4,
+        "worst": 4
+      },
+      "mainElu": {
+        "median": 0.3164026635285869,
+        "worst": 0.31861201826729724
+      },
+      "mainMaxRssBytes": {
+        "median": 754245632,
+        "worst": 779743232
+      }
+    }
+  },
+  "history": {
+    "players": 50,
+    "globalRecoveries": 0,
+    "sharedAcquires": 1089,
+    "summary": {
+      "tickP95Ms": 10.37860200000432,
+      "tickP99Ms": 24.13572600000043,
+      "maxTickMs": 64.79134599999816,
+      "mainMaxPauseMs": 112.066559,
+      "mainPausesOver50Ms": 3,
+      "channelPausesOver50Ms": 7,
+      "maxChannelPauseMs": 73.007103,
+      "mainElu": 0.3097159515644661,
+      "mainMaxRssBytes": 717451264,
+      "resources": {
+        "cpuBudget": 4,
+        "totalCpuFraction": 0.32184092128381475,
+        "maxRssBytes": 1589784576
+      }
+    },
+    "deathDelivery": {
+      "count": 188,
+      "p50Ms": 112.93357800000376,
+      "p95Ms": 283.66823999999906,
+      "p99Ms": 487.41999900000155,
+      "maxMs": 650.8917030000011,
+      "over50": 176,
+      "over200": 33,
+      "over1000": 0
+    }
+  },
+  "scope": {
+    "players": 50,
+    "cpuQuota": 4,
+    "syntheticDatabase": true,
+    "live": false,
+    "causalPerformanceImprovementProven": false,
+    "zeroLagAchieved": false,
+    "p99LessThan30MixedR115": true,
+    "atMostOneMainPauseOver50EveryRun": false
+  }
+}
