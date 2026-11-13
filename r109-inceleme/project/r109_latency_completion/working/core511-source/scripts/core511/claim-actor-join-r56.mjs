@@ -16,7 +16,8 @@ import {compactJoinedAckR57} from './joined-ack-r57.mjs';
 
 // Native claims, ordinary potions or solo owned ground collects, journals and the receipt
 // share the existing transaction/fsync. The established journal wire and ACK
-// are reused; potion never moves to the separate reward worker.
+// are reused. R113 may execute this complete journal/retaliation/potion unit
+// in the sole persistence worker; validation order and atomicity are identical.
 export function createJoinedClaimActorsR56(authority){
  const checkpoint=createActorCheckpointHandler();
  return (sql,payload,context)=>{

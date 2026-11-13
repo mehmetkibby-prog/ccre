@@ -68,7 +68,15 @@ export class RewardWorkerR533 {
    }
    demand(w.ports.guard(db,request.payload,context,request.operation)===true,'game_writer_security');
    if(dungeonWriteR113(request)){for(const id of request.payload.actors)w.authority.assertSimulated(db,peer,id,request.payload.epochs?.[id],{allowDraining:true});}
-   else{guardDeathBatchActorsR57(db,request.payload,context,w.ports.guard);assertNativeWriteResources(db,request.payload,context,{authority:w.authority,shared:w.sharedCombat});assertSettlementResources(db,request.payload,context);}
+   else{
+    guardDeathBatchActorsR57(db,request.payload,context,w.ports.guard);assertNativeWriteResources(db,request.payload,context,{authority:w.authority,shared:w.sharedCombat});
+    // Match createActionWriterHandler's ordering. A joined potion first CASes
+    // its journal, then validates the resulting retaliation resources INSIDE
+    // the worker transaction. Preflighting stale SQL retaliation here rejects
+    // hits that the channel has already settled. The native join still checks
+    // every due attacker before any potion effect and before COMMIT.
+    if(!(request.payload.claimActorsR56&&request.payload.input?.action==='use_potion'))assertSettlementResources(db,request.payload,context);
+   }
    stamps=[...w.presence.rows.values()];envelope=this.envelope(peer,request,context,stamps);throw marker;
   },atomic:work=>this.lane.run(async()=>{
    const started=performance.now();let value,delegated=false;

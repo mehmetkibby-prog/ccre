@@ -17,8 +17,18 @@ for(const area of ['forest','black','rune_v2'])test(area+': native claim and pot
  const s=await setup(t,{shared:true,localCombat:{hp:1,area},prepare:f=>createAdventureSchema(f.sql)}),{f,writer,core,world,http,connect,faults}=s;
  await world.stopJobs();const ticket=await http('character',{channel:4});assert.equal(ticket.status,200);const live=await connect(ticket);
  await core.permanentPlayers([f.id],()=>f.sql.prepare('UPDATE players SET area=?,x=2700,y=2025,hp=100,max_hp=100000,potions=4,xp=0,level=40,attack_one_at=0,attack_two_at=0,attack_three_at=0,attack_four_at=0,combat_lock_until_ms=0,last_seen=? WHERE id=?').run(area,Math.floor(f.clock()/1000),f.id));
- const original=writer.command.bind(writer),records=[];
- writer.command=async(peer,q)=>{const ack=await original(peer,q);if(['attack','native_action'].includes(q.operation))records.push({peer,q,ack});return ack;};
+ const original=writer.command.bind(writer),records=[];let staleEncounter=false;
+ writer.command=async(peer,q)=>{
+  if(staleEncounter&&q.payload.input?.action==='use_potion'){
+   staleEncounter=false;assert(q.payload.claimActorsR56,'exercise the actual joined journal');
+   await core.database.atomic(sql=>{
+    const now=q.payload.receivedAtMs,mid='golge-r113-stale',entry={monster_id:mid,spawn_round:1,next_hit_at_ms:now-1,last_skill_at_ms:now-2000};
+    sql.prepare('INSERT INTO monsters(id,name,area,channel,x,y,hp,max_hp,spawn_round) VALUES(?,?,?,?,?,?,?,?,?)').run(mid,'Stale journal fixture',area,4,2700,2025,100,100,1);
+    sql.prepare('INSERT OR REPLACE INTO pve_engagements(player_id,monster_id,spawn_round,next_hit_at_ms,last_skill_at_ms,expires_at_ms,hit_sequence,updated_at_ms,attackers489) VALUES(?,?,?,?,?,?,?,?,?)').run(f.id,mid,1,now-1,now-2000,now+8000,0,now,JSON.stringify({[mid]:entry}));
+   });
+  }
+  const ack=await original(peer,q);if(['attack','native_action'].includes(q.operation))records.push({peer,q,ack});return ack;
+ };
  let sequence=0;
  async function send(payload){
   const start=records.length;live.ws.send(JSON.stringify({type:'input',sequence:++sequence,payload}));
@@ -43,5 +53,13 @@ for(const area of ['forest','black','rune_v2'])test(area+': native claim and pot
   }
   assert.deepEqual(await original(peer,q),expected);assert.deepEqual(f.sql.prepare('SELECT hp,potions,xp,gems FROM players WHERE id=?').get(f.id),after);
   assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM kernel511_channel_receipts WHERE operation_id=?').get(q.operationId).n,1);
+ }
+ if(area==='forest'){
+  const before=f.sql.prepare('SELECT hp,potions FROM players WHERE id=?').get(f.id);staleEncounter=true;
+  const {ack}=await send({action:'use_potion'});
+  assert.equal(ack.result.result.status,409,'stale journal must be a safe native CAS rejection, never an unknown outcome');
+  assert.equal(ack.result.result.body.not_executed,true);
+  assert.deepEqual(f.sql.prepare('SELECT hp,potions FROM players WHERE id=?').get(f.id),before);
+  assert.equal(faults.length,0);
  }
 });
