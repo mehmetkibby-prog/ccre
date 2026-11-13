@@ -1,0 +1,173 @@
+{
+  "release": "/tmp/r112-installed-vnh4py7s/release",
+  "overlay": [
+    "core511-source/scripts/core511/actor-read-wire-r112.mjs",
+    "core511-source/scripts/core511/attack-commit-r53.mjs",
+    "core511-source/scripts/core511/bounded-read-queue.mjs",
+    "core511-source/scripts/core511/combat-continuation-r57.mjs",
+    "core511-source/scripts/core511/command-failure-scope.mjs",
+    "core511-source/scripts/core511/coordinator.mjs",
+    "core511-source/scripts/core511/death-latency-r82.mjs",
+    "core511-source/scripts/core511/fixed-loop.mjs",
+    "core511-source/scripts/core511/generated/native-http-composition-proof.json",
+    "core511-source/scripts/core511/ipc-replay-r111.mjs",
+    "core511-source/scripts/core511/load-measurements.mjs",
+    "core511-source/scripts/core511/load-window.mjs",
+    "core511-source/scripts/core511/native-http-action.mjs",
+    "core511-source/scripts/core511/native-http-bindings.mjs",
+    "core511-source/scripts/core511/patch-native-social.mjs",
+    "core511-source/scripts/core511/read-worker.mjs",
+    "core511-source/scripts/core511/reliable-stream.mjs",
+    "core511-source/scripts/core511/reward-actor-scope-r85.mjs",
+    "core511-source/scripts/core511/reward-worker-r533.mjs",
+    "core511-source/scripts/core511/reward-worker-runtime-r533.mjs",
+    "core511-source/scripts/core511/runtime-acceptance.mjs",
+    "core511-source/scripts/core511/shared-claim-rejection-r85.mjs",
+    "core511-source/scripts/core511/shared-combat-bridge.mjs",
+    "core511-source/scripts/core511/shared-combat-channel.mjs",
+    "core511-source/scripts/core511/shared-combat-owner.mjs",
+    "core511-source/scripts/core511/slow-death-r111.mjs",
+    "core511-source/scripts/core511/tests/actor-read-pool-r112.test.mjs",
+    "core511-source/scripts/core511/tests/load-measurement-process.test.mjs",
+    "core511-source/scripts/core511/tests/process-cold-world.test.mjs",
+    "core511-source/scripts/core511/tests/shared-refresh-release.test.mjs",
+    "core511-source/scripts/core511/tests/terminal-write-barrier.test.mjs",
+    "http-runtime/dist-vds/server/index.js",
+    "core511-source/scripts/delivery511/install-operations.mjs"
+  ],
+  "realRuntimeEntry": true,
+  "results": [
+    {
+      "realm": "r1",
+      "handoff": true,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 6,
+          "firstReplyMs": 9,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 2,
+          "openMs": 3,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 3,
+          "openMs": 3,
+          "firstReplyMs": 4,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 4,
+          "openMs": 6,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": true
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 35
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 146
+      }
+    },
+    {
+      "realm": "r1",
+      "handoff": false,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 7,
+          "firstReplyMs": 9,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 2,
+          "openMs": 5,
+          "firstReplyMs": 7,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 3,
+          "openMs": 8,
+          "firstReplyMs": 10,
+          "code": 1008,
+          "ownerIsChannel": false
+        },
+        {
+          "channel": 4,
+          "openMs": 4,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": false
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 43
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 159
+      }
+    },
+    {
+      "realm": "r2",
+      "handoff": true,
+      "connections": [
+        {
+          "channel": 1,
+          "openMs": 4,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 2,
+          "openMs": 3,
+          "firstReplyMs": 5,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 3,
+          "openMs": 9,
+          "firstReplyMs": 10,
+          "code": 1008,
+          "ownerIsChannel": true
+        },
+        {
+          "channel": 4,
+          "openMs": 3,
+          "firstReplyMs": 4,
+          "code": 1008,
+          "ownerIsChannel": true
+        }
+      ],
+      "burst": {
+        "sockets": 24,
+        "opened": 24,
+        "refused": [],
+        "maxFirstReplyMs": 24
+      },
+      "shutdown": {
+        "code": 0,
+        "ms": 205
+      }
+    }
+  ]
+}
