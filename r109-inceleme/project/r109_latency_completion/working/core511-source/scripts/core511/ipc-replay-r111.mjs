@@ -36,7 +36,7 @@ export class IpcReplay {
   const fingerprint=JSON.stringify([method,payload]),old=this.rows.get(serial);
   if(old){
    demand(old.fingerprint===fingerprint,'ipc_request_id_reused');
-   if(old.wire){this.storage.replayed++;let frame=JSON.parse(old.wire.toString('utf8'));if(Object.hasOwn(frame,REPLY_WIRE_MARKER_R57))frame=decodeReplyWireR57(frame).frame;if(Object.hasOwn(frame,COMPACT_COMBAT_MARKER_R52))frame=decodeCompactCombatReplyR52(frame);return Promise.resolve(frame.value);}
+   if(old.wire){this.storage.replayed++;let frame=JSON.parse(old.wire.toString('utf8')),wireBytes=old.wire.length;if(Object.hasOwn(frame,REPLY_WIRE_MARKER_R57)){const decoded=decodeReplyWireR57(frame);frame=decoded.frame;wireBytes=decoded.wireBytes;}if(Object.hasOwn(frame,COMPACT_COMBAT_MARKER_R52))frame=decodeCompactCombatReplyR52(frame,wireBytes);return Promise.resolve(frame.value);}
    if(old.bytes){this.storage.replayed++;return Promise.resolve(deserialize(old.bytes));}
    return old.promise;
   }

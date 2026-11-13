@@ -43,6 +43,13 @@ test('non-kernel stream and unrelated methods keep existing uncompressed replies
  const native=await pipe(t,()=>value);assert.deepEqual(await native.request('ping',{}),value);assert.equal(native.wire.compressed,0);
 });
 
+test('compressed compact monster rows replay after reconnect without dropping the expansion bound',async t=>{
+ const value={key:'operation:compact',result:{players:[{id:'p',data:'ö😀'.repeat(30000)}],monsters:Array.from({length:40},(_,i)=>({id:'m'+i,hp:0,spawn_round:1,channel:1,area:'forest'})),participants:[],events:[]}};let calls=0;
+ const f=await pipe(t,()=>{calls++;return value;});const id=f.client.requestPrefix+':1';
+ assert.deepEqual(await f.request('command',{}, {id}),value);f.client.socket.destroy();
+ assert.deepEqual(await f.request('command',{}, {id}),value);assert.equal(calls,1);
+});
+
 test('negotiated small reply serializes its value once; replies never share a mutable buffer',async t=>{
  let reads=0;
  const f=await pipe(t,(_peer,_method,payload)=>({get message(){reads++;return payload.text;}}));
