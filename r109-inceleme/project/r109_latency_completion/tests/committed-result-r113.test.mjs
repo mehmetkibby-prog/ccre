@@ -28,6 +28,7 @@ test('committed actor sections match the authoritative full snapshot after progr
   if(deleted){sql.prepare('DELETE FROM player_items WHERE player_id=?').run(id);sql.prepare('DELETE FROM dungeon_materials WHERE player_id=?').run(id);}
   const result=await s.f.database.atomic(()=>s.capture(['players','player_items','dungeon_materials']));
   assert(result.committedR113);const part=result.committedR113.actors[0];
+  assert.equal(Object.hasOwn(part.bundle,'profiles'),false);assert.equal(Object.hasOwn(part.bundle,'settings'),false);
   const fresh=await readActorWorldBundle(sql,[id,1,s.peer.incarnation,s.owner.epoch,0,result.committedR113.at,{account:part.bundle.player.account_id,chatAfterId:0,starterReward:null}],new ColdWorldReader(sql));
   for(const key of ['inventory','storageItems','stones','pets','dungeonMaterials','dungeonWings','drops','adventure511'])assert.deepEqual(wire(part.sections[key]),wire(fresh.projection.data[key]),key);
   const expected=fresh.projection.data.players.find(p=>p.id===id);
@@ -35,6 +36,11 @@ test('committed actor sections match the authoritative full snapshot after progr
   for(const key of ['player','combat','engagement','fishing','party','partyMembers','guildSkill','arena','arenaPlayers','dungeon','adventure','mounts'])assert.deepEqual(wire(part.bundle[key]??null),wire(fresh[key]??null),key);
   assert.equal(readCommitRevisionR113(sql,id),deleted?2:1);
  }
+});
+test('committed capture never reads the world-wide monster catalog',async t=>{
+ const s=await scene(t),original=s.sql.prepare;
+ s.sql.prepare=function(query){assert(!/^\s*SELECT \* FROM all_monster_combat_profiles\s*$/i.test(String(query)),'global catalog belongs to boot/configuration only');return original.call(this,query);};
+ try{const result=await s.f.database.atomic(()=>s.capture());assert(result.committedR113);}finally{s.sql.prepare=original;}
 });
 test('rollback restores both reward rows and result revision; unknown effects cannot be certified',async t=>{
  const s=await scene(t),before=s.sql.prepare('SELECT gems FROM players WHERE id=?').get(s.id).gems;

@@ -159,7 +159,7 @@ export class ReadWorker {
 // A single read transaction provides all admitted/refresh inputs at one WAL
 // snapshot. Ownership is checked inside it. The thread has query_only and an
 // OS read-only SQLite handle; no migration or account creation can occur here.
-export function readActorBundle(sql,params,{insideTransaction=false,cache=null}={}){
+export function readActorBundle(sql,params,{insideTransaction=false,cache=null,includeCatalogs=true}={}){
  demand(Array.isArray(params)&&params.length===6,'actor_bundle_parameters');
  const [actor,channel,incarnation,epoch,revision,nowMs]=params;
  demand(typeof actor==='string'&&[1,2,3,4].includes(channel)&&typeof incarnation==='string'&&Number.isSafeInteger(epoch)&&epoch>0&&Number.isSafeInteger(revision)&&revision>=0&&Number.isSafeInteger(nowMs)&&nowMs>=0,'actor_bundle_parameters');
@@ -172,7 +172,7 @@ export function readActorBundle(sql,params,{insideTransaction=false,cache=null}=
   demand(owner&&owner.channel===channel&&owner.incarnation===incarnation&&owner.epoch===epoch&&owner.state==='active','actor_bundle_owner_fenced');
   const player=sql.prepare('SELECT * FROM players WHERE id=?').get(actor);demand(player&&player.channel===channel,'actor_bundle_scope_changed');
   const readAll=query=>cache?cache.read(query,[],()=>sql.prepare(query).all()):sql.prepare(query).all();
-  const combat=readCombatBundle(sql,actor,{revision,nowMs}),world=sql.prepare('SELECT * FROM world_state WHERE id=1').get(),settings={...readAll('SELECT * FROM game_settings WHERE id=1')[0],...readAll('SELECT * FROM combat_settings WHERE id=1')[0]};
+  const combat=readCombatBundle(sql,actor,{revision,nowMs}),world=sql.prepare('SELECT * FROM world_state WHERE id=1').get(),settings=includeCatalogs?{...readAll('SELECT * FROM game_settings WHERE id=1')[0],...readAll('SELECT * FROM combat_settings WHERE id=1')[0]}:undefined;
   const party=sql.prepare('SELECT p.* FROM parties p JOIN party_members m ON m.party_id=p.id WHERE m.player_id=?').get(actor)??null;
   const arena=player.arena_match_id?sql.prepare('SELECT * FROM arena_matches WHERE id=?').get(player.arena_match_id)??null:null;
   const result={actor,revision,commitRevisionR113:readCommitRevisionR113(sql,actor),owner,player,castleGuild:readCastleGuild(sql,actor),adventure:readAdventureBundle(sql,player),combat,world,settings,engagement:sql.prepare('SELECT * FROM pve_engagements WHERE player_id=?').get(actor)??null,
@@ -180,7 +180,7 @@ export function readActorBundle(sql,params,{insideTransaction=false,cache=null}=
    party,partyMembers:party?sql.prepare('SELECT m.*,COALESCE((SELECT a.channel FROM kernel511_admissions a WHERE a.player_id=m.player_id),(SELECT s.channel FROM kernel511_simulations s WHERE s.player_id=m.player_id),0) AS live_channel511 FROM party_members m WHERE m.party_id=?').all(party.id):[],
    guildSkill:sql.prepare('SELECT s.* FROM guild_skills s JOIN guild_members m ON m.guild_id=s.guild_id WHERE m.player_id=?').get(actor)??null,
    arena,arenaPlayers:arena?sql.prepare('SELECT * FROM arena_match_players WHERE match_id=?').all(arena.id):[],
-   profiles:readAll('SELECT * FROM all_monster_combat_profiles'),dungeon:readDungeonAdmission(sql,[actor])};
+   profiles:includeCatalogs?readAll('SELECT * FROM all_monster_combat_profiles'):undefined,dungeon:readDungeonAdmission(sql,[actor])};
   if(mountEnabled()&&sql.prepare("SELECT 1 FROM sqlite_schema WHERE name='mount_profiles_r49'").get())result.mounts=readMountBundle(sql,actor,{now:nowMs});
   if(!insideTransaction)sql.exec('COMMIT');return result;
  }catch(error){if(!insideTransaction)sql.exec('ROLLBACK');throw error;}

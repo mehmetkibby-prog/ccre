@@ -1,0 +1,63 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794544220878,"backupName":"before-pearl-reset-1794544220878-2f033f81-5c09-4072-9486-9872d9f2e7a0.sqlite"}
+# Subtest: committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+ok 1 - committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+  ---
+  duration_ms: 2110.452235
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794544222766,"backupName":"before-pearl-reset-1794544222766-d9fc0f88-2e88-4065-b7d7-506035f63b77.sqlite"}
+# Subtest: committed capture never reads the world-wide monster catalog
+not ok 2 - committed capture never reads the world-wide monster catalog
+  ---
+  duration_ms: 1795.156557
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: 'global catalog belongs to boot/configuration only'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    DatabaseSync.prepare (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:42:32)
+    Object.prepare (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/retaliation-writer.mjs:20:65)
+    Object.prepareFrame (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/retaliation-rules.mjs:681:12)
+    readRetaliationFrame (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/retaliation-writer.mjs:38:38)
+    readCombatBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/combat-frames.mjs:21:128)
+    readActorBundle (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:175:16)
+    CommittedResultProducerR113.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/committed-result-r113.mjs:42:17)
+    Object.capture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:18:59)
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-result-r113.test.mjs:43:51
+    file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/guild-state.mjs:16:261
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794544224668,"backupName":"before-pearl-reset-1794544224668-41e27754-5faf-4cda-b769-2de40adfdade.sqlite"}
+# Subtest: rollback restores both reward rows and result revision; unknown effects cannot be certified
+ok 3 - rollback restores both reward rows and result revision; unknown effects cannot be certified
+  ---
+  duration_ms: 1872.860375
+  type: 'test'
+  ...
+# Subtest: consumer rejects a revision gap before changing any actor
+ok 4 - consumer rejects a revision gap before changing any actor
+  ---
+  duration_ms: 0.225891
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794544226441,"backupName":"before-pearl-reset-1794544226441-0a51280f-9cd6-4a6a-ad71-f6b3016fb745.sqlite"}
+# Subtest: large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards
+ok 5 - large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards
+  ---
+  duration_ms: 1821.335813
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8446.162209

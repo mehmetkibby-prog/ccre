@@ -39,7 +39,7 @@ export class CommittedResultProducerR113{
    if(!owner)continue; // Offline recipients retain their already-committed reward.
    const base=readCommitRevisionR113(sql,id);demand(Number.isSafeInteger(base),'committed_revision_schema_missing');
    const next=base+1;demand(Number.isSafeInteger(next),'committed_revision_overflow');
-   const bundle=readActorBundle(sql,[id,owner.channel,owner.incarnation,owner.epoch,0,this.now],{insideTransaction:true});
+   const bundle=readActorBundle(sql,[id,owner.channel,owner.incarnation,owner.epoch,0,this.now],{insideTransaction:true,includeCatalogs:false});
    const read=(query,params=[])=>prepareCached477(sql,query).all(...params);
    const sections=this.rules.readCommittedSectionsR113(read,bundle.player,this.now);
    const tool=sections.dungeonMaterials.some(m=>m.amount>0&&['zumrut_axe_r93','zumrut_pickaxe_r93'].includes(m.kind))?readZumrutToolR93(sql,id):'';
