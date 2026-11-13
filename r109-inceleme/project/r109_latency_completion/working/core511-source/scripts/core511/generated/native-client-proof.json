@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r113-5f9c544e240a4cab.js",
+  "name": "game-client-core511-r114-3a57abcac795f120.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -241,9 +241,9 @@
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r113-42f7db678ec34760.js",
+    "name": "auth-portal-core511-r114-e8621310b1cae69d.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "42f7db678ec34760d6c1fa8ac71f852d16c2f4746b40cb2fba9083e74b9e2bbb",
+    "patchedSha256": "e8621310b1cae69d818fb85967722fda6aecda9e3c3212f14a9997259836b3e2",
     "entryProof": {
       "edits": [
         {
@@ -281,7 +281,7 @@
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
   "bridgeSha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "5f9c544e240a4cab0d208cb831e859eafd7b0645358b359701e4a22ae661e91f",
+  "patchedSha256": "3a57abcac795f1208b507219aaf619045094c478d01b2d50a04c7935d3c204d2",
   "bridge": "core511-transport-r113-53abe09d240f2c5c.js",
   "edits": [
     {
@@ -5457,5 +5457,15 @@
       "portal": "auth-portal-core511-r105-eab63de9b642530e.js"
     },
     "orderedActions": 2
+  },
+  "r114Rune": {
+    "sourceGame": "game-client-core511-r113-5f9c544e240a4cab.js",
+    "sourceGameSha256": "5f9c544e240a4cab0d208cb831e859eafd7b0645358b359701e4a22ae661e91f",
+    "sourcePortal": "auth-portal-core511-r113-42f7db678ec34760.js",
+    "scope": [
+      "rune",
+      "rune_v2"
+    ],
+    "geometry": "rectangular world boundary; no interior or coastline collision"
   }
 }

@@ -1,0 +1,22 @@
+{
+  "changes": [
+    {
+      "file": "native510-bb3a6cc689c6/lib/runes.mjs",
+      "before": "6e00a81ae5f87551e2c85ba95cce99dd402957792323c29101f480a1526403ae",
+      "after": "8fe3ca9ac8faf92c51216e6f119de98d54a3e8812156b85bc682b2ab464cc9c4"
+    },
+    {
+      "file": "native510-bb3a6cc689c6/realtime-server/src/rune-map.mjs",
+      "before": "3d0f537861a9e203b9c8e5dee55a116720b6a8da4d43b747b4de2133c86fb2cc",
+      "after": "d1cc282ca7c3ec827dfced171cc30af0b0250567ebf18d37ea1da45ed0b2df62"
+    },
+    {
+      "file": "core511-source/scripts/core511/generated/reward-services.mjs",
+      "before": "a4be465bdc35291867ce3788b811bce241bd40da4b71c3793f7b49bd2ab86bf3",
+      "after": "32bd488204a4c0f8f325d8e563ace949dedce1acb3cedaa3c7350f9b0b28de45"
+    }
+  ],
+  "game": "game-client-core511-r114-3a57abcac795f120.js",
+  "portal": "auth-portal-core511-r114-e8621310b1cae69d.js",
+  "live": false
+}

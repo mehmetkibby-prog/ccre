@@ -17,8 +17,8 @@ export const isRuneKind=k=>typeof k==='string'&&Object.hasOwn(RUNE_TYPES,k);
 export function runeUpgradeCost(level){if(!Number.isSafeInteger(level)||level<1||!Number.isSafeInteger(level+2))throw Error('Rün seviyesi geçersiz.');return level+2;}
 export const runeBonusPercent=(level,step=.2)=>Math.round(level*step*1000000)/1000000;
 export function runeMonsterKey(monster){return monster?.area==='rune'?String(monster.id).match(/^rune-(tide|warden|sentinel|wraith)-c[1-3]-\d+$/)?.[1]??null:null;}
-export const RUNE_WALKABLE_POLYGON=[[1195,967],[2162,844],[2232,615],[3164,615],[3234,809],[4096,686],[4219,914],[4078,1125],[4781,1195],[4816,1494],[4500,1916],[4430,2514],[3938,2812],[3076,3076],[2900,3463],[2426,3463],[2250,3094],[1652,2760],[1301,2461],[1195,2004],[1125,1600],[1055,1248]].map(([x,y])=>[Math.round(x*.8),Math.round(y*.8)]);
-export const RUNE_OBSTACLES=[[[2039,1121],[2278,1058],[2584,1146],[2739,1287],[2591,1498],[2275,1568],[2039,1434]],[[3347,1870],[3561,1870],[3730,1986],[3544,2148],[3305,2116],[3206,2000]]].map(poly=>poly.map(([x,y])=>[Math.round(x*.8),Math.round(y*.8)]));
+export const RUNE_WALKABLE_POLYGON=[[0,0],[RUNE_WORLD.width,0],[RUNE_WORLD.width,RUNE_WORLD.height],[0,RUNE_WORLD.height]];
+export const RUNE_OBSTACLES=[];
 const inside=(x,y,poly)=>{let yes=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>y)!==(b[1]>y)&&x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0])yes=!yes;}return yes;};
 const edgeDistance=(x,y,a,b)=>{const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);};
 const runeEdges=[RUNE_WALKABLE_POLYGON,...RUNE_OBSTACLES].flatMap(poly=>poly.map((p,i)=>[p,poly[(i+1)%poly.length]]));
