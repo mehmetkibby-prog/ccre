@@ -19,6 +19,10 @@ for name in files:
   text=text.replace('t.after(async()=>{await target.walSync', 'installBagLimit(target.sqlite);t.after(async()=>{await target.walSync')
  if name=='dungeon-channel.test.mjs':
   text=text.replace('f.reset({area:', 'createTowerSchema(sql);createAdventureSchema(sql);f.reset({area:')
+  # The archived fixture manually drives ticks. Current bounded ticks may
+  # yield to I/O; wait for that logical tick before driving the next one, just
+  # as the production scheduler does. Keep all lease/ACK assertions intact.
+  text=text.replace('channel.kernel.tick();', 'await channel.kernel.tick();')
  if name.startswith('dungeon-'):
   text="import {installBagLimit} from "+repr(str(core/'bag-limit.mjs'))+";\nimport {createTowerSchema} from "+repr(str(core/'tower-config.mjs'))+";\nimport {createAdventureSchema} from "+repr(str(core/'adventure-schema.mjs'))+";\nimport {createContentSchemaR102} from "+repr(str(core/'content-config-r102.mjs'))+";\n"+text
  if name=='native-http-trade-storage.test.mjs':
