@@ -40,6 +40,19 @@ production zero-lag guarantee; these limitations do not stop local implementatio
 
 ## Current work
 
-Branch created. Inspecting writer result, resident state, ownership and projection
-contracts before implementing the normal-kill vertical slice. No R113 runtime
-change or R113 performance result yet.
+Normal-kill vertical slice implemented. Durable revision + complete private
+replacement sections travel in the existing receipt-backed result. The native
+reward/RNG handler remains authoritative. Full cold reads recover version gaps
+and unknown effects. Initial scope: attack/PvP/retaliation/reward; extending all
+relevant paths and independent ownership remains outstanding.
+
+Checks: 3 focused committed-result tests pass (full snapshot parity including
+rank, gear and deletes; transaction rollback; revision-gap rejection). A real
+four-channel process test passes: ordinary death needs zero cold actor reads,
+resident XP matches SQL, retry has one receipt and no second reward.
+
+Fixture failures retained in validation/r113-engine: archived channel fixture
+lacked kadim_tower_settings; first process fixture lacked adventure_monsters.
+The new test uses explicit schema setup and character selection, and awaits the
+final killed event, not the already-existing speculative 202 response. No R113
+performance claim yet.

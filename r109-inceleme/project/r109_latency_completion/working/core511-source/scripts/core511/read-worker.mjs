@@ -1,3 +1,4 @@
+import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {realmLoadLabConfigR101} from './realm-loadlab-r101.mjs';
 import {encodeActorReadR112} from './actor-read-wire-r112.mjs';
 import {readCastleBoot,readCastleGuild} from './castle-service-r59.mjs';
@@ -172,7 +173,7 @@ export function readActorBundle(sql,params,{insideTransaction=false,cache=null}=
   const combat=readCombatBundle(sql,actor,{revision,nowMs}),world=sql.prepare('SELECT * FROM world_state WHERE id=1').get(),settings={...readAll('SELECT * FROM game_settings WHERE id=1')[0],...readAll('SELECT * FROM combat_settings WHERE id=1')[0]};
   const party=sql.prepare('SELECT p.* FROM parties p JOIN party_members m ON m.party_id=p.id WHERE m.player_id=?').get(actor)??null;
   const arena=player.arena_match_id?sql.prepare('SELECT * FROM arena_matches WHERE id=?').get(player.arena_match_id)??null:null;
-  const result={actor,revision,owner,player,castleGuild:readCastleGuild(sql,actor),adventure:readAdventureBundle(sql,player),combat,world,settings,engagement:sql.prepare('SELECT * FROM pve_engagements WHERE player_id=?').get(actor)??null,
+  const result={actor,revision,commitRevisionR113:readCommitRevisionR113(sql,actor),owner,player,castleGuild:readCastleGuild(sql,actor),adventure:readAdventureBundle(sql,player),combat,world,settings,engagement:sql.prepare('SELECT * FROM pve_engagements WHERE player_id=?').get(actor)??null,
    fishing:sql.prepare('SELECT * FROM fishing_sessions WHERE player_id=?').get(actor)??null,
    party,partyMembers:party?sql.prepare('SELECT m.*,COALESCE((SELECT a.channel FROM kernel511_admissions a WHERE a.player_id=m.player_id),(SELECT s.channel FROM kernel511_simulations s WHERE s.player_id=m.player_id),0) AS live_channel511 FROM party_members m WHERE m.party_id=?').all(party.id):[],
    guildSkill:sql.prepare('SELECT s.* FROM guild_skills s JOIN guild_members m ON m.guild_id=s.guild_id WHERE m.player_id=?').get(actor)??null,

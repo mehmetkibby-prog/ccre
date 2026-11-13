@@ -52,7 +52,7 @@ export class ResidentChannel {
  constructor({peer,initial,globals,requestWriter,requestSystem=null,recoverWriter=null,loadActor,send,ports,wall=Date.now,onFatal=()=>{}}){
   for(const name of ['guard','scope','footprint','affectedAttack','affectedPvp','publish','project','modeAction','modeTick','recordSecurityEvent','hydrateMode','dropMode','drainMode'])demand(typeof ports?.[name]==='function','resident_channel_port_'+name);
   demand(typeof requestWriter==='function'&&typeof loadActor==='function'&&typeof send==='function'&&initial?.world,'resident_channel_dependencies');
-  Object.assign(this,{peer,loadActor,ports,wall,onFatal,globals});this.world={...initial.world};this.settings=initial.settings;this.owners=new Map();this.identities=new Map();this.fishing=new Map();this.membership=new ResidentMembership();this.parties=this.membership.parties;this.arenas=this.membership.arenas;this.teams=this.membership.teams;this.revision=0;
+  Object.assign(this,{peer,loadActor,ports,wall,onFatal,globals});this.world={...initial.world};this.settings=initial.settings;this.owners=new Map();this.identities=new Map();this.fishing=new Map();this.membership=new ResidentMembership();this.parties=this.membership.parties;this.arenas=this.membership.arenas;this.teams=this.membership.teams;this.revision=0;this.commitRevisionsR113=new Map();
   this.completedClaimHintsR56=new CompletedClaimHintsR56();
   this.state=new ResidentState(peer.channel);this.lanes=new ResourceLanes();this.view=new AggroMemory({channel:peer.channel,cycle:this.world.cycle,now:wall});
   this.presence=new ResidentPresence({owner:id=>this.owners.get(id),player:id=>this.view.player(id),setPlayer:row=>this.view.setPlayer(row),clock:wall,onSeen:(id,now)=>ports.presence?.(id,now)});
@@ -108,6 +108,7 @@ export class ResidentChannel {
  applyBundle(bundle){
   const owner=this.owners.get(bundle.player.id);demand(owner&&bundle.owner?.epoch===owner.epoch&&bundle.owner?.incarnation===this.peer.incarnation&&bundle.player.channel===this.peer.channel&&bundle.world.cycle===this.world.cycle,'resident_bundle_fenced');
   demand(Number.isSafeInteger(bundle.revision)&&bundle.revision===bundle.combat.revision,'resident_bundle_revision');this.revision=Math.max(this.revision,bundle.revision);
+  if(Number.isSafeInteger(bundle.commitRevisionR113))this.commitRevisionsR113.set(bundle.player.id,bundle.commitRevisionR113);
   this.view.setPlayer(this.presence.merge(bundle.player,owner.epoch));this.view.setEngagement(bundle.player.id,bundle.engagement);if(bundle.fishing)this.fishing.set(bundle.player.id,bundle.fishing);else this.fishing.delete(bundle.player.id);
   this.membership.hydrate(bundle);if(this.mounts.enabled)this.mounts.hydrate(bundle.player.id,bundle.mounts);
   // Actor snapshots may finish after another resident has damaged a room mob.
@@ -131,6 +132,7 @@ export class ResidentChannel {
  }
  async applyCommit(result,context){
   this.completedClaimHintsR56.record(this.world.cycle,result.completedClaimsR56);
+  if(this.ports.committedResultR113?.(result,context))return;
   if(context?.input?.action==='collect'&&this.ports.collectRefresh?.(result,context))return;
   const sectionRefresh=this.ports.actorSectionRefreshR52?.(result,context);if(sectionRefresh===true||(sectionRefresh&&typeof sectionRefresh.then==='function'&&await sectionRefresh))return;
   const changed=result.players??[result.player];demand(changed.every(p=>p&&typeof p.id==='string'),'resident_commit_actor');

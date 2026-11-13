@@ -66,6 +66,13 @@ export class WorldProjection {
   sub.marketRevision=marketRevision;if((previous?.data.zumrutR93?.equippedTool??'')!==(data.zumrutR93?.equippedTool??''))room.revision++;this.subscribers.set(id,sub);this.native.seedFriends487(id,friends);
   if(previous&&previous.room!==room)this.cleanup();return sub;
  }
+ commitPrivateR113(id,sections){
+  const sub=this.subscribers.get(id),{owner,...values}=sections;
+  demand(sub&&owner?.id===id&&sub.data.area===owner.area&&sub.data.channel===owner.channel,'committed_projection_scope');
+  sub.ownerRow=owner;sub.data={...sub.data,...values,players:sub.data.players.map(p=>p.id===id?owner:p)};
+  sub.cache=null;sub.privateOwnerCache=null;sub.revision++;
+  const row=publicWorldPlayer(owner);sub.room.staticPlayers.set(id,row);sub.room.revision++;
+ }
  refreshPotion(row){
   const sub=this.subscribers.get(row.id);if(!sub||sub.data.area!==row.area||sub.data.channel!==row.channel)return false;
   const owner={...sub.ownerRow};for(const key of POTION_REFRESH_FIELDS)if(Object.hasOwn(owner,key))owner[key]=row[key];

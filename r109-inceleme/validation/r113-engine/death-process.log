@@ -1,0 +1,38 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794542407202,"backupName":"before-pearl-reset-1794542407202-f5697840-1310-48ca-8d71-8a49dbe853cd.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:00:14.976Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":224831,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e893d9ef85e2c4a487db5b84"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:00:14.977Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":224841,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"00d666319dc1d9ace9818348"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:00:14.977Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":224847,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"784a76aad1d1ec36a9d3f9d5"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:00:14.977Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":224857,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fc6284b9a8c66a1066155cb6"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:00:15.005Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":224820,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"99afd3f17eec9e17b1b04694"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+not ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 9193.528913
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-death-process-r113.test.mjs:7:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"type":"action","status":202,"body":{"combatPending":true,"combatPhase":"pending","rewardPending":false,"xp":0,"groundDrops":0,"intentId":"r113-death","hits":[{"id":"golge-local-terminal511","spawnRound":17,"damage":27,"hp":1,"killed":false,"killPending":true}],"provisionalHits":[{"id":"golge-local-terminal511","spawnRound":17,"damage":27,"hp":0,"killPending":true}],"cycle":1,"channel":4,"area":"forest","serverAt":1794542414852,"nextAttackAtMs":1794542415502,"cooldownRemainingMs":650},"sequence":1}
+    
+    202 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 202
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-death-process-r113.test.mjs:18:87)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10156.428542

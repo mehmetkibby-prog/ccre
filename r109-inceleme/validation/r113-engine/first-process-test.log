@@ -1,0 +1,34 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794542362258,"backupName":"before-pearl-reset-1794542362258-1ece3052-6cb6-4e55-9329-02595ba65503.sqlite"}
+# Error: no such table: adventure_monsters
+#     at readChannelBoot (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:217:89)
+#     at SnapshotReadQueue.readMessage [as read] (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:57:89)
+#     at async SnapshotReadQueue.drain (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/snapshot-read-queue.mjs:19:29)
+# {"event":"core511_recovery_cause","at":"2026-11-13T03:59:24.793Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":224733,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"8efb476462a18c3b5d0e5f53"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+not ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 4011.228573
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/committed-death-process-r113.test.mjs:6:1'
+  failureType: 'testCodeFailure'
+  error: 'ERR_SQLITE_ERROR'
+  code: 'ERR_SQLITE_ERROR'
+  stack: |-
+    kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    Worker.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/read-worker.mjs:110:130)
+    Worker.emit (node:events:519:28)
+    MessagePort.<anonymous> (node:internal/worker:270:53)
+    [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    MessagePort.<anonymous> (node:internal/per_context/messageport:23:28)
+    MessagePort.callbackTrampoline (node:internal/async_hooks:130:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5067.238751

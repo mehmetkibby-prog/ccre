@@ -27,9 +27,9 @@ export function extraPlayer(s,index,id='shared-player-'+index,{offline=false}={}
  return {id,http:async(action='ticket',body={})=>{const r=await core.http(new Request(f.origin+'/api/realtime/core511-'+action,{method:'POST',headers:{Origin:f.origin,Cookie:'__Host-yasam-session='+token+'; __Host-yasam-csrf='+csrf,'X-CSRF-Token':csrf,'X-Game-Instance':instance,'Content-Type':'application/json'},body:JSON.stringify({protocol:PROTOCOL,...body})}));return {status:r.status,...await r.json()};}};
 }
 
-export async function setup(t,{fresh=false,shared=false,nativeMechanics=shared,nativeWriter=shared,respawns=false,repairs=false,dragon=false,cleanup=false,rune=false,heartbeatRewards=false,sharedCombat=null,content=false,localCombat=null,stoneWave=null,readerQueries=new Map()}={}){
+export async function setup(t,{prepare=null,fresh=false,shared=false,nativeMechanics=shared,nativeWriter=shared,respawns=false,repairs=false,dragon=false,cleanup=false,rune=false,heartbeatRewards=false,sharedCombat=null,content=false,localCombat=null,stoneWave=null,readerQueries=new Map()}={}){
  const cleanups=[],f=await setupEntry({after:fn=>cleanups.push(fn)},{fresh,realTime:true}),faults=[];let writer,core;
- createTowerSchema(f.sql);
+ createTowerSchema(f.sql);if(prepare)await prepare(f);
  if(content){f.sql.prepare('UPDATE world_state SET layout_version=24 WHERE id=1').run();await bootstrapFourthChannel(f.f.database,{assertStopped:()=>writer===undefined});}
  // Full shared topology uses the production identity/resource policy. Smaller
  // non-world fixtures keep their explicitly scoped writer callbacks.

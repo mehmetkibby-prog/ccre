@@ -1074,4 +1074,21 @@ const membership = viewer?.party_id ? { party_id: viewer.party_id } : null;
 			settings
 		});
 }
-return {readColdWorld,readFriends487,arenaStatements,arenaPayloadFromResults,withRankPlayers};}
+// R113: authoritative, synchronous private sections. The transaction owner
+// binds read() to its existing SQLite connection. Empty arrays/null explicitly
+// replace removed inventory, materials, drops and wings; they are not omissions.
+function readCommittedSectionsR113(read,player,nowMs){
+ const id=player.id,now=Math.floor(nowMs/1000),area=player.area;
+ const rows=read(OWNER_PLAYER_SQL,[id,now-30,id,player.channel,area,id,id]);
+ const owner=createWorldPlayerProjector(read)(rows,id,nowMs)[0];
+ if(!owner)throw Error('committed_owner_projection_missing');
+ const data={owner,drops:dragonService()?.describeDrops?.(read(DROPS_SQL,[id,now,area,area,area,area,area]))??read(DROPS_SQL,[id,now,area,area,area,area,area])};
+ data.inventory=read("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC",[id]);
+ data.storageItems=read("SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot",[id]);
+ data.stones=read("SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind",[id]);
+ data.pets=read("SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at",[id]);
+ data.dungeonMaterials=read("SELECT kind,amount FROM dungeon_materials WHERE player_id=?",[id]);
+ data.dungeonWings=read("SELECT equipped FROM dungeon_wings WHERE player_id=?",[id])[0]??null;
+ return data;
+}
+return {readCommittedSectionsR113,readColdWorld,readFriends487,arenaStatements,arenaPayloadFromResults,withRankPlayers};}
