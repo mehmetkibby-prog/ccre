@@ -83,7 +83,7 @@ try{
   report.arrivalPolicyR113=process.env.POPULATION_OPEN_ARRIVAL==='1'?'fixed 950ms attack offers, bounded two-input backlog; idle/movement/blocked slots reported':'closed-loop legacy comparator';report.populationFixture=await seedPopulation(host,actors,mode);
  }});
  s.testListeners=listeners;s.route=await nativeRoute(scope);
- if(report.populationFixture.boss){const acquire=s.world.combat.acquire.bind(s.world.combat);s.world.combat.acquire=(peer,...args)=>{sharedAcquires[peer.channel]=(sharedAcquires[peer.channel]??0)+1;return acquire(peer,...args);};}
+ if(report.populationFixture.boss||report.populationFixture.sharedHistoryR115){const acquire=s.world.combat.acquire.bind(s.world.combat);s.world.combat.acquire=(peer,...args)=>{sharedAcquires[peer.channel]=(sharedAcquires[peer.channel]??0)+1;return acquire(peer,...args);};}
  if(report.populationFixture.equipment)report.equipmentBefore=populationWeaponCounterSnapshot(s.host.database.sqlite,actors);
  panel=attachPanelRuntime({host:s.host,core:s.core,world:s.world});clean.push(()=>panel.close());await s.world.startJobs();s.core.start();
  for(const row of s.supervisor.rows.values())row.child.setMaxListeners(150);
@@ -116,7 +116,7 @@ try{
  report.replayStorageEnabled=process.env.CORE511_R111_REPLAY_STORAGE!=='0';
  const diagnostics=await s.core.diagnostics.sample();
  report.deathDiagnostics={scope:'last bounded samples including warmup; read after timed window',mainStages:diagnostics.stagesR51,channels:diagnostics.targets.filter(t=>t.target.startsWith('channel-')).map(t=>({target:t.target,available:t.available,deathWait:t.metrics?.deathWaitR82,stages:t.metrics?.stagesR51,committed:t.metrics?.committedR113,sections:t.metrics?.r52?.actorSections}))};
- report.sharedTerminal={scope:'existing bounded records, read after timed window; synthetic actors only',channelRelease:s.world.combat.channelReleaseR111,actorWaits:s.world.combat.actorWaits,actorRejections:s.world.combat.actorRejections,conflicts:s.world.combat.actorConflicts,refreshes:s.world.combat.refreshTrace??[]};
+ report.sharedTerminal={scope:'existing bounded records, read after timed window; synthetic actors only',acquiresByChannel:sharedAcquires,channelRelease:s.world.combat.channelReleaseR111,actorWaits:s.world.combat.actorWaits,actorRejections:s.world.combat.actorRejections,conflicts:s.world.combat.actorConflicts,refreshes:s.world.combat.refreshTrace??[]};
  if(census)report.sqlCensus=census.report();
  if(framing){report.framingCensus=Object.fromEntries([...framing].sort((a,b)=>b[1].ms-a[1].ms));report.ipcSendCensus=ipcSends;}
  report.wsHandoff=s.supervisor.handoffStatsR110??null;if(report.wsHandoff?.sent)report.webSocketTransport='production-style-socket-handoff';

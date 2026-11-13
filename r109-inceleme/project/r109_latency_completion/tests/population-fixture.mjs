@@ -64,7 +64,19 @@ export async function seedPopulation(host,actors,mode){
  }));
  const equipment=process.env.POPULATION_EQUIPMENT==='1'?await seedPopulationEquipment(q,actors,{tree,bagItems:30,rotateRoles:true}):null;
  const boss=sharedBoss?seedSharedBoss(q,actors,{terminal:mode==='shared_boss_terminal'}):null;
- return {backgroundMonsters:background,monsters:q.prepare('SELECT count(*) n FROM monsters').get().n,zones:Object.fromEntries([...zones,'shared_boss'].map(z=>[z,actors.filter(a=>a.zone===z).length])),independentTowers:process.env.INDEPENDENT_TOWERS==='1',synthetic:true,farmStress,equipment,boss};
+ const sharedHistoryR115=process.env.POPULATION_SHARED_HISTORY_R115==='1';
+ if(sharedHistoryR115){
+  if(mode!=='forest')throw Error('shared_history_requires_forest');
+  // A contribution survives moving to another channel. These old local hits
+  // must also be covered when a later attack touches channel-zero monsters.
+  for(let channel=1;channel<=4;channel++){
+   const former=actors.find(a=>a.channel===channel%4+1),m=q.prepare('SELECT * FROM monsters WHERE id=?').get('curuk-pop-forest-'+channel+'-0');
+   if(!former||!m)throw Error('shared_history_fixture_incomplete');
+   put(q,'monster_participants',{monster_id:m.id,spawn_round:m.spawn_round,player_id:former.id,created_at:Math.floor(Date.now()/1000)});
+  }
+  for(let i=0;i<12;i++)put(q,'monsters',{...template,id:'curuk-r115-shared-'+i,area:'forest',channel:0,x:990+(i%4)*8,y:990+Math.floor(i/4)*8,hp:1800,max_hp:1800,respawn_at:0});
+ }
+ return {backgroundMonsters:background,monsters:q.prepare('SELECT count(*) n FROM monsters').get().n,zones:Object.fromEntries([...zones,'shared_boss'].map(z=>[z,actors.filter(a=>a.zone===z).length])),independentTowers:process.env.INDEPENDENT_TOWERS==='1',synthetic:true,farmStress,equipment,boss,sharedHistoryR115};
 }
 export async function nativeRoute(scope){
  const temp=temporary(scope),serverDir=path.join(temp,'dist-vds/server');fs.mkdirSync(serverDir,{recursive:true});
