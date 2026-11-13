@@ -93,3 +93,25 @@ test('a fenced error after native chat starts is never retried',{timeout:45000},
  try{assert.equal((await call(s,{body:'Islem yeniden oynatilmasin',scope:'world'})).status,500);assert.equal(operations,1);}
  finally{gate.chat=original;}
 });
+
+test('plain chat waits outside the coordinator for a shared world terminal and sends once',{timeout:45000},async t=>{
+ const s=await httpActionFixture(t),c=s.core,bridge=c.sharedWorld.combat.global??c.sharedWorld.combat;
+ const gate=c.nativeHttpAction,chat=gate.chat.bind(gate);let answered=false,authorizations=0,operations=0,resumeAuthorization;
+ const authorizationHold=new Promise(r=>resumeAuthorization=r);
+ assert.equal(bridge.terminal,null);
+ // Isolate the real admission boundary without issuing a fake world write.
+ const held={phase:'freezing'};
+ gate.chat=(session,payload,reauthorize,operation)=>chat(session,payload,async()=>{const current=await reauthorize();authorizations++;if(authorizations===1)await authorizationHold;return current;},async()=>{operations++;return operation();});
+ let sending;
+ try{
+  sending=call(s,{body:'Ortak dunya islemi sonrasi tek mesaj',scope:'world'}).then(r=>{answered=true;return r;});
+  await until(()=>authorizations>0,3000);bridge.terminal=held;resumeAuthorization();await new Promise(r=>setTimeout(r,100));
+  assert.equal(answered,false,'temporary shared terminal must wait, not return chat503');assert.equal(operations,0);
+  let free=false;c.tail.then(()=>free=true);await until(()=>free,1000);
+  assert.equal(bridge.terminal,held,'chat must never release the world fence');
+  bridge.terminal=null;bridge.wake();assert.equal((await sending).status,200);
+  assert(authorizations>=2);assert.equal(operations,1);
+  assert.equal(s.f.sql.prepare('SELECT count(*) n FROM messages WHERE player_id=? AND body=?').get(s.f.id,'Ortak dunya islemi sonrasi tek mesaj').n,1);
+ }finally{resumeAuthorization();if(bridge.terminal===held){bridge.terminal=null;bridge.wake();}await sending;gate.chat=chat;}
+ assert.equal(s.faults.length,0);
+});
