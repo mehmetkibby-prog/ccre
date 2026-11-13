@@ -135,7 +135,7 @@ try{
   inspector.disconnect();inspector=null;
  }
  report.instrumentation={execArgv:process.execArgv,allocationSampling:process.env.ALLOCATION_PROFILE==='1',cpuSampling:process.env.CPU_PROFILE==='1',sqlTiming:process.env.SQL_DIAGNOSTIC==='1',cpuClockOriginMs,readerBatchDisabledForDiagnostic:process.env.R108_TEST_READ_BATCH==='0',pid:process.pid};report.sqlDiagnostic=sqlDiagnostic;
- gcObserver.disconnect();report.host={before:hostBefore,after:hostStats()};report.mainGc=gc;report.committedR113=structuredClone((await import(core+'/committed-result-r113.mjs')).committedResultMetricsR113);report.writerStalls=s.core.diagnostics.writerStallsR79?.snapshot();
+ gcObserver.disconnect();report.host={before:hostBefore,after:hostStats()};report.mainGc=gc;report.committedR113=fs.existsSync(core+'/committed-result-r113.mjs')?structuredClone((await import(core+'/committed-result-r113.mjs')).committedResultMetricsR113):{available:false};report.writerStalls=s.core.diagnostics.writerStallsR79?.snapshot();
  const bots=await remote.call('end');report.botDriver=bots.resources;report.botDriver.pid=bots.pid;report.endSettlement=bots.endSettlement;
  if(report.populationFixture.boss){
   const deadline=Date.now()+10000;
