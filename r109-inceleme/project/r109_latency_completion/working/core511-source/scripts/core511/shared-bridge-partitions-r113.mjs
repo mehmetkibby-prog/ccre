@@ -1,6 +1,6 @@
 import {SharedCombatBridge} from './shared-combat-bridge.mjs';
 import {PartitionGateR113} from './partition-gate-r113.mjs';
-import {foregroundAttackScopeR112,expandRewardActorsR112} from './reward-actor-scope-r85.mjs';
+import {foregroundAttackScopeR112,attackActorsR115} from './reward-actor-scope-r85.mjs';
 import {prepareCached477} from './writer-statements.mjs';
 import {demand} from './contract.mjs';
 
@@ -16,8 +16,8 @@ export class SharedBridgePartitionsR113{
    const sql=this.core.database.sqlite;
    // Read-only relation closure plus the authoritative, unflushed shared
    // contributions. No per-hit checkpoint/receipt/SQL write is introduced.
-   const seed=new Set([row.source.actor,...prepareCached477(sql,'SELECT id FROM players WHERE area=? AND channel=?').all(area,row.source.channel).map(p=>p.id),...grant.snapshot.participants.map(p=>p.player_id),...grant.snapshot.bossParticipants.map(p=>p.player_id)]);
-   const ids=expandRewardActorsR112(sql,seed);demand(ids,'shared_partition_actor_bound');
+   const extra=[...grant.snapshot.participants.map(p=>p.player_id),...grant.snapshot.bossParticipants.map(p=>p.player_id)];
+   const ids=attackActorsR115(sql,row.source.actor,area,row.source.channel,extra);demand(ids,'shared_partition_actor_bound');
    row.partitionActorsR113=ids;row.partitionActorGateR113=await this.actors.acquire(ids.map(id=>'player:'+id));
   };
   b.releasePartitionR113=row=>{if(row.partitionActorGateR113){this.actors.release(row.partitionActorGateR113);row.partitionActorGateR113=null;}if(row.partitionGateR113){this.gate.release(row.partitionGateR113);row.partitionGateR113=null;}};

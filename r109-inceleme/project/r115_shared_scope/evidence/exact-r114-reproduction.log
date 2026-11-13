@@ -1,0 +1,46 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794593772746,"backupName":"before-pearl-reset-1794593772746-1a0dadc6-4da4-426f-895f-1fae77e776c2.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.727Z","action":"shared_combat_failure","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.727Z","action":"global_recovery_request","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.727Z","action":"global_recovery_start","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}]}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.727Z","action":"signal","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}],"channel":1,"pid":362710,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"05654d99f172848659cd7115"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.728Z","action":"signal","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}],"channel":2,"pid":362716,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"041c619c6673cf1b6b340bb3"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.728Z","action":"signal","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}],"channel":3,"pid":362726,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"a0d056558af5f9e6375bd4fa"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.728Z","action":"signal","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}],"channel":4,"pid":362732,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"25c6af98adaff0ed96cebdda"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:18.728Z","action":"signal","incident":1,"reason":"shared_partition_actor_changed","origin":"shared_combat_failure","requestMethod":"shared_prepare","operation":null,"actorRef":"a827100acf991ac8077e8d6d","sourceChannel":4,"phase":"freezing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"contract.mjs","line":15,"column":51},{"file":"shared-combat-bridge.mjs","line":100,"column":32}],"channel":0,"pid":362699,"signal":"SIGKILL","state":"running","role":"world","ownerRef":"773c1f66b2090eaf4256588f"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:22.474Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":362755,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7f619db5c195fffcf66769c6"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:22.474Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":362761,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0d94250321d0340ea7419da0"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:22.475Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":362767,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1f0196d38d5d6a62ecf0ceb3"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:22.475Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":362777,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f0125b7c8664374b2faed5ea"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:16:22.494Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":362746,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"688de07484b312369f789748"}
+# Subtest: a departed local contributor cannot turn a shared kill into realm recovery
+not ok 1 - a departed local contributor cannot turn a shared kill into realm recovery
+  ---
+  duration_ms: 11567.350929
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r115_shared_scope/tests/historical-participant-process.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    a historical participant must not restart the realm
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r115_shared_scope/tests/historical-participant-process.test.mjs:30:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12480.623583

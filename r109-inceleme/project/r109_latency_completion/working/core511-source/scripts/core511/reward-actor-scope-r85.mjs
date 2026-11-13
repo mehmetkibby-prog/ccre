@@ -87,16 +87,22 @@ export function foregroundAttackScopeR112(sql,input,actor,channel){
  if(!p||p.channel!==channel||p.arena_match_id||!['forest','frozen','ancient','black','rune_v2'].includes(p.area)&&!instanceRewardAreaR71(p.area))return null;
  const m=prepareCached477(sql,'SELECT id,area,channel,spawn_round FROM monsters WHERE id=?').get(input.targetId);
  if(!m||m.area!==p.area||![0,channel].includes(m.channel)||m.id==='dunya-bosu-1')return null;
- const actors=new Set([actor,...prepareCached477(sql,'SELECT id FROM players WHERE area=? AND channel=?').all(p.area,channel).map(r=>r.id)]);
  if(instanceRewardAreaR71(p.area)){
   const invalid=Symbol('invalid instance');try{assertInstanceRewardScopeR71(sql,{actor,player:p,target:{id:m.id},fail:()=>{throw invalid;}});}catch(e){if(e===invalid)return null;throw e;}
-  for(const r of prepareCached477(sql,"SELECT a.player_id AS id FROM adventure_members a JOIN adventure_runs r ON r.id=a.run_id WHERE r.area=? AND a.departed=0").all(p.area))actors.add(r.id);
  }
- // Include all historic participants in all potentially affected local/shared
-// mobs. No distance approximation and no mutable cached party membership.
- for(const r of prepareCached477(sql,`SELECT DISTINCT mp.player_id AS id FROM monster_participants mp JOIN monsters m ON m.id=mp.monster_id AND m.spawn_round=mp.spawn_round JOIN players p ON p.id=mp.player_id WHERE m.area=? AND m.channel IN (0,?)`).all(p.area,channel))actors.add(r.id);
- const expanded=expandRewardActorsR112(sql,actors);if(!expanded)return null;
+ const expanded=attackActorsR115(sql,actor,p.area,channel);if(!expanded)return null;
  return {cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,area:p.area,target:{id:m.id,spawnRound:m.spawn_round},actors:expanded.sort()};
+}
+
+// Grant and terminal preparation must use the same recipient closure. Local
+// contributors remain eligible after leaving the map; they are absent from
+// both the current-resident list and the shared world's in-memory journal.
+// Extra actors are authoritative unflushed shared contributions at grant time.
+export function attackActorsR115(sql,actor,area,channel,extraActors=[]){
+ const actors=new Set([actor,...extraActors,...prepareCached477(sql,'SELECT id FROM players WHERE area=? AND channel=?').all(area,channel).map(r=>r.id)]);
+ if(instanceRewardAreaR71(area))for(const r of prepareCached477(sql,"SELECT a.player_id AS id FROM adventure_members a JOIN adventure_runs r ON r.id=a.run_id WHERE r.area=? AND a.departed=0").all(area))actors.add(r.id);
+ for(const r of prepareCached477(sql,`SELECT DISTINCT mp.player_id AS id FROM monster_participants mp JOIN monsters m ON m.id=mp.monster_id AND m.spawn_round=mp.spawn_round JOIN players p ON p.id=mp.player_id WHERE m.area=? AND m.channel IN (0,?)`).all(area,channel))actors.add(r.id);
+ return expandRewardActorsR112(sql,actors);
 }
 export const foregroundScopeR112=(sql,input,actor,channel)=>input?.action==='attack'?foregroundAttackScopeR112(sql,input,actor,channel):foregroundClaimScopeR85(sql,input,actor,channel);
 

@@ -1,0 +1,99 @@
+TAP version 13
+# Subtest: ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+ok 1 - ordinary reward scope includes current party, guild and room recipients but excludes unrelated combat
+  ---
+  duration_ms: 4.877942
+  type: 'test'
+  ...
+# Subtest: membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+ok 2 - membership, epoch-channel scope and undeclared recipients cannot cross the worker transaction
+  ---
+  duration_ms: 2.403162
+  type: 'test'
+  ...
+# Subtest: an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+ok 3 - an unexpected cold inventory effect is rejected inside the transaction and rolls back; selected effects commit
+  ---
+  duration_ms: 3.938025
+  type: 'test'
+  ...
+# Subtest: ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+ok 4 - ordinary shared attack selects current map and reward relations; instance/world attacks stay broad
+  ---
+  duration_ms: 1.555968
+  type: 'test'
+  ...
+# Subtest: out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+ok 5 - out-of-scope attack effects acquire a rejection proof only after SQL and native service rollback
+  ---
+  duration_ms: 50.878356
+  type: 'test'
+  ...
+# Subtest: a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+ok 6 - a scoped shared commit joins an unrelated in-flight journal without losing its ACK or masking failure
+  ---
+  duration_ms: 226.630571
+  type: 'test'
+  ...
+# Subtest: tower and mist scope follows the exact active run and includes a member on another floor
+ok 7 - tower and mist scope follows the exact active run and includes a member on another floor
+  ---
+  duration_ms: 2.329649
+  type: 'test'
+  ...
+# Subtest: group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+ok 8 - group scope reaches party mates of guild/room recipients and malformed inputs keep the broad path
+  ---
+  duration_ms: 2.641256
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794593560112,"backupName":"before-pearl-reset-1794593560112-918cfb92-fd7f-4b62-aad8-2e8575bb6a09.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:47.519Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":362167,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9989bb14e689cd211a50a678"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:47.519Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":362177,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"7e0df5ec3228f5743c922adf"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:47.520Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":362183,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"8c95d6387dc9a464638662a0"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:47.520Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":362193,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ab93e3114e5055496ce756a3"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:47.537Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":362156,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"ae20de082c47e3c398b5cab3"}
+# Subtest: actual map owners: a held forest operation cannot stop a frozen-map death on another channel
+ok 9 - actual map owners: a held forest operation cannot stop a frozen-map death on another channel
+  ---
+  duration_ms: 9094.348185
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794593569920,"backupName":"before-pearl-reset-1794593569920-a3263d2a-5c65-426f-b919-8aefbc750506.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:55.950Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":362233,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9b098d5cd9cb29adf8ae2ae4"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:55.951Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":362239,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a4b404035d47b74b97bd5727"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:55.951Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":362249,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"984c98ab8fde65d34a528ac1"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:55.951Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":362255,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"78f46f807f24745d73ef2465"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T18:12:55.970Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":362222,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"3c2b62bab3f392364b708709"}
+# Subtest: a departed local contributor cannot turn a shared kill into realm recovery
+not ok 10 - a departed local contributor cannot turn a shared kill into realm recovery
+  ---
+  duration_ms: 7633.01656
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r115_shared_scope/tests/historical-participant-process.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r115_shared_scope/tests/historical-participant-process.test.mjs:28:37)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 9
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18981.278089
