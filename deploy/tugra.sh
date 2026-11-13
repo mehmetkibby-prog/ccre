@@ -39,6 +39,7 @@ case "${1:-}" in
     chown -R coreoflife "$yeni"; ln -sfn "$yeni" $KOK/current; systemctl restart coreoflife
     for i in $(seq 1 30); do curl -fs http://127.0.0.1:8080/api/health >/dev/null && break; sleep 1; done
     if curl -fs http://127.0.0.1:8080/api/health >/dev/null; then
+      install -m 755 "$yeni/deploy/tugra.sh" /usr/local/bin/tugra   # yönetim komutu da güncellenir
       echo "güncellendi: $(basename "$yeni") ($(sudo -u coreoflife git -C "$yeni" rev-parse --short HEAD))"
       ls -1dt $KOK/releases/r* | tail -n +4 | xargs -r rm -rf   # son 3 sürüm kalır
     else
