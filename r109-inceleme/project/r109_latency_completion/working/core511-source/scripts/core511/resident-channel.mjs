@@ -128,7 +128,7 @@ export class ResidentChannel {
  rebind(bundle,identity){
   const id=bundle.player.id,owner=this.owners.get(id),actor=this.kernel.players.get(id);
   demand(owner&&actor?.suspended&&bundle.owner.epoch>owner.epoch&&bundle.owner.incarnation===owner.incarnation,'resident_rebind_not_drained');this.writer.finalSequence(id);
-  this.state.freeze(id,owner.epoch);this.kernel.detach(id,owner.epoch);this.checkpoints.forget(id);this.frames.remove(id);this.view.removePlayer(id);this.presence.forget(id);this.mounts.forget(id);this.owners.delete(id);this.identities.delete(id);
+  this.state.freeze(id,owner.epoch);this.kernel.detach(id,owner.epoch);this.checkpoints.forget(id);this.frames.remove(id);this.view.removePlayer(id);this.presence.forget(id);this.mounts.forget(id);this.owners.delete(id);this.commitRevisionsR113.delete(id);this.identities.delete(id);
   // Keep room membership/state: only input/session authority is retired.
   this.admit(bundle,identity);
  }
@@ -188,7 +188,7 @@ export class ResidentChannel {
   return this.mounts.command({...input,id},{busy});
  }
  async drain(id){const owner=this.owners.get(id);demand(owner,'resident_actor_missing');await this.kernel.quiesce(id,owner.epoch);await this.ports.drainMode(id);await this.checkpoints.drain(id);await this.combatCheckpoints.drain();return {epoch:owner.epoch,finalSequence:this.writer.finalSequence(id)};}
- detach(id){const owner=this.owners.get(id);demand(owner,'resident_actor_missing');this.state.freeze(id,owner.epoch);this.kernel.detach(id,owner.epoch);this.checkpoints.forget(id);this.frames.remove(id);this.view.removePlayer(id);this.identities.delete(id);this.owners.delete(id);this.presence.forget(id);this.mounts.forget(id);this.fishing.delete(id);this.membership.forget(id);this.ports.dropMode(id);}
+ detach(id){const owner=this.owners.get(id);demand(owner,'resident_actor_missing');this.state.freeze(id,owner.epoch);this.kernel.detach(id,owner.epoch);this.checkpoints.forget(id);this.frames.remove(id);this.view.removePlayer(id);this.identities.delete(id);this.owners.delete(id);this.commitRevisionsR113.delete(id);this.presence.forget(id);this.mounts.forget(id);this.fishing.delete(id);this.membership.forget(id);this.ports.dropMode(id);}
  quarantineActor(id,error){return this.quarantines.reject(id,error);}
  handleActorFailure(error){
   const rejected=actorFaultIsolation&&actorRejection(error);if(!rejected)return false;
