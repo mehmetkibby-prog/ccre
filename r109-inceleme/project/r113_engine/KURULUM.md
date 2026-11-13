@@ -1,8 +1,15 @@
 # R113 oyun motoru — kurulum adayı
 
-Bu paket henüz canlıya kurulmadı. Performans kabulü ve kurulum doğrulamaları
-tamamlanmadan üretime önerilmez. Kaynak sürüm **R110_HANDOFF1** olmalıdır.
+Bu paket henüz canlıya kurulmadı. Kaynak sürüm **R110_HANDOFF1** olmalıdır.
 Efsane ve Akademi birlikte güncellenir; dört kanal ve bakım tercihi korunur.
+
+Son kaynak kod, 50 sentetik oyuncuyla üç karma ve üç ortak boss koşusunda
+oyun işlemlerini hatasız tamamladı. Üç karma koşuda döngü p99 hedefi 30 ms'nin
+altında kaldı; 50 ms üzeri duraklamayı dakikada en fazla bir kez görme hedefi
+tüm koşularda sağlanmadı. Bu bir kontrollü kurulum adayıdır; sıfır takılma veya
+canlı kapasite garantisi verilmez. Test ortamı dört CPU kotasına sahipti ve
+canlı oyuncu veritabanını içermiyordu. Akademi'nin mevcut 40 kişilik giriş
+sınırı test amacıyla kaldırılmadı; 50 kişilik yük Efsane'de sınandı.
 
 Paketin SHA256 değeri `evidence/package.json` içindedir. Eski ZIP'ler değişmez.
 Root terminalinde önce dosya kimliğini doğrula, sonra:

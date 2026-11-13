@@ -1,0 +1,176 @@
+{
+  "candidateCommit": "8caf54d",
+  "core": "41fb08d699eafa8d8e0f3a1da64b2d8c465f7fc7fce4b1b90f4d71569972ce94",
+  "baselineCore": "de7e042120f54f92fc62d53164696ff7df6ba2b60ef650fe0fc49bfaa00b2411",
+  "players": 50,
+  "newPopulationCounts": [
+    50
+  ],
+  "functionalRuns": {
+    "passed": 6,
+    "total": 6,
+    "finalDeaths": 1056
+  },
+  "mixed": {
+    "R110": {
+      "tickP99Ms": {
+        "median": 31.575058000002173,
+        "worst": 39.95824100000027,
+        "all": [
+          31.41345000000001,
+          31.575058000002173,
+          39.95824100000027
+        ]
+      },
+      "deathP99Ms": {
+        "median": 471.88106600000174,
+        "worst": 760.648331000004,
+        "all": [
+          471.88106600000174,
+          466.7401619999873,
+          760.648331000004
+        ]
+      },
+      "mainElu": {
+        "median": 0.40161851808156035,
+        "worst": 0.41631925483390103,
+        "all": [
+          0.40161851808156035,
+          0.3982725307034248,
+          0.41631925483390103
+        ]
+      },
+      "mainPausesOver50PerMinute": {
+        "median": 3,
+        "worst": 5,
+        "all": [
+          3,
+          1,
+          5
+        ]
+      },
+      "totalRssBytes": {
+        "median": 1597341696,
+        "worst": 1700814848,
+        "all": [
+          1700814848,
+          1524224000,
+          1597341696
+        ]
+      }
+    },
+    "R113": {
+      "tickP99Ms": {
+        "median": 22.108753000000434,
+        "worst": 23.222515999997995,
+        "all": [
+          19.92655999999988,
+          23.222515999997995,
+          22.108753000000434
+        ]
+      },
+      "deathP99Ms": {
+        "median": 234.20803400000295,
+        "worst": 290.32706200000393,
+        "all": [
+          290.32706200000393,
+          221.78877999999895,
+          234.20803400000295
+        ]
+      },
+      "mainElu": {
+        "median": 0.30560659149095454,
+        "worst": 0.315263701040504,
+        "all": [
+          0.3046989389372618,
+          0.315263701040504,
+          0.30560659149095454
+        ]
+      },
+      "mainPausesOver50PerMinute": {
+        "median": 3,
+        "worst": 4,
+        "all": [
+          3,
+          4,
+          1
+        ]
+      },
+      "totalRssBytes": {
+        "median": 1528406016,
+        "worst": 1568555008,
+        "all": [
+          1568555008,
+          1528406016,
+          1522229248
+        ]
+      }
+    }
+  },
+  "bossR113": {
+    "tickP99Ms": {
+      "median": 17.797999000002164,
+      "worst": 20.756707000007736,
+      "all": [
+        14.958256999998412,
+        20.756707000007736,
+        17.797999000002164
+      ]
+    },
+    "deathP99Ms": {
+      "median": 497.89363700000104,
+      "worst": 634.9702909999978,
+      "all": [
+        471.056872000001,
+        634.9702909999978,
+        497.89363700000104
+      ]
+    },
+    "mainElu": {
+      "median": 0.33209145341068813,
+      "worst": 0.35108831157968484,
+      "all": [
+        0.33044343588701136,
+        0.35108831157968484,
+        0.33209145341068813
+      ]
+    },
+    "mainPausesOver50PerMinute": {
+      "median": 3,
+      "worst": 8,
+      "all": [
+        3,
+        8,
+        2
+      ]
+    },
+    "totalRssBytes": {
+      "median": 1486688256,
+      "worst": 1498009600,
+      "all": [
+        1478025216,
+        1486688256,
+        1498009600
+      ]
+    }
+  },
+  "goals": {
+    "allMixedTickP99Below30Ms": true,
+    "allMixedMainPausesAtMost1PerMinute": false,
+    "zeroLagProven": false
+  },
+  "limitations": [
+    "synthetic players and database; not a live production database copy",
+    "four-CPU quota; live VDS reported eight cores",
+    "three fresh 60-second windows per workload; prior 300-second forest soak used e000d80 before the sanctuary-only change",
+    "r2 actual 40-player cap preserved; r2 has separate functional/browser/installer checks",
+    "no pauses excluded or subtracted using independent control"
+  ],
+  "raw": [
+    "matrix-5091-50",
+    "matrix-potion-50",
+    "matrix-chat-50",
+    "matrix-boss-worker-50"
+  ],
+  "deployed": false
+}

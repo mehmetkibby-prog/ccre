@@ -26,3 +26,8 @@ R112 continuation: read `r109-inceleme/R112_DEVIR.md`. The active tree now
 contains the R112 candidate, not the live R110 code. R112 accepts exact R110
 or R111 sources; production installation is unconfirmed. Preserve the raw
 performance regressions and distinguish functional checks from latency goals.
+
+R113 continuation: `r109-inceleme/R113_DEVIR.md` supersedes the candidate-state
+notes above. The active tree contains the R113 engine candidate; confirmed live
+is still R110_HANDOFF1. Latest requested population testing is ONLY 50 players.
+Preserve failed measurements and do not equate functional success with zero lag.
