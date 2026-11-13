@@ -132,7 +132,7 @@ export class ResidentChannel {
  }
  async applyCommit(result,context){
   this.completedClaimHintsR56.record(this.world.cycle,result.completedClaimsR56);
-  if(this.ports.committedResultR113?.(result,context))return;
+  if(await this.ports.committedResultR113?.(result,context))return;
   if(context?.input?.action==='collect'&&this.ports.collectRefresh?.(result,context))return;
   const sectionRefresh=this.ports.actorSectionRefreshR52?.(result,context);if(sectionRefresh===true||(sectionRefresh&&typeof sectionRefresh.then==='function'&&await sectionRefresh))return;
   const changed=result.players??[result.player];demand(changed.every(p=>p&&typeof p.id==='string'),'resident_commit_actor');

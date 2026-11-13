@@ -236,7 +236,8 @@ export class SharedCombatBridge {
   this.assertScope(row,held);demand(row.commandAck,'shared_terminal_commit_missing');
   if(row.committedReloadR112)return row.committedReloadR112;
   row.committedReloadR112=(async()=>{
-   const snapshot=(await this.core.reader.query('kernel511_world_boot',[row.world.peer.incarnation,row.world.owner.epoch])).rows;
+   const committed=row.commandAck.result.committedR113,world=committed?.sharedWorld;
+   const snapshot=committed?.version===1&&committed.operationId===row.commandAck.key&&world?.system?.incarnation===row.world.peer.incarnation&&world.system.epoch===row.world.owner.epoch?world:(await this.core.reader.query('kernel511_world_boot',[row.world.peer.incarnation,row.world.owner.epoch])).rows;
    this.assertScope(row,held);await row.world.control.request('shared_reload',{peer:row.source,proof:row.proof,snapshot});this.assertScope(row,held);
   })();
   // Observe failures immediately even if the source disappears before finish.
@@ -306,7 +307,7 @@ export class SharedCombatBridge {
        entry.unchangedReleasedR112=new Set(expected.map(a=>a.id));this.wakeWritable();
       }
      }
-     const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');
+     const ack=await channel.control.request('shared_release',{token:held.token,refreshActors:entry.refreshActors,...(row.commandAck.result.committedR113?{committedResult:row.commandAck.result}:{})});demand(ack.token===held.token&&ack.released,'shared_release_ack');demand(current(),'shared_finish_superseded');
      // The existing channel protocol has now refreshed and unlocked all of
      // its held actors. Do not make their next normal kill wait for a slower
      // sibling. Shared ownership and the source world lease remain held.

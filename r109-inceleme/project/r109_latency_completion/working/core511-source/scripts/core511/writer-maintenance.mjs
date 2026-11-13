@@ -1,3 +1,5 @@
+import {committedResultsR113} from './committed-protocol-r113.mjs';
+import {pruneCommittedImagesR113} from './committed-store-r113.mjs';
 import {r35Options} from './r35-options.mjs';
 import {prepareServerStatement} from './server-statements.mjs';
 const immediate=()=>new Promise(resolve=>setImmediate(resolve));
@@ -6,7 +8,7 @@ export function retentionMinutes(value=process.env.CORE511_RETENTION_MINUTES){co
 // deleted; ACKed audience rows can be removed without changing R34 replay.
 export class WriterMaintenance {
  constructor(writer,{clock=Date.now,retention=r35Options.retention,idleCheckpoint=r35Options.idleCheckpoint,minutes=retentionMinutes()}={}){
-  Object.assign(this,{writer,database:writer.database,clock,retention,idleCheckpoint,minutes});this.timer=null;this.retryTimer=null;this.running=null;this.closed=false;this.batch=1;this.cursors={system:0,notifications:0};this.ceilings={system:null,notifications:null};this.nextFamily=0;this.lastCheckpoint=0;this.nextPassAt=0;this.budgetMs=0;this.metrics={passes:0,skipped:0,receipts:0,system:0,notifications:0,checkpoints:0,errors:0,maxBatchMs:0,batches:0,budgetOverruns:0};
+  Object.assign(this,{writer,database:writer.database,clock,retention,idleCheckpoint,minutes});this.timer=null;this.retryTimer=null;this.running=null;this.closed=false;this.batch=1;this.cursors={system:0,notifications:0};this.ceilings={system:null,notifications:null};this.nextFamily=0;this.lastCheckpoint=0;this.nextPassAt=0;this.budgetMs=0;this.metrics={passes:0,skipped:0,receipts:0,system:0,notifications:0,images:0,checkpoints:0,errors:0,maxBatchMs:0,batches:0,budgetOverruns:0};
  }
  idle(){const d=this.database,w=d.walSync;return !this.closed&&!d.closed&&!d.maintenance&&!d.sqlite.isTransaction&&!d.writeQueue?.length&&!d.writeDrain&&!w?.running&&!w?.waiting?.length&&!this.writer.inflight&&!this.writer.system.pending&&!this.writer.sharedCombat?.busy&&!this.writer.sharedCombat?.terminal;}
  poll(){void this.step().catch(error=>{this.metrics.errors++;if(this.metrics.errors<=4)console.warn(JSON.stringify({type:'core511_writer_maintenance',code:error.code??'maintenance_failed'}));});}
@@ -40,7 +42,7 @@ export class WriterMaintenance {
    // Rotate first service even if an earlier family consumed the whole budget
    // or foreground work interrupted the pass. A cold channel delete cannot
    // indefinitely postpone system receipts or acknowledged notifications.
-   const families=['channel','system',...(r35Options.outboxV2?['notifications']:[])];
+   const families=['channel','system',...(committedResultsR113?['images']:[]),...(r35Options.outboxV2?['notifications']:[])];
    const start=this.nextFamily%families.length;this.nextFamily=(start+1)%families.length;
    for(let offset=0;offset<families.length;offset++){
     if(!this.idle()||this.budgetMs<=0)break;
@@ -50,7 +52,7 @@ export class WriterMaintenance {
     // database port. No ownership/replay implementation is duplicated here.
     const port=Object.create(this.writer.authority);port.database={atomic:work=>this.atomic(work)};
     const result=await port.pruneReceipts(before,this.batch);this.metrics.receipts+=Number(result.changes??0);
-    }else await this.pruneRows(family,before);
+    }else if(family==='images'){const r=await this.atomic(sql=>({changes:pruneCommittedImagesR113(sql,before,this.batch)}));this.metrics.images+=r.changes;}else await this.pruneRows(family,before);
     await immediate();
    }
   }

@@ -5,19 +5,21 @@ import {createColdWorldRules} from './generated/cold-world-rules.mjs';
 import {readZumrutToolR93} from './zumrut-tools-r93.mjs';
 import {publicAdventure} from './adventure-service.mjs';
 import {demand} from './contract.mjs';
+import {committedResultsR113,COMMITTED_RESULT_VERSION_R113,committedResultMetricsR113} from './committed-protocol-r113.mjs';
+import {initializeCommittedStoreR113,storeCommittedImagesR113} from './committed-store-r113.mjs';
+export {committedResultsR113,COMMITTED_RESULT_VERSION_R113,committedResultMetricsR113} from './committed-protocol-r113.mjs';
 
-export const committedResultsR113=process.env.CORE511_COMMITTED_R113!=='0';
-export const COMMITTED_RESULT_VERSION_R113=1;
-export const committedResultMetricsR113={captured:0,actors:0,applied:0,recovered:0,bounds:0,unsupported:{}};
-const kinds=new Set(['attack','pvp_attack','monster_reward','retaliation_death']);
+const kinds=new Set(['attack','pvp_attack','monster_reward','retaliation_death','adventure_step','native_action','dungeon','dungeon_entry']);
 // Changes outside actor-private state have their own world/market/guild feeds.
 // A previously unknown write must recover through an authoritative snapshot;
 // it may never silently certify an incomplete result.
 const covered=new Set(['players','player_items','player_storage_items','player_pets','player_stones','afk_hunt_state','fishing_sessions','pve_engagements','dungeon_materials','dungeon_wings','world_drops','monster_xp_claims','normal_reward_claims','monster_reward_claims','boss_reward_claims','sinsi_reward_claims','arena_reward_claims','pvp_reward_cooldowns','auth_rate_limits','guilds','guild_members','guild_skills','guild_monster_claims','guild_essence_rewards','community_kills','adventure_runs','adventure_members','adventure_monsters','adventure_awards','adventure_chests','adventure_portals','adventure_entries','adventure_receipts','adventure_schedule','content_champion_rewards_r102','content_forge_r102','content_battlefield_r102','content_receipts_r102','content_battlefield_claims_r102']);
+for(const table of ['monsters','monster_participants','boss_participants','combat_events','boss_defeats','monster_defeats','sinsi_defeats','normal_defeats','mount_inventory_r49','mount_reward_claims_r49'])covered.add(table);
 
 export function initializeCommittedResultsR113(sql){
  if(!committedResultsR113)return;
  sql.exec('CREATE TABLE IF NOT EXISTS kernel511_actor_revision_r113(actor TEXT PRIMARY KEY,revision INTEGER NOT NULL CHECK(revision>=0)) WITHOUT ROWID');
+ initializeCommittedStoreR113(sql);
 }
 
 
@@ -48,8 +50,16 @@ export class CommittedResultProducerR113{
    delete bundle.profiles;delete bundle.settings;
    actors.push({id,base,next,bundle,sections});
   }
-  const committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
-  if(Buffer.byteLength(JSON.stringify(committedR113))>2*1024*1024){committedResultMetricsR113.bounds++;return result;}
+  let committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
+  if(payload.sharedLease){
+   const world={system:prepareCached477(sql,"SELECT * FROM kernel511_system_owners WHERE service='world'").get(),world:prepareCached477(sql,'SELECT * FROM world_state WHERE id=1').get(),monsters:prepareCached477(sql,'SELECT * FROM monsters WHERE channel=0').all(),participants:prepareCached477(sql,'SELECT p.* FROM monster_participants p JOIN monsters m ON m.id=p.monster_id WHERE m.channel=0 AND m.spawn_round=p.spawn_round').all(),bossParticipants:prepareCached477(sql,'SELECT p.* FROM boss_participants p WHERE EXISTS(SELECT 1 FROM monsters m WHERE m.channel=0 AND m.is_boss=1 AND m.spawn_round=p.boss_round)').all()};
+   // World-ending/global jobs retain the full native refresh protocol. This
+   // committed image certifies the same HP/contribution inputs as world boot.
+   if(world.system&&Buffer.byteLength(JSON.stringify(world))<=64*1024)committedR113.sharedWorld=world;
+  }
+  if(actors.some(part=>Buffer.byteLength(JSON.stringify(part))>1024*1024)){committedResultMetricsR113.bounds++;return result;}
+  if(Buffer.byteLength(JSON.stringify({...result,committedR113}))>192*1024){committedR113=storeCommittedImagesR113(sql,committedR113);committedResultMetricsR113.indirect++;}
+  if(Buffer.byteLength(JSON.stringify({...result,committedR113}))>224*1024){committedResultMetricsR113.bounds++;return result;}
   for(const {id,next}of actors)prepareCached477(sql,'INSERT INTO kernel511_actor_revision_r113 VALUES(?,?) ON CONFLICT(actor) DO UPDATE SET revision=excluded.revision').run(id,next);
   committedResultMetricsR113.captured++;committedResultMetricsR113.actors+=actors.length;
   return {...result,committedR113};

@@ -1,0 +1,42 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794543453916,"backupName":"before-pearl-reset-1794543453916-5cff1a9b-953f-4bc0-983a-8a00a4974e80.sqlite"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:17:41.328Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":226919,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f3181249c19648de4dd711eb"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:17:41.328Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":226929,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"483d6baf2689b06825cd9de1"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:17:41.329Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":226935,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"76fea9220457a7032c83b3e6"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:17:41.329Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":226945,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"624627a886e8b473a0b75778"}
+# {"event":"core511_recovery_cause","at":"2026-11-13T04:17:41.353Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":226908,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"9edb659f2de902eb518c215c"}
+# Subtest: native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+ok 1 - native ordinary death applies the committed result without a cold actor read; replay grants nothing twice
+  ---
+  duration_ms: 9090.410153
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543463699,"backupName":"before-pearl-reset-1794543463699-b5ef30b4-e8fb-4a7b-b3cf-20c47607cb94.sqlite"}
+# Subtest: committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+ok 2 - committed actor sections match the authoritative full snapshot after progression, equipment and deletion
+  ---
+  duration_ms: 2048.469436
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794543465858,"backupName":"before-pearl-reset-1794543465858-b01cd866-3b4d-40d1-aa23-0f14552ea05e.sqlite"}
+# Subtest: rollback restores both reward rows and result revision; unknown effects cannot be certified
+ok 3 - rollback restores both reward rows and result revision; unknown effects cannot be certified
+  ---
+  duration_ms: 2050.624122
+  type: 'test'
+  ...
+# Subtest: consumer rejects a revision gap before changing any actor
+ok 4 - consumer rejects a revision gap before changing any actor
+  ---
+  duration_ms: 0.317194
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14852.58453

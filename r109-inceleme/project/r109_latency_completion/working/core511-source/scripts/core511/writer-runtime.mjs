@@ -90,7 +90,8 @@ export class GameWriter {
   this.system.add('scoped_reward',(sql,payload,context)=>runScopedRewardR79(this,sql,payload,context));
   this.system.add('monster_respawn',createRespawnHandler({services:this.services,clock}));
   this.system.add('castle_step',createCastleStepR59(this.services));
-  this.system.add('adventure_step',createAdventureHandler({services:this.services,authority:this.authority,clock}));
+  const adventureHandler=createAdventureHandler({services:this.services,authority:this.authority,clock});
+  this.system.add('adventure_step',(sql,payload,context)=>{const result=this.sharedRefresh.run(sql,payload,context,()=>adventureHandler(sql,payload,context),{global:true});return this.committedR113.capture(sql,'adventure_step',payload,context,result);});
   this.system.add('rune_boss_step',createRuneBossHandler({services:this.services,authority:this.authority,clock}));
   this.system.add('monster_repair',createRepairHandler({services:this.services,clock}));
   this.system.add('dragon_tick',createDragonTickHandler({services:this.services,clock}));

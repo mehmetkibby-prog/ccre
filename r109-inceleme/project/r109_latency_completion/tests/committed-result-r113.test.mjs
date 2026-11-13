@@ -8,6 +8,7 @@ import {createTowerSchema} from '../working/core511-source/scripts/core511/tower
 import {createAdventureSchema} from '../working/core511-source/scripts/core511/adventure-schema.mjs';
 import {readCommitRevisionR113} from '../working/core511-source/scripts/core511/commit-revision-r113.mjs';
 import {applyCommittedResultR113} from '../working/core511-source/scripts/core511/committed-apply-r113.mjs';
+import {readCommittedImagesR113,pruneCommittedImagesR113} from '../working/core511-source/scripts/core511/committed-store-r113.mjs';
 const wire=v=>JSON.parse(JSON.stringify(v));
 async function scene(t){
  const f=await setupPvp(t);f.reset({area:'forest'});createTowerSchema(f.sql);createAdventureSchema(f.sql);
@@ -46,4 +47,20 @@ test('consumer rejects a revision gap before changing any actor',()=>{
  const c={world:{cycle:1},owners:new Map([['a',owner]]),kernel:{players:new Map([['a',{epoch:1,barrier:{}}]])},commitRevisionsR113:new Map([['a',3]]),lanes:{busy:()=>true},applyBundle:()=>changed++,revision:0};
  const r={channel:c,world:{subscribers:new Map([['a',{data:{area:'forest',channel:1}}]])}};
  assert.equal(applyCommittedResultR113(r,{players:[row],committedR113:{version:1,cycle:1,operationId:'op',actors:[{id:'a',base:1,next:2,bundle:{player:row,owner,world:{cycle:1}},sections:{owner:row}}]}}),false);assert.equal(changed,0);
+});
+test('large committed output uses a small receipt and an atomic, owner-fenced image; retention cannot delete rewards',async t=>{
+ const s=await scene(t),read=s.writer.committedR113.rules.readCommittedSectionsR113;
+ // Exercise the fan-out/size boundary independently of the native bag cap.
+ s.writer.committedR113.rules.readCommittedSectionsR113=(...args)=>({...read(...args),storageItems:Array.from({length:250},(_,i)=>({id:String(i),name:'x'.repeat(1000)}))});
+ const result=await s.f.database.atomic(()=>s.capture()),d=result.committedR113;
+ assert(d.indirect);assert(Buffer.byteLength(JSON.stringify(result))<224*1024);assert.equal(d.actors[0].bundle,undefined);
+ const params={operationId:d.operationId,channel:1,incarnation:s.peer.incarnation,actors:d.actors};
+ const images=readCommittedImagesR113(s.sql,params);assert.equal(images[0].sections.storageItems.length,250);
+ assert.equal(readCommittedImagesR113(s.sql,{...params,incarnation:'replaced'}),null);
+ assert.equal(readCommittedImagesR113(s.sql,{...params,actors:[{...d.actors[0],epoch:s.owner.epoch+1}]}),null);
+ s.context.key='rollback-image';await assert.rejects(s.f.database.atomic(()=>{s.capture();throw Error('before-commit');}),/before-commit/);
+ assert.equal(readCommittedImagesR113(s.sql,{...params,operationId:'rollback-image'}),null);assert.equal(readCommitRevisionR113(s.sql,s.id),1);
+ const player=s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id);
+ await s.f.database.atomic(()=>pruneCommittedImagesR113(s.sql,d.at+1,1));
+ assert.equal(readCommittedImagesR113(s.sql,params),null);assert.deepEqual(s.sql.prepare('SELECT * FROM players WHERE id=?').get(s.id),player);assert.equal(readCommitRevisionR113(s.sql,s.id),1);
 });

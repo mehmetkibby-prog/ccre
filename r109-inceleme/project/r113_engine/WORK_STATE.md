@@ -67,3 +67,15 @@ was restored. This does not yet partition the global shared-combat owner.
 Preliminary 10-player forest run (15 s, four-CPU quota): tick p99 9.11 ms,
 no main/channel pauses over 50 ms, confirmed death p99 188.33 ms (17 kills).
 This small single run does not meet or establish the final 40-player target.
+
+Second committed-result slice: owner-fenced immutable image storage for large
+fan-out, in the same SQLite transaction as rewards and revision. Command receipts
+remain below their original 256 KiB ceiling. Images expire through bounded idle
+maintenance; missing images recover through snapshots without replaying rewards.
+Foreign shared recipients consume committed images; shared HP/contribution images
+can also bypass post-COMMIT world boot reads. Native actions/adventure steps now
+enter the audited producer. Scope/area changes and unknown tables still recover.
+The main loop no longer imports the producer via the consumer module. Atomic
+image rollback, ownership fencing, retention and size tests pass; real ordinary
+death, shared release and maintenance regressions pass. Cross-map integration
+and realistic load gates remain outstanding.

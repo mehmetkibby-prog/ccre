@@ -1,5 +1,13 @@
 import {mergeDeathBundleR86} from './death-movement-r86.mjs';
-import {committedResultsR113,committedResultMetricsR113} from './committed-result-r113.mjs';
+import {committedResultsR113,committedResultMetricsR113} from './committed-protocol-r113.mjs';
+
+export async function installCommittedResultR113(runtime,result,context){
+ const d=result.committedR113;if(!d?.indirect)return applyCommittedResultR113(runtime,result,context);
+ const wanted=new Set(result.players.map(p=>p.id)),actors=d.actors.filter(p=>wanted.has(p.id)&&runtime.channel.owners.has(p.id));
+ const parts=await runtime.request('read_committed_r113',{operationId:d.operationId,actors});
+ if(!parts){committedResultMetricsR113.recovered++;return false;}
+ return applyCommittedResultR113(runtime,{...result,committedR113:{...d,actors:parts,indirect:false}},context);
+}
 
 // Prepare the entire recipient set before touching resident state. This port
 // accepts only a writer result delivered after durable COMMIT, never a client

@@ -15,6 +15,7 @@ import {sharedNeeds} from './generated/shared-lease-selection.mjs';
 import {heartbeatRestFrame} from './heartbeat-writer.mjs';
 import {RetaliationMemory} from './retaliation-memory.mjs';
 import {foregroundClaimTargetsR85} from './reward-actor-scope-r85.mjs';
+import {installCommittedResultR113} from './committed-apply-r113.mjs';
 
 const empty=()=>({monsters:[],participants:[],bossParticipants:[],combatEvents:[]});
 const key=(kind,p)=>JSON.stringify(kind==='participants'?[p.monster_id,p.spawn_round,p.player_id]:[p.boss_round,p.player_id]);
@@ -274,7 +275,7 @@ export class SharedCombatChannel {
     else if(a.quiesced)c.kernel.resume(a.id,a.epoch);else a.p.suspended=a.suspended;
   }
  }
- async release({token,refreshActors=null,releaseUnchangedOnly=false}){
+ async release({token,refreshActors=null,releaseUnchangedOnly=false,committedResult=null}){
   const c=this.channel,h=this.held;demand(h?.token===token,'shared_release_scope');
   const started=performance.now();let read=null,applyMs=0;
   try{for(const a of h.actors){
@@ -295,6 +296,17 @@ export class SharedCombatChannel {
     return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,unchangedReleased:unchanged.map(a=>({id:a.id,epoch:a.epoch}))};
    }
    const selected=refreshActors===null?h.actors:h.actors.filter(a=>refreshActors.includes(a.id));let bundles;
+   if(committedResult?.committedR113){
+    const d=committedResult.committedR113,parts=new Map(d.actors.map(a=>[a.id,a]));
+    // The source channel may already have installed its held teammates along
+    // with its own result. Do not overwrite subsequent accepted movement.
+    const fresh=selected.filter(a=>c.commitRevisionsR113.get(a.id)!==parts.get(a.id)?.next);
+    const ids=new Set(fresh.map(a=>a.id)),players=committedResult.players.filter(p=>ids.has(p.id));
+    if(selected.every(a=>parts.has(a.id))&&players.length===fresh.length&&(!fresh.length||await installCommittedResultR113(this.runtime,{...committedResult,players,monsters:[]}))){
+     for(const a of fresh){c.checkpoints.hydrate(c.view.player(a.id));c.encounters.hydrate(a.id,c.view.engagements.get(a.id)??null);}
+     this.releaseActors(h,h.actors);this.held=null;this.runtime.mailbox.resume(token);return {token,released:true,refresh:{durationMs:performance.now()-started,applyMs:performance.now()-started,read:{query:'committed_r113',actors:fresh.length}}};
+    }
+   }
    const readAt=performance.now();bundles=[];
    if(PARALLEL_RELEASE){
     const requests=selected.map(a=>({id:a.id,epoch:a.epoch,revision:++c.revision}));
