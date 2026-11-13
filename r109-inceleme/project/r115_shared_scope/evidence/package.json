@@ -1,0 +1,15 @@
+{
+  "file": "artifacts/R115_SHARED_SCOPE_a668b021b2e3.zip",
+  "bytes": 107743,
+  "sha256": "791858ebddc240c5330e663b569982305fb5acb0c8645adde77e86ed1a6603ea",
+  "sourceVersion": "R114_RUNE_FORUM1",
+  "sourceCore": "5839b7a3fb0f0f6ba1e1656333cc149ea4469816a641a7c25d1a5f5105e3d342",
+  "targetVersion": "R115_SHARED_SCOPE1",
+  "targetCore": "95dd77f5e5a15ceb5d5afa752545a8bd6483ab95bf2fa466265fd294e1eb4039",
+  "changedCodeFiles": 3,
+  "forumChanges": false,
+  "databaseScope": "none",
+  "namespace": "core511-4698e897914580f4",
+  "acceptance": "pending",
+  "deployed": false
+}
