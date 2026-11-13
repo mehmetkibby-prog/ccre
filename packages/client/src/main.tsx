@@ -45,7 +45,7 @@ function AppScreens() {
     catch { setScreen({ s: 'auth' }); }
   };
   useEffect(() => { refresh(); }, []);
-  if (screen.s === 'loading') return <div className="screen"><div className="logo">Core of Life</div></div>;
+  if (screen.s === 'loading') return <div className="screen"><div className="logo">Tuğra<small>ONLINE</small></div></div>;
   if (screen.s === 'auth') return <AuthScreen onDone={refresh} />;
   if (screen.s === 'chars' && me) return <CharScreen me={me} error={lastError} onReload={refresh} onPlay={(id) => { setLastError(''); setScreen({ s: 'channels', charId: id }); }} onLogout={async () => { await api('/api/logout', {}).catch(() => {}); setScreen({ s: 'auth' }); }} />;
   if (screen.s === 'channels') return <ChannelScreen charId={screen.charId} onBack={() => setScreen({ s: 'chars' })} onEnter={(ticket, ch) => setScreen({ s: 'game', ticket, charId: screen.charId, channel: ch })} />;
@@ -78,7 +78,7 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     <div className="screen">
       <MenuBackdrop />
       <div style={{ zIndex: 1 }}>
-        <div className="logo">Core of Life<small>YAŞAM ÇEKİRDEĞİ</small></div>
+        <div className="logo">Tuğra<small>ONLINE</small><em>Yaşam Çekirdeği Destanı</em></div>
         {OFFLINE && <div className="frame auth" style={{ padding: '12px 16px', marginBottom: 12, fontSize: 13 }}><b className="title">Test sürümü</b><div className="muted" style={{ marginTop: 4 }}>Oyun sunucusu bu sürümde tarayıcının içinde çalışır. Hesabın ve karakterin yalnız bu cihazda saklanır. Köyde ve ormanda gördüğün diğer oyuncular test botlarıdır.</div></div>}
         <form className="frame auth" onSubmit={submit}>
           <div className="tabs">

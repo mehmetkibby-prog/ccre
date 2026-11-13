@@ -57,6 +57,30 @@ cp /opt/coreoflife/current/deploy/nginx.conf /etc/nginx/sites-available/coreofli
 certbot certonly --nginx -d ALAN_ADIN.com && nginx -t && systemctl reload nginx
 ```
 
+## 5b. Cloudflare arkasında (önerilen; 5. adımın yerine)
+Cloudflare panelinde: DNS → `A` kaydı (`@` ve `www`, VDS IP'si, turuncu bulut açık) · SSL/TLS → **Full (strict)** ·
+SSL/TLS → Origin Server → **Create Certificate** (15 yıl). Çıkan iki metni VDS'e kaydet:
+```bash
+mkdir -p /etc/ssl/cloudflare && nano /etc/ssl/cloudflare/origin.pem
+```
+```bash
+nano /etc/ssl/cloudflare/origin.key && chmod 600 /etc/ssl/cloudflare/origin.key
+```
+Gerçek oyuncu IP'si (yoksa herkes Cloudflare IP'sinden geliyor görünür; IP sınırları herkesi birden engeller):
+```bash
+bash /opt/coreoflife/current/deploy/cloudflare-realip.sh
+```
+```bash
+cp /opt/coreoflife/current/deploy/nginx-cloudflare.conf /etc/nginx/sites-available/coreoflife && sed -i 's/ALAN_ADIN.com/kendialanadin.com/g' /etc/nginx/sites-available/coreoflife
+```
+```bash
+ln -sf /etc/nginx/sites-available/coreoflife /etc/nginx/sites-enabled/ && rm -f /etc/nginx/sites-enabled/default && nginx -t && systemctl reload nginx
+```
+Güvenlik duvarı:
+```bash
+ufw allow OpenSSH && ufw allow 80/tcp && ufw allow 443/tcp && ufw --force enable
+```
+
 ## 6. Sağlık kontrolü
 ```bash
 curl -s http://127.0.0.1:8080/api/health

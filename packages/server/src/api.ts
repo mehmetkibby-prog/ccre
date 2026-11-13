@@ -168,7 +168,7 @@ export function buildApi(d: ApiDeps): Router {
       const alive = d.channels.alive(ch);
       list.push({ id: ch, name: `Kanal ${ch}`, population: pop, capacity: config.channelCapacity, status: !alive ? 'restarting' : d.channels.maintenance[ch] ? 'maintenance' : pop >= config.channelCapacity ? 'full' : pop > config.channelCapacity * 0.7 ? 'busy' : 'ok' });
     }
-    return { open: open.ok, reason: open.reason ?? null, channels: list, realm: { name: 'Yaşam Çekirdeği', online: d.gateway.online(), capacity: config.realmCapacity } };
+    return { open: open.ok, reason: open.reason ?? null, channels: list, realm: { name: 'Tuğra Online', online: d.gateway.online(), capacity: config.realmCapacity } };
   });
 
   /** Kanal girişi: tek bekleyen bilet, istemci nonce'u ile eşleşir (geç gelen eski yanıt yeni seçimi bozmaz). */

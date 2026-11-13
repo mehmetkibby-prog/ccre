@@ -287,7 +287,7 @@ export async function localApi(path: string, body: any): Promise<any> {
     case '/api/channels': {
       me();
       const online = B().sockets.size + (B().started ? B().bots.length : TUNING.bots);
-      return { open: true, reason: null, channels: [{ id: 1, name: 'Test Kanalı', population: online, capacity: 120, status: 'ok' }], realm: { name: 'Yaşam Çekirdeği (tarayıcı içi test)', online, capacity: 120 } };
+      return { open: true, reason: null, channels: [{ id: 1, name: 'Test Kanalı', population: online, capacity: 120, status: 'ok' }], realm: { name: 'Tuğra Online (tarayıcı içi test)', online, capacity: 120 } };
     }
     case '/api/admission': {
       const a = me();
