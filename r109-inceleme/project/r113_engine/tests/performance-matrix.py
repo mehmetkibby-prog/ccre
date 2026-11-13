@@ -25,8 +25,8 @@ record=OUT/'index.json';rows=json.loads(record.read_text()) if a.resume and reco
 assert a.resume or not record.exists(),'Use --resume to retain all prior runs'
 def save():
  temp=record.with_suffix('.preparing');temp.write_text(json.dumps(rows,indent=2)+'\n');temp.replace(record)
-def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False):
- key=f'{version}-{realm}-{mode}{"-farm" if farm else ""}-{n}-{repeat}-{seconds}'
+def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False,distribution='balanced'):
+ key=f'{version}-{realm}-{mode}{"-farm" if farm else ""}{"-packed" if distribution=="packed" else ""}-{n}-{repeat}-{seconds}'
  if (OUT/'STOP').exists():raise SystemExit('Stopped at run boundary; previous raw results retained')
  if any(r['key']==key for r in rows):return
  for name,tree in [('R110',baseline),('R113',candidate)]:assert core_identity(tree/'core511-source/scripts/core511')==frozen[name],'Runtime changed during matrix: '+name
@@ -35,10 +35,10 @@ def run(version,n,mode,repeat,realm='r1',seconds=60,farm=False):
  before=set(SOURCE.glob('review-*.json'));start=time.time();log=OUT/(key+'.log')
  print(json.dumps({'starting':key,'at':datetime.datetime.now(datetime.timezone.utc).isoformat()}),flush=True)
  with log.open('w') as output:
-  result=subprocess.run([sys.executable,str(REVIEW/'scripts/load.py'),'--players',str(n),'--seconds',str(seconds),'--mode',mode,'--realm',realm,'--arrival','open','--control'],cwd=REVIEW,env=env,stdout=output,stderr=subprocess.STDOUT)
+  result=subprocess.run([sys.executable,str(REVIEW/'scripts/load.py'),'--players',str(n),'--seconds',str(seconds),'--mode',mode,'--realm',realm,'--arrival','open','--distribution',distribution,'--control'],cwd=REVIEW,env=env,stdout=output,stderr=subprocess.STDOUT)
  created=set(SOURCE.glob('review-*.json'))-before;assert len(created)==1,(key,'missing/ambiguous result',result.returncode)
  src=created.pop();value=json.loads(src.read_text());dest=OUT/(key+'.json');shutil.copyfile(src,dest)
- row={'key':key,'version':version,'players':n,'mode':mode,'farmStress':farm,'repeat':repeat,'realm':realm,'seconds':seconds,'source':str(src.relative_to(REVIEW)),'raw':dest.name,'log':log.name,'returncode':result.returncode,'elapsedSeconds':time.time()-start,'functional':value.get('passed',False),'summary':value.get('summary'),'deaths':value.get('combatDelivery',{}).get('deaths'),'controlMaxPauseMs':value.get('independentControl',{}).get('maxPauseMs')}
+ row={'key':key,'version':version,'players':n,'mode':mode,'distribution':distribution,'farmStress':farm,'repeat':repeat,'realm':realm,'seconds':seconds,'source':str(src.relative_to(REVIEW)),'raw':dest.name,'log':log.name,'returncode':result.returncode,'elapsedSeconds':time.time()-start,'functional':value.get('passed',False),'summary':value.get('summary'),'deaths':value.get('combatDelivery',{}).get('deaths'),'controlMaxPauseMs':value.get('independentControl',{}).get('maxPauseMs')}
  rows.append(row);save();print(json.dumps({'finished':key,**{k:row[k] for k in ['functional','summary','deaths','controlMaxPauseMs']}}),flush=True)
  if version=='R113' and not row['functional']:raise SystemExit('Candidate functional failure; matrix paused at '+key)
 
@@ -51,6 +51,7 @@ for repeat in range(1,4):
  for n in ([40] if a.primary_only else [40,10,50,100]):
   for version in ['R110','R113']:run(version,n,'mixed',repeat)
  for n in [30,40]:run('R113',n,'forest',repeat)
+ run('R113',40,'forest',repeat,distribution='packed')
 if a.primary_only:
  print(json.dumps({'primaryMatrixComplete':True,'runs':len(rows)}),flush=True);raise SystemExit(0)
 run('R113',40,'mixed',1,'r2')
