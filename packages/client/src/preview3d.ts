@@ -29,11 +29,11 @@ if (q.get('show') !== 'none') {
 const lineup = q.get('lineup');
 if (lineup) {
   g.ents.clear();
-  const list = lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup.startsWith('p') ? [['P', Number(lineup.slice(1))]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
+  const list = lineup.startsWith('m:') ? lineup.slice(2).split(',').map((m) => ['M', m]) : lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup.startsWith('p') ? [['P', Number(lineup.slice(1))]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
   list.forEach(([k, v], i) => {
     const x = sx + (i - (list.length - 1) / 2) * (lineup === 'mons' ? 110 : 75), y = sy + 20;
     if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: Number(q.get('dir') ?? 64), level: 30, weapon: 3 }));
-    else add(mk(Kind.MONSTER, x, y, { tpl: MONSTER_INDEX.get(v as string)!, variant: i % 2, dir: 64, level: 20 }));
+    else add(mk(Kind.MONSTER, x, y, { tpl: MONSTER_INDEX.get(v as string)!, variant: lineup.startsWith('m:') ? i : i % 2, dir: Number(q.get('dir') ?? 64), level: 20 }));
   });
   g.dx = sx - 1000; g.dy = sy - 1000; // kendini uzağa al
   (r as any).camOverride = { x: sx, y: sy + 20, dist: Number(q.get('dist') ?? 6), pitch: Number(q.get('pitch') ?? 0.42) };
@@ -43,7 +43,7 @@ let last = performance.now();
 let frames = 0; const maxFrames = Number(q.get('frames') ?? 1e9);
 const loop = (t: number) => {
   const dt = t - last; last = t;
-  if (anim === 'walk') { g.lastMoveAt = t; g.dy += 0; }
+  if (anim === 'walk') { g.lastMoveAt = t; g.dy += 0; for (const e of g.ents.values()) if (e.kind === Kind.MONSTER) e.anim = Anim.WALK; }
   if (anim === 'attack' && t - g.selfAnimStart > 900) { g.selfAnim = Anim.ATTACK; g.selfAnimStart = t; }
   for (const e of g.ents.values()) if (e.kind !== Kind.LOOT && anim === 'attack' && t - e.animStart > 900) { e.anim = Anim.ATTACK; e.animStart = t; }
   r.draw(t, dt);

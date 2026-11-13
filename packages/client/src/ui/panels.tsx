@@ -1,5 +1,6 @@
 import { AdminPanel } from '../admin/AdminPanel.tsx';
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
   classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, type ItemInstance, type Slot, type ClassId,
@@ -76,32 +77,74 @@ const TIER_NAMES = ['1. kademe', '2. kademe', '3. kademe', '4. kademe'];
 function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
   const tpl = ITEM_TPL.get(it.tpl);
   const r = RARITY[it.rarity];
+  const power = itemPower(it), base = itemPower({ ...it, plus: 0 });
+  const self = store.get().self;
+  const lvlOk = !self || self.level >= r.minLevel;
   const body = (
     <>
-      <div className="nm" style={{ color: r.color }}>{itemDisplayName(it)}</div>
-      <div className="muted" style={{ fontSize: 11 }}>{r.name} · {tpl ? SLOT_NAMES[tpl.slot] : ''}{tpl?.cls ? ` · ${CLASSES[tpl.cls].name}` : ''} · Gereken Sv. {r.minLevel}</div>
-      <div className="st" style={{ marginTop: 6 }}>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'} +{itemPower(it)}</div>
-      {it.ench.length > 0 && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Efsunlar ({it.ench.length})</div>}
-      {it.ench.map((e, i) => (
-        <div key={i} className={'en t' + (e.tier ?? 0)}>
-          <span>{ENCHANTS[e.t].name} {ENCHANTS[e.t].unit === '%' ? `%${e.v}` : `+${e.v.toLocaleString('tr-TR')}`}</span>
-          <small>{TIER_NAMES[e.tier ?? 0]}</small>
-          {pinned && <div className="ed">{ENCHANTS[e.t].desc}</div>}
+      <div className="tip-hd" style={{ ['--rc' as string]: r.color }}>
+        <div className={'cell r-' + it.rarity}><img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} alt="" /></div>
+        <div style={{ minWidth: 0 }}>
+          <div className="nm" style={{ color: r.color }}>{itemDisplayName(it)}</div>
+          <div className="sub">{r.name} · {tpl ? SLOT_NAMES[tpl.slot] : ''}{tpl?.cls ? ` · ${CLASSES[tpl.cls].name}` : ''}</div>
+          {it.plus > 0 && <div className="pips">{Array.from({ length: Math.max(MAX_PLUS, it.plus) }, (_, i) => <i key={i} className={(i < it.plus ? 'on' : '') + (i === 5 ? ' p6' : '')} />)}</div>}
         </div>
-      ))}
-      {it.kills ? <div className="muted" style={{ fontSize: 11 }}>Silahla av: {it.kills}</div> : null}
-      {it.locked && <div style={{ color: '#ffd27a', fontSize: 11 }}>Kilitli (satılamaz)</div>}
-      <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Satış: {sellPrice(it.rarity)} Mücevher</div>
+      </div>
+      <div className="tip-stat">
+        <span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'}</span>
+        <b>+{power.toLocaleString('tr-TR')}</b>
+        {it.plus > 0 && <small>{base} + {power - base} (artı)</small>}
+      </div>
+      {it.ench.length > 0 && (
+        <div className="tip-ench">
+          <div className="sect">Efsunlar · {it.ench.length}</div>
+          {it.ench.map((e, i) => {
+            const E = ENCHANTS[e.t], tier = e.tier ?? 0;
+            return (
+              <div key={i} className={'er t' + tier}>
+                <div className="ln">
+                  <span className="k">{E.name}</span>
+                  <span className="v">{E.unit === '%' ? `%${e.v}` : `+${e.v.toLocaleString('tr-TR')}`}</span>
+                  <span className="tr" title={TIER_NAMES[tier]}>{[0, 1, 2, 3].map((q) => <i key={q} className={q <= tier ? 'on' : ''} />)}</span>
+                </div>
+                {pinned && <div className="ed">{E.desc}</div>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <div className="tip-ft">
+        <span style={{ color: lvlOk ? undefined : 'var(--bad)' }}>Gereken seviye {r.minLevel}</span>
+        <span>Satış <b>{sellPrice(it.rarity)}</b> Mücevher</span>
+        {it.kills ? <span>Silahla av {it.kills.toLocaleString('tr-TR')}</span> : null}
+        {it.locked && <span style={{ color: 'var(--ember2)' }}>🔒 Kilitli</span>}
+      </div>
     </>
   );
   // telefonda: dokununca sabit kart, "Kapat" ile kapanır
-  if (pinned) return (
+  // panelin kırpma alanı kartı kesmesin: sayfanın en üst katmanına çizilir
+  if (pinned) return createPortal(
     <div className="frame tip tip-sheet" role="dialog" aria-label="Eşya özellikleri" onPointerDown={(e) => e.stopPropagation()}>
       {body}
       <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>
-    </div>
+    </div>, document.body,
   );
-  return <div className="frame tip" style={{ left: Math.min(x + 16, innerWidth - 270), top: Math.min(y + 10, innerHeight - 220) }}>{body}</div>;
+  return <FloatingTip x={x} y={y}>{body}</FloatingTip>;
+}
+/** İmlecin yanında açılır; gerçek yüksekliği ölçülüp ekrana sığdırılır (altta yer yoksa imlecin üstüne çıkar). */
+function FloatingTip({ x, y, children }: { x: number; y: number; children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useLayoutEffect(() => {
+    const el = ref.current; if (!el) return;
+    const h = el.offsetHeight, w = el.offsetWidth;
+    let top = y + 14;
+    if (top + h > innerHeight - 8) top = y - h - 10;
+    top = Math.max(8, Math.min(top, innerHeight - h - 8));
+    let left = x + 18;
+    if (left + w > innerWidth - 8) left = x - w - 14;
+    el.style.left = Math.max(8, left) + 'px'; el.style.top = top + 'px'; el.style.visibility = 'visible';
+  });
+  return createPortal(<div ref={ref} className="frame tip" style={{ left: x + 18, top: y + 14, visibility: 'hidden' }}>{children}</div>, document.body);
 }
 let lastPointer = 'mouse';
 function useTip() {

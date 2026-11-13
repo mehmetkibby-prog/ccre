@@ -307,5 +307,9 @@
       "Attack Magic 2"
     ],
     "animFrom": "arcanist"
+  },
+  "fox_mesh": {
+    "url": "fox_mesh.glb",
+    "scale": 1
   }
 }

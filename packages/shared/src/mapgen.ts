@@ -152,7 +152,18 @@ function genVillage(l: MapLayout, rng: Rng) {
       l.ground[idx(l, x, y)] = n > 0.45 ? G.LUSH : G.GRASS;
     }
     // giriş: köy yolu çitteki kapıdan patikaya döner
-    for (const [x0, y0, x1, y1] of [[cx, 58, cx, h - 7], [cx, 64, 12, 74], [cx, 66, 52, 76], [52, 76, 74, 68], [cx, 72, 40, 81]] as const) carvePath(l, rng, x0, y0, x1, y1, 1, G.DIRT, protect);
+    for (const [x0, y0, x1, y1] of [
+      [cx, 58, cx, h - 7], [cx, 64, 12, 74], [cx, 66, 52, 76], [52, 76, 74, 68], [cx, 72, 40, 81],
+      [cx, 86, 12, 98], [12, 98, 20, 108], [cx, 90, 60, 100], [60, 100, 78, 88], [74, 68, 78, 88], [cx, 100, 46, 109],
+    ] as const) carvePath(l, rng, x0, y0, x1, y1, 1, G.DIRT, protect);
+    // korunun ortasında küçük bir gölet (tilkilerin su içtiği yer)
+    for (let y = GY + 1; y < h - 3; y++) for (let x = 3; x < w - 3; x++) {
+      const d = ((x - 71) / 4.5) ** 2 + ((y - 106) / 3) ** 2 + (smoothNoise(x, y, 3, 31) - 0.5) * 0.5;
+      const i = idx(l, x, y);
+      if (protect[i]) continue;
+      if (d < 1) { l.ground[i] = d < 0.4 ? G.DEEP : G.WATER; l.blocked[i] = 1; }
+      else if (d < 1.45) l.ground[i] = G.SAND;
+    }
     for (let x = 4; x < w - 4; x++) {
       if (Math.abs(x - cx) <= 2) continue;
       const i = idx(l, x, GY - 1);

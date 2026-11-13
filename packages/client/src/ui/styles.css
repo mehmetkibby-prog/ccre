@@ -296,10 +296,7 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .mats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; margin-top: 8px; }
 .mat { display: flex; align-items: center; gap: 9px; padding: 6px 9px; background: rgba(4, 7, 14, .55); clip-path: var(--clip-s); box-shadow: inset 0 0 0 1px var(--edge); font-size: 12.5px; font-weight: 600; }
 .mat img { width: 30px; height: 30px; }
-.tip { position: fixed; z-index: 100; pointer-events: none; width: 270px; padding: 12px 14px; font-size: 12.5px; --cut: 10px; box-shadow: var(--shadow); }
-.tip .nm { font-weight: 700; font-size: 14.5px; margin-bottom: 3px; }
-.tip .st { color: var(--core2); font-weight: 600; }
-.tip .en { color: #a8d0ff; }
+.tip { position: fixed; z-index: 100; pointer-events: none; width: 290px; padding: 0; font-size: 12.5px; --cut: 12px; box-shadow: var(--shadow); }
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .stat { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: rgba(4, 7, 14, .55); clip-path: var(--clip-s); box-shadow: inset 0 0 0 1px var(--edge); margin-bottom: 6px; }
 .stat .v { width: 34px; text-align: center; font-weight: 700; font-size: 17px; color: var(--core2); font-variant-numeric: tabular-nums; }
@@ -496,9 +493,36 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 @media (max-width: 560px) { .stall-row { grid-template-columns: 40px minmax(0, 1fr) auto; } .stall-row > :last-child { grid-column: 2 / -1; justify-self: end; } }
 
 /* ═══════════ eşya kartı ve efsun kademeleri ═══════════ */
-.tip .en { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
-.tip .en small { font-size: 10px; color: var(--muted); font-weight: 500; }
-.tip .en.t3 > span { color: #ffd84a; font-weight: 700; }
-.tip .en.t2 > span { color: #ffb86a; }
-.tip .en .ed { width: 100%; font-size: 11px; color: #a8b2c8; margin: -2px 0 4px; }
+/* başlık: ikon + ad (nadirlik rengi) + tür + artı elmasları */
+.tip-hd { display: flex; gap: 11px; align-items: center; padding: 12px 14px 10px; background: linear-gradient(180deg, color-mix(in srgb, var(--rc) 22%, transparent), transparent); box-shadow: inset 0 -1px 0 var(--edge); }
+.tip-hd .cell { width: 52px; height: 52px; flex: none; cursor: default; }
+.tip-hd .cell img { width: 44px; height: 44px; }
+.tip-hd .nm { font-weight: 700; font-size: 15px; line-height: 1.2; text-shadow: 0 0 12px color-mix(in srgb, var(--rc) 45%, transparent); }
+.tip-hd .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.tip-hd .pips { justify-content: flex-start; margin-top: 5px; gap: 4px; }
+.tip-hd .pips i { width: 7px; height: 7px; }
+/* ana değer */
+.tip-stat { display: flex; align-items: baseline; gap: 8px; padding: 9px 14px; box-shadow: inset 0 -1px 0 rgba(37, 49, 80, .6); }
+.tip-stat span { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+.tip-stat b { font-size: 20px; font-weight: 600; color: var(--core2); font-variant-numeric: tabular-nums; }
+.tip-stat small { margin-left: auto; font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* efsunlar: alt alta, sarı; sağda değer ve kademe elmasları */
+.tip-ench { padding: 9px 14px 6px; }
+.tip-ench .sect { margin: 0 0 6px; color: #ffd84a; }
+.tip-ench .sect::after { background: linear-gradient(90deg, rgba(255, 216, 74, .4), transparent); }
+.tip-ench .er { padding: 4px 0 4px 10px; box-shadow: inset 2px 0 0 rgba(255, 216, 74, .45); margin-bottom: 3px; }
+.tip-ench .ln { display: flex; align-items: center; gap: 8px; }
+.tip-ench .k { color: #ffd84a; font-weight: 600; font-size: 13px; }
+.tip-ench .v { margin-left: auto; color: #fff1a8; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+.tip-ench .tr { display: flex; gap: 2px; }
+.tip-ench .tr i { width: 5px; height: 5px; transform: rotate(45deg); background: rgba(255, 216, 74, .18); }
+.tip-ench .tr i.on { background: #ffd84a; }
+.tip-ench .er.t3 { box-shadow: inset 2px 0 0 #ffd84a; background: linear-gradient(90deg, rgba(255, 216, 74, .12), transparent 70%); }
+.tip-ench .er.t3 .k, .tip-ench .er.t3 .v { text-shadow: 0 0 10px rgba(255, 216, 74, .6); }
+.tip-ench .er.t3 .tr i.on { box-shadow: 0 0 6px #ffd84a; }
+.tip-ench .ed { font-size: 11px; color: #a8b2c8; margin-top: 2px; line-height: 1.35; }
+/* alt bilgi */
+.tip-ft { display: flex; flex-wrap: wrap; gap: 4px 12px; padding: 8px 14px 11px; font-size: 11px; color: var(--muted); background: rgba(0, 0, 0, .22); box-shadow: inset 0 1px 0 rgba(37, 49, 80, .6); }
+.tip-ft b { color: var(--ember2); font-weight: 600; }
+.tip-sheet .btn { margin: 0 14px 12px; width: calc(100% - 28px) !important; }
 .tip.tip-sheet { position: fixed; left: 50%; top: 8px; bottom: auto; transform: translateX(-50%); z-index: 70; width: min(420px, calc(100vw - 24px)); max-height: 60vh; overflow: auto; pointer-events: auto; }

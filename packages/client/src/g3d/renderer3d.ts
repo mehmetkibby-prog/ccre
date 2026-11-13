@@ -17,7 +17,7 @@ import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
 import { buildProps } from './props3d.ts';
 import { createHumanoid, animateHumanoid, LOOKS, type Rig, type HState } from './humanoid.ts';
-import { createMonster, type MonsterRig } from './monsters3d.ts';
+import { createMonster, MONSTER_MESHES, type MonsterRig } from './monsters3d.ts';
 import { Fx3D } from './fx3d.ts';
 import { shared, mat as sharedMat } from './materials.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -146,7 +146,7 @@ export class Renderer3D {
     loadManifest();
     onModelReady((id) => {
       // model geldi: o modeli kullanan görünümleri yeniden kur
-      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
       if (this.self && (this.self.wpend === id || this.self.apend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
       if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
       // NPC'ler: yerinde yeni modelle değiştir

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { at, cyl, lathe } from './geom.ts';
 import { fbm } from './textures.ts';
+import { model as loadModel } from './models.ts';
+import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { templateFromPieces, instantiate, seg, sph, BONES, WORLD, animateHumanoid, type Piece, type BoneDef, type Rig, type HState } from './humanoid.ts';
 
 /** Ortak canavar arayüzü: render katmanı yalnız bunu bilir. */
@@ -74,50 +76,88 @@ function quadPieces(kind: 'wolf' | 'lynx', variant: number): Piece[] {
  */
 function foxPieces(variant: number): Piece[] {
   const P: Piece[] = [];
-  const top = [0xd8641e, 0xa8401a, 0x6a6a74][variant];
-  const sock = [0x2a1a14, 0x1e120c, 0x121216][variant];
-  const white = 0xf4eee4;
-  const fur = furColor(top, 0xf0e2d0, 17 + variant);
-  // sırtta koyu, yanlarda açık geçiş; karın beyaz
+  const top = new THREE.Color([0xd9611c, 0xa83c16, 0x7a7a86][variant]);
+  const saddle = new THREE.Color([0xa8400e, 0x6a200a, 0x3a3a46][variant]);
+  const cream = new THREE.Color([0xf6ece0, 0xe8dccc, 0xe8eaf0][variant]);
+  const sock = [0x241510, 0x1a0e0a, 0x101014][variant];
+  const white = cream.getHex();
+  // post: sırtta koyu kızıl "eyer", böğürde turuncu, karında krem; ince tüy dalgalanması
   const coat = (p: THREE.Vector3, n: THREE.Vector3) => {
-    const c = fur(p, n);
-    if (n.y > 0.55) c.multiplyScalar(0.82);
-    return c;
+    const c = top.clone();
+    c.lerp(saddle, THREE.MathUtils.clamp((n.y - 0.35) * 1.6, 0, 1));
+    c.lerp(cream, THREE.MathUtils.clamp((-n.y - 0.2) * 1.7, 0, 1));
+    return c.multiplyScalar(0.9 + fbm(p.x * 9 + 3, p.z * 7 + p.y * 9, 2, 3, 17 + variant) * 0.22);
   };
   const add = (g: THREE.BufferGeometry, bone: string, color: Piece['color'] = coat, glow = false) => P.push({ g, bone, color, glow });
+  /** Z ekseni boyunca uzanan döndürme yüzeyi (profil: [yarıçap, boy]); w = genişlik, hgt = yükseklik çarpanı. */
+  const along = (prof: [number, number][], x: number, y: number, z: number, w: number, hgt: number) => at(lathe(prof, 18, 0.5), x, y, z, Math.PI / 2, 0, 0, w, 1, hgt);
+  const S = 14; // boru kenar sayısı
   const b = QW.body, c = QW.chest, h = QW.head;
-  // gövde: ince ve uzun
-  add(sph(0.18, b.x, b.y + 0.01, b.z + 0.03, 0.95, 0.9, 1.5), 'body');
-  add(sph(0.18, c.x, c.y - 0.01, c.z - 0.1, 0.95, 1.0, 1.15), 'chest');
-  // beyaz göğüs önlüğü
-  add(sph(0.12, c.x, c.y - 0.06, c.z + 0.02, 0.85, 1.15, 0.75), 'chest', white);
-  add(seg(c.clone().add(V3(0, 0.02, 0)), h.clone().add(V3(0, -0.03, -0.04)), 0.11, 0.085), 'neck');
-  // kafa: geniş yanaklar, sivri yüz
-  add(sph(0.105, h.x, h.y + 0.015, h.z - 0.005, 1.12, 0.9, 1.0), 'head');
-  for (const s2 of [1, -1]) add(sph(0.06, s2 * 0.06, h.y - 0.03, h.z + 0.03, 1, 0.8, 1), 'head', white); // beyaz yanaklar
-  add(seg(h.clone().add(V3(0, -0.005, 0.04)), h.clone().add(V3(0, -0.035, 0.25)), 0.062, 0.022), 'head');
-  add(seg(h.clone().add(V3(0, -0.04, 0.05)), h.clone().add(V3(0, -0.05, 0.22)), 0.045, 0.018), 'jaw', white);
-  add(sph(0.022, h.x, h.y - 0.033, h.z + 0.255), 'head', 0x141010); // burun
-  for (const s2 of [1, -1]) {
-    // iri üçgen kulaklar, siyah uçlu, içi açık
-    add(at(new THREE.ConeGeometry(0.055, 0.17, 4), s2 * 0.06, h.y + 0.13, h.z - 0.02, -0.1, Math.PI / 4, s2 * -0.18), 'head');
-    add(at(new THREE.ConeGeometry(0.026, 0.06, 4), s2 * 0.072, h.y + 0.205, h.z - 0.03, -0.1, Math.PI / 4, s2 * -0.18), 'head', sock);
-    add(at(new THREE.ConeGeometry(0.03, 0.1, 4), s2 * 0.058, h.y + 0.12, h.z + 0.005, -0.1, Math.PI / 4, s2 * -0.18, 1, 1, 0.4), 'head', 0xf2d8c8);
-    // badem gözler
-    add(sph(0.016, s2 * 0.048, h.y + 0.03, h.z + 0.085, 1.3, 0.7, 0.6), 'head', EYE[variant], true);
+
+  // gövde: yuvarlak kalça → ince bel → derin göğüs (kısa, atletik)
+  add(along([[0, -0.37], [0.075, -0.355], [0.13, -0.3], [0.145, -0.22], [0.13, -0.11], [0.112, 0.0], [0.108, 0.1], [0.12, 0.2], [0.09, 0.28], [0, 0.3]], b.x, b.y + 0.035, b.z, 0.82, 1.08), 'body');
+  add(along([[0, -0.32], [0.095, -0.3], [0.118, -0.2], [0.145, -0.07], [0.155, 0.02], [0.135, 0.1], [0.07, 0.155], [0, 0.17]], c.x, c.y - 0.03, c.z - 0.06, 0.84, 1.3), 'chest');
+  // beyaz göğüs önlüğü ve aşağı sarkan yele perçemleri
+  add(sph(0.105, c.x, c.y - 0.07, c.z + 0.07, 0.85, 1.25, 0.7), 'chest', white);
+  for (let i = 0; i < 5; i++) {
+    const x = (i - 2) * 0.034;
+    add(at(new THREE.ConeGeometry(0.03, 0.13 - Math.abs(i - 2) * 0.02, 5), x, c.y - 0.17, c.z + 0.06, -0.25, 0, Math.PI + x * 2.5), 'chest', white);
   }
-  // gür kuyruk: kalınlaşıp incelir, ucu beyaz
-  add(seg(QW.tail1.clone().add(V3(0, 0.02, 0.06)), QW.tail2, 0.07, 0.13), 'tail1');
-  const t3 = QW.tail2.clone().add(V3(0, -0.03, -0.24));
-  add(seg(QW.tail2, t3, 0.13, 0.1), 'tail2');
-  add(seg(t3, t3.clone().add(V3(0, -0.01, -0.13)), 0.1, 0.02), 'tail2', white);
-  // bacaklar: üst kızıl, alt siyah çorap
+  // boyun
+  add(seg(c.clone().add(V3(0, 0.03, 0.04)), h.clone().add(V3(0, -0.035, -0.05)), 0.115, 0.08, S), 'neck');
+  add(seg(c.clone().add(V3(0, -0.02, 0.09)), h.clone().add(V3(0, -0.07, 0.0)), 0.07, 0.055, S), 'neck', white);
+
+  // kafa: üçgen kafatası, yana taşan beyaz yanak perçemleri
+  add(sph(0.095, h.x, h.y + 0.02, h.z - 0.01, 1.18, 0.86, 1.05, 18, 12), 'head');
+  add(sph(0.07, h.x, h.y + 0.055, h.z + 0.03, 1.0, 0.6, 1.0), 'head'); // alın
+  for (const s2 of [1, -1]) {
+    add(at(new THREE.ConeGeometry(0.048, 0.13, 6), s2 * 0.09, h.y - 0.03, h.z - 0.005, 0, s2 * 0.5, -s2 * (Math.PI / 2 + 0.25)), 'head', white);
+    add(sph(0.055, s2 * 0.055, h.y - 0.035, h.z + 0.035, 1, 0.75, 1.1), 'head', white);
+  }
+  // sivri burun: üstü kızıl, altı beyaz; siyah burun ucu
+  add(seg(h.clone().add(V3(0, -0.008, 0.05)), h.clone().add(V3(0, -0.045, 0.265)), 0.058, 0.017, S), 'head');
+  add(seg(h.clone().add(V3(0, -0.05, 0.05)), h.clone().add(V3(0, -0.062, 0.225)), 0.043, 0.013, S), 'jaw', white);
+  add(sph(0.021, h.x, h.y - 0.043, h.z + 0.272, 1.1, 0.85, 1), 'head', 0x120c0a);
+  for (const s2 of [1, -1]) {
+    // gözden buruna inen koyu "gözyaşı" çizgisi
+    add(seg(h.clone().add(V3(s2 * 0.043, 0.012, 0.095)), h.clone().add(V3(s2 * 0.02, -0.035, 0.19)), 0.007, 0.005, 6), 'head', 0x3a1a10);
+    // badem gözler
+    add(sph(0.017, s2 * 0.046, h.y + 0.026, h.z + 0.089, 1.4, 0.68, 0.6), 'head', EYE[variant], true);
+    // iri üçgen kulaklar: yassı, ucu ve arkası koyu, içi krem
+    const ex = s2 * 0.06, ey = h.y + 0.125, ez = h.z - 0.035;
+    add(at(new THREE.ConeGeometry(0.062, 0.17, 3), ex, ey, ez, -0.18, 0, -s2 * 0.24, 1, 1, 0.42), 'head');
+    add(at(new THREE.ConeGeometry(0.03, 0.07, 3), ex - s2 * 0.018, ey + 0.065, ez - 0.012, -0.18, 0, -s2 * 0.24, 1, 1, 0.5), 'head', sock);
+    add(at(new THREE.ConeGeometry(0.04, 0.11, 3), ex, ey - 0.01, ez + 0.012, -0.18, 0, -s2 * 0.24, 1, 1, 0.2), 'head', 0xf0d2c0);
+  }
+
+  // gür kuyruk: tek parça, ortası şişkin, tutam tutam kabarık; kızıldan beyaz uca geçiş
+  {
+    const L = 0.7;
+    const g = lathe([[0.035, 0], [0.07, 0.05], [0.105, 0.14], [0.13, 0.28], [0.138, 0.4], [0.122, 0.53], [0.075, 0.63], [0.02, 0.69], [0, L]], 22, 0.4);
+    const pa = g.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < pa.count; i++) {
+      const x = pa.getX(i), y = pa.getY(i), z = pa.getZ(i);
+      const a = Math.atan2(z, x), k = 1 + 0.09 * Math.sin(a * 7 + y * 26) * Math.min(1, y * 6) + 0.05 * Math.sin(a * 13 - y * 40);
+      pa.setXYZ(i, x * k, y, z * k * 0.92);
+    }
+    g.computeVertexNormals();
+    const base = QW.tail1.clone().add(V3(0, 0.03, 0.08));
+    const dir = V3(0, -0.22, -1).normalize();
+    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(V3(0, 1, 0), dir));
+    g.translate(base.x, base.y, base.z);
+    const tipStart = base.z + dir.z * L * 0.74;
+    add(g, 'tail1', (p, n) => (p.z < tipStart ? cream.clone().multiplyScalar(0.94 + fbm(p.x * 20, p.y * 20, 2, 3, 5) * 0.12) : coat(p, n)));
+  }
+
+  // bacaklar: ince, alt yarısı siyah "çorap"; arka bacaklarda dolgun kalça
   for (const L of ['fl', 'fr', 'bl', 'br']) {
     const u = QW[L + 'U'], l = QW[L + 'L'], p = QW[L + 'P'];
     const back = L[0] === 'b';
-    add(seg(u.clone().add(V3(0, 0.06, 0)), l, back ? 0.085 : 0.065, 0.04), L + 'U');
-    add(seg(l, p, 0.036, 0.028), L + 'L', sock);
-    add(sph(0.036, p.x, p.y - 0.01, p.z + 0.025, 1, 0.6, 1.4), L + 'P', sock);
+    if (back) add(sph(0.085, u.x * 0.85, u.y + 0.03, u.z + 0.03, 0.6, 1.1, 1.2), L + 'U');
+    add(seg(u.clone().add(V3(0, 0.05, 0)), l, back ? 0.066 : 0.048, 0.034, S), L + 'U', back ? coat : (pp: THREE.Vector3, n: THREE.Vector3) => (pp.y < u.y - 0.12 ? new THREE.Color(sock) : coat(pp, n)));
+    add(sph(0.033, l.x, l.y, l.z, 1), L + 'L', sock);
+    add(seg(l, p, 0.03, 0.023, S), L + 'L', sock);
+    add(sph(0.036, p.x, p.y - 0.012, p.z + 0.028, 1, 0.55, 1.45), L + 'P', sock);
   }
   return P;
 }
@@ -219,8 +259,9 @@ function tpl(key: string, build: () => THREE.Object3D) { let t = tpls.get(key); 
 export function createMonster(art: string, variant: number, size: number): MonsterRig {
   const s = size * (variant === 2 ? 1.12 : 1);
   const glow = EYE[variant];
+  if (art === 'fox') { const m = createMeshFox(variant, s); if (m) return m; }
   if (art === 'wolf' || art === 'lynx' || art === 'fox') {
-    const t = tpl(art + variant, () => templateFromPieces(art === 'fox' ? foxPieces(variant) : quadPieces(art, variant), QB, { glowColor: glow, texture: 'leather', clothRough: 0.9 }));
+    const t = tpl(art + variant, () => templateFromPieces(art === 'fox' ? foxPieces(variant) : quadPieces(art, variant), QB, { glowColor: glow, texture: art === 'fox' ? 'cloth' : 'leather', clothRough: 0.92 }));
     const inst = instantiate(t);
     inst.root.scale.setScalar(s * (art === 'wolf' ? 1.35 : art === 'fox' ? 1.15 : 1.2));
     const fox = art === 'fox';
@@ -230,7 +271,8 @@ export function createMonster(art: string, variant: number, size: number): Monst
         quadAnimate(inst.bones, inst.body, st, tm, k, ph);
         if (fox) {
           // tilki: kuyruk yere paralel ve canlı sallanır, kulaklar dik; boşta ara ara başını yana eğer
-          inst.bones.tail1.rotation.x = 0.15; inst.bones.tail2.rotation.x = 0.05;
+          inst.bones.tail1.rotation.x = 0.1; inst.bones.tail2.rotation.x = 0;
+          if (st !== 'dead') { inst.bones.neck.rotation.x -= 0.32; inst.bones.head.rotation.x += 0.24; } // baş dik, burun düz
           inst.bones.tail1.rotation.y = Math.sin(tm * (st === 'walk' ? 6 : 2.2)) * (st === 'walk' ? 0.35 : 0.22);
           if (st === 'idle') inst.bones.head.rotation.z = Math.max(0, Math.sin(tm * 0.7)) ** 6 * 0.35;
         }
@@ -255,6 +297,47 @@ export function createMonster(art: string, variant: number, size: number): Monst
   if (art === 'devourer') return createDevourer(variant, s);
   if (art === 'blackstone') return createBlackStone(s);
   return createDevourer(variant, s);
+}
+
+/** Hazır 3B modeli olan canavarlar: model kimliği → sanat adı (model gelince görünümler yeniden kurulur). */
+export const MONSTER_MESHES: Record<string, string> = { fox_mesh: 'fox' };
+const foxMats = new Map<number, THREE.Material>();
+/**
+ * Meshy'de tasarlanıp scripts/quad-rig.mjs ile dört ayaklı iskelete bağlanan tilki. Kemik adları QB ile aynı,
+ * dinlenme dönüşleri birim: quadAnimate doğrudan sürer. Model yüklenmediyse null (çizilmiş tilki görünür).
+ */
+function createMeshFox(variant: number, s: number): MonsterRig | null {
+  const L = loadModel('fox_mesh');
+  if (!L) return null;
+  const inner = skClone(L.scene) as THREE.Object3D;
+  const bones: Record<string, THREE.Bone> = {};
+  inner.traverse((o) => {
+    if ((o as THREE.Bone).isBone) bones[o.name] = o as THREE.Bone;
+    const m = o as THREE.SkinnedMesh;
+    if (m.isSkinnedMesh) {
+      m.castShadow = true; m.frustumCulled = false;
+      if (variant > 0) {
+        let vm = foxMats.get(variant);
+        if (!vm) { vm = (m.material as THREE.MeshStandardMaterial).clone(); (vm as THREE.MeshStandardMaterial).color.set(variant === 2 ? 0x9aa2b8 : 0xc08a78); foxMats.set(variant, vm); }
+        m.material = vm;
+      }
+    }
+  });
+  if (!bones.body) return null;
+  const restBodyY = bones.body.position.y;
+  const bodyG = new THREE.Group(); bodyG.add(inner);
+  const root = new THREE.Group(); root.add(bodyG);
+  root.scale.setScalar(s * 1.05);
+  return {
+    root, height: 0.95 * s * 1.05,
+    update(st, t, k, ph) {
+      quadAnimate(bones, bodyG, st, t, k, ph);
+      bones.body.position.y += restBodyY - QB[0][3];
+      bones.tail1.rotation.x = 0.12; bones.tail2.rotation.x = 0.05;
+      bones.tail1.rotation.y = Math.sin(t * (st === 'walk' ? 6 : 2.2)) * (st === 'walk' ? 0.3 : 0.18);
+      if (st === 'idle') bones.head.rotation.z = Math.max(0, Math.sin(t * 0.7)) ** 6 * 0.3;
+    },
+  };
 }
 
 function createDevourer(variant: number, s: number): MonsterRig {
