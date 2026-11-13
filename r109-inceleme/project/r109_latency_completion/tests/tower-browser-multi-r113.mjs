@@ -2,6 +2,7 @@
 // seed data and the accounts HTTP boundary are synthetic, as in tower-browser.
 import assert from 'node:assert/strict';
 import {randomUUID,createHash} from 'node:crypto';
+import {setTimeout as pause} from 'node:timers/promises';
 const hash=v=>createHash('sha256').update(v).digest('base64url');
 export function seedBrowserUsersR113(sql,seed){
  const put=(table,row)=>{const keys=Object.keys(row);sql.prepare(`INSERT INTO ${table}(${keys.join(',')}) VALUES(${keys.map(()=>'?').join(',')})`).run(...Object.values(row));};
@@ -24,7 +25,12 @@ export async function openIndependentTowersR113({browser,users,origin,requests,n
   await page.route('**/*',r=>new URL(r.request().url()).origin===origin?r.continue():r.abort());
   await page.goto(origin);await page.getByRole('button',{name:'Maceraya katıl'}).click({timeout:30000});await page.getByRole('button',{name:/Kanal 1.*Katıl/s}).click({timeout:30000});
   await page.locator('.primary-skill-bar').waitFor({state:'visible',timeout:30000});
-  const instance=requests.findLast(r=>r.player===user.index&&r.path==='/api/realtime/core511-character'&&r.status===200)?.instance;assert(instance);
+  // The HUD shell can become visible before the successful admission response
+  // has reached the fixture's HTTP recorder. Wait for that same real response;
+  // do not invent an instance or bypass the portal/admission protocol.
+  let instance;const deadline=Date.now()+10000;
+  while(!instance&&Date.now()<deadline){instance=requests.findLast(r=>r.player===user.index&&r.path==='/api/realtime/core511-character'&&r.status===200)?.instance;if(!instance)await pause(25);}
+  assert(instance,'separate browser never completed character admission');
   await page.evaluate(async({namespace,bridge,instance})=>window.__qaReadCore=(await import('/assets/'+namespace+'/'+bridge)).browserCore(instance),{namespace,bridge,instance});
   await page.waitForFunction(()=>window.__qaReadCore?.ready&&window.__qaReadCore.world?.players?.length);
   const entered=await page.evaluate(()=>window.__qaReadCore.command({action:'adventure_tower_enter',requestId:crypto.randomUUID()}));assert.equal(entered.status,200,JSON.stringify(entered));
