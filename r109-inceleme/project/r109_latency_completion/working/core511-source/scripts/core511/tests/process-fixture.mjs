@@ -1,3 +1,4 @@
+import {createAdventureSchema} from '../adventure-schema.mjs';
 import {createTowerSchema} from '../tower-config.mjs';
 import assert from 'node:assert/strict';
 import {generateKeyPairSync,randomUUID} from 'node:crypto';
@@ -29,7 +30,7 @@ export function extraPlayer(s,index,id='shared-player-'+index,{offline=false}={}
 
 export async function setup(t,{prepare=null,fresh=false,shared=false,nativeMechanics=shared,nativeWriter=shared,respawns=false,repairs=false,dragon=false,cleanup=false,rune=false,heartbeatRewards=false,sharedCombat=null,content=false,localCombat=null,stoneWave=null,readerQueries=new Map()}={}){
  const cleanups=[],f=await setupEntry({after:fn=>cleanups.push(fn)},{fresh,realTime:true}),faults=[];let writer,core;
- createTowerSchema(f.sql);if(prepare)await prepare(f);
+ createTowerSchema(f.sql);createAdventureSchema(f.sql);if(prepare)await prepare(f);
  if(content){f.sql.prepare('UPDATE world_state SET layout_version=24 WHERE id=1').run();await bootstrapFourthChannel(f.f.database,{assertStopped:()=>writer===undefined});}
  // Full shared topology uses the production identity/resource policy. Smaller
  // non-world fixtures keep their explicitly scoped writer callbacks.
