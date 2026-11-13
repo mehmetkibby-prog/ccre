@@ -71,7 +71,7 @@ Gerçek oyuncu IP'si (yoksa herkes Cloudflare IP'sinden geliyor görünür; IP s
 bash /opt/coreoflife/current/deploy/cloudflare-realip.sh
 ```
 ```bash
-cp /opt/coreoflife/current/deploy/nginx-cloudflare.conf /etc/nginx/sites-available/coreoflife && sed -i 's/ALAN_ADIN.com/kendialanadin.com/g' /etc/nginx/sites-available/coreoflife
+cp /opt/coreoflife/current/deploy/nginx-cloudflare.conf /etc/nginx/sites-available/coreoflife
 ```
 ```bash
 ln -sf /etc/nginx/sites-available/coreoflife /etc/nginx/sites-enabled/ && rm -f /etc/nginx/sites-enabled/default && nginx -t && systemctl reload nginx
