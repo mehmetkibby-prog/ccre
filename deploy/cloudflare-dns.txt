@@ -1,0 +1,12 @@
+;; Tuğra Online — Cloudflare DNS içe aktarma dosyası (BIND biçimi)
+;; Cloudflare → tugraonline.net → DNS → Records → Import and Export → Import → bu dosyayı seç.
+;; "Proxy imported DNS records" kutusunu İŞARETLE (turuncu bulut).
+;; Yüklemeden önce iki satırdaki SUNUCU_IP yazısını VDS'in IP adresiyle değiştir (ör. 185.12.34.56).
+$ORIGIN tugraonline.net.
+$TTL 1
+tugraonline.net.      1 IN A   SUNUCU_IP ; cf_tags=cf-proxied:true
+www.tugraonline.net.  1 IN A   SUNUCU_IP ; cf_tags=cf-proxied:true
+;; Bu alan adı e-posta göndermiyor: başkalarının bu adla sahte e-posta atmasını engeller.
+;; İleride şifre sıfırlama e-postası için bir e-posta servisi bağlarken bu iki kayıt güncellenecek.
+tugraonline.net.        1 IN TXT "v=spf1 -all"
+_dmarc.tugraonline.net. 1 IN TXT "v=DMARC1; p=reject;"

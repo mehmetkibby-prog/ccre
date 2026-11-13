@@ -101,6 +101,17 @@ pem_oku() { # $1 dosya, $2 bitiş satırı
 if [ -s "$SSL/origin.pem" ] && [ -s "$SSL/origin.key" ]; then
   tamam "sertifika zaten var"
 else
+  echo "  Cloudflare Origin sertifikasını yapıştırmak için Enter'a bas."
+  echo "  Yapıştıramıyorsan (noVNC konsolu gibi) 'g' yaz ve Enter: geçici sertifika üretilir; Cloudflare'de SSL modu 'Full' olmalı."
+  IFS= read -r secim < /dev/tty || secim=""
+fi
+if [ -s "$SSL/origin.pem" ] && [ -s "$SSL/origin.key" ]; then :
+elif [ "${secim:-}" = g ] || [ "${secim:-}" = G ]; then
+  openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -subj "/CN=$ALAN" -addext "subjectAltName=DNS:$ALAN,DNS:www.$ALAN" \
+    -keyout "$SSL/origin.key" -out "$SSL/origin.pem" 2>/dev/null
+  chmod 600 "$SSL/origin.key"
+  tamam "geçici sertifika üretildi. Cloudflare → SSL/TLS → 'Full' seç (strict değil). Sonra SSH ile bağlanıp asıl sertifikayı kurmak için: rm $SSL/origin.* && bash kur.sh"
+else
   echo "  Cloudflare → SSL/TLS → Origin Server → Create Certificate (RSA, 15 yıl, tugraonline.net ve *.tugraonline.net)."
   echo "  'Origin Certificate' kutusundaki metnin TAMAMINI buraya yapıştır (-----END CERTIFICATE----- satırında kendisi durur):"
   pem_oku "$SSL/origin.pem" '-----END CERTIFICATE-----'
