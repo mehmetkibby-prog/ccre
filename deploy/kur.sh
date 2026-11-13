@@ -67,8 +67,8 @@ mkdir -p "$KOK/releases"
 SURUM=r$(date +%Y%m%d-%H%M%S)
 git clone -q --depth 1 -b "$DAL" "$REPO" "$KOK/releases/$SURUM"
 cd "$KOK/releases/$SURUM"
-npm ci --no-audit --no-fund --loglevel=error
-NODE_OPTIONS=--max-old-space-size=1536 npm run build >/tmp/tugra-build.log 2>&1 || { tail -30 /tmp/tugra-build.log; hata "derleme başarısız (tam kayıt: /tmp/tugra-build.log)"; }
+{ npm ci --no-audit --no-fund --loglevel=error && NODE_OPTIONS=--max-old-space-size=1536 npm run build >/tmp/tugra-build.log 2>&1; } || {
+  tail -30 /tmp/tugra-build.log 2>/dev/null; cd /; rm -rf "$KOK/releases/$SURUM"; hata "derleme başarısız (tam kayıt: /tmp/tugra-build.log)"; }
 ln -sfn "$KOK/releases/$SURUM" "$KOK/current"
 chown -R coreoflife "$KOK"
 tamam "sürüm $SURUM ($(git rev-parse --short HEAD))"
