@@ -1,5 +1,5 @@
 [Unit]
-Description=Core of Life oyun sunucusu
+Description=Tuğra Online oyun sunucusu
 After=network.target postgresql.service
 Requires=postgresql.service
 

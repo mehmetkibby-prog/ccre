@@ -1,6 +1,24 @@
-# VDS Kurulumu (Ubuntu 24.04, 8 çekirdek / 8 GB)
+# VDS Kurulumu (Ubuntu 24.04)
 
-Komutları sırayla, root olarak çalıştır. `ALAN_ADIN.com` yerine kendi alan adını yaz.
+## Hızlı kurulum (önerilen): tek komut
+Önce Cloudflare'de DNS kayıtlarını aç (`A @` ve `A www` → VDS IP'si, turuncu bulut açık; SSL/TLS → **Full (strict)**).
+Sonra sunucuya root olarak bağlanıp:
+```bash
+curl -fsSLo kur.sh https://raw.githubusercontent.com/mehmetkibby-prog/ccre/tugra-online/deploy/kur.sh && bash kur.sh
+```
+Betik takas alanı, paketler, veritabanı (rastgele parola), derleme, servis, nginx, gerçek IP, güvenlik duvarı ve gece yedeğini kurar.
+Bir yerde Cloudflare Origin sertifikasını ve anahtarını yapıştırmanı ister (Cloudflare → SSL/TLS → Origin Server → Create Certificate).
+Bitince:
+```bash
+tugra yonetici KULLANICI_ADIN
+```
+```bash
+tugra ac
+```
+Diğer komutlar: `tugra durum`, `tugra kapat`, `tugra bakim "mesaj"`, `tugra guncelle` (yedek alır, derler, açılmazsa eskiye döner), `tugra geri`, `tugra yedek`, `tugra kayit`.
+
+---
+Aşağısı elle kurulum içindir (betiğin yaptığı adımlar). Komutları sırayla, root olarak çalıştır.
 
 ## 0. Küçük sunucu (2 çekirdek / 2 GB RAM) notları
 - Derleme (`npm run build`) 2 GB RAM'de bellek yetmezliğine düşebilir: önce 2 GB takas alanı aç.
