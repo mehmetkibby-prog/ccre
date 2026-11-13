@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101916"><title>Core of Life · Topluluk Forumu</title>
+  <meta name="description" content="Core of Life duyuruları, güncelleme notları, etkinlikler ve oyuncu topluluğu.">
+  <link rel="stylesheet" href="/forum/style.css"><script src="/forum/app.js" defer></script>
+</head>
+<body>
+  <div class="preview-label" id="preview-label" hidden>R114 TASLAK <span>·</span> İçerikler örnektir. Canlı siteye yayınlanmadı.</div>
+  <header class="site-header"><div class="container header-inner">
+    <a class="brand" href="#" aria-label="Core of Life Forum ana sayfa"><span class="brand-emblem" aria-hidden="true">✧</span><span>CORE OF LIFE<small>TOPLULUK FORUMU</small></span></a>
+    <nav class="main-nav" aria-label="Ana menü"><a href="#" class="selected">Forum</a><a href="https://coreoflife.net">Ana site <span>↗</span></a><a href="https://discord.gg/pBywtjhTN" target="_blank" rel="noopener noreferrer">Discord <span>↗</span></a></nav>
+    <div id="account-actions" class="account-actions"></div>
+  </div></header>
+  <section class="hero" aria-labelledby="hero-title"><div class="container hero-inner">
+    <div><p class="eyebrow"><span></span> EFSANE & AKADEMİ TOPLULUĞU</p><h1 id="hero-title">Maceranın buluşma noktası.</h1><p>Haberleri takip et, deneyimini paylaş.<br>Birlikte daha güçlü bir dünya kur.</p><button class="button gold" data-auth="register">Topluluğa katıl <span>→</span></button></div>
+    <div class="hero-sign"><span>YAŞAMIN ÇEKİRDEĞİNE DÖN</span><i>✧</i><small>coreoflife.net</small></div>
+  </div></section>
+  <div class="quick-bar"><div class="container quick-inner"><span class="quick-intro">HIZLI ERİŞİM</span><a href="#category/guncellemeler" data-icon="scroll">Güncelleme notları</a><a href="#category/bakim" data-icon="tool">Bakım duyuruları</a><a href="#category/etkinlikler" data-icon="calendar">Etkinlikler</a><a class="play-link" href="https://accounts.coreoflife.net/?servers=1&intent=login">Oyuna dön <span>↗</span></a></div></div>
+  <main class="container main-layout" id="main">
+    <div class="forum-main">
+      <div class="breadcrumb"><a href="#">Forum</a><span id="breadcrumb-detail"></span></div>
+      <div class="forum-toolbar"><div><p class="eyebrow" id="section-eyebrow">CORE OF LIFE</p><h2 id="section-title">Topluluk forumu</h2></div><button class="button gold new-topic" id="new-topic">＋ Yeni konu aç</button></div>
+      <form class="search" id="search-form" role="search"><span data-icon="search"></span><input id="search" name="search" placeholder="Konu veya duyuru ara..." aria-label="Forumda ara" maxlength="100"><button type="submit">Ara <span>↵</span></button></form>
+      <div id="forum-content" aria-live="polite"><div class="empty-state">Forum yükleniyor…</div></div>
+    </div>
+    <aside class="sidebar">
+      <section class="welcome-panel"><span class="small-emblem">✧</span><p class="eyebrow">SÖZ SIRASI SENDE</p><h3>Bu dünyanın<br>bir parçasısın.</h3><p>Sorularını sor, rehberlerini paylaş,<br>yeni yol arkadaşları bul.</p><button class="button gold" data-auth="register">Ücretsiz üye ol <span>→</span></button><small>Bir hesabın var mı? <button class="text-button" data-auth="login">Giriş yap</button></small></section>
+      <section class="sidebar-panel"><div class="side-heading"><h3>Yönetimden haberler</h3><span data-icon="horn"></span></div><div id="latest-official"></div><a class="side-footer" href="#official">Tüm duyuruları gör <span>→</span></a></section>
+      <section class="sidebar-panel guide-panel"><div class="side-heading"><h3>Birlikte daha güçlüyüz</h3><span data-icon="shield"></span></div><p>Saygılı ol. Hesap bilgilerini paylaşma.<br>Doğru bölümde konu aç.</p><button class="text-button" id="rules-link">Forum kurallarını oku <span>→</span></button></section>
+      <a class="discord-panel" href="https://discord.gg/pBywtjhTN" target="_blank" rel="noopener noreferrer"><span data-icon="chat"></span><span>SOHBETE DEVAM ET<strong>Discord’a katıl</strong></span><b>↗</b></a>
+      <section class="forum-stats" id="forum-stats"></section>
+    </aside>
+  </main>
+  <footer class="site-footer"><div class="container"><span class="footer-brand">CORE OF LIFE <small>Birlikte daha güçlü.</small></span><span>Topluluk forumu <i>·</i> Efsane & Akademi</span><a href="https://coreoflife.net">Ana siteye dön ↗</a></div></footer>
+  <dialog id="auth-dialog" aria-labelledby="auth-title"><button class="dialog-close" data-close aria-label="Kapat">×</button><div class="dialog-brand">✧ <span>CORE OF LIFE</span></div><p class="eyebrow" id="auth-eyebrow">TOPLULUĞA KATIL</p><h2 id="auth-title">Hikâyeye sen de katıl.</h2><p class="dialog-intro" id="auth-intro">Forum hesabını oluştur, sohbetin bir parçası ol.</p>
+    <form id="auth-form"><div class="field"><label for="auth-name">Kullanıcı adı</label><input id="auth-name" name="name" autocomplete="username" minlength="3" maxlength="24" pattern="[a-zA-Z0-9_]{3,24}" placeholder="Forumda görünecek adın" required><small>3–24 karakter; harf, rakam veya alt çizgi.</small></div>
+    <div class="field register-only"><label for="auth-email">E-posta adresi</label><input id="auth-email" name="email" type="email" autocomplete="email" placeholder="ornek@eposta.com"><small>E-posta adresin diğer üyelere gösterilmez.</small></div>
+    <div class="field"><label for="auth-password">Parola</label><input id="auth-password" name="password" type="password" autocomplete="new-password" minlength="10" maxlength="128" placeholder="En az 10 karakter" required></div>
+    <div class="field register-only"><label for="auth-repeat">Parola tekrar</label><input id="auth-repeat" name="repeat" type="password" autocomplete="new-password" placeholder="Parolanı tekrar yaz"></div>
+    <div class="field"><label for="auth-captcha">Güvenlik kodu</label><div class="captcha-row"><img id="captcha-image" alt="Altı haneli güvenlik kodu" width="220" height="72"><button class="button outline" id="renew-captcha" type="button" aria-label="Güvenlik kodunu yenile">↻ Yenile</button></div><input id="auth-captcha" name="captcha" inputmode="numeric" autocomplete="off" maxlength="6" pattern="[0-9]{6}" placeholder="Görseldeki 6 rakamı yaz" required></div>
+    <label class="check-label register-only"><input type="checkbox" name="terms" id="auth-terms"><span>Forum kurallarını okudum ve kabul ediyorum.</span></label><p class="form-error" id="auth-error" role="alert"></p><button class="button gold full" type="submit" id="auth-submit">Hesabımı oluştur →</button><p class="account-note">Forum üyeliği oyun hesabından ayrıdır.</p></form><p class="auth-switch" id="auth-switch"></p>
+  </dialog>
+  <dialog id="compose-dialog" aria-labelledby="compose-title"><button class="dialog-close" data-close aria-label="Kapat">×</button><p class="eyebrow">TOPLULUKLA PAYLAŞ</p><h2 id="compose-title">Yeni bir konu aç.</h2><form id="compose-form"><div class="field"><label for="compose-category">Bölüm</label><select id="compose-category" name="category" required></select></div><div class="field"><label for="compose-realm">Sunucu</label><select id="compose-realm" name="realm"><option>Tüm sunucular</option><option>Efsane</option><option>Akademi</option></select></div><div class="field"><label for="compose-topic">Konu başlığı</label><input id="compose-topic" name="title" minlength="5" maxlength="140" required placeholder="Konunu birkaç kelimeyle anlat"></div><div class="field"><label for="compose-body">Mesajın</label><textarea id="compose-body" name="body" minlength="10" maxlength="10000" rows="7" required placeholder="Deneyimini, sorunu veya duyurunu yaz..."></textarea></div><div id="compose-admin" hidden><label class="check-label"><input type="checkbox" name="pinned">Konuyu sabitle</label><label class="check-label"><input type="checkbox" name="locked">Oyuncu yanıtlarına kapat</label></div><p class="form-error" id="compose-error" role="alert"></p><button class="button gold full" type="submit">Konuyu yayınla →</button></form></dialog>
+  <dialog id="rules-dialog" aria-labelledby="rules-title"><button class="dialog-close" data-close aria-label="Kapat">×</button><p class="eyebrow">TOPLULUK KURALLARI</p><h2 id="rules-title">Herkese yer var.</h2><ol class="rules-list"><li>Saygılı ve yapıcı ol. Hakaret, taciz ve kişisel bilgi paylaşımı yapma.</li><li>Oyun veya forum parolanı, güvenlik kodunu kimseyle paylaşma.</li><li>Konunu ilgili bölümde aç; ilanında Efsane veya Akademi sunucusunu belirt.</li><li>Spam, dolandırıcılık ve hesap satışı yasaktır.</li><li>Güvenlik açıklarını herkese açık konuya yazma; yönetimle özel olarak iletişime geç.</li><li>Resmî duyuru, güncelleme, bakım ve etkinlik bölümlerinde yalnız yöneticiler paylaşım yapar.</li></ol></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body></html>

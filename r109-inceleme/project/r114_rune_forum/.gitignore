@@ -1,0 +1,5 @@
+forum/var/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+evidence/*.log

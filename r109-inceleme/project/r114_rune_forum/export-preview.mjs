@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.join(import.meta.dirname,'forum/public');
+const [categories,topics,captcha]=await Promise.all(['/categories','/topics','/captcha'].map(async p=>{const r=await fetch('http://127.0.0.1:8114/forum/api'+p);if(!r.ok)throw Error('preview fetch '+p);return r.json();}));
+let html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+let css=fs.readFileSync(path.join(root,'style.css'),'utf8');
+css=css.replace(/\/forum\/assets\/([a-zA-Z0-9.-]+)/g,(_,name)=>'data:'+(name.endsWith('.webp')?'image/webp':'font/woff2')+';base64,'+fs.readFileSync(path.join(root,'assets',name)).toString('base64'));
+html=html.replace('<link rel="stylesheet" href="/forum/style.css"><script src="/forum/app.js" defer></script>',()=>'<style>'+css+'</style>');
+html=html.replace('Forum üyeliği oyun hesabından ayrıdır.','Bu indirilebilir taslak gerçek hesap oluşturmaz. Gerçek parolanı girme.');
+const data=JSON.stringify({categories,topics:topics.topics,captcha:captcha.image}).replaceAll('<','\\u003c');
+const script=fs.readFileSync(path.join(root,'app.js'),'utf8').replaceAll('</script','<\\/script');
+html=html.replace('</body>',()=>`<script>window.__FORUM_PREVIEW__=${data};</script><script>${script}</script></body>`);
+const out=path.join(import.meta.dirname,'delivery');fs.mkdirSync(out,{recursive:true});
+fs.writeFileSync(path.join(out,'r114-forum-taslak.html'),html);
+fs.copyFileSync(path.join(out,'r114-forum-taslak.html'),'/workspace/r114-forum-taslak.html');
+console.log('Offline preview exported: '+html.length+' characters');

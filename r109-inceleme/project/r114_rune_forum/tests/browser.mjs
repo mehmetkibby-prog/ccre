@@ -1,0 +1,54 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {createForum} from '../forum/server.mjs';
+import {CaptchaRendererR106} from '../forum/lib/captcha-renderer-r106.mjs';
+const out=path.resolve(import.meta.dirname,'../evidence');
+const renderer=new CaptchaRendererR106();let answer;
+const app=await createForum({origin:'http://127.0.0.1:8115',demo:true,renderer:{render:value=>{answer=value;return renderer.render(value);},close:()=>renderer.close()}});
+await app.createAdmin('ForumOwner','Admin-test-only-passphrase114','owner@example.invalid');
+await new Promise(resolve=>app.server.listen(8115,'127.0.0.1',resolve));
+const browser=await chromium.launch({executablePath:'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const errors=[],checks=[];
+try{
+ const context=await browser.newContext({viewport:{width:1440,height:1100},deviceScaleFactor:1});
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+ page.on('response',r=>{if(r.status()>=500)errors.push(r.url()+' '+r.status());});
+ await page.goto('http://127.0.0.1:8115/forum');await page.locator('.category-row').first().waitFor();
+ await page.screenshot({path:path.join(out,'forum-desktop.png'),fullPage:true});checks.push('desktop categories and official-only labels');
+ await page.getByRole('button',{name:'Üye ol',exact:true}).click();await page.locator('#captcha-image[src^="data:image/png"]').waitFor();
+ await page.screenshot({path:path.join(out,'forum-register-desktop.png')});
+ await page.locator('#auth-dialog [data-close]').click();
+ for(const width of [360,390,768,1440]){
+   await page.setViewportSize({width,height:844});
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));checks.push('no horizontal overflow '+width);
+ }
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(out,'forum-mobile.png'),fullPage:true});
+ await page.getByRole('button',{name:'Üye ol',exact:true}).click();await page.locator('#captcha-image[src^="data:image/png"]').waitFor();
+ await page.setViewportSize({width:390,height:1100});await page.screenshot({path:path.join(out,'forum-register-mobile.png')});
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#auth-name').fill('MobilePlayer');await page.locator('#auth-email').fill('mobile@example.invalid');
+ await page.locator('#auth-password').fill('Test-only-passphrase114');await page.locator('#auth-repeat').fill('Test-only-passphrase114');
+ await page.locator('#auth-captcha').fill(answer);await page.locator('#auth-terms').check();
+ await page.locator('#auth-submit').click();await page.locator('#logout').waitFor();checks.push('mobile real registration and PNG CAPTCHA');
+ await page.locator('#new-topic').click();assert.equal(await page.locator('#compose-category option').count(),5);checks.push('member composer exposes only player categories');
+ await page.locator('#compose-category').selectOption('meydan');await page.locator('#compose-topic').fill('Mobil oyuncu denemesi');
+ const text='<img src=x onerror="window.forumXss=true"> Birlikte maceraya devam.';
+ await page.locator('#compose-body').fill(text);await page.locator('#compose-form button[type=submit]').click();
+ await page.locator('.post-body').waitFor();assert.equal(await page.locator('.post-body').textContent(),text);assert.equal(await page.locator('.post-body img').count(),0);checks.push('stored content rendered as text, no HTML execution');
+ await page.locator('#reply-body').fill('Mobil yanıt başarıyla eklendi.');await page.locator('#reply-form button').click();await page.getByText('Mobil yanıt başarıyla eklendi.',{exact:true}).waitFor();checks.push('member topic and reply');
+ await page.goto('http://127.0.0.1:8115/forum#category/bakim');await page.getByText('Bu bölümde yalnız yöneticiler paylaşım yapabilir. Herkes okuyabilir.').waitFor();assert(await page.locator('#new-topic').isHidden());checks.push('readonly admin category on mobile');
+ await page.locator('#logout').click();await page.getByRole('button',{name:'Giriş yap',exact:true}).first().waitFor();
+ await page.setViewportSize({width:1440,height:1100});await page.getByRole('button',{name:'Giriş yap',exact:true}).first().click();await page.locator('#captcha-image[src^="data:image/png"]').waitFor();
+ await page.locator('#auth-name').fill('ForumOwner');await page.locator('#auth-password').fill('Admin-test-only-passphrase114');await page.locator('#auth-captcha').fill(answer);await page.locator('#auth-submit').click();await page.locator('#logout').waitFor();
+ await page.locator('#new-topic').click();assert.equal(await page.locator('#compose-category option').count(),9);await page.locator('#compose-category').selectOption('bakim');
+ await page.locator('#compose-topic').fill('Planlı bakım duyurusu');await page.locator('#compose-body').fill('Bakımın başlangıç saati ve tamamlandığı bilgisi bu başlıkta paylaşılacak.');
+ await page.screenshot({path:path.join(out,'forum-admin-compose.png')});
+ await page.locator('#compose-form button[type=submit]').click();await page.getByRole('button',{name:'Sabitle',exact:true}).waitFor();checks.push('admin login and announcement publishing');
+ await page.screenshot({path:path.join(out,'forum-topic.png'),fullPage:true});
+ await page.getByRole('button',{name:'Sabitle',exact:true}).click();await page.getByRole('button',{name:'Sabitlemeyi kaldır'}).waitFor();checks.push('admin moderation');
+ assert.deepEqual(errors,[]);
+ fs.writeFileSync(path.join(out,'forum-browser.json'),JSON.stringify({passed:true,checks,errors,live:false},null,2)+'\n');
+ console.log(JSON.stringify({passed:true,checks,errors}));
+}finally{await browser.close();await app.close();}

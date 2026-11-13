@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "errors": [],
+  "interactiveReadOnly": true,
+  "noBackendRequests": true,
+  "fileProtocol": "blocked by managed browser policy; self-contained HTML tested over localhost"
+}
