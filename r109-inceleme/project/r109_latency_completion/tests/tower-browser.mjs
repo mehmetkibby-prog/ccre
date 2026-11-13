@@ -157,7 +157,16 @@ try{
  page.on('console',m=>{if(['error','warning'].includes(m.type()))log('console',{kind:m.type(),message:m.text().slice(0,1200)});});
  page.on('websocket',socket=>{socket.on('framesent',event=>{try{const value=JSON.parse(String(event.payload));if(value.type==='input'){const row={at:Date.now(),phase,type:value.type,sequence:value.sequence,action:value.payload?.action??value.action};commands.push(row);log('inputs',row);}}catch{}});socket.on('framereceived',event=>{try{const value=JSON.parse(String(event.payload));if(['error','rejected','not_queued','retry'].includes(value.type))log('responses',value);if(value.type==='frame'&&value.results?.length)log('results',{results:value.results});}catch{}});});
  await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
- await page.addInitScript(()=>{const Native=window.WebSocket;window.WebSocket=class extends Native{addEventListener(type,fn,...args){return super.addEventListener(type,type==='message'?event=>{if(window.__dropTowerSocket===this)return;fn.call(this,event);}:fn,...args);}};});
+ await page.addInitScript(()=>{const Native=window.WebSocket;window.WebSocket=class extends Native{
+  send(data){
+   // Drop the selected attack's replies only after that input reaches send().
+   // An earlier dungeon-sync ACK must drain first; dropping it instead tests
+   // an unsubmitted queued action, not the intended durable-receipt replay.
+   if(window.__dropNextTowerAttack){try{const p=JSON.parse(data);if(p.type==='input'&&p.payload?.action==='attack'){window.__dropNextTowerAttack=false;window.__dropTowerSocket=this;}}catch{}}
+   return super.send(data);
+  }
+  addEventListener(type,fn,...args){return super.addEventListener(type,type==='message'?event=>{if(window.__dropTowerSocket===this)return;fn.call(this,event);}:fn,...args);}
+ };});
  await page.addInitScript(()=>{Object.defineProperty(AbortSignal,'any',{value:undefined,configurable:true});Object.defineProperty(AbortSignal,'timeout',{value:undefined,configurable:true});});
  await page.addInitScript(account=>{performance.setResourceTimingBufferSize(3000);sessionStorage.setItem('coreoflife-chrome-warning:'+account,'accepted');},s.f.account.id);
  await page.addInitScript(()=>{
@@ -199,8 +208,9 @@ try{
  const player=s.f.sql.prepare('SELECT * FROM players WHERE id=?').get(s.f.id),enemy=s.f.sql.prepare('SELECT * FROM monsters WHERE area=? AND hp>0').get(player.area);
  await s.core.permanentPlayers([s.f.id],()=>{s.f.sql.prepare('UPDATE players SET x=?,y=?,attack_one_at=0 WHERE id=?').run(enemy.x,enemy.y,s.f.id);});
  await page.screenshot({path:out+'/tower-before.png'});
+ await page.evaluate(enemy=>{window.__dropNextTowerAttack=true;window.__towerAttackDone=false;window.__towerAttack=window.__qaReadCore.command({action:'attack',targetId:enemy.id,spawnRound:enemy.spawn_round,ability:0,intentId:crypto.randomUUID(),requestId:crypto.randomUUID()}).then(result=>{window.__towerAttackDone=true;window.__towerAttackResult=result;return result;});},enemy);
+ await wait(()=>commands.some(v=>v.action==='attack'),'tower attack must reach the socket before injected loss');
  const droppedAtR113=Date.now();
- await page.evaluate(enemy=>{window.__dropTowerSocket=window.__qaReadCore.ws;window.__towerAttackDone=false;window.__towerAttack=window.__qaReadCore.command({action:'attack',targetId:enemy.id,spawnRound:enemy.spawn_round,ability:0,intentId:crypto.randomUUID(),requestId:crypto.randomUUID()}).then(result=>{window.__towerAttackDone=true;window.__towerAttackResult=result;return result;});},enemy);
  if(independentTowersR113.length){await advanceIndependentTowersR113(s,independentTowersR113,out);checks.push({name:'Three independent browser accounts: two towers advance while the first loses messages',accounts:3});}
  await pause(Math.max(0,4000-(Date.now()-droppedAtR113)));
  assert.equal(await page.evaluate(()=>window.__qaReadCore.world.adventure511.run.floor),1,'loss holds stale floor before recovery');
