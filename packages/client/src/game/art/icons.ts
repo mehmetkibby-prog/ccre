@@ -8,6 +8,7 @@ const RAR = ['#e8e6df', '#5fa8ff', '#ffa53d', '#ff4d5a', '#ffd84a', '#7cf3ff', '
 const PNG_ICONS = new Set([...['guardian', 'hunter', 'arcanist'].flatMap((c) => ['blue', 'orange', 'crimson'].map((r) => `armor_${c}_${r}`)), 'armor_arcanist','armor_guardian','armor_hunter','boots','bow','bracelet','branch','chest','crystal','dust','earring','essence','gem','helm_arcanist','helm_guardian','helm_hunter','herb','iron','necklace','pearl_red','pearl_white','potion_red','scroll','scroll_evo','seal','seal_gold','staff','sword','talisman','w_arcanist_blue','w_arcanist_crimson','w_arcanist_orange','w_guardian_blue','w_guardian_crimson','w_guardian_orange','w_hunter_blue','w_hunter_crimson','w_hunter_orange']);
 export function iconUrl(name: string, rarity = 0): string {
   if (PNG_ICONS.has(name)) return `icons/${name}.png`;
+  if (name.startsWith('mall_')) return `icons/mall/${name}.png`;
   const key = name + '|' + rarity;
   const c = cache.get(key);
   if (c) return c;
@@ -28,6 +29,17 @@ export function iconCanvas(name: string, rarity = 0): HTMLImageElement {
 }
 
 type P = (ctx: Ctx, tint: string | null) => void;
+/** Balık: gövde (yan görünüş), kuyruk, yüzgeç, göz; zargana uzun ve gagalı. */
+function fishIcon(ctx: Ctx, body: string, belly: string, h: number, beak: boolean) {
+  const L = beak ? 26 : 20, H = 11 * h, th = 10 * Math.min(1, h + 0.2);
+  ctx.beginPath(); ctx.moveTo(L - 2, 0); ctx.lineTo(L + 12, -th); ctx.lineTo(L + 9, 0); ctx.lineTo(L + 12, th); ctx.closePath(); fillStroke(ctx, body);
+  ell(ctx, 0, 0, L, H); fillStroke(ctx, vgrad(ctx, -H, H, shade(body, 0.12), belly));
+  if (beak) { ctx.beginPath(); ctx.moveTo(-L + 2, -2); ctx.lineTo(-L - 14, 0); ctx.lineTo(-L + 2, 3); ctx.closePath(); fillStroke(ctx, shade(body, -0.1)); }
+  ctx.beginPath(); ctx.moveTo(-2, -H + 1); ctx.quadraticCurveTo(6, -H - 9, 12, -H + 3); ctx.closePath(); fillStroke(ctx, shade(body, -0.15));
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-L + 7, -2, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(-L + 7.5, -2, 1.6, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 1.2; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(-4 + k * 7, 0, H * 0.7, -0.9, 0.9); ctx.stroke(); }
+}
 const metal = (ctx: Ctx, t: string | null, y0: number, y1: number) => vgrad(ctx, y0, y1, '#ffffff', t ?? '#a9b6c6');
 
 const ICONS: Record<string, P> = {
@@ -126,6 +138,18 @@ const ICONS: Record<string, P> = {
     ctx.beginPath(); ctx.moveTo(-22, 8); ctx.lineTo(24, 8); ctx.lineTo(24, 16); ctx.lineTo(-22, 16); ctx.closePath(); fillStroke(ctx, '#5a626e', 2);
     ell(ctx, -4, 0, 4, 2); ctx.fillStyle = '#a0643a'; ctx.fill(); ell(ctx, 10, -4, 3, 1.6); ctx.fill();
   },
+  rod(ctx) {
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = OUTLINE; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(-20, 22); ctx.lineTo(18, -22); ctx.stroke();
+    ctx.strokeStyle = '#a8743a'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(-20, 22); ctx.lineTo(18, -22); ctx.stroke();
+    ctx.strokeStyle = '#3a2414'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-20, 22); ctx.lineTo(-11, 12); ctx.stroke();
+    ctx.strokeStyle = '#e8e6df'; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(18, -22); ctx.quadraticCurveTo(24, 0, 20, 14); ctx.stroke();
+    ctx.beginPath(); ctx.arc(-9, 14, 4, 0, Math.PI * 2); fillStroke(ctx, '#c9a24a');
+    ctx.beginPath(); ctx.arc(20, 16, 3.2, 0, Math.PI * 2); fillStroke(ctx, '#e43a4f');
+  },
+  fish_sokan(ctx) { fishIcon(ctx, '#7da3b8', '#c8dde8', 1, false); },
+  fish_zargana(ctx) { fishIcon(ctx, '#5fb8a8', '#d8f2ea', 0.55, true); },
+  fish_levrek(ctx) { fishIcon(ctx, '#9aa8b8', '#e8eef4', 1.25, false); },
   pearl_white(ctx) { pearl(ctx, '#ffffff', '#c8c4e8'); },
   pearl_red(ctx) { pearl(ctx, '#ffd0d6', '#ff4d6a'); },
   dust(ctx) {

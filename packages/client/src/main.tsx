@@ -75,41 +75,62 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     } catch (e2) { setErr((e2 as Error).message); }
     setBusy(false);
   };
+  const [showPw, setShowPw] = useState(false);
+  const title = tab === 'login' ? 'Tekrar hoş geldin' : tab === 'register' ? 'Destana katıl' : 'Parolanı yenile';
+  const sub = tab === 'login' ? 'Hesabınla giriş yap, kaldığın yerden devam et.' : tab === 'register' ? 'Ücretsiz hesap aç; ilk sandığın seni bekliyor.' : 'Kullanıcı adını yaz, sıfırlama kodunu al.';
   return (
     <div className="screen live auth-screen">
       <MenuBackdrop />
-      <div className="ferman-wrap">
-        <form className="ferman" onSubmit={submit}>
-          <div className="ferman-roll top" aria-hidden />
-          <div className="ferman-body">
-            <TugraMark />
-            <h1 className="ferman-title">Tuğra<span>ONLINE</span></h1>
-            <div className="ferman-sub">Fermandır: kılıcını kuşan, pazara in, adını duyur.</div>
-            {OFFLINE && <div className="ferman-note"><b>Test sürümü.</b> Oyun tarayıcının içinde çalışır; hesabın yalnız bu cihazda saklanır, gördüğün diğer oyuncular test botlarıdır.</div>}
-            <div className="ferman-tabs">
-              <button type="button" className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş</button>
-              <i>❖</i>
-              <button type="button" className={tab === 'register' ? 'on' : ''} onClick={() => setTab('register')}>Kayıt Ol</button>
+      <div className="auth-layout">
+        <div className="auth-brand">
+          <TugraMark />
+          <h1 className="brand-title">TUĞRA</h1>
+          <div className="brand-online"><i />ONLINE<i /></div>
+          <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen.</p>
+          <RealmLine />
+        </div>
+        <form className="auth-card" onSubmit={submit}>
+          <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
+          {tab !== 'forgot' && (
+            <div className="ac-tabs" role="tablist">
+              <button type="button" role="tab" aria-selected={tab === 'login'} className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş Yap</button>
+              <button type="button" role="tab" aria-selected={tab === 'register'} className={tab === 'register' ? 'on' : ''} onClick={() => setTab('register')}>Kayıt Ol</button>
+              <span className="ac-tab-ink" style={{ transform: `translateX(${tab === 'register' ? 100 : 0}%)` }} />
             </div>
-            <label className="ink"><span>Kullanıcı adı</span><input autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /></label>
-            {tab === 'register' && <label className="ink"><span>E-posta (isteğe bağlı)</span><input type="email" value={f.email} onChange={set('email')} /></label>}
-            {tab === 'forgot' && <label className="ink"><span>Sıfırlama kodu (aldıysan)</span><input value={f.code} onChange={set('code')} /></label>}
-            {(tab !== 'forgot' || f.code) && <label className="ink"><span>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</span><input type="password" autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /></label>}
-            {tab === 'register' && <label className="ink"><span>Parola tekrar</span><input type="password" autoComplete="new-password" value={f.password2} onChange={set('password2')} /></label>}
-            {err && <div className="ferman-err">{err}</div>}
-            {info && <div className="ferman-ok">{info}</div>}
-            <button className="seal-btn" disabled={busy}>
-              <span className="seal" aria-hidden><svg viewBox="0 0 40 40"><path d="M20 7 L23 15 L32 15 L25 20 L28 29 L20 24 L12 29 L15 20 L8 15 L17 15 Z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg></span>
-              <span>{busy ? 'Bekle…' : tab === 'login' ? 'Mühürle ve Gir' : tab === 'register' ? 'Hesabı Mühürle' : f.code ? 'Parolayı Değiştir' : 'Kod Gönder'}</span>
-            </button>
-            <a className="ferman-link" onClick={() => setTab(tab === 'forgot' ? 'login' : 'forgot')}>{tab === 'forgot' ? 'Girişe dön' : 'Parolamı unuttum'}</a>
-            <RealmLine />
+          )}
+          <h2 className="ac-title">{title}</h2>
+          <p className="ac-sub">{sub}</p>
+          {OFFLINE && <div className="ac-note"><b>Test sürümü:</b> oyun tarayıcının içinde çalışır, hesabın yalnız bu cihazda saklanır.</div>}
+          <label className="ac-field"><span className="ac-ic"><Ico k="user" /></span><input placeholder=" " autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /><em>Kullanıcı adı</em></label>
+          {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="mail" /></span><input placeholder=" " type="email" value={f.email} onChange={set('email')} /><em>E-posta (isteğe bağlı)</em></label>}
+          {tab === 'forgot' && <label className="ac-field"><span className="ac-ic"><Ico k="key" /></span><input placeholder=" " value={f.code} onChange={set('code')} /><em>Sıfırlama kodu (aldıysan)</em></label>}
+          {(tab !== 'forgot' || f.code) && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /><em>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</em><button type="button" className="ac-eye" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Parolayı gizle' : 'Parolayı göster'}><Ico k={showPw ? 'eyeoff' : 'eye'} /></button></label>}
+          {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete="new-password" value={f.password2} onChange={set('password2')} /><em>Parola tekrar</em></label>}
+          {err && <div className="ac-err">{err}</div>}
+          {info && <div className="ac-ok">{info}</div>}
+          <button className="ac-cta" disabled={busy}><span>{busy ? 'Bekle…' : tab === 'login' ? 'OYUNA GİR' : tab === 'register' ? 'HESABI OLUŞTUR' : f.code ? 'PAROLAYI DEĞİŞTİR' : 'KOD GÖNDER'}</span></button>
+          <div className="ac-links">
+            {tab === 'login' && <><a onClick={() => setTab('forgot')}>Parolamı unuttum</a><a onClick={() => setTab('register')}>Hesabın yok mu? <b>Kayıt ol</b></a></>}
+            {tab === 'register' && <a onClick={() => setTab('login')}>Zaten hesabın var mı? <b>Giriş yap</b></a>}
+            {tab === 'forgot' && <a onClick={() => setTab('login')}>← Girişe dön</a>}
           </div>
-          <div className="ferman-roll bottom" aria-hidden />
         </form>
       </div>
     </div>
   );
+}
+
+/** Giriş kartındaki küçük simgeler. */
+function Ico({ k }: { k: 'user' | 'lock' | 'mail' | 'key' | 'eye' | 'eyeoff' }) {
+  const p: Record<string, React.ReactNode> = {
+    user: <><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></>,
+    lock: <><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>,
+    mail: <><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" /></>,
+    key: <><circle cx="8" cy="15" r="4" /><path d="M11 12l9-9M17 6l3 3" /></>,
+    eye: <><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></>,
+    eyeoff: <><path d="M3 3l18 18M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.1 6.1C3.6 7.9 2 12 2 12s3.6 7 10 7a9.8 9.8 0 0 0 5-1.4" /></>,
+  };
+  return <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{p[k]}</svg>;
 }
 
 /** Ferman tepesindeki amblem: tuğradan esinlenmiş özgün bir süs (üç direk, iç içe kavisler, alt kuyruk). */
@@ -271,7 +292,7 @@ function MenuBackdrop() {
       }
       // geniş ekranda ferman solda: savaş sahnesi sağ boşlukta görünsün
       const cw = canvas.clientWidth, chh = canvas.clientHeight;
-      if (cw > 720) r.camera.setViewOffset(cw, chh, -cw * 0.17, 0, cw, chh); else if (r.camera.view) r.camera.clearViewOffset();
+      if (cw > 860) r.camera.setViewOffset(cw, chh, -cw * 0.04, 0, cw, chh); else if (r.camera.view) r.camera.clearViewOffset();
       try { r.draw(t, dt); } catch (e) { console.warn('[menü] çizim hatası', e); setFallback(true); return; }
       const self = (r as any).self; if (self) self.obj.visible = false; // kendi karakter yok
       // sahne, boss modeli gelince (en geç 8 sn) belirsin: boş arena görünmesin
@@ -283,7 +304,8 @@ function MenuBackdrop() {
     return () => { cancelAnimationFrame(raf); sharedU.cutR.value = cut0; try { r.renderer.dispose(); r.renderer.forceContextLoss(); } catch { /* */ } };
   }, [fallback]);
   if (fallback) return <SparkBackdrop />;
-  return <><canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} /><div className="screen-vignette" /></>;
+  // hazır sahne görüntüsü anında görünür; canlı 3B sahne hazır olunca üstüne yumuşakça geçer
+  return <><img className="screen-poster" src="poster/arena.jpg" alt="" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /><canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} /><div className="screen-vignette" /></>;
 }
 
 /** Yedek arka plan: hafif sis ve kıvılcımlar. */

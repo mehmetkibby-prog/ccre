@@ -3,16 +3,19 @@ import type { ItemInstance, Slot, StatAlloc } from '@col/shared';
 
 export interface SelfInfo {
   level: number; xp: number; xpNext: number; gems: number; essence: number; cp: number; kills: number; autoPotion: boolean; daily: number;
+  buffs?: Record<string, number>; autoPool?: number; bait?: number; stallSkin?: number;
   bag: ItemInstance[]; equip: Partial<Record<Slot, ItemInstance>>; materials: Record<string, number>;
   statAlloc: StatAlloc; statRev: number; statBudget: number; skills: number[]; spec: string | null; skillBudget: number;
   combat: { maxHp: number; atk: number; def: number; crit: number; critDmg: number; speed: number; atkSpeed: number; block: number; lifesteal: number; pvpPower: number; pvpResist: number };
 }
-export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean }
+export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | null;
 
-export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number }
+export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
+export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
+export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; biteAt: number; diff: number; motion: string }
 export interface StallView { stall: string; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
 /** Oyuncunun kendi dükkânı (sahibinden bağımsız; oyundan çıksa da açık kalır). */
 export interface MyStall { id: string; title: string; zone: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; earned: number; openedAt: number }
@@ -37,6 +40,12 @@ export interface UiState {
   modal: { title: string; lines: string[] } | null;
   upgradeResult: { ok: boolean; before: number; after: number; chance: number } | null;
   lootFeed: { id: number; text: string; rarity: string; at: number }[];
+  bosses: BossInfo[]; bossBanner: { id: string; name: string; map: string; x: number; y: number; ev: 'spawn' | 'dead'; killer?: string; at: number } | null; bossTrack: string | null;
+  /** sunucu saati farkı (ms): geri sayımlar için */
+  clockSkew: number;
+  fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
+  marketResults: { q: string; list: { stall: string; owner: string; title: string; item: ItemInstance; price: number; x: number; y: number }[] } | null;
+  mallTarget: string | null;
   settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number };
 }
 
@@ -56,6 +65,7 @@ let state: UiState = {
   connected: false, status: '', map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, lootFeed: [], settings: loadSettings(),
+  bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,
 };
 const listeners = new Set<() => void>();
 export const store = {

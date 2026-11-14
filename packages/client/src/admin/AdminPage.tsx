@@ -8,11 +8,11 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, MapTab, LevelTab, Num, fmtN } from './AdminPanel.tsx';
+import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
-  id: number; name: string; cls: string; level: number; gems: number; potions: number; map: string; online: boolean;
+  id: number; name: string; cls: string; level: number; gems: number; potions: number; map: string; online: boolean; cp?: number;
   kills?: number; lastSeen?: string | null; accountId?: number; username?: string; role?: string; bannedUntil?: string | null; banReason?: string | null; bot?: boolean;
 }
 interface Opening { mode: 'closed' | 'scheduled' | 'open' | 'maintenance'; openAt: number | null; message: string; revision: number }
@@ -28,7 +28,10 @@ interface Backend {
   setOpening(o: Omit<Opening, 'revision'>, revision: number): Promise<Opening>;
   setWorld?(health: number): Promise<number>;
   players(q: string, onlyOnline: boolean): Promise<APlayer[]>;
-  updatePlayer(id: number, patch: { level?: number; gems?: number; potions?: number }): Promise<string>;
+  updatePlayer(id: number, patch: { level?: number; gems?: number; potions?: number; cp?: number }): Promise<string>;
+  sendCp?(id: number, amount: number): Promise<string>;
+  epinList?(): Promise<{ code: string; cp: number; note: string | null; createdAt: string; usedAt: string | null; usedBy: string | null }[]>;
+  epinCreate?(cp: number, count: number, note: string): Promise<string[]>;
   resetPlayer(id: number): Promise<string>;
   account?(accountId: number, body: Record<string, unknown>): Promise<void>;
   kick?(accountId: number): Promise<void>;
@@ -42,6 +45,9 @@ const serverBackend: Backend = {
   players: (q, on) => api(`/api/admin/players?q=${encodeURIComponent(q)}${on ? '&online=1' : ''}`),
   updatePlayer: async (id, patch) => (await api('/api/admin/player', { id, ...patch })).text,
   resetPlayer: async (id) => (await api('/api/admin/player/reset', { id })).text,
+  sendCp: async (id, amount) => (await api('/api/admin/cp', { id, amount })).text,
+  epinList: () => api('/api/admin/epin'),
+  epinCreate: async (cp, count, note) => (await api('/api/admin/epin', { cp, count, note })).codes,
   account: async (accountId, body) => { await api('/api/admin/account', { accountId, ...body }); },
   kick: async (accountId) => { await api('/api/admin/kick', { accountId }); },
 };
@@ -63,12 +69,12 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita';
+type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'balik' | 'market';
 const TABS: [Tab, string, string][] = [
-  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['seviye', 'Seviye', '▲'], ['canavar', 'Canavarlar', '✶'],
-  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['harita', 'Haritalar', '⌖'],
+  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
+  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'canavar', 'ganimet', 'efsun', 'arti', 'harita']);
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'harita']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -174,6 +180,9 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             <p className="muted adm-hint">Boş kutu = varsayılan değer. Değişiklikler <b>Kaydet</b> deyince oyundaki herkese anında uygulanır.</p>
             {tab === 'genel' && <GeneralTab t={t} setT={setTT} dis={busy} />}
             {tab === 'seviye' && <LevelTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'boss' && <BossTab t={t} setMon={setMon} setSpawn={setSpawn} dis={busy} />}
+            {tab === 'balik' && <FishingTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'market' && <MallTab t={t} setT={setTT} dis={busy} epin={backend.epinCreate ? <EpinBox toast={setToast} /> : undefined} />}
             {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={busy} />}
             {tab === 'ganimet' && <><RarityTable t={t} setT={setTT} dis={busy} /><LootTab t={t} setMon={setMon} dis={busy} /></>}
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
@@ -290,6 +299,34 @@ function WorldCard({ s, toast, reload }: { s: Summary; toast: (x: { ok: boolean;
     </section>
   );
 }
+function EpinBox({ toast }: { toast: (x: { ok: boolean; text: string }) => void }) {
+  const [cp, setCp] = useState<number | undefined>(500);
+  const [count, setCount] = useState<number | undefined>(1);
+  const [note, setNote] = useState('');
+  const [made, setMade] = useState<string[]>([]);
+  const [list, setList] = useState<Awaited<ReturnType<NonNullable<Backend['epinList']>>>>([]);
+  const load = useCallback(() => { backend.epinList?.().then(setList).catch(() => {}); }, []);
+  useEffect(() => { load(); }, [load]);
+  const make = async () => {
+    try { const codes = await backend.epinCreate!(cp ?? 0, count ?? 1, note); setMade(codes); toast({ ok: true, text: `${codes.length} E-PIN kodu üretildi.` }); load(); }
+    catch (e) { toast({ ok: false, text: (e as Error).message }); }
+  };
+  const copy = (txt: string) => { navigator.clipboard?.writeText(txt).then(() => toast({ ok: true, text: 'Kopyalandı.' })).catch(() => {}); };
+  return (
+    <section className="admin-sec">
+      <h4>E-PIN kodu üret</h4>
+      <div className="muted adm-hint">Ödemeyi aldığın oyuncuya kodu ver; oyuncu Nesne Market › ÇP ve E-PIN bölümünde kodu yazınca ÇP hesabına yüklenir. Her kod bir kez kullanılır.</div>
+      <div className="adm-fields">
+        <label><span>ÇP</span><Num v={cp} def={500} min={1} max={1e6} step={1} w={90} on={setCp} /></label>
+        <label><span>Adet</span><Num v={count} def={1} min={1} max={50} step={1} w={70} on={setCount} /></label>
+        <label><span>Not (isteğe bağlı)</span><input className="adm-num" style={{ width: '100%' }} value={note} maxLength={80} onChange={(e) => setNote(e.target.value)} placeholder="ör. Ahmet - havale" /></label>
+      </div>
+      <div className="row" style={{ marginTop: 8 }}><button className="btn small primary" disabled={!cp} onClick={make}>Kod üret</button></div>
+      {made.length > 0 && <div className="epin-made">{made.map((c) => <button key={c} className="epin-code" onClick={() => copy(c)}>{c}<small>kopyala</small></button>)}</div>}
+      {list.length > 0 && <div className="adm-kv" style={{ marginTop: 12 }}>{list.slice(0, 20).map((x) => <React.Fragment key={x.code}><span style={{ fontFamily: 'monospace' }}>{x.code}</span><b>{x.cp} ÇP · {x.usedAt ? `kullanıldı (${x.usedBy ?? '?'})` : 'boşta'}</b></React.Fragment>)}</div>}
+    </section>
+  );
+}
 function Stat({ k, v, sub, accent }: { k: string; v: string; sub?: string; accent?: boolean }) {
   return <div className={'adm-stat' + (accent ? ' accent' : '')}><small>{k}</small><b>{v}</b>{sub && <span>{sub}</span>}</div>;
 }
@@ -317,7 +354,8 @@ function PlayersTab({ toast }: { toast: (x: { ok: boolean; text: string }) => vo
   );
 }
 function PlayerCard({ p, open, onToggle, toast, reload }: { p: APlayer; open: boolean; onToggle: () => void; toast: (x: { ok: boolean; text: string }) => void; reload: () => void }) {
-  const [edit, setEdit] = useState<{ level?: number; gems?: number; potions?: number }>({});
+  const [edit, setEdit] = useState<{ level?: number; gems?: number; potions?: number; cp?: number }>({});
+  const [cpAdd, setCpAdd] = useState<number | undefined>(undefined);
   const [confirm, setConfirm] = useState<'' | 'reset' | 'ban'>('');
   const [banH, setBanH] = useState(24); const [banR, setBanR] = useState('');
   const [busy, setBusy] = useState(false);
@@ -352,7 +390,16 @@ function PlayerCard({ p, open, onToggle, toast, reload }: { p: APlayer; open: bo
             <label><span>Seviye</span><Num v={edit.level} def={p.level} min={1} max={65} step={1} w={84} on={(v) => setEdit({ ...edit, level: v })} /></label>
             <label><span>Mücevher</span><Num v={edit.gems} def={p.gems} min={0} max={1e12} step={1} w={110} on={(v) => setEdit({ ...edit, gems: v })} /></label>
             <label><span>Kırmızı İksir</span><Num v={edit.potions} def={p.potions} min={0} max={1e7} step={1} w={84} on={(v) => setEdit({ ...edit, potions: v })} /></label>
+            {p.cp !== undefined && <label><span>ÇP (bakiye)</span><Num v={edit.cp} def={p.cp} min={0} max={1e9} step={1} w={100} on={(v) => setEdit({ ...edit, cp: v })} /></label>}
           </div>
+          {backend.sendCp && (
+            <div className="adm-cp">
+              <span>ÇP gönder</span>
+              {[100, 500, 1000].map((n) => <button key={n} className="btn small ghost" disabled={busy} onClick={() => run(() => backend.sendCp!(p.id, n))}>+{n}</button>)}
+              <Num v={cpAdd} def={0} min={-1e7} max={1e7} step={1} w={90} on={setCpAdd} />
+              <button className="btn small primary" disabled={busy || !cpAdd} onClick={() => run(() => backend.sendCp!(p.id, cpAdd!)).then(() => setCpAdd(undefined))}>Gönder</button>
+            </div>
+          )}
           <div className="adm-acts">
             <button className="btn small primary" disabled={!changed || busy} onClick={() => run(() => backend.updatePlayer(p.id, edit))}>Değişikliği uygula</button>
             {!p.bot && (confirm === 'reset'

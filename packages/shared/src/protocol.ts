@@ -140,7 +140,16 @@ export type ClientCmd =
   | { t: 'donate'; amount: number; req: string }
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'npc'; id: string }
-  | { t: 'use'; key: string; req: string }
+  | { t: 'use'; key: string; req: string; item?: string }
+  | { t: 'mall_buy'; id: string; qty: number; req: string }
+  | { t: 'stall_skin'; on: boolean }
+  | { t: 'market_search'; q: string }
+  | { t: 'chat_item'; item: string; req: string }
+  | { t: 'fish_cast' }
+  | { t: 'fish_end'; token: string; ok: boolean }
+  | { t: 'fish_rod'; req: string }
+  | { t: 'fish_sell'; req: string }
+  | { t: 'bosses' }
   | { t: 'stall_open'; title: string; items: { id: string; price: number }[]; req: string }
   | { t: 'stall_close' }
   | { t: 'gm_set'; name: string; level?: number; gems?: number; essence?: number; potions?: number }

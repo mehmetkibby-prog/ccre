@@ -1,4 +1,4 @@
-import { computeStats, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING } from '@col/shared';
+import { computeStats, charBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING } from '@col/shared';
 import type { CharState } from '../types.ts';
 import type { Zone } from './zone.ts';
 
@@ -32,6 +32,8 @@ export class Player {
   shieldPct = 0;
   lastPotionAt = 0;
   lastAutoPotionAt = 0;
+  /** balıkçılık: atılmış olta (sunucu belirler: balık ve vurma zamanı) */
+  fishing?: { token: string; fish: string; biteAt: number };
   lastDamageAt = 0;
   lastActiveAt = Date.now();
   // görüş
@@ -54,7 +56,8 @@ export class Player {
   get name() { return this.char.name; }
   recompute(keepRatio: boolean) {
     const oldMax = this.stats?.maxHp ?? 0;
-    this.stats = computeStats({ cls: this.char.cls, level: this.char.level, stats: this.char.stats, equip: this.char.equip });
+    const b = charBuffs(this.char.misc.buffs, Date.now());
+    this.stats = computeStats({ cls: this.char.cls, level: this.char.level, stats: this.char.stats, equip: this.char.equip, buffs: { atkFlat: b.atkFlat, hpFlat: b.hpFlat, defFlat: b.defFlat, critPct: b.critPct } });
     if (keepRatio && oldMax > 0) {
       // max can değişimi bedava iyileşme sağlamaz: mevcut can korunur, yalnız üst sınıra kırpılır
       this.hp = Math.min(this.hp, this.stats.maxHp);
@@ -108,9 +111,9 @@ export class Monster {
     this.x = sp.x; this.y = sp.y;
     const s = monsterStats(def, sp.level, sp.variant);
     // yönetim çarpanları doğuş anında uygulanır (yaşayan canavar değişmez, yeniden doğan yeni değeri alır)
-    const hp = Math.max(1, Math.round(s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
-    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
-    this.armor = Math.max(0, s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
+    const hp = Math.max(1, Math.round(mt?.hp ?? s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
+    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(mt?.atk ?? s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
+    this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
     this.wanderAt = Date.now() + Math.random() * 8000;
   }
   get level() { return this.sp.level; }

@@ -170,11 +170,16 @@ export class Fx3D {
       case 'pillar': case 'teleport': {
         const geo = new THREE.CylinderGeometry(sh.kind === 'pillar' ? 0.7 : 0.55, sh.kind === 'pillar' ? 0.9 : 0.7, 6, 24, 1, true); geo.translate(0, 3, 0);
         const colors = new Float32Array(geo.attributes.position.count * 4);
-        const c = new THREE.Color(sh.kind === 'pillar' ? '#ffd860' : '#7cf3ff');
+        const c = new THREE.Color(sh.kind === 'pillar' ? '#ffd860' : sh.color === 'emerald' ? '#3ef09a' : '#7cf3ff');
         for (let i = 0; i < geo.attributes.position.count; i++) { const y = geo.attributes.position.getY(i); colors.set([c.r, c.g, c.b, 1 - y / 6], i * 4); }
         geo.setAttribute('color', new THREE.BufferAttribute(colors, 4));
         const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
-        m.name = 'pillar'; g.add(m); break;
+        m.name = 'pillar'; g.add(m);
+        if (sh.color === 'emerald') { // Zümrüt Geçidi: yerde dönen mühür halkası
+          const ring = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.55, 6, 1), new THREE.MeshBasicMaterial({ color: '#3ef09a', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
+          ring.rotation.x = -Math.PI / 2; ring.position.y = 0.06; ring.name = 'seal'; g.add(ring);
+        }
+        break;
       }
       case 'shield': {
         const m = new THREE.Mesh(new THREE.SphereGeometry(1.0, 24, 16), new THREE.MeshStandardMaterial({ color: '#9fd8ff', emissive: '#4a90d0', emissiveIntensity: 0.6, transparent: true, opacity: 0.22, depthWrite: false, roughness: 0.1 }));
@@ -237,6 +242,8 @@ export class Fx3D {
         (m.material as THREE.MeshBasicMaterial).opacity = Math.sin(t * Math.PI);
         m.scale.set(1 - t * 0.3, 0.6 + t * 0.6, 1 - t * 0.3);
         m.rotation.y = now / 400;
+        const seal = o.getObjectByName('seal') as THREE.Mesh | undefined;
+        if (seal) { seal.rotation.z = now / 300; (seal.material as THREE.MeshBasicMaterial).opacity = Math.sin(t * Math.PI); seal.scale.setScalar(0.8 + t * 0.8); }
         break;
       }
       case 'shield': {

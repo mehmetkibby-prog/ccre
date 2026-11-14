@@ -1,6 +1,8 @@
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
+import { MallButton, BossButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
+import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, type ClassId } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, type ClassId, type ItemInstance } from '@col/shared';
 import { Game } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -115,6 +117,12 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <XpLine />
       <AnnouncementBar />
       <Minimap game={game} />
+      <div className="tr-btns"><MallButton /><BossButton /></div>
+      <BossBanner game={game} />
+      <BossCompass game={game} />
+      <BossCountdowns game={game} />
+      <FishButton game={game} />
+      <FishGame game={game} />
       <Toasts />
       <LootFeed />
       <Chat />
@@ -257,6 +265,12 @@ function Minimap({ game }: { game: Game }) {
       const dot = (x: number, y: number, c: string, r = 2.2) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(S / 2 + (x * scale - cx), S / 2 + (y * scale - cy), r, 0, Math.PI * 2); ctx.fill(); };
       for (const z of game.layout.zones) { ctx.strokeStyle = 'rgba(255,110,80,.55)'; ctx.fillStyle = 'rgba(220,70,50,.12)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(S / 2 + (z.x * scale - cx), S / 2 + (z.y * scale - cy), z.r * scale, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
       for (const n of game.layout.npcs) dot(n.x, n.y, '#ffd84a', 2.6);
+      // bosslar: canlıysa yanıp sönen kırmızı, ölüyse gri halka
+      for (const b of store.get().bosses) if (b.map === store.get().map) {
+        const bx = S / 2 + (b.x * scale - cx), by = S / 2 + (b.y * scale - cy);
+        ctx.lineWidth = 2; ctx.strokeStyle = b.alive ? '#ffd84a' : '#9a8f80'; ctx.fillStyle = b.alive ? `rgba(255,60,60,${0.55 + Math.sin(performance.now() / 200) * 0.35})` : 'rgba(80,70,60,.7)';
+        ctx.beginPath(); ctx.arc(bx, by, 5.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
       for (const e of game.ents.values()) dot(e.x, e.y, e.kind === Kind.MONSTER ? (e.variant === 2 ? '#ff3030' : '#e86a50') : e.kind === Kind.PLAYER ? '#6ab0ff' : '#fff6c2', e.kind === Kind.LOOT ? 1.5 : 2);
       ctx.fillStyle = '#fff'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
       ctx.save(); ctx.translate(S / 2, S / 2); ctx.rotate((game.sdir / 256) * Math.PI * 2); ctx.beginPath(); ctx.moveTo(6, 0); ctx.lineTo(-4, -4); ctx.lineTo(-2, 0); ctx.lineTo(-4, 4); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
@@ -287,6 +301,7 @@ function LootFeed() {
 }
 
 function Chat() {
+  const [tip, setTip] = useState<{ it: ItemInstance; x: number; y: number } | null>(null);
   const msgs = useStore((s) => s.chat);
   const tab = useStore((s) => s.chatTab);
   const chatOpen = useStore((s) => s.chatOpen);
@@ -306,7 +321,8 @@ function Chat() {
     <div className={'frame chat' + (chatOpen ? ' open' : '')}>
       <div className="tabs2">{['all', 'world', 'trade', 'local'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}<button className="chat-x" aria-label="Sohbeti kapat" onClick={() => store.set({ chatOpen: false })}>✕</button></div>
       <div className="msgs" ref={box}>
-        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined }}>{m.from}</b>: {m.text}</div>)}
+        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined }}>{m.from}</b>: {m.item ? <a className="chat-item" style={{ color: RARITY[m.item.rarity]?.color }} onClick={(e) => setTip({ it: m.item!, x: e.clientX, y: e.clientY })}>{m.text}</a> : m.text}</div>)}
+        {tip && <ItemTip it={tip.it} x={tip.x} y={tip.y} pinned onClose={() => setTip(null)} />}
       </div>
       <div className="in">
         <select value={ch} onChange={(e) => setCh(e.target.value as 'local')}><option value="local">Bölge</option><option value="world">Dünya</option><option value="trade">Ticaret</option></select>

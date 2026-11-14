@@ -129,6 +129,10 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'stone_dust', name: 'Taş Tozu', icon: 'dust', color: '#c8c2b8', sellable: false, desc: 'Taş sanatında kullanılır.' },
   { id: 'mastery_seal', name: 'Ustalık Mührü', icon: 'seal_gold', color: '#ffd84a', sellable: false, desc: 'Artı basma başarı şansını göreli %30 artırır.' },
   { id: 'starter_chest', name: 'Başlangıç Sandığı', icon: 'chest', color: '#e0a650', sellable: false, desc: 'Bir defalık hediye: 50 Mücevher ve 10 Kırmızı İksir.' },
+  { id: 'fishing_rod', name: 'Olta', icon: 'rod', color: '#c8a46a', sellable: false, desc: 'Şelale Gölü\'nde balık tutmak için. Suya yakın dur, Olta At\'a bas.' },
+  { id: 'fish_sokan', name: 'Sokan', icon: 'fish_sokan', color: '#8fb8c8', sellable: false, desc: 'Gölün en yaygın balığı. Balıkçı Hasan alır.' },
+  { id: 'fish_zargana', name: 'Zargana', icon: 'fish_zargana', color: '#7fd6c8', sellable: false, desc: 'Uzun gagalı, çevik balık. Balıkçı Hasan alır.' },
+  { id: 'fish_levrek', name: 'Levrek', icon: 'fish_levrek', color: '#b8c8d8', sellable: false, desc: 'Değerli, güçlü balık. Balıkçı Hasan alır.' },
   { id: 'talisman_stone', name: 'Tılsım Taşı', icon: 'talisman', color: '#5ce0b0', sellable: false, desc: '20 tanesi Tılsımın Gücü olur.' },
 ];
 export const MATERIAL = new Map(MATERIALS.map((m) => [m.id, m] as const));

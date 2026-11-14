@@ -32,6 +32,16 @@ export interface CharMisc {
   receipts?: string[]; // son işlem kimlikleri (idempotency, sınırlı)
   tutorial?: number;
   deadAt?: number; // epoch ms (ölüm durumu kalıcı)
+  /** Nesne Market süreli etkileri: anahtar → bitiş (epoch ms) */
+  buffs?: Record<string, number>;
+  /** Oto iksir deposu (can) */
+  autoPool?: number;
+  /** Bereketli Olta Yemi: kalan av */
+  bait?: number;
+  /** Zümrüt tezgâh: sahip ve açık mı */
+  stallSkin?: 0 | 1 | 2;
+  /** Demircinin Koruma Mührü: sonraki başarısız artı basmada malzemelerin yarısı döner */
+  protectSeal?: boolean;
 }
 
 // ana → worker
@@ -46,12 +56,12 @@ export type ToWorker =
   /** Yönetim paneli: yeni oyun ayarları (canavar yoğunluğu değiştiyse harita yeniden kurulur). */
   | { type: 'tuning'; data: unknown }
   /** Yönetim paneli: bu kanaldaki çevrimiçi karakteri düzenle / sıfırla. */
-  | { type: 'admin'; op: 'set' | 'reset'; charId: number; patch?: { level?: number; gems?: number; potions?: number } }
+  | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename'; charId: number; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string }
   | { type: 'shutdown' };
 
 // worker → ana
 /** Kanalın pazarı: bağımsız dükkânlar ve sahibi yokken yapılan satışların bekleyen kazancı. */
-export interface MarketStall { id: string; ownerId: number; ownerName: string; zone: string; title: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; openedAt: number; earned: number }
+export interface MarketStall { id: string; ownerId: number; ownerName: string; zone: string; title: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; openedAt: number; earned: number; skin?: string }
 export interface MarketState { v: 1; stalls: MarketStall[]; pending: Record<string, { gems: number; sales: { buyer: string; name: string; price: number; at: number }[] }> }
 export type FromWorker =
   | { type: 'out'; batch: [number, string | ArrayBuffer][] }

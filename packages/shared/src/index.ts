@@ -15,3 +15,5 @@ export * from './content/loot.ts';
 export * from './content/shops.ts';
 export * from './content/upgrade.ts';
 export * from './tuning.ts';
+export * from './content/mall.ts';
+export * from './content/fishing.ts';

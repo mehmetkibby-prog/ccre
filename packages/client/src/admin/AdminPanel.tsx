@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -491,4 +491,156 @@ export function useCanAdmin() {
   const [ok, setOk] = useState(configState.canEdit);
   useEffect(() => onConfig(() => setOk(configState.canEdit)), []);
   return ok;
+}
+
+// ═══════════════════════ Bosslar: güç, genel ayar, düşme tablosu ═══════════════════════
+type SetMon = (id: string, p: Partial<MonsterTune>) => void;
+type SetSpawn = (k: string, p: Partial<SpawnTune>) => void;
+const KIND_NAMES: Record<DropTune['kind'], string> = { item: 'Eşya', mat: 'Malzeme', mall: 'Market ürünü' };
+function dropOptions(kind: DropTune['kind']): [string, string][] {
+  if (kind === 'item') return ITEM_TEMPLATES.map((t) => [t.id, t.name] as [string, string]);
+  if (kind === 'mat') return MATERIALS.filter((m) => !MALL.has(m.id)).map((m) => [m.id, m.name] as [string, string]);
+  return MALL_ITEMS.filter((m) => !m.soon && !m.epin).map((m) => [m.id, m.name] as [string, string]);
+}
+export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: SetMon; setSpawn: SetSpawn; dis: boolean }) {
+  const bosses = MONSTERS.filter((d) => d.boss);
+  return (
+    <>{bosses.map((d) => {
+      const m = t.monsters[d.id] ?? {};
+      // haritadaki doğma grubu (seviye için)
+      let spawnKey = '', baseLevel = 1, mapName = '';
+      for (const mp of Object.values(MAPS)) mp.spawns.forEach((g, gi) => { if (g.monster === d.id && !spawnKey) { spawnKey = mp.id + ':' + gi; baseLevel = g.level[0]; mapName = mp.name; } });
+      const lv = t.spawns[spawnKey]?.level?.[0] ?? baseLevel;
+      const st = monsterStats(d, lv, 0);
+      const defHp = Math.round(st.maxHp * TUNING_DEF(t, 'monsterHpMul') * (m.hpMul ?? 1)), defAtk = Math.round(st.atk * TUNING_DEF(t, 'monsterAtkMul') * (m.atkMul ?? 1));
+      const drops = m.drops ?? [];
+      const setDrops = (n: DropTune[]) => setMon(d.id, { drops: n.length ? n : undefined });
+      const theme = monsterTheme(d.id), prof = LOOT_PROFILES[theme] ?? LOOT_PROFILES.forest;
+      const rw = m.rarity ?? prof.rarityWeights as Record<string, number>;
+      return (
+        <section className="admin-sec boss-adm" key={d.id}>
+          <h4>{d.name} <span className="pill" style={{ marginLeft: 6 }}>{mapName}</span></h4>
+          <div className="muted adm-hint">Boş kutu = varsayılan. Can, saldırı ve savunma mutlak değerdir; kaydedince yeni doğan bossa uygulanır.</div>
+          <div className="adm-fields six">
+            <label><span>Seviye</span><Num v={t.spawns[spawnKey]?.level?.[0]} def={baseLevel} min={1} max={120} step={1} w={70} dis={dis || !spawnKey} on={(v) => setSpawn(spawnKey, { level: v === undefined ? undefined : [v, v] })} /></label>
+            <label><span>Can</span><Num v={m.hp} def={defHp} min={1} max={1e9} step={1} w={100} dis={dis} on={(v) => setMon(d.id, { hp: v })} /></label>
+            <label><span>Saldırı</span><Num v={m.atk} def={defAtk} min={0} max={1e7} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { atk: v })} /></label>
+            <label><span>Savunma</span><Num v={m.def} def={d.def} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { def: v })} /></label>
+            <label><span>Hız ×</span><Num v={m.speedMul} def={1} min={0.2} max={3} w={70} dis={dis} on={(v) => setMon(d.id, { speedMul: v })} /></label>
+            <label><span>TP ×</span><Num v={m.xpMul} def={1} min={0} max={50} w={70} dis={dis} on={(v) => setMon(d.id, { xpMul: v })} /></label>
+            <label><span>Doğma (dk)</span><Num v={m.respawnMin} def={d.respawnMin ?? 10} min={0.5} max={1440} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { respawnMin: v })} /></label>
+            <label><span>Mücevher en az</span><Num v={m.gems?.[0]} def={prof.gems[0] * 20} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { gems: v === undefined ? undefined : [v, Math.max(v, m.gems?.[1] ?? v)] })} /></label>
+            <label><span>Mücevher en çok</span><Num v={m.gems?.[1]} def={prof.gems[1] * 20} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { gems: v === undefined ? undefined : [Math.min(v, m.gems?.[0] ?? v), v] })} /></label>
+            <label><span>Öz en az</span><Num v={m.essence?.[0]} def={prof.essence[0] * 20} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { essence: v === undefined ? undefined : [v, Math.max(v, m.essence?.[1] ?? v)] })} /></label>
+            <label><span>Öz en çok</span><Num v={m.essence?.[1]} def={prof.essence[1] * 20} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setMon(d.id, { essence: v === undefined ? undefined : [Math.min(v, m.essence?.[0] ?? v), v] })} /></label>
+          </div>
+          <div className="muted adm-hint" style={{ marginTop: 10 }}>Mücevher ve Öz, boss için 20 kat çarpılmış hâliyle gösterilir. Boss her ölümde 3 ekipman düşürür; nadirlik ağırlıkları:</div>
+          <div className="adm-fields six">
+            {RARITIES.map((r) => <label key={r}><span style={{ color: RARITY[r].color }}>{RARITY[r].name}</span><Num v={m.rarity?.[r]} def={rw[r] ?? 0} min={0} max={10000} step={1} w={70} dis={dis} on={(v) => { const n = { ...(m.rarity ?? {}) }; if (v === undefined) delete n[r]; else n[r] = v; setMon(d.id, { rarity: Object.keys(n).length ? n : undefined }); }} /></label>)}
+          </div>
+          <div className="sect" style={{ marginTop: 14 }}>Özel düşenler</div>
+          <div className="drop-list">
+            {drops.map((x, i) => {
+              const upd = (p: Partial<DropTune>) => setDrops(drops.map((y, j) => (j === i ? { ...y, ...p } : y)));
+              return (
+                <div className="drop-row" key={i}>
+                  <select className="adm-sel" value={x.kind} disabled={dis} onChange={(e) => { const k = e.target.value as DropTune['kind']; upd({ kind: k, key: dropOptions(k)[0]?.[0] ?? '', rarity: k === 'item' ? 'blue' : undefined }); }}>
+                    {(Object.keys(KIND_NAMES) as DropTune['kind'][]).map((k) => <option key={k} value={k}>{KIND_NAMES[k]}</option>)}
+                  </select>
+                  <select className="adm-sel grow" value={x.key} disabled={dis} onChange={(e) => upd({ key: e.target.value })}>{dropOptions(x.kind).map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
+                  {x.kind === 'item' && <select className="adm-sel" value={x.rarity ?? 'blue'} disabled={dis} onChange={(e) => upd({ rarity: e.target.value })}>{RARITIES.map((r) => <option key={r} value={r}>{RARITY[r].name}</option>)}</select>}
+                  <label className="adm-inline"><span>%</span><Num v={Math.round(x.chance * 10000) / 100} def={0} min={0} max={100} step={0.1} w={70} dis={dis} on={(v) => upd({ chance: (v ?? 0) / 100 })} /></label>
+                  <label className="adm-inline"><span>Adet</span><Num v={x.qty[0]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [v ?? 1, Math.max(v ?? 1, x.qty[1])] })} /><span>–</span><Num v={x.qty[1]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [Math.min(x.qty[0], v ?? 1), v ?? 1] })} /></label>
+                  <button className="btn small ghost danger" disabled={dis} onClick={() => setDrops(drops.filter((_, j) => j !== i))} aria-label="Sil">✕</button>
+                </div>
+              );
+            })}
+            {!drops.length && <div className="muted" style={{ fontSize: 12 }}>Özel düşen yok. Boss yalnız mücevher, öz ve ekipman bırakır.</div>}
+            <button className="btn small" disabled={dis} onClick={() => setDrops([...drops, { kind: 'mat', key: 'mastery_seal', chance: 0.25, qty: [1, 1] }])}>+ Düşen ekle</button>
+          </div>
+        </section>
+      );
+    })}</>
+  );
+}
+const TUNING_DEF = (t: GameTuning, k: 'monsterHpMul' | 'monsterAtkMul') => t[k] ?? 1;
+
+// ═══════════════════════ Balıkçılık ═══════════════════════
+export function FishingTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const f = t.fishing ?? {};
+  const setF = (p: Partial<NonNullable<GameTuning['fishing']>>) => { const n = { ...f, ...p } as Record<string, unknown>; for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k]; setT({ ...t, fishing: Object.keys(n).length ? n as GameTuning['fishing'] : undefined }); };
+  const setC = (id: string, p: Record<string, unknown>) => { const c = { ...(f.catches ?? {}) }; const e = { ...(c[id] ?? {}), ...p } as Record<string, unknown>; for (const k of Object.keys(e)) if (e[k] === undefined || e[k] === false) delete e[k]; if (Object.keys(e).length) c[id] = e as never; else delete c[id]; setF({ catches: Object.keys(c).length ? c : undefined }); };
+  const totalW = FISH.filter((x) => !f.catches?.[x.id]?.off).reduce((a, x) => a + (f.catches?.[x.id]?.weight ?? x.weight), 0) || 1;
+  return (
+    <>
+      <section className="admin-sec">
+        <h4>Genel</h4>
+        <div className="muted adm-hint">Şelale Gölü'nde Balıkçı Hasan oltayı satar ve balıkları alır. Oyuncu suya yakın durup "Olta At"a basar; vurunca tutma oyunu başlar.</div>
+        <div className="adm-fields">
+          <label><span>Olta fiyatı (Mücevher)</span><Num v={f.rodPrice} def={FISHING_DEFAULTS.rodPrice} min={0} max={1e9} step={1} w={100} dis={dis} on={(v) => setF({ rodPrice: v })} /></label>
+          <label><span>Vurma en erken (sn)</span><Num v={f.biteMin} def={FISHING_DEFAULTS.biteMin} min={0.5} max={60} step={0.5} w={80} dis={dis} on={(v) => setF({ biteMin: v })} /></label>
+          <label><span>Vurma en geç (sn)</span><Num v={f.biteMax} def={FISHING_DEFAULTS.biteMax} min={0.5} max={120} step={0.5} w={80} dis={dis} on={(v) => setF({ biteMax: v })} /></label>
+        </div>
+      </section>
+      <section className="admin-sec">
+        <h4>Av tablosu</h4>
+        <div className="muted adm-hint">Ağırlık: tutulma şansı (yüzde otomatik). Zorluk 1–100: yüksek zorlukta balık hızlı kaçar, yeşil alan küçülür. Fiyat 0 ise Hasan satın almaz.</div>
+        <div className="drop-list">
+          {FISH.map((x) => {
+            const c = f.catches?.[x.id] ?? {}, on = !c.off, w = c.weight ?? x.weight;
+            return (
+              <div className={'drop-row' + (on ? '' : ' off')} key={x.id}>
+                <button type="button" className={'switch' + (on ? ' on' : '')} disabled={dis} onClick={() => setC(x.id, { off: on ? true : undefined })}><i /></button>
+                <b className="grow">{x.name}</b>
+                <label className="adm-inline"><span>Ağırlık</span><Num v={c.weight} def={x.weight} min={0} max={10000} step={1} w={66} dis={dis} on={(v) => setC(x.id, { weight: v })} /><small className="muted">%{fmtN(on ? (w / totalW) * 100 : 0, 1)}</small></label>
+                <label className="adm-inline"><span>Zorluk</span><Num v={c.diff} def={x.diff} min={1} max={100} step={1} w={60} dis={dis} on={(v) => setC(x.id, { diff: v })} /></label>
+                <label className="adm-inline"><span>Fiyat</span><Num v={c.price} def={x.price} min={0} max={1e7} step={1} w={66} dis={dis} on={(v) => setC(x.id, { price: v })} /></label>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    </>
+  );
+}
+
+// ═══════════════════════ Nesne Market ═══════════════════════
+export function MallTab({ t, setT, dis, epin }: { t: GameTuning; setT: SetT; dis: boolean; epin?: React.ReactNode }) {
+  const ml = t.mall ?? {};
+  const setM = (p: Partial<NonNullable<GameTuning['mall']>>) => { const n = { ...ml, ...p } as Record<string, unknown>; for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k]; setT({ ...t, mall: Object.keys(n).length ? n as GameTuning['mall'] : undefined }); };
+  const off = new Set(ml.off ?? []);
+  const w = ml.wings ?? {};
+  const setW = (k: 'atk' | 'def' | 'crit', v: number | undefined) => { const n = { ...w }; if (v === undefined) delete n[k]; else n[k] = v; setM({ wings: Object.keys(n).length ? n : undefined }); };
+  return (
+    <>
+      {epin}
+      <section className="admin-sec">
+        <h4>Ürünler ve fiyatlar (ÇP)</h4>
+        <div className="muted adm-hint">Kapatılan ürün markette "Satışta değil" görünür. "Yakında" ürünlerin sistemi oyunda henüz yok; E-PIN'ler kodla yüklenir.</div>
+        <div className="mall-adm">
+          {MALL_ITEMS.slice().sort((a, b) => a.no - b.no).map((m) => {
+            const fixed = m.soon || !!m.epin, on = !off.has(m.id);
+            return (
+              <div key={m.id} className={'mall-adm-row' + (fixed ? ' fixed' : on ? '' : ' off')}>
+                <img src={'icons/mall/' + mallIcon(m.id) + '.png'} alt="" />
+                <div className="grow"><b>{m.no}. {m.name}</b><small>{m.desc}</small></div>
+                {fixed ? <span className="pill">{m.soon ? 'Yakında' : 'E-PIN'}</span> : <>
+                  <Num v={ml.price?.[m.id]} def={m.price} min={0} max={1e7} step={1} w={80} dis={dis} on={(v) => { const p = { ...(ml.price ?? {}) }; if (v === undefined) delete p[m.id]; else p[m.id] = v; setM({ price: Object.keys(p).length ? p : undefined }); }} />
+                  <button type="button" className={'switch' + (on ? ' on' : '')} disabled={dis} title={on ? 'Satışta' : 'Kapalı'} onClick={() => { const s2 = new Set(off); if (on) s2.add(m.id); else s2.delete(m.id); setM({ off: s2.size ? [...s2] : undefined }); }}><i /></button>
+                </>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      <section className="admin-sec">
+        <h4>Kızıl Çekirdek Kanatları bonusları</h4>
+        <div className="adm-fields">
+          <label><span>Saldırı +</span><Num v={w.atk} def={DEFAULT_WINGS.atk} min={0} max={1e5} step={1} w={80} dis={dis} on={(v) => setW('atk', v)} /></label>
+          <label><span>Savunma +</span><Num v={w.def} def={DEFAULT_WINGS.def} min={0} max={1e5} step={1} w={80} dis={dis} on={(v) => setW('def', v)} /></label>
+          <label><span>Kritik %</span><Num v={w.crit} def={DEFAULT_WINGS.crit} min={0} max={100} step={1} w={80} dis={dis} on={(v) => setW('crit', v)} /></label>
+        </div>
+      </section>
+    </>
+  );
 }

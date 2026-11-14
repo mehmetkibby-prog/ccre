@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, type ItemInstance, type Slot, type ClassId,
+  classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
+import { api } from '../api.ts';
+import { MallPanel, BossPanel, FishShop, TradeGlass } from './extras.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -13,7 +15,7 @@ import { sfx } from '../game/audio.ts';
 const RIDX = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
 const close = () => store.set({ panel: null, npc: null, shop: null, stallView: null });
 
-function Panel({ title, children, width }: { title: string; children: React.ReactNode; width?: number }) {
+export function Panel({ title, children, width }: { title: string; children: React.ReactNode; width?: number }) {
   return (
     <div className="frame panel" style={width ? { width: `min(${width}px, 96vw)` } : undefined} onPointerDown={(e) => e.stopPropagation()}>
       <div className="hd"><span className="title">{title}</span><button className="x" onClick={close}>✕</button></div>
@@ -41,6 +43,10 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'upgrade' && <Upgrade game={game} />}
       {p === 'market' && <Market game={game} />}
       {p === 'donate' && <Donate game={game} />}
+      {p === 'mall' && <MallPanel game={game} />}
+      {p === 'bosses' && <BossPanel game={game} />}
+      {p === 'fishshop' && <FishShop game={game} />}
+      {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
           <div className="title" style={{ fontSize: 20, marginBottom: 8 }}>Dikkat: PvP bölgesi</div>
@@ -73,7 +79,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
 
 // ───────── eşya ipucu ─────────
 const TIER_NAMES = ['1. kademe', '2. kademe', '3. kademe', '4. kademe'];
-function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
+export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
   const tpl = ITEM_TPL.get(it.tpl);
   const r = RARITY[it.rarity];
   const power = itemPower(it), base = itemPower({ ...it, plus: 0 });
@@ -146,7 +152,7 @@ function FloatingTip({ x, y, children }: { x: number; y: number; children: React
   return createPortal(<div ref={ref} className="frame tip" style={{ left: x + 18, top: y + 14, visibility: 'hidden' }}>{children}</div>, document.body);
 }
 let lastPointer = 'mouse';
-function useTip() {
+export function useTip() {
   const [tip, setTip] = useState<{ it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void } | null>(null);
   // fare: üstüne gelince; dokunmatik: dokununca sabit kart (üstüne gelme olayı dokunmada anlık titriyordu)
   const bind = (it: ItemInstance | undefined) => it ? {
@@ -159,7 +165,7 @@ function useTip() {
   } : {};
   return { tip, bind, clear: () => setTip(null) };
 }
-function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: string; onClick?: () => void; sel?: boolean; bind?: { onTapCard?: () => void } }) {
+export function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: string; onClick?: () => void; sel?: boolean; bind?: { onTapCard?: () => void } }) {
   const tpl = it ? ITEM_TPL.get(it.tpl) : null;
   const { onTapCard, ...handlers } = bind ?? {};
   return (
@@ -171,22 +177,43 @@ function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; label?: st
   );
 }
 
+type BagTab = 'esya' | 'malzeme' | 'market';
+/** Duvar saati (epoch ms) ile yenilenen bileşen: süreli etkilerin kalan süresi için. */
+export function useClock(ms = 1000) { const [, set] = useState(0); useEffect(() => { const iv = setInterval(() => set((x) => x + 1), ms); return () => clearInterval(iv); }, [ms]); return Date.now(); }
+const fmtLeft = (ms: number) => { const m = Math.max(0, Math.round(ms / 60000)); if (m >= 2880) return `${Math.round(m / 1440)} gün`; if (m >= 120) return `${Math.floor(m / 60)} sa ${m % 60} dk`; if (m >= 60) return `1 sa ${m - 60} dk`; return `${m} dk`; };
 function Inventory({ game }: { game: Game }) {
   const self = useStore((s) => s.self);
+  const target = useStore((s) => s.mallTarget);
   const { tip, bind, clear } = useTip();
   const [sel, setSel] = useState<string | null>(null);
+  const [tab, setTab] = useState<BagTab>(() => (target ? 'esya' : 'esya'));
+  const [rename, setRename] = useState('');
+  const now = useClock(1000);
   if (!self) return null;
   const selItem = self.bag.find((b) => b.id === sel);
   const selSlot = (Object.keys(self.equip) as Slot[]).find((s) => self.equip[s]?.id === sel);
   const selEq = selSlot ? self.equip[selSlot] : undefined;
   const sellIt = (it: ItemInstance) => { game.send({ t: 'sell', items: [it.id], req: reqId() }); setSel(null); clear(); };
   const layout: (Slot | null)[] = ['earring', 'helmet', 'necklace', 'weapon', 'armor', 'bracelet', null, 'boots', null];
+  // market ürünü bir ekipmana uygulanacaksa: eşyaya dokununca uygulanır
+  const pick = (id: string) => {
+    if (target) { game.useItem(target, id); store.set({ mallTarget: null }); setSel(null); clear(); return; }
+    setSel(sel === id ? null : id);
+  };
+  const mats = Object.entries(self.materials).filter(([k, n]) => n > 0 && !MALL.has(k));
+  const mallOwned = Object.entries(self.materials).filter(([k, n]) => n > 0 && MALL.has(k));
+  const buffs = Object.entries(self.buffs ?? {}).filter(([, t]) => t > now + (store.get().clockSkew ?? 0));
+  const doRename = async () => {
+    try { const r = await api<{ name: string }>('/api/rename', { characterId: store.get().char?.id, name: rename }); notify(`Yeni adın: ${r.name}`, 'ok'); setRename(''); }
+    catch (e) { notify((e as Error).message, 'error'); }
+  };
   return (
-    <Panel title="Çanta ve Ekipman" width={820}>
+    <Panel title="Çanta ve Ekipman" width={840}>
+      {target && <div className="bag-target">✦ <b>{MALL.get(target)?.name}</b>: uygulamak istediğin ekipmana dokun. <button className="btn small ghost" onClick={() => store.set({ mallTarget: null })}>Vazgeç</button></div>}
       <div className="inv">
         <div>
           <div className="paper">
-            {layout.map((s, i) => s ? <Cell key={s} it={self.equip[s]} label={SLOT_NAMES[s]} bind={bind(self.equip[s])} onClick={() => { if (self.equip[s]) setSel(sel === self.equip[s]!.id ? null : self.equip[s]!.id); }} sel={!!self.equip[s] && sel === self.equip[s]!.id} /> : <div key={i} />)}
+            {layout.map((s, i) => s ? <Cell key={s} it={self.equip[s]} label={SLOT_NAMES[s]} bind={bind(self.equip[s])} onClick={() => { if (self.equip[s]) pick(self.equip[s]!.id); }} sel={!!self.equip[s] && sel === self.equip[s]!.id} /> : <div key={i} />)}
           </div>
           <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Eşyaya dokun: çıkar, sat ya da kilitle</div>
           {selEq && selSlot && (
@@ -199,35 +226,72 @@ function Inventory({ game }: { game: Game }) {
           )}
         </div>
         <div>
-          <div className="row"><b>Çanta</b><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Dükkânı</button>}</div>
-          <div className="bag" style={{ marginTop: 8 }}>
-            {self.bag.map((it) => <Cell key={it.id} it={it} sel={sel === it.id} bind={bind(it)} onClick={() => setSel(sel === it.id ? null : it.id)} />)}
-            {Array.from({ length: Math.max(0, 35 - self.bag.length) }).slice(0, 14).map((_, i) => <div key={'e' + i} className="cell" />)}
+          <div className="bag-tabs">
+            {([['esya', 'Eşya', self.bag.length], ['malzeme', 'Malzeme', mats.length], ['market', 'Nesne Market', mallOwned.length]] as [BagTab, string, number][]).map(([k, l, n]) =>
+              <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}{n > 0 && <small>{n}</small>}</button>)}
           </div>
-          {selItem && (
-            <div className="row" style={{ marginTop: 10, flexWrap: 'wrap' }}>
-              <span style={{ color: RARITY[selItem.rarity].color, fontWeight: 800 }}>{itemDisplayName(selItem)}</span>
-              <div className="spacer" />
-              <button className="btn small green" onClick={() => { game.send({ t: 'equip', item: selItem.id }); setSel(null); clear(); }}>Kuşan</button>
-              <button className="btn small red" disabled={!!selItem.locked} title={selItem.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selItem)}>Sat +{sellPrice(selItem.rarity)}</button>
-              <button className="btn small" onClick={() => game.send({ t: 'lock', item: selItem.id, on: !selItem.locked })}>{selItem.locked ? 'Kilidi aç' : 'Kilitle'}</button>
+          {tab === 'esya' && <>
+            <div className="row"><span className="muted" style={{ fontSize: 12 }}>{self.bag.length} / 35 ekipman</span><div className="spacer" />{MAPS[store.get().map]?.market && <button className="btn small primary" onClick={() => store.set({ panel: 'market', stallView: null })}>Pazar Dükkânı</button>}</div>
+            <div className="bag" style={{ marginTop: 8 }}>
+              {self.bag.map((it) => <Cell key={it.id} it={it} sel={sel === it.id} bind={bind(it)} onClick={() => pick(it.id)} />)}
+              {Array.from({ length: Math.max(0, 35 - self.bag.length) }).slice(0, 14).map((_, i) => <div key={'e' + i} className="cell" />)}
             </div>
-          )}
-          <div style={{ marginTop: 14 }}><b>Malzemeler</b></div>
-          <div className="mats">
-            {Object.entries(self.materials).filter(([, n]) => n > 0).map(([k, n]) => {
-              const m = MATERIAL.get(k);
-              return (
-                <div key={k} className="mat" title={m?.desc}>
-                  <img src={iconUrl(m?.icon ?? 'bag')} alt="" /><div style={{ flex: 1 }}>{m?.name ?? k}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
-                  {(k === 'starter_chest' || k === 'red_potion') && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'starter_chest' ? 'Aç' : 'Kullan'}</button>}
-                </div>
-              );
-            })}
-          </div>
-          <label className="row" style={{ marginTop: 12, fontSize: 13 }}>
-            <input type="checkbox" checked={self.autoPotion} onChange={(e) => game.send({ t: 'autopotion', on: e.target.checked })} /> Can %50'nin altına düşünce otomatik iksir (en az 2 sn arayla)
-          </label>
+            {selItem && (
+              <div className="row" style={{ marginTop: 10, flexWrap: 'wrap' }}>
+                <span style={{ color: RARITY[selItem.rarity].color, fontWeight: 800 }}>{itemDisplayName(selItem)}</span>
+                <div className="spacer" />
+                <button className="btn small green" onClick={() => { game.send({ t: 'equip', item: selItem.id }); setSel(null); clear(); }}>Kuşan</button>
+                <button className="btn small red" disabled={!!selItem.locked} title={selItem.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selItem)}>Sat +{sellPrice(selItem.rarity)}</button>
+                <button className="btn small" onClick={() => game.send({ t: 'lock', item: selItem.id, on: !selItem.locked })}>{selItem.locked ? 'Kilidi aç' : 'Kilitle'}</button>
+              </div>
+            )}
+          </>}
+          {tab === 'malzeme' && <>
+            <div className="mats">
+              {mats.length === 0 && <div className="muted" style={{ fontSize: 13 }}>Malzemen yok. Canavarlardan düşer.</div>}
+              {mats.map(([k, n]) => {
+                const m = MATERIAL.get(k);
+                return (
+                  <div key={k} className="mat" title={m?.desc}>
+                    <img src={iconUrl(m?.icon ?? 'bag')} alt="" /><div style={{ flex: 1 }}>{m?.name ?? k}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
+                    {(k === 'starter_chest' || k === 'red_potion') && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'starter_chest' ? 'Aç' : 'Kullan'}</button>}
+                  </div>
+                );
+              })}
+            </div>
+            <label className="row" style={{ marginTop: 12, fontSize: 13 }}>
+              <input type="checkbox" checked={self.autoPotion} onChange={(e) => game.send({ t: 'autopotion', on: e.target.checked })} /> Can %50'nin altına düşünce otomatik iksir (en az 2 sn arayla)
+            </label>
+          </>}
+          {tab === 'market' && <>
+            {(buffs.length > 0 || (self.autoPool ?? 0) > 0 || (self.bait ?? 0) > 0) && (
+              <div className="buff-list">
+                {buffs.map(([k, t]) => { const m = MALL.get(k); return <div key={k} className="buff"><img src={iconUrl(mallIcon(k))} alt="" /><span>{m?.name ?? k}</span><b>{fmtLeft(t - now - (store.get().clockSkew ?? 0))}</b></div>; })}
+                {(self.autoPool ?? 0) > 0 && <div className="buff"><img src={iconUrl('mall_auto_potion')} alt="" /><span>Oto iksir deposu</span><b>{(self.autoPool ?? 0).toLocaleString('tr-TR')} can</b></div>}
+                {(self.bait ?? 0) > 0 && <div className="buff"><img src={iconUrl('mall_fish_bait')} alt="" /><span>Bereketli yem</span><b>{self.bait} av</b></div>}
+              </div>
+            )}
+            <div className="mats">
+              {mallOwned.length === 0 && <div className="muted" style={{ fontSize: 13 }}>Nesne Market ürünün yok. Sağ üstteki <b>Market</b> düğmesinden alabilirsin.</div>}
+              {mallOwned.map(([k, n]) => {
+                const m = MALL.get(k)!;
+                const act = m.target ? 'Ekipman seç' : k === 'rename' ? null : (k === 'mastery_seal' || k === 'protect_seal') ? null : 'Kullan';
+                return (
+                  <div key={k} className="mat mall-mat" title={m.desc}>
+                    <img src={iconUrl(mallIcon(k))} alt="" /><div style={{ flex: 1, minWidth: 0 }}>{m.name}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
+                    {act && <button className="btn small" onClick={() => { if (m.target) { store.set({ mallTarget: k }); setTab('esya'); } else game.useItem(k); }}>{act}</button>}
+                    {k === 'rename' && <div className="rename-row"><input className="inp" placeholder="Yeni ad" maxLength={18} value={rename} onChange={(e) => setRename(e.target.value)} /><button className="btn small primary" disabled={rename.trim().length < 2} onClick={doRename}>Değiştir</button></div>}
+                    {(k === 'mastery_seal' || k === 'protect_seal') && <small className="muted" style={{ fontSize: 10.5 }}>Haso'da kendiliğinden</small>}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="row" style={{ marginTop: 10, gap: 8, flexWrap: 'wrap' }}>
+              <button className="btn small primary" onClick={() => store.set({ panel: 'mall' })}>Nesne Market'i aç</button>
+              {(self.buffs?.trade_glass ?? 0) > now && <button className="btn small" onClick={() => game.send({ t: 'market_search', q: '' })}>Pazarda ara (Ticaret Camı)</button>}
+              {(self.stallSkin ?? 0) > 0 && <label className="row" style={{ fontSize: 12.5, gap: 6 }}><input type="checkbox" checked={self.stallSkin === 2} onChange={(e) => game.send({ t: 'stall_skin', on: e.target.checked })} /> Zümrüt tezgâh görünümü</label>}
+            </div>
+          </>}
         </div>
       </div>
       {tip && <ItemTip {...tip} />}
@@ -433,13 +497,14 @@ function Settings() {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi (yakında)', fishing_shop: 'Olta al (yakında)' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi (yakında)', fishing_shop: 'Olta al · Balık sat' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
     else if (a === 'shop_smith') store.set({ panel: 'shop', shop: 'smith' });
     else if (a === 'sell') store.set({ panel: 'shop', shop: 'sell' });
     else if (a === 'upgrade') store.set({ panel: 'upgrade' });
+    else if (a === 'fishing_shop') store.set({ panel: 'fishshop' });
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {

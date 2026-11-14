@@ -43,7 +43,7 @@ export interface CombatStats {
 export interface CharCore {
   cls: ClassId; level: number; stats: StatAlloc;
   equip: Partial<Record<Slot, ItemInstance>>;
-  buffs?: { atkFlat?: number; hpFlat?: number; dmgReducePct?: number };
+  buffs?: { atkFlat?: number; hpFlat?: number; dmgReducePct?: number; defFlat?: number; critPct?: number };
 }
 
 export function computeStats(c: CharCore): CombatStats {
@@ -86,7 +86,8 @@ export function computeStats(c: CharCore): CombatStats {
   if (c.buffs?.hpFlat) hpFlat += c.buffs.hpFlat;
   const st = c.stats;
   atk = (atk + atkFlat) * (1 + (STAT_BONUS_AT_MAX.str * st.str) / STAT_MAX);
-  dfn = dfn * (1 + (STAT_BONUS_AT_MAX.res * st.res) / STAT_MAX);
+  dfn = (dfn + (c.buffs?.defFlat ?? 0)) * (1 + (STAT_BONUS_AT_MAX.res * st.res) / STAT_MAX);
+  if (c.buffs?.critPct) s.crit += c.buffs.critPct;
   maxHp = (maxHp + hpFlat) * (1 + (STAT_BONUS_AT_MAX.vit * st.vit) / STAT_MAX);
   s.maxHp = Math.round(maxHp);
   s.atk = Math.round(atk);

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type { ServerResponse } from 'node:http';
 import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
@@ -264,7 +265,7 @@ export function buildApi(d: ApiDeps): Router {
     const online = d.gateway.onlineCharIds();
     const like = '%' + q.replace(/[%_\\]/g, (m) => '\\' + m) + '%';
     const rows = (await pool.query(
-      `SELECT c.id, c.name, c.cls, c.level, c.gems, c.map, c.kills, c.last_seen, c.account_id, a.username, a.role, a.banned_until, a.ban_reason,
+      `SELECT c.id, c.name, c.cls, c.level, c.gems, c.cp, c.map, c.kills, c.last_seen, c.account_id, a.username, a.role, a.banned_until, a.ban_reason,
          COALESCE((SELECT qty FROM materials m WHERE m.char_id=c.id AND m.key='red_potion'), 0) AS potions
        FROM characters c JOIN accounts a ON a.id=c.account_id
        WHERE c.deleted_at IS NULL AND ($1 = '' OR c.name_norm LIKE $2 OR a.username_norm LIKE $2) ${onlyOnline ? 'AND c.id = ANY($3::bigint[])' : ''}
@@ -274,7 +275,7 @@ export function buildApi(d: ApiDeps): Router {
       const id = Number(x.id);
       const live = d.store.peek(id);
       return {
-        id, name: x.name, cls: x.cls, level: live?.level ?? x.level, gems: Number(live?.gems ?? x.gems), potions: Number(live?.materials.red_potion ?? x.potions), map: live?.map ?? x.map,
+        id, name: x.name, cls: x.cls, level: live?.level ?? x.level, gems: Number(live?.gems ?? x.gems), cp: Number(live?.cp ?? x.cp), potions: Number(live?.materials.red_potion ?? x.potions), map: live?.map ?? x.map,
         kills: Number(live?.kills ?? x.kills), lastSeen: x.last_seen, online: online.has(id), accountId: Number(x.account_id), username: x.username, role: x.role,
         bannedUntil: x.banned_until && new Date(x.banned_until).getTime() > Date.now() ? x.banned_until : null, banReason: x.ban_reason,
       };
@@ -283,10 +284,10 @@ export function buildApi(d: ApiDeps): Router {
   const audit = (actor: number, action: string, detail: unknown) => pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES ($1,$2,$3)`, [actor, action, JSON.stringify(detail)]).catch(() => {});
   r.post('/api/admin/player', async (req) => {
     const a = await requireAdmin(req);
-    const { id, level, gems, potions } = req.body ?? {};
+    const { id, level, gems, potions, cp } = req.body ?? {};
     const charId = Number(id);
     const num = (v: unknown, lo: number, hi: number) => (v === undefined || v === null || v === '' ? undefined : Math.min(hi, Math.max(lo, Math.round(Number(v)))));
-    const patch = { level: num(level, 1, LEVEL_CAP_BASE), gems: num(gems, 0, 1e12), potions: num(potions, 0, 1e7) };
+    const patch = { level: num(level, 1, LEVEL_CAP_BASE), gems: num(gems, 0, 1e12), potions: num(potions, 0, 1e7), cp: num(cp, 0, 1e9) };
     if (Object.values(patch).every((v) => v === undefined || Number.isNaN(v))) throw new HttpError(400, 'Değişiklik yok.');
     const ch = d.gateway.onlineChannel(charId);
     if (ch) { d.channels.send(ch, { type: 'admin', op: 'set', charId, patch }); await audit(a.id, 'player.set', { charId, patch }); return { ok: true, text: 'Oyunda, anında uygulandı.' }; }
@@ -295,10 +296,80 @@ export function buildApi(d: ApiDeps): Router {
     if (patch.level !== undefined) { c.level = patch.level; c.xp = 0; c.hp = computeStats({ cls: c.cls, level: c.level, stats: c.stats, equip: c.equip }).maxHp; }
     if (patch.gems !== undefined) c.gems = patch.gems;
     if (patch.potions !== undefined) c.materials.red_potion = patch.potions;
+    if (patch.cp !== undefined) c.cp = patch.cp;
     c.saveVersion++;
     d.store.enqueue(c, true);
     await audit(a.id, 'player.set', { charId, patch });
     return { ok: true, text: 'Kaydedildi (oyuncu çevrimdışı).' };
+  });
+  /** ÇP ekle: çevrimiçiyse anında, değilse kayda. (E-PIN ile de aynı yol kullanılır.) */
+  const addCp = async (charId: number, amount: number) => {
+    const ch = d.gateway.onlineChannel(charId);
+    if (ch) { d.channels.send(ch, { type: 'admin', op: 'addcp', charId, amount }); return true; }
+    const c = await d.store.load(charId);
+    if (!c) return false;
+    c.cp = Math.max(0, c.cp + amount); c.saveVersion++; d.store.enqueue(c, true);
+    return true;
+  };
+  r.post('/api/admin/cp', async (req) => {
+    const a = await requireAdmin(req);
+    const charId = Number(req.body?.id), amount = Math.round(Number(req.body?.amount));
+    if (!Number.isFinite(amount) || amount === 0 || Math.abs(amount) > 1e7) throw new HttpError(400, 'Geçersiz miktar.');
+    if (!(await addCp(charId, amount))) throw new HttpError(404, 'Karakter bulunamadı.');
+    await audit(a.id, 'player.cp', { charId, amount });
+    return { ok: true, text: `${amount > 0 ? '+' : ''}${amount.toLocaleString('tr-TR')} ÇP gönderildi.` };
+  });
+  // E-PIN kodları
+  r.get('/api/admin/epin', async (req) => {
+    await requireAdmin(req);
+    const rows = (await pool.query(`SELECT e.code, e.cp, e.note, e.created_at, e.used_at, c.name AS used_by FROM epin_codes e LEFT JOIN characters c ON c.id=e.used_by_char ORDER BY e.created_at DESC LIMIT 100`)).rows;
+    return rows.map((x) => ({ code: x.code, cp: x.cp, note: x.note, createdAt: x.created_at, usedAt: x.used_at, usedBy: x.used_by }));
+  });
+  r.post('/api/admin/epin', async (req) => {
+    const a = await requireAdmin(req);
+    const cp = Math.round(Number(req.body?.cp)), count = Math.min(50, Math.max(1, Math.round(Number(req.body?.count) || 1)));
+    if (!Number.isFinite(cp) || cp < 1 || cp > 1e6) throw new HttpError(400, 'Geçersiz ÇP.');
+    const note = String(req.body?.note ?? '').slice(0, 80);
+    const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const codes: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const raw = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => A[b % A.length]).join('');
+      codes.push(`TGR-${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}`);
+    }
+    for (const c of codes) await pool.query('INSERT INTO epin_codes(code, cp, note, created_by) VALUES ($1,$2,$3,$4)', [c, cp, note || null, a.id]);
+    await audit(a.id, 'epin.create', { cp, count });
+    return { ok: true, codes };
+  });
+  r.post('/api/epin', async (req) => {
+    const a = await requireAuth(req);
+    if (!config.loadTestMode && !loginLimiter.take(req.ip + ':epin')) throw new HttpError(429, 'Çok fazla deneme. Biraz bekle.');
+    const code = String(req.body?.code ?? '').trim().toUpperCase().replace(/\s+/g, '');
+    const charId = Number(req.body?.characterId);
+    const own = (await pool.query('SELECT 1 FROM characters WHERE id=$1 AND account_id=$2 AND deleted_at IS NULL', [charId, a.id])).rowCount;
+    if (!own) throw new HttpError(403, 'Karakter bulunamadı.');
+    const r2 = await pool.query(`UPDATE epin_codes SET used_at=now(), used_by_char=$2, used_by_account=$3 WHERE code=$1 AND used_at IS NULL RETURNING cp`, [code, charId, a.id]);
+    if (!r2.rowCount) throw new HttpError(404, 'Kod geçersiz ya da daha önce kullanılmış.');
+    const cp = Number(r2.rows[0].cp);
+    await addCp(charId, cp);
+    await audit(a.id, 'epin.redeem', { code, charId, cp });
+    return { ok: true, cp, text: `${cp.toLocaleString('tr-TR')} ÇP yüklendi.` };
+  });
+  // İsim Değiştirme (Nesne Market ürünü)
+  r.post('/api/rename', async (req) => {
+    const a = await requireAuth(req);
+    const charId = Number(req.body?.characterId), name = String(req.body?.name ?? '').trim();
+    const bad = validateCharacterName(name); if (bad) throw new HttpError(400, bad);
+    const own = (await pool.query('SELECT 1 FROM characters WHERE id=$1 AND account_id=$2 AND deleted_at IS NULL', [charId, a.id])).rowCount;
+    if (!own) throw new HttpError(403, 'Karakter bulunamadı.');
+    const live = d.store.peek(charId) ?? await d.store.load(charId);
+    if (!live || (live.materials.rename ?? 0) <= 0) throw new HttpError(400, 'İsim Değiştirme ürünü gerekir (Nesne Market).');
+    try { await pool.query('UPDATE characters SET name=$2, name_norm=$3 WHERE id=$1', [charId, name, normalizeName(name)]); }
+    catch (e: any) { if (e.code === '23505') throw new HttpError(409, 'Bu ad alınmış.'); throw e; }
+    const ch = d.gateway.onlineChannel(charId);
+    if (ch) d.channels.send(ch, { type: 'admin', op: 'rename', charId, name });
+    else { const c = await d.store.load(charId); if (c) { c.name = name; c.materials.rename = Math.max(0, (c.materials.rename ?? 1) - 1); c.saveVersion++; d.store.enqueue(c, true); } }
+    await audit(a.id, 'char.rename', { charId, name });
+    return { ok: true, name };
   });
   r.post('/api/admin/player/reset', async (req) => {
     const a = await requireAdmin(req);

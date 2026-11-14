@@ -411,24 +411,25 @@ const B: Partial<Record<PropKind, Builder>> = {
   gate(v) {
     const parts: { g: THREE.BufferGeometry; m: string; shadow?: boolean }[] = [];
     const Z = 4.1; // sütunlar yolun iki kenarında
+    const L = 2.2; // levha ve çatı yüksekte: altından rahat geçilsin, uzaktan görünsün
     for (const z of [-Z, Z]) {
       parts.push({ g: at(box(0.9, 0.5, 0.9, 0.8), 0, 0.25, z), m: 'stonewall' });
-      parts.push({ g: at(cyl(0.32, 0.38, 5.6, 10), 0, 3.0, z), m: 'marble' });
-      parts.push({ g: at(box(0.8, 0.3, 0.8, 0.8), 0, 5.9, z), m: 'stonewall' });
-      parts.push({ g: at(new THREE.SphereGeometry(0.22, 12, 8), 0, 6.25, z), m: 'gold' });
+      parts.push({ g: at(cyl(0.32, 0.4, 5.6 + L, 10), 0, 3.0 + L / 2, z), m: 'marble' });
+      parts.push({ g: at(box(0.8, 0.3, 0.8, 0.8), 0, 5.9 + L, z), m: 'stonewall' });
+      parts.push({ g: at(new THREE.SphereGeometry(0.22, 12, 8), 0, 6.25 + L, z), m: 'gold' });
     }
     // kirişler
-    parts.push({ g: at(box(0.45, 0.4, 2 * Z + 0.9, 1), 0, 5.6, 0), m: 'timber' });
-    parts.push({ g: at(box(0.35, 0.25, 2 * Z - 0.4, 1), 0, 2.9, 0), m: 'timber' });
+    parts.push({ g: at(box(0.45, 0.4, 2 * Z + 0.9, 1), 0, 5.6 + L, 0), m: 'timber' });
+    parts.push({ g: at(box(0.35, 0.25, 2 * Z - 0.4, 1), 0, 2.9 + L, 0), m: 'timber' });
     // levha: ahşap zemin + altın çerçeve + iki yüzde yazı
-    parts.push({ g: at(box(0.16, 2.3, 6.4, 0.8), 0, 4.15, 0), m: 'planks' });
-    parts.push({ g: at(box(0.2, 0.12, 6.6, 1), 0, 5.33, 0), m: 'gold' });
-    parts.push({ g: at(box(0.2, 0.12, 6.6, 1), 0, 2.97, 0), m: 'gold' });
-    parts.push({ g: at(new THREE.PlaneGeometry(6.2, 2.15), -0.09, 4.15, 0, 0, -Math.PI / 2, 0), m: 'sign_' + v, shadow: false });
-    parts.push({ g: at(new THREE.PlaneGeometry(6.2, 2.15), 0.09, 4.15, 0, 0, Math.PI / 2, 0), m: 'sign_' + v, shadow: false });
+    parts.push({ g: at(box(0.16, 2.3, 6.4, 0.8), 0, 4.15 + L, 0), m: 'planks' });
+    parts.push({ g: at(box(0.2, 0.12, 6.6, 1), 0, 5.33 + L, 0), m: 'gold' });
+    parts.push({ g: at(box(0.2, 0.12, 6.6, 1), 0, 2.97 + L, 0), m: 'gold' });
+    parts.push({ g: at(new THREE.PlaneGeometry(6.2, 2.15), -0.09, 4.15 + L, 0, 0, -Math.PI / 2, 0), m: 'sign_' + v, shadow: false });
+    parts.push({ g: at(new THREE.PlaneGeometry(6.2, 2.15), 0.09, 4.15 + L, 0, 0, Math.PI / 2, 0), m: 'sign_' + v, shadow: false });
     // kiremit çatı
-    for (const sx of [-1, 1]) parts.push({ g: at(box(1.1, 0.12, 2 * Z + 1.6, 1), sx * 0.42, 6.05, 0, 0, 0, sx * -0.5), m: 'roof_red' });
-    parts.push({ g: at(new THREE.SphereGeometry(0.28, 12, 8), 0, 6.55, 0), m: 'gold' });
+    for (const sx of [-1, 1]) parts.push({ g: at(box(1.1, 0.12, 2 * Z + 1.6, 1), sx * 0.42, 6.05 + L, 0, 0, 0, sx * -0.5), m: 'roof_red' });
+    parts.push({ g: at(new THREE.SphereGeometry(0.28, 12, 8), 0, 6.55 + L, 0), m: 'gold' });
     return group(parts);
   },
   banner() {

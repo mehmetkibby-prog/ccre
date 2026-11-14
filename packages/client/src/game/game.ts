@@ -156,7 +156,17 @@ export class Game {
       case 'stall_away': store.set((st) => ({ stallLog: [...(m.sales ?? []).map((x: { buyer: string; name: string; price: number }) => `${x.buyer} · ${x.name} · ${Number(x.price).toLocaleString('tr-TR')} Mücevher (sen yokken)`), ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'stall_sold': store.set((st) => ({ stallLog: [`${m.buyer} · ${m.name} · ${Number(m.price).toLocaleString('tr-TR')} Mücevher`, ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
-      case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm }); break;
+      case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm, item: m.item }); break;
+      case 'bosses': store.set({ bosses: Array.isArray(m.list) ? m.list : [] }); break;
+      case 'boss': {
+        store.set({ bossBanner: { id: m.id, name: m.name, map: m.map, x: m.x, y: m.y, ev: m.ev, killer: m.killer, at: Date.now() } });
+        if (m.ev === 'spawn') { sfx.play('levelup'); pushChat({ ch: 'sys', from: 'Duyuru', text: `${m.name} doğdu! (${MAPS[m.map]?.name ?? m.map})`, system: true }); }
+        else pushChat({ ch: 'sys', from: 'Duyuru', text: `${m.name}, ${m.killer} ve arkadaşları tarafından yenildi.`, system: true });
+        break;
+      }
+      case 'fish_wait': store.set({ fishing: { phase: 'wait', token: m.token, biteAt: performance.now() + m.biteIn, diff: m.diff, motion: m.motion }, fishResult: null }); break;
+      case 'fish_result': store.set({ fishing: null, fishResult: { ok: m.ok, name: m.name, qty: m.qty, at: Date.now() } }); if (m.ok) sfx.play('loot'); break;
+      case 'market_results': store.set({ marketResults: { q: m.q, list: Array.isArray(m.list) ? m.list : [] }, panel: 'tradeglass' }); break;
       case 'gain': {
         if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
         if (m.essence) this.fx.text(m.x + 18, m.y, 1.2, `+${m.essence} Öz`, '#8ff4ff', 13, 1200);
@@ -172,7 +182,7 @@ export class Game {
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
       case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'shop': break;
-      case 'pong': store.set({ ping: Date.now() - m.c }); break;
+      case 'pong': store.set({ ping: Date.now() - m.c, clockSkew: typeof m.s === 'number' ? m.s - (Date.now() + m.c) / 2 : store.get().clockSkew }); break;
       case 'kicked': setReason(m.text); break;
       case 'fatal': setReason(m.text); break;
     }
@@ -337,7 +347,7 @@ export class Game {
           sfx.play('boom');
         } else if (ev.fx === FxKind.HEAL_WAVE) this.fx.shapes.push({ kind: 'heal', ...sh });
         else if (ev.fx === FxKind.SHIELD) this.fx.shapes.push({ kind: 'shield', ...sh, follow: ev.a === (this.selfId & 0xffff) ? this.selfId : undefined });
-        else if (ev.fx === FxKind.TELEPORT) this.fx.shapes.push({ kind: 'teleport', ...sh });
+        else if (ev.fx === FxKind.TELEPORT) { this.fx.shapes.push({ kind: 'teleport', ...sh, color: ev.a === 1 ? 'emerald' : '' }); if (ev.a === 1) { this.fx.burst(ev.x, ev.y, 0.5, 40, '#3ef09a', 3, 900, 0.2, 1); this.fx.light(ev.x, ev.y, 1.4, '#3ef09a', 5, 700); } }
         else if (ev.fx === FxKind.PICKUP) this.fx.burst(ev.x, ev.y, 0.4, 12, '#fff6c2', 2, 500, 0.15, 2);
         break;
       }
@@ -590,6 +600,17 @@ export class Game {
   goToMarket() {
     const m = this.layout.def.market;
     if (m) this.moveTarget = { x: m.tx * 64 + 32 - 200, y: m.ty * 64 + 32 + 60 };
+  }
+  mallBuy(id: string, qty: number) { this.send({ t: 'mall_buy', id, qty, req: reqId() }); }
+  useItem(key: string, item?: string) { this.send({ t: 'use', key, req: reqId(), ...(item ? { item } : {}) }); }
+  fishCast() { this.send({ t: 'fish_cast' }); }
+  fishEnd(ok: boolean) { const f = store.get().fishing; if (f) this.send({ t: 'fish_end', token: f.token, ok }); if (!ok) store.set({ fishing: null }); }
+  /** Oyuncunun yakınında su var mı (Olta At düğmesi için). */
+  nearWater(): boolean {
+    const l = this.layout; if (!l) return false;
+    const tx = Math.floor(this.px / 64), ty = Math.floor(this.py / 64);
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) { const x = tx + dx, y = ty + dy; if (x < 0 || y < 0 || x >= l.w || y >= l.h) continue; const g = l.ground[y * l.w + x]; if (g === 4 || g === 10) return true; }
+    return false;
   }
   donate(amount: number) { this.send({ t: 'donate', amount: Math.floor(amount), req: reqId() }); }
   travel(map: string, confirm = false) { this.send({ t: 'travel', map, req: reqId(), confirm }); }
