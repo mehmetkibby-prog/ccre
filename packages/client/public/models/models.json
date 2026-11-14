@@ -326,5 +326,26 @@
       "Attack Slash",
       "Cast Ground Slam"
     ]
+  },
+  "tree_oak": {
+    "url": "tree_oak.glb",
+    "scale": 1
+  },
+  "tree_oak_autumn": {
+    "url": "tree_oak_autumn.glb",
+    "scale": 1
+  },
+  "goblin": {
+    "url": "goblin.glb",
+    "height": 1.25,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Hook"
+    },
+    "attackClips": [
+      "Attack Hook"
+    ]
   }
 }

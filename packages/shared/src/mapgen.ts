@@ -372,6 +372,7 @@ const ZONE_NAMES: Record<string, string[]> = {
   blizzard_seer: ['Kâhin Çemberi', 'Tipi Sunağı', 'Ak Fırtına'],
   black_stone: ['Kara Taş'],
   fox_king: ['Tilki Kral Arenası'],
+  sneaky_goblin: ['Goblin Saklanağı', 'Çalıntı Çuval', 'Sinsi Pusu', 'Hırsız Kovuğu'],
 };
 /** Bir yuvada kaç canavar olur: kalabalık ama okunaklı sürüler. */
 const PACK = 9;

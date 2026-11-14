@@ -111,6 +111,7 @@ export class Game {
     setInterval(() => { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.send({ t: 'ping', c: this.pingSent }); } }, 3000);
   }
   stop() {
+    sfx.setMusic(null);
     if (this.stopped) return;
     this.stopped = true;
     cancelAnimationFrame(this.raf);
@@ -128,6 +129,7 @@ export class Game {
     this.renderer.setLayout(this.layout);
     store.set({ map: id, target: null });
     sfx.setZone(MAPS[id]?.theme ?? 'village');
+    sfx.setMusic(id);
   }
 
   private onJson(m: any, setReason: (r: string) => void) {

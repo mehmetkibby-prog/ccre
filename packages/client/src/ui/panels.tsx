@@ -484,7 +484,7 @@ function Settings() {
         <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa 30 seç. Sınırsız, 120 Hz ekranlarda saniyede 120 kare çizer ve pili hızlı tüketir.</div>
       </div>
       <div className="field"><label>Yakınlaştırma: {s.zoom.toFixed(2)}</label><input type="range" min={0.7} max={1.6} step={0.05} value={s.zoom} onChange={(e) => set({ zoom: Number(e.target.value) })} /></div>
-      <div className="field"><label>Müzik / ambiyans: {Math.round(s.music * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.music} onChange={(e) => set({ music: Number(e.target.value) })} /></div>
+      <div className="field"><label>Müzik (köy müziği ve ambiyans): {Math.round(s.music * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.music} onChange={(e) => set({ music: Number(e.target.value) })} /></div>
       <div className="field"><label>Efekt sesi: {Math.round(s.sfx * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
       <label className="row" style={{ fontSize: 14 }}><input type="checkbox" checked={s.showNames} onChange={(e) => set({ showNames: e.target.checked })} /> Oyuncu isimlerini göster</label>
       <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.showDamage} onChange={(e) => set({ showDamage: e.target.checked })} /> Başkalarının hasar sayıları</label>

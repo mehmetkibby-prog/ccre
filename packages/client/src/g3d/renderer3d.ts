@@ -15,7 +15,7 @@ import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, type Ma
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
-import { buildProps } from './props3d.ts';
+import { buildProps, MESHY_TREES } from './props3d.ts';
 import { createHumanoid, animateHumanoid, LOOKS, type Rig, type HState } from './humanoid.ts';
 import { createMonster, MONSTER_MESHES, type MonsterRig } from './monsters3d.ts';
 import { Fx3D } from './fx3d.ts';
@@ -92,10 +92,13 @@ export class Renderer3D {
   ringMesh: THREE.Mesh;
   selfRing: THREE.Mesh;
   grass: GrassField | null = null;
+  private propsGroup: THREE.Group | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
   camYaw = 0; camZoom = 1; camPitch = 0.62; private camYawS = 0; private camZoomS = 1; private camPitchS = 0.62;
   /** Dinamik çözünürlük: FPS düşünce piksel oranı kendiliğinden azalır. */
   private frameNo = 0;
+  /** sabit çözünürlük ölçeği (giriş videosu kaydı); null: kare hızına göre uyarlanır */
+  fixedScale: number | null = null;
   private dynScale = 1; private fpsAcc = 0; private fpsFrames = 0; private fpsAt = 0;
   private skyTex: THREE.Texture | null = null;
   quality = '';
@@ -157,6 +160,14 @@ export class Renderer3D {
       });
     });
     onModelReady((id) => {
+      // Meshy ağacı geldi: haritanın nesneleri yeni ağaçla yeniden kurulur
+      if (MESHY_TREES.includes(id) && this.propsGroup && this.layout?.props.some((p) => p.k === 'tree')) {
+        const l = this.layout;
+        this.world.remove(this.propsGroup);
+        this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), store.get().settings.quality, !DYN_SHADOWS);
+        this.world.add(this.propsGroup);
+        this.shadowDirty = true;
+      }
       // model geldi: o modeli kullanan görünümleri yeniden kur
       for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
       if (this.self && (this.self.wpend === id || this.self.apend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
@@ -225,7 +236,8 @@ export class Renderer3D {
     this.world.add(this.terrain.mesh);
     if (this.terrain.water) this.world.add(this.terrain.water);
     const q = store.get().settings.quality;
-    this.world.add(buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS));
+    this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS);
+    this.world.add(this.propsGroup);
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
@@ -255,6 +267,7 @@ export class Renderer3D {
 
   /** Son 2 sn'nin ortalamasına göre çizim çözünürlüğünü ayarla (hedef 60 FPS). */
   private adaptResolution(now: number, dt: number) {
+    if (this.fixedScale !== null) { this.dynScale = this.fixedScale; return; }
     if (document.hidden) return;
     this.fpsAcc += dt; this.fpsFrames++;
     if (now - this.fpsAt < 2000) return;

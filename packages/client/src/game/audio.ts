@@ -13,7 +13,7 @@ class Sfx {
   private last = new Map<string, number>();
 
   unlock() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
+    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume().then(() => this.startMusic()); else this.startMusic(); return; }
     try {
       this.ctx = new AudioContext();
       this.master = this.ctx.createGain(); this.master.connect(this.ctx.destination);
@@ -25,6 +25,7 @@ class Sfx {
       for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
       this.applyVolume();
       this.startAmbient();
+      if (this.ctx.state === 'running') this.startMusic(); else this.ctx.resume().then(() => this.startMusic());
     } catch { this.ctx = null; }
   }
   applyVolume() {
@@ -32,8 +33,46 @@ class Sfx {
     const s = store.get().settings;
     this.sfxGain.gain.value = s.sfx * 0.6;
     this.musicGain.gain.value = s.music * 0.35;
+    if (this.music && !this.music.paused) { window.clearInterval(this.musicFade); this.music.volume = this.musicVol(); }
   }
   setZone(z: string) { if (z === this.zone) return; this.zone = z; if (this.ctx) this.startAmbient(); }
+
+  // ───── harita müziği (akışla çalınır; ses seviyesi Ayarlar → Müzik) ─────
+  private music: HTMLAudioElement | null = null;
+  private musicUrl = '';
+  private musicFade = 0;
+  private ducked = false;
+  /** Haritanın müziği; müziği olmayan haritada (ya da menüde) yavaşça susar. */
+  setMusic(map: string | null) {
+    const url = map === 'bazaar' ? (import.meta.env.BASE_URL ?? './') + 'sounds/bazaar.mp3' : '';
+    if (url === this.musicUrl) return;
+    this.musicUrl = url;
+    const old = this.music; this.music = null;
+    if (old) this.fadeTo(old, 0, 900, () => { old.pause(); old.src = ''; });
+    if (!url) return;
+    const a = new Audio(url); a.loop = true; a.preload = 'auto'; a.volume = 0;
+    this.music = a;
+    this.startMusic();
+  }
+  /** Nesne Market açıkken köy müziği kısılır (marketin kendi ezgisi çalar). */
+  duckMusic(on: boolean) { this.ducked = on; this.applyVolume(); }
+  private musicVol() { const v = store.get().settings.music; return this.ducked ? 0 : Math.min(1, v * 0.55); }
+  private startMusic() {
+    const a = this.music;
+    if (!a || !this.ctx || this.ctx.state !== 'running') return; // ilk dokunuştan sonra unlock() yeniden dener
+    if (!a.paused) return;
+    a.play().then(() => this.fadeTo(a, this.musicVol(), 1600)).catch(() => { /* tarayıcı izin vermedi: sonraki dokunuşta */ });
+  }
+  private fadeTo(a: HTMLAudioElement, to: number, ms: number, done?: () => void) {
+    const from = a.volume, t0 = performance.now();
+    if (a === this.music) window.clearInterval(this.musicFade);
+    const id = window.setInterval(() => {
+      const k = Math.min(1, (performance.now() - t0) / ms);
+      a.volume = Math.max(0, Math.min(1, from + (to - from) * k));
+      if (k >= 1) { window.clearInterval(id); done?.(); }
+    }, 50);
+    if (a === this.music) this.musicFade = id;
+  }
 
   private tone(freq: number, dur: number, type: OscillatorType, vol: number, slide = 0, delay = 0) {
     const c = this.ctx!; const t = c.currentTime + delay;

@@ -181,6 +181,8 @@ function MenuBackdrop() {
   // iki farklı sahneyi üst üste bindirip hayalet gibi gösteriyordu; yalnız ?canli adresinde (kayıt/deneme) açılır.
   const liveOk = useMemo(() => new URLSearchParams(location.search).has('canli') && !matchMedia('(pointer: coarse)').matches, []);
   useEffect(() => { document.documentElement.classList.remove('boot'); }, []);
+  // bilgisayarda 1600×900 yüksek kaliteli video, telefonda hafif 960×540 sürüm
+  const videoSrc = useMemo(() => (!matchMedia('(pointer: coarse)').matches && innerWidth * (devicePixelRatio || 1) > 1100 ? '/poster/arena_hd.mp4' : '/poster/arena.mp4'), []);
   useEffect(() => { if (shown) { const id = setTimeout(() => vid.current?.pause(), 2000); return () => clearTimeout(id); } }, [shown]);
   useEffect(() => {
     if (fallback || !liveOk) return;
@@ -229,7 +231,7 @@ function MenuBackdrop() {
       const dt = Math.min(100, t - last); last = t;
       const s = (t - t0) / 1000;
       const rec = (window as any).__menuCam as ((s: number) => [number, number]) | undefined; // video kaydı için kamera
-      if (rec) [r.camYaw, co.dist] = rec(s);
+      if (rec) { [r.camYaw, co.dist] = rec(s); r.fixedScale = 1; }
       else { r.camYaw = s * 0.06; co.dist = 15 + Math.sin(s * 0.11) * 2; } // tam tur ≈ 1,7 dakika
       for (let k = later.length - 1; k >= 0; k--) if (t >= later[k].at) { const f = later[k].f; later.splice(k, 1); f(); }
       // oyuncular
@@ -318,7 +320,7 @@ function MenuBackdrop() {
   if (fallback) return <SparkBackdrop />;
   // hazır sahne görüntüsü anında görünür; canlı 3B sahne hazır olunca üstüne yumuşakça geçer
   return <>
-    <video ref={vid} className="screen-poster" src="/poster/arena.mp4" poster="/poster/arena.jpg" autoPlay muted loop playsInline preload="auto" />
+    <video ref={vid} className="screen-poster" src={videoSrc} poster="/poster/arena.jpg" autoPlay muted loop playsInline preload="auto" />
     {liveOk && <canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} />}
     <div className="screen-vignette" />
   </>;

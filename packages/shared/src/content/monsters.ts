@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -21,6 +21,7 @@ export interface MonsterDef {
 }
 
 export const MONSTERS: MonsterDef[] = [
+  { id: 'sneaky_goblin', name: 'Sinsi Goblin', art: 'goblin', hpBase: 52, hpPerLevel: 15, atkBase: 4, atkPerLevel: 1.3, def: 1, speed: 175, range: 70, attackMs: 1350, aggroRadius: 220, leash: 600, xpBase: 26, size: 1 },
   { id: 'wild_fox', name: 'Yabani Tilki', art: 'fox', hpBase: 34, hpPerLevel: 12, atkBase: 3, atkPerLevel: 1, def: 0, speed: 200, range: 60, attackMs: 1300, aggroRadius: 220, leash: 600, xpBase: 18, size: 0.8 },
   { id: 'shadow_wolf', name: 'Gölge Kurt', art: 'wolf', hpBase: 60, hpPerLevel: 26, atkBase: 7, atkPerLevel: 2.4, def: 2, speed: 190, range: 70, attackMs: 1400, aggroRadius: 300, leash: 700, xpBase: 14, size: 1 },
   { id: 'rot_guard', name: 'Çürük Muhafız', art: 'rotguard', hpBase: 110, hpPerLevel: 38, atkBase: 9, atkPerLevel: 2.8, def: 5, speed: 130, range: 80, attackMs: 1800, aggroRadius: 260, leash: 650, xpBase: 20, size: 1.15 },

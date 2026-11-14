@@ -46,7 +46,7 @@ export function MallPanel({ game }: { game: Game }) {
   const [bought, setBought] = useState<string | null>(null);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
-  useEffect(() => { startMallMusic(vol); return () => stopMallMusic(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { startMallMusic(vol); sfx.duckMusic(true); return () => { stopMallMusic(); sfx.duckMusic(false); }; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   if (!self) return null;
   const cp = self.cp ?? 0;
   const list = MALL_ITEMS.filter((m) => (cat === 'hepsi' ? m.cat !== 'yakinda' && !m.epin : m.cat === cat)).sort((a, b) => a.no - b.no);

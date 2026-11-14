@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import type { Prop, PropKind } from '@col/shared';
 import { box, cyl, lathe, at, merge, colorize, radialNormals, rng } from './geom.ts';
-import { mat } from './materials.ts';
+import { mat, addWind } from './materials.ts';
+import { model as loadGlb } from './models.ts';
 import { fbm } from './textures.ts';
 import { U } from './terrain.ts';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
@@ -54,7 +55,7 @@ function cone(cx: number, cy: number, cz: number, r: number, h: number, dark: nu
 }
 
 /** Bir prop modeli: malzeme anahtarına göre birleştirilmiş geometri parçaları. */
-export interface Part { geo: THREE.BufferGeometry; mat: string; shadow?: boolean }
+export interface Part { geo: THREE.BufferGeometry; mat: string | THREE.Material; shadow?: boolean }
 type Builder = (v: number) => Part[];
 
 function group(parts: { g: THREE.BufferGeometry; m: string; shadow?: boolean }[]): Part[] {
@@ -363,6 +364,8 @@ const B: Partial<Record<PropKind, Builder>> = {
   grasstuft(v) {
     const list: THREE.BufferGeometry[] = [];
     for (let i = 0; i < 3; i++) list.push(at(new THREE.PlaneGeometry(0.7, 0.5), 0, 0.25, 0, 0, (i / 3) * Math.PI));
+    // arka yüzler ayrı (ters sarım) üçgenler: tek yüzlü malzemeyle arka yüz kararmaz
+    for (let i = 0; i < 3; i++) { const b = at(new THREE.PlaneGeometry(0.7, 0.5), 0, 0.25, 0, 0, (i / 3) * Math.PI); b.scale(-1, 1, 1); list.push(b); }
     const g = merge(list);
     // normaller yukarı: yandan ışık alan dikey kartlar koyu ve sivri görünüyordu; zeminle aynı parlaklıkta olsun
     const nor = g.attributes.normal as THREE.BufferAttribute;
@@ -486,7 +489,46 @@ function crystalModel(v: number, m: string): Part[] {
 
 // ───────────── örnekleme (instancing) ─────────────
 const modelCache = new Map<string, Part[]>();
+/** Meshy'de üretilen ağaç (tree_oak, sonbahar: tree_oak_autumn); yüklenince çizilmiş ağacın yerini alır. */
+export const MESHY_TREES = ['tree_oak', 'tree_oak_autumn'];
+const meshyTreeCache = new Map<string, Part[]>();
+function meshyTree(v: number): Part[] | null {
+  const id = v === 2 ? 'tree_oak_autumn' : 'tree_oak';
+  const hit = meshyTreeCache.get(id + v);
+  if (hit) return hit;
+  const L = loadGlb(id);
+  if (!L) return null;
+  L.scene.updateMatrixWorld(true);
+  const box = new THREE.Box3().setFromObject(L.scene);
+  const H = 6.2 + v * 0.5, sc = H / Math.max(0.01, box.max.y - box.min.y);
+  const parts: Part[] = [];
+  L.scene.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    // sıkıştırılmış (int16 normalize) öznitelikler dönüşümde ±1'e kırpılır: önce ondalığa çevir
+    const g = new THREE.BufferGeometry();
+    for (const [name, at] of Object.entries(m.geometry.attributes)) {
+      const src = at as THREE.BufferAttribute, n = src.itemSize, arr = new Float32Array(src.count * n);
+      for (let i = 0; i < src.count; i++) for (let c = 0; c < n; c++) arr[i * n + c] = src.getComponent(i, c);
+      g.setAttribute(name, new THREE.BufferAttribute(arr, n));
+    }
+    if (m.geometry.index) g.setIndex(Array.from(m.geometry.index.array));
+    g.applyMatrix4(m.matrixWorld);
+    g.translate(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2);
+    g.scale(sc, sc, sc);
+    g.computeBoundingSphere();
+    const src = m.material as THREE.MeshStandardMaterial;
+    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xffffff : 0xd6f0c4 });
+    if (mt.map) { mt.map.colorSpace = THREE.SRGBColorSpace; mt.map.anisotropy = 4; }
+    addWind(mt, 0.06, H); // taç hafifçe salınır, gövde dibi sabit
+    parts.push({ geo: g, mat: mt });
+  });
+  meshyTreeCache.set(id + v, parts);
+  return parts;
+}
+
 export function propModel(k: PropKind, v: number): Part[] | null {
+  if (k === 'tree') { const m = meshyTree(v); if (m) return m; }
   const key = k + v;
   let m = modelCache.get(key);
   if (m) return m;
@@ -528,7 +570,7 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
     if (!model) continue;
     const fixedRot = k === 'gate' || k === 'signpost' || k === 'house' || k === 'stall' || k === 'fence' || k === 'dock' || k === 'waterfall' || k === 'tent' || k === 'banner' || k === 'portalstone' || k === 'well';
     for (const part of model) {
-      const im = new THREE.InstancedMesh(part.geo, mat(part.mat), list.length);
+      const im = new THREE.InstancedMesh(part.geo, typeof part.mat === 'string' ? mat(part.mat) : part.mat, list.length);
       list.forEach((p, i) => {
         const rot = fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
         const scale = (k === 'tree' || k === 'pine' || k === 'snowpine' || k === 'deadtree') ? p.s * 0.8 : k === 'rock' ? p.s * 1.1 : p.s;

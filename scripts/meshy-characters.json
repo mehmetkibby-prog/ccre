@@ -130,7 +130,8 @@
     "stable": 1.78,
     "merchant": 1.74,
     "fisher": 1.74,
-    "fox_king": 2.6
+    "fox_king": 2.6,
+    "goblin": 1.25
   },
   "animations": {
     "guardian": {
@@ -172,6 +173,12 @@
       "Walk": 21,
       "Attack Slash": 97,
       "Cast Ground Slam": 127,
+      "Death": 189
+    },
+    "goblin": {
+      "Idle": 0,
+      "Walk": 21,
+      "Attack Hook": 193,
       "Death": 189
     }
   }

@@ -123,6 +123,9 @@
     "fk1": {
       "file": "assets-src/meshy/concepts/fk1.png",
       "prompt": "tilki kral k1"
+    },
+    "goblin": {
+      "file": "assets-src/meshy/concepts/goblin.png"
     }
   },
   "builds": {
@@ -382,6 +385,31 @@
         },
         "Death": {
           "task": "01a1d6be-2e2c-75c0-bb3e-3752bffdb8de",
+          "actionId": 189
+        }
+      }
+    },
+    "goblin": {
+      "concept": "goblin",
+      "model": "01a1d9bd-5a15-7132-adaf-dde5b95ca9ef",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1d9bd-5a15-7132-adaf-dde5b95ca9ef/output/model.glb?Expires=1794913728&Signature=d4UQT2dxe0rZJeYVdgNTU4lII3XECO4jW~1E7iuxT-PHhjjKb~lULENcSv7Ekcj3sxonBPICaO4hw1gcLzY0cJ9uPGRSpN~FJ0D2w8A08hqmAGjnrahJFtv3faNejEovJwu7ygPOwgHRqdJ8YN49QrZWvU5cMkVjl6IEGda-yVaycEyo4mLmd6eJJp7jDnZjQirSt9WdcTyY2gLMhC-s9kFp8~Q-zw-PsGqGO~s2ODmvCwwcYqofMmIEK84U8BBIk0RlRFrSwUX-xTO1Yr0MTr6QWdBuq0xA6S-vsoEYlYUIzB1XtExgAbwLRqpNNBvZtcNlq7CS5miFcdp0V2DMGA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1d9be-e889-746c-a559-b22527d701a3",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1d9bf-3ade-776e-b113-f85405c134c3",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1d9bf-3c38-74b2-b22c-5fe7b37ef465",
+          "actionId": 21
+        },
+        "Attack Hook": {
+          "task": "01a1d9bf-3e62-7509-ace0-f7d9a1aabf5d",
+          "actionId": 193
+        },
+        "Death": {
+          "task": "01a1d9bf-40c3-7561-93b3-dc5cb94edcfa",
           "actionId": 189
         }
       }

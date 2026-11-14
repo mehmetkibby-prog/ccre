@@ -305,6 +305,14 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
   const key = 'leaf_' + kind;
   const c = objCache.get(key);
   if (c) return c.map;
+  if (kind === 'grass') {
+    // Meshy'de çizilen çimen kümesi (saydam kart, public/textures/grass.png)
+    const tex = new THREE.TextureLoader().load((import.meta.env.BASE_URL ?? './') + 'textures/grass.png');
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 4;
+    objCache.set(key, { map: tex, normal: tex });
+    return tex;
+  }
   const S = 256;
   const cv = document.createElement('canvas'); cv.width = cv.height = S;
   const ctx = cv.getContext('2d')!;

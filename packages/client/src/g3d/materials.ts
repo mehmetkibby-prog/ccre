@@ -138,7 +138,7 @@ export function mat(key: string): THREE.Material {
     case 'needles': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xa8c49c }), 0.05, 7); break;
     case 'needles_snow': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('needle'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9, color: 0xb8d8d0 }), 0.04, 7); break;
     case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb2cc82 }), 0.05, 1.2); break;
-    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.95, color: 0xf0fce8 }), 0.12, 0.6); break;
+    case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.45, side: THREE.FrontSide, roughness: 0.95, color: 0xe8f2dc }), 0.12, 0.6); break;
     // anime ağaç taçları: köşe renkli dolgun kütle (yaprak kartı yok), hafif rüzgâr
     case 'canopy': m = addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6), 1.1); break;
     case 'canopy_low': m = addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5), 0.7); break;

@@ -37,6 +37,8 @@ export const MAPS: Record<string, MapDef> = {
     // köyün güneyindeki Tilki Korusu: 1. seviye başlangıç avı (tilkiler saldırılmadıkça dokunmaz)
     spawns: [
       { monster: 'wild_fox', count: 70, level: [1, 1], variants: [100, 0, 0], region: 'any', area: [5, 62, 82, 111] },
+      // korunun güney yarısında pazardan çalıp kaçan goblinler (tilkilerden biraz güçlü)
+      { monster: 'sneaky_goblin', count: 30, level: [2, 3], variants: [85, 15, 0], region: 'any', area: [8, 88, 80, 111] },
       // en güneydeki Tilki Kral Arenası (merkez 44,121; yarıçap 8 karo)
       { monster: 'fox_king', count: 1, level: [20, 20], variants: [100, 0, 0], region: 'any', area: [39, 116, 49, 126] },
     ],

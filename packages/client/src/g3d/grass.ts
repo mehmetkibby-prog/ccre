@@ -26,9 +26,15 @@ export class GrassField {
     fadeR.value = this.radius;
     // 3 çapraz kart; normaller yukarı eğik (yumuşak ışık)
     const parts: THREE.BufferGeometry[] = [];
-    for (let i = 0; i < 3; i++) { const p = new THREE.PlaneGeometry(0.5, 0.38, 1, 2); p.translate(0, 0.19, 0); p.rotateY((i / 3) * Math.PI + 0.3); parts.push(p.toNonIndexed()); }
+    for (let i = 0; i < 3; i++) { const p = new THREE.PlaneGeometry(0.46, 0.46, 1, 2); p.translate(0, 0.22, 0); p.rotateY((i / 3) * Math.PI + 0.3); parts.push(p.toNonIndexed()); }
     const pos: number[] = [], uv: number[] = [], nor: number[] = [];
-    for (const p of parts) { pos.push(...p.attributes.position.array); uv.push(...p.attributes.uv.array); }
+    // her kartın arka yüzü ayrı üçgenlerle (ters sarım): çift yüzlü malzeme arka yüzün normalini aşağı çevirip
+    // öbeklerin yarısını kahverengi-koyu gösteriyordu
+    for (const p of parts) {
+      const P = p.attributes.position.array, T = p.attributes.uv.array;
+      pos.push(...P); uv.push(...T);
+      for (let t = 0; t < P.length / 9; t++) for (const k of [0, 2, 1]) { const v = t * 3 + k; pos.push(P[v * 3], P[v * 3 + 1], P[v * 3 + 2]); uv.push(T[v * 2], T[v * 2 + 1]); }
+    }
     for (let i = 0; i < pos.length / 3; i++) nor.push(0, 1, 0);
     this.geo = new THREE.BufferGeometry();
     this.geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
@@ -36,7 +42,7 @@ export class GrassField {
     this.geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     const frozen = l.def.theme === 'frozen';
     // alpha-to-coverage KULLANILMAZ: donanım kenar yumuşatması kapalı cihazlarda kartın saydam köşeleri siyah dikdörtgen çiziliyordu
-    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xffffff });
+    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.45, side: THREE.FrontSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xe8f2dc });
     addWind(m, 0.1, 0.4);
     addFade(m); // rüzgârdan önce çalışır
     this.mat = m;

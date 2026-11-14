@@ -261,6 +261,7 @@ export function createMonster(art: string, variant: number, size: number): Monst
   const glow = EYE[variant];
   if (art === 'fox') { const m = createMeshFox(variant, s); if (m) return m; }
   if (art === 'fox_king') return createMonster('rotguard', variant, size * 1.5); // 3B model yüklenemezse yedek
+  if (art === 'goblin') return createMonster('rotguard', variant, size * 0.7); // 3B model yüklenemezse yedek
   if (art === 'wolf' || art === 'lynx' || art === 'fox') {
     const t = tpl(art + variant, () => templateFromPieces(art === 'fox' ? foxPieces(variant) : quadPieces(art, variant), QB, { glowColor: glow, texture: art === 'fox' ? 'cloth' : 'leather', clothRough: 0.92 }));
     const inst = instantiate(t);
