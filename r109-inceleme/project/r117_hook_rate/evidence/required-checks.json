@@ -1,0 +1,22 @@
+[
+  {
+    "suite": "test",
+    "exit": 0,
+    "seconds": 33.58
+  },
+  {
+    "suite": "test:native",
+    "exit": 0,
+    "seconds": 113.69
+  },
+  {
+    "suite": "test:captcha",
+    "exit": 0,
+    "seconds": 96.98
+  },
+  {
+    "suite": "test:r110",
+    "exit": 0,
+    "seconds": 85.61
+  }
+]

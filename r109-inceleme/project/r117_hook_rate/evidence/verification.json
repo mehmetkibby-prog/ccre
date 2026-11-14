@@ -1,0 +1,52 @@
+{
+  "runtimeCommit": "ff13c1a",
+  "artifact": "R117_HOOK10_28ecda32950b.zip",
+  "sha256": "420135643eddb53f8b81fc490014d31fb877d7513077716c792fba92a5658996",
+  "sourceVersion": "R116_ADMISSION_TRANSFER1",
+  "targetVersion": "R117_HOOK10",
+  "hookChancePercent": 10,
+  "hookAndAdminTests": {
+    "pass": 9,
+    "fail": 0
+  },
+  "requiredChecks": [
+    {
+      "suite": "test",
+      "exit": 0,
+      "seconds": 33.58
+    },
+    {
+      "suite": "test:native",
+      "exit": 0,
+      "seconds": 113.69
+    },
+    {
+      "suite": "test:captcha",
+      "exit": 0,
+      "seconds": 96.98
+    },
+    {
+      "suite": "test:r110",
+      "exit": 0,
+      "seconds": 85.61
+    }
+  ],
+  "installerTests": {
+    "pass": 11,
+    "fail": 0
+  },
+  "installedRuntimeTests": {
+    "pass": 3,
+    "fail": 0,
+    "realms": [
+      "r1",
+      "r2"
+    ],
+    "channels": 8
+  },
+  "adminEntryMappingVerified": true,
+  "browserHtmlBootstrapVerified": false,
+  "browserLimitation": "Synthetic stage omits SSR index; installed admin reference and new helper mapping verified statically.",
+  "firstFixtureFailure": "Incorrect permission expectation corrected; existing modes preserved, new files readable. Raw failure retained.",
+  "deployed": false
+}

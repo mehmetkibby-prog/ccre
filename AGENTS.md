@@ -57,3 +57,9 @@ transport, preserving the original 1 MiB frame and 4 MiB reader limits. The
 first candidate control-ordering regression was caught and fixed before
 delivery. Package source is exact R115; three runtime files, no DB or client
 changes. The original disconnect trigger is not proven by the recovery log.
+
+R117 continuation (14 Nov 2026): live Efsane health confirms R116 installed.
+Read `r109-inceleme/R117_DEVIR.md`. User requested Azrail chest hook chance 10%.
+Active source includes the rule, nonmutating legacy 6% read compatibility and
+new hashed UI assets. New package source is exact R116; no player DB/schema
+changes. Preserve original R116 archive and all previous hashed assets.

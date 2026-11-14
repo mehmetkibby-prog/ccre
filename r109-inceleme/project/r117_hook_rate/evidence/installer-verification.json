@@ -1,0 +1,30 @@
+{
+  "packageSHA256": "420135643eddb53f8b81fc490014d31fb877d7513077716c792fba92a5658996",
+  "sourceArtifactSHA256": "f8399793db7d40af7f873b4a892759c7c71c19f70bb4c45995b00b68d3071ac9",
+  "sourceVersion": "R116_ADMISSION_TRANSFER1",
+  "targetVersion": "R117_HOOK10",
+  "targetCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
+  "installerPython": {
+    "tests": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "realRuntime": {
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "realms": [
+      "r1",
+      "r2"
+    ],
+    "channels": 8,
+    "hookRate": "R117_HOOK10",
+    "azrailHookChance": 10,
+    "webSocketHandoff": true
+  },
+  "databasePayloadChanges": false,
+  "syntheticOnly": true,
+  "deployed": false,
+  "retention": "historical recovery archives protected",
+  "priorFixtureFailure": "installer-fixture-permissions.log; test corrected to preserve existing source modes while asserting 0644 for new modules and client files"
+}

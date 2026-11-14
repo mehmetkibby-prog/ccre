@@ -1,0 +1,11 @@
+[
+  "core511-source/scripts/core511/engine-health-r113.mjs",
+  "core511-source/scripts/core511/generated/client/admin-client-core511-r117-964b4979c617eb7c.js",
+  "core511-source/scripts/core511/generated/client/auth-portal-core511-r117-c1a66e4535350ae3.js",
+  "core511-source/scripts/core511/generated/client/core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+  "core511-source/scripts/core511/generated/client/core511-tower-r117-hook10-17862dadd8f71abd.js",
+  "core511-source/scripts/core511/generated/client/game-client-core511-r117-4feaa261f90b5d9c.js",
+  "core511-source/scripts/core511/generated/native-client-proof.json",
+  "core511-source/scripts/core511/tower-client.mjs",
+  "core511-source/scripts/core511/tower-config.mjs"
+]

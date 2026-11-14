@@ -1,0 +1,10 @@
+{
+  "admin": "admin-client-core511-r117-964b4979c617eb7c.js",
+  "clientNew": [
+    "core511-tower-r117-hook10-17862dadd8f71abd.js",
+    "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+    "game-client-core511-r117-4feaa261f90b5d9c.js",
+    "admin-client-core511-r117-964b4979c617eb7c.js",
+    "auth-portal-core511-r117-c1a66e4535350ae3.js"
+  ]
+}

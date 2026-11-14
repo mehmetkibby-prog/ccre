@@ -1,0 +1,24 @@
+{
+  "file": "artifacts/R117_HOOK10_28ecda32950b.zip",
+  "bytes": 1298065,
+  "sha256": "420135643eddb53f8b81fc490014d31fb877d7513077716c792fba92a5658996",
+  "sourceVersion": "R116_ADMISSION_TRANSFER1",
+  "sourceCore": "d02be201cb7c4311d3e53a6122d86e0d8cad35c235906b7b669c976c965429a9",
+  "targetVersion": "R117_HOOK10",
+  "targetCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
+  "changedCodeFiles": 9,
+  "forumChanges": false,
+  "databaseScope": "none",
+  "namespace": "core511-58686c517948ebc6",
+  "acceptance": "installer-and-staged-runtime-checks-passed",
+  "deployed": false,
+  "checks": {
+    "installerPython": 11,
+    "installedRuntime": 3,
+    "realms": 2,
+    "realChannels": 8,
+    "node": "22.23.4",
+    "hookChancePercent": 10
+  },
+  "clientFiles": 5
+}

@@ -1,0 +1,112 @@
+{
+  "namespace": "core511-58686c517948ebc6",
+  "baselineNamespace": "core511-4698e897914580f4",
+  "game": "game-client-core511-r117-4feaa261f90b5d9c.js",
+  "admin": "admin-client-core511-r117-964b4979c617eb7c.js",
+  "portal": "auth-portal-core511-r117-c1a66e4535350ae3.js",
+  "clientNew": [
+    "core511-tower-r117-hook10-17862dadd8f71abd.js",
+    "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+    "game-client-core511-r117-4feaa261f90b5d9c.js",
+    "admin-client-core511-r117-964b4979c617eb7c.js",
+    "auth-portal-core511-r117-c1a66e4535350ae3.js"
+  ],
+  "files": [
+    "tower-client.mjs",
+    "generated/native-client-proof.json",
+    "generated/client/core511-tower-r117-hook10-17862dadd8f71abd.js",
+    "generated/client/core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+    "generated/client/game-client-core511-r117-4feaa261f90b5d9c.js",
+    "generated/client/admin-client-core511-r117-964b4979c617eb7c.js",
+    "generated/client/auth-portal-core511-r117-c1a66e4535350ae3.js"
+  ],
+  "syntaxChecks": 6,
+  "inverseEditsVerified": 6,
+  "assets": [
+    {
+      "name": "core511-tower-r117-hook10-17862dadd8f71abd.js",
+      "sourceName": "core511-tower-r102-auto-ecdbd6f626b40250.js",
+      "sourceSha256": "ecdbd6f626b40250917a71eea9a8f6aa3dcf71b2db97cbe72426df58124eed08",
+      "sha256": "17862dadd8f71abd1b127f7f105ae89fd80d94e164a014e15ad6231e14a7080f",
+      "edits": [
+        {
+          "from": "bu sand\\u0131ktan %6 olas\\u0131l\\u0131kla",
+          "to": "bu sand\\u0131ktan %10 olas\\u0131l\\u0131kla",
+          "count": 1
+        },
+        {
+          "from": "hook ? \"Sabit %6\" :",
+          "to": "hook ? \"Sabit %\" + row.chance :",
+          "count": 1
+        },
+        {
+          "from": "AZRA\\u0130L KANCASI %6 / 1 adet sabittir.",
+          "to": "AZRA\\u0130L KANCASI %10 / 1 adet sabittir.",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+      "sourceName": "core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+      "sourceSha256": "a06be5f2a5d1fa7a1e0190038848c5743fc62403b8c5016a3478a6049b7f8b70",
+      "sha256": "d41609822f32a40fe3b8ce5c0a459e76509219ab8eb76480382c5b7cdc2649b2",
+      "edits": [
+        {
+          "from": "bu sand\\u0131ktan %6 olas\\u0131l\\u0131kla",
+          "to": "bu sand\\u0131ktan %10 olas\\u0131l\\u0131kla",
+          "count": 1
+        },
+        {
+          "from": "hook ? \"Sabit %6\" :",
+          "to": "hook ? \"Sabit %\" + row.chance :",
+          "count": 1
+        },
+        {
+          "from": "AZRA\\u0130L KANCASI %6 / 1 adet sabittir.",
+          "to": "AZRA\\u0130L KANCASI %10 / 1 adet sabittir.",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "game-client-core511-r117-4feaa261f90b5d9c.js",
+      "sourceName": "game-client-core511-r114-3a57abcac795f120.js",
+      "sourceSha256": "3a57abcac795f1208b507219aaf619045094c478d01b2d50a04c7935d3c204d2",
+      "sha256": "4feaa261f90b5d9c7eb07ff4e70b6df8fafad3af69f750beb02484f4e018f7fb",
+      "edits": [
+        {
+          "from": "core511-tower-r102-auto-ecdbd6f626b40250.js",
+          "to": "core511-tower-r117-hook10-17862dadd8f71abd.js",
+          "count": 3
+        }
+      ]
+    },
+    {
+      "name": "admin-client-core511-r117-964b4979c617eb7c.js",
+      "sourceName": "admin-client-core511-r103-d967d2e806534317.js",
+      "sourceSha256": "d967d2e806534317d66ac41aa11e41b1228f4b3613df9cec89630ec23966f8d7",
+      "sha256": "964b4979c617eb7c11a4d4722a3cb2d1d0df08c6f5205ebf3be79555cfb30f3c",
+      "edits": [
+        {
+          "from": "core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+          "to": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "name": "auth-portal-core511-r117-c1a66e4535350ae3.js",
+      "sourceName": "auth-portal-core511-r114-e8621310b1cae69d.js",
+      "sourceSha256": "e8621310b1cae69d818fb85967722fda6aecda9e3c3212f14a9997259836b3e2",
+      "sha256": "c1a66e4535350ae3899ef143673c41ca5195d99d9680d5e274111e13b164c6f1",
+      "edits": [
+        {
+          "from": "game-client-core511-r114-3a57abcac795f120.js",
+          "to": "game-client-core511-r117-4feaa261f90b5d9c.js",
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

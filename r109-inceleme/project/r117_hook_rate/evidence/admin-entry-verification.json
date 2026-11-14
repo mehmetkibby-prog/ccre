@@ -1,0 +1,30 @@
+{
+  "namespace": "core511-58686c517948ebc6",
+  "actualInstalledGraph": true,
+  "live": false,
+  "serverAdminReference": "32ca04999434#default",
+  "runtime": [
+    {
+      "runtime": "http-runtime",
+      "adminRscId": "32ca04999434",
+      "bootstrap": "index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+      "bootstrapSha256": "06b6bcada51974f0299377c33cb7b49a228dbe4167166ebf0192d1bbdae4a84e",
+      "admin": "admin-client-core511-r117-964b4979c617eb7c.js",
+      "adminHelper": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+      "hookPercent": 10,
+      "serverSsrPresent": false
+    },
+    {
+      "runtime": "accounts-runtime",
+      "adminRscId": "32ca04999434",
+      "bootstrap": "index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+      "bootstrapSha256": "06b6bcada51974f0299377c33cb7b49a228dbe4167166ebf0192d1bbdae4a84e",
+      "admin": "admin-client-core511-r117-964b4979c617eb7c.js",
+      "adminHelper": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+      "hookPercent": 10,
+      "serverSsrPresent": false
+    }
+  ],
+  "oldServerAdminLiteral": "Only publicFiles set; server AdminPage emits the RSC ID rather than an asset filename.",
+  "limitation": "Synthetic installed fixture omits SSR index and has empty server asset manifest; HTML bootstrap request unverified. Installer rewrites server and SSR Vite assets manifests when present."
+}
