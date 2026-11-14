@@ -177,9 +177,9 @@ function MenuBackdrop() {
   const [fallback, setFallback] = useState(false);
   const [shown, setShown] = useState(false);
   const vid = useRef<HTMLVideoElement>(null);
-  // telefonda canlı 3B sahne açılmaz (veri ve pil): hazır savaş videosu döner. Masaüstünde video hemen oynar,
-  // canlı sahne tüm modeller (boss + 8 oyuncu + silahlar) yüklenince üstüne yumuşakça geçer; yarım sahne hiç görünmez.
-  const liveOk = useMemo(() => !matchMedia('(pointer: coarse)').matches && innerWidth > 860, []);
+  // Giriş ekranında hazır savaş videosu döner (ilk karesi index.html'de JS gelmeden görünür). Canlı 3B sahneye geçiş
+  // iki farklı sahneyi üst üste bindirip hayalet gibi gösteriyordu; yalnız ?canli adresinde (kayıt/deneme) açılır.
+  const liveOk = useMemo(() => new URLSearchParams(location.search).has('canli') && !matchMedia('(pointer: coarse)').matches, []);
   useEffect(() => { document.documentElement.classList.remove('boot'); }, []);
   useEffect(() => { if (shown) { const id = setTimeout(() => vid.current?.pause(), 2000); return () => clearTimeout(id); } }, [shown]);
   useEffect(() => {
