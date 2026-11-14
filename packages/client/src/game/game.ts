@@ -576,10 +576,14 @@ export class Game {
     this.input.attackHeld = down;
     if (!down) { this.attackNeedsRelease = false; return; }
     if (down) {
-      const t = this.targetId ? this.ents.get(this.targetId) : null;
-      // yalnız vuruş menzilindeki canavar seçilir: tuşa basmak uzaktaki canavara götürmez
-      if (!t || t.hp <= 0) { const nt = this.nearestEnemy(this.selfRange() + 40); this.setTarget(nt ? nt.id : 0); }
-      this.walkToTarget = false;
+      // yakın dövüşçü (Muhafız) hafif uzaktaki canavara da yürüyüp vurur; menzil kısa olduğu için. Uzaktaki
+      // canavara gitmez (tuşa basılı tutup haritada bot gibi dolaşılmasın); ölünce yeniden basmak gerekir.
+      const approach = this.selfRange() < 160 ? 210 : 40;
+      const reach = this.selfRange() + approach;
+      let t = this.targetId ? this.ents.get(this.targetId) : undefined;
+      if (t && (t.hp <= 0 || Math.hypot(t.x - this.px, t.y - this.py) > reach)) t = undefined;
+      if (!t) { const nt = this.nearestEnemy(reach); if (nt) { this.setTarget(nt.id); t = nt; } else if (!this.targetId || !this.ents.get(this.targetId)) this.setTarget(0); }
+      this.walkToTarget = !!t && approach > 40;
       this.autoAttack = true;
       this.moveTarget = null;
     }

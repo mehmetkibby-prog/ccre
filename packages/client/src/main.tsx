@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import './game/install.ts'; // yükleme şeridini en başta bastır
 import * as THREE from 'three';
 import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, MONSTER_INDEX, validateCharacterName, type ClassId } from '@col/shared';
 import { Renderer3D } from './g3d/renderer3d.ts';

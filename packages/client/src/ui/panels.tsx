@@ -1,3 +1,4 @@
+import { installAvailable, onInstallChange, promptInstall } from '../game/install.ts';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -488,7 +489,10 @@ function Settings() {
       <div className="field"><label>Efekt sesi: {Math.round(s.sfx * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
       <label className="row" style={{ fontSize: 14 }}><input type="checkbox" checked={s.showNames} onChange={(e) => set({ showNames: e.target.checked })} /> Oyuncu isimlerini göster</label>
       <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.showDamage} onChange={(e) => set({ showDamage: e.target.checked })} /> Başkalarının hasar sayıları</label>
-      <div className="row" style={{ marginTop: 14 }}><button className="btn small" onClick={() => document.documentElement.requestFullscreen?.()}>Tam ekran</button></div>
+      <div className="row" style={{ marginTop: 14, gap: 8, flexWrap: 'wrap' }}>
+        <button className="btn small" onClick={() => document.documentElement.requestFullscreen?.()}>Tam ekran</button>
+        <InstallButton />
+      </div>
       <div className="muted" style={{ fontSize: 11, marginTop: 12 }}>Kısayollar: WASD/oklar yürü · Fare ile tıkla-yürü/hedef · Boşluk/1 saldır · 2-3-4 beceri · Q iksir · Z topla · Tab hedef değiştir · I çanta · C karakter · K beceri · T ışınlan · M harita · Enter sohbet</div>
     </Panel>
   );
@@ -776,4 +780,12 @@ function StallBuy({ game }: { game: Game }) {
       {tip && <ItemTip {...tip} />}
     </Panel>
   );
+}
+
+/** Ayarlar: oyunu telefonun ana ekranına uygulama gibi ekler (yalnız tarayıcı izin verdiğinde görünür). */
+function InstallButton() {
+  const [, bump] = useState(0);
+  useEffect(() => onInstallChange(() => bump((n) => n + 1)), []);
+  if (!installAvailable()) return null;
+  return <button className="btn small" title="Adres çubuğu olmadan, tam ekran açılır" onClick={() => { void promptInstall(); }}>Ana ekrana ekle</button>;
 }

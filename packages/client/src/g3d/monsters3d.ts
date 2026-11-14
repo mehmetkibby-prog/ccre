@@ -260,6 +260,8 @@ export function createMonster(art: string, variant: number, size: number): Monst
   const s = size * (variant === 2 ? 1.12 : 1);
   const glow = EYE[variant];
   if (art === 'fox') { const m = createMeshFox(variant, s); if (m) return m; }
+  if (art === 'wolf') { const m = createMeshQuad('wolf_mesh', variant, s, 1.0, 1.3, [0xffffff, 0xd88a8a, 0x9aa8ff]); if (m) return m; }
+  if (art === 'devourer') { const m = createMeshDevourer(variant, s); if (m) return m; }
   if (art === 'fox_king') return createMonster('rotguard', variant, size * 1.5); // 3B model yüklenemezse yedek
   if (art === 'goblin') return createMonster('rotguard', variant, size * 0.7); // 3B model yüklenemezse yedek
   if (art === 'wolf' || art === 'lynx' || art === 'fox') {
@@ -302,7 +304,7 @@ export function createMonster(art: string, variant: number, size: number): Monst
 }
 
 /** Hazır 3B modeli olan canavarlar: model kimliği → sanat adı (model gelince görünümler yeniden kurulur). */
-export const MONSTER_MESHES: Record<string, string> = { fox_mesh: 'fox' };
+export const MONSTER_MESHES: Record<string, string> = { fox_mesh: 'fox', wolf_mesh: 'wolf', devourer_mesh: 'devourer' };
 const foxMats = new Map<number, THREE.Material>();
 /**
  * Meshy'de tasarlanıp scripts/quad-rig.mjs ile dört ayaklı iskelete bağlanan tilki. Kemik adları QB ile aynı,
@@ -378,6 +380,81 @@ function createMeshFox(variant: number, s: number): MonsterRig | null {
       bones.tail1.rotation.x = 0.12; bones.tail2.rotation.x = 0.05;
       bones.tail1.rotation.y = Math.sin(t * (st === 'walk' ? 6 : 2.2)) * (st === 'walk' ? 0.3 : 0.18);
       if (st === 'idle') bones.head.rotation.z = Math.max(0, Math.sin(t * 0.7)) ** 6 * 0.3;
+    },
+  };
+}
+
+/** Meshy'de çizilip quad-rig.mjs ile dört ayaklı iskelete bağlanan hayvan (kurt): tilkiyle aynı prosedürel yürüyüş. */
+const quadMats = new Map<string, THREE.Material>();
+function createMeshQuad(id: string, variant: number, s: number, scale: number, height: number, tint: number[]): MonsterRig | null {
+  const L = loadModel(id);
+  if (!L) return null;
+  fixQuadWeights(L.scene);
+  const inner = skClone(L.scene) as THREE.Object3D;
+  const bones: Record<string, THREE.Bone> = {};
+  inner.traverse((o) => {
+    if ((o as THREE.Bone).isBone) bones[o.name] = o as THREE.Bone;
+    const m = o as THREE.SkinnedMesh;
+    if (m.isSkinnedMesh) {
+      m.castShadow = true; m.frustumCulled = false;
+      if (variant > 0) {
+        const key = id + variant;
+        let vm = quadMats.get(key);
+        if (!vm) { vm = (m.material as THREE.MeshStandardMaterial).clone(); (vm as THREE.MeshStandardMaterial).color.set(tint[variant] ?? 0xffffff); quadMats.set(key, vm); }
+        m.material = vm;
+      }
+    }
+  });
+  if (!bones.body) return null;
+  const restBodyY = bones.body.position.y;
+  const bodyG = new THREE.Group(); bodyG.add(inner);
+  const root = new THREE.Group(); root.add(bodyG);
+  root.scale.setScalar(s * scale);
+  return {
+    root, height: height * s * scale,
+    update(st, t, k, ph) {
+      quadAnimate(bones, bodyG, st, t, k, ph);
+      bones.body.position.y += restBodyY - QB[0][3];
+      if (bones.tail1) { bones.tail1.rotation.x = 0.1; bones.tail1.rotation.y = Math.sin(t * (st === 'walk' ? 5 : 1.8)) * (st === 'walk' ? 0.25 : 0.14); }
+      if (bones.tail2) bones.tail2.rotation.x = 0.05;
+    },
+  };
+}
+
+/** Meshy'de çizilen Öz Yutan: iskeletsiz; süzülür, nefes alır gibi esner, saldırırken şişip öne atılır. */
+const devMats = new Map<number, THREE.Material>();
+function createMeshDevourer(variant: number, s: number): MonsterRig | null {
+  const L = loadModel('devourer_mesh');
+  if (!L) return null;
+  const inner = L.scene.clone(true);
+  inner.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    m.castShadow = true;
+    if (variant > 0) {
+      let vm = devMats.get(variant);
+      if (!vm) { vm = (m.material as THREE.MeshStandardMaterial).clone(); (vm as THREE.MeshStandardMaterial).color.set(variant === 2 ? 0xff8a9a : 0xc8a0ff); devMats.set(variant, vm); }
+      m.material = vm;
+    }
+  });
+  const box = new THREE.Box3().setFromObject(inner);
+  const H = 0.95, sc = H / Math.max(0.01, box.max.y - box.min.y);
+  inner.scale.setScalar(sc);
+  inner.position.set(-(box.min.x + box.max.x) / 2 * sc, -box.min.y * sc, -(box.min.z + box.max.z) / 2 * sc);
+  const g = new THREE.Group(); g.add(inner);
+  const glow = new THREE.PointLight(0x9ffff0, 0.8, 3.5); glow.position.set(0, 0.6, 0.3); g.add(glow);
+  const root = new THREE.Group(); root.add(g); root.scale.setScalar(s);
+  return {
+    root, height: (H + 0.35) * s,
+    update(st, t, k, ph) {
+      const sq = st === 'walk' ? Math.sin(ph) * 0.6 : Math.sin(t * 2) * 0.3;
+      let sx = 1 + sq * 0.06, sy = 1 - sq * 0.08;
+      if (st === 'attack' || st === 'cast') { const p = Math.sin(Math.min(1, k) * Math.PI); sx += p * 0.18; sy += p * 0.12; }
+      g.scale.set(sx, sy, sx);
+      g.position.y = 0.32 + Math.sin(t * 2.2) * 0.08 + (st === 'walk' ? Math.max(0, Math.sin(ph)) * 0.08 : 0);
+      g.rotation.z = Math.sin(t * 1.3) * 0.05;
+      glow.intensity = 0.6 + Math.sin(t * 3) * 0.25;
+      if (st === 'dead') g.scale.setScalar(Math.max(0.01, 1 - k));
     },
   };
 }

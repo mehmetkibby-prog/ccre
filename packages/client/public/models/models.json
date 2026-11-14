@@ -347,5 +347,26 @@
     "attackClips": [
       "Attack Hook"
     ]
+  },
+  "wolf_mesh": {
+    "url": "wolf_mesh.glb",
+    "scale": 1
+  },
+  "devourer_mesh": {
+    "url": "devourer_mesh.glb",
+    "scale": 1
+  },
+  "rotguard": {
+    "url": "rotguard.glb",
+    "height": 1.75,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
   }
 }

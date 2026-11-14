@@ -131,7 +131,8 @@
     "merchant": 1.74,
     "fisher": 1.74,
     "fox_king": 2.6,
-    "goblin": 1.25
+    "goblin": 1.25,
+    "rotguard": 1.75
   },
   "animations": {
     "guardian": {
@@ -179,6 +180,12 @@
       "Idle": 0,
       "Walk": 21,
       "Attack Hook": 193,
+      "Death": 189
+    },
+    "rotguard": {
+      "Idle": 0,
+      "Walk": 112,
+      "Attack Slash": 97,
       "Death": 189
     }
   }

@@ -126,6 +126,9 @@
     },
     "goblin": {
       "file": "assets-src/meshy/concepts/goblin.png"
+    },
+    "rotguard": {
+      "file": "assets-src/meshy/concepts/rotguard.png"
     }
   },
   "builds": {
@@ -410,6 +413,31 @@
         },
         "Death": {
           "task": "01a1d9bf-40c3-7561-93b3-dc5cb94edcfa",
+          "actionId": 189
+        }
+      }
+    },
+    "rotguard": {
+      "concept": "rotguard",
+      "model": "01a1dc79-9989-7489-945f-2f4f2aa542ca",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1dc79-9989-7489-945f-2f4f2aa542ca/output/model.glb?Expires=1794959614&Signature=e1viILp5BHr7mWq2RS7cuKLPkk55HPK2e5tipNGKKXNh~mwFJzITmbu0xfuJXPuxRWSGMUqZZAAmLCgunAnZxR0v2vq5b~c268uzXqJqyjszAncgxiB39slry1E8cI9ychRSN~Vs9-vgqIGljbXC7DSEHleBjz6gh~K4GmxXCHXFmeycsEGw~l98~m99O8DigHFhOULBxn8xnobiIhCHtUjDbJOr9-9NsN5zWRo-0HQBjT-z2ctE56Bf1oaxgu1OLRLeiEmk4AtZDFFXgJ7GKNjk3V5UbA5~TCsSkW7dSwiIr9R2msPJYQQYIafYnpYcOhsDnrCebQzrESYeuoauDg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1dc7b-1a05-7317-9bf2-0d2ab764ca50",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1dc7b-7de2-7232-8a7b-07662345d358",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1dc7b-7f22-77ac-a63e-71af4e6355fc",
+          "actionId": 112
+        },
+        "Attack Slash": {
+          "task": "01a1dc7b-8064-7539-ac37-adbbc85a36af",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1dc7b-819f-73c4-b984-084c6fea4d56",
           "actionId": 189
         }
       }
