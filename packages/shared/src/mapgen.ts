@@ -199,7 +199,7 @@ function genVillage(l: MapLayout, rng: Rng) {
       const i = idx(l, x, y);
       if (protect[i] || l.blocked[i]) continue;
       const dense = smoothNoise(x, y, 6, 1907 + 3);
-      const want = dense > 0.6 ? rng() < 0.42 : rng() < 0.018; // seyrek koru: ağaçlar arası açıklık kalsın
+      const want = dense > 0.66 ? rng() < 0.3 : rng() < 0.006; // seyrek koru: yalnız birkaç küme, arası açık
       if (want && (x + y) % 2 === 0) {
         l.props.push({ k: rng() < 0.4 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 24, y: tc(y) + (rng() - 0.5) * 18, v: (rng() * 4) | 0, s: 0.95 + rng() * 0.45 });
         l.blocked[i] = 1;
@@ -227,7 +227,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     if (protect[i] && edge > 1) continue;
     if (edge <= 1) l.blocked[i] = 1;
     // sınır: tek sıra, üç karoda bir (dağlar ve ufuk görünsün); iri ağaçlar boşluğu kapatır
-    if (edge === 1 && (x + y) % 3 === 0 && !l.ground[i]) {
+    if (edge === 1 && (x + y) % 6 === 0 && !l.ground[i]) {
       l.props.push({ k: rng() < 0.3 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 20, y: tc(y) + (rng() - 0.5) * 16, v: (rng() * 4) | 0, s: 1.05 + rng() * 0.35 });
       l.blocked[i] = 1;
     }
@@ -241,7 +241,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     if (r < 0.5) l.props.push({ k: 'flowers', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 5) | 0, s: 1 });
     else if (r < 0.75) l.props.push({ k: 'grasstuft', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 3) | 0, s: 1 });
     else if (r < 0.88 && isFree(l, x, y)) { l.props.push({ k: 'bush', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
-    else if (isFree(l, x, y)) { l.props.push({ k: 'tree', x: tc(x), y: tc(y), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+    else if (rng() < 0.25 && isFree(l, x, y)) { l.props.push({ k: 'tree', x: tc(x), y: tc(y), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
   }
   for (let n = 0; n < 16; n++) {
     const x = 6 + ((rng() * 8) | 0), y = 33 + ((rng() * 8) | 0);

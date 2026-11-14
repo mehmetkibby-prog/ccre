@@ -142,7 +142,7 @@ for (const name of names) {
   let gy, gx = 0, gz = 0, yawToZ = 0;
   if (spec.kind === 'sword') {
     const g = W.indexOf(Math.max(...W.slice(0, NB / 2)));
-    gy = y0 + (g + 0.5) / NB * L - 0.1 / s; // siperin 10 cm altı
+    gy = y0 + (g + 0.5) / NB * L - (0.1 + Number(process.env.GRIP_DY || 0)) / s; // siperin 10 cm altı (GRIP_DY: süslü siperde ek kaydırma, m)
     const sl = P.filter((q) => Math.abs(q[1] - gy) < 0.03 / s); if (sl.length) { gx = sl.reduce((a, q) => a + q[0], 0) / sl.length; gz = sl.reduce((a, q) => a + q[2], 0) / sl.length; }
   } else if (spec.kind === 'staff') {
     gy = y0 + L * 0.27;

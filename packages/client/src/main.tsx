@@ -158,6 +158,16 @@ function TugraMark() {
 }
 
 /** Ferman altında sunucu durumu. */
+/**
+ * Telefonda oyuna girerken tam ekran: Chrome normal modda ön kamera deliğinin olduğu kenarı (katlanır telefonda
+ * yatayda sol kenar) siyah bırakıyor; tam ekranda viewport-fit=cover ile o şerit de oyunla dolar. Kullanıcı
+ * dokunuşu içinde çağrılmalı (tarayıcı kuralı). Ana ekrana eklenmiş uygulamada zaten tam ekrandır.
+ */
+function goFullscreen() {
+  if (!matchMedia('(pointer: coarse)').matches || document.fullscreenElement || matchMedia('(display-mode: fullscreen)').matches) return;
+  try { void document.documentElement.requestFullscreen?.({ navigationUI: 'hide' }).catch(() => {}); } catch { /* desteklenmiyor */ }
+}
+
 function RealmLine() {
   const [st, setSt] = useState<{ online: number; open: boolean; msg: string } | null>(null);
   useEffect(() => {
@@ -498,7 +508,7 @@ function ChannelScreen({ charId, onBack, onEnter }: { charId: number; onBack: ()
             const k = c.population / c.capacity;
             const label = c.status === 'full' ? 'Dolu' : c.status === 'busy' ? 'Yoğun' : c.status === 'restarting' ? 'Yeniden başlatılıyor' : c.status === 'maintenance' ? 'Bakımda' : 'Uygun';
             return (
-              <button key={c.id} className="chcard" disabled={!data.open || c.status === 'full' || c.status === 'restarting' || c.status === 'maintenance' || pending !== null} onClick={() => enter(c.id)}>
+              <button key={c.id} className="chcard" disabled={!data.open || c.status === 'full' || c.status === 'restarting' || c.status === 'maintenance' || pending !== null} onClick={() => { goFullscreen(); enter(c.id); }}>
                 <div className="row"><b>{c.name}</b><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{pending === c.id ? 'Bağlanıyor…' : label}</span></div>
                 <div className={'bar ' + (c.status === 'full' ? 'full' : c.status === 'busy' ? 'busy' : '')} style={{ marginTop: 8 }}><i style={{ width: `${Math.min(100, k * 100)}%` }} /></div>
                 <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>{c.population} / {c.capacity}</div>
