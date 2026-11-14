@@ -9,7 +9,7 @@ export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND
 export type PropKind =
   | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
   | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'forge' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
-  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost';
+  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
 export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number }
@@ -98,8 +98,10 @@ function genVillage(l: MapLayout, rng: Rng) {
       l.props.push({ k: 'lamp', x: fx * TILE, y: fy * TILE, v: 0, s: 1 });
     }
     for (const [ox, oy] of [[-0.72, -0.72], [0.72, -0.72], [-0.72, 0.72], [0.72, 0.72]] as const) l.props.push({ k: 'banner', x: (mk.tx + ox * mk.rx) * TILE, y: (mk.ty + oy * mk.ry) * TILE, v: 0, s: 1.1 });
-    // girişte tabela (yolun kuzey kenarında, yazısı güneye/kameraya dönük): v=0 → "PAZAR ALANI"
-    l.props.push({ k: 'signpost', x: (mk.tx - mk.rx - 3) * TILE, y: (cy - 1.6) * TILE, v: 0, s: 1 });
+    // köyden pazara giden yolun girişinde büyük kemer tabela (Seyis Arda'nın hemen doğusu): v=0 → "PAZAR ALANI"
+    const gx = 47;
+    l.props.push({ k: 'gate', x: (gx + 0.5) * TILE, y: (cy + 0.5) * TILE, v: 0, s: 1 });
+    for (const gy of [cy - 2, cy + 2]) l.blocked[idx(l, gx, gy)] = 1;
     // kenarda süs sandık ve fıçılar (yürüme alanının dışında)
     for (let k = 0; k < 10; k++) {
       const a = 0.4 + (k / 10) * Math.PI * 2;

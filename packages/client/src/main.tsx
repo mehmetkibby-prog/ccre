@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
-import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, validateCharacterName, type ClassId } from '@col/shared';
+import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, MONSTER_INDEX, validateCharacterName, type ClassId } from '@col/shared';
 import { Renderer3D } from './g3d/renderer3d.ts';
 import { shared as sharedU } from './g3d/materials.ts';
 import type { CEnt } from './game/game.ts';
@@ -159,42 +159,126 @@ function MenuBackdrop() {
     if (fallback) return;
     const canvas = ref.current!;
     let r: Renderer3D;
+    // Tilki Kral Arenası: 8 kişilik grup boss'la savaşıyor (giriş ekranı sahnesi)
     const l = getLayout('bazaar');
-    const sx = l.spawn.x, sy = l.spawn.y;
-    const g: any = { selfId: 1, cls: 'guardian', dx: sx, dy: sy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
+    const zk = l.zones.find((z) => z.monster === 'fox_king');
+    const bx = zk ? zk.x : l.spawn.x, by = zk ? zk.y : l.spawn.y;
+    const g: any = { selfId: 1, cls: 'guardian', dx: bx, dy: by, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
     try {
       r = new Renderer3D(g, canvas, document.createElement('canvas'));
       r.setLayout(l);
     } catch (e) { console.warn('[menü] 3B sahne kurulamadı', e); setFallback(true); return; }
-    // meydanda dolaşan oyuncular: farklı yarıçap, hız ve yönde çember
-    const names = ['Defne', 'Mert', 'Ayşe', 'Kaan', 'Elif', 'Bora', 'Zeynep'];
-    const walkers = names.map((name, i) => ({ r: 150 + (i % 4) * 70, w: (0.05 + (i % 3) * 0.018) * (i % 2 ? 1 : -1), p: i * 0.9 }));
-    walkers.forEach((wk, i) => {
-      const x = sx + Math.cos(wk.p) * wk.r, y = sy + Math.sin(wk.p) * wk.r;
-      g.ents.set(10 + i, { id: 10 + i, kind: Kind.PLAYER, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: Anim.WALK, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 10 + i * 4, name: names[i], cls: i % 3, variant: 0, tpl: 0, weapon: [0, 3, 6, 9, 1, 4, 7][i], wplus: i % 3 === 0 ? 5 : 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0 } as unknown as CEnt);
+    const fx = r.fx;
+    const mk = (id: number, kind: number, x: number, y: number, extra: Record<string, unknown>) => ({ id, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: Anim.IDLE, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 30, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, wplus: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra }) as unknown as CEnt & { combo?: number; skill?: number };
+    const BOSS = 9;
+    const boss = mk(BOSS, Kind.MONSTER, bx, by, { tpl: MONSTER_INDEX.get('fox_king') ?? 0, level: 20, name: 'Tilki Kral', hp: 26000, maxHp: 36000 });
+    g.ents.set(BOSS, boss);
+    const dirTo = (x0: number, y0: number, x1: number, y1: number) => ((Math.atan2(y1 - y0, x1 - x0) / (Math.PI * 2)) * 256 + 256) % 256;
+    // c: 0 Muhafız (yakın), 1 Avcı, 2 Arkanist; r: bossa uzaklık (px), a: açı
+    const party = [
+      { n: 'Defne', c: 0, r: 100, a: 0.2, w: 3, p: 6 }, { n: 'Mert', c: 0, r: 104, a: 2.3, w: 6, p: 4 }, { n: 'Kaan', c: 0, r: 98, a: 4.3, w: 9, p: 5 },
+      { n: 'Ayşe', c: 1, r: 255, a: 1.15, w: 1, p: 5 }, { n: 'Bora', c: 1, r: 265, a: 3.55, w: 4, p: 0 },
+      { n: 'Elif', c: 2, r: 225, a: 0.55, w: 7, p: 6 }, { n: 'Zeynep', c: 2, r: 235, a: 2.85, w: 2, p: 3 }, { n: 'Emir', c: 2, r: 230, a: 5.15, w: 5, p: 0 },
+    ].map((m, i) => {
+      const x = bx + Math.cos(m.a) * m.r, y = by + Math.sin(m.a) * m.r;
+      const e = mk(10 + i, Kind.PLAYER, x, y, { name: m.n, cls: m.c, level: 24 + i * 3, weapon: m.w, wplus: m.p, dir: dirTo(x, y, bx, by) });
+      g.ents.set(e.id, e);
+      return { ...m, e, next: performance.now() + 600 + i * 230, n2: 0 };
     });
-    const co = { x: sx, y: sy - 40, dist: 15, pitch: 0.42 };
-    const cut0 = sharedU.cutR.value; sharedU.cutR.value = 0; // oyuncu yok: kameranın önündeki nesneler saydamlaşmasın
+    const later: { at: number; f: () => void }[] = [];
+    const after = (ms: number, f: () => void) => later.push({ at: performance.now() + ms, f });
+    const hitBoss = (dmg: number, crit = false) => {
+      boss.hp = Math.max(1, boss.hp - dmg); boss.hurtUntil = performance.now() + 140;
+      fx.text(bx + (Math.random() - 0.5) * 50, by, 3.4 + Math.random() * 0.6, (crit ? '' : '') + dmg.toLocaleString('tr-TR'), crit ? '#ffd84a' : '#fff1d6', crit ? 26 : 18, 900);
+      if (boss.hp < boss.maxHp * 0.25) boss.hp = Math.round(boss.maxHp * 0.8); // sahne sonsuz döngü: kral "toparlanır"
+    };
+    let bossNext = performance.now() + 1500, bossN = 0;
+    const co = { x: bx, y: by, dist: 16, pitch: 0.4 };
     (r as any).camOverride = co;
+    const cut0 = sharedU.cutR.value; sharedU.cutR.value = 0; // oyuncu yok: kameranın önündeki nesneler saydamlaşmasın
     let raf = 0, last = performance.now(), frames = 0;
     const t0 = last;
     const loop = (t: number) => {
       const dt = Math.min(100, t - last); last = t;
       const s = (t - t0) / 1000;
-      r.camYaw = s * 0.045; // tam tur ≈ 2 dakika
-      walkers.forEach((wk, i) => {
-        const e = g.ents.get(10 + i);
-        const a = wk.p + s * wk.w;
-        const nx = sx + Math.cos(a) * wk.r, ny = sy + Math.sin(a) * wk.r;
-        const ang = Math.atan2(ny - e.y, nx - e.x);
-        e.dir = ((ang / (Math.PI * 2)) * 256 + 256) % 256;
-        e.x = nx; e.y = ny;
-      });
+      r.camYaw = s * 0.06; // tam tur ≈ 1,7 dakika
+      co.dist = 15 + Math.sin(s * 0.11) * 2;
+      for (let k = later.length - 1; k >= 0; k--) if (t >= later[k].at) { const f = later[k].f; later.splice(k, 1); f(); }
+      // oyuncular
+      for (const m of party) {
+        const e = m.e;
+        e.dir = dirTo(e.x, e.y, bx, by);
+        if (t < m.next) continue;
+        m.n2++;
+        const ex = e.x, ey = e.y;
+        if (m.c === 0) {
+          e.anim = Anim.ATTACK; e.animStart = t; e.combo = (m.n2 - 1) % 3;
+          const a = Math.atan2(by - ey, bx - ex);
+          after(160, () => {
+            fx.shapes.push({ kind: 'slash', x: ex, y: ey, r: e.combo === 2 ? 64 : 74, r2: e.combo ?? 0, a: a + (e.combo === 1 ? 0.35 : e.combo === 0 ? -0.35 : 0), t0: performance.now(), dur: 260, color: e.combo === 2 ? '#ffe2a0' : '#ffffff' });
+            fx.shapes.push({ kind: 'blast', x: bx, y: by, r: 46, r2: 0, a: 0, t0: performance.now(), dur: 200, color: '#fff4d8' });
+            const crit = Math.random() < 0.2; hitBoss(Math.round(380 + Math.random() * 260) * (crit ? 2 : 1), crit);
+          });
+          if (m.n2 % 5 === 0) fx.shapes.push({ kind: 'shield', x: ex, y: ey, r: 40, r2: 0, a: 0, t0: t, dur: 1600, color: '#ffd27a', follow: e.id });
+          m.next = t + 720 + Math.random() * 260;
+        } else if (m.c === 1) {
+          e.anim = Anim.ATTACK; e.animStart = t;
+          const volley = m.n2 % 4 === 0;
+          for (let k = 0; k < (volley ? 3 : 1); k++) after(140 + k * 110, () => {
+            fx.projs.push({ x0: ex, y0: ey, tx: bx, ty: by, tgt: BOSS, t0: performance.now(), dur: 220, kind: 'arrow', color: '#fff' });
+            after(220, () => { const crit = Math.random() < 0.25; hitBoss(Math.round(300 + Math.random() * 220) * (crit ? 2 : 1), crit); });
+          });
+          m.next = t + 820 + Math.random() * 300;
+        } else {
+          const big = m.n2 % 4 === 0, heal = !big && m.n2 % 5 === 0;
+          e.anim = Anim.CAST; e.animStart = t; e.skill = big ? 2 : heal ? 3 : 0;
+          if (big) after(420, () => {
+            fx.shapes.push({ kind: 'circle', x: bx, y: by, r: 150, r2: 0, a: 0, t0: performance.now(), dur: 420, color: 'rgba(197,139,255,0.5)' });
+            after(420, () => {
+              fx.shapes.push({ kind: 'blast', x: bx, y: by, r: 150, r2: 0, a: 0, t0: performance.now(), dur: 380, color: '#c58bff' });
+              fx.burst(bx, by, 0.4, 46, '#d6b0ff', 5, 800, 0.24); fx.light(bx, by, 1.4, '#c58bff', 7, 500);
+              hitBoss(Math.round(1400 + Math.random() * 600), true);
+            });
+          });
+          else if (heal) {
+            const tank = party[(m.n2 / 5) % 3 | 0].e;
+            after(300, () => { fx.shapes.push({ kind: 'heal', x: tank.x, y: tank.y, r: 70, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '#8dffb0' }); fx.text(tank.x, tank.y, 2.3, '+' + (600 + Math.round(Math.random() * 300)), '#6dff9a', 18); });
+          } else after(260, () => {
+            fx.projs.push({ x0: ex, y0: ey, tx: bx, ty: by, tgt: BOSS, t0: performance.now(), dur: 280, kind: 'orb', color: m.n2 % 2 ? '#7cf3ff' : '#ff9a5a' });
+            fx.light(ex, ey, 1.6, '#7cf3ff', 3, 300);
+            after(280, () => { const crit = Math.random() < 0.2; hitBoss(Math.round(420 + Math.random() * 260) * (crit ? 2 : 1), crit); });
+          });
+          m.next = t + (big ? 1700 : 1100) + Math.random() * 300;
+        }
+      }
+      // Tilki Kral: sırayla öndekilere pençe, her üçüncüde yere vurma
+      if (t >= bossNext) {
+        bossN++;
+        const slam = bossN % 3 === 0;
+        const victim = party[bossN % 3].e;
+        boss.dir = dirTo(bx, by, victim.x, victim.y);
+        boss.anim = Anim.ATTACK; boss.animStart = t;
+        if (slam) {
+          fx.shapes.push({ kind: 'ring', x: bx, y: by, r: 190, r2: 0.7, a: 0, t0: t, dur: 700, color: 'rgba(255,110,60,0.55)' });
+          after(700, () => {
+            fx.shapes.push({ kind: 'blast', x: bx, y: by, r: 190, r2: 0, a: 0, t0: performance.now(), dur: 420, color: '#ff7a3a' });
+            fx.burst(bx, by, 0.2, 60, '#ffb070', 6, 900, 0.26); fx.light(bx, by, 1.2, '#ff7a3a', 8, 600);
+            r.shake(2);
+            for (const m of party) if (m.c === 0) fx.text(m.e.x, m.e.y, 2.4, '-' + (700 + Math.round(Math.random() * 300)), '#ff6a5a', 18);
+          });
+        } else after(320, () => { fx.burst(victim.x, victim.y, 1.1, 12, '#ff5040', 3.5, 420, 0.16); fx.text(victim.x, victim.y, 2.4, '-' + (300 + Math.round(Math.random() * 200)), '#ff6a5a', 16); });
+        bossNext = t + (slam ? 2600 : 1900);
+      }
+      // geniş ekranda ferman solda: savaş sahnesi sağ boşlukta görünsün
+      const cw = canvas.clientWidth, chh = canvas.clientHeight;
+      if (cw > 720) r.camera.setViewOffset(cw, chh, -cw * 0.17, 0, cw, chh); else if (r.camera.view) r.camera.clearViewOffset();
       try { r.draw(t, dt); } catch (e) { console.warn('[menü] çizim hatası', e); setFallback(true); return; }
       const self = (r as any).self; if (self) self.obj.visible = false; // kendi karakter yok
-      if (++frames === 3) setShown(true);
+      // sahne, boss modeli gelince (en geç 8 sn) belirsin: boş arena görünmesin
+      if (!shownRef && ((r as any).views?.get(BOSS)?.glb || s > 8) && ++frames > 2) { shownRef = true; setShown(true); }
       raf = requestAnimationFrame(loop);
     };
+    let shownRef = false;
     raf = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(raf); sharedU.cutR.value = cut0; try { r.renderer.dispose(); r.renderer.forceContextLoss(); } catch { /* */ } };
   }, [fallback]);
