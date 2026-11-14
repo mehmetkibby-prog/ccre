@@ -1,0 +1,5 @@
+[
+  "core511-source/scripts/core511/reliable-stream.mjs",
+  "core511-source/scripts/core511/ipc-control-parts-r116.mjs",
+  "core511-source/scripts/core511/engine-health-r113.mjs"
+]

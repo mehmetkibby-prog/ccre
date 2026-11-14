@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: control rejection distinguishes exhausted capacity, duplicate identity and a retired process
+ok 1 - control rejection distinguishes exhausted capacity, duplicate identity and a retired process
+  ---
+  duration_ms: 2.171308
+  type: 'test'
+  ...
+# Subtest: same authenticated writer stream: control during-work disconnect replays without applying twice
+ok 2 - same authenticated writer stream: control during-work disconnect replays without applying twice
+  ---
+  duration_ms: 21.981469
+  type: 'test'
+  ...
+# Subtest: same authenticated writer stream: control after-work disconnect replays without applying twice
+ok 3 - same authenticated writer stream: control after-work disconnect replays without applying twice
+  ---
+  duration_ms: 9.098769
+  type: 'test'
+  ...
+# Subtest: single-buffer IPC preserves exact prefix, JSON/UTF8 bytes, getters and size rejection
+ok 4 - single-buffer IPC preserves exact prefix, JSON/UTF8 bytes, getters and size rejection
+  ---
+  duration_ms: 47.104096
+  type: 'test'
+  ...
+# Subtest: corked IPC bytes retain order and stream identity; all callbacks await the actual send callback
+ok 5 - corked IPC bytes retain order and stream identity; all callbacks await the actual send callback
+  ---
+  duration_ms: 10.159196
+  type: 'test'
+  ...
+# Subtest: corked MessagePort writes use one cloned message with unchanged bytes and EOF
+ok 6 - corked MessagePort writes use one cloned message with unchanged bytes and EOF
+  ---
+  duration_ms: 3.417145
+  type: 'test'
+  ...
+# Subtest: disconnected batched IPC fails every write and sends no bytes
+ok 7 - disconnected batched IPC fails every write and sends no bytes
+  ---
+  duration_ms: 1.904492
+  type: 'test'
+  ...
+# Subtest: R116 admission snapshots round trip exact JSON and UTF8 through bounded frames
+ok 8 - R116 admission snapshots round trip exact JSON and UTF8 through bounded frames
+  ---
+  duration_ms: 208.974971
+  type: 'test'
+  ...
+# Subtest: R116 keeps the original frame cap and allows only bounded cold admission snapshots
+ok 9 - R116 keeps the original frame cap and allows only bounded cold admission snapshots
+  ---
+  duration_ms: 230.686583
+  type: 'test'
+  ...
+# Subtest: R116 rejects malformed headers before allocation and bounds aggregate receiver memory
+ok 10 - R116 rejects malformed headers before allocation and bounds aggregate receiver memory
+  ---
+  duration_ms: 7.216096
+  type: 'test'
+  ...
+# Subtest: R116 rejects out-of-order, duplicate, malformed and noncanonical parts
+ok 11 - R116 rejects out-of-order, duplicate, malformed and noncanonical parts
+  ---
+  duration_ms: 18.689779
+  type: 'test'
+  ...
+# Subtest: R116 verifies integrity, UTF8, JSON and complete control identity before dispatch
+ok 12 - R116 verifies integrity, UTF8, JSON and complete control identity before dispatch
+  ---
+  duration_ms: 84.978478
+  type: 'test'
+  ...
+# Subtest: R116 replay fingerprints remain bounded and distinguish method and payload
+ok 13 - R116 replay fingerprints remain bounded and distinguish method and payload
+  ---
+  duration_ms: 5.36716
+  type: 'test'
+  ...
+# Subtest: R116 StreamControl rejects unsupported or excessive snapshots before sending and releases every retained byte
+ok 14 - R116 StreamControl rejects unsupported or excessive snapshots before sending and releases every retained byte
+  ---
+  duration_ms: 309.026311
+  type: 'test'
+  ...
+# Subtest: R116 actual ProcessStream path preserves immutable snapshot, interleaved requests and replay result
+ok 15 - R116 actual ProcessStream path preserves immutable snapshot, interleaved requests and replay result
+  ---
+  duration_ms: 107.142028
+  type: 'test'
+  ...
+# Subtest: R116 disconnect after-header replays one admission and one side effect
+ok 16 - R116 disconnect after-header replays one admission and one side effect
+  ---
+  duration_ms: 50.934231
+  type: 'test'
+  ...
+# Subtest: R116 disconnect mid-parts replays one admission and one side effect
+ok 17 - R116 disconnect mid-parts replays one admission and one side effect
+  ---
+  duration_ms: 82.814817
+  type: 'test'
+  ...
+# Subtest: R116 disconnect final-part replays one admission and one side effect
+ok 18 - R116 disconnect final-part replays one admission and one side effect
+  ---
+  duration_ms: 92.108003
+  type: 'test'
+  ...
+# Subtest: R116 disconnect during-handler replays one admission and one side effect
+ok 19 - R116 disconnect during-handler replays one admission and one side effect
+  ---
+  duration_ms: 75.675769
+  type: 'test'
+  ...
+# Subtest: R116 disconnect lost-ack replays one admission and one side effect
+ok 20 - R116 disconnect lost-ack replays one admission and one side effect
+  ---
+  duration_ms: 84.849387
+  type: 'test'
+  ...
+# Subtest: R116 completed ID cannot be reused with changed fragmented payload
+ok 21 - R116 completed ID cannot be reused with changed fragmented payload
+  ---
+  duration_ms: 88.071293
+  type: 'test'
+  ...
+# Subtest: R116 completed ID cannot be reused with changed normal payload
+ok 22 - R116 completed ID cannot be reused with changed normal payload
+  ---
+  duration_ms: 51.012522
+  type: 'test'
+  ...
+# Subtest: R116 an executing control rejects a changed-payload replay before a second handler starts
+ok 23 - R116 an executing control rejects a changed-payload replay before a second handler starts
+  ---
+  duration_ms: 57.891639
+  type: 'test'
+  ...
+# Subtest: R116 fragmented controls cannot dispatch before the authenticated ready handshake
+ok 24 - R116 fragmented controls cannot dispatch before the authenticated ready handshake
+  ---
+  duration_ms: 10.63467
+  type: 'test'
+  ...
+# Subtest: R116 large controls cannot use wrong-process-stream
+ok 25 - R116 large controls cannot use wrong-process-stream
+  ---
+  duration_ms: 13.696019
+  type: 'test'
+  ...
+# Subtest: R116 large controls cannot use message-port
+ok 26 - R116 large controls cannot use message-port
+  ---
+  duration_ms: 19.880306
+  type: 'test'
+  ...
+# Subtest: R116 ordinary small control frames and pending limit remain unchanged
+ok 27 - R116 ordinary small control frames and pending limit remain unchanged
+  ---
+  duration_ms: 18.12363
+  type: 'test'
+  ...
+# Subtest: R116 preserves handler start order when later small controls follow a fragmented admission
+ok 28 - R116 preserves handler start order when later small controls follow a fragmented admission
+  ---
+  duration_ms: 176.913155
+  type: 'test'
+  ...
+# Subtest: R116 sends later controls after assembly without waiting for the first handler ACK
+ok 29 - R116 sends later controls after assembly without waiting for the first handler ACK
+  ---
+  duration_ms: 45.064387
+  type: 'test'
+  ...
+# Subtest: R116 reconnect preserves the queued control order behind an interrupted snapshot
+ok 30 - R116 reconnect preserves the queued control order behind an interrupted snapshot
+  ---
+  duration_ms: 114.357713
+  type: 'test'
+  ...
+# Subtest: R116 an earlier handler ACK cannot release a different snapshot barrier after reconnect
+ok 31 - R116 an earlier handler ACK cannot release a different snapshot barrier after reconnect
+  ---
+  duration_ms: 201.897871
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2375.555117

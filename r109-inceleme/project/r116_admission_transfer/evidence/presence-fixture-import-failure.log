@@ -1,0 +1,42 @@
+TAP version 13
+# node:internal/modules/cjs/loader:1430
+#   const err = new Error(message);
+#               ^
+# Error: Cannot find module '/tmp/core511-build-deps/node_modules/eslint-scope'
+# Require stack:
+# - /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/native-logout-fixture.mjs
+#     at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+#     at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+#     at Function._load (node:internal/modules/cjs/loader:1216:25)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+#     at Module.require (node:internal/modules/cjs/loader:1527:12)
+#     at require (node:internal/modules/helpers:147:16)
+#     at file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/native-logout-fixture.mjs:10:56 {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/tests/native-logout-fixture.mjs'
+#   ]
+# }
+# Node.js v22.23.4
+# Subtest: /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/r116-admission-size.test.mjs
+not ok 1 - /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/r116-admission-size.test.mjs
+  ---
+  duration_ms: 882.135211
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/r116-admission-size.test.mjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 889.547308

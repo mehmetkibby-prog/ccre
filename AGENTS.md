@@ -49,3 +49,11 @@ shared_partition_actor_changed realm-wide recovery: initial recipient scope
 now includes historical local contributors, using the same closure as terminal
 validation. Three runtime files; source is exact R114_RUNE_FORUM1. No forum,
 client, schema or reward-rule changes. Preserve receipt/owner/durability guards.
+
+R116 incident continuation (14 Nov 2026): public Efsane health confirms live
+R115_SHARED_SCOPE1. Read `r109-inceleme/R116_DEVIR.md`. The active candidate
+adds bounded, ordered admission-control fragmentation on the private process
+transport, preserving the original 1 MiB frame and 4 MiB reader limits. The
+first candidate control-ordering regression was caught and fixed before
+delivery. Package source is exact R115; three runtime files, no DB or client
+changes. The original disconnect trigger is not proven by the recovery log.

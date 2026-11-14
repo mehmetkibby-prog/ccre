@@ -1,0 +1,23 @@
+{
+  "fixture": "validated tower 10 waves x 60 enemies, 8 valid drop rows",
+  "initialAdmission": "candidate transport",
+  "firstReplacement": "preserved R115 StreamControl.request",
+  "failure": {
+    "code": "ipc_frame_size",
+    "bytes": 1134373,
+    "stack": "Error: ipc_frame_size\n    at kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)\n    at framedTextR105 (file:///tmp/r116-original-stream-xbmThn/reliable-stream.mjs:33:126)\n    at framed (file:///tmp/r116-original-stream-xbmThn/reliable-stream.mjs:30:9)\n    at StreamControl.request (file:///tmp/r116-original-stream-xbmThn/reliable-stream.mjs:160:486)\n    at StreamControl.request (file:///workspace/coreoflife-r111/r109-inceleme/project/r116_admission_transfer/evidence/reproduce-restore-before.mjs:34:57)\n    at CoreCoordinator.install (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/coordinator.mjs:248:155)\n    at async CoreCoordinator.install (file:///workspace/coreoflife-r111/r109-inceleme/project/r116_admission_transfer/evidence/reproduce-restore-before.mjs:39:14)\n    at async file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/coordinator-recovery.mjs:101:13\n    at async file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/native-guild-auth.mjs:29:81\n    at async file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/realm-security-queue.mjs:16:55",
+    "channel": 4,
+    "epoch": 2,
+    "priorEpoch": 1
+  },
+  "automaticRetry": "candidate transport; running and ticket200",
+  "faults": [
+    {
+      "code": "ipc_frame_size",
+      "supervisor": true,
+      "retryChannels": [
+        4
+      ]
+    }
+  ]
+}
