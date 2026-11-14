@@ -18,6 +18,7 @@ import {controlFreezeFailureForR85,receiveFreezeFailureR85} from './freeze-failu
 import {unprovenFreezeR85} from './freeze-outcomes-r85.mjs';
 import {controlGlobalFreezeAbortFor,receiveGlobalFreezeAbort} from './global-freeze-abort-proof.mjs';
 import {markIpcRequestError} from './ipc-request-context.mjs';
+import {CONTROL_PART_BYTES_R116,CONTROL_CACHE_R116,controlPartsMethodR116,prepareControlPartsR116,takeControlPartR116,controlFingerprintR116,ControlPartsReceiverR116} from './ipc-control-parts-r116.mjs';
 const MAX_FRAME=1048576;
 // RegExp.test coerces undefined to the valid-looking string "undefined".
 // Require an actual code string before selecting it; JSON must never omit the
@@ -80,7 +81,7 @@ export class ReliableStream {
  start(){demand(!this.closed,'ipc_closed');this.connect();}
  connect() {
   if(this.closed||this.socket)return;
-  const socket=this.open();this.socket=socket;
+  const socket=this.open();this.socket=socket;const controlParts=new ControlPartsReceiverR116();
   const deadline=setTimeout(()=>socket.destroy(),5000);
   socket.on('connect',()=>{try{socket.write(framed({...this.handshake(),type:'hello',protocol:PROTOCOL}));}catch(error){this.onState('error',error.code);socket.destroy();}});
   receiveFrames(socket,(frame,wireBytes)=>{
@@ -89,9 +90,16 @@ export class ReliableStream {
     demand(frame.type==='ready'&&frame.protocol===PROTOCOL,'ipc_auth_failed');clearTimeout(deadline);this.ready=true;this.onState('ready');
     for(const row of this.pending.values()){row.sent=false;delete row.parts;}this.flush();return;
    }
+   if(frame.type==='control_parts'||frame.type==='control_part'){
+    demand(ipcSafeStream&&socket instanceof ProcessStream&&socket.name==='kernel511','ipc_control_parts_transport');
+    if(frame.type==='control_parts'){socket.write(framed(controlParts.begin(frame)));return;}
+    const assembled=controlParts.append(frame);
+    if(assembled.request){socket.write(framed(assembled.request));return;}
+    frame=assembled.frame;
+   }
    if(frame.type==='control'){
     demand(typeof this.control==='function'&&typeof frame.id==='string'&&frame.id.length<=160&&typeof frame.method==='string','invalid_ipc_control');
-    const completed=this.controlCompleted.get(frame.id),pending=this.controls.get(frame.id),fingerprint=JSON.stringify([frame.method,frame.payload]);
+    const completed=this.controlCompleted.get(frame.id),pending=this.controls.get(frame.id),fingerprint=controlFingerprintR116(frame.method,frame.payload);
     if(completed||pending)demand((completed??pending).fingerprint===fingerprint,'ipc_control_id_reused');
     const send=value=>{if(this.socket===socket&&this.ready&&!socket.destroyed)socket.write(ipcSafeStream?replyBytes(value,frame.method):framed(value));};
     if(completed){send(completed.frame);return;}
@@ -117,7 +125,7 @@ export class ReliableStream {
   },error=>this.onState('error',error.code));
   socket.on('drain',()=>this.flush());socket.on('error',()=>{});
   socket.on('close',()=>{
-   clearTimeout(deadline);if(this.socket!==socket)return;
+   clearTimeout(deadline);controlParts.clear();if(this.socket!==socket)return;
    this.socket=null;this.ready=false;this.onState('disconnected');
    if(!this.closed)this.timer=setTimeout(()=>{this.timer=null;this.connect();},this.retryMs);
   });
@@ -152,14 +160,45 @@ export function createStreamServer(options) {
 // The parent retains this object per process incarnation while the physical
 // socket reconnects. Freeze/refresh/admission calls retain IDs on ACK loss.
 export class StreamControl {
- constructor({maxPending=128}={}){this.pending=new Map();this.send=null;this.maxPending=maxPending;this.closed=false;}
- attach(send){demand(!this.closed,'ipc_control_closed');this.send=send;for(const task of this.pending.values())send(task.frame,task.bytes);}
- detach(send){if(this.send===send)this.send=null;}
+ constructor({maxPending=128}={}){this.pending=new Map();this.send=null;this.maxPending=maxPending;this.closed=false;this.partBytesR116=0;this.sendingPartsR116=null;}
+ attach(send){demand(!this.closed,'ipc_control_closed');this.send=send;this.sendingPartsR116=null;for(const task of this.pending.values()){task.sentR116=false;if(task.partsR116)task.partsR116.index=0;}this.flushR116();}
+ detach(send){if(this.send===send){this.send=null;this.sendingPartsR116=null;}}
+ // Preserve the original logical wire order. A later revoke/session must not
+ // overtake an incomplete admission. Only CONTROL transmission waits; ordinary
+ // requests, results and checkpoint replies continue on the same duplex pipe.
+ flushR116(){
+  if(!this.send||this.sendingPartsR116!==null)return;
+  for(const row of this.pending.values())if(!row.sentR116){
+   row.sentR116=true;
+   if(row.partsR116){this.sendingPartsR116=row.frame.id;this.send(row.partsR116.header,row.bytes);return;}
+   this.send(row.frame,row.bytes);
+  }
+ }
  // Only bounded diagnostics may abandon an unanswered request. Durable
  // freeze/admission/refresh controls retain their existing replay semantics.
- request(method,payload,{id=randomUUID(),timeoutMs=null}={}){demand(!this.closed,'ipc_control_closed');demand(this.pending.size<this.maxPending,'ipc_control_backpressure');demand(!this.pending.has(id),'ipc_control_duplicate_pending_id');demand(timeoutMs===null||['metrics','profile','load_measure'].includes(method)&&Number.isSafeInteger(timeoutMs)&&timeoutMs>0&&timeoutMs<=5000,'ipc_control_timeout_scope');const stage=stageStartR51(),frame={type:'control',id,method,payload},encoded=framed(frame),bytes=r35Options.writerHygiene?encoded:undefined;return observeStageR51('control.'+method,stage,new Promise((resolve,reject)=>{const row={frame,bytes,resolve,reject,timer:null};this.pending.set(id,row);if(timeoutMs!==null){row.timer=setTimeout(()=>{if(this.pending.get(id)!==row)return;this.pending.delete(id);reject(kernelError('ipc_control_timeout'));},timeoutMs);row.timer.unref();}this.send?.(frame,bytes);}));}
- receive(frame){demand(frame.type==='control_result'&&typeof frame.id==='string','invalid_control_result');const row=this.pending.get(frame.id);if(!row)return;const error=frame.ok===true?null:receiveFreezeFailureR85(receiveGlobalFreezeAbort(receiveActorIsolation(kernelError(typeof frame.code==='string'?frame.code:'ipc_control_failed'),frame.actorIsolation,row.frame.method,row.frame.payload),frame.globalFreezeAbort,row.frame.method,row.frame.payload),frame.freezeFailureR85,row.frame.method,row.frame.payload);this.pending.delete(frame.id);clearTimeout(row.timer);frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(error,row.frame.method,row.frame.payload));}
- close(){this.closed=true;this.send=null;for(const row of this.pending.values()){clearTimeout(row.timer);row.reject(markIpcRequestError(kernelError('ipc_control_outcome_unknown'),row.frame.method,row.frame.payload));}this.pending.clear();}
+ request(method,payload,{id=randomUUID(),timeoutMs=null}={}){
+  demand(!this.closed,'ipc_control_closed');demand(this.pending.size<this.maxPending,'ipc_control_backpressure');demand(!this.pending.has(id),'ipc_control_duplicate_pending_id');demand(timeoutMs===null||['metrics','profile','load_measure'].includes(method)&&Number.isSafeInteger(timeoutMs)&&timeoutMs>0&&timeoutMs<=5000,'ipc_control_timeout_scope');
+  const stage=stageStartR51(),frame={type:'control',id,method,payload};let encoded,partsR116=null;
+  try{encoded=framed(frame);}catch(error){
+   if(!ipcSafeStream||error.code!=='ipc_frame_size'||!controlPartsMethodR116(method))throw error;
+   demand(this.partBytesR116+error.bytes<=CONTROL_CACHE_R116,'ipc_control_parts_capacity');
+   partsR116=prepareControlPartsR116(frame,error.frameText);encoded=framed(partsR116.header);
+  }
+  const bytes=r35Options.writerHygiene||partsR116?encoded:undefined;
+  return observeStageR51('control.'+method,stage,new Promise((resolve,reject)=>{
+   const row={frame,bytes,partsR116,resolve,reject,timer:null,sentR116:false};this.pending.set(id,row);if(partsR116)this.partBytesR116+=partsR116.buffer.length;
+   if(timeoutMs!==null){row.timer=setTimeout(()=>{if(this.pending.get(id)!==row)return;this.pending.delete(id);reject(kernelError('ipc_control_timeout'));},timeoutMs);row.timer.unref();}
+   this.flushR116();
+  }));
+ }
+ partR116(id,index){demand(this.sendingPartsR116===id,'ipc_control_part_order');const row=this.pending.get(id);return takeControlPartR116(row?.partsR116,id,index);}
+ partSentR116(id){
+  const row=this.pending.get(id);demand(this.sendingPartsR116===id&&row?.partsR116,'ipc_control_part_order');
+  if(row.partsR116.index*CONTROL_PART_BYTES_R116>=row.partsR116.buffer.length){this.sendingPartsR116=null;this.flushR116();}
+ }
+
+ receive(frame){demand(frame.type==='control_result'&&typeof frame.id==='string','invalid_control_result');const row=this.pending.get(frame.id);if(!row)return;const error=frame.ok===true?null:receiveFreezeFailureR85(receiveGlobalFreezeAbort(receiveActorIsolation(kernelError(typeof frame.code==='string'?frame.code:'ipc_control_failed'),frame.actorIsolation,row.frame.method,row.frame.payload),frame.globalFreezeAbort,row.frame.method,row.frame.payload),frame.freezeFailureR85,row.frame.method,row.frame.payload);this.pending.delete(frame.id);if(row.partsR116)this.partBytesR116-=row.partsR116.buffer.length;clearTimeout(row.timer);frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(error,row.frame.method,row.frame.payload));}
+ close(){this.closed=true;this.send=null;for(const row of this.pending.values()){clearTimeout(row.timer);row.reject(markIpcRequestError(kernelError('ipc_control_outcome_unknown'),row.frame.method,row.frame.payload));}this.pending.clear();this.partBytesR116=0;this.sendingPartsR116=null;}
 }
 export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128,maxInflightFor=null,controlFor=null,onClose=()=>{},onSerializedR113=null}) {
   let peer=null,pending=0,closed=false,authenticating=false;const readParts=ipcSafeStream?new ReadResultParts():null;
@@ -181,6 +220,10 @@ export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128
    }
    if(ipcSafeStream&&frame.type==='result_part_request'){
     demand(socket instanceof ProcessStream&&socket.name==='kernel511','ipc_read_part_transport');send(readParts.take(frame.id,frame.index));return;
+   }
+   if(frame.type==='control_part_request'){
+    demand(ipcSafeStream&&control&&socket instanceof ProcessStream&&socket.name==='kernel511'&&Object.keys(frame).sort().join(',')==='id,index,type','ipc_control_parts_transport');
+    send(control.partR116(frame.id,frame.index));control.partSentR116(frame.id);return;
    }
    if(frame.type==='control_result'){if(!control){socket.destroy();return;}control.receive(frame);return;}
    if(frame.type!=='request'||typeof frame.id!=='string'||frame.id.length>160||typeof frame.method!=='string'||++pending>(maxInflightFor?.(peer)??maxInflight)){socket.destroy();return;}
