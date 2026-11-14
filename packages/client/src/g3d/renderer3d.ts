@@ -601,7 +601,22 @@ export class Renderer3D {
     this.frameNo++;
     if (this.composer) this.composer.render(); else this.renderer.render(this.scene, this.camera);
     this.drawOverlay(now);
+    if (this.captureCb) {
+      // ekran görüntüsü: WebGL tamponu ancak çizimle aynı görevde okunabilir; isim/hasar katmanı üstüne eklenir
+      const cb = this.captureCb; this.captureCb = null;
+      try {
+        const out = document.createElement('canvas');
+        out.width = this.canvas.width; out.height = this.canvas.height;
+        const c = out.getContext('2d')!;
+        c.drawImage(this.canvas, 0, 0);
+        c.drawImage(this.overlay, 0, 0, out.width, out.height);
+        out.toBlob((b) => cb(b), 'image/png');
+      } catch { cb(null); }
+    }
   }
+  private captureCb: ((b: Blob | null) => void) | null = null;
+  /** Bir sonraki karede oyun görüntüsünü PNG olarak verir. */
+  capture(): Promise<Blob | null> { return new Promise((res) => { this.captureCb = res; }); }
 
   private ambient(dt: number) {
     const q = store.get().settings.quality;

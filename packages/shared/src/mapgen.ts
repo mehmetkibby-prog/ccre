@@ -199,7 +199,7 @@ function genVillage(l: MapLayout, rng: Rng) {
       const i = idx(l, x, y);
       if (protect[i] || l.blocked[i]) continue;
       const dense = smoothNoise(x, y, 6, 1907 + 3);
-      const want = dense > 0.56 ? rng() < 0.6 : rng() < 0.035;
+      const want = dense > 0.6 ? rng() < 0.42 : rng() < 0.018; // seyrek koru: ağaçlar arası açıklık kalsın
       if (want && (x + y) % 2 === 0) {
         l.props.push({ k: rng() < 0.4 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 24, y: tc(y) + (rng() - 0.5) * 18, v: (rng() * 4) | 0, s: 0.95 + rng() * 0.45 });
         l.blocked[i] = 1;
@@ -226,8 +226,9 @@ function genVillage(l: MapLayout, rng: Rng) {
     const i = idx(l, x, y);
     if (protect[i] && edge > 1) continue;
     if (edge <= 1) l.blocked[i] = 1;
-    if (edge <= 2 && (x + y) % 2 === 0 && !l.ground[i]) {
-      l.props.push({ k: rng() < 0.3 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 20, y: tc(y) + (rng() - 0.5) * 16, v: (rng() * 4) | 0, s: 0.9 + rng() * 0.35 });
+    // sınır: tek sıra, üç karoda bir (dağlar ve ufuk görünsün); iri ağaçlar boşluğu kapatır
+    if (edge === 1 && (x + y) % 3 === 0 && !l.ground[i]) {
+      l.props.push({ k: rng() < 0.3 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 20, y: tc(y) + (rng() - 0.5) * 16, v: (rng() * 4) | 0, s: 1.05 + rng() * 0.35 });
       l.blocked[i] = 1;
     }
   }

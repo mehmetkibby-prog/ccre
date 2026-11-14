@@ -43,6 +43,7 @@ export function MenuIcon({ k }: { k: string }) {
     gear: <><circle cx="24" cy="24" r="8" stroke="#c8c0b0" strokeWidth="4" /><path d="M24 6 V12 M24 36 V42 M6 24 H12 M36 24 H42 M11 11 L15 15 M33 33 L37 37 M37 11 L33 15 M15 33 L11 37" stroke="#c8c0b0" strokeWidth="4" /></>,
     potion: <><path d="M20 6 H28 V14 C36 18 38 26 36 32 C34 40 14 40 12 32 C10 26 12 18 20 14 Z" fill="#ff4d5a" stroke={dark} strokeWidth="2" /><ellipse cx="19" cy="24" rx="3" ry="6" fill="#fff" opacity=".6" /></>,
     pick: <><path d="M10 30 L24 16 L38 30" stroke={gold} strokeWidth="4" /><path d="M24 16 V42" stroke={gold} strokeWidth="4" /></>,
+    camera: <><rect x="6" y="14" width="36" height="24" rx="4" fill="#4a3a2a" stroke={gold} strokeWidth="2.5" /><path d="M16 14 L19 9 H29 L32 14" fill="#4a3a2a" stroke={gold} strokeWidth="2.5" /><circle cx="24" cy="26" r="7" fill="#1a1410" stroke="#c8c0b0" strokeWidth="2.5" /><circle cx="26" cy="24" r="2" fill="#fff" opacity=".7" /></>,
     chat: <><path d="M8 10 H40 V32 H22 L12 40 V32 H8 Z" fill="#2a3a2a" stroke={gold} strokeWidth="2.5" /></>,
     exit: <><path d="M20 8 H8 V40 H20" stroke="#c8c0b0" strokeWidth="3.5" /><path d="M18 24 H42 M34 16 L42 24 L34 32" stroke="#ff8a7a" strokeWidth="3.5" /></>,
   };

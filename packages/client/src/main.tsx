@@ -181,8 +181,12 @@ function MenuBackdrop() {
   // iki farklı sahneyi üst üste bindirip hayalet gibi gösteriyordu; yalnız ?canli adresinde (kayıt/deneme) açılır.
   const liveOk = useMemo(() => new URLSearchParams(location.search).has('canli') && !matchMedia('(pointer: coarse)').matches, []);
   useEffect(() => { document.documentElement.classList.remove('boot'); }, []);
-  // bilgisayarda 1600×900 yüksek kaliteli video, telefonda hafif 960×540 sürüm
-  const videoSrc = useMemo(() => (!matchMedia('(pointer: coarse)').matches && innerWidth * (devicePixelRatio || 1) > 1100 ? '/poster/arena_hd.mp4' : '/poster/arena.mp4'), []);
+  // ekranı kaplamak (cover) için gereken gerçek piksel genişliği: katlanır telefonun iç ekranı (~2000 px) ve
+  // dikey telefonlar (boy × 16/9) dahil neredeyse her cihaz 1600×900 sürümü alır; yalnız küçük ekranlar hafif sürümü
+  const videoSrc = useMemo(() => {
+    const need = Math.max(innerWidth, innerHeight * 16 / 9) * (devicePixelRatio || 1);
+    return need > 1100 ? '/poster/arena_hd.mp4' : '/poster/arena.mp4';
+  }, []);
   useEffect(() => { if (shown) { const id = setTimeout(() => vid.current?.pause(), 2000); return () => clearTimeout(id); } }, [shown]);
   useEffect(() => {
     if (fallback || !liveOk) return;

@@ -584,6 +584,23 @@ export class Game {
       this.moveTarget = null;
     }
   }
+  /** Ekran görüntüsü: oyun sahnesini PNG kaydeder (telefonda paylaşım menüsü, değilse İndirilenler'e). */
+  async screenshot() {
+    const blob = await this.renderer.capture();
+    if (!blob) return notify('Ekran görüntüsü alınamadı.', 'error');
+    const d = new Date(), z = (n: number) => String(n).padStart(2, '0');
+    const name = `tugra-${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.png`;
+    sfx.play('ui');
+    const file = new File([blob], name, { type: 'image/png' });
+    const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean };
+    if (matchMedia('(pointer: coarse)').matches && nav.canShare?.({ files: [file] })) {
+      try { await nav.share({ files: [file], title: 'Tuğra Online' }); return; } catch { /* paylaşım kapatıldı: indirmeye düş */ }
+    }
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    notify('Ekran görüntüsü kaydedildi (İndirilenler)', 'ok');
+  }
   useSkill(s: number) {
     const sk = classSkill(this.cls, s, store.get().self?.spec ?? null);
     if (!sk) return notify('Bu beceri henüz açılmadı.', 'error');
@@ -686,6 +703,7 @@ export class Game {
 
   private onKey(code: string, down: boolean, e: KeyboardEvent) {
     if (code === 'Space' || code === 'Digit1') { this.attackPressed(down); return; }
+    if (code === 'PrintScreen') { if (!down) this.screenshot(); return; } // tarayıcılar çoğunlukla yalnız bırakmayı iletir
     if (!down) return;
     const toggle = (p: any) => store.set((s) => ({ panel: s.panel === p ? null : p }));
     switch (code) {
@@ -697,6 +715,7 @@ export class Game {
       case 'Tab': this.cycleTarget(); break;
       case 'KeyI': case 'KeyB': toggle('inventory'); break;
       case 'KeyC': toggle('character'); break;
+      case 'F8': this.screenshot(); break;
       case 'KeyK': toggle('skills'); break;
       case 'KeyM': toggle('map'); break;
       case 'KeyT': toggle('teleport'); break;
