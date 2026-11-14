@@ -89,7 +89,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
       }
       if (rot && game) {
         // sürüklemeden sağ tık: hedefe saldır
-        if (!rot.moved && rot.btn === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; } }
+        if (!rot.moved && rot.btn === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; game.walkToTarget = true; } }
         rot = null;
       }
     };

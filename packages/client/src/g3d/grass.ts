@@ -36,7 +36,7 @@ export class GrassField {
     this.geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     const frozen = l.def.theme === 'frozen';
     // alpha-to-coverage KULLANILMAZ: donanım kenar yumuşatması kapalı cihazlarda kartın saydam köşeleri siyah dikdörtgen çiziliyordu
-    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xf4fff0 });
+    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.5, side: THREE.DoubleSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xffffff });
     addWind(m, 0.1, 0.4);
     addFade(m); // rüzgârdan önce çalışır
     this.mat = m;
@@ -68,7 +68,7 @@ export class GrassField {
       if (l.blocked[ty * l.w + tx] && r2 < 0.6) continue;
       p.set(gx, this.heightAt(sx, sy) - 0.02, gz);
       e.set(0, r3 * 6.283, 0); q.setFromEuler(e);
-      const sc = 0.6 + r2 * 0.5; s.set(sc, sc * (k > 1 ? 1.2 : 0.9) * (0.75 + r1 * 0.4), sc);
+      const sc = 0.6 + r2 * 0.5; s.set(sc * 1.1, sc * (k > 1 ? 1.0 : 0.78) * (0.75 + r1 * 0.35), sc * 1.1);
       mats.push(m4.compose(p, q, s).clone());
     }
     if (!mats.length) return null;

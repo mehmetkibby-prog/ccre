@@ -307,9 +307,49 @@ const foxMats = new Map<number, THREE.Material>();
  * Meshy'de tasarlanıp scripts/quad-rig.mjs ile dört ayaklı iskelete bağlanan tilki. Kemik adları QB ile aynı,
  * dinlenme dönüşleri birim: quadAnimate doğrudan sürer. Model yüklenmediyse null (çizilmiş tilki görünür).
  */
+/**
+ * quad-rig.mjs kuyruk ucundaki köşeleri arka pati/bacak kemiklerine bağlamıştı: tilki yürürken bacak oynadıkça
+ * kuyruk ucu patiye doğru gerilip arkasında iz gibi uzuyordu. Bacak kemiğinden (kemik–çocuk parçasına) çok uzak
+ * düşen bacak ağırlıkları en yakın gövde/kuyruk kemiğine taşınır. Geometri klonlar arasında ortak: bir kez yapılır.
+ */
+const quadFixed = new WeakSet<THREE.BufferGeometry>();
+function fixQuadWeights(scene: THREE.Object3D) {
+  scene.traverse((o) => {
+    const m = o as THREE.SkinnedMesh;
+    if (!m.isSkinnedMesh || quadFixed.has(m.geometry)) return;
+    quadFixed.add(m.geometry);
+    const bones = m.skeleton.bones, n = bones.length;
+    const bp = m.skeleton.boneInverses.map((bi) => new THREE.Vector3().setFromMatrixPosition(bi.clone().invert()));
+    const child = bones.map((b) => { const c = b.children.find((x) => (x as THREE.Bone).isBone); return c ? bones.indexOf(c as THREE.Bone) : -1; });
+    const isLeg = bones.map((b) => /^[fb][lr][ULP]$/.test(b.name));
+    const spine = bones.map((b, i) => (/^(tail1|tail2|body)$/.test(b.name) ? i : -1)).filter((i) => i >= 0);
+    if (!spine.length) return;
+    let zmin = Infinity, zmax = -Infinity; for (const v of bp) { zmin = Math.min(zmin, v.z); zmax = Math.max(zmax, v.z); }
+    const T = Math.max(0.05, (zmax - zmin) * 0.22);
+    const seg = new THREE.Line3(), q = new THREE.Vector3(), v = new THREE.Vector3();
+    const segDist = (k: number, p: THREE.Vector3) => { const c = child[k]; if (c < 0) return p.distanceTo(bp[k]); seg.set(bp[k], bp[c]); seg.closestPointToPoint(p, true, q); return p.distanceTo(q); };
+    const P = m.geometry.attributes.position, J = m.geometry.attributes.skinIndex, W = m.geometry.attributes.skinWeight;
+    let moved = 0;
+    for (let i = 0; i < P.count; i++) {
+      v.fromBufferAttribute(P, i).applyMatrix4(m.bindMatrix);
+      const js = [0, 1, 2, 3].map((k) => J.getComponent(i, k)), ws = [0, 1, 2, 3].map((k) => W.getComponent(i, k));
+      let bad = 0;
+      for (let k = 0; k < 4; k++) if (ws[k] > 0 && js[k] < n && isLeg[js[k]] && segDist(js[k], v) > T) { bad += ws[k]; ws[k] = 0; }
+      if (bad <= 0) continue;
+      let best = spine[0], bd = Infinity; for (const k of spine) { const d = segDist(k, v); if (d < bd) { bd = d; best = k; } }
+      let slot = js.indexOf(best); if (slot < 0) { slot = ws.indexOf(Math.min(...ws)); js[slot] = best; ws[slot] = 0; }
+      ws[slot] += bad; moved++;
+      const sum = ws[0] + ws[1] + ws[2] + ws[3] || 1;
+      J.setXYZW(i, js[0], js[1], js[2], js[3]); W.setXYZW(i, ws[0] / sum, ws[1] / sum, ws[2] / sum, ws[3] / sum);
+    }
+    J.needsUpdate = true; W.needsUpdate = true;
+    if (moved) console.info('[tilki] kuyruk ağırlığı düzeltildi:', moved);
+  });
+}
 function createMeshFox(variant: number, s: number): MonsterRig | null {
   const L = loadModel('fox_mesh');
   if (!L) return null;
+  fixQuadWeights(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
   const bones: Record<string, THREE.Bone> = {};
   inner.traverse((o) => {

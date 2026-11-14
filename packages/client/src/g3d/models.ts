@@ -281,9 +281,44 @@ export function weaponGlb(id: string): THREE.Object3D | null {
 /** Elle çizilmiş klipler (model kimliği başına bir kez). */
 const customClips = new Map<string, ReturnType<typeof guardianClips> | null>();
 
+/**
+ * Tilki Kral: Meshy iki ayaklı iskeletinde kuyruk kemiği yok, kuyruk köşeleri sol bacağa bağlanmıştı; yürürken
+ * kuyruk bacakla savrulup gerilerek arkasında iz gibi uzuyordu. Gövdenin arkasındaki (ve bel altındaki) köşeler
+ * kalçaya taşınır: kuyruk gövdeyle birlikte hareket eder. Geometri klonlar arasında ortak: bir kez yapılır.
+ */
+const tailFixed = new WeakSet<THREE.BufferGeometry>();
+function tailToHips(scene: THREE.Object3D) {
+  scene.traverse((o) => {
+    const m = o as THREE.SkinnedMesh;
+    if (!m.isSkinnedMesh || tailFixed.has(m.geometry)) return;
+    tailFixed.add(m.geometry);
+    const hips = m.skeleton.bones.findIndex((b) => b.name === 'Hips');
+    if (hips < 0) return;
+    const P = m.geometry.attributes.position, J = m.geometry.attributes.skinIndex, W = m.geometry.attributes.skinWeight;
+    m.geometry.computeBoundingBox();
+    const bb = m.geometry.boundingBox!, zc = (bb.min.z + bb.max.z) / 2, zh = (bb.max.z - bb.min.z) / 2, yc = (bb.min.y + bb.max.y) / 2, yh = (bb.max.y - bb.min.y) / 2;
+    const ws = [0, 0, 0, 0], js = [0, 0, 0, 0];
+    for (let i = 0; i < P.count; i++) {
+      const back = (zc - P.getZ(i)) / zh, up = (P.getY(i) - yc) / yh;
+      if (back < 0.32 || up > 0.12 || up < -0.95) continue;
+      const f = THREE.MathUtils.smoothstep(back, 0.32, 0.5) * THREE.MathUtils.smoothstep(-up, -0.12, 0.02);
+      if (f <= 0) continue;
+      for (let k = 0; k < 4; k++) { js[k] = J.getComponent(i, k); ws[k] = W.getComponent(i, k) * (1 - f); }
+      let slot = js.indexOf(hips);
+      if (slot < 0) { slot = ws.indexOf(Math.min(...ws)); js[slot] = hips; ws[slot] = 0; }
+      ws[slot] += f;
+      const sum = ws[0] + ws[1] + ws[2] + ws[3] || 1;
+      J.setXYZW(i, js[0], js[1], js[2], js[3]);
+      W.setXYZW(i, ws[0] / sum, ws[1] / sum, ws[2] / sum, ws[3] / sum);
+    }
+    J.needsUpdate = true; W.needsUpdate = true;
+  });
+}
+
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
   if (!L) return null;
+  if (id === 'fox_king') tailToHips(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
   inner.scale.setScalar(L.scale);
   inner.position.y = L.offsetY;

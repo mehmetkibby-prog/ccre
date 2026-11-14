@@ -335,18 +335,20 @@ export function leafTexture(kind: 'broad' | 'needle' | 'grass'): THREE.Texture {
     }
     ctx.filter = 'none';
   } else {
-    // anime çimen: az sayıda geniş, yumuşak, sivri uçlu yaprak; dipte zemin yeşili, uçta açık sarı-yeşil.
-    // (Önceki 46 ince sap ekranda bir pikselden inceydi ve yürürken titriyordu.)
-    ctx.filter = 'blur(0.6px)';
-    for (let i = 0; i < 9; i++) {
-      const x = 22 + (i / 8) * (S - 44) + (rnd() - 0.5) * 18, h = S * (0.5 + rnd() * 0.42), w = 16 + rnd() * 12, lean = (rnd() - 0.5) * 70;
+    // yumuşak çimen: geniş, uçları yuvarlak yapraklar; zemine yakın, düşük karşıtlıklı renkler.
+    // (Sivri uçlu, koyu dipli yapraklar pazar köyünde keskin diken öbekleri gibi görünüyordu.)
+    ctx.filter = 'blur(1.4px)';
+    for (let i = 0; i < 11; i++) {
+      const x = 20 + (i / 10) * (S - 40) + (rnd() - 0.5) * 16, h = S * (0.42 + rnd() * 0.36), w = 22 + rnd() * 14, lean = (rnd() - 0.5) * 46;
       const grd = ctx.createLinearGradient(0, S, 0, S - h);
-      grd.addColorStop(0, 'rgb(96,164,66)'); grd.addColorStop(0.55, 'rgb(142,198,86)'); grd.addColorStop(1, 'rgb(206,234,128)');
+      grd.addColorStop(0, 'rgb(122,198,98)'); grd.addColorStop(0.6, 'rgb(134,208,104)'); grd.addColorStop(1, 'rgb(150,218,114)'); // ışıkla zemin yeşiline oturur
       ctx.fillStyle = grd;
+      const tx = x + lean, ty = S - h, r = w * 0.32;
       ctx.beginPath();
       ctx.moveTo(x - w / 2, S);
-      ctx.quadraticCurveTo(x - w * 0.35 + lean * 0.4, S - h * 0.55, x + lean, S - h);
-      ctx.quadraticCurveTo(x + w * 0.35 + lean * 0.4, S - h * 0.5, x + w / 2, S);
+      ctx.quadraticCurveTo(x - w * 0.42 + lean * 0.4, S - h * 0.5, tx - r, ty + r);
+      ctx.quadraticCurveTo(tx, ty - r * 0.6, tx + r, ty + r); // yuvarlak uç
+      ctx.quadraticCurveTo(x + w * 0.42 + lean * 0.4, S - h * 0.5, x + w / 2, S);
       ctx.closePath(); ctx.fill();
     }
     ctx.filter = 'none';

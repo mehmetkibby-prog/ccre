@@ -585,6 +585,7 @@ export class World {
         if (!validTarget(target)) return this.notice(p, 'Önce bir hedef seç.');
         if (dist(p, target) > sk.range + MONSTER_RADIUS + RANGE_TOLERANCE) return this.notice(p, 'Hedef menzil dışında.');
         use(target.x, target.y, target.id);
+        if (sk.kind === 'pull' && target instanceof Monster && target.def.boss) this.notice(p, 'Bosslar zincirle çekilemez; yine de hasar aldı.');
         if (sk.kind === 'pull' && target instanceof Monster && !target.def.boss) {
           const a = Math.atan2(target.y - p.y, target.x - p.x);
           const np = nearestFree(z.layout, p.x + Math.cos(a) * 70, p.y + Math.sin(a) * 70);

@@ -13,6 +13,8 @@ export interface Sample { t: number; x: number; y: number }
 export interface CEnt {
   id: number; kind: number;
   x: number; y: number; samples: Sample[];
+  /** Zincir Çekişi: canavar eski yerinden oyuncuya sürüklenerek gelir */
+  slide?: { x0: number; y0: number; t0: number };
   dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
   name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; guild: string; combo?: number;
@@ -53,8 +55,11 @@ export class Game {
   moveTarget: { x: number; y: number } | null = null;
   interactNpc: string | null = null;
   autoAttack = false;
+  /** hedefe yürüyerek saldırı yalnız fareyle canavara tıklayınca; saldırı tuşu (1 / boşluk / mobil düğme) olduğu yerde vurur */
+  walkToTarget = false;
   /** Saldırı basılıyken hedef öldü: yeni hedefe geçmek için tuş bırakılıp yeniden basılmalı (makro/ağırlıkla bot gibi kasılmayı önler). */
   attackNeedsRelease = false;
+  private farHintAt = 0;
   /** Yakın dövüş saldırısı başlayanlar: vuruş anını eşlemek ve kombo sırası için */
   meleeCast = new Map<number, { at: number; combo: number }>();
   selfCombo = 0;
@@ -325,6 +330,7 @@ export class Game {
           }, MELEE_IMPACT_MS - 40);
         }
         else if (ev.skill > 0 && isSelf) sfx.play('skill');
+        if (clsIdx === 0 && ev.skill === 1 && ev.tgt) { const te = this.ents.get(ev.tgt); if (te && te.kind === Kind.MONSTER && !MONSTERS[te.tpl]?.boss) te.slide = { x0: te.x, y0: te.y, t0: now + 120 }; }
         if (clsIdx === 0 && ev.skill === 1) this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 70, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 300, color: '#ffd27a' });
         if (ev.skill > 0 && ev.skill < 9) this.skillFx(clsIdx, ev.skill, sp, ev, now);
         break;
@@ -427,6 +433,12 @@ export class Game {
         else { e.x = a.x + (b.x - a.x) * k; e.y = a.y + (b.y - a.y) * k; }
       }
       while (s.length > 2 && s[1].t < rt - 200) s.shift();
+      if (e.slide) {
+        // zincir: önce kısa gerilme, sonra hızla oyuncuya sürüklenme
+        const k = (now - e.slide.t0) / 380;
+        if (k >= 1) e.slide = undefined;
+        else { const q = k <= 0 ? 0 : 1 - (1 - k) * (1 - k); e.x = e.slide.x0 + (e.x - e.slide.x0) * q; e.y = e.slide.y0 + (e.y - e.slide.y0) * q; }
+      }
     }
   }
 
@@ -479,11 +491,15 @@ export class Game {
         // hedef öldü: basılı tutulan saldırı kendiliğinden sıradaki canavara geçmez
         t = undefined; this.autoAttack = false;
         if (this.input.attackHeld) this.attackNeedsRelease = true;
-      } else if (!t && !this.attackNeedsRelease) { const nt = this.nearestEnemy(manual ? this.selfRange() + 60 : 700); if (nt) { this.setTarget(nt.id); t = nt; } }
+      } else if (!t && !this.attackNeedsRelease) { const nt = this.nearestEnemy(this.selfRange() + 40); if (nt) { this.setTarget(nt.id); t = nt; } }
       if (t) {
         const d = Math.hypot(t.x - this.px, t.y - this.py);
         const range = this.selfRange();
-        if (d > range - 8) { if (!manual) dir = dirIndexFromVector(t.x - this.px, t.y - this.py); }
+        if (d > range - 8) {
+          // tuşla saldırıda karakter canavara yürümez (bot kurulmasın); yalnız tıklanan hedefe yürünür
+          if (!manual && this.walkToTarget) dir = dirIndexFromVector(t.x - this.px, t.y - this.py);
+          else if (!manual && this.input.attackHeld && performance.now() - this.farHintAt > 2500) { this.farHintAt = performance.now(); notify('Hedef çok uzak: yaklaş ya da canavara tıkla.', 'error'); }
+        }
         else {
           const cd = attackCooldown(650, st.self?.combat?.atkSpeed ?? 0);
           const now = performance.now();
@@ -559,7 +575,9 @@ export class Game {
     if (!down) { this.attackNeedsRelease = false; return; }
     if (down) {
       const t = this.targetId ? this.ents.get(this.targetId) : null;
-      if (!t || t.hp <= 0) { const nt = this.nearestEnemy(700); if (nt) this.setTarget(nt.id); }
+      // yalnız vuruş menzilindeki canavar seçilir: tuşa basmak uzaktaki canavara götürmez
+      if (!t || t.hp <= 0) { const nt = this.nearestEnemy(this.selfRange() + 40); this.setTarget(nt ? nt.id : 0); }
+      this.walkToTarget = false;
       this.autoAttack = true;
       this.moveTarget = null;
     }
@@ -630,7 +648,7 @@ export class Game {
     if (hit?.type !== 'npc') { const sl = this.stallAt(wx, wy); if (sl && !(hit?.type === 'ent' && hit.e!.kind === Kind.MONSTER)) { this.openStall(sl); return; } }
     if (hit?.type === 'ent') {
       this.setTarget(hit.e!.id);
-      if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.moveTarget = null; }
+      if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
       return;
     }
     if (hit?.type === 'npc') {

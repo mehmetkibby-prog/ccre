@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as THREE from 'three';
 import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, MONSTER_INDEX, validateCharacterName, type ClassId } from '@col/shared';
@@ -176,8 +176,14 @@ function MenuBackdrop() {
   const ref = useRef<HTMLCanvasElement>(null);
   const [fallback, setFallback] = useState(false);
   const [shown, setShown] = useState(false);
+  const vid = useRef<HTMLVideoElement>(null);
+  // telefonda canlı 3B sahne açılmaz (veri ve pil): hazır savaş videosu döner. Masaüstünde video hemen oynar,
+  // canlı sahne tüm modeller (boss + 8 oyuncu + silahlar) yüklenince üstüne yumuşakça geçer; yarım sahne hiç görünmez.
+  const liveOk = useMemo(() => !matchMedia('(pointer: coarse)').matches && innerWidth > 860, []);
+  useEffect(() => { document.documentElement.classList.remove('boot'); }, []);
+  useEffect(() => { if (shown) { const id = setTimeout(() => vid.current?.pause(), 2000); return () => clearTimeout(id); } }, [shown]);
   useEffect(() => {
-    if (fallback) return;
+    if (fallback || !liveOk) return;
     const canvas = ref.current!;
     let r: Renderer3D;
     // Tilki Kral Arenası: 8 kişilik grup boss'la savaşıyor (giriş ekranı sahnesi)
@@ -222,8 +228,9 @@ function MenuBackdrop() {
     const loop = (t: number) => {
       const dt = Math.min(100, t - last); last = t;
       const s = (t - t0) / 1000;
-      r.camYaw = s * 0.06; // tam tur ≈ 1,7 dakika
-      co.dist = 15 + Math.sin(s * 0.11) * 2;
+      const rec = (window as any).__menuCam as ((s: number) => [number, number]) | undefined; // video kaydı için kamera
+      if (rec) [r.camYaw, co.dist] = rec(s);
+      else { r.camYaw = s * 0.06; co.dist = 15 + Math.sin(s * 0.11) * 2; } // tam tur ≈ 1,7 dakika
       for (let k = later.length - 1; k >= 0; k--) if (t >= later[k].at) { const f = later[k].f; later.splice(k, 1); f(); }
       // oyuncular
       for (const m of party) {
@@ -292,11 +299,16 @@ function MenuBackdrop() {
       }
       // geniş ekranda ferman solda: savaş sahnesi sağ boşlukta görünsün
       const cw = canvas.clientWidth, chh = canvas.clientHeight;
-      if (cw > 860) r.camera.setViewOffset(cw, chh, -cw * 0.04, 0, cw, chh); else if (r.camera.view) r.camera.clearViewOffset();
+      if (cw > 860 && !rec) r.camera.setViewOffset(cw, chh, -cw * 0.04, 0, cw, chh); else if (r.camera.view) r.camera.clearViewOffset();
       try { r.draw(t, dt); } catch (e) { console.warn('[menü] çizim hatası', e); setFallback(true); return; }
       const self = (r as any).self; if (self) self.obj.visible = false; // kendi karakter yok
-      // sahne, boss modeli gelince (en geç 8 sn) belirsin: boş arena görünmesin
-      if (!shownRef && ((r as any).views?.get(BOSS)?.glb || s > 8) && ++frames > 2) { shownRef = true; setShown(true); }
+      // canlı sahne ancak herkes (boss, 8 oyuncu, silahları) tam yüklenince belirir; o zamana dek video oynar
+      if (!shownRef) {
+        const views = (r as any).views as Map<number, { glb?: unknown; ph?: boolean; wpend?: string | null; apend?: string | null }> | undefined;
+        const ok = !!views && [BOSS, ...party.map((m) => m.e.id)].every((id) => { const v = views.get(id); return v && v.glb && !v.ph && !v.wpend && !v.apend; });
+        frames = ok ? frames + 1 : 0;
+        if (frames > 20) { shownRef = true; canvas.dataset.ready = '1'; setShown(true); }
+      }
       raf = requestAnimationFrame(loop);
     };
     let shownRef = false;
@@ -305,7 +317,11 @@ function MenuBackdrop() {
   }, [fallback]);
   if (fallback) return <SparkBackdrop />;
   // hazır sahne görüntüsü anında görünür; canlı 3B sahne hazır olunca üstüne yumuşakça geçer
-  return <><img className="screen-poster" src="poster/arena.jpg" alt="" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /><canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} /><div className="screen-vignette" /></>;
+  return <>
+    <video ref={vid} className="screen-poster" src="/poster/arena.mp4" poster="/poster/arena.jpg" autoPlay muted loop playsInline preload="auto" />
+    {liveOk && <canvas ref={ref} className={'screen-live' + (shown ? ' on' : '')} />}
+    <div className="screen-vignette" />
+  </>;
 }
 
 /** Yedek arka plan: hafif sis ve kıvılcımlar. */

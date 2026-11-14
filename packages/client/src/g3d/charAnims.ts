@@ -162,6 +162,12 @@ const GUARD: Pose = {
   RightUpLeg: { e: [10, 0, -6] }, RightLeg: { e: [14, 0, 0] }, RightFoot: { e: [-4, 0, 0] },
 };
 const P = (over: Pose): Pose => ({ ...GUARD, ...over });
+/** tüm gövde: kalça yaw (sola +) ve öne eğilme (derece) verilir; bacaklar ters dönerek ayaklar yerde kalır */
+const B = (pose: Pose, yaw: number, lean = 0): Pose => {
+  const o: Pose = { ...pose, Hips: { e: [lean, yaw, 0] } };
+  for (const n of ['LeftUpLeg', 'RightUpLeg']) { const e = o[n]?.e ?? [0, 0, 0]; o[n] = { e: [e[0] - lean, e[1] - yaw, e[2]] }; }
+  return o;
+};
 const LUNGE_L: Pose = { LeftUpLeg: { e: [-30, 0, 6] }, LeftLeg: { e: [30, 0, 0] }, RightUpLeg: { e: [20, 0, -6] }, RightLeg: { e: [8, 0, 0] } };
 const LUNGE_R: Pose = { RightUpLeg: { e: [-26, 0, -6] }, RightLeg: { e: [28, 0, 0] }, LeftUpLeg: { e: [16, 0, 6] }, LeftLeg: { e: [10, 0, 0] } };
 
@@ -171,25 +177,25 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
   // 1) yatay kesik: sağdan sola, gövde ile birlikte savrulur
   const a1 = buildClip('G Kesik 1', inner, root, [
     { t: 0, p: GUARD },
-    { t: 0.11, ease: 'out', hips: [-0.03, -0.02], p: P({ Spine02: { e: [6, -32, 0] }, Spine: { e: [0, -16, 0] }, Head: { e: [-8, 26, 0] }, RightArm: { a: [-0.92, 0.28, -0.18] }, RightForeArm: { a: [-0.55, 0.3, -0.78], bl: [-0.3, 0.6, -0.75] } }) },
-    { t: I, ease: 'in', hips: [-0.07, 0.07], p: P({ ...LUNGE_L, Spine02: { e: [12, 22, 0] }, Spine: { e: [6, 16, 0] }, Head: { e: [-8, -24, 0] }, RightArm: { a: [0.15, 0.02, 1] }, RightForeArm: { a: [0.8, -0.02, 0.6], bl: [-0.2, 0.05, 1] } }) },
-    { t: 0.31, ease: 'out', hips: [-0.07, 0.08], p: P({ ...LUNGE_L, Spine02: { e: [12, 40, 0] }, Spine: { e: [6, 26, 0] }, Head: { e: [-8, -34, 0] }, RightArm: { a: [0.62, -0.12, 0.7] }, RightForeArm: { a: [0.96, -0.12, -0.15], bl: [0.3, 0, 1] } }) },
+    { t: 0.11, ease: 'out', hips: [-0.04, -0.05], p: B(P({ Spine02: { e: [4, -26, 0] }, Spine: { e: [0, -12, 0] }, Head: { e: [-8, 34, 0] }, RightArm: { a: [-0.92, 0.28, -0.18] }, RightForeArm: { a: [-0.55, 0.3, -0.78], bl: [-0.3, 0.6, -0.75] } }), -22, -4) },
+    { t: I, ease: 'in', hips: [-0.1, 0.13], p: B(P({ ...LUNGE_L, Spine02: { e: [12, 18, 0] }, Spine: { e: [6, 12, 0] }, Head: { e: [-10, -34, 0] }, RightArm: { a: [0.15, 0.02, 1] }, RightForeArm: { a: [0.8, -0.02, 0.6], bl: [-0.2, 0.05, 1] } }), 20, 10) },
+    { t: 0.31, ease: 'out', hips: [-0.11, 0.15], p: B(P({ ...LUNGE_L, Spine02: { e: [12, 32, 0] }, Spine: { e: [6, 20, 0] }, Head: { e: [-10, -50, 0] }, RightArm: { a: [0.62, -0.12, 0.7] }, RightForeArm: { a: [0.96, -0.12, -0.15], bl: [0.3, 0, 1] } }), 30, 12) },
     { t: 0.62, ease: 'inOut', p: GUARD },
   ], 0.62);
   // 2) ters kesik: soldan sağa yükselen
   const a2 = buildClip('G Kesik 2', inner, root, [
     { t: 0, p: GUARD },
-    { t: 0.11, ease: 'out', hips: [-0.04, -0.01], p: P({ Spine02: { e: [10, 34, 0] }, Spine: { e: [4, 18, 0] }, Head: { e: [-8, -28, 0] }, RightArm: { a: [0.55, -0.4, 0.73] }, RightForeArm: { a: [0.82, -0.5, -0.2], bl: [0.3, -0.8, -0.4] } }) },
-    { t: I, ease: 'in', hips: [-0.06, 0.06], p: P({ ...LUNGE_R, Spine02: { e: [6, -22, 0] }, Spine: { e: [0, -14, 0] }, Head: { e: [-8, 20, 0] }, RightArm: { a: [-0.38, 0.28, 0.88] }, RightForeArm: { a: [-0.72, 0.55, 0.42], bl: [-0.5, 0.6, 0.6] } }) },
-    { t: 0.31, ease: 'out', hips: [-0.05, 0.07], p: P({ ...LUNGE_R, Spine02: { e: [2, -38, 0] }, Spine: { e: [-2, -22, 0] }, Head: { e: [-8, 30, 0] }, RightArm: { a: [-0.85, 0.48, 0.25] }, RightForeArm: { a: [-0.58, 0.78, -0.25], bl: [-0.6, 0.7, -0.2] } }) },
+    { t: 0.11, ease: 'out', hips: [-0.05, -0.04], p: B(P({ Spine02: { e: [10, 28, 0] }, Spine: { e: [4, 14, 0] }, Head: { e: [-8, -38, 0] }, RightArm: { a: [0.55, -0.4, 0.73] }, RightForeArm: { a: [0.82, -0.5, -0.2], bl: [0.3, -0.8, -0.4] } }), 22, 6) },
+    { t: I, ease: 'in', hips: [-0.09, 0.12], p: B(P({ ...LUNGE_R, Spine02: { e: [4, -18, 0] }, Spine: { e: [0, -10, 0] }, Head: { e: [-8, 32, 0] }, RightArm: { a: [-0.38, 0.28, 0.88] }, RightForeArm: { a: [-0.72, 0.55, 0.42], bl: [-0.5, 0.6, 0.6] } }), -20, 6) },
+    { t: 0.31, ease: 'out', hips: [-0.08, 0.14], p: B(P({ ...LUNGE_R, Spine02: { e: [-2, -30, 0] }, Spine: { e: [-4, -16, 0] }, Head: { e: [-6, 48, 0] }, RightArm: { a: [-0.85, 0.48, 0.25] }, RightForeArm: { a: [-0.58, 0.78, -0.25], bl: [-0.6, 0.7, -0.2] } }), -30, 2) },
     { t: 0.62, ease: 'inOut', p: GUARD },
   ], 0.62);
   // 3) tepeden iniş: geriye yaylanıp bütün ağırlıkla aşağı
   const a3 = buildClip('G Kesik 3', inner, root, [
     { t: 0, p: GUARD },
-    { t: 0.12, ease: 'out', hips: [0.01, -0.03], p: P({ Spine02: { e: [-14, 0, 0] }, Spine: { e: [-8, 0, 0] }, Head: { e: [-2, 0, 0] }, RightArm: { a: [-0.18, 0.95, -0.22] }, RightForeArm: { a: [0, 0.3, -0.95], bl: [0, -0.6, -0.8] }, LeftArm: { a: [0.42, -0.25, 0.87] }, LeftForeArm: { a: [0.1, 0.55, 0.83] } }) },
-    { t: I + 0.02, ease: 'in', hips: [-0.12, 0.09], p: P({ LeftUpLeg: { e: [-36, 0, 5] }, LeftLeg: { e: [42, 0, 0] }, RightUpLeg: { e: [26, 0, -5] }, RightLeg: { e: [26, 0, 0] }, Spine02: { e: [30, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-16, 0, 0] }, RightArm: { a: [-0.12, 0.02, 1] }, RightForeArm: { a: [0, -0.55, 0.84], bl: [0, 1, 0.3] } }) },
-    { t: 0.34, ease: 'out', hips: [-0.13, 0.1], p: P({ LeftUpLeg: { e: [-36, 0, 5] }, LeftLeg: { e: [44, 0, 0] }, RightUpLeg: { e: [26, 0, -5] }, RightLeg: { e: [28, 0, 0] }, Spine02: { e: [34, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-20, 0, 0] }, RightArm: { a: [-0.12, -0.42, 0.9] }, RightForeArm: { a: [0, -0.88, 0.47], bl: [0, 0.4, 1] } }) },
+    { t: 0.12, ease: 'out', hips: [0.03, -0.07], p: B(P({ Spine02: { e: [-16, 0, 0] }, Spine: { e: [-10, 0, 0] }, Head: { e: [4, 0, 0] }, RightArm: { a: [-0.18, 0.95, -0.22] }, RightForeArm: { a: [0, 0.3, -0.95], bl: [0, -0.6, -0.8] }, LeftArm: { a: [0.42, -0.25, 0.87] }, LeftForeArm: { a: [0.1, 0.55, 0.83] } }), -8, -8) },
+    { t: I + 0.02, ease: 'in', hips: [-0.17, 0.16], p: B(P({ LeftUpLeg: { e: [-40, 0, 5] }, LeftLeg: { e: [50, 0, 0] }, RightUpLeg: { e: [28, 0, -5] }, RightLeg: { e: [34, 0, 0] }, Spine02: { e: [30, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.12, 0.02, 1] }, RightForeArm: { a: [0, -0.55, 0.84], bl: [0, 1, 0.3] } }), 6, 14) },
+    { t: 0.34, ease: 'out', hips: [-0.18, 0.17], p: B(P({ LeftUpLeg: { e: [-40, 0, 5] }, LeftLeg: { e: [52, 0, 0] }, RightUpLeg: { e: [28, 0, -5] }, RightLeg: { e: [36, 0, 0] }, Spine02: { e: [34, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-30, 0, 0] }, RightArm: { a: [-0.12, -0.42, 0.9] }, RightForeArm: { a: [0, -0.88, 0.47], bl: [0, 0.4, 1] } }), 8, 16) },
     { t: 0.62, ease: 'inOut', p: GUARD },
   ], 0.62);
 

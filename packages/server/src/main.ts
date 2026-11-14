@@ -47,7 +47,7 @@ async function main() {
       };
       return handleApi(router, req, res);
     }
-    if (!serveStatic(config.staticDir, url.pathname, res)) { res.writeHead(404); res.end('Not found (istemci derlenmemiş olabilir: npm run build)'); }
+    if (!serveStatic(config.staticDir, url.pathname, res, raw.headers, raw.method)) { res.writeHead(404); res.end('Not found (istemci derlenmemiş olabilir: npm run build)'); }
   });
   server.on('upgrade', (req, socket, head) => {
     if (!req.url?.startsWith('/ws')) { socket.destroy(); return; }
