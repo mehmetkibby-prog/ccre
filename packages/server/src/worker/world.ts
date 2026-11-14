@@ -1314,7 +1314,7 @@ export class World {
   private useMall(p: Player, key: string, req: string, itemId?: string) {
     const c = p.char, m = MALL.get(key)!;
     const consume = () => { c.materials[key] -= 1; if (c.materials[key] <= 0) delete c.materials[key]; };
-    const done = (text: string, mask = 1 | 2) => { p.selfDirty |= mask; this.save(p, true); this.notice(p, text, 'ok'); this.sendJson(p, { t: 'result', for: 'use', req, ok: true, msg: text }); };
+    const done = (text: string, mask = 1 | 2) => { p.selfDirty |= mask; this.save(p, true); this.sendJson(p, { t: 'result', for: 'use', req, ok: true, msg: text }); };
     if (m.buff) {
       const b = (c.misc.buffs ??= {});
       if (key === 'war_ration' && (b.war_ration ?? 0) > this.now) return this.notice(p, 'Kumanyanın etkisi sürüyor; bitince tekrar kullanabilirsin.');

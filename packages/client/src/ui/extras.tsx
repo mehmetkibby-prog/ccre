@@ -300,7 +300,13 @@ export function FishGame({ game }: { game: Game }) {
       ctx.fillStyle = inZone ? 'rgba(120,240,140,.85)' : 'rgba(120,240,140,.55)';
       ctx.beginPath(); ctx.roundRect(7, zone, W - 14, zoneH, 6); ctx.fill();
       ctx.strokeStyle = '#d8ffe0'; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.font = '22px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🐟', W / 2, fish);
+      // balık (çizim): gövde, kuyruk, göz
+      ctx.save(); ctx.translate(W / 2, fish);
+      ctx.fillStyle = '#ffb35c'; ctx.strokeStyle = '#5a2a10'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(15, -6); ctx.lineTo(15, 6); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(-2, 0, 11, 6.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-8, -1.5, 2.2, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(-8.3, -1.5, 1.1, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
       const pb = document.getElementById('fish-prog'); if (pb) { pb.style.height = `${Math.max(0, Math.min(1, prog)) * 100}%`; pb.style.background = prog < 0.25 ? '#ff6b5a' : prog < 0.6 ? '#ffd84a' : '#8fdc8a'; }
       if (!done && prog >= 1) { done = true; game.fishEnd(true); return; }
       if (!done && prog <= 0) { done = true; game.fishEnd(false); notify('Balık kaçtı!', 'error'); return; }

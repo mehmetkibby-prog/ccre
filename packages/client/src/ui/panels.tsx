@@ -271,7 +271,7 @@ function Inventory({ game }: { game: Game }) {
                 {(self.bait ?? 0) > 0 && <div className="buff"><img src={iconUrl('mall_fish_bait')} alt="" /><span>Bereketli yem</span><b>{self.bait} av</b></div>}
               </div>
             )}
-            <div className="mats">
+            <div className="mats mall-mats">
               {mallOwned.length === 0 && <div className="muted" style={{ fontSize: 13 }}>Nesne Market ürünün yok. Sağ üstteki <b>Market</b> düğmesinden alabilirsin.</div>}
               {mallOwned.map(([k, n]) => {
                 const m = MALL.get(k)!;
