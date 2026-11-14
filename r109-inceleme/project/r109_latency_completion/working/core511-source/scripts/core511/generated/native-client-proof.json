@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r114-3a57abcac795f120.js",
+  "name": "game-client-core511-r117-4feaa261f90b5d9c.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -116,7 +116,7 @@
   },
   "admin": {
     "file": "dist-vds/client/assets/admin-client-B_LbmWSV-ga4172-v418ws--e510-8225403c2fcc-88ffa15660.js",
-    "name": "admin-client-core511-r103-d967d2e806534317.js",
+    "name": "admin-client-core511-r117-964b4979c617eb7c.js",
     "proof": {
       "sourceSha256": "269d512e8ab421617557c5686ddf2df405188db90f295d8fefd893deb6458d43",
       "patchedSha256": "b8502b430480e1eb72cb6d3d1ec8271ba5800856c4756942f3fc70e901625962",
@@ -237,13 +237,13 @@
         "sha256": "b85db78b65f40592e0949dbb8ee4b4524bac17100a3045e420f39f391785a66c"
       }
     },
-    "patchedSha256": "d967d2e806534317d66ac41aa11e41b1228f4b3613df9cec89630ec23966f8d7"
+    "patchedSha256": "964b4979c617eb7c11a4d4722a3cb2d1d0df08c6f5205ebf3be79555cfb30f3c"
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r114-e8621310b1cae69d.js",
+    "name": "auth-portal-core511-r117-c1a66e4535350ae3.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "e8621310b1cae69d818fb85967722fda6aecda9e3c3212f14a9997259836b3e2",
+    "patchedSha256": "c1a66e4535350ae3899ef143673c41ca5195d99d9680d5e274111e13b164c6f1",
     "entryProof": {
       "edits": [
         {
@@ -281,7 +281,7 @@
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
   "bridgeSha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "3a57abcac795f1208b507219aaf619045094c478d01b2d50a04c7935d3c204d2",
+  "patchedSha256": "4feaa261f90b5d9c7eb07ff4e70b6df8fafad3af69f750beb02484f4e018f7fb",
   "bridge": "core511-transport-r113-53abe09d240f2c5c.js",
   "edits": [
     {
@@ -5256,11 +5256,11 @@
   "autoIpLimit": "R102_AUTO_IP1",
   "mobileHud": "R102_HUD_SLIM1",
   "additionsR102": {
-    "tower": "core511-tower-r102-auto-ecdbd6f626b40250.js",
-    "towerSha256": "ecdbd6f626b40250917a71eea9a8f6aa3dcf71b2db97cbe72426df58124eed08",
+    "tower": "core511-tower-r117-hook10-17862dadd8f71abd.js",
+    "towerSha256": "17862dadd8f71abd1b127f7f105ae89fd80d94e164a014e15ad6231e14a7080f",
     "towerReferences": 3,
-    "adminTower": "core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
-    "adminTowerSha256": "a06be5f2a5d1fa7a1e0190038848c5743fc62403b8c5016a3478a6049b7f8b70",
+    "adminTower": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+    "adminTowerSha256": "d41609822f32a40fe3b8ce5c0a459e76509219ab8eb76480382c5b7cdc2649b2",
     "dungeon": "core511-dungeon-r102-smooth-b735b7fb156bca9a.js",
     "dungeonSha256": "b735b7fb156bca9a2bb582d7d45f90d66738e93b1acd3fb79db52948a6cb80a4",
     "edits": [
@@ -5467,5 +5467,125 @@
       "rune_v2"
     ],
     "geometry": "rectangular world boundary; no interior or coastline collision"
+  },
+  "r117HookChance": {
+    "baseline": {
+      "proofSha256": "1095af1d3c3624ee0b7dd70a97788bd4b211a4abdb9aca69456c2065fc21c3fb",
+      "namespace": "core511-4698e897914580f4",
+      "game": "game-client-core511-r114-3a57abcac795f120.js",
+      "admin": "admin-client-core511-r103-d967d2e806534317.js",
+      "portal": "auth-portal-core511-r114-e8621310b1cae69d.js"
+    },
+    "chancePercent": 10,
+    "source": {
+      "file": "tower-client.mjs",
+      "sourceSha256": "c4311de3fea0b59904f58ef8ee578cbb16d3e046a7b3e6f34505657af304d9c0",
+      "sha256": "c9b0eed7919aebf797cdbd2a0fcdcc90f5d3f317fe6f21e27c019689f2164bcf",
+      "edits": [
+        {
+          "from": "bu sandıktan %6 olasılıkla",
+          "to": "bu sandıktan %10 olasılıkla",
+          "count": 1
+        },
+        {
+          "from": "hook?'Sabit %6':'Kaldır'",
+          "to": "hook?'Sabit %'+row.chance:'Kaldır'",
+          "count": 1
+        },
+        {
+          "from": "AZRAİL KANCASI %6 / 1 adet sabittir.",
+          "to": "AZRAİL KANCASI %10 / 1 adet sabittir.",
+          "count": 1
+        }
+      ]
+    },
+    "assets": [
+      {
+        "name": "core511-tower-r117-hook10-17862dadd8f71abd.js",
+        "sourceName": "core511-tower-r102-auto-ecdbd6f626b40250.js",
+        "sourceSha256": "ecdbd6f626b40250917a71eea9a8f6aa3dcf71b2db97cbe72426df58124eed08",
+        "sha256": "17862dadd8f71abd1b127f7f105ae89fd80d94e164a014e15ad6231e14a7080f",
+        "edits": [
+          {
+            "from": "bu sand\\u0131ktan %6 olas\\u0131l\\u0131kla",
+            "to": "bu sand\\u0131ktan %10 olas\\u0131l\\u0131kla",
+            "count": 1
+          },
+          {
+            "from": "hook ? \"Sabit %6\" :",
+            "to": "hook ? \"Sabit %\" + row.chance :",
+            "count": 1
+          },
+          {
+            "from": "AZRA\\u0130L KANCASI %6 / 1 adet sabittir.",
+            "to": "AZRA\\u0130L KANCASI %10 / 1 adet sabittir.",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+        "sourceName": "core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+        "sourceSha256": "a06be5f2a5d1fa7a1e0190038848c5743fc62403b8c5016a3478a6049b7f8b70",
+        "sha256": "d41609822f32a40fe3b8ce5c0a459e76509219ab8eb76480382c5b7cdc2649b2",
+        "edits": [
+          {
+            "from": "bu sand\\u0131ktan %6 olas\\u0131l\\u0131kla",
+            "to": "bu sand\\u0131ktan %10 olas\\u0131l\\u0131kla",
+            "count": 1
+          },
+          {
+            "from": "hook ? \"Sabit %6\" :",
+            "to": "hook ? \"Sabit %\" + row.chance :",
+            "count": 1
+          },
+          {
+            "from": "AZRA\\u0130L KANCASI %6 / 1 adet sabittir.",
+            "to": "AZRA\\u0130L KANCASI %10 / 1 adet sabittir.",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "game-client-core511-r117-4feaa261f90b5d9c.js",
+        "sourceName": "game-client-core511-r114-3a57abcac795f120.js",
+        "sourceSha256": "3a57abcac795f1208b507219aaf619045094c478d01b2d50a04c7935d3c204d2",
+        "sha256": "4feaa261f90b5d9c7eb07ff4e70b6df8fafad3af69f750beb02484f4e018f7fb",
+        "edits": [
+          {
+            "from": "core511-tower-r102-auto-ecdbd6f626b40250.js",
+            "to": "core511-tower-r117-hook10-17862dadd8f71abd.js",
+            "count": 3
+          }
+        ]
+      },
+      {
+        "name": "admin-client-core511-r117-964b4979c617eb7c.js",
+        "sourceName": "admin-client-core511-r103-d967d2e806534317.js",
+        "sourceSha256": "d967d2e806534317d66ac41aa11e41b1228f4b3613df9cec89630ec23966f8d7",
+        "sha256": "964b4979c617eb7c11a4d4722a3cb2d1d0df08c6f5205ebf3be79555cfb30f3c",
+        "edits": [
+          {
+            "from": "core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+            "to": "core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "name": "auth-portal-core511-r117-c1a66e4535350ae3.js",
+        "sourceName": "auth-portal-core511-r114-e8621310b1cae69d.js",
+        "sourceSha256": "e8621310b1cae69d818fb85967722fda6aecda9e3c3212f14a9997259836b3e2",
+        "sha256": "c1a66e4535350ae3899ef143673c41ca5195d99d9680d5e274111e13b164c6f1",
+        "edits": [
+          {
+            "from": "game-client-core511-r114-3a57abcac795f120.js",
+            "to": "game-client-core511-r117-4feaa261f90b5d9c.js",
+            "count": 2
+          }
+        ]
+      }
+    ],
+    "scope": "Only Azrail hook probability labels and immutable asset references; admin fixed-rate controls and all later client patches retained."
   }
 }

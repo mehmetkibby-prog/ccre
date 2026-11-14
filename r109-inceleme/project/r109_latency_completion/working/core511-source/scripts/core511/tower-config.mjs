@@ -9,7 +9,7 @@ export const TOWER_MATERIALS=Object.freeze([
 ]);
 export const TOWER_CHEST=Object.freeze({id:'tower:azrail_chest',kind:'tower_azrail_chest',name:'Azrail Sandığı',type:'towerChest'});
 export const TOWER_HOOK=Object.freeze({id:'tower:azrail_hook',kind:'tower_azrail_hook',name:'AZRAİL KANCASI',type:'towerItem'});
-export const TOWER_HOOK_CHANCE=6;
+export const TOWER_HOOK_CHANCE=10;
 export const TOWER_CATALOG=Object.freeze([...TOWER_MATERIALS,TOWER_CHEST,TOWER_HOOK,...SOLO_CATALOG]);
 export const TOWER_CATALOG_BY_ID=new Map(TOWER_CATALOG.map(item=>[item.id,item]));
 export const TOWER_NAMES=['Mühür Avlusu','Kül Koridoru','Pençe Geçidi','Zincir Salonu','Gardiyanın Zindanı','Kırık Ruhlar','Matem Mabedi','Sessiz Çığlık','Son Mühür','Azrail’in Tahtı'];
@@ -25,7 +25,7 @@ function validateDrops(rows,{chest=false}={}){
  if(!Array.isArray(rows)||rows.length>16)throw Error('Bir ödül tablosunda en fazla 16 satır olabilir.');const ids=new Set();let gear=0;
  const out=rows.map(row=>{const item=TOWER_CATALOG_BY_ID.get(row?.itemId);if(!item||item.id===TOWER_CHEST.id||(!chest&&item.id===TOWER_HOOK.id)||ids.has(item.id))throw Error('Geçersiz/tekrarlanan kule ödülü.');ids.add(item.id);const chance=Number(row.chance);if(!Number.isFinite(chance)||chance<0||chance>100)throw Error('Düşme oranı 0–100 olmalı.');const stack=['resource','material','stone','towerMaterial','towerItem'].includes(item.type),min=integer(row.min,1,stack?1000:1,'ödül miktarı'),max=integer(row.max,min,stack?1000:1,'ödül miktarı');if(!stack&&chance>0)gear++;return {itemId:item.id,chance:Math.round(chance*10000)/10000,min,max};});
  if(gear>8)throw Error('Bir tablodan en fazla 8 ayrı ekipman düşebilir.');
- if(chest){const hook=out.find(r=>r.itemId===TOWER_HOOK.id);if(!hook||hook.chance!==TOWER_HOOK_CHANCE||hook.min!==1||hook.max!==1)throw Error('Azrail Kancası sandıktan %6 olasılıkla 1 adet çıkmalı.');}
+ if(chest){const hook=out.find(r=>r.itemId===TOWER_HOOK.id);if(!hook||hook.chance!==TOWER_HOOK_CHANCE||hook.min!==1||hook.max!==1)throw Error(`Azrail Kancası sandıktan %${TOWER_HOOK_CHANCE} olasılıkla 1 adet çıkmalı.`);}
  return out;
 }
 export function validateTowerConfig(input){
@@ -41,9 +41,9 @@ export function readTowerConfig(value){
  if(value==null)return structuredClone(TOWER_DEFAULTS);
  try{
   let input=typeof value==='string'?JSON.parse(value):value;
-  // Compatibility with the previously locked 10% setting. Apply the new fixed
-  // rule while reading; keep custom floors/other loot and stored JSON intact.
-  if(Array.isArray(input?.chest))input={...input,chest:input.chest.map(row=>row?.itemId===TOWER_HOOK.id&&Number(row.chance)===10?{...row,chance:TOWER_HOOK_CHANCE}:row)};
+  // R117: accept the former fixed 6% setting while reading. Only the hook
+  // chance changes; custom floors, other loot, revisions and stored JSON stay intact.
+  if(Array.isArray(input?.chest))input={...input,chest:input.chest.map(row=>row?.itemId===TOWER_HOOK.id&&Number(row.chance)===6?{...row,chance:TOWER_HOOK_CHANCE}:row)};
   return validateTowerConfig(input);
  }catch(error){throw Error('Kadim Kulesi ayarı okunamadı: '+error.message);}
 }
