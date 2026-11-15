@@ -1,0 +1,25 @@
+{
+  "sourceVersion": "R117_HOOK10",
+  "httpSha256": "ebd020559246908bed5921f66c4cc73155a1dd457ee0dfb812429779707ccbf6",
+  "baseHttpSha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056",
+  "sourceSha256Preserved": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "edits": 10,
+  "forwardByteEquality": true,
+  "inverseByteEquality": true,
+  "integrityGuardChanged": false
+}
+{
+  "file": "artifacts/R118_ROYAL_61ba37784ffb.zip",
+  "bytes": 4864886,
+  "sha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
+  "sourceVersion": "R117_HOOK10",
+  "sourceCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
+  "targetVersion": "R118_ROYAL1",
+  "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+  "changedCodeFiles": 113,
+  "forumChanges": false,
+  "databaseScope": "r118-royal-champions-additive-v1",
+  "namespace": "core511-c4d0f4d061896a4e",
+  "acceptance": "pending",
+  "deployed": false
+}

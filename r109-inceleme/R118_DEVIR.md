@@ -1,5 +1,34 @@
 # R118 — Hükümdar Kraliyet ve Şampiyonlar Diyarı
 
+## Güncel teslim: kurulum kapsamı düzeltmesi
+
+Kullanıcının VDS ekranında R116/R117 kurulumu tamamlanmış; ilk R118 arşivi
+SHA doğrulamasını geçmiş, fakat `perf-r11/tests/reward/fixture.mjs` farklılığı
+nedeniyle hem `--check` hem `--apply` ön kontrolde durmuş. R118 uygulanmamış.
+Bu geliştirme fikstürü hiçbir R117 deltasında yoktur ve çalışan servislerin
+bağımlılığı değildir. Yeni paket yalnız bu dosyayı dağıtım kapsamından çıkarır;
+113 kalan payload dosyası ve tüm runtime/şema modülleri birebir korunur.
+
+Güncel arşiv: `project/r118_royal_champions/artifacts/R118_ROYAL_61ba37784ffb.zip`.
+SHA256: `8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5`.
+Kaynak R117_HOOK10, hedef R118_ROYAL1, hedef çekirdek ve istemci kimliği aynı.
+İlk 640cf76b… arşivi değiştirilmedi ve tarihsel kanıt olarak saklandı. Sonraki
+sürümün delta kaynağı düzeltilmiş arşiv olmalı; eski test fikstürünü canlıda
+kurulu varsaymayın. Gerekli üretim dosyalarının hash kontrolleri gevşetilmedi.
+
+16 kurulum kontrolü (ilk koşudaki bir testin hata mesajı beklentisi düzeltildi,
+hedefli tekrar geçti) ve yeni ZIP'in kurduğu dosyalarla 3 gerçek runtime testi
+geçti. Test fikstürü tamamen yokken Efsane/Akademi, sekiz kanal, captcha ve
+WebSocket devri doğrulandı. Farklı/eksik test fikstürüyle kurulum ve geri dönüş
+başarılı; yabancı runtime değişikliği yine yazmadan reddediliyor. Kurulu çekirdekte gerçek savaş, kalıcı ölüm ve tek seferlik taç/öz ödülü iki
+dünya için yeniden geçti. Eksik test DB fabrikası yalnız yerel savaş testinde
+geçici adapter olarak sağlanıp kaldırılır; oyuna dağıtılmaz. Önceki UI ve
+şema kanıtları byte eşitliğiyle taşınır; yük testi tekrarlanmadı, kapasite
+iddiası yok. Kanıtlar `evidence/installer-scope-fix` ve güncel `package.json`.
+Burada canlıya kurulum yapılmadı.
+
+Aşağıdaki kayıtlar önceki teslimin tarihsel ayrıntılarıdır.
+
 15 Kasım 2026. Dal `codex/r118-royal-champions`. Doğrulanan canlı kaynak
 R117_HOOK10; bu çalışma kendi başına canlı kurulum anlamına gelmez.
 Aktif kaynak yine `project/r109_latency_completion/working`.

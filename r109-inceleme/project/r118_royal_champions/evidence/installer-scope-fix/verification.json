@@ -1,0 +1,57 @@
+{
+  "packageSha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
+  "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+  "functionalPassed": true,
+  "liveDeployed": false,
+  "installerTests": 16,
+  "installerTestsPassed": 16,
+  "installerTestRuns": [
+    "installer-scope-fix/installer-tests.log",
+    "installer-scope-fix/production-guards-recheck.log"
+  ],
+  "testHarnessCorrection": "First run: 15 passed; production guard correctly rejected the altered core, but the new test expected different wording. Exact expected message corrected; both core/native rejection cases then passed. No runtime or installer guard changed.",
+  "actualInstalledRuntimeTests": 3,
+  "actualInstalledRealms": [
+    "r1",
+    "r2"
+  ],
+  "actualInstalledChannels": 8,
+  "developmentFixtureAbsentDuringActualBoot": true,
+  "runtimeFilesByteIdenticalToOriginal": 113,
+  "sourceAndTargetCoreIdentityUnchanged": true,
+  "priorFunctionalEvidence": {
+    "packageSha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+    "evidence": "installer-scope-fix/original-evidence/installed-acceptance.json",
+    "carriedByByteEquality": [
+      "9 migration tests",
+      "desktop/mobile player and admin flows"
+    ],
+    "notRepeated": "Gameplay and UI files and database migration modules are byte-identical. Only installer scope was corrected."
+  },
+  "loadValidation": "unavailable",
+  "capacityOrZeroLagCertified": false,
+  "unresolvedTestFailures": [],
+  "logs": {
+    "installer-scope-fix/installer-tests.log": "dd40ca2702c423de563c856ba9921608d18ec0749c81f6a6417cec6bb68dc2c4",
+    "installer-scope-fix/production-guards-recheck.log": "7abcf5142397c38df9838d9451fafa21f3ef3d275da4478d97cfeb3cb173f0d8",
+    "installer-scope-fix/runtime-tests.log": "e4e81ccb8cf4a7d64399c5b489e744e6afe432e4691d9898ba88d349f0c58525",
+    "installer-scope-fix/stage.log": "a699d8019471af1128b990fed703a85ab922c4d682c46a6c6c2af3b7992706bb",
+    "installer-scope-fix/archive-comparison.json": "9eace164a4aacdbf8fd8763810cddffc291d73c90b66eb5768d4547980116436",
+    "installer-scope-fix/reproduction.json": "69f048ee9ba18ab37308e32dfe6d4be53e49f3db40b5efbc9f4b61352d7df022",
+    "installed-combat-r1.log": "d721ebb485306a37c7fddaca5dcf688eeefd90a0290f91c1f72ffc3fc7aa1f25",
+    "installed-combat-r2.log": "0264a5119e8bbb17f4b60bb24d75762125f4c7b3f919cfd036ee4d3bb65ddaad",
+    "installer-scope-fix/combat-tests.log": "9473ebb6c42636ec9294c20d4c94507de44486e9339970803a7d91d399c1c8c8",
+    "installer-scope-fix/public-download.json": "39240388c4d2e947783f4c2e63420552935db926730a94ade9ac92eadcfc31cd"
+  },
+  "installedCombatTests": {
+    "realmModes": [
+      "r1",
+      "r2"
+    ],
+    "passed": 2,
+    "developmentFixtureProvidedOnlyByLocalTestAdapter": true,
+    "developmentFixtureRemovedAfterTests": true,
+    "runtimeCoreIdentityUnchangedAfterTests": true,
+    "evidence": "installed-combat.json"
+  }
+}

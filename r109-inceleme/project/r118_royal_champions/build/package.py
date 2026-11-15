@@ -5,6 +5,7 @@ ROOT=Path(__file__).resolve().parents[1];PROJECT=ROOT.parent;REVIEW=PROJECT.pare
 sys.path.insert(0,str(ROOT/'deployment/modules'))
 import r63_support as identity
 from storage import encoded
+from deployment_scope import deployable
 sha=lambda b:hashlib.sha256(b).hexdigest()
 CORE='core511-source/scripts/core511/';WORK=PROJECT/'r109_latency_completion/working';BASE=PROJECT/'r105_performance_review/working'
 subprocess.run([sys.executable,str(ROOT/'build/http-proof.py'),'--check'],check=True,stdout=sys.stderr)
@@ -31,12 +32,15 @@ rows={};data={}
 for tree in ('core511-source','http-runtime','accounts-runtime','native510-bb3a6cc689c6'):
  for p in sorted((WORK/tree).rglob('*')):
   if not p.is_file() or p.is_symlink() or '__pycache__' in p.parts or 'evidence' in p.relative_to(WORK).parts or p.name.startswith('.'):continue
-  n=p.relative_to(WORK).as_posix();b=p.read_bytes();old=before(n);checksum=sha(old) if old is not None else None
+  n=p.relative_to(WORK).as_posix()
+  if not deployable(n):continue
+  b=p.read_bytes();old=before(n);checksum=sha(old) if old is not None else None
   if checksum==sha(b):continue
   rows[n]={'before':[checksum],'after':sha(b),'bytes':len(b)};data['payload/'+n]=b
 if '--review-candidates' in sys.argv:
  print(json.dumps(rows,indent=2,sort_keys=True));raise SystemExit(0)
 allowed=set(json.loads((ROOT/'build/reviewed-files.json').read_text()));assert set(rows)==allowed,set(rows)^allowed
+assert all(deployable(n) for n in allowed),'Development fixtures must not be installed'
 pinned=[{'path':n,'bytes':len(b),'sha256':sha(b)} for n,b in sorted(installed.items()) if not n.startswith(CORE) and n not in rows]
 assert all(sha((WORK/r['path']).read_bytes())==r['sha256'] for r in pinned)
 sources={'R117_HOOK10':{'core':previous['targetCore'],'coreRows':sourceRows,'retainedFiles':pinned,**{k:previous[k] for k in ('namespace','game','admin','portal')}}}

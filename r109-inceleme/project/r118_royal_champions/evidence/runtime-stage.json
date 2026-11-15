@@ -1,15 +1,15 @@
 {
-  "release": "/tmp/r118-installed-r_s9514_/release",
+  "release": "/tmp/r118-installed-0ig7s85o/release",
   "base": "R118 ZIP applied by its own installer to an installed R117_HOOK10 fixture",
   "package": {
-    "file": "artifacts/R118_ROYAL_6fa07edb5ce7.zip",
-    "bytes": 4870422,
-    "sha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+    "file": "artifacts/R118_ROYAL_61ba37784ffb.zip",
+    "bytes": 4864886,
+    "sha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
     "sourceVersion": "R117_HOOK10",
     "sourceCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
     "targetVersion": "R118_ROYAL1",
     "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
-    "changedCodeFiles": 114,
+    "changedCodeFiles": 113,
     "forumChanges": false,
     "databaseScope": "r118-royal-champions-additive-v1",
     "namespace": "core511-c4d0f4d061896a4e",
@@ -442,10 +442,6 @@
     {
       "path": "core511-source/scripts/core511/zumrut-catalog-r93.mjs",
       "sha256": "600b567102c9ae3b607df34e85d775d98dcb72927cd106cea047cd52b3058bb1"
-    },
-    {
-      "path": "core511-source/scripts/perf-r11/tests/reward/fixture.mjs",
-      "sha256": "244a767c5131993d47af853e8804bdf5024104c9e881c0fa5fdbaddbfe65d6c0"
     },
     {
       "path": "http-runtime/dist-vds/server/index.js",
@@ -1423,5 +1419,6 @@
       "path": "accounts-runtime/dist-vds/client/assets/core511-c4d0f4d061896a4e/auth-portal-core511-r118-e25fc8036012412d.js",
       "sha256": "e19dc8a340f3c304b5c4097b8b5cb4a8d4ce4ec6bd90b442a785fa04962817bd"
     }
-  ]
+  ],
+  "developmentFixtureAbsent": "core511-source/scripts/perf-r11/tests/reward/fixture.mjs"
 }

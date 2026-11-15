@@ -91,3 +91,23 @@ bağlantı kopması yoktu. Kullanıcının süre/kredi sınırı üzerine isteğ
 düzenek genişletilmedi. İki harita için tamamlanmış karşılaştırma, üç tekrar
 medyanı, canlı kapasite veya sıfır takılma iddiası yoktur. Başarısız ham kayıtlar
 korundu: `evidence/load-validation.json`.
+
+## R118 kurulum kapsamı düzeltmesi
+
+İlk teslim edilen `640cf76b…` arşivinin ön kontrolü, çalışma ortamına ait
+`core511-source/scripts/perf-r11/tests/reward/fixture.mjs` dosyasının canlıda
+aynı olmasını yanlışlıkla şart koşuyordu. Bu dosyaya R117 güncellemeleri
+dokunmamıştı; çalışan servisler bu test fikstürünü kullanmaz. Hata kaynak
+doğrulamasında, servis durdurma / kod değiştirme / şema geçişinden önce oluştu.
+
+Yeni arşiv bu geliştirme dosyasını dağıtım kapsamından çıkarır. Geri kalan
+113 payload dosyasının içerikleri, kaynak/hedef çekirdek kimlikleri, istemci
+ad alanı ve şema geçişi ilk teslimle birebir aynıdır. Üretim dosyalarındaki
+yabancı değişiklikler hâlâ reddedilir. Çekirdek kimliğinin parçası olan
+mevcut test dosyaları topluca çıkarılmamıştır; kimlik sözleşmesi korunur.
+
+Eski arşiv ve özeti değiştirilmez. Düzeltmenin yeniden üretimi, eski/yeni
+paket karşılaştırması, farklı/eksik test dosyasıyla kurulum-geri dönüş ve
+gerçek iki dünya başlangıç kanıtları `evidence/installer-scope-fix` altındadır.
+Güncel indirilecek arşiv `evidence/package.json` ile seçilir. Eski kabul
+kaydı `evidence/installer-scope-fix/original-evidence` içinde korunur.

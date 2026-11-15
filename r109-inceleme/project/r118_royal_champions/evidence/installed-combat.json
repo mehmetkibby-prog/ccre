@@ -1,20 +1,24 @@
 {
   "package": {
-    "file": "artifacts/R118_ROYAL_6fa07edb5ce7.zip",
-    "bytes": 4870422,
-    "sha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+    "file": "artifacts/R118_ROYAL_61ba37784ffb.zip",
+    "bytes": 4864886,
+    "sha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
     "sourceVersion": "R117_HOOK10",
     "sourceCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
     "targetVersion": "R118_ROYAL1",
     "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
-    "changedCodeFiles": 114,
+    "changedCodeFiles": 113,
     "forumChanges": false,
     "databaseScope": "r118-royal-champions-additive-v1",
     "namespace": "core511-c4d0f4d061896a4e",
-    "acceptance": "pending",
-    "deployed": false
+    "acceptance": "functional-passed-load-validation-unavailable",
+    "deployed": false,
+    "loadValidation": "unavailable",
+    "installerCorrection": "exclude-development-only-perf-r11-test-fixture",
+    "supersedesSha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+    "verification": "evidence/installer-scope-fix/verification.json"
   },
-  "release": "/tmp/r118-installed-r_s9514_/release",
+  "release": "/tmp/r118-installed-0ig7s85o/release",
   "results": [
     {
       "realmMode": "r1",
@@ -27,5 +31,10 @@
       "log": "evidence/installed-combat-r2.log"
     }
   ],
+  "developmentFixtureAdapter": {
+    "path": "core511-source/scripts/perf-r11/tests/reward/fixture.mjs",
+    "sha256": "244a767c5131993d47af853e8804bdf5024104c9e881c0fa5fdbaddbfe65d6c0",
+    "scope": "local test-only adapter; restored after test"
+  },
   "contract": "Installed core modules with actual release flags; immutable native fixture seed/listener adapters. Actual full runtime-entry closure is a separate check."
 }

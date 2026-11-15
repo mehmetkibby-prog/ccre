@@ -1,0 +1,49 @@
+{
+  "packageSha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+  "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+  "functionalPassed": true,
+  "liveDeployed": false,
+  "installerTests": 13,
+  "migrationTests": 9,
+  "actualInstalledRuntimeTests": 3,
+  "actualInstalledRealms": [
+    "r1",
+    "r2"
+  ],
+  "actualInstalledChannels": 8,
+  "startup": "Concurrent realm boots,15000 additionalr1 monsters; unchanged30s health limit and zero core511_fault/channel_recovery_request required.",
+  "combat": {
+    "realmModes": [
+      "r1",
+      "r2"
+    ],
+    "perRealmNonlethalHits": 7,
+    "perRealmSpecialAttacks": 1,
+    "perRealmRewardClaimReplays": 2,
+    "perRealmCollected": {
+      "essence": 3,
+      "royal_crown": 1
+    },
+    "faults": 0,
+    "scope": "Installed core modules with actual release flags; immutable native fixture seed/listener adapters. Actual full runtime-entry closure is a separate check."
+  },
+  "logs": {
+    "installer-final5.log": "aa496210897bc463fd47fa447f4a057095d4bb4259b56deb86063382aa15b53d",
+    "stage-final5.log": "feca16becfc40cb2918536f118e1407453cd9700dfbd32f563c00206c32dd2b4",
+    "installed-runtime-final5.log": "decd09aafe997401ffacf0d5fbe0cd5d9f80830e4d926f7f104f8113196cae03",
+    "installed-combat-final5.log": "52858308751b7f9a0c162df17a8065ceace081786f6c77bf020bdd758a174392",
+    "installed-combat-r1.log": "cfefb33841ea937f520b4974ea767227fb5799f6a3a088dc162317b4ad03f3b8",
+    "installed-combat-r2.log": "15375913a4361f65730d0c6a655297e2a10abeca9168eec0ea03aead8fe7250d",
+    "migration-final4-valid-path.log": "4200898beccf760fab695d181b65ad57e948a85328827e0c96734e6cc4bab2ea"
+  },
+  "remaining": [],
+  "priorFailuresPreserved": [
+    "installed-runtime-final4.log",
+    "installed-combat-final4-r1.log",
+    "pre-release-findings.json"
+  ],
+  "requiredChecks": "required-projection-release-checks.json",
+  "loadValidation": "unavailable",
+  "loadEvidence": "load-validation.json",
+  "capacityOrZeroLagCertified": false
+}

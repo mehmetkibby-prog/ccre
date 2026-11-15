@@ -2,6 +2,13 @@
 
 Yalnız doğrulanmış R117_HOOK10 üzerine. Efsane ve Akademi birlikte güncellenir.
 
+Kurulum kapsamı düzeltmesi: eski R118 arşivi `perf-r11/tests/reward/fixture.mjs`
+adlı yerel test dosyasını yanlışlıkla canlı güncellemeye dahil ediyordu. Yeni
+arşiv bu geliştirme dosyasına dokunmaz. Oyun kodu, istemci, çekirdek kimliği ve
+veri geçişi aynıdır; üretim dosyalarının bütünlük kontrolleri korunur. Eski
+arşiv ve SHA256 değişmez. Bu hatada ön kontrolde duran sunucuda R117 korunur;
+yeni dosya ile normal `--check` / bakım / `--apply` sırası kullanılmalıdır.
+
 1. Teslim edilen ZIP'in SHA256 değerini doğrula.
 2. `python3 /root/r118.zip --check`
 3. Efsane panelinde bakımı başlat ve geri sayımın tamamlanmasını bekle.

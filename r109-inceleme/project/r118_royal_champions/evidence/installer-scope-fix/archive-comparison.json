@@ -1,0 +1,16 @@
+{
+  "originalSha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+  "correctedSha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
+  "removedArchiveMember": "payload/core511-source/scripts/perf-r11/tests/reward/fixture.mjs",
+  "changedArchiveMembers": [
+    "KURULUM.md",
+    "modules.json",
+    "modules/code_contract.py",
+    "plan.json"
+  ],
+  "unchangedPayloadFiles": 113,
+  "sourceAndTargetIdentityUnchanged": true,
+  "allRuntimeAndMigrationModuleBytesUnchanged": true,
+  "clientNamespaceUnchanged": true,
+  "oldArchiveUnmodified": true
+}

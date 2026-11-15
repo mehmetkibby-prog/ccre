@@ -105,7 +105,6 @@
   "core511-source/scripts/core511/tests/royal-schema-fixture-r118.mjs",
   "core511-source/scripts/core511/world-supervisor.mjs",
   "core511-source/scripts/core511/zumrut-catalog-r93.mjs",
-  "core511-source/scripts/perf-r11/tests/reward/fixture.mjs",
   "http-runtime/dist-vds/server/index.js",
   "native510-bb3a6cc689c6/lib/combat-stats.ts",
   "native510-bb3a6cc689c6/lib/equipment-sets.mjs",

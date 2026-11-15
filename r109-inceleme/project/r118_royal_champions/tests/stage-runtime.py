@@ -8,9 +8,12 @@ runtime stage. The record is written to evidence/runtime-stage.json here.
 import json,shutil,sys,tempfile
 from pathlib import Path
 HERE=Path(__file__).resolve().parent;sys.path.insert(0,str(HERE))
-from installer_test import Fixture,m,ROOT,PROJECT
+from installer_test import Fixture,m,ROOT,PROJECT,DEVELOPMENT_FIXTURE
 f=Fixture()
 try:
+ # A production release need not contain the local native-test fixture.
+ # Prove the corrected archive boots without supplying it indirectly.
+ (f.root/DEVELOPMENT_FIXTURE).unlink()
  m.apply(f.live,f.z,f.plan);result=json.loads((next(f.control.glob('install-*'))/'result.json').read_text());m.validate_record(result,completed=True)
  out=Path(tempfile.mkdtemp(prefix='r118-installed-'))/'release'
  shutil.copytree(f.root,out,symlinks=True)
@@ -26,6 +29,8 @@ try:
   (out/runtime/'package.json').write_text('{"type":"module"}')
   (out/runtime/'dist-vds/server/__vite_rsc_assets_manifest.js').write_text('export default {serverResources:{},clientReferenceDeps:{}};')
  record={'release':str(out),'base':'R118 ZIP applied by its own installer to an installed R117_HOOK10 fixture','package':json.loads((ROOT/'evidence/package.json').read_text()),'installedVersion':json.loads(f.statefile.read_text())['r64Deployment']['version'],'targetCore':result['identity']['targetCore'],'overlay':[{'path':r['path'],'sha256':r['after']} for r in result['files']]}
+ assert not (out/DEVELOPMENT_FIXTURE).exists()
+ record['developmentFixtureAbsent']=DEVELOPMENT_FIXTURE
  (ROOT/'evidence/runtime-stage.json').write_text(json.dumps(record,indent=2)+'\n')
  print(out)
 finally:f.close()

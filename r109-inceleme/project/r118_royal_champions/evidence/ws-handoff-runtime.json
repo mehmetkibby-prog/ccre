@@ -1,5 +1,5 @@
 {
-  "release": "/tmp/r118-installed-r_s9514_/release",
+  "release": "/tmp/r118-installed-0ig7s85o/release",
   "overlay": [
     "core511-source/scripts/core511/action-loop.mjs",
     "core511-source/scripts/core511/action-writer.mjs",
@@ -107,7 +107,6 @@
     "core511-source/scripts/core511/tests/royal-schema-fixture-r118.mjs",
     "core511-source/scripts/core511/world-supervisor.mjs",
     "core511-source/scripts/core511/zumrut-catalog-r93.mjs",
-    "core511-source/scripts/perf-r11/tests/reward/fixture.mjs",
     "http-runtime/dist-vds/server/index.js",
     "native510-bb3a6cc689c6/lib/combat-stats.ts",
     "native510-bb3a6cc689c6/lib/equipment-sets.mjs",
@@ -361,29 +360,29 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 7,
-          "firstReplyMs": 8,
+          "openMs": 9,
+          "firstReplyMs": 12,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 2,
-          "openMs": 6,
-          "firstReplyMs": 7,
+          "openMs": 8,
+          "firstReplyMs": 12,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 3,
-          "openMs": 5,
-          "firstReplyMs": 6,
+          "openMs": 6,
+          "firstReplyMs": 10,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 4,
           "openMs": 8,
-          "firstReplyMs": 9,
+          "firstReplyMs": 10,
           "code": 1008,
           "ownerIsChannel": true
         }
@@ -392,11 +391,11 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 36
+        "maxFirstReplyMs": 57
       },
       "shutdown": {
         "code": 0,
-        "ms": 271
+        "ms": 469
       }
     },
     {
@@ -405,29 +404,29 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 5,
-          "firstReplyMs": 7,
+          "openMs": 23,
+          "firstReplyMs": 34,
           "code": 1008,
           "ownerIsChannel": false
         },
         {
           "channel": 2,
-          "openMs": 13,
-          "firstReplyMs": 20,
+          "openMs": 6,
+          "firstReplyMs": 9,
           "code": 1008,
           "ownerIsChannel": false
         },
         {
           "channel": 3,
-          "openMs": 5,
-          "firstReplyMs": 7,
+          "openMs": 6,
+          "firstReplyMs": 11,
           "code": 1008,
           "ownerIsChannel": false
         },
         {
           "channel": 4,
-          "openMs": 18,
-          "firstReplyMs": 23,
+          "openMs": 6,
+          "firstReplyMs": 13,
           "code": 1008,
           "ownerIsChannel": false
         }
@@ -436,11 +435,11 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 48
+        "maxFirstReplyMs": 62
       },
       "shutdown": {
         "code": 0,
-        "ms": 262
+        "ms": 347
       }
     },
     {
@@ -449,29 +448,29 @@
       "connections": [
         {
           "channel": 1,
-          "openMs": 4,
-          "firstReplyMs": 6,
+          "openMs": 10,
+          "firstReplyMs": 13,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 2,
-          "openMs": 4,
-          "firstReplyMs": 5,
+          "openMs": 5,
+          "firstReplyMs": 7,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 3,
-          "openMs": 3,
-          "firstReplyMs": 5,
+          "openMs": 5,
+          "firstReplyMs": 7,
           "code": 1008,
           "ownerIsChannel": true
         },
         {
           "channel": 4,
-          "openMs": 6,
-          "firstReplyMs": 7,
+          "openMs": 4,
+          "firstReplyMs": 6,
           "code": 1008,
           "ownerIsChannel": true
         }
@@ -480,11 +479,11 @@
         "sockets": 24,
         "opened": 24,
         "refused": [],
-        "maxFirstReplyMs": 28
+        "maxFirstReplyMs": 61
       },
       "shutdown": {
         "code": 0,
-        "ms": 300
+        "ms": 377
       }
     }
   ]

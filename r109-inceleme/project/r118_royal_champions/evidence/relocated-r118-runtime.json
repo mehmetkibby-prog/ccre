@@ -1,14 +1,14 @@
 {
-  "release": "/tmp/r118-installed-r_s9514_/release",
+  "release": "/tmp/r118-installed-0ig7s85o/release",
   "package": {
-    "file": "artifacts/R118_ROYAL_6fa07edb5ce7.zip",
-    "bytes": 4870422,
-    "sha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+    "file": "artifacts/R118_ROYAL_61ba37784ffb.zip",
+    "bytes": 4864886,
+    "sha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
     "sourceVersion": "R117_HOOK10",
     "sourceCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
     "targetVersion": "R118_ROYAL1",
     "targetCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
-    "changedCodeFiles": 114,
+    "changedCodeFiles": 113,
     "forumChanges": false,
     "databaseScope": "r118-royal-champions-additive-v1",
     "namespace": "core511-c4d0f4d061896a4e",
@@ -61,7 +61,7 @@
         "academyPrereg": "R104_AKADEMI4",
         "durable": true,
         "protocol": "coreoflife-kernel-v1",
-        "startupId": "a0facc5d-9421-41fc-a027-ddedd36da4b2",
+        "startupId": "f43c976b-fe61-4ce3-8e36-e61f42ed43a5",
         "checkpointR79": {
           "ready": true,
           "fallback": null,
@@ -91,7 +91,7 @@
         "runtimeDiagnosticsR80": {
           "protocol": "runtime-diagnostics-r80-v1",
           "available": true,
-          "measuredAtMs": 1794759387942,
+          "measuredAtMs": 1794762722039,
           "scope": "server-process-and-durable-write-wait-not-player-ping",
           "main": {
             "status": "unavailable",
@@ -117,7 +117,7 @@
             "oldestQueuedAgeMs": null,
             "nativeWrites": 0,
             "completedExternal": 4,
-            "maxExternalMs": 1077.56
+            "maxExternalMs": 3784.23
           },
           "walSync": {
             "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
@@ -125,19 +125,19 @@
             "fallback": false,
             "running": false,
             "queuedForNextFlush": 0,
-            "pumpedCallsTotal": 25,
-            "syncs": 25,
-            "meanMs": 1.29,
-            "maxMs": 7.05,
-            "totalMs": 32,
+            "pumpedCallsTotal": 26,
+            "syncs": 24,
+            "meanMs": 3.91,
+            "maxMs": 42.65,
+            "totalMs": 94,
             "errors": 0,
             "reopened": 0
           },
           "mainCommits": {
             "scope": "main-connection-SQLite-COMMIT-wall-time",
             "slowCommits": 0,
-            "lastCommitMs": 0.09,
-            "maxCommitMs": 0.64,
+            "lastCommitMs": 0.1,
+            "maxCommitMs": 0.34,
             "lastSlowAtMs": null
           },
           "rewardWorker": {
@@ -150,15 +150,15 @@
             "restarts": 0,
             "maxWorkerMs": 0,
             "maxPreflightMs": 0,
-            "maxReadyWaitMs": 1076.16
+            "maxReadyWaitMs": 3782.7
           }
         },
         "realm": {
           "realmId": "r1",
-          "dbIdentity": "5cf98bd5-6850-41d2-809d-059f3757c4ce",
+          "dbIdentity": "dad3de55-c906-4f7d-a845-66fdb011e198",
           "protocol": "coreoflife-kernel-v1",
           "ready": true,
-          "sampledAtMs": 1794759387942,
+          "sampledAtMs": 1794762722039,
           "channelCapacity": 25,
           "channels": [
             0,
@@ -255,7 +255,7 @@
         "academyPrereg": "R104_AKADEMI4",
         "durable": true,
         "protocol": "coreoflife-kernel-v1",
-        "startupId": "ffc5e2fc-eef9-4017-8adf-4c992267e859",
+        "startupId": "8a1b6e56-7cb3-4325-ab4a-2ffcd2ae176a",
         "checkpointR79": {
           "ready": true,
           "fallback": null,
@@ -285,7 +285,7 @@
         "runtimeDiagnosticsR80": {
           "protocol": "runtime-diagnostics-r80-v1",
           "available": true,
-          "measuredAtMs": 1794759395707,
+          "measuredAtMs": 1794762723692,
           "scope": "server-process-and-durable-write-wait-not-player-ping",
           "main": {
             "status": "unavailable",
@@ -311,7 +311,7 @@
             "oldestQueuedAgeMs": null,
             "nativeWrites": 0,
             "completedExternal": 4,
-            "maxExternalMs": 4255.83
+            "maxExternalMs": 5625.54
           },
           "walSync": {
             "scope": "async-WAL-flush-service-wall-time-including-libuv-and-callback-scheduling-excluding-preflush-queue",
@@ -319,19 +319,19 @@
             "fallback": false,
             "running": false,
             "queuedForNextFlush": 0,
-            "pumpedCallsTotal": 26,
+            "pumpedCallsTotal": 25,
             "syncs": 24,
-            "meanMs": 2.07,
-            "maxMs": 8.74,
-            "totalMs": 50,
+            "meanMs": 0.95,
+            "maxMs": 4.57,
+            "totalMs": 23,
             "errors": 0,
             "reopened": 0
           },
           "mainCommits": {
             "scope": "main-connection-SQLite-COMMIT-wall-time",
             "slowCommits": 0,
-            "lastCommitMs": 0.11,
-            "maxCommitMs": 0.15,
+            "lastCommitMs": 0.19,
+            "maxCommitMs": 0.98,
             "lastSlowAtMs": null
           },
           "rewardWorker": {
@@ -344,15 +344,15 @@
             "restarts": 0,
             "maxWorkerMs": 0,
             "maxPreflightMs": 0,
-            "maxReadyWaitMs": 4254.62
+            "maxReadyWaitMs": 5624.16
           }
         },
         "realm": {
           "realmId": "r2",
-          "dbIdentity": "f704bee8-39b3-4b2f-a0d3-fa987971eb0c",
+          "dbIdentity": "c75f3d85-0468-471c-adab-f8ad2a6e9fc2",
           "protocol": "coreoflife-kernel-v1",
           "ready": true,
-          "sampledAtMs": 1794759395708,
+          "sampledAtMs": 1794762723696,
           "channelCapacity": 10,
           "channels": [
             0,

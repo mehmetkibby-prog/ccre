@@ -17,6 +17,8 @@ R117=PROJECT/'r117_hook_rate/artifacts/R117_HOOK10_28ecda32950b.zip'
 CORE='core511-source/scripts/core511/'
 CHANGED=set(json.loads((ROOT/'build/reviewed-files.json').read_text()))
 OPTIONS=CORE+'royal-config-r118.mjs'
+DEVELOPMENT_FIXTURE='core511-source/scripts/perf-r11/tests/reward/fixture.mjs'
+ORIGINAL_R118=ROOT/'artifacts/R118_ROYAL_6fa07edb5ce7.zip'
 def marks(version):
  return {'ok':True,'updateVersion':'R102_CONTENT','adminHotfix':'R102_ADMIN1','rankingHotfix':'R102_RANK1','entryHotfix':'R102_ENTRY1','championLabelHotfix':'R102_LABEL1','mobileHud':'R102_HUD_SLIM1','autoIpLimit':'R102_AUTO_IP1','realmLoad':'R102_LOAD1','additionsHotfix':'R102_COMPLETE3','skillVisuals':'R103_SKILLS1','browserCompatibility':'R103_ABORT1','autoSession':'R103_AUTO_SESSION1','mobileChat':'R103_CHAT_ANCHOR2','academyPrereg':'R104_AKADEMI4','readerBoot':'R104_BOOT1','connectionRecovery':'R105_TOWER2','performanceReview':'R105_PERF1','captchaWorker':'R106_CAPTCHA1','populationStability':'R107_POPULATION1','latencyRepair':'R109_LATENCY2','realtimeHandoff':'R110_HANDOFF1','combatContinuity':'R111_COMBAT1' if version in ('R111_COMBAT1','R112_FLOW1','R113_ENGINE1','R114_RUNE_FORUM1','R115_SHARED_SCOPE1','R116_ADMISSION_TRANSFER1','R117_HOOK10','R118_ROYAL1') else None,'runtimeFlow':'R112_FLOW1','engineRework':'R113_ENGINE1','engineReadyR113':True,'runeForum':'R114_RUNE_FORUM1','sharedScope':'R115_SHARED_SCOPE1' if version in ('R115_SHARED_SCOPE1','R116_ADMISSION_TRANSFER1','R117_HOOK10','R118_ROYAL1') else None,'admissionTransfer':'R116_ADMISSION_TRANSFER1' if version in ('R116_ADMISSION_TRANSFER1','R117_HOOK10','R118_ROYAL1') else None,'hookRate':'R117_HOOK10' if version in ('R117_HOOK10','R118_ROYAL1') else None,'azrailHookChance':10 if version in ('R117_HOOK10','R118_ROYAL1') else 6,'royalChampions':'R118_ROYAL1' if version=='R118_ROYAL1' else None,'royalReadyR118':version=='R118_ROYAL1','kernel511':{'readerReady':True}}
 
@@ -104,6 +106,50 @@ class Installation(unittest.TestCase):
  def fixture(self):
   f=Fixture();self.addCleanup(f.close);return f
  def result(self,f):return json.loads((max(f.control.glob('install-*'),key=lambda p:p.stat().st_mtime)/'result.json').read_text())
+ def test_corrected_archive_preserves_every_runtime_byte_and_identity(self):
+  record=json.loads((ROOT/'evidence/package.json').read_text())
+  self.assertEqual(digest(ORIGINAL_R118),'640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7')
+  with zipfile.ZipFile(ORIGINAL_R118) as old,zipfile.ZipFile(ROOT/record['file']) as new:
+   before=json.loads(old.read('plan.json'));after=json.loads(new.read('plan.json'))
+   self.assertEqual(set(before['files'])-set(after['files']),{DEVELOPMENT_FIXTURE})
+   self.assertEqual(set(after['files'])-set(before['files']),set())
+   for key in set(before)-{'files'}:self.assertEqual(before[key],after[key],key)
+   for name in after['files']:
+    self.assertEqual(before['files'][name],after['files'][name],name)
+    self.assertEqual(old.read('payload/'+name),new.read('payload/'+name),name)
+   self.assertNotIn('payload/'+DEVELOPMENT_FIXTURE,new.namelist())
+   for name in old.namelist():
+    if name.startswith('modules/') and name!='modules/code_contract.py':
+     self.assertEqual(old.read(name),new.read(name),name)
+ def test_different_or_missing_development_fixture_survives_apply_and_rollback(self):
+  for missing in (False,True):
+   with self.subTest(missing=missing):
+    f=self.fixture();file=f.root/DEVELOPMENT_FIXTURE
+    if missing:file.unlink()
+    else:file.write_bytes(file.read_bytes()+b'\n// Locally adapted native test fixture.\n')
+    expected=None if missing else file.read_bytes()
+    m.apply(f.live,f.z,f.plan);j=self.result(f);m.validate_record(j,completed=True)
+    self.assertNotIn(DEVELOPMENT_FIXTURE,{row['path'] for row in j['files']})
+    self.assertEqual(file.read_bytes() if file.exists() else None,expected)
+    j['phase']='rollback-requested';m.persist(j);m.rollback(f.live,j)
+    self.assertEqual(file.read_bytes() if file.exists() else None,expected)
+    self.assertEqual(json.loads(f.statefile.read_text())['r64Deployment']['version'],'R117_HOOK10')
+    self.assertEqual(f.policies,f.initialPolicies)
+    # Restore patched module globals before constructing the next fixture.
+    f.scope.close()
+ def test_changed_production_files_still_stop_before_any_installation_write(self):
+  f=self.fixture();beforeState=f.statefile.read_bytes();beforeDB={rid:digest(row['path']) for rid,row in f.databases.items()}
+  for name,error in ((CORE+'attack-loop.mjs','Kurulu çekirdek eşleşmedi:'),('native510-bb3a6cc689c6/lib/combat-stats.ts','Kurulu dosya farklı:')):
+   with self.subTest(path=name):
+    file=f.root/name;original=file.read_bytes();file.write_bytes(original+b'\n// Unrecognized production modification.\n')
+    try:
+     with patch.object(m,'stop_all') as stop:
+      with self.assertRaisesRegex(RuntimeError,error):m.apply(f.live,f.z,f.plan)
+      stop.assert_not_called()
+     self.assertEqual(f.statefile.read_bytes(),beforeState)
+     self.assertEqual({rid:digest(row['path']) for rid,row in f.databases.items()},beforeDB)
+     self.assertFalse(m.ACTIVE.exists());self.assertEqual(f.centralCalls,[])
+    finally:file.write_bytes(original)
  def test_client_graph_rejects_missing_new_monster_art_before_mutation(self):
   plan={'namespace':'core511-aaaaaaaaaaaaaaaa','game':'game-client-x.js','portal':'portal.js','admin':'admin.js'}
   prefix='http-runtime/dist-vds/client/assets/'+plan['namespace']+'/'
