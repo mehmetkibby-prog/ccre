@@ -1,0 +1,39 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794752587219,"backupName":"before-pearl-reset-1794752587219-0124f14c-ba3c-4dd5-98fe-87b435237113.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:23:24.214Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":15475,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bd0eb2211da0c4a88128b487"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:23:24.218Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":15482,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9fce72d838ae3624a98e2316"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:23:24.222Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":15488,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"19759aa74bed4636e24cca47"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:23:24.223Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":15528,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4453e5c362ded66ccb1e5b59"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:23:24.272Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":15453,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"46f79f3f6789c8ee21e6b0c0"}
+# Subtest: actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+not ok 1 - actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+  ---
+  duration_ms: 24493.036427
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-host.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":"İşlem sürüyor; kısa bir an sonra tekrar dene.","code":"craft_rate_limited"}
+    
+    429 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 429
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-host.test.mjs:46:55)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 30406.696246
