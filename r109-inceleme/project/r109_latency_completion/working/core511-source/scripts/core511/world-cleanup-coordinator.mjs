@@ -2,7 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {CLEANUP_ORDER,CLEANUP_BATCH_SIZE,CLEANUP_MAX_BATCHES} from './world-cleanup.mjs';
 import {demand} from './contract.mjs';
 export class WorldCleanupCoordinator {
- constructor(world){this.world=world;this.core=world.core;this.channels=world.core.channelSupervisor;this.cursors=new Map();this.held=null;this.running=null;this.core.writer.cleanupCoordinator=this;}
+ constructor(world){this.world=world;this.core=world.core;this.channels=world.core.channelSupervisor;this.cursors=new Map();this.retryAt=new Map();this.held=null;this.running=null;this.core.writer.cleanupCoordinator=this;}
  run(peer,{nowMs,cycle}){
   demand(!this.running&&this.world.row?.peer.incarnation===peer.incarnation&&Number.isSafeInteger(nowMs)&&nowMs>0&&nowMs<=this.core.clock()+5000,'cleanup_request');
   this.running=this.execute(peer,nowMs,cycle).finally(()=>{this.running=null;});return this.running;
@@ -10,7 +10,10 @@ export class WorldCleanupCoordinator {
  async execute(peer,nowMs,cycle){
   let removed=0;
   for(const table of CLEANUP_ORDER)for(let batch=0;batch<CLEANUP_MAX_BATCHES;batch++){
+   if(nowMs<(this.retryAt.get(table)??0))break;
    const answer=await this.channels.serial(()=>this.world.serial(()=>this.core.serial(()=>this.batch(peer,{table,nowMs,cycle}))));
+   if(answer.sqlDeferred){this.retryAt.set(table,nowMs+60000);break;}
+   this.retryAt.delete(table);
    if(answer.busy)return {removed,deferred:true};removed+=answer.removed;
    if(answer.count<CLEANUP_BATCH_SIZE)break;
    await new Promise(resolve=>setImmediate(resolve));
@@ -33,6 +36,14 @@ export class WorldCleanupCoordinator {
    if(rows.some(row=>row.ack.busy)){await Promise.all(rows.filter(row=>!row.ack.busy).map(row=>row.control.request('cleanup_resume',{token,aborted:true})));this.held=null;return {busy:true};}
    for(const row of rows)demand(row.ack.token===token&&row.ack.cycle===cycle&&row.ack.incarnation===row.peer.incarnation&&JSON.stringify(row.ack.resources)===JSON.stringify(plan.resources),'cleanup_freeze_ack');h.ready=true;
    const ack=await this.world.row.control.request('cleanup_execute',{key:'world-cleanup:'+token,kind:'world_cleanup_batch',payload:{token,plan}});demand(ack.key==='world-cleanup:'+token&&ack.result.table===table,'cleanup_commit_ack');
+   if(ack.result.cleanupDeferredR121===true){
+    // This ACK is returned only after rollback plus the negative receipt's
+    // COMMIT/fsync. Keep every resident contribution and release only the
+    // exact frozen leases; a lost/malformed resume ACK still fails closed.
+    demand(ack.result.token===token&&Array.isArray(ack.result.rows)&&ack.result.rows.length===0,'cleanup_rollback_ack');
+    await Promise.all(rows.map(async row=>{const reply=await row.control.request('cleanup_resume',{token,aborted:true});demand(reply.token===token&&reply.resumed===true,'cleanup_abort_ack');}));
+    this.held=null;return {count:plan.count,removed:0,sqlDeferred:true};
+   }
    await Promise.all(rows.map(async row=>{const reply=await row.control.request('cleanup_commit',{token,...ack.result});demand(reply.token===token&&reply.refreshed,'cleanup_refresh_ack');}));
    await Promise.all(rows.map(async row=>{const reply=await row.control.request('cleanup_resume',{token});demand(reply.token===token&&reply.resumed,'cleanup_resume_ack');}));this.held=null;this.advance(plan);return {count:plan.count,removed:ack.result.rows.length};
   }catch(error){this.world.global.held={phase:'unknown',token};this.core.onFault({error,cleanup:true});this.world.global.recover({error});this.held=null;throw error;}

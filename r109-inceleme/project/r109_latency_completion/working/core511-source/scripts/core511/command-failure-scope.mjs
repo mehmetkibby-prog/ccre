@@ -35,6 +35,23 @@ function safeFrames(error){return String(error?.stack??'').split('\n').slice(1).
 export class CommandFailureScope {
  constructor(sql,{checkpoint=()=>null,onRollback=()=>{},diagnostic=record=>console.error(JSON.stringify(record)),clock=Date.now}={}){this.sql=sql;this.state=observe(sql);this.checkpoint=checkpoint;this.onRollback=onRollback;this.diagnostic=diagnostic;this.clock=clock;this.logged=new Map();}
  preserve(afterRollback){demand(typeof afterRollback==='function','command_failure_preserve');if(this.state.active)this.state.active.preserved.push(afterRollback);}
+ // Optional expiry is allowed to retain old rows after a connection-proven
+ // SQL error. Never swallow an ownership exception, unknown COMMIT, failed
+ // rollback, IO/corruption error, or an application-forged SQLite code.
+ // The enclosing SystemWriter still persists a receipt and waits for fsync.
+ cleanup(payload,context,work){
+  const sql=this.sql,state=this.state;
+  demand(sql.isTransaction&&!state.active&&context.peer.channel===0&&context.peer.role==='world','cleanup_failure_scope');
+  const scope={preserved:[]};sql.exec('SAVEPOINT core511_optional_cleanup');state.active=scope;
+  try{const result=work();demand(!result?.then,'cleanup_failure_async');sql.exec('RELEASE core511_optional_cleanup');return result;}
+  catch(error){
+   const evidence=state.known.get(error);if(!evidence||evidence.scope!==scope||!sql.isTransaction)throw error;
+   sql.exec('ROLLBACK TO core511_optional_cleanup; RELEASE core511_optional_cleanup');
+   const key='cleanup:'+evidence.family+':'+evidence.queryDigest,now=this.clock();
+   if(now-(this.logged.get(key)??-Infinity)>=60000){this.logged.set(key,now);if(this.logged.size>64)this.logged.delete(this.logged.keys().next().value);try{this.diagnostic({type:'core511_cleanup_sql_deferred',table:payload.plan.table,family:evidence.family,queryDigest:evidence.queryDigest,sqliteCode:evidence.sqliteCode,frames:safeFrames(error),outcome:'rollback_confirmed_receipt_pending_durability'});}catch{}}
+   return {table:payload.plan.table,rows:[],cleanupDeferredR121:true,token:payload.token};
+  }finally{state.active=null;}
+ }
  run(kind,payload,context,work){
   if(!supported.has(kind))return work();
   const sql=this.sql,state=this.state;demand(sql.isTransaction&&!state.active,'command_failure_scope');const scope={preserved:[]},checkpoint=this.checkpoint();

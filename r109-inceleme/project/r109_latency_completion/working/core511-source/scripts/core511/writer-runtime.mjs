@@ -97,7 +97,8 @@ export class GameWriter {
   this.system.add('dragon_tick',createDragonTickHandler({services:this.services,clock}));
   this.system.add('world_upkeep',createWorldUpkeepHandler({services:this.services,clock}));
   this.system.add('player_upkeep',createPlayerJobHandler({database,services:this.services,clock,assertHeld:(...args)=>{demand(this.playerJobs,'player_job_coordinator_missing');return this.playerJobs.assertHeld(...args);}}));
-  this.system.add('world_cleanup_batch',createCleanupHandler({clock,assertHeld:(...args)=>{demand(this.cleanupCoordinator,'cleanup_coordinator_missing');return this.cleanupCoordinator.assertHeld(...args);}}));
+  const cleanupHandler=createCleanupHandler({clock,assertHeld:(...args)=>{demand(this.cleanupCoordinator,'cleanup_coordinator_missing');return this.cleanupCoordinator.assertHeld(...args);}});
+  this.system.add('world_cleanup_batch',(sql,payload,context)=>this.commandFailures.cleanup(payload,context,()=>cleanupHandler(sql,payload,context)));
   const worldTransition=createWorldTransitionHandler({services:this.services,clock,authority:this.authority,appendEvents:(...args)=>this.notifications.append(...args),assertHeartbeat:(...args)=>{demand(this.heartbeatJobs,'heartbeat_coordinator_missing');return this.heartbeatJobs.assertHeld(...args);},assertFrozen:(...args)=>{demand(this.globalWorld,'world_transition_coordinator_missing');return this.globalWorld.assertFrozen(...args);}});
   this.system.add('world_transition',(sql,payload,context)=>this.sharedRefresh.run(sql,payload,context,()=>worldTransition(sql,payload,context),{global:r35Options.globalRefresh&&payload.mode==='heartbeat'}));
   const checkpointResources=createCheckpointResourceGuard(this.authority);
