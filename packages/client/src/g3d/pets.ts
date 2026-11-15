@@ -63,8 +63,13 @@ function splitWings(scene: THREE.Object3D, bodyFrac: number, target: number): { 
   return any ? { root, left, right, half } : null;
 }
 
-/** Sırttaki kanat (Kızıl Çekirdek Kanatları): karakterin kök nesnesine eklenir; çok hafif çırpınır. */
-export function createWings(height: number): (THREE.Object3D & { tick?: (t: number, moving: boolean) => void }) | null {
+/**
+ * Sırttaki kanat (Kızıl Çekirdek Kanatları): karakterin göğüs/sırt kemiğine bağlıdır; karakter eğilince, dönünce,
+ * saldırırken kanat da gövdeyle birlikte hareket eder. Üstüne çok hafif çırpınma eklenir.
+ * Kemik ölçeği (Meshy iskeleti) yüzünden kemiğe çocuk olarak takılmaz: her karede kemiğin köke göre konumu
+ * ve dönüşü okunup bağlanma pozundaki göreli konum korunur.
+ */
+export function createWings(height: number, charRoot?: THREE.Object3D): (THREE.Object3D & { tick?: (t: number, moving: boolean) => void }) | null {
   const L = loadModel('wings_crimson');
   if (!L) return null;
   const w = splitWings(L.scene.clone(true), 0.12, 1.9 * (height / 1.85));
@@ -74,7 +79,28 @@ export function createWings(height: number): (THREE.Object3D & { tick?: (t: numb
   holder.add(w.root);
   w.root.rotation.y = Math.PI; // dış yüz (görselde arkadan bakılan) karakterin arkasına baksın
   holder.position.set(0, height * 0.7, -0.17);
+  // sırt kemiği: Spine02 (göğüs) yoksa Spine01 / Spine
+  let bone: THREE.Object3D | undefined;
+  if (charRoot) for (const n of ['Spine02', 'Spine01', 'Spine']) { charRoot.traverse((o) => { if (!bone && (o as THREE.Bone).isBone && o.name === n) bone = o; }); if (bone) break; }
+  const rel = (out: { p: THREE.Vector3; q: THREE.Quaternion }) => {
+    charRoot!.updateMatrixWorld(); // kemik matrisi bir önceki karedeki pozdan
+    const m = new THREE.Matrix4().copy(charRoot!.matrixWorld).invert().multiply(bone!.matrixWorld);
+    m.decompose(out.p, out.q, new THREE.Vector3());
+    return out;
+  };
+  let off: THREE.Vector3 | null = null, qCorr: THREE.Quaternion | null = null;
+  if (bone && charRoot) {
+    const r0 = rel({ p: new THREE.Vector3(), q: new THREE.Quaternion() });
+    qCorr = r0.q.clone().invert();
+    off = holder.position.clone().sub(r0.p).applyQuaternion(qCorr);
+  }
+  const cur = { p: new THREE.Vector3(), q: new THREE.Quaternion() };
   holder.tick = (t, moving) => {
+    if (bone && off && qCorr) {
+      rel(cur);
+      holder.position.copy(off).applyQuaternion(cur.q).add(cur.p);
+      holder.quaternion.copy(cur.q).multiply(qCorr);
+    }
     const a = 0.16 + Math.sin(t * (moving ? 2.6 : 1.5)) * (moving ? 0.13 : 0.07);
     w.left.rotation.y = a; w.right.rotation.y = -a; // arkaya doğru hafif kapanıp açılır
     w.left.rotation.z = Math.sin(t * 1.5 + 0.5) * 0.04; w.right.rotation.z = -w.left.rotation.z;

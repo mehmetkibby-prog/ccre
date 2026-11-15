@@ -78,15 +78,24 @@ export class Terrain {
     geo.computeVertexNormals();
     // splat dokusu: her tile için katman ağırlıkları (12 kanal = 3 RGBA doku)
     const nl = LAYER_NAMES.length;
-    const splats: Uint8Array[] = [new Uint8Array(l.w * l.h * 4), new Uint8Array(l.w * l.h * 4), new Uint8Array(l.w * l.h * 4)];
-    for (let ty = 0; ty < l.h; ty++) for (let tx = 0; tx < l.w; tx++) {
-      const g = l.ground[ty * l.w + tx];
-      const layer = LAYER_NAMES.indexOf(GROUND_LAYERS[g]);
-      const idx = ty * l.w + tx;
-      splats[(layer / 4) | 0][idx * 4 + (layer % 4)] = 255;
+    // Karo başına tek değer çift doğrusal örneklenince yol/çimen kenarı merdiven gibi kesik kesik görünüyordu.
+    // Ağırlıklar 4× çözünürlükte, Gauss bulanıklığıyla (σ ≈ 0,8 karo) yumuşatılır: kenarlar yuvarlak ve doğal kıvrımlı.
+    const SS = 4, W = l.w * SS, H = l.h * SS;
+    const splats: Uint8Array[] = [new Uint8Array(W * H * 4), new Uint8Array(W * H * 4), new Uint8Array(W * H * 4)];
+    const used = new Set<number>();
+    const lay = new Int8Array(l.w * l.h);
+    for (let k = 0; k < l.w * l.h; k++) { const li = LAYER_NAMES.indexOf(GROUND_LAYERS[l.ground[k]]); lay[k] = li; used.add(li); }
+    const R = 7, sig = 3.2, ker = Array.from({ length: R * 2 + 1 }, (_, i) => Math.exp(-((i - R) ** 2) / (2 * sig * sig)));
+    const ks = ker.reduce((a, b) => a + b, 0); for (let i = 0; i < ker.length; i++) ker[i] /= ks;
+    const A = new Float32Array(W * H), B = new Float32Array(W * H);
+    for (const li of used) {
+      for (let y = 0; y < H; y++) { const ty = (y / SS) | 0; for (let x = 0; x < W; x++) A[y * W + x] = lay[ty * l.w + ((x / SS) | 0)] === li ? 1 : 0; }
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += A[y * W + Math.min(W - 1, Math.max(0, x + k))] * ker[k + R]; B[y * W + x] = v; }
+      const ch = splats[(li / 4) | 0], o = li % 4;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += B[Math.min(H - 1, Math.max(0, y + k)) * W + x] * ker[k + R]; ch[(y * W + x) * 4 + o] = Math.round(v * 255); }
     }
     const splatTex = splats.map((d) => {
-      const t = new THREE.DataTexture(d, l.w, l.h, THREE.RGBAFormat);
+      const t = new THREE.DataTexture(d, W, H, THREE.RGBAFormat);
       t.magFilter = THREE.LinearFilter; t.minFilter = THREE.LinearFilter; t.needsUpdate = true;
       return t;
     });

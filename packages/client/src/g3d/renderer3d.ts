@@ -365,7 +365,7 @@ export class Renderer3D {
       // Nesne Market kozmetikleri (bit 12-14): kanat sırta, evcil hayvan yanına
       const cos = kind === Kind.PLAYER ? (gear >> 12) & 7 : 0;
       let cpend: string | null = null, wings: View['wings'] = null, pet: Pet | null = null;
-      if (cos & 4) { wings = createWings(glb.height - 0.2); if (wings) glb.root.add(wings); else if (modelPending('wings_crimson')) cpend = 'wings_crimson'; }
+      if (cos & 4) { wings = createWings(glb.height - 0.2, glb.root); if (wings) glb.root.add(wings); else if (modelPending('wings_crimson')) cpend = 'wings_crimson'; }
       if (cos & 3) { pet = createPet(cos & 3); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[cos & 3])) cpend = PET_MODEL[cos & 3]; }
       return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend, wings, pet, cpend };
     }
