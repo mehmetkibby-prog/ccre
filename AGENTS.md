@@ -109,3 +109,5 @@ receipts. Original production SQLite error code was not captured; do not claim
 its exact cause was proven. Keep ambiguous commit/ACK and ownership recovery.
 The backend-only installer accepts exact R118/R119/R120 sources and preserves
 their installed clients. See R121 package/validation evidence before delivery.
+
+R122 disk incident continuation: read `r109-inceleme/R122_DEVIR.md`. The user confirmed R121 installed; Efsane DB is 127.39 GiB with only 0.32 GiB freelist. A guarded reserve adjustment supplied 7.62 GiB headroom. New candidate is R122_RETENTION1 (two backend files) plus a separate offline `--compact` command, exact R121/R120 client source. Preserve DB inode, all permanent rows, ownership/replay fences and unACK notifications. No live compaction is confirmed; do not claim production reclaimed space or full throughput guarantee.

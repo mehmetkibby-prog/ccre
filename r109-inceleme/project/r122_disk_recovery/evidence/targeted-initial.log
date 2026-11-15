@@ -1,0 +1,150 @@
+TAP version 13
+# (node:100840) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+ok 1 - copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+  ---
+  duration_ms: 93.843217
+  type: 'test'
+  ...
+# Subtest: low disk space stops without modifying original database
+ok 2 - low disk space stops without modifying original database
+  ---
+  duration_ms: 24.285974
+  type: 'test'
+  ...
+# Subtest: schema variants are rejected before original is changed
+ok 3 - schema variants are rejected before original is changed
+  ---
+  duration_ms: 13.53323
+  type: 'test'
+  ...
+# {"test":"inplace_compact","bytesBefore":168083456,"bytesAfter":90112,"reclaimedBytes":167993344}
+# Subtest: compact installation preserves live inode and frees the old file with WAL recovery
+ok 4 - compact installation preserves live inode and frees the old file with WAL recovery
+  ---
+  duration_ms: 2179.050665
+  type: 'test'
+  ...
+# Subtest: changed backup contents stop before original installation
+ok 5 - changed backup contents stop before original installation
+  ---
+  duration_ms: 8.502182
+  type: 'test'
+  ...
+# (node:100841) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: slow channel batch cannot starve system or ACKed notifications
+ok 6 - slow channel batch cannot starve system or ACKed notifications
+  ---
+  duration_ms: 111.292224
+  type: 'test'
+  ...
+# Subtest: cold system SELECT progresses one row even when initial read exceeds target
+ok 7 - cold system SELECT progresses one row even when initial read exceeds target
+  ---
+  duration_ms: 70.46175
+  type: 'test'
+  ...
+# Subtest: one cold family does not monopolize the next family
+ok 8 - one cold family does not monopolize the next family
+  ---
+  duration_ms: 28.749397
+  type: 'test'
+  ...
+# Subtest: 15-minute boundary and unacknowledged recipients remain protected
+not ok 9 - 15-minute boundary and unacknowledged recipients remain protected
+  ---
+  duration_ms: 15.637974
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/maintenance.test.mjs:38:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'evt1',
+        'evt2',
+        'evt3'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'evt2'
+    1: 'evt3'
+  actual:
+    0: 'evt1'
+    1: 'evt2'
+    2: 'evt3'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/maintenance.test.mjs:43:9)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: unacknowledged first row cannot prevent later eligible notification cleanup
+ok 10 - unacknowledged first row cannot prevent later eligible notification cleanup
+  ---
+  duration_ms: 11.917544
+  type: 'test'
+  ...
+# Subtest: all original foreground and durability idle guards prevent writes
+ok 11 - all original foreground and durability idle guards prevent writes
+  ---
+  duration_ms: 9.037316
+  type: 'test'
+  ...
+# Subtest: foreground work arriving after admission keeps FIFO priority
+ok 12 - foreground work arriving after admission keeps FIFO priority
+  ---
+  duration_ms: 4.968654
+  type: 'test'
+  ...
+# {"type":"core511_retention_r122","version":"R122_RETENTION1","enabled":true,"minutes":15,"lastProgressAt":1793861407163,"catchUp":true,"batchByFamily":{"channel":2,"system":2,"images":2,"notifications":2},"passes":1,"skipped":4,"receipts":0,"system":1,"notifications":0,"images":0,"checkpoints":0,"errors":0,"maxBatchMs":0.3065169999999853,"batches":4,"budgetOverruns":0}
+# Subtest: busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+ok 13 - busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+  ---
+  duration_ms: 109.119889
+  type: 'test'
+  ...
+# Subtest: close cancels retry and disabled retention never writes
+ok 14 - close cancels retry and disabled retention never writes
+  ---
+  duration_ms: 138.542972
+  type: 'test'
+  ...
+# Subtest: pruning channel receipt preserves sequence watermark and forbids duplicate reward
+ok 15 - pruning channel receipt preserves sequence watermark and forbids duplicate reward
+  ---
+  duration_ms: 28.395022
+  type: 'test'
+  ...
+# Subtest: pruning system receipt preserves epoch/sequence and forbids duplicate work
+ok 16 - pruning system receipt preserves epoch/sequence and forbids duplicate work
+  ---
+  duration_ms: 10.340246
+  type: 'test'
+  ...
+# Subtest: continuous fresh appends do not strand a now-expired row behind the cursor
+ok 17 - continuous fresh appends do not strand a now-expired row behind the cursor
+  ---
+  duration_ms: 46.309396
+  type: 'test'
+  ...
+# Subtest: continuous appends cannot strand a notification acknowledged after its first scan
+ok 18 - continuous appends cannot strand a notification acknowledged after its first scan
+  ---
+  duration_ms: 52.051564
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 17
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2615.702005

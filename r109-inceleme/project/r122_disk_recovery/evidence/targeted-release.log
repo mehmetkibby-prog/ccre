@@ -1,0 +1,157 @@
+TAP version 13
+# (node:103604) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+ok 1 - copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+  ---
+  duration_ms: 18.02054
+  type: 'test'
+  ...
+# Subtest: low disk space stops without modifying original database
+ok 2 - low disk space stops without modifying original database
+  ---
+  duration_ms: 6.086858
+  type: 'test'
+  ...
+# Subtest: schema variants are rejected before original is changed
+ok 3 - schema variants are rejected before original is changed
+  ---
+  duration_ms: 3.663203
+  type: 'test'
+  ...
+# {"test":"inplace_compact","bytesBefore":168087552,"bytesAfter":94208,"reclaimedBytes":167993344}
+# Subtest: compact installation preserves live inode and frees the old file with WAL recovery
+ok 4 - compact installation preserves live inode and frees the old file with WAL recovery
+  ---
+  duration_ms: 413.566587
+  type: 'test'
+  ...
+# Subtest: changed backup contents stop before original installation
+ok 5 - changed backup contents stop before original installation
+  ---
+  duration_ms: 12.825327
+  type: 'test'
+  ...
+# Subtest: metadata tampering cannot reset the next equipment identifier
+ok 6 - metadata tampering cannot reset the next equipment identifier
+  ---
+  duration_ms: 8.870781
+  type: 'test'
+  ...
+# Subtest: interrupted post-commit install can complete without changing player state or inode
+ok 7 - interrupted post-commit install can complete without changing player state or inode
+  ---
+  duration_ms: 270.614495
+  type: 'test'
+  ...
+# Subtest: recovery refuses a stale snapshot after a newer game boot
+ok 8 - recovery refuses a stale snapshot after a newer game boot
+  ---
+  duration_ms: 6.681522
+  type: 'test'
+  ...
+# Subtest: output cap stops a large permanent table without touching original
+ok 9 - output cap stops a large permanent table without touching original
+  ---
+  duration_ms: 21.445659
+  type: 'test'
+  ...
+# (node:103615) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: slow channel batch cannot starve system or ACKed notifications
+ok 10 - slow channel batch cannot starve system or ACKed notifications
+  ---
+  duration_ms: 62.58446
+  type: 'test'
+  ...
+# Subtest: cold system SELECT progresses one row even when initial read exceeds target
+ok 11 - cold system SELECT progresses one row even when initial read exceeds target
+  ---
+  duration_ms: 41.640103
+  type: 'test'
+  ...
+# Subtest: one cold family does not monopolize the next family
+ok 12 - one cold family does not monopolize the next family
+  ---
+  duration_ms: 16.507628
+  type: 'test'
+  ...
+# Subtest: 15-minute boundary and unacknowledged recipients remain protected
+ok 13 - 15-minute boundary and unacknowledged recipients remain protected
+  ---
+  duration_ms: 3.613797
+  type: 'test'
+  ...
+# Subtest: unacknowledged first row cannot prevent later eligible notification cleanup
+ok 14 - unacknowledged first row cannot prevent later eligible notification cleanup
+  ---
+  duration_ms: 3.482356
+  type: 'test'
+  ...
+# Subtest: all original foreground and durability idle guards prevent writes
+ok 15 - all original foreground and durability idle guards prevent writes
+  ---
+  duration_ms: 0.993684
+  type: 'test'
+  ...
+# Subtest: foreground work arriving after admission keeps FIFO priority
+ok 16 - foreground work arriving after admission keeps FIFO priority
+  ---
+  duration_ms: 1.943503
+  type: 'test'
+  ...
+# {"type":"core511_retention_r122","version":"R122_RETENTION1","enabled":true,"minutes":15,"lastProgressAt":1793861407163,"catchUp":true,"batchByFamily":{"channel":2,"system":2,"images":2,"notifications":2},"passes":1,"skipped":4,"receipts":0,"system":1,"notifications":0,"images":0,"checkpoints":0,"errors":0,"maxBatchMs":0.14509700000002113,"batches":4,"budgetOverruns":0}
+# Subtest: busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+ok 17 - busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+  ---
+  duration_ms: 102.012773
+  type: 'test'
+  ...
+# Subtest: close cancels retry and disabled retention never writes
+ok 18 - close cancels retry and disabled retention never writes
+  ---
+  duration_ms: 131.864619
+  type: 'test'
+  ...
+# Subtest: pruning channel receipt preserves sequence watermark and forbids duplicate reward
+ok 19 - pruning channel receipt preserves sequence watermark and forbids duplicate reward
+  ---
+  duration_ms: 4.963654
+  type: 'test'
+  ...
+# Subtest: pruning system receipt preserves epoch/sequence and forbids duplicate work
+ok 20 - pruning system receipt preserves epoch/sequence and forbids duplicate work
+  ---
+  duration_ms: 3.131682
+  type: 'test'
+  ...
+# Subtest: continuous fresh appends do not strand a now-expired row behind the cursor
+ok 21 - continuous fresh appends do not strand a now-expired row behind the cursor
+  ---
+  duration_ms: 8.266378
+  type: 'test'
+  ...
+# Subtest: continuous appends cannot strand a notification acknowledged after its first scan
+ok 22 - continuous appends cannot strand a notification acknowledged after its first scan
+  ---
+  duration_ms: 7.669014
+  type: 'test'
+  ...
+# (node:103622) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# {"scenario":"60 seconds simulated idle windows; virtual clock and fixed 1 ms SELECT budget cost; scheduling regression test, not measured live throughput","before":{"removed":60,"passes":60,"maxBatchMs":1,"wallMs":55.042213},"after":{"removed":10000,"passes":453,"maxBatchMs":1,"wallMs":463.402678}}
+# Subtest: independent batches and catch-up improve controlled cleanup capacity without shortening retention
+ok 23 - independent batches and catch-up improve controlled cleanup capacity without shortening retention
+  ---
+  duration_ms: 721.259584
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2235.396626

@@ -1,0 +1,64 @@
+test_full_copy_install_keeps_inode_and_controls (__main__.Run.test_full_copy_install_keeps_inode_and_controls) ... ERROR
+test_open_game_is_rejected_before_stop (__main__.Run.test_open_game_is_rejected_before_stop) ... ok
+test_post_commit_crash_is_guarded_and_resumes_forward (__main__.Run.test_post_commit_crash_is_guarded_and_resumes_forward) ... FAIL
+test_preparation_failure_restarts_original_and_discards_partial (__main__.Run.test_preparation_failure_restarts_original_and_discards_partial) ... FAIL
+test_recovery_after_start_does_not_restore_older_player_progress (__main__.Run.test_recovery_after_start_does_not_restore_older_player_progress) ... FAIL
+test_unknown_recovery_phase_is_rejected (__main__.Run.test_unknown_recovery_phase_is_rejected) ... ok
+
+======================================================================
+ERROR: test_full_copy_install_keeps_inode_and_controls (__main__.Run.test_full_copy_install_keeps_inode_and_controls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py", line 31, in test_full_copy_install_keeps_inode_and_controls
+    ino=self.source.stat().st_ino;m.apply(self.live)
+                                  ^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py", line 193, in apply
+    require(not ROOT.is_symlink() and ROOT.stat().st_uid == 0, 'Disk bakım dizini farklı')
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/support/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Disk bakım dizini farklı
+
+======================================================================
+FAIL: test_post_commit_crash_is_guarded_and_resumes_forward (__main__.Run.test_post_commit_crash_is_guarded_and_resumes_forward)
+----------------------------------------------------------------------
+RuntimeError: Disk bakım dizini farklı
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py", line 45, in test_post_commit_crash_is_guarded_and_resumes_forward
+    with patch.object(m,'worker',side_effect=fail),self.assertRaisesRegex(RuntimeError,'lost worker'):m.apply(self.live)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "lost worker" does not match "Disk bakım dizini farklı"
+
+======================================================================
+FAIL: test_preparation_failure_restarts_original_and_discards_partial (__main__.Run.test_preparation_failure_restarts_original_and_discards_partial)
+----------------------------------------------------------------------
+RuntimeError: Disk bakım dizini farklı
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py", line 37, in test_preparation_failure_restarts_original_and_discards_partial
+    with patch.object(m,'worker',side_effect=fail),self.assertRaisesRegex(RuntimeError,'copy failed'):m.apply(self.live)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "copy failed" does not match "Disk bakım dizini farklı"
+
+======================================================================
+FAIL: test_recovery_after_start_does_not_restore_older_player_progress (__main__.Run.test_recovery_after_start_does_not_restore_older_player_progress)
+----------------------------------------------------------------------
+RuntimeError: Disk bakım dizini farklı
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py", line 51, in test_recovery_after_start_does_not_restore_older_player_progress
+    with self.assertRaisesRegex(RuntimeError,'health timeout'):m.apply(self.live)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "health timeout" does not match "Disk bakım dizini farklı"
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.018s
+
+FAILED (failures=3, errors=1)

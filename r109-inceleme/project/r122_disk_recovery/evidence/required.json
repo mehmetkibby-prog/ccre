@@ -1,0 +1,18 @@
+[
+  {
+    "test": "test",
+    "exit": 0
+  },
+  {
+    "test": "test:native",
+    "exit": 0
+  },
+  {
+    "test": "test:captcha",
+    "exit": 0
+  },
+  {
+    "test": "test:r110",
+    "exit": 0
+  }
+]

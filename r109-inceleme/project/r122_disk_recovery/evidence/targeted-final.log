@@ -1,0 +1,172 @@
+TAP version 13
+# (node:102221) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+ok 1 - copy retains exact player state, rowids, large integers, blobs, sequences, schema and pending notifications
+  ---
+  duration_ms: 83.27362
+  type: 'test'
+  ...
+# Subtest: low disk space stops without modifying original database
+ok 2 - low disk space stops without modifying original database
+  ---
+  duration_ms: 29.237573
+  type: 'test'
+  ...
+# Subtest: schema variants are rejected before original is changed
+ok 3 - schema variants are rejected before original is changed
+  ---
+  duration_ms: 20.596568
+  type: 'test'
+  ...
+# {"test":"inplace_compact","bytesBefore":168087552,"bytesAfter":94208,"reclaimedBytes":167993344}
+# Subtest: compact installation preserves live inode and frees the old file with WAL recovery
+ok 4 - compact installation preserves live inode and frees the old file with WAL recovery
+  ---
+  duration_ms: 1463.612247
+  type: 'test'
+  ...
+# Subtest: changed backup contents stop before original installation
+ok 5 - changed backup contents stop before original installation
+  ---
+  duration_ms: 14.122155
+  type: 'test'
+  ...
+# Subtest: metadata tampering cannot reset the next equipment identifier
+ok 6 - metadata tampering cannot reset the next equipment identifier
+  ---
+  duration_ms: 10.475491
+  type: 'test'
+  ...
+# Subtest: interrupted post-commit install can complete without changing player state or inode
+ok 7 - interrupted post-commit install can complete without changing player state or inode
+  ---
+  duration_ms: 549.533578
+  type: 'test'
+  ...
+# Subtest: recovery refuses a stale snapshot after a newer game boot
+ok 8 - recovery refuses a stale snapshot after a newer game boot
+  ---
+  duration_ms: 88.702739
+  type: 'test'
+  ...
+# Subtest: output cap stops a large permanent table without touching original
+ok 9 - output cap stops a large permanent table without touching original
+  ---
+  duration_ms: 181.243851
+  type: 'test'
+  ...
+# (node:102232) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: slow channel batch cannot starve system or ACKed notifications
+ok 10 - slow channel batch cannot starve system or ACKed notifications
+  ---
+  duration_ms: 102.094421
+  type: 'test'
+  ...
+# Subtest: cold system SELECT progresses one row even when initial read exceeds target
+ok 11 - cold system SELECT progresses one row even when initial read exceeds target
+  ---
+  duration_ms: 54.975241
+  type: 'test'
+  ...
+# Subtest: one cold family does not monopolize the next family
+ok 12 - one cold family does not monopolize the next family
+  ---
+  duration_ms: 24.940125
+  type: 'test'
+  ...
+# Subtest: 15-minute boundary and unacknowledged recipients remain protected
+ok 13 - 15-minute boundary and unacknowledged recipients remain protected
+  ---
+  duration_ms: 15.437666
+  type: 'test'
+  ...
+# Subtest: unacknowledged first row cannot prevent later eligible notification cleanup
+ok 14 - unacknowledged first row cannot prevent later eligible notification cleanup
+  ---
+  duration_ms: 16.23188
+  type: 'test'
+  ...
+# Subtest: all original foreground and durability idle guards prevent writes
+ok 15 - all original foreground and durability idle guards prevent writes
+  ---
+  duration_ms: 3.859783
+  type: 'test'
+  ...
+# Subtest: foreground work arriving after admission keeps FIFO priority
+ok 16 - foreground work arriving after admission keeps FIFO priority
+  ---
+  duration_ms: 1.443854
+  type: 'test'
+  ...
+# {"type":"core511_retention_r122","version":"R122_RETENTION1","enabled":true,"minutes":15,"lastProgressAt":1793861407163,"catchUp":true,"batchByFamily":{"channel":2,"system":2,"images":2,"notifications":1},"passes":1,"skipped":4,"receipts":0,"system":1,"notifications":0,"images":0,"checkpoints":0,"errors":0,"maxBatchMs":2.0661369999999124,"batches":4,"budgetOverruns":1}
+# Subtest: busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+ok 17 - busy sampling gets one bounded retry, no extra work pass before the catch-up deadline
+  ---
+  duration_ms: 107.510525
+  type: 'test'
+  ...
+# Subtest: close cancels retry and disabled retention never writes
+ok 18 - close cancels retry and disabled retention never writes
+  ---
+  duration_ms: 133.907707
+  type: 'test'
+  ...
+# Subtest: pruning channel receipt preserves sequence watermark and forbids duplicate reward
+ok 19 - pruning channel receipt preserves sequence watermark and forbids duplicate reward
+  ---
+  duration_ms: 18.517145
+  type: 'test'
+  ...
+# Subtest: pruning system receipt preserves epoch/sequence and forbids duplicate work
+ok 20 - pruning system receipt preserves epoch/sequence and forbids duplicate work
+  ---
+  duration_ms: 11.478853
+  type: 'test'
+  ...
+# Subtest: continuous fresh appends do not strand a now-expired row behind the cursor
+ok 21 - continuous fresh appends do not strand a now-expired row behind the cursor
+  ---
+  duration_ms: 24.25172
+  type: 'test'
+  ...
+# Subtest: continuous appends cannot strand a notification acknowledged after its first scan
+ok 22 - continuous appends cannot strand a notification acknowledged after its first scan
+  ---
+  duration_ms: 26.346916
+  type: 'test'
+  ...
+# (node:102239) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: independent batches and catch-up improve controlled cleanup capacity without shortening retention
+not ok 23 - independent batches and catch-up improve controlled cleanup capacity without shortening retention
+  ---
+  duration_ms: 1099.048775
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/retention-capacity.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert(after.removed>before.removed*3)
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/retention-capacity.test.mjs:22:58)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 22
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5430.578268

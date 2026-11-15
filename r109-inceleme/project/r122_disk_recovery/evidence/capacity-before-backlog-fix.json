@@ -1,0 +1,15 @@
+{
+  "scenario": "60 seconds simulated idle windows; SQLite SELECT injected 1 ms cold-read cost; not a production benchmark",
+  "before": {
+    "removed": 57,
+    "passes": 60,
+    "maxBatchMs": 5.396781000000033,
+    "wallMs": 301.590943
+  },
+  "after": {
+    "removed": 628,
+    "passes": 108,
+    "maxBatchMs": 2.9582810000000563,
+    "wallMs": 255.48743099999996
+  }
+}

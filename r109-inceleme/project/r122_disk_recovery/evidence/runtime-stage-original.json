@@ -1,0 +1,32 @@
+{
+  "release": "/tmp/r122-installed-5kk37ixt/release",
+  "base": "Archived R120 and R121 installed, then exact R122 ZIP applied by its own installer",
+  "package": {
+    "file": "artifacts/R122_DISK_e241dfc79443.zip",
+    "sha256": "5c88b051eadf14d97e6e2c6f0ae9e45dcecbe6dade8f2bd743e2d7401689eea8",
+    "bytes": 143178,
+    "source": "R121_CLEANUP1 on exact R120 client",
+    "targetVersion": "R122_RETENTION1",
+    "targetCore": "714f7ecc701d5a6d3ec83b12031d7977e2f2fc2d4fff9a216101306e146620b3",
+    "changedCodeFiles": 2,
+    "compactScope": "expired transport receipts/images; acknowledged old notifications; fixed conservative cutoff; all other rows exact",
+    "deployed": false,
+    "acceptance": "pending"
+  },
+  "installedVersion": "R122_RETENTION1",
+  "targetCore": "714f7ecc701d5a6d3ec83b12031d7977e2f2fc2d4fff9a216101306e146620b3",
+  "overlay": [
+    {
+      "path": "core511-source/scripts/core511/writer-maintenance.mjs",
+      "sha256": "328fbb156bfbfa7ab41c9044238807cfbc768ec1c344188d9d545c67e6a5e3f4"
+    },
+    {
+      "path": "core511-source/scripts/core511/engine-health-r113.mjs",
+      "sha256": "176a858c82aaabef92a25b1012179fd4714c5b9d5f0970b0fe8c2d6a4fff2d47"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/install-operations.mjs",
+      "sha256": "4acaf8374ad3da73592b9d3deaf864006195a395f5e12de5d308fb2eedc55bd2"
+    }
+  ]
+}

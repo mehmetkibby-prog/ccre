@@ -1,0 +1,12 @@
+{
+  "file": "artifacts/R122_DISK_5623194d8819.zip",
+  "sha256": "d86e7b0e05e9f25c641e7b4d7dc913799f37666863108fc0d629eaa1355cef67",
+  "bytes": 143436,
+  "source": "R121_CLEANUP1 on exact R120 client",
+  "targetVersion": "R122_RETENTION1",
+  "targetCore": "714f7ecc701d5a6d3ec83b12031d7977e2f2fc2d4fff9a216101306e146620b3",
+  "changedCodeFiles": 2,
+  "compactScope": "expired transport receipts/images; acknowledged old notifications; fixed conservative cutoff; all other rows exact",
+  "deployed": false,
+  "acceptance": "pending"
+}

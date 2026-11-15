@@ -1,0 +1,56 @@
+test_full_copy_install_keeps_inode_and_controls (__main__.Run.test_full_copy_install_keeps_inode_and_controls) ... Önce ayrı ve doğrulanmış kopya hazırlanıyor. Süre veri miktarına bağlı; ilerleme aşağıda yazılacak.
+Korunacak kayıtlar okunuyor: kernel511_host_boot
+Yeni kopya bütünlük ve satır karşılaştırmasını geçti: 0.000 GiB
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:217: ResourceWarning: unclosed file <_io.TextIOWrapper name=5 encoding='UTF-8'>
+  worker(live, j, 'prepare')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:217: ResourceWarning: unclosed file <_io.TextIOWrapper name=7 encoding='UTF-8'>
+  worker(live, j, 'prepare')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+Doğrulanmış kopya SQLite işlemiyle uygulanıyor; dosya kimliği korunuyor.
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:223: ResourceWarning: unclosed file <_io.TextIOWrapper name=5 encoding='UTF-8'>
+  worker(live, j, 'install')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:223: ResourceWarning: unclosed file <_io.TextIOWrapper name=7 encoding='UTF-8'>
+  worker(live, j, 'install')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+DİSK BAKIMI TAMAMLANDI: 0.00 -> 0.00 GiB; açılan alan 0.00 GiB. İki sunucu ve sekiz kanal doğrulandı. Panelden oyunu açabilirsiniz.
+ok
+test_open_game_is_rejected_before_stop (__main__.Run.test_open_game_is_rejected_before_stop) ... ok
+test_post_commit_crash_is_guarded_and_resumes_forward (__main__.Run.test_post_commit_crash_is_guarded_and_resumes_forward) ... Önce ayrı ve doğrulanmış kopya hazırlanıyor. Süre veri miktarına bağlı; ilerleme aşağıda yazılacak.
+Korunacak kayıtlar okunuyor: kernel511_host_boot
+Yeni kopya bütünlük ve satır karşılaştırmasını geçti: 0.000 GiB
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py:43: ResourceWarning: unclosed file <_io.TextIOWrapper name=5 encoding='UTF-8'>
+  real(live,j,mode)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/tests/runner_test.py:43: ResourceWarning: unclosed file <_io.TextIOWrapper name=7 encoding='UTF-8'>
+  real(live,j,mode)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+Doğrulanmış kopya SQLite işlemiyle uygulanıyor; dosya kimliği korunuyor.
+Kurtarma kaydı korundu. Aynı paketle --recover çalıştırın; veritabanı dosyalarını silmeyin.
+Yarım SQLite kurulumu doğrulanmış kopyadan ileri tamamlanacak.
+Doğrulanmış kopya SQLite işlemiyle uygulanıyor; dosya kimliği korunuyor.
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:170: ResourceWarning: unclosed file <_io.TextIOWrapper name=5 encoding='UTF-8'>
+  worker(live, j, 'recover-install')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/workspace/coreoflife-r111/r109-inceleme/project/r122_disk_recovery/runner.py:170: ResourceWarning: unclosed file <_io.TextIOWrapper name=7 encoding='UTF-8'>
+  worker(live, j, 'recover-install')
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+Oyun servisleri yeniden doğrulandı. Bakım ayarın korundu.
+ok
+test_preparation_failure_restarts_original_and_discards_partial (__main__.Run.test_preparation_failure_restarts_original_and_discards_partial) ... Önce ayrı ve doğrulanmış kopya hazırlanıyor. Süre veri miktarına bağlı; ilerleme aşağıda yazılacak.
+Hazırlık durdu; asıl veritabanı değiştirilmeden oyun servisleri yeniden doğrulandı.
+ok
+test_recovery_after_start_does_not_restore_older_player_progress (__main__.Run.test_recovery_after_start_does_not_restore_older_player_progress) ... Önce ayrı ve doğrulanmış kopya hazırlanıyor. Süre veri miktarına bağlı; ilerleme aşağıda yazılacak.
+Korunacak kayıtlar okunuyor: kernel511_host_boot
+Yeni kopya bütünlük ve satır karşılaştırmasını geçti: 0.000 GiB
+Doğrulanmış kopya SQLite işlemiyle uygulanıyor; dosya kimliği korunuyor.
+Kurtarma kaydı korundu. Aynı paketle --recover çalıştırın; veritabanı dosyalarını silmeyin.
+Oyun servisleri yeniden doğrulandı. Bakım ayarın korundu.
+ok
+test_unknown_recovery_phase_is_rejected (__main__.Run.test_unknown_recovery_phase_is_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.761s
+
+OK

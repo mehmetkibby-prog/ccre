@@ -1,0 +1,50 @@
+{
+  "package": {
+    "file": "artifacts/R122_DISK_5623194d8819.zip",
+    "sha256": "d86e7b0e05e9f25c641e7b4d7dc913799f37666863108fc0d629eaa1355cef67",
+    "bytes": 143436,
+    "source": "R121_CLEANUP1 on exact R120 client",
+    "targetVersion": "R122_RETENTION1",
+    "targetCore": "714f7ecc701d5a6d3ec83b12031d7977e2f2fc2d4fff9a216101306e146620b3",
+    "changedCodeFiles": 2,
+    "compactScope": "expired transport receipts/images; acknowledged old notifications; fixed conservative cutoff; all other rows exact",
+    "deployed": false,
+    "acceptance": "pending"
+  },
+  "checks": {
+    "focused": 23,
+    "offline_orchestrator": 7,
+    "native_schema_realms": 2,
+    "backend_installer": 3,
+    "actual_compacted_realms": 2,
+    "actual_channels": 8,
+    "required": [
+      {
+        "test": "test",
+        "exit": 0
+      },
+      {
+        "test": "test:native",
+        "exit": 0
+      },
+      {
+        "test": "test:captcha",
+        "exit": 0
+      },
+      {
+        "test": "test:r110",
+        "exit": 0
+      }
+    ]
+  },
+  "runtimeProofPackage": "59023ab281d1a2b1fe0b8e5e6d33bd7b2107e12db62a1f125bfb95aa5ab9437b",
+  "identicalRuntimePayloadToFinalArchive": true,
+  "productionDatabaseUnavailable": true,
+  "productionReclaimedBytes": null,
+  "initialFailures": [
+    "Original boundary test assumed all four families fit one 2 ms pass; fixed-clock repeated bounded passes verify cutoff unchanged.",
+    "First wall-clock injected-delay capacity threshold was unstable under other tests. Raw failure retained; final scheduling test uses a virtual budget clock and is not a measured production speed claim.",
+    "Non-root orchestrator fixture rejected root-owned-dir condition. Production preflight still requires root; ownership check uses effective user."
+  ],
+  "installed": false
+}
