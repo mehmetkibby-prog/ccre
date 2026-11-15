@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r117-4feaa261f90b5d9c.js",
+  "name": "game-client-core511-r118-a3dda0259af155b6.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -116,7 +116,7 @@
   },
   "admin": {
     "file": "dist-vds/client/assets/admin-client-B_LbmWSV-ga4172-v418ws--e510-8225403c2fcc-88ffa15660.js",
-    "name": "admin-client-core511-r117-964b4979c617eb7c.js",
+    "name": "admin-client-core511-r118-bd266dccdc24b06a.js",
     "proof": {
       "sourceSha256": "269d512e8ab421617557c5686ddf2df405188db90f295d8fefd893deb6458d43",
       "patchedSha256": "b8502b430480e1eb72cb6d3d1ec8271ba5800856c4756942f3fc70e901625962",
@@ -237,13 +237,13 @@
         "sha256": "b85db78b65f40592e0949dbb8ee4b4524bac17100a3045e420f39f391785a66c"
       }
     },
-    "patchedSha256": "964b4979c617eb7c11a4d4722a3cb2d1d0df08c6f5205ebf3be79555cfb30f3c"
+    "patchedSha256": "bd266dccdc24b06a786bfb4ec214896dae965960325a0a23e726cc412d4d2622"
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r117-c1a66e4535350ae3.js",
+    "name": "auth-portal-core511-r118-d8b6eb5d377087b6.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "c1a66e4535350ae3899ef143673c41ca5195d99d9680d5e274111e13b164c6f1",
+    "patchedSha256": "d8b6eb5d377087b66e60e0d52c70bd5dcc17d2a929e14cf0d1d8f211c44400b7",
     "entryProof": {
       "edits": [
         {
@@ -279,10 +279,10 @@
     }
   },
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
-  "bridgeSha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad",
+  "bridgeSha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "4feaa261f90b5d9c7eb07ff4e70b6df8fafad3af69f750beb02484f4e018f7fb",
-  "bridge": "core511-transport-r113-53abe09d240f2c5c.js",
+  "patchedSha256": "a3dda0259af155b67849397fd0241a770e1da59f2fb6a75bdfceb6cf8822b69d",
+  "bridge": "core511-transport-r118-c4d1b9128f079567.js",
   "edits": [
     {
       "start": 0,
@@ -792,6 +792,91 @@
       "name": "academy-r104-akademi.webp",
       "sha256": "e9014f7a8f8c979b77c09a79179404fca0950a445d1261e6be19f853cb9f38bb",
       "bytes": 273750
+    },
+    {
+      "name": "royal-icon-weapon_muhafiz-r118-df1750a1f9c3126e.webp",
+      "sha256": "df1750a1f9c3126e3c393e241994b45f3166fb5bd55753037114782a910a219e",
+      "bytes": 4638
+    },
+    {
+      "name": "royal-icon-weapon_avci-r118-a2ce6ce9fa6ea6b5.webp",
+      "sha256": "a2ce6ce9fa6ea6b59964871578f7848e4438617a05f9083c0964a6bc77ab54ea",
+      "bytes": 5240
+    },
+    {
+      "name": "royal-icon-weapon_arkanist-r118-7784da8683f48b88.webp",
+      "sha256": "7784da8683f48b886877b0665a22facad0959e05b6fe8ba956f130ba12ed1e75",
+      "bytes": 3920
+    },
+    {
+      "name": "royal-icon-armor-r118-604fb486a94b793b.webp",
+      "sha256": "604fb486a94b793b2dd6c1f9506dca3efb76d2cfda4822c71ce8a6ddbbab3baa",
+      "bytes": 9176
+    },
+    {
+      "name": "royal-icon-helmet-r118-a7093d1e7fd2ec70.webp",
+      "sha256": "a7093d1e7fd2ec70043fef895916790ab53fb257198207b0c166cc1548f0aa4a",
+      "bytes": 7734
+    },
+    {
+      "name": "royal-icon-necklace-r118-129f572914439776.webp",
+      "sha256": "129f572914439776e39750c8fa0eee718e71ccbdafd8c84b037d288abd48e2fa",
+      "bytes": 5808
+    },
+    {
+      "name": "royal-icon-shoes-r118-6a7b63fbda295221.webp",
+      "sha256": "6a7b63fbda2952210d29bd472c09f95df5c2b209cf0b3824f5c5cba80795d0f3",
+      "bytes": 8378
+    },
+    {
+      "name": "royal-icon-emerald_dust-r118-489c24fa11893ae1.webp",
+      "sha256": "489c24fa11893ae1e66e2f87cbd2b7b437e9e285ef738214c72e6d7e80790375",
+      "bytes": 5150
+    },
+    {
+      "name": "royal-icon-royal_crown-r118-7fd15c76f9b1f4c0.webp",
+      "sha256": "7fd15c76f9b1f4c09be03b4408e4d3b06ef35fe3e4a052636d1001086a04bea6",
+      "bytes": 7560
+    },
+    {
+      "name": "royal-armor-r118-7ea0badf6c7f1bd7.webp",
+      "sha256": "7ea0badf6c7f1bd7c5c8f2b28783777aef8de8592c56d771fb30bc3579abe41b",
+      "bytes": 27918
+    },
+    {
+      "name": "royal-set-r118-cfe43838826cc23d.webp",
+      "sha256": "cfe43838826cc23d82467fbdfbda9558c713a4dd30b2c2dcd0a47d178cbd7286",
+      "bytes": 83364
+    },
+    {
+      "name": "royal-hero-motion-r118-be48d4c46c491f0f.webp",
+      "sha256": "be48d4c46c491f0fc40039661baf3eda7a4029bdb75712f4cdda9266893f2095",
+      "bytes": 586222
+    },
+    {
+      "name": "champions-ivory_guard-r118-28fdfdad64d82ec3.webp",
+      "sha256": "28fdfdad64d82ec311569e3698da72211b34b4177bbcee1b317ca0561ad28200",
+      "bytes": 159074
+    },
+    {
+      "name": "champions-golden_lion-r118-3113c551aa948a39.webp",
+      "sha256": "3113c551aa948a3998e30e80a6663f5513a1b9b66f001e00c18534f0c04d3434",
+      "bytes": 186326
+    },
+    {
+      "name": "champions-crescent_hunter-r118-80cde4cc5248ba49.webp",
+      "sha256": "80cde4cc5248ba495289ef26faa8ede76487faa32f0bbd8c3f0ad0524420692d",
+      "bytes": 128266
+    },
+    {
+      "name": "champions-royal_colossus-r118-beb3cdcf61df5353.webp",
+      "sha256": "beb3cdcf61df53531ff05ff8e14103fb33a403158fb554ea9af1c1a312c61641",
+      "bytes": 169012
+    },
+    {
+      "name": "champions-map-r118-b7ed6342e7d023a0.webp",
+      "sha256": "b7ed6342e7d023a022f9d34358b08b4bde0d78fbfad70dff6aae5bff0b32a787",
+      "bytes": 629026
     }
   ],
   "assetSourceSha256": "7c6445efcd9f888f43ab253578949f69ae648601c723b5902a4c8ca81c28a707",
@@ -5587,5 +5672,603 @@
       }
     ],
     "scope": "Only Azrail hook probability labels and immutable asset references; admin fixed-rate controls and all later client patches retained."
+  },
+  "r118RoyalChampions": {
+    "version": "R118_ROYAL1",
+    "baseline": {
+      "proofSha256": "e4685492a256343c297a77972320cf6095d8b3f55d0874e43a53e1ea579de81b",
+      "game": "game-client-core511-r117-4feaa261f90b5d9c.js",
+      "admin": "admin-client-core511-r117-964b4979c617eb7c.js",
+      "portal": "auth-portal-core511-r117-c1a66e4535350ae3.js",
+      "transport": "core511-transport-r113-53abe09d240f2c5c.js",
+      "transportSha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad"
+    },
+    "modules": {
+      "ui": "core511-ui-r118-35d1e138501d65ec.js",
+      "art": "core511-art-r118-9b3f768e5a7dcd77.js",
+      "map": "core511-map-r118-b0420489815c0e76.js",
+      "presentation": "core511-presentation-r118-c12506716f74fc34.js",
+      "royalAdmin": "core511-royalAdmin-r118-2a6eed293f4bcf67.js",
+      "championsAdmin": "core511-championsAdmin-r118-91bf55d2492a5b93.js",
+      "nav": "core511-nav-r118-3946e2ed80e23106.js",
+      "content": "core511-content-r118-88ec870c838c9fad.js",
+      "transport": "core511-transport-r118-c4d1b9128f079567.js",
+      "game": "game-client-core511-r118-a3dda0259af155b6.js",
+      "admin": "admin-client-core511-r118-bd266dccdc24b06a.js",
+      "portal": "auth-portal-core511-r118-d8b6eb5d377087b6.js"
+    },
+    "assets": [
+      {
+        "name": "royal-icon-weapon_muhafiz-r118-df1750a1f9c3126e.webp",
+        "sha256": "df1750a1f9c3126e3c393e241994b45f3166fb5bd55753037114782a910a219e",
+        "bytes": 4638
+      },
+      {
+        "name": "royal-icon-weapon_avci-r118-a2ce6ce9fa6ea6b5.webp",
+        "sha256": "a2ce6ce9fa6ea6b59964871578f7848e4438617a05f9083c0964a6bc77ab54ea",
+        "bytes": 5240
+      },
+      {
+        "name": "royal-icon-weapon_arkanist-r118-7784da8683f48b88.webp",
+        "sha256": "7784da8683f48b886877b0665a22facad0959e05b6fe8ba956f130ba12ed1e75",
+        "bytes": 3920
+      },
+      {
+        "name": "royal-icon-armor-r118-604fb486a94b793b.webp",
+        "sha256": "604fb486a94b793b2dd6c1f9506dca3efb76d2cfda4822c71ce8a6ddbbab3baa",
+        "bytes": 9176
+      },
+      {
+        "name": "royal-icon-helmet-r118-a7093d1e7fd2ec70.webp",
+        "sha256": "a7093d1e7fd2ec70043fef895916790ab53fb257198207b0c166cc1548f0aa4a",
+        "bytes": 7734
+      },
+      {
+        "name": "royal-icon-necklace-r118-129f572914439776.webp",
+        "sha256": "129f572914439776e39750c8fa0eee718e71ccbdafd8c84b037d288abd48e2fa",
+        "bytes": 5808
+      },
+      {
+        "name": "royal-icon-shoes-r118-6a7b63fbda295221.webp",
+        "sha256": "6a7b63fbda2952210d29bd472c09f95df5c2b209cf0b3824f5c5cba80795d0f3",
+        "bytes": 8378
+      },
+      {
+        "name": "royal-icon-emerald_dust-r118-489c24fa11893ae1.webp",
+        "sha256": "489c24fa11893ae1e66e2f87cbd2b7b437e9e285ef738214c72e6d7e80790375",
+        "bytes": 5150
+      },
+      {
+        "name": "royal-icon-royal_crown-r118-7fd15c76f9b1f4c0.webp",
+        "sha256": "7fd15c76f9b1f4c09be03b4408e4d3b06ef35fe3e4a052636d1001086a04bea6",
+        "bytes": 7560
+      },
+      {
+        "name": "royal-armor-r118-7ea0badf6c7f1bd7.webp",
+        "sha256": "7ea0badf6c7f1bd7c5c8f2b28783777aef8de8592c56d771fb30bc3579abe41b",
+        "bytes": 27918
+      },
+      {
+        "name": "royal-set-r118-cfe43838826cc23d.webp",
+        "sha256": "cfe43838826cc23d82467fbdfbda9558c713a4dd30b2c2dcd0a47d178cbd7286",
+        "bytes": 83364
+      },
+      {
+        "name": "royal-hero-motion-r118-be48d4c46c491f0f.webp",
+        "sha256": "be48d4c46c491f0fc40039661baf3eda7a4029bdb75712f4cdda9266893f2095",
+        "bytes": 586222
+      },
+      {
+        "name": "champions-ivory_guard-r118-28fdfdad64d82ec3.webp",
+        "sha256": "28fdfdad64d82ec311569e3698da72211b34b4177bbcee1b317ca0561ad28200",
+        "bytes": 159074
+      },
+      {
+        "name": "champions-golden_lion-r118-3113c551aa948a39.webp",
+        "sha256": "3113c551aa948a3998e30e80a6663f5513a1b9b66f001e00c18534f0c04d3434",
+        "bytes": 186326
+      },
+      {
+        "name": "champions-crescent_hunter-r118-80cde4cc5248ba49.webp",
+        "sha256": "80cde4cc5248ba495289ef26faa8ede76487faa32f0bbd8c3f0ad0524420692d",
+        "bytes": 128266
+      },
+      {
+        "name": "champions-royal_colossus-r118-beb3cdcf61df5353.webp",
+        "sha256": "beb3cdcf61df53531ff05ff8e14103fb33a403158fb554ea9af1c1a312c61641",
+        "bytes": 169012
+      },
+      {
+        "name": "champions-map-r118-b7ed6342e7d023a0.webp",
+        "sha256": "b7ed6342e7d023a022f9d34358b08b4bde0d78fbfad70dff6aae5bff0b32a787",
+        "bytes": 629026
+      },
+      {
+        "name": "core511-ui-r118-35d1e138501d65ec.js",
+        "sha256": "35d1e138501d65ecf219c55bb89c034cb68f732142c4ebde25467a511578b1a9",
+        "bytes": 21125
+      },
+      {
+        "name": "core511-art-r118-9b3f768e5a7dcd77.js",
+        "sha256": "9b3f768e5a7dcd7778ed523d3983addcb10a312b54dcaad84a3f0cd03055a7a2",
+        "bytes": 5795
+      },
+      {
+        "name": "core511-map-r118-b0420489815c0e76.js",
+        "sha256": "b0420489815c0e76a45601bc55a43b0e6a93c2d84c61b8a3dbac9f774bf0fd18",
+        "bytes": 3801
+      },
+      {
+        "name": "core511-presentation-r118-c12506716f74fc34.js",
+        "sha256": "c12506716f74fc34d4493c2a91bb6b40a99e38d6704160c0d20c153024aa07fb",
+        "bytes": 2354
+      },
+      {
+        "name": "core511-royalAdmin-r118-2a6eed293f4bcf67.js",
+        "sha256": "2a6eed293f4bcf67f5584104fc9936f4746542474bbc56681f9d40bb426971ec",
+        "bytes": 12902
+      },
+      {
+        "name": "core511-championsAdmin-r118-91bf55d2492a5b93.js",
+        "sha256": "91bf55d2492a5b93bd0b7074f981490be8ab405198d71e7f19bc400f93ad1df3",
+        "bytes": 15969
+      },
+      {
+        "name": "core511-nav-r118-3946e2ed80e23106.js",
+        "sha256": "3946e2ed80e23106d0edcd9f31d998b38bff59f41d132d9db71dad5971c00cf0",
+        "bytes": 12179
+      },
+      {
+        "name": "core511-content-r118-88ec870c838c9fad.js",
+        "sha256": "88ec870c838c9fad3b4409333f46542a106c97bf1d06e07bbe1b52105030f4e1",
+        "bytes": 555994
+      },
+      {
+        "name": "core511-transport-r118-c4d1b9128f079567.js",
+        "sha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911",
+        "bytes": 595331
+      },
+      {
+        "name": "game-client-core511-r118-a3dda0259af155b6.js",
+        "sha256": "a3dda0259af155b67849397fd0241a770e1da59f2fb6a75bdfceb6cf8822b69d",
+        "bytes": 1756906
+      },
+      {
+        "name": "admin-client-core511-r118-bd266dccdc24b06a.js",
+        "sha256": "bd266dccdc24b06a786bfb4ec214896dae965960325a0a23e726cc412d4d2622",
+        "bytes": 587908
+      },
+      {
+        "name": "auth-portal-core511-r118-d8b6eb5d377087b6.js",
+        "sha256": "d8b6eb5d377087b66e60e0d52c70bd5dcc17d2a929e14cf0d1d8f211c44400b7",
+        "bytes": 84195
+      }
+    ],
+    "sources": [
+      {
+        "file": "royal-client-r118.mjs",
+        "sha256": "67e3f7ea1d8f97f330a6e79fb7db4c1c8177abb0982f0bd67ee2d2e8001b0498"
+      },
+      {
+        "file": "royal-visuals-r118.mjs",
+        "sha256": "abc532ff4cd7f097e6f7e78d4f7e3b36414e553a511bdc6d7cc4303e9ea8920a"
+      },
+      {
+        "file": "champions-client-r118.mjs",
+        "sha256": "2fc6c3d1726d79960488c44be33673157c4a1dfbfeee6f30f79c0607849409da"
+      },
+      {
+        "file": "royal-presentation-r118.mjs",
+        "sha256": "9ec363429ac0b6fdc96ec49752fef51b57154e6472db7db90e835b6e99c76911"
+      },
+      {
+        "file": "royal-admin-client-r118.mjs",
+        "sha256": "60d968206377094054d89dc8d416e6b03e39f2266141eb518fcdd18f8d2dbcf0"
+      },
+      {
+        "file": "champions-admin-client-r118.mjs",
+        "sha256": "2f20bcc094aa007f85b1ee2e945d522e4fc2120fd51e3958c48a776a6597be87"
+      },
+      {
+        "file": "admin-navigation-r66.mjs",
+        "sha256": "93d7ae95fa1cf9703fe363c939e2c43ac06262790a5e3bb69539bd16f19999f7"
+      }
+    ],
+    "gameEdits": [
+      {
+        "label": "new feature imports",
+        "prefix": "import {createRoyalUIR118,openRoyalR118} from './core511-ui-r118-35d1e138501d65ec.js';\nimport {ROYAL_MEDIA_R118,drawRoyalArmorFxR118,drawRoyalWeaponFxR118} from './core511-art-r118-9b3f768e5a7dcd77.js';\nimport {createChampionsViewR118,CHAMPIONS_BOUNDS_R118,CHAMPIONS_SPAWN_R118,CHAMPIONS_PVP_NOTICE_R118,championsSegmentR118,clampChampionsR118} from './core511-map-r118-b0420489815c0e76.js';\nimport {createRoyalPresentationR118,royalEligibleClientR118} from './core511-presentation-r118-c12506716f74fc34.js';\n"
+      },
+      {
+        "label": "initialize presentation beside existing UI",
+        "from": "const colContentR102=createContentUIR102",
+        "to": "const colChampionsR118=createChampionsViewR118(ROYAL_MEDIA_R118);\nconst colRoyalArtR118=createRoyalPresentationR118(R,ROYAL_MEDIA_R118,Iy);\nconst colRoyalR118=createRoyalUIR118(R,{Dialog:It,Content:kt,Header:Pt,Title:jt,Description:Ct,icon:colRoyalArtR118.icon});\nconst colContentR102=createContentUIR102",
+        "count": 1
+      },
+      {
+        "label": "royal host uses authoritative command ingress",
+        "from": "children: [R.createElement(colContentR102.Host,",
+        "to": "children: [R.createElement(colRoyalR118.Host,{key:'royal:'+X2?.id,own:X2,world:U2,joined:Ea2,post:Q,suspended:Xo2,onChanged:async()=>{I2.current=true;await J(true);}}),R.createElement('style',null,'.rarity-royal{--rarity-color:#e8cf8c;color:#f4e6bc}.rarity-royal.inspectable-item,.rarity-royal.gear-slot{border-color:#d6b66d}.royal118-gear-icon{object-fit:contain}.champions118-destination strong{color:#f2d48e}'),R.createElement(colContentR102.Host,",
+        "count": 1
+      },
+      {
+        "label": "Haso salvage entry",
+        "from": "children: [R.createElement(colContentR102.ForgeEntry,{area:U2?.area}),",
+        "to": "children: [R.createElement(colRoyalR118.SalvageEntry,{area:U2?.area,onOpen:()=>{cd2(false);hd2(false);}}),R.createElement(colContentR102.ForgeEntry,{area:U2?.area}),",
+        "count": 1
+      },
+      {
+        "label": "champions hunting destination",
+        "from": "Zs2 === `hunt` && (0, z.jsxs)(`div`, { className: `teleport-grid`, children: [",
+        "to": "Zs2 === `hunt` && (0, z.jsxs)(`div`, { className: `teleport-grid`, children: [R.createElement('button',{className:'champions118-destination',disabled:$2==='champions'||!royalEligibleClientR118(X2)||U2?.champions?.enabled===false,onClick:()=>{Xs2(false);Wb('champions');}},R.createElement('span',{className:'teleport-icon'},'♛'),R.createElement('span',null,R.createElement('strong',null,'Şampiyonlar Diyarı'),R.createElement('small',null,'Şampiyon Lv 1 · PvP açık · Kraliyet Tacı')),R.createElement('b',null,$2==='champions'?'BURADASIN':'IŞINLAN')),",
+        "count": 1
+      },
+      {
+        "label": "royal separate town panel",
+        "from": "Zs2 === `town` && (0, z.jsxs)(`div`, { className: `teleport-grid`, children: [",
+        "to": "Zs2 === `town` && (0, z.jsxs)(`div`, { className: `teleport-grid`, children: [R.createElement(colRoyalR118.RoyalEntry,{area:U2?.area,onOpen:()=>Xs2(false)}),",
+        "count": 1
+      },
+      {
+        "label": "champion friendly equip gate",
+        "from": "if (n3 && !yu(n3, r3?.level)) {",
+        "to": "if(n3?.rarity==='royal'&&!royalEligibleClientR118(r3)){K2('Kraliyet eşyalarını kuşanmak için Şampiyon Lv 1 olmalısın.');return;}\n    if (n3 && !yu(n3, r3?.level)) {",
+        "count": 1
+      },
+      {
+        "label": "royal shares emerald family, no second bonus",
+        "from": "const definition = hl[rarity];",
+        "to": "if(rarity==='royal')rarity='emerald';\n  const definition = hl[rarity];",
+        "count": 1
+      },
+      {
+        "label": "mixed royal and emerald family count",
+        "from": "item.equipped === 1 && item.rarity === rarity",
+        "to": "item.equipped === 1 && (rarity==='emerald'?['emerald','royal'].includes(item.rarity):item.rarity===rarity)",
+        "count": 1
+      },
+      {
+        "label": "family label",
+        "from": "emerald: EMERALD_SET444 }), gl",
+        "to": "emerald: {...EMERALD_SET444,name:'Kadim Zümrüt / Hükümdar Kraliyet'} }), gl",
+        "count": 1
+      },
+      {
+        "label": "royal gear icon",
+        "from": "function rv({ kind: e3, role: t2, rarity: n2, enchantments: r2, item_name, name }) {",
+        "to": "function rv({ kind: e3, role: t2, rarity: n2, enchantments: r2, item_name, name }) {\n  if(n2==='royal')return R.createElement(colRoyalArtR118.Icon,{kind:e3,role:t2});",
+        "count": 1
+      },
+      {
+        "label": "royal weapon icon",
+        "from": "function uv(props) {",
+        "to": "function uv(props) {\n  if(props.rarity==='royal')return R.createElement(colRoyalArtR118.Icon,{...props,kind:'weapon'});",
+        "count": 1
+      },
+      {
+        "label": "royal ground and material icons",
+        "from": "function zp(e3) {",
+        "to": "function zp(e3) {\n  const royalArt=colRoyalArtR118.ground(e3);if(royalArt)return royalArt;",
+        "count": 1
+      },
+      {
+        "label": "royal hidden in quick sale",
+        "from": "![`unique`, `infinite`, \"emerald\"].includes(e4.rarity)",
+        "to": "![`unique`, `infinite`, \"emerald\", \"royal\"].includes(e4.rarity)",
+        "count": 3
+      },
+      {
+        "label": "market material icons",
+        "from": "ZR93.zumrutMarketIconR93(R,e4.item_id)",
+        "to": "colRoyalArtR118.material(e4.item_id) ?? ZR93.zumrutMarketIconR93(R,e4.item_id)",
+        "count": 1
+      },
+      {
+        "label": "inventory material icons",
+        "from": "ZR93.zumrutMarketIconR93(R,e3)",
+        "to": "colRoyalArtR118.material(e3) ?? ZR93.zumrutMarketIconR93(R,e3)",
+        "count": 1
+      },
+      {
+        "label": "all gear icon source",
+        "from": "function gear(kind, role, rarity) {",
+        "to": "function gear(kind, role, rarity) {\n    if(rarity==='royal')return [colRoyalArtR118.icon(kind,role),1,1,0,0];",
+        "count": 1
+      },
+      {
+        "label": "all weapon icon source",
+        "from": "function weapon(role, rarity, costume = false) {",
+        "to": "function weapon(role, rarity, costume = false) {\n    if(!costume&&rarity==='royal')return [colRoyalArtR118.icon('weapon',role),1,1,0,0];",
+        "count": 1
+      },
+      {
+        "label": "royal inventory hero preview",
+        "from": "function Hero({ role, rarity = \"white\", label = \"\" }) {",
+        "to": "function Hero({ role, rarity = \"white\", label = \"\" }) {\n    if(rarity==='royal')return sprite('div','preview-hero role-'+roleColumn(role)+' armor-royal',[ROYAL_MEDIA_R118.hero,6,3,0,roleColumn(role)],null,label);",
+        "count": 1
+      },
+      {
+        "label": "royal body atlas",
+        "from": "u2 === \"emerald\" ? Iy(\"/game/hero-motion-emerald-v447.webp\")",
+        "to": "u2 === \"royal\" ? Iy(ROYAL_MEDIA_R118.hero) : u2 === \"emerald\" ? Iy(\"/game/hero-motion-emerald-v447.webp\")",
+        "count": 1
+      },
+      {
+        "label": "body sizing uses royal atlas",
+        "from": "String(t2.src ?? \"\").includes(\"hero-motion-emerald-v447.webp\")",
+        "to": "(String(t2.src ?? \"\").includes(\"hero-motion-emerald-v447.webp\")||String(t2.src??\"\").includes(\"royal-hero-motion-r118\"))",
+        "count": 1
+      },
+      {
+        "label": "royal armor effects",
+        "from": "P2 || (u2 === \"emerald\" && ie2?.emeraldInfiniteArmor===true",
+        "to": "P2 || (u2 === 'royal' && drawRoyalArmorFxR118(e3,xe2,Se2,m2,k2,o2), u2 === \"emerald\" && ie2?.emeraldInfiniteArmor===true",
+        "count": 1
+      },
+      {
+        "label": "royal weapon presentation and same pose geometry",
+        "from": "  const colShopWeaponVisible492 = Boolean(pose?.weaponSkin) && globalThis.__colHideCostumes481 !== true;\n  const rankWeaponPath = pose?.rankWeapon === \"hunter_weapon\" ? \"/game/rank-hunter-weapons.webp\" : pose?.rankWeapon === \"executioner_weapon\" ? \"/game/rank-executioner-weapons.webp\" : null;\n  const rankCandidate = rankWeaponPath ? Iy(rankWeaponPath) : void 0;\n  const rankWeapon = rankCandidate?.complete && rankCandidate.naturalWidth ? rankCandidate : void 0;\n  const infiniteWeapon = rankWeapon ?? (colShopWeaponVisible492 ? Iy(\"/game/premium-weapons.webp\") : rarity === \"emerald\" ? Iy(\"/game/emerald-set-v447.webp\") : rarity === \"infinite\" ? fp(\"weapon\") : void 0);\n  const purpleWeapon = rarity === \"purple\" && !colShopWeaponVisible492 && !rankWeapon ? Iy(\"/game/purple-weapons-v349.webp\") : void 0;\n  if (infiniteWeapon || purpleWeapon) image = infiniteWeapon ?? purpleWeapon;\n  if (!image?.complete || !image.naturalWidth) return false;\n  const column = pv(role);\n  const row = infiniteWeapon || purpleWeapon ? 0 : [\"unique\", \"infinite\"].includes(rarity) ? 4 : rarity === \"red\" || rarity === \"purple\" ? 3 : rarity === \"orange\" ? 2 : rarity === \"blue\" ? 1 : 0;\n  const cellWidth = image.naturalWidth / 3;\n  const cellHeight = image.naturalHeight / (rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492 ? 2 : infiniteWeapon || purpleWeapon ? 1 : 5);\n  const tint = rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? \"#259d61\" : \"#34ba79\" : rarity === \"emerald\" ? \"#55edb0\" : rarity === \"infinite\" ? \"#ffdb8d\" : rarity === \"unique\" ? \"#e9fbff\" : rarity === \"purple\" ? \"#bc78fa\" : rarity === \"red\" ? \"#ff1838\" : rarity === \"orange\" ? \"#ff9f42\" : rarity === \"blue\" ? \"#5faeff\" : \"rgba(225,240,224,.7)\";\n  const direction = pose?.direction ?? { x: 1, y: 0 };\n  const attacking = Boolean(pose?.attacking);\n  const frame = Math.max(0, Math.min(5, pose?.frame ?? 0));\n  const hand = pose?.mountedR58?mountedHandR58(role,x2,y2,frame,direction.facingR73??direction.x,pose.mountedR58):ey(role, x2, y2, frame, direction.facingR73??direction.x);\n  const walkHand = th(role, frame, pose?.bodyAtlasSource ?? \"\");\n  if (walkHand && !pose?.mountedR58) {\n    hand.x = x2 + walkHand.x * hand.facing;\n    hand.y = y2 + walkHand.y;\n  }\n  const localDirectionAngle = Math.atan2(direction.y, Math.max(0.18, Math.abs(direction.x)));\n  const syncedAttackPhase = pose?.mountedR58?Math.max(0,Math.min(1,pose.mountedR58.attackPhase??0)):pose?.moving ? Math.max(0, Math.min(1, pose.attackPhase ?? 0)) : frame <= 3 ? 0.14 : frame === 4 ? 0.52 : 0.86;\n  let rotation = colShopWeaponVisible492 ? role === \"muhafiz\" ? Math.PI - 0.25 : role === \"avci\" ? 0 : -0.2 : role === \"muhafiz\" ? Math.PI : role === \"avci\" ? $v[frame] : -0.66;\n  const size = rankWeapon && role === \"muhafiz\" ? 138 : rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? 150 : role === \"avci\" ? 129 : 140 : role === \"avci\" ? 96 : role === \"arkanist\" ? 106 : 100;\n  const pivot = role === \"avci\" && rarity === \"infinite\" && !rankWeapon && !colShopWeaponVisible492 ? { x: 0.545, y: 0.5 } : rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? { x: 0.5, y: 0.782 } : role === \"avci\" ? { x: 0.473, y: 0.535 } : { x: 0.5, y: 0.727 } : rankWeapon ? role === \"muhafiz\" ? { x: 0.539, y: 0.79 } : role === \"avci\" ? { x: 0.44, y: 0.51 } : { x: 0.46, y: 0.7 } : colShopWeaponVisible492 ? role === \"muhafiz\" ? { x: 0.535, y: 0.775 } : role === \"avci\" ? { x: 0.62, y: 0.5 } : { x: 0.5, y: 0.68 } : purpleWeapon ? role === \"muhafiz\" ? { x: 0.21, y: 0.78 } : role === \"avci\" ? { x: 0.43, y: 0.52 } : { x: 0.29, y: 0.74 } : role === \"muhafiz\" ? { x: 0.24, y: 0.78 } : role === \"avci\" ? { x: 0.445, y: 0.485 } : { x: 0.35, y: 0.68 };\n  if (attacking && role === \"muhafiz\") {\n    rotation = colGuardianSwordSwing481(localDirectionAngle, syncedAttackPhase, colShopWeaponVisible492 ? Math.PI / 4 : 0);\n  } else if (attacking && role === \"avci\") {\n    rotation = (colShopWeaponVisible492 ? 0 : $v[frame]) + Math.max(-0.18, Math.min(0.18, localDirectionAngle * 0.2));\n  } else if (attacking && role === \"arkanist\") {\n    rotation = (colShopWeaponVisible492 ? -0.2 : -0.66) + localDirectionAngle * 0.18 + (frame === 4 ? 0.11 : frame === 5 ? 0.04 : 0);\n  } else if (pose?.moving) {\n    rotation += frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0;\n  }\n  if (rankWeapon || rarity === \"emerald\" && !colShopWeaponVisible492) {\n    rotation = role === \"muhafiz\" ? attacking ? localDirectionAngle + Math.PI / 2 + (-0.8 + syncedAttackPhase * 1.6) : Math.PI + 0.94 + (pose?.moving ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0) : role === \"avci\" ? Math.max(-0.18, Math.min(0.18, localDirectionAngle * 0.2)) : -0.2 + (attacking ? localDirectionAngle * 0.18 : 0);\n  }\n  if (role === \"avci\" && !rankWeapon && !colShopWeaponVisible492 && (rarity === \"infinite\" || rarity === \"purple\" || rarity === \"emerald\")) {\n    const colBowBase446 = rarity === \"emerald\" ? 0 : rarity === \"infinite\" ? -0.73 : 2.34;\n    const colBowAim446 = attacking ? Math.max(-0.32, Math.min(0.32, localDirectionAngle * 0.25)) : 0;\n    rotation = colBowBase446 + colBowAim446 + (pose?.moving && !attacking ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0);\n  }\n  if (role === \"muhafiz\" && rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492) {\n    rotation = (attacking ? localDirectionAngle + Math.PI / 4 + (-0.92 + syncedAttackPhase * 1.48) : Math.PI + (pose?.moving ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0)) + Math.PI / 4;\n  }\n  ctx.save();\n  ctx.translate(hand.x, hand.y);\n  rotation=mountedWeaponRotationR60(role,rotation,pose);\n  ctx.scale(hand.facing, 1);\n  ctx.rotate(rotation);\n  if ((rankWeapon || rarity === \"emerald\" && !colShopWeaponVisible492) && role === \"avci\") ctx.scale(-1, 1);\n  const colBowCrop446 = role === \"avci\" && purpleWeapon?.complete ? 0.12 : 0;\n  const colBowCropScale446 = colBowCrop446 ? 0.81 : 1;\n  const sourceX = (column + colBowCrop446) * cellWidth;\n  const sourceY = row * cellHeight;\n  const targetX = -pivot.x * size;\n  const targetY = -pivot.y * size;\n  const now = pose?.now ?? performance.now();\n  if ((rankWeapon || colShopWeaponVisible492 || rarity === \"infinite\" || rarity === \"emerald\") && infiniteWeapon) {\n    const width = size * cellWidth / cellHeight, height = size;\n    if(pose?.infiniteEmeraldR102&&!rankWeapon&&!colShopWeaponVisible492)drawEmeraldInfiniteWeaponR102(ctx,-pivot.x*width,-pivot.y*height,width,height,now,pose.qualityR102,role,pose.ownR102);\n    const glow = Nv(`skin:${image.src}:${role}:${tint}:${size}`, Math.ceil(width + 24) * 2, (height + 24) * 2, (g2) => {\n      g2.scale(2, 2);\n      g2.shadowColor = rankWeapon ? pose?.rankWeapon === \"executioner_weapon\" ? \"#ffb35d\" : \"#56ebde\" : rarity === \"infinite\" ? \"rgba(255,235,173,.5)\" : tint;\n      g2.shadowBlur = rankWeapon ? 12 : rarity === \"emerald\" ? 10 : 6;\n      if (rarity === \"emerald\" && !rankWeapon && !colShopWeaponVisible492) {\n        g2.save();\n        g2.shadowColor = tint;\n        g2.shadowBlur = 3;\n        for (const dx of [-3.5, 3.5]) {\n          g2.shadowOffsetX = dx;\n          g2.shadowOffsetY = 0;\n          g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n        }\n        g2.restore();\n      }\n      if (rankWeapon) {\n        g2.filter = \"brightness(1.22) saturate(1.12)\";\n        g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n        g2.shadowBlur = 4;\n        g2.filter = \"none\";\n      }\n      g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n    });\n    ctx.shadowBlur = 0;\n    if (glow) ctx.drawImage(glow, -pivot.x * width - 12, -pivot.y * height - 12, Math.ceil(width + 24), height + 24);\n    else ctx.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, -pivot.x * width, -pivot.y * height, width, height);\n    if (pose?.talismanColor) El(ctx, -pivot.x * width + width * 0.5, -pivot.y * height + height * 0.12, pose.talismanColor, now, role);\n    ctx.restore();\n    return true;\n  }\n  const padding = 32;\n  const cachedWeapon = pose?.heatProtection || rarity === \"infinite\" ? Nv(`weapon:${image.src}:${role}:${rarity}:${size}`, (size + padding * 2) * 2, (size + padding * 2) * 2, (g2) => {\n    g2.scale(2, 2);\n    fy(g2, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, padding + size * colBowCrop446, padding, size * colBowCropScale446, size, rarity, role, 0);\n    g2.shadowColor = tint;\n    g2.shadowBlur = rarity === \"infinite\" ? 22 : rarity === \"unique\" ? 16 : rarity === \"purple\" ? 15 : rarity === \"red\" ? 13 : rarity === \"orange\" ? 9 : rarity === \"blue\" ? 6 : 2;\n    if (rarity === \"purple\" && !purpleWeapon) g2.filter = \"hue-rotate(255deg) saturate(1.2)\";\n    g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, padding + size * colBowCrop446, padding, size * colBowCropScale446, size);\n    if (rarity === \"purple\" && !purpleWeapon) g2.filter = \"none\";\n  }) : null;\n  if (cachedWeapon) {\n    ctx.shadowBlur = 0;\n    ctx.drawImage(cachedWeapon, targetX - padding, targetY - padding, size + padding * 2, size + padding * 2);\n  } else {\n    fy(ctx, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size, rarity, role, now);\n    ctx.shadowColor = tint;\n    ctx.shadowBlur = rarity === \"infinite\" ? 22 : rarity === \"unique\" ? 16 : rarity === \"purple\" ? 15 : rarity === \"red\" ? 13 : rarity === \"orange\" ? 9 : rarity === \"blue\" ? 6 : 2;\n    if (rarity === \"purple\" && !purpleWeapon) ctx.filter = \"hue-rotate(255deg) saturate(1.2)\";\n    if (!Vv(ctx, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size)) ctx.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size);\n    if (rarity === \"purple\" && !purpleWeapon) ctx.filter = \"none\";\n  }\n  if (pose?.talismanColor) El(ctx, targetX + size * (role === \"avci\" ? 0.5 : 0.88), targetY + size * 0.1, pose.talismanColor, now, role);\n  if (pose?.evolution) oh(ctx, targetX, targetY, size, pose.evolution, pose.evolutionEffects ?? 1, now);\n  ctx.shadowBlur = 0;\n  ctx.fillStyle = \"rgba(28,24,21,.86)\";\n  ctx.beginPath();\n  ctx.ellipse(0, 0, 3.2, 2.4, 0, 0, Math.PI * 2);\n  ctx.fill();\n  ctx.restore();\n  return true;\n}",
+        "to": "  const colShopWeaponVisible492 = Boolean(pose?.weaponSkin) && globalThis.__colHideCostumes481 !== true;\n  const rankWeaponPath = pose?.rankWeapon === \"hunter_weapon\" ? \"/game/rank-hunter-weapons.webp\" : pose?.rankWeapon === \"executioner_weapon\" ? \"/game/rank-executioner-weapons.webp\" : null;\n  const rankCandidate = rankWeaponPath ? Iy(rankWeaponPath) : void 0;\n  const rankWeapon = rankCandidate?.complete && rankCandidate.naturalWidth ? rankCandidate : void 0;\n  const infiniteWeapon = rankWeapon ?? (colShopWeaponVisible492 ? Iy(\"/game/premium-weapons.webp\") : (rarity === \"emerald\" || rarity === \"royal\") ? Iy(rarity === \"royal\" ? ROYAL_MEDIA_R118.weapons : \"/game/emerald-set-v447.webp\") : rarity === \"infinite\" ? fp(\"weapon\") : void 0);\n  const purpleWeapon = rarity === \"purple\" && !colShopWeaponVisible492 && !rankWeapon ? Iy(\"/game/purple-weapons-v349.webp\") : void 0;\n  if (infiniteWeapon || purpleWeapon) image = infiniteWeapon ?? purpleWeapon;\n  if (!image?.complete || !image.naturalWidth) return false;\n  const column = pv(role);\n  const row = infiniteWeapon || purpleWeapon ? 0 : [\"unique\", \"infinite\"].includes(rarity) ? 4 : rarity === \"red\" || rarity === \"purple\" ? 3 : rarity === \"orange\" ? 2 : rarity === \"blue\" ? 1 : 0;\n  const cellWidth = image.naturalWidth / 3;\n  const cellHeight = image.naturalHeight / ((rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492 ? 2 : infiniteWeapon || purpleWeapon ? 1 : 5);\n  const tint = rarity === \"royal\" ? \"#edd69b\" : (rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? \"#259d61\" : \"#34ba79\" : (rarity === \"emerald\" || rarity === \"royal\") ? \"#55edb0\" : rarity === \"infinite\" ? \"#ffdb8d\" : rarity === \"unique\" ? \"#e9fbff\" : rarity === \"purple\" ? \"#bc78fa\" : rarity === \"red\" ? \"#ff1838\" : rarity === \"orange\" ? \"#ff9f42\" : rarity === \"blue\" ? \"#5faeff\" : \"rgba(225,240,224,.7)\";\n  const direction = pose?.direction ?? { x: 1, y: 0 };\n  const attacking = Boolean(pose?.attacking);\n  const frame = Math.max(0, Math.min(5, pose?.frame ?? 0));\n  const hand = pose?.mountedR58?mountedHandR58(role,x2,y2,frame,direction.facingR73??direction.x,pose.mountedR58):ey(role, x2, y2, frame, direction.facingR73??direction.x);\n  const walkHand = th(role, frame, pose?.bodyAtlasSource ?? \"\");\n  if (walkHand && !pose?.mountedR58) {\n    hand.x = x2 + walkHand.x * hand.facing;\n    hand.y = y2 + walkHand.y;\n  }\n  const localDirectionAngle = Math.atan2(direction.y, Math.max(0.18, Math.abs(direction.x)));\n  const syncedAttackPhase = pose?.mountedR58?Math.max(0,Math.min(1,pose.mountedR58.attackPhase??0)):pose?.moving ? Math.max(0, Math.min(1, pose.attackPhase ?? 0)) : frame <= 3 ? 0.14 : frame === 4 ? 0.52 : 0.86;\n  let rotation = colShopWeaponVisible492 ? role === \"muhafiz\" ? Math.PI - 0.25 : role === \"avci\" ? 0 : -0.2 : role === \"muhafiz\" ? Math.PI : role === \"avci\" ? $v[frame] : -0.66;\n  const size = rankWeapon && role === \"muhafiz\" ? 138 : (rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? 150 : role === \"avci\" ? 129 : 140 : role === \"avci\" ? 96 : role === \"arkanist\" ? 106 : 100;\n  const pivot = role === \"avci\" && rarity === \"infinite\" && !rankWeapon && !colShopWeaponVisible492 ? { x: 0.545, y: 0.5 } : (rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492 ? role === \"muhafiz\" ? { x: 0.5, y: 0.782 } : role === \"avci\" ? { x: 0.473, y: 0.535 } : { x: 0.5, y: 0.727 } : rankWeapon ? role === \"muhafiz\" ? { x: 0.539, y: 0.79 } : role === \"avci\" ? { x: 0.44, y: 0.51 } : { x: 0.46, y: 0.7 } : colShopWeaponVisible492 ? role === \"muhafiz\" ? { x: 0.535, y: 0.775 } : role === \"avci\" ? { x: 0.62, y: 0.5 } : { x: 0.5, y: 0.68 } : purpleWeapon ? role === \"muhafiz\" ? { x: 0.21, y: 0.78 } : role === \"avci\" ? { x: 0.43, y: 0.52 } : { x: 0.29, y: 0.74 } : role === \"muhafiz\" ? { x: 0.24, y: 0.78 } : role === \"avci\" ? { x: 0.445, y: 0.485 } : { x: 0.35, y: 0.68 };\n  if (attacking && role === \"muhafiz\") {\n    rotation = colGuardianSwordSwing481(localDirectionAngle, syncedAttackPhase, colShopWeaponVisible492 ? Math.PI / 4 : 0);\n  } else if (attacking && role === \"avci\") {\n    rotation = (colShopWeaponVisible492 ? 0 : $v[frame]) + Math.max(-0.18, Math.min(0.18, localDirectionAngle * 0.2));\n  } else if (attacking && role === \"arkanist\") {\n    rotation = (colShopWeaponVisible492 ? -0.2 : -0.66) + localDirectionAngle * 0.18 + (frame === 4 ? 0.11 : frame === 5 ? 0.04 : 0);\n  } else if (pose?.moving) {\n    rotation += frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0;\n  }\n  if (rankWeapon || (rarity === \"emerald\" || rarity === \"royal\") && !colShopWeaponVisible492) {\n    rotation = role === \"muhafiz\" ? attacking ? localDirectionAngle + Math.PI / 2 + (-0.8 + syncedAttackPhase * 1.6) : Math.PI + 0.94 + (pose?.moving ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0) : role === \"avci\" ? Math.max(-0.18, Math.min(0.18, localDirectionAngle * 0.2)) : -0.2 + (attacking ? localDirectionAngle * 0.18 : 0);\n  }\n  if (role === \"avci\" && !rankWeapon && !colShopWeaponVisible492 && (rarity === \"infinite\" || rarity === \"purple\" || (rarity === \"emerald\" || rarity === \"royal\"))) {\n    const colBowBase446 = (rarity === \"emerald\" || rarity === \"royal\") ? 0 : rarity === \"infinite\" ? -0.73 : 2.34;\n    const colBowAim446 = attacking ? Math.max(-0.32, Math.min(0.32, localDirectionAngle * 0.25)) : 0;\n    rotation = colBowBase446 + colBowAim446 + (pose?.moving && !attacking ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0);\n  }\n  if (role === \"muhafiz\" && (rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492) {\n    rotation = (attacking ? localDirectionAngle + Math.PI / 4 + (-0.92 + syncedAttackPhase * 1.48) : Math.PI + (pose?.moving ? frame === 1 ? -0.025 : frame === 2 ? 0.025 : 0 : 0)) + Math.PI / 4;\n  }\n  ctx.save();\n  ctx.translate(hand.x, hand.y);\n  rotation=mountedWeaponRotationR60(role,rotation,pose);\n  ctx.scale(hand.facing, 1);\n  ctx.rotate(rotation);\n  if ((rankWeapon || (rarity === \"emerald\" || rarity === \"royal\") && !colShopWeaponVisible492) && role === \"avci\") ctx.scale(-1, 1);\n  const colBowCrop446 = role === \"avci\" && purpleWeapon?.complete ? 0.12 : 0;\n  const colBowCropScale446 = colBowCrop446 ? 0.81 : 1;\n  const sourceX = (column + colBowCrop446) * cellWidth;\n  const sourceY = row * cellHeight;\n  const targetX = -pivot.x * size;\n  const targetY = -pivot.y * size;\n  const now = pose?.now ?? performance.now();\n  if ((rankWeapon || colShopWeaponVisible492 || rarity === \"infinite\" || (rarity === \"emerald\" || rarity === \"royal\")) && infiniteWeapon) {\n    const width = size * cellWidth / cellHeight, height = size;\n    if(pose?.infiniteEmeraldR102&&!rankWeapon&&!colShopWeaponVisible492)drawEmeraldInfiniteWeaponR102(ctx,-pivot.x*width,-pivot.y*height,width,height,now,pose.qualityR102,role,pose.ownR102);\n    if(rarity==='royal'&&!rankWeapon&&!colShopWeaponVisible492)drawRoyalWeaponFxR118(ctx,-pivot.x*width,-pivot.y*height,width,height,now,pose.qualityR102,role,pose.ownR102);\n    const glow = Nv(`skin:${image.src}:${role}:${tint}:${size}`, Math.ceil(width + 24) * 2, (height + 24) * 2, (g2) => {\n      g2.scale(2, 2);\n      g2.shadowColor = rankWeapon ? pose?.rankWeapon === \"executioner_weapon\" ? \"#ffb35d\" : \"#56ebde\" : rarity === \"infinite\" ? \"rgba(255,235,173,.5)\" : tint;\n      g2.shadowBlur = rankWeapon ? 12 : (rarity === \"emerald\" || rarity === \"royal\") ? 10 : 6;\n      if ((rarity === \"emerald\" || rarity === \"royal\") && !rankWeapon && !colShopWeaponVisible492) {\n        g2.save();\n        g2.shadowColor = tint;\n        g2.shadowBlur = 3;\n        for (const dx of [-3.5, 3.5]) {\n          g2.shadowOffsetX = dx;\n          g2.shadowOffsetY = 0;\n          g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n        }\n        g2.restore();\n      }\n      if (rankWeapon) {\n        g2.filter = \"brightness(1.22) saturate(1.12)\";\n        g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n        g2.shadowBlur = 4;\n        g2.filter = \"none\";\n      }\n      g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, 12, 12, width, height);\n    });\n    ctx.shadowBlur = 0;\n    if (glow) ctx.drawImage(glow, -pivot.x * width - 12, -pivot.y * height - 12, Math.ceil(width + 24), height + 24);\n    else ctx.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, -pivot.x * width, -pivot.y * height, width, height);\n    if (pose?.talismanColor) El(ctx, -pivot.x * width + width * 0.5, -pivot.y * height + height * 0.12, pose.talismanColor, now, role);\n    ctx.restore();\n    return true;\n  }\n  const padding = 32;\n  const cachedWeapon = pose?.heatProtection || rarity === \"infinite\" ? Nv(`weapon:${image.src}:${role}:${rarity}:${size}`, (size + padding * 2) * 2, (size + padding * 2) * 2, (g2) => {\n    g2.scale(2, 2);\n    fy(g2, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, padding + size * colBowCrop446, padding, size * colBowCropScale446, size, rarity, role, 0);\n    g2.shadowColor = tint;\n    g2.shadowBlur = rarity === \"infinite\" ? 22 : rarity === \"unique\" ? 16 : rarity === \"purple\" ? 15 : rarity === \"red\" ? 13 : rarity === \"orange\" ? 9 : rarity === \"blue\" ? 6 : 2;\n    if (rarity === \"purple\" && !purpleWeapon) g2.filter = \"hue-rotate(255deg) saturate(1.2)\";\n    g2.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, padding + size * colBowCrop446, padding, size * colBowCropScale446, size);\n    if (rarity === \"purple\" && !purpleWeapon) g2.filter = \"none\";\n  }) : null;\n  if (cachedWeapon) {\n    ctx.shadowBlur = 0;\n    ctx.drawImage(cachedWeapon, targetX - padding, targetY - padding, size + padding * 2, size + padding * 2);\n  } else {\n    fy(ctx, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size, rarity, role, now);\n    ctx.shadowColor = tint;\n    ctx.shadowBlur = rarity === \"infinite\" ? 22 : rarity === \"unique\" ? 16 : rarity === \"purple\" ? 15 : rarity === \"red\" ? 13 : rarity === \"orange\" ? 9 : rarity === \"blue\" ? 6 : 2;\n    if (rarity === \"purple\" && !purpleWeapon) ctx.filter = \"hue-rotate(255deg) saturate(1.2)\";\n    if (!Vv(ctx, image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size)) ctx.drawImage(image, sourceX, sourceY, cellWidth * colBowCropScale446, cellHeight, targetX + size * colBowCrop446, targetY, size * colBowCropScale446, size);\n    if (rarity === \"purple\" && !purpleWeapon) ctx.filter = \"none\";\n  }\n  if (pose?.talismanColor) El(ctx, targetX + size * (role === \"avci\" ? 0.5 : 0.88), targetY + size * 0.1, pose.talismanColor, now, role);\n  if (pose?.evolution) oh(ctx, targetX, targetY, size, pose.evolution, pose.evolutionEffects ?? 1, now);\n  ctx.shadowBlur = 0;\n  ctx.fillStyle = \"rgba(28,24,21,.86)\";\n  ctx.beginPath();\n  ctx.ellipse(0, 0, 3.2, 2.4, 0, 0, Math.PI * 2);\n  ctx.fill();\n  ctx.restore();\n  return true;\n}",
+        "count": 1
+      },
+      {
+        "label": "remaining royal rarity colors",
+        "from": "emerald: \"#39c889\"",
+        "to": "emerald: \"#39c889\",royal:\"#ecdba8\"",
+        "count": 4
+      },
+      {
+        "label": "royal ordinary level stays independent",
+        "from": "infinite: 50, emerald: 65 };",
+        "to": "infinite: 50, emerald: 65, royal:1 };",
+        "count": 1
+      },
+      {
+        "label": "royal friendly rarity name",
+        "from": "return e3 === \"emerald\" ? \"Kadim",
+        "to": "return e3 === \"royal\" ? \"Hükümdar Kraliyet\" : e3 === \"emerald\" ? \"Kadim",
+        "count": 1
+      },
+      {
+        "label": "royal sale prediction guard",
+        "from": "![`unique`, `infinite`, \"emerald\"].includes(n4.rarity)",
+        "to": "![`unique`, `infinite`, \"emerald\", \"royal\"].includes(n4.rarity)",
+        "count": 1
+      },
+      {
+        "label": "royal protected sale price",
+        "from": "[`unique`, `infinite`, \"emerald\"].includes(e4.rarity) ? 0",
+        "to": "[`unique`, `infinite`, \"emerald\", \"royal\"].includes(e4.rarity) ? 0",
+        "count": 1
+      },
+      {
+        "label": "royal animated hand anchors",
+        "from": "String(n2).includes(\"hero-motion-emerald-v447.webp\")",
+        "to": "(String(n2).includes(\"hero-motion-emerald-v447.webp\")||String(n2).includes(\"royal-hero-motion-r118\"))",
+        "count": 1
+      },
+      {
+        "label": "royal label dictionary",
+        "from": "const labels = { crafted:",
+        "to": "const labels = { royal:\"Hükümdar Kraliyet\", crafted:",
+        "count": 1
+      },
+      {
+        "label": "material names and inventory image references",
+        "from": "var Qf = { forge_ember491:",
+        "to": "var Qf = { ...{\"emerald_dust\":{\"label\":\"Zümrüt Tozu\",\"image\":\"../assets/royal-icon-emerald_dust-r118-489c24fa11893ae1\"},\"royal_crown\":{\"label\":\"Kraliyet Tacı\",\"image\":\"../assets/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0\"}}, forge_ember491:",
+        "count": 1
+      },
+      {
+        "label": "open PvP classification",
+        "from": "return area === \"black\" || area === \"rune_v2\";",
+        "to": "return area === \"champions\" || area === \"black\" || area === \"rune_v2\";",
+        "count": 1
+      },
+      {
+        "label": "area bounds",
+        "from": "return area === \"zumrut\" ? ZR93.ZUMRUT_BOUNDS",
+        "to": "return area === \"champions\" ? CHAMPIONS_BOUNDS_R118 : area === \"zumrut\" ? ZR93.ZUMRUT_BOUNDS",
+        "count": 1
+      },
+      {
+        "label": "area segment",
+        "from": "return area === \"zumrut\" ? ZR93.zumrutSegment(...args)",
+        "to": "return area === \"champions\" ? championsSegmentR118(...args) : area === \"zumrut\" ? ZR93.zumrutSegment(...args)",
+        "count": 1
+      },
+      {
+        "label": "prediction clamp",
+        "from": "function Ev(e3, t2, n2) {",
+        "to": "function Ev(e3, t2, n2) {\n  if(e3==='champions')return clampChampionsR118(n2);",
+        "count": 1
+      },
+      {
+        "label": "authoritative position area reconciliation",
+        "from": "s5 = t5 === \"zumrut\" ?",
+        "to": "s5 = t5 === \"champions\" ? t5 : t5 === \"zumrut\" ?",
+        "count": 1
+      },
+      {
+        "label": "travel cache destination",
+        "from": "o3 = n3 === \"travel_event\" ?",
+        "to": "o3 = n3 === \"travel_champions\" ? \"champions\" : n3 === \"travel_event\" ?",
+        "count": 1
+      },
+      {
+        "label": "map travel client guard",
+        "from": "}, Wb = async (e4) => {",
+        "to": "}, Wb = async (e4) => {\n    if(e4==='champions'){if(!royalEligibleClientR118(X2)){K2('Şampiyonlar Diyarı için Şampiyon Lv 1 olmalısın.');return;}if(U2?.champions?.enabled===false){K2('Şampiyonlar Diyarı şu anda kapalı.');return;}if(e4===$2||!window.confirm(CHAMPIONS_PVP_NOTICE_R118))return;colChampionsR118.preload();}",
+        "count": 1
+      },
+      {
+        "label": "map travel spawn",
+        "from": "let n3 = e4 === \"zumrut\" ? ZR93.ZUMRUT_SPAWN",
+        "to": "let n3 = e4 === \"champions\" ? CHAMPIONS_SPAWN_R118 : e4 === \"zumrut\" ? ZR93.ZUMRUT_SPAWN",
+        "count": 1
+      },
+      {
+        "label": "map command",
+        "from": "let r3 = await _m2({ ...e4 === \"rune_v2\" ? { confirmPvp: true } : {}, action: e4 === \"zumrut\" ?",
+        "to": "let r3 = await _m2({ ...[\"rune_v2\",\"champions\"].includes(e4) ? { confirmPvp: true } : {}, action: e4 === \"champions\" ? \"travel_champions\" : e4 === \"zumrut\" ?",
+        "count": 1
+      },
+      {
+        "label": "map name",
+        "from": "$2 === \"zumrut\" ? \"Zümrüt Vadisi\" :",
+        "to": "$2 === \"champions\" ? \"Şampiyonlar Diyarı\" : $2 === \"zumrut\" ? \"Zümrüt Vadisi\" :",
+        "count": 1
+      },
+      {
+        "label": "map mission heading",
+        "from": "ab2 = $2 === \"zumrut\" ?",
+        "to": "ab2 = $2 === \"champions\" ? \"ŞAMPİYONLAR DİYARI · PVP AÇIK\" : $2 === \"zumrut\" ?",
+        "count": 1
+      },
+      {
+        "label": "hide unrelated boss ribbon",
+        "from": "$2 !== \"zumrut\" && $2 !== `arena`",
+        "to": "$2 !== \"champions\" && $2 !== \"zumrut\" && $2 !== `arena`",
+        "count": 1
+      },
+      {
+        "label": "hide unrelated forest quest",
+        "from": "($2 === \"zumrut\" || isAdventureArea511($2)) ? null",
+        "to": "($2 === \"champions\" || $2 === \"zumrut\" || isAdventureArea511($2)) ? null",
+        "count": 1
+      },
+      {
+        "label": "skip forest tutorial",
+        "from": "step: $2 === \"zumrut\" || isAdventureArea511($2) ? 3",
+        "to": "step: $2 === \"champions\" || $2 === \"zumrut\" || isAdventureArea511($2) ? 3",
+        "count": 1
+      },
+      {
+        "label": "ordinary monster targeting list",
+        "from": "\"rune\", \"rune_v2\", \"event\"].includes(e4.area)",
+        "to": "\"rune\", \"rune_v2\", \"event\", \"champions\"].includes(e4.area)",
+        "count": 1
+      },
+      {
+        "label": "autohunt ordinary map list",
+        "from": "\"rune\", \"rune_v2\", \"event\"].includes(F2.current?.area",
+        "to": "\"rune\", \"rune_v2\", \"event\", \"champions\"].includes(F2.current?.area",
+        "count": 1
+      },
+      {
+        "label": "attack gating",
+        "from": "if (d2.area !== \"event\" &&",
+        "to": "if (d2.area !== \"champions\" && d2.area !== \"event\" &&",
+        "count": 1
+      },
+      {
+        "label": "pointer monster selection",
+        "from": "if (colRuneCoast483(a3?.area) ||",
+        "to": "if (a3?.area === \"champions\" || colRuneCoast483(a3?.area) ||",
+        "count": 1
+      },
+      {
+        "label": "skill bar availability",
+        "from": "$2 !== \"event\" && !colRuneCoast483($2)",
+        "to": "$2 !== \"champions\" && $2 !== \"event\" && !colRuneCoast483($2)",
+        "count": 2
+      },
+      {
+        "label": "mobile attack availability",
+        "from": "($2 === \"event\" || colRuneCoast483($2)",
+        "to": "($2 === \"champions\" || $2 === \"event\" || colRuneCoast483($2)",
+        "count": 1
+      },
+      {
+        "label": "ordinary activity polling",
+        "from": "r3 === \"rune_v2\", a3 = Hn2.current",
+        "to": "(r3 === \"rune_v2\" || r3 === \"champions\"), a3 = Hn2.current",
+        "count": 1
+      },
+      {
+        "label": "PvP rendering",
+        "from": "at3 = rt2 || it2 || nt3 || Fe2 === \"rune_v2\"",
+        "to": "at3 = rt2 || it2 || nt3 || Fe2 === \"champions\" || Fe2 === \"rune_v2\"",
+        "count": 1
+      },
+      {
+        "label": "map texture",
+        "from": "L3 = isAdventureArea511(Fe2) ?",
+        "to": "L3 = Fe2 === \"champions\" ? colChampionsR118.texture() : isAdventureArea511(Fe2) ?",
+        "count": 1
+      },
+      {
+        "label": "ordinary ground drops",
+        "from": "if (isAdventureArea511(i4.area) || i4.area === \"event\"",
+        "to": "if (i4.area === \"champions\" || isAdventureArea511(i4.area) || i4.area === \"event\"",
+        "count": 1
+      },
+      {
+        "label": "custom mob render with normal attack phase",
+        "from": "draw: () => (drawAdventureEnemy511(n3, i5, adventureMob511,",
+        "to": "draw: () => (colChampionsR118.drawEnemy(n3,i5,_r2.current===t4.id,a3,S2,E3,r6.travel,x3) ? void 0 : drawAdventureEnemy511(n3, i5, adventureMob511,",
+        "count": 1
+      },
+      {
+        "label": "map ambient palette",
+        "from": "var Dv = { rune_v2:",
+        "to": "var Dv = { champions:{veil:\"rgba(12,18,15,.03)\",screen:\"rgba(227,205,142,.01)\",lights:[]}, rune_v2:",
+        "count": 1
+      },
+      {
+        "label": "royal NPC depth-sorted presentation",
+        "from": "Ze2 && e6(towerDoor511.x, towerDoor511.y, 440)",
+        "to": "Ze2 && e6(1740,390,220) && lt2.push({y:390,draw:()=>colRoyalArtR118.npc(n3,a3)}), Ze2 && e6(towerDoor511.x, towerDoor511.y, 440)",
+        "count": 1
+      },
+      {
+        "label": "royal NPC click",
+        "from": "if (towerHit511(n3, r3)) {",
+        "to": "if(Math.abs(n3-1740)<80&&r3>225&&r3<425){vi2.current=null;openRoyalR118('transform');Y2('ui');return;}\n      if (towerHit511(n3, r3)) {",
+        "count": 1
+      },
+      {
+        "label": "new commands use existing durable channel transport",
+        "from": "core511-transport-r113-53abe09d240f2c5c.js",
+        "to": "core511-transport-r118-c4d1b9128f079567.js",
+        "count": 1
+      },
+      {
+        "label": "preserve content helper with royal Sonsuz labels",
+        "from": "content-client-r103-chat-c073632f6ace7ffd.js",
+        "to": "core511-content-r118-88ec870c838c9fad.js",
+        "count": 1
+      }
+    ],
+    "adminEdits": [
+      {
+        "label": "new admin module imports",
+        "prefix": "import {createRoyalAdminR118} from './core511-royalAdmin-r118-2a6eed293f4bcf67.js';\nimport {createChampionsAdminR118} from './core511-championsAdmin-r118-91bf55d2492a5b93.js';\n"
+      },
+      {
+        "label": "new navigation group membership",
+        "from": "core511-admin-nav-r102-190e3198a3c8e3b0.js",
+        "to": "core511-nav-r118-3946e2ed80e23106.js",
+        "count": 1
+      },
+      {
+        "label": "new authenticated panel factories",
+        "from": "const colAdminNavigatorR66=createAdminNavigatorR66(X);",
+        "to": "const colAdminNavigatorR66=createAdminNavigatorR66(X);\nconst colRoyalAdminR118=createRoyalAdminR118(X);\nconst colChampionsAdminR118=createChampionsAdminR118(X);",
+        "count": 1
+      },
+      {
+        "label": "new admin navigation cards",
+        "from": "{ id: \"kadim_tower\", label:",
+        "to": "{id:\"royal_r118\",label:\"Kraliyet Eşyaları\",note:\"Dönüşüm malzemeleri ve Zümrüt Tozu\",icon:\"♛\"},{id:\"champions_r118\",label:\"Şampiyonlar Diyarı\",note:\"Canavar, tecrübe, öz ve ganimet\",icon:\"⚔\"},{ id: \"kadim_tower\", label:",
+        "count": 1
+      },
+      {
+        "label": "new panel mounts",
+        "from": "n2 === \"kadim_tower\" && X.createElement",
+        "to": "n2 === \"royal_r118\" && X.createElement(colRoyalAdminR118),n2 === \"champions_r118\" && X.createElement(colChampionsAdminR118),n2 === \"kadim_tower\" && X.createElement",
+        "count": 1
+      }
+    ]
   }
 }

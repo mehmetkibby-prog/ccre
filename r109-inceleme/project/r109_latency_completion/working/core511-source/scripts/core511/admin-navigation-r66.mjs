@@ -2,13 +2,13 @@
 // in their existing components; this navigator never fetches or writes data.
 export const ADMIN_GROUPS_R66=[
  {id:'management',label:'Genel yönetim',items:['overview','launch','registrations','players','gm','updates','support']},
- {id:'items',label:'Eşya ve gelişim',items:['enchants_r66','loot','enhancement491','materials','mount_r55','status','runes','specialistSkills459']},
- {id:'world',label:'Haritalar ve savaş',items:['zumrut_r93','castle_r66','world','combat','champion_r102','battlefield_r102','solo','kadim_tower','sis_mist','runes_v2','stone_boss']},
+ {id:'items',label:'Eşya ve gelişim',items:['royal_r118','enchants_r66','loot','enhancement491','materials','mount_r55','status','runes','specialistSkills459']},
+ {id:'world',label:'Haritalar ve savaş',items:['champions_r118','zumrut_r93','castle_r66','world','combat','champion_r102','battlefield_r102','solo','kadim_tower','sis_mist','runes_v2','stone_boss']},
  {id:'events',label:'Etkinlikler ve ödüller',items:['events','newyear_r102','community','eventIsland','quests438','battle_pass','wheel483','cauldron488','brokenCore464']},
  {id:'economy',label:'Ekonomi',items:['economy','market','arenaMarket','epins']},
  {id:'security',label:'Güvenlik ve sunucu',items:['security','afk_suspects','loadlab477']}
 ];
-const details={champion_r102:'Giriş bedeli, tecrübe artışı ve on seviye ödülleri',battlefield_r102:'Savaş saatleri, oyuncu öldürme ve Zafer Sandığı',newyear_r102:'Çorap düşme oranı ve Yılbaşı Sandığı içeriği',
+const details={royal_r118:'Kraliyet dönüşüm malzemeleri, Zümrüt Tozu ve tarifler',champions_r118:'Şampiyon haritası, dört canavar, tecrübe, öz ve ganimetler',champion_r102:'Giriş bedeli, tecrübe artışı ve on seviye ödülleri',battlefield_r102:'Savaş saatleri, oyuncu öldürme ve Zafer Sandığı',newyear_r102:'Çorap düşme oranı ve Yılbaşı Sandığı içeriği',
  zumrut_r93:'Balta, kazma, toplama ve şanslı üretim tezgâhı',
  overview:'Canlı oyuncular ve sunucu performansı',launch:'Ön kayıt, açılış saati ve bakım',registrations:'Hesaplar ve erken giriş izni',players:'Karakterler, eşya gönderme ve hesap işlemleri',gm:'GM yetkileri ve sunucu duyuruları',updates:'Yeni içerikleri önizleme ve açma',support:'Oyuncu destek talepleri',
  enchants_r66:'Efsun ihtimalleri ve dört kademe değerleri',loot:'Ganimet tabloları, sandıklar ve eşya gücü',enhancement491:'Artı basma oranları, malzemeler ve Kor Mührü',materials:'Geliştirme malzemelerinin düşme oranları',mount_r55:'Binek malzemeleri ve düşme haritaları',status:'Statü puanlarının verdiği bonuslar',runes:'Rün gelişimi ve bonuslar',specialistSkills459:'Uzmanlık becerilerinin gücü ve süreleri',
