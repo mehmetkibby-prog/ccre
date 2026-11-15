@@ -17,3 +17,4 @@ export * from './content/upgrade.ts';
 export * from './tuning.ts';
 export * from './content/mall.ts';
 export * from './content/fishing.ts';
+export * from './content/transform.ts';

@@ -404,7 +404,7 @@ function placeSpawns(l: MapLayout, rng: Rng) {
     let left = total;
     for (let c = 0; c < camps && left > 0; c++) {
       const n = md?.boss ? 1 : Math.ceil(left / (camps - c));
-      const rT = md?.boss ? 2 : Math.min(7, Math.max(3.2, Math.sqrt(n) * 1.35 + 1.2)); // yarıçap (karo)
+      const rT = md?.boss ? 2 : Math.min(9, Math.max(4, Math.sqrt(n) * 1.9 + 1.5)); // yarıçap (karo): geniş, canavarlar dağınık
       // yuva merkezi
       let cx = -1, cy = -1;
       for (let tries = 0; tries < 900; tries++) {
@@ -416,7 +416,8 @@ function placeSpawns(l: MapLayout, rng: Rng) {
         const x = tc(tx), y = tc(ty);
         if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 900 + rT * TILE) continue;
         if (!relax && g.region !== 'any' && !A && regionOf(l, x, y) !== g.region) continue;
-        if (l.zones.some((z) => Math.hypot(z.x - x, z.y - y) < z.r + rT * TILE + 2.5 * TILE)) continue;
+        // yuvalar arası boşluk; sınırlı alanlı gruplarda (ör. Tilki Korusu) yuvalar yan yana olabilir
+        if (l.zones.some((z) => Math.hypot(z.x - x, z.y - y) < (A ? (z.r + rT * TILE) * 0.72 : z.r + rT * TILE + 2.5 * TILE))) continue;
         // dairenin çoğu yürünebilir olmalı
         let free = 0, all = 0;
         for (let oy = -Math.floor(rT); oy <= rT; oy++) for (let ox = -Math.floor(rT); ox <= rT; ox++) if (ox * ox + oy * oy <= rT * rT) { all++; if (tx + ox > 1 && ty + oy > 1 && tx + ox < l.w - 2 && ty + oy < l.h - 2 && isFree(l, tx + ox, ty + oy)) free++; }
@@ -429,6 +430,7 @@ function placeSpawns(l: MapLayout, rng: Rng) {
       const zone: MonsterZone = { name: names[k % names.length] + (k >= names.length ? ' ' + (Math.floor(k / names.length) + 1) : ''), monster: g.monster, x: tc(cx), y: tc(cy), r: rT * TILE, level: [g.level[0], g.level[1]], count: 0 };
       l.zones.push(zone);
       let placed = 0;
+      const pts: [number, number][] = [];
       for (let tries = 0; placed < n && tries < n * 80; tries++) {
         const a = rng() * Math.PI * 2, d = (placed === 0 ? 0 : Math.sqrt(rng())) * rT;
         const tx = Math.round(cx + Math.cos(a) * d), ty = Math.round(cy + Math.sin(a) * d);
@@ -436,6 +438,9 @@ function placeSpawns(l: MapLayout, rng: Rng) {
         if (g.area && (tx < g.area[0] || ty < g.area[1] || tx > g.area[2] || ty > g.area[3])) continue;
         const key = ty * l.w + tx;
         if (taken.has(key) && tries < n * 40) continue; // aynı karoya iki canavar koyma (gerekirse izin ver)
+        // birbirine yapışık durmasınlar: yuvadaki diğerlerinden en az ~1,7 karo uzakta (yer kalmazsa gevşer)
+        if (tries < n * 60 && pts.some(([qx, qy]) => (qx - tx) ** 2 + (qy - ty) ** 2 < 2.9)) continue;
+        pts.push([tx, ty]);
         taken.add(key);
         const tot = g.variants[0] + g.variants[1] + g.variants[2];
         const r = rng() * tot;

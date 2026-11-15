@@ -359,7 +359,9 @@ function createMeshFox(variant: number, s: number): MonsterRig | null {
     if ((o as THREE.Bone).isBone) bones[o.name] = o as THREE.Bone;
     const m = o as THREE.SkinnedMesh;
     if (m.isSkinnedMesh) {
-      m.castShadow = true; m.frustumCulled = false;
+      m.castShadow = true;
+      if (!m.geometry.boundingSphere) { m.geometry.computeBoundingSphere(); m.geometry.boundingSphere!.radius *= 1.5; }
+      m.frustumCulled = true; // ekran dışındaki kurt/tilki çizilmez (önceden hepsi her karede çiziliyordu)
       if (variant > 0) {
         let vm = foxMats.get(variant);
         if (!vm) { vm = (m.material as THREE.MeshStandardMaterial).clone(); (vm as THREE.MeshStandardMaterial).color.set(variant === 2 ? 0x9aa2b8 : 0xc08a78); foxMats.set(variant, vm); }
@@ -396,7 +398,9 @@ function createMeshQuad(id: string, variant: number, s: number, scale: number, h
     if ((o as THREE.Bone).isBone) bones[o.name] = o as THREE.Bone;
     const m = o as THREE.SkinnedMesh;
     if (m.isSkinnedMesh) {
-      m.castShadow = true; m.frustumCulled = false;
+      m.castShadow = true;
+      if (!m.geometry.boundingSphere) { m.geometry.computeBoundingSphere(); m.geometry.boundingSphere!.radius *= 1.5; }
+      m.frustumCulled = true; // ekran dışındaki kurt/tilki çizilmez (önceden hepsi her karede çiziliyordu)
       if (variant > 0) {
         const key = id + variant;
         let vm = quadMats.get(key);
@@ -442,7 +446,11 @@ function createMeshDevourer(variant: number, s: number): MonsterRig | null {
   inner.scale.setScalar(sc);
   inner.position.set(-(box.min.x + box.max.x) / 2 * sc, -box.min.y * sc, -(box.min.z + box.max.z) / 2 * sc);
   const g = new THREE.Group(); g.add(inner);
-  const glow = new THREE.PointLight(0x9ffff0, 0.8, 3.5); glow.position.set(0, 0.6, 0.3); g.add(glow);
+  // nokta ışığı YOK: her canavara ışık eklemek ışık sayısını değiştirip bütün malzemeleri yeniden derletiyordu
+  // (ormanda ilerledikçe takılma). Parıltı, malzemenin kendi ışımasıyla verilir (ortak malzeme, tek güncelleme).
+  const glowMats: THREE.MeshStandardMaterial[] = [];
+  inner.traverse((o) => { const m = o as THREE.Mesh; if (m.isMesh) { const mt = m.material as THREE.MeshStandardMaterial; if (!glowMats.includes(mt)) { mt.emissive = new THREE.Color(0x6a3aa8); mt.emissiveMap = mt.map; glowMats.push(mt); } } });
+  const glow = { set intensity(v: number) { for (const mt of glowMats) mt.emissiveIntensity = v; } };
   const root = new THREE.Group(); root.add(g); root.scale.setScalar(s);
   return {
     root, height: (H + 0.35) * s,
@@ -453,7 +461,7 @@ function createMeshDevourer(variant: number, s: number): MonsterRig | null {
       g.scale.set(sx, sy, sx);
       g.position.y = 0.32 + Math.sin(t * 2.2) * 0.08 + (st === 'walk' ? Math.max(0, Math.sin(ph)) * 0.08 : 0);
       g.rotation.z = Math.sin(t * 1.3) * 0.05;
-      glow.intensity = 0.6 + Math.sin(t * 3) * 0.25;
+      glow.intensity = 0.35 + Math.sin(t * 3) * 0.15;
       if (st === 'dead') g.scale.setScalar(Math.max(0.01, 1 - k));
     },
   };

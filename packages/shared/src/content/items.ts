@@ -18,7 +18,7 @@ export const RARITY: Record<Rarity, RarityDef> = {
   blue: { id: 'blue', name: 'Mavi', color: '#5fa8ff', minLevel: 7, power: 1.5, weaponPower: 1.8 },
   orange: { id: 'orange', name: 'Turuncu', color: '#ffa53d', minLevel: 20, power: 2.6, weaponPower: 3.1 },
   crimson: { id: 'crimson', name: 'Kızıl', color: '#ff4d5a', minLevel: 30, power: 3.9, weaponPower: 5.4 },
-  unique: { id: 'unique', name: 'Eşsiz', color: '#ffd84a', minLevel: 50, power: 5.4, weaponPower: 7.2 },
+  unique: { id: 'unique', name: 'Eşsiz', color: '#ffd84a', minLevel: 30, power: 4.4, weaponPower: 6.1 }, // Kızıl'dan dönüşür, ondan ~%13 güçlü
   infinite: { id: 'infinite', name: 'Sonsuz', color: '#7cf3ff', minLevel: 50, power: 6.4, weaponPower: 8.6 },
   purple: { id: 'purple', name: 'Mor Kök', color: '#c58bff', minLevel: 60, power: 6.0, weaponPower: 8.0 },
   emerald: { id: 'emerald', name: 'Kadim Zümrüt', color: '#3ef09a', minLevel: 65, power: 7.2, weaponPower: 9.8 },

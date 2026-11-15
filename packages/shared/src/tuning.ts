@@ -18,6 +18,10 @@ export interface MonsterTune {
 }
 export interface DropTune { kind: 'item' | 'mat' | 'mall'; key: string; rarity?: string; chance: number; qty: [number, number] }
 export interface MallTune { price?: Record<string, number>; off?: string[]; wings?: { atk?: number; def?: number; crit?: number } }
+/** Dönüşüm (Haso): bkz. content/transform.ts */
+export interface TransformCostTune { gems: number; mats: Record<string, number>; chance: number; minPlus: number; minLevel: number }
+export interface TransformTune { enabled?: boolean; from?: string[]; cost?: Partial<Record<'weapon' | 'armor' | 'other', Partial<TransformCostTune>>> }
+const RARITY_IDS = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
 export interface FishingTune { rodPrice?: number; biteMin?: number; biteMax?: number; catches?: Record<string, { weight?: number; diff?: number; price?: number; off?: boolean }> }
 /** Harita doğma grubu ayarı: anahtar `harita:sıra`. */
 export interface SpawnTune { count?: number; level?: [number, number]; variants?: [number, number, number] }
@@ -53,6 +57,7 @@ export interface GameTuning {
   sellPrice: Record<string, number>;
   /** Artı basma: 6 kademelik tablo (boş = varsayılan) ve başarısızlıkta kademe düşmesi. */
   upgrade: UpgradeTune;
+  transform?: TransformTune;
   /** Seviye TP tablosu: 64 değer (1→2 … 64→65); boş = varsayılan tablo. */
   xpTable?: number[];
   /** Nesne Market: fiyatlar (ÇP), satıştan kaldırılanlar, kanat bonusları. */
@@ -69,7 +74,7 @@ export const DEFAULT_TUNING: GameTuning = {
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], retargetDelay: [0, 5, 0.1],
@@ -162,6 +167,23 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     out.upgrade.steps = steps;
   }
   if (typeof up.failDown === 'boolean') out.upgrade.failDown = up.failDown;
+  // dönüşüm (Haso): kaynak nadirlikler, grup başına mücevher/malzeme/şans/en az artı/seviye
+  const tr = obj(r.transform);
+  if (Object.keys(tr).length) {
+    const t: TransformTune = {};
+    if (typeof tr.enabled === 'boolean') t.enabled = tr.enabled;
+    if (Array.isArray(tr.from)) t.from = tr.from.filter((x): x is string => typeof x === 'string' && RARITY_IDS.includes(x) && x !== 'unique').slice(0, 8);
+    const cost: NonNullable<TransformTune['cost']> = {};
+    for (const g of ['weapon', 'armor', 'other'] as const) {
+      const o = obj(obj(tr.cost)[g]);
+      if (!Object.keys(o).length) continue;
+      const mats: Record<string, number> = {};
+      for (const [k, v] of Object.entries(obj(o.mats)).slice(0, 6)) { const n = num(v, 0, 9999); if (key(k) && n) mats[k] = Math.round(n); }
+      cost[g] = { gems: Math.round(num(o.gems, 0, 1e8) ?? 0), mats, chance: num(o.chance, 0, 100) ?? 100, minPlus: Math.round(num(o.minPlus, 0, 6) ?? 0), minLevel: Math.round(num(o.minLevel, 1, 200) ?? 1) };
+    }
+    if (Object.keys(cost).length) t.cost = cost;
+    out.transform = t;
+  }
   const ml = obj(r.mall), mall: MallTune = {};
   const mp: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(ml.price))) { const n = num(v, 0, 1e7); if (key(k) && n !== undefined) mp[k] = Math.round(n); }
   if (Object.keys(mp).length) mall.price = mp;

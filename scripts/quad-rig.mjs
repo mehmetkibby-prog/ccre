@@ -26,7 +26,7 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
 
 const src = await io.read(inPath);
 await src.transform(weld());
-await src.transform(simplify({ simplifier: MeshoptSimplifier, ratio: 0.75, error: 0.0008 }));
+await src.transform(simplify({ simplifier: MeshoptSimplifier, ratio: Number(process.env.RATIO || 0.75), error: Number(process.env.ERR || 0.0008) }));
 const sp = src.getRoot().listMeshes()[0].listPrimitives()[0];
 const node = src.getRoot().listNodes().find((n) => n.getMesh());
 const Wm = node.getWorldMatrix();

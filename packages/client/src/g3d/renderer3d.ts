@@ -447,7 +447,18 @@ export class Renderer3D {
     v.speed = (v.speed ?? 0) * 0.8 + sp * 0.2;
     const restart = (v.state === 'attack' || v.state === 'cast') && (v as View & { lastStart?: number }).lastStart !== animStart;
     (v as View & { lastStart?: number }).lastStart = animStart;
-    if (v.glb) v.glb.update(v.state, dt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
+    // ayrıntı kısma: kameradan uzak (~24 m+) olanların iskelet animasyonu 3 karede bir, biriken süreyle güncellenir
+    // (kalabalıkta/ormanda kare süresinin çoğu iskelet hesabıydı). Durum değişimi ve vuruş başlangıcı hemen işlenir.
+    const lv = v as View & { lodAcc?: number; lodSlot?: number };
+    const far = v.obj.position.distanceToSquared(this.camTarget) > 24 * 24;
+    let adt = dt;
+    if (far && !restart) {
+      lv.lodAcc = (lv.lodAcc ?? 0) + dt;
+      lv.lodSlot ??= (Math.random() * 3) | 0;
+      if ((this.frameNo + lv.lodSlot) % 3 !== 0) return;
+      adt = lv.lodAcc; lv.lodAcc = 0;
+    } else lv.lodAcc = 0;
+    if (v.glb) v.glb.update(v.state, adt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
     else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
   }

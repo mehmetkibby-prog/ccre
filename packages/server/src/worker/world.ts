@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
@@ -236,6 +236,7 @@ export class World {
       case 'buy': return this.cmdBuy(p, c);
       case 'donate': return this.cmdDonate(p, Math.floor(Number(c.amount) || 0), String(c.req ?? ''));
       case 'upgrade': return this.cmdUpgrade(p, c);
+      case 'transform': return this.cmdTransform(p, c);
       case 'npc': return this.cmdNpc(p, String(c.id));
       case 'use': return this.cmdUse(p, String(c.key), String(c.req ?? ''), c.item ? String(c.item) : undefined);
       case 'mall_buy': return this.cmdMallBuy(p, String(c.id), Math.floor(Number(c.qty) || 1), String(c.req ?? ''));
@@ -1047,6 +1048,38 @@ export class World {
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'upgradeResult', req: c.req, ok, before, after: it.plus, chance, item: it.id });
+  }
+
+  /**
+   * Haso · Dönüşüm: ekipmanı Eşsiz nadirliğe çevirir. Efsun, artı, evrim ve sayaç aynen kalır.
+   * Gereksinimler yönetimden (transformConf); şans %100 değilse başarısızlıkta yalnız malzeme gider, eşya bozulmaz.
+   */
+  private cmdTransform(p: Player, c: Extract<ClientCmd, { t: 'transform' }>) {
+    const smith = p.zone.layout.npcs.find((n) => MAPS[p.zone.id]?.npcs.find((d) => d.id === n.id)?.actions.includes('upgrade') && dist(p, n) <= NPC_RANGE);
+    if (!smith) return this.reply(p, c, false, 'Demirciye yaklaş.');
+    if (this.now < p.combatUntil) return this.reply(p, c, false, 'Savaş sırasında dönüşüm yapılamaz.');
+    if (this.seenReceipt(p, c.req)) return;
+    const conf = transformConf();
+    if (!conf.enabled) return this.reply(p, c, false, 'Dönüşüm şu an kapalı.');
+    const ch = p.char;
+    const it = ch.bag.find((x) => x.id === c.item) ?? Object.values(ch.equip).find((x) => x?.id === c.item);
+    if (!it) return this.reply(p, c, false, 'Eşya bulunamadı.');
+    const g = transformGroup(it);
+    if (!g || !canTransform(it)) return this.reply(p, c, false, it.rarity === 'unique' ? 'Bu eşya zaten Eşsiz.' : `Yalnız ${conf.from.map((r) => RARITY[r].name).join(', ')} eşya dönüşür.`);
+    const cost = conf.cost[g];
+    if (ch.level < cost.minLevel) return this.reply(p, c, false, `Dönüşüm için seviye ${cost.minLevel} gerekir.`);
+    if (it.plus < cost.minPlus) return this.reply(p, c, false, `Eşya en az +${cost.minPlus} olmalı.`);
+    const m = ch.materials;
+    if (ch.gems < cost.gems || Object.entries(cost.mats).some(([k, q]) => (m[k] ?? 0) < q)) return this.reply(p, c, false, 'Malzeme veya Mücevher yetersiz.');
+    for (const [k, q] of Object.entries(cost.mats)) m[k] -= q;
+    ch.gems -= cost.gems;
+    const ok = rnd() * 100 < cost.chance;
+    if (ok) it.rarity = 'unique';
+    p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
+    p.selfDirty |= 1 | 2 | 4; this.save(p, true);
+    this.sendJson(p, { t: 'transformResult', req: c.req, ok, item: it.id });
+    if (ok) this.notice(p, `${itemDisplayName(it)} Eşsiz'e dönüştü! Efsunları ve artısı korundu.`, 'ok');
+    else this.notice(p, 'Dönüşüm başarısız oldu; eşyan zarar görmedi.', 'error');
   }
 
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {
