@@ -1,0 +1,14 @@
+{
+  "file": "artifacts/R119_MOTION_4596197ee9b4.zip",
+  "sha256": "8f544b172c6ea7afc737267f587c61daada01f6c6d33ba61d97a9db830575e39",
+  "bytes": 706559,
+  "sourceVersion": "R118_ROYAL1",
+  "targetVersion": "R119_MOTION1",
+  "sourceCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+  "targetCore": "2625bdb67a25f12a6f60ceb968ff4495219e78b9e3ef32e47acbab9443f2a9e0",
+  "namespace": "core511-f3b670dfef6c25f1",
+  "changedCodeFiles": 5,
+  "databaseScope": "none",
+  "acceptance": "pending",
+  "deployed": false
+}

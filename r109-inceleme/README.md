@@ -1,5 +1,11 @@
 # Core of Life inceleme dosyaları
 
+**15 Kasım R119 devamı:** önce [R119_DEVIR.md](R119_DEVIR.md) dosyasını oku.
+Efsane'de R118 doğrulandı. Aktif çalışma ağacı R119 istemci animasyonu adayını
+içerir; kaynak tam düzeltilmiş R118'dir. Paket/testler
+`project/r119_monster_motion/evidence` içindedir. R119 canlıya kurulmadı.
+Alt sürüm notları tarihseldir.
+
 **15 Kasım R118 devamı:** önce [R118_DEVIR.md](R118_DEVIR.md) dosyasını oku.
 Canlıda doğrulanan kaynak R117_HOOK10, aktif çalışma ağacı R118 adayını içerir.
 Son paket kabulü `project/r118_royal_champions/evidence/package.json` içindedir.

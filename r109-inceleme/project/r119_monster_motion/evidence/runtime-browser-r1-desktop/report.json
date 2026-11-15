@@ -1,0 +1,762 @@
+{
+  "realmId": "r1",
+  "namespace": "core511-f3b670dfef6c25f1",
+  "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
+  "client": "game-client-core511-r119-6558907cd29913ad.js",
+  "checks": [
+    {
+      "name": "native champion entry",
+      "area": "bazaar",
+      "channels": 4
+    },
+    {
+      "name": "real transport champion travel and combat, compiled map renderer"
+    },
+    {
+      "name": "return to normal forest renders normally"
+    }
+  ],
+  "webSocketTransport": "production-style-socket-handoff",
+  "champions": {
+    "monsters": [
+      {
+        "id": "champions-crescent-hunter-c1-01",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-02",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-03",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-04",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-05",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-06",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-07",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-08",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-09",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-10",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-11",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-12",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-01",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-02",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-03",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-04",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-05",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-06",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-07",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-08",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-09",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-10",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-11",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-12",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-01",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-02",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-03",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-04",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-05",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-06",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-07",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-08",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-09",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-10",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-11",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-12",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-01",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-02",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-03",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-04",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-05",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-06",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-07",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-08",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-09",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-10",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-11",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-12",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      }
+    ],
+    "sprites": {
+      "crescent_hunter": 1,
+      "golden_lion": 1,
+      "ivory_guard": 1,
+      "royal_colossus": 1
+    },
+    "names": [
+      "Hilal Avcısı",
+      "Altın Yeleli Arslan",
+      "Fildişi Muhafız",
+      "Saltanat Devi"
+    ]
+  },
+  "idleFrames": {
+    "crescent_hunter": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ]
+    },
+    "golden_lion": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ]
+    },
+    "ivory_guard": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ]
+    },
+    "royal_colossus": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ]
+    }
+  },
+  "motionFrames": {
+    "crescent_hunter": {
+      "columns": [
+        0,
+        2,
+        3,
+        4,
+        1
+      ],
+      "rows": [
+        0,
+        1
+      ],
+      "draws": 9
+    },
+    "golden_lion": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ],
+      "draws": 2
+    },
+    "ivory_guard": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ],
+      "draws": 2
+    },
+    "royal_colossus": {
+      "columns": [
+        0
+      ],
+      "rows": [
+        0
+      ],
+      "draws": 2
+    }
+  },
+  "passed": true,
+  "durationMs": 37411,
+  "webSocketHandoffs": 1,
+  "handoffStats": {
+    "sent": 1,
+    "declined": 0,
+    "failed": 0
+  },
+  "requests": [
+    {
+      "at": 1794765220732,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "ms": 5
+    },
+    {
+      "at": 1794765220777,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/realm/characters",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794765221140,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r46-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221141,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r45-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221142,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r44-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221143,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221144,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r43-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221241,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 10
+    },
+    {
+      "at": 1794765221277,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 9,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765221745,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 11,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765221760,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r49-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221761,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794765221756,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/onboarding",
+      "status": 200,
+      "ms": 28,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765221761,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 34,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765222099,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 51,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765223319,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-character",
+      "status": 200,
+      "ms": 94,
+      "action": "join",
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765223868,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 3,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765224374,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 8
+    },
+    {
+      "at": 1794765224383,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 16
+    },
+    {
+      "at": 1794765224385,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 15,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765224388,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 43,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765224420,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/mount-r49",
+      "status": 200,
+      "ms": 16,
+      "action": "status",
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765224407,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 34,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765226728,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 7,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765226740,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 10,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765230005,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 7,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765231308,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 6,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765231665,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 12,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765231677,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 16,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765232317,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 1,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765235149,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 4,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765235293,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 10,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765236661,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 6,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765236671,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 12,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765241272,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 22,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765241321,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 6,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765241693,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 6,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765241703,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 12,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765242286,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 2,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    },
+    {
+      "at": 1794765245288,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 6,
+      "instance": "11a58efc-94ea-4291-9bae-c08b7ea080a0"
+    }
+  ],
+  "errors": [],
+  "nativeFaults": [],
+  "missingAssets": []
+}

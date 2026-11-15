@@ -1,0 +1,222 @@
+{
+  "package": {
+    "file": "artifacts/R119_MOTION_4596197ee9b4.zip",
+    "sha256": "8f544b172c6ea7afc737267f587c61daada01f6c6d33ba61d97a9db830575e39",
+    "bytes": 706559,
+    "sourceVersion": "R118_ROYAL1",
+    "targetVersion": "R119_MOTION1",
+    "sourceCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+    "targetCore": "2625bdb67a25f12a6f60ceb968ff4495219e78b9e3ef32e47acbab9443f2a9e0",
+    "namespace": "core511-f3b670dfef6c25f1",
+    "changedCodeFiles": 5,
+    "databaseScope": "none",
+    "acceptance": "local-functional-passed",
+    "deployed": false
+  },
+  "motionTests": {
+    "passed": 3,
+    "legacyForestCasesEqual": 3024,
+    "log": "motion-tests.log"
+  },
+  "installerTests": {
+    "passed": 6,
+    "realSqlite": true,
+    "systemdAndHealth": "fixture adapters",
+    "log": "installer-tests.log"
+  },
+  "browser": {
+    "r1-desktop": {
+      "passed": true,
+      "durationMs": 37411,
+      "idleFrames": {
+        "crescent_hunter": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "golden_lion": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "ivory_guard": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "royal_colossus": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        }
+      },
+      "motionFrames": {
+        "crescent_hunter": {
+          "columns": [
+            0,
+            2,
+            3,
+            4,
+            1
+          ],
+          "rows": [
+            0,
+            1
+          ],
+          "draws": 9
+        },
+        "golden_lion": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 2
+        },
+        "ivory_guard": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 2
+        },
+        "royal_colossus": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 2
+        }
+      },
+      "webSocketHandoffs": 1,
+      "errors": [],
+      "nativeFaults": [],
+      "missingAssets": []
+    },
+    "r2-mobile": {
+      "passed": true,
+      "durationMs": 28667,
+      "idleFrames": {
+        "crescent_hunter": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "golden_lion": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "ivory_guard": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        },
+        "royal_colossus": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ]
+        }
+      },
+      "motionFrames": {
+        "crescent_hunter": {
+          "columns": [
+            0,
+            2,
+            3,
+            4,
+            1
+          ],
+          "rows": [
+            0,
+            1
+          ],
+          "draws": 8
+        },
+        "golden_lion": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 1
+        },
+        "ivory_guard": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 1
+        },
+        "royal_colossus": {
+          "columns": [
+            0
+          ],
+          "rows": [
+            0
+          ],
+          "draws": 1
+        }
+      },
+      "webSocketHandoffs": 1,
+      "errors": [],
+      "nativeFaults": [],
+      "missingAssets": []
+    }
+  },
+  "installedRuntime": {
+    "passed": true,
+    "realms": [
+      "r1",
+      "r2"
+    ],
+    "realChannels": 8,
+    "exactZipApplied": true,
+    "live": false,
+    "log": "installed-runtime.log"
+  },
+  "visualInspection": [
+    "runtime-browser-r1-desktop/champions-combat.png",
+    "runtime-browser-r2-mobile/champions-combat.png"
+  ],
+  "priorHarnessFailure": {
+    "file": "browser-desktop-initial-path.log",
+    "cause": "runner resolves relative test path from another cwd",
+    "correction": "absolute test path; no production change"
+  },
+  "performanceClaim": null,
+  "newArt": false,
+  "liveDeployment": false
+}

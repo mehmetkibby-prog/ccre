@@ -1,0 +1,998 @@
+{
+  "release": "/tmp/r119-installed-rs5whvyc/release",
+  "base": "Corrected immutable R118 installed, then exact R119 ZIP applied by its own installer",
+  "package": {
+    "file": "artifacts/R119_MOTION_4596197ee9b4.zip",
+    "sha256": "8f544b172c6ea7afc737267f587c61daada01f6c6d33ba61d97a9db830575e39",
+    "bytes": 706559,
+    "sourceVersion": "R118_ROYAL1",
+    "targetVersion": "R119_MOTION1",
+    "sourceCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+    "targetCore": "2625bdb67a25f12a6f60ceb968ff4495219e78b9e3ef32e47acbab9443f2a9e0",
+    "namespace": "core511-f3b670dfef6c25f1",
+    "changedCodeFiles": 5,
+    "databaseScope": "none",
+    "acceptance": "pending",
+    "deployed": false
+  },
+  "installedVersion": "R119_MOTION1",
+  "targetCore": "2625bdb67a25f12a6f60ceb968ff4495219e78b9e3ef32e47acbab9443f2a9e0",
+  "overlay": [
+    {
+      "path": "core511-source/scripts/core511/champions-client-r118.mjs",
+      "sha256": "7ab011bd130cf795a744961ac43d9222c4c139008a3e07885e4506862eb50c88"
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/native-client-proof.json",
+      "sha256": "d53c0cbcd07b58724705397d5549f1079f120659e789aa630d9b1540b9f6bda1"
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/client/core511-map-r119-06c782d779f19e50.js",
+      "sha256": "06c782d779f19e507a53f3335161a8af0fe2496e9c0c8a6336e4314be063765e"
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/client/game-client-core511-r119-6558907cd29913ad.js",
+      "sha256": "6558907cd29913ad85286602c71dd36c7eee4971b5040dd7fedf3e028bf3541d"
+    },
+    {
+      "path": "core511-source/scripts/core511/generated/client/auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+      "sha256": "9b81ddc8fb6f9d73a2c8dd9b62aa5b6c8553456759657fbeba504fbda0328858"
+    },
+    {
+      "path": "core511-source/scripts/delivery511/install-operations.mjs",
+      "sha256": "ee414e5ab1e7c54c592884de864ae215d81c8e1bf11ed0fada06b09336b526c8"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-akademi.webp",
+      "sha256": "e9014f7a8f8c979b77c09a79179404fca0950a445d1261e6be19f853cb9f38bb"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-efsane.webp",
+      "sha256": "c5d359ae48e90070f9fd6766db4c54b3dc1f4e13931d21e21ecee2162d6e4b19"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-fox.webp",
+      "sha256": "5eee1be8bb0de44b516ab097b3aa085bf2e66cae00da5838759ab07f9ba75265"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-gameplay.webp",
+      "sha256": "84524aeb98869139fbd6ac04d0a8e2c4784e8d8e09d89a79f839d8c4c90c5ce1"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-hero.webp",
+      "sha256": "44dc57ae74ea37e19b2fb0f8f00aad1d2314b973b6c3e3959e25b0db6fe1b83b"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/admin-client-Ddjb5wZy-71d7507dc759-entry453-757f73732393.css",
+      "sha256": "9219a8831d3eb4f49ce636f52f12d923b3ba96e1c892d393ca77a50f76e78f66"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/armor-mitigation-r102-29575405eb25888c.js",
+      "sha256": "29575405eb25888cd158c83d59449b92521643968a3cc93b8ef4c47291dec185"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-BarRL7qp.css",
+      "sha256": "568583837668f249ef4efadc0ded52fc44d98ac92b94053902dfbfe87049e96d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
+      "sha256": "e0c77c8fd4a8f350a857eef47a0607bfcc2201c7c36e01d27cd678c4026ba96e"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auto-red-potion-10m-r97.webp",
+      "sha256": "2362f5a90cb6662e5a008a091ca9ce5c5d3319f31f6dc5775be308308cf161c7"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-crescent_hunter-r118-80cde4cc5248ba49.webp",
+      "sha256": "80cde4cc5248ba495289ef26faa8ede76487faa32f0bbd8c3f0ad0524420692d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-golden_lion-r118-3113c551aa948a39.webp",
+      "sha256": "3113c551aa948a3998e30e80a6663f5513a1b9b66f001e00c18534f0c04d3434"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-ivory_guard-r118-28fdfdad64d82ec3.webp",
+      "sha256": "28fdfdad64d82ec311569e3698da72211b34b4177bbcee1b317ca0561ad28200"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-map-r118-b7ed6342e7d023a0.webp",
+      "sha256": "b7ed6342e7d023a022f9d34358b08b4bde0d78fbfad70dff6aae5bff0b32a787"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-royal_colossus-r118-beb3cdcf61df5353.webp",
+      "sha256": "beb3cdcf61df53531ff05ff8e14103fb33a403158fb554ea9af1c1a312c61641"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/circle-check-CykMSVzB-ga4172.js",
+      "sha256": "d1dd9d07960b02a87446911b418f48a4c659df6833f76ea687b64630ebf4385a"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/combat-scope-c739df23588e-2ccab1ae461d-ent-r13-5800bb6a0478-a1fab4eb.js",
+      "sha256": "0320f511db341bcbf73bed3cb99573f5688f06fef28e245f68b6ab6f3655e3a7"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-admin-r102-4e77a16845082c9e.js",
+      "sha256": "4e77a16845082c9e25424d977f659b8762a03249f308193c3a3213cc689f4df9"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-12d69a7d234b7f5d.js",
+      "sha256": "12d69a7d234b7f5d8da83edee8aa511baccdb3f393b81f61d14d855b71006e4f"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-mobile-78b93e2873a81fab.js",
+      "sha256": "78b93e2873a81fabca18872c6aa3ef1eac4a263b061263bf7dac9cc0c7dbd9dd"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-slim-b242de8ed637b5af.js",
+      "sha256": "b242de8ed637b5afe409e112db7b65befae64aafa41fdb77ee17e592657c4cfe"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r103-chat-c073632f6ace7ffd.js",
+      "sha256": "c073632f6ace7ffd27ff38b359b873e6688760427905c663cd97919a02dd8eda"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-icons-r102-d3362565e428da2e.webp",
+      "sha256": "d3362565e428da2e67ae17fd3117517d9ce28b0a3598e12ca10172355bd812b1"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-admin-nav-r102-190e3198a3c8e3b0.js",
+      "sha256": "190e3198a3c8e3b083481064c99c28d76e317bc56915e99394b2d4c6a9f8c399"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-afk-admin-r32-abb1bb7ecdb247a0.js",
+      "sha256": "abb1bb7ecdb247a07c2ca6418490f06c03b0b2cdadb4153960955ce57caddf93"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-afk-r77-669a59aad349230a.js",
+      "sha256": "669a59aad349230adf4c899ba5b96b14873f2c3d0790a3ccc5a8ef3f837bb268"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-art-r118-9b3f768e5a7dcd77.js",
+      "sha256": "9b3f768e5a7dcd7778ed523d3983addcb10a312b54dcaad84a3f0cd03055a7a2"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-belt-r31-cf8d0676c9ed605b.js",
+      "sha256": "6982d06c10750b0e9741267cf52f36dc619ff8b4eb530dcb1b24835faeac5c61"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-castle-admin-r59-100832b6836a087b.js",
+      "sha256": "100832b6836a087b93716e4bb98a63cf59ddb3f705af9c9e1e307d53eabf1814"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-championsAdmin-r118-91bf55d2492a5b93.js",
+      "sha256": "91bf55d2492a5b93bd0b7074f981490be8ab405198d71e7f19bc400f93ad1df3"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-claim-r50-55137f395b664a58.js",
+      "sha256": "55137f395b664a58e91900c12870bddbaa583d18cd0473c29e9c87d7fc468e44"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-content-r118-88ec870c838c9fad.js",
+      "sha256": "88ec870c838c9fad3b4409333f46542a106c97bf1d06e07bbe1b52105030f4e1"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-dungeon-r102-smooth-b735b7fb156bca9a.js",
+      "sha256": "b735b7fb156bca9a2bb582d7d45f90d66738e93b1acd3fb79db52948a6cb80a4"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-dungeon-r98-b805670e05d196b4.js",
+      "sha256": "b805670e05d196b4e8dd15fbc3c39513541ef4888de191ced5e3b917ae8b1ae8"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-first-steps-r67-525006f922521fde.js",
+      "sha256": "525006f922521fde1e681f257317632e088f7668866534dcf3ec6e4b0ae19d36"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-gameplay-r69-ec0e405322bc1d3b.js",
+      "sha256": "775c8c7102e776148087aef33b2492677846465d824020bb285ffdf88a49e56f"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-gameplay-r92-b25b28c9505ed4f1.js",
+      "sha256": "b25b28c9505ed4f1c271eb84f6999acdfb18f39bb305dcdf3a1800c897b0e907"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-incoming-hit-r96-7615a7e0723c7549.js",
+      "sha256": "7615a7e0723c754925ee3879e3a36709f7a1c01c24194b6873caba746796eea0"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-map-r118-d1ca010e7892c254.js",
+      "sha256": "d1ca010e7892c2540ba068bc3651cb6bd0cdb21a84095d9525d38e08e8362eb7"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-motion-admin-r34-85bc86838e29a3fd.js",
+      "sha256": "85bc86838e29a3fdddbc74ebce4b0c289d2c04718068320b1db413aad891c872"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-nav-r118-3946e2ed80e23106.js",
+      "sha256": "3946e2ed80e23106d0edcd9f31d998b38bff59f41d132d9db71dad5971c00cf0"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-presentation-r118-c12506716f74fc34.js",
+      "sha256": "c12506716f74fc34d4493c2a91bb6b40a99e38d6704160c0d20c153024aa07fb"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-quests-r70-2792b663bdaba7a3.js",
+      "sha256": "2792b663bdaba7a3f6e0b351b014312db0239be62d9cdde15485af7ed136740d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-9f5f284069ff5cd9.js",
+      "sha256": "a61c28203f533c8aa997cd22aa2bc189cccacd28f713a57c1edec95dc113af3e"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-icons-d8553ea731a56b89.js",
+      "sha256": "d8553ea731a56b899bdb23468433de48557969730ed2ea09227f955a8b7f1596"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-icons-r69-16445e30a5872c06.js",
+      "sha256": "16445e30a5872c06a664c7ac77c46d8cda75af8164e07bea44ca381b454934bc"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-r1005-c606eb7d0163781d.js",
+      "sha256": "c606eb7d0163781d5d26d3e94b89515d6f94339cf1fb47454a19d06d31fb30f5"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r41-bag-b5492e12d6a6356c.js",
+      "sha256": "b5492e12d6a6356cb5993fa7a188c384d64680610ec211ecfbce6878c3bc41a5"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r43-materials-0c10ea33dc2cc813.js",
+      "sha256": "0c10ea33dc2cc813bc17086b15aa901b1f72c1c0cae8053d7a80474a68ae37e7"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r43-ui-r69-2cbb3cbf17d4e556.js",
+      "sha256": "2cbb3cbf17d4e5562063b46bab181eae4909566c32186d16774e299584d62575"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-royalAdmin-r118-2a6eed293f4bcf67.js",
+      "sha256": "2a6eed293f4bcf67f5584104fc9936f4746542474bbc56681f9d40bb426971ec"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-0fd926810ba551cc.js",
+      "sha256": "7d686d2868add70417787f21c4d873a69065a7d56720918c39c0643df94a6f8c"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+      "sha256": "12a6e93b74cee7795418c0909156a96e007a9c23fc80052772ddf72e35e42b3d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+      "sha256": "e6f47ef5eed5db1e72bc822b34e8777b1db1abc70837ec93089d65e20ef0a77f"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-art-r69-db590592a52dc7dd.js",
+      "sha256": "db590592a52dc7dd69e52c62bcd10e092acdf27999cdf896813e2dd5a0064ec6"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r102-auto-ecdbd6f626b40250.js",
+      "sha256": "3be6e352c7f744dc9e4c71e6d738103608ec9b366898b04dec57836cfdb1b2b5"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r117-hook10-17862dadd8f71abd.js",
+      "sha256": "1b221971144370da2d4bfb2f2dbfd1a58b76446615121757f08fa1d97925af57"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r99-9cfc6f6d45bff7e2.js",
+      "sha256": "c25ff6323ce10c354a69267fb10bfa3d3b371cf246022a8ee699004f545c8e1e"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r102-0c73cb1c515487f3.js",
+      "sha256": "0c73cb1c515487f3a91a925085a4dcaf7af14ca526ebf8cdf9362d39c71c2dfd"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r105-b25f3f5757b582f4.js",
+      "sha256": "b25f3f5757b582f47b1cb1478baf16290613314a1a3790f9cd20d6a735cca959"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r113-53abe09d240f2c5c.js",
+      "sha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r118-c4d1b9128f079567.js",
+      "sha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-ui-r118-35d1e138501d65ec.js",
+      "sha256": "35d1e138501d65ecf219c55bb89c034cb68f732142c4ebde25467a511578b1a9"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-zumrut-admin-r93-9a358defdc49d24b.js",
+      "sha256": "9a358defdc49d24b9f036325f593b37dfec78a2a4064372c41fa6b0eb6f7448b"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-zumrut-r96-d7d6004f18423911.js",
+      "sha256": "d7d6004f184239114529855a7d989e39467faeef3cc6d64722c5b5cc075be764"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/createLucideIcon-BiVFlVzr-ga4172.js",
+      "sha256": "f8538f7a819bce8cd1e06af7a70cf3dbc6665013e5f857c661aa16936bd09e16"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-arkanist-a38c736b24529fb4.webp",
+      "sha256": "a38c736b24529fb4a4c7821987124f52ce15033461f29b774ed5c4ae0a90799a"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-avci-1da2d89b2f4c0927.webp",
+      "sha256": "1da2d89b2f4c0927e0667181dccd21d0184dcb86ab619e996f8d4c2772983055"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-forest-f7f2499b8023e59d.webp",
+      "sha256": "f7f2499b8023e59ded99eefdcfb429a2eafa1f833500cd16b5a1c854a4fc4ead"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-hero-811184a70c46c463.webp",
+      "sha256": "811184a70c46c4631f0d6deb9bb5ac027253317238ff00158655e9b44cc05814"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-muhafiz-271bc99205a8d378.webp",
+      "sha256": "271bc99205a8d378119e7e1629693d335b7f40baae7e2ed51a090f1588f73f47"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry.js",
+      "sha256": "8209b7921b43f5bd8d631be06780928eaf36d02802f701dec97eec29145f856c"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/framework-CXnKph_e-ga4172.js",
+      "sha256": "94d54e43b7cdd7fe6794c820aa50ddb4b5b3620b5a083f2d56b8ff404150ba1a"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-BaAq3GeO.css",
+      "sha256": "585da3ddb4d420bd3902889ea192a05a4da0d14bafa552aff9adf126ad33b2c3"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
+      "sha256": "526561777038a069c284609df426cc777189efc006b7132e524bc64110107221"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-instance-559vKpBT-ga4172-prereg-1788d-e486-48ff1d5b32ef-6a1e68bc.js",
+      "sha256": "437372f7910da9f02cada0e1c13368187b7e23f042d95f5856de57e841fc7067"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/index-0YW8q32Y-6c0df9c9-2793d6a2-a7e-e503-ffc2780268cc-37a0ce72f3.css",
+      "sha256": "37a0ce72f3aa71ecea30e38c322bb2cd3fb31d33c4ab6da3ce995f941f0c9825"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+      "sha256": "7c7b7724508d1d1349816bf6ee45021f28cc61c895e0cdd6a91e8f8c764203d0"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/launch-landing-CAftBWzJ.css",
+      "sha256": "c8b819a5062701ab58f6f21ad1b0fa2048d67b342c929a639e1ecb534c7afc6d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/launch-landing-qVKrjo7K-ga4172-prereg-1788-e486-48ff1d5b32ef-74b8821e.js",
+      "sha256": "fb49ca947427e709ed976308251efb498cdb4391f241d9f375a1d91139ba7de1"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/layout-segment-context-Z9wEnLYj-ga41-e510-8225403c2fcc-9faeb96e10.js",
+      "sha256": "d71bf84bc12ffc4386d15223c6882ead848e1757c8045d8759fc1f02ba0d7729"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/link-C6WHyGA8-ga4172-v418ws-3c02836f-e510-8225403c2fcc-9c637f1178.js",
+      "sha256": "adcb0803ffcde0496e8cefb563023521ff27cf2a0af4c0078fcc8be3fed177a0"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/livekit-client.esm-BKoz8lx2-ga4172.js",
+      "sha256": "538a67fbe18867b318796ac310a8334c855b1a91d5bb5744b7aca8caf37b956a"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/monster-loot-CwYNLkQv.css",
+      "sha256": "3fff81ddf9c5116e5ce8184d34dccfb770868723f6a159966cdefde7235f9745"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/monster-loot-a2QO0cPh-ga4172-92bdd7a4-bab8-e499-fab4fcb1e1b2-f4f682b8.js",
+      "sha256": "44175358b08d28dff067d7413479a5d0eda76f92e1d123ac7002b3e187d01c05"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/mount-talisman-r93-0bd57198fab39f6a.webp",
+      "sha256": "0bd57198fab39f6a627be1b125cf1ec2c91a2a492d49302b93f4c5803de67775"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/page-Ck3zZGMX-ga4172-v418ws-3c02836f-e510-8225403c2fcc-004b9c0469.js",
+      "sha256": "b6cae80dbc5c4a43f5734dae8b7486abfc1ba11ea5a4dba76dba8a120e90f3eb"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/page-bSBkcHXS-ga4172.js",
+      "sha256": "c46741aec28d5477395ac3a7d9875849b6f2a9074d1f46594cb06500b9488590"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r102-7800ef2d3de021c8.js",
+      "sha256": "7800ef2d3de021c8a925fd8e4618ebb4ad9942d03b9df4aa3786fdeff8c7b8c2"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r103-76eaf48727d4bc42.js",
+      "sha256": "76eaf48727d4bc429b9e7e0b038d272110cbc9aaa0079087259b4b5d6f50791c"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r104-cards-4fe6e29a319f2fc1.js",
+      "sha256": "4fe6e29a319f2fc17f6c1fb7870bd12f9e9198d6bc66441770642697d9f5e599"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/rolldown-runtime-S-ySWqyJ-ga4172.js",
+      "sha256": "5db5ba82eef00d1dee7e86e663098c9427d01183a88d357437daff295aec3e75"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/router-CqkNUm3j-ga4172-v418ws-3c0283-e510-8225403c2fcc-c9756a8fe9.js",
+      "sha256": "0c1fc71172f739583bad3d2811a3ad61d62987672c18ef0affb8f5b30761933d"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-armor-r118-7ea0badf6c7f1bd7.webp",
+      "sha256": "7ea0badf6c7f1bd7c5c8f2b28783777aef8de8592c56d771fb30bc3579abe41b"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-hero-motion-r118-be48d4c46c491f0f.webp",
+      "sha256": "be48d4c46c491f0fc40039661baf3eda7a4029bdb75712f4cdda9266893f2095"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-armor-r118-604fb486a94b793b.webp",
+      "sha256": "604fb486a94b793b2dd6c1f9506dca3efb76d2cfda4822c71ce8a6ddbbab3baa"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-emerald_dust-r118-489c24fa11893ae1.webp",
+      "sha256": "489c24fa11893ae1e66e2f87cbd2b7b437e9e285ef738214c72e6d7e80790375"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-helmet-r118-a7093d1e7fd2ec70.webp",
+      "sha256": "a7093d1e7fd2ec70043fef895916790ab53fb257198207b0c166cc1548f0aa4a"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-necklace-r118-129f572914439776.webp",
+      "sha256": "129f572914439776e39750c8fa0eee718e71ccbdafd8c84b037d288abd48e2fa"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0.webp",
+      "sha256": "7fd15c76f9b1f4c09be03b4408e4d3b06ef35fe3e4a052636d1001086a04bea6"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-shoes-r118-6a7b63fbda295221.webp",
+      "sha256": "6a7b63fbda2952210d29bd472c09f95df5c2b209cf0b3824f5c5cba80795d0f3"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_arkanist-r118-7784da8683f48b88.webp",
+      "sha256": "7784da8683f48b886877b0665a22facad0959e05b6fe8ba956f130ba12ed1e75"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_avci-r118-a2ce6ce9fa6ea6b5.webp",
+      "sha256": "a2ce6ce9fa6ea6b59964871578f7848e4438617a05f9083c0964a6bc77ab54ea"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_muhafiz-r118-df1750a1f9c3126e.webp",
+      "sha256": "df1750a1f9c3126e3c393e241994b45f3166fb5bd55753037114782a910a219e"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-set-r118-cfe43838826cc23d.webp",
+      "sha256": "cfe43838826cc23d82467fbdfbda9558c713a4dd30b2c2dcd0a47d178cbd7286"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/seasonal-renderer453-ce66cee5738c-entry453-757f73732393-0fc89cd5-cb766166d025-entry473-2324044b58af.js",
+      "sha256": "33265a008aafdb26153bbe4bb2c061c3dd4a942eaa0cda536f8cf7ae41bb5708"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/skill-client-r103-2ec69470f90e2925.js",
+      "sha256": "2ec69470f90e292510d2c57299faa655e483a8bfa77f96d34d05a8873847c4b5"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/skill-visuals-r102-4fcfa7fb37eba4fc.js",
+      "sha256": "4fcfa7fb37eba4fcb43583d7e50d13d698243966fd9ba3db794316a189fa1013"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/unchanged.webp",
+      "sha256": "4d6e57dd507a55486118361ecfd0afef4bf8cfabcbb314dc48b11877b47cc626"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-items-r93-7753cdbf438ef095.webp",
+      "sha256": "7753cdbf438ef095e8dcfeeb239202d43cb4e0c19a9d80d35dedd326541af484"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-props-r93-2a4c1d827afff6e3.webp",
+      "sha256": "2a4c1d827afff6e35779031629d8933aa6ec312b5bb74a7d787f310355658a01"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-terrain-r93-bcec784fbce4dda0.webp",
+      "sha256": "bcec784fbce4dda07711569db86a3ccf071f2a3ebb778744badd89a670a2839b"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-10.webp",
+      "sha256": "f7c4c02420ce8b5e3dd47441e38206d4129ba9daf863662a9ac99e1689300493"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-4.webp",
+      "sha256": "37b3a99ced0adf245cdd51ad482d9aeb1d3cbf1b7e375b406e442c2162f3a7d7"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-7.webp",
+      "sha256": "aa76cdfeaca6331304b44303666b5a941a9b8aa33fc8c1940232c6cc55a1e306"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-map-r119-06c782d779f19e50.js",
+      "sha256": "06c782d779f19e507a53f3335161a8af0fe2496e9c0c8a6336e4314be063765e"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-core511-r119-6558907cd29913ad.js",
+      "sha256": "b62454f82f788f97e9dd64bfa923bebe4bfe554a306ef3a687edbb1167b3c72c"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+      "sha256": "30f7fc106abd37e0f87f4f509e5af57f4aeb21216c88bd6f9fada25918c98ec4"
+    },
+    {
+      "path": "http-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/admin-client-core511-r118-bd266dccdc24b06a.js",
+      "sha256": "81b4576b7a896d224bcbaf213043535c5a039a32a6023c1ef9fe36673f4f572d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-akademi.webp",
+      "sha256": "e9014f7a8f8c979b77c09a79179404fca0950a445d1261e6be19f853cb9f38bb"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-efsane.webp",
+      "sha256": "c5d359ae48e90070f9fd6766db4c54b3dc1f4e13931d21e21ecee2162d6e4b19"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-fox.webp",
+      "sha256": "5eee1be8bb0de44b516ab097b3aa085bf2e66cae00da5838759ab07f9ba75265"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-gameplay.webp",
+      "sha256": "84524aeb98869139fbd6ac04d0a8e2c4784e8d8e09d89a79f839d8c4c90c5ce1"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/academy-r104-hero.webp",
+      "sha256": "44dc57ae74ea37e19b2fb0f8f00aad1d2314b973b6c3e3959e25b0db6fe1b83b"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/admin-client-Ddjb5wZy-71d7507dc759-entry453-757f73732393.css",
+      "sha256": "9219a8831d3eb4f49ce636f52f12d923b3ba96e1c892d393ca77a50f76e78f66"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/armor-mitigation-r102-29575405eb25888c.js",
+      "sha256": "29575405eb25888cd158c83d59449b92521643968a3cc93b8ef4c47291dec185"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-BarRL7qp.css",
+      "sha256": "568583837668f249ef4efadc0ded52fc44d98ac92b94053902dfbfe87049e96d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
+      "sha256": "e0c77c8fd4a8f350a857eef47a0607bfcc2201c7c36e01d27cd678c4026ba96e"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auto-red-potion-10m-r97.webp",
+      "sha256": "2362f5a90cb6662e5a008a091ca9ce5c5d3319f31f6dc5775be308308cf161c7"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-crescent_hunter-r118-80cde4cc5248ba49.webp",
+      "sha256": "80cde4cc5248ba495289ef26faa8ede76487faa32f0bbd8c3f0ad0524420692d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-golden_lion-r118-3113c551aa948a39.webp",
+      "sha256": "3113c551aa948a3998e30e80a6663f5513a1b9b66f001e00c18534f0c04d3434"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-ivory_guard-r118-28fdfdad64d82ec3.webp",
+      "sha256": "28fdfdad64d82ec311569e3698da72211b34b4177bbcee1b317ca0561ad28200"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-map-r118-b7ed6342e7d023a0.webp",
+      "sha256": "b7ed6342e7d023a022f9d34358b08b4bde0d78fbfad70dff6aae5bff0b32a787"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/champions-royal_colossus-r118-beb3cdcf61df5353.webp",
+      "sha256": "beb3cdcf61df53531ff05ff8e14103fb33a403158fb554ea9af1c1a312c61641"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/circle-check-CykMSVzB-ga4172.js",
+      "sha256": "d1dd9d07960b02a87446911b418f48a4c659df6833f76ea687b64630ebf4385a"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/combat-scope-c739df23588e-2ccab1ae461d-ent-r13-5800bb6a0478-a1fab4eb.js",
+      "sha256": "0320f511db341bcbf73bed3cb99573f5688f06fef28e245f68b6ab6f3655e3a7"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-admin-r102-4e77a16845082c9e.js",
+      "sha256": "4e77a16845082c9e25424d977f659b8762a03249f308193c3a3213cc689f4df9"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-12d69a7d234b7f5d.js",
+      "sha256": "12d69a7d234b7f5d8da83edee8aa511baccdb3f393b81f61d14d855b71006e4f"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-mobile-78b93e2873a81fab.js",
+      "sha256": "78b93e2873a81fabca18872c6aa3ef1eac4a263b061263bf7dac9cc0c7dbd9dd"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r102-slim-b242de8ed637b5af.js",
+      "sha256": "b242de8ed637b5afe409e112db7b65befae64aafa41fdb77ee17e592657c4cfe"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-client-r103-chat-c073632f6ace7ffd.js",
+      "sha256": "c073632f6ace7ffd27ff38b359b873e6688760427905c663cd97919a02dd8eda"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/content-icons-r102-d3362565e428da2e.webp",
+      "sha256": "d3362565e428da2e67ae17fd3117517d9ce28b0a3598e12ca10172355bd812b1"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-admin-nav-r102-190e3198a3c8e3b0.js",
+      "sha256": "190e3198a3c8e3b083481064c99c28d76e317bc56915e99394b2d4c6a9f8c399"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-afk-admin-r32-abb1bb7ecdb247a0.js",
+      "sha256": "abb1bb7ecdb247a07c2ca6418490f06c03b0b2cdadb4153960955ce57caddf93"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-afk-r77-669a59aad349230a.js",
+      "sha256": "669a59aad349230adf4c899ba5b96b14873f2c3d0790a3ccc5a8ef3f837bb268"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-art-r118-9b3f768e5a7dcd77.js",
+      "sha256": "9b3f768e5a7dcd7778ed523d3983addcb10a312b54dcaad84a3f0cd03055a7a2"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-belt-r31-cf8d0676c9ed605b.js",
+      "sha256": "6982d06c10750b0e9741267cf52f36dc619ff8b4eb530dcb1b24835faeac5c61"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-castle-admin-r59-100832b6836a087b.js",
+      "sha256": "100832b6836a087b93716e4bb98a63cf59ddb3f705af9c9e1e307d53eabf1814"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-championsAdmin-r118-91bf55d2492a5b93.js",
+      "sha256": "91bf55d2492a5b93bd0b7074f981490be8ab405198d71e7f19bc400f93ad1df3"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-claim-r50-55137f395b664a58.js",
+      "sha256": "55137f395b664a58e91900c12870bddbaa583d18cd0473c29e9c87d7fc468e44"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-content-r118-88ec870c838c9fad.js",
+      "sha256": "88ec870c838c9fad3b4409333f46542a106c97bf1d06e07bbe1b52105030f4e1"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-dungeon-r102-smooth-b735b7fb156bca9a.js",
+      "sha256": "b735b7fb156bca9a2bb582d7d45f90d66738e93b1acd3fb79db52948a6cb80a4"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-dungeon-r98-b805670e05d196b4.js",
+      "sha256": "b805670e05d196b4e8dd15fbc3c39513541ef4888de191ced5e3b917ae8b1ae8"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-first-steps-r67-525006f922521fde.js",
+      "sha256": "525006f922521fde1e681f257317632e088f7668866534dcf3ec6e4b0ae19d36"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-gameplay-r69-ec0e405322bc1d3b.js",
+      "sha256": "775c8c7102e776148087aef33b2492677846465d824020bb285ffdf88a49e56f"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-gameplay-r92-b25b28c9505ed4f1.js",
+      "sha256": "b25b28c9505ed4f1c271eb84f6999acdfb18f39bb305dcdf3a1800c897b0e907"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-incoming-hit-r96-7615a7e0723c7549.js",
+      "sha256": "7615a7e0723c754925ee3879e3a36709f7a1c01c24194b6873caba746796eea0"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-map-r118-d1ca010e7892c254.js",
+      "sha256": "d1ca010e7892c2540ba068bc3651cb6bd0cdb21a84095d9525d38e08e8362eb7"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-motion-admin-r34-85bc86838e29a3fd.js",
+      "sha256": "85bc86838e29a3fdddbc74ebce4b0c289d2c04718068320b1db413aad891c872"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-nav-r118-3946e2ed80e23106.js",
+      "sha256": "3946e2ed80e23106d0edcd9f31d998b38bff59f41d132d9db71dad5971c00cf0"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-presentation-r118-c12506716f74fc34.js",
+      "sha256": "c12506716f74fc34d4493c2a91bb6b40a99e38d6704160c0d20c153024aa07fb"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-quests-r70-2792b663bdaba7a3.js",
+      "sha256": "2792b663bdaba7a3f6e0b351b014312db0239be62d9cdde15485af7ed136740d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-9f5f284069ff5cd9.js",
+      "sha256": "a61c28203f533c8aa997cd22aa2bc189cccacd28f713a57c1edec95dc113af3e"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-icons-d8553ea731a56b89.js",
+      "sha256": "d8553ea731a56b899bdb23468433de48557969730ed2ea09227f955a8b7f1596"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-icons-r69-16445e30a5872c06.js",
+      "sha256": "16445e30a5872c06a664c7ac77c46d8cda75af8164e07bea44ca381b454934bc"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r40-r1005-c606eb7d0163781d.js",
+      "sha256": "c606eb7d0163781d5d26d3e94b89515d6f94339cf1fb47454a19d06d31fb30f5"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r41-bag-b5492e12d6a6356c.js",
+      "sha256": "b5492e12d6a6356cb5993fa7a188c384d64680610ec211ecfbce6878c3bc41a5"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r43-materials-0c10ea33dc2cc813.js",
+      "sha256": "0c10ea33dc2cc813bc17086b15aa901b1f72c1c0cae8053d7a80474a68ae37e7"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-r43-ui-r69-2cbb3cbf17d4e556.js",
+      "sha256": "2cbb3cbf17d4e5562063b46bab181eae4909566c32186d16774e299584d62575"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-royalAdmin-r118-2a6eed293f4bcf67.js",
+      "sha256": "2a6eed293f4bcf67f5584104fc9936f4746542474bbc56681f9d40bb426971ec"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-0fd926810ba551cc.js",
+      "sha256": "7d686d2868add70417787f21c4d873a69065a7d56720918c39c0643df94a6f8c"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-admin-r102-hook-a06be5f2a5d1fa7a.js",
+      "sha256": "12a6e93b74cee7795418c0909156a96e007a9c23fc80052772ddf72e35e42b3d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-admin-r117-hook10-d41609822f32a40f.js",
+      "sha256": "e6f47ef5eed5db1e72bc822b34e8777b1db1abc70837ec93089d65e20ef0a77f"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-art-r69-db590592a52dc7dd.js",
+      "sha256": "db590592a52dc7dd69e52c62bcd10e092acdf27999cdf896813e2dd5a0064ec6"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r102-auto-ecdbd6f626b40250.js",
+      "sha256": "3be6e352c7f744dc9e4c71e6d738103608ec9b366898b04dec57836cfdb1b2b5"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r117-hook10-17862dadd8f71abd.js",
+      "sha256": "1b221971144370da2d4bfb2f2dbfd1a58b76446615121757f08fa1d97925af57"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-tower-r99-9cfc6f6d45bff7e2.js",
+      "sha256": "c25ff6323ce10c354a69267fb10bfa3d3b371cf246022a8ee699004f545c8e1e"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r102-0c73cb1c515487f3.js",
+      "sha256": "0c73cb1c515487f3a91a925085a4dcaf7af14ca526ebf8cdf9362d39c71c2dfd"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r105-b25f3f5757b582f4.js",
+      "sha256": "b25f3f5757b582f47b1cb1478baf16290613314a1a3790f9cd20d6a735cca959"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r113-53abe09d240f2c5c.js",
+      "sha256": "53abe09d240f2c5c4ca5187aa516af0d2a3b89d7be9e18110cb5a9a5eef962ad"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-transport-r118-c4d1b9128f079567.js",
+      "sha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-ui-r118-35d1e138501d65ec.js",
+      "sha256": "35d1e138501d65ecf219c55bb89c034cb68f732142c4ebde25467a511578b1a9"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-zumrut-admin-r93-9a358defdc49d24b.js",
+      "sha256": "9a358defdc49d24b9f036325f593b37dfec78a2a4064372c41fa6b0eb6f7448b"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-zumrut-r96-d7d6004f18423911.js",
+      "sha256": "d7d6004f184239114529855a7d989e39467faeef3cc6d64722c5b5cc075be764"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/createLucideIcon-BiVFlVzr-ga4172.js",
+      "sha256": "f8538f7a819bce8cd1e06af7a70cf3dbc6665013e5f857c661aa16936bd09e16"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-arkanist-a38c736b24529fb4.webp",
+      "sha256": "a38c736b24529fb4a4c7821987124f52ce15033461f29b774ed5c4ae0a90799a"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-avci-1da2d89b2f4c0927.webp",
+      "sha256": "1da2d89b2f4c0927e0667181dccd21d0184dcb86ab619e996f8d4c2772983055"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-forest-f7f2499b8023e59d.webp",
+      "sha256": "f7f2499b8023e59ded99eefdcfb429a2eafa1f833500cd16b5a1c854a4fc4ead"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-hero-811184a70c46c463.webp",
+      "sha256": "811184a70c46c4631f0d6deb9bb5ac027253317238ff00158655e9b44cc05814"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry-r101-muhafiz-271bc99205a8d378.webp",
+      "sha256": "271bc99205a8d378119e7e1629693d335b7f40baae7e2ed51a090f1588f73f47"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/entry.js",
+      "sha256": "8209b7921b43f5bd8d631be06780928eaf36d02802f701dec97eec29145f856c"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/framework-CXnKph_e-ga4172.js",
+      "sha256": "94d54e43b7cdd7fe6794c820aa50ddb4b5b3620b5a083f2d56b8ff404150ba1a"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-BaAq3GeO.css",
+      "sha256": "585da3ddb4d420bd3902889ea192a05a4da0d14bafa552aff9adf126ad33b2c3"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
+      "sha256": "526561777038a069c284609df426cc777189efc006b7132e524bc64110107221"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-instance-559vKpBT-ga4172-prereg-1788d-e486-48ff1d5b32ef-6a1e68bc.js",
+      "sha256": "437372f7910da9f02cada0e1c13368187b7e23f042d95f5856de57e841fc7067"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/index-0YW8q32Y-6c0df9c9-2793d6a2-a7e-e503-ffc2780268cc-37a0ce72f3.css",
+      "sha256": "37a0ce72f3aa71ecea30e38c322bb2cd3fb31d33c4ab6da3ce995f941f0c9825"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/index-D6eonq7K-ga4172-v418ws-3c02836-e510-8225403c2fcc-90f5b4ab25.js",
+      "sha256": "7c7b7724508d1d1349816bf6ee45021f28cc61c895e0cdd6a91e8f8c764203d0"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/launch-landing-CAftBWzJ.css",
+      "sha256": "c8b819a5062701ab58f6f21ad1b0fa2048d67b342c929a639e1ecb534c7afc6d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/launch-landing-qVKrjo7K-ga4172-prereg-1788-e486-48ff1d5b32ef-74b8821e.js",
+      "sha256": "fb49ca947427e709ed976308251efb498cdb4391f241d9f375a1d91139ba7de1"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/layout-segment-context-Z9wEnLYj-ga41-e510-8225403c2fcc-9faeb96e10.js",
+      "sha256": "d71bf84bc12ffc4386d15223c6882ead848e1757c8045d8759fc1f02ba0d7729"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/link-C6WHyGA8-ga4172-v418ws-3c02836f-e510-8225403c2fcc-9c637f1178.js",
+      "sha256": "adcb0803ffcde0496e8cefb563023521ff27cf2a0af4c0078fcc8be3fed177a0"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/livekit-client.esm-BKoz8lx2-ga4172.js",
+      "sha256": "538a67fbe18867b318796ac310a8334c855b1a91d5bb5744b7aca8caf37b956a"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/monster-loot-CwYNLkQv.css",
+      "sha256": "3fff81ddf9c5116e5ce8184d34dccfb770868723f6a159966cdefde7235f9745"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/monster-loot-a2QO0cPh-ga4172-92bdd7a4-bab8-e499-fab4fcb1e1b2-f4f682b8.js",
+      "sha256": "44175358b08d28dff067d7413479a5d0eda76f92e1d123ac7002b3e187d01c05"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/mount-talisman-r93-0bd57198fab39f6a.webp",
+      "sha256": "0bd57198fab39f6a627be1b125cf1ec2c91a2a492d49302b93f4c5803de67775"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/page-Ck3zZGMX-ga4172-v418ws-3c02836f-e510-8225403c2fcc-004b9c0469.js",
+      "sha256": "b6cae80dbc5c4a43f5734dae8b7486abfc1ba11ea5a4dba76dba8a120e90f3eb"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/page-bSBkcHXS-ga4172.js",
+      "sha256": "c46741aec28d5477395ac3a7d9875849b6f2a9074d1f46594cb06500b9488590"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r102-7800ef2d3de021c8.js",
+      "sha256": "7800ef2d3de021c8a925fd8e4618ebb4ad9942d03b9df4aa3786fdeff8c7b8c2"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r103-76eaf48727d4bc42.js",
+      "sha256": "76eaf48727d4bc429b9e7e0b038d272110cbc9aaa0079087259b4b5d6f50791c"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/realm-entry-r104-cards-4fe6e29a319f2fc1.js",
+      "sha256": "4fe6e29a319f2fc17f6c1fb7870bd12f9e9198d6bc66441770642697d9f5e599"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/rolldown-runtime-S-ySWqyJ-ga4172.js",
+      "sha256": "5db5ba82eef00d1dee7e86e663098c9427d01183a88d357437daff295aec3e75"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/router-CqkNUm3j-ga4172-v418ws-3c0283-e510-8225403c2fcc-c9756a8fe9.js",
+      "sha256": "0c1fc71172f739583bad3d2811a3ad61d62987672c18ef0affb8f5b30761933d"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-armor-r118-7ea0badf6c7f1bd7.webp",
+      "sha256": "7ea0badf6c7f1bd7c5c8f2b28783777aef8de8592c56d771fb30bc3579abe41b"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-hero-motion-r118-be48d4c46c491f0f.webp",
+      "sha256": "be48d4c46c491f0fc40039661baf3eda7a4029bdb75712f4cdda9266893f2095"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-armor-r118-604fb486a94b793b.webp",
+      "sha256": "604fb486a94b793b2dd6c1f9506dca3efb76d2cfda4822c71ce8a6ddbbab3baa"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-emerald_dust-r118-489c24fa11893ae1.webp",
+      "sha256": "489c24fa11893ae1e66e2f87cbd2b7b437e9e285ef738214c72e6d7e80790375"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-helmet-r118-a7093d1e7fd2ec70.webp",
+      "sha256": "a7093d1e7fd2ec70043fef895916790ab53fb257198207b0c166cc1548f0aa4a"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-necklace-r118-129f572914439776.webp",
+      "sha256": "129f572914439776e39750c8fa0eee718e71ccbdafd8c84b037d288abd48e2fa"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0.webp",
+      "sha256": "7fd15c76f9b1f4c09be03b4408e4d3b06ef35fe3e4a052636d1001086a04bea6"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-shoes-r118-6a7b63fbda295221.webp",
+      "sha256": "6a7b63fbda2952210d29bd472c09f95df5c2b209cf0b3824f5c5cba80795d0f3"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_arkanist-r118-7784da8683f48b88.webp",
+      "sha256": "7784da8683f48b886877b0665a22facad0959e05b6fe8ba956f130ba12ed1e75"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_avci-r118-a2ce6ce9fa6ea6b5.webp",
+      "sha256": "a2ce6ce9fa6ea6b59964871578f7848e4438617a05f9083c0964a6bc77ab54ea"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-icon-weapon_muhafiz-r118-df1750a1f9c3126e.webp",
+      "sha256": "df1750a1f9c3126e3c393e241994b45f3166fb5bd55753037114782a910a219e"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/royal-set-r118-cfe43838826cc23d.webp",
+      "sha256": "cfe43838826cc23d82467fbdfbda9558c713a4dd30b2c2dcd0a47d178cbd7286"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/seasonal-renderer453-ce66cee5738c-entry453-757f73732393-0fc89cd5-cb766166d025-entry473-2324044b58af.js",
+      "sha256": "33265a008aafdb26153bbe4bb2c061c3dd4a942eaa0cda536f8cf7ae41bb5708"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/skill-client-r103-2ec69470f90e2925.js",
+      "sha256": "2ec69470f90e292510d2c57299faa655e483a8bfa77f96d34d05a8873847c4b5"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/skill-visuals-r102-4fcfa7fb37eba4fc.js",
+      "sha256": "4fcfa7fb37eba4fcb43583d7e50d13d698243966fd9ba3db794316a189fa1013"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/unchanged.webp",
+      "sha256": "4d6e57dd507a55486118361ecfd0afef4bf8cfabcbb314dc48b11877b47cc626"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-items-r93-7753cdbf438ef095.webp",
+      "sha256": "7753cdbf438ef095e8dcfeeb239202d43cb4e0c19a9d80d35dedd326541af484"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-props-r93-2a4c1d827afff6e3.webp",
+      "sha256": "2a4c1d827afff6e35779031629d8933aa6ec312b5bb74a7d787f310355658a01"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/zumrut-terrain-r93-bcec784fbce4dda0.webp",
+      "sha256": "bcec784fbce4dda07711569db86a3ccf071f2a3ebb778744badd89a670a2839b"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-10.webp",
+      "sha256": "f7c4c02420ce8b5e3dd47441e38206d4129ba9daf863662a9ac99e1689300493"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-4.webp",
+      "sha256": "37b3a99ced0adf245cdd51ad482d9aeb1d3cbf1b7e375b406e442c2162f3a7d7"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/tower-r18/floor-7.webp",
+      "sha256": "aa76cdfeaca6331304b44303666b5a941a9b8aa33fc8c1940232c6cc55a1e306"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/core511-map-r119-06c782d779f19e50.js",
+      "sha256": "06c782d779f19e507a53f3335161a8af0fe2496e9c0c8a6336e4314be063765e"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/game-client-core511-r119-6558907cd29913ad.js",
+      "sha256": "b62454f82f788f97e9dd64bfa923bebe4bfe554a306ef3a687edbb1167b3c72c"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+      "sha256": "30f7fc106abd37e0f87f4f509e5af57f4aeb21216c88bd6f9fada25918c98ec4"
+    },
+    {
+      "path": "accounts-runtime/dist-vds/client/assets/core511-f3b670dfef6c25f1/admin-client-core511-r118-bd266dccdc24b06a.js",
+      "sha256": "81b4576b7a896d224bcbaf213043535c5a039a32a6023c1ef9fe36673f4f572d"
+    }
+  ]
+}

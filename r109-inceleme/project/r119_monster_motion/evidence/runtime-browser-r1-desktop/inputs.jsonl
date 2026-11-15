@@ -1,0 +1,6 @@
+{"at":1794765223855,"phase":"native-entry","type":"input","sequence":1,"action":"heartbeat"}
+{"at":1794765228888,"phase":"native-entry","type":"input","sequence":2,"action":"heartbeat"}
+{"at":1794765231378,"phase":"champions-travel","type":"input","sequence":3,"action":"travel_champions"}
+{"at":1794765237071,"phase":"champions-travel","type":"input","sequence":4,"action":"attack"}
+{"at":1794765238879,"phase":"champions-travel","type":"input","sequence":5,"action":"heartbeat"}
+{"at":1794765243037,"phase":"champions-travel","type":"input","sequence":6,"action":"travel_forest"}

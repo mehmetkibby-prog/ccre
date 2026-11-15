@@ -1,0 +1,20 @@
+
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/runtime-browser.mjs' imported from /workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/
+    at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:989:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolve (file:///workspace/coreoflife-r111/r109-inceleme/scripts/dependency-loader.mjs:24:10)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30)
+    at MessagePort.handleMessage (node:internal/modules/esm/worker:199:24)
+    at [nodejs.internal.kHybridDispatch] (node:internal/event_target:843:20)
+    at MessagePort.<anonymous> (node:internal/per_context/messageport:23:28) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/runtime-browser.mjs'
+}
+
+Node.js v22.23.4

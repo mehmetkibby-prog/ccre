@@ -1,5 +1,13 @@
 # Claude için başlangıç
 
+## R119 devamı — 15 Kasım 2026
+
+Önce `r109-inceleme/R119_DEVIR.md` dosyasını oku. Canlı Efsane R118_ROYAL1
+olarak doğrulandı. Aktif ağaç R119 canavar animasyonu adayını içerir; yalnız
+istemci değişir, backend sağlık işaretinin R118 kalması doğrudur. Son paket ve
+test kanıtları `project/r119_monster_motion/evidence` içindedir. Canlı R119
+kurulumu doğrulanmadı. Aşağıdaki sürüm notları tarihseldir.
+
 ## R118 devamı — 15 Kasım 2026
 
 Güncel devir: `r109-inceleme/R118_DEVIR.md`. Canlı kaynak salt okunur kontrolde

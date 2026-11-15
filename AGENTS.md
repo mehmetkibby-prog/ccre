@@ -71,3 +71,10 @@ This release has explicit additive schema migration, not only code changes.
 Latest user feedback requires scattered monsters and Turkish-facing labels.
 Use the exact R117 source and preserve all old artifacts. Check the final
 R118 package evidence before treating this candidate as delivered or installed.
+
+R119 continuation (15 Nov 2026): read `r109-inceleme/R119_DEVIR.md` first.
+Public Efsane health confirms R118_ROYAL1. R119 changes only champion monster
+presentation, reusing the North Forest renderer. The installer requires exact
+corrected R118, preserves schema recovery archives, and changes five client
+files. Backend health remains R118; installer state/new client hashes are R119.
+See the R119 package/verification evidence; live R119 installation is unconfirmed.
