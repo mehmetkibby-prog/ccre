@@ -14,9 +14,28 @@ for name in files:
  if name=='dungeon-native.test.mjs':
   text=text.replace("const {DungeonEngine}=await native('vds-server/src/dungeon-engine.mjs');", "const {createDungeonRules: previousDungeonRules}=await import("+repr(str(root.parent/'r106_captcha_worker/working/core511-source/scripts/core511/generated/dungeon-rules.mjs'))+");const {DungeonEngine}=previousDungeonRules();")
   text=text.replace('V510 dungeon declarations are identical after factory extraction','Selected R106 dungeon declarations remain identical')
+  # Node runs t.after hooks in registration order. The archived fixture used
+  # temporary(t) before registering database shutdown, deleting the directory
+  # before an outstanding durable WAL flush. Register one LIFO cleanup stack
+  # for this fixture only: recovered DB, target DB, source fixture, directory.
+  # All gameplay/crash/receipt assertions remain the original test body.
+  if text.count('t.after(')!=4 or text.count('dir=temporary(t)')!=1:
+   raise RuntimeError('Dungeon cleanup fixture anchors changed')
+  text=text.replace('t.after(', 'nativeCleanupR118(t,')
+  text=text.replace('dir=temporary(t)', 'dir=temporary({after:fn=>nativeCleanupR118(t,fn)})')
+  text=text.replace('target.close();', 'target.close();await target.walSync?.closing;')
+  text=text.replace('recovered.close();', 'recovered.close();await recovered.walSync?.closing;')
+  text="""const nativeCleanupStacksR118=new WeakMap();
+function nativeCleanupR118(context,cleanup){
+ let callbacks=nativeCleanupStacksR118.get(context);
+ if(!callbacks){callbacks=[];nativeCleanupStacksR118.set(context,callbacks);context.after(async()=>{for(const callback of callbacks.reverse())await callback();});}
+ callbacks.push(cleanup);
+}
+"""+text
+
   text=text.replace('const source=f.database.sqlite,ids=', 'createTowerSchema(f.database.sqlite);createAdventureSchema(f.database.sqlite);createContentSchemaR102(f.database.sqlite);installBagLimit(f.database.sqlite);const source=f.database.sqlite,ids=')
  if name=='dungeon-native.test.mjs':
-  text=text.replace('t.after(async()=>{await target.walSync', 'installBagLimit(target.sqlite);t.after(async()=>{await target.walSync')
+  text=text.replace('nativeCleanupR118(t,async()=>{await target.walSync', 'installBagLimit(target.sqlite);nativeCleanupR118(t,async()=>{await target.walSync')
  if name=='dungeon-channel.test.mjs':
   text=text.replace('f.reset({area:', 'createTowerSchema(sql);createAdventureSchema(sql);f.reset({area:')
   # The archived fixture manually drives ticks. Current bounded ticks may
