@@ -75,15 +75,25 @@ case "${1:-}" in
     cp "$site" "$site.yedek-$(date +%F-%H%M%S)"
     {
       echo "# tugra alan $yeni ile üretildi ($(date +%F))"
-      echo "server { listen 80; listen [::]:80; server_name $yeni www.$yeni; return 301 https://$yeni\$request_uri; }"
+      konum() {
+        echo "    client_max_body_size 64k;"
+        echo "    if (\$host = www.$yeni) { return 301 https://$yeni\$request_uri; }"
+        echo "    location /ws { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Upgrade \$http_upgrade; proxy_set_header Connection \"upgrade\"; proxy_set_header X-Real-IP \$remote_addr; proxy_read_timeout 3600s; proxy_buffering off; tcp_nodelay on; }"
+        echo "    location / { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; gzip on; gzip_types text/css application/javascript application/json; }"
+      }
+      # 80: Cloudflare "Flexible" modunda istek buraya HTTPS olarak işaretli gelir → oyunu sun; doğrudan HTTP ise HTTPS'e yönlendir
+      echo "server {"
+      echo "    listen 80; listen [::]:80;"
+      echo "    server_name $yeni www.$yeni;"
+      echo "    if (\$http_x_forwarded_proto != \"https\") { return 301 https://$yeni\$request_uri; }"
+      konum
+      echo "}"
+      # 443: Cloudflare "Full" modu
       echo "server {"
       echo "    listen 443 ssl http2; listen [::]:443 ssl http2;"
       echo "    server_name $yeni www.$yeni;"
       echo "    ssl_certificate $pem; ssl_certificate_key $key;"
-      echo "    client_max_body_size 64k;"
-      echo "    if (\$host = www.$yeni) { return 301 https://$yeni\$request_uri; }"
-      echo "    location /ws { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Upgrade \$http_upgrade; proxy_set_header Connection \"upgrade\"; proxy_set_header X-Real-IP \$remote_addr; proxy_read_timeout 3600s; proxy_buffering off; tcp_nodelay on; }"
-      echo "    location / { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; gzip on; gzip_types text/css application/javascript application/json; }"
+      konum
       echo "}"
       if [ -n "$eski" ] && [ -s "$SSLD/origin.pem" ]; then
         echo "# eski adres: her şey yeni adrese yönlenir (yer imleri ve ana ekrana eklenenler kaybolmaz)"
