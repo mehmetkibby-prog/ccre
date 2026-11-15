@@ -1,0 +1,163 @@
+{
+  "version": "R118_ROYAL_ART1",
+  "assets": {
+    "royal-icon-weapon_muhafiz-r118": {
+      "file": "royal-icon-weapon_muhafiz-r118-df1750a1f9c3126e.webp",
+      "sha256": "df1750a1f9c3126e3c393e241994b45f3166fb5bd55753037114782a910a219e",
+      "bytes": 4638,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-weapon_avci-r118": {
+      "file": "royal-icon-weapon_avci-r118-a2ce6ce9fa6ea6b5.webp",
+      "sha256": "a2ce6ce9fa6ea6b59964871578f7848e4438617a05f9083c0964a6bc77ab54ea",
+      "bytes": 5240,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-weapon_arkanist-r118": {
+      "file": "royal-icon-weapon_arkanist-r118-7784da8683f48b88.webp",
+      "sha256": "7784da8683f48b886877b0665a22facad0959e05b6fe8ba956f130ba12ed1e75",
+      "bytes": 3920,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-armor-r118": {
+      "file": "royal-icon-armor-r118-604fb486a94b793b.webp",
+      "sha256": "604fb486a94b793b2dd6c1f9506dca3efb76d2cfda4822c71ce8a6ddbbab3baa",
+      "bytes": 9176,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-helmet-r118": {
+      "file": "royal-icon-helmet-r118-a7093d1e7fd2ec70.webp",
+      "sha256": "a7093d1e7fd2ec70043fef895916790ab53fb257198207b0c166cc1548f0aa4a",
+      "bytes": 7734,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-necklace-r118": {
+      "file": "royal-icon-necklace-r118-129f572914439776.webp",
+      "sha256": "129f572914439776e39750c8fa0eee718e71ccbdafd8c84b037d288abd48e2fa",
+      "bytes": 5808,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-shoes-r118": {
+      "file": "royal-icon-shoes-r118-6a7b63fbda295221.webp",
+      "sha256": "6a7b63fbda2952210d29bd472c09f95df5c2b209cf0b3824f5c5cba80795d0f3",
+      "bytes": 8378,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-emerald_dust-r118": {
+      "file": "royal-icon-emerald_dust-r118-489c24fa11893ae1.webp",
+      "sha256": "489c24fa11893ae1e66e2f87cbd2b7b437e9e285ef738214c72e6d7e80790375",
+      "bytes": 5150,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-icon-royal_crown-r118": {
+      "file": "royal-icon-royal_crown-r118-7fd15c76f9b1f4c0.webp",
+      "sha256": "7fd15c76f9b1f4c09be03b4408e4d3b06ef35fe3e4a052636d1001086a04bea6",
+      "bytes": 7560,
+      "width": 128,
+      "height": 128,
+      "alpha": true
+    },
+    "royal-armor-r118": {
+      "file": "royal-armor-r118-7ea0badf6c7f1bd7.webp",
+      "sha256": "7ea0badf6c7f1bd7c5c8f2b28783777aef8de8592c56d771fb30bc3579abe41b",
+      "bytes": 27918,
+      "width": 256,
+      "height": 256,
+      "alpha": true
+    },
+    "royal-set-r118": {
+      "file": "royal-set-r118-cfe43838826cc23d.webp",
+      "sha256": "cfe43838826cc23d82467fbdfbda9558c713a4dd30b2c2dcd0a47d178cbd7286",
+      "bytes": 83364,
+      "width": 768,
+      "height": 512,
+      "alpha": true
+    },
+    "royal-hero-motion-r118": {
+      "file": "royal-hero-motion-r118-be48d4c46c491f0f.webp",
+      "sha256": "be48d4c46c491f0fc40039661baf3eda7a4029bdb75712f4cdda9266893f2095",
+      "bytes": 586222,
+      "width": 1920,
+      "height": 1098,
+      "alpha": true
+    },
+    "champions-ivory_guard-r118": {
+      "file": "champions-ivory_guard-r118-28fdfdad64d82ec3.webp",
+      "sha256": "28fdfdad64d82ec311569e3698da72211b34b4177bbcee1b317ca0561ad28200",
+      "bytes": 159074,
+      "width": 1280,
+      "height": 512,
+      "alpha": true
+    },
+    "champions-golden_lion-r118": {
+      "file": "champions-golden_lion-r118-3113c551aa948a39.webp",
+      "sha256": "3113c551aa948a3998e30e80a6663f5513a1b9b66f001e00c18534f0c04d3434",
+      "bytes": 186326,
+      "width": 1280,
+      "height": 512,
+      "alpha": true
+    },
+    "champions-crescent_hunter-r118": {
+      "file": "champions-crescent_hunter-r118-80cde4cc5248ba49.webp",
+      "sha256": "80cde4cc5248ba495289ef26faa8ede76487faa32f0bbd8c3f0ad0524420692d",
+      "bytes": 128266,
+      "width": 1280,
+      "height": 512,
+      "alpha": true
+    },
+    "champions-royal_colossus-r118": {
+      "file": "champions-royal_colossus-r118-beb3cdcf61df5353.webp",
+      "sha256": "beb3cdcf61df53531ff05ff8e14103fb33a403158fb554ea9af1c1a312c61641",
+      "bytes": 169012,
+      "width": 1280,
+      "height": 512,
+      "alpha": true
+    },
+    "champions-map-r118": {
+      "file": "champions-map-r118-b7ed6342e7d023a0.webp",
+      "sha256": "b7ed6342e7d023a022f9d34358b08b4bde0d78fbfad70dff6aae5bff0b32a787",
+      "bytes": 629026,
+      "width": 1536,
+      "height": 1024,
+      "alpha": false
+    }
+  },
+  "totalBytes": 2026812,
+  "monsterFrames": {
+    "columns": 5,
+    "rows": 2,
+    "cellWidth": 256,
+    "cellHeight": 256,
+    "footY": 232,
+    "facing": "right"
+  },
+  "heroFrames": {
+    "columns": 6,
+    "rows": 3,
+    "cellWidth": 320,
+    "cellHeight": 366,
+    "footY": 354,
+    "roles": [
+      "muhafiz",
+      "avci",
+      "arkanist"
+    ],
+    "facing": "left"
+  }
+}

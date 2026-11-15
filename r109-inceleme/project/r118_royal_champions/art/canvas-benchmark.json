@@ -1,0 +1,202 @@
+{
+  "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "reports": [
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.19999999995343387,
+        "p95": 0.5,
+        "p99": 1.6999999999534339,
+        "max": 2.0999999998603016
+      },
+      "rafIntervalMs": {
+        "p95": 16.799999999999955,
+        "p99": 16.800000000000182,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 1,
+        "p95": 1.5999999998603016,
+        "p99": 2.199999999953434,
+        "max": 2.4000000001396984
+      },
+      "rafIntervalMs": {
+        "p95": 16.700000000000728,
+        "p99": 16.800000000000182,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.6000000000931323,
+        "p95": 1.3000000000465661,
+        "p99": 3.300000000046566,
+        "max": 3.5999999998603016
+      },
+      "rafIntervalMs": {
+        "p95": 16.800000000000182,
+        "p99": 16.800000000000182,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 186,
+        "max": 186
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.19999999995343387,
+        "p95": 0.7999999998137355,
+        "p99": 4.5,
+        "max": 4.5
+      },
+      "rafIntervalMs": {
+        "p95": 50,
+        "p99": 66.60000000000036,
+        "over50": 3
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.39999999990686774,
+        "p95": 1.0999999998603016,
+        "p99": 2.199999999953434,
+        "max": 3.3999999999068677
+      },
+      "rafIntervalMs": {
+        "p95": 16.700000000000728,
+        "p99": 16.799999999999272,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.4000000001396984,
+        "p95": 3.300000000046566,
+        "p99": 8.699999999953434,
+        "max": 10.899999999906868
+      },
+      "rafIntervalMs": {
+        "p95": 50,
+        "p99": 66.70000000000073,
+        "over50": 5
+      },
+      "drawCallsPerFrame": {
+        "min": 186,
+        "max": 186
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.10000000009313226,
+        "p95": 3.5,
+        "p99": 7.800000000046566,
+        "max": 9.600000000093132
+      },
+      "rafIntervalMs": {
+        "p95": 50.10000000000218,
+        "p99": 66.79999999999927,
+        "over50": 8
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.6000000000931323,
+        "p95": 8,
+        "p99": 15.800000000046566,
+        "max": 23.600000000093132
+      },
+      "rafIntervalMs": {
+        "p95": 50,
+        "p99": 66.79999999999927,
+        "over50": 5
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 2.0999999998603016,
+        "p95": 17,
+        "p99": 26.9000000001397,
+        "max": 40.699999999953434
+      },
+      "rafIntervalMs": {
+        "p95": 83.29999999999927,
+        "p99": 116.70000000000073,
+        "over50": 41
+      },
+      "drawCallsPerFrame": {
+        "min": 186,
+        "max": 186
+      }
+    }
+  ],
+  "scope": "Local headless Chromium Canvas2D art-only benchmark, 50 royal actors; draw submission and requestAnimationFrame timing, not a live gameplay/network performance guarantee.",
+  "generatedAt": "2026-11-15T14:08:41.257Z",
+  "sourceState": "Initial96drawbudget forallqualities; before final reduced-quality48drawcap.",
+  "concurrencyLimitation": "Concurrent npm and Node tests observed; baseline also experienced long RAF intervals. Not clean serial acceptance."
+}

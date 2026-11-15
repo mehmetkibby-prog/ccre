@@ -1,0 +1,80 @@
+{
+  "artAssets": 17,
+  "passed": 17,
+  "failed": 0,
+  "compressedBytes": 2026812,
+  "rgbaDecodedBytes": 27634688,
+  "atlasFrames": 40,
+  "heroFrames": 18,
+  "maxMobFrameBaselineY": 232,
+  "results": [
+    {
+      "asset": "royal-icon-weapon_muhafiz-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-weapon_avci-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-weapon_arkanist-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-armor-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-helmet-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-necklace-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-shoes-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-emerald_dust-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-icon-royal_crown-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-armor-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-set-r118",
+      "pass": true
+    },
+    {
+      "asset": "royal-hero-motion-r118",
+      "pass": true
+    },
+    {
+      "asset": "champions-ivory_guard-r118",
+      "pass": true
+    },
+    {
+      "asset": "champions-golden_lion-r118",
+      "pass": true
+    },
+    {
+      "asset": "champions-crescent_hunter-r118",
+      "pass": true
+    },
+    {
+      "asset": "champions-royal_colossus-r118",
+      "pass": true
+    },
+    {
+      "asset": "champions-map-r118",
+      "pass": true
+    }
+  ]
+}
