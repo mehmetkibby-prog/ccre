@@ -1,0 +1,522 @@
+{
+  "realmId": "r1",
+  "namespace": "core511-c4d0f4d061896a4e",
+  "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
+  "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
+  "checks": [
+    {
+      "name": "native champion entry",
+      "area": "bazaar",
+      "channels": 4
+    },
+    {
+      "name": "actual NPC, royal UI, durable transform and costs"
+    }
+  ],
+  "webSocketTransport": "production-style-socket-handoff",
+  "failure": {
+    "phase": "royal-town-menu",
+    "message": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Işınlanma', exact: true })\u001b[22m\n",
+    "stack": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Işınlanma', exact: true })\u001b[22m\n\n    at /workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/runtime-browser.mjs:166:87",
+    "dom": "DÜNYA SAĞLIĞI\n%99.79\n95000\n5\nRütbe\nKÜLKANAT · KADİM EJDERHA\n2:58:49\n♛\nBinek\nLonca\nNesne Market\nArena\nIşınlanma\nMarket\nPazarım\nHAREKET\nDünya Sohbeti\n\nHenüz kimse konuşmadı.\n\nDünya\nBölgesel\nLonca\nTicaret\n1000\nCAN\n199\nİKSİR\nŞampiyon Lv 1\n1.000.000 TP kaldı\n1\n+16%\nArk\n2\n+16%\nMızrak\n3\n+16%\nÇember\n4\n+16%\nÖz Patlaması\nE\nTopla\nH\nBağış\n100000\nÖZ\nHükümdar Kraliyet Seti\n\nCore of Life · Saltanat Hükümdarı\n\nKraliyet dönüşümü tamamlandı.\nŞAMPİYONLARA ÖZEL\nTahtına layık bir güç.\n\nBeyaz ve altın Hükümdar Kraliyet Seti · %8 temel güç\n\nZümrüt Tozu\n32\nKraliyet Tacı\n4\nDönüştürülecek Kadim Zümrüt eşya\nÇantandan bir eşya seç…\nKadim Zümrüt Zırh · 350\nDönüşümü incele\nClose",
+    "npc": {
+      "Demirci Haso": {
+        "x": 422.0050863732839,
+        "y": 80.74666486183803,
+        "at": 1794757372641
+      },
+      "Kraliyet Ustası": {
+        "x": 594.7727753827188,
+        "y": 74.98666499058406,
+        "at": 1794757372641
+      }
+    }
+  },
+  "durationMs": 76787,
+  "webSocketHandoffs": 1,
+  "handoffStats": {
+    "sent": 1,
+    "declined": 0,
+    "failed": 0
+  },
+  "requests": [
+    {
+      "at": 1794757335992,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "ms": 10
+    },
+    {
+      "at": 1794757341029,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/launch",
+      "status": 200,
+      "ms": 6
+    },
+    {
+      "at": 1794757341347,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/realm/characters",
+      "status": 200,
+      "ms": 239
+    },
+    {
+      "at": 1794757342027,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r46-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794757342031,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r45-options",
+      "status": 200,
+      "ms": 7
+    },
+    {
+      "at": 1794757342040,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r44-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794757342041,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794757342045,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r43-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794757342239,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 6
+    },
+    {
+      "at": 1794757342462,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 14,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757345210,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 20,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757345247,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r49-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794757345249,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794757345214,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/onboarding",
+      "status": 200,
+      "ms": 48,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757345251,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 30,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757345591,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 128,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757346629,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-character",
+      "status": 200,
+      "ms": 165,
+      "action": "join",
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757347078,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 23,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757347768,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 5
+    },
+    {
+      "at": 1794757347768,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 8
+    },
+    {
+      "at": 1794757347769,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 15,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757347784,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/mount-r49",
+      "status": 200,
+      "ms": 16,
+      "action": "status",
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757347786,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 46,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757347786,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 111,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757349700,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757349911,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 8,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757352667,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 7,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757353922,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 87,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757355141,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 3,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757355142,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 11,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757355541,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 2,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757358140,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 93
+    },
+    {
+      "at": 1794757359141,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 59,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757359364,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 39,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757359718,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 4,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757359729,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 31,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757362787,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "at": 1794757362793,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 11,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757363707,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 2,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757365052,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 25,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757365333,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 107,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757365456,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 100,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757369451,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 6,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757369820,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757369823,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 10,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757370982,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 18,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757372625,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 7,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    },
+    {
+      "at": 1794757373493,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 16,
+      "instance": "e213f50e-6d61-4888-8bc9-fb24568a04a2"
+    }
+  ],
+  "errors": [],
+  "nativeFaults": [],
+  "missingAssets": []
+}

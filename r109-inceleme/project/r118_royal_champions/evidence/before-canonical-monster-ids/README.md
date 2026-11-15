@@ -1,0 +1,1 @@
+These reports and screenshots precede the canonical hyphenated champion monster IDs and subsequent checkpoint/reward trigger repairs. They validate the earlier candidate only, not the final release. Source evidence commit: c26bf98. Client namespace: core511-50776109cf7b82b1. Preserve the failures documented in ../runtime-findings.json.

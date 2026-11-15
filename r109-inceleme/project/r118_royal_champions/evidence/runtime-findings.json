@@ -14,7 +14,22 @@
     "Town-menu flow remembers its category. Test explicitly selects Av Bölgeleri before champion travel.",
     "Realm driver now uses R102_TEST_REALM, since scripts/run.py intentionally overrides direct CORE101_REALM_ID. Reports from mistaken realm dispatch were not counted toward r2.",
     "One desktop run clicked Haso during the previous Radix dialog exit animation. The harness now waits until the dialog and pointer lock are released and verifies a genuine unobstructed canvas hit. No production NPC/overlay changes were made.",
-    "r2-only legacy /api/admin/launch read initially used a central-account admin identity absent from this external-admin UI fixture and returned 403. Its unchanged launch card now receives an explicit read-only projection of the real isolated launch service. New R118 admin authentication and save routes remain actual and errors are not suppressed."
+    "r2-only legacy /api/admin/launch read initially used a central-account admin identity absent from this external-admin UI fixture and returned 403. Its unchanged launch card now receives an explicit read-only projection of the real isolated launch service. New R118 admin authentication and save routes remain actual and errors are not suppressed.",
+    "The canonical-ID assertion initially included dragon-world-1: native world.monsters also carries global boss HUD metadata. Final ID checks and combat target selection are explicitly scoped to monster.area === champions. Earlier unscoped attack selection is not evidence of champion-monster combat. The corrected final matrix must pass before champion combat is claimed.",
+    "One final mobile run attempted Escape after SQL commit but before the UI finished confirming/refreshing. The pending-write guard correctly kept the panel open. Final harness waits until the select unlocks and uses the real close button, with touch on mobile; the production close guard is unchanged."
   ],
-  "scope": "Production generated game+admin bundles, native HTTP/SQLite/channel processes and real WebSocket socket handoff in isolated database. Authenticated game identity and external admin identity controlled fixture. Admin legacy overview is a SQL projection; new configuration reads/saves use actual admin authorization handler and real settings services. Full admin UI is mounted using its production React renderer, with separate Vinext page hydration bootstrap held pending because server HTML fixture is not an actual SSR response. This is integration/UI validation, not live-VDS or load measurement. Unchanged legacy central-account launch GET is a read-only projection; no central launch authorization/mutation coverage is claimed."
+  "scope": "Production generated game+admin bundles, native HTTP/SQLite/channel processes and real WebSocket socket handoff in isolated database. Authenticated game identity and external admin identity controlled fixture. Admin legacy overview is a SQL projection; new configuration reads/saves use actual admin authorization handler and real settings services. Full admin UI is mounted using its production React renderer, with separate Vinext page hydration bootstrap held pending because server HTML fixture is not an actual SSR response. This is integration/UI validation, not live-VDS or load measurement. Unchanged legacy central-account launch GET is a read-only projection; no central launch authorization/mutation coverage is claimed.",
+  "finalCanonicalVerification": {
+    "namespace": "core511-c4d0f4d061896a4e",
+    "game": "game-client-core511-r118-a4d21f5a07c2cb04.js",
+    "cases": 4,
+    "passed": 4,
+    "checksPerCase": 7,
+    "championMonstersPerCase": 48,
+    "spriteSpeciesPerCase": 4,
+    "TurkishNamesPerCase": 4,
+    "combatTargetScope": "monster.area === champions",
+    "httpBrowserNativeErrors": 0,
+    "missingAssets": 0
+  }
 }

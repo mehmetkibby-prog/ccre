@@ -3,7 +3,7 @@
     "realm": "r1",
     "layout": "desktop",
     "passed": true,
-    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
     "checks": [
       {
         "name": "native champion entry",
@@ -27,21 +27,21 @@
       },
       {
         "name": "actual compiled admin navigation and authenticated native config handlers",
-        "overview": "isolated SQL projection, external admin identity controlled fixture"
+        "overview": "isolated SQL projection plus unchanged launch-read projection; external admin identity controlled fixture"
       }
     ],
     "errors": [],
     "missingAssets": [],
     "nativeFaults": [],
     "webSocketHandoffs": 1,
-    "durationMs": 67319,
+    "durationMs": 115657,
     "report": "runtime-browser-r1-desktop/report.json"
   },
   {
     "realm": "r1",
     "layout": "mobile",
     "passed": true,
-    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
     "checks": [
       {
         "name": "native champion entry",
@@ -65,21 +65,21 @@
       },
       {
         "name": "actual compiled admin navigation and authenticated native config handlers",
-        "overview": "isolated SQL projection, external admin identity controlled fixture"
+        "overview": "isolated SQL projection plus unchanged launch-read projection; external admin identity controlled fixture"
       }
     ],
     "errors": [],
     "missingAssets": [],
     "nativeFaults": [],
     "webSocketHandoffs": 1,
-    "durationMs": 46505,
+    "durationMs": 92090,
     "report": "runtime-browser-r1-mobile/report.json"
   },
   {
     "realm": "r2",
     "layout": "desktop",
     "passed": true,
-    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
     "checks": [
       {
         "name": "native champion entry",
@@ -110,14 +110,14 @@
     "missingAssets": [],
     "nativeFaults": [],
     "webSocketHandoffs": 1,
-    "durationMs": 54295,
+    "durationMs": 110518,
     "report": "runtime-browser-r2-desktop/report.json"
   },
   {
     "realm": "r2",
     "layout": "mobile",
     "passed": true,
-    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
     "checks": [
       {
         "name": "native champion entry",
@@ -148,7 +148,7 @@
     "missingAssets": [],
     "nativeFaults": [],
     "webSocketHandoffs": 1,
-    "durationMs": 36849,
+    "durationMs": 65209,
     "report": "runtime-browser-r2-mobile/report.json"
   }
 ]

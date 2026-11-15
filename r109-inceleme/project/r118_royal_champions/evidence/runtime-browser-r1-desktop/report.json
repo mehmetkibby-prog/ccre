@@ -1,6 +1,8 @@
 {
+  "realmId": "r1",
+  "namespace": "core511-c4d0f4d061896a4e",
   "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
-  "client": "game-client-core511-r118-a3dda0259af155b6.js",
+  "client": "game-client-core511-r118-a4d21f5a07c2cb04.js",
   "checks": [
     {
       "name": "native champion entry",
@@ -24,12 +26,268 @@
     },
     {
       "name": "actual compiled admin navigation and authenticated native config handlers",
-      "overview": "isolated SQL projection, external admin identity controlled fixture"
+      "overview": "isolated SQL projection plus unchanged launch-read projection; external admin identity controlled fixture"
     }
   ],
   "webSocketTransport": "production-style-socket-handoff",
+  "champions": {
+    "monsters": [
+      {
+        "id": "champions-crescent-hunter-c1-01",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-02",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-03",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-04",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-05",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-06",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-07",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-08",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-09",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-10",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-11",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-crescent-hunter-c1-12",
+        "name": "Hilal Avcısı",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-01",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-02",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-03",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-04",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-05",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-06",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-07",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-08",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-09",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-10",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-11",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-golden-lion-c1-12",
+        "name": "Altın Yeleli Arslan",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-01",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-02",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-03",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-04",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-05",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-06",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-07",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-08",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-09",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-10",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-11",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-ivory-guard-c1-12",
+        "name": "Fildişi Muhafız",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-01",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-02",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-03",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-04",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-05",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-06",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-07",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-08",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-09",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-10",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-11",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      },
+      {
+        "id": "champions-royal-colossus-c1-12",
+        "name": "Saltanat Devi",
+        "area": "champions"
+      }
+    ],
+    "sprites": {
+      "crescent_hunter": 60,
+      "golden_lion": 60,
+      "ivory_guard": 60,
+      "royal_colossus": 60
+    },
+    "names": [
+      "Hilal Avcısı",
+      "Altın Yeleli Arslan",
+      "Fildişi Muhafız",
+      "Saltanat Devi"
+    ]
+  },
   "passed": true,
-  "durationMs": 67319,
+  "durationMs": 115657,
   "webSocketHandoffs": 1,
   "handoffStats": {
     "sent": 1,
@@ -38,25 +296,55 @@
   },
   "requests": [
     {
-      "at": 1794753129525,
+      "at": 1794757208701,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/auth/me",
       "status": 200,
-      "ms": 5
+      "ms": 119
     },
     {
-      "at": 1794753129744,
+      "at": 1794757213861,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/launch",
+      "status": 200,
+      "ms": 19
+    },
+    {
+      "at": 1794757214070,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/realm/characters",
       "status": 200,
-      "ms": 2
+      "ms": 4
     },
     {
-      "at": 1794753130017,
+      "at": 1794757215233,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 120
+    },
+    {
+      "at": 1794757215482,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 111,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757216016,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
@@ -65,34 +353,34 @@
       "ms": 0
     },
     {
-      "at": 1794753130018,
+      "at": 1794757216017,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/core511-r45-options",
       "status": 200,
-      "ms": 1
+      "ms": 0
     },
     {
-      "at": 1794753130020,
+      "at": 1794757216033,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/core511-r44-options",
       "status": 200,
-      "ms": 0
+      "ms": 3
     },
     {
-      "at": 1794753130023,
+      "at": 1794757216043,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/core511-ui-options",
       "status": 200,
-      "ms": 1
+      "ms": 6
     },
     {
-      "at": 1794753130025,
+      "at": 1794757216053,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
@@ -101,579 +389,731 @@
       "ms": 0
     },
     {
-      "at": 1794753130165,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realm/character-select",
-      "status": 200,
-      "ms": 10
-    },
-    {
-      "at": 1794753130227,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/game-presence",
-      "status": 200,
-      "ms": 12,
-      "action": "claim",
-      "idleExempt": false,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753130906,
+      "at": 1794757218212,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/events",
       "status": 200,
-      "ms": 6,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 14,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753130925,
+      "at": 1794757218231,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/core511-r49-options",
       "status": 200,
-      "ms": 4
+      "ms": 1
     },
     {
-      "at": 1794753130930,
+      "at": 1794757218233,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/core511-ui-options",
       "status": 200,
-      "ms": 1
+      "ms": 0
     },
     {
-      "at": 1794753130923,
+      "at": 1794757218229,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/onboarding",
       "status": 200,
-      "ms": 32,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 29,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753130934,
+      "at": 1794757218235,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/bot-check",
       "status": 200,
-      "ms": 30,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 36,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753131733,
+      "at": 1794757219585,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/channels",
       "status": 200,
-      "ms": 3,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 2,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753133852,
+      "at": 1794757222879,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 27,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757222919,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 36,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757223649,
       "phase": "native-entry",
       "player": 0,
       "method": "POST",
       "path": "/api/realtime/core511-character",
       "status": 200,
-      "ms": 180,
+      "ms": 619,
       "action": "join",
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753134038,
+      "at": 1794757224289,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/channels",
       "status": 200,
-      "ms": 16,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 31,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753135272,
+      "at": 1794757225780,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 88,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757226822,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/channels",
       "status": 200,
-      "ms": 2,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 18,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753136211,
+      "at": 1794757228830,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/content-r102",
       "status": 200,
-      "ms": 5
+      "ms": 56
     },
     {
-      "at": 1794753136220,
+      "at": 1794757228837,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/content-r102",
       "status": 200,
-      "ms": 5
+      "ms": 86
     },
     {
-      "at": 1794753136226,
+      "at": 1794757228894,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/trade",
       "status": 200,
-      "ms": 2,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 47,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753136230,
+      "at": 1794757228902,
       "phase": "native-entry",
       "player": 0,
       "method": "POST",
       "path": "/api/realtime/core511-dungeon-lobby",
       "status": 200,
-      "ms": 5,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 93,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753136248,
+      "at": 1794757228969,
       "phase": "native-entry",
       "player": 0,
       "method": "POST",
       "path": "/api/mount-r49",
       "status": 200,
-      "ms": 4,
+      "ms": 40,
       "action": "status",
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753136246,
+      "at": 1794757228925,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/guild",
       "status": 200,
-      "ms": 11,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 114,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753136623,
+      "at": 1794757229859,
       "phase": "native-entry",
       "player": 0,
       "method": "GET",
       "path": "/api/events",
-      "status": 200,
-      "ms": 3,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753136628,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 35,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753140279,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/game-presence",
-      "status": 200,
-      "ms": 5,
-      "action": "renew",
-      "idleExempt": false,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753140688,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 20,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753140695,
-      "phase": "native-entry",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 59,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753141580,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/royal-r118",
-      "status": 200,
-      "ms": 28
-    },
-    {
-      "at": 1794753142093,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 28,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753145360,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/trade",
-      "status": 200,
-      "ms": 11,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753145934,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 11,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753145946,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 27,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753147053,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/guild",
-      "status": 200,
-      "ms": 8,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753147486,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 19,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753148869,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/royal-r118",
-      "status": 200,
-      "ms": 6
-    },
-    {
-      "at": 1794753152159,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 10,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753152149,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/game-presence",
-      "status": 200,
-      "ms": 67,
-      "action": "renew",
-      "idleExempt": false,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753152196,
-      "phase": "royal-npc",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 33,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753153010,
-      "phase": "royal-town-menu",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 9,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753153413,
-      "phase": "royal-town-menu",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/royal-r118",
-      "status": 200,
-      "ms": 7
-    },
-    {
-      "at": 1794753154097,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/trade",
-      "status": 200,
-      "ms": 3,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753154532,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/royal-r118",
-      "status": 200,
-      "ms": 2
-    },
-    {
-      "at": 1794753155652,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 2,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753155668,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 10,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753157823,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/guild",
-      "status": 200,
-      "ms": 3,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753158048,
-      "phase": "haso",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 6,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753159140,
-      "phase": "haso",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/royal-r118",
-      "status": 200,
-      "ms": 2
-    },
-    {
-      "at": 1794753160620,
-      "phase": "haso",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/game-presence",
-      "status": 200,
-      "ms": 6,
-      "action": "renew",
-      "idleExempt": false,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753160793,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 3,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753160800,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 8,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753162121,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/trade",
-      "status": 200,
-      "ms": 6,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753163363,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 88,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753165680,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/events",
-      "status": 200,
-      "ms": 17,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753165705,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/bot-check",
-      "status": 200,
-      "ms": 22,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753169187,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/guild",
       "status": 200,
       "ms": 18,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753169195,
-      "phase": "champions-travel",
-      "player": 0,
-      "method": "POST",
-      "path": "/api/realtime/core511-dungeon-lobby",
-      "status": 200,
-      "ms": 29,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
-    },
-    {
-      "at": 1794753170194,
-      "phase": "champions-travel",
+      "at": 1794757229909,
+      "phase": "native-entry",
       "player": 0,
       "method": "GET",
-      "path": "/api/trade",
+      "path": "/api/bot-check",
       "status": 200,
-      "ms": 2,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 17,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753170283,
-      "phase": "champions-travel",
+      "at": 1794757233359,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 1,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757235222,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 144
+    },
+    {
+      "at": 1794757235499,
+      "phase": "royal-npc",
       "player": 0,
       "method": "POST",
       "path": "/api/game-presence",
       "status": 200,
-      "ms": 8,
+      "ms": 63,
       "action": "renew",
       "idleExempt": false,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753170720,
+      "at": 1794757236713,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 19,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757237932,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 36,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757237982,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 76,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757238507,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 50,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757239165,
+      "phase": "royal-npc",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 4
+    },
+    {
+      "at": 1794757242678,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757242705,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 48,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757243352,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 4,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757243499,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794757243636,
+      "phase": "royal-town-menu",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 75,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757244879,
+      "phase": "haso",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 29
+    },
+    {
+      "at": 1794757245412,
+      "phase": "haso",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 106,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757246664,
+      "phase": "haso",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 1,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757247980,
+      "phase": "haso",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 26,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757248007,
+      "phase": "haso",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757248922,
+      "phase": "haso",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 11,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757249242,
+      "phase": "haso",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/royal-r118",
+      "status": 200,
+      "ms": 18
+    },
+    {
+      "at": 1794757253035,
       "phase": "champions-travel",
       "player": 0,
       "method": "GET",
       "path": "/api/events",
       "status": 200,
-      "ms": 17,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 28,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753170813,
+      "at": 1794757253045,
       "phase": "champions-travel",
       "player": 0,
       "method": "GET",
       "path": "/api/bot-check",
       "status": 200,
-      "ms": 14,
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "ms": 37,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753174687,
+      "at": 1794757253792,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 13,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757254678,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 31,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757254710,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 7,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757255756,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 9,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757258094,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757258106,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757261448,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 5,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757264118,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 1,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757264152,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 2,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757264160,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757265367,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 4,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757265708,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 6,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757267982,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 1,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757267996,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757270026,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 15,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757272706,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 3,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757272865,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 3,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757272871,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 10,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757276100,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 68,
+      "action": "renew",
+      "idleExempt": false,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757276609,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 7,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757276729,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 13,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757277855,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 8,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757277890,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 23,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757283073,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 27,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757283064,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 36,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757283073,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 52,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757283075,
+      "phase": "champions-travel",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 65,
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
+    },
+    {
+      "at": 1794757283212,
       "phase": "admin-navigation",
       "player": 0,
       "method": "POST",
       "path": "/api/game-presence",
       "status": 200,
-      "ms": 13,
+      "ms": 38,
       "action": "release",
-      "instance": "93162b96-ac51-407c-8d10-2761bf601c54"
+      "instance": "8af8dfeb-37ef-4763-a35e-54c8d39dfeca"
     },
     {
-      "at": 1794753175293,
+      "at": 1794757283720,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
       "path": "/api/realm/context",
       "status": 200,
-      "ms": 1
+      "ms": 0
     },
     {
-      "at": 1794753175397,
+      "at": 1794757283867,
+      "phase": "admin-navigation",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/admin",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "at": 1794757283872,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
@@ -682,16 +1122,7 @@
       "ms": 1
     },
     {
-      "at": 1794753175398,
-      "phase": "admin-navigation",
-      "player": 0,
-      "method": "GET",
-      "path": "/api/admin",
-      "status": 200,
-      "ms": 1
-    },
-    {
-      "at": 1794753175399,
+      "at": 1794757283874,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
@@ -700,25 +1131,25 @@
       "ms": 0
     },
     {
-      "at": 1794753175405,
+      "at": 1794757283874,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
       "path": "/api/admin",
       "status": 200,
-      "ms": 0
+      "ms": 1
     },
     {
-      "at": 1794753175417,
+      "at": 1794757283889,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
       "path": "/api/admin",
       "status": 200,
-      "ms": 0
+      "ms": 1
     },
     {
-      "at": 1794753175782,
+      "at": 1794757284362,
       "phase": "admin-navigation",
       "player": 0,
       "method": "POST",
@@ -728,7 +1159,7 @@
       "action": "royal_admin_read_r118"
     },
     {
-      "at": 1794753175785,
+      "at": 1794757284365,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
@@ -737,42 +1168,42 @@
       "ms": 0
     },
     {
-      "at": 1794753177057,
+      "at": 1794757286341,
       "phase": "admin-navigation",
       "player": 0,
       "method": "POST",
       "path": "/api/admin",
       "status": 200,
-      "ms": 180,
+      "ms": 368,
       "action": "royal_admin_save_r118"
     },
     {
-      "at": 1794753177432,
+      "at": 1794757287120,
       "phase": "admin-navigation",
       "player": 0,
       "method": "POST",
       "path": "/api/admin",
       "status": 200,
-      "ms": 2,
+      "ms": 6,
       "action": "champions_admin_read_r118"
     },
     {
-      "at": 1794753177452,
+      "at": 1794757287134,
       "phase": "admin-navigation",
       "player": 0,
       "method": "GET",
       "path": "/api/admin",
       "status": 200,
-      "ms": 1
+      "ms": 6
     },
     {
-      "at": 1794753178149,
+      "at": 1794757288121,
       "phase": "admin-navigation",
       "player": 0,
       "method": "POST",
       "path": "/api/admin",
       "status": 200,
-      "ms": 122,
+      "ms": 366,
       "action": "champions_admin_save_r118"
     }
   ],

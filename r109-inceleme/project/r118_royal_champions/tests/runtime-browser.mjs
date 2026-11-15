@@ -25,7 +25,7 @@ const {BASE,temporary}=await import(coreRoot+'/tests/helpers.mjs');
 const {attachPanelRuntime}=await import(working+'/core511-source/scripts/delivery511/panel-control.mjs');
 let phase='preparation',browser,server,s,linkDelay=0,handoffs=0,started=Date.now(),browserUsersR113=[],independentTowersR113=[];
 const lag=()=>new Transform({transform(chunk,enc,callback){const delay=linkDelay;setTimeout(()=>this.push(chunk),delay);callback();}});
-const report={scope:'Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.',client:proof.name,checks};
+const report={realmId:process.env.CORE101_REALM_ID||'r1',namespace:CLIENT_ASSET_NAMESPACE,scope:'Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.',client:proof.name,checks};
 report.webSocketTransport=process.env.BROWSER_WS_TRANSPORT==='handoff'?'production-style-socket-handoff':'test-process-bridge';
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function wait(predicate,message,timeout=12000){const end=Date.now()+timeout;while(Date.now()<end){if(await predicate())return;await pause(70);}throw Error(message);}
@@ -52,6 +52,7 @@ try{
   for(const [kind,amount]of [['emerald_dust',40],['royal_crown',5]])sql.prepare('INSERT INTO dungeon_materials(player_id,kind,amount) VALUES(?,?,?) ON CONFLICT(player_id,kind) DO UPDATE SET amount=excluded.amount').run(seed.id,kind,amount);
 
  }});
+ assert.equal(s.host.expected.realmId,report.realmId,'actual realm fixture matches report');
  await s.host.database.atomic(()=>{globalThis.__colLaunch.grant(s.f.account.id,true);for(const user of browserUsersR113){globalThis.__colLaunch.grant(user.account.id,true);s.f.bot.deadline(user.account.id);}});
  const panel=attachPanelRuntime({host:s.host,core:s.core,world:s.world});await s.world.startJobs();s.core.start();cleanups.push(()=>panel.close());
  // Stage only the HTTP entry and a few server files. Unchanged large dependencies
@@ -123,12 +124,12 @@ try{
  await page.addInitScript(()=>{Object.defineProperty(AbortSignal,'any',{value:undefined,configurable:true});Object.defineProperty(AbortSignal,'timeout',{value:undefined,configurable:true});});
  await page.addInitScript(account=>{sessionStorage.setItem('coreoflife-chrome-warning:'+account,'accepted');},s.f.account.id);
  await page.addInitScript(()=>{
-  const prototype=CanvasRenderingContext2D.prototype,draw=prototype.fillText,drawImage=prototype.drawImage,labels=new WeakMap();window.__npcR118={};
+  const prototype=CanvasRenderingContext2D.prototype,draw=prototype.fillText,drawImage=prototype.drawImage,labels=new WeakMap();window.__npcR118={};window.__championsDrawnR118={};window.__championsNamesR118=new Set();
   const record=(ctx,text,x,y)=>{const box=ctx.canvas.getBoundingClientRect();if(!(box.width>0&&box.height>0))return;const m=ctx.getTransform(),dpr=ctx.canvas.width/box.width;window.__npcR118[text]={x:(m.a*x+m.c*y+m.e)/dpr+box.left,y:(m.b*x+m.d*y+m.f)/dpr+box.top,at:Date.now()};};
-  prototype.fillText=function(text,x,y,...rest){if(/Kraliyet Ustası|Demirci Haso/.test(String(text))){labels.set(this.canvas,String(text));record(this,String(text),x,y);}return draw.call(this,text,x,y,...rest);};
+  prototype.fillText=function(text,x,y,...rest){if(['Fildişi Muhafız','Altın Yeleli Arslan','Hilal Avcısı','Saltanat Devi'].includes(String(text)))window.__championsNamesR118.add(String(text));if(/Kraliyet Ustası|Demirci Haso/.test(String(text))){labels.set(this.canvas,String(text));record(this,String(text),x,y);}return draw.call(this,text,x,y,...rest);};
   // Mobile caches labels in detached canvases. Follow the cached text image
   // into the real visible canvas instead of treating cache pixels as CSS pixels.
-  prototype.drawImage=function(source,...args){const label=labels.get(source);if(label){let x,y,w,h;if(args.length===2){[x,y]=args;w=source.width;h=source.height;}else if(args.length===4){[x,y,w,h]=args;}else{[x,y,w,h]=args.slice(4);}record(this,label,x+w/2,y+h/2);}return drawImage.call(this,source,...args);};
+  prototype.drawImage=function(source,...args){const sprite=/\/champions-(ivory_guard|golden_lion|crescent_hunter|royal_colossus)-r118-/.exec(String(source?.src??''));if(sprite)window.__championsDrawnR118[sprite[1]]=(window.__championsDrawnR118[sprite[1]]??0)+1;const label=labels.get(source);if(label){let x,y,w,h;if(args.length===2){[x,y]=args;w=source.width;h=source.height;}else if(args.length===4){[x,y,w,h]=args;}else{[x,y,w,h]=args.slice(4);}record(this,label,x+w/2,y+h/2);}return drawImage.call(this,source,...args);};
 
  });
  if(process.env.ADMIN_ONLY!=='1'){
@@ -143,6 +144,14 @@ try{
  assert.equal((await own()).area,'bazaar');checks.push({name:'native champion entry',area:'bazaar',channels:s.supervisor.rows.size});
  await page.locator('canvas:visible').first().waitFor({state:'visible'});await pause(500);
  const capture=async name=>{assert(!/\b(?:weapon|armor|helmet|necklace|shoes|emerald_dust|royal_crown)\b/i.test(await page.locator('body').innerText()),'raw item identifiers exposed in UI');assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'horizontal overflow');await page.screenshot({path:out+'/'+name+'.png'});};
+ const closeRoyal=async()=>{
+  // SQLite committing is earlier than the UI receiving its confirmed result.
+  // Respect the pending-write close guard and use the real mobile close button.
+  await page.waitForFunction(()=>{const select=document.querySelector('select[aria-label="Kadim Zümrüt eşya seç"]');return select&&!select.disabled;});
+  const close=page.getByRole('dialog').getByRole('button',{name:'Close',exact:true});
+  if(mobile)await tap(close);else await close.click();
+  await page.waitForFunction(()=>!document.querySelector('[role=dialog]')&&getComputedStyle(document.body).pointerEvents!=='none');
+ };
  const npc=async name=>{
   // Radix retains its closing portal for an exit animation. A real canvas click
   // must wait until that portal releases pointer input; do not click through it.
@@ -161,15 +170,19 @@ try{
  await page.getByRole('button',{name:'Malzemeleri harca ve dönüştür',exact:true}).click();
  await wait(()=>s.f.sql.prepare('SELECT rarity FROM player_items WHERE id=?').get('r118-transform')?.rarity==='royal','royal transformation durable result');
  assert.equal(material('emerald_dust'),32);assert.equal(material('royal_crown'),4);checks.push({name:'actual NPC, royal UI, durable transform and costs'});await capture('royal-transform-after');
- await page.keyboard.press('Escape');
- phase='royal-town-menu';await page.getByRole('button',{name:'Işınlanma',exact:true}).click();await page.getByRole('button',{name:'Kasaba & Sosyal',exact:true}).click();await page.locator('[data-royal-entry="transform"]').click();await page.getByRole('heading',{name:'Hükümdar Kraliyet Seti',exact:true}).waitFor();assert.equal(await page.getByRole('dialog').count(),1,'town menu closes before royal panel opens');await page.keyboard.press('Escape');checks.push({name:'actual town menu royal entry opens one clean modal'});
+ await closeRoyal();
+ phase='royal-town-menu';await page.getByRole('button',{name:'Işınlanma',exact:true}).click();await page.getByRole('button',{name:'Kasaba & Sosyal',exact:true}).click();await page.locator('[data-royal-entry="transform"]').click();await page.getByRole('heading',{name:'Hükümdar Kraliyet Seti',exact:true}).waitFor();assert.equal(await page.getByRole('dialog').count(),1,'town menu closes before royal panel opens');await closeRoyal();checks.push({name:'actual town menu royal entry opens one clean modal'});
  phase='haso';await s.core.permanentPlayers([s.f.id],()=>s.f.sql.prepare("UPDATE players SET x=1200,y=500,combat_lock_until_ms=0 WHERE id=?").run(s.f.id));await wait(async()=>Math.abs((await own()).x-1200)<5,'Haso fixture movement');await npc('Demirci Haso');
  await page.locator('[data-royal-entry="salvage"]').click();
  await page.getByRole('heading',{name:'Zümrüt Tozu · Demirci Haso',exact:true}).waitFor();await page.getByLabel('Kadim Zümrüt eşya seç').selectOption('r118-salvage');await capture('haso-salvage-before');await page.getByRole('button',{name:'Eritmeyi incele',exact:true}).click();await page.getByRole('button',{name:'Eşyayı erit · 1 Toz al',exact:true}).click();
- await wait(()=>!s.f.sql.prepare('SELECT 1 FROM player_items WHERE id=?').get('r118-salvage'),'salvage durable result');assert.equal(material('emerald_dust'),33);checks.push({name:'actual Haso dialog closes, salvage confirms one selected item'});await capture('haso-salvage-after');await page.keyboard.press('Escape');
+ await wait(()=>!s.f.sql.prepare('SELECT 1 FROM player_items WHERE id=?').get('r118-salvage'),'salvage durable result');assert.equal(material('emerald_dust'),33);checks.push({name:'actual Haso dialog closes, salvage confirms one selected item'});await capture('haso-salvage-after');await closeRoyal();
  phase='champions-travel';page.on('dialog',d=>d.accept());
- await page.getByRole('button',{name:'Işınlanma',exact:true}).click();await page.getByRole('button',{name:'Av Bölgeleri',exact:true}).click();await page.locator('.champions118-destination').click();await page.waitForFunction(()=>window.__qaReadCore.world?.area==='champions');await pause(700);await capture('champions-map');
- const enemy=await page.evaluate(()=>window.__qaReadCore.world.monsters?.find(m=>m.hp>0));assert(enemy,'champion monster visible');
+ await page.getByRole('button',{name:'Işınlanma',exact:true}).click();await page.getByRole('button',{name:'Av Bölgeleri',exact:true}).click();await page.locator('.champions118-destination').click();await page.waitForFunction(()=>window.__qaReadCore.world?.area==='champions');
+ await page.waitForFunction(()=>Object.keys(window.__championsDrawnR118).length===4&&window.__championsNamesR118.size===4);
+ const rendered=await page.evaluate(()=>({monsters:window.__qaReadCore.world.monsters.filter(m=>m.area==='champions').map(m=>({id:m.id,name:m.name,area:m.area})),sprites:window.__championsDrawnR118,names:[...window.__championsNamesR118]}));
+ assert(rendered.monsters.length>0);for(const m of rendered.monsters)assert.match(m.id,/^champions-(ivory-guard|golden-lion|crescent-hunter|royal-colossus)-c[1-4]-(?:0[1-9]|1[0-2])$/,'canonical monster id reaches real browser');report.champions=rendered;
+ await capture('champions-map');
+ const enemy=await page.evaluate(()=>window.__qaReadCore.world.monsters?.find(m=>m.area==='champions'&&m.hp>0));assert(enemy,'champion monster visible');
  await s.core.permanentPlayers([s.f.id],()=>s.f.sql.prepare('UPDATE players SET x=?,y=?,combat_lock_until_ms=0 WHERE id=?').run(enemy.x,enemy.y+40,s.f.id));await pause(350);
  const attack=await page.evaluate(enemy=>window.__qaReadCore.command({action:'attack',targetId:enemy.id,spawnRound:enemy.spawn_round,ability:0,intentId:crypto.randomUUID(),requestId:crypto.randomUUID()}),enemy);assert.equal(attack.status,200,JSON.stringify(attack));await wait(()=>s.f.sql.prepare('SELECT hp FROM monsters WHERE id=?').get(enemy.id)?.hp<enemy.hp,'actual monster damage');await capture('champions-combat');checks.push({name:'real transport champion travel and combat, compiled map renderer'});
  await s.core.permanentPlayers([s.f.id],()=>s.f.sql.prepare('UPDATE players SET x=1800,y=1950,combat_lock_until_ms=0 WHERE id=?').run(s.f.id));await wait(async()=>Math.abs((await own()).x-1800)<5&&Math.abs((await own()).y-1950)<5,'disengage in clear entry area');await pause(1500);
