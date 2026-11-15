@@ -1,0 +1,70 @@
+{
+  "reason": "Unpublished R118 candidates retained byte-identically outside the active client graph. No R117 or older asset was moved.",
+  "files": [
+    {
+      "name": "game-client-core511-r118-9c1d68f09ecb31f6.js",
+      "sha256": "9c1d68f09ecb31f65ab464e5ec5105c7495852bb505556331b338ce15c41e477",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-art-r118-b76874788b586aa3.js",
+      "sha256": "b76874788b586aa32526eaffc0a3d9844cb382492f8265bd76b9bd3d6ecd9df1",
+      "retainedInGit": false
+    },
+    {
+      "name": "auth-portal-core511-r118-d8b6eb5d377087b6.js",
+      "sha256": "d8b6eb5d377087b66e60e0d52c70bd5dcc17d2a929e14cf0d1d8f211c44400b7",
+      "retainedInGit": true
+    },
+    {
+      "name": "game-client-core511-r118-a3dda0259af155b6.js",
+      "sha256": "a3dda0259af155b67849397fd0241a770e1da59f2fb6a75bdfceb6cf8822b69d",
+      "retainedInGit": true
+    },
+    {
+      "name": "auth-portal-core511-r118-92fbfe7b1ac5f869.js",
+      "sha256": "92fbfe7b1ac5f869ef5093cc5cc867336ec7186c0be82dc47783515020a05cea",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-map-r118-df5c71ca31267558.js",
+      "sha256": "df5c71ca312675586f92402f25c269e83924557017e988aa66eb0bff264fa0a2",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-map-r118-b0420489815c0e76.js",
+      "sha256": "b0420489815c0e76a45601bc55a43b0e6a93c2d84c61b8a3dbac9f774bf0fd18",
+      "retainedInGit": true
+    },
+    {
+      "name": "core511-presentation-r118-5a60ec128639dc03.js",
+      "sha256": "5a60ec128639dc0373edde39e5e3370c6ca3e678147e4b84df0a7ec3ba821330",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-nav-r118-883ff5ccf1e1d2da.js",
+      "sha256": "883ff5ccf1e1d2da402e68e66ba4a41c668e0fc24949b4848a1f726521591f00",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-championsAdmin-r118-60e7bd6f65281de2.js",
+      "sha256": "60e7bd6f65281de25a4ecaa21ed942eb1ca1434378e1c1f6128aafa681a08276",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-royalAdmin-r118-6fd3374e2583bda1.js",
+      "sha256": "6fd3374e2583bda10af86b71919b8f296674a07d59d45c4d0994806f20d1dfa7",
+      "retainedInGit": false
+    },
+    {
+      "name": "core511-ui-r118-8000bc3aa5109888.js",
+      "sha256": "8000bc3aa51098885520ee098980ccbd67d05c0ae24666594ac6da48f98c0380",
+      "retainedInGit": false
+    },
+    {
+      "name": "admin-client-core511-r118-04e6a802c49181ce.js",
+      "sha256": "04e6a802c49181cec0765e5b8262017ddc43a000d1a165520dfeba9860084ca5",
+      "retainedInGit": false
+    }
+  ]
+}

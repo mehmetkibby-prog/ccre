@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r118-a3dda0259af155b6.js",
+  "name": "game-client-core511-r118-a4d21f5a07c2cb04.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -241,9 +241,9 @@
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r118-d8b6eb5d377087b6.js",
+    "name": "auth-portal-core511-r118-e25fc8036012412d.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "d8b6eb5d377087b66e60e0d52c70bd5dcc17d2a929e14cf0d1d8f211c44400b7",
+    "patchedSha256": "e25fc8036012412dd8f826e7ea86fc86e2b33451f693e429302f2e655d3649e5",
     "entryProof": {
       "edits": [
         {
@@ -281,7 +281,7 @@
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
   "bridgeSha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "a3dda0259af155b67849397fd0241a770e1da59f2fb6a75bdfceb6cf8822b69d",
+  "patchedSha256": "a4d21f5a07c2cb04364ec1c7453754338138f6402ab9bbe0fe46c5df887b00ae",
   "bridge": "core511-transport-r118-c4d1b9128f079567.js",
   "edits": [
     {
@@ -5686,16 +5686,16 @@
     "modules": {
       "ui": "core511-ui-r118-35d1e138501d65ec.js",
       "art": "core511-art-r118-9b3f768e5a7dcd77.js",
-      "map": "core511-map-r118-b0420489815c0e76.js",
+      "map": "core511-map-r118-d1ca010e7892c254.js",
       "presentation": "core511-presentation-r118-c12506716f74fc34.js",
       "royalAdmin": "core511-royalAdmin-r118-2a6eed293f4bcf67.js",
       "championsAdmin": "core511-championsAdmin-r118-91bf55d2492a5b93.js",
       "nav": "core511-nav-r118-3946e2ed80e23106.js",
       "content": "core511-content-r118-88ec870c838c9fad.js",
       "transport": "core511-transport-r118-c4d1b9128f079567.js",
-      "game": "game-client-core511-r118-a3dda0259af155b6.js",
+      "game": "game-client-core511-r118-a4d21f5a07c2cb04.js",
       "admin": "admin-client-core511-r118-bd266dccdc24b06a.js",
-      "portal": "auth-portal-core511-r118-d8b6eb5d377087b6.js"
+      "portal": "auth-portal-core511-r118-e25fc8036012412d.js"
     },
     "assets": [
       {
@@ -5794,9 +5794,9 @@
         "bytes": 5795
       },
       {
-        "name": "core511-map-r118-b0420489815c0e76.js",
-        "sha256": "b0420489815c0e76a45601bc55a43b0e6a93c2d84c61b8a3dbac9f774bf0fd18",
-        "bytes": 3801
+        "name": "core511-map-r118-d1ca010e7892c254.js",
+        "sha256": "d1ca010e7892c2540ba068bc3651cb6bd0cdb21a84095d9525d38e08e8362eb7",
+        "bytes": 3918
       },
       {
         "name": "core511-presentation-r118-c12506716f74fc34.js",
@@ -5829,8 +5829,8 @@
         "bytes": 595331
       },
       {
-        "name": "game-client-core511-r118-a3dda0259af155b6.js",
-        "sha256": "a3dda0259af155b67849397fd0241a770e1da59f2fb6a75bdfceb6cf8822b69d",
+        "name": "game-client-core511-r118-a4d21f5a07c2cb04.js",
+        "sha256": "a4d21f5a07c2cb04364ec1c7453754338138f6402ab9bbe0fe46c5df887b00ae",
         "bytes": 1756906
       },
       {
@@ -5839,8 +5839,8 @@
         "bytes": 587908
       },
       {
-        "name": "auth-portal-core511-r118-d8b6eb5d377087b6.js",
-        "sha256": "d8b6eb5d377087b66e60e0d52c70bd5dcc17d2a929e14cf0d1d8f211c44400b7",
+        "name": "auth-portal-core511-r118-e25fc8036012412d.js",
+        "sha256": "e25fc8036012412dd8f826e7ea86fc86e2b33451f693e429302f2e655d3649e5",
         "bytes": 84195
       }
     ],
@@ -5855,7 +5855,7 @@
       },
       {
         "file": "champions-client-r118.mjs",
-        "sha256": "2fc6c3d1726d79960488c44be33673157c4a1dfbfeee6f30f79c0607849409da"
+        "sha256": "a9aa9cc7056d1ffaa1ac3823bd7c09c67a584af92b7ed64019e510b86cfe1288"
       },
       {
         "file": "royal-presentation-r118.mjs",
@@ -5877,7 +5877,7 @@
     "gameEdits": [
       {
         "label": "new feature imports",
-        "prefix": "import {createRoyalUIR118,openRoyalR118} from './core511-ui-r118-35d1e138501d65ec.js';\nimport {ROYAL_MEDIA_R118,drawRoyalArmorFxR118,drawRoyalWeaponFxR118} from './core511-art-r118-9b3f768e5a7dcd77.js';\nimport {createChampionsViewR118,CHAMPIONS_BOUNDS_R118,CHAMPIONS_SPAWN_R118,CHAMPIONS_PVP_NOTICE_R118,championsSegmentR118,clampChampionsR118} from './core511-map-r118-b0420489815c0e76.js';\nimport {createRoyalPresentationR118,royalEligibleClientR118} from './core511-presentation-r118-c12506716f74fc34.js';\n"
+        "prefix": "import {createRoyalUIR118,openRoyalR118} from './core511-ui-r118-35d1e138501d65ec.js';\nimport {ROYAL_MEDIA_R118,drawRoyalArmorFxR118,drawRoyalWeaponFxR118} from './core511-art-r118-9b3f768e5a7dcd77.js';\nimport {createChampionsViewR118,CHAMPIONS_BOUNDS_R118,CHAMPIONS_SPAWN_R118,CHAMPIONS_PVP_NOTICE_R118,championsSegmentR118,clampChampionsR118} from './core511-map-r118-d1ca010e7892c254.js';\nimport {createRoyalPresentationR118,royalEligibleClientR118} from './core511-presentation-r118-c12506716f74fc34.js';\n"
       },
       {
         "label": "initialize presentation beside existing UI",

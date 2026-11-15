@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: every real champion monster identity survives existing reward protocols and selects its own artwork
+ok 1 - every real champion monster identity survives existing reward protocols and selects its own artwork
+  ---
+  duration_ms: 14.102403
+  type: 'test'
+  ...
+# Subtest: new map artwork never recognizes an unrelated or malformed monster identity
+ok 2 - new map artwork never recognizes an unrelated or malformed monster identity
+  ---
+  duration_ms: 1.663013
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 320.132579

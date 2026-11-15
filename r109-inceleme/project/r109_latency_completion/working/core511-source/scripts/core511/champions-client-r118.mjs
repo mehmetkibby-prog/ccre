@@ -18,7 +18,8 @@ export function createChampionsViewR118(assets={}){
  }
  function key(monster){
   if(monster?.area!=='champions')return null;
-  return species.find(value=>String(monster.id).includes(value))??null;
+  const match=/^champions-(ivory-guard|golden-lion|crescent-hunter|royal-colossus)-c[1-4]-(?:0[1-9]|1[0-2])$/.exec(String(monster.id));
+  return match?match[1].replaceAll('-','_'):null;
  }
  function preload(){image(assets.map);for(const kind of species)image(assets.monsters?.[kind]);}
  function drawEnemy(ctx,monster,selected,now,moving,attack,travel,direction){
