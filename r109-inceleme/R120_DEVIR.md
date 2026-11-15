@@ -1,6 +1,6 @@
 # R120 devamı — 15 Kasım 2026
 
-Güncel kurucu R120_2D_DEPOT2; oyun/istemci dosyaları ilk R120 ile aynıdır. Canlıda doğrulanan backend hâlâ
+Güncel kurucu R120_2D_DEPOT3; oyun/istemci dosyaları ilk R120 ile aynıdır. Canlıda doğrulanan backend hâlâ
 R118_ROYAL1; R119 istemci kurulumunun durumu bilinmiyor. Yeni paket tam R118
 veya R119 üzerine uygulanır, R119 animasyonları dahil. Tarihsel ZIP/SHA değişmedi.
 
@@ -67,3 +67,23 @@ canlı ACME/Cloudflare ve telefon/PC akışları yapılmış gibi sunulmaz.
 Cloudflare bölgesi Full; otomatik mod açık (sonraki tarama Dec 8). Bölge değişmedi.
 Gerekiyorsa yalnız apex/www için Full Configuration Rule envanter sonrası
 kullanıcıya tarif edilir; mevcut Full nedeniyle bugün strict istisnası zorunlu değil.
+
+## V3 — dış 403 sonrası 2d TLS'i kaldırma döngüsü
+
+Kullanıcı apex DNS'ini 3D'ye taşıdı. V2 --prepare-web yerel kontrolü geçti,
+dış urllib GET HTTP 403 aldı ve aliası geri kaldırdı. Sonraki curl HTTP 525
+verdi. İlk 403'ün kaynak/kuralı hâlâ kesin değil; ikinci 525 ile karıştırılmamalı.
+
+V3 sadece hazırlık/kurucu değiştirir; oyun/forum dosyaları v1/v2 ile aynıdır.
+Yerel TLS + ana sayfa + eski yerel apex kontrolü başarısızsa geri dönüş sürer.
+Bu üç kontrol geçtiğinde dış erişim hatası yeni hostname'i kaldırmaz; özel
+günlükte local-ready-public-pending olur, işlem başarısız çıkar, normal
+--check/--apply tamamlanmış public hazırlık olmadan başlamaz. Yeniden deneme
+aynı config'i tekrar yüklemez. --check-public yalnız okur. HTTP/CF-Ray/
+CF-Mitigated ve redakte yönlendirme hostu gösterilir; redirect izlenmez.
+Güvenlik/SSL kapatılmaz; user-agent açıkça CoreOfLife readiness olarak tanımlıdır.
+
+39 hedefli test geçti; v2 rolled-back günlüğüyle uyumluluk doğrulandı.
+Ayrıntı evidence/verification-v3.json. Tam paket: `artifacts/R120_2D_DEPOT_a75c635543cf.zip`
+SHA256 `28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821`. Eski ZIP'ler/SHA'lar korunur.
+Canlı kurulum ve dış erişim kabulü henüz doğrulanmadı; 2D hazır denmez.

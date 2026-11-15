@@ -4,10 +4,10 @@ Only Caddy config and a private recovery journal are written. No DNS, cloud
 settings, game database, certificate private key or service restart is touched.
 The caller requires maintenance because Caddy reload can reconnect WebSockets.
 """
-import hashlib,json,socket,stat,tempfile,time,urllib.request
-from urllib.parse import urlsplit
+import hashlib,json,socket,stat,tempfile,time
 from pathlib import Path
 import domain_move as d
+import public_probe
 from storage import atomic,encoded,read,require,digest
 
 JOURNAL=Path('/var/lib/core511/r120-web/prepare.json')
@@ -87,13 +87,20 @@ def wait_ready(config,timeout,say):
   if time.monotonic()>=next_log:say('2d.coreoflife.net sertifikası bekleniyor; oyun servisleri yeniden başlatılmadı.');next_log=time.monotonic()+15
   time.sleep(1)
 
-def public_home():
- # Cloudflare-facing HTTPS is separate from the local origin handshake.
- # No credentials/cookies, and no redirects back to the future 3D host.
- with urllib.request.urlopen(d.ORIGIN+'/',timeout=20) as response:
-  body=response.read(2*1024*1024)
-  require(response.status==200 and urlsplit(response.url).hostname==d.HOST and (b'Core of Life' in body or b'CORE OF LIFE' in body),'Cloudflare üzerinden 2D ana sayfası doğrulanamadı; yönlendirme kuralları incelenmeli')
-  return {'status':response.status,'hostname':d.HOST}
+def public_home():return public_probe.probe()
+
+class PublicPending(RuntimeError):pass
+
+def require_public_ready():
+ j=saved()
+ require(not j or j.get('phase')=='ready','Web hazırlığı veya dış erişim henüz doğrulanmadı. Önce --prepare-web adımını tamamlayın; yerel TLS hazırsa --check-public sonucu ayrıntıyı gösterir. Oyun kurulumu başlamadı.')
+
+def check_public(say=print):
+ # Read-only and independent of maintenance; usable after an apex DNS cutover.
+ ready=wait_ready(current(),0,say);say('Yerel 2D TLS ve ana sayfa: doğrulandı.')
+ result=public_home();say('DIŞ ERİŞİM: '+public_probe.describe(result))
+ require(result.get('ok') is True,'Dış erişim henüz doğrulanmadı; DNS/SSL/güvenlik ayarı değiştirilmedi.')
+ return {**ready,'publicHomepage':result}
 
 def prepare(run,say=print,timeout=150):
  j=preflight(run)
@@ -116,10 +123,20 @@ def prepare(run,say=print,timeout=150):
   ready=wait_ready(j['after'],timeout,say)
   status,_,body=d.request_origin('/',host='coreoflife.net')
   require(status==old_status and sha(body)==j['oldPageSHA256'],'Mevcut ana site hazırlıkta değişti')
-  ready['publicHomepage']=public_home()
   require(current()==j['after'],'Caddy hazırlık sırasında dışarıdan değişti')
-  j['phase']='ready';j['verified']=ready;store(j)
  except BaseException:
   rollback(say);raise
+ # A verified additive hostname must not be removed because an external
+ # challenge/proxy/redirect fails. That caused a second TLS 525 after the
+ # original 403. Preserve the local result durably, but keep installation
+ # blocked and return nonzero until the independent public check succeeds.
+ j['phase']='local-ready-public-pending';j['verified']=ready;store(j)
+ say('Yerel 2D TLS ve ana sayfa doğrulandı; yeni hostname ayarı korundu.')
+ result=public_home();ready['publicHomepage']=result
+ require(current()==j['after'],'Caddy dış kontrol sırasında dışarıdan değişti; üzerine yazılmadı')
+ j['verified']=ready;store(j);say('DIŞ ERİŞİM: '+public_probe.describe(result))
+ if result.get('ok') is not True:
+  raise PublicPending('2D TLS ayarı korundu. Dış erişim doğrulanmadığı için oyun kurulumu başlamadı. Yukarıdaki HTTP/CF-Ray/CF-Mitigated sonucunu paylaşın; SSL veya güvenlik kontrollerini kapatmayın.')
+ j['phase']='ready';store(j)
  say('WEB HAZIRLIĞI TAMAM. Yeni adın TLS sertifikası ve ana sayfası doğrulandı; eski adres çalışıyor. DNS değişmedi.')
  return ready

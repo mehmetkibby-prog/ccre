@@ -8,7 +8,7 @@ import source_identity,readiness,r63_support as identity
 from storage import atomic,descriptor,digest,encoded,read,require,sync_dir,lock
 STATE=Path('/var/lib/core511/state.json');CONTROL=STATE.parent/'r102-admin-fix';ACTIVE=CONTROL/'active.json'
 RELEASES=Path('/opt/core511/releases');SYSTEMD=Path('/etc/systemd/system');HERE=Path(__file__).resolve().parent
-VERSION='R120_2D_DEPOT2';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
+VERSION='R120_2D_DEPOT3';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
 START=('coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service','coreoflife-r1.service','coreoflife-r2.service')
 def say(s):print(s,flush=True)
 
@@ -218,6 +218,7 @@ def validate_plan(plan):
 
 def preflight(live,z,plan,apply=False,restored_pending=False):
  validate_plan(plan)
+ web_prepare.require_public_ready()
  require(not ACTIVE.exists(),'Yarım güncelleme var; aynı paketle --recover çalıştırın')
  require(not(CONTROL/'prune-intent.json').exists(),'Yarım yedek temizliği var; --cleanup çalıştırın')
  for p in ('r102-updates/active.json','r101/active.json','r64-updates/active.json','launch-reset-r63/active.json'):
@@ -319,11 +320,12 @@ def apply(live,z,plan,prepared=None):
 
 def main(archive):
  p=argparse.ArgumentParser(description='R120 depo, canavar animasyonları ve 2D alan adı geçişi (tam R118/R119 üzerine)');g=p.add_mutually_exclusive_group(required=True)
- for name in ('check','apply','recover','rollback','cleanup','status','check-web','prepare-web','rollback-web'):g.add_argument('--'+name,action='store_true')
+ for name in ('check','apply','recover','rollback','cleanup','status','check-web','prepare-web','rollback-web','check-public'):g.add_argument('--'+name,action='store_true')
  args=p.parse_args();require(os.geteuid()==0,'VDS üzerinde root ile çalıştırın')
  if args.status:say(json.dumps({'pending':ACTIVE.exists(),'adminFix':read(STATE).get('r102AdminFix')},ensure_ascii=False));return
  with lock(STATE.parent/'r23-backups/install.lock'):
   live=discover()
+  if args.check_public:web_prepare.check_public(say);return
   if args.check_web or args.prepare_web or args.rollback_web:
    require(not ACTIVE.exists(),'Önce bekleyen oyun güncellemesini --recover ile tamamlayın')
    require(not(CONTROL/'prune-intent.json').exists(),'Yarım yedek temizliği var; önce kendi paketiyle --cleanup çalıştırın')

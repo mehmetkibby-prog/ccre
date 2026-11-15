@@ -1,0 +1,17 @@
+{
+  "file": "artifacts/R120_2D_DEPOT_a75c635543cf.zip",
+  "sha256": "28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821",
+  "bytes": 1461430,
+  "sourceVersions": [
+    "R118_ROYAL1",
+    "R119_MOTION1"
+  ],
+  "targetVersion": "R120_2D_DEPOT3",
+  "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
+  "namespace": "core511-17d72e47dc4df4fa",
+  "changedCodeFiles": 14,
+  "databaseScope": "none",
+  "acceptance": "pending",
+  "deployed": false,
+  "publicDomainTests": "pending"
+}

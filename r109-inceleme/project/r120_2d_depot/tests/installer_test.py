@@ -72,7 +72,7 @@ class Installation(unittest.TestCase):
   f=self.fixture(source);beforedb={k:digest(v['path']) for k,v in f.f.databases.items()};prior=f.result();oldBackup={str(p):digest(p) for p in Path(prior['directory']).rglob('*') if p.is_file()}
   m.apply(f.live,f.z,f.plan);j=f.result();m.validate_record(j,completed=True)
   self.assertEqual(beforedb,{k:digest(v['path']) for k,v in f.f.databases.items()});self.assertEqual(oldBackup,{p:digest(p) for p in oldBackup})
-  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT2');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
+  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT3');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
   for p in f.settings:self.assertIn('2d.coreoflife.net',json.loads(p.read_text())['hosts'])
   for row in f.f.databases.values():
    with sqlite3.connect(row['path']) as db:db.execute('UPDATE players SET gems=98765');db.commit()

@@ -88,3 +88,9 @@ R120 v2 continuation (15 Nov 2026): screenshots confirm Cloudflare Full with aut
 mode, and Caddy default certificate automation. Use R120_2D_DEPOT2 and its
 maintenance-gated --prepare-web, then --check/--apply. Game bytes equal v1.
 Read the updated R120_DEVIR.md; live end-to-end acceptance remains pending.
+
+R120 v3 continuation: current installer R120_2D_DEPOT3 keeps verified local
+2d TLS when an external HTTP check fails, instead of removing the new alias.
+Main installation remains blocked pending a successful public check; no security
+bypass. User moved apex DNS to 3D. Read R120_DEVIR.md v3 section and preserve
+all v1/v2 archives. Live acceptance and original HTTP 403 cause remain pending.

@@ -1,0 +1,34 @@
+test_failed_https_restores_every_domain_setting_and_keeps_progress (__main__.Installation.test_failed_https_restores_every_domain_setting_and_keeps_progress) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: injected R120 HTTPS failure
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ok
+test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy (__main__.Installation.test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R120 TAMAMLANDI. Efsane ve Akademi depo düzeltildi, 2D alan adı yerel HTTPS üzerinden doğrulandı; sekiz kanal hazır. Bakım ayarın korundu.
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ok
+test_r118_cumulative_apply_and_rollback (__main__.Installation.test_r118_cumulative_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R120 TAMAMLANDI. Efsane ve Akademi depo düzeltildi, 2D alan adı yerel HTTPS üzerinden doğrulandı; sekiz kanal hazır. Bakım ayarın korundu.
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ok
+test_r119_apply_and_rollback (__main__.Installation.test_r119_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R119 TAMAMLANDI. Efsane ve Akademi Şampiyonlar Diyarı animasyonları güncellendi; sekiz kanal hazır. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R120 TAMAMLANDI. Efsane ve Akademi depo düzeltildi, 2D alan adı yerel HTTPS üzerinden doğrulandı; sekiz kanal hazır. Bakım ayarın korundu.
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ok
+test_unknown_source_rejected_and_no_database_migration (__main__.Installation.test_unknown_source_rejected_and_no_database_migration) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 43.947s
+
+OK

@@ -1,0 +1,51 @@
+{
+  "package": {
+    "file": "artifacts/R120_2D_DEPOT_a75c635543cf.zip",
+    "sha256": "28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821",
+    "bytes": 1461430,
+    "sourceVersions": [
+      "R118_ROYAL1",
+      "R119_MOTION1"
+    ],
+    "targetVersion": "R120_2D_DEPOT3",
+    "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
+    "namespace": "core511-17d72e47dc4df4fa",
+    "changedCodeFiles": 14,
+    "databaseScope": "none",
+    "acceptance": "39 targeted tests passed; unchanged game/forum payload; public incident still needs VDS verification",
+    "deployed": false,
+    "publicDomainTests": "pending"
+  },
+  "tests": {
+    "domain_test-v3.log": 9,
+    "web_prepare_test-v3.log": 14,
+    "web_cli_test-v3.log": 5,
+    "public_probe_test-v3.log": 6,
+    "installer-v3.log": 5
+  },
+  "totalTests": 39,
+  "regressionFixed": "External HTTP failure no longer removes independently verified additive 2d TLS. Pending public checks return failure and block main install. Local failures still roll back.",
+  "v2JournalCompatibility": true,
+  "readOnlyPublicCheck": true,
+  "gameForumPayloadUnchanged": true,
+  "transportTlsTest": "Existing actual Caddy auto-TLS test remains applicable: domain_move.py unchanged since v2. No production ACME or Cloudflare success asserted.",
+  "latestLiveEvidence": {
+    "apexDnsMoved": "reported by user",
+    "v2Prepare": "local checks passed then external HTTP 403; rolled back before game apply",
+    "afterRollback": "HTTP 525, Server cloudflare; Ray a5b0ec3278b32cb3-AMS"
+  },
+  "original403Cause": "not yet identified; next probe emits safe headers and redirect destination without following it",
+  "pending": [
+    "V3 live preparation, exact HTTP/CF-Ray/CF-Mitigated outcome",
+    "Cloudflare rule inventory",
+    "Game install and public mobile/desktop flows",
+    "Post-cutover no-apex-request checks"
+  ],
+  "notChanged": [
+    "DNS",
+    "3D server",
+    "Cloudflare zone/security rules",
+    "game data/schema",
+    "historical ZIPs"
+  ]
+}

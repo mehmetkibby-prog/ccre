@@ -12,7 +12,8 @@
 - Etkin Cloudflare yönlendirme/Worker/cache/SaaS kurallarının envanteri bekliyor.
 - Mevcut apex ana sayfası temiz tarayıcıda HTTP 200 verdi; service worker kaydı
   ve tarayıcı hatası görülmedi. Bu kontrol eski kullanıcı profillerini kapsamaz.
-- Apex/www DNS kesimi kullanıcıya aittir. Bu paket DNS API çağrısı yapmaz.
+- Kullanıcı apex DNS'ini 3D'ye taşıdığını bildirdi (15 Kasım, 22:10 ekranı).
+  Bu paket DNS API çağrısı yapmaz. Kesim sonrası canlı kabul şimdi gereklidir.
 
 ## 1. VDS / sertifika
 
@@ -20,12 +21,16 @@
 kullandığını doğruladı. `certificates: []` sadece elle yüklenen sertifikaların
 olmadığını gösterir; sertifika yok demek değildir. 2d hostu henüz tanımlı değil.
 
-V2 kurucudaki `--check-web` salt okunurdur. Bakım sırasında `--prepare-web`
+V3 kurucudaki `--check-web` salt okunurdur. Bakım sırasında `--prepare-web`
 eski apex kurallarını koruyarak 2d eşlerini ekler. Caddy mevcut sertifika
 sağlayıcısıyla yeni hostname sertifikasını otomatik alır. Elle sertifika/key
 listesi eklenmez, ACME/Cloudflare TLS doğrulaması kapatılmaz. Hazırlık hem
 localhost origin'i hostname/CA doğrulamasıyla hem Cloudflare ana sayfasını
-HTTPS ile kontrol eder; hata halinde eski Caddy ayarına döner.
+HTTPS ile kontrol eder. Yerel TLS/sayfa doğrulaması başarısızsa eski Caddy
+ayarına döner. Dış kontrol başarısızsa doğrulanmış yeni hostname korunur, oyun
+kurulumu engellenir. `--check-public` ayrıntıyı yeniden okur; dış kontrol geçince
+`--prepare-web` tekrar çalıştırılır. V2'deki dış 403 sonrası geri dönüş yeni
+hostname'i kaldırdığı için sonrasında Cloudflare 525 görüldü; V3 bu döngüyü önler.
 
 Kontrol bu çalışma ortamında gerçek Caddy + izole yerel CA ile yapıldı;
 canlı ACME sertifikası ancak kullanıcı VDS'te hazırlığı çalıştırınca doğrulanır.
@@ -115,3 +120,15 @@ video akışlarını gezin. Request URL hostu TAM `coreoflife.net` veya
 `/rehber`, `/forum`, `/on-kayit`, `/akademi-kayit`, `/col-site`, `/_game`, `/game`,
 `/voice` ve bunların alt yolları. Yol ve sorgu korunur. `/api`, `/ws`, `/assets`,
 `/` ve diğer yollar 3D'ye aittir. Bu paket 3D VDS'ine dokunmaz.
+
+## 15 Kasım dış erişim olayı
+
+V2 çıktısı: yerel hazırlıktan sonra dış HTTP 403; otomatik web geri dönüşü.
+Sonraki curl: HTTP/2 525, Server cloudflare, Ray `a5b0ec3278b32cb3-AMS`.
+Bu Ray 525 isteğine aittir; ilk 403'ün Ray kimliği önceki kurucuda tutulmamıştı.
+İlk 403'ün kuralı/kaynağı kesinleşmedi. DNS değişikliği tek başına bu sonucun
+nedeni diye sunulmaz. V3 yeni hata bilgisini gizli veri olmadan gösterecektir.
+CF-Mitigated=challenge varsa otomatik istek sınaması söz konusudur; Security
+Events içinde yeni Ray/host/zaman ile ilgili kural incelenir. Geniş WAF/Bot
+Fight/SSL kapatma veya başka hostlara etki eden değişiklik yapılmaz. 525 yerel
+TLS sağlamken sürerse 2d DNS hedefi, AAAA/Origin Rule/SNI seçimi ayrıca kontrol edilir.

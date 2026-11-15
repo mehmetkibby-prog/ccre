@@ -18,7 +18,7 @@ class Preparation(unittest.TestCase):
   self.scope.enter_context(patch.object(d,'CONFIG',self.file));self.scope.enter_context(patch.object(d,'api',side_effect=self.api));self.scope.enter_context(patch.object(w,'JOURNAL',self.journal));self.scope.enter_context(patch.object(w.socket,'getaddrinfo',return_value=[('resolved',)]))
   self.scope.enter_context(patch.object(d,'request_origin',side_effect=lambda *a,**k:(200,{},b'Core of Life unchanged')))
   self.scope.enter_context(patch.object(d,'certificate_ready',return_value=[{'path':None,'names':[d.HOST],'notAfter':'synthetic'}]))
-  self.scope.enter_context(patch.object(w,'public_home',return_value={'status':200,'hostname':d.HOST}))
+  self.scope.enter_context(patch.object(w,'public_home',return_value={'status':200,'hostname':d.HOST,'ok':True}))
  def api(self,value=None):
   if value is not None:self.loads.append(copy.deepcopy(value));self.running=copy.deepcopy(value)
   return copy.deepcopy(self.running)
@@ -38,10 +38,27 @@ class Preparation(unittest.TestCase):
   with patch.object(d,'certificate_ready',side_effect=RuntimeError('certificate unavailable')):
    with self.assertRaisesRegex(RuntimeError,'sertifikası'):self.prepare()
   self.assertEqual(self.file.read_bytes(),self.raw);self.assertEqual(self.running,self.initial);self.assertEqual(w.saved()['phase'],'rolled-back');self.assertEqual(len(self.loads),2)
- def test_public_cloudflare_failure_restores_old_site(self):
-  with patch.object(w,'public_home',side_effect=RuntimeError('wrong redirect')):
-   with self.assertRaisesRegex(RuntimeError,'wrong redirect'):self.prepare()
-  self.assertEqual(self.file.read_bytes(),self.raw);self.assertEqual(self.running,self.initial)
+ def test_public_403_preserves_verified_tls_and_blocks_install_until_retry(self):
+  with patch.object(w,'public_home',return_value={'ok':False,'status':403,'headers':{'Server':'cloudflare','CF-Mitigated':'challenge','CF-Ray':'synthetic-ray'}}):
+   with self.assertRaises(w.PublicPending):self.prepare()
+  self.assertEqual(self.running,d.caddy_alias(self.initial));self.assertEqual(json.loads(self.file.read_bytes()),self.running);self.assertEqual(len(self.loads),1)
+  self.assertEqual(w.saved()['phase'],'local-ready-public-pending');self.assertTrue(w.saved()['verified']['tlsVerified'])
+  with self.assertRaisesRegex(RuntimeError,'dış erişim'):w.require_public_ready()
+  self.prepare();self.assertEqual(len(self.loads),1);self.assertEqual(w.saved()['phase'],'ready');w.require_public_ready()
+ def test_public_525_redirect_or_network_failure_does_not_remove_valid_local_tls(self):
+  for probe in ({'ok':False,'status':525},{'ok':False,'status':302,'redirect':{'host':'coreoflife.net'}},{'ok':False,'errorType':'URLError'}):
+   with patch.object(w,'public_home',return_value=probe):
+    with self.assertRaises(w.PublicPending):self.prepare()
+   self.assertEqual(self.running,d.caddy_alias(self.initial));self.assertEqual(len(self.loads),1)
+  w.rollback(lambda m:None);self.assertEqual(self.file.read_bytes(),self.raw)
+ def test_readonly_public_check_does_not_reload_or_mutate_journal(self):
+  self.prepare();raw=self.journal.read_bytes();loads=len(self.loads);before=self.file.read_bytes()
+  with patch.object(w,'public_home',return_value={'ok':False,'status':403}):
+   with self.assertRaisesRegex(RuntimeError,'Dış erişim'):w.check_public(lambda m:None)
+  self.assertEqual(self.journal.read_bytes(),raw);self.assertEqual(self.file.read_bytes(),before);self.assertEqual(len(self.loads),loads)
+ def test_v2_rollback_journal_is_compatible(self):
+  j=w.preflight(self.validate_cmd);j['phase']='rolled-back';w.store(j)
+  self.assertEqual(j['version'],'R120_WEB2');self.prepare();self.assertEqual(len(self.loads),1);self.assertEqual(w.saved()['beforeBytes'],self.raw.hex())
  def test_failed_caddy_load_restores_persisted_file(self):
   def fail_once(value=None):
    if value is not None and value!=self.initial:raise RuntimeError('load rejected')

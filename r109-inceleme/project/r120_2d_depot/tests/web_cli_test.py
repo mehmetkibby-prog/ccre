@@ -26,6 +26,14 @@ class CLI(unittest.TestCase):
     with self.assertRaisesRegex(RuntimeError,'bakımı'):self.command(flag)
   self.prepare.assert_not_called();self.rollback.assert_not_called()
   self.policy={'phase':'maintenance','deadlineMs':0};self.command('prepare-web');self.prepare.assert_called_once();self.command('rollback-web');self.rollback.assert_called_once()
+ def test_public_check_is_readonly_without_maintenance(self):
+  with patch.object(m.web_prepare,'check_public') as check:
+   self.command('check-public');check.assert_called_once()
+  self.prepare.assert_not_called();self.central.assert_not_called()
+ def test_pending_public_check_blocks_main_install_before_service_actions(self):
+  with patch.object(m,'validate_plan'),patch.object(m.web_prepare,'require_public_ready',side_effect=RuntimeError('public pending')),patch.object(m,'prop') as prop:
+   with self.assertRaisesRegex(RuntimeError,'public pending'):m.preflight(SimpleNamespace(),None,{})
+   prop.assert_not_called()
  def test_other_incomplete_install_is_not_ignored(self):
   self.policy={'phase':'maintenance','deadlineMs':0};marker=self.root/'r101/active.json';marker.parent.mkdir();marker.write_text('{}')
   with self.assertRaisesRegex(RuntimeError,'Başka kurulum'):self.command('prepare-web')

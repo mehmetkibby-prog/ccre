@@ -1,0 +1,31 @@
+[
+  {
+    "test": "domain_test.py",
+    "exit": 0,
+    "seconds": 0.27,
+    "log": "evidence/domain_test-v3.log"
+  },
+  {
+    "test": "web_prepare_test.py",
+    "exit": 0,
+    "seconds": 0.26,
+    "log": "evidence/web_prepare_test-v3.log"
+  },
+  {
+    "test": "web_cli_test.py",
+    "exit": 0,
+    "seconds": 0.36,
+    "log": "evidence/web_cli_test-v3.log"
+  },
+  {
+    "test": "public_probe_test.py",
+    "exit": 0,
+    "seconds": 0.14,
+    "log": "evidence/public_probe_test-v3.log"
+  },
+  {
+    "check": "v2-v3-game-and-forum-payload-identical",
+    "files": 16,
+    "passed": true
+  }
+]

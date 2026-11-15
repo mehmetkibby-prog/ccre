@@ -1,0 +1,14 @@
+test_certificate_hostname_and_validity_before_install (__main__.Domain.test_certificate_hostname_and_validity_before_install) ... ok
+test_exact_prepared_alias_is_idempotent_and_custom_alias_is_not_overwritten (__main__.Domain.test_exact_prepared_alias_is_idempotent_and_custom_alias_is_not_overwritten) ... ok
+test_exact_urls_preserve_accounts_email_issuer_queries_and_foreign_hosts (__main__.Domain.test_exact_urls_preserve_accounts_email_issuer_queries_and_foreign_hosts) ... ok
+test_existing_routes_identical_new_alias_is_complete (__main__.Domain.test_existing_routes_identical_new_alias_is_complete) ... ok
+test_game_origins_keep_both_hosts_and_no_domain_cookie (__main__.Domain.test_game_origins_keep_both_hosts_and_no_domain_cookie) ... ok
+test_import_guard_distinguishes_resource_directory_from_module (__main__.Domain.test_import_guard_distinguishes_resource_directory_from_module) ... ok
+test_realtime_exact_origin_union_and_env_injection_rejected (__main__.Domain.test_realtime_exact_origin_union_and_env_injection_rejected) ... ok
+test_restore_refuses_external_caddy_change (__main__.Domain.test_restore_refuses_external_caddy_change) ... ok
+test_site_canonical_email_media_manifest_sitemap_and_old_backup (__main__.Domain.test_site_canonical_email_media_manifest_sitemap_and_old_backup) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.108s
+
+OK
