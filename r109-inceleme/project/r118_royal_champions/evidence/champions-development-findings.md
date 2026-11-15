@@ -42,3 +42,18 @@ joined-path concurrency. The final legal 50-player run supplies that coverage.
 Early test experiments that wrongly demanded a joined marker from this solo
 fallback are retained in `champions-checkpoint-host-*.log`; those failures were
 coverage assertions, not gameplay exceptions.
+
+## Installed host fixture cadence correction
+
+An installed-stage run returned `429 basic_attack_cadence` without owner faults
+or disconnects. The earlier fixture selected ability 2 on every iteration once
+HP fell below 54. Random damage could leave a few HP after the special, causing
+another cast only 750 ms later despite its native 12-second cooldown. The
+error alone did not prove this was the first special; the prior description
+of it as a first special was unproven.
+
+The fixture now starts with explicit fresh attack clocks, sends exactly one
+special after its initial nonlethal basic hit, and finishes with basic attacks.
+It honors basic `nextAttackAtMs` responses, records every ability/damage/HP,
+and asserts exactly one special succeeded. No runtime guard, cooldown or retry
+policy was changed. The failed staged log is retained by the package tests.

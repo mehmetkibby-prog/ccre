@@ -22,13 +22,19 @@ test('production-flags owner stream persists nonlethal damage, kills, claims and
  const monsterId=championsMonsterIdR118('ivory_guard',1,1);assert.match(monsterId,/^[a-z0-9-]{1,64}$/);assert.deepEqual(normalizeClaimTargets([{id:monsterId,spawnRound:17}]),[{id:monsterId,spawnRound:17}]);
  await coordinator.nativeConfiguration.run([],()=>f.sql.prepare('UPDATE monsters SET hp=300,max_hp=300,spawn_round=17,respawn_at=0 WHERE id=?').run(monsterId));
  const mob=f.sql.prepare('SELECT x,y FROM monsters WHERE id=?').get(monsterId);
- await coordinator.permanentPlayers([f.id],()=>f.sql.prepare("UPDATE players SET champion_level_r102=1,level=65,rank_tier=18,role='avci',skill_three=3,area='champions',x=?,y=?,hp=1000,max_hp=1000,combat_lock_until_ms=0,attack_one_at=0,rod_equipped=0 WHERE id=?").run(mob.x+25,mob.y,f.id));
- const attack={action:'attack',targetId:monsterId,spawnRound:17,ability:0};let killed=false,nonlethal=0,remaining=300;
+ await coordinator.permanentPlayers([f.id],()=>f.sql.prepare("UPDATE players SET champion_level_r102=1,level=65,rank_tier=18,role='avci',skill_three=3,area='champions',x=?,y=?,hp=1000,max_hp=1000,combat_lock_until_ms=0,attack_one_at=0,attack_two_at=0,attack_three_at=0,attack_four_at=0,rod_equipped=0 WHERE id=?").run(mob.x+25,mob.y,f.id));
+ const attack={action:'attack',targetId:monsterId,spawnRound:17,ability:0};let killed=false,nonlethal=0,remaining=300,specialUsed=false,nextBasicAt=0;const attacks=[];
  for(let n=0;n<25&&!killed;n++){
   if(n)await pause(750);
-  const result=await send({...attack,ability:remaining<=54?2:0,intentId:'champions-checkpoint-'+n});assert.equal(result.status,200,JSON.stringify(result));const hit=result.body?.hits?.find(h=>h.id===monsterId);assert(hit,JSON.stringify(result));killed=hit.killed===true;remaining=hit.hp;if(!killed)nonlethal++;
+  // A special may leave a few HP after its random damage roll. Use it once,
+  // then finish with basics instead of illegally repeating its 12s cooldown.
+  const ability=n===1?2:0;
+  if(ability===0)await pause(Math.max(0,nextBasicAt-Date.now()+25));
+  const result=await send({...attack,ability,intentId:'champions-checkpoint-'+n});assert.equal(result.status,200,JSON.stringify({result,attacks}));const hit=result.body?.hits?.find(h=>h.id===monsterId);assert(hit,JSON.stringify(result));
+  if(ability===2)specialUsed=true;else nextBasicAt=Number(result.body?.nextAttackAtMs)||0;
+  attacks.push({ability,damage:hit.damage,hp:hit.hp});killed=hit.killed===true;remaining=hit.hp;if(!killed)nonlethal++;
  }
- assert(nonlethal>0);assert(killed);
+ assert(nonlethal>0);assert(killed);assert.equal(attacks.filter(a=>a.ability===2).length,1);assert(attacks[0].hp>0);
  // A lethal visual reply precedes the durable receipt. Wait for the actual
  // persisted defeat before judging its committed rewards.
  await until(()=>f.sql.prepare('SELECT rewards_completed_at FROM normal_defeats WHERE monster_id=? AND spawn_round=17').get(monsterId)?.rewards_completed_at>0||s.faults.length,15000);
@@ -39,5 +45,5 @@ test('production-flags owner stream persists nonlethal damage, kills, claims and
  const at=Math.max(...drops.map(d=>d.collectible_at));await pause(Math.max(0,at*1000-Date.now()+30));
  for(const drop of drops){const result=await send({action:'collect',targetId:drop.id});assert.equal(result.status,200,JSON.stringify(result));}
  assert.equal(f.sql.prepare('SELECT amount FROM dungeon_materials WHERE player_id=? AND kind=?').get(f.id,'royal_crown').amount,1);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM world_drops WHERE monster_id=?').get(monsterId).n,0);assert.equal(s.faults.length,0,faults());assert.equal(s.live.ws.readyState,1);
- t.diagnostic(JSON.stringify({coreRoot,realm:process.env.R102_TEST_REALM??'fixture',nonlethal,claims:2,collected:drops.length,faults:s.faults.length}));
+ t.diagnostic(JSON.stringify({coreRoot,realm:process.env.R102_TEST_REALM??'fixture',nonlethal,specialUsed,attacks,claims:2,collected:drops.length,faults:s.faults.length}));
 });
