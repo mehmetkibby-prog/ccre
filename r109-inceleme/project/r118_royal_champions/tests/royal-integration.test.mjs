@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {DatabaseSync} from 'node:sqlite';
+import {createStorage,ensureStorageSchema} from '../../r109_latency_completion/working/native510-bb3a6cc689c6/vds-server/src/storage.mjs';
 import {RoyalHttpR118} from '../../r109_latency_completion/working/core511-source/scripts/core511/royal-http-r118.mjs';
 import {RoyalServiceR118} from '../../r109_latency_completion/working/core511-source/scripts/core511/royal-service-r118.mjs';
 import {ROYAL_DEFAULTS_R118} from '../../r109_latency_completion/working/core511-source/scripts/core511/royal-config-r118.mjs';
@@ -76,4 +77,30 @@ test('royal status authenticates twice and never leaks another character after s
  const bridge=new RoyalHttpR118({},()=>core),response=await bridge.route(new Request('https://game.invalid/api/royal-r118'));
  assert.equal(response.status,401);assert.equal(reads,0);assert.equal((await response.json()).code,'game_instance_expired');
  assert.equal((await bridge.route(new Request('https://game.invalid/api/royal-r118',{method:'POST'}))).status,405);
+});
+
+
+test('royal materials and gear preserve quantities, identity and replay through actual storage',async t=>{
+ const f=await setupPvp(t),sql=f.sql;ensureStorageSchema(sql);
+ sql.prepare("UPDATE players SET area='bazaar',x=1790,y=1110,hp=1000,combat_lock_until_ms=0,arena_match_id='',champion_level_r102=1 WHERE id IN (?,?)").run(f.id,f.targetId);
+ const storage=createStorage(sql,{now:()=>f.nowMs}),balance=kind=>sql.prepare('SELECT amount FROM dungeon_materials WHERE player_id=? AND kind=?').get(f.id,kind)?.amount??0;
+ for(const kind of ['emerald_dust','royal_crown']){
+  sql.prepare('INSERT INTO dungeon_materials(player_id,kind,amount) VALUES(?,?,9)').run(f.id,kind);
+  const request={action:'storage_deposit',itemId:'material:'+kind,amount:4,requestId:'deposit-'+kind.replaceAll('_','-')+'-r118'};
+  assert.equal(storage.act(f.id,request).ok,true);assert.equal(storage.act(f.id,request).ok,true);assert.equal(balance(kind),5);
+  const row=sql.prepare("SELECT * FROM player_storage_items WHERE player_id=? AND kind=?").get(f.id,kind);assert.equal(row.amount,4);
+  assert.throws(()=>storage.act(f.targetId,{action:'storage_withdraw',itemId:row.id,amount:4,requestId:'foreign-'+kind.replaceAll('_','-')+'-r118'}),/bulunamadı/);
+  assert.equal(balance(kind),5);
+  const take={action:'storage_withdraw',itemId:row.id,amount:4,requestId:'withdraw-'+kind.replaceAll('_','-')+'-r118'};
+  assert.equal(storage.act(f.id,take).ok,true);assert.equal(storage.act(f.id,take).ok,true);assert.equal(balance(kind),9);
+  assert.equal(sql.prepare('SELECT COUNT(*) n FROM player_storage_items WHERE id=?').get(row.id).n,0);
+ }
+ const id='royal-storage-fixture-r118';
+ sql.prepare("INSERT INTO player_items(id,player_id,kind,item_name,rarity,power,role,enchantments,created_at,equipped,sale_locked499)VALUES(?,?,'armor','+5 Sonsuz Kraliyet Hükümdar Zırhı','royal',493,'muhafiz',?,1,0,1)").run(id,f.id,JSON.stringify([{kind:'hp',value:5}]));
+ const before=plain(sql.prepare('SELECT * FROM player_items WHERE id=?').get(id));
+ storage.act(f.id,{action:'storage_deposit',itemId:id,requestId:'royal-gear-deposit-r118'});
+ assert.equal(sql.prepare('SELECT COUNT(*) n FROM player_items WHERE id=?').get(id).n,0);
+ storage.act(f.id,{action:'storage_withdraw',itemId:id,requestId:'royal-gear-withdraw-r118'});
+ assert.deepEqual(plain(sql.prepare('SELECT * FROM player_items WHERE id=?').get(id)),before);
+ assert.equal(sql.isTransaction,false);
 });
