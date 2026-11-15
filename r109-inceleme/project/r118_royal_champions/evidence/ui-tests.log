@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: bounded reads reject broken, unauthorized and timed-out responses without AbortSignal.any
+ok 1 - bounded reads reject broken, unauthorized and timed-out responses without AbortSignal.any
+  ---
+  duration_ms: 12.584025
+  type: 'test'
+  ...
+# Subtest: admin requests use authenticated CSRF route, reject missing revisions, and clear timeouts
+ok 2 - admin requests use authenticated CSRF route, reject missing revisions, and clear timeouts
+  ---
+  duration_ms: 29.793079
+  type: 'test'
+  ...
+# Subtest: royal transform requires review, prevents duplicate submission, and replays same request after uncertain response
+ok 3 - royal transform requires review, prevents duplicate submission, and replays same request after uncertain response
+  ---
+  duration_ms: 62.184461
+  type: 'test'
+  ...
+# Subtest: salvage confirms loss of exactly selected item and protects locked or nonchampion remote actions
+ok 4 - salvage confirms loss of exactly selected item and protects locked or nonchampion remote actions
+  ---
+  duration_ms: 25.386669
+  type: 'test'
+  ...
+# Subtest: read failure leaves visible retry rather than permanent loading and abort on close causes no stale state
+ok 5 - read failure leaves visible retry rather than permanent loading and abort on close causes no stale state
+  ---
+  duration_ms: 8.402923
+  type: 'test'
+  ...
+# Subtest: admin validates mandatorydust, resourcebounds, duplicateingredients and safe fourmonsterloot quantities
+ok 6 - admin validates mandatorydust, resourcebounds, duplicateingredients and safe fourmonsterloot quantities
+  ---
+  duration_ms: 1.098892
+  type: 'test'
+  ...
+# Subtest: admin stale-save response keeps draft and requires explicit reload before newrevision save
+ok 7 - admin stale-save response keeps draft and requires explicit reload before newrevision save
+  ---
+  duration_ms: 17.549372
+  type: 'test'
+  ...
+# Subtest: mapadmin edits independent crown chance and species with plain zero-essence support
+ok 8 - mapadmin edits independent crown chance and species with plain zero-essence support
+  ---
+  duration_ms: 15.584528
+  type: 'test'
+  ...
+# Subtest: Haso entry closes the existing suspended dialog before opening salvage
+ok 9 - Haso entry closes the existing suspended dialog before opening salvage
+  ---
+  duration_ms: 16.858251
+  type: 'test'
+  ...
+# Subtest: both new admin panels recover from an incomplete initial response with explicit retry
+ok 10 - both new admin panels recover from an incomplete initial response with explicit retry
+  ---
+  duration_ms: 16.627659
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 607.297823
