@@ -36,6 +36,12 @@ Hedef çekirdek: `2625bdb67a25f12a6f60ceb968ff4495219e78b9e3ef32e47acbab9443f2a9
 
 Namespace: `core511-f3b670dfef6c25f1`
 
+Doğrulanan indirme (HTTP 200 + SHA256 + ZIP bütünlüğü):
+`https://raw.githubusercontent.com/mehmetkibby-prog/ccre/52030069819a4563d78e646952c35864ad5ccca1/r119-animasyon.zip`
+
+Kaynak dal: `codex/r119-champion-motion`; teslimat dalı `r119-download`.
+İndirme doğrulaması `project/r119_monster_motion/evidence/download-verification.json`.
+
 Mevcut R110 devretme/readStop, R115 kapsam ve R116 parçalama korumaları;
 SQLite/ödül/makbuz/sahiplik/RNG ve R118 Kraliyet şeması aynen korunur.
 R119 geri dönüşü oyuncu verisini geri almaz; eski R118 şema yedekleri saklanır.
