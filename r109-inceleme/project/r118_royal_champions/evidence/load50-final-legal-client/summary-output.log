@@ -1,0 +1,99 @@
+{
+  "forest": {
+    "runs": 1,
+    "allFunctionalChecksAccepted": true,
+    "strictLatencyTargetMet": false,
+    "metrics": {
+      "defeats": {
+        "median": 240,
+        "worst": 240,
+        "minimum": 240
+      },
+      "claims": {
+        "median": 240,
+        "worst": 240,
+        "minimum": 240
+      },
+      "collects": {
+        "median": 145,
+        "worst": 145,
+        "minimum": 145
+      },
+      "attackP95Ms": {
+        "median": 2164,
+        "worst": 2164,
+        "minimum": 2164
+      },
+      "attackP99Ms": {
+        "median": 4202,
+        "worst": 4202,
+        "minimum": 4202
+      },
+      "attackMaxMs": {
+        "median": 9384,
+        "worst": 9384,
+        "minimum": 9384
+      },
+      "channelTickP95WorstMs": {
+        "median": 138.92,
+        "worst": 138.92,
+        "minimum": 138.92
+      },
+      "channelTickP99WorstMs": {
+        "median": 524.26,
+        "worst": 524.26,
+        "minimum": 524.26
+      },
+      "channelMaxTickWorstMs": {
+        "median": 937.2,
+        "worst": 937.2,
+        "minimum": 937.2
+      },
+      "mainEluPercent": {
+        "median": 69.81096127998799,
+        "worst": 69.81096127998799,
+        "minimum": 69.81096127998799
+      },
+      "mainCpuOneCorePercent": {
+        "median": 98.81934973863171,
+        "worst": 98.81934973863171,
+        "minimum": 98.81934973863171
+      },
+      "mainTimerOver50Count": {
+        "median": 186,
+        "worst": 186,
+        "minimum": 186
+      },
+      "mainMaxPauseMs": {
+        "median": 427.6032219999979,
+        "worst": 427.6032219999979,
+        "minimum": 427.6032219999979
+      },
+      "worstChannelTimerOver50Count": {
+        "median": 71,
+        "worst": 71,
+        "minimum": 71
+      },
+      "rssSummedPeaksMiB": {
+        "median": 1562.58984375,
+        "worst": 1562.58984375,
+        "minimum": 1562.58984375
+      },
+      "cpuFourCoreBudgetPercent": {
+        "median": 73.02536019280365,
+        "worst": 73.02536019280365,
+        "minimum": 73.02536019280365
+      },
+      "nrThrottled": {
+        "median": 90,
+        "worst": 90,
+        "minimum": 90
+      },
+      "throttledUsec": {
+        "median": 2896809,
+        "worst": 2896809,
+        "minimum": 2896809
+      }
+    }
+  }
+}

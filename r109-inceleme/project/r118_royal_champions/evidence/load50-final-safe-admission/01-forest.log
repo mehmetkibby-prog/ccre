@@ -1,0 +1,41 @@
+pearl_reset {"applied":true,"appliedAtMs":1794760031631,"backupName":"before-pearl-reset-1794760031631-f8dfda2e-f39b-4ac9-9b3c-bc4ae5ab7eb6.sqlite"}
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+yuk_basladi 50 oyuncu 60s
+CHSTATE t=0 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9
+CHSTATE t=5 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+CHSTATE t=10 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+OLDEST [{"p":"fd1c:4","ch":1,"party":false,"seq":21,"ms":4023,"a":"attack","t":"e-9548-b40ebbe7fd1c-1-12","ws":1}]
+PROG t=10s kills=0 sent=1414 acked=1385 pending=29 oldestMs=4023 disc=0 gaps=0
+CHSTATE t=15 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+CHSTATE t=20 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+PROG t=20s kills=2 sent=1751 acked=1751 pending=0 oldestMs=0 disc=0 gaps=0
+CHSTATE t=25 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+CHSTATE t=30 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+PROG t=30s kills=2 sent=1751 acked=1751 pending=0 oldestMs=0 disc=0 gaps=0
+CHSTATE t=35 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+CHSTATE t=40 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+PROG t=40s kills=2 sent=1751 acked=1751 pending=0 oldestMs=0 disc=0 gaps=0
+CHSTATE t=45 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+CHSTATE t=50 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+PROG t=50s kills=2 sent=1751 acked=1751 pending=0 oldestMs=0 disc=0 gaps=0
+CHSTATE t=55 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+POST_WORKLOAD_DRAIN {"activeDurationMs":60000,"pendingAfterOriginal5s":[],"pendingFinalAfterOriginal5s":[],"extraWaitLimitMs":25000,"elapsedMs":2.675731999988784,"pendingFinalAfterDrain":[],"pendingAfterDrain":[],"openSocketPending":0}
+ECON {"start":{"xp":0,"gems":500000,"essence":50000,"level":3250,"potions":5000,"contribution":0},"end":{"xp":0,"gems":500000,"essence":50000,"level":3250,"potions":4995,"contribution":0},"xpClaims":1,"items":250}
+DB {"defeats":1,"dropsPending":0,"drops":0,"pending":0,"claims":1,"sample":[{"monster_id":"golge-validation-c031ac6f-c128-485e-9548-b40ebbe7fd1c-3-6","spawn_round":17,"rewards_completed_at":1794760062,"parts":1,"claims":1}]}
+AFFECTED {"gear":{"n":0,"open":0,"acked":0},"poked":{"n":0,"open":0,"acked":0},"geared":{"n":0,"open":0,"acked":0},"others":{"n":50,"open":50,"acked":0}} CHEND 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0 start=1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9
+CHSTATE t=60 1:running:96d4 2:running:3ac7 3:running:6f51 4:running:b4f9 faults=0
+PROG t=60s kills=2 sent=1751 acked=1751 pending=0 oldestMs=0 disc=0 gaps=0
+SHARED {}
+LOOT {"collects":0,"found":0,"noDrop":0,"failed":0,"retries":0}
+AOE {"multiHit":0,"multiKill":0,"abilityUses":0,"killHist":{"1":1}}
+OBSERVER {"samples":0,"p50":0,"p95":0,"p99":0,"p999":0,"max":0,"over150":0,"over300":0,"over500":0,"jumps80":0,"motionSent":6867}
+SERVER_MOTION {"1":{"received":1747,"accepted":950,"rejected":797,"limited":0,"delivered":12671,"proximitySkipped":0,"reasons":{"position_revision":6,"segment_collision":791}},"2":{"received":2294,"accepted":1546,"rejected":748,"limited":0,"delivered":21061,"proximitySkipped":0,"reasons":{"position_revision":2,"segment_collision":740,"dead":6}},"3":{"received":1409,"accepted":800,"rejected":609,"limited":0,"delivered":11575,"proximitySkipped":0,"reasons":{"position_revision":3,"segment_collision":606}},"4":{"received":1417,"accepted":859,"rejected":558,"limited":0,"delivered":12196,"proximitySkipped":0,"reasons":{"position_revision":2,"segment_collision":553,"dead":3}}}
+ERRCODES {"move:409":702,"attack:basic_attack_cadence":16,"use_potion:Yaratığın vuruşu önce gerçekleşti; yeniden doğmayı bekliyorsun.":1,"use_potion:Can iksirin yok.":3}
+MOTION {"sent":0,"recv":52471,"streams":50,"cycles":[1]}
+CHURN {}
+{"latency":{"move":{"n":1651,"p50":87,"p95":488,"p99":921,"max":2798,"over300":182,"over500":79,"over1000":16},"attack":{"n":84,"p50":126,"p95":2341,"p99":4060,"max":4060,"over300":20,"over500":17,"over1000":17},"use_potion":{"n":9,"p50":1649,"p95":2764,"p99":2764,"max":2764,"over300":9,"over500":9,"over1000":7},"heartbeat":{"n":6,"p50":145,"p95":2126,"p99":2126,"max":2126,"over300":2,"over500":1,"over1000":1},"claim_rewards":{"n":1,"p50":287,"p95":287,"p99":287,"max":287,"over300":0,"over500":0,"over1000":0}},"kills":2,"players":50,"channels":[{"ch":"channel-1","players":13,"tickP95":10.25,"tickP99":39.51,"maxTick":424.3,"maxPause":103.7,"elu":0.104},{"ch":"channel-2","players":13,"tickP95":35.84,"tickP99":116.78,"maxTick":333.9,"maxPause":95.8,"elu":0.167},{"ch":"channel-3","players":12,"tickP95":10.94,"tickP99":29.93,"maxTick":73.3,"maxPause":146.3,"elu":0.093},{"ch":"channel-4","players":12,"tickP95":12.27,"tickP99":47.61,"maxTick":85.7,"maxPause":103.9,"elu":0.101}],"others":[{"t":"main","maxPause":289.4,"elu":0.239},{"t":"world","maxPause":107.9,"elu":0.026},{"t":"reader","maxPause":179.8,"elu":0.024},{"t":"reader-actor-1","maxPause":104.3,"elu":0.033},{"t":"reader-actor-2","maxPause":103.8,"elu":0.032}],"errors":722,"disconnects":0,"rssMB":1532,"cpu":0.27538982697871567}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:28:31.522Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":50372,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4b876cde5596bee1a8f3acf0"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:28:31.524Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":50378,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"88184311d4fd20e21523fa6c"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:28:31.524Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":50388,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c238346a0e55e7b789e68dc5"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:28:31.524Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":50394,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"efb4d83f2bb6ccae205864fe"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:28:31.654Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":50357,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"9b43cec3b3ee8cd7e73e724d"}

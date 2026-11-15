@@ -1,0 +1,22 @@
+pearl_reset {"applied":true,"appliedAtMs":1794760454352,"backupName":"before-pearl-reset-1794760454352-4f2d55ef-ea96-406c-921f-3c02c6615e45.sqlite"}
+{"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+CHILD_STDERR 1 running
+
+CHILD_STDERR 2 running
+
+CHILD_STDERR 3 running
+
+CHILD_STDERR 4 running
+
+FAULTS []
+yuk_hata benchmark_actor_died_during_admission:{"hp":0,"max_hp":100} benchmark_actor_died_during_admission:{"hp":0,"max_hp":100}
+Error: benchmark_actor_died_during_admission:{"hp":0,"max_hp":100}
+    at kernelError (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:14:58)
+    at demand (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/contract.mjs:15:51)
+    at file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/benchmark/load50.mjs:198:104
+[]
+{"event":"core511_recovery_cause","at":"2026-11-15T16:34:40.502Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":51022,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bb5827bd62e3a670622cce88"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:34:40.502Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":51032,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0fd9c146bdeb24870cce90c0"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:34:40.503Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":51042,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"83ff7e0115e009545b86a69b"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:34:40.503Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":51052,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a29bcac56936f80e45ff8780"}
+{"event":"core511_recovery_cause","at":"2026-11-15T16:34:40.598Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":51011,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"43915fbe1482c47deccde060"}

@@ -1,0 +1,56 @@
+{
+  "packageSha256": "640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7",
+  "runtimeChangedDuringFinalHarnessCorrections": false,
+  "status": "unavailable",
+  "validatedPopulationCapacity": null,
+  "latestRequestedScope": {
+    "players": 50,
+    "areas": [
+      "forest",
+      "champions"
+    ],
+    "runsPerArea": 1
+  },
+  "validTimedRuns": 0,
+  "finalAttempt": {
+    "directory": "load50-final-stationary-calibrated",
+    "area": "forest",
+    "timedWorkloadStarted": false,
+    "fatal": "benchmark_actor_died_during_admission:{\"hp\":0,\"max_hp\":100}",
+    "runtimeFaults": 0,
+    "disconnects": 0,
+    "protocolErrors": 0,
+    "championsRun": "not started after strict preflight failure"
+  },
+  "decision": "Stop optional harness under explicit time/credit constraint; retain completed feature/installer checks, do not claim capacity, zero lag, medians or a completed comparison.",
+  "fixtureLimits": [
+    "Synthetic fresh database and colocated bots under4CPUquota, not live8coreVDS.",
+    "Fixture-derived HP remained100 despite attempted ordinary equipment setup; actors died during sequential admission. This prevents the intended sustained50-combat proof.",
+    "Prior safe-admission navigation run crossed forest collision geometry and is invalid as performance acceptance.",
+    "Calibrated stationary scenario used admin damage1 and HP3000, no GM/HPboost/guard bypass; admission still failed."
+  ],
+  "rawPreserved": [
+    "load50-final-current",
+    "load50-final-legal-client",
+    "load50-final-certified",
+    "load50-final-safe-admission",
+    "load50-final-stationary",
+    "load50-final-stationary-calibrated"
+  ],
+  "performanceTable": [
+    {
+      "area": "forest",
+      "validRuns": 0,
+      "attackP95Ms": null,
+      "attackP99Ms": null,
+      "tickP99Ms": null
+    },
+    {
+      "area": "champions",
+      "validRuns": 0,
+      "attackP95Ms": null,
+      "attackP99Ms": null,
+      "tickP99Ms": null
+    }
+  ]
+}

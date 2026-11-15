@@ -1,0 +1,10 @@
+{
+  "activeDurationMs": 60000,
+  "pendingAfterOriginal5s": [],
+  "pendingFinalAfterOriginal5s": [],
+  "extraWaitLimitMs": 25000,
+  "elapsedMs": 2.675731999988784,
+  "pendingFinalAfterDrain": [],
+  "pendingAfterDrain": [],
+  "openSocketPending": 0
+}

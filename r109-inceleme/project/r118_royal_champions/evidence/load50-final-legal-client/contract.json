@@ -1,0 +1,30 @@
+{
+  "players": 50,
+  "perChannel": [
+    13,
+    13,
+    12,
+    12
+  ],
+  "seconds": 60,
+  "repetitions": 3,
+  "source": {
+    "sha256": "e9278b405ea72fc4dadfcba7a0469a9ffae3584e2dc450cc1d4936fdd5e929d8",
+    "files": 2079,
+    "includes": [
+      "core511",
+      "native/lib",
+      "native/vds-server",
+      "HTTP/accounts runtime",
+      "client/media",
+      "benchmark driver"
+    ]
+  },
+  "node": "/workspace/ccre/r79_stability_work/runtime/node-v22.23.4-linux-x64/bin/node",
+  "notes": [
+    "Synthetic fresh database, not a sanitized production database.",
+    "Bots and server share this host; not a production capacity guarantee.",
+    "Serial forest/champions runs with matched geometry/HP/damage/respawn and ordinary gameplay guards.",
+    "Map reward policies remain their real policies, including the default 2% crown chance."
+  ]
+}

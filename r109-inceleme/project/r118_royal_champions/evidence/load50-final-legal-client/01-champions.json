@@ -1,0 +1,1200 @@
+{
+ "completed": false,
+ "mode": "corrected-upload-local-reproduction",
+ "r56Flags": {
+  "CORE511_R56_REFRESH_READ_PIPELINE": false,
+  "CORE511_R56_AUDIT_GATE": false,
+  "CORE511_R56_NONLETHAL_REWARDS": true,
+  "CORE511_R56_REWARD_SLICE": true,
+  "CORE511_R56_BULK_HITS": true,
+  "CORE511_R56_RESOURCE_BATCH": true,
+  "CORE511_R56_XP_GROUP": true,
+  "CORE511_R56_REWARD_WARMUP": true,
+  "CORE511_R56_CLAIM_SCOPED_DRAIN": false,
+  "CORE511_R56_CLAIM_ACTOR_JOIN": true,
+  "CORE511_R56_COMPLETED_CLAIM": true,
+  "CORE511_R56_SMALL_GROUP_EAGER": true,
+  "CORE511_R56_WORKER_WINDOW": true,
+  "CORE511_R56_REWARD_READ_CACHE": true,
+  "CORE511_R56_MIST_CONFIG_CACHE": true,
+  "CORE511_R56_POTION_ACTOR_JOIN": true,
+  "CORE511_R56_SECTION_READ_GROUP": true,
+  "CORE511_R56_SHORT_WRITE_WINDOW": true,
+  "CORE511_R56_SMALL_REWARD_COMPLETE": true
+ },
+ "monsterPool": "extreme-per-player-map",
+ "capacityValidated": false,
+ "localHostAuthorization": "User authorized isolated local bot reproduction; current CPU quota must be checked separately; bots co-located.",
+ "legacyCountersNotUnique": [
+  "kills",
+  "rewardPending"
+ ],
+ "actualKillsUse": "actualRewards.defeats",
+ "legacyNavigationPreserved": true,
+ "unacked": 50,
+ "pending": [
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:0",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 12,
+   "ageMs": 63857.962720999996,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:25",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 12,
+   "ageMs": 60501.51780500001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:50",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 12,
+   "ageMs": 64211.91188100001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:75",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 12,
+   "ageMs": 64211.841702000005,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:1",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63857.903997999994,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:26",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60551.447561999994,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:51",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.823843,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:76",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 9,
+   "ageMs": 65069.550083,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:2",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64160.997282,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:27",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60501.467728,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:52",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63908.780230000004,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:77",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64311.458973999994,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:3",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64059.025269000005,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:28",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60501.45694,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:53",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 9,
+   "ageMs": 64717.447362000006,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:78",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64160.948833,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:4",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64008.295343,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:29",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60501.445226,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:54",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64008.246055999996,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:79",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64160.935687000005,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:5",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64008.233012,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:30",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 11,
+   "ageMs": 59781.12841599999,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:55",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64058.987271,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:80",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.75623,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:6",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 9,
+   "ageMs": 64717.189879,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:31",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60239.709913000006,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:56",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64058.976514,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:81",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.731091999995,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:7",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64008.231722000004,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:32",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60346.97902399999,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:57",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64058.965255,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:82",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.71439800001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:8",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64008.223158,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:33",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60346.93057700001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:58",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64058.957689,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:83",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.69701,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:9",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63857.91091500001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:34",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60346.918597,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:59",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63908.774068000006,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:84",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64211.677363,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:10",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63857.903840000006,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:35",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60296.709517,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:60",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63908.766706,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:85",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 9,
+   "ageMs": 65019.514154000004,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:11",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63707.80016800001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:36",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60296.650313,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:61",
+   "channel": 3,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63908.75937999999,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:86",
+   "channel": 4,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 64160.941591999996,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:12",
+   "channel": 1,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 63707.74379600001,
+   "measured": true,
+   "wireAttempts": 1
+  },
+  {
+   "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:37",
+   "channel": 2,
+   "action": "attack",
+   "sequence": 10,
+   "ageMs": 60296.63804099999,
+   "measured": true,
+   "wireAttempts": 1
+  }
+ ],
+ "rejectedBeforeQueue": 0,
+ "rejectionLatency": {
+  "n": 0,
+  "p50": 0,
+  "p95": 0,
+  "p99": 0,
+  "max": 0,
+  "observations": []
+ },
+ "ignoredReplies": {},
+ "completionAccounting": {
+  "sent": 497,
+  "nativeResults": 447,
+  "rejectedBeforeQueue": 0,
+  "pending": 50,
+  "balanced": true
+ },
+ "failureEvidence": {
+  "total": 45,
+  "byKind": {
+   "disconnect": 45
+  },
+  "byCode": {
+   "disconnect:4003": 45
+  },
+  "first": [
+   {
+    "at": 1794756027930,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:76",
+    "channel": 4
+   },
+   {
+    "at": 1794756028078,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:85",
+    "channel": 4
+   },
+   {
+    "at": 1794756028207,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:6",
+    "channel": 1
+   },
+   {
+    "at": 1794756028234,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:53",
+    "channel": 3
+   },
+   {
+    "at": 1794756028665,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:50",
+    "channel": 3
+   },
+   {
+    "at": 1794756028675,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:51",
+    "channel": 3
+   },
+   {
+    "at": 1794756028724,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:2",
+    "channel": 1
+   },
+   {
+    "at": 1794756028852,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:55",
+    "channel": 3
+   },
+   {
+    "at": 1794756028856,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:81",
+    "channel": 4
+   },
+   {
+    "at": 1794756028867,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:56",
+    "channel": 3
+   },
+   {
+    "at": 1794756028875,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:57",
+    "channel": 3
+   },
+   {
+    "at": 1794756028883,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:58",
+    "channel": 3
+   },
+   {
+    "at": 1794756028906,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:82",
+    "channel": 4
+   },
+   {
+    "at": 1794756028920,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:3",
+    "channel": 1
+   },
+   {
+    "at": 1794756028932,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:83",
+    "channel": 4
+   },
+   {
+    "at": 1794756028932,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:84",
+    "channel": 4
+   },
+   {
+    "at": 1794756028944,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:4",
+    "channel": 1
+   },
+   {
+    "at": 1794756028955,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:54",
+    "channel": 3
+   },
+   {
+    "at": 1794756028976,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:78",
+    "channel": 4
+   },
+   {
+    "at": 1794756028977,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:5",
+    "channel": 1
+   },
+   {
+    "at": 1794756028980,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:7",
+    "channel": 1
+   },
+   {
+    "at": 1794756028986,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:79",
+    "channel": 4
+   },
+   {
+    "at": 1794756028988,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:8",
+    "channel": 1
+   },
+   {
+    "at": 1794756029002,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:52",
+    "channel": 3
+   },
+   {
+    "at": 1794756029016,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:86",
+    "channel": 4
+   },
+   {
+    "at": 1794756029020,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:59",
+    "channel": 3
+   },
+   {
+    "at": 1794756029021,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:60",
+    "channel": 3
+   },
+   {
+    "at": 1794756029025,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:61",
+    "channel": 3
+   },
+   {
+    "at": 1794756029036,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:1",
+    "channel": 1
+   },
+   {
+    "at": 1794756029065,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:9",
+    "channel": 1
+   },
+   {
+    "at": 1794756029070,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:10",
+    "channel": 1
+   },
+   {
+    "at": 1794756029169,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:11",
+    "channel": 1
+   },
+   {
+    "at": 1794756029201,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:12",
+    "channel": 1
+   },
+   {
+    "at": 1794756032418,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:26",
+    "channel": 2
+   },
+   {
+    "at": 1794756032456,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:28",
+    "channel": 2
+   },
+   {
+    "at": 1794756032496,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:29",
+    "channel": 2
+   },
+   {
+    "at": 1794756032524,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:27",
+    "channel": 2
+   },
+   {
+    "at": 1794756032604,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:32",
+    "channel": 2
+   },
+   {
+    "at": 1794756032643,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:33",
+    "channel": 2
+   },
+   {
+    "at": 1794756032656,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:34",
+    "channel": 2
+   },
+   {
+    "at": 1794756032672,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:35",
+    "channel": 2
+   },
+   {
+    "at": 1794756032686,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:36",
+    "channel": 2
+   },
+   {
+    "at": 1794756032691,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:37",
+    "channel": 2
+   },
+   {
+    "at": 1794756032700,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:31",
+    "channel": 2
+   },
+   {
+    "at": 1794756033103,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:30",
+    "channel": 2
+   }
+  ],
+  "tail": [
+   {
+    "at": 1794756027930,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:76",
+    "channel": 4
+   },
+   {
+    "at": 1794756028078,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:85",
+    "channel": 4
+   },
+   {
+    "at": 1794756028207,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:6",
+    "channel": 1
+   },
+   {
+    "at": 1794756028234,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:53",
+    "channel": 3
+   },
+   {
+    "at": 1794756028665,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:50",
+    "channel": 3
+   },
+   {
+    "at": 1794756028675,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:51",
+    "channel": 3
+   },
+   {
+    "at": 1794756028724,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:2",
+    "channel": 1
+   },
+   {
+    "at": 1794756028852,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:55",
+    "channel": 3
+   },
+   {
+    "at": 1794756028856,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:81",
+    "channel": 4
+   },
+   {
+    "at": 1794756028867,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:56",
+    "channel": 3
+   },
+   {
+    "at": 1794756028875,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:57",
+    "channel": 3
+   },
+   {
+    "at": 1794756028883,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:58",
+    "channel": 3
+   },
+   {
+    "at": 1794756028906,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:82",
+    "channel": 4
+   },
+   {
+    "at": 1794756028920,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:3",
+    "channel": 1
+   },
+   {
+    "at": 1794756028932,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:83",
+    "channel": 4
+   },
+   {
+    "at": 1794756028932,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:84",
+    "channel": 4
+   },
+   {
+    "at": 1794756028944,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:4",
+    "channel": 1
+   },
+   {
+    "at": 1794756028955,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:54",
+    "channel": 3
+   },
+   {
+    "at": 1794756028976,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:78",
+    "channel": 4
+   },
+   {
+    "at": 1794756028977,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:5",
+    "channel": 1
+   },
+   {
+    "at": 1794756028980,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:7",
+    "channel": 1
+   },
+   {
+    "at": 1794756028986,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:79",
+    "channel": 4
+   },
+   {
+    "at": 1794756028988,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:8",
+    "channel": 1
+   },
+   {
+    "at": 1794756029002,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:52",
+    "channel": 3
+   },
+   {
+    "at": 1794756029016,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:86",
+    "channel": 4
+   },
+   {
+    "at": 1794756029020,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:59",
+    "channel": 3
+   },
+   {
+    "at": 1794756029021,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:60",
+    "channel": 3
+   },
+   {
+    "at": 1794756029025,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:61",
+    "channel": 3
+   },
+   {
+    "at": 1794756029036,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:1",
+    "channel": 1
+   },
+   {
+    "at": 1794756029065,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:9",
+    "channel": 1
+   },
+   {
+    "at": 1794756029070,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:10",
+    "channel": 1
+   },
+   {
+    "at": 1794756029169,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:11",
+    "channel": 1
+   },
+   {
+    "at": 1794756029201,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:12",
+    "channel": 1
+   },
+   {
+    "at": 1794756032418,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:26",
+    "channel": 2
+   },
+   {
+    "at": 1794756032456,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:28",
+    "channel": 2
+   },
+   {
+    "at": 1794756032496,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:29",
+    "channel": 2
+   },
+   {
+    "at": 1794756032524,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:27",
+    "channel": 2
+   },
+   {
+    "at": 1794756032604,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:32",
+    "channel": 2
+   },
+   {
+    "at": 1794756032643,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:33",
+    "channel": 2
+   },
+   {
+    "at": 1794756032656,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:34",
+    "channel": 2
+   },
+   {
+    "at": 1794756032672,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:35",
+    "channel": 2
+   },
+   {
+    "at": 1794756032686,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:36",
+    "channel": 2
+   },
+   {
+    "at": 1794756032691,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:37",
+    "channel": 2
+   },
+   {
+    "at": 1794756032700,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:31",
+    "channel": 2
+   },
+   {
+    "at": 1794756033103,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:30",
+    "channel": 2
+   }
+  ],
+  "firstByKind": [
+   {
+    "at": 1794756027930,
+    "kind": "disconnect",
+    "code": "4003",
+    "actor": "1a1f2f0b-955b-49df-b85a-0bc96cf89522:76",
+    "channel": 4
+   }
+  ],
+  "firstDetailsOmitted": 0,
+  "limits": {
+   "first": 512,
+   "tail": 64,
+   "keys": 129
+  }
+ },
+ "sent": 497,
+ "acked": 447,
+ "errors": 0,
+ "disconnects": 45,
+ "faults": [
+  {
+   "at": 1794756088176,
+   "code": "actor_command_outcome_stalled",
+   "message": "actor_command_outcome_stalled",
+   "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+   "context": null
+  },
+  {
+   "at": 1794756088799,
+   "code": "actor_command_outcome_stalled",
+   "message": "actor_command_outcome_stalled",
+   "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+   "context": null
+  },
+  {
+   "at": 1794756088846,
+   "code": "actor_command_outcome_stalled",
+   "message": "actor_command_outcome_stalled",
+   "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+   "context": null
+  },
+  {
+   "at": 1794756092752,
+   "code": "actor_command_outcome_stalled",
+   "message": "actor_command_outcome_stalled",
+   "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+   "context": null
+  }
+ ],
+ "fatal": {
+  "code": "load_process_changed",
+  "message": "load_process_changed"
+ }
+}

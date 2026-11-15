@@ -1,0 +1,200 @@
+{
+ "completed": false,
+ "rewardObservationR54": {
+  "provisional": 0,
+  "durableDeathFromInputMs": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null,
+   "max": null
+  },
+  "firstOwnXpOrTargetDropObservedMs": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null,
+   "max": null
+  },
+  "visibilityDefinition": "First world packet after durable death with increased own XP/rank XP or new owned drop for the target; other party awards can contribute to the XP observation. Not an exact per-receipt attribution.",
+  "damage": {
+   "n": 0,
+   "p50": null,
+   "p95": null,
+   "p99": null,
+   "max": null
+  },
+  "rejected": 0,
+  "pendingFinal": [],
+  "pendingVisibility": 0,
+  "eventTypes": {
+   "player_hit": 3430,
+   "undefined": 229
+  }
+ },
+ "mode": "corrected-upload-local-reproduction",
+ "r56Flags": {
+  "CORE511_R56_REFRESH_READ_PIPELINE": false,
+  "CORE511_R56_AUDIT_GATE": false,
+  "CORE511_R56_NONLETHAL_REWARDS": true,
+  "CORE511_R56_REWARD_SLICE": true,
+  "CORE511_R56_BULK_HITS": true,
+  "CORE511_R56_RESOURCE_BATCH": true,
+  "CORE511_R56_XP_GROUP": true,
+  "CORE511_R56_REWARD_WARMUP": true,
+  "CORE511_R56_CLAIM_SCOPED_DRAIN": false,
+  "CORE511_R56_CLAIM_ACTOR_JOIN": true,
+  "CORE511_R56_COMPLETED_CLAIM": true,
+  "CORE511_R56_SMALL_GROUP_EAGER": true,
+  "CORE511_R56_WORKER_WINDOW": true,
+  "CORE511_R56_REWARD_READ_CACHE": true,
+  "CORE511_R56_MIST_CONFIG_CACHE": true,
+  "CORE511_R56_POTION_ACTOR_JOIN": true,
+  "CORE511_R56_SECTION_READ_GROUP": true,
+  "CORE511_R56_SHORT_WRITE_WINDOW": true,
+  "CORE511_R56_SMALL_REWARD_COMPLETE": true
+ },
+ "monsterPool": "extreme-per-player-map",
+ "capacityValidated": false,
+ "localHostAuthorization": "User authorized isolated local bot reproduction; current CPU quota must be checked separately; bots co-located.",
+ "legacyCountersNotUnique": [
+  "kills",
+  "rewardPending"
+ ],
+ "actualKillsUse": "actualRewards.defeats",
+ "legacyNavigationPreserved": true,
+ "unacked": 0,
+ "pending": [],
+ "rejectedBeforeQueue": 0,
+ "rejectionLatency": {
+  "n": 0,
+  "p50": 0,
+  "p95": 0,
+  "p99": 0,
+  "max": 0,
+  "observations": []
+ },
+ "ignoredReplies": {},
+ "completionAccounting": {
+  "sent": 0,
+  "nativeResults": 0,
+  "rejectedBeforeQueue": 0,
+  "pending": 0,
+  "balanced": true
+ },
+ "failureEvidence": {
+  "total": 8,
+  "byKind": {
+   "native_result": 8
+  },
+  "byCode": {
+   "native_result:{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}": 8
+  },
+  "first": [
+   {
+    "at": 1794759905035,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905077,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905090,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905139,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905151,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905198,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905233,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905282,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   }
+  ],
+  "tail": [
+   {
+    "at": 1794759905035,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905077,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905090,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905139,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905151,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905198,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905233,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   },
+   {
+    "at": 1794759905282,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   }
+  ],
+  "firstByKind": [
+   {
+    "at": 1794759905035,
+    "kind": "native_result",
+    "code": "{\"action\":\"move\",\"status\":409,\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"data\":{\"error\":\"Konumun sunucuyla eşitleniyor.\",\"code\":\"movement_state_changed\",\"x\":2580,\"y\":1800,\"area\":\"forest\",\"positionRevision\":0}}"
+   }
+  ],
+  "firstDetailsOmitted": 0,
+  "limits": {
+   "first": 512,
+   "tail": 64,
+   "keys": 129
+  }
+ },
+ "sent": 0,
+ "acked": 0,
+ "errors": 8,
+ "disconnects": 0,
+ "faults": [],
+ "fatal": {
+  "code": "native_scenario_preflight",
+  "message": "native_scenario_preflight"
+ }
+}

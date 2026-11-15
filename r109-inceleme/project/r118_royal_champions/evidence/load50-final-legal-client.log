@@ -1,0 +1,5 @@
+START 01-forest
+DONE 01-forest exit 0 completed True rewards {'defeats': 240, 'claims': 240, 'unfinished': 0, 'duplicateClaims': 0, 'crowns': 0} latency {'move': {'n': 803, 'p50': 78, 'p95': 648, 'p99': 2313, 'max': 3900, 'over300': 151, 'over500': 67, 'over1000': 17}, 'attack': {'n': 2144, 'p50': 89, 'p95': 2164, 'p99': 4202, 'max': 9384, 'over300': 520, 'over500': 387, 'over1000': 237}, 'claim_rewards': {'n': 235, 'p50': 544, 'p95': 2957, 'p99': 4072, 'max': 4288, 'over300': 149, 'over500': 128, 'over1000': 78}, 'heartbeat': {'n': 237, 'p50': 88, 'p95': 1514, 'p99': 2879, 'max': 7732, 'over300': 48, 'over500': 36, 'over1000': 18}, 'collect': {'n': 145, 'p50': 546, 'p95': 3285, 'p99': 3685, 'max': 3801, 'over300': 106, 'over500': 78, 'over1000': 49}, 'use_potion': {'n': 28, 'p50': 267, 'p95': 3397, 'p99': 4233, 'max': 4233, 'over300': 14, 'over500': 11, 'over1000': 8}}
+START 01-champions
+DONE 01-champions exit 1 completed False rewards None latency None
+Run failed; raw evidence preserved at /workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/evidence/load50-final-legal-client

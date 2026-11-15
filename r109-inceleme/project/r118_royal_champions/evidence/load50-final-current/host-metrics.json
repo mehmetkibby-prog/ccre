@@ -1,0 +1,66 @@
+[
+  {
+    "name": "01-forest",
+    "exitCode": 0,
+    "before": {
+      "at": 1794755465.0304418,
+      "cpuStat": {
+        "usage_usec": 5364275138,
+        "user_usec": 4215492597,
+        "system_usec": 1148782540,
+        "nice_usec": 0,
+        "nr_periods": 34323,
+        "nr_throttled": 1761,
+        "throttled_usec": 73599460,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuMax": "400000 100000",
+      "cpusEffective": "0-4",
+      "loadavg": "0.89 1.20 1.31 2/302 31455",
+      "cpuTimes": "cpu  242526 0 68563 2301823 274 0 2708 263500 0 0",
+      "memory": "3811360768"
+    },
+    "after": {
+      "at": 1794755547.9194577,
+      "cpuStat": {
+        "usage_usec": 5526116762,
+        "user_usec": 4355178169,
+        "system_usec": 1170938592,
+        "nice_usec": 0,
+        "nr_periods": 35152,
+        "nr_throttled": 1810,
+        "throttled_usec": 75163170,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuMax": "400000 100000",
+      "cpusEffective": "0-4",
+      "loadavg": "2.01 1.53 1.42 1/292 31669",
+      "cpuTimes": "cpu  249627 0 69610 2326772 274 0 2980 273818 0 0",
+      "memory": "3807436800"
+    },
+    "cpuStatDelta": {
+      "usage_usec": 161841624,
+      "user_usec": 139685572,
+      "system_usec": 22156052,
+      "nice_usec": 0,
+      "nr_periods": 829,
+      "nr_throttled": 49,
+      "throttled_usec": 1563710,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "acceptanceChecks": {
+      "completed": true,
+      "exact50": true,
+      "allFought": false,
+      "exactChannels": true,
+      "runtimePopulation": true,
+      "noFailures": false,
+      "realRewards": true,
+      "realCollection": true
+    },
+    "accepted": false
+  }
+]

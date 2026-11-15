@@ -1,0 +1,217 @@
+{
+  "contract": {
+    "players": 50,
+    "perChannel": [
+      13,
+      13,
+      12,
+      12
+    ],
+    "seconds": 60,
+    "repetitions": 3,
+    "source": {
+      "sha256": "e9278b405ea72fc4dadfcba7a0469a9ffae3584e2dc450cc1d4936fdd5e929d8",
+      "files": 2079,
+      "includes": [
+        "core511",
+        "native/lib",
+        "native/vds-server",
+        "HTTP/accounts runtime",
+        "client/media",
+        "benchmark driver"
+      ]
+    },
+    "node": "/workspace/ccre/r79_stability_work/runtime/node-v22.23.4-linux-x64/bin/node",
+    "notes": [
+      "Synthetic fresh database, not a sanitized production database.",
+      "Bots and server share this host; not a production capacity guarantee.",
+      "Serial forest/champions runs with matched geometry/HP/damage/respawn and ordinary gameplay guards.",
+      "Map reward policies remain their real policies, including the default 2% crown chance."
+    ]
+  },
+  "notes": [
+    "Functional checks do not certify latency performance.",
+    "Channel p95/p99 are maximum per-channel percentiles in each run, not a pooled population percentile.",
+    "Main and channel timer gaps are separately reported; they may overlap and must not be added as unique physical freezes.",
+    "Cgroup throttling deltas cover startup, timed workload and drain, not only the timed window.",
+    "RSS is the conservative sum of per-process high-water marks.",
+    "Four-CPU shared-host synthetic fixture is not the eight-core production VDS; no production capacity or zero-lag guarantee."
+  ],
+  "runs": [
+    {
+      "name": "01-forest",
+      "area": "forest",
+      "functionalChecksAccepted": true,
+      "players": 50,
+      "defeats": 240,
+      "claims": 240,
+      "collects": 145,
+      "errors": 0,
+      "disconnects": 0,
+      "faults": 0,
+      "unacked": 0,
+      "unfinishedRewards": 0,
+      "duplicateClaims": 0,
+      "attackP95Ms": 2164,
+      "attackP99Ms": 4202,
+      "attackMaxMs": 9384,
+      "channelTickP95WorstMs": 138.92,
+      "channelTickP99WorstMs": 524.26,
+      "channelMaxTickWorstMs": 937.2,
+      "mainEluPercent": 69.81096127998799,
+      "mainCpuOneCorePercent": 98.81934973863171,
+      "mainTimerOver50Count": 186,
+      "mainMaxPauseMs": 427.6032219999979,
+      "worstChannelTimerOver50Count": 71,
+      "rssSummedPeaksMiB": 1562.58984375,
+      "cpuFourCoreBudgetPercent": 73.02536019280365,
+      "nrThrottled": 90,
+      "throttledUsec": 2896809,
+      "processWindowSeconds": 60.6,
+      "strictLatencyTargetMet": false
+    }
+  ],
+  "failedRuns": [
+    {
+      "name": "01-champions",
+      "functionalChecksAccepted": false,
+      "completed": false,
+      "fatal": {
+        "code": "load_process_changed",
+        "message": "load_process_changed"
+      },
+      "errors": 0,
+      "disconnects": 45,
+      "unacked": 50,
+      "faults": [
+        {
+          "at": 1794756088176,
+          "code": "actor_command_outcome_stalled",
+          "message": "actor_command_outcome_stalled",
+          "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+          "context": null
+        },
+        {
+          "at": 1794756088799,
+          "code": "actor_command_outcome_stalled",
+          "message": "actor_command_outcome_stalled",
+          "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+          "context": null
+        },
+        {
+          "at": 1794756088846,
+          "code": "actor_command_outcome_stalled",
+          "message": "actor_command_outcome_stalled",
+          "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+          "context": null
+        },
+        {
+          "at": 1794756092752,
+          "code": "actor_command_outcome_stalled",
+          "message": "actor_command_outcome_stalled",
+          "stack": "Error: actor_command_outcome_stalled\n    at ChildProcess.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:70:115)\n    at ChildProcess.emit (node:events:531:35)\n    at emit (node:internal/child_process:949:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)",
+          "context": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "forest": {
+      "runs": 1,
+      "allFunctionalChecksAccepted": true,
+      "strictLatencyTargetMet": false,
+      "metrics": {
+        "defeats": {
+          "median": 240,
+          "worst": 240,
+          "minimum": 240
+        },
+        "claims": {
+          "median": 240,
+          "worst": 240,
+          "minimum": 240
+        },
+        "collects": {
+          "median": 145,
+          "worst": 145,
+          "minimum": 145
+        },
+        "attackP95Ms": {
+          "median": 2164,
+          "worst": 2164,
+          "minimum": 2164
+        },
+        "attackP99Ms": {
+          "median": 4202,
+          "worst": 4202,
+          "minimum": 4202
+        },
+        "attackMaxMs": {
+          "median": 9384,
+          "worst": 9384,
+          "minimum": 9384
+        },
+        "channelTickP95WorstMs": {
+          "median": 138.92,
+          "worst": 138.92,
+          "minimum": 138.92
+        },
+        "channelTickP99WorstMs": {
+          "median": 524.26,
+          "worst": 524.26,
+          "minimum": 524.26
+        },
+        "channelMaxTickWorstMs": {
+          "median": 937.2,
+          "worst": 937.2,
+          "minimum": 937.2
+        },
+        "mainEluPercent": {
+          "median": 69.81096127998799,
+          "worst": 69.81096127998799,
+          "minimum": 69.81096127998799
+        },
+        "mainCpuOneCorePercent": {
+          "median": 98.81934973863171,
+          "worst": 98.81934973863171,
+          "minimum": 98.81934973863171
+        },
+        "mainTimerOver50Count": {
+          "median": 186,
+          "worst": 186,
+          "minimum": 186
+        },
+        "mainMaxPauseMs": {
+          "median": 427.6032219999979,
+          "worst": 427.6032219999979,
+          "minimum": 427.6032219999979
+        },
+        "worstChannelTimerOver50Count": {
+          "median": 71,
+          "worst": 71,
+          "minimum": 71
+        },
+        "rssSummedPeaksMiB": {
+          "median": 1562.58984375,
+          "worst": 1562.58984375,
+          "minimum": 1562.58984375
+        },
+        "cpuFourCoreBudgetPercent": {
+          "median": 73.02536019280365,
+          "worst": 73.02536019280365,
+          "minimum": 73.02536019280365
+        },
+        "nrThrottled": {
+          "median": 90,
+          "worst": 90,
+          "minimum": 90
+        },
+        "throttledUsec": {
+          "median": 2896809,
+          "worst": 2896809,
+          "minimum": 2896809
+        }
+      }
+    }
+  }
+}

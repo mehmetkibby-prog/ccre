@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-15",
+  "productionCodeChanged": false,
+  "changes": [
+    "Ordinary legal HP/emerald equipment and actual observed movement/HP revisions",
+    "Basic650ms dispatch cadence plus server deadline, without adding ACK latency twice",
+    "Do not attack while own provisional kill waits for durable result; other legal inputs continue",
+    "30s bounded protocol and durable-result drain; delayed monster rejection fails",
+    "Balanced protocol accounting plus exact50and13/13/12/12,allfought/alive,realreward/collect integrity checks",
+    "Exact known legacy fixture-only trigger wrapper normalized to canonical production SQL; schema certificate required",
+    "Later stationary/admin-damage calibration stillfailed admission withderivedmaxHP100; see load-validation.json."
+  ],
+  "files": {
+    "benchmark/build-load-driver.py": "f01fb790607832afd04d4a0531401a00809c9e834242c23fe967b5090f0ddbf0",
+    "benchmark/load50.mjs": "6cb983e42a5570fa6b76e292728db49fbec0a578f456aec2004acd1a587db51e",
+    "benchmark/run50.py": "27c6e7ff5ba238c23931f22d8a7e132917ab72536d9d17d86deee46239de2c1b",
+    "benchmark/summarize50.py": "e7493e565fdb8949258b979350c1ff178691cf677ead00b82f584ac7c7e104f9"
+  },
+  "status": "not-validated",
+  "finalScope": "Stationary controlled-damage comparison; optional validation unavailable, stopped after strict setup failure."
+}
