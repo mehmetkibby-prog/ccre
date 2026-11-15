@@ -368,6 +368,7 @@ export class World {
     if (this.now < p.rootUntil) f |= EFlag.ROOTED;
     if (p.shieldUntil > this.now) f |= EFlag.SHIELD;
     if (p.char.role === 'gm' || p.char.role === 'admin' || p.char.role === 'owner') f |= EFlag.GM;
+    if (p.fishing && this.now - p.fishing.biteAt < 125_000) f |= EFlag.FISHING; // herkes oltayı ve şamandırayı görür
     return f;
   }
 
@@ -1461,19 +1462,25 @@ export class World {
   }
 
   // ───────────────────────────── balıkçılık ─────────────────────────────
-  private nearWater(p: Player) {
+  /** En yakın su karosu (2 karo içinde); yoksa null. */
+  private nearWater(p: Player): { x: number; y: number } | null {
     const l = p.zone.layout, tx = Math.floor(p.x / 64), ty = Math.floor(p.y / 64);
+    let best: { x: number; y: number } | null = null, bd = 1e9;
     for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
       const x = tx + dx, y = ty + dy; if (x < 0 || y < 0 || x >= l.w || y >= l.h) continue;
-      const g = l.ground[y * l.w + x]; if (g === 4 || g === 10) return true; // su, derin su
+      const g = l.ground[y * l.w + x]; if (g !== 4 && g !== 10) continue; // su, derin su
+      const d = dx * dx + dy * dy; if (d < bd) { bd = d; best = { x: x * 64 + 32, y: y * 64 + 32 }; }
     }
-    return false;
+    return best;
   }
   private cmdFishCast(p: Player) {
     const c = p.char;
     if (p.dead) return;
-    if ((c.materials[ROD_ID] ?? 0) <= 0) return this.notice(p, 'Oltan yok. Şelale Gölü\'ndeki Balıkçı Hasan\'dan alabilirsin.');
-    if (!this.nearWater(p)) return this.notice(p, 'Suya yaklaş.');
+    if ((c.materials[ROD_ID] ?? 0) <= 0) return this.notice(p, 'Oltan yok. Pazar Köyü göletindeki Balıkçı Kemal\'den alabilirsin.');
+    const wt = this.nearWater(p);
+    if (!wt) return this.notice(p, 'Suya yaklaş.');
+    // suya dön (herkes oltayı suya doğru atmış görsün)
+    p.dir = Math.round((Math.atan2(wt.y - p.y, wt.x - p.x) / (Math.PI * 2)) * 256) & 255; p.dirty |= Upd.ANIM;
     const table = fishTable(); const tot = table.reduce((a, f) => a + f.weight, 0);
     if (!tot) return this.notice(p, 'Şu an balık tutulamıyor.');
     let r = rnd() * tot; let fish = table[0]; for (const f of table) if ((r -= f.weight) <= 0) { fish = f; break; }
@@ -1501,7 +1508,7 @@ export class World {
     this.sendJson(p, { t: 'fish_result', ok: true, id: f.fish, name: def.name, qty });
   }
   private cmdFishRod(p: Player, req: string) {
-    if (!p.zone.def.npcs.some((n) => n.actions.includes('fishing_shop') && this.nearNpc(p, n.id))) return this.notice(p, 'Balıkçı Hasan\'a yaklaş.');
+    if (!p.zone.def.npcs.some((n) => n.actions.includes('fishing_shop') && this.nearNpc(p, n.id))) return this.notice(p, 'Balıkçıya yaklaş.');
     const c = p.char, price = fishingConf().rodPrice;
     if ((c.materials[ROD_ID] ?? 0) > 0) return this.notice(p, 'Zaten bir oltan var.', 'info');
     if (c.gems < price) return this.notice(p, `Olta ${price.toLocaleString('tr-TR')} Mücevher.`);
@@ -1511,7 +1518,7 @@ export class World {
     this.notice(p, 'Olta aldın! Suya yaklaş ve "Olta At"a bas.', 'ok');
   }
   private cmdFishSell(p: Player, req: string) {
-    if (!p.zone.def.npcs.some((n) => n.actions.includes('fishing_shop') && this.nearNpc(p, n.id))) return this.notice(p, 'Balıkçı Hasan\'a yaklaş.');
+    if (!p.zone.def.npcs.some((n) => n.actions.includes('fishing_shop') && this.nearNpc(p, n.id))) return this.notice(p, 'Balıkçıya yaklaş.');
     if (this.seenReceipt(p, req)) return;
     const c = p.char; let total = 0, n = 0;
     for (const f of fishTable()) { const q = c.materials[f.id] ?? 0; if (q > 0 && f.price > 0) { total += q * f.price; n += q; delete c.materials[f.id]; } }

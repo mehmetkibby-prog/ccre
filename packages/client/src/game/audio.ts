@@ -11,6 +11,8 @@ class Sfx {
   private ambient: { stop: () => void } | null = null;
   private zone = 'village';
   private last = new Map<string, number>();
+  /** çağrı başına ses çarpanı (uzaktaki oyuncular kısık duyulur) */
+  private k = 1;
 
   unlock() {
     if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume().then(() => this.startMusic()); else this.startMusic(); return; }
@@ -79,7 +81,7 @@ class Sfx {
     const o = c.createOscillator(), g = c.createGain();
     o.type = type; o.frequency.setValueAtTime(freq, t);
     if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(20, freq * slide), t + dur);
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol * this.k), t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     o.connect(g).connect(this.sfxGain); o.start(t); o.stop(t + dur + 0.05);
   }
   private noise(dur: number, freq: number, q: number, vol: number, type: BiquadFilterType = 'bandpass', delay = 0, slide = 0) {
@@ -87,15 +89,38 @@ class Sfx {
     const s = c.createBufferSource(); s.buffer = this.noiseBuf; s.playbackRate.value = 1;
     const f = c.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(freq, t); f.Q.value = q;
     if (slide) f.frequency.exponentialRampToValueAtTime(freq * slide, t + dur);
-    const g = c.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    const g = c.createGain(); g.gain.setValueAtTime(Math.max(0.0002, vol * this.k), t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     s.connect(f).connect(g).connect(this.sfxGain); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
   }
 
-  play(name: string) {
-    if (!this.ctx || this.ctx.state !== 'running') return;
+  /**
+   * Ayak sesi: zemine göre (çimen yumuşak hışırtı, taş kısa tık, toprak boğuk, kum kumlu, tahta tok).
+   * Çok kısık ve her adımda biraz farklı (tekrar eden "tık tık" rahatsız etmesin). k: uzaklık çarpanı.
+   */
+  step(surface: 'grass' | 'stone' | 'dirt' | 'sand' | 'wood' | 'snow', k = 1) {
+    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04) return;
+    const v = 0.55 + Math.random() * 0.25, pr = 0.85 + Math.random() * 0.3;
+    this.k = k;
+    switch (surface) {
+      case 'grass': this.noise(0.09, 900 * pr, 0.8, 0.08 * v, 'lowpass'); this.noise(0.06, 2600 * pr, 1.5, 0.025 * v, 'bandpass', 0.01); break;
+      case 'stone': this.noise(0.04, 2200 * pr, 2.2, 0.07 * v, 'bandpass'); this.tone(170 * pr, 0.05, 'triangle', 0.035 * v, 0.7); break;
+      case 'dirt': this.noise(0.08, 520 * pr, 0.9, 0.09 * v, 'lowpass'); break;
+      case 'sand': this.noise(0.11, 1500 * pr, 0.7, 0.05 * v, 'bandpass', 0, 0.6); break;
+      case 'wood': this.tone(120 * pr, 0.08, 'triangle', 0.06 * v, 0.6); this.noise(0.05, 700 * pr, 1.2, 0.05 * v, 'bandpass'); break;
+      case 'snow': this.noise(0.12, 1200 * pr, 0.6, 0.06 * v, 'lowpass', 0, 0.5); break;
+    }
+    this.k = 1;
+  }
+
+  play(name: string, k = 1) {
+    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04) return;
     const now = performance.now();
     if (now - (this.last.get(name) ?? 0) < 45) return;
     this.last.set(name, now);
+    this.k = Math.min(1, k);
+    try { this.playRaw(name); } finally { this.k = 1; }
+  }
+  private playRaw(name: string) {
     switch (name) {
       case 'swing': this.noise(0.18, 1800, 1.2, 0.35, 'bandpass', 0, 0.4); break;
       case 'hit': this.noise(0.08, 900, 1, 0.5, 'lowpass'); this.tone(140, 0.09, 'triangle', 0.25, 0.6); break;

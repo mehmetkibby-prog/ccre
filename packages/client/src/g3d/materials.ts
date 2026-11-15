@@ -101,6 +101,7 @@ function texMat(name: string, opts: THREE.MeshStandardMaterialParameters = {}, r
 /** Tabela yazıları (prop çeşidi = sıra). */
 const SIGN_TEXTS: { title: string; sub: string }[] = [
   { title: 'PAZAR ALANI', sub: '(Değerli eşyalarınızı burada satın)' },
+  { title: 'BALIK TUTMA YERİ', sub: '(Oltanı at, balığını tut)' },
 ];
 function signMaterial(v: number) {
   const t = SIGN_TEXTS[v] ?? SIGN_TEXTS[0];

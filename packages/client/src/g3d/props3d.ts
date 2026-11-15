@@ -605,6 +605,7 @@ function variantFor(p: Prop) {
     case 'house': case 'stall': return p.v % 4;
     case 'portalstone': return p.v % 3;
     case 'grasstuft': return p.v === 3 ? 3 : 0;
+    case 'signpost': return p.v;
     default: return 0;
   }
 }

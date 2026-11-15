@@ -358,8 +358,8 @@ export function FishGame({ game }: { game: Game }) {
     const c = cv.current!; const ctx = c.getContext('2d')!;
     const H = 300, W = 46; c.width = W * 2; c.height = H * 2; ctx.scale(2, 2);
     const diff = f.diff / 100;
-    const zoneH = H * (0.34 - diff * 0.14);
-    let zone = H - zoneH, zv = 0, fish = H * 0.6, ft = H * 0.5, fv = 0, prog = 0.3, last = performance.now(), tNext = 0, done = false;
+    const zoneH = H * (0.44 - diff * 0.12); // geniş yeşil alan (kolay)
+    let zone = H - zoneH, zv = 0, fish = H * 0.6, ft = H * 0.5, fv = 0, prog = 0.4, last = performance.now(), tNext = 0, done = false;
     const keyDown = (e: KeyboardEvent) => { if (e.code === 'Space') { hold.current = true; e.preventDefault(); } };
     const keyUp = (e: KeyboardEvent) => { if (e.code === 'Space') hold.current = false; };
     window.addEventListener('keydown', keyDown); window.addEventListener('keyup', keyUp);
@@ -367,7 +367,7 @@ export function FishGame({ game }: { game: Game }) {
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000); last = now;
       // yeşil alan: basılıyken yukarı ivme, bırakınca yerçekimi; dipte hafif sekme
-      zv += (hold.current ? -900 : 650) * dt; zv *= 0.985;
+      zv += (hold.current ? -720 : 470) * dt; zv *= 0.965; // daha yumuşak, kontrolü kolay
       zone += zv * dt;
       if (zone < 0) { zone = 0; zv = 0; } if (zone > H - zoneH) { zone = H - zoneH; zv = zv > 120 ? -zv * 0.35 : 0; }
       // balık: türüne göre hareket
@@ -376,12 +376,12 @@ export function FishGame({ game }: { game: Game }) {
         const m = f.motion;
         const jump = m === 'dart' ? 0.7 : m === 'mixed' ? 0.5 : 0.3;
         ft = Math.max(8, Math.min(H - 8, (m === 'sinker' ? H * 0.75 : fish) + (Math.random() - 0.5) * H * jump * (0.6 + diff)));
-        tNext = (m === 'dart' ? 0.35 : 0.8) * (1.4 - diff) + Math.random() * 0.6;
+        tNext = ((m === 'dart' ? 0.35 : 0.8) * (1.4 - diff) + Math.random() * 0.6) * 1.5; // balık daha seyrek yön değiştirir
       }
-      fv += (ft - fish) * (6 + diff * 14) * dt; fv *= 0.86; fish += fv * dt * 6;
+      fv += (ft - fish) * (4 + diff * 8) * dt; fv *= 0.86; fish += fv * dt * 5; // daha yavaş balık
       fish = Math.max(6, Math.min(H - 6, fish));
       const inZone = fish > zone && fish < zone + zoneH;
-      prog += (inZone ? 0.24 : -(0.14 + diff * 0.12)) * dt;
+      prog += (inZone ? 0.3 : -(0.08 + diff * 0.07)) * dt;
       // çizim
       ctx.clearRect(0, 0, W, H);
       const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2a7fa8'); g.addColorStop(1, '#0d3a5a');
@@ -416,6 +416,7 @@ export function FishGame({ game }: { game: Game }) {
           <canvas ref={cv} style={{ width: 46, height: 300 }} />
           <div className="fish-progwrap"><i id="fish-prog" /></div>
           <div className="fish-help"><b>Basılı tut</b><span>Yeşil alanı balığın üstünde tut</span><small>Boşluk tuşu da olur</small></div>
+          <button className="fish-tut" onPointerDown={(e) => { e.stopPropagation(); down(e); }} onPointerUp={up} onPointerCancel={up} onPointerLeave={up} onContextMenu={(e) => e.preventDefault()}>TUT</button>
         </div>
       )}
     </div>

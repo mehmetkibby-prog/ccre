@@ -520,7 +520,7 @@ function NpcDialog({ game }: { game: Game }) {
   };
   const greet: Record<string, string> = {
     haso: 'Ocak sıcak, örs hazır. Silahını ya da zırhını getir; artısını +6\'ya kadar ben dövüp çıkarırım. Güçlü Dal, mühür ve biraz da Mücevher lazım.', rauf: 'Eşyaların bende emanet, bir tanesi bile kaybolmaz.', nur: 'Çekirdeğin ışığı seni dilediğin yere taşır.',
-    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister.', bekci: 'Kapının ardında karanlık bekliyor.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.',
+    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister.', bekci: 'Kapının ardında karanlık bekliyor.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.', kemal: 'Gölet küçük ama balığı bol!',
   };
   return (
     <div className="frame panel npcd" onPointerDown={(e) => e.stopPropagation()}>

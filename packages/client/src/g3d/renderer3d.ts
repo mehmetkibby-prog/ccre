@@ -17,6 +17,8 @@ import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
 import { buildProps, MESHY_TREES } from './props3d.ts';
 import { createPet, createWings, PET_MODEL, type Pet } from './pets.ts';
+import { FishGear } from './fishing3d.ts';
+import { sfx } from '../game/audio.ts';
 import { createHumanoid, animateHumanoid, LOOKS, type Rig, type HState } from './humanoid.ts';
 import { createMonster, MONSTER_MESHES, type MonsterRig } from './monsters3d.ts';
 import { Fx3D } from './fx3d.ts';
@@ -100,6 +102,8 @@ export class Renderer3D {
   selfRing: THREE.Mesh;
   grass: GrassField | null = null;
   private coolOn = false;
+  /** balık tutan oyuncuların oltaları (görünüm → olta); karede kullanılmayanlar kaldırılır */
+  private fishGears = new Map<View, { gear: FishGear; wx: number; wz: number; at: number; seen: number }>();
   private propsGroup: THREE.Group | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
   camYaw = 0; camZoom = 1; camPitch = 0.62; private camYawS = 0; private camZoomS = 1; private camPitchS = 0.62;
@@ -442,6 +446,49 @@ export class Renderer3D {
     return t;
   }
 
+  private stepBudget = 0; private stepFrame = -1;
+  /** Ayak sesi: kendi adımın tam, yakındaki oyuncularınki uzaklıkla kısılarak (karede en çok 3 yabancı adım). */
+  private footstep(isSelf: boolean, x: number, y: number) {
+    const l = this.layout; if (!l) return;
+    let k = 1;
+    if (!isSelf) {
+      if (this.stepFrame !== this.frameNo) { this.stepFrame = this.frameNo; this.stepBudget = 3; }
+      if (this.stepBudget <= 0) return;
+      const d = Math.hypot(x - this.g.dx, y - this.g.dy);
+      k = Math.pow(Math.max(0, 1 - d / 700), 1.6) * 0.75;
+      if (k < 0.05) return;
+      this.stepBudget--;
+    }
+    const tx = Math.floor(x / TILE), ty = Math.floor(y / TILE);
+    const gr = l.ground[Math.max(0, Math.min(l.h - 1, ty)) * l.w + Math.max(0, Math.min(l.w - 1, tx))];
+    const surf = gr === 11 ? 'wood' : gr === 3 || gr === 9 ? 'stone' : gr === 2 || gr === 8 ? 'dirt' : gr === 5 ? 'sand' : gr === 6 || gr === 7 ? 'snow' : 'grass';
+    sfx.step(surf, k);
+  }
+
+  /** Balık tutan oyuncu: elde olta, en yakın suya misina ve şamandıra. */
+  private syncFish(v: View, on: boolean, x: number, y: number, now: number) {
+    let f = this.fishGears.get(v);
+    if (!on) { if (f) { this.dyn.remove(f.gear.obj); this.fishGears.delete(v); } return; }
+    if (!f) {
+      // en yakın su karosu (3 karo içinde); bulunamazsa önüne
+      const l = this.layout!, tx = Math.floor(x / TILE), ty = Math.floor(y / TILE);
+      let bx = x + Math.sin(v.yaw) * 100, by = y + Math.cos(v.yaw) * 100, bd = 1e9;
+      for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+        const gx = tx + dx, gy = ty + dy; if (gx < 0 || gy < 0 || gx >= l.w || gy >= l.h) continue;
+        const gr = l.ground[gy * l.w + gx]; if (gr !== 4 && gr !== 10) continue;
+        const d = dx * dx + dy * dy; if (d < bd) { bd = d; bx = (gx + 0.5) * TILE; by = (gy + 0.5) * TILE; }
+      }
+      // şamandıra kıyıdan biraz içeride: oyuncudan su karosuna doğru 1,4 karo daha
+      const ang = Math.atan2(by - y, bx - x), dist = Math.hypot(bx - x, by - y) + TILE * 0.9;
+      f = { gear: new FishGear(), wx: (x + Math.cos(ang) * dist) * U, wz: (y + Math.sin(ang) * dist) * U, at: now, seen: 0 };
+      this.dyn.add(f.gear.obj); this.fishGears.set(v, f);
+    }
+    f.seen = this.frameNo;
+    const hand = new THREE.Vector3();
+    if (v.glb?.hand) v.glb.hand.getWorldPosition(hand); else hand.copy(v.obj.position).add(new THREE.Vector3(0, 1.2, 0));
+    f.gear.update(hand, new THREE.Vector3(f.wx, 0, f.wz), -0.32, now);
+  }
+
   /** Oyuncu görünümünün ayrıntısı: tam (gölge, evcil hayvan, kanat) ya da hafif. Yalnız değişince dolaşır. */
   private setDetail(v: View, full: boolean) {
     const lv = v as View & { full?: boolean; casters?: THREE.Mesh[] };
@@ -473,6 +520,12 @@ export class Renderer3D {
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
     if (dead && !v.deadAt) v.deadAt = now;
     v.phase += dist * (Math.PI * 2 / 1.55);
+    // ayak sesi: yürüme döngüsünde her ayak basışında (döngü başına 2 adım)
+    if (v.kind === Kind.PLAYER) {
+      const sv2 = v as View & { stepN?: number }, n = Math.floor(v.phase / Math.PI);
+      if (sv2.stepN !== undefined && n !== sv2.stepN && moving && !dead) this.footstep(v === this.self, x, y);
+      sv2.stepN = n;
+    }
     const k = st === 'dead' ? (now - v.deadAt) / 700 : (now - v.stateAt) / (st === 'attack' ? 480 : 600);
     const tt = now / 1000;
     const sp = dt > 0 ? (dist / dt) * 1000 : 0;
@@ -546,6 +599,7 @@ export class Renderer3D {
     // saldırıda "beceri" yuvası kombo sırasını taşır (1-2-3 vuruş farklı animasyon)
     (sv as View & { skill?: number }).skill = sAnim === Anim.ATTACK ? g.selfCombo : g.selfSkill;
     this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, this.frozen(g.selfId, now) ? 0 : dt, selfDead);
+    this.syncFish(sv, (g.selfFlags & EFlag.FISHING) !== 0 && !selfDead, g.dx, g.dy, now);
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
     const seen = new Set<number>();
@@ -566,6 +620,7 @@ export class Renderer3D {
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
       (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead);
+      if (e.kind === Kind.PLAYER) this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now);
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       if (e.kind === Kind.PLAYER) crowd.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur
@@ -578,6 +633,7 @@ export class Renderer3D {
       } else if (now < e.hurtUntil) { v.obj.position.x += (Math.random() - 0.5) * 0.04; v.obj.position.z += (Math.random() - 0.5) * 0.04; }
     }
     for (const [id, v] of this.views) if (!seen.has(id)) { this.dyn.remove(v.obj); this.views.delete(id); }
+    for (const [v, f] of this.fishGears) if (f.seen !== this.frameNo) { this.dyn.remove(f.gear.obj); this.fishGears.delete(v); }
     // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)
     if (fxNear.length > (cool() ? 3 : FX_MAX)) fxNear.sort((a, b) => a.d - b.d);
     const fxMax = cool() ? 3 : FX_MAX;

@@ -11,7 +11,7 @@ export const enum COp { MOVE = 1 }
 export const enum Kind { PLAYER = 1, MONSTER = 2, LOOT = 3 }
 export const enum Anim { IDLE = 0, WALK = 1, ATTACK = 2, HURT = 3, DEAD = 4, CAST = 5 }
 export const enum Upd { POS = 1, HP = 2, ANIM = 4, MAXHP = 8, FLAGS = 16, LEVEL = 32 }
-export const enum EFlag { DEAD = 1, MOUNTED = 2, PVP = 4, STUNNED = 8, ROOTED = 16, SHIELD = 32, GM = 64 }
+export const enum EFlag { DEAD = 1, MOUNTED = 2, PVP = 4, STUNNED = 8, ROOTED = 16, SHIELD = 32, GM = 64, FISHING = 128 }
 export const enum Ev { DAMAGE = 1, CAST = 2, DEATH = 3, FX = 4, LEVELUP = 5, HEAL = 6 }
 export const enum DmgFlag { CRIT = 1, BLOCK = 2, MISS = 4 }
 export const enum Fx { TELEGRAPH_CIRCLE = 1, TELEGRAPH_RING = 2, TELEGRAPH_LINE = 3, TELEPORT = 4, LEVELUP = 5, AOE_BLAST = 6, HEAL_WAVE = 7, SHIELD = 8, PICKUP = 9 }

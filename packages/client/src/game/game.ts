@@ -58,6 +58,8 @@ export class Game {
   /** hedefe yürüyerek saldırı yalnız fareyle canavara tıklayınca; saldırı tuşu (1 / boşluk / mobil düğme) olduğu yerde vurur */
   walkToTarget = false;
   private autoPauseUntil = 0;
+  /** Yakındaki başka oyuncunun sesi: uzaklıkla kısılır (~11 m'de susar). */
+  private nearK(p: { x: number; y: number }) { const d = Math.hypot(p.x - this.dx, p.y - this.dy); return Math.pow(Math.max(0, 1 - d / 700), 1.5) * 0.6; }
   setAuto(on: boolean) { this.send({ t: 'auto', on }); }
   /** hedefimiz son öldüğünde (yeni hedefe yürüme beklemesi için) */
   private lastKillAt = 0;
@@ -323,8 +325,8 @@ export class Game {
         else if (src) { src.anim = ev.skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; src.skill = ev.skill; }
         const clsIdx = isSelf ? CLASS_IDS.indexOf(this.cls) : src?.kind === Kind.PLAYER ? src.cls : -1;
         if (ev.skill === 9) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 420, kind: 'ice', color: '#8fe6ff' }); break; }
-        if (clsIdx === 1 && (ev.skill === 0 || ev.skill === 2 || ev.skill === 3)) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); if (isSelf) sfx.play('bow'); }
-        else if (clsIdx === 2 && ev.skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 260, kind: 'orb', color: '#7cf3ff' }); this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); if (isSelf) sfx.play('magic'); }
+        if (clsIdx === 1 && (ev.skill === 0 || ev.skill === 2 || ev.skill === 3)) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); sfx.play('bow', isSelf ? 1 : this.nearK(sp)); }
+        else if (clsIdx === 2 && ev.skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 260, kind: 'orb', color: '#7cf3ff' }); this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); sfx.play('magic', isSelf ? 1 : this.nearK(sp)); }
         else if (clsIdx === 0 && ev.skill === 0) {
           // Muhafız kombosu: 1) sağdan sola yatay, 2) ters yükselen, 3) tepeden iniş; kesik izi vuruş anında
           const prev = this.meleeCast.get(ev.src);
@@ -333,14 +335,14 @@ export class Game {
           if (isSelf) this.selfCombo = combo;
           else if (src) src.combo = combo;
           const a = Math.atan2(ev.y - sp.y, ev.x - sp.x);
-          if (isSelf) sfx.play('swing');
+          sfx.play('swing', isSelf ? 1 : this.nearK(sp));
           window.setTimeout(() => {
             const t2 = performance.now();
             this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: combo === 2 ? 64 : 74, r2: combo, a: a + (combo === 1 ? 0.35 : combo === 0 ? -0.35 : 0), t0: t2, dur: 260, color: combo === 2 ? '#ffe2a0' : '#ffffff' });
             if (combo === 2) this.fx.burst(ev.x, ev.y, 0.1, 14, '#d9c7a1', 2, 500, 0.2, 1);
           }, MELEE_IMPACT_MS - 40);
         }
-        else if (ev.skill > 0 && isSelf) sfx.play('skill');
+        else if (ev.skill > 0) sfx.play('skill', isSelf ? 1 : this.nearK(sp));
         if (clsIdx === 0 && ev.skill === 1 && ev.tgt) { const te = this.ents.get(ev.tgt); if (te && te.kind === Kind.MONSTER && !MONSTERS[te.tpl]?.boss) te.slide = { x0: te.x, y0: te.y, t0: now + 120 }; }
         if (clsIdx === 0 && ev.skill === 1) this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: 70, r2: 0, a: Math.atan2(ev.y - sp.y, ev.x - sp.x), t0: now, dur: 300, color: '#ffd27a' });
         if (ev.skill > 0 && ev.skill < 9) this.skillFx(clsIdx, ev.skill, sp, ev, now);
