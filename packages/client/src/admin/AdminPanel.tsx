@@ -22,13 +22,17 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['worldDecayMul', 'Azalma hızı', '1 = günde yaklaşık %26 · 0 = hiç azalmaz'],
     ['worldDonateGain', '1 Öz bağışının etkisi', 'Varsayılan 0,02 puan; sağlık düştükçe etki büyür'],
   ] },
+  { title: 'Saldırı Tuşu (bota karşı)', note: 'Boşluk / 1 / mobil saldırı düğmesi. Canavara tıklayınca her zaman yürünür.', items: [
+    ['meleeApproach', 'Yakın dövüşte yürüyerek yaklaşma', '0 = yalnız vuruş mesafesindekine vurur · 64 ≈ 1 adım'],
+    ['retargetDelay', 'Öldürdükten sonra yeni hedefe yürüme beklemesi', 'Hızlı basarak sürekli saldırmayı engeller'],
+  ] },
   { title: 'Dünya', items: [
     ...(OFFLINE ? [['bots', 'Test botu sayısı', 'Köyde dolaşan / ormanda avlanan oyuncular'] as [NumKey, string, string]] : []),
     ['brightness', 'Işık seviyesi', 'Bütün haritaların parlaklığı'],
   ] },
 ];
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
-const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
+const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'meleeApproach' ? Math.round(v) + ' px' : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];

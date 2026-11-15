@@ -37,6 +37,10 @@ export interface GameTuning {
   bots: number; worldDecayMul: number; brightness: number;
   /** Dünya Sağlığı: 1 Öz bağışının kazandırdığı puan (sağlık düştükçe etkisi artar). */
   worldDonateGain: number;
+  /** saldırı tuşu: yakın dövüşçünün yürüyerek yaklaşacağı ek mesafe (px, ~64 = 1 adım) */
+  meleeApproach: number;
+  /** saldırı tuşu: hedef ölünce bu süre (sn) boyunca yeni canavara yürünmez, yalnız menzildekine vurulur */
+  retargetDelay: number;
   announcement: string;
   monsters: Record<string, MonsterTune>;
   spawns: Record<string, SpawnTune>;
@@ -61,14 +65,14 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, announcement: '',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, retargetDelay: 1.2, announcement: '',
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
 export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
-  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005],
+  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], retargetDelay: [0, 5, 0.1],
 };
 export const DENSITY_LIMITS: [number, number, number] = [0.3, 3, 0.05];
 export const TUNING: GameTuning = structuredClone(DEFAULT_TUNING);

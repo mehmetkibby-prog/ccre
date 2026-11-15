@@ -1,6 +1,6 @@
 import { DIR_STEPS,
   readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
-  MONSTERS, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
+  MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
 } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId } from './store.ts';
 import { Input } from './input.ts';
@@ -57,6 +57,8 @@ export class Game {
   autoAttack = false;
   /** hedefe yürüyerek saldırı yalnız fareyle canavara tıklayınca; saldırı tuşu (1 / boşluk / mobil düğme) olduğu yerde vurur */
   walkToTarget = false;
+  /** hedefimiz son öldüğünde (yeni hedefe yürüme beklemesi için) */
+  private lastKillAt = 0;
   /** Saldırı basılıyken hedef öldü: yeni hedefe geçmek için tuş bırakılıp yeniden basılmalı (makro/ağırlıkla bot gibi kasılmayı önler). */
   attackNeedsRelease = false;
   private farHintAt = 0;
@@ -340,7 +342,7 @@ export class Game {
       case Ev.DEATH: {
         const e = this.ents.get(ev.id);
         if (e) { e.deadAt = now; const p = this.entPos(e); this.fx.burst(p.x, p.y, 0.8, 26, e.kind === Kind.MONSTER ? '#9ffff0' : '#ff8a8a', 3, 900, 0.22, -1); if (ev.killer === this.selfId) sfx.play('kill'); }
-        if (ev.id === this.targetId) { this.autoAttack = false; if (this.input.attackHeld) this.attackNeedsRelease = true; this.setTarget(0); }
+        if (ev.id === this.targetId) { this.autoAttack = false; this.walkToTarget = false; this.lastKillAt = performance.now(); if (this.input.attackHeld) this.attackNeedsRelease = true; this.setTarget(0); }
         break;
       }
       case Ev.FX: {
@@ -578,7 +580,9 @@ export class Game {
     if (down) {
       // yakın dövüşçü (Muhafız) hafif uzaktaki canavara da yürüyüp vurur; menzil kısa olduğu için. Uzaktaki
       // canavara gitmez (tuşa basılı tutup haritada bot gibi dolaşılmasın); ölünce yeniden basmak gerekir.
-      const approach = this.selfRange() < 160 ? 210 : 40;
+      // yönetimden: yaklaşma mesafesi ve öldürdükten sonra bekleme (hızlı basarak oto saldırı olmasın)
+      const fresh = performance.now() - this.lastKillAt < (TUNING.retargetDelay ?? 1.2) * 1000;
+      const approach = this.selfRange() < 160 && !fresh ? (TUNING.meleeApproach ?? 90) : 40;
       const reach = this.selfRange() + approach;
       let t = this.targetId ? this.ents.get(this.targetId) : undefined;
       if (t && (t.hp <= 0 || Math.hypot(t.x - this.px, t.y - this.py) > reach)) t = undefined;
