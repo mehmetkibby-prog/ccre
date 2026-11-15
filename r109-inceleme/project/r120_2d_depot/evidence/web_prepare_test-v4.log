@@ -1,0 +1,19 @@
+test_certificate_failure_restores_old_site_without_services_or_database (__main__.Preparation.test_certificate_failure_restores_old_site_without_services_or_database) ... ok
+test_default_auto_https_preflight_is_read_only (__main__.Preparation.test_default_auto_https_preflight_is_read_only) ... ok
+test_disabled_auto_https_or_no_443_is_not_overridden (__main__.Preparation.test_disabled_auto_https_or_no_443_is_not_overridden) ... ok
+test_edited_2d_route_not_accepted (__main__.Preparation.test_edited_2d_route_not_accepted) ... ok
+test_external_change_is_never_overwritten (__main__.Preparation.test_external_change_is_never_overwritten) ... ok
+test_failed_caddy_load_restores_persisted_file (__main__.Preparation.test_failed_caddy_load_restores_persisted_file) ... ok
+test_interrupted_config_write_explicit_recovery (__main__.Preparation.test_interrupted_config_write_explicit_recovery) ... ok
+test_old_home_changes_trigger_rollback (__main__.Preparation.test_old_home_changes_trigger_rollback) ... ok
+test_private_journal_symlink_is_rejected_before_any_write (__main__.Preparation.test_private_journal_symlink_is_rejected_before_any_write) ... ok
+test_public_403_preserves_verified_tls_and_blocks_install_until_retry (__main__.Preparation.test_public_403_preserves_verified_tls_and_blocks_install_until_retry) ... ok
+test_public_525_redirect_or_network_failure_does_not_remove_valid_local_tls (__main__.Preparation.test_public_525_redirect_or_network_failure_does_not_remove_valid_local_tls) ... ok
+test_readonly_public_check_does_not_reload_or_mutate_journal (__main__.Preparation.test_readonly_public_check_does_not_reload_or_mutate_journal) ... ok
+test_success_retry_and_rollback_preserve_exact_bytes_permissions (__main__.Preparation.test_success_retry_and_rollback_preserve_exact_bytes_permissions) ... ok
+test_v2_rollback_journal_is_compatible (__main__.Preparation.test_v2_rollback_journal_is_compatible) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.075s
+
+OK

@@ -1,0 +1,10 @@
+test_network_realm_signing_and_database_guards_remain_strict (__main__.AcademyOrigin.test_network_realm_signing_and_database_guards_remain_strict) ... ok
+test_new_health_marker_is_required_only_for_v4_not_rollback (__main__.AcademyOrigin.test_new_health_marker_is_required_only_for_v4_not_rollback) ... ok
+test_reproduce_old_failure_then_real_signed_connections_with_new_and_old_origin (__main__.AcademyOrigin.test_reproduce_old_failure_then_real_signed_connections_with_new_and_old_origin) ... {"new2dOrigin":"accepted","foreignOrigins":"rejected","normalAcademyTicket":"accepted","otherRealmSigningKey":"rejected","durableBot":"rejected","markedBot":"rejected","testProof":"rejected"}
+ok
+test_tampered_legacy_bundle_or_record_is_rejected_before_mutations (__main__.AcademyOrigin.test_tampered_legacy_bundle_or_record_is_rejected_before_mutations) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.723s
+
+OK

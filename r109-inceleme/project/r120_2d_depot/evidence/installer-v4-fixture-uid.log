@@ -1,0 +1,143 @@
+test_failed_https_restores_every_domain_setting_and_keeps_progress (__main__.Installation.test_failed_https_restores_every_domain_setting_and_keeps_progress) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-ah8e6v71/rt-library
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+FAIL
+test_failed_realtime_readiness_restores_old_bundle_and_configuration (__main__.Installation.test_failed_realtime_readiness_restores_old_bundle_and_configuration) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-xy2m3uvo/rt-library
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ERROR
+test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy (__main__.Installation.test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-wr7akiw4/rt-library
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ERROR
+test_r118_cumulative_apply_and_rollback (__main__.Installation.test_r118_cumulative_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-smm41sub/rt-library
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ERROR
+test_r119_apply_and_rollback (__main__.Installation.test_r119_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R119 TAMAMLANDI. Efsane ve Akademi Şampiyonlar Diyarı animasyonları güncellendi; sekiz kanal hazır. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+Yama durdu: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-91p9u119/rt-library
+Önceki oyun ve alan adı ayarları geri yüklendi; oyuncu verileri geri alınmadı.
+ERROR
+test_unknown_source_rejected_and_no_database_migration (__main__.Installation.test_unknown_source_rejected_and_no_database_migration) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ok
+
+======================================================================
+ERROR: test_failed_realtime_readiness_restores_old_bundle_and_configuration (__main__.Installation.test_failed_realtime_readiness_restores_old_bundle_and_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 118, in test_failed_realtime_readiness_restores_old_bundle_and_configuration
+    with self.assertRaisesRegex(m.readiness.NotReady,'injected Academy'):m.apply(f.live,f.z,f.plan)
+                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/installer.py", line 309, in apply
+    domain_move.apply(plan['_domainPrepared'],j,external,persist,run)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/domain_move.py", line 167, in apply
+    if prepared.get('academyRealtime'):academy_origin.make_directory(prepared['academyRealtime'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 70, in make_directory
+    trusted(LIBRARY,True)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 18, in trusted
+    require(not p.is_symlink() and s.st_uid==ROOT_UID and not s.st_mode&0o022 and (stat.S_ISDIR(s.st_mode) if directory else stat.S_ISREG(s.st_mode)),'Akademi bağlantı dosyası sahibi/izni farklı: '+str(p))
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-xy2m3uvo/rt-library
+
+======================================================================
+ERROR: test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy (__main__.Installation.test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 98, in test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy
+    m.apply(f.live,f.z,f.plan);j=f.result()
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/installer.py", line 309, in apply
+    domain_move.apply(plan['_domainPrepared'],j,external,persist,run)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/domain_move.py", line 167, in apply
+    if prepared.get('academyRealtime'):academy_origin.make_directory(prepared['academyRealtime'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 70, in make_directory
+    trusted(LIBRARY,True)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 18, in trusted
+    require(not p.is_symlink() and s.st_uid==ROOT_UID and not s.st_mode&0o022 and (stat.S_ISDIR(s.st_mode) if directory else stat.S_ISREG(s.st_mode)),'Akademi bağlantı dosyası sahibi/izni farklı: '+str(p))
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-wr7akiw4/rt-library
+
+======================================================================
+ERROR: test_r118_cumulative_apply_and_rollback (__main__.Installation.test_r118_cumulative_apply_and_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 94, in test_r118_cumulative_apply_and_rollback
+    def test_r118_cumulative_apply_and_rollback(self):self.roundtrip('R118_ROYAL1')
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 81, in roundtrip
+    m.apply(f.live,f.z,f.plan);j=f.result();m.validate_record(j,completed=True)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/installer.py", line 309, in apply
+    domain_move.apply(plan['_domainPrepared'],j,external,persist,run)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/domain_move.py", line 167, in apply
+    if prepared.get('academyRealtime'):academy_origin.make_directory(prepared['academyRealtime'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 70, in make_directory
+    trusted(LIBRARY,True)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 18, in trusted
+    require(not p.is_symlink() and s.st_uid==ROOT_UID and not s.st_mode&0o022 and (stat.S_ISDIR(s.st_mode) if directory else stat.S_ISREG(s.st_mode)),'Akademi bağlantı dosyası sahibi/izni farklı: '+str(p))
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-smm41sub/rt-library
+
+======================================================================
+ERROR: test_r119_apply_and_rollback (__main__.Installation.test_r119_apply_and_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 95, in test_r119_apply_and_rollback
+    def test_r119_apply_and_rollback(self):self.roundtrip('R119_MOTION1')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 81, in roundtrip
+    m.apply(f.live,f.z,f.plan);j=f.result();m.validate_record(j,completed=True)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/installer.py", line 309, in apply
+    domain_move.apply(plan['_domainPrepared'],j,external,persist,run)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/domain_move.py", line 167, in apply
+    if prepared.get('academyRealtime'):academy_origin.make_directory(prepared['academyRealtime'])
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 70, in make_directory
+    trusted(LIBRARY,True)
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/academy_origin.py", line 18, in trusted
+    require(not p.is_symlink() and s.st_uid==ROOT_UID and not s.st_mode&0o022 and (stat.S_ISDIR(s.st_mode) if directory else stat.S_ISREG(s.st_mode)),'Akademi bağlantı dosyası sahibi/izni farklı: '+str(p))
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/deployment/modules/storage.py", line 6, in require
+    if not ok:raise RuntimeError(message)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-91p9u119/rt-library
+
+======================================================================
+FAIL: test_failed_https_restores_every_domain_setting_and_keeps_progress (__main__.Installation.test_failed_https_restores_every_domain_setting_and_keeps_progress)
+----------------------------------------------------------------------
+RuntimeError: Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-ah8e6v71/rt-library
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 106, in test_failed_https_restores_every_domain_setting_and_keeps_progress
+    with self.assertRaisesRegex(RuntimeError,'injected R120'):m.apply(f.live,f.z,f.plan)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: "injected R120" does not match "Akademi bağlantı dosyası sahibi/izni farklı: /tmp/r118-install-test-ah8e6v71/rt-library"
+
+----------------------------------------------------------------------
+Ran 6 tests in 48.993s
+
+FAILED (failures=1, errors=4)

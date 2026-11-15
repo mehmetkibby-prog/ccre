@@ -8,7 +8,7 @@ import source_identity,readiness,r63_support as identity
 from storage import atomic,descriptor,digest,encoded,read,require,sync_dir,lock
 STATE=Path('/var/lib/core511/state.json');CONTROL=STATE.parent/'r102-admin-fix';ACTIVE=CONTROL/'active.json'
 RELEASES=Path('/opt/core511/releases');SYSTEMD=Path('/etc/systemd/system');HERE=Path(__file__).resolve().parent
-VERSION='R120_2D_DEPOT3';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
+VERSION='R120_2D_DEPOT4';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
 START=('coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service','coreoflife-r1.service','coreoflife-r2.service')
 def say(s):print(s,flush=True)
 

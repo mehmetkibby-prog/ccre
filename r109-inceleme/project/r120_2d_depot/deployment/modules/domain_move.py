@@ -1,5 +1,6 @@
 """Narrow, journaled 2D alias/configuration changes. Never calls a DNS API."""
 import copy,hashlib,http.client,json,re,socket,ssl,tempfile,time,urllib.request
+import academy_origin
 from pathlib import Path
 from urllib.parse import urlsplit
 from storage import require,encoded,digest,read
@@ -142,7 +143,9 @@ def prepare(live,z,plan,run):
   file=Path(file);require(not file.is_symlink(),'Servis ayarı sembolik bağ')
   value=read(file);new=game_config(value);rows.append((file,digest(file),encoded(new)))
  for unit in ('coreoflife-rt-r1.service','coreoflife-rt-r2.service'):
-  drop,data,env,value=realtime_dropin(unit,process_origins(unit,run))
+  old_origins=process_origins(unit,run)
+  if unit==academy_origin.UNIT:academy=academy_origin.prepare(live,SYSTEMD,run,old_origins);rows+=academy['rows']
+  drop,data,env,value=realtime_dropin(unit,old_origins)
   for p,b in ((drop,data),(env,value)):
    require(not p.exists() and not p.is_symlink(),'R120 realtime ayarı zaten var; üzerine yazılmadı');rows.append((p,None,b))
  root=SITE.resolve();require(root.is_relative_to(SITE.parent.resolve()),'Ana site dizini farklı')
@@ -156,14 +159,16 @@ def prepare(live,z,plan,run):
  p=SYSTEMD/'coreoflife-forum.service.d/zz-r120-2d.conf';require(not p.exists() and not p.is_symlink(),'Forum geçiş ayarı zaten var')
  rows.append((p,None,('[Service]\nEnvironment=FORUM_ORIGIN='+ORIGIN+'\nEnvironment=FORUM_ALLOWED_ORIGINS='+','.join([ORIGIN,*['https://'+h for h in OLD]])+'\n').encode()))
  require(len({str(p) for p,_,_ in rows})==len(rows),'Tekrarlanan geçiş dosyası')
- return {'beforeConfig':before,'afterConfig':after,'certificate':certs[0]['path'],'rows':rows}
+ return {'beforeConfig':before,'afterConfig':after,'certificate':certs[0]['path'],'rows':rows,'academyRealtime':academy}
 
 def apply(prepared,j,external,persist,run):
  require(read(CONFIG)==prepared['beforeConfig'] and api()==prepared['beforeConfig'],'Caddy ön kontrolden sonra değişti')
  j['domain']={k:prepared[k] for k in ('beforeConfig','afterConfig','certificate')};j['domain']['phase']='prepared';persist(j)
+ if prepared.get('academyRealtime'):academy_origin.make_directory(prepared['academyRealtime'])
  for p,before,data in prepared['rows']:
   require(not p.is_symlink() and (digest(p) if p.exists() else None)==before,'Geçiş dosyası ön kontrolden sonra değişti: '+str(p))
   external(j,p,data)
+ if prepared.get('academyRealtime'):academy_origin.check_access(prepared['academyRealtime'],run)
  if prepared['afterConfig']!=prepared['beforeConfig']:
   external(j,CONFIG,encoded(prepared['afterConfig']));api(prepared['afterConfig'])
  require(api()==prepared['afterConfig'],'Yeni Caddy ayarı etkinleşmedi')

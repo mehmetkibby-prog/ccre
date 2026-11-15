@@ -87,3 +87,37 @@ Güvenlik/SSL kapatılmaz; user-agent açıkça CoreOfLife readiness olarak tan�
 Ayrıntı evidence/verification-v3.json. Tam paket: `artifacts/R120_2D_DEPOT_a75c635543cf.zip`
 SHA256 `28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821`. Eski ZIP'ler/SHA'lar korunur.
 Canlı kurulum ve dış erişim kabulü henüz doğrulanmadı; 2D hazır denmez.
+
+## V4 — Akademi realtime_network_identity (15 Kasım, 22:36 ekranı)
+
+V3 web hazırlığı canlıda yerel TLS/ana sayfa + dış HTTP 200 geçti. Ana kurulum
+r2 bağlantı sağlık kontrolünde durdu ve önceki kod/alan ayarları geri yüklendi.
+Web hazırlığının yeni 2d eşleri yerinde kaldı. V3 ana kurulu sayılmaz; kaynak
+tam R118/R119 olarak kalır. Eski 403/525 bu yeni servisin hatası değildir.
+
+Günlük kesin neden: R102 `realtime-profile.mjs` içindeki
+`env.ALLOWED_ORIGINS===realm.origin`. R120 yeni 2d origin ekleyince bu şart
+sağlanmıyor. Son satır R102_REALTIME1'in rollback sonrası hazır olduğunu gösterdi.
+
+V4 `academy_origin.py` eski R102 kayıt/manifest/dosya SHA/servis komutu ve canlı
+PID bağını doğrular. Yeni profili gerçek col-r2 ile servisleri durdurmadan,
+salt okunur DB üzerinden sınar. Yeni kod ayrı academy-realtime-r120-<hash>
+dizinine, normal geri dönüş günlüğüyle yazılır; zz-r120-realtime.conf devreye
+alınır. Eski paket, kayıt ve zz-r102-realtime.conf hiç değiştirilmez.
+
+Yalnız tam r2 origin veya tam r2 + sabit 2d origin kabul edilir. Port/localhost,
+imza, realm/veritabanı kimliği, bot/proof korumaları sürer. İki realtime sağlık
+yolunda R102_REALTIME1 korunur ve R120_ORIGIN1 eklenir; v4 readiness bunu ister.
+Geri dönüş eski sürümde yeni işareti istemez; yeni dosyaları/override'ı kaldırır.
+
+Paket `artifacts/R120_2D_DEPOT_f2ae90415c02.zip`, sürüm R120_2D_DEPOT4.
+SHA256 `2763f8fbc6e37749f2dcd1df5f2ad4c57e391761ef49208f28f5438b1aad05b8`.
+Çekirdek/namespace ve 16 oyun/forum payload dosyası v3 ile byte olarak aynıdır.
+Tüm önceki R120 ZIP SHA'ları tekrar doğrulandı. DNS/3D/Cloudflare değişmedi.
+
+44 test geçti: 9 alan, 14 web hazırlık, 5 CLI, 6 public probe, 4 gerçek Academy
+servis/Origin/kimlik/WS ve 6 paket kurulum/geri dönüş. İki ilk kurulum-test
+fikstürü hatası (eksik dizin ve UID1000 uyarlaması) düzeltildi ve logları korundu;
+üretim root koruması gevşetilmedi. `evidence/verification-v4.json` kanıtıdır.
+Testler sentetik veridedir; canlı v4 kurulumu ve tam mobil/masaüstü kabul hâlâ
+bekler. Kullanıcıya yeni v4 indirme/kurulum bloğu verilecek; 2D hazır denmez.

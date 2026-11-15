@@ -1,0 +1,82 @@
+{
+  "package": {
+    "file": "artifacts/R120_2D_DEPOT_f2ae90415c02.zip",
+    "sha256": "2763f8fbc6e37749f2dcd1df5f2ad4c57e391761ef49208f28f5438b1aad05b8",
+    "bytes": 1464741,
+    "sourceVersions": [
+      "R118_ROYAL1",
+      "R119_MOTION1"
+    ],
+    "targetVersion": "R120_2D_DEPOT4",
+    "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
+    "namespace": "core511-17d72e47dc4df4fa",
+    "changedCodeFiles": 14,
+    "databaseScope": "none",
+    "acceptance": "44 targeted tests passed; actual Academy RT failure reproduced and fixed; v4 live install pending",
+    "deployed": false,
+    "publicDomainTests": "v3 web preparation live HTTP 200 confirmed by screenshot; full flows pending"
+  },
+  "tests": {
+    "domain_test-v4.log": 9,
+    "web_prepare_test-v4.log": 14,
+    "web_cli_test-v4.log": 5,
+    "public_probe_test-v4.log": 6,
+    "academy-origin-v4.log": 4,
+    "installer-v4.log": 6
+  },
+  "totalTests": 44,
+  "before": {
+    "realOldR102WithTwoOrigins": "exit 1 realtime_network_identity",
+    "liveV3": "TLS/public HTTP200 passed, main install failed r2 realtime and rolled back"
+  },
+  "afterLocal": {
+    "realNodeService": "healthz and readyz pass R120_ORIGIN1 + R102_REALTIME1",
+    "signedWebSockets": [
+      "r2 original Origin accepted",
+      "2d new Origin accepted",
+      "foreign Origins rejected",
+      "other realm key rejected",
+      "durable and marked bots rejected",
+      "loadlab proof rejected"
+    ],
+    "guards": [
+      "fixed localhost and port",
+      "exact old origin or exact old+2d origins",
+      "realm config and database identity",
+      "public signing key identity",
+      "bundle digests and root owned paths"
+    ],
+    "rollback": "R118 and R119 code/config restore, old R102 bundle/dropin/record unchanged, player progress retained; injected realtime and HTTPS failures handled"
+  },
+  "oldArchivesVerified": {
+    "R120_2D_DEPOT_074a106a8fd8.zip": "afc268526f78b8e895e92b2d6048055e02f74fc17bf939ee69d49911c3ac12cc",
+    "R120_2D_DEPOT_4cdc1af31b61.zip": "5fcf4d850076257437166f5634519041f803866b8956d95901bf2141c1664ff6",
+    "R120_2D_DEPOT_a75c635543cf.zip": "28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821"
+  },
+  "unchangedGameForumPayloadFiles": 16,
+  "gameChangesBeyondV3": false,
+  "productionDeployedHere": false,
+  "failedAttempts": [
+    {
+      "log": "installer-v4-fixture-missing-directory.log",
+      "cause": "synthetic systemd fixture missing parent directory; corrected fixture"
+    },
+    {
+      "log": "installer-v4-fixture-uid.log",
+      "cause": "test runs as UID1000; root-ownership fixture adapter missing; corrected fixture, production root check unchanged"
+    }
+  ],
+  "pending": [
+    "User installs v4 on VDS and returns result",
+    "Cloudflare rule inventory",
+    "Public mobile/desktop login, registration, game, voice, forum, preregistration, media and email links",
+    "No apex/www outbound requests after cutover"
+  ],
+  "notChanged": [
+    "DNS",
+    "3D VDS",
+    "Cloudflare zone/security",
+    "game/player schema/data",
+    "old R102 bundle and immutable archives"
+  ]
+}

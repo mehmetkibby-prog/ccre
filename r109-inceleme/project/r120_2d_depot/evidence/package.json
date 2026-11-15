@@ -1,17 +1,17 @@
 {
-  "file": "artifacts/R120_2D_DEPOT_a75c635543cf.zip",
-  "sha256": "28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821",
-  "bytes": 1461430,
+  "file": "artifacts/R120_2D_DEPOT_f2ae90415c02.zip",
+  "sha256": "2763f8fbc6e37749f2dcd1df5f2ad4c57e391761ef49208f28f5438b1aad05b8",
+  "bytes": 1464741,
   "sourceVersions": [
     "R118_ROYAL1",
     "R119_MOTION1"
   ],
-  "targetVersion": "R120_2D_DEPOT3",
+  "targetVersion": "R120_2D_DEPOT4",
   "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
   "namespace": "core511-17d72e47dc4df4fa",
   "changedCodeFiles": 14,
   "databaseScope": "none",
-  "acceptance": "39 targeted tests passed; unchanged game/forum payload; public incident still needs VDS verification",
+  "acceptance": "44 targeted tests passed; actual Academy RT failure reproduced and fixed; v4 live install pending",
   "deployed": false,
-  "publicDomainTests": "pending"
+  "publicDomainTests": "v3 web preparation live HTTP 200 confirmed by screenshot; full flows pending"
 }

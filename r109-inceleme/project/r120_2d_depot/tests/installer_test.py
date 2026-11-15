@@ -1,5 +1,5 @@
 """Real archived R118/R119 -> R120 apply/rollback. Only services/TLS are adapters."""
-import contextlib,copy,importlib,importlib.util,json,sqlite3,sys,unittest,zipfile
+import contextlib,copy,importlib,importlib.util,json,os,sqlite3,sys,unittest,zipfile
 from pathlib import Path
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1];OLD=ROOT.parent/'r119_monster_motion'
@@ -45,6 +45,13 @@ class Fixture:
   self.forum=f.home/'forum';self.forum.mkdir();self.forum.joinpath('public').mkdir()
   for name in self.plan['domain']['forum']:(self.forum/name).write_bytes((ROOT.parent/'r114_rune_forum/forum'/name).read_bytes())
   self.newconf=f.home/'systemd/r120.conf'
+  self.rt_library=f.home/'rt-library';self.rt_library.mkdir();self.rt_library.chmod(0o755)
+  self.scope.enter_context(patch.object(m.domain_move.academy_origin,'ROOT_UID',os.getuid()))
+  self.scope.enter_context(patch.object(m.domain_move.academy_origin,'LIBRARY',self.rt_library))
+  self.rt_target=self.rt_library/'academy-realtime-r120-1234567890abcdef'
+  self.rt_legacy=self.rt_library/'academy-realtime-old';self.rt_legacy.mkdir();(self.rt_legacy/'server.mjs').write_bytes(b'old immutable realtime')
+  self.rt_drop=f.home/'systemd/zz-r120-realtime.conf';self.rt_drop.parent.mkdir(exist_ok=True)
+  self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
  def api(self,value=None):
   if value is not None:self.caddy=copy.deepcopy(value)
   return copy.deepcopy(self.caddy)
@@ -55,7 +62,9 @@ class Fixture:
   for name,meta in plan['domain']['forum'].items():
    p=self.forum/name;assert digest(p)==meta['before'];rows.append((p,digest(p),z.read('forum/'+name)))
   rows.append((self.newconf,None,b'[Service]\nEnvironment=ALLOWED_ORIGINS=https://2d.coreoflife.net\n'))
-  plan['_domainPrepared']={'beforeConfig':self.initial,'afterConfig':m.domain_move.caddy_alias(self.initial),'certificate':'isolated-tls-adapter','rows':rows}
+  rt_rows=[(self.rt_target/n,None,b'fixture bundle data') for n in ('server.mjs','realtime-entry.mjs','realtime-profile.mjs','bundle.json')]+[(self.rt_drop,None,b'ExecStart=new realtime\n')]
+  rows+=rt_rows
+  plan['_domainPrepared']={'beforeConfig':self.initial,'afterConfig':m.domain_move.caddy_alias(self.initial),'certificate':'isolated-tls-adapter','rows':rows,'academyRealtime':{'target':str(self.rt_target),'node':str(live.node),'rows':rt_rows}}
   return m.payload(live,z,plan)+m.asset_updates(live,z,plan)
  def health(self,j):
   assert self.caddy==m.domain_move.caddy_alias(self.initial)
@@ -72,12 +81,14 @@ class Installation(unittest.TestCase):
   f=self.fixture(source);beforedb={k:digest(v['path']) for k,v in f.f.databases.items()};prior=f.result();oldBackup={str(p):digest(p) for p in Path(prior['directory']).rglob('*') if p.is_file()}
   m.apply(f.live,f.z,f.plan);j=f.result();m.validate_record(j,completed=True)
   self.assertEqual(beforedb,{k:digest(v['path']) for k,v in f.f.databases.items()});self.assertEqual(oldBackup,{p:digest(p) for p in oldBackup})
-  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT3');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
+  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT4');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
+  self.assertTrue(f.rt_drop.exists());self.assertEqual(len(list(f.rt_target.iterdir())),4)
   for p in f.settings:self.assertIn('2d.coreoflife.net',json.loads(p.read_text())['hosts'])
   for row in f.f.databases.values():
    with sqlite3.connect(row['path']) as db:db.execute('UPDATE players SET gems=98765');db.commit()
   j['phase']='rollback-requested';m.persist(j);m.rollback(f.live,j)
   self.assertEqual(m.identity.core_identity(f.root/m.source_identity.CORE),f.plan['sources'][source]['core']);self.assertEqual(f.caddy,f.initial);self.assertFalse(f.newconf.exists());self.assertEqual(f.site.read_text(),'<a href="https://coreoflife.net/">Ana site</a>')
+  self.assertFalse(f.rt_drop.exists());self.assertFalse(list(f.rt_target.iterdir()));self.assertEqual((f.rt_legacy/'server.mjs').read_bytes(),b'old immutable realtime');self.assertEqual(f.rt_old_drop.read_text(),'ExecStart=old realtime\n')
   for p,b in f.settings.items():self.assertEqual(p.read_bytes(),b)
   for row in f.f.databases.values():
    with sqlite3.connect(row['path']) as db:self.assertEqual(db.execute('SELECT gems FROM players').fetchone()[0],98765);self.assertEqual(db.execute("SELECT count(*) FROM monsters WHERE area='champions'").fetchone()[0],192)
@@ -95,9 +106,21 @@ class Installation(unittest.TestCase):
   f=self.fixture();f.fail=True
   with self.assertRaisesRegex(RuntimeError,'injected R120'):m.apply(f.live,f.z,f.plan)
   self.assertFalse(m.ACTIVE.exists());self.assertEqual(f.caddy,f.initial);self.assertFalse(f.newconf.exists())
+  self.assertFalse(f.rt_drop.exists());self.assertFalse(list(f.rt_target.iterdir()));self.assertEqual(f.rt_old_drop.read_text(),'ExecStart=old realtime\n')
   for p,b in f.settings.items():self.assertEqual(p.read_bytes(),b)
   self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R118_ROYAL1')
   with sqlite3.connect(f.f.databases['r1']['path']) as db:self.assertEqual(db.execute('SELECT gems FROM players').fetchone()[0],234567)
+ def test_failed_realtime_readiness_restores_old_bundle_and_configuration(self):
+  f=self.fixture()
+  def health(manifest,version=m.VERSION,**kw):
+   if version==m.VERSION:raise m.readiness.NotReady('injected Academy realtime failure')
+   return f.f.health(manifest,'R118_ROYAL1')
+  with patch.object(m.readiness,'wait',side_effect=health):
+   with self.assertRaisesRegex(m.readiness.NotReady,'injected Academy'):m.apply(f.live,f.z,f.plan)
+  self.assertFalse(m.ACTIVE.exists());self.assertFalse(f.rt_drop.exists());self.assertFalse(list(f.rt_target.iterdir()))
+  self.assertEqual(f.rt_old_drop.read_text(),'ExecStart=old realtime\n');self.assertEqual((f.rt_legacy/'server.mjs').read_bytes(),b'old immutable realtime')
+  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R118_ROYAL1')
+  for p,b in f.settings.items():self.assertEqual(p.read_bytes(),b)
  def test_unknown_source_rejected_and_no_database_migration(self):
   f=self.fixture();self.assertEqual(set(f.plan['sources']),{'R118_ROYAL1','R119_MOTION1'});self.assertEqual(f.plan['databaseScope'],'none');self.assertFalse(f.plan['databaseSchemaChanges']);self.assertFalse(f.plan['domain']['dnsChanges']);self.assertFalse(f.plan['domain']['zoneChanges'])
   self.assertFalse(any('/tests/' in n or 'http-runtime/' in n or 'native510' in n for n in f.plan['files']))

@@ -94,3 +94,11 @@ R120 v3 continuation: current installer R120_2D_DEPOT3 keeps verified local
 Main installation remains blocked pending a successful public check; no security
 bypass. User moved apex DNS to 3D. Read R120_DEVIR.md v3 section and preserve
 all v1/v2 archives. Live acceptance and original HTTP 403 cause remain pending.
+
+R120 v4 continuation: live v3 web preparation passed TLS and public HTTP 200,
+then main apply rolled back because the old Academy R102 realtime profile
+required a single ALLOWED_ORIGINS value. Current R120_2D_DEPOT4 adds a verified,
+separate R120_ORIGIN1 Academy bundle and journaled ExecStart override. Preserve
+the original R102 record/bundle and all old ZIPs. 44 targeted tests passed,
+including real Node/signed WebSocket reproduction and installer rollback.
+V4 live application/full public acceptance is still pending. Read R120_DEVIR.md.

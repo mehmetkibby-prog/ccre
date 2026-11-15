@@ -3,8 +3,9 @@ import time
 from r63_support import local
 class NotReady(RuntimeError):pass
 
-def probe(manifest,version='R120_2D_DEPOT3',request=local):
- if version in ('R119_MOTION1','R120_2D_DEPOT3'):version='R118_ROYAL1' # Client-only patch; authoritative runtime is R118.
+def probe(manifest,version='R120_2D_DEPOT4',request=local):
+ require_origin=version=='R120_2D_DEPOT4'
+ if version in ('R119_MOTION1','R120_2D_DEPOT4'):version='R118_ROYAL1' # Client-only patch; authoritative runtime is R118.
  target=version
  if version in ('R112_FLOW1','R113_ENGINE1','R114_RUNE_FORUM1','R115_SHARED_SCOPE1','R116_ADMISSION_TRANSFER1','R117_HOOK10','R118_ROYAL1'):version='R111_COMBAT1'
  health={};issues=[]
@@ -41,13 +42,14 @@ def probe(manifest,version='R120_2D_DEPOT3',request=local):
     rt=request(realm['ports']['realtime'],path)
     if rt.get('ok') is not True or rt.get('protocol')!='col-realtime-1':raise ValueError('bağlantı servisi hazır değil')
     if rid=='r2' and (rt.get('transportRepairVersion')!='R102_REALTIME1' or rt.get('realmId')!='r2' or rt.get('dbIdentity')!=realm['dbIdentity']):raise ValueError('Akademi bağlantı kimliği farklı')
+    if rid=='r2' and require_origin and rt.get('originCompatibility')!='R120_ORIGIN1':raise ValueError('Akademi yeni alan adı bağlantı kodu hazır değil')
   except Exception as e:issues.append(rid+' bağlantı: '+(str(e)[:120] if isinstance(e,ValueError) else 'yerel bağlantı servisi yanıt vermiyor'))
  try:
   if request(manifest['authPort'],'/api/auth/me').get('authenticated') is not False:issues.append('hesap: beklenmeyen yanıt')
  except Exception:issues.append('hesap: yerel servis henüz yanıt vermiyor')
  return health,issues
 
-def wait(manifest,version='R120_2D_DEPOT3',timeout=120,request=local,say=print):
+def wait(manifest,version='R120_2D_DEPOT4',timeout=120,request=local,say=print):
  end=time.monotonic()+timeout;reported=0
  while time.monotonic()<end:
   health,issues=probe(manifest,version,request)

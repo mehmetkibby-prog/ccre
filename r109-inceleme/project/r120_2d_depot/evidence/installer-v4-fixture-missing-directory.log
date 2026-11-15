@@ -1,0 +1,157 @@
+test_failed_https_restores_every_domain_setting_and_keeps_progress (__main__.Installation.test_failed_https_restores_every_domain_setting_and_keeps_progress) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ERROR
+test_failed_realtime_readiness_restores_old_bundle_and_configuration (__main__.Installation.test_failed_realtime_readiness_restores_old_bundle_and_configuration) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ERROR
+test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy (__main__.Installation.test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ERROR
+test_r118_cumulative_apply_and_rollback (__main__.Installation.test_r118_cumulative_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ERROR
+test_r119_apply_and_rollback (__main__.Installation.test_r119_apply_and_rollback) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Yalnız değişen oyun kodu yedekleniyor; oyuncu veritabanı taraması ve sıkıştırma yok.
+R119 TAMAMLANDI. Efsane ve Akademi Şampiyonlar Diyarı animasyonları güncellendi; sekiz kanal hazır. Bakım ayarın korundu.
+ERROR
+test_unknown_source_rejected_and_no_database_migration (__main__.Installation.test_unknown_source_rejected_and_no_database_migration) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ERROR
+
+======================================================================
+ERROR: test_failed_https_restores_every_domain_setting_and_keeps_progress (__main__.Installation.test_failed_https_restores_every_domain_setting_and_keeps_progress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 105, in test_failed_https_restores_every_domain_setting_and_keeps_progress
+    f=self.fixture();f.fail=True
+      ^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-6gsu37re/systemd/zz-r102-realtime.conf'
+
+======================================================================
+ERROR: test_failed_realtime_readiness_restores_old_bundle_and_configuration (__main__.Installation.test_failed_realtime_readiness_restores_old_bundle_and_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 113, in test_failed_realtime_readiness_restores_old_bundle_and_configuration
+    f=self.fixture()
+      ^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-pa3ptke_/systemd/zz-r102-realtime.conf'
+
+======================================================================
+ERROR: test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy (__main__.Installation.test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 97, in test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy
+    f=self.fixture();f.initial=m.domain_move.caddy_alias(f.initial);f.caddy=copy.deepcopy(f.initial);f.config.write_bytes(encoded(f.initial))
+      ^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-bmfr99ax/systemd/zz-r102-realtime.conf'
+
+======================================================================
+ERROR: test_r118_cumulative_apply_and_rollback (__main__.Installation.test_r118_cumulative_apply_and_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 94, in test_r118_cumulative_apply_and_rollback
+    def test_r118_cumulative_apply_and_rollback(self):self.roundtrip('R118_ROYAL1')
+                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 80, in roundtrip
+    f=self.fixture(source);beforedb={k:digest(v['path']) for k,v in f.f.databases.items()};prior=f.result();oldBackup={str(p):digest(p) for p in Path(prior['directory']).rglob('*') if p.is_file()}
+      ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-kc_1y905/systemd/zz-r102-realtime.conf'
+
+======================================================================
+ERROR: test_r119_apply_and_rollback (__main__.Installation.test_r119_apply_and_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 95, in test_r119_apply_and_rollback
+    def test_r119_apply_and_rollback(self):self.roundtrip('R119_MOTION1')
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 80, in roundtrip
+    f=self.fixture(source);beforedb={k:digest(v['path']) for k,v in f.f.databases.items()};prior=f.result();oldBackup={str(p):digest(p) for p in Path(prior['directory']).rglob('*') if p.is_file()}
+      ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-entsqhji/systemd/zz-r102-realtime.conf'
+
+======================================================================
+ERROR: test_unknown_source_rejected_and_no_database_migration (__main__.Installation.test_unknown_source_rejected_and_no_database_migration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 124, in test_unknown_source_rejected_and_no_database_migration
+    f=self.fixture();self.assertEqual(set(f.plan['sources']),{'R118_ROYAL1','R119_MOTION1'});self.assertEqual(f.plan['databaseScope'],'none');self.assertFalse(f.plan['databaseSchemaChanges']);self.assertFalse(f.plan['domain']['dnsChanges']);self.assertFalse(f.plan['domain']['zoneChanges'])
+      ^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 78, in fixture
+    def fixture(self,source='R118_ROYAL1'):f=Fixture(source);self.addCleanup(f.close);return f
+                                             ^^^^^^^^^^^^^^^
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r120_2d_depot/tests/installer_test.py", line 53, in __init__
+    self.rt_old_drop=f.home/'systemd/zz-r102-realtime.conf';self.rt_old_drop.write_text('ExecStart=old realtime\n')
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r118-install-test-y04rlpo8/systemd/zz-r102-realtime.conf'
+
+----------------------------------------------------------------------
+Ran 6 tests in 41.162s
+
+FAILED (errors=6)

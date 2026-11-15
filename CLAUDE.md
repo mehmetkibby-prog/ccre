@@ -99,3 +99,9 @@ R120 v3 continuation: current installer R120_2D_DEPOT3 keeps verified local
 Main installation remains blocked pending a successful public check; no security
 bypass. User moved apex DNS to 3D. Read R120_DEVIR.md v3 section and preserve
 all v1/v2 archives. Live acceptance and original HTTP 403 cause remain pending.
+
+R120 v4: güncel kurucu R120_2D_DEPOT4. V3 web hazırlığı canlı TLS + HTTP 200
+geçti; ana kurulum eski Akademi profilinin tek Origin şartı nedeniyle döndü.
+Yeni ayrı R120_ORIGIN1 bağlantı paketi + günlüklü ExecStart ek ayarı kullanılır;
+eski R102 dosyaları korunur. 44 hedefli test geçti, canlı v4 kurulum bekliyor.
+Güncel ayrıntı R120_DEVIR.md'nin v4 bölümündedir.
