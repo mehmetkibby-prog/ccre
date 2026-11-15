@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { glowTexture } from './textures.ts';
 import { U } from './terrain.ts';
+import { SkillFx } from './skillfx.ts';
 
 /** 3B efektler. Konumlar sunucu birimindedir (x,y) + yükseklik metre (h). */
 export interface FloatText { x: number; y: number; h: number; text: string; color: string; size: number; t0: number; dur: number; vx: number }
@@ -24,6 +25,8 @@ export class Fx3D {
   lights: THREE.PointLight[] = [];
   heightAt: (x: number, y: number) => number = () => 0;
   posOf: (id: number) => { x: number; y: number } | null = () => null;
+  /** Beceri efektleri (rün daireleri, şok dalgası, zincir, ok yağmuru…). */
+  sk = new SkillFx(this);
 
   constructor() {
     this.pGeo = new THREE.BufferGeometry();
@@ -39,7 +42,7 @@ export class Fx3D {
     });
     this.points = new THREE.Points(this.pGeo, mat);
     this.points.frustumCulled = false;
-    this.group.add(this.points);
+    this.group.add(this.points, this.sk.group);
     for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xffffff, 0, 9, 1.6); this.lights.push(l); this.group.add(l); }
   }
 
@@ -72,6 +75,7 @@ export class Fx3D {
 
   update(dt: number, now: number) {
     const s = dt / 1000;
+    this.sk.update(now);
     for (const l of this.lights) if (l.intensity > 0) l.intensity = Math.max(0, l.intensity - ((l.userData as any).decay ?? 0.01) * dt);
     const pos = this.pGeo.attributes.position.array as Float32Array, col = this.pGeo.attributes.color.array as Float32Array, siz = this.pGeo.attributes.size.array as Float32Array;
     let n = 0;

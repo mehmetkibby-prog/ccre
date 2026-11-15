@@ -93,6 +93,7 @@ export class Renderer3D {
   self: View | null = null;
   selfCls = '';
   fx = new Fx3D();
+  private skWarm = false;
   layout!: MapLayout;
   w = 1; h = 1; dpr = 1;
   octx: CanvasRenderingContext2D;
@@ -670,6 +671,8 @@ export class Renderer3D {
     // pazar tezgâhları
     this.syncStalls();
     // efektler
+    this.fx.sk.q = cool() ? 0 : MOBILE ? 1 : 2;
+    if (!this.skWarm) { this.skWarm = true; this.fx.sk.warm(); }
     this.fx.update(dt, now);
     this.ambient(dt);
     // kamera

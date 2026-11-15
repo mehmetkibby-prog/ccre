@@ -129,6 +129,20 @@ class Sfx {
       case 'magic': this.tone(660, 0.25, 'sine', 0.15, 1.8); this.tone(990, 0.2, 'sine', 0.08, 1.4, 0.03); break;
       case 'skill': this.tone(440, 0.3, 'sawtooth', 0.08, 2); this.noise(0.3, 1200, 3, 0.2, 'bandpass', 0, 3); break;
       case 'boom': this.noise(0.5, 400, 0.7, 0.7, 'lowpass', 0, 0.3); this.tone(80, 0.4, 'sine', 0.4, 0.5); break;
+      // ── beceri sesleri ──
+      case 'chain': for (let i = 0; i < 6; i++) this.noise(0.05, 3800 + i * 300, 6, 0.16, 'bandpass', i * 0.035); this.tone(1250, 0.25, 'triangle', 0.06, 0.6); break;
+      case 'charge': this.noise(0.35, 500, 0.8, 0.35, 'bandpass', 0, 4); this.tone(110, 0.3, 'sawtooth', 0.06, 1.8); break;
+      case 'impact': this.noise(0.7, 300, 0.7, 0.85, 'lowpass', 0, 0.25); this.tone(55, 0.6, 'sine', 0.55, 0.45); this.noise(0.12, 2600, 1, 0.35, 'bandpass'); this.noise(0.5, 900, 0.6, 0.18, 'lowpass', 0.08, 0.4); break;
+      case 'shield': this.tone(294, 0.55, 'triangle', 0.12, 2); this.tone(588, 0.6, 'sine', 0.08, 1.5, 0.05); this.noise(0.6, 5000, 2, 0.06, 'highpass', 0.05); break;
+      case 'holy': [392, 587, 784].forEach((f, i) => this.tone(f, 0.9, 'triangle', 0.07, 1.02, i * 0.05)); this.noise(0.9, 6000, 3, 0.05, 'highpass'); break;
+      case 'volley': for (let i = 0; i < 4; i++) { this.tone(300 + i * 30, 0.1, 'triangle', 0.12, 0.5, i * 0.06); this.noise(0.1, 3200, 2, 0.1, 'highpass', i * 0.06); } this.noise(0.6, 1800, 0.8, 0.12, 'bandpass', 0.15, 0.4); break;
+      case 'pierce': this.tone(340, 0.12, 'triangle', 0.18, 0.45); this.noise(0.3, 900, 1.5, 0.3, 'bandpass', 0, 5); break;
+      case 'beam': this.tone(220, 0.55, 'sawtooth', 0.07, 3); this.tone(880, 0.5, 'sine', 0.09, 1.5, 0.04); this.noise(0.5, 2500, 1.2, 0.15, 'bandpass', 0, 2.5); break;
+      case 'vine': this.noise(0.6, 260, 0.9, 0.5, 'lowpass', 0, 0.5); this.tone(85, 0.5, 'sawtooth', 0.06, 1.6); for (let i = 0; i < 4; i++) this.noise(0.05, 1500, 3, 0.12, 'bandpass', 0.05 + i * 0.07); break;
+      case 'arcane': this.tone(330, 0.45, 'sine', 0.13, 3); this.tone(495, 0.4, 'sine', 0.08, 2.4, 0.04); this.noise(0.4, 3000, 4, 0.08, 'bandpass', 0, 2); break;
+      case 'frost': this.noise(0.4, 6000, 1.2, 0.12, 'highpass', 0, 0.6); [1568, 2093, 2637].forEach((f, i) => this.tone(f, 0.18, 'sine', 0.05, 1, i * 0.05)); break;
+      case 'shatter': for (let i = 0; i < 7; i++) this.noise(0.07, 4500 + Math.random() * 3000, 4, 0.16, 'bandpass', i * 0.03); this.tone(2400, 0.3, 'sine', 0.05, 0.8); this.noise(0.4, 400, 0.7, 0.3, 'lowpass'); break;
+      case 'explode': this.noise(1.0, 500, 0.6, 0.9, 'lowpass', 0, 0.2); this.tone(48, 0.8, 'sine', 0.6, 0.4); this.tone(660, 0.5, 'sine', 0.08, 0.3); this.noise(0.25, 3000, 1, 0.25, 'bandpass'); break;
       case 'heal': [523, 659, 784].forEach((f, i) => this.tone(f, 0.35, 'sine', 0.1, 1, i * 0.06)); break;
       case 'kill': this.tone(300, 0.2, 'triangle', 0.15, 0.4); break;
       case 'loot': this.tone(1046, 0.12, 'sine', 0.12); this.tone(1568, 0.16, 'sine', 0.1, 1, 0.05); break;

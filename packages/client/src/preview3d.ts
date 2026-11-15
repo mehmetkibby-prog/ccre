@@ -46,6 +46,16 @@ if (lineup) {
   g.dx = sx - 1000; g.dy = sy - 1000; // kendini uzağa al
   (r as any).camOverride = { x: sx, y: sy + 20, dist: Number(q.get('dist') ?? 6), pitch: Number(q.get('pitch') ?? 0.42) };
 }
+// beceri efekti denemesi: sfx=sınıf,beceri,yol → oyuncu önündeki canavara periyodik beceri
+const sfxq = q.get('sfx');
+let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + 140, y: sy + 30, dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
+(window as any).__sfx = (t: number) => {
+  if (!sfxP || !sfxq) return;
+  const [c, s, v] = sfxq.split(',').map(Number);
+  const { P, M } = sfxP; P.anim = Anim.CAST; P.animStart = t; P.skill = s;
+  if (c === 0 && s === 3 && !v) r.fx.sk.dome(P.id, { x: P.x, y: P.y }, 3000, '#ffcf5a');
+  r.fx.sk.play({ cls: c, skill: s, variant: v ?? 0, src: P.id, tgt: M.id, sp: { x: P.x, y: P.y }, tp: { x: M.x, y: M.y }, self: true, near: 0, now: t, shake: (n) => r.shake(n), hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
+};
 const anim = q.get('anim') ?? 'idle';
 let last = performance.now();
 let frames = 0; const maxFrames = Number(q.get('frames') ?? 1e9);
@@ -60,6 +70,7 @@ const loop = (t: number) => {
   for (const [i, e] of walkers.entries()) { const a = t / 3000 + i; e.x += Math.cos(a) * dt * 0.08; e.y += Math.sin(a * 1.3) * dt * 0.08; e.dir = ((Math.atan2(Math.sin(a * 1.3), Math.cos(a)) / (Math.PI * 2)) * 256 + 256) % 256; e.anim = Anim.WALK; e.samples = [{ t: 0, x: e.x, y: e.y }]; }
   const ft = (window as any).__ft ??= []; ft.push(dt); if (ft.length > 600) ft.shift();
   (window as any).__phase = [...g.ents.values()].map((e: CEnt) => Math.round(t - e.animStart));
+  if (sfxq && !q.get('manual') && t - sfxAt > Number(q.get('period') ?? 2600)) { sfxAt = t; (window as any).__sfx(t); }
   r.draw(t, dt);
   if (++frames >= maxFrames) { (window as any).done = true; return; }
   requestAnimationFrame(loop);

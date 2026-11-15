@@ -578,7 +578,9 @@ export class World {
     const use = (tx: number, ty: number, tgtId = 0) => {
       p.cooldowns[s] = this.now + cd;
       this.faceAndAnim(p, tx, ty, Anim.CAST, 480);
-      z.emit(p.x, p.y, { e: Ev.CAST, src: p.id, skill: s, tgt: tgtId, x: tx | 0, y: ty | 0 });
+      // uzmanlık becerisinde ikinci yol 4 olarak gider (istemci doğru efekti seçsin)
+      const castId = s === 3 && sk.spec && CLASSES[p.char.cls].specs[1]?.id === sk.spec ? 4 : s;
+      z.emit(p.x, p.y, { e: Ev.CAST, src: p.id, skill: castId, tgt: tgtId, x: tx | 0, y: ty | 0 });
       this.sendJson(p, { t: 'cd', s, until: p.cooldowns[s] - this.now });
     };
     switch (sk.kind) {
