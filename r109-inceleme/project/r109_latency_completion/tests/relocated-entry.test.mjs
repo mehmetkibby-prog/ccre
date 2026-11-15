@@ -42,6 +42,15 @@ test('exact installed server starts both realms with eight real channels outside
   const {privateKey}=generateKeyPairSync('ec',{namedCurve:'prime256v1'}),config={database:realm.database,hosts:[realm.id+'.fixture.invalid'],proxyToken:randomBytes(32).toString('hex'),environment:{CORE101_REALM_ID:realm.id,CORE_REALM_ID:realm.id,CORE_DATA_ROOT:realm.dataRoot,CORE511_RETENTION:'1',CORE511_OUTBOX_V2:'1',REALTIME_SIGNING_PRIVATE_KEY:privateKey.export({type:'pkcs8',format:'der'}).toString('base64')},realm:{role:'game',id:realm.id,dbIdentity:realm.dbIdentity,manifestFile:dir+'/manifest.json',keyFile},delivery511:{releaseRoot:release,appPort:realm.ports.app,proxyPort:realm.ports.proxy,channelPorts:realm.ports.channels}};
   const configFile=realm.dataRoot+'/config.json';fs.writeFileSync(configFile,JSON.stringify(config));const env={...process.env,CORE_CONFIG_FILE:configFile};delete env.COL_CORE511_BASE;
   const child=spawn(process.execPath,[release+'/core511-source/scripts/delivery511/runtime-entry.mjs'],{detached:true,env,stdio:['ignore','pipe','pipe']});child.output='';child.stdout.on('data',b=>child.output+=b);child.stderr.on('data',b=>child.output+=b);children.push(child);
+  // Historical R110 has a fixed 5s private bootstrap handshake. On this
+  // four-CPU fixture host, serialize its realm boots without changing shipped
+  // deadlines. The first realm remains running; final checks still require
+  // both realms and all eight real owners at the same time.
+  if(process.env.RUNTIME_SERIAL_LEGACY_BOOT==='1'){
+   const end=Date.now()+30000;let healthy=false;
+   while(Date.now()<end){assert.equal(child.exitCode,null,child.output);try{const response=await fetch('http://127.0.0.1:'+realm.ports.app+'/api/vds-health',{signal:AbortSignal.timeout(1000)}),health=await response.json();healthy=response.ok&&health.ok&&health.realm?.realmId===realm.id&&health.channelProcesses?.channels?.length===4&&health.channelProcesses.channels.every(channel=>channel.ready&&channel.capacity===realm.initialChannelCapacity);if(healthy)break;}catch{}await pause(100);}
+   assert.equal(healthy,true,child.output);
+  }
  }
  for(let i=0;i<realms.length;i++){
   const realm=realms[i],child=children[i],end=Date.now()+30000;let health;

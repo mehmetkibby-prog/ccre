@@ -29,7 +29,7 @@ elif group=='r110':
     if rc:raise SystemExit(rc)
     subprocess.run([sys.executable,str(T/'tests/stage-runtime.py')],cwd=T,env=os.environ,check=True)
     stage=str(T/'evidence/runtime-stage.json')
-    env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r110','RUNTIME_EXPECT_R110':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
+    env={**os.environ,'RUNTIME_STAGE_FILE':stage,'RUNTIME_EVIDENCE_DIR':str(T/'evidence'),'RUNTIME_LABEL':'relocated-r110','RUNTIME_EXPECT_R110':'1','RUNTIME_SERIAL_LEGACY_BOOT':'1','HANDOFF_STAGE_FILE':stage,'HANDOFF_EVIDENCE_FILE':str(T/'evidence/ws-handoff-runtime.json')}
     raise SystemExit(subprocess.run(runner+['--test','--test-concurrency=1',str(R/'tests/relocated-entry.test.mjs'),str(R/'tests/ws-handoff-runtime.test.mjs')],cwd=R,env=env).returncode)
 elif group=='r111':
     subprocess.run([sys.executable,str(R/'tests/prepare-native-regression.py')],cwd=R,check=True)
