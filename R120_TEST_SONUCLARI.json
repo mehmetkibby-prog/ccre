@@ -1,0 +1,81 @@
+{
+  "package": {
+    "file": "artifacts/R120_2D_DEPOT_074a106a8fd8.zip",
+    "sha256": "afc268526f78b8e895e92b2d6048055e02f74fc17bf939ee69d49911c3ac12cc",
+    "bytes": 1452588,
+    "sourceVersions": [
+      "R118_ROYAL1",
+      "R119_MOTION1"
+    ],
+    "targetVersion": "R120_2D_DEPOT1",
+    "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
+    "namespace": "core511-17d72e47dc4df4fa",
+    "changedCodeFiles": 14,
+    "databaseScope": "none",
+    "acceptance": "local-functional-passed; live VDS, TLS certificate and Cloudflare pending",
+    "deployed": false,
+    "publicDomainTests": "pending"
+  },
+  "tests": {
+    "depot": "actual native browser: r1 desktop, r1 mobile, r2 mobile; 2 pages visible; durable slot25 withdrawal",
+    "domain": 9,
+    "realCaddyTlsAndRoutes": 1,
+    "forum": 10,
+    "originEmailAndWebSocket": 6,
+    "installerRoundtrip": 4,
+    "installedRuntime": {
+      "tests": 3,
+      "realms": [
+        "r1",
+        "r2"
+      ],
+      "channels": 8
+    },
+    "animation": 3,
+    "required": [
+      {
+        "group": "focused",
+        "exitCode": 0,
+        "seconds": 45.3
+      },
+      {
+        "group": "native",
+        "exitCode": 0,
+        "seconds": 148.2
+      },
+      {
+        "group": "captcha",
+        "exitCode": 0,
+        "seconds": 134.0
+      },
+      {
+        "group": "r110",
+        "exitCode": 0,
+        "seconds": 109.0
+      }
+    ]
+  },
+  "live": {
+    "deployed": false,
+    "cloudflareRead": false,
+    "newARecord": "reported created by user",
+    "newDomainTest": "blocked by execution network proxy, not an origin response",
+    "apexHomepage": 200,
+    "apexServiceWorkersInFreshProfile": []
+  },
+  "failuresCaughtBeforeDelivery": [
+    "Initial fixture test folder collided with historical test site directory; isolated fixture path fixed.",
+    "Runtime import validator mistook a new URL resource directory for a module; directory existence checked separately, executable file checks preserved.",
+    "R118 cumulative asset graph initially missed R119 map chunk; included before release. R119 and R118 now pass.",
+    "WS test used an unavailable default dependency path; changed to repository dependency directory.",
+    "First relocated test used historical pre-R118 synthetic schema; used existing R118 migrated fixtures without weakening runtime schema guard."
+  ],
+  "notClaimed": [
+    "Live deployment or DNS/Cloudflare change",
+    "Actual mobile microphone/voice delivery over public new hostname",
+    "Real Resend email delivered and clicked",
+    "Post-DNS-cutover no-apex verification",
+    "Zero-lag or performance improvement"
+  ],
+  "executableArchiveEquivalence": "final-archive-equivalence.txt"
+}
