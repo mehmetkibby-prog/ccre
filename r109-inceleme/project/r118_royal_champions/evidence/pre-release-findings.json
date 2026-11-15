@@ -1,0 +1,57 @@
+{
+  "published": false,
+  "findings": [
+    {
+      "code": "new-client-relative-material-url",
+      "state": "fixed-and-tested",
+      "detail": "Installer previously failed to namespace extensionless ../assets/royal-icon- paths although browser stage did. Installer now handles /assets/, assets/ and ../assets/ exactly once; both installed runtime trees tested."
+    },
+    {
+      "code": "native-http-proof-stale",
+      "state": "fixed-and-tested",
+      "detail": "Actual relocated runtime correctly rejected stale HTTP composition proof. Canonical10-edit proof update preserves original source fingerprint and validates forward/inverse equality. Runtime guard unchanged."
+    },
+    {
+      "code": "health-contract-field",
+      "state": "fixed-and-tested",
+      "detail": "Actual health has royalReadyR118; installer verifier now checks that real field. Regression imports recorded r1/r2 health and rejects false readiness."
+    },
+    {
+      "code": "private-bootstrap-five-second-guard",
+      "state": "fixed-and-tested",
+      "detail": "CPU-affinity diagnostic observed parent ProcessStream destruction exactly5001/5003ms by reliable-stream deadline, while supervisor budget20s. Scoped actual-child pipe budget fix, public5s/auth unchanged. First uninstrumented intermittent closures lack exact caller and are not asserted conclusively identical. Two normal installed8-channel rounds passed."
+    },
+    {
+      "code": "inherited-load-driver-zombie-traffic",
+      "state": "harness-corrected",
+      "raw": "load50-final-current/",
+      "detail": "Original inherited bots ignored derived HP/death, sent fabricated1e9 HP revision, and failed to reconcile movement. Naked actors died and issued2670 rejected commands. Run invalid for capacity inference. Newdriver uses full ordinary emerald set/native HP enchant settings, real state/650ms responsecooldown,2s health threshold potion and bounded acknowledgedmotion;50-player forest then had0 errors/disconnects/faults and240 exactrewardclaims."
+    },
+    {
+      "code": "champions-joined-checkpoint",
+      "state": "source-fixed-final-load-pending",
+      "raw": "load50-final-legal-client/01-champions.log",
+      "detail": "Actual installed-option load uses joined-checkpoint-r53; monster area allowlist omitted champions. Firstchampions run produced checkpoint_join_monster/actor_command_outcome_pending,45disconnects and50unackedinputs. Run aborted; sourcefix and newinstalled/runtime/load proof required. No package published. Strict champion catalog area validation and hyphenated claim IDs are fixed in a8d477e; final50 acceptance remains pending."
+    },
+    {
+      "code": "world-projection-before-channel-ready",
+      "state": "fixed-and-tested",
+      "raw": "installed-runtime-final4.log",
+      "detail": "Exact e244 runtime concurrent two-realm boot with15000 extra r1 monsters failed world_projection_channel_timeout. Runtime registered online=true before child readiness; world publish could queue delivery and begin5s timeout before StreamControl connected. Initial large-boot test failed; relocated captcha and realWebSocket handoff passed. No deadline widened. Integration agent owns lifecycle fix. Exact baseline reproduction failed;12 focused tests pass on subscription lifecycle fix. Same5s/20s deadlines and concurrent two-realm runtime test retained. Fresh candidate SHA640cf76b awaits actual installed startup. New640cf76b actualconcurrent15k-largeboot and all3installedentry/captcha/WebSocket checks pass; zero bootfault/recovery asserted.",
+      "fixCommit": "6c0cf8f"
+    },
+    {
+      "code": "installed-special-attack-fixture-cadence",
+      "state": "test-fixed-and-installed-both-realms-passed",
+      "raw": "installed-combat-final4-r1.log",
+      "detail": "Installed-core r1 test reached sequence9 then429 basic_attack_cadence retryAfterMs12012, withoutfaults/disconnects. Agent found remaining<=54 repeatedly selectedability2 when randomdamageleftHP, retrying a12s skill afterfixed750ms. Prior claimthatthiswasfirstspecial wasnotproven. Testwilluseexactlyonelegalspecial thenbasics, resetfreshfixtureclocks andpace fromactualreply; runtimeunchanged. Correctedtest passed bothactualinstalledcore realmmodes; each7nonlethalhits,1special,realdefeat/claims/3essence+1crown collection,0faults.",
+      "fixCommit": "b5ac5d7"
+    },
+    {
+      "code": "final-load-fixture-not-validated",
+      "state": "unavailable-stopped-under-time-constraint",
+      "raw": "load-validation.json",
+      "detail": "Strict setup and navigation guards rejected the extended50actor harness; final profile-calibrated stationary attempt foundhp0/max_hp100 beforetimedworkload. No runtimefault/disconnect inthatattempt. Optionalharness stopped explicitly; no completed50comparison orcapacity/zerolagclaim."
+    }
+  ]
+}

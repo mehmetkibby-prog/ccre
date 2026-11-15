@@ -1,0 +1,87 @@
+DIAGNOSTIC ONLY: process tree affinity 0
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794754440485,"backupName":"before-pearl-reset-1794754440485-0f467bc5-8ce7-40ee-8be8-f4e018ef3df3.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794754446388,"backupName":"before-pearl-reset-1794754446388-a5f9008c-f93d-4c7f-b05f-afdfcc35ab69.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+not ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 40763.467382
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/relocated-entry.test.mjs:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    R118_CHILD_START {"at":1794754445229,"pid":25986,"entry":"/usr/bin/flock"}
+    R118_CHILD_EXIT {"pid":25986,"code":0,"signal":null,"entry":"/usr/bin/flock"}
+    {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+    R118_CHILD_START {"at":1794754452857,"pid":26009,"entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/world-process.mjs"}
+    R118_CHILD_FIRST_MESSAGE {"at":1794754455350,"elapsedMs":2493,"pid":26009,"type":"kernel511-bytes"}
+    R118_CHILD_FIRST_MESSAGE {"at":1794754455411,"elapsedMs":2554,"pid":26009,"type":"kernel511-world-ready"}
+    {"event":"core511_boot_read","query":"kernel511_channel_boot","resultBytes":6132555,"limitBytes":33554432,"repair":"R104_BOOT1"}
+    R118_CHILD_START {"at":1794754466871,"pid":26055,"entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/channel-process.mjs"}
+    {"event":"core511_fault","at":"2026-11-15T14:54:29.781Z","code":"world_projection_channel_timeout","channel":1,"ownerRef":"1504e3e60c1e25242557b553","stack":[{"file":"world-supervisor.mjs","line":22,"column":110}]}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:29.848Z","action":"channel_recovery_request","incident":1,"reason":"world_projection_channel_timeout","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"world-supervisor.mjs","line":22,"column":110}]}
+    R118_PARENT_DESTROY {"at":1794754471874,"pid":26055,"stream":"kernel511","stack":"Error\n    at Duplex.destroy (/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/child-stderr-diagnostic.cjs:11:135)\n    at Timeout._onTimeout (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/reliable-stream.mjs:205:40)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)"}
+    {"type":"core511_ipc_safe_stream","code":"channel_ipc_closed","method":"unknown"}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:31.875Z","action":"signal","incident":2,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":26055,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"4bddde1c2a16179242489e66"}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:31.876Z","action":"signal","incident":3,"reason":"channel_ipc_closed","origin":"channel_boot","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":81,"column":176}],"channel":1,"pid":26055,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"4bddde1c2a16179242489e66"}
+    R118_CHILD_EXIT {"pid":26055,"code":null,"signal":"SIGKILL","entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/channel-process.mjs"}
+    {"event":"core511_boot_read","query":"kernel511_channel_boot","resultBytes":6132555,"limitBytes":33554432,"repair":"R104_BOOT1"}
+    R118_CHILD_START {"at":1794754473106,"pid":26070,"entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/channel-process.mjs"}
+    R118_PARENT_DESTROY {"at":1794754478107,"pid":26070,"stream":"kernel511","stack":"Error\n    at Duplex.destroy (/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/child-stderr-diagnostic.cjs:11:135)\n    at Timeout._onTimeout (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/reliable-stream.mjs:205:40)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)"}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:38.109Z","action":"signal","incident":4,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":26070,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"bb89e6df756d531a27b17ecd"}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:38.116Z","action":"signal","incident":5,"reason":"channel_ipc_closed","origin":"channel_boot","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":81,"column":176}],"channel":1,"pid":26070,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"bb89e6df756d531a27b17ecd"}
+    R118_CHILD_EXIT {"pid":26070,"code":null,"signal":"SIGKILL","entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/channel-process.mjs"}
+    {"event":"core511_fault","at":"2026-11-15T14:54:38.140Z","code":"channel_ipc_closed","stack":[{"file":"process-supervisor.mjs","line":81,"column":176}]}
+    {"event":"core511_recovery_cause","at":"2026-11-15T14:54:38.158Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":26009,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"1f94d5472ddb1a62c79c230b"}
+    R118_PARENT_DESTROY {"at":1794754478199,"pid":26009,"stream":"kernel511","stack":"Error\n    at Duplex.destroy (/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/child-stderr-diagnostic.cjs:11:135)\n    at ProcessStream.closedPeer (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/process-stream.mjs:8:28)\n    at Object.onceWrapper (node:events:633:28)\n    at ChildProcess.emit (node:events:519:28)\n    at finish (node:internal/child_process:933:14)\n    at process.processTicksAndRejections (node:internal/process/task_queues:84:11)"}
+    R118_CHILD_EXIT {"pid":26009,"code":0,"signal":null,"entry":"/tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/world-process.mjs"}
+    node:internal/modules/run_main:123
+        triggerUncaughtException(
+        ^
+    
+    Error: channel_ipc_closed
+        at ProcessStream.<anonymous> (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/process-supervisor.mjs:81:176)
+        at Object.onceWrapper (node:events:633:28)
+        at ProcessStream.emit (node:events:531:35)
+        at emitCloseNT (node:internal/streams/destroy:148:10)
+        at process.processTicksAndRejections (node:internal/process/task_queues:88:21) {
+      code: 'channel_ipc_closed'
+    }
+    
+    Node.js v22.23.4
+    
+    
+    1 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    ProcessStream.<anonymous> (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/process-supervisor.mjs:81:176)
+    Object.onceWrapper (node:events:633:28)
+    ProcessStream.emit (node:events:531:35)
+    emitCloseNT (node:internal/streams/destroy:148:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:88:21) {
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/relocated-entry.test.mjs:51:32)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 277.936592
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 50296.149512

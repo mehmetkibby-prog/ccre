@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: bounded SQLite snapshot, real additive migration, four channels and unchanged legacy progress
+ok 1 - bounded SQLite snapshot, real additive migration, four channels and unchanged legacy progress
+  ---
+  duration_ms: 168.043562
+  type: 'test'
+  ...
+# Subtest: migration exception rolls back DDL and all seeded monsters atomically
+ok 2 - migration exception rolls back DDL and all seeded monsters atomically
+  ---
+  duration_ms: 19.475987
+  type: 'test'
+  ...
+# Subtest: existing unknown new area or tables stops before snapshot or writes
+ok 3 - existing unknown new area or tables stops before snapshot or writes
+  ---
+  duration_ms: 5.457724
+  type: 'test'
+  ...
+# Subtest: configuration or schema changed after snapshot stops migration
+ok 4 - configuration or schema changed after snapshot stops migration
+  ---
+  duration_ms: 9.607922
+  type: 'test'
+  ...
+# Subtest: completed gameplay receipt prevents downgrade and preserves all new data
+ok 5 - completed gameplay receipt prevents downgrade and preserves all new data
+  ---
+  duration_ms: 28.279909
+  type: 'test'
+  ...
+# Subtest: new material or damaged new mob blocks downgrade without erasing legacy progress
+ok 6 - new material or damaged new mob blocks downgrade without erasing legacy progress
+  ---
+  duration_ms: 26.399388
+  type: 'test'
+  ...
+# Subtest: out-of-contract schema addition rolls back the complete migration
+ok 7 - out-of-contract schema addition rolls back the complete migration
+  ---
+  duration_ms: 14.430886
+  type: 'test'
+  ...
+# Subtest: snapshot tampering is rejected before migration
+ok 8 - snapshot tampering is rejected before migration
+  ---
+  duration_ms: 6.173606
+  type: 'test'
+  ...
+# Subtest: database inode replacement invalidates its existing migration snapshot
+ok 9 - database inode replacement invalidates its existing migration snapshot
+  ---
+  duration_ms: 5.256223
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2138.051178

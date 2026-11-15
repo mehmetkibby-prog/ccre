@@ -1,0 +1,15 @@
+{
+  "file": "artifacts/R118_ROYAL_433471685f52.zip",
+  "bytes": 4865200,
+  "sha256": "e244376a9fa289b57d01b1c023d37966d6fd052ab8163fc0d942e21328ba93e0",
+  "sourceVersion": "R117_HOOK10",
+  "sourceCore": "327a0fe35b8fea065afa816372f31d49ee52539971200e60817c46dc3a6e35eb",
+  "targetVersion": "R118_ROYAL1",
+  "targetCore": "4ef84cb7135aa73cbb29cfcada6b18d9299bf4435ef509642ff45de09eaef2fc",
+  "changedCodeFiles": 113,
+  "forumChanges": false,
+  "databaseScope": "r118-royal-champions-additive-v1",
+  "namespace": "core511-c4d0f4d061896a4e",
+  "acceptance": "pending",
+  "deployed": false
+}

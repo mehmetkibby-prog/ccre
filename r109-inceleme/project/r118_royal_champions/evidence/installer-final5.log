@@ -1,0 +1,36 @@
+test_actual_runtime_health_contract_satisfies_installer_readiness (__main__.Installation.test_actual_runtime_health_contract_satisfies_installer_readiness) ... ok
+test_apply_and_unused_rollback_preserve_old_progress_assets_site_forum (__main__.Installation.test_apply_and_unused_rollback_preserve_old_progress_assets_site_forum) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_atomic_writer_honors_strict_umask (__main__.Installation.test_atomic_writer_honors_strict_umask) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ok
+test_client_graph_rejects_missing_new_monster_art_before_mutation (__main__.Installation.test_client_graph_rejects_missing_new_monster_art_before_mutation) ... ok
+test_corrupt_schema_backup_blocks_rollback_before_writes (__main__.Installation.test_corrupt_schema_backup_blocks_rollback_before_writes) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ok
+test_exact_r117_reviewed_source_schema_scope_and_asset_graph (__main__.Installation.test_exact_r117_reviewed_source_schema_scope_and_asset_graph) ... ok
+test_failed_health_rolls_back_unused_schema_and_preserves_legacy_progress (__main__.Installation.test_failed_health_rolls_back_unused_schema_and_preserves_legacy_progress) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+Yama durdu: injected health failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_foreign_pending_recovery_has_no_side_effects (__main__.Installation.test_foreign_pending_recovery_has_no_side_effects) ... ok
+test_gameplay_blocks_downgrade_and_recovers_current_version_without_loss (__main__.Installation.test_gameplay_blocks_downgrade_and_recovers_current_version_without_loss) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+R118 oyuncu ilerlemesi korunarak yeniden açıldı; eski sürüme geri dönülmedi.
+ok
+test_health_requires_r118_and_r116_guards_and_all_eight_channels (__main__.Installation.test_health_requires_r118_and_r116_guards_and_all_eight_channels) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+R118 TAMAMLANDI. Efsane ve Akademi Kraliyet dönüşümü ve Şampiyonlar Diyarı hazır; sekiz kanal doğrulandı. Bakım ayarın korundu.
+ok
+test_partial_second_realm_migration_failure_recovers_both_schemas_and_code (__main__.Installation.test_partial_second_realm_migration_failure_recovers_both_schemas_and_code) ... Değişen kod, dört ilgili tetikleyici ve yeni içerik kapsamı tutarlı yedekleniyor; tam oyuncu veritabanı taraması yok.
+Yama durdu: injected second realm migration failure
+Önceki oyun kodu iki sunucuda doğrulandı; oyuncu verileri ve ayarlar geri alınmadı.
+ok
+test_relative_market_material_icon_paths_match_browser_staging_once (__main__.Installation.test_relative_market_material_icon_paths_match_browser_staging_once) ... ok
+test_wrong_source_or_corrupt_payload_stops_before_mutation (__main__.Installation.test_wrong_source_or_corrupt_payload_stops_before_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 66.932s
+
+OK

@@ -1,0 +1,39 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794758913775,"backupName":"before-pearl-reset-1794758913775-ccfe976e-727d-4feb-8ace-afcad4410baf.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T16:08:54.332Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":45799,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"82d708d13eaf10f746f3a480"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T16:08:54.335Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":45805,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"dddea3c9426434feecd999f2"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T16:08:54.336Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":45811,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1fb562f24f5c371e1703a1fe"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T16:08:54.336Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":45829,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4689d1963b2a3467d3124436"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T16:08:54.378Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":45757,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"73c29c6a87992fcd9945fb0c"}
+# Subtest: production-flags owner stream persists nonlethal damage, kills, claims and collects a champion monster without disconnecting
+not ok 1 - production-flags owner stream persists nonlethal damage, kills, claims and collects a champion monster without disconnecting
+  ---
+  duration_ms: 22822.938226
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/champions-checkpoint-host.test.mjs:11:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"type":"action","body":{"error":"Saldırı ritmi eşitleniyor.","code":"basic_attack_cadence","nextAttackAtMs":1794758946249,"retryAfterMs":12012},"status":429,"sequence":9}
+    
+    429 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 429
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/champions-checkpoint-host.test.mjs:29:108)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25941.530793

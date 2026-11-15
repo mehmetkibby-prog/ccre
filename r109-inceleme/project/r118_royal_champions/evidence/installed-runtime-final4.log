@@ -1,0 +1,63 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794758622342,"backupName":"before-pearl-reset-1794758622342-557fbd5c-1603-4698-bb1e-b712b5b7278e.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794758624826,"backupName":"before-pearl-reset-1794758624826-638e7cfa-6369-40e4-bde2-ecd7a9a83aab.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+not ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 35586.171191
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/relocated-entry.test.mjs:35:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+    {"event":"core511_boot_read","query":"kernel511_channel_boot","resultBytes":6132555,"limitBytes":33554432,"repair":"R104_BOOT1"}
+    {"event":"core511_fault","at":"2026-11-15T16:04:06.267Z","code":"world_projection_channel_timeout","channel":1,"ownerRef":"5c2d2232b9f6eea755e7e088","stack":[{"file":"world-supervisor.mjs","line":22,"column":110}]}
+    {"event":"core511_recovery_cause","at":"2026-11-15T16:04:06.271Z","action":"channel_recovery_request","incident":1,"reason":"world_projection_channel_timeout","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"world-supervisor.mjs","line":22,"column":110}]}
+    
+    + actual - expected
+    
+    + undefined
+    - 'R106_CAPTCHA1'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'R106_CAPTCHA1'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/relocated-entry.test.mjs:61:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 278.043328
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794758667346,"backupName":"before-pearl-reset-1794758667346-4c1fc1ee-0735-4ec4-8838-f95962f2bf88.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794758706840,"backupName":"before-pearl-reset-1794758706840-c2985d92-083c-4e9d-9233-d2c5aeaa156f.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+ok 3 - installed runtime hands player WebSockets to channel processes for both realms; R109 proxy remains the =0 fallback
+  ---
+  duration_ms: 60626.923203
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 2
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 116237.269788
+Traceback (most recent call last):
+  File "/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/installed-runtime.py", line 18, in <module>
+    subprocess.run(command,cwd=PROJECT/'r109_latency_completion',env=env,check=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3', '/workspace/coreoflife-r111/r109-inceleme/scripts/run.py', '--test', '--test-concurrency=1', '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/relocated-entry.test.mjs', '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/ws-handoff-runtime.test.mjs']' returned non-zero exit status 1.

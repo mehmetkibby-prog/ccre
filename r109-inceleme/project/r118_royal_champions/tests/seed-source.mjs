@@ -1,0 +1,17 @@
+import {DatabaseSync} from 'node:sqlite';
+import {createContentLootR102} from '../../r109_latency_completion/working/core511-source/scripts/core511/content-loot-r102.mjs';
+import {defaultRuneV2Config} from '../../r109_latency_completion/working/native510-bb3a6cc689c6/lib/rune-v2.mjs';
+const db=new DatabaseSync(process.argv[2]);
+db.exec(`CREATE TABLE players(id TEXT PRIMARY KEY,daily_monster_kills INTEGER DEFAULT 0,daily_monster_day INTEGER DEFAULT 0,is_gm INTEGER DEFAULT 0,account_id TEXT,level INTEGER,gems INTEGER DEFAULT 100,area TEXT DEFAULT 'forest',champion_level_r102 INTEGER DEFAULT 1,set_hp INTEGER DEFAULT 0,set_pve INTEGER DEFAULT 0,set_pvp INTEGER DEFAULT 0,set_resistance INTEGER DEFAULT 0,set_speed INTEGER DEFAULT 0,set_attack INTEGER DEFAULT 0);
+ INSERT INTO players(id,account_id,level) VALUES('one','account',65);
+ CREATE TABLE kernel511_admissions(id TEXT);CREATE TABLE kernel511_actor_revision_r113(actor TEXT PRIMARY KEY,revision INTEGER NOT NULL);INSERT INTO kernel511_actor_revision_r113 VALUES('one',77);
+ CREATE TABLE player_items(id TEXT PRIMARY KEY,player_id TEXT,rarity TEXT,kind TEXT,equipped INTEGER DEFAULT 0);
+ CREATE TABLE dungeon_materials(player_id TEXT,kind TEXT,amount INTEGER,PRIMARY KEY(player_id,kind));
+ CREATE TABLE content_settings_r102(id INTEGER PRIMARY KEY,config TEXT);
+ CREATE TABLE rune_v2_settings(id INTEGER PRIMARY KEY,revision INTEGER,config_json TEXT);
+ CREATE TABLE monsters(id TEXT PRIMARY KEY,name TEXT,x INTEGER,y INTEGER,hp INTEGER,max_hp INTEGER,variant TEXT,area TEXT,channel INTEGER,is_boss INTEGER,is_stone INTEGER,summoned INTEGER,respawn_at INTEGER,spawn_round INTEGER);
+ CREATE TRIGGER equipment_set_insert AFTER INSERT ON player_items WHEN NEW.equipped=1 BEGIN SELECT 1; END;
+ CREATE TRIGGER equipment_set_delete AFTER DELETE ON player_items WHEN OLD.equipped=1 BEGIN SELECT 1; END;
+ CREATE TRIGGER equipment_set_update AFTER UPDATE ON player_items WHEN OLD.equipped=1 OR NEW.equipped=1 BEGIN SELECT 1; END;`);
+createContentLootR102(db);const stockingBefore=db.prepare("SELECT sql FROM sqlite_schema WHERE name='content_stocking_drop_r102'").get().sql.replace(" AND NEW.area<>'champions'",'');db.exec('DROP TRIGGER content_stocking_drop_r102');db.exec(stockingBefore);
+db.prepare('INSERT INTO rune_v2_settings VALUES(1,7,?)').run(JSON.stringify(defaultRuneV2Config()));db.close();

@@ -1,0 +1,25 @@
+{
+  "diagnosticOnly": true,
+  "affinityCpus": 1,
+  "runtimeModified": false,
+  "sourceLog": "installed-runtime-cpu1-diagnostic.log",
+  "timerCaptures": [
+    {
+      "kind": "R118_PARENT_DESTROY",
+      "at": 1794754471874,
+      "pid": 26055,
+      "stream": "kernel511",
+      "stack": "Error\n    at Duplex.destroy (/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/child-stderr-diagnostic.cjs:11:135)\n    at Timeout._onTimeout (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/reliable-stream.mjs:205:40)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
+      "elapsedFromForkMs": 5003
+    },
+    {
+      "kind": "R118_PARENT_DESTROY",
+      "at": 1794754478107,
+      "pid": 26070,
+      "stream": "kernel511",
+      "stack": "Error\n    at Duplex.destroy (/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/child-stderr-diagnostic.cjs:11:135)\n    at Timeout._onTimeout (file:///tmp/r118-installed-4ebe6k_o/release/core511-source/scripts/core511/reliable-stream.mjs:205:40)\n    at listOnTimeout (node:internal/timers:585:17)\n    at process.processTimers (node:internal/timers:521:7)",
+      "elapsedFromForkMs": 5001
+    }
+  ],
+  "originalIntermittentCause": "Original uninstrumented failures had no destroy stack; controlled capture proves the same five-second bootstrap cut-off path."
+}
