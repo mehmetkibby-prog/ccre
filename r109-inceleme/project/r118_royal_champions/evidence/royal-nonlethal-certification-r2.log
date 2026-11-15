@@ -1,0 +1,49 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794756862044,"backupName":"before-pearl-reset-1794756862044-0666b8ef-e234-4cd8-9cf3-c04f66ac81f4.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: R118 exact migrated production trigger certification retains native nonlethal elision
+    # Subtest: all reviewed exact definitions exist; migrated writer uses the optimized port
+    ok 1 - all reviewed exact definitions exist; migrated writer uses the optimized port
+      ---
+      duration_ms: 8.87408
+      type: 'test'
+      ...
+    # Subtest: historical R117 equipment hashes stay valid as exact alternatives
+    ok 2 - historical R117 equipment hashes stay valid as exact alternatives
+      ---
+      duration_ms: 32.563162
+      type: 'test'
+      ...
+    # Subtest: unknown main and TEMP triggers invalidate the schema cache and force native fallback
+    ok 3 - unknown main and TEMP triggers invalidate the schema cache and force native fallback
+      ---
+      duration_ms: 39.201639
+      type: 'test'
+      ...
+    # Subtest: changed existing Royal and TEMP observer definitions still force native fallback
+    ok 4 - changed existing Royal and TEMP observer definitions still force native fallback
+      ---
+      duration_ms: 41.117151
+      type: 'test'
+      ...
+    # Subtest: nonlethal native attack skips only empty rewards; lethal native reward and replay remain once
+    ok 5 - nonlethal native attack skips only empty rewards; lethal native reward and replay remain once
+      ---
+      duration_ms: 71.068881
+      type: 'test'
+      ...
+    1..5
+ok 1 - R118 exact migrated production trigger certification retains native nonlethal elision
+  ---
+  duration_ms: 3253.285157
+  type: 'test'
+  ...
+1..1
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5798.814295

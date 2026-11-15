@@ -1,0 +1,34 @@
+// Exact R118 alternatives to the existing reviewed trigger sets.
+// Gear eligibility/set triggers never alter monster HP/life. TEMP observers
+// only record refresh metadata; elided nonlethal statements affect zero rows.
+// Full SQL/review: project/r118_royal_champions/evidence/r118-trigger-review.json.
+// Keep old hashes valid; every unknown or changed trigger still falls back.
+export const royalTriggerHashesR118=Object.freeze({
+ "main:royal_champion_insert_r118": "44085c9be9b486dd7a2ac9aeb646ff5c18a5a2892baccbd6d29b85f4224c321e",
+ "main:royal_champion_update_r118": "60422ee591adc1531f771c31bf1f750a1ce2d703f2348ba906a6f88b0a971693",
+ "main:royal_champion_loss_r118": "c3fff96a10dff45566aecdbf5c2e93c67734750eb565436d7e20713141ea6f5f",
+ "main:equipment_set_insert": "60e1c0c68f79b6d42a0fae0f6fb83b522c7dea482d3ea3727844b65d97426891",
+ "main:equipment_set_delete": "9d2a18ac2e62893215239874488cc76c499707ab26abe93233a9ad779a21df97",
+ "main:equipment_set_update": "7b57b0257e269defff05bde9efb4b27c28e3f9e2568d33707f724f789da0d2e4",
+ "temp:kernel511_refresh_r533_royal_settings_r118_INSERT_scope": "9c0af490039c81ffe045a50009058a0084dde3b4a37d39952df2a03fb2b467e5",
+ "temp:kernel511_refresh_r533_royal_settings_r118_UPDATE_scope": "001239a9b275e04c13cc3ba2ad8f2ce93e87a5156e17c4e309186aa8b4ee703a",
+ "temp:kernel511_refresh_r533_royal_settings_r118_DELETE_scope": "14ad06b0af1cef74e854c326416a5e137bc6c30a59ff920e17d5cfdfc1168519",
+ "temp:kernel511_refresh_r533_royal_receipts_r118_INSERT_scope": "70ac614115b579048448d11e5b4f2a45ea9be4ffa7c153feb57747275ae6f63a",
+ "temp:kernel511_refresh_r533_royal_receipts_r118_UPDATE_scope": "8db4b89b6d3a8d908745513868ae71bafc686820fb09411eaf933e63a0ea4704",
+ "temp:kernel511_refresh_r533_royal_receipts_r118_DELETE_scope": "1e8439ce141e15f82818a43623da935f5209ed53e24663fe58adfc691e5eb1df",
+ "temp:kernel511_refresh_r533_royal_transforms_r118_INSERT_scope": "5a32fb73195b9c8f8d38c866e1746dd8fbb0e2115ac50d55de93781cbb285621",
+ "temp:kernel511_refresh_r533_royal_transforms_r118_UPDATE_scope": "df432f10b74c899c7222a23a7f8bee31236681f318b5b658d1a84836e987c9ae",
+ "temp:kernel511_refresh_r533_royal_transforms_r118_DELETE_scope": "b29471edb36d4ae3632f946e5693a0b6b11915b78692da3099e02e87283ee591",
+ "temp:kernel511_refresh_r533_royal_salvage_r118_INSERT_scope": "90e44c4d5000fbe36e86b30ff7dc59041d6eaa45690b2278d53858bc1ac18f19",
+ "temp:kernel511_refresh_r533_royal_salvage_r118_UPDATE_scope": "479c1768b82e5b2c9253a76da08f6179abfdef1f8e4f71a81ec1ee7e28572b84",
+ "temp:kernel511_refresh_r533_royal_salvage_r118_DELETE_scope": "9827d961f9fdcc22ced6c67df4d389b223bee6bae1474907bdf48a4957aec9ae",
+ "temp:kernel511_refresh_r533_royal_admin_audit_r118_INSERT_scope": "592b7154b8584462541bb83745bb76ce370cad8e4f6f41c35f5ff9a43360923e",
+ "temp:kernel511_refresh_r533_royal_admin_audit_r118_UPDATE_scope": "7a7d19db366a898aa04d298a3f9fc5bd87c53b66f3c83aa52edea9c9842a5862",
+ "temp:kernel511_refresh_r533_royal_admin_audit_r118_DELETE_scope": "594577dc906e573969d42b59a38640bc4f5ae3971b9009a1fec8d3d652aeb38c",
+ "temp:kernel511_refresh_r533_champions_settings_r118_INSERT_scope": "4b343e4b0c5f4face5faa3422687b5d33ad6a0a700302ff8f81ce3784903cdba",
+ "temp:kernel511_refresh_r533_champions_settings_r118_UPDATE_scope": "c663fced28fa7d25ba02d8f2f7b2377ed97b943e87f5a2a2de249e9cbad303b8",
+ "temp:kernel511_refresh_r533_champions_settings_r118_DELETE_scope": "86a0d2cf7ebdfd328133e0d03c61534559e456c2a7482b0a6e667de0ac7cc8c4",
+ "temp:kernel511_refresh_r533_r118_install_state_INSERT_scope": "45f57b70a0464cead4532737311a7468fe0faca69809d0cecfee12529f05af37",
+ "temp:kernel511_refresh_r533_r118_install_state_UPDATE_scope": "f8e969f5e0a532af375daed9534c537ded9c5de5a086e48fade80e99865f3ceb",
+ "temp:kernel511_refresh_r533_r118_install_state_DELETE_scope": "1710517035c1f4c7472fb18bedfd045886af5db6b275bc7867b7cdea93c5f26d"
+});

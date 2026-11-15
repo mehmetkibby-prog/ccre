@@ -1,0 +1,43 @@
+{
+  "change": "Exact R118 trigger certification alternatives preserve R117 forest nonlethal optimization",
+  "runtimeFiles": {
+    "project/r109_latency_completion/working/core511-source/scripts/core511/nonlethal-rewards-r56.mjs": "04fc0d8904c1d3761f548bb957b66b0c0774d23d39ea78e397dad7cf7f3b68dc",
+    "project/r109_latency_completion/working/core511-source/scripts/core511/royal-trigger-audit-r118.mjs": "7e24356b26bf238af32193c3f819fc39623fcec337363a7abbf1b6c35338549e"
+  },
+  "reviewedDefinitions": {
+    "main": 6,
+    "temporaryRefreshOnly": 21,
+    "total": 27,
+    "sqlReviewSha256": "c0948affb659b4fc8e10b9d09914e3a3c42b3da229fe389b84f1a59e20d78d86"
+  },
+  "before": {
+    "migratedSchemaCertified": false,
+    "evidence": "r118-trigger-audit-production-before.log",
+    "note": "Diagnostic flat-registry list also includes existing gated hashes and a synthetic loadlab wrapper; those are not blanket-certified by this change."
+  },
+  "after": {
+    "r1": {
+      "passed": 6,
+      "failed": 0,
+      "log": "royal-nonlethal-certification-final.log",
+      "sha256": "4f768d8b4836bbe90b75928b1c7588a67f6aa395ce50965b5682c31f7b8a52bd"
+    },
+    "r2": {
+      "passed": 6,
+      "failed": 0,
+      "log": "royal-nonlethal-certification-r2.log",
+      "sha256": "01a0dafa3e734731ffb8cf9250081e7c85ce29400dbda1283cd324922f0b7530"
+    }
+  },
+  "assertions": [
+    "Complete production connection initialization accepts all exact R118 triggers, including installer journal observers",
+    "Historical R117 equipment trigger definitions retain original accepted hashes",
+    "Unknown main and TEMP triggers disable optimization, including after cached successful certification",
+    "Changed Royal, equipment and TEMP observer definitions disable optimization",
+    "Native optimized and full nonlethal preparation yield identical player, monster, events and reward rows and next random/UUID values",
+    "Lethal reward completes once and replay preserves committed rewards"
+  ],
+  "scope": "No trigger SQL, loot, RNG, durability, owner or frame guards changed; Champions does not get new nonlethal-area eligibility",
+  "fixtureNormalization": "Only exact known legacy loadlab-wrapped content_battlefield_kill_r102 is recreated via canonical production creator before writer startup; unknown shape rejected; no runtime whitelist for fixture wrapper",
+  "performance": "Restores eligibility for established optimization; no claimed latency/capacity result before fresh measured runs"
+}

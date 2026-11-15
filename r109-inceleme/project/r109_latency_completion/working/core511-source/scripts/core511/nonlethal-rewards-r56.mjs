@@ -1,3 +1,4 @@
+import {royalTriggerHashesR118} from './royal-trigger-audit-r118.mjs';
 import {contentTriggerHashesR102} from './content-trigger-audit-r102.mjs';
 import {zumrutAuditHashesR93} from './zumrut-audit-hashes-r93.mjs';
 import {dailyRewardTriggerHashesR76} from './daily-monster-rewards-r76.mjs';
@@ -23,7 +24,7 @@ export function nonlethalSchemaR56(sql){
  const {mainVersion:main,tempVersion:temp}=preparedSchemaVersions477(sql),prior=certified.get(sql);
  if(prior&&prior.main===main&&prior.temp===temp)return prior.ok;
  const rows=prepareServerStatement(sql,"SELECT 'main' scope,name,sql FROM main.sqlite_schema WHERE type='trigger' UNION ALL SELECT 'temp',name,sql FROM temp.sqlite_schema WHERE type='trigger'").all();
- const ok=rows.every(r=>(contentTriggerHashesR102[r.scope+':'+r.name]??nonlethalTriggersR56[r.scope+':'+r.name]??itemRefreshTriggerHashesR57[r.scope+':'+r.name]??castleAuditHashesR59[r.scope+':'+r.name]??dailyRewardTriggerHashesR76[r.scope+':'+r.name]??zumrutAuditHashesR93[r.scope+':'+r.name])===hash(r.sql)||(gameplayR60.rewardSections&&rewardAuditHashesR60[r.scope+':'+r.name]===hash(r.sql))||(castleEnabled()&&r.scope==='main'&&(r.name==='channel_capacity_reentry'&&hash(r.sql)===castleCapacityHashR59||r.name==='guild_member_capacity'&&hash(r.sql)===guildCapacityHashR59)));certified.set(sql,{main,temp,ok});return ok;
+ const ok=rows.every(r=>(contentTriggerHashesR102[r.scope+':'+r.name]??nonlethalTriggersR56[r.scope+':'+r.name]??itemRefreshTriggerHashesR57[r.scope+':'+r.name]??castleAuditHashesR59[r.scope+':'+r.name]??dailyRewardTriggerHashesR76[r.scope+':'+r.name]??zumrutAuditHashesR93[r.scope+':'+r.name])===hash(r.sql)||royalTriggerHashesR118[r.scope+':'+r.name]===hash(r.sql)||(gameplayR60.rewardSections&&rewardAuditHashesR60[r.scope+':'+r.name]===hash(r.sql))||(castleEnabled()&&r.scope==='main'&&(r.name==='channel_capacity_reentry'&&hash(r.sql)===castleCapacityHashR59||r.name==='guild_member_capacity'&&hash(r.sql)===guildCapacityHashR59)));certified.set(sql,{main,temp,ok});return ok;
 }
 // Called at the original per-target preparation point, inside the sole writer.
 // Only zero-row reward statements are omitted. Exact baseline triggers cannot

@@ -1,0 +1,195 @@
+{
+  "scope": "Exact R118 production trigger alternatives; all prior hashes remain accepted; unknown changes fall back.",
+  "zeroRowSafety": "Elided statements affect zero reward rows on proven ordinary nonlethal hits. New triggers cannot run for those absent rows or change monster HP/life between preparation and native hit batch.",
+  "rows": [
+    {
+      "scope": "main",
+      "name": "royal_champion_insert_r118",
+      "sql": "CREATE TRIGGER royal_champion_insert_r118 BEFORE INSERT ON player_items\n WHEN NEW.equipped=1 AND NEW.rarity='royal' AND NOT EXISTS(SELECT 1 FROM players WHERE id=NEW.player_id AND champion_level_r102>=1)\n BEGIN SELECT RAISE(ABORT,'royal_champion_required_r118'); END",
+      "sha256": "44085c9be9b486dd7a2ac9aeb646ff5c18a5a2892baccbd6d29b85f4224c321e",
+      "review": "Read-only champion eligibility predicate with RAISE(ABORT) on unauthorized equipped Royal gear insert/update. No monster, reward or RNG mutation."
+    },
+    {
+      "scope": "main",
+      "name": "royal_champion_update_r118",
+      "sql": "CREATE TRIGGER royal_champion_update_r118 BEFORE UPDATE OF equipped,rarity,player_id ON player_items\n WHEN NEW.equipped=1 AND NEW.rarity='royal' AND NOT EXISTS(SELECT 1 FROM players WHERE id=NEW.player_id AND champion_level_r102>=1)\n BEGIN SELECT RAISE(ABORT,'royal_champion_required_r118'); END",
+      "sha256": "60422ee591adc1531f771c31bf1f750a1ce2d703f2348ba906a6f88b0a971693",
+      "review": "Read-only champion eligibility predicate with RAISE(ABORT) on unauthorized equipped Royal gear insert/update. No monster, reward or RNG mutation."
+    },
+    {
+      "scope": "main",
+      "name": "royal_champion_loss_r118",
+      "sql": "CREATE TRIGGER royal_champion_loss_r118 AFTER UPDATE OF champion_level_r102 ON players\n WHEN OLD.champion_level_r102>=1 AND NEW.champion_level_r102<1\n BEGIN UPDATE player_items SET equipped=0 WHERE player_id=NEW.id AND equipped=1 AND rarity='royal'; END",
+      "sha256": "c3fff96a10dff45566aecdbf5c2e93c67734750eb565436d7e20713141ea6f5f",
+      "review": "Only on champion-level downgrade, unequips own Royal gear; chained equipment/HP correction touches player only. No monster HP/life or reward/claim/RNG mutation."
+    },
+    {
+      "scope": "main",
+      "name": "equipment_set_insert",
+      "sql": "CREATE TRIGGER equipment_set_insert AFTER INSERT ON player_items WHEN NEW.equipped=1 BEGIN UPDATE players SET set_hp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 600 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 500 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 700 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 1000 ELSE 0 END,set_pve=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=2 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 10 ELSE 0 END,set_pvp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=3 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 10 ELSE 0 END,set_resistance=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 7 ELSE 0 END,set_speed=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=4 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 9 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 10 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 12 ELSE 0 END,set_attack=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 50 ELSE 0 END WHERE id=NEW.player_id; END",
+      "sha256": "60e1c0c68f79b6d42a0fae0f6fb83b522c7dea482d3ea3727844b65d97426891",
+      "review": "Only recomputes owning players set columns for equipped gear mutations. Exact R117 definition with emerald+royal in the same family; no monster write or reward/RNG operation."
+    },
+    {
+      "scope": "main",
+      "name": "equipment_set_delete",
+      "sql": "CREATE TRIGGER equipment_set_delete AFTER DELETE ON player_items WHEN OLD.equipped=1 BEGIN UPDATE players SET set_hp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 600 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 500 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 700 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 1000 ELSE 0 END,set_pve=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=2 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 10 ELSE 0 END,set_pvp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=3 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 10 ELSE 0 END,set_resistance=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 7 ELSE 0 END,set_speed=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=4 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 9 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 10 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 12 ELSE 0 END,set_attack=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 50 ELSE 0 END WHERE id=OLD.player_id; END",
+      "sha256": "9d2a18ac2e62893215239874488cc76c499707ab26abe93233a9ad779a21df97",
+      "review": "Only recomputes owning players set columns for equipped gear mutations. Exact R117 definition with emerald+royal in the same family; no monster write or reward/RNG operation."
+    },
+    {
+      "scope": "main",
+      "name": "equipment_set_update",
+      "sql": "CREATE TRIGGER equipment_set_update AFTER UPDATE OF equipped,rarity,kind,player_id ON player_items WHEN OLD.equipped=1 OR NEW.equipped=1 BEGIN UPDATE players SET set_hp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 600 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 500 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 700 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 1000 ELSE 0 END,set_pve=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=2 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 10 ELSE 0 END,set_pvp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=3 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 10 ELSE 0 END,set_resistance=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 7 ELSE 0 END,set_speed=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=4 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 9 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 10 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 12 ELSE 0 END,set_attack=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 50 ELSE 0 END WHERE id=OLD.player_id; UPDATE players SET set_hp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 600 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 500 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 700 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=2 THEN 1000 ELSE 0 END,set_pve=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=2 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=3 THEN 10 ELSE 0 END,set_pvp=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=3 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 7 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=4 THEN 10 ELSE 0 END,set_resistance=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 6 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 7 ELSE 0 END,set_speed=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='red' AND kind IN ('weapon','armor','shoes','necklace'))>=4 THEN 3 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='unique' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 9 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='purple' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 5 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity='infinite' AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 10 ELSE 0 END+CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 12 ELSE 0 END,set_attack=CASE WHEN (SELECT COUNT(DISTINCT kind) FROM player_items WHERE player_id=players.id AND equipped=1 AND rarity IN ('emerald','royal') AND kind IN ('weapon','armor','helmet','shoes','necklace'))>=5 THEN 50 ELSE 0 END WHERE id=NEW.player_id; END",
+      "sha256": "7b57b0257e269defff05bde9efb4b27c28e3f9e2568d33707f724f789da0d2e4",
+      "review": "Only recomputes owning players set columns for equipped gear mutations. Exact R117 definition with emerald+royal in the same family; no monster write or reward/RNG operation."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_settings_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_settings_r118_INSERT_scope\" AFTER INSERT ON main.\"royal_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_settings_r118'); END",
+      "sha256": "9c0af490039c81ffe045a50009058a0084dde3b4a37d39952df2a03fb2b467e5",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_settings_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_settings_r118_UPDATE_scope\" AFTER UPDATE ON main.\"royal_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_settings_r118'); END",
+      "sha256": "001239a9b275e04c13cc3ba2ad8f2ce93e87a5156e17c4e309186aa8b4ee703a",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_settings_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_settings_r118_DELETE_scope\" BEFORE DELETE ON main.\"royal_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_settings_r118'); END",
+      "sha256": "14ad06b0af1cef74e854c326416a5e137bc6c30a59ff920e17d5cfdfc1168519",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_receipts_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_receipts_r118_INSERT_scope\" AFTER INSERT ON main.\"royal_receipts_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_receipts_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_receipts_r118'); END",
+      "sha256": "70ac614115b579048448d11e5b4f2a45ea9be4ffa7c153feb57747275ae6f63a",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_receipts_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_receipts_r118_UPDATE_scope\" AFTER UPDATE ON main.\"royal_receipts_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_receipts_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_receipts_r118'); END",
+      "sha256": "8db4b89b6d3a8d908745513868ae71bafc686820fb09411eaf933e63a0ea4704",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_receipts_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_receipts_r118_DELETE_scope\" BEFORE DELETE ON main.\"royal_receipts_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_receipts_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_receipts_r118'); END",
+      "sha256": "1e8439ce141e15f82818a43623da935f5209ed53e24663fe58adfc691e5eb1df",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_transforms_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_transforms_r118_INSERT_scope\" AFTER INSERT ON main.\"royal_transforms_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_transforms_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_transforms_r118'); END",
+      "sha256": "5a32fb73195b9c8f8d38c866e1746dd8fbb0e2115ac50d55de93781cbb285621",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_transforms_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_transforms_r118_UPDATE_scope\" AFTER UPDATE ON main.\"royal_transforms_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_transforms_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_transforms_r118'); END",
+      "sha256": "df432f10b74c899c7222a23a7f8bee31236681f318b5b658d1a84836e987c9ae",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_transforms_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_transforms_r118_DELETE_scope\" BEFORE DELETE ON main.\"royal_transforms_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_transforms_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_transforms_r118'); END",
+      "sha256": "b29471edb36d4ae3632f946e5693a0b6b11915b78692da3099e02e87283ee591",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_salvage_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_salvage_r118_INSERT_scope\" AFTER INSERT ON main.\"royal_salvage_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_salvage_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_salvage_r118'); END",
+      "sha256": "90e44c4d5000fbe36e86b30ff7dc59041d6eaa45690b2278d53858bc1ac18f19",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_salvage_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_salvage_r118_UPDATE_scope\" AFTER UPDATE ON main.\"royal_salvage_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_salvage_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_salvage_r118'); END",
+      "sha256": "479c1768b82e5b2c9253a76da08f6179abfdef1f8e4f71a81ec1ee7e28572b84",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_salvage_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_salvage_r118_DELETE_scope\" BEFORE DELETE ON main.\"royal_salvage_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_salvage_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_salvage_r118'); END",
+      "sha256": "9827d961f9fdcc22ced6c67df4d389b223bee6bae1474907bdf48a4957aec9ae",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_admin_audit_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_admin_audit_r118_INSERT_scope\" AFTER INSERT ON main.\"royal_admin_audit_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_admin_audit_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_admin_audit_r118'); END",
+      "sha256": "592b7154b8584462541bb83745bb76ce370cad8e4f6f41c35f5ff9a43360923e",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_admin_audit_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_admin_audit_r118_UPDATE_scope\" AFTER UPDATE ON main.\"royal_admin_audit_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_admin_audit_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_admin_audit_r118'); END",
+      "sha256": "7a7d19db366a898aa04d298a3f9fc5bd87c53b66f3c83aa52edea9c9842a5862",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_royal_admin_audit_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_royal_admin_audit_r118_DELETE_scope\" BEFORE DELETE ON main.\"royal_admin_audit_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'royal_admin_audit_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='royal_admin_audit_r118'); END",
+      "sha256": "594577dc906e573969d42b59a38640bc4f5ae3971b9009a1fec8d3d652aeb38c",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_champions_settings_r118_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_champions_settings_r118_INSERT_scope\" AFTER INSERT ON main.\"champions_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'champions_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='champions_settings_r118'); END",
+      "sha256": "4b343e4b0c5f4face5faa3422687b5d33ad6a0a700302ff8f81ce3784903cdba",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_champions_settings_r118_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_champions_settings_r118_UPDATE_scope\" AFTER UPDATE ON main.\"champions_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'champions_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='champions_settings_r118'); END",
+      "sha256": "c663fced28fa7d25ba02d8f2f7b2377ed97b943e87f5a2a2de249e9cbad303b8",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_champions_settings_r118_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_champions_settings_r118_DELETE_scope\" BEFORE DELETE ON main.\"champions_settings_r118\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'champions_settings_r118',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='champions_settings_r118'); END",
+      "sha256": "86a0d2cf7ebdfd328133e0d03c61534559e456c2a7482b0a6e667de0ac7cc8c4",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_r118_install_state_INSERT_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_r118_install_state_INSERT_scope\" AFTER INSERT ON main.\"r118_install_state\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'r118_install_state',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='r118_install_state'); END",
+      "sha256": "45f57b70a0464cead4532737311a7468fe0faca69809d0cecfee12529f05af37",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_r118_install_state_UPDATE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_r118_install_state_UPDATE_scope\" AFTER UPDATE ON main.\"r118_install_state\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'r118_install_state',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='r118_install_state'); END",
+      "sha256": "f8e969f5e0a532af375daed9534c537ded9c5de5a086e48fade80e99865f3ceb",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    },
+    {
+      "scope": "temp",
+      "name": "kernel511_refresh_r533_r118_install_state_DELETE_scope",
+      "sql": "CREATE TRIGGER \"kernel511_refresh_r533_r118_install_state_DELETE_scope\" BEFORE DELETE ON main.\"r118_install_state\" WHEN ((SELECT v FROM kernel511_refresh_enabled)>0) BEGIN INSERT INTO kernel511_refresh_tables SELECT 'r118_install_state',1 WHERE NOT EXISTS(SELECT 1 FROM kernel511_refresh_tables WHERE name='r118_install_state'); END",
+      "sha256": "1710517035c1f4c7472fb18bedfd045886af5db6b275bc7867b7cdea93c5f26d",
+      "review": "Only inserts a table name into existing TEMP refresh metadata, with scope gate and duplicate suppression; never changes players, monster HP/life, inventory, claims or RNG."
+    }
+  ]
+}
