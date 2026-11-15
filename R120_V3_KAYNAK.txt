@@ -1,0 +1,4 @@
+Source: https://github.com/mehmetkibby-prog/ccre/tree/d41159cab3be392fd415a21080c3b3c26f3939d7/r109-inceleme/project/r120_2d_depot
+Version: R120_2D_DEPOT3
+SHA256: 28d5eeb6029029d529ba8d3789d05b9f167d13146100267f1e262e11f50a9821
+V1/V2 preserved. Public failure keeps locally verified TLS but blocks game install. Live verification pending.
