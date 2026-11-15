@@ -89,8 +89,8 @@ export class GrassField {
       const tx = Math.floor(sx / TILE), ty = Math.floor(sy / TILE);
       if (tx < 0 || ty < 0 || tx >= l.w || ty >= l.h) continue;
       // yumuşak maske + hafif gürültü: kenar doğal kıvrımlı seyrelir (karo sınırı belli olmaz)
-      const k = this.allowedAt(sx, sy) * (0.8 + 0.4 * ((Math.sin(gx * 1.7) + Math.sin(gz * 1.3 + gx * 0.6)) * 0.25 + 0.5));
-      if (k <= 0.05 || r1 > Math.min(1, k)) continue;
+      const k = this.allowedAt(sx, sy);
+      if (k <= 0.35 || r1 > Math.min(1, (k - 0.35) / 0.4)) continue; // yol kenarında düz çizgide biter
       p.set(gx, this.heightAt(sx, sy) - 0.02, gz);
       e.set(0, r3 * 6.283, 0); q.setFromEuler(e);
       const sc = (0.6 + r2 * 0.5) * (0.55 + 0.45 * Math.min(1, k)); s.set(sc * 1.1, sc * (k > 1 ? 1.0 : 0.78) * (0.75 + r1 * 0.35), sc * 1.1);

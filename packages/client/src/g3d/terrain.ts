@@ -106,7 +106,7 @@ export class Terrain {
     const used = new Set<number>();
     const lay = new Int8Array(l.w * l.h);
     for (let k = 0; k < l.w * l.h; k++) { const li = LAYER_NAMES.indexOf(GROUND_LAYERS[l.ground[k]]); lay[k] = li; used.add(li); }
-    const R = 7, sig = 3.2, ker = Array.from({ length: R * 2 + 1 }, (_, i) => Math.exp(-((i - R) ** 2) / (2 * sig * sig)));
+    const R = 9, sig = 4.2, ker = Array.from({ length: R * 2 + 1 }, (_, i) => Math.exp(-((i - R) ** 2) / (2 * sig * sig)));
     const ks = ker.reduce((a, b) => a + b, 0); for (let i = 0; i < ker.length; i++) ker[i] /= ks;
     const A = new Float32Array(W * H), B = new Float32Array(W * H);
     for (const li of used) {
@@ -149,8 +149,8 @@ float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix
 vec3 gCol; vec3 gNor;
 void groundBlend(){
   vec2 uv = vWPos.xz / uMapSize;
-  vec2 j = vec2(vn(vWPos.xz*0.9), vn(vWPos.xz*0.9+17.3)) - 0.5;
-  vec2 suv = uv + j * (${(TILE_M * 0.9).toFixed(3)} / uMapSize);
+  // kenar dümdüz: örnekleme noktasına gürültü eklenmez (yumuşatılmış maske düz, temiz bir sınır verir)
+  vec2 suv = uv;
   vec4 s0 = texture2D(uSplat0, suv), s1 = texture2D(uSplat1, suv), s2 = texture2D(uSplat2, suv);
   float w[${nl}];
   vec4 SP[3]; SP[0]=s0; SP[1]=s1; SP[2]=s2;
@@ -174,9 +174,9 @@ void groundBlend(){
     vec2 gx = isCliff ? mix(tdx, cdx, slope) : tdx, gy = isCliff ? mix(tdy, cdy, slope) : tdy;
     vec4 c = textureGrad(uColArr, vec3(uvi, float(i)), gx, gy);
     // yükseklik tabanlı keskin geçiş: taşlar çimenin içinden çıkar
+    // geçiş: dokuya bağlı (taşlı, tırtıklı) değil, ağırlığa bağlı kısa ve düzgün
     float hgt = dot(c.rgb, vec3(0.33));
-    float ww = pow(w[i], 1.6) * (0.35 + hgt);
-    ww = ww * ww;
+    float ww = pow(w[i], 9.0) * (0.85 + 0.15 * hgt); // yüksek üs: dar, net geçiş
     col += c.rgb * ww;
     nor += (textureGrad(uNorArr, vec3(uvi, float(i)), gx, gy).xyz * 2.0 - 1.0) * ww;
     tot += ww;
