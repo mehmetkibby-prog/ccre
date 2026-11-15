@@ -1,0 +1,69 @@
+{
+  "sourceCommit": "b4b6224",
+  "checks": [
+    {
+      "suite": "focused",
+      "command": "npm test",
+      "exitCode": 0,
+      "seconds": 54.76,
+      "log": "required-final-focused.log",
+      "tapTests": [
+        60
+      ],
+      "tapPass": [
+        60
+      ],
+      "pythonTests": [],
+      "logSha256": "2ee39d632b2378e95ab9db2125ee10103552dc1b37b48506b897e49f0bab851f"
+    },
+    {
+      "suite": "native",
+      "command": "npm run test:native",
+      "exitCode": 0,
+      "seconds": 154.294,
+      "log": "required-final-native.log",
+      "tapTests": [
+        29
+      ],
+      "tapPass": [
+        29
+      ],
+      "pythonTests": [],
+      "logSha256": "ba04d9dc793972617d832772687a4962ab302453859c421b52cbf71cadf0982a"
+    },
+    {
+      "suite": "captcha",
+      "command": "npm run test:captcha",
+      "exitCode": 0,
+      "seconds": 135.35,
+      "log": "required-final-captcha.log",
+      "tapTests": [
+        20
+      ],
+      "tapPass": [
+        20
+      ],
+      "pythonTests": [],
+      "logSha256": "0b58f4ef44a1bbdb67d75e8d1ebaabd33bdad021e6c8594304166fbd2752394d"
+    },
+    {
+      "suite": "r110",
+      "command": "npm run test:r110",
+      "exitCode": 0,
+      "seconds": 99.917,
+      "log": "required-final-r110.log",
+      "tapTests": [
+        3
+      ],
+      "tapPass": [
+        3
+      ],
+      "pythonTests": [
+        16
+      ],
+      "logSha256": "4b0b5beb8476f60e937093d635b1052f1f9ed460cddc82112604ab81993d2e8e"
+    }
+  ],
+  "allPassed": true,
+  "complete": true
+}
