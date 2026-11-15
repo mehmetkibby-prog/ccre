@@ -328,8 +328,9 @@ export class Game {
         else if (src) { src.anim = skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; src.skill = skill; }
         const clsIdx = isSelf ? CLASS_IDS.indexOf(this.cls) : src?.kind === Kind.PLAYER ? src.cls : -1;
         if (skill === 9) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 420, kind: 'ice', color: '#8fe6ff' }); break; }
-        if (clsIdx === 1 && skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 200, kind: 'arrow', color: '#fff' }); sfx.play('bow', isSelf ? 1 : this.nearK(sp)); }
-        else if (clsIdx === 2 && skill === 0) { this.fx.projs.push({ x0: sp.x, y0: sp.y, tx: ev.x, ty: ev.y, tgt: ev.tgt, t0: now, dur: 260, kind: 'orb', color: '#7cf3ff' }); this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); sfx.play('magic', isSelf ? 1 : this.nearK(sp)); }
+        const near = isSelf || ev.tgt === this.selfId || Math.hypot(sp.x - this.dx, sp.y - this.dy) < 1500;
+        if (clsIdx === 1 && skill === 0) { if (near) this.fx.sk.basic(1, ev.src, ev.tgt, { x: sp.x, y: sp.y }, { x: ev.x, y: ev.y }, isSelf); sfx.play('bow', isSelf ? 1 : this.nearK(sp)); }
+        else if (clsIdx === 2 && skill === 0) { if (near) this.fx.sk.basic(2, ev.src, ev.tgt, { x: sp.x, y: sp.y }, { x: ev.x, y: ev.y }, isSelf); if (isSelf) this.fx.light(sp.x, sp.y, 1.6, '#7cf3ff', 3, 300); sfx.play('magic', isSelf ? 1 : this.nearK(sp)); }
         else if (clsIdx === 0 && skill === 0) {
           // Muhafız kombosu: 1) sağdan sola yatay, 2) ters yükselen, 3) tepeden iniş; kesik izi vuruş anında
           const prev = this.meleeCast.get(ev.src);

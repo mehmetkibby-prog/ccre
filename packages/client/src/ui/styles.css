@@ -1154,3 +1154,13 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .classic-btn .cb-ic { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(160deg, #e9b65a, #9a6a22); color: #2a1a08; font-size: 10px; font-weight: 800; letter-spacing: .5px; }
 .classic-btn.small { margin: 0 6px; padding: 3px 10px 3px 3px; font-size: 12px; }
 .classic-btn.small .cb-ic { width: 20px; height: 20px; font-size: 9px; }
+
+/* Meshy skill ikonları: elmas yuvada dik durur, kenar çerçevesi yuvanın kendi çerçevesine bırakılır */
+.sk-img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+.slot .sk-img { position: absolute; left: 50%; top: 50%; width: 66px; height: 66px; max-width: none; transform: translate(-50%, -50%) rotate(-45deg); clip-path: polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%); }
+.slot.big .sk-img { width: 82px; height: 82px; }
+@media (max-width: 900px), (pointer: coarse) { .slot .sk-img { width: 56px; height: 56px; } .slot.big .sk-img { width: 70px; height: 70px; } }
+.mact button .sk-img { width: 94%; height: 94%; clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.skillrow .ic .sk-img { width: 100%; height: 100%; }
+.slot .key, .slot .cd, .slot .cnt { z-index: 2; }
+.mact .cdo { z-index: 2; }

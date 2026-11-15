@@ -53,6 +53,7 @@ let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(N
   if (!sfxP || !sfxq) return;
   const [c, s, v] = sfxq.split(',').map(Number);
   const { P, M } = sfxP; P.anim = Anim.CAST; P.animStart = t; P.skill = s;
+  if (s === 0) { r.fx.sk.basic(c, P.id, M.id, { x: P.x, y: P.y }, { x: M.x, y: M.y }, true); return; }
   if (c === 0 && s === 3 && !v) r.fx.sk.dome(P.id, { x: P.x, y: P.y }, 3000, '#ffcf5a');
   r.fx.sk.play({ cls: c, skill: s, variant: v ?? 0, src: P.id, tgt: M.id, sp: { x: P.x, y: P.y }, tp: { x: M.x, y: M.y }, self: true, near: 0, now: t, shake: (n) => r.shake(n), hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
 };

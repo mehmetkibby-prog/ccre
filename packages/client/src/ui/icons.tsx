@@ -12,7 +12,11 @@ export function ClassIcon({ cls, size = 30 }: { cls: string; size?: number }) {
   return <G size={size}><path d="M14 42 L30 14" stroke="#7a4a2a" strokeWidth="4" /><circle cx="32" cy="11" r="7" fill="#7cf3ff" stroke={dark} strokeWidth="2" /><circle cx="30" cy="9" r="2" fill="#fff" /></G>;
 }
 
+/** Meshy ile çizilmiş skill ikonları (public/icons/skills). Diğerleri için el çizimi SVG. */
+const SKILL_ART = new Set(['g_basic', 'g_pull', 'g_dash', 'g_steel', 'g_judge', 'h_basic', 'h_multi', 'h_pierce', 'h_dawn', 'h_root', 'a_basic', 'a_nova', 'a_frost', 'a_burst', 'a_wave']);
+
 export function SkillIcon({ id }: { id: string }) {
+  if (SKILL_ART.has(id)) return <img className="sk-img" src={`/icons/skills/${id}.jpg`} alt="" draggable={false} />;
   switch (id) {
     case 'g_basic': return <G><path d="M10 38 L34 10 L38 14 L14 42 Z" fill="#dfe6ee" stroke={dark} strokeWidth="2" /><path d="M9 33 L17 41 M12 40 L7 45" stroke={gold} strokeWidth="3.5" /></G>;
     case 'g_pull': return <G><circle cx="12" cy="24" r="5" stroke="#b8c0c8" strokeWidth="3" /><circle cx="22" cy="24" r="5" stroke="#b8c0c8" strokeWidth="3" /><circle cx="32" cy="24" r="5" stroke="#b8c0c8" strokeWidth="3" /><path d="M38 16 L44 24 L38 32" stroke={gold} strokeWidth="3.5" /></G>;

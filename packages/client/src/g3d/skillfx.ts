@@ -412,7 +412,7 @@ export class SkillFx {
   /** Mermi: süzülen ışık/ok; yol boyunca iz bırakır, varınca onHit(hedef konumu). */
   missile(sp: P, tgt: number, tp: P, dur: number, kind: 'arrow' | 'orb' | 'ice', color: THREE.ColorRepresentation, size: number, onHit?: (p: P) => void, trail = 2) {
     const g = new THREE.Group();
-    const mats: THREE.Material[] = [];
+    const mats: THREE.Material[] = [], own: THREE.BufferGeometry[] = [];
     const gm = new THREE.SpriteMaterial({ map: glowTexture(), color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false });
     mats.push(gm);
     const glow = new THREE.Sprite(gm); glow.scale.setScalar(size); g.add(glow);
@@ -421,7 +421,8 @@ export class SkillFx {
       const a = new THREE.Mesh(arrowGeo(), am); a.scale.setScalar(1.25); g.add(a);
     } else {
       const cm = new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }); mats.push(cm);
-      const c = new THREE.Mesh(kind === 'ice' ? new THREE.OctahedronGeometry(size * 0.18) : new THREE.SphereGeometry(size * 0.14, 10, 8), cm); g.add(c);
+      const cg = kind === 'ice' ? new THREE.OctahedronGeometry(size * 0.18) : new THREE.SphereGeometry(size * 0.14, 10, 8); own.push(cg);
+      const c = new THREE.Mesh(cg, cm); g.add(c);
     }
     const col = new THREE.Color(color);
     let hit = false; const end = { ...tp };
@@ -434,10 +435,28 @@ export class SkillFx {
       g.lookAt(end.x * U, this.gy(end.x, end.y) + 1.05, end.y * U);
       for (let i = 0; i < trail; i++) this.fx.spawn(g.position.x, g.position.y, g.position.z, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, 320, size * 0.28, col);
       if (f >= 1 && !hit) { hit = true; g.visible = false; onHit?.(end); }
-    }, mats);
+    }, mats, own);
   }
 
   // ───────── koreografi ─────────
+
+  /** Temel saldırı mermisi (sık kullanılır: hafif tutulur). cls 1 ok, cls 2 öz küresi. */
+  basic(cls: number, src: number, tgt: number, sp: P, tp: P, self: boolean) {
+    const lite = !self && this.q < 2;
+    if (cls === 1) {
+      this.missile(sp, tgt, tp, 190, 'arrow', '#b8ff8a', 0.7, (p) => {
+        if (!this.full(self)) return;
+        this.flash(p, 1.05, 1.1, 160, '#e8ffd0');
+        if (!lite) this.fx.burst(p.x, p.y, 1.0, Math.ceil(6 * this.pk), '#c8ff9a', 2.6, 320, 0.1, -2);
+      }, lite ? 0 : 1);
+    } else if (cls === 2) {
+      this.missile(sp, tgt, tp, 250, 'orb', '#7cf3ff', 1.0, (p) => {
+        if (!this.full(self)) return;
+        this.flash(p, 1.1, 1.6, 200, '#bff8ff');
+        if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
+      }, lite ? 1 : 2);
+    }
+  }
 
   /** Sınıf + beceri + uzmanlık türüne göre tam efekt. */
   play(c: SkillCtx) {
