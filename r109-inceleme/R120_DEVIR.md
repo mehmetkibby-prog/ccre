@@ -121,3 +121,8 @@ fikstürü hatası (eksik dizin ve UID1000 uyarlaması) düzeltildi ve logları 
 üretim root koruması gevşetilmedi. `evidence/verification-v4.json` kanıtıdır.
 Testler sentetik veridedir; canlı v4 kurulumu ve tam mobil/masaüstü kabul hâlâ
 bekler. Kullanıcıya yeni v4 indirme/kurulum bloğu verilecek; 2D hazır denmez.
+
+V4 indirilebilir paket yayımlandı ve anonim HTTP 200 + SHA256 doğrulandı:
+https://raw.githubusercontent.com/mehmetkibby-prog/ccre/5fb5d5cc6a415a85e5c9a897e858398fe82d5345/r120-2d-depo-v4.zip
+Kaynak commit: 1053c9792bc53a1c73f0df5355f030276bdf72a3.
+Kanıt: project/r120_2d_depot/evidence/download-v4.json. Canlı kurulum bekliyor.
