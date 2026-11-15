@@ -1,12 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
+import {siteUrlsR120} from './site-origin-r120.mjs';
 
 const proof=JSON.parse(fs.readFileSync(new URL('./generated/native-client-proof.json',import.meta.url)));
 // A versioned directory keeps circular ES-module imports in one immutable
 // graph. Renaming only the game and portal leaves the bootstrap importing V510.
 export const CLIENT_ASSET_NAMESPACE='core511-'+createHash('sha256').update(fs.readFileSync(new URL(import.meta.url))).update(JSON.stringify(proof)).digest('hex').slice(0,16);
 export function clientAssetPaths(source){
+ source=siteUrlsR120(source);
  source=source.replaceAll(path.basename(proof.file),proof.name).replaceAll(path.basename(proof.portal.file),proof.portal.name);
  return source.replaceAll('/assets/','/assets/'+CLIENT_ASSET_NAMESPACE+'/').replace(/(["'`])assets\//g,'$1assets/'+CLIENT_ASSET_NAMESPACE+'/');
 }
