@@ -78,6 +78,8 @@ case "${1:-}" in
       konum() {
         echo "    client_max_body_size 64k;"
         echo "    if (\$host = www.$yeni) { return 301 https://$yeni\$request_uri; }"
+        # eski 2D sayfalarına giden bağlantılar (rehber, forum, ön kayıt…) 2D'nin yeni adresine yönlenir
+        echo "    location ~ ^/(rehber|forum|on-kayit|akademi-kayit|col-site|_game|game|voice)(/|\$) { return 301 https://2d.$yeni\$request_uri; }"
         echo "    location /ws { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Upgrade \$http_upgrade; proxy_set_header Connection \"upgrade\"; proxy_set_header X-Real-IP \$remote_addr; proxy_read_timeout 3600s; proxy_buffering off; tcp_nodelay on; }"
         echo "    location / { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; gzip on; gzip_types text/css application/javascript application/json; }"
       }
