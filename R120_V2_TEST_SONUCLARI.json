@@ -1,0 +1,54 @@
+{
+  "package": {
+    "file": "artifacts/R120_2D_DEPOT_4cdc1af31b61.zip",
+    "sha256": "5fcf4d850076257437166f5634519041f803866b8956d95901bf2141c1664ff6",
+    "bytes": 1458847,
+    "sourceVersions": [
+      "R118_ROYAL1",
+      "R119_MOTION1"
+    ],
+    "targetVersion": "R120_2D_DEPOT2",
+    "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
+    "namespace": "core511-17d72e47dc4df4fa",
+    "changedCodeFiles": 14,
+    "databaseScope": "none",
+    "acceptance": "29 targeted installer/TLS/domain tests passed; game/forum payload identical to locally verified v1; live deployment pending",
+    "deployed": false,
+    "publicDomainTests": "pending"
+  },
+  "tests": {
+    "domain": 9,
+    "webPreparationFailureRecovery": 11,
+    "maintenanceAndPendingInstallGuards": 3,
+    "realCaddyAutomaticTLS": 1,
+    "archivedSourceApplyRollback": 5,
+    "total": 29
+  },
+  "gameTests": "Unchanged game and forum bytes; v1 tests retained in verification.json (native depot browsers, two realms/eight channels, required test groups).",
+  "payloadEquivalence": "16 payload/forum files byte-identical; core/namespace unchanged. No extra bot test needed for installer-only changes.",
+  "automaticTlsTest": "Actual isolated Caddy; internal issuer, no global trust install. Correct hostname/trust required; untrusted certificate rejected. Production ACME still pending.",
+  "observedLive": "Cloudflare Full, automatic mode enabled; existing Caddy default certificate automation; 2d not yet in host config. User screenshots.",
+  "notChanged": [
+    "apex/www DNS",
+    "protected subdomain/email DNS",
+    "3D server",
+    "Cloudflare zone settings",
+    "player/forum database",
+    "historical ZIPs"
+  ],
+  "pending": [
+    "User VDS execution of v2 web preparation and main installer",
+    "Cloudflare Page/Redirect/Worker/Cache/SaaS rules inventory",
+    "Public desktop/mobile auth/game/voice/video/email tests",
+    "Post-apex-DNS-cutover no exact apex/www requests"
+  ],
+  "fixtureFailure": "First new unittest helper was named run and shadowed unittest.TestCase.run; corrected to validate_cmd before any test execution. Raw failure retained in web-prepare-v2-fixture-first.log.",
+  "evidence": [
+    "domain_test-v2.log",
+    "web_prepare_test-v2.log",
+    "web_cli_test-v2.log",
+    "installer-v2.log",
+    "caddy-auto-tls-v2.json",
+    "v2-targeted-results.json"
+  ]
+}

@@ -1,0 +1,4 @@
+Source: https://github.com/mehmetkibby-prog/ccre/tree/ea15cd5ad590f1b68a7fb555291fddba709e8f5e/r109-inceleme/project/r120_2d_depot
+Version: R120_2D_DEPOT2
+SHA256: 5fcf4d850076257437166f5634519041f803866b8956d95901bf2141c1664ff6
+Previous R120 archive unchanged. Game/forum payload identical to v1. Live installation unconfirmed.
