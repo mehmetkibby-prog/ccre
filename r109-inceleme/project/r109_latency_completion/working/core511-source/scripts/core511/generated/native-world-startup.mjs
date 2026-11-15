@@ -215,7 +215,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -224,6 +224,9 @@ function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(area==='
 	if (area === "ancient") return ANCIENT_WORLD;
 	return area === "war" ? WAR_WORLD : area === "black" ? BLACK_WORLD : area === "frozen" ? FROZEN_WORLD : area === "forest" ? FOREST_WORLD : COMMON_WORLD;
 }
+// Preserve the pinned native dependency and apply the existing R93 map extension separately.
+const nativeAreaWorldR118=areaWorld;
+areaWorld=function(area){return area==='zumrut'?ZUMRUT_WORLD_R93:nativeAreaWorldR118(area);};
 function insideForestBounds(x, y) {
 	if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
 	let inside = false;
@@ -244,7 +247,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
@@ -256,6 +259,9 @@ function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutW
 	if (area === "fishing") return ((x - FISHING_LAKE$1.x) / FISHING_LAKE$1.radiusX) ** 2 + ((y - FISHING_LAKE$1.y) / FISHING_LAKE$1.radiusY) ** 2 >= 1.02;
 	return true;
 }
+// Preserve the pinned native dependency and apply the existing R93 map extension separately.
+const nativeWalkablePositionR118=isAreaWalkablePosition;
+isAreaWalkablePosition=function(area,x,y){return area==='zumrut'?isZumrutWalkableR93(x,y):nativeWalkablePositionR118(area,x,y);};
 var HUNTING_COUNTS = {
 	forest: 72,
 	frozen: 45,

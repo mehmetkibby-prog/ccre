@@ -522,7 +522,7 @@
       "sha256": "d3fb03157ed01d757a0e20f5ae0b55f8b0d000eb5438efc72cf5cbf40d8032de"
     }
   ],
-  "generatedSha256": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+  "generatedSha256": "403f93ca5ea49b32add95754c7d878fb5960837592e7b998f7a309c85610b098",
   "bodies": {
     "ensureWorldSeed": "aac20ca733301737f410421179f5a6b3b7a71a80c324938e82ddf542a2235d46",
     "ensureMonsterBalanceInitialized": "7e6ee8f0d1fbc7a7de36a48adef2af7d536d11658fb5aef8cd4ffcbb09bcc279"
@@ -538,6 +538,16 @@
       "generatedSha256": {
         "previous": "594da1076c88fe8b89d5deda3e898094c793bd079b036c349fc5a2d826b91f5a",
         "current": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+        "file": "native-world-startup.mjs"
+      }
+    }
+  },
+  "r118RoyalChampions": {
+    "scope": "Preserve pinned V510 dependencies and apply the existing R93 zumrut bounds/walkability via separate equivalent wrappers; no new startup migration.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+        "current": "403f93ca5ea49b32add95754c7d878fb5960837592e7b998f7a309c85610b098",
         "file": "native-world-startup.mjs"
       }
     }

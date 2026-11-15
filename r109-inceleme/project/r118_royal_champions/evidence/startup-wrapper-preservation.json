@@ -1,0 +1,7 @@
+{
+  "baselineSha256": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+  "currentSha256": "403f93ca5ea49b32add95754c7d878fb5960837592e7b998f7a309c85610b098",
+  "inverseByteEquality": true,
+  "changes": 2,
+  "geometryPolicy": "Identical previous zumrut dimensions and walkability function; other map calls delegate byte-identical original functions."
+}
