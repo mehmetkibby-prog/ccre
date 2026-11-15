@@ -3,7 +3,7 @@
   "source": "dist-vds/server/index.js",
   "clientAssetNamespace": "core511-1025c65a35480d96",
   "sourceSha256": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
-  "generatedSha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056",
+  "generatedSha256": "ebd020559246908bed5921f66c4cc73155a1dd457ee0dfb812429779707ccbf6",
   "patches": [
     {
       "name": "patchNativeAdmin",
@@ -2019,5 +2019,108 @@
     "sourceSha256": "cf2c5353525b600ec52641953a8428c7b13bedb7bb1d3d0915ea8f8c7396dc59",
     "callSiteReplacements": 1,
     "scope": "Plain world/trade chat uses the bound continuity gate; all native filtering, SQL and notification code is unchanged."
+  },
+  "r118RoyalChampions": {
+    "sourceVersion": "R117_HOOK10",
+    "historicalServerArchive": "r113_engine/artifacts/R113_ENGINE_76cd8cd4c40f.zip",
+    "historicalArchiveSha256": "4399dfe08550ebf04bd4c8ea7fbab8cedcdb804fd851495dd17847a0eabbcbc3",
+    "previousCompositionProofSha256": "85687508462d6abfcd5127d742bf29540d4f07603b3953337f7127152a13a476",
+    "sourceSha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056",
+    "patchedSha256": "ebd020559246908bed5921f66c4cc73155a1dd457ee0dfb812429779707ccbf6",
+    "edits": [
+      {
+        "scope": "Register the two royal materials with versioned icons",
+        "beforeStart": 728064,
+        "beforeEnd": 728534,
+        "afterStart": 728064,
+        "afterEnd": 728921,
+        "original": "var PROGRESSION_MATERIALS = Object.freeze({forge_ember491:{\"label\":\"Kor Mührü\",\"image\":\"../game/forge-ember-v491\",\"note\":\"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir.\"},\"rune_defense\":{label:\"Safir Siper Parçası\",image:\"rune-defense-v422-shard\"},\"rune_attack\":{label:\"Kızıl Kudret Parçası\",image:\"rune-attack-v422-shard\"},\"rune_hp\":{label:\"Zümrüt Yaşam Parçası\",image:\"rune-hp-v422-shard\"},\n",
+        "replacement": "var PROGRESSION_MATERIALS = Object.freeze({emerald_dust:{label:'Zümrüt Tozu',image:'../assets/royal-icon-emerald_dust-r118-489c24fa11893ae1',note:'Demirci Haso’da 1 Kadim Zümrüt eşyasından elde edilir. Kraliyet dönüşümünde kullanılır.'},royal_crown:{label:'Kraliyet Tacı',image:'../assets/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0',note:'Şampiyonlar Diyarı ganimeti; Kraliyet dönüşümünde kullanılır.'},forge_ember491:{\"label\":\"Kor Mührü\",\"image\":\"../game/forge-ember-v491\",\"note\":\"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir.\"},\"rune_defense\":{label:\"Safir Siper Parçası\",image:\"rune-defense-v422-shard\"},\"rune_attack\":{label:\"Kızıl Kudret Parçası\",image:\"rune-attack-v422-shard\"},\"rune_hp\":{label:\"Zümrüt Yaşam Parçası\",image:\"rune-hp-v422-shard\"},\n"
+      },
+      {
+        "scope": "Count mixed emerald/royal pieces as one existing set family",
+        "beforeStart": 791313,
+        "beforeEnd": 791485,
+        "afterStart": 791700,
+        "afterEnd": 791989,
+        "original": " const definition=EQUIPMENT_SETS[rarity];if(!definition)return null;\n const worn=new Set(items.filter(item=>item.equipped===1&&item.rarity===rarity).map(item=>item.kind));\n",
+        "replacement": " const definition=EQUIPMENT_SETS[rarity==='royal'?'emerald':rarity];if(!definition)return null;\n const worn=new Set(items.filter(item=>item.equipped===1&&((rarity==='emerald'||rarity==='royal')?(item.rarity==='emerald'||item.rarity==='royal'):item.rarity===rarity)).map(item=>item.kind));\n"
+      },
+      {
+        "scope": "Name the royal set without changing its bonuses",
+        "beforeStart": 791817,
+        "beforeEnd": 791976,
+        "afterStart": 792321,
+        "afterEnd": 792539,
+        "original": " return {...definition,rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};\n",
+        "replacement": " return {...definition,...(rarity==='royal'?{name:'Hükümdar Kraliyet Seti'}:{}),rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};\n"
+      },
+      {
+        "scope": "Retain the existing NPC-sale exclusion for royal gear",
+        "beforeStart": 1267087,
+        "beforeEnd": 1267350,
+        "afterStart": 1267650,
+        "afterEnd": 1267921,
+        "original": "           FROM player_items item WHERE item.id = ? AND item.player_id = ? AND item.equipped = 0 AND item.sale_locked499 = 0 AND item.kind NOT IN ('rune_attack','rune_defense','rune_hp','earring','bracelet') AND item.rarity NOT IN ('unique','infinite','emerald')\n",
+        "replacement": "           FROM player_items item WHERE item.id = ? AND item.player_id = ? AND item.equipped = 0 AND item.sale_locked499 = 0 AND item.kind NOT IN ('rune_attack','rune_defense','rune_hp','earring','bracelet') AND item.rarity NOT IN ('unique','infinite','emerald','royal')\n"
+      },
+      {
+        "scope": "Route royal/champions admin actions after existing administrator and Origin gates",
+        "beforeStart": 1573150,
+        "beforeEnd": 1573150,
+        "afterStart": 1573721,
+        "afterEnd": 1574796,
+        "original": "",
+        "replacement": " if(['royal-r118','champions-r118'].includes(new URL(request.url).searchParams.get('core511'))){\n  try{const input=await readJsonObject(request),identity=await getChatGPTUser(),service=db().core511RoyalR118;if(!service)return Response.json({error:'Kraliyet hizmeti hazırlanıyor.'},{status:503});\n   const authorization={adminId:identity?.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}};\n   const champions=new URL(request.url).searchParams.get('core511')==='champions-r118';\n   const result=champions?await service.championsAdmin(input,authorization):await service.admin(input,authorization);\n   return Response.json(champions?{champions:result}:{royal:result},{headers:{'cache-control':'no-store'}});\n  }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'İşlem doğrulanamadı. Paneli yenile.':error.message,code:error.gameCode},{status,headers:{'cache-control':'no-store'}});}\n }\n"
+      },
+      {
+        "scope": "Restrict administrator royal grants to the five existing equipment slots",
+        "beforeStart": 1665208,
+        "beforeEnd": 1665426,
+        "afterStart": 1666854,
+        "afterEnd": 1667090,
+        "original": "\t\t\tconst item = payload.item ?? {};if(item.rarity==='emerald'&&!EMERALD_SET444.slots.includes(item.kind))return Response.json({error:'Kadim Zümrüt yalnız silah, zırh, kask, kolye ve ayakkabıdır.'},{status:400});\n",
+        "replacement": "\t\t\tconst item = payload.item ?? {};if(['emerald','royal'].includes(item.rarity)&&!EMERALD_SET444.slots.includes(item.kind))return Response.json({error:'Kadim Zümrüt yalnız silah, zırh, kask, kolye ve ayakkabıdır.'},{status:400});\n"
+      },
+      {
+        "scope": "Allow royal rarity in the existing administrator gear validator",
+        "beforeStart": 1665657,
+        "beforeEnd": 1665674,
+        "afterStart": 1667321,
+        "afterEnd": 1667346,
+        "original": "\t\t\t,\"emerald\"]);\n",
+        "replacement": "\t\t\t,\"emerald\",\"royal\"]);\n"
+      },
+      {
+        "scope": "Sort royal gear in incremental inventory reads",
+        "beforeStart": 1897674,
+        "beforeEnd": 1898088,
+        "afterStart": 1899346,
+        "afterEnd": 1899780,
+        "original": " add('player_items','inventory',\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\");\n",
+        "replacement": " add('player_items','inventory',\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\");\n"
+      },
+      {
+        "scope": "Sort royal gear in owner inventory reads",
+        "beforeStart": 1909957,
+        "beforeEnd": 1910375,
+        "afterStart": 1911649,
+        "afterEnd": 1912087,
+        "original": "\t\t\t\tdatabase.prepare(\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\").bind(playerId),\n",
+        "replacement": "\t\t\t\tdatabase.prepare(\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\").bind(playerId),\n"
+      },
+      {
+        "scope": "Sort royal gear in full inventory reads",
+        "beforeStart": 1917201,
+        "beforeEnd": 1917618,
+        "afterStart": 1918913,
+        "afterEnd": 1919350,
+        "original": "\t\t\tdatabase.prepare(\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\").bind(playerId),\n",
+        "replacement": "\t\t\tdatabase.prepare(\"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC\").bind(playerId),\n"
+      }
+    ],
+    "forwardByteEquality": true,
+    "inverseByteEquality": true,
+    "scope": "Ten reviewed Royal HTTP changes only. Original V510 source hash, all historical patches, admission guards, listener integrity check, authorization and transaction boundaries retained. Later R114-R117 installers retain this HTTP entry byte-for-byte."
   }
 }

@@ -1,0 +1,10 @@
+{
+  "sourceVersion": "R117_HOOK10",
+  "httpSha256": "ebd020559246908bed5921f66c4cc73155a1dd457ee0dfb812429779707ccbf6",
+  "baseHttpSha256": "d4d7b0366525ca205055bf08e503bbe644963d423c615b4414e0a074b7794056",
+  "sourceSha256Preserved": "c1df2de800f7af1bef8dd09e04b4590127fd13207749853d2267ca377793d589",
+  "edits": 10,
+  "forwardByteEquality": true,
+  "inverseByteEquality": true,
+  "integrityGuardChanged": false
+}
