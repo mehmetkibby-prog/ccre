@@ -175,6 +175,7 @@ export class NativeHttpAction {
    // original marketplace. The legacy NPC sale treats unknown rarities as
    // cheap white gear, so reject this request before any item/currency write.
    if(!trade&&payload.action==='sell_item'&&typeof payload.itemId==='string'&&sql.prepare("SELECT 1 FROM player_items WHERE id=? AND player_id=? AND kind='belt'").get(payload.itemId,actor))return Response.json({error:'Kemer NPC’ye satılamaz; oyuncu pazarında satışa koyabilirsin.',code:'belt_npc_sale_forbidden'},{status:409});
+   if(!trade&&payload.action==='sell_item'&&typeof payload.itemId==='string'&&sql.prepare("SELECT 1 FROM player_items WHERE id=? AND player_id=? AND rarity='royal'").get(payload.itemId,actor))return Response.json({error:'Kraliyet eşyası hızlı satılamaz; oyuncu pazarını kullanabilirsin.',code:'royal_npc_sale_forbidden_r118'},{status:409});
    // Both live and replay receipts are server-selected. Request-supplied
    // seller/account/channel values never determine the freeze set.
    if(trade){
@@ -185,6 +186,7 @@ export class NativeHttpAction {
     const listing=typeof payload.listingId==='string'&&/^[a-zA-Z0-9-]{8,64}$/.test(payload.listingId)?payload.listingId:'';
     if(listing){for(const row of sql.prepare('SELECT seller_id FROM market_listings WHERE id=? UNION SELECT seller_id FROM market_settlements WHERE listing_id=?').all(listing,listing))if(row.seller_id)ids.push(row.seller_id);}
    }
+   if(!trade&&payload.action==='equip'&&typeof payload.itemId==='string'&&sql.prepare("SELECT 1 FROM player_items i JOIN players p ON p.id=i.player_id WHERE i.id=? AND i.player_id=? AND i.rarity='royal' AND COALESCE(p.champion_level_r102,0)<1").get(payload.itemId,actor))return Response.json({error:'Kraliyet eşyalarını yalnız Şampiyon karakterler kuşanabilir.',code:'royal_champion_required_r118'},{status:403});
    const unique=[...new Set(ids)];demand(unique.length<=2&&unique.every(id=>!c.transitions.has(id)),'native_http_action_resources');
    const state={active:true,events:[],actor,account:current.account.id,payload,nativeCalled:false};let value,rejected=null,notificationActors=[];
    await c.permanent.durablePlayers(unique,async()=>{

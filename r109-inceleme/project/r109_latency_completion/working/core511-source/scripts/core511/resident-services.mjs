@@ -1,3 +1,4 @@
+import {createChampionsSnapshotR118} from './champions-service-r118.mjs';
 import {createCombatServices,extraBuff,guildSkillLevel,EMPTY_GUILD_BUFF,infiniteEquipmentPower} from './generated/combat-services.mjs';
 import {demand} from './contract.mjs';
 
@@ -14,12 +15,12 @@ export class ResidentServices {
  }
  configure(snapshot){
   demand(Number.isSafeInteger(snapshot?.revision)&&snapshot.revision>this.revision,'resident_config_revision');
-  for(const key of ['rank','rune','runeV2','status','progression','dragon','dungeon','dungeonRaw','events'])demand(snapshot[key]&&typeof snapshot[key]==='object','resident_config_'+key);
+  for(const key of ['championsR118','rank','rune','runeV2','status','progression','dragon','dungeon','dungeonRaw','events'])demand(snapshot[key]&&typeof snapshot[key]==='object','resident_config_'+key);
   demand(Array.isArray(snapshot.eventProfiles),'resident_event_profiles');
   const c=immutable(structuredClone(snapshot)),profiles=new Map(c.eventProfiles);
   const services=createCombatServices({player:this.player,rank:c.rank.config,rune:c.rune.config,runeV2:c.runeV2.config,status:c.status.config,profiles});
   Object.assign(this.globals,services,{
-   __colEquipmentSets:true,__colAdventure:Object.freeze({profile:m=>this.adventureProfiles.get(typeof m==='string'?m:m?.id)??null}),
+   __colEquipmentSets:true,__colChampionsR118:createChampionsSnapshotR118(c.championsR118),__colAdventure:Object.freeze({profile:m=>this.adventureProfiles.get(typeof m==='string'?m:m?.id)??null}),
    __colPremium:Object.freeze({buff:id=>extraBuff(this.player(id),this.clock())}),
    __colGuildSkill:Object.freeze({bonuses:id=>{const s=this.guild.get(id);return s&&s.active_until>this.clock()?{...guildSkillLevel(s.active_level),until:s.active_until}:EMPTY_GUILD_BUFF;}}),
    __colProgression:Object.freeze({snapshot:()=>c.progression}),

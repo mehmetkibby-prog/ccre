@@ -187,7 +187,7 @@ export function canEquipGear(item: { kind: string; role?: string | null }, role:
   return isGearKind(item.kind) && (item.kind === "shoes" || item.kind === "necklace" || item.role === role);
 }
 
-export const GEAR_REQUIRED_LEVELS = { white: 1, blue: 7, orange: 20, red: 30, purple: 60, unique: 50, infinite: 50, emerald: 65 } as const;
+export const GEAR_REQUIRED_LEVELS = { white: 1, blue: 7, orange: 20, red: 30, purple: 60, unique: 50, infinite: 50, emerald: 65, royal: 1 } as const;
 export function requiredGearLevel(rarity: unknown): number {
   return typeof rarity === 'string' && rarity in GEAR_REQUIRED_LEVELS ? GEAR_REQUIRED_LEVELS[rarity as keyof typeof GEAR_REQUIRED_LEVELS] : 1;
 }

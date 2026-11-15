@@ -62,7 +62,7 @@ export class ContentServiceR102{
   const last=this.q('SELECT MAX(milestone) n FROM content_champion_rewards_r102 WHERE player_id=?').get(p.id)?.n??0;
   return {xpBase:cfg.baseXp,xpStep:cfg.stepXp,eligible:p.level>=65&&p.rank_tier>=18,active:level>0,...effective,title:level?'Şampiyon Lv '+level:'',bonuses:{hp:level/5,attack:level/5,defense:level/5},costs:costSummaryR93(this.sql,p.id,cfg.costs,{now:this.now()}),nextReward:(last+10)<=level?last+10:null,rewards:cfg.rewards};
  }
- status(id){const p=this.player(id),{config,revision}=this.settings();return {revision,serverTime:this.now(),auto:this.autoStatus(p),champion:this.champion(p),newyear:{enabled:config.newyear.enabled,socks:this.balance(id,K.sock),chests:this.balance(id,K.newyear),required:50,rewards:config.newyear.rewards},battlefield:{active:battlefieldWindowR102(config.battlefield,this.now()),slots:config.battlefield.slots,killsPerChest:config.battlefield.killsPerChest,chests:this.balance(id,K.victory),progress:this.q('SELECT day,kills,chests FROM content_battlefield_r102 WHERE player_id=?').get(id)??null,rewards:config.battlefield.rewards},forge:{costs:costSummaryR93(this.sql,id,EMERALD_COST_R102,{now:this.now()}),items:this.q("SELECT i.id,i.item_name,i.kind,i.role,i.power FROM player_items i WHERE i.player_id=? AND i.rarity='emerald' AND i.equipped=0 AND i.sale_locked499=0 AND i.expires_at_ms=0 AND i.kind IN ('weapon','armor','helmet','shoes','necklace') AND NOT EXISTS(SELECT 1 FROM content_forge_r102 f WHERE f.item_id=i.id) ORDER BY i.created_at,i.id LIMIT 80").all(id)}};}
+ status(id){const p=this.player(id),{config,revision}=this.settings();return {revision,serverTime:this.now(),auto:this.autoStatus(p),champion:this.champion(p),newyear:{enabled:config.newyear.enabled,socks:this.balance(id,K.sock),chests:this.balance(id,K.newyear),required:50,rewards:config.newyear.rewards},battlefield:{active:battlefieldWindowR102(config.battlefield,this.now()),slots:config.battlefield.slots,killsPerChest:config.battlefield.killsPerChest,chests:this.balance(id,K.victory),progress:this.q('SELECT day,kills,chests FROM content_battlefield_r102 WHERE player_id=?').get(id)??null,rewards:config.battlefield.rewards},forge:{costs:costSummaryR93(this.sql,id,EMERALD_COST_R102,{now:this.now()}),items:this.q("SELECT i.id,i.item_name,i.kind,i.role,i.power FROM player_items i WHERE i.player_id=? AND i.rarity IN ('emerald','royal') AND i.equipped=0 AND i.sale_locked499=0 AND i.expires_at_ms=0 AND i.kind IN ('weapon','armor','helmet','shoes','necklace') AND NOT EXISTS(SELECT 1 FROM content_forge_r102 f WHERE f.item_id=i.id) ORDER BY i.created_at,i.id LIMIT 80").all(id)}};}
  enterChampion(id,input){
   const p=this.player(id);if(p.champion_level_r102>0)fail('Zaten Şampiyonsun.','champion_already_r102',409);
   if(p.level<65||p.rank_tier<18)fail('Önce Çekirdek Efsanesi 3 olmalısın.','champion_ineligible_r102',409);
@@ -89,14 +89,14 @@ export class ContentServiceR102{
   if(typeof input.itemId!=='string'||input.itemId.length>160)fail('Dönüştürülecek eşyayı seç.');
   const p=this.player(id);if(p.area!=='bazaar')fail('Dönüşüm için Demirci Haso’ya git.','forge_location_r102',409);
   const item=this.q('SELECT * FROM player_items WHERE id=? AND player_id=?').get(input.itemId,id);
-  if(!item||item.rarity!=='emerald'||!['weapon','armor','helmet','shoes','necklace'].includes(item.kind)||item.equipped||item.sale_locked499||item.expires_at_ms!==0||this.q('SELECT 1 FROM content_forge_r102 WHERE item_id=?').get(item.id))fail('Kuşanılmamış, kilitsiz ve henüz dönüştürülmemiş Kadim Zümrüt eşya seç.','forge_item_r102',409);
+  if(!item||!['emerald','royal'].includes(item.rarity)||!['weapon','armor','helmet','shoes','necklace'].includes(item.kind)||item.equipped||item.sale_locked499||item.expires_at_ms!==0||this.q('SELECT 1 FROM content_forge_r102 WHERE item_id=?').get(item.id))fail('Kuşanılmamış, kilitsiz ve henüz Sonsuz yapılmamış Kadim Zümrüt veya Kraliyet eşyası seç.','forge_item_r102',409);
   payCostRowsR93(this.sql,id,EMERALD_COST_R102,{now:this.now()});
   const power=Math.round(item.power*120)/100;if(!Number.isFinite(power)||power<0||power>10000000)fail('Eşyanın gücü doğrulanamadı.');
   // Keep rarity, set identity, stones and enchantments: their independent
   // upgrade rules still apply. The native power stat gains exactly 20%.
   this.q('INSERT INTO content_forge_r102(item_id,player_id,before_json,created_at) VALUES(?,?,?,?)').run(item.id,id,JSON.stringify(item),this.now());
   const name=item.item_name.replace(/^(\+[0-5]\s+)?/u,(_m,prefix='')=>prefix+'Sonsuz ');this.q('UPDATE player_items SET power=?,item_name=? WHERE id=? AND player_id=? AND equipped=0 AND sale_locked499=0').run(power,name,item.id,id);
-  return {item:{id:item.id,name,power,previousPower:item.power,rarity:'emerald'},bonusPercent:20};
+  return {item:{id:item.id,name,power,previousPower:item.power,rarity:item.rarity},bonusPercent:20};
  }
  command(id,input,autoIp){
   this.atomic();if(!CONTENT_ACTIONS_R102.includes(input?.action))fail('İşlem geçersiz.');

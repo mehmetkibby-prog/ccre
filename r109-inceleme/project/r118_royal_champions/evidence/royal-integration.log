@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: emerald and royal pieces share one set family in pure and materialized SQL stats
+ok 1 - emerald and royal pieces share one set family in pure and materialized SQL stats
+  ---
+  duration_ms: 17.901897
+  type: 'test'
+  ...
+# Subtest: actual admin route rejects non-admin and cross-origin royal and champions edits
+ok 2 - actual admin route rejects non-admin and cross-origin royal and champions edits
+  ---
+  duration_ms: 268.514965
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751257509,"backupName":"before-pearl-reset-1794751257509-ac84c64e-032d-4186-bbff-7a1e989917cc.sqlite"}
+# Subtest: admin configuration gate reauthorizes, commits exact revision and rejects stale saves
+ok 3 - admin configuration gate reauthorizes, commits exact revision and rejects stale saves
+  ---
+  duration_ms: 2373.285611
+  type: 'test'
+  ...
+# Subtest: royal status authenticates twice and never leaks another character after session change
+ok 4 - royal status authenticates twice and never leaks another character after session change
+  ---
+  duration_ms: 1.519113
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4776.222086

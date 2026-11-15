@@ -1,3 +1,4 @@
+import {createChampionsR118} from './champions-service-r118.mjs';
 import {createRewardServices,NATIVE_MODE_SQL_BATCHES} from './generated/reward-services.mjs';
 import {serviceTransactionDatabase} from './service-transaction.mjs';
 import {actionRandom} from './action-writer.mjs';
@@ -14,7 +15,7 @@ export class NativeModeServices {
   this.database=db;this.modules=createRewardServices({globals:this.globals,now,random,uuid,integer,fourChannels});const m=this.modules,g=this.globals;
   g.__colStatus=m.status.createStatus(db);g.__colRanks=m.ranks.createRanks(db);
   g.__colDragonBoss=m.dragon.createDragonBoss(db,{now,random});g.__colQuests438=m.quests.createQuests438(db,{now,random});
-  g.__colRunes=m.runes.createRunes(db);g.__colRuneV2=m.runeV2.createRuneV2(db);g.__colEventIsland444=m.events.createEventIsland444(db,{now,random});
+  g.__colChampionsR118=createChampionsR118(sql);g.__colRunes=m.runes.createRunes(db);g.__colRuneV2=m.runeV2.createRuneV2(db);g.__colEventIsland444=m.events.createEventIsland444(db,{now,random});
   g.__colArenaMarket=m.arena.createArenaMarket(db,{now});g.__colBattlePass=m.battlePass.createBattlePass(db,{now});g.__colCauldron488=m.cauldron.createCauldron488(db,{now});
   g.__colEvolutionQuest=m.evolution.createEvolutionQuest(db);g.__colCommunityEvent=m.community.createCommunityEvent(db,{now:()=>Math.floor(now()/1000)});
   g.__colGuildVillage=m.guildVillage.createGuildVillage(db,{now,dungeonLocked:id=>{demand(typeof g.__colDungeon?.locked==='function','dungeon_membership_service_missing');return g.__colDungeon.locked(id);}});
@@ -27,5 +28,5 @@ export class NativeModeServices {
  }
  // The trusted settings-change coordinator calls this after its atomic commit
  // and before broadcasting the new immutable configuration to channel workers.
- refresh({serviceRefreshR89=null}={}){demand(!this.active,'mode_refresh_during_operation');for(const key of ['__colStatus','__colRanks','__colDragonBoss','__colQuests438','__colRunes','__colRuneV2','__colEventIsland444','__colArenaMarket','__colBattlePass','__colCommunityEvent'])if(!serviceRefreshR89?.refresh(this,key))this.globals[key].refresh?.();}
+ refresh({serviceRefreshR89=null}={}){demand(!this.active,'mode_refresh_during_operation');for(const key of ['__colChampionsR118','__colStatus','__colRanks','__colDragonBoss','__colQuests438','__colRunes','__colRuneV2','__colEventIsland444','__colArenaMarket','__colBattlePass','__colCommunityEvent'])if(!serviceRefreshR89?.refresh(this,key))this.globals[key].refresh?.();}
 }

@@ -1,3 +1,4 @@
+import {ROYAL_MATERIALS_R118} from './royal-model-r118.mjs';
 import {randomUUID} from 'node:crypto';
 import {CAULDRON_CATALOG488,CAULDRON_BY_ID488} from '../../../native510-bb3a6cc689c6/lib/cauldron-catalog488.mjs';
 import {ENHANCEMENT_CATALOG491} from '../../../native510-bb3a6cc689c6/lib/enhancement491.mjs';
@@ -13,6 +14,7 @@ import {r40Options,BAG_EQUIPMENT_LIMIT} from './r40-options.mjs';
 // Every item keeps its existing inventory/grant path. Only five new material
 // kinds are introduced. No parallel wallet, gear store or periodic scan.
 const extras=[
+ ...ROYAL_MATERIALS_R118,
  ...ENHANCEMENT_CATALOG491.map(x=>({...x,type:x.table==='players'?'resource':x.table==='player_stones'?'stone':'material'})),
  ...[...TOWER_MATERIALS,TOWER_CHEST,TOWER_HOOK].map(x=>({...x,type:'material',group:'Kadim Kulesi'})),
  ...Object.entries(MOUNT_MATERIALS_R60).map(([kind,name])=>({id:'material:'+kind,kind,name,type:'material',group:'Binek malzemeleri'})),

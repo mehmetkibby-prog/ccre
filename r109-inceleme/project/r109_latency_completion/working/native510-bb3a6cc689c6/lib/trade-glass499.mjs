@@ -4,7 +4,7 @@ export const TRADE_GLASS_PRODUCT499=Object.freeze({name:'Ticaret Camı',price:10
 const PAGE=24,SCAN=192;
 const equipment=new Set(['weapon','armor','helmet','shoes','necklace','earring','bracelet','rune_attack','rune_defense','rune_hp']);
 const equipmentKinds502=new Set(['all',...equipment]);
-const rarities=new Set(['all','white','blue','orange','red','purple','unique','infinite','emerald']);
+const rarities=new Set(['all','white','blue','orange','red','purple','unique','infinite','emerald','royal']);
 const lastRead=new Map();
 const fail=(message,code='trade_glass_unavailable499',status=409)=>Object.assign(Error(message),{code,status});
 export function assertTradeGlass499(p,now=Date.now()){

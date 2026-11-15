@@ -1,3 +1,4 @@
+import {prepareRoyalFixtureR118} from '../../../core511/tests/royal-schema-fixture-r118.mjs';
 import {mkdtemp, cp, readFile, rm, access, readdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path, {join, resolve, dirname} from 'node:path';
@@ -117,6 +118,7 @@ export async function fixture({variant = 'r7', groupWrites = true, asyncDurable 
     sqlite.exec("CREATE TABLE IF NOT EXISTS app_release_migrations(id TEXT PRIMARY KEY NOT NULL,applied_at_ms INTEGER NOT NULL)");
     const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;await new AsyncFunction(...Object.keys(deps),body)(...Object.values(deps));
     (await importModule('vds-server/src/starter-reward.mjs')).createStarterReward(sqlite);
+    prepareRoyalFixtureR118(sqlite);
     // Retain exact R6 table/index schema, while these inherited writer-isolation
     // tests intentionally use representative economic SQL without world triggers.
     // Actual startup reward trigger coverage belongs to the separate reward suite.

@@ -1,3 +1,4 @@
+import {RoyalServiceR118} from './royal-service-r118.mjs';
 import {ContentServiceR102} from './content-service-r102.mjs';
 import {createContentSchemaR102} from './content-config-r102.mjs';
 import {ZumrutServiceR93} from './zumrut-service-r93.mjs';
@@ -43,6 +44,7 @@ export class NativeGameServices extends NativeModeServices {
   g.__colAdventure=new AdventureService(sql,{now,lootClock:this.clock,random,uuid,globals:g});
   g.__colZumrutR93=new ZumrutServiceR93(sql,{now,random,uuid,globals:g});
   g.__colContentR102=new ContentServiceR102(sql,{now,random,uuid,globals:g});
+  g.__colRoyalR118=new RoyalServiceR118(sql,{now,globals:g});g.__colRoyalR118.settings();
   g.__colMounts=new MountService(sql,{now,uuid,locked:id=>Boolean(g.__colDungeon.locked(id)||g.__colAdventure.membership(id))});
   g.__colBelt=new BeltService(sql,{now,uuid,refreshHp:id=>g.__colPremium.refreshHp(id),locked:id=>Boolean(g.__colDungeon.locked(id)||g.__colAdventure.membership(id))});
   this.castle=new CastleServiceR59(sql,{clock:this.clock,services:this});
@@ -50,7 +52,7 @@ export class NativeGameServices extends NativeModeServices {
   this.rules=createAttackWriterRules({globals:g,now,random,uuid,fourChannels:true});
   this.rules.dungeonService(); // Original equipment stats and solo gear rolls.
  }
- refresh({rankRefreshR85=null,serviceRefreshR89=null}={}){super.refresh({serviceRefreshR89});this.globals.__colContentR102.refresh();if(!serviceRefreshR89?.refresh(this,'__colProgression'))this.globals.__colProgression.refresh();this.globals.__colRanks=rankRefreshR85?rankRefreshR85.refresh(this):this.modules.ranks.createRanks(this.database);}
+ refresh({rankRefreshR85=null,serviceRefreshR89=null}={}){super.refresh({serviceRefreshR89});this.globals.__colContentR102.refresh();this.globals.__colRoyalR118.refresh();if(!serviceRefreshR89?.refresh(this,'__colProgression'))this.globals.__colProgression.refresh();this.globals.__colRanks=rankRefreshR85?rankRefreshR85.refresh(this):this.modules.ranks.createRanks(this.database);}
  dungeonOptions(){
   const g=this.globals;return {globals:g,stats:(...args)=>g.__colDungeon.stats(...args),makeGear:(...args)=>g.__colDungeon.makeGear(...args),progressionSettings:()=>g.__colProgression.snapshot()};
  }

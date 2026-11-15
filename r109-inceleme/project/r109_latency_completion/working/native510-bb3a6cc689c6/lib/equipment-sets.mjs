@@ -17,12 +17,12 @@ emerald:EMERALD_SET444});
 export const SET_BONUS_LABELS=Object.freeze({hp:'Can',pve:'Canavarlara karşı güç',pvp:'Oyunculara karşı güç',resistance:'Oyunculara karşı savunma',speed:'Saldırı hızı',attack:"Saldırı"});
 export const EQUIPMENT_SLOT_LABELS=Object.freeze({weapon:'Silah',armor:'Zırh',helmet:'Kask',shoes:'Çizme',necklace:'Kolye'});
 export function equipmentSetState(rarity,items){
- const definition=EQUIPMENT_SETS[rarity];if(!definition)return null;
- const worn=new Set(items.filter(item=>item.equipped===1&&item.rarity===rarity).map(item=>item.kind));
+ const definition=EQUIPMENT_SETS[rarity==='royal'?'emerald':rarity];if(!definition)return null;
+ const worn=new Set(items.filter(item=>item.equipped===1&&((rarity==='emerald'||rarity==='royal')?(item.rarity==='emerald'||item.rarity==='royal'):item.rarity===rarity)).map(item=>item.kind));
  const count=definition.slots.filter(slot=>worn.has(slot)).length;
  const thresholds=Object.fromEntries(Object.keys(definition.bonuses).map(key=>[key,colEquipmentSetThreshold473(key,definition)]));
  const activeBonuses=Object.fromEntries(Object.entries(definition.bonuses).map(([key,value])=>[key,count>=thresholds[key]?value:0]));
- return {...definition,rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
+ return {...definition,...(rarity==='royal'?{name:'Hükümdar Kraliyet Seti'}:{}),rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
 }
 function colEquipmentSetThreshold473(key,definition){
  // V476: each lower tier remains active when a higher-tier piece is removed.
