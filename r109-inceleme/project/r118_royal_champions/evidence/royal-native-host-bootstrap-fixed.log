@@ -1,0 +1,41 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794751388260,"backupName":"before-pearl-reset-1794751388260-c3ad44a7-f231-457e-a933-5ffe5ba61b33.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:03:18.044Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":5136,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3dc094ed6e5da3e84a9a8772"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:03:18.044Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":5155,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ca8f97ed1ee305784ca46359"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:03:18.044Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":5161,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9c728713caa43e09132e9e9a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:03:18.044Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":5171,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"157d59aeae7d7b7bf0661c40"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:03:18.082Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":5118,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"af40906f92d11ae94ff4ddd8"}
+# Subtest: actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+not ok 1 - actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+  ---
+  duration_ms: 12216.596339
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-host.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'royal'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'royal'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-host.test.mjs:35:46)
+    process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14221.256491

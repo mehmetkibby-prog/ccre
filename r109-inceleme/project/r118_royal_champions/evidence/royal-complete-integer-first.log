@@ -1,0 +1,114 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794751555267,"backupName":"before-pearl-reset-1794751555267-0932f391-6bc7-4672-847a-104fff4d09f0.sqlite"}
+# Subtest: royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+ok 1 - royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+  ---
+  duration_ms: 6511.198166
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751557862,"backupName":"before-pearl-reset-1794751557862-0a931cc3-2627-4630-accb-bf255f4b94ac.sqlite"}
+# native_fsync_timing {"version":1,"pid":5573,"startedAtMs":1794751558901,"endedAtMs":1794751558972,"prepareMs":0.003,"syncAwaitMs":71.227,"totalMs":71.232,"scope":"WAL-FileHandle.sync-await-wall-including-libuv-queue-and-scheduling; not-kernel-only-fsync-or-request-causality","droppedEvents":0,"droppedScope":"process-lifetime"}
+# Subtest: native Sonsuz and Royal transformations commute for every +level while preserving fixed enhancement bonuses
+ok 2 - native Sonsuz and Royal transformations commute for every +level while preserving fixed enhancement bonuses
+  ---
+  duration_ms: 4263.436042
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751567173,"backupName":"before-pearl-reset-1794751567173-c579b961-bf2a-433d-843b-b820093479e5.sqlite"}
+# Subtest: new royal power remains integer and can be enhanced by the unchanged native enhancement guard
+ok 3 - new royal power remains integer and can be enhanced by the unchanged native enhancement guard
+  ---
+  duration_ms: 7529.660431
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751552197,"backupName":"before-pearl-reset-1794751552197-b2a70df7-13d1-4238-9f43-0fc1350d54f1.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"type":"core511_ipc_safe_stream","code":"channel_ipc_closed","method":"unknown"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:06:06.600Z","action":"signal","incident":1,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":5655,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"741421e975689709b2583f5a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:06:06.602Z","action":"signal","incident":2,"reason":"channel_ipc_closed","origin":"channel_boot","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":81,"column":176}],"channel":1,"pid":5655,"signal":"SIGKILL","state":"booting","role":"channel","ownerRef":"741421e975689709b2583f5a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:06:06.659Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":5623,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"9b9d7f87d46e07b0c417f0e7"}
+# Subtest: actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+not ok 4 - actual owner transport collects a crown, transforms once, salvages once and native equip enforces champion ownership
+  ---
+  duration_ms: 19095.67105
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-host.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: 'channel_ipc_closed'
+  code: 'channel_ipc_closed'
+  stack: |-
+    ProcessStream.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/process-supervisor.mjs:81:176)
+    Object.onceWrapper (node:events:633:28)
+    ProcessStream.emit (node:events:531:35)
+    emitCloseNT (node:internal/streams/destroy:148:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:88:21)
+  ...
+# Subtest: conversion preserves item identity, enhancement, stones and authentic infinite provenance; charges once across reconnect
+ok 5 - conversion preserves item identity, enhancement, stones and authentic infinite provenance; charges once across reconnect
+  ---
+  duration_ms: 144.782999
+  type: 'test'
+  ...
+# Subtest: all five slots and three classes use their royal names and base-power bonus
+ok 6 - all five slots and three classes use their royal names and base-power bonus
+  ---
+  duration_ms: 254.490652
+  type: 'test'
+  ...
+# Subtest: salvage consumes one chosen item for exactly one dust; replay and new request cannot duplicate dust
+ok 7 - salvage consumes one chosen item for exactly one dust; replay and new request cannot duplicate dust
+  ---
+  duration_ms: 30.332753
+  type: 'test'
+  ...
+# Subtest: receipt insertion failure rolls back conversion materials, resources, item and history
+ok 8 - receipt insertion failure rolls back conversion materials, resources, item and history
+  ---
+  duration_ms: 22.070158
+  type: 'test'
+  ...
+# Subtest: dust cap and receipt failure leave salvaged item intact
+ok 9 - dust cap and receipt failure leave salvaged item intact
+  ---
+  duration_ms: 23.877536
+  type: 'test'
+  ...
+# Subtest: stale ingredient revision, stale item stamp, insufficient costs and forged targets fail without consumption
+ok 10 - stale ingredient revision, stale item stamp, insufficient costs and forged targets fail without consumption
+  ---
+  duration_ms: 39.093691
+  type: 'test'
+  ...
+# Subtest: champion, location, combat, active trade, equipment lock and explicit salvage confirmation are enforced
+ok 11 - champion, location, combat, active trade, equipment lock and explicit salvage confirmation are enforced
+  ---
+  duration_ms: 26.11978
+  type: 'test'
+  ...
+# Subtest: database prevents bypassed royal equip and removes royal gear when champion status is lost
+ok 12 - database prevents bypassed royal equip and removes royal gear when champion status is lost
+  ---
+  duration_ms: 11.484275
+  type: 'test'
+  ...
+# Subtest: admin validation forbids hidden currencies, unknown fields, duplicate costs and zero-dust recipes; settings replay conflicts
+ok 13 - admin validation forbids hidden currencies, unknown fields, duplicate costs and zero-dust recipes; settings replay conflicts
+  ---
+  duration_ms: 12.910942
+  type: 'test'
+  ...
+# Subtest: mutations reject calls outside authoritative transaction and schema initialization is idempotent
+ok 14 - mutations reject calls outside authoritative transaction and schema initialization is idempotent
+  ---
+  duration_ms: 16.067426
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 13
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20788.784736

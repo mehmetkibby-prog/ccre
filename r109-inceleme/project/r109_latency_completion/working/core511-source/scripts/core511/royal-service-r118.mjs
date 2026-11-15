@@ -17,7 +17,7 @@ export function royalPowerR118(item,forgeBefore=null){
  const forgeUpgrade=forgeBefore?.kind===item.kind?enhancementBonus491(item.kind,enhancementLevel491(forgeBefore)):0;
  const upgrade=enhancementBonus491(item.kind,enhancementLevel491(item))+forgeUpgrade*0.2,base=item.power-upgrade;
  if(!Number.isFinite(base)||base<0||base>10000000)fail('Eşyanın gücü doğrulanamadı.','royal_item_power_r118',409);
- return Math.round((base*(1+ROYAL_POWER_BONUS_R118/100)+upgrade)*100)/100;
+ return Math.round(base*(1+ROYAL_POWER_BONUS_R118/100)+upgrade);
 }
 export class RoyalServiceR118{
  constructor(sql,{now=Date.now,globals={}}={}){Object.assign(this,{sql,now,globals});this.cached=null;}

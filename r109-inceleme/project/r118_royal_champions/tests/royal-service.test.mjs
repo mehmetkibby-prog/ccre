@@ -28,7 +28,7 @@ function scene(t){
 test('conversion preserves item identity, enhancement, stones and authentic infinite provenance; charges once across reconnect',t=>{
  const s=scene(t),before=s.put();s.sql.prepare('INSERT INTO content_forge_r102 VALUES(?,?,?,?)').run('gear','one','{}',1);
  const req=s.request(),result=s.cmd(req),after=s.item();
- assert.equal(after.rarity,'royal');assert.equal(after.power,493.6);assert.equal(after.item_name,'+5 Sonsuz Kraliyet Hükümkılıcı');
+ assert.equal(after.rarity,'royal');assert.equal(after.power,494);assert.equal(after.item_name,'+5 Sonsuz Kraliyet Hükümkılıcı');
  for(const k of Object.keys(before).filter(k=>!['rarity','power','item_name'].includes(k)))assert.equal(after[k],before[k]);
  assert.equal(s.service.balance('one','emerald_dust'),16);assert.equal(s.service.balance('one','royal_crown'),2);assert.equal(s.service.player('one').gems,15000);
  assert.deepEqual(s.cmd(req),result);
