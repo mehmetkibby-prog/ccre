@@ -58,6 +58,7 @@ export class Game {
   /** hedefe yürüyerek saldırı yalnız fareyle canavara tıklayınca; saldırı tuşu (1 / boşluk / mobil düğme) olduğu yerde vurur */
   walkToTarget = false;
   private autoPauseUntil = 0;
+  private avoidSide = 1; private avoidUntil = 0; private stuckBest = 1e9; private stuckAt = 0;
   /** Yakındaki başka oyuncunun sesi: uzaklıkla kısılır (~11 m'de susar). */
   private nearK(p: { x: number; y: number }) { const d = Math.hypot(p.x - this.dx, p.y - this.dy); return Math.pow(Math.max(0, 1 - d / 700), 1.5) * 0.6; }
   setAuto(on: boolean) { this.send({ t: 'auto', on }); }
@@ -539,6 +540,25 @@ export class Game {
         if (npc && Math.hypot(npc.x - this.px, npc.y - this.py) < 170) { this.send({ t: 'npc', id: npc.id }); this.interactNpc = null; this.moveTarget = null; dir = NO_DIR; }
       }
     }
+    // otomatik yürüyüşte (oto av, hedefe/tıklanan yere yürüme) engelin etrafından dolan: ağaç/nesneye takılıp kalmasın.
+    // Yan yönler sırayla denenir; seçilen taraf kısa süre korunur (sağ-sol arasında titremesin). Elle yürüyüşe dokunulmaz.
+    if (dir !== NO_DIR && !(mv.x || mv.y)) {
+      const sp = this.speed(), want = sp * 0.5;
+      const moves = (d: number) => { const t = { x: this.px, y: this.py }; stepMove(this.layout, t, d, sp); return Math.hypot(t.x - this.px, t.y - this.py) >= want * 0.05; };
+      if (!moves(dir)) {
+        const side = performance.now() < this.avoidUntil ? this.avoidSide : 1;
+        let found = -1;
+        for (const o of [6, 12, 18, 24]) { for (const sg of [side, -side]) { const d2 = (dir + o * sg + DIR_STEPS) % DIR_STEPS; if (moves(d2)) { found = d2; this.avoidSide = sg; break; } } if (found >= 0) break; }
+        if (found >= 0) { dir = found; this.avoidUntil = performance.now() + 700; }
+      }
+      // uzun süre hedefe yaklaşamıyorsa (oto av) başka canavara geç
+      const tg = this.targetId ? this.ents.get(this.targetId) : undefined;
+      if (tg && st.self?.autoOn) {
+        const dd = Math.hypot(tg.x - this.px, tg.y - this.py);
+        if (dd < this.stuckBest - 8) { this.stuckBest = dd; this.stuckAt = performance.now(); }
+        else if (performance.now() - this.stuckAt > 2500) { this.setTarget(0); this.stuckBest = 1e9; this.stuckAt = performance.now(); }
+      }
+    } else { this.stuckBest = 1e9; this.stuckAt = performance.now(); }
     // kendi ganimetini otomatik al (5 sn sonra sunucu da toplar; yakında elle de)
     if (dir !== NO_DIR) {
       const ox = this.px, oy = this.py;

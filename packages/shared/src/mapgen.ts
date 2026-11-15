@@ -250,7 +250,6 @@ function genVillage(l: MapLayout, rng: Rng) {
   // BALIK TUTMA YERİ (gölet): kuzeyden göletin ortasına uzanan iskele, kıyıda sazlık, tabela ve Balıkçı Kemal
   for (let y = 33; y <= 36; y++) for (let x = 9; x <= 10; x++) { l.ground[idx(l, x, y)] = G.PLANK; l.blocked[idx(l, x, y)] = 0; }
   l.props.push({ k: 'dock', x: 10 * TILE, y: 33 * TILE - 10, v: 0, s: 1 });
-  l.props.push({ k: 'signpost', x: 13 * TILE, y: 32 * TILE, v: 1, s: 0.8 });
   for (let y = 33; y <= 41; y++) for (let x = 1; x <= 15; x++) {
     const g = l.ground[idx(l, x, y)];
     if (g === G.SAND && !(x >= 8 && x <= 11 && y <= 34) && rng() < 0.55) l.props.push({ k: 'reeds', x: tc(x) + (rng() - 0.5) * 30, y: tc(y) + (rng() - 0.5) * 30, v: 0, s: 0.9 + rng() * 0.3 });

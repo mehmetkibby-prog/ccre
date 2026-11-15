@@ -7,7 +7,7 @@ import {
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
-import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
+import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive } from '../types.ts';
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
@@ -74,6 +74,14 @@ export class World {
     p.char.cp = Math.max(0, p.char.cp + Math.round(amount));
     p.selfDirty |= 1; this.save(p, true);
     this.notice(p, amount >= 0 ? `Hesabına ${Math.round(amount).toLocaleString('tr-TR')} ÇP yüklendi.` : `${Math.round(-amount)} ÇP düşüldü.`, 'ok');
+    return true;
+  }
+  /** Yönetim: çevrimiçi oyuncuya eşya/malzeme ver (anında çantasına). */
+  adminGive(charId: number, g: AdminGive): boolean {
+    const p = this.findPlayer(charId); if (!p) return false;
+    const text = applyGive(p.char, g);
+    p.recompute(true); p.selfDirty |= 1 | 2 | 4; this.save(p, true);
+    this.notice(p, text, 'ok');
     return true;
   }
   /** İsim Değiştirme: ad veritabanında değişti; burada bellekteki ad güncellenir ve ürün tüketilir. */
@@ -429,25 +437,42 @@ export class World {
     if (m.telegraphs.length) this.resolveTelegraphs(z, m);
   }
 
+  /**
+   * Canavar adımı: engel (ağaç, kaya, ev) önündeyse etrafından dolanır. Yan açıları sırayla dener; bir kez seçtiği
+   * yönü (sağ/sol) kısa süre korur, böylece iki yön arasında gidip gelip titremez. Bakış yönü gerçek hareket yönüdür.
+   */
   private stepMonster(z: Zone, m: Monster, tx: number, ty: number, speed: number, ghost = false): boolean {
     const dx = tx - m.x, dy = ty - m.y;
     const d = Math.hypot(dx, dy);
     if (d < 1) return false;
     const step = Math.min(d, speed * (TICK_MS / 1000));
-    const nx = m.x + (dx / d) * step, ny = m.y + (dy / d) * step;
-    let moved = false;
-    if (ghost) { m.x = nx; m.y = ny; moved = true; }
+    let mx = 0, my = 0, moved = false;
+    if (ghost) { mx = (dx / d) * step; my = (dy / d) * step; moved = true; }
     else {
       const l = z.layout;
-      const free = (x: number, y: number) => { const t = l.blocked[Math.floor(y / 64) * l.w + Math.floor(x / 64)]; return t === 0; };
-      if (free(nx, ny)) { m.x = nx; m.y = ny; moved = true; }
-      else if (free(nx, m.y)) { m.x = nx; moved = true; }
-      else if (free(m.x, ny)) { m.y = ny; moved = true; }
+      const free = (x: number, y: number) => { const tx2 = Math.floor(x / 64), ty2 = Math.floor(y / 64); return tx2 >= 0 && ty2 >= 0 && tx2 < l.w && ty2 < l.h && l.blocked[ty2 * l.w + tx2] === 0; };
+      // ileriyi de yokla (gövde yarıçapı kadar): engele burnunu dayayıp titremesin
+      const ok = (ang: number) => { const cx = Math.cos(ang), cy = Math.sin(ang); return free(m.x + cx * step, m.y + cy * step) && free(m.x + cx * (step + 22), m.y + cy * (step + 22)); };
+      const base = Math.atan2(dy, dx);
+      const mm = m as Monster & { avoidSide?: number; avoidUntil?: number };
+      let side = mm.avoidSide && this.now < (mm.avoidUntil ?? 0) ? mm.avoidSide : (m.id & 1 ? 1 : -1);
+      const offs = [0, 0.45, 0.9, 1.35, 1.8, 2.3];
+      for (const o of offs) {
+        for (const sgn of o === 0 ? [1] : [side, -side]) {
+          const ang = base + o * sgn;
+          if (!ok(ang)) continue;
+          mx = Math.cos(ang) * step; my = Math.sin(ang) * step; moved = true;
+          if (o > 0) { mm.avoidSide = sgn; mm.avoidUntil = this.now + 900; side = sgn; }
+          break;
+        }
+        if (moved) break;
+      }
     }
     if (moved) {
+      m.x += mx; m.y += my;
       z.monsters.move(m);
       m.dirty |= Upd.POS;
-      const nd = angleByte(dx, dy);
+      const nd = angleByte(mx, my);
       if (nd !== m.dir || m.anim !== Anim.WALK) { m.dir = nd; if (this.now >= m.animUntil) m.anim = Anim.WALK; m.dirty |= Upd.ANIM; }
     }
     return moved;
@@ -1661,6 +1686,19 @@ export function resetCharState(c: CharState) {
   c.misc = {};
   c.map = 'bazaar'; c.x = l.spawn.x; c.y = l.spawn.y;
   c.saveVersion++;
+}
+
+/** Yönetim verişi: karakter kaydına uygular (çevrimiçi/çevrimdışı ortak). Dönen metin oyuncuya gösterilir. */
+export function applyGive(c: CharState, g: AdminGive): string {
+  if (g.kind === 'item') {
+    const it = makeItem(g.tpl, g.rarity as Rarity, 'gm');
+    it.plus = Math.max(0, Math.min(MAX_PLUS, Math.round(g.plus ?? 0)));
+    c.bag.push(it);
+    return `Yönetimden hediye: ${itemDisplayName(it)}`;
+  }
+  const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
+  c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
+  return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;
 }
 
 export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?: number): ItemInstance {

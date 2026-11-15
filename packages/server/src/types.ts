@@ -58,7 +58,7 @@ export type ToWorker =
   /** Yönetim paneli: yeni oyun ayarları (canavar yoğunluğu değiştiyse harita yeniden kurulur). */
   | { type: 'tuning'; data: unknown }
   /** Yönetim paneli: bu kanaldaki çevrimiçi karakteri düzenle / sıfırla. */
-  | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename'; charId: number; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string }
+  | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename' | 'give'; charId: number; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string; give?: AdminGive }
   | { type: 'shutdown' };
 
 // worker → ana
@@ -89,3 +89,6 @@ export interface WorkerStats {
   heapMB: number;
   at: number;
 }
+
+/** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
+export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number };

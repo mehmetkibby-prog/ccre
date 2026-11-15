@@ -6,7 +6,9 @@ import { groundTextureArrays, GROUND_LAYERS, LAYER_NAMES, fbm } from './textures
 export const U = 1 / 40;
 export const TILE_M = TILE * U;
 
-const G_WATER = 4, G_DEEP = 10;
+const G_WATER = 4, G_DEEP = 10, G_PLANK = 11;
+/** iskele tahtalarının üstü (iskele modeli -0,2'de, tahtalar +0,1): karakter burada yürür */
+const DECK_Y = -0.08;
 
 export class Terrain {
   mesh: THREE.Mesh;
@@ -31,7 +33,7 @@ export class Terrain {
     // Göllere uzaklık (karo): su düzlemi tek yükseklikte (-0,32 m); tepe üstüne düşen göl tabanı suyun
     // üstünde kalıp "içi boş göl" gibi görünüyordu. Göl karoları her zaman suyun altına oyulur, çevresi kıyıya iner.
     const wd = new Float32Array(l.w * l.h).fill(1e9), qx: number[] = [];
-    for (let k = 0; k < l.w * l.h; k++) if (l.ground[k] === G_WATER || l.ground[k] === G_DEEP) { wd[k] = 0; qx.push(k); }
+    for (let k = 0; k < l.w * l.h; k++) if (l.ground[k] === G_WATER || l.ground[k] === G_DEEP || l.ground[k] === G_PLANK) { wd[k] = 0; qx.push(k); }
     for (let qi = 0; qi < qx.length; qi++) {
       const k = qx[qi], x = k % l.w, y = (k / l.w) | 0;
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
@@ -56,7 +58,7 @@ export class Terrain {
         return (at(x0, y0) * (1 - u) + at(x0 + 1, y0) * u) * (1 - v) + (at(x0, y0 + 1) * (1 - u) + at(x0 + 1, y0 + 1) * u) * v;
       };
     };
-    const roadW = blurMask((g) => g === 3 || g === 9 || g === 11), sandW = blurMask((g) => g === 2);
+    const roadW = blurMask((g) => g === 3 || g === 9), sandW = blurMask((g) => g === 2);
     for (let j = 0; j < this.hh; j++) for (let i = 0; i < this.hw; i++) {
       const tx = i / SUB, ty = j / SUB;
       let h = (fbm(tx / l.w, ty / l.h, 3, 4, seed) - 0.5) * (wild ? 3.4 : 0.6) + (fbm(tx / 9, ty / 9, 2, 3, seed + 11) - 0.5) * (wild ? 0.7 : 0.15);
@@ -65,7 +67,7 @@ export class Terrain {
       if (ds < 8) h *= 0.35 + 0.65 * (ds / 8);
       // su çukurları: komşu tile'ların su oranı
       let water = 0, cnt = 0;
-      for (let dy = -1; dy <= 0; dy++) for (let dx = -1; dx <= 0; dx++) { const g = gAt(Math.floor(tx) + dx, Math.floor(ty) + dy); if (g === G_WATER || g === G_DEEP) water += g === G_DEEP ? 1.6 : 1; cnt++; }
+      for (let dy = -1; dy <= 0; dy++) for (let dx = -1; dx <= 0; dx++) { const g = gAt(Math.floor(tx) + dx, Math.floor(ty) + dy); if (g === G_WATER || g === G_DEEP || g === G_PLANK) water += g === G_DEEP ? 1.6 : 1; cnt++; }
       h -= (water / cnt) * 1.3;
       // sınır yamaçları (doğal duvar)
       const edge = Math.min(tx, ty, l.w - tx, l.h - ty);
@@ -208,7 +210,7 @@ void groundBlend(){
     // (Önceden maske dikeyde aynalanıyordu: göller suyu olmayan boş çukur, su ise çimenin üstünde kalıyordu.)
     for (let ty = 0; ty < l.h; ty++) for (let tx = 0; tx < l.w; tx++) {
       const g = l.ground[ty * l.w + tx];
-      const v = g === G_WATER ? 230 : g === G_DEEP ? 255 : 0;
+      const v = g === G_WATER || g === G_PLANK ? 230 : g === G_DEEP ? 255 : 0;
       if (v) any = true;
       const i = (l.h - 1 - ty) * l.w + tx;
       mask[i * 4] = mask[i * 4 + 1] = mask[i * 4 + 2] = v; mask[i * 4 + 3] = 255;
@@ -266,6 +268,9 @@ void groundBlend(){
 
   /** Sunucu koordinatında zemin yüksekliği (metre). */
   heightAt(x: number, y: number): number {
+    // iskele tahtası: karakter suyun üstündeki tahtalarda durur (altı göl)
+    const l = this.layout, ttx = Math.floor(x / 64), tty = Math.floor(y / 64);
+    if (ttx >= 0 && tty >= 0 && ttx < l.w && tty < l.h && l.ground[tty * l.w + ttx] === G_PLANK) return DECK_Y;
     const fx = (x * U) / this.step, fy = (y * U) / this.step;
     const i = Math.max(0, Math.min(this.hw - 2, Math.floor(fx))), j = Math.max(0, Math.min(this.hh - 2, Math.floor(fy)));
     const u = Math.min(1, Math.max(0, fx - i)), v = Math.min(1, Math.max(0, fy - j));

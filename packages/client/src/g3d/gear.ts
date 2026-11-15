@@ -184,6 +184,7 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0, plus = 
       at = boneRootPos(root, hand);
       q = new THREE.Quaternion();
     }
+    g.name = 'held-weapon'; // balık tutarken gizlenir (elde olta)
     styleWeapon(g, rarity, L.weapon, !!designed);
     plusFx(g, plus, L.weapon ?? 'sword');
     attachToBone(root, hand, g, q, at);

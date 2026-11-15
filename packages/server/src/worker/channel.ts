@@ -29,6 +29,7 @@ port.on('message', (m: ToWorker) => {
     case 'admin':
       if (m.op === 'set') world.adminSetPlayer(m.charId, m.patch ?? {});
       else if (m.op === 'addcp') world.adminAddCp(m.charId, m.amount ?? 0);
+      else if (m.op === 'give' && m.give) world.adminGive(m.charId, m.give);
       else if (m.op === 'rename') world.adminRename(m.charId, m.name ?? '');
       else world.adminResetPlayer(m.charId);
       break;

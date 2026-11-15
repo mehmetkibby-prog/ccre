@@ -467,6 +467,13 @@ export class Renderer3D {
 
   /** Balık tutan oyuncu: elde olta, en yakın suya misina ve şamandıra. */
   private syncFish(v: View, on: boolean, x: number, y: number, now: number) {
+    // balık tutarken eldeki silah kaldırılır, yerine olta tutulur
+    const hv = v as View & { held?: THREE.Object3D[]; heldOff?: boolean };
+    if ((hv.heldOff ?? false) !== on) {
+      hv.held ??= (() => { const a: THREE.Object3D[] = []; v.obj.traverse((o) => { if (o.name === 'held-weapon') a.push(o); }); return a; })();
+      for (const o of hv.held) o.visible = !on;
+      hv.heldOff = on;
+    }
     let f = this.fishGears.get(v);
     if (!on) { if (f) { this.dyn.remove(f.gear.obj); this.fishGears.delete(v); } return; }
     if (!f) {

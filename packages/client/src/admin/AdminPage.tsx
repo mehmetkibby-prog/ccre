@@ -3,7 +3,7 @@
  * Sunucu sürümünde her şey sunucu API'si ile; tarayıcı test sürümünde (#admin1997) paylaşılan ayar kaydı ve yerel oyuncular ile.
  */
 import React, { useCallback, useEffect, useState } from 'react';
-import { CLASSES, MAPS, TUNING, sanitizeTuning, type ClassId, type GameTuning, type MonsterTune, type SpawnTune } from '@col/shared';
+import { CLASSES, MAPS, TUNING, sanitizeTuning, ITEM_TEMPLATES, RARITIES, RARITY, MAX_PLUS, MATERIALS, MALL_ITEMS, type ClassId, type GameTuning, type MonsterTune, type SpawnTune } from '@col/shared';
 import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
@@ -30,6 +30,7 @@ interface Backend {
   players(q: string, onlyOnline: boolean): Promise<APlayer[]>;
   updatePlayer(id: number, patch: { level?: number; gems?: number; potions?: number; cp?: number }): Promise<string>;
   sendCp?(id: number, amount: number): Promise<string>;
+  give?(id: number, g: Record<string, unknown>): Promise<string>;
   epinList?(): Promise<{ code: string; cp: number; note: string | null; createdAt: string; usedAt: string | null; usedBy: string | null }[]>;
   epinCreate?(cp: number, count: number, note: string): Promise<string[]>;
   resetPlayer(id: number): Promise<string>;
@@ -46,6 +47,7 @@ const serverBackend: Backend = {
   updatePlayer: async (id, patch) => (await api('/api/admin/player', { id, ...patch })).text,
   resetPlayer: async (id) => (await api('/api/admin/player/reset', { id })).text,
   sendCp: async (id, amount) => (await api('/api/admin/cp', { id, amount })).text,
+  give: async (id, g) => (await api('/api/admin/give', { id, ...g })).text,
   epinList: () => api('/api/admin/epin'),
   epinCreate: async (cp, count, note) => (await api('/api/admin/epin', { cp, count, note })).codes,
   account: async (accountId, body) => { await api('/api/admin/account', { accountId, ...body }); },
@@ -401,6 +403,7 @@ function PlayerCard({ p, open, onToggle, toast, reload }: { p: APlayer; open: bo
               <button className="btn small primary" disabled={busy || !cpAdd} onClick={() => run(() => backend.sendCp!(p.id, cpAdd!)).then(() => setCpAdd(undefined))}>Gönder</button>
             </div>
           )}
+          {backend.give && <GiveBox busy={busy} onGive={(g) => run(() => backend.give!(p.id, g))} />}
           <div className="adm-acts">
             <button className="btn small primary" disabled={!changed || busy} onClick={() => run(() => backend.updatePlayer(p.id, edit))}>Değişikliği uygula</button>
             {!p.bot && (confirm === 'reset'
@@ -439,3 +442,47 @@ export function isAdminRoute() {
   return /^\/admin1997\/?$/.test(location.pathname) || location.hash.startsWith('#admin1997');
 }
 export default AdminPage;
+
+/** Oyuncuya eşya ver: silah/zırh/takı (nadirlik, artı) ya da malzeme / Nesne Market ürünü (adet). */
+function GiveBox({ busy, onGive }: { busy: boolean; onGive: (g: Record<string, unknown>) => void }) {
+  const [kind, setKind] = useState<'item' | 'mat'>('item');
+  const [tpl, setTpl] = useState(ITEM_TEMPLATES[0]?.id ?? '');
+  const [rarity, setRarity] = useState('crimson');
+  const [plus, setPlus] = useState(0);
+  const [key, setKey] = useState(MATERIALS[0]?.id ?? '');
+  const [qty, setQty] = useState(1);
+  const slotName: Record<string, string> = { weapon: 'Silah', armor: 'Zırh', helmet: 'Miğfer', boots: 'Çizme', necklace: 'Kolye', earring: 'Küpe', bracelet: 'Bilezik' };
+  const items = [...ITEM_TEMPLATES].sort((a, b) => (a.slot + (a.cls ?? '')).localeCompare(b.slot + (b.cls ?? '')));
+  return (
+    <div className="adm-give">
+      <div className="row" style={{ gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+        <b style={{ fontSize: 12.5 }}>Eşya ver</b>
+        <button className={'btn small ' + (kind === 'item' ? 'primary' : 'ghost')} onClick={() => setKind('item')}>Silah · Zırh · Takı</button>
+        <button className={'btn small ' + (kind === 'mat' ? 'primary' : 'ghost')} onClick={() => setKind('mat')}>Malzeme · Nesne Market</button>
+      </div>
+      {kind === 'item' ? (
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+          <select className="adm-sel" value={tpl} onChange={(e) => setTpl(e.target.value)}>
+            {items.map((t) => <option key={t.id} value={t.id}>{(slotName[t.slot] ?? t.slot) + (t.cls ? ' · ' + CLASSES[t.cls as ClassId].name : '') + ' — ' + t.name}</option>)}
+          </select>
+          <select className="adm-sel" value={rarity} onChange={(e) => setRarity(e.target.value)} style={{ color: RARITY[rarity as keyof typeof RARITY]?.color }}>
+            {RARITIES.map((r) => <option key={r} value={r}>{RARITY[r].name}</option>)}
+          </select>
+          <select className="adm-sel" value={plus} onChange={(e) => setPlus(Number(e.target.value))}>
+            {Array.from({ length: MAX_PLUS + 1 }, (_, i) => <option key={i} value={i}>+{i}</option>)}
+          </select>
+          <button className="btn small primary" disabled={busy || !tpl} onClick={() => onGive({ kind: 'item', tpl, rarity, plus })}>Ver</button>
+        </div>
+      ) : (
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+          <select className="adm-sel" value={key} onChange={(e) => setKey(e.target.value)}>
+            <optgroup label="Malzemeler">{MATERIALS.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</optgroup>
+            <optgroup label="Nesne Market">{MALL_ITEMS.filter((m) => m.cat !== 'yakinda' && !m.epin).map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</optgroup>
+          </select>
+          <input className="inp" type="number" min={1} max={99999} value={qty} style={{ width: 80, padding: 5 }} onChange={(e) => setQty(Math.max(1, Math.min(99999, Number(e.target.value) || 1)))} />
+          <button className="btn small primary" disabled={busy || !key} onClick={() => onGive({ kind: 'mat', key, qty })}>Ver</button>
+        </div>
+      )}
+    </div>
+  );
+}

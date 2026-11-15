@@ -1,12 +1,13 @@
 import crypto from 'node:crypto';
 import type { ServerResponse } from 'node:http';
-import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, type ClassId } from '@col/shared';
+import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
 import { hashPassword, verifyPassword, createSession, destroySession, sessionAccount, isStaff, isAdmin, sha256, randomToken, invalidateAccountCache, type AuthAccount } from './auth.ts';
 import { initialHp, startPosition } from './store.ts';
 import { config } from './config.ts';
-import { makeItem } from './worker/world.ts';
+import { makeItem, applyGive } from './worker/world.ts';
+import type { AdminGive } from './types.ts';
 import type { Gateway } from './gateway.ts';
 import type { ChannelManager } from './channels.ts';
 import type { OpeningState } from './opening.ts';
@@ -318,6 +319,31 @@ export function buildApi(d: ApiDeps): Router {
     if (!(await addCp(charId, amount))) throw new HttpError(404, 'Karakter bulunamadı.');
     await audit(a.id, 'player.cp', { charId, amount });
     return { ok: true, text: `${amount > 0 ? '+' : ''}${amount.toLocaleString('tr-TR')} ÇP gönderildi.` };
+  });
+  /** Oyuncuya eşya / malzeme / Nesne Market ürünü ver */
+  r.post('/api/admin/give', async (req) => {
+    const a = await requireAdmin(req);
+    const charId = Number(req.body?.id), b = req.body ?? {};
+    let g: AdminGive;
+    if (b.kind === 'item') {
+      if (!ITEM_TPL.has(String(b.tpl)) || !(RARITIES as string[]).includes(String(b.rarity))) throw new HttpError(400, 'Geçersiz eşya.');
+      g = { kind: 'item', tpl: String(b.tpl), rarity: String(b.rarity), plus: Math.max(0, Math.min(MAX_PLUS, Math.round(Number(b.plus) || 0))) };
+    } else if (b.kind === 'mat') {
+      const key = String(b.key), qty = Math.round(Number(b.qty));
+      if (!(MATERIAL.has(key) || MALL.has(key)) || !(qty >= 1 && qty <= 99999)) throw new HttpError(400, 'Geçersiz malzeme ya da adet.');
+      g = { kind: 'mat', key, qty };
+    } else throw new HttpError(400, 'Geçersiz tür.');
+    const ch = d.gateway.onlineChannel(charId);
+    let text: string;
+    if (ch) { d.channels.send(ch, { type: 'admin', op: 'give', charId, give: g }); text = 'Gönderildi (oyuncu çevrimiçi, çantasına düştü).'; }
+    else {
+      const c = await d.store.load(charId);
+      if (!c) throw new HttpError(404, 'Karakter bulunamadı.');
+      applyGive(c, g); c.saveVersion++; d.store.enqueue(c, true);
+      text = 'Gönderildi (oyuncu çevrimdışı; girince çantasında).';
+    }
+    await audit(a.id, 'player.give', { charId, give: g });
+    return { ok: true, text };
   });
   // E-PIN kodları
   r.get('/api/admin/epin', async (req) => {

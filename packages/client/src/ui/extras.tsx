@@ -50,7 +50,7 @@ export function MallButton() {
   return (
     <button className={'mall-btn' + (open ? ' on' : '')} title="Nesne Market" onClick={() => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === 'mall' ? null : 'mall' })); }}>
       <span className="mall-btn-ic"><MallShopIcon /></span>
-      <span>Market</span>
+      <span className="two">Nesne Market</span>
     </button>
   );
 }
