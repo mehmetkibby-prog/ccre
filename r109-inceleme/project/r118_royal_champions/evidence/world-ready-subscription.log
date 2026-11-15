@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: a registered child can spend over five seconds booting without receiving premature projections
+ok 1 - a registered child can spend over five seconds booting without receiving premature projections
+  ---
+  duration_ms: 7.82206
+  type: 'test'
+  ...
+# Subtest: an initial full snapshot is enqueued before publications arriving during its acknowledgement
+ok 2 - an initial full snapshot is enqueued before publications arriving during its acknowledgement
+  ---
+  duration_ms: 3.889861
+  type: 'test'
+  ...
+# Subtest: attachment before the first world projection subscribes to its future full snapshot
+ok 3 - attachment before the first world projection subscribes to its future full snapshot
+  ---
+  duration_ms: 0.388653
+  type: 'test'
+  ...
+# Subtest: a replacement incarnation must attach independently and stale peers remain fenced
+ok 4 - a replacement incarnation must attach independently and stale peers remain fenced
+  ---
+  duration_ms: 4.095812
+  type: 'test'
+  ...
+# Subtest: a failed old attachment cannot unsubscribe a successfully attached replacement
+ok 5 - a failed old attachment cannot unsubscribe a successfully attached replacement
+  ---
+  duration_ms: 2.750125
+  type: 'test'
+  ...
+# Subtest: a failed current attachment unsubscribes until a later successful full resynchronization
+ok 6 - a failed current attachment unsubscribes until a later successful full resynchronization
+  ---
+  duration_ms: 2.923963
+  type: 'test'
+  ...
+# Subtest: the normal five-second projection timeout still faults a stalled attached channel
+ok 7 - the normal five-second projection timeout still faults a stalled attached channel
+  ---
+  duration_ms: 0.753572
+  type: 'test'
+  ...
+# Subtest: initial attachment also preserves the five-second response guard and unsubscribes on timeout
+ok 8 - initial attachment also preserves the five-second response guard and unsubscribes on timeout
+  ---
+  duration_ms: 0.432184
+  type: 'test'
+  ...
+# Subtest: world restart preserves live subscriptions and changes epoch through a new full snapshot
+ok 9 - world restart preserves live subscriptions and changes epoch through a new full snapshot
+  ---
+  duration_ms: 3.812734
+  type: 'test'
+  ...
+# Subtest: duplicate delivery is ignored and repeated attachments cannot let deltas overtake a full snapshot
+ok 10 - duplicate delivery is ignored and repeated attachments cannot let deltas overtake a full snapshot
+  ---
+  duration_ms: 1.666207
+  type: 'test'
+  ...
+# Subtest: four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+ok 11 - four channel engagement replicas retain native expiry and a stale source cannot erase transferred combat
+  ---
+  duration_ms: 0.522617
+  type: 'test'
+  ...
+# Subtest: shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+ok 12 - shared runtime retains newer projection changes during an outstanding send and drains zero-player checkpoints
+  ---
+  duration_ms: 2.029027
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1659.323752

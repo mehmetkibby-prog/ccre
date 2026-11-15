@@ -23,7 +23,7 @@ const bounded=(work,ms,code)=>new Promise((resolve,reject)=>{const timer=setTime
 
 export class WorldProcessSupervisor {
  constructor(core,{execPath=process.execPath,bootTimeoutMs=20000,onFault=()=>{}}={}){
-  demand(core?.writer?.system&&!core.sharedWorld,'world_supervisor_dependencies');Object.assign(this,{core,execPath,bootTimeoutMs,onFault});core.sharedWorld=this;this.row=null;this.queue=Promise.resolve();this.closing=false;this.monsters=new Map();this.projection=null;this.deliveries=new Map();
+  demand(core?.writer?.system&&!core.sharedWorld,'world_supervisor_dependencies');Object.assign(this,{core,execPath,bootTimeoutMs,onFault});core.sharedWorld=this;this.row=null;this.queue=Promise.resolve();this.closing=false;this.monsters=new Map();this.projection=null;this.deliveries=new Map();this.subscriptions=new Map();
   this.global=new GlobalWorldCoordinator(core,core.channelSupervisor,this);
   if(recoveryWatchdog)this.retry=new RecoveryRetry(()=>this.retryRecovery(),{scope:'world',onError:error=>this.deferRecovery(error)});
   this.combat=new SharedBridgePartitionsR113(this);core.writer.sharedCombat=this.combat;core.permanent.sharedCombat=this.combat;
@@ -83,7 +83,10 @@ export class WorldProcessSupervisor {
   demand(this.row===row&&!row.exited&&payload?.epoch===row.owner.epoch&&payload.incarnation===row.peer.incarnation&&Number.isSafeInteger(payload.version)&&payload.version>0&&Number.isSafeInteger(payload.cycle)&&Array.isArray(payload.monsters)&&payload.monsters.length<=4096&&payload.monsters.every(m=>m?.channel===0&&typeof m.id==='string'),'world_projection_fenced');
   demand(!this.projection?payload.full&&payload.version===1:payload.version===this.projection.version+1&&payload.cycle===this.projection.cycle,'world_projection_sequence');
   if(payload.full)this.monsters.clear();for(const monster of payload.monsters)this.monsters.set(monster.id,Object.freeze({...monster}));this.projection={...payload,monsters:undefined};
-  await Promise.all([...this.core.processes.values()].filter(r=>r.online).map(async channel=>{try{await this.deliver(channel,payload);}catch(error){if(channel.online)this.core.onFault({channel:channel.peer.channel,incarnation:channel.peer.incarnation,error});}}));return {version:payload.version};
+  // Registration permits authentication, but the child may still be loading
+  // its initial snapshot. Only attachChannel, after kernel511-ready, opts its
+  // exact incarnation into projection delivery and the existing 5s deadline.
+  await Promise.all([...this.core.processes.values()].filter(r=>r.online&&this.subscriptions.get(r.peer.channel)?.incarnation===r.peer.incarnation).map(async channel=>{try{await this.deliver(channel,payload);}catch(error){if(channel.online)this.core.onFault({channel:channel.peer.channel,incarnation:channel.peer.incarnation,error});}}));return {version:payload.version};
  }
  deliver(channel,payload,{full=false}={}){
   const peer=channel.peer;let lane=this.deliveries.get(peer.channel);
@@ -96,7 +99,16 @@ export class WorldProcessSupervisor {
   });lane.tail=work.catch(()=>{});return work;
  }
  bootDescriptor(){return this.projection?{epoch:this.projection.epoch,incarnation:this.projection.incarnation}:null;}
- async attachChannel(peer){const row=this.core.process(peer);if(!this.projection)return;await this.deliver(row,this.projection,{full:true});}
+ async attachChannel(peer){
+  const row=this.core.process(peer),subscription={incarnation:peer.incarnation};
+  // Subscribe and enqueue the full current view without yielding. Subsequent
+  // publications use the same lane, so a delta cannot overtake this snapshot.
+  // Retain live subscriptions across world restarts; a replacement channel
+  // must attach its own incarnation. The map has at most the four channel keys.
+  this.subscriptions.set(peer.channel,subscription);
+  try{if(this.projection)await this.deliver(row,this.projection,{full:true});}
+  catch(error){if(this.subscriptions.get(peer.channel)===subscription)this.subscriptions.delete(peer.channel);throw error;}
+ }
  async engagements(peer,rows){
   const channel=this.core.process(peer),world=this.row;demand(channel.online&&world?.state==='running'&&!world.exited&&Array.isArray(rows)&&rows.length<=512,'world_engagements_unavailable');
   if(actorFaultIsolation){
