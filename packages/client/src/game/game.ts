@@ -57,6 +57,8 @@ export class Game {
   autoAttack = false;
   /** hedefe yürüyerek saldırı yalnız fareyle canavara tıklayınca; saldırı tuşu (1 / boşluk / mobil düğme) olduğu yerde vurur */
   walkToTarget = false;
+  private autoPauseUntil = 0;
+  setAuto(on: boolean) { this.send({ t: 'auto', on }); }
   /** hedefimiz son öldüğünde (yeni hedefe yürüme beklemesi için) */
   private lastKillAt = 0;
   /** Saldırı basılıyken hedef öldü: yeni hedefe geçmek için tuş bırakılıp yeniden basılmalı (makro/ağırlıkla bot gibi kasılmayı önler). */
@@ -192,6 +194,7 @@ export class Game {
       case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
       case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
+      case 'auto': store.set((st) => ({ self: st.self ? { ...st.self, autoOn: !!m.on, autoLeft: Number(m.left) || 0 } : st.self, autoSync: Date.now() })); if (!m.on) { this.autoAttack = false; this.walkToTarget = false; } break;
       case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'shop': break;
@@ -488,6 +491,16 @@ export class Game {
     let dir = NO_DIR;
     if (!mv.x && !mv.y) this.lastJoyDir = NO_DIR;
     if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
+    // OTO ATAK (Nesne Market yanındaki düğme, günlük süre sınırlı): ölen hedeften sonra yakındaki canavara yürüyüp vurur.
+    // Elle yürüyünce 1,5 sn bırakır (oyuncu yönlendirebilsin).
+    if (mv.x || mv.y) this.autoPauseUntil = performance.now() + 1500;
+    if (st.self?.autoOn && performance.now() > this.autoPauseUntil) {
+      const cur = this.targetId ? this.ents.get(this.targetId) : undefined;
+      if (!cur || cur.hp <= 0 || cur.deadAt || cur.kind !== Kind.MONSTER) {
+        const nt = this.nearestEnemy(700);
+        if (nt) { this.setTarget(nt.id); this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
+      } else { this.autoAttack = true; this.walkToTarget = true; }
+    }
     // saldırı: basılı tutma veya otomatik hedef
     const wantAttack = (this.input.attackHeld && !this.attackNeedsRelease) || this.autoAttack;
     if (wantAttack) {

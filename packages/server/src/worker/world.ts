@@ -237,6 +237,7 @@ export class World {
       case 'donate': return this.cmdDonate(p, Math.floor(Number(c.amount) || 0), String(c.req ?? ''));
       case 'upgrade': return this.cmdUpgrade(p, c);
       case 'transform': return this.cmdTransform(p, c);
+      case 'auto': return this.cmdAuto(p, !!c.on);
       case 'npc': return this.cmdNpc(p, String(c.id));
       case 'use': return this.cmdUse(p, String(c.key), String(c.req ?? ''), c.item ? String(c.item) : undefined);
       case 'mall_buy': return this.cmdMallBuy(p, String(c.id), Math.floor(Number(c.qty) || 1), String(c.req ?? ''));
@@ -317,6 +318,7 @@ export class World {
         if (this.tickNo % 20 === 0) p.selfDirty |= 1;
       } else if (p.char.misc.autoPotion && p.hp <= p.stats.maxHp * 0.5 && now - p.lastAutoPotionAt >= 2000) this.usePotion(p, true);
       if (this.tickNo % 40 === (p.sid % 40)) this.expireBuffs(p);
+      if (p.autoOn && this.tickNo % 20 === (p.sid % 20)) this.autoTick(p, now);
       if (p.shieldUntil && now > p.shieldUntil) { p.shieldUntil = 0; p.shieldPct = 0; p.dirty |= Upd.FLAGS; }
       const flags = this.playerFlags(p);
       if (flags !== p.flags) { p.flags = flags; p.dirty |= Upd.FLAGS; }
@@ -1082,6 +1084,36 @@ export class World {
     else this.notice(p, 'Dönüşüm başarısız oldu; eşyan zarar görmedi.', 'error');
   }
 
+  // ───── oto atak (günlük süre sınırlı; süre sunucuda tutulur) ─────
+  private autoLeft(p: Player, now = Date.now()): number {
+    const day = trDayKey(now), a = p.char.misc.autoDay;
+    const used = a && a.day === day ? a.ms : 0;
+    return Math.max(0, (TUNING.autoAttackMin ?? 120) * 60_000 - used);
+  }
+  private autoSend(p: Player) { this.sendJson(p, { t: 'auto', on: p.autoOn, left: this.autoLeft(p) }); }
+  private cmdAuto(p: Player, on: boolean) {
+    const now = Date.now();
+    if (on && !p.autoOn) {
+      if (this.autoLeft(p, now) <= 0) { this.notice(p, 'Bugünkü oto atak süren doldu. Gece 00.00\'da yenilenir.'); return this.autoSend(p); }
+      if (p.dead) return this.autoSend(p);
+      p.autoOn = true; p.autoAt = now;
+    } else if (!on && p.autoOn) { this.autoTick(p, now); p.autoOn = false; }
+    this.autoSend(p);
+  }
+  /** Geçen süreyi günlük hakka işler; hak bitince kapatır. Gün değişiminde sayaç sıfırlanır. */
+  private autoTick(p: Player, now: number) {
+    if (!p.autoOn) return;
+    const day = trDayKey(now), c = p.char;
+    if (!c.misc.autoDay || c.misc.autoDay.day !== day) c.misc.autoDay = { day, ms: 0 };
+    c.misc.autoDay.ms += Math.max(0, Math.min(10_000, now - p.autoAt)); p.autoAt = now;
+    p.markSave();
+    if (p.dead || this.autoLeft(p, now) <= 0) {
+      p.autoOn = false;
+      if (!p.dead) this.notice(p, 'Bugünkü oto atak süren doldu. Gece 00.00\'da yenilenir.');
+      this.autoSend(p);
+    } else if (this.tickNo % 1200 < 20) this.autoSend(p); // dakikada bir kalan süre
+  }
+
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {
     const def = MAPS[mapId];
     if (!def || !def.travelable) return this.notice(p, 'Bu bölgeye ışınlanılamaz.');
@@ -1261,7 +1293,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0 });
+    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;

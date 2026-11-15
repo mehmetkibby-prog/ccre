@@ -3,7 +3,7 @@
  * Ticaret Camı araması.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, type MallCat } from '@col/shared';
+import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, type MallCat } from '@col/shared';
 import type { Game } from '../game/game.ts';
 import { store, useStore, notify, type BossInfo } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -17,15 +17,104 @@ const fmtCountdown = (ms: number) => { const s = Math.max(0, Math.round(ms / 100
 function useTick(ms: number) { const [, set] = useState(0); useEffect(() => { const iv = setInterval(() => set((x) => x + 1), ms); return () => clearInterval(iv); }, [ms]); }
 
 // ═══════════════════════ Nesne Market ═══════════════════════
+/** Nesne Market simgesi: çizgili tenteli küçük dükkân, tezgâhta parlayan mücevher ve altın para. */
+function MallShopIcon() {
+  return (
+    <svg viewBox="0 0 48 48" width="34" height="34" aria-hidden>
+      <defs>
+        <linearGradient id="mk-gem" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#b8fff0" /><stop offset=".55" stopColor="#2fd6a8" /><stop offset="1" stopColor="#0d7a64" /></linearGradient>
+        <linearGradient id="mk-wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#c98a4a" /><stop offset="1" stopColor="#8a5424" /></linearGradient>
+        <radialGradient id="mk-glow"><stop offset="0" stopColor="#fff6c0" stopOpacity=".9" /><stop offset="1" stopColor="#ffd84a" stopOpacity="0" /></radialGradient>
+      </defs>
+      {/* direkler ve tezgâh */}
+      <rect x="9" y="16" width="3" height="24" rx="1" fill="#6a3d18" />
+      <rect x="36" y="16" width="3" height="24" rx="1" fill="#6a3d18" />
+      <rect x="6" y="31" width="36" height="9" rx="2" fill="url(#mk-wood)" stroke="#5a3010" strokeWidth="1.2" />
+      {/* çizgili tente */}
+      <path d="M5 10 h38 l-2 8 H7 Z" fill="#fff4dc" stroke="#5a3010" strokeWidth="1.2" />
+      {[0, 1, 2, 3].map((i) => <path key={i} d={`M${8 + i * 9.5} 10 h4.75 l-0.5 8 h-4.75 Z`} fill="#d8343a" />)}
+      <path d="M7 18 q2.4 3 4.8 0 q2.4 3 4.8 0 q2.4 3 4.8 0 q2.4 3 4.8 0 q2.4 3 4.8 0 q2.4 3 4.8 0 q2.4 3 4.8 0" fill="#d8343a" stroke="#5a3010" strokeWidth="1" />
+      {/* parıltı + mücevher + para */}
+      <circle cx="21" cy="27" r="9" fill="url(#mk-glow)" />
+      <path d="M21 20 l5 4.5 -5 7.5 -5 -7.5 Z" fill="url(#mk-gem)" stroke="#0b5a4a" strokeWidth="1" />
+      <path d="M16 24.5 h10 M21 20 l-2 4.5 2 7.5 2 -7.5 Z" stroke="#e8fffa" strokeWidth=".7" fill="none" opacity=".8" />
+      <circle cx="31" cy="29" r="3.6" fill="#ffd84a" stroke="#9a6a10" strokeWidth="1" />
+      <path d="M31 27.3 v3.4" stroke="#9a6a10" strokeWidth="1" />
+      <path d="M36 5 l1 2.2 2.2 1 -2.2 1 -1 2.2 -1 -2.2 -2.2 -1 2.2 -1 Z" fill="#fff6c0" />
+    </svg>
+  );
+}
+
 export function MallButton() {
   const open = useStore((s) => s.panel === 'mall');
   return (
     <button className={'mall-btn' + (open ? ' on' : '')} title="Nesne Market" onClick={() => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === 'mall' ? null : 'mall' })); }}>
-      <span className="mall-btn-ic"><img src={iconUrl('mall_cp_100')} alt="" /></span>
+      <span className="mall-btn-ic"><MallShopIcon /></span>
       <span>Market</span>
     </button>
   );
 }
+/** Tam ekran (yalnız telefon/tablet): sağ üstte Market'in yanında. */
+export function FullscreenButton() {
+  const [fs, setFs] = useState(!!document.fullscreenElement);
+  useEffect(() => { const f = () => setFs(!!document.fullscreenElement); document.addEventListener('fullscreenchange', f); return () => document.removeEventListener('fullscreenchange', f); }, []);
+  if (!matchMedia('(pointer: coarse)').matches || !document.documentElement.requestFullscreen) return null;
+  const toggle = () => { sfx.play('ui'); if (document.fullscreenElement) void document.exitFullscreen().catch(() => {}); else void document.documentElement.requestFullscreen({ navigationUI: 'hide' }).catch(() => {}); };
+  return (
+    <button className={'boss-btn fs-btn' + (fs ? ' on' : '')} title="Tam ekran" onClick={toggle}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden fill="none" stroke="#f3e2b8" strokeWidth="2.4" strokeLinecap="round">{fs
+        ? <path d="M9 3v6H3M15 3v6h6M9 21v-6H3M15 21v-6h6" />
+        : <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />}</svg>
+      <span>{fs ? 'Küçült' : 'Tam ekran'}</span>
+    </button>
+  );
+}
+
+const fmtLeft = (ms: number) => { const m = Math.max(0, Math.floor(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)} sa ${m % 60} dk` : `${m} dk`; };
+/** Kalan oto atak süresi: açıkken son sunucu bildiriminden geri sayılır. */
+function useAutoLeft() {
+  const self = useStore((s) => s.self);
+  const sync = useStore((s) => s.autoSync);
+  useTick(1000);
+  const left = self?.autoLeft ?? 0;
+  return self?.autoOn ? Math.max(0, left - (sync ? Date.now() - sync : 0)) : left;
+}
+/** Oto atak düğmesi (sağ üst): paneli açar; açıkken yeşil ışıldar. */
+export function AutoButton() {
+  const on = useStore((s) => !!s.self?.autoOn);
+  return (
+    <button className={'boss-btn auto-btn' + (on ? ' alive on' : '')} title="Oto atak" onClick={() => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === 'auto' ? null : 'auto' })); }}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden><path d="M4 20 L14 10 M14 10 l4-6 l2 2 l-6 4 M6 14 l4 4 M20 20 L10 10 M10 10 l-4-6 l-2 2 l6 4 M18 14 l-4 4" stroke={on ? '#9dffb8' : '#f3e2b8'} strokeWidth="2" fill="none" strokeLinecap="round" /></svg>
+      <span>{on ? 'Oto açık' : 'Oto atak'}</span>
+    </button>
+  );
+}
+/** Oto atak paneli: başlat/durdur, bugünkü kalan süre. */
+export function AutoPanel({ game }: { game: Game }) {
+  const on = useStore((s) => !!s.self?.autoOn);
+  const left = useAutoLeft();
+  const total = (TUNING.autoAttackMin ?? 120) * 60000;
+  const pct = total > 0 ? Math.min(100, (left / total) * 100) : 0;
+  return (
+    <div className="mall-ov" onClick={() => store.set({ panel: null })}>
+      <div className="auto-panel" onClick={(e) => e.stopPropagation()}>
+        <button className="mall-x" onClick={() => store.set({ panel: null })} aria-label="Kapat">✕</button>
+        <div className={'auto-orb' + (on ? ' on' : '')}><svg viewBox="0 0 24 24" width="44" height="44" aria-hidden><path d="M4 20 L14 10 M14 10 l4-6 l2 2 l-6 4 M6 14 l4 4 M20 20 L10 10 M10 10 l-4-6 l-2 2 l6 4 M18 14 l-4 4" stroke="#fff6dc" strokeWidth="1.8" fill="none" strokeLinecap="round" /></svg></div>
+        <h3>Oto Atak</h3>
+        <p className="muted">Açıkken karakterin yakındaki canavarlara kendisi yürür ve normal saldırıyla vurur. Beceri kullanmaz. Elle yürürsen kısa süre seni bırakır.</p>
+        <div className="auto-time">
+          <div className="lbl"><span>Bugün kalan</span><b>{fmtLeft(left)}</b></div>
+          <div className="bar"><i style={{ width: pct + '%' }} /></div>
+          <small>Günde {fmtLeft(total)} · Her gece 00.00'da yenilenir</small>
+        </div>
+        <button className={'btn auto-go' + (on ? ' stop' : '')} disabled={!on && left <= 0} onClick={() => { sfx.play('ui'); game.setAuto(!on); if (!on) store.set({ panel: null }); }}>
+          {on ? 'Durdur' : left <= 0 ? 'Bugünkü süre doldu' : 'Başlat'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function BossButton() {
   const bosses = useStore((s) => s.bosses);
   const alive = bosses.some((b) => b.alive);

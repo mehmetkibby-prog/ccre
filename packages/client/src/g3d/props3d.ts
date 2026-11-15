@@ -182,7 +182,8 @@ const B: Partial<Record<PropKind, Builder>> = {
     // alın üçgenleri
     const tri = new THREE.Shape(); tri.moveTo(-run + 0.5, 0); tri.lineTo(0, rise - 0.15); tri.lineTo(run - 0.5, 0); tri.closePath();
     for (const s of [-1, 1]) { const tg = new THREE.ExtrudeGeometry(tri, { depth: 0.15, bevelEnabled: false }); tg.scale(0.5, 0.5, 1); tg.scale(2, 2, 1); at(tg, s * (W / 2 + 0.17) - (s > 0 ? 0.15 : 0), roofY, z0, 0, Math.PI / 2, 0); parts.push({ g: tg, m: 'plaster' }); }
-    parts.push({ g: at(box(0.3, 0.3, D + 1.6, 0.7), 0, roofY + rise + 0.05, z0, 0, 0, Math.PI / 4), m: 'timber' });
+    // mahya kirişi: çatının tepesi boyunca (X ekseni); önceden çatıya dik konup önden/arkadan kütük gibi taşıyordu
+    parts.push({ g: at(box(RW + 0.1, 0.24, 0.24, 0.7), 0, roofY + rise + 0.02, z0, Math.PI / 4, 0, 0), m: 'timber' });
     // baca
     parts.push({ g: at(box(0.8, 2.2, 0.8, 1), W / 3, roofY + 1.6, z0 - 0.6), m: 'stonewall' });
     parts.push({ g: at(box(1.0, 0.18, 1.0, 1), W / 3, roofY + 2.7, z0 - 0.6), m: 'stonewall' });

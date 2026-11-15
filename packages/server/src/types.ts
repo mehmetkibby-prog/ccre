@@ -29,6 +29,8 @@ export interface CharMisc {
   autoPotion?: boolean;
   statRev?: number;
   dailyKills?: { day: string; n: number };
+  /** oto atak: bugün kullanılan süre (ms) */
+  autoDay?: { day: string; ms: number };
   receipts?: string[]; // son işlem kimlikleri (idempotency, sınırlı)
   tutorial?: number;
   deadAt?: number; // epoch ms (ölüm durumu kalıcı)

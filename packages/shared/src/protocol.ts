@@ -140,6 +140,7 @@ export type ClientCmd =
   | { t: 'donate'; amount: number; req: string }
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'transform'; item: string; req: string }
+  | { t: 'auto'; on: boolean }
   | { t: 'npc'; id: string }
   | { t: 'use'; key: string; req: string; item?: string }
   | { t: 'mall_buy'; id: string; qty: number; req: string }

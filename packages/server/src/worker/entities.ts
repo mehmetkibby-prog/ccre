@@ -34,6 +34,8 @@ export class Player {
   lastAutoPotionAt = 0;
   /** balıkçılık: atılmış olta (sunucu belirler: balık ve vurma zamanı) */
   fishing?: { token: string; fish: string; biteAt: number };
+  /** oto atak açık mı ve son sayım anı */
+  autoOn = false; autoAt = 0;
   lastDamageAt = 0;
   lastActiveAt = Date.now();
   // görüş

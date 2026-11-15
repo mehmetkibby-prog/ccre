@@ -1,5 +1,5 @@
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
-import { MallButton, BossButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
+import { MallButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, type ClassId, type ItemInstance } from '@col/shared';
@@ -117,7 +117,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <XpLine />
       <AnnouncementBar />
       <Minimap game={game} />
-      <div className="tr-btns"><MallButton /><BossButton /></div>
+      <div className="tr-btns"><MallButton /><AutoButton /><BossButton /><FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
       <BossCountdowns game={game} />
@@ -374,6 +374,8 @@ function BottomBar({ game }: { game: Game }) {
 }
 
 function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void }) {
+  // Çıkış düğmesi kaldırıldı; Ayarlar'daki "Kanal / karakter değiştir" bu olayı yollar
+  useEffect(() => { const f = () => { currentGame?.stop(); onExit('', true); }; window.addEventListener('col-exit', f); return () => window.removeEventListener('col-exit', f); }, [onExit]);
   const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p })); };
   const self = useStore((s) => s.self);
   const unread = useStore((s) => s.unread);
@@ -388,7 +390,6 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       <button title="Ekran görüntüsü (F8)" onClick={() => currentGame?.screenshot()}><MenuIcon k="camera" /><small>F8</small><span className="tag">Görüntü</span></button>
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
-      <button className="exit" title="Kanal değiştir / çıkış" onClick={() => { currentGame?.stop(); onExit('', true); }}><MenuIcon k="exit" /><span className="tag">Çıkış</span></button>
     </div>
   );
 }

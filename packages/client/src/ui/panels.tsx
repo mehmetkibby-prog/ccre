@@ -6,7 +6,7 @@ import {
   transformConf, transformGroup, classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
-import { MallPanel, BossPanel, FishShop, TradeGlass } from './extras.tsx';
+import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel } from './extras.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -47,6 +47,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'donate' && <Donate game={game} />}
       {p === 'mall' && <MallPanel game={game} />}
       {p === 'bosses' && <BossPanel game={game} />}
+      {p === 'auto' && <AutoPanel game={game} />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
@@ -496,8 +497,8 @@ function Settings() {
       <label className="row" style={{ fontSize: 14 }}><input type="checkbox" checked={s.showNames} onChange={(e) => set({ showNames: e.target.checked })} /> Oyuncu isimlerini göster</label>
       <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.showDamage} onChange={(e) => set({ showDamage: e.target.checked })} /> Başkalarının hasar sayıları</label>
       <div className="row" style={{ marginTop: 14, gap: 8, flexWrap: 'wrap' }}>
-        <button className="btn small" onClick={() => document.documentElement.requestFullscreen?.()}>Tam ekran</button>
         <InstallButton />
+        <button className="btn small ghost" title="Karakter ve kanal seçimine döner" onClick={() => window.dispatchEvent(new Event('col-exit'))}>Kanal / karakter değiştir</button>
       </div>
       <div className="muted" style={{ fontSize: 11, marginTop: 12 }}>Kısayollar: WASD/oklar yürü · Fare ile tıkla-yürü/hedef · Boşluk/1 saldır · 2-3-4 beceri · Q iksir · Z topla · Tab hedef değiştir · I çanta · C karakter · K beceri · T ışınlan · M harita · Enter sohbet</div>
     </Panel>
