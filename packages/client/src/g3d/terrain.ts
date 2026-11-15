@@ -136,12 +136,15 @@ export class Terrain {
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWPos = (modelMatrix * vec4(position,1.0)).xyz;\nvWNor = normalize(mat3(modelMatrix) * normal);');
       sh.fragmentShader = sh.fragmentShader
         .replace('#include <common>', `#include <common>
+precision highp float;
 precision highp sampler2DArray;
 varying vec3 vWPos; varying vec3 vWNor;
 uniform sampler2D uSplat0; uniform sampler2D uSplat1; uniform sampler2D uSplat2;
 uniform sampler2DArray uColArr; uniform sampler2DArray uNorArr;
 uniform vec2 uMapSize; uniform vec3 uTint;
-float hsh(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
+// sin'siz karma (Dave Hoskins hash12): telefon GPU'larında büyük açılı sin hassas değil, gürültü ~1 m'lik bloklara bölünüp
+// yol kenarında basamaklar ve zeminde dikdörtgen açık/koyu yamalar yapıyordu
+float hsh(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
 float vn(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hsh(i),hsh(i+vec2(1,0)),f.x), mix(hsh(i+vec2(0,1)),hsh(i+vec2(1,1)),f.x), f.y); }
 vec3 gCol; vec3 gNor;
 void groundBlend(){

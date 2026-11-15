@@ -208,7 +208,7 @@ const SHELL_FRAG = /* glsl */ `
 uniform float uTime, uStar;
 uniform vec3 uA, uB;
 varying vec3 vN, vV, vW;
-float h(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+float h(vec3 p) { p = fract(p * 0.1031); p += dot(p, p.zyx + 31.32); return fract((p.x + p.y) * p.z); }
 void main() {
   float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.2);
   // yukarı akan alev bantları
