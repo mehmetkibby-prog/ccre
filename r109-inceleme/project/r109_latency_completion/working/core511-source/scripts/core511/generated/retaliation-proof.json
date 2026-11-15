@@ -10,7 +10,7 @@
     "sha256": "903d015816e22932f86a934fb1d5aec7aa4c454347caae4c4c49c527b0861948"
   },
   "nativeCommitSha256": "09684c49390c5d993508bfc39abedec4985a54cd18ac929311a25a95fe0a5ba3",
-  "generatedSha256": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+  "generatedSha256": "9dfbb07bd9855a2d7f4dbb492904eb832a50aab820768e1579b510ba7ee26e47",
   "declarations": [
     {
       "name": "colRuneFactor",
@@ -243,6 +243,16 @@
       "generatedSha256": {
         "previous": "c01e8872b745918dbd586546817ea1d374a29cf95fa5711676798ae9e1e3974c",
         "current": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+        "file": "retaliation-rules.mjs"
+      }
+    }
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+        "current": "9dfbb07bd9855a2d7f4dbb492904eb832a50aab820768e1579b510ba7ee26e47",
         "file": "retaliation-rules.mjs"
       }
     }

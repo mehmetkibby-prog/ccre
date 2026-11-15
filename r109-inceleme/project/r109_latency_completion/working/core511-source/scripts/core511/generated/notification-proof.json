@@ -75,7 +75,7 @@
       "sha256": "09f3d37b41297e8678273f084f05aed4c39ad30bdb9894860a783573c901c7c3"
     }
   ],
-  "generatedSha256": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+  "generatedSha256": "ff6fe8e68ce6d2a9a35ce1fefca7f7b3993bb776b9f3d794380b89f7b995d1a1",
   "edits": [
     "Original9 native declaration source hashes retained; safeArea and realtimeRoomName additionally recognize strict adventure IDs",
     "Authenticated snapshot sockets and sender capture injected; no network or mutable socket ownership",
@@ -87,6 +87,16 @@
       "generatedSha256": {
         "previous": "45f177b6180c5a968b26219eef3832d804ad4a034d06238569fe8440f4c618e4",
         "current": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+        "file": "notification-rules.mjs"
+      }
+    }
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+        "current": "ff6fe8e68ce6d2a9a35ce1fefca7f7b3993bb776b9f3d794380b89f7b995d1a1",
         "file": "notification-rules.mjs"
       }
     }

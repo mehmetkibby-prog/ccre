@@ -79,12 +79,22 @@
       "sha256": "9c3afbaab98417245a719f38aa9261351e9cb9276882e43e5dac6f8d3ab5eb68"
     }
   ],
-  "generatedSha256": "d9937e3ba2d37ad3da58fc49fb6f35705e42cf439e2c27913a9313668bdf27e9",
+  "generatedSha256": "20e7773e641c75d4a18819e59c7bbe5133d5025c3c184720ed6e0013d2669aa9",
   "edits": [
     "native upkeep health/market SQL arrays unchanged",
     "native guardian/reset branches unchanged except async storage keywords",
     "explicit operation clock/UUID",
     "reset adapter extends only C4 black-stone IDs",
     "global transition requires external all-owner drain/freeze; no timer started here"
-  ]
+  ],
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "d9937e3ba2d37ad3da58fc49fb6f35705e42cf439e2c27913a9313668bdf27e9",
+        "current": "20e7773e641c75d4a18819e59c7bbe5133d5025c3c184720ed6e0013d2669aa9",
+        "file": "world-job-rules.mjs"
+      }
+    }
+  }
 }

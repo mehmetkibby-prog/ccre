@@ -4,7 +4,7 @@
   "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
   "fullWorldBodySha256": "66d1e1aed9648e04ccf6a7618910ffa627a7cda358a2682c0efbebe4e355e495",
   "decorationSha256": "de467a6a430868c5d44ffcd32172d8a3ad89556e3f9e35e311856e3c9fb1cf25",
-  "generatedSha256": "93961891c8c5cb52ec3c86e5dac042bd49f8240553b39a716e06f21576ba9c44",
+  "generatedSha256": "600ada21ec4df89f76ffd2a73587eedce56a7a9302c170931d77b3abb20a4564",
   "declarations": [
     {
       "name": "halloweenEventView456",
@@ -217,5 +217,15 @@
     "changes": [
       "canonical single-slot belt stat and XP integration"
     ]
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "93961891c8c5cb52ec3c86e5dac042bd49f8240553b39a716e06f21576ba9c44",
+        "current": "600ada21ec4df89f76ffd2a73587eedce56a7a9302c170931d77b3abb20a4564",
+        "file": "cold-world-rules.mjs"
+      }
+    }
   }
 }

@@ -4,11 +4,11 @@
   "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
   "nativeBodySha256": "1f5e5effda583906fb4bfad4745a33212a87f2257f70e80de4f68534e35eae5b",
   "nativeHitPlanSha256": "46826f9af5b60fafb9c1a2b2b4e4b3dbc000e615a72d9e8abc7cb10079cb82ae",
-  "generatedSha256": "490ed4062cf79e952bef64f2bd6463d8b0b99e50cb7d5899c963e8a991cf3099",
-  "writerSha256": "421e8089bd77ff40d0213a251032b23f9947b3cc2ca2940dc0e8951e4ab50e58",
+  "generatedSha256": "387136ddb9d587555ecb3ef9b4533013f2f4b608836bc4af9c378659dbc9c8b0",
+  "writerSha256": "d22a3aba214c8608f4a0cd60326a859fc405d2eab78c9d49d3e9f0934585f7a3",
   "extractedSha256": "2efb43e15d125ed783cf07838fe69ab74dec22d5b0830df08502d6b0db018f96",
   "extractedWriterSha256": "35db05f42a55964b7eccc23aef89bdf8f3bddcb6dc4fbf2cfe5586967fad12d4",
-  "adventureAdapterSha256": "7befc664cd8fdcc9b5b0a12743d55d1c492949005fd8f0130178a66605cedbab",
+  "adventureAdapterSha256": "6cf99395edbff0d8517b13082987def76fcb85b9d5e5db1758eed90040751751",
   "rankingSourceSha256": "2588dd9037feb8a1cad98e166afcae53b72e6148891183d25ad9ee6dd748e51b",
   "rankingDeclarations": [
     "prepareRuneV2Winner483",
@@ -1331,6 +1331,26 @@
         "previous": "b84b27d1682cbe93b5ecefaad61e508a4c94ecbb1cba3697beecb760698ca82e",
         "current": "421e8089bd77ff40d0213a251032b23f9947b3cc2ca2940dc0e8951e4ab50e58",
         "file": "attack-writer-rules.mjs"
+      }
+    }
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "490ed4062cf79e952bef64f2bd6463d8b0b99e50cb7d5899c963e8a991cf3099",
+        "current": "387136ddb9d587555ecb3ef9b4533013f2f4b608836bc4af9c378659dbc9c8b0",
+        "file": "attack-rules.mjs"
+      },
+      "writerSha256": {
+        "previous": "421e8089bd77ff40d0213a251032b23f9947b3cc2ca2940dc0e8951e4ab50e58",
+        "current": "d22a3aba214c8608f4a0cd60326a859fc405d2eab78c9d49d3e9f0934585f7a3",
+        "file": "attack-writer-rules.mjs"
+      },
+      "adventureAdapterSha256": {
+        "previous": "7befc664cd8fdcc9b5b0a12743d55d1c492949005fd8f0130178a66605cedbab",
+        "current": "6cf99395edbff0d8517b13082987def76fcb85b9d5e5db1758eed90040751751",
+        "file": "../adapt-adventure-attack.mjs"
       }
     }
   }

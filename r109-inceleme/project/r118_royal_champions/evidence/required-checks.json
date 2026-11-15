@@ -1,0 +1,35 @@
+{
+  "node": "22.23.4",
+  "runner": "scripts/run.py through npm scripts/check.py",
+  "checks": [
+    {
+      "command": "npm test",
+      "runtimeTests": 60,
+      "passed": 60,
+      "failed": 0,
+      "log": "required-focused.log"
+    },
+    {
+      "command": "npm run test:native",
+      "runtimeTests": 29,
+      "passed": 29,
+      "failed": 0,
+      "log": "required-native.log"
+    },
+    {
+      "command": "npm run test:captcha",
+      "runtimeTests": 20,
+      "passed": 20,
+      "failed": 0,
+      "log": "required-captcha.log"
+    },
+    {
+      "command": "npm run test:r110",
+      "runtimeTests": 3,
+      "passed": 3,
+      "failed": 0,
+      "log": "required-r110.log",
+      "installerTests": 16
+    }
+  ]
+}

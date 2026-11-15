@@ -152,11 +152,21 @@
       "generatedSha256": "ed09793f7e382d7702ac5deb7dbc92cda981d11ebf43c6a171ac3122e5859475"
     }
   ],
-  "generatedSha256": "7d58a90245e7708f32a36e0f5ffe2e15e7b38cf3d775a5cd07f38ea9f3eaa3c1",
+  "generatedSha256": "346f301174148996b8dc13f35b1b09196107481841234e09f93b2f9da7eb903f",
   "edits": [
     "native respawn,repair,despawn SQL planners unchanged",
     "explicit operation RNG and native service globals",
     "fourth-channel boss and black-slot profile identifiers",
     "monster repair/despawn adapter adds only channel and leased-id predicates; market housekeeping is a separate world job"
-  ]
+  ],
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "7d58a90245e7708f32a36e0f5ffe2e15e7b38cf3d775a5cd07f38ea9f3eaa3c1",
+        "current": "346f301174148996b8dc13f35b1b09196107481841234e09f93b2f9da7eb903f",
+        "file": "respawn-rules.mjs"
+      }
+    }
+  }
 }

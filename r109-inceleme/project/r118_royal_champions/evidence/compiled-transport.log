@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: R113 combat window is bounded to two and social/world reads never wait for a combat ACK
+ok 1 - R113 combat window is bounded to two and social/world reads never wait for a combat ACK
+  ---
+  duration_ms: 87.290051
+  type: 'test'
+  ...
+# Subtest: client applies native deltas, bounds interpolation and waits for durable mailbox ACK before sending another batch
+ok 2 - client applies native deltas, bounds interpolation and waits for durable mailbox ACK before sending another batch
+  ---
+  duration_ms: 7.834148
+  type: 'test'
+  ...
+# Subtest: single input queue keeps sequence after rejection and never acknowledges an economy command before its server result
+ok 3 - single input queue keeps sequence after rejection and never acknowledges an economy command before its server result
+  ---
+  duration_ms: 11.989355
+  type: 'test'
+  ...
+# Subtest: reconnect consumes the saved result without replaying a committed debit; changed owner leaves an unknown result
+ok 4 - reconnect consumes the saved result without replaying a committed debit; changed owner leaves an unknown result
+  ---
+  duration_ms: 1537.057037
+  type: 'test'
+  ...
+# Subtest: closing socket before close event retains unsent input and mailbox ACK until safe reconnect
+ok 5 - closing socket before close event retains unsent input and mailbox ACK until safe reconnect
+  ---
+  duration_ms: 525.475424
+  type: 'test'
+  ...
+# Subtest: distributed R118 bridge routes royal_transform_r118 through acknowledged owner transport
+ok 6 - distributed R118 bridge routes royal_transform_r118 through acknowledged owner transport
+  ---
+  duration_ms: 13.893083
+  type: 'test'
+  ...
+# Subtest: distributed R118 bridge routes royal_salvage_r118 through acknowledged owner transport
+ok 7 - distributed R118 bridge routes royal_salvage_r118 through acknowledged owner transport
+  ---
+  duration_ms: 12.347559
+  type: 'test'
+  ...
+# Subtest: distributed R118 bridge routes travel_champions through acknowledged owner transport
+ok 8 - distributed R118 bridge routes travel_champions through acknowledged owner transport
+  ---
+  duration_ms: 10.548341
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2812.624398

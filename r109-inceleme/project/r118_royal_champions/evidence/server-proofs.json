@@ -1,0 +1,116 @@
+[
+  {
+    "file": "rules-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+        "current": "6a2629b3131d733e2a0952056d39c1dde3a38e4ed431c34934b460a975e14ad6",
+        "file": "rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "attack-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "490ed4062cf79e952bef64f2bd6463d8b0b99e50cb7d5899c963e8a991cf3099",
+        "current": "387136ddb9d587555ecb3ef9b4533013f2f4b608836bc4af9c378659dbc9c8b0",
+        "file": "attack-rules.mjs"
+      },
+      "writerSha256": {
+        "previous": "421e8089bd77ff40d0213a251032b23f9947b3cc2ca2940dc0e8951e4ab50e58",
+        "current": "d22a3aba214c8608f4a0cd60326a859fc405d2eab78c9d49d3e9f0934585f7a3",
+        "file": "attack-writer-rules.mjs"
+      },
+      "adventureAdapterSha256": {
+        "previous": "7befc664cd8fdcc9b5b0a12743d55d1c492949005fd8f0130178a66605cedbab",
+        "current": "6cf99395edbff0d8517b13082987def76fcb85b9d5e5db1758eed90040751751",
+        "file": "../adapt-adventure-attack.mjs"
+      }
+    }
+  },
+  {
+    "file": "entry-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "bb07882ee543c0e10e729b7b0a1a0bc83f2ecaac047e4cf536253c552346b957",
+        "current": "3833777dd7bcbfc782a6069b7bdabcc49b7f6cc7725e067e3e85ec76ab13ea0e",
+        "file": "entry-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "respawn-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "7d58a90245e7708f32a36e0f5ffe2e15e7b38cf3d775a5cd07f38ea9f3eaa3c1",
+        "current": "346f301174148996b8dc13f35b1b09196107481841234e09f93b2f9da7eb903f",
+        "file": "respawn-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "retaliation-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "ef53cd4d5f409945abd9c023de203dfad3e32289412ca1880f9b4ad9aeb689fd",
+        "current": "9dfbb07bd9855a2d7f4dbb492904eb832a50aab820768e1579b510ba7ee26e47",
+        "file": "retaliation-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "cold-world-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "93961891c8c5cb52ec3c86e5dac042bd49f8240553b39a716e06f21576ba9c44",
+        "current": "600ada21ec4df89f76ffd2a73587eedce56a7a9302c170931d77b3abb20a4564",
+        "file": "cold-world-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "notification-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+        "current": "ff6fe8e68ce6d2a9a35ce1fefca7f7b3993bb776b9f3d794380b89f7b995d1a1",
+        "file": "notification-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "channel-content-proof.json",
+    "hashes": {}
+  },
+  {
+    "file": "native-world-startup-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+        "current": "403f93ca5ea49b32add95754c7d878fb5960837592e7b998f7a309c85610b098",
+        "file": "native-world-startup.mjs"
+      }
+    }
+  },
+  {
+    "file": "aggro-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "1f504d4d4a0c5b2054756d6213bdc4bb33cfd9affd2a8f10dfd370d8f7e43568",
+        "current": "30ff6b9ec4027bc90a253ef66e86f6315477a0634be85f57077cf39ad0071057",
+        "file": "aggro-rules.mjs"
+      }
+    }
+  },
+  {
+    "file": "world-job-proof.json",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "d9937e3ba2d37ad3da58fc49fb6f35705e42cf439e2c27913a9313668bdf27e9",
+        "current": "20e7773e641c75d4a18819e59c7bbe5133d5025c3c184720ed6e0013d2669aa9",
+        "file": "world-job-rules.mjs"
+      }
+    }
+  }
+]

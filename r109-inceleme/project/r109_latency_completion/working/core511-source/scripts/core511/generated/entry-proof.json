@@ -2,7 +2,7 @@
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "source": "dist-vds/server/channel-runtime/index.mjs",
   "sourceSha256": "710026ed520bdf83aaa6c5749f431b166977dc898c0466c491e4fa56863f507b",
-  "generatedSha256": "bb07882ee543c0e10e729b7b0a1a0bc83f2ecaac047e4cf536253c552346b957",
+  "generatedSha256": "3833777dd7bcbfc782a6069b7bdabcc49b7f6cc7725e067e3e85ec76ab13ea0e",
   "join": {
     "start": 497768,
     "end": 503257,
@@ -570,5 +570,15 @@
     "scope": "Replace only the removed hashed guild module lookup with a bound runtime port. Async auth still invokes NativeGuildAuth repair and durable ejection after all original guards; synchronous entry has no authentication port.",
     "previous": "1a964df732cf4be3a1580fb75a56fa65268bce4c1f1efb72b59af8ecef3a19d6",
     "current": "bb07882ee543c0e10e729b7b0a1a0bc83f2ecaac047e4cf536253c552346b957"
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "bb07882ee543c0e10e729b7b0a1a0bc83f2ecaac047e4cf536253c552346b957",
+        "current": "3833777dd7bcbfc782a6069b7bdabcc49b7f6cc7725e067e3e85ec76ab13ea0e",
+        "file": "entry-rules.mjs"
+      }
+    }
   }
 }

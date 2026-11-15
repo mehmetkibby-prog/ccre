@@ -1,0 +1,10 @@
+{
+  "initial": "pinned-proofs-before-r93-fix.log",
+  "initialPass": 7,
+  "initialFailure": "Pre-existing R93 additions inside areaWorld/isAreaWalkablePosition declarations prevented strict V510 declaration inclusion.",
+  "resolution": "Equivalent wrappers retain exact pinned declarations and the previous R93 dimensions/walkability.",
+  "targetedRetest": "startup-proof-final.log",
+  "targetedPass": 1,
+  "baselineTestsChanged": false,
+  "inverseByteProof": "startup-wrapper-preservation.json"
+}

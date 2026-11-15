@@ -739,7 +739,7 @@
       "generatedSha256": "b129c3989c8eaff4dd822e3d52529059d1e2b917e4c8599cba8ff43277d1ca75"
     }
   ],
-  "generatedSha256": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+  "generatedSha256": "6a2629b3131d733e2a0952056d39c1dde3a38e4ed431c34934b460a975e14ad6",
   "adventureAdapter": {
     "version": "r21-reproducible-existing-r19-r20",
     "nativeOutputSha256": "e5e28bb713345685a2356d9b6a52e60482af4462f6c7e4a74a9a8593a208df6d",
@@ -772,6 +772,16 @@
       "generatedSha256": {
         "previous": "fa411bc0993a1d4850a7ab6bc9743b917e9c12b32457d710d4995fc96faf6385",
         "current": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+        "file": "rules.mjs"
+      }
+    }
+  },
+  "r118RoyalChampions": {
+    "scope": "Explicit champion map extension and royal equipment family/material registration; pinned source hashes and legacy parity assertions are unchanged.",
+    "hashes": {
+      "generatedSha256": {
+        "previous": "35189d5f5bf73adb16f3ea97844c849319139431ac69846c94126e428f481b4f",
+        "current": "6a2629b3131d733e2a0952056d39c1dde3a38e4ed431c34934b460a975e14ad6",
         "file": "rules.mjs"
       }
     }
