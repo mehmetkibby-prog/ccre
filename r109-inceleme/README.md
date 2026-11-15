@@ -1,4 +1,10 @@
-# Core of Life inceleme dosyaları — güncel taban R110_HANDOFF1
+# Core of Life inceleme dosyaları
+
+**15 Kasım R118 devamı:** önce [R118_DEVIR.md](R118_DEVIR.md) dosyasını oku.
+Canlıda doğrulanan kaynak R117_HOOK10, aktif çalışma ağacı R118 adayını içerir.
+Son paket kabulü `project/r118_royal_champions/evidence/package.json` içindedir.
+Aşağıdaki R110 kurulum ve ölçüm bilgileri tarihsel başlangıcı anlatır; yeni yük
+ölçümlerinde kullanıcının son sınırı yalnız **50 oyuncudur**.
 
 12 Kasım 2026 devir bilgisine göre Efsane ve Akademi'de R110_HANDOFF1 kurulu.
 Önce [CHATGPT_DEVIR_R110.md](CHATGPT_DEVIR_R110.md), ardından kökteki

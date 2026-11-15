@@ -63,3 +63,11 @@ Read `r109-inceleme/R117_DEVIR.md`. User requested Azrail chest hook chance 10%.
 Active source includes the rule, nonmutating legacy 6% read compatibility and
 new hashed UI assets. New package source is exact R116; no player DB/schema
 changes. Preserve original R116 archive and all previous hashed assets.
+
+R118 continuation (15 Nov 2026): read `r109-inceleme/R118_DEVIR.md`.
+Read-only live Efsane health confirms R117_HOOK10. The active candidate adds
+royal equipment, controlled emerald salvage and the champion-only PvP map.
+This release has explicit additive schema migration, not only code changes.
+Latest user feedback requires scattered monsters and Turkish-facing labels.
+Use the exact R117 source and preserve all old artifacts. Check the final
+R118 package evidence before treating this candidate as delivered or installed.

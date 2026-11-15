@@ -1,5 +1,13 @@
 # Claude için başlangıç
 
+## R118 devamı — 15 Kasım 2026
+
+Güncel devir: `r109-inceleme/R118_DEVIR.md`. Canlı kaynak salt okunur kontrolde
+R117_HOOK10; aktif çalışma ağacı R118 Kraliyet/Şampiyonlar Diyarı adayını içerir.
+Son paket kabulünü `project/r118_royal_champions/evidence/package.json` içinden
+doğrula. Aşağıdaki R110 bilgileri tarihsel devirdir. Eski arşivleri değiştirme;
+son kullanıcı yük testi sınırı yalnız 50 oyuncudur.
+
 ## GÜNCEL CANLI DURUM (12 Kasım 2026) — önce bunu oku
 
 Canlıda artık **R110_HANDOFF1** kurulu (Efsane + Akademi). Ne yapıldığı,
