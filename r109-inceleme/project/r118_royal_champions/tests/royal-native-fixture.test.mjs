@@ -1,0 +1,26 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {BASE,SHA} from '../../r109_latency_completion/working/core511-source/scripts/core511/tests/helpers.mjs';
+import {put} from '../../r109_latency_completion/working/core511-source/scripts/core511/tests/pvp-fixture.mjs';
+import {createRoyalSchemaR118} from '../../r109_latency_completion/working/core511-source/scripts/core511/royal-config-r118.mjs';
+import {RoyalServiceR118} from '../../r109_latency_completion/working/core511-source/scripts/core511/royal-service-r118.mjs';
+process.env.COL_NATIVE_TEST_ROOT=BASE;process.env.COL_NATIVE_TEST_MANIFEST_SHA256=SHA;
+const {fixture}=await import('../../r109_latency_completion/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs');
+test('royal conversion and salvage work against full native schema, existing triggers and native atomic commit',async t=>{
+ const f=await fixture();t.after(()=>f.close());const sql=f.database.sqlite;createRoyalSchemaR118(sql);
+ sql.exec("UPDATE players SET champion_level_r102=1,hp=100,area='bazaar',x=1740,y=390,arena_match_id='',combat_lock_until_ms=0,gems=20000 WHERE id='real-1'");
+ for(const kind of ['emerald_dust','royal_crown'])sql.prepare('INSERT INTO dungeon_materials(player_id,kind,amount) VALUES(?,?,?) ON CONFLICT(player_id,kind) DO UPDATE SET amount=20').run('real-1',kind,20);
+ put(sql,'player_items',{id:'royal-native-candidate',player_id:'real-1',kind:'armor',item_name:'+3 Kadim Zümrüt Zırhı',rarity:'emerald',power:311,role:'arkanist',enchantments:'[{"kind":"hp","value":300}]',equipped:0,created_at:1});
+ const service=new RoyalServiceR118(sql),status=service.status('real-1'),item=status.items.find(i=>i.id==='royal-native-candidate');assert.ok(item);
+ const request={action:'royal_transform_r118',requestId:randomUUID(),revision:status.revision,itemId:item.id,itemStamp:item.itemStamp};
+ const result=await f.database.atomic(()=>service.command('real-1',request));assert.equal(result.item.power,335);assert.equal(result.item.rarity,'royal');
+ const owned=sql.prepare('SELECT * FROM player_items WHERE id=?').get(item.id);assert.equal(owned.enchantments,'[{"kind":"hp","value":300}]');
+ assert.deepEqual(await f.database.atomic(()=>service.command('real-1',request)),result);
+ sql.exec("UPDATE player_items SET equipped=1 WHERE id='royal-native-candidate'");assert.equal(sql.prepare('SELECT equipped FROM player_items WHERE id=?').get(item.id).equipped,1);
+ sql.exec("UPDATE players SET champion_level_r102=0 WHERE id='real-1'");assert.equal(sql.prepare('SELECT equipped FROM player_items WHERE id=?').get(item.id).equipped,0);
+ put(sql,'player_items',{id:'salvage-native-candidate',player_id:'real-1',kind:'weapon',item_name:'Kadim Zümrüt Öz Asası',rarity:'emerald',power:350,role:'arkanist',enchantments:'[]',equipped:0,created_at:1});
+ sql.exec("UPDATE players SET x=1200 WHERE id='real-1'");const dustBefore=service.balance('real-1','emerald_dust'),salvage=service.status('real-1').items.find(i=>i.id==='salvage-native-candidate');
+ await f.database.atomic(()=>service.command('real-1',{action:'royal_salvage_r118',requestId:randomUUID(),itemId:salvage.id,itemStamp:salvage.itemStamp,confirm:true}));
+ assert.equal(service.balance('real-1','emerald_dust'),dustBefore+1);assert.equal(sql.prepare('SELECT 1 FROM player_items WHERE id=?').get(salvage.id),undefined);
+});

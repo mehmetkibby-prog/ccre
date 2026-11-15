@@ -1,0 +1,29 @@
+TAP version 13
+# (node:2511) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+not ok 1 - royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+  ---
+  duration_ms: 21.839879
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-fixture.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: 'Fixture baseline member differs: vds-server/src/bot-check.mjs'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    visit (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:27:87)
+    async verifyBaseline (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:32:3)
+    async fixture (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/perf-r11/tests/reward/fixture.mjs:78:27)
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-fixture.test.mjs:11:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 274.427614

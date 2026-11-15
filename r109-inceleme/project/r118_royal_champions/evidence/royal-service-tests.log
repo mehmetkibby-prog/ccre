@@ -1,0 +1,72 @@
+TAP version 13
+# (node:2394) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: conversion preserves item identity, enhancement, stones and authentic infinite provenance; charges once across reconnect
+ok 1 - conversion preserves item identity, enhancement, stones and authentic infinite provenance; charges once across reconnect
+  ---
+  duration_ms: 23.395607
+  type: 'test'
+  ...
+# Subtest: all five slots and three classes use their royal names and base-power bonus
+ok 2 - all five slots and three classes use their royal names and base-power bonus
+  ---
+  duration_ms: 18.329534
+  type: 'test'
+  ...
+# Subtest: salvage consumes one chosen item for exactly one dust; replay and new request cannot duplicate dust
+ok 3 - salvage consumes one chosen item for exactly one dust; replay and new request cannot duplicate dust
+  ---
+  duration_ms: 3.596417
+  type: 'test'
+  ...
+# Subtest: receipt insertion failure rolls back conversion materials, resources, item and history
+ok 4 - receipt insertion failure rolls back conversion materials, resources, item and history
+  ---
+  duration_ms: 2.946433
+  type: 'test'
+  ...
+# Subtest: dust cap and receipt failure leave salvaged item intact
+ok 5 - dust cap and receipt failure leave salvaged item intact
+  ---
+  duration_ms: 4.784205
+  type: 'test'
+  ...
+# Subtest: stale ingredient revision, stale item stamp, insufficient costs and forged targets fail without consumption
+ok 6 - stale ingredient revision, stale item stamp, insufficient costs and forged targets fail without consumption
+  ---
+  duration_ms: 5.542384
+  type: 'test'
+  ...
+# Subtest: champion, location, combat, active trade, equipment lock and explicit salvage confirmation are enforced
+ok 7 - champion, location, combat, active trade, equipment lock and explicit salvage confirmation are enforced
+  ---
+  duration_ms: 6.868942
+  type: 'test'
+  ...
+# Subtest: database prevents bypassed royal equip and removes royal gear when champion status is lost
+ok 8 - database prevents bypassed royal equip and removes royal gear when champion status is lost
+  ---
+  duration_ms: 1.690044
+  type: 'test'
+  ...
+# Subtest: admin validation forbids hidden currencies, unknown fields, duplicate costs and zero-dust recipes; settings replay conflicts
+ok 9 - admin validation forbids hidden currencies, unknown fields, duplicate costs and zero-dust recipes; settings replay conflicts
+  ---
+  duration_ms: 3.364054
+  type: 'test'
+  ...
+# Subtest: mutations reject calls outside authoritative transaction and schema initialization is idempotent
+ok 10 - mutations reject calls outside authoritative transaction and schema initialization is idempotent
+  ---
+  duration_ms: 3.696424
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 320.407734
