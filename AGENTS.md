@@ -102,3 +102,10 @@ separate R120_ORIGIN1 Academy bundle and journaled ExecStart override. Preserve
 the original R102 record/bundle and all old ZIPs. 44 targeted tests passed,
 including real Node/signed WebSocket reproduction and installer rollback.
 V4 live application/full public acceptance is still pending. Read R120_DEVIR.md.
+
+R121 incident continuation: read `r109-inceleme/R121_DEVIR.md`. The active
+candidate isolates proven optional cleanup SQL rollbacks behind durable negative
+receipts. Original production SQLite error code was not captured; do not claim
+its exact cause was proven. Keep ambiguous commit/ACK and ownership recovery.
+The backend-only installer accepts exact R118/R119/R120 sources and preserves
+their installed clients. See R121 package/validation evidence before delivery.

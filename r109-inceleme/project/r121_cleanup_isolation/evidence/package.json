@@ -1,0 +1,38 @@
+{
+  "file": "artifacts/R121_CLEANUP_e996c2d0f228.zip",
+  "sha256": "d99b560c1842e25a677ff836a1b1f299f0aadc716a08398e9ed9cac4238836f7",
+  "bytes": 500760,
+  "sources": [
+    "R118_ROYAL1",
+    "R119_MOTION1",
+    "R120_2D_DEPOT1",
+    "R120_2D_DEPOT2",
+    "R120_2D_DEPOT3",
+    "R120_2D_DEPOT4"
+  ],
+  "targetVersion": "R121_CLEANUP1",
+  "targets": {
+    "R118_ROYAL1": {
+      "core": "547c4578a1ce740cf16e2df61a0e871a242ec60ce9990ae1ad75eb44fd79303f"
+    },
+    "R119_MOTION1": {
+      "core": "8f48add32a8d8f5930f48718ab03e0b0b32f7fb76e4ff340df08e958fe1b8716"
+    },
+    "R120_2D_DEPOT1": {
+      "core": "a2181d30bd4e624585a54a6c72dad923dbb97baa3686c5b661e551b632963ee9"
+    },
+    "R120_2D_DEPOT2": {
+      "core": "a2181d30bd4e624585a54a6c72dad923dbb97baa3686c5b661e551b632963ee9"
+    },
+    "R120_2D_DEPOT3": {
+      "core": "a2181d30bd4e624585a54a6c72dad923dbb97baa3686c5b661e551b632963ee9"
+    },
+    "R120_2D_DEPOT4": {
+      "core": "a2181d30bd4e624585a54a6c72dad923dbb97baa3686c5b661e551b632963ee9"
+    }
+  },
+  "changedCodeFiles": 5,
+  "databaseScope": "none",
+  "deployed": false,
+  "acceptance": "local-functional-and-installer-checks-passed; live-installation-pending"
+}

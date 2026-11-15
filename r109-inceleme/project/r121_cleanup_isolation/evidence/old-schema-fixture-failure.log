@@ -1,0 +1,63 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794782037824,"backupName":"before-pearl-reset-1794782037824-b6c12e2e-7f48-4d60-9b8c-edadf9be3311.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# pearl_reset {"applied":true,"appliedAtMs":1794782039353,"backupName":"before-pearl-reset-1794782039353-b63133fc-b782-4c76-b1d6-6a5125cc0331.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: exact installed server starts both realms with eight real channels outside the development tree
+not ok 1 - exact installed server starts both realms with eight real channels outside the development tree
+  ---
+  duration_ms: 3492.243606
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/relocated-entry.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+    file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/contract.mjs:14
+    export function kernelError(code) { return Object.assign(new Error(code), {code}); }
+                                                             ^
+    
+    Error: royal_schema_required_r118
+        at kernelError (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/contract.mjs:14:58)
+        at demand (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/contract.mjs:15:51)
+        at Object.atomic (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/native-http-bindings.mjs:77:5)
+        at perform (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:477:50)
+        at withPreparedStatements477 (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:98:20)
+        at scoped (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:479:28)
+        at LocalDatabase.drainWrites (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:480:93)
+        at file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:431:78
+        at AsyncLocalStorage.run (node:internal/async_local_storage/async_hooks:91:14)
+        at Immediate.<anonymous> (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:431:56) {
+      code: 'royal_schema_required_r118'
+    }
+    
+    Node.js v22.23.4
+    
+    
+    1 !== null
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: ~
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    kernelError (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/contract.mjs:14:58)
+    demand (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/contract.mjs:15:51)
+    Object.atomic (file:///tmp/r121-installed-f5tsf9g1/release/core511-source/scripts/core511/native-http-bindings.mjs:77:5)
+    perform (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:477:50)
+    withPreparedStatements477 (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/prepared-statements477.mjs:98:20)
+    scoped (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:479:28)
+    LocalDatabase.drainWrites (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:480:93)
+    file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:431:78
+    AsyncLocalStorage.run (node:internal/async_local_storage/async_hooks:91:14)
+    Immediate.<anonymous> (file:///tmp/r121-installed-f5tsf9g1/release/native510-bb3a6cc689c6/vds-server/src/database.mjs:431:56) {
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/tests/relocated-entry.test.mjs:57:32)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: relocated native captcha worker resolves its imports and produces a PNG
+ok 2 - relocated native captcha worker resolves its imports and produces a PNG
+  ---
+  duration_ms: 103.115229
+  type: 'test'
+  ...

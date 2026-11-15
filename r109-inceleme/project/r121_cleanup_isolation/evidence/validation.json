@@ -1,0 +1,88 @@
+{
+  "scope": "R121_CLEANUP1",
+  "liveInstalled": false,
+  "loadTest": false,
+  "checks": {
+    "focused": {
+      "passed": 26,
+      "failed": 0
+    },
+    "installer": {
+      "passed": 4,
+      "failed": 0,
+      "sourceSubcases": [
+        "R118_ROYAL1",
+        "R119_MOTION1",
+        "R120_2D_DEPOT4"
+      ]
+    },
+    "npm test": {
+      "passed": 60,
+      "failed": 0
+    },
+    "npm run test:native": {
+      "passed": 29,
+      "failed": 0
+    },
+    "npm run test:captcha": {
+      "passed": 20,
+      "failed": 0
+    },
+    "npm run test:r110": {
+      "installerPassed": 16,
+      "runtimePassed": 3,
+      "failed": 0,
+      "isolatedRerun": true
+    },
+    "installedR121": {
+      "passed": 2,
+      "failed": 0,
+      "realms": [
+        "r1",
+        "r2"
+      ],
+      "realChannels": 8,
+      "cleanupReadyBothRealms": true,
+      "cleanShutdown": true
+    }
+  },
+  "earlierFailures": [
+    {
+      "test": "R110 archived runtime boot during concurrent test runs",
+      "result": "channel_ipc_closed; one runtime test failed",
+      "resolution": "same immutable archive and checks passed on isolated rerun without changing runtime or checks",
+      "rootCauseProven": false
+    },
+    {
+      "test": "historical presence fixture in initial triage",
+      "result": "missing castle_entries_r59 table in synthetic schema",
+      "resolution": "not treated as production SQL diagnosis; fixture left unchanged"
+    },
+    {
+      "test": "new cleanup process fixture initial connection setup",
+      "result": "ticket admission needs channel selection; transfer fallback session_epoch_fenced",
+      "resolution": "use actual character login with channel:1; leave admission guards intact"
+    },
+    {
+      "test": "R109 generic relocated entry fixture against R121",
+      "result": "royal_schema_required_r118",
+      "resolution": "use existing R118 fixture that performs the explicit royal migration; no production code or guards changed; both realms passed"
+    }
+  ],
+  "guaranteesVerified": [
+    "rollback preserves earlier partial DELETE rows",
+    "negative receipt persists exactly once and is replayed",
+    "ACK blocked until fsync finishes",
+    "real WebSocket and five owner PIDs retained after recoverable cleanup error",
+    "same error with former handler reproduces all-owner recovery",
+    "60-second per-table backoff and later successful cleanup",
+    "forged/ownership/IO errors and failed rollback/fsync still reject",
+    "lost negative ACK retires old owners before recovery",
+    "installer failed-start rollback preserves player progress"
+  ],
+  "limits": [
+    "Original live SQLite code/message was absent from old diagnostics. Exact underlying SQL failure remains unproven.",
+    "Optional cleanup recovery accepts only connection-proven SQLite code 1 or primary 19 after confirmed savepoint rollback; other failures retain existing recovery.",
+    "No claim of zero latency or all possible incident causes fixed."
+  ]
+}
