@@ -1,0 +1,49 @@
+{
+  "scope": "Local serial 50-actor art rendering only; not live gameplay/server load. Nine runs: three quality levels × three repetitions, with 120 measured frames and 30 warm-up frames per run.",
+  "raw": "canvas-benchmark-clean-final.json",
+  "moduleSha256": "abc532ff4cd7f097e6f7e78d4f7e3b36414e553a511bdc6d7cc4303e9ea8920a",
+  "rows": [
+    {
+      "mode": "Efekt kapalı",
+      "actors": 50,
+      "runs": 3,
+      "drawSubmissionP95MedianMs": 0.5,
+      "drawSubmissionP95WorstMs": 1.8,
+      "drawSubmissionP99MedianMs": 1.6,
+      "drawSubmissionP99WorstMs": 3.1,
+      "drawSubmissionMaxMs": 3.9,
+      "rafOver50CountTotal": 0,
+      "drawCallsPerFrame": 101
+    },
+    {
+      "mode": "Tam efekt",
+      "actors": 50,
+      "runs": 3,
+      "drawSubmissionP95MedianMs": 2.1,
+      "drawSubmissionP95WorstMs": 4.8,
+      "drawSubmissionP99MedianMs": 3.1,
+      "drawSubmissionP99WorstMs": 7.2,
+      "drawSubmissionMaxMs": 7.3,
+      "rafOver50CountTotal": 1,
+      "drawCallsPerFrame": 191
+    },
+    {
+      "mode": "Düşük efekt",
+      "actors": 50,
+      "runs": 3,
+      "drawSubmissionP95MedianMs": 1.9,
+      "drawSubmissionP95WorstMs": 3.1,
+      "drawSubmissionP99MedianMs": 2.8,
+      "drawSubmissionP99WorstMs": 4.5,
+      "drawSubmissionMaxMs": 4.7,
+      "rafOver50CountTotal": 0,
+      "drawCallsPerFrame": 139
+    }
+  ],
+  "cgroupDelta": {
+    "nr_periods": 273,
+    "nr_throttled": 0,
+    "throttled_usec": 0
+  },
+  "limitation": "One requestAnimationFrame interval exceeded 50 ms in the third full-effect repetition. No zero-stutter claim. CPU draw submission is not GPU completion or network latency."
+}

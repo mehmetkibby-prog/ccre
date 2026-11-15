@@ -1,0 +1,259 @@
+{
+  "browser": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "reports": [
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.19999999925494194,
+        "p95": 0.5,
+        "p99": 0.599999999627471,
+        "max": 0.8999999994412065
+      },
+      "rafIntervalMs": {
+        "p95": 16.700000000000273,
+        "p99": 16.800000000000182,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.599999999627471,
+        "p95": 1.099999999627471,
+        "p99": 1.7999999998137355,
+        "max": 4.2000000001862645
+      },
+      "rafIntervalMs": {
+        "p95": 16.800000000000182,
+        "p99": 16.800000000000182,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 1,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.40000000037252903,
+        "p95": 0.6000000005587935,
+        "p99": 0.900000000372529,
+        "max": 2.2000000001862645
+      },
+      "rafIntervalMs": {
+        "p95": 16.700000000000728,
+        "p99": 16.799999999999272,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 139,
+        "max": 139
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.10000000055879354,
+        "p95": 0.39999999944120646,
+        "p99": 1.599999999627471,
+        "max": 3.900000000372529
+      },
+      "rafIntervalMs": {
+        "p95": 33.20000000000073,
+        "p99": 33.29999999999927,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.7000000001862645,
+        "p95": 4.7999999998137355,
+        "p99": 7.2000000001862645,
+        "max": 7.2999999998137355
+      },
+      "rafIntervalMs": {
+        "p95": 33.399999999999636,
+        "p99": 33.399999999999636,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 2,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.40000000037252903,
+        "p95": 3.099999999627471,
+        "p99": 4.5,
+        "max": 4.7000000001862645
+      },
+      "rafIntervalMs": {
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000109,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 139,
+        "max": 139
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 0,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.10000000055879354,
+        "p95": 1.7999999998137355,
+        "p99": 3.099999999627471,
+        "max": 3.400000000372529
+      },
+      "rafIntervalMs": {
+        "p95": 16.700000000000728,
+        "p99": 16.799999999999272,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 101,
+        "max": 101
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 1,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.5,
+        "p95": 2.099999999627471,
+        "p99": 3.099999999627471,
+        "max": 4.3999999994412065
+      },
+      "rafIntervalMs": {
+        "p95": 16.799999999999272,
+        "p99": 33.400000000001455,
+        "over50": 1
+      },
+      "drawCallsPerFrame": {
+        "min": 191,
+        "max": 191
+      }
+    },
+    {
+      "repeat": 3,
+      "actors": 50,
+      "quality": 0.5,
+      "frames": 120,
+      "drawSubmissionMs": {
+        "p50": 0.599999999627471,
+        "p95": 1.900000000372529,
+        "p99": 2.7999999998137355,
+        "max": 3.099999999627471
+      },
+      "rafIntervalMs": {
+        "p95": 16.799999999999272,
+        "p99": 16.80000000000291,
+        "over50": 0
+      },
+      "drawCallsPerFrame": {
+        "min": 139,
+        "max": 139
+      }
+    }
+  ],
+  "scope": "Local headless Chromium Canvas2D art-only benchmark, 50 royal actors; draw submission and requestAnimationFrame timing, not a live gameplay/network performance guarantee.",
+  "generatedAt": "2026-11-15T15:10:42.909Z",
+  "label": "clean-final",
+  "moduleSha256": "abc532ff4cd7f097e6f7e78d4f7e3b36414e553a511bdc6d7cc4303e9ea8920a",
+  "sourceState": "Final shared draw caps: full quality96, reduced quality48.",
+  "hostBefore": {
+    "loadAverage": [
+      0.51,
+      1.22,
+      1.33
+    ],
+    "cpuCount": 5,
+    "cgroupCpuMax": "400000 100000\n",
+    "cgroupCpuStat": "usage_usec 5330592726\nuser_usec 4188646786\nsystem_usec 1141945940\nnice_usec 0\nnr_periods 33931\nnr_throttled 1761\nthrottled_usec 73599460\nnr_bursts 0\nburst_usec 0\n",
+    "processSnapshot": [
+      "    PID %CPU COMMAND",
+      "  31077  100 node",
+      "  20800  3.3 chromium",
+      "   6932  0.4 node",
+      "  21482  0.1 node",
+      "    427  0.1 codex",
+      "  21467  0.1 node",
+      "  26044  0.1 node",
+      "  21520  0.1 node",
+      "  21531  0.1 node",
+      "  20117  0.1 node",
+      "  20461  0.1 node",
+      "  20451  0.0 node",
+      "  26083  0.0 node",
+      "    183  0.0 containerd",
+      "  20092  0.0 node"
+    ]
+  },
+  "hostAfter": {
+    "loadAverage": [
+      0.68,
+      1.2,
+      1.32
+    ],
+    "cpuCount": 5,
+    "cgroupCpuMax": "400000 100000\n",
+    "cgroupCpuStat": "usage_usec 5355760819\nuser_usec 4210043450\nsystem_usec 1145717368\nnice_usec 0\nnr_periods 34204\nnr_throttled 1761\nthrottled_usec 73599460\nnr_bursts 0\nburst_usec 0\n",
+    "processSnapshot": [
+      "    PID %CPU COMMAND",
+      "  31208  200 ps",
+      "  31191 71.3 chromium",
+      "  31092 14.3 chromium",
+      "  31175  4.9 chromium",
+      "  31077  4.7 node",
+      "  31134  4.4 chromium",
+      "  20800  3.2 chromium",
+      "  31113  1.1 chromium",
+      "  31144  0.6 chromium",
+      "   6932  0.4 node",
+      "  31114  0.3 chromium",
+      "  31184  0.2 chromium",
+      "  21482  0.1 node",
+      "    427  0.1 codex",
+      "  31159  0.1 chromium"
+    ]
+  }
+}

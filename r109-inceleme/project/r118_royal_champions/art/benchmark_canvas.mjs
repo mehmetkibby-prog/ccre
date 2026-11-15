@@ -2,9 +2,19 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+import os from 'node:os';
+import {execFileSync} from 'node:child_process';
 import {chromium} from '../../../node_modules/playwright/index.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const modulePath=path.resolve(root,'../../r109_latency_completion/working/core511-source/scripts/core511/royal-visuals-r118.mjs');
+const label=process.env.ROYAL_CANVAS_LABEL??'clean-final';
+if(!/^[a-z0-9-]{1,64}$/.test(label))throw Error('Invalid benchmark label');
+const reportPath=path.join(root,'canvas-benchmark-'+label+'.json');
+if(fs.existsSync(reportPath))throw Error('Evidence already exists; choose a new label');
+const maybeRead=p=>{try{return fs.readFileSync(p,'utf8');}catch{return null;}};
+const host=()=>({loadAverage:os.loadavg(),cpuCount:os.cpus().length,cgroupCpuMax:maybeRead('/sys/fs/cgroup/cpu.max'),cgroupCpuStat:maybeRead('/sys/fs/cgroup/cpu.stat'),processSnapshot:execFileSync('ps',['-eo','pid,pcpu,comm','--sort=-pcpu'],{encoding:'utf8'}).split('\n').slice(0,16)});
+const before=host();
 const server=http.createServer((req,res)=>{
  const name=decodeURIComponent(req.url.split('?')[0]);
  if(name==='/'){res.setHeader('Content-Type','text/html');res.end('<!doctype html><html><body style="margin:0;background:#132019"><canvas id="c" width="1280" height="720"></canvas></body></html>');return;}
@@ -43,7 +53,10 @@ try{
  });
  result.scope='Local headless Chromium Canvas2D art-only benchmark, 50 royal actors; draw submission and requestAnimationFrame timing, not a live gameplay/network performance guarantee.';
  result.generatedAt=new Date().toISOString();
- fs.writeFileSync(path.join(root,'canvas-benchmark.json'),JSON.stringify(result,null,2)+'\n');
- await page.screenshot({path:path.join(root,'previews/fifty-royal-actors.png')});
+ result.label=label;result.moduleSha256=createHash('sha256').update(fs.readFileSync(modulePath)).digest('hex');
+ result.sourceState='Final shared draw caps: full quality96, reduced quality48.';
+ result.hostBefore=before;result.hostAfter=host();
+ fs.writeFileSync(reportPath,JSON.stringify(result,null,2)+'\n');
+ await page.screenshot({path:path.join(root,'previews/fifty-royal-actors-'+label+'.png')});
  console.log(JSON.stringify(result,null,2));
 }finally{await browser.close();await new Promise(r=>server.close(r));}

@@ -44,5 +44,16 @@ Local Canvas benchmark: `canvas-benchmark.json` retains the initial three-repeat
 even the no-FX baseline recorded frame delays. These timings are not clean
 performance acceptance. They exposed that reduced quality still consumed the full
 shared budget; the final module caps reduced quality at 48 draws. A clean serial
-rerun is deferred until other heavy checks complete. An initial benchmark harness
+rerun was deferred until other heavy checks completed; final results follow below. An initial benchmark harness
 import path failed before running; its repository-relative path was corrected.
+
+Clean serial final measurement completed after other heavy tests stopped:
+`canvas-benchmark-clean-final.json` and `canvas-summary-clean-final.json`. Each
+mode rendered 50 actors in three repetitions. Full-effect draw-submission p95
+median/worst was 2.1/4.8 ms; p99 median/worst was 3.1/7.2 ms. Reduced-effect p95
+median/worst was 1.9/3.1 ms. Total draw calls were 191/full, 139/reduced and
+101/no-effects. Cgroup throttling delta was zero. One full-effect RAF interval
+exceeded 50 ms in the third repetition; this remains in the evidence and does
+not establish zero stutter. This is an art-only local Canvas measurement, not a
+server/network or live-device capacity guarantee. No game runtime or art assets
+were changed for this final measurement.
