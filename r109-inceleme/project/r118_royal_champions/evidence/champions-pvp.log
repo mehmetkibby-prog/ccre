@@ -1,0 +1,24 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794751728452,"backupName":"before-pearl-reset-1794751728452-85c33bba-f33b-4188-b3d1-f0d758803422.sqlite"}
+# Subtest: champions PvP all three roles and primary/AoE skills preserve native/memory parity
+ok 1 - champions PvP all three roles and primary/AoE skills preserve native/memory parity
+  ---
+  duration_ms: 2534.296498
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751731318,"backupName":"before-pearl-reset-1794751731318-88a8ff28-adb6-4b21-b0ea-ae05558d4f5f.sqlite"}
+# Subtest: champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+ok 2 - champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+  ---
+  duration_ms: 2537.500177
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5724.918814

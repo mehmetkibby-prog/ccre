@@ -1,0 +1,75 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794752510206,"backupName":"before-pearl-reset-1794752510206-2fc804b5-78af-499c-be4a-063bf510b83b.sqlite"}
+# Subtest: authenticated reentry restores only eligible champions and safely relocates ineligible stored players
+ok 1 - authenticated reentry restores only eligible champions and safely relocates ineligible stored players
+  ---
+  duration_ms: 2556.054303
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794752512085,"backupName":"before-pearl-reset-1794752512085-6bcc0f3c-8c2f-42f4-82b7-f7357e07d108.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:22:02.865Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":14932,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"062ee8d89580379aa2ee847f"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:22:02.866Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":14942,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"6f4794c2cef85ce1c8dbb227"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:22:02.866Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":14948,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"2bac8633712679841857f291"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:22:02.866Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":14958,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5b1ba89e803413ac87331116"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T14:22:02.928Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":14921,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"103cddf4810a53fed065ba97"}
+# Subtest: real four-owner runtime admits champions, streams map snapshots and deltas and propagates admin settings
+ok 2 - real four-owner runtime admits champions, streams map snapshots and deltas and propagates admin settings
+  ---
+  duration_ms: 12782.896907
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794752510082,"backupName":"before-pearl-reset-1794752510082-94493ead-0d49-4131-ba57-fd4442f433d7.sqlite"}
+# Subtest: champions native SQLite travel, combat, loot, collection and respawn
+ok 3 - champions native SQLite travel, combat, loot, collection and respawn
+  ---
+  duration_ms: 3785.549997
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794752512423,"backupName":"before-pearl-reset-1794752512423-2227caa5-1ee4-4a5f-b655-280e826f8c65.sqlite"}
+# Subtest: champions PvP all three roles and primary/AoE skills preserve native/memory parity
+ok 4 - champions PvP all three roles and primary/AoE skills preserve native/memory parity
+  ---
+  duration_ms: 7753.773958
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794752517281,"backupName":"before-pearl-reset-1794752517281-556f4b3f-7e33-4de2-8901-0724689958f0.sqlite"}
+# Subtest: champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+ok 5 - champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+  ---
+  duration_ms: 4793.209034
+  type: 'test'
+  ...
+# Subtest: initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+ok 6 - initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+  ---
+  duration_ms: 17.399044
+  type: 'test'
+  ...
+# Subtest: champion-only eligibility and open-map spawn geometry
+ok 7 - champion-only eligibility and open-map spawn geometry
+  ---
+  duration_ms: 0.723945
+  type: 'test'
+  ...
+# Subtest: admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+ok 8 - admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+  ---
+  duration_ms: 11.165272
+  type: 'test'
+  ...
+# Subtest: champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+ok 9 - champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+  ---
+  duration_ms: 0.953959
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19348.987415

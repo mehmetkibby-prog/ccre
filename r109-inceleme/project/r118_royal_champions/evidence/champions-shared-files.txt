@@ -1,0 +1,25 @@
+# Shared runtime files with champions map changes; parent owns combined commit.
+# Generated proof files are separately owned by royal_integration.
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/actor-section-reuse-r52.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/afk-policy.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/attack-loop.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-loot-r102.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-trigger-audit-r102.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/entry-writer.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/action-names.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/attack-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/attack-writer-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/cold-world-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/entry-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/notification-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/respawn-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/retaliation-rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/generated/rules.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/local-death-batch-r51.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/local-mixed-scope.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/loot-profile-cache-r61.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/mount-motion.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/mounts-model.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/mounts-rewards.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/r53-options.mjs
+r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/reward-actor-scope-r85.mjs

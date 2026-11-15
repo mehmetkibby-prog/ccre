@@ -1,0 +1,41 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794752164996,"backupName":"before-pearl-reset-1794752164996-529759c6-c7aa-4b5c-b69c-b382282e2dff.sqlite"}
+# Subtest: champions native SQLite travel, combat, loot, collection and respawn
+ok 1 - champions native SQLite travel, combat, loot, collection and respawn
+  ---
+  duration_ms: 3236.651744
+  type: 'test'
+  ...
+# Subtest: initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+ok 2 - initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+  ---
+  duration_ms: 100.863541
+  type: 'test'
+  ...
+# Subtest: champion-only eligibility and open-map spawn geometry
+ok 3 - champion-only eligibility and open-map spawn geometry
+  ---
+  duration_ms: 0.36282
+  type: 'test'
+  ...
+# Subtest: admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+ok 4 - admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+  ---
+  duration_ms: 51.217482
+  type: 'test'
+  ...
+# Subtest: champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+ok 5 - champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+  ---
+  duration_ms: 10.901896
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6657.079878

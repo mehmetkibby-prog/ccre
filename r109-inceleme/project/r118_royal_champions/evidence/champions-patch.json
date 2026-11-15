@@ -1,0 +1,418 @@
+[
+  {
+    "path": "generated/action-names.mjs",
+    "before": "cb3c4fb4fb5a752aed7bda3406036eef2af8bb7a3aa2854db678bbb4c64391d2",
+    "after": "47952b8f2afbc86e010f7089b35400e41a884fc8936e15053a4dda58ee32a43c",
+    "edits": [
+      {
+        "anchor": "'travel_zumrut'",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/attack-rules.mjs",
+    "before": "c21b9102b0f4fa9617be01bfd2f9ee779fb261dac72ffb670e34d6476a2f2ff2",
+    "after": "54846bd820269236631c15774c1294548fd3f53b4c8fe7da1cc2e942497eaf45",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {",
+        "count": 1
+      },
+      {
+        "anchor": "^(zumrut|forest|",
+        "count": 1
+      },
+      {
+        "anchor": "player.area==='black'||player.area==='rune_v2'",
+        "count": 5
+      },
+      {
+        "anchor": "player.area === \"black\" || player.area === \"rune_v2\"",
+        "count": 2
+      },
+      {
+        "anchor": "player.area !== \"rune_v2\" &&",
+        "count": 6
+      },
+      {
+        "anchor": "function resolveLootSourceKey(monster) {",
+        "count": 1
+      },
+      {
+        "anchor": "function profileFromDefeat(defeat, fallbackKey, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {",
+        "count": 1
+      },
+      {
+        "anchor": "function defaultLootSnapshot(target, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "function monsterXpReward(target, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "if(/^rune_v2\\.(tide|warden|sentinel|wraith|boss)$/.test(pending.loot_source_key))",
+        "count": 1
+      },
+      {
+        "anchor": "(target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:",
+        "count": 6
+      },
+      {
+        "anchor": "drop.monster_id.startsWith('rune-v2-')?'rune_v2':",
+        "count": 1
+      },
+      {
+        "anchor": "'weathered_iron','wing','infinite','pet','halloween_pumpkin'",
+        "count": 1
+      },
+      {
+        "anchor": "WHERE id=? AND area IN ('rune','rune_v2') AND EXISTS",
+        "count": 1
+      },
+      {
+        "anchor": "case \"travel_zumrut\":",
+        "count": 1
+      },
+      {
+        "anchor": "const destination = payload.action==='travel_zumrut'",
+        "count": 1
+      },
+      {
+        "anchor": "const target = destination === \"zumrut\"",
+        "count": 1
+      },
+      {
+        "anchor": "message: destination === \"zumrut\"",
+        "count": 1
+      },
+      {
+        "anchor": "if(payload.action==='travel_rune_v2'&&payload.confirmPvp!==true)",
+        "count": 1
+      },
+      {
+        "anchor": "AND (? != 'event' OR json_extract",
+        "count": 1
+      },
+      {
+        "anchor": "destination,destination,destination,destination).first()) return Response.json",
+        "count": 1
+      },
+      {
+        "anchor": "const respawnArea = player.area===CASTLE_AREA",
+        "count": 1
+      },
+      {
+        "anchor": "const respawnPoint = respawnArea==='event'",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/attack-writer-rules.mjs",
+    "before": "ad19cb45facfd3e6dbdf877c8228fe981bb2ef253bdd9bfac63247a8370f278a",
+    "after": "1688b6514fca9a63bcfacc5ed4a53964bbace04ea2f44cb1e5b4877eef6a0c17",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {",
+        "count": 1
+      },
+      {
+        "anchor": "^(zumrut|forest|",
+        "count": 1
+      },
+      {
+        "anchor": "player.area==='black'||player.area==='rune_v2'",
+        "count": 5
+      },
+      {
+        "anchor": "player.area === \"black\" || player.area === \"rune_v2\"",
+        "count": 2
+      },
+      {
+        "anchor": "player.area !== \"rune_v2\" &&",
+        "count": 6
+      },
+      {
+        "anchor": "function resolveLootSourceKey(monster) {",
+        "count": 1
+      },
+      {
+        "anchor": "function profileFromDefeat(defeat, fallbackKey, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {",
+        "count": 1
+      },
+      {
+        "anchor": "function defaultLootSnapshot(target, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "function monsterXpReward(target, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "if(/^rune_v2\\.(tide|warden|sentinel|wraith|boss)$/.test(pending.loot_source_key))",
+        "count": 1
+      },
+      {
+        "anchor": "(target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:",
+        "count": 6
+      },
+      {
+        "anchor": "drop.monster_id.startsWith('rune-v2-')?'rune_v2':",
+        "count": 1
+      },
+      {
+        "anchor": "'weathered_iron','wing','infinite','pet','halloween_pumpkin'",
+        "count": 1
+      },
+      {
+        "anchor": "WHERE id=? AND area IN ('rune','rune_v2') AND EXISTS",
+        "count": 1
+      },
+      {
+        "anchor": "case \"travel_zumrut\":",
+        "count": 1
+      },
+      {
+        "anchor": "const destination = payload.action==='travel_zumrut'",
+        "count": 1
+      },
+      {
+        "anchor": "const target = destination === \"zumrut\"",
+        "count": 1
+      },
+      {
+        "anchor": "message: destination === \"zumrut\"",
+        "count": 1
+      },
+      {
+        "anchor": "if(payload.action==='travel_rune_v2'&&payload.confirmPvp!==true)",
+        "count": 1
+      },
+      {
+        "anchor": "AND (? != 'event' OR json_extract",
+        "count": 1
+      },
+      {
+        "anchor": "destination,destination,destination,destination).first()) return Response.json",
+        "count": 1
+      },
+      {
+        "anchor": "const respawnArea = player.area===CASTLE_AREA",
+        "count": 1
+      },
+      {
+        "anchor": "const respawnPoint = respawnArea==='event'",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/channel-content-rules.mjs",
+    "before": "9471cff39d7f7d8c7a3536702275ff3dec7c1a855059f5fed3a46d962fc9f700",
+    "after": "45a56b6a4adf70b76cf3c8cf0098cf2d41a90152445efdd80289621b69d0e007",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "regionArray": "[\n\t\t\"forest\",\n\t\t\"frozen\",\n\t\t\"black\"\n\t]",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/cold-world-rules.mjs",
+    "before": "a7658f7685769c0b8d1325d0567303f28812e3a006227e07179a1f13ee4cb5ed",
+    "after": "97aaf4fdd5d46d7736b01fd2c0e58ddf7167401429e00e35152b832bdc5b0a89",
+    "edits": [
+      {
+        "anchor": "WHEN monster_id LIKE 'event-%' THEN",
+        "count": 1
+      },
+      {
+        "anchor": "runeV2:{enabled:",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/entry-rules.mjs",
+    "before": "bb07882ee543c0e10e729b7b0a1a0bc83f2ecaac047e4cf536253c552346b957",
+    "after": "3833777dd7bcbfc782a6069b7bdabcc49b7f6cc7725e067e3e85ec76ab13ea0e",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 2
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "path": "generated/native-world-startup.mjs",
+    "before": "3ec42b8052ded8c3d3e2c8487835138ce0af19a04b8740643c8b465442a17445",
+    "after": "dd323d3592fda6fe5258dc9280716a3da82200a3b29583deac0467e343595439",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "regionArray": "[\n\t\t\"forest\",\n\t\t\"frozen\",\n\t\t\"black\"\n\t]",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/notification-rules.mjs",
+    "before": "18c5a02bff4ffa1599256a21d97a64a4f0d3a98faa78b2e7f9e0fe494fb1e0ed",
+    "after": "ff6fe8e68ce6d2a9a35ce1fefca7f7b3993bb776b9f3d794380b89f7b995d1a1",
+    "edits": [
+      {
+        "anchor": "^(zumrut|forest|",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "path": "generated/respawn-rules.mjs",
+    "before": "7d58a90245e7708f32a36e0f5ffe2e15e7b38cf3d775a5cd07f38ea9f3eaa3c1",
+    "after": "8ea109127196e322bfa0ba238a107f8cdc2daa02f3e1b2d4c2895d784cb71d2a",
+    "edits": [
+      {
+        "anchor": "if(monster.area==='rune_v2'){const cfg=",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/retaliation-rules.mjs",
+    "before": "ebccc201bf17a834248b991b3bbb5b2e730e131d65ee177cf38e7100aa1b2d8b",
+    "after": "9dfbb07bd9855a2d7f4dbb492904eb832a50aab820768e1579b510ba7ee26e47",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "anchor": "function pveDamage(monster, armorPower, player, settings) {",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "generated/rules.mjs",
+    "before": "a2e0b4da31f9e506d508742ae791d4575ff8faf2e4a5a5791bf3623283d7dcc9",
+    "after": "6bb0314faa6f52629e6999ef0b47d74a93fad3b62086d71a55148f289a786f2f",
+    "edits": [
+      {
+        "anchor": "function areaWorld(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkablePosition(area, x, y) {",
+        "count": 1
+      },
+      {
+        "anchor": "function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {",
+        "count": 1
+      },
+      {
+        "anchor": "function validArea(area) {",
+        "count": 1
+      },
+      {
+        "anchor": "^(zumrut|forest|",
+        "count": 1
+      },
+      {
+        "anchor": "function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {",
+        "count": 1
+      },
+      {
+        "anchor": "function monsterXpReward(target, settings) {",
+        "count": 1
+      },
+      {
+        "anchor": "function pveDamage(monster, armorPower, player, settings) {",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "path": "r53-options.mjs",
+    "before": "e316af348b443972aaf82e21c8cacbd86c51cc989cb0a8d3195a8a8f09777224",
+    "after": "97b4a51e3df529171cb3651ba0a9910f0e1756fb7e2acfcef744c6ddc59e9eb2"
+  },
+  {
+    "path": "actor-section-reuse-r52.mjs",
+    "before": "6826982505548372115970ce534e7a5267d84f092c66aa50df3f630de9ef2fde",
+    "after": "6c6effc97b052ed11b2221f12213003e460c927eb3b826bf56ff0e23e924050e"
+  },
+  {
+    "path": "reward-actor-scope-r85.mjs",
+    "before": "ea7079a6025e406b60d59ad0830a749c9627864f20e109f75ce207ad40af64c0",
+    "after": "02b32650831cf7bb285e08423fde3ba8c702b5d576eeb8989c5945e95a568cbc"
+  },
+  {
+    "path": "local-death-batch-r51.mjs",
+    "before": "0b959f8ae24a430d4414c75a03aae22c703f488836147216208f95c9d2daec71",
+    "after": "bec90c8dc4f09c8ff2847d007f8afae360fd8e9648e9816c19e851f185669c1f"
+  },
+  {
+    "path": "attack-loop.mjs",
+    "before": "bf4d1917670012b163bddb5ffabd75c60cbf1db3ef5d247e64319e2716b28c7e",
+    "after": "a16e20c0b3562da1a1925a8543bfac95582cdccd659541aa7f6f4739f68c5089"
+  },
+  {
+    "path": "local-mixed-scope.mjs",
+    "before": "fbecbbdc78979350304492fe024e293075862c68325c43dfa43eee71a7f23d0f",
+    "after": "2f80ba5ffd057789783149813a7405eed96e00664c87b552f5ac460004ac2d78"
+  },
+  {
+    "path": "loot-profile-cache-r61.mjs",
+    "before": "6b64f3e5b175d38fcf80e93a18c4c44777c4c975bf1a2d77cc0970b14d7ca1fc",
+    "after": "80c88a8b9a31d445ef69a3df08ed04071a892da738ea9db3f4b188325f92b505"
+  }
+]
