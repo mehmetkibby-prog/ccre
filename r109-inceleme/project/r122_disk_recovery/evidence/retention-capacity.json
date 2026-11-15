@@ -1,0 +1,15 @@
+{
+  "scenario": "60 seconds simulated idle windows; virtual clock and fixed 1 ms SELECT budget cost; scheduling regression test, not measured live throughput",
+  "before": {
+    "removed": 60,
+    "passes": 60,
+    "maxBatchMs": 1,
+    "wallMs": 55.042213
+  },
+  "after": {
+    "removed": 10000,
+    "passes": 453,
+    "maxBatchMs": 1,
+    "wallMs": 463.402678
+  }
+}

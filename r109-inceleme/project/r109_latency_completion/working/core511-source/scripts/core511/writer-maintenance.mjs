@@ -8,14 +8,16 @@ export function retentionMinutes(value=process.env.CORE511_RETENTION_MINUTES){co
 // deleted; ACKed audience rows can be removed without changing R34 replay.
 export class WriterMaintenance {
  constructor(writer,{clock=Date.now,retention=r35Options.retention,idleCheckpoint=r35Options.idleCheckpoint,minutes=retentionMinutes()}={}){
-  Object.assign(this,{writer,database:writer.database,clock,retention,idleCheckpoint,minutes});this.timer=null;this.retryTimer=null;this.running=null;this.closed=false;this.batch=1;this.cursors={system:0,notifications:0};this.ceilings={system:null,notifications:null};this.nextFamily=0;this.lastCheckpoint=0;this.nextPassAt=0;this.budgetMs=0;this.metrics={passes:0,skipped:0,receipts:0,system:0,notifications:0,images:0,checkpoints:0,errors:0,maxBatchMs:0,batches:0,budgetOverruns:0};
+  Object.assign(this,{writer,database:writer.database,clock,retention,idleCheckpoint,minutes});this.timer=null;this.retryTimer=null;this.running=null;this.closed=false;this.batch=1;this.familyBatches={};this.familyBacklog=new Set();this.family='channel';this.catchUp=false;this.lastProgressAt=0;this.lastLogAt=0;this.cursors={system:0,notifications:0};this.ceilings={system:null,notifications:null};this.nextFamily=0;this.lastCheckpoint=0;this.nextPassAt=0;this.budgetMs=0;this.metrics={passes:0,skipped:0,receipts:0,system:0,notifications:0,images:0,checkpoints:0,errors:0,maxBatchMs:0,batches:0,budgetOverruns:0};
  }
  idle(){const d=this.database,w=d.walSync;return !this.closed&&!d.closed&&!d.maintenance&&!d.sqlite.isTransaction&&!d.writeQueue?.length&&!d.writeDrain&&!w?.running&&!w?.waiting?.length&&!this.writer.inflight&&!this.writer.system.pending&&!this.writer.sharedCombat?.busy&&!this.writer.sharedCombat?.terminal;}
- poll(){void this.step().catch(error=>{this.metrics.errors++;if(this.metrics.errors<=4)console.warn(JSON.stringify({type:'core511_writer_maintenance',code:error.code??'maintenance_failed'}));});}
- start(){if(this.timer||this.closed||!this.retention&&!this.idleCheckpoint)return;this.timer=setInterval(()=>this.poll(),1000);this.timer.unref?.();}
+ snapshot(){return {version:'R122_RETENTION1',enabled:this.retention,minutes:this.minutes,lastProgressAt:this.lastProgressAt,catchUp:this.catchUp,batchByFamily:{...this.familyBatches},...this.metrics};}
+ poll(){void this.step().catch(error=>{this.metrics.errors++;if(this.metrics.errors<=4)console.warn(JSON.stringify({type:'core511_writer_maintenance',code:error.code??'maintenance_failed',sqliteCode:Number.isInteger(error.errcode)?error.errcode:null}));}).finally(()=>{const now=this.clock();if(now-this.lastLogAt>=60000){this.lastLogAt=now;console.log(JSON.stringify({type:'core511_retention_r122',...this.snapshot()}));}});}
+ start(){if(this.timer||this.closed||!this.retention&&!this.idleCheckpoint)return;this.timer=setInterval(()=>this.poll(),100);this.timer.unref?.();}
  // A busy one-second tick must not be the only chance to observe an idle gap.
- // Keep at most one cheap retry timer; successful work still has the original
- // one-second rate limit and every original writer/WAL/ownership idle guard.
+ // At most one retry timer. Every original writer/WAL/ownership idle guard
+ // remains. Expired rows permit a 100 ms follow-up with a smaller 2 ms budget;
+ // empty passes return to one second. No table scans on timer-only polls.
  retryIdle(){if(this.retryTimer||!this.timer||this.closed)return;this.retryTimer=setTimeout(()=>{this.retryTimer=null;this.poll();},100);this.retryTimer.unref?.();}
  close(){this.closed=true;clearInterval(this.timer);clearTimeout(this.retryTimer);this.timer=null;this.retryTimer=null;}
  async step(){
@@ -23,18 +25,26 @@ export class WriterMaintenance {
   if(this.clock()<this.nextPassAt){this.metrics.skipped++;return;}
   if(!this.idle()){this.metrics.skipped++;this.retryIdle();return;}
   clearTimeout(this.retryTimer);this.retryTimer=null;
-  this.nextPassAt=this.clock()+1000;this.budgetMs=4;
-  const task=this.run();this.running=task;try{return await task;}finally{if(this.running===task)this.running=null;}
+  const started=this.clock();this.nextPassAt=started+1000;this.budgetMs=2;this.catchUp=this.familyBacklog.size>0;
+  const task=this.run();this.running=task;try{return await task;}finally{this.nextPassAt=started+(this.catchUp?100:1000);if(this.running===task)this.running=null;}
  }
  async atomic(work){
   if(!this.idle()||this.budgetMs<=0)return {changes:0,skipped:true};
-  return this.database.atomic(sql=>{
+  const result=await this.database.atomic(sql=>{
    // Recheck after joining the FIFO: a player job queued in that intervening
    // turn has priority. Do not consume a maintenance batch in its group.
    if(this.database.writeQueue?.length||this.closed)return {changes:0,skipped:true};
    const started=performance.now();this.deadline=started+Math.min(2,this.budgetMs);const result=work(sql),ms=performance.now()-started;this.metrics.maxBatchMs=Math.max(this.metrics.maxBatchMs,ms);this.metrics.batches++;this.budgetMs-=ms;
-   if(ms>2){this.batch=Math.max(1,Math.floor(this.batch/2));this.metrics.budgetOverruns++;}else if(ms<.5)this.batch=Math.min(128,this.batch+1);return result;
+   if(ms>2){this.batch=Math.max(1,Math.floor(this.batch/2));this.metrics.budgetOverruns++;}else if(ms<1.5)this.batch=Math.min(128,this.batch+1);
+   this.familyBatches[this.family]=this.batch;
+   return result;
   });
+  if(!result.skipped){
+   if(Number(result.changes??0)>0){this.familyBacklog.add(this.family);this.lastProgressAt=this.clock();}
+   else if(this.family==='channel'||this.family==='images'||result.ceiling===null)this.familyBacklog.delete(this.family);
+   this.catchUp=this.familyBacklog.size>0;
+  }
+  return result;
  }
  async run(){
   this.metrics.passes++;const before=Math.floor(this.clock()-this.minutes*60000);
@@ -46,7 +56,7 @@ export class WriterMaintenance {
    const start=this.nextFamily%families.length;this.nextFamily=(start+1)%families.length;
    for(let offset=0;offset<families.length;offset++){
     if(!this.idle()||this.budgetMs<=0)break;
-    const family=families[(start+offset)%families.length];
+    const family=families[(start+offset)%families.length];this.family=family;this.batch=this.familyBatches[family]??1;
     if(family==='channel'){
     // Reuse the exact authority pruning operation, through an idle-only
     // database port. No ownership/replay implementation is duplicated here.
