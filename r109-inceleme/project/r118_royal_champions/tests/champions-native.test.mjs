@@ -22,7 +22,7 @@ let v=act({action:'travel_champions',confirmPvp:true});assert.equal(v.status,403
 sql.prepare("UPDATE players SET champion_level_r102=1 WHERE id='real-1'").run();v=act({action:'travel_champions'});assert.equal(v.status,403,JSON.stringify(v));
 v=act({action:'travel_champions',confirmPvp:true});assert.equal(v.status,200,JSON.stringify(v));assert.equal(sql.prepare("SELECT area FROM players WHERE id='real-1'").get().area,'champions');
 const common=createRules({globals,now:()=>now});assert(common.validArea('champions'));assert(common.isAreaWalkableSegment('champions',1800,1950,400,400));assert(!common.isAreaWalkableSegment('champions',1800,1950,10,10));
-const mob=sql.prepare("SELECT * FROM monsters WHERE id='champions-ivory_guard-c1-01'").get();assert.equal(common.monsterXpReward(mob,settings),globals.__colChampionsR118.monster(mob).xp);
+const mob=sql.prepare("SELECT * FROM monsters WHERE id='champions-ivory-guard-c1-01'").get();assert.equal(common.monsterXpReward(mob,settings),globals.__colChampionsR118.monster(mob).xp);
 const actor=sql.prepare("SELECT * FROM players WHERE id='real-1'").get();const damage=common.pveDamage(mob,0,actor,settings);assert.equal(damage.raw,globals.__colChampionsR118.monster(mob).damage);
 sql.prepare("INSERT INTO world_drops(id,owner_id,monster_id,kind,item_name,rarity,power,amount,role,enchantments,x,y,expires_at,collectible_at) VALUES('r118-crown','real-1',?,'royal_crown','Kraliyet Tacı','royal',0,1,NULL,'[]',1800,1950,120,100)").run(mob.id);
 v=act({action:'collect',targetId:'r118-crown'});assert.equal(v.status,200,JSON.stringify(v));assert.equal(sql.prepare("SELECT amount FROM dungeon_materials WHERE player_id='real-1' AND kind='royal_crown'").get().amount,1);

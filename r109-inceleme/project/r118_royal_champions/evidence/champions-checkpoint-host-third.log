@@ -1,0 +1,44 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794756683286,"backupName":"before-pearl-reset-1794756683286-1acc61d3-769a-4ad0-b9e5-95bb0c48a4de.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:31:46.495Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":34836,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b87a85291fb5a7911d3f2be9"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:31:46.496Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":34866,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"63d5b4cfb818c006cb2d5686"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:31:46.496Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":34886,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"14ec68e4e3ff452e27cb54bd"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:31:46.500Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":34915,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"16dc3e0080fd0935e4452fd5"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:31:46.550Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":34782,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"79f84d146a5c16d584124dd0"}
+# Subtest: production-flags owner stream checkpoints nonlethal damage, kills, claims and collects a champion monster without disconnecting
+not ok 1 - production-flags owner stream checkpoints nonlethal damage, kills, claims and collects a champion monster without disconnecting
+  ---
+  duration_ms: 25241.385379
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/champions-checkpoint-host.test.mjs:10:1'
+  failureType: 'testCodeFailure'
+  error: 'real joined checkpoint path was exercised'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/champions-checkpoint-host.test.mjs:29:37)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# {"attack":0,"hit":{"id":"champions-ivory-guard-c1-01","damage":34,"hp":266,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":1,"hit":{"id":"champions-ivory-guard-c1-01","damage":35,"hp":231,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":2,"hit":{"id":"champions-ivory-guard-c1-01","damage":54,"hp":177,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":3,"hit":{"id":"champions-ivory-guard-c1-01","damage":35,"hp":142,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":4,"hit":{"id":"champions-ivory-guard-c1-01","damage":30,"hp":112,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":5,"hit":{"id":"champions-ivory-guard-c1-01","damage":30,"hp":82,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":6,"hit":{"id":"champions-ivory-guard-c1-01","damage":30,"hp":52,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":7,"hit":{"id":"champions-ivory-guard-c1-01","damage":33,"hp":19,"killed":false,"critical":false,"spawnRound":17,"elemental":[]},"joined":0}
+# {"attack":8,"hit":{"id":"champions-ivory-guard-c1-01","damage":48,"hp":0,"killed":true,"critical":true,"spawnRound":17,"elemental":[]},"joined":0}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29363.698069

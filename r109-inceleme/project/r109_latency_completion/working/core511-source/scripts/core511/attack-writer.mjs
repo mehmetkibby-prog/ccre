@@ -1,3 +1,4 @@
+import {ordinaryChampionsMonsterR118} from './champions-config-r118.mjs';
 import {capturePortalCreationR57} from './portal-refresh-r57.mjs';
 import {executeDeathBatchR57} from './death-batch-writer-r57.mjs';
 import {localRewardBudgetR57} from './local-reward-budget-r57.mjs';
@@ -114,7 +115,7 @@ export function createAttackWriterHandler({settingsFor,globalsFor,assertOwnershi
   rewardBudgetR56=localRewardBudgetR57(payload,frame.player.area,killedIds,rewardBudgetR56);
   if(eagerNormalRewardsR53)for(const hit of result.body?.hits??[])if(hit.killed){
    const m=prepareCached477(sqlite,'SELECT id,area,channel,is_boss,is_stone,summoned FROM monsters WHERE id=?').get(hit.id);
-   if(m&&m.channel>0&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||payload.localScope?.kind==='kill'&&(instanceRewardAreaR71(m.area)||ordinaryRuneRewardR87(m)))){
+   if(m&&m.channel>0&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||ordinaryChampionsMonsterR118(m)||payload.localScope?.kind==='kill'&&(instanceRewardAreaR71(m.area)||ordinaryRuneRewardR87(m)))){
     if(rewardBudgetR56--<=0)continue;
     const awarded=sync(rules.awardPendingNormalRewards(db,settings,Math.floor(nowMs/1000),{id:hit.id,spawn_round:hit.spawnRound}));
     // Native eligibility deliberately returns null for an unknown loot source

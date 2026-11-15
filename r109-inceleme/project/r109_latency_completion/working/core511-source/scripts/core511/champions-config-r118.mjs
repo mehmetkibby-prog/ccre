@@ -12,7 +12,11 @@ export const CHAMPIONS_MOBS_R118=Object.freeze([
 ]);
 export const CHAMPIONS_LOOT_LABELS_R118=Object.freeze({...Object.fromEntries(Object.entries(RUNE_LOOT_LABELS).filter(([key])=>key!=='essence')),royal_crown:'Kraliyet Tacı'});
 export const championsEligibleR118=player=>Number.isSafeInteger(player?.champion_level_r102)&&player.champion_level_r102>=1;
-export function championsMonsterKeyR118(monster){if(monster?.area!==CHAMPIONS_AREA_R118)return null;return /^champions-(ivory_guard|golden_lion|crescent_hunter|royal_colossus)-c[1-4]-(0[1-9]|1[0-2])$/.exec(String(monster.id))?.[1]??null;}
+export function championsMonsterIdR118(key,channel,slot){if(!CHAMPIONS_MOBS_R118.some(m=>m.key===key)||!Number.isSafeInteger(channel)||channel<1||channel>4||!Number.isSafeInteger(slot)||slot<1||slot>12)throw Error('champions_monster_identity_r118');return `champions-${key.replaceAll('_','-')}-c${channel}-${String(slot).padStart(2,'0')}`;}
+export function championsMonsterKeyR118(monster){if(monster?.area!==CHAMPIONS_AREA_R118)return null;return /^champions-(ivory-guard|golden-lion|crescent-hunter|royal-colossus)-c[1-4]-(0[1-9]|1[0-2])$/.exec(String(monster.id))?.[1]?.replaceAll('-','_')??null;}
+// The joined writer may accept only the migrated ordinary catalog, never an
+// arbitrary same-area row or a boss/summon masquerading as a normal monster.
+export function ordinaryChampionsMonsterR118(monster){return Boolean(championsMonsterKeyR118(monster)&&monster.is_boss===0&&monster.is_stone===0&&monster.summoned===0&&Number.isSafeInteger(monster.channel)&&monster.channel>=1&&monster.channel<=4&&monster.id.includes('-c'+monster.channel+'-'));}
 export function championsWalkableR118(x,y,margin=0){return Number.isFinite(x)&&Number.isFinite(y)&&Number.isFinite(margin)&&margin>=0&&x>=Math.max(80,margin)&&x<=3600-Math.max(80,margin)&&y>=Math.max(100,margin)&&y<=2400-Math.max(80,margin);}
 export const championsSegmentR118=(x,y,tx,ty,margin=0)=>championsWalkableR118(x,y,margin)&&championsWalkableR118(tx,ty,margin);
 // Fixed irregular points keep movement deterministic without regenerating a layout

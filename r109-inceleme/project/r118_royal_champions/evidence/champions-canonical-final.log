@@ -1,0 +1,81 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794756623987,"backupName":"before-pearl-reset-1794756623987-f1d72876-199a-47ac-bffa-0322b72f4e3c.sqlite"}
+# Subtest: authenticated reentry restores only eligible champions and safely relocates ineligible stored players
+ok 1 - authenticated reentry restores only eligible champions and safely relocates ineligible stored players
+  ---
+  duration_ms: 4276.664529
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794756628293,"backupName":"before-pearl-reset-1794756628293-d21dfd19-2720-4998-a1aa-2a93919ef942.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:30:46.506Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":34513,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1213c3e6ba46f23edf9960d9"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:30:46.506Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":34537,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"038578300627b082debcf4ec"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:30:46.507Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":34552,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"cef06cc46753d244f62289c0"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:30:46.507Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":34562,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4ac809f2c3b8f1ebd7576f74"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T15:30:46.574Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":113,"column":44},{"file":"world-supervisor.mjs","line":129,"column":165}],"channel":0,"pid":34502,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"d779d053650cac691c5e9bca"}
+# Subtest: real four-owner runtime admits champions, streams map snapshots and deltas and propagates admin settings
+ok 2 - real four-owner runtime admits champions, streams map snapshots and deltas and propagates admin settings
+  ---
+  duration_ms: 22120.943661
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794756618303,"backupName":"before-pearl-reset-1794756618303-d1cc7cd5-07d0-4753-b3c3-3098c99e1d9a.sqlite"}
+# Subtest: champions native SQLite travel, combat, loot, collection and respawn
+ok 3 - champions native SQLite travel, combat, loot, collection and respawn
+  ---
+  duration_ms: 4267.081528
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794756613832,"backupName":"before-pearl-reset-1794756613832-ca51b609-8cda-4b67-832b-e847edef6218.sqlite"}
+# Subtest: champions PvP all three roles and primary/AoE skills preserve native/memory parity
+ok 4 - champions PvP all three roles and primary/AoE skills preserve native/memory parity
+  ---
+  duration_ms: 3010.269713
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794756617008,"backupName":"before-pearl-reset-1794756617008-fc2deee0-ccda-48cf-8db4-a51f187d865a.sqlite"}
+# Subtest: champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+ok 5 - champions PvP death keeps gems and equipment, respawns in map, and rejects unqualified return
+  ---
+  duration_ms: 2924.787352
+  type: 'test'
+  ...
+# Subtest: initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+ok 6 - initialization seeds four channels from each realm actual rune values only once and preserves existing monsters
+  ---
+  duration_ms: 17.710432
+  type: 'test'
+  ...
+# Subtest: champion-only eligibility and open-map spawn geometry
+ok 7 - champion-only eligibility and open-map spawn geometry
+  ---
+  duration_ms: 0.80764
+  type: 'test'
+  ...
+# Subtest: admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+ok 8 - admin revision CAS, bounds and frozen earned-loot snapshots survive configuration changes
+  ---
+  duration_ms: 11.286639
+  type: 'test'
+  ...
+# Subtest: champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+ok 9 - champions loot obeys only saved admin rates, uses one authoritative owner and no implicit global event drops
+  ---
+  duration_ms: 1.494239
+  type: 'test'
+  ...
+# Subtest: only catalog-bound ordinary champions can join the durable checkpoint and reward path
+ok 10 - only catalog-bound ordinary champions can join the durable checkpoint and reward path
+  ---
+  duration_ms: 2.477159
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 36414.827471

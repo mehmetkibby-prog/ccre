@@ -1,3 +1,4 @@
+import {ordinaryChampionsMonsterR118} from './champions-config-r118.mjs';
 import {readResourceMonstersR56} from './resource-reads-r56.mjs';
 import {demand} from './contract.mjs';
 import {createActorCheckpointHandler} from './actor-checkpoint.mjs';
@@ -24,7 +25,7 @@ export function createJoinedCheckpointR53(authority){
   demand(Array.isArray(actors)&&actors.length>0&&actors.length<=25&&new Set(actors.map(a=>a.actor)).size===actors.length&&actors.some(a=>a.actor===context.actor),'checkpoint_join_actors');
   demand(targets.size>0&&targets.size<=(payload.localScope.kind==='mixed'?localMixedTargetLimitR51:10)&&journal&&journal.bossParticipants?.length===0&&journal.monsters.every(r=>targets.has(r.current.id)&&!r.current.is_boss&&!r.current.is_stone)&&journal.participants.every(r=>targets.has(r.current.monster_id)&&held.has('player:'+r.current.player_id))&&journal.combatEvents.every(r=>targets.has(r.target_id)&&held.has('player:'+r.player_id)),'checkpoint_join_journal');
   const monstersR56=readResourceMonstersR56(sql,payload.localScope.targets.map(t=>t.id),'scope');
-  for(const t of payload.localScope.targets){const m=monstersR56?monstersR56.get(t.id):sql.prepare('SELECT id,area,channel,spawn_round,is_boss,is_stone,summoned FROM monsters WHERE id=?').get(t.id);demand(m&&m.channel===context.peer.channel&&m.spawn_round===t.spawnRound&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||payload.localScope.kind==='kill'&&(instanceRewardAreaR71(m.area)||ordinaryRuneRewardR87(m)))&&held.has('monster:'+t.id),'checkpoint_join_monster');}
+  for(const t of payload.localScope.targets){const m=monstersR56?monstersR56.get(t.id):sql.prepare('SELECT id,area,channel,spawn_round,is_boss,is_stone,summoned FROM monsters WHERE id=?').get(t.id);demand(m&&m.channel===context.peer.channel&&m.spawn_round===t.spawnRound&&!m.is_boss&&!m.is_stone&&(['forest','frozen','black','ancient','sanctum'].includes(m.area)||ordinaryChampionsMonsterR118(m)||payload.localScope.kind==='kill'&&(instanceRewardAreaR71(m.area)||ordinaryRuneRewardR87(m)))&&held.has('monster:'+t.id),'checkpoint_join_monster');}
   const saved=[];sql.exec('SAVEPOINT core511_join_r53');
   try{
    for(const row of actors){

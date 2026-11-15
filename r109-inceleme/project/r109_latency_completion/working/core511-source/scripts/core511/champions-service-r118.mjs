@@ -1,6 +1,6 @@
 import {createHash} from 'node:crypto';
 import {prepareServerStatement} from './server-statements.mjs';
-import {CHAMPIONS_MOBS_R118,CHAMPIONS_SPAWNS_R118,CHAMPIONS_LOOT_LABELS_R118,championsMonsterKeyR118,championsLootSnapshotR118,defaultChampionsConfigR118,validateChampionsConfigR118} from './champions-config-r118.mjs';
+import {CHAMPIONS_MOBS_R118,CHAMPIONS_SPAWNS_R118,CHAMPIONS_LOOT_LABELS_R118,championsMonsterKeyR118,championsMonsterIdR118,championsLootSnapshotR118,defaultChampionsConfigR118,validateChampionsConfigR118} from './champions-config-r118.mjs';
 
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const q=(sql,text)=>prepareServerStatement(sql,text);
@@ -33,14 +33,14 @@ export function ensureChampionsSchemaR118(sql){
   }
   const settings=q(sql,'SELECT revision,config_json FROM champions_settings_r118 WHERE id=1').get(),config=validateChampionsConfigR118(JSON.parse(settings.config_json));
   const insert=q(sql,"INSERT OR IGNORE INTO monsters(id,name,x,y,hp,max_hp,variant,area,channel,is_boss,is_stone,summoned,respawn_at,spawn_round) VALUES(?,?,?,?,?,?,'normal','champions',?,0,0,0,0,1)");
-  for(let channel=1;channel<=4;channel++)for(const spawn of CHAMPIONS_SPAWNS_R118){const mob=config.monsters[spawn.key];insert.run(`champions-${spawn.key}-c${channel}-${String(spawn.slot).padStart(2,'0')}`,mob.name,spawn.x,spawn.y,mob.hp,mob.hp,channel);}
+  for(let channel=1;channel<=4;channel++)for(const spawn of CHAMPIONS_SPAWNS_R118){const mob=config.monsters[spawn.key];insert.run(championsMonsterIdR118(spawn.key,channel,spawn.slot),mob.name,spawn.x,spawn.y,mob.hp,mob.hp,channel);}
   if(own){sql.exec('COMMIT');initialized.add(sql);}
  }catch(error){if(own&&sql.isTransaction)sql.exec('ROLLBACK');throw error;}
 }
 export function createChampionsSnapshotR118(settings){
  const current=freeze({revision:settings.revision,config:validateChampionsConfigR118(settings.config)});
  if(!Number.isSafeInteger(current.revision)||current.revision<1)throw Error('champions_revision_r118');
- const snapshots=Object.fromEntries(CHAMPIONS_MOBS_R118.map(m=>[m.key,championsLootSnapshotR118(current,{id:`champions-${m.key}-c1-01`,area:'champions'})]));
+ const snapshots=Object.fromEntries(CHAMPIONS_MOBS_R118.map(m=>[m.key,championsLootSnapshotR118(current,{id:championsMonsterIdR118(m.key,1,1),area:'champions'})]));
  return Object.freeze({settings:()=>({...current,lootLabels:CHAMPIONS_LOOT_LABELS_R118,species:CHAMPIONS_MOBS_R118}),monster:m=>current.config.monsters[championsMonsterKeyR118(m)]??null,lootSnapshot:m=>snapshots[championsMonsterKeyR118(m)]??null});
 }
 export function createChampionsR118(sql){
@@ -53,7 +53,7 @@ export function createChampionsR118(sql){
   try{
    if(q(sql,'UPDATE champions_settings_r118 SET config_json=?,revision=revision+1 WHERE id=1 AND revision=?').run(JSON.stringify(config),revision).changes!==1)throw Object.assign(Error('Ayarlar değişti. Yenileyip tekrar kaydet.'),{status:409,gameCode:'champions_revision_conflict_r118'});
    const rename=q(sql,"UPDATE monsters SET name=? WHERE id=? AND area='champions'");
-   for(let channel=1;channel<=4;channel++)for(const spawn of CHAMPIONS_SPAWNS_R118)rename.run(config.monsters[spawn.key].name,`champions-${spawn.key}-c${channel}-${String(spawn.slot).padStart(2,'0')}`);
+   for(let channel=1;channel<=4;channel++)for(const spawn of CHAMPIONS_SPAWNS_R118)rename.run(config.monsters[spawn.key].name,championsMonsterIdR118(spawn.key,channel,spawn.slot));
    refresh();if(own)sql.exec('COMMIT');return facade.settings();
   }catch(error){if(own&&sql.isTransaction)sql.exec('ROLLBACK');facade=previous;throw error;}
  }};
