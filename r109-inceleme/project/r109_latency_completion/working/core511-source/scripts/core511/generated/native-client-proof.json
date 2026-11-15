@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r119-6558907cd29913ad.js",
+  "name": "game-client-core511-r120-69c9ea09dc330cc6.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -116,7 +116,7 @@
   },
   "admin": {
     "file": "dist-vds/client/assets/admin-client-B_LbmWSV-ga4172-v418ws--e510-8225403c2fcc-88ffa15660.js",
-    "name": "admin-client-core511-r118-bd266dccdc24b06a.js",
+    "name": "admin-client-core511-r120-bd266dccdc24b06a.js",
     "proof": {
       "sourceSha256": "269d512e8ab421617557c5686ddf2df405188db90f295d8fefd893deb6458d43",
       "patchedSha256": "b8502b430480e1eb72cb6d3d1ec8271ba5800856c4756942f3fc70e901625962",
@@ -241,9 +241,9 @@
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+    "name": "auth-portal-core511-r120-93f57bbee2e7ec95.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "9b81ddc8fb6f9d73a2c8dd9b62aa5b6c8553456759657fbeba504fbda0328858",
+    "patchedSha256": "93f57bbee2e7ec95f5aae194ffac0a2953badf3647498071344a318d85e087b0",
     "entryProof": {
       "edits": [
         {
@@ -281,7 +281,7 @@
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
   "bridgeSha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "6558907cd29913ad85286602c71dd36c7eee4971b5040dd7fedf3e028bf3541d",
+  "patchedSha256": "69c9ea09dc330cc64d98b181e9cb0e6ff123ec5b122c417b673b761ff9588598",
   "bridge": "core511-transport-r118-c4d1b9128f079567.js",
   "edits": [
     {
@@ -6326,5 +6326,36 @@
         "to": "Ud(e3, g2, championProfileR119?.atlasIndex ?? _2, championProfileR119?.rows ?? 6, D2, O2 + 28,"
       }
     ]
+  },
+  "r120DomainDepot": {
+    "version": "R120_2D_DEPOT1",
+    "canonicalOrigin": "https://2d.coreoflife.net",
+    "sourcePackageSha256": "8f544b172c6ea7afc737267f587c61daada01f6c6d33ba61d97a9db830575e39",
+    "depot": "core511-depot-r120-e07425bc0ed306ea.js",
+    "assets": [
+      {
+        "name": "core511-depot-r120-e07425bc0ed306ea.js",
+        "sha256": "e07425bc0ed306eaabf641b8b41311f9451d9e596b320752e1c8ed78a97122f5",
+        "bytes": 1407
+      },
+      {
+        "name": "game-client-core511-r120-69c9ea09dc330cc6.js",
+        "sha256": "69c9ea09dc330cc64d98b181e9cb0e6ff123ec5b122c417b673b761ff9588598",
+        "bytes": 1757211
+      },
+      {
+        "name": "auth-portal-core511-r120-93f57bbee2e7ec95.js",
+        "sha256": "93f57bbee2e7ec95f5aae194ffac0a2953badf3647498071344a318d85e087b0",
+        "bytes": 84195
+      },
+      {
+        "name": "admin-client-core511-r120-bd266dccdc24b06a.js",
+        "sha256": "bd266dccdc24b06a786bfb4ec214896dae965960325a0a23e726cc412d4d2622",
+        "bytes": 587908
+      }
+    ],
+    "storageMutationChanges": false,
+    "animationSource": "R119_MOTION1",
+    "requestGuardsPreserved": true
   }
 }
