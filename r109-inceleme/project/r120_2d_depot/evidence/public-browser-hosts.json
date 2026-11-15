@@ -1,0 +1,120 @@
+[
+  {
+    "origin": "https://2d.coreoflife.net",
+    "scope": "Fresh browser public homepage only; not existing users or authenticated flows.",
+    "requests": [
+      {
+        "host": "2d.coreoflife.net",
+        "path": "/",
+        "type": "document"
+      }
+    ],
+    "errors": [],
+    "error": "page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://2d.coreoflife.net/\nCall log:\n\u001b[2m  - navigating to \"https://2d.coreoflife.net/\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "origin": "https://coreoflife.net",
+    "scope": "Fresh browser public homepage only; not existing users or authenticated flows.",
+    "requests": [
+      {
+        "host": "coreoflife.net",
+        "path": "/",
+        "type": "document"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/cinzel-latin-600-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/site.css",
+        "type": "stylesheet"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/site.js",
+        "type": "script"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/entry-r104-d132b52349cf3539.js",
+        "type": "script"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/entry-r104-be01526d63d5ce27.css",
+        "type": "stylesheet"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/favicon.svg",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/hero.webp",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/starter-pet.webp",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/api/site-launch",
+        "type": "fetch"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/manrope-latin-400-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/manrope-latin-700-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/cinzel-latin-ext-600-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/bazaar.webp",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/north-forest.webp",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/dark-forest.webp",
+        "type": "image"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/manrope-latin-ext-700-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/col-site/20261030-af635782aab7/manrope-latin-ext-400-normal.woff2",
+        "type": "font"
+      },
+      {
+        "host": "coreoflife.net",
+        "path": "/favicon.svg",
+        "type": "other"
+      }
+    ],
+    "errors": [],
+    "status": 200,
+    "serviceWorkers": [],
+    "title": "Core of Life — Kendi efsaneni yaz"
+  }
+]

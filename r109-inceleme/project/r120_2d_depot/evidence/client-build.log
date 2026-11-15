@@ -1,0 +1,24 @@
+{
+  "namespace": "core511-17d72e47dc4df4fa",
+  "game": "game-client-core511-r120-69c9ea09dc330cc6.js",
+  "portal": "auth-portal-core511-r120-93f57bbee2e7ec95.js",
+  "admin": "admin-client-core511-r120-bd266dccdc24b06a.js",
+  "depot": "core511-depot-r120-e07425bc0ed306ea.js",
+  "clientNew": [
+    "core511-depot-r120-e07425bc0ed306ea.js",
+    "game-client-core511-r120-69c9ea09dc330cc6.js",
+    "auth-portal-core511-r120-93f57bbee2e7ec95.js",
+    "admin-client-core511-r120-bd266dccdc24b06a.js"
+  ],
+  "files": [
+    "depot-style-r120.mjs",
+    "generated/native-client-proof.json",
+    "generated/client/core511-depot-r120-e07425bc0ed306ea.js",
+    "generated/client/game-client-core511-r120-69c9ea09dc330cc6.js",
+    "generated/client/auth-portal-core511-r120-93f57bbee2e7ec95.js",
+    "generated/client/admin-client-core511-r120-bd266dccdc24b06a.js"
+  ],
+  "sourceGame": "game-client-core511-r119-6558907cd29913ad.js",
+  "depotNavigationMovedBeforeBank": true,
+  "newUnresolvedReferences": 0
+}

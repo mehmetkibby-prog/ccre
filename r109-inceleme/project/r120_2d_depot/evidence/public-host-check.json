@@ -1,0 +1,17 @@
+{
+  "2d.coreoflife.net": {
+    "error": "<urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  "coreoflife.net": {
+    "status": 200,
+    "url": "https://coreoflife.net/",
+    "server": "envoy",
+    "bytes": 24722
+  },
+  "accounts.coreoflife.net": {
+    "status": 200,
+    "url": "https://accounts.coreoflife.net/",
+    "server": "envoy",
+    "bytes": 17529
+  }
+}

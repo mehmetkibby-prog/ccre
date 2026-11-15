@@ -1,0 +1,342 @@
+{
+  "realmId": "r1",
+  "namespace": "core511-f3b670dfef6c25f1",
+  "scope": "Actual generated game, isolated native HTTP/SQLite/channel processes, cached static assets, no live VDS.",
+  "client": "game-client-core511-r119-6558907cd29913ad.js",
+  "checks": [
+    {
+      "name": "native champion entry",
+      "area": "bazaar",
+      "channels": 4
+    }
+  ],
+  "webSocketTransport": "production-style-socket-handoff",
+  "layoutBeforeClick": {
+    "pageCount": 2,
+    "nav": {
+      "height": 16,
+      "width": 730,
+      "scrollHeight": 60
+    },
+    "buttons": [
+      {
+        "text": "1. Bölme\n1–24",
+        "x": 57,
+        "y": 582.84375,
+        "width": 98.78125,
+        "height": 44,
+        "reachable": false
+      },
+      {
+        "text": "2. Bölme\n25–48",
+        "x": 161.78125,
+        "y": 582.84375,
+        "width": 105.078125,
+        "height": 44,
+        "reachable": false
+      }
+    ]
+  },
+  "secondPageAccessible": true,
+  "layoutAfterClick": {
+    "pageCount": 2,
+    "nav": {
+      "height": 16,
+      "width": 730,
+      "scrollHeight": 60
+    },
+    "buttons": [
+      {
+        "text": "1. Bölme\n1–24",
+        "x": 57,
+        "y": 172.84375,
+        "width": 98.78125,
+        "height": 44,
+        "reachable": true
+      },
+      {
+        "text": "2. Bölme\n25–48",
+        "x": 161.78125,
+        "y": 172.84375,
+        "width": 105.078125,
+        "height": 44,
+        "reachable": true
+      }
+    ]
+  },
+  "passed": true,
+  "durationMs": 27415,
+  "webSocketHandoffs": 1,
+  "handoffStats": {
+    "sent": 1,
+    "declined": 0,
+    "failed": 0
+  },
+  "requests": [
+    {
+      "at": 1794767218189,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "ms": 6
+    },
+    {
+      "at": 1794767218244,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/realm/characters",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "at": 1794767218717,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r46-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794767218721,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r45-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794767218724,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r44-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794767218725,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "at": 1794767218728,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r43-options",
+      "status": 200,
+      "ms": 1
+    },
+    {
+      "at": 1794767218769,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realm/character-select",
+      "status": 200,
+      "ms": 14
+    },
+    {
+      "at": 1794767218809,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/game-presence",
+      "status": 200,
+      "ms": 10,
+      "action": "claim",
+      "idleExempt": false,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767219322,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-r49-options",
+      "status": 200,
+      "ms": 2
+    },
+    {
+      "at": 1794767219329,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/core511-ui-options",
+      "status": 200,
+      "ms": 0
+    },
+    {
+      "at": 1794767219313,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 42,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767219317,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/onboarding",
+      "status": 200,
+      "ms": 53,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767219333,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 47,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767219622,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 3,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767220665,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-character",
+      "status": 200,
+      "ms": 167,
+      "action": "join",
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767221129,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/channels",
+      "status": 200,
+      "ms": 4,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767221734,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 44
+    },
+    {
+      "at": 1794767221744,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/content-r102",
+      "status": 200,
+      "ms": 58
+    },
+    {
+      "at": 1794767221745,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/trade",
+      "status": 200,
+      "ms": 58,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767221780,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/guild",
+      "status": 200,
+      "ms": 46,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767221753,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 90,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767221814,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/mount-r49",
+      "status": 200,
+      "ms": 34,
+      "action": "status",
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767224146,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/events",
+      "status": 200,
+      "ms": 12,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767224162,
+      "phase": "native-entry",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/bot-check",
+      "status": 200,
+      "ms": 13,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767227245,
+      "phase": "depot",
+      "player": 0,
+      "method": "GET",
+      "path": "/api/storage",
+      "status": 200,
+      "ms": 63,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    },
+    {
+      "at": 1794767227981,
+      "phase": "depot",
+      "player": 0,
+      "method": "POST",
+      "path": "/api/realtime/core511-dungeon-lobby",
+      "status": 200,
+      "ms": 9,
+      "instance": "76397fa9-45cc-424c-a66b-650ad95af024"
+    }
+  ],
+  "errors": [],
+  "nativeFaults": [],
+  "missingAssets": []
+}

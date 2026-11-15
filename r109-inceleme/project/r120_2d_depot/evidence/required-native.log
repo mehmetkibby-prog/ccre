@@ -1,0 +1,249 @@
+/workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/evidence/native-tests
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794769775093,"backupName":"before-pearl-reset-1794769775093-ac2af34f-3156-4822-ae43-a517f73cf52a.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:02.195Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":68538,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a912fac1fe37d186ebcd39ff"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:02.197Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":68549,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"fe848e76fca1ccd30b8136f2"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:02.197Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":68555,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9441224b936675f1cc646f61"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:02.197Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":68565,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bdf40f052dde28a7d68121ed"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:02.246Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":68521,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"a18642243db74e473255a85f"}
+# Subtest: R19 tower uses real channel movement, attack, durable kill, native map exit
+ok 1 - R19 tower uses real channel movement, attack, durable kill, native map exit
+  ---
+  duration_ms: 30387.330919
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769805793,"backupName":"before-pearl-reset-1794769805793-12464153-5a8b-4f18-82c6-5e98200c8e68.sqlite"}
+# Subtest: native dungeon room shares channel actor leases through write ACK, refresh and rare-operation drain
+ok 2 - native dungeon room shares channel actor leases through write ACK, refresh and rare-operation drain
+  ---
+  duration_ms: 3638.590046
+  type: 'test'
+  ...
+# Subtest: Selected R106 dungeon declarations remain identical; RNG replay is stable
+ok 3 - Selected R106 dungeon declarations remain identical; RNG replay is stable
+  ---
+  duration_ms: 9.899247
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769810804,"backupName":"before-pearl-reset-1794769810804-07d70528-1e87-45e7-9a0f-9a9a41d6b73d.sqlite"}
+# Subtest: idle room keeps exact native clocks without full-room clone or redundant projection
+ok 4 - idle room keeps exact native clocks without full-room clone or redundant projection
+  ---
+  duration_ms: 2208.97915
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769813527,"backupName":"before-pearl-reset-1794769813527-2570079b-a870-4365-92a1-beda02b7b542.sqlite"}
+# Subtest: native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+ok 5 - native group dungeon entry, movement, combat, boss rewards, collect and leave match SQLite engine
+  ---
+  duration_ms: 3260.407076
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769817557,"backupName":"before-pearl-reset-1794769817557-04532f4b-37ae-4469-8fe4-e9e4db03db22.sqlite"}
+# Subtest: dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+ok 6 - dungeon writer ACK loss keeps every room member fenced and replay cannot grant twice
+  ---
+  duration_ms: 3577.157745
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769819581,"backupName":"before-pearl-reset-1794769819581-0dbed088-3b56-4fff-b002-7719ede8bf6d.sqlite"}
+# Subtest: failed native economy command rolls back, preserves room and allows a later valid command
+ok 7 - failed native economy command rolls back, preserves room and allows a later valid command
+  ---
+  duration_ms: 2117.114747
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769821831,"backupName":"before-pearl-reset-1794769821831-b3b7f6db-bc82-41d5-9120-fbe4be7ed5e3.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+ok 8 - native dungeon reward survives SIGKILL before COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 2746.862654
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769824820,"backupName":"before-pearl-reset-1794769824820-aa44de27-f2d2-4a54-917d-0b3cd709f5ce.sqlite"}
+# Subtest: native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+ok 9 - native dungeon reward survives SIGKILL after COMMIT and applies exactly once after writer restart
+  ---
+  duration_ms: 2777.27071
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769827502,"backupName":"before-pearl-reset-1794769827502-f511a7d4-db6c-477b-958e-93f210af249b.sqlite"}
+# Subtest: 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+ok 10 - 20 Hz input queues integrate the native dungeon writer without publishing uncommitted results
+  ---
+  duration_ms: 2232.614874
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769829708,"backupName":"before-pearl-reset-1794769829708-7d5db0c6-7927-42d8-8584-b37f72155415.sqlite"}
+# Subtest: native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+ok 11 - native solo entry key, daily limit receipt, three loot draws, pickup and exit remain equal
+  ---
+  duration_ms: 2272.613475
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769831914,"backupName":"before-pearl-reset-1794769831914-3a194635-9767-4564-88f8-41f3a467556a.sqlite"}
+# Subtest: native dungeon rewards use four-channel authority and per-player ordered durable receipts
+ok 12 - native dungeon rewards use four-channel authority and per-player ordered durable receipts
+  ---
+  duration_ms: 2225.725568
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769835821,"backupName":"before-pearl-reset-1794769835821-3e46a49d-c76d-400a-98ea-3e83f7ec1129.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:47.982Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":68938,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"e564e5d8a5587089c8455a53"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:47.982Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":68949,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"2e37aeac7adc80a3e4a6b9a4"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:47.983Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":68955,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"872a3fd31b3b47e707a8e835"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:47.984Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":68965,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3866450fae38d6a4d6f0dbf6"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:10:48.034Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":68921,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"07ea6f4a599e536bea69cfce"}
+# Subtest: native trade drains the stored pair, transfers once and isolates notices; forged actor/revision/CSRF cannot spend
+ok 13 - native trade drains the stored pair, transfers once and isolates notices; forged actor/revision/CSRF cannot spend
+  ---
+  duration_ms: 14579.193002
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769852069,"backupName":"before-pearl-reset-1794769852069-76478981-5e36-49a2-8f85-970780dcbc35.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"type":"core511_ipc_safe_stream","code":"channel_ipc_closed","method":"unknown"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:03.325Z","action":"signal","incident":1,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":69062,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"a9407312ebe9405b2c87219b"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:03.328Z","action":"channel_recovery_request","incident":2,"reason":"channel_ipc_closed","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":75,"column":128}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:03.330Z","action":"channel_recovery_request","incident":3,"reason":"ipc_control_outcome_unknown","origin":"channel_recovery_request","requestMethod":"refresh_frozen","operation":"permanent","actorRef":"84806bddef75eda57a11c628","sourceChannel":1,"phase":"refreshing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"reliable-stream.mjs","line":201,"column":137},{"file":"coordinator-recovery.mjs","line":29,"column":32},{"file":"process-supervisor.mjs","line":73,"column":124}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:03.330Z","action":"channel_recovery_request","incident":3,"reason":"ipc_control_outcome_unknown","origin":"channel_recovery_request","requestMethod":"refresh_frozen","operation":"permanent","actorRef":"71a9b6619be8b08ffe636bb9","sourceChannel":1,"phase":"refreshing","stack":[{"file":"contract.mjs","line":14,"column":58},{"file":"reliable-stream.mjs","line":201,"column":137},{"file":"coordinator-recovery.mjs","line":29,"column":32},{"file":"process-supervisor.mjs","line":73,"column":124}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:05.000Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":69099,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a359c9a78d7b9c664a7e2004"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:05.001Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":69126,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"1fe5079da571c10eb9848e53"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:05.001Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":69143,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5e6459803007475b8ce087bd"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:05.001Z","action":"signal","incident":7,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":69157,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c286e922cf5a82a8b59a07fd"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:05.041Z","action":"signal","incident":8,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":69050,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"788a41b833ba1c3f18c772ce"}
+# Subtest: native trade source SIGKILL before COMMIT preserves both balances, item identity and one receipt
+ok 14 - native trade source SIGKILL before COMMIT preserves both balances, item identity and one receipt
+  ---
+  duration_ms: 16992.004067
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769867393,"backupName":"before-pearl-reset-1794769867393-15e44c4e-df93-439b-8cd6-b5058937d8e7.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:18.530Z","action":"channel_recovery_request","incident":1,"reason":"runtime_fault","origin":"channel_recovery_request","requestMethod":"command","operation":"permanent","actorRef":"23c66b8fd94da33f603bbfad","sourceChannel":1,"phase":"frozen","stack":[{"file":"native-http-trade-storage.test.mjs","line":35,"column":210}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:18.530Z","action":"channel_recovery_request","incident":1,"reason":"runtime_fault","origin":"channel_recovery_request","requestMethod":"command","operation":"permanent","actorRef":"0591ef9ada132a22ef7538bc","sourceChannel":1,"phase":"frozen","stack":[{"file":"native-http-trade-storage.test.mjs","line":35,"column":210}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:18.531Z","action":"signal","incident":1,"reason":"runtime_fault","origin":"channel_recovery_request","requestMethod":"command","operation":"permanent","actorRef":"23c66b8fd94da33f603bbfad","sourceChannel":1,"phase":"frozen","stack":[{"file":"native-http-trade-storage.test.mjs","line":35,"column":210}],"channel":1,"pid":69245,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"a8f348e6884853dfa7fca2ec"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:19.695Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":69255,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d42f8ff29b3c197504bda217"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:19.695Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":69261,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f89dff6389299c27e575741f"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:19.696Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":69271,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"46fbb0e8cc1d00acdbd95317"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:19.696Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":69285,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"abad4c969894643488d88762"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:19.719Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":69206,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"5f412511d178ebe8ca906a4f"}
+# Subtest: native trade source SIGKILL after COMMIT preserves both balances, item identity and one receipt
+ok 15 - native trade source SIGKILL after COMMIT preserves both balances, item identity and one receipt
+  ---
+  duration_ms: 14506.843456
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769882380,"backupName":"before-pearl-reset-1794769882380-45ff48a7-192d-4acc-8f22-485489aad905.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:31.128Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":69373,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"016726fc900604873bddbd82"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:31.129Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":69383,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"67b05d185e7f4c5e9ef98407"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:31.129Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":69389,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"37909ef3e904294056c348bd"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:31.129Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":69399,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"d5fb63d807b7b48e6b1442c1"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:11:31.150Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":69334,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"95603cf6f4dfcbd4d80f73a8"}
+# Subtest: actual native storage and guild donation retain owned current resources, replay and authorization
+ok 16 - actual native storage and guild donation retain owned current resources, replay and authorization
+  ---
+  duration_ms: 11463.461699
+  type: 'test'
+  ...
+# Subtest: strict ten-floor map IDs and same world geometry predicates
+ok 17 - strict ten-floor map IDs and same world geometry predicates
+  ---
+  duration_ms: 0.688961
+  type: 'test'
+  ...
+# Subtest: mist limits, prohibited tower loot and three seals
+ok 18 - mist limits, prohibited tower loot and three seals
+  ---
+  duration_ms: 0.882104
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769893589,"backupName":"before-pearl-reset-1794769893589-4dec98c2-06a3-4ddc-8951-bd602a797502.sqlite"}
+# Subtest: tower enters native player.area, never dungeon_members; floor order and exit always allowed
+ok 19 - tower enters native player.area, never dungeon_members; floor order and exit always allowed
+  ---
+  duration_ms: 1971.215179
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769895733,"backupName":"before-pearl-reset-1794769895733-d490ba2e-2ea8-4ee6-83c6-2692e2e1f6b3.sqlite"}
+# Subtest: all ten tower floors use native monsters and keep Azrail chest once on lethal award
+ok 20 - all ten tower floors use native monsters and keep Azrail chest once on lethal award
+  ---
+  duration_ms: 2276.783445
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769897919,"backupName":"before-pearl-reset-1794769897919-9184b1fb-4ba8-4bb9-86db-268f23428613.sqlite"}
+# Subtest: mist entry is portal-, distance-, channel-, capacity- and replay-checked
+ok 21 - mist entry is portal-, distance-, channel-, capacity- and replay-checked
+  ---
+  duration_ms: 2078.952486
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769900093,"backupName":"before-pearl-reset-1794769900093-fae3ed55-2c8c-4f5f-a216-19f4b422166d.sqlite"}
+# Subtest: death ejects to market, expiry returns origin, unfinished completion cannot claim loot
+ok 22 - death ejects to market, expiry returns origin, unfinished completion cannot claim loot
+  ---
+  duration_ms: 2140.038964
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769902877,"backupName":"before-pearl-reset-1794769902877-b459f718-afc2-45b3-be17-7343435c902d.sqlite"}
+# Subtest: owned combat checkpoint rejects foreign channel monster without trusting external resource callbacks
+ok 23 - owned combat checkpoint rejects foreign channel monster without trusting external resource callbacks
+  ---
+  duration_ms: 2144.67681
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769904952,"backupName":"before-pearl-reset-1794769904952-cf056b33-58a2-4517-b46c-c40b78be0de4.sqlite"}
+# Subtest: owned combat checkpoint rejects independent shared monster without trusting external resource callbacks
+ok 24 - owned combat checkpoint rejects independent shared monster without trusting external resource callbacks
+  ---
+  duration_ms: 2217.885305
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769908089,"backupName":"before-pearl-reset-1794769908089-c733afc3-d205-470b-a4ab-d335a141205c.sqlite"}
+# Subtest: owned combat checkpoint rejects foreign channel contribution without trusting external resource callbacks
+ok 25 - owned combat checkpoint rejects foreign channel contribution without trusting external resource callbacks
+  ---
+  duration_ms: 3103.253332
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769910569,"backupName":"before-pearl-reset-1794769910569-96ac3cff-7a5c-474c-affd-b37e50057652.sqlite"}
+# Subtest: owned combat checkpoint rejects foreign player contribution without trusting external resource callbacks
+ok 26 - owned combat checkpoint rejects foreign player contribution without trusting external resource callbacks
+  ---
+  duration_ms: 2333.986256
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769912881,"backupName":"before-pearl-reset-1794769912881-ec8e34dc-8e25-4d94-9871-9c91c21ea30b.sqlite"}
+# Subtest: owned combat checkpoint rejects foreign boss contribution without trusting external resource callbacks
+ok 27 - owned combat checkpoint rejects foreign boss contribution without trusting external resource callbacks
+  ---
+  duration_ms: 2476.598083
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769915181,"backupName":"before-pearl-reset-1794769915181-7703371a-4dc9-4d86-8f53-4f407d62db6c.sqlite"}
+# Subtest: owned combat checkpoint rejects foreign PvP event target without trusting external resource callbacks
+ok 28 - owned combat checkpoint rejects foreign PvP event target without trusting external resource callbacks
+  ---
+  duration_ms: 2186.641149
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769917502,"backupName":"before-pearl-reset-1794769917502-53dbacb8-5225-4e12-8904-0ef61b72a8b7.sqlite"}
+# Subtest: native local checkpoint and shared historical credit keep their distinct actual owner scopes and replay once
+ok 29 - native local checkpoint and shared historical credit keep their distinct actual owner scopes and replay once
+  ---
+  duration_ms: 2389.169577
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 147896.752153

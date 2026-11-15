@@ -1,0 +1,19 @@
+{"level":"info","ts":1794769697.761742,"msg":"maxprocs: Updating GOMAXPROCS=4: determined from CPU quota"}
+{"level":"info","ts":1794769697.7624018,"msg":"GOMEMLIMIT is updated","package":"github.com/KimMachineGun/automemlimit/memlimit","GOMEMLIMIT":30923764531,"previous":9223372036854775807}
+{"level":"info","ts":1794769697.7624586,"msg":"using config from file","file":"/tmp/tmpivesp5tk/config.json"}
+{"level":"warn","ts":1794769697.764537,"logger":"admin","msg":"admin endpoint disabled"}
+{"level":"info","ts":1794769697.7661338,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc0002aa400"}
+{"level":"info","ts":1794769697.7676446,"logger":"http.auto_https","msg":"skipping automatic certificate management because one or more matching certificates are already loaded","domain":"2d.coreoflife.net","server_name":"s"}
+{"level":"info","ts":1794769697.7676558,"logger":"http.auto_https","msg":"skipping automatic certificate management because one or more matching certificates are already loaded","domain":"coreoflife.net","server_name":"s"}
+{"level":"info","ts":1794769697.7676587,"logger":"http.auto_https","msg":"skipping automatic certificate management because one or more matching certificates are already loaded","domain":"www.coreoflife.net","server_name":"s"}
+{"level":"info","ts":1794769697.7676604,"logger":"http.auto_https","msg":"automatic HTTP->HTTPS redirects are disabled","server_name":"s"}
+{"level":"info","ts":1794769697.7706718,"logger":"http","msg":"enabling HTTP/3 listener","addr":"127.0.0.1:41029"}
+{"level":"info","ts":1794769697.7723668,"logger":"http.log","msg":"server running","name":"s","protocols":["h1","h2","h3"]}
+{"level":"info","ts":1794769697.7751586,"msg":"autosaved config (load with --resume flag)","file":"/home/agent/.config/caddy/autosave.json"}
+{"level":"info","ts":1794769697.7751749,"msg":"serving initial configuration"}
+{"level":"info","ts":1794769697.776417,"logger":"tls","msg":"cleaning storage unit","storage":"FileStorage:/home/agent/.local/share/caddy"}
+{"level":"info","ts":1794769697.7783089,"logger":"tls","msg":"finished cleaning storage units"}
+{"level":"info","ts":1794769698.5871606,"msg":"shutting down apps, then terminating","signal":"SIGTERM"}
+{"level":"warn","ts":1794769698.5873249,"msg":"exiting; byeee!! 👋","signal":"SIGTERM"}
+{"level":"info","ts":1794769698.5875142,"logger":"http","msg":"servers shutting down with eternal grace period"}
+{"level":"info","ts":1794769698.5881958,"msg":"shutdown complete","signal":"SIGTERM","exit_code":0}

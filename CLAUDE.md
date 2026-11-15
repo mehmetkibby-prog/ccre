@@ -1,3 +1,8 @@
+# R120 güncel devam
+
+Önce `r109-inceleme/R120_DEVIR.md` oku. Aktif aday R120_2D_DEPOT1; canlı kurulum
+ve Cloudflare/sertifika kabulü doğrulanmadı. Aşağıdaki sürüm notları tarihseldir.
+
 # Claude için başlangıç
 
 ## R119 devamı — 15 Kasım 2026

@@ -78,3 +78,8 @@ presentation, reusing the North Forest renderer. The installer requires exact
 corrected R118, preserves schema recovery archives, and changes five client
 files. Backend health remains R118; installer state/new client hashes are R119.
 See the R119 package/verification evidence; live R119 installation is unconfirmed.
+
+R120 continuation (15 Nov 2026): read `r109-inceleme/R120_DEVIR.md`. Active candidate
+adds depot visibility and 2d domain transition on exact R118/R119; includes R119
+animation behavior. Live domain/SSL/Cloudflare verification remains pending.
+Preserve all prior artifacts, host-only cookies and protected DNS. No 3D changes.

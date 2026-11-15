@@ -1,0 +1,72 @@
+TAP version 13
+# (node:65832) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registration: one-use real PNG CAPTCHA, member role, hashed session and private email
+ok 1 - registration: one-use real PNG CAPTCHA, member role, hashed session and private email
+  ---
+  duration_ms: 794.552978
+  type: 'test'
+  ...
+# Subtest: players cannot forge admin, publish or reply in any official category, pin or moderate
+ok 2 - players cannot forge admin, publish or reply in any official category, pin or moderate
+  ---
+  duration_ms: 730.79317
+  type: 'test'
+  ...
+# Subtest: origin, CSRF, authentication and SQL parameters protect writes
+ok 3 - origin, CSRF, authentication and SQL parameters protect writes
+  ---
+  duration_ms: 476.986285
+  type: 'test'
+  ...
+# Subtest: administrator publishes announcements and moderates; players cannot reply to locked topics
+ok 4 - administrator publishes announcements and moderates; players cannot reply to locked topics
+  ---
+  duration_ms: 716.502042
+  type: 'test'
+  ...
+# Subtest: forum data persists across restart, passwords are not stored in plaintext, logout revokes session
+ok 5 - forum data persists across restart, passwords are not stored in plaintext, logout revokes session
+  ---
+  duration_ms: 958.516067
+  type: 'test'
+  ...
+# Subtest: CAPTCHA render failure returns retryable error; the next generation recovers
+ok 6 - CAPTCHA render failure returns retryable error; the next generation recovers
+  ---
+  duration_ms: 430.247045
+  type: 'test'
+  ...
+# Subtest: limits, security headers and nonpublic files
+ok 7 - limits, security headers and nonpublic files
+  ---
+  duration_ms: 483.836979
+  type: 'test'
+  ...
+# Subtest: single-use recovery changes password, rotates key, revokes every prior session and never stores raw key
+ok 8 - single-use recovery changes password, rotates key, revokes every prior session and never stores raw key
+  ---
+  duration_ms: 1119.626839
+  type: 'test'
+  ...
+# Subtest: online backup contains committed topics and preserves damaged old backup for investigation
+ok 9 - online backup contains committed topics and preserves damaged old backup for investigation
+  ---
+  duration_ms: 456.032495
+  type: 'test'
+  ...
+# Subtest: transition old hosts retain writes, foreign origins blocked; all session cookies host-only
+ok 10 - transition old hosts retain writes, foreign origins blocked; all session cookies host-only
+  ---
+  duration_ms: 377.47637
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6726.907178

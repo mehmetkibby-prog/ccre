@@ -1,0 +1,1 @@
+Executable modules, payload, forum files, plan and bootstrap are byte-identical to the exact artifact installed for R118/R119 roundtrip and 8-channel boot. Only documentation/tools were added.

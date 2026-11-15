@@ -1,0 +1,22 @@
+[
+  {
+    "group": "focused",
+    "exitCode": 0,
+    "seconds": 45.3
+  },
+  {
+    "group": "native",
+    "exitCode": 0,
+    "seconds": 148.2
+  },
+  {
+    "group": "captcha",
+    "exitCode": 0,
+    "seconds": 134.0
+  },
+  {
+    "group": "r110",
+    "exitCode": 0,
+    "seconds": 109.0
+  }
+]

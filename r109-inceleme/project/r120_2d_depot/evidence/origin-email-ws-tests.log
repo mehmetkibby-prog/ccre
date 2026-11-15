@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: exact URL migration preserves query, protocol, child hosts and JWT issuer
+ok 1 - exact URL migration preserves query, protocol, child hosts and JWT issuer
+  ---
+  duration_ms: 0.472778
+  type: 'test'
+  ...
+# Subtest: http-runtime actual email token builder uses trusted new origin; accounts stays unchanged
+ok 2 - http-runtime actual email token builder uses trusted new origin; accounts stays unchanged
+  ---
+  duration_ms: 694.432168
+  type: 'test'
+  ...
+# Subtest: accounts-runtime actual email token builder uses trusted new origin; accounts stays unchanged
+ok 3 - accounts-runtime actual email token builder uses trusted new origin; accounts stays unchanged
+  ---
+  duration_ms: 270.94777
+  type: 'test'
+  ...
+# Subtest: real HTTP Upgrade and WS frames over MessageChannel authenticate once and carry inputs, output, ping and ban
+ok 4 - real HTTP Upgrade and WS frames over MessageChannel authenticate once and carry inputs, output, ping and ban
+  ---
+  duration_ms: 16.89955
+  type: 'test'
+  ...
+# Subtest: real upgrade rejects wrong origin, route, untrusted proxy and forged IP without reserving a slot
+ok 5 - real upgrade rejects wrong origin, route, untrusted proxy and forged IP without reserving a slot
+  ---
+  duration_ms: 84.773854
+  type: 'test'
+  ...
+# Subtest: real masked WS rejects ticket replay and binary game input
+ok 6 - real masked WS rejects ticket replay and binary game input
+  ---
+  duration_ms: 13.688816
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1214.518317

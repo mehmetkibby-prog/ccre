@@ -1,0 +1,59 @@
+{
+  "scope": "Actual isolated Caddy and synthetic valid TLS certificate; not live Cloudflare. HTTP route forwarding, not voice media or WS authentication.",
+  "hostnameVerified": "2d.coreoflife.net",
+  "oldHostsStillWork": true,
+  "checks": [
+    {
+      "uri": "/?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/assets/a.js?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/col-site/video.mp4?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/api/health?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/ws?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/voice/rtc?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/game/channel/1?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/_game/api/session?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/rehber?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/forum/api/health?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/on-kayit?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/akademi-kayit?a=1%202&token=safe_test",
+      "status": 200
+    },
+    {
+      "uri": "/reset-password?a=1%202&token=safe_test",
+      "status": 200
+    }
+  ]
+}

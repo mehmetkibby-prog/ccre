@@ -1,0 +1,204 @@
+TAP version 13
+# Subtest: exact accounts routes register and log in with asynchronous CAPTCHA; CSRF and replay remain enforced
+ok 1 - exact accounts routes register and log in with asynchronous CAPTCHA; CSRF and replay remain enforced
+  ---
+  duration_ms: 291.048841
+  type: 'test'
+  ...
+# Subtest: independent registration forms sharing an IP survive concurrent preparation and both can register
+ok 2 - independent registration forms sharing an IP survive concurrent preparation and both can register
+  ---
+  duration_ms: 146.39558
+  type: 'test'
+  ...
+# Subtest: existing registration rate limit still blocks repeated CAPTCHA requests
+ok 3 - existing registration rate limit still blocks repeated CAPTCHA requests
+  ---
+  duration_ms: 218.854528
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769923229,"backupName":"before-pearl-reset-1794769923229-b0f4da80-1a1a-43bd-b52c-491669504c61.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:15.512Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":69585,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"712dc15a9213cc6791ec275f"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:15.513Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":69595,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"9a496beb048ee5b48929f1e6"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:15.513Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":69601,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"6d1df8a31399c7ea37b33ff5"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:15.513Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":69658,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"4576568b25f89664119d0f21"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:15.543Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":69574,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"29cbf230ad9b0b6cad371ce1"}
+# Subtest: real game route draws outside the writer and coordinator; simultaneous GETs install one challenge
+ok 4 - real game route draws outside the writer and coordinator; simultaneous GETs install one challenge
+  ---
+  duration_ms: 14891.506723
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769938068,"backupName":"before-pearl-reset-1794769938068-07cc5274-892f-433d-85d3-e5631544595c.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:29.705Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":69861,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"db38babe5532a0dd0bf4b26a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:29.706Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":69895,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f34da10cc941feee9585d712"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:29.706Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":69991,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"0270935a0c3b19a84363278e"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:29.706Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70001,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3af911407f55eaad4f6cc870"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:29.734Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":69783,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"ba8a6a70ff6e397e5ef57eb0"}
+# Subtest: expired login during rendering is reauthorized and cannot create a challenge
+ok 5 - expired login during rendering is reauthorized and cannot create a challenge
+  ---
+  duration_ms: 14218.686187
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769952257,"backupName":"before-pearl-reset-1794769952257-fd8ee1fa-de70-43b6-99d1-12ae86d0398d.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:41.933Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70037,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"2ff96bf22da1e43c7c35aa57"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:41.934Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70047,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"c4d95bbaf93d3f533ec1eb39"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:41.934Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70053,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"cce19117f7f630608bce3fff"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:41.935Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70063,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f8f8b2f14045cb5d883e05de"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:41.956Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70026,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"4fc28d30203973d85ff33f24"}
+# Subtest: if verification succeeds in another request while rendering, the old deadline is not restored
+ok 6 - if verification succeeds in another request while rendering, the old deadline is not restored
+  ---
+  duration_ms: 12155.393179
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769963872,"backupName":"before-pearl-reset-1794769963872-798e0444-ce27-434e-a34e-26538c57aff4.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Auth operation failed test worker failure
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:52.201Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70099,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"56dc1d089914fc1576c4c44b"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:52.202Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70109,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"71cb79002f8a96dec591dae6"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:52.202Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70115,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a851a87d6dfd69e112870e2c"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:52.202Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70125,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"a0cc8be6137d6b692649cde9"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:12:52.224Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70088,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"d4ba25e8321185f559e6cd6c"}
+# Subtest: render failure returns an error without installing a half-created challenge
+ok 7 - render failure returns an error without installing a half-created challenge
+  ---
+  duration_ms: 10424.473966
+  type: 'test'
+  ...
+# Subtest: native CAPTCHA patch reverses exactly and retains original four guarded call sites
+ok 8 - native CAPTCHA patch reverses exactly and retains original four guarded call sites
+  ---
+  duration_ms: 747.272526
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769976644,"backupName":"before-pearl-reset-1794769976644-1783a308-7e0a-4034-a7d4-f452b04d7160.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:15.383Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70203,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"aef0ea06860f600b812d4124"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:15.383Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70213,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"46768226b4d2b80e05f8d9b9"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:15.384Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70225,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"ece31100cf7efa30eacede45"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:15.384Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70235,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"24d451fc583758baafefb847"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:15.411Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70192,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"bfd4ff214db6f4308619028f"}
+# Subtest: verified CAPTCHA waits for durability and current channel ACK and survives the old deadline with periodic refresh enabled
+ok 9 - verified CAPTCHA waits for durability and current channel ACK and survives the old deadline with periodic refresh enabled
+  ---
+  duration_ms: 21119.201574
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794769997632,"backupName":"before-pearl-reset-1794769997632-13819e96-8d06-4f96-be09-47a7be02c47d.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:27.562Z","action":"signal","incident":1,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70275,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"3c52494bfb50bcb5fba2e1e4"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:27.562Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70285,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"17990849ba7eda339726619a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:27.562Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70291,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"5f2881f38a570a54d4618582"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:27.568Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70301,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f95fa96640710f08049c695d"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:27.597Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70264,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"c4d3474c9914cfd753702c57"}
+# Subtest: native wrong-answer attempts remain durable, bounded and one-use; GET retains native challenge and authentication rules
+ok 10 - native wrong-answer attempts remain durable, bounded and one-use; GET retains native challenge and authentication rules
+  ---
+  duration_ms: 12225.389109
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794770010409,"backupName":"before-pearl-reset-1794770010409-f323b94b-92c8-4b9a-9c6a-44a2bd5571e9.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:42.582Z","action":"signal","incident":1,"reason":"runtime_fault","origin":"native-bot-check","requestMethod":"session","operation":null,"actorRef":"b13367d091cb93abd0c91c86","sourceChannel":1,"phase":null,"stack":[{"file":"captcha-regression.test.mjs","line":49,"column":132},{"file":"native-bot-check.mjs","line":41,"column":17},{"file":"native-bot-check.mjs","line":71,"column":44},{"file":"native-bot-check.mjs","line":36,"column":4},{"file":"native-guild-auth.mjs","line":29,"column":81},{"file":"realm-security-queue.mjs","line":16,"column":55}],"channel":1,"pid":70559,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"d1f82548b7c921244073dc51"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:42.596Z","action":"channel_recovery_request","incident":1,"reason":"runtime_fault","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"captcha-regression.test.mjs","line":49,"column":132},{"file":"native-bot-check.mjs","line":41,"column":17},{"file":"native-bot-check.mjs","line":71,"column":44},{"file":"native-bot-check.mjs","line":36,"column":4},{"file":"native-guild-auth.mjs","line":29,"column":81},{"file":"realm-security-queue.mjs","line":16,"column":55}]}
+# Auth operation failed captcha_delivery_lost
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:44.101Z","action":"signal","incident":2,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70580,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"b55fde82a2b9b07bb3656d37"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:44.101Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70624,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"020a62f19977e3462d57093b"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:44.102Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70634,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"220ad7f023bd95819f27aa5a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:44.102Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70644,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"f953e394f2649afe967537c6"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:44.145Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70484,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"28635ea2122799cbf489c086"}
+# Subtest: lost native CAPTCHA session ACK terminates only the old channel before response and reconnect uses current deadline
+ok 11 - lost native CAPTCHA session ACK terminates only the old channel before response and reconnect uses current deadline
+  ---
+  duration_ms: 16582.767401
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794770027273,"backupName":"before-pearl-reset-1794770027273-0d26dbcd-7b75-475d-875c-6a71113a60f3.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Auth operation failed captcha_before_commit
+# {"type":"core511_ipc_safe_stream","code":"channel_ipc_closed","method":"unknown"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:55.886Z","action":"signal","incident":1,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":70680,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"dcfc580b22c96b7a203103f8"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:55.887Z","action":"channel_recovery_request","incident":2,"reason":"channel_ipc_closed","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":75,"column":128}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:57.300Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70690,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"df5b1ddb6ea4b0c182ee59d2"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:57.301Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70696,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"152b08aa41031654e1cf03d8"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:57.301Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70706,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"bcb5bd9d5f4c638b6c431937"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:57.301Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70720,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"149c05bfb23ec9dd9e9dfff3"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:13:57.324Z","action":"signal","incident":7,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70669,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"070cdb33536a31cff9add59a"}
+# Subtest: native CAPTCHA source SIGKILL before COMMIT preserves original attempt and one-use outcome
+ok 12 - native CAPTCHA source SIGKILL before COMMIT preserves original attempt and one-use outcome
+  ---
+  duration_ms: 13201.736372
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794770039577,"backupName":"before-pearl-reset-1794770039577-ca480553-f1c4-43cc-a824-3cbbc2ac782b.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Auth operation failed captcha_after_commit
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:09.529Z","action":"signal","incident":1,"reason":"channel_ipc_closed","origin":"channel_ipc_close","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":84,"column":41}],"channel":1,"pid":70752,"signal":"SIGKILL","state":"running","role":"channel","ownerRef":"50a6707f1cec113eb876f23c"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:09.529Z","action":"channel_recovery_request","incident":2,"reason":"channel_ipc_closed","origin":"channel_recovery_request","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"process-supervisor.mjs","line":75,"column":128}]}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:10.885Z","action":"signal","incident":3,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":2,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":2,"pid":70762,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"685abad89fa44fb996270c7f"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:10.885Z","action":"signal","incident":4,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":3,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":3,"pid":70768,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"8ca64bc295659e5b19440735"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:10.885Z","action":"signal","incident":5,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":4,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":4,"pid":70785,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"011dc2c7776e5104eb54527d"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:10.885Z","action":"signal","incident":6,"reason":"orderly_shutdown","origin":"channel_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":1,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"process-supervisor.mjs","line":135,"column":44},{"file":"process-supervisor.mjs","line":172,"column":168},{"file":"process-supervisor.mjs","line":172,"column":154}],"channel":1,"pid":70799,"signal":"SIGTERM","state":"running","role":"channel","ownerRef":"35101b4b03459f8692fdbd0a"}
+# {"event":"core511_recovery_cause","at":"2026-11-15T19:14:10.924Z","action":"signal","incident":7,"reason":"orderly_shutdown","origin":"world_terminate","requestMethod":null,"operation":null,"actorRef":null,"sourceChannel":0,"phase":null,"stack":[{"file":"recovery-diagnostics-r532.mjs","line":20,"column":444},{"file":"world-supervisor.mjs","line":125,"column":44},{"file":"world-supervisor.mjs","line":141,"column":165}],"channel":0,"pid":70741,"signal":"SIGTERM","state":"running","role":"world","ownerRef":"10491df20c9cd44cee80418b"}
+# Subtest: native CAPTCHA source SIGKILL after COMMIT preserves original attempt and one-use outcome
+ok 13 - native CAPTCHA source SIGKILL after COMMIT preserves original attempt and one-use outcome
+  ---
+  duration_ms: 13553.78767
+  type: 'test'
+  ...
+# Subtest: async registration writes only after rendering; one-use, expiry and attempts retain their rules
+ok 14 - async registration writes only after rendering; one-use, expiry and attempts retain their rules
+  ---
+  duration_ms: 5.311959
+  type: 'test'
+  ...
+# Subtest: same IP registration forms remain independent and game generation shares in-flight drawing
+ok 15 - same IP registration forms remain independent and game generation shares in-flight drawing
+  ---
+  duration_ms: 7.438825
+  type: 'test'
+  ...
+# Subtest: prepared images cannot be rebound; concurrent fresh-answer collision preserves the old challenge
+ok 16 - prepared images cannot be rebound; concurrent fresh-answer collision preserves the old challenge
+  ---
+  duration_ms: 0.720443
+  type: 'test'
+  ...
+# Subtest: render or commit failure publishes no challenge; expiry starts at final commit
+ok 17 - render or commit failure publishes no challenge; expiry starts at final commit
+  ---
+  duration_ms: 2.798496
+  type: 'test'
+  ...
+# Subtest: real renderer creates valid independent PNGs while the main event loop continues
+ok 18 - real renderer creates valid independent PNGs while the main event loop continues
+  ---
+  duration_ms: 286.884717
+  type: 'test'
+  ...
+# Subtest: renderer queue is bounded, worker termination rejects pending jobs and a new worker recovers
+ok 19 - renderer queue is bounded, worker termination rejects pending jobs and a new worker recovers
+  ---
+  duration_ms: 106.952987
+  type: 'test'
+  ...
+# Subtest: unresponsive worker times out without a synchronous fallback and close cancels pending jobs
+ok 20 - unresponsive worker times out without a synchronous fallback and close cancels pending jobs
+  ---
+  duration_ms: 63.845175
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 133696.892808
