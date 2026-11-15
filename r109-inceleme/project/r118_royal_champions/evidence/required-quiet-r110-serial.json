@@ -1,0 +1,23 @@
+{
+  "sourceCommit": "632a94e5f6a1b39efb8c3fdec37c49e64a690179",
+  "suite": "r110",
+  "command": "npm run test:r110",
+  "exitCode": 0,
+  "seconds": 156.951,
+  "log": "required-quiet-r110-serial.log",
+  "tapTests": [
+    3
+  ],
+  "tapPass": [
+    3
+  ],
+  "pythonTests": [
+    16
+  ],
+  "logSha256": "6f27aced29503598824d7226713d6a0a7be4ca2e19f2ab0a7c6062a3654014c5",
+  "priorFailure": "required-quiet-r110.log",
+  "testOnlyChange": "Start historical immutable R110 realms sequentially, retaining first healthy realm and all final both-realm/eight-channel assertions. Existing30s test readiness and all shipped5s handshake/20s supervisor deadlines unchanged. Explicit flag set only by test:r110.",
+  "runtimeChanged": false,
+  "complete": true,
+  "allPassed": true
+}

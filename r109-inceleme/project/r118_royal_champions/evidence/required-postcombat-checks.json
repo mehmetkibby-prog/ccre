@@ -1,0 +1,83 @@
+{
+  "sourceCommit": "a8d477ef2f42dee35e43a627c2c9d82e1e6a67c3",
+  "startedUTC": "2026-11-15T15:37:48.334924+00:00",
+  "checks": [
+    {
+      "suite": "focused",
+      "command": "npm test",
+      "exitCode": 0,
+      "seconds": 81.521,
+      "log": "required-postcombat-focused.log",
+      "tapTests": [
+        60
+      ],
+      "tapPass": [
+        60
+      ],
+      "pythonTests": [],
+      "logSha256": "a60f2e692c562c0d84b3529864bbc6937d9fee3f5c2969f4728c80ab21fd3e53"
+    },
+    {
+      "suite": "native",
+      "command": "npm run test:native",
+      "exitCode": 1,
+      "seconds": 282.72,
+      "log": "required-postcombat-native.log",
+      "tapTests": [
+        29
+      ],
+      "tapPass": [
+        27
+      ],
+      "pythonTests": [],
+      "logSha256": "ff1c95ff401287b41c9bb96e29bd4ce13d474db214b83ff50408836139fe1f02"
+    },
+    {
+      "suite": "captcha",
+      "command": "npm run test:captcha",
+      "exitCode": 1,
+      "tapSeconds": 291.276,
+      "log": "required-postcombat-captcha.log",
+      "tapTests": [
+        20
+      ],
+      "tapPass": [
+        19
+      ],
+      "tapCancelled": [
+        1
+      ],
+      "logSha256": "92e275ac5a9f2e4a3c6a2002353ed44caaa054ec38b24e228ecdad8004e8f4e2"
+    }
+  ],
+  "allPassed": false,
+  "complete": true,
+  "deferredChecks": [
+    "r110"
+  ],
+  "endedUTC": "2026-11-15T15:49:43.293792+00:00",
+  "coordination": "Orchestrator paused while CAPTCHA child finished; R110 deliberately deferred to quiet serial native/captcha/R110 chain after UI4complete. Original logs retained.",
+  "failures": [
+    {
+      "suite": "native",
+      "case": 9,
+      "kind": "hookFailed",
+      "error": "ENOENT resident.sqlite-wal",
+      "cause": "Inherited test cleanup registered directory deletion before pending database WAL close; test-only LIFO cleanup adapter corrected."
+    },
+    {
+      "suite": "native",
+      "case": 15,
+      "kind": "testCodeFailure during startup",
+      "error": "reward_worker_start_timeout",
+      "cause": "10s readiness deadline exceeded during overlapping browser run; causation not established by timing alone; runtime deadline unchanged."
+    },
+    {
+      "suite": "captcha",
+      "case": 10,
+      "kind": "testTimeoutFailure",
+      "error": "35s whole-test timeout",
+      "cause": "Expired during overlapping browser run; runtime and test deadlines unchanged."
+    }
+  ]
+}

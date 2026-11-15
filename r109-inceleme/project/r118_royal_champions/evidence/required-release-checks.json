@@ -1,0 +1,182 @@
+{
+  "release": "R118_ROYAL1",
+  "runtimeSourceCommits": [
+    "27f5d74",
+    "223cdd2",
+    "a8d477e"
+  ],
+  "testOnlyCommits": [
+    "632a94e",
+    "e261422"
+  ],
+  "complete": true,
+  "allPassed": true,
+  "runtimeChangedForFailedChecks": false,
+  "checks": [
+    {
+      "suite": "focused",
+      "command": "npm test",
+      "exitCode": 0,
+      "seconds": 81.521,
+      "log": "required-postcombat-focused.log",
+      "tapTests": [
+        60
+      ],
+      "tapPass": [
+        60
+      ],
+      "pythonTests": [],
+      "logSha256": "a60f2e692c562c0d84b3529864bbc6937d9fee3f5c2969f4728c80ab21fd3e53"
+    },
+    {
+      "suite": "native",
+      "command": "npm run test:native",
+      "exitCode": 0,
+      "seconds": 212.361,
+      "log": "required-quiet-native.log",
+      "tapTests": [
+        29
+      ],
+      "tapPass": [
+        29
+      ],
+      "pythonTests": [],
+      "logSha256": "9e27267e42daa184666075046988643e7e7ad6306a6e6ca71140df8c17809f47",
+      "cpuStatBefore": {
+        "usage_usec": 8334655579,
+        "user_usec": 6592459039,
+        "system_usec": 1742196540,
+        "nice_usec": 0,
+        "nr_periods": 49970,
+        "nr_throttled": 2973,
+        "throttled_usec": 123425223,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuStatAfter": {
+        "usage_usec": 8619557735,
+        "user_usec": 6821012392,
+        "system_usec": 1798545342,
+        "nice_usec": 0,
+        "nr_periods": 52094,
+        "nr_throttled": 2996,
+        "throttled_usec": 123715913,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuStatDelta": {
+        "usage_usec": 284902156,
+        "user_usec": 228553353,
+        "system_usec": 56348802,
+        "nice_usec": 0,
+        "nr_periods": 2124,
+        "nr_throttled": 23,
+        "throttled_usec": 290690,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      }
+    },
+    {
+      "suite": "captcha",
+      "command": "npm run test:captcha",
+      "exitCode": 0,
+      "seconds": 224.042,
+      "log": "required-quiet-captcha.log",
+      "tapTests": [
+        20
+      ],
+      "tapPass": [
+        20
+      ],
+      "pythonTests": [],
+      "logSha256": "06f05a014ec402797ffefc47c487006a35fc3b1bfb392ce530ba31b0f82e4efd",
+      "cpuStatBefore": {
+        "usage_usec": 8619565753,
+        "user_usec": 6821020410,
+        "system_usec": 1798545342,
+        "nice_usec": 0,
+        "nr_periods": 52094,
+        "nr_throttled": 2996,
+        "throttled_usec": 123715913,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuStatAfter": {
+        "usage_usec": 8956039533,
+        "user_usec": 7091151520,
+        "system_usec": 1864888012,
+        "nice_usec": 0,
+        "nr_periods": 54334,
+        "nr_throttled": 3031,
+        "throttled_usec": 124517985,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "cpuStatDelta": {
+        "usage_usec": 336473780,
+        "user_usec": 270131110,
+        "system_usec": 66342670,
+        "nice_usec": 0,
+        "nr_periods": 2240,
+        "nr_throttled": 35,
+        "throttled_usec": 802072,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      }
+    },
+    {
+      "sourceCommit": "632a94e5f6a1b39efb8c3fdec37c49e64a690179",
+      "suite": "r110",
+      "command": "npm run test:r110",
+      "exitCode": 0,
+      "seconds": 156.951,
+      "log": "required-quiet-r110-serial.log",
+      "tapTests": [
+        3
+      ],
+      "tapPass": [
+        3
+      ],
+      "pythonTests": [
+        16
+      ],
+      "logSha256": "6f27aced29503598824d7226713d6a0a7be4ca2e19f2ab0a7c6062a3654014c5",
+      "priorFailure": "required-quiet-r110.log",
+      "testOnlyChange": "Start historical immutable R110 realms sequentially, retaining first healthy realm and all final both-realm/eight-channel assertions. Existing30s test readiness and all shipped5s handshake/20s supervisor deadlines unchanged. Explicit flag set only by test:r110.",
+      "runtimeChanged": false,
+      "complete": true,
+      "allPassed": true
+    }
+  ],
+  "retainedAttempts": [
+    "required-postcombat-checks.json",
+    "required-quiet-checks.json"
+  ],
+  "failuresAndResolutions": [
+    {
+      "log": "required-postcombat-native.log",
+      "case": 9,
+      "failure": "Fixture directory removed before WAL durability cleanup",
+      "resolution": "Only external archived-test adapter now drains and closes DBs before deleting directory (LIFO cleanup); native gameplay/crash/receipt assertions unchanged; quiet29/29passed."
+    },
+    {
+      "log": "required-postcombat-native.log",
+      "case": 15,
+      "failure": "10s reward worker startup deadline exceeded while browser tests overlapped",
+      "resolution": "Quiet same-runtime check passed; no production startup deadline changed; overlap timing supports contention sensitivity but does not establish sole cause."
+    },
+    {
+      "log": "required-postcombat-captcha.log",
+      "case": 10,
+      "failure": "35s test deadline exceeded while browser tests overlapped",
+      "resolution": "Quiet same-runtime check passed20/20 with unchanged deadline; failed result retained."
+    },
+    {
+      "log": "required-quiet-r110.log",
+      "case": 1,
+      "failure": "Historical immutable R110 channel closed at bootstrap; old private5s budget does not include R118 fix",
+      "resolution": "Explicit test:r110-only orchestration starts each realm after previous has4healthy owners; first staysrunning, final8owners and all health checks retained. Runtime/archive deadlines unchanged; installer16/16 andruntime3/3passed."
+    }
+  ],
+  "scope": "Required code/regression checks only. Actual R118 installed-artifact and fifty-player evidence are separate; these passes do not prove latency or capacity."
+}

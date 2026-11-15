@@ -1,0 +1,387 @@
+
+> test
+> python3 scripts/check.py focused
+
+TAP version 13
+# Subtest: room scheduling parity across deaths, owners, seals, hazards, expiry and explicit refusal
+ok 1 - room scheduling parity across deaths, owners, seals, hazards, expiry and explicit refusal
+  ---
+  duration_ms: 1214.974817
+  type: 'test'
+  ...
+# Subtest: mutations between ticks are immediately visible; no retained room/member cache
+ok 2 - mutations between ticks are immediately visible; no retained room/member cache
+  ---
+  duration_ms: 26.030714
+  type: 'test'
+  ...
+# Subtest: whole-world monster iteration is independent of occupied room count
+ok 3 - whole-world monster iteration is independent of occupied room count
+  ---
+  duration_ms: 166.833996
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757079074,"backupName":"before-pearl-reset-1794757079074-95e028cb-dfde-410f-a1a1-2abff662db8e.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: previous boot order loses the pool when the real reward worker reinstalls its guild trigger
+ok 4 - previous boot order loses the pool when the real reward worker reinstalls its guild trigger
+  ---
+  duration_ms: 12780.682992
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757090544,"backupName":"before-pearl-reset-1794757090544-0805ab74-b566-4acb-b626-62ea1e3b732b.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: all four real registrations retain a usable pool; external schema changes still invalidate it
+ok 5 - all four real registrations retain a usable pool; external schema changes still invalidate it
+  ---
+  duration_ms: 11111.755097
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757100191,"backupName":"before-pearl-reset-1794757100191-10a96550-680e-437f-8214-84e1f20dbb82.sqlite"}
+# {"event":"core511_checkpoint","sqliteVersion":"3.53.4","state":"ready","attempts":0,"recoveries":0}
+# Subtest: a local TEMP schema change still discards the prepared pool
+ok 6 - a local TEMP schema change still discards the prepared pool
+  ---
+  duration_ms: 10789.475115
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757114665,"backupName":"before-pearl-reset-1794757114665-d8228159-5e59-479d-b51e-c627a70683ba.sqlite"}
+# Subtest: one transaction reuses adventure rows without changing normal, tower or mist cold snapshots
+ok 7 - one transaction reuses adventure rows without changing normal, tower or mist cold snapshots
+  ---
+  duration_ms: 5454.326093
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757120815,"backupName":"before-pearl-reset-1794757120815-ba552bd0-1c84-4a58-92b7-39816ebab0e8.sqlite"}
+# Subtest: a portal expiring after the private read is absent from the public snapshot
+ok 8 - a portal expiring after the private read is absent from the public snapshot
+  ---
+  duration_ms: 6192.281252
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757124931,"backupName":"before-pearl-reset-1794757124931-44f3ee6e-ee51-456d-a736-957aab5fff1c.sqlite"}
+# Subtest: expired mist escrow is not exposed while public and private snapshots remain independent
+ok 9 - expired mist escrow is not exposed while public and private snapshots remain independent
+  ---
+  duration_ms: 3631.46173
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794757129440,"backupName":"before-pearl-reset-1794757129440-67b5da2f-8ca6-4d5a-9eca-539279f5ce0e.sqlite"}
+# Subtest: retained cold rules match fresh rules across clocks, configuration, accounts and service replacement
+ok 10 - retained cold rules match fresh rules across clocks, configuration, accounts and service replacement
+  ---
+  duration_ms: 5248.184856
+  type: 'test'
+  ...
+# Subtest: 40 boss contributors / 6000 background monsters retain exact committed rows with one live-round query
+ok 11 - 40 boss contributors / 6000 background monsters retain exact committed rows with one live-round query
+  ---
+  duration_ms: 252.34955
+  type: 'test'
+  ...
+# {"backgroundMonsters":6000,"contributors":40,"baselineBossReads":40,"candidateBossReads":1,"baselinePlayerReads":40,"candidatePlayerReads":0,"scope":"one synchronous checkpoint invocation; native mutation/receipt wrappers tested separately"}
+# Subtest: distinct boss rounds retain independent guards and invocation-local results
+ok 12 - distinct boss rounds retain independent guards and invocation-local results
+  ---
+  duration_ms: 15.620781
+  type: 'test'
+  ...
+# Subtest: missing players, dead rounds, stale bases and invalid events preserve rejection and rollback
+ok 13 - missing players, dead rounds, stale bases and invalid events preserve rejection and rollback
+  ---
+  duration_ms: 29.997671
+  type: 'test'
+  ...
+# Subtest: unknown main or temp trigger fallback rereads a live boss after every inserted contribution
+ok 14 - unknown main or temp trigger fallback rereads a live boss after every inserted contribution
+  ---
+  duration_ms: 14.536346
+  type: 'test'
+  ...
+# Subtest: missing player after a prior invocation and duplicate contributor keys keep the original rejection
+ok 15 - missing player after a prior invocation and duplicate contributor keys keep the original rejection
+  ---
+  duration_ms: 19.964386
+  type: 'test'
+  ...
+# Subtest: unknown trigger fallback rereads player existence and keeps row/event ordering
+ok 16 - unknown trigger fallback rereads player existence and keeps row/event ordering
+  ---
+  duration_ms: 10.515918
+  type: 'test'
+  ...
+# Subtest: checkpoint component timing retains all samples and does not assert whole-game latency
+ok 17 - checkpoint component timing retains all samples and does not assert whole-game latency
+  ---
+  duration_ms: 383.592084
+  type: 'test'
+  ...
+# {"scope":"in-memory SQLite checkpoint component, 6000 background monsters, 40 contributors, 15 paired runs; not gameplay/network latency","baseline":{"medianMs":15.03894200000002,"maxMs":18.850319000000127,"samplesMs":[16.189552999999933,13.55592200000001,17.89675299999999,14.79228999999998,16.103297999999995,14.271454000000062,15.03894200000002,17.316877999999974,14.09803199999999,18.850319000000127,17.542091000000028,11.933974999999919,11.557043999999905,17.26331399999981,14.736582999999882]},"candidate":{"medianMs":2.831811000000016,"maxMs":5.23566900000003,"samplesMs":[4.849510000000009,5.23566900000003,4.716803000000027,3.841961999999967,4.685509999999908,3.377815999999939,1.5746480000000247,1.0423100000000431,2.2384850000000824,1.0615809999999328,4.0176349999999275,1.1012640000001284,0.9402130000000852,1.9357800000000225,2.831811000000016]}}
+# Subtest: advanced process IPC owns a stable snapshot after every write callback, including queued writes
+ok 18 - advanced process IPC owns a stable snapshot after every write callback, including queued writes
+  ---
+  duration_ms: 874.253704
+  type: 'test'
+  ...
+# Subtest: received typed-array subrange, stream demultiplexing and EOF retain exact bytes
+ok 19 - received typed-array subrange, stream demultiplexing and EOF retain exact bytes
+  ---
+  duration_ms: 1.19256
+  type: 'test'
+  ...
+# Subtest: late actor snapshot cannot restore already accepted monster damage or movement
+ok 20 - late actor snapshot cannot restore already accepted monster damage or movement
+  ---
+  duration_ms: 12.486809
+  type: 'test'
+  ...
+# Subtest: late actor snapshot cannot resurrect a monster after a confirmed defeat
+ok 21 - late actor snapshot cannot resurrect a monster after a confirmed defeat
+  ---
+  duration_ms: 0.214957
+  type: 'test'
+  ...
+# Subtest: joining a new floor seeds previously unknown monsters and their combat checkpoint
+ok 22 - joining a new floor seeds previously unknown monsters and their combat checkpoint
+  ---
+  duration_ms: 0.1019
+  type: 'test'
+  ...
+# Subtest: explicit committed monster state still replaces the current row
+ok 23 - explicit committed monster state still replaces the current row
+  ---
+  duration_ms: 0.086897
+  type: 'test'
+  ...
+# Subtest: actor snapshots retain the original realm and ownership fencing
+ok 24 - actor snapshots retain the original realm and ownership fencing
+  ---
+  duration_ms: 0.095041
+  type: 'test'
+  ...
+# Subtest: world traffic keeps three connections healthy without additional requests
+ok 25 - world traffic keeps three connections healthy without additional requests
+  ---
+  duration_ms: 216.458729
+  type: 'test'
+  ...
+# Subtest: silent open socket reconnects and committed debit is recovered from receipt, never replayed
+ok 26 - silent open socket reconnects and committed debit is recovered from receipt, never replayed
+  ---
+  duration_ms: 21.470584
+  type: 'test'
+  ...
+# Subtest: resuming a sleeping tab grants queued world frames time to drain
+ok 27 - resuming a sleeping tab grants queued world frames time to drain
+  ---
+  duration_ms: 6.705385
+  type: 'test'
+  ...
+# Subtest: brief READY followed by broken snapshot retains backoff and polling shares one ticket
+ok 28 - brief READY followed by broken snapshot retains backoff and polling shares one ticket
+  ---
+  duration_ms: 7568.870153
+  type: 'test'
+  ...
+# Subtest: hung ticket fetch finishes at a bounded deadline without replaying character POST
+ok 29 - hung ticket fetch finishes at a bounded deadline without replaying character POST
+  ---
+  duration_ms: 7.237541
+  type: 'test'
+  ...
+# Subtest: hung JSON body finishes at a bounded deadline without replaying character POST
+ok 30 - hung JSON body finishes at a bounded deadline without replaying character POST
+  ---
+  duration_ms: 0.508811
+  type: 'test'
+  ...
+# Subtest: session rejection stops recovery and does not override access checks
+ok 31 - session rejection stops recovery and does not override access checks
+  ---
+  duration_ms: 7.611627
+  type: 'test'
+  ...
+# Subtest: 429 Retry-After is shared by world refresh and reconnect without new ticket requests
+ok 32 - 429 Retry-After is shared by world refresh and reconnect without new ticket requests
+  ---
+  duration_ms: 19.728369
+  type: 'test'
+  ...
+# Subtest: negotiated process reply, reconnect replay and status retain exact result and one dispatch
+ok 33 - negotiated process reply, reconnect replay and status retain exact result and one dispatch
+  ---
+  duration_ms: 66.887544
+  type: 'test'
+  ...
+# Subtest: non-kernel stream and unrelated methods keep existing uncompressed replies
+ok 34 - non-kernel stream and unrelated methods keep existing uncompressed replies
+  ---
+  duration_ms: 10.384461
+  type: 'test'
+  ...
+# Subtest: compressed compact monster rows replay after reconnect without dropping the expansion bound
+# {"type":"core511_ipc_safe_stream","code":"ipc_frame_size","method":"command","bytes":1320093}
+ok 35 - compressed compact monster rows replay after reconnect without dropping the expansion bound
+  ---
+  duration_ms: 54.489632
+  type: 'test'
+  ...
+# Subtest: negotiated small reply serializes its value once; replies never share a mutable buffer
+ok 36 - negotiated small reply serializes its value once; replies never share a mutable buffer
+  ---
+  duration_ms: 12.241316
+  type: 'test'
+  ...
+# Subtest: large committed replies still transfer in bounded parts and replay once after interrupted transfer
+ok 37 - large committed replies still transfer in bounded parts and replay once after interrupted transfer
+  ---
+  duration_ms: 188.624158
+  type: 'test'
+  ...
+# Subtest: reply above the bounded transfer limit fails without dispatching twice
+ok 38 - reply above the bounded transfer limit fails without dispatching twice
+  ---
+  duration_ms: 262.520039
+  type: 'test'
+  ...
+# Subtest: R113 system checkpoint and shared snapshot replays keep the first wire value without retaining mutable graphs
+ok 39 - R113 system checkpoint and shared snapshot replays keep the first wire value without retaining mutable graphs
+  ---
+  duration_ms: 9.700712
+  type: 'test'
+  ...
+# Subtest: live ACK, status replay and existing compact tables roundtrip without mutation
+ok 40 - live ACK, status replay and existing compact tables roundtrip without mutation
+  ---
+  duration_ms: 35.555964
+  type: 'test'
+  ...
+# Subtest: expansion, corruption, wrong request identity and malformed envelopes are rejected
+ok 41 - expansion, corruption, wrong request identity and malformed envelopes are rejected
+  ---
+  duration_ms: 19.25939
+  type: 'test'
+  ...
+# Subtest: small, incompressible, error and above-one-frame results use the old transport
+ok 42 - small, incompressible, error and above-one-frame results use the old transport
+  ---
+  duration_ms: 21.871376
+  type: 'test'
+  ...
+# Subtest: async compression keeps exact wire, serializes once and yields before compression completes
+ok 43 - async compression keeps exact wire, serializes once and yields before compression completes
+  ---
+  duration_ms: 35.927876
+  type: 'test'
+  ...
+# Subtest: compression pressure and failure use bounded plain wire without losing a committed result
+ok 44 - compression pressure and failure use bounded plain wire without losing a committed result
+  ---
+  duration_ms: 22.098498
+  type: 'test'
+  ...
+# Subtest: external fallback reuses statements with fresh bindings, and only publishes after durability
+ok 45 - external fallback reuses statements with fresh bindings, and only publishes after durability
+  ---
+  duration_ms: 19.167027
+  type: 'test'
+  ...
+# Subtest: failed fallback rolls back and the next command keeps native ordering
+ok 46 - failed fallback rolls back and the next command keeps native ordering
+  ---
+  duration_ms: 2.170327
+  type: 'test'
+  ...
+# Subtest: fallback cache still observes MAIN/TEMP schema changes and trigger side effects
+ok 47 - fallback cache still observes MAIN/TEMP schema changes and trigger side effects
+  ---
+  duration_ms: 6.328975
+  type: 'test'
+  ...
+# Subtest: small groups retain all later heads and preserve seeds, sequences and FIFO
+ok 48 - small groups retain all later heads and preserve seeds, sequences and FIFO
+  ---
+  duration_ms: 7.984346
+  type: 'test'
+  ...
+# Subtest: full party leases remain complete and no later group is consumed
+ok 49 - full party leases remain complete and no later group is consumed
+  ---
+  duration_ms: 3.128116
+  type: 'test'
+  ...
+# Subtest: mixed area planning and accepted overlapping casts also retain later heads
+ok 50 - mixed area planning and accepted overlapping casts also retain later heads
+  ---
+  duration_ms: 3.807341
+  type: 'test'
+  ...
+# Subtest: foreign, held, missing, overdue and older waiters still block without consumption
+ok 51 - foreign, held, missing, overdue and older waiters still block without consumption
+  ---
+  duration_ms: 8.596894
+  type: 'test'
+  ...
+# Subtest: changed ownership or head invalidates the entire planned group
+ok 52 - changed ownership or head invalidates the entire planned group
+  ---
+  duration_ms: 0.421352
+  type: 'test'
+  ...
+# Subtest: unchanged private sections are retained; only changed sections allocate new snapshots
+ok 53 - unchanged private sections are retained; only changed sections allocate new snapshots
+  ---
+  duration_ms: 5.879054
+  type: 'test'
+  ...
+# Subtest: inputs, returned metadata and expanded values cannot mutate the retained snapshot
+ok 54 - inputs, returned metadata and expanded values cannot mutate the retained snapshot
+  ---
+  duration_ms: 3.504881
+  type: 'test'
+  ...
+# Subtest: ownership, channel, area, cycle and older revision changes do not reuse snapshots
+ok 55 - ownership, channel, area, cycle and older revision changes do not reuse snapshots
+  ---
+  duration_ms: 4.768194
+  type: 'test'
+  ...
+# Subtest: actors remain isolated, removed sections are dropped and forget requires a full read
+ok 56 - actors remain isolated, removed sections are dropped and forget requires a full read
+  ---
+  duration_ms: 1.183125
+  type: 'test'
+  ...
+# Subtest: digest verification and full fallback still reject mismatched omitted values
+ok 57 - digest verification and full fallback still reject mismatched omitted values
+  ---
+  duration_ms: 0.597812
+  type: 'test'
+  ...
+# Subtest: repeated changed, unchanged, removed and reordered sections match full snapshots
+ok 58 - repeated changed, unchanged, removed and reordered sections match full snapshots
+  ---
+  duration_ms: 33.17365
+  type: 'test'
+  ...
+# Subtest: first client bytes sent while the channel is busy reach the channel, not the realm
+ok 59 - first client bytes sent while the channel is busy reach the channel, not the realm
+  ---
+  duration_ms: 976.029856
+  type: 'test'
+  ...
+# Subtest: handoff is declined, socket untouched, when this process already holds client bytes or the channel is not running
+ok 60 - handoff is declined, socket untouched, when this process already holds client bytes or the channel is not running
+  ---
+  duration_ms: 340.079384
+  type: 'test'
+  ...
+1..60
+# tests 60
+# suites 0
+# pass 60
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 80965.675688
