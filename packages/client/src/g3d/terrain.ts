@@ -40,6 +40,23 @@ export class Terrain {
       }
     }
     const WATER_Y = -0.32;
+    // Yol/meydan ve kum düzleştirmesi yumuşak maskeyle: karo başına aç-kapa düzleştirme yol kenarında karo karo
+    // basamaklar (kayalık yamaç dokulu, kesik kesik kenar) yapıyordu. Maske Gauss ile bulanıklaştırılıp çift doğrusal okunur.
+    const blurMask = (pred: (g: number) => boolean) => {
+      const W = l.w, H = l.h, R = 3, sg = 1.1, ker = Array.from({ length: R * 2 + 1 }, (_, i) => Math.exp(-((i - R) ** 2) / (2 * sg * sg)));
+      const ks = ker.reduce((x, y) => x + y, 0);
+      const a = new Float32Array(W * H), b = new Float32Array(W * H);
+      for (let k = 0; k < W * H; k++) a[k] = pred(l.ground[k]) ? 1 : 0;
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += a[y * W + Math.min(W - 1, Math.max(0, x + k))] * ker[k + R]; b[y * W + x] = v / ks; }
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += b[Math.min(H - 1, Math.max(0, y + k)) * W + x] * ker[k + R]; a[y * W + x] = v / ks; }
+      return (tx: number, ty: number) => {
+        const fx = Math.max(0, Math.min(W - 1.001, tx - 0.5)), fy = Math.max(0, Math.min(H - 1.001, ty - 0.5));
+        const x0 = Math.floor(fx), y0 = Math.floor(fy), u = fx - x0, v = fy - y0;
+        const at = (x: number, y: number) => a[Math.min(H - 1, y) * W + Math.min(W - 1, x)];
+        return (at(x0, y0) * (1 - u) + at(x0 + 1, y0) * u) * (1 - v) + (at(x0, y0 + 1) * (1 - u) + at(x0 + 1, y0 + 1) * u) * v;
+      };
+    };
+    const roadW = blurMask((g) => g === 3 || g === 9 || g === 11), sandW = blurMask((g) => g === 2);
     for (let j = 0; j < this.hh; j++) for (let i = 0; i < this.hw; i++) {
       const tx = i / SUB, ty = j / SUB;
       let h = (fbm(tx / l.w, ty / l.h, 3, 4, seed) - 0.5) * (wild ? 3.4 : 0.6) + (fbm(tx / 9, ty / 9, 2, 3, seed + 11) - 0.5) * (wild ? 0.7 : 0.15);
@@ -55,14 +72,18 @@ export class Terrain {
       const rim = wild ? 5 : 3;
       if (edge < rim) h += Math.pow(rim - edge, 1.35) * (wild ? 1.25 : 0.55) * (0.55 + fbm(tx / 6, ty / 6, 2, 3, seed + 3) * 0.9);
       // yollar ve meydan düz
-      const g = gAt(Math.floor(tx), Math.floor(ty));
-      if (g === 3 || g === 9 || g === 11) h = h * 0.25 + 0.02;
-      else if (g === 2) h *= 0.75;
+      const rw = THREE.MathUtils.smoothstep(roadW(tx, ty), 0.05, 0.6), sw = sandW(tx, ty);
+      h = THREE.MathUtils.lerp(h * (1 - 0.25 * sw), h * 0.25 + 0.02, rw);
       // (kenar yamacı ve yollardan sonra: kenardaki göller de dolu kalsın)
       if (water > 0) h = Math.min(h, WATER_Y - 0.18 - (water / cnt) * 0.9); // göl tabanı daima suyun altında
       else {
-        const d = wd[Math.min(l.h - 1, Math.floor(ty)) * l.w + Math.min(l.w - 1, Math.floor(tx))];
-        if (d < 3) h = Math.min(h, THREE.MathUtils.lerp(WATER_Y + 0.12, Math.max(h, WATER_Y + 0.12), THREE.MathUtils.smoothstep(d, 0, 3))); // kıyıya yumuşak iniş
+        // kıyıya uzaklık çift doğrusal okunur: karo karo okununca kıyı basamak basamak iniyor, kayalık yamaç
+        // dokusu kenarda kesik kesik görünüyordu
+        const fx = Math.max(0, Math.min(l.w - 1.001, tx - 0.5)), fy = Math.max(0, Math.min(l.h - 1.001, ty - 0.5));
+        const x0 = Math.floor(fx), y0 = Math.floor(fy), u = fx - x0, v = fy - y0;
+        const W_ = (x: number, y: number) => Math.min(6, wd[Math.min(l.h - 1, y) * l.w + Math.min(l.w - 1, x)]);
+        const d = (W_(x0, y0) * (1 - u) + W_(x0 + 1, y0) * u) * (1 - v) + (W_(x0, y0 + 1) * (1 - u) + W_(x0 + 1, y0 + 1) * u) * v;
+        if (d < 4) h = Math.min(h, THREE.MathUtils.lerp(WATER_Y + 0.08, Math.max(h, WATER_Y + 0.08), THREE.MathUtils.smoothstep(d, 0.3, 4))); // kıyıya yumuşak iniş
       }
       this.heights[j * this.hw + i] = h;
     }
@@ -132,7 +153,7 @@ void groundBlend(){
   vec4 SP[3]; SP[0]=s0; SP[1]=s1; SP[2]=s2;
   for (int i = 0; i < ${nl}; i++) w[i] = SP[i / 4][i - (i / 4) * 4];
   // eğim: dik yerler kaya yamacı olur
-  float slope = smoothstep(0.2, 0.42, 1.0 - normalize(vWNor).y);
+  float slope = smoothstep(0.3, 0.5, 1.0 - normalize(vWNor).y);
   for (int i = 0; i < ${nl}; i++) w[i] *= (1.0 - slope);
   w[${LAYER_NAMES.indexOf('cliff')}] += slope;
   vec2 tuv = vWPos.xz / 2.4;
@@ -180,10 +201,13 @@ void groundBlend(){
   private buildWater(l: MapLayout) {
     let any = false;
     const mask = new Uint8Array(l.w * l.h * 4);
-    for (let i = 0; i < l.w * l.h; i++) {
-      const g = l.ground[i];
+    // Düzlem X ekseninde döndürüldüğü için UV'nin v'si dünyada z'nin TERSİ yönde: satırlar ters yazılır.
+    // (Önceden maske dikeyde aynalanıyordu: göller suyu olmayan boş çukur, su ise çimenin üstünde kalıyordu.)
+    for (let ty = 0; ty < l.h; ty++) for (let tx = 0; tx < l.w; tx++) {
+      const g = l.ground[ty * l.w + tx];
       const v = g === G_WATER ? 230 : g === G_DEEP ? 255 : 0;
       if (v) any = true;
+      const i = (l.h - 1 - ty) * l.w + tx;
       mask[i * 4] = mask[i * 4 + 1] = mask[i * 4 + 2] = v; mask[i * 4 + 3] = 255;
     }
     if (!any) return;

@@ -48,6 +48,25 @@ export class GrassField {
     this.mat = m;
   }
 
+  /** Karo izin değerinin Gauss ile yumuşatılmış hali: çimen yol kenarında karo karo kesilmesin, yavaşça seyrelsin. */
+  private smooth: Float32Array | null = null;
+  private allowedAt(sx: number, sy: number): number {
+    const l = this.l, W = l.w, H = l.h;
+    if (!this.smooth) {
+      const R = 2, sg = 0.85, ker = Array.from({ length: R * 2 + 1 }, (_, i) => Math.exp(-((i - R) ** 2) / (2 * sg * sg)));
+      const ks = ker.reduce((x, y) => x + y, 0);
+      const a = new Float32Array(W * H), b = new Float32Array(W * H);
+      for (let k = 0; k < W * H; k++) a[k] = this.allowed(l.ground[k]) * (l.blocked[k] ? 0.4 : 1);
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += a[y * W + Math.min(W - 1, Math.max(0, x + k))] * ker[k + R]; b[y * W + x] = v / ks; }
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) { let v = 0; for (let k = -R; k <= R; k++) v += b[Math.min(H - 1, Math.max(0, y + k)) * W + x] * ker[k + R]; a[y * W + x] = v / ks; }
+      this.smooth = a;
+    }
+    const fx = Math.max(0, Math.min(W - 1.001, sx / TILE - 0.5)), fy = Math.max(0, Math.min(H - 1.001, sy / TILE - 0.5));
+    const x0 = Math.floor(fx), y0 = Math.floor(fy), u = fx - x0, v = fy - y0, A = this.smooth;
+    const at = (x: number, y: number) => A[Math.min(H - 1, y) * W + Math.min(W - 1, x)];
+    return (at(x0, y0) * (1 - u) + at(x0 + 1, y0) * u) * (1 - v) + (at(x0, y0 + 1) * (1 - u) + at(x0 + 1, y0 + 1) * u) * v;
+  }
+
   private allowed(gt: number) {
     const th = this.l.def.theme;
     if (th === 'black') return 0;
@@ -69,12 +88,12 @@ export class GrassField {
       const sx = gx / U, sy = gz / U;
       const tx = Math.floor(sx / TILE), ty = Math.floor(sy / TILE);
       if (tx < 0 || ty < 0 || tx >= l.w || ty >= l.h) continue;
-      const k = this.allowed(l.ground[ty * l.w + tx]);
-      if (k <= 0 || r1 > Math.min(1, k)) continue;
-      if (l.blocked[ty * l.w + tx] && r2 < 0.6) continue;
+      // yumuşak maske + hafif gürültü: kenar doğal kıvrımlı seyrelir (karo sınırı belli olmaz)
+      const k = this.allowedAt(sx, sy) * (0.8 + 0.4 * ((Math.sin(gx * 1.7) + Math.sin(gz * 1.3 + gx * 0.6)) * 0.25 + 0.5));
+      if (k <= 0.05 || r1 > Math.min(1, k)) continue;
       p.set(gx, this.heightAt(sx, sy) - 0.02, gz);
       e.set(0, r3 * 6.283, 0); q.setFromEuler(e);
-      const sc = 0.6 + r2 * 0.5; s.set(sc * 1.1, sc * (k > 1 ? 1.0 : 0.78) * (0.75 + r1 * 0.35), sc * 1.1);
+      const sc = (0.6 + r2 * 0.5) * (0.55 + 0.45 * Math.min(1, k)); s.set(sc * 1.1, sc * (k > 1 ? 1.0 : 0.78) * (0.75 + r1 * 0.35), sc * 1.1);
       mats.push(m4.compose(p, q, s).clone());
     }
     if (!mats.length) return null;
