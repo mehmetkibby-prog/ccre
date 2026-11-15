@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
   ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -270,6 +271,67 @@ export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
             </td>
           </tr>
         ))}</tbody>
+      </table></div>
+    </>
+  );
+}
+
+/** Dönüşüm (Haso): hangi nadirlik Eşsiz'e dönüşür, grup başına (silah / zırh / diğer) ne istenir. */
+export function TransformTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const tr = t.transform ?? {};
+  const conf = transformConf();
+  const from: string[] = tr.from?.length ? tr.from : TRANSFORM_DEFAULTS.from;
+  const put = (patch: Partial<NonNullable<GameTuning['transform']>>) => setT({ ...t, transform: { ...tr, ...patch } });
+  const cost = (g: TransformGroup) => ({ ...TRANSFORM_DEFAULTS.cost[g], ...(tr.cost?.[g] ?? {}) });
+  const putCost = (g: TransformGroup, patch: Partial<TransformCost>) => put({ cost: { ...(tr.cost ?? {}), [g]: { ...cost(g), ...patch } } });
+  const setMat = (g: TransformGroup, oldKey: string | null, key: string, qty: number) => {
+    const mats = { ...cost(g).mats };
+    if (oldKey && oldKey !== key) delete mats[oldKey];
+    if (key && qty > 0) mats[key] = qty; else if (key) delete mats[key];
+    putCost(g, { mats });
+  };
+  const matOpts = MATERIALS.filter((m) => !['red_potion', 'starter_chest', 'mastery_seal'].includes(m.id));
+  void conf;
+  return (
+    <>
+      <section className="admin-sec">
+        <h4>Dönüşüm (Demirci Haso)</h4>
+        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Ekipman <b style={{ color: RARITY.unique.color }}>Eşsiz</b> nadirliğe dönüşür. Efsunlar, artı ve evrim aynen korunur; yalnız nadirlik ve güç değişir (Eşsiz, Kızıl'dan ~%13 güçlü). Şans %100 değilse başarısızlıkta yalnız bedel gider, eşya bozulmaz.</div>
+        <label className="row" style={{ fontSize: 13, marginBottom: 8 }}><input type="checkbox" disabled={dis} checked={tr.enabled ?? TRANSFORM_DEFAULTS.enabled} onChange={(e) => put({ enabled: e.target.checked })} /> Dönüşüm açık</label>
+        <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Hangi nadirlikteki eşyalar dönüşebilir:</div>
+        <div className="row wrap" style={{ gap: 6 }}>
+          {TRANSFORM_RARITY_OPTIONS.map((r) => (
+            <label key={r} className="row" style={{ fontSize: 12.5, gap: 4 }}>
+              <input type="checkbox" disabled={dis} checked={from.includes(r)} onChange={(e) => { const n = e.target.checked ? [...from, r] : from.filter((x) => x !== r); put({ from: n.length ? n : TRANSFORM_DEFAULTS.from }); }} />
+              <span style={{ color: RARITY[r].color }}>{RARITY[r].name}</span>
+            </label>
+          ))}
+        </div>
+        {tr.cost && <div className="row wrap" style={{ marginTop: 8 }}><span className="pill">Özel bedeller</span><button className="btn small ghost" disabled={dis} onClick={() => put({ cost: undefined })}>Varsayılana dön</button></div>}
+      </section>
+      <div className="adm-table-wrap"><table className="adm-table">
+        <thead><tr><th>Grup</th><th>Şans %</th><th>Mücevher</th><th>En az artı</th><th>En az seviye</th><th>Malzemeler (ad · adet)</th></tr></thead>
+        <tbody>{TRANSFORM_GROUPS.map((g) => { const c = cost(g); return (
+          <tr key={g}>
+            <td><b>{TRANSFORM_GROUP_NAMES[g]}</b><small>{g === 'other' ? 'miğfer, takılar, çizme' : g === 'armor' ? 'gövde zırhı' : 'kılıç, yay, asa'}</small></td>
+            <td><Num v={c.chance} def={c.chance} min={0} max={100} step={1} w={58} dis={dis} on={(v) => putCost(g, { chance: v ?? 100 })} /></td>
+            <td><Num v={c.gems} def={c.gems} min={0} max={1e8} step={100} w={86} dis={dis} on={(v) => putCost(g, { gems: Math.round(v ?? 0) })} /></td>
+            <td><Num v={c.minPlus} def={c.minPlus} min={0} max={6} step={1} w={52} dis={dis} on={(v) => putCost(g, { minPlus: Math.round(v ?? 0) })} /></td>
+            <td><Num v={c.minLevel} def={c.minLevel} min={1} max={200} step={1} w={58} dis={dis} on={(v) => putCost(g, { minLevel: Math.round(v ?? 1) })} /></td>
+            <td>
+              <div className="col" style={{ gap: 4 }}>
+                {Object.entries(c.mats).map(([k, q]) => (
+                  <div key={k} className="row" style={{ gap: 4 }}>
+                    <select className="adm-sel" disabled={dis} value={k} onChange={(e) => setMat(g, k, e.target.value, q)}>{matOpts.map((m) => <option key={m.id} value={m.id} disabled={m.id !== k && m.id in c.mats}>{m.name}</option>)}</select>
+                    <Num v={q} def={q} min={0} max={9999} step={1} w={58} dis={dis} on={(v) => setMat(g, k, k, Math.round(v ?? 0))} />
+                    <button className="btn small ghost" disabled={dis} onClick={() => setMat(g, k, k, 0)} aria-label="Kaldır">✕</button>
+                  </div>
+                ))}
+                {Object.keys(c.mats).length < 6 && <button className="btn small ghost" disabled={dis} onClick={() => { const f = matOpts.find((m) => !(m.id in c.mats)); if (f) setMat(g, null, f.id, 1); }}>+ Malzeme</button>}
+              </div>
+            </td>
+          </tr>
+        ); })}</tbody>
       </table></div>
     </>
   );

@@ -142,7 +142,8 @@ export function itemIconName(it: { tpl: string; rarity: Rarity }): string {
   const t = ITEM_TPL.get(it.tpl);
   if (!t) return 'bag';
   if ((t.slot === 'weapon' || t.slot === 'armor') && t.cls && it.rarity !== 'white') {
-    const r = it.rarity === 'blue' || it.rarity === 'orange' ? it.rarity : 'crimson';
+    // Eşsiz ve üstü kendi (altın) simgesini, kızıl kızılı kullanır
+    const r = it.rarity === 'blue' || it.rarity === 'orange' || it.rarity === 'crimson' ? it.rarity : 'unique';
     return t.slot === 'weapon' ? `w_${t.cls}_${r}` : `armor_${t.cls}_${r}`;
   }
   return t.icon;

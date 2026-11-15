@@ -11,11 +11,12 @@ import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
 import { buildProps, MESHY_TREES } from './props3d.ts';
+import { createPet, createWings, PET_MODEL, type Pet } from './pets.ts';
 import { createHumanoid, animateHumanoid, LOOKS, type Rig, type HState } from './humanoid.ts';
 import { createMonster, MONSTER_MESHES, type MonsterRig } from './monsters3d.ts';
 import { Fx3D } from './fx3d.ts';
@@ -35,7 +36,10 @@ const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse
  */
 const DYN_SHADOWS = !MOBILE;
 /** Nadir eşya parıltısı gösterilen en çok oyuncu ve en uzak mesafe² (sunucu birimi). */
-const FX_MAX = MOBILE ? 8 : 20, FX_FAR2 = (MOBILE ? 700 : 1100) ** 2;
+const FX_MAX = MOBILE ? 6 : 16, FX_FAR2 = (MOBILE ? 700 : 1100) ** 2;
+/** Kalabalık bütçesi: yalnız en yakın PLAYER_FULL oyuncu tam ayrıntılı (gölge, evcil hayvan, kanat);
+ *  ötekiler gölgesiz ve kozmetiksiz çizilir. 20+ oyunculu meydanda çizim çağrısı ve üçgen sayısı sınırlı kalır. */
+const PLAYER_FULL = MOBILE ? 10 : 22;
 let blobGeo: THREE.PlaneGeometry | null = null, blobMat: THREE.MeshBasicMaterial | null = null;
 function blobShadow(r: number) {
   if (!blobGeo) {
@@ -66,7 +70,8 @@ const THEME = {
 } as const;
 
 
-interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null; /** asıl model yüklenirken boş yer tutucu */ ph?: boolean }
+interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null; /** asıl model yüklenirken boş yer tutucu */ ph?: boolean;
+  /** Nesne Market: evcil hayvan ve sırttaki kanat; cpend yüklenmeyi bekleyen kozmetik modeli */ pet?: Pet | null; wings?: (THREE.Object3D & { tick?: (t: number, moving: boolean) => void }) | null; cpend?: string | null }
 
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
@@ -169,8 +174,8 @@ export class Renderer3D {
         this.shadowDirty = true;
       }
       // model geldi: o modeli kullanan görünümleri yeniden kur
-      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
-      if (this.self && (this.self.wpend === id || this.self.apend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
+      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id || v.cpend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
+      if (this.self && (this.self.wpend === id || this.self.apend === id || this.self.cpend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
       if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
       // NPC'ler: yerinde yeni modelle değiştir
       this.npcViews = this.npcViews.map((v) => {
@@ -329,7 +334,7 @@ export class Renderer3D {
     const cls = this.g.cls;
     // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
-    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) this.dyn.remove(this.self.obj);
     this.selfWR = wr;
@@ -343,7 +348,7 @@ export class Renderer3D {
   private humanView(modelId: string, kind: number, x: number, y: number, gear = 0): View {
     const gr = gearRarity(gear);
     // nadir zırh: Meshy'de tasarlanmış zırhlı çeşit (aynı iskelet ve animasyonlar); yüklenene dek temel model
-    const vid = kind === Kind.PLAYER && gr.armor > 0 ? `${modelId}_${['', 'blue', 'orange', 'crimson'][Math.min(3, gr.armor)]}` : '';
+    const vid = kind === Kind.PLAYER && gr.armor > 0 ? `${modelId}_${['', 'blue', 'orange', 'crimson', 'unique'][Math.min(4, gr.armor)]}` : '';
     const designed = !!vid && hasModel(vid);
     let glb = designed ? createGlbChar(vid) : null;
     const apend = designed && !glb ? vid : null;
@@ -357,7 +362,12 @@ export class Renderer3D {
       if (gr.plus >= 6) glb.root.add(sigilFx());
       const gfx: THREE.Object3D[] = [];
       if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx' || o.name === 'plus-fx') gfx.push(o); });
-      return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend };
+      // Nesne Market kozmetikleri (bit 12-14): kanat sırta, evcil hayvan yanına
+      const cos = kind === Kind.PLAYER ? (gear >> 12) & 7 : 0;
+      let cpend: string | null = null, wings: View['wings'] = null, pet: Pet | null = null;
+      if (cos & 4) { wings = createWings(glb.height - 0.2); if (wings) glb.root.add(wings); else if (modelPending('wings_crimson')) cpend = 'wings_crimson'; }
+      if (cos & 3) { pet = createPet(cos & 3); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[cos & 3])) cpend = PET_MODEL[cos & 3]; }
+      return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend, wings, pet, cpend };
     }
     // asıl model yükleniyorsa geçici prosedürel modeli gösterme: kısa bir süre boş kalsın, model gelince kurulur
     if (modelPending(modelId)) return { kind, obj: new THREE.Group(), model: modelId, height: 2.0, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, ph: true };
@@ -368,10 +378,10 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
-    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8))) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
+    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12))) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
-      const gb = e.weapon | (Math.min(15, e.wplus) << 8);
+      const gb = e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12);
       v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y, gb);
       (v as View & { wr?: number }).wr = gb;
     } else if (e.kind === Kind.MONSTER) {
@@ -422,6 +432,18 @@ export class Renderer3D {
     return t;
   }
 
+  /** Oyuncu görünümünün ayrıntısı: tam (gölge, evcil hayvan, kanat) ya da hafif. Yalnız değişince dolaşır. */
+  private setDetail(v: View, full: boolean) {
+    const lv = v as View & { full?: boolean; casters?: THREE.Mesh[] };
+    if (lv.full === full) return;
+    lv.full = full;
+    if (!lv.casters) { lv.casters = []; v.obj.traverse((o) => { const m = o as THREE.Mesh; if (m.isMesh && m.castShadow) lv.casters!.push(m); }); }
+    for (const m of lv.casters) m.castShadow = full;
+    if (v.pet) v.pet.obj.visible = full;
+    if (v.wings) v.wings.visible = full;
+    this.shadowDirty = true;
+  }
+
   private animateView(v: View, x: number, y: number, dir: number | null, anim: number, animStart: number, now: number, dt: number, dead: boolean) {
     const dist = Math.hypot(x - v.lx, y - v.ly) * U;
     const moving = dist > 0.002;
@@ -447,6 +469,9 @@ export class Renderer3D {
     v.speed = (v.speed ?? 0) * 0.8 + sp * 0.2;
     const restart = (v.state === 'attack' || v.state === 'cast') && (v as View & { lastStart?: number }).lastStart !== animStart;
     (v as View & { lastStart?: number }).lastStart = animStart;
+    // evcil hayvan ve kanat (her karede; ucuz)
+    if (v.pet?.obj.visible) v.pet.update(dt, now, v.obj, moving, (wx, wz) => this.heightAt(wx / U, wz / U));
+    v.wings?.tick?.(now / 1000, moving);
     // ayrıntı kısma: kameradan uzak (~24 m+) olanların iskelet animasyonu 3 karede bir, biriken süreyle güncellenir
     // (kalabalıkta/ormanda kare süresinin çoğu iskelet hesabıydı). Durum değişimi ve vuruş başlangıcı hemen işlenir.
     const lv = v as View & { lodAcc?: number; lodSlot?: number };
@@ -514,6 +539,7 @@ export class Renderer3D {
     // varlıklar
     const seen = new Set<number>();
     const fxNear: { v: View; d: number }[] = [];
+    const crowd: { v: View; d: number }[] = [];
     for (const e of g.ents.values()) {
       const v = this.viewFor(e);
       if (!v) continue;
@@ -530,6 +556,7 @@ export class Renderer3D {
       (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead);
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
+      if (e.kind === Kind.PLAYER) crowd.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur
       if (e.kind === Kind.MONSTER && dead && v.deadAt) { const k = (now - v.deadAt) / 1500; v.obj.position.y -= Math.max(0, k - 0.5) * 0.8; }
       // isabet titreşimi
@@ -543,6 +570,8 @@ export class Renderer3D {
     // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)
     if (fxNear.length > FX_MAX) fxNear.sort((a, b) => a.d - b.d);
     for (let i = 0; i < fxNear.length; i++) { const on = i < FX_MAX && fxNear[i].d < FX_FAR2; for (const o of fxNear[i].v.gfx!) o.visible = on; }
+    if (crowd.length > PLAYER_FULL) crowd.sort((a, b) => a.d - b.d);
+    for (let i = 0; i < crowd.length; i++) this.setDetail(crowd[i].v, i < PLAYER_FULL);
     // NPC'ler: oyuncuya döner
     for (const v of this.npcViews) {
       const toSelf = Math.hypot(g.dx - v.lx, g.dy - v.ly) < 360;

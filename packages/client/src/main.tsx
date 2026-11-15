@@ -213,7 +213,7 @@ function MenuBackdrop() {
       r.setLayout(l);
     } catch (e) { console.warn('[menü] 3B sahne kurulamadı', e); setFallback(true); return; }
     const fx = r.fx;
-    const mk = (id: number, kind: number, x: number, y: number, extra: Record<string, unknown>) => ({ id, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: Anim.IDLE, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 30, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, wplus: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra }) as unknown as CEnt & { combo?: number; skill?: number };
+    const mk = (id: number, kind: number, x: number, y: number, extra: Record<string, unknown>) => ({ id, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: Anim.IDLE, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 30, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, wplus: 0, cos: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra }) as unknown as CEnt & { combo?: number; skill?: number };
     const BOSS = 9;
     const boss = mk(BOSS, Kind.MONSTER, bx, by, { tpl: MONSTER_INDEX.get('fox_king') ?? 0, level: 20, name: 'Tilki Kral', hp: 26000, maxHp: 36000 });
     g.ents.set(BOSS, boss);

@@ -16,7 +16,7 @@ r.setLayout(l);
 r.camYaw = Number(q.get('yaw') ?? 0); r.camZoom = Number(q.get('cz') ?? 1); r.camPitch = Number(q.get('cp') ?? 0.62);
 store.set({ char: { id: 1, name: 'Çağlar', cls, role: 'player' }, hp: 100, maxHp: 100 });
 let id = 10;
-const mk = (kind: number, x: number, y: number, extra: Partial<CEnt>): CEnt => ({ id: id++, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: 0, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 5, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, wplus: 0, guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra });
+const mk = (kind: number, x: number, y: number, extra: Partial<CEnt>): CEnt => ({ id: id++, kind, x, y, samples: [{ t: 0, x, y }], dir: 64, anim: 0, animStart: 0, hp: 100, maxHp: 100, flags: 0, level: 5, name: '', cls: 0, variant: 0, tpl: 0, weapon: 0, wplus: 0, cos: Number(q.get('cos') ?? 0), guild: '', icon: '', rarity: 0, owner: 0, ttlEnd: 1e12, label: '', hurtUntil: 0, spawnAt: 0, deadAt: 0, ...extra });
 const add = (e: CEnt) => g.ents.set(e.id, e);
 const sx = g.dx, sy = g.dy;
 if (q.get('show') !== 'none') {
@@ -27,12 +27,20 @@ if (q.get('show') !== 'none') {
   add(mk(Kind.LOOT, sx + 50, sy + 110, { icon: 'sword', rarity: 2, owner: 1, label: 'Turuncu Kılıç' }));
 }
 const lineup = q.get('lineup');
+// kalabalık denemesi: crowd=N oyuncu, karışık sınıf/ekipman/kozmetik, rastgele dolaşır
+const crowd = Number(q.get('crowd') ?? 0);
+const walkers: CEnt[] = [];
+for (let i = 0; i < crowd; i++) {
+  const a = (i / crowd) * Math.PI * 2, rr = 140 + (i % 5) * 70;
+  const e = mk(Kind.PLAYER, sx + Math.cos(a) * rr, sy + Math.sin(a) * rr, { name: 'Oyuncu' + i, cls: i % 3, level: 10 + i, weapon: [0, 17, 34, 51, 68][i % 5], wplus: i % 7, cos: [0, 1, 2, 3, 4, 7][i % 6] });
+  add(e); walkers.push(e);
+}
 if (lineup) {
   g.ents.clear();
   const list = lineup.startsWith('m:') ? lineup.slice(2).split(',').map((m) => ['M', m]) : lineup === 'chars' ? [['P', 0], ['P', 1], ['P', 2]] : lineup.startsWith('p') ? [['P', Number(lineup.slice(1))]] : lineup === 'mons' ? [['M', 'shadow_wolf'], ['M', 'rot_guard'], ['M', 'essence_eater'], ['M', 'frost_lynx'], ['M', 'ice_golem'], ['M', 'blizzard_seer']] : [];
   list.forEach(([k, v], i) => {
     const x = sx + (i - (list.length - 1) / 2) * (lineup === 'mons' ? 110 : 75), y = sy + 20;
-    if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: Number(q.get('dir') ?? 64), level: 30, weapon: 3 }));
+    if (k === 'P') add(mk(Kind.PLAYER, x, y, { name: ['Muhafız', 'Avcı', 'Arkanist'][v as number], cls: v as number, dir: Number(q.get('dir') ?? 64), level: 30, weapon: Number(q.get('gear') ?? 3), cos: q.get('coses') ? Number(q.get('coses')!.split(',')[v as number] ?? 0) : Number(q.get('cos') ?? 0) }));
     else add(mk(Kind.MONSTER, x, y, { tpl: MONSTER_INDEX.get(v as string)!, variant: lineup.startsWith('m:') ? i : i % 2, dir: Number(q.get('dir') ?? 64), level: 20 }));
   });
   g.dx = sx - 1000; g.dy = sy - 1000; // kendini uzağa al
@@ -48,6 +56,9 @@ const loop = (t: number) => {
   const period = Number(q.get('period') ?? 900);
   for (const e of g.ents.values()) if (e.kind !== Kind.LOOT && anim === 'attack' && t - e.animStart > period) { e.anim = Anim.ATTACK; e.animStart = t; e.combo = ((e.combo ?? -1) + 1) % 3; if (q.get('combo')) e.combo = Number(q.get('combo')); }
   for (const e of g.ents.values()) if (e.kind === Kind.PLAYER && anim === 'cast' && t - e.animStart > Number(q.get('period') ?? 1400)) { e.anim = Anim.CAST; e.animStart = t; e.skill = Number(q.get('skill') ?? 1); }
+  if (q.get('stroll')) { for (const e of g.ents.values()) if (e.kind === Kind.PLAYER) { const ph = ((t / 1000) % 8) < 4; if (ph) { e.x += dt * 0.09; e.dir = 0; } e.samples = [{ t: 0, x: e.x, y: e.y }]; const co = (r as any).camOverride; if (co) co.x = e.x; } }
+  for (const [i, e] of walkers.entries()) { const a = t / 3000 + i; e.x += Math.cos(a) * dt * 0.08; e.y += Math.sin(a * 1.3) * dt * 0.08; e.dir = ((Math.atan2(Math.sin(a * 1.3), Math.cos(a)) / (Math.PI * 2)) * 256 + 256) % 256; e.anim = Anim.WALK; e.samples = [{ t: 0, x: e.x, y: e.y }]; }
+  const ft = (window as any).__ft ??= []; ft.push(dt); if (ft.length > 600) ft.shift();
   (window as any).__phase = [...g.ents.values()].map((e: CEnt) => Math.round(t - e.animStart));
   r.draw(t, dt);
   if (++frames >= maxFrames) { (window as any).done = true; return; }

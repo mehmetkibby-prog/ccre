@@ -12,7 +12,7 @@ const EYE = [0xffd860, 0xff8a20, 0xff2020];
 const V3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 
 // ───────────── dört ayaklı (kurt, vaşak) ─────────────
-const QB: BoneDef[] = [
+export const QB: BoneDef[] = [
   ['body', null, 0, 0.56, -0.05], ['chest', 'body', 0, 0.04, 0.4], ['neck', 'chest', 0, 0.1, 0.17], ['head', 'neck', 0, 0.06, 0.15], ['jaw', 'head', 0, -0.06, 0.07],
   ['tail1', 'body', 0, 0.06, -0.44], ['tail2', 'tail1', 0, -0.06, -0.22],
   ['flU', 'chest', 0.12, -0.08, 0.04], ['flL', 'flU', 0, -0.24, 0], ['flP', 'flL', 0, -0.22, 0],
@@ -162,7 +162,7 @@ function foxPieces(variant: number): Piece[] {
   return P;
 }
 
-function quadAnimate(bones: Record<string, THREE.Bone>, body: THREE.Object3D, st: HState, t: number, k: number, phase: number) {
+export function quadAnimate(bones: Record<string, THREE.Bone>, body: THREE.Object3D, st: HState, t: number, k: number, phase: number) {
   for (const b of Object.values(bones)) b.rotation.set(0, 0, 0);
   body.rotation.set(0, 0, 0); body.position.set(0, 0, 0);
   bones.body.position.y = QB[0][3];
@@ -316,7 +316,7 @@ const foxMats = new Map<number, THREE.Material>();
  * düşen bacak ağırlıkları en yakın gövde/kuyruk kemiğine taşınır. Geometri klonlar arasında ortak: bir kez yapılır.
  */
 const quadFixed = new WeakSet<THREE.BufferGeometry>();
-function fixQuadWeights(scene: THREE.Object3D) {
+export function fixQuadWeights(scene: THREE.Object3D) {
   scene.traverse((o) => {
     const m = o as THREE.SkinnedMesh;
     if (!m.isSkinnedMesh || quadFixed.has(m.geometry)) return;

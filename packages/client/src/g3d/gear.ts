@@ -94,18 +94,20 @@ const RAR_STYLE: Record<number, { tint: number; emissive: number; ei: number; ha
   1: { tint: 0xa8c8ff, emissive: 0x2a5cff, ei: 0.55 },
   2: { tint: 0xffc066, emissive: 0xff7a10, ei: 0.7, halo: 0xffa040 },
   3: { tint: 0xff6a6a, emissive: 0xff1020, ei: 1.15, halo: 0xff2a30 },
+  4: { tint: 0xffe7a0, emissive: 0xffc030, ei: 1.2, halo: 0xffd84a },
 };
-const RAR_NAME = ['', 'blue', 'orange', 'crimson'];
+/** 4 = Eşsiz (Haso dönüşümü); üstündeki nadirlikler de Eşsiz modelini kullanır */
+const RAR_NAME = ['', 'blue', 'orange', 'crimson', 'unique'];
 const WEAPON_CLS: Record<string, string> = { sword: 'guardian', bow: 'hunter', staff: 'arcanist' };
 /** Nadirliğe özel tasarlanmış silah modelinin kimliği (beyazda yok; kızıldan üstü kızıl modeli kullanır). */
 export function weaponModelId(kind: string | undefined, rarity: number) {
   const cls = kind ? WEAPON_CLS[kind] : undefined;
-  return cls && rarity > 0 ? `w_${cls}_${RAR_NAME[Math.min(3, rarity)]}` : null;
+  return cls && rarity > 0 ? `w_${cls}_${RAR_NAME[Math.min(4, rarity)]}` : null;
 }
 /** Tasarlanmış modelin malzemesi: dokusu hafifçe kendinden ışır (nadirlik arttıkça daha çok). Model başına bir kez kurulur. */
 const glowMats = new Map<THREE.Material, THREE.Material>();
 function glowGlb(g: THREE.Object3D, rarity: number) {
-  const ei = [0, 0.12, 0.3, 0.5][Math.min(3, rarity)];
+  const ei = [0, 0.12, 0.3, 0.5, 0.62][Math.min(4, rarity)];
   g.traverse((o) => {
     const m = o as THREE.Mesh;
     if (!m.isMesh) return;
@@ -122,7 +124,7 @@ function glowGlb(g: THREE.Object3D, rarity: number) {
 }
 
 export function styleWeapon(g: THREE.Object3D, rarity: number, kind = 'sword', designed = false) {
-  const st = RAR_STYLE[Math.min(3, rarity)];
+  const st = RAR_STYLE[Math.min(4, rarity)];
   if (!st || rarity <= 0) return;
   if (!designed) g.traverse((o) => {
     const m = o as THREE.Mesh;

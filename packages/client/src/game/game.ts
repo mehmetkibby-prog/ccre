@@ -17,7 +17,7 @@ export interface CEnt {
   slide?: { x0: number; y0: number; t0: number };
   dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
-  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; guild: string; combo?: number;
+  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; cos: number; guild: string; combo?: number;
   icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
   hurtUntil: number; spawnAt: number; deadAt: number;
   /** vuruşla geri sekme: yön (birim vektör) ve bitiş anı */
@@ -189,6 +189,7 @@ export class Game {
       case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
       case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
+      case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'shop': break;
       case 'pong': store.set({ ping: Date.now() - m.c, clockSkew: typeof m.s === 'number' ? m.s - (Date.now() + m.c) / 2 : store.get().clockSkew }); break;
@@ -218,7 +219,7 @@ export class Game {
         id: sp.id, kind: sp.kind, x: sp.x, y: sp.y, samples: [{ t: s.t, x: sp.x, y: sp.y }], dir: 'dir' in sp ? sp.dir : 0, anim: 'anim' in sp ? sp.anim : 0, animStart: now,
         hp: 'hp' in sp ? sp.hp : 0, maxHp: 'maxHp' in sp ? sp.maxHp : 0, flags: 'flags' in sp ? sp.flags : 0, level: 'level' in sp ? sp.level : 0,
         name: sp.kind === Kind.PLAYER ? sp.name : sp.kind === Kind.MONSTER ? MONSTERS[sp.tpl]?.name ?? '?' : '', cls: sp.kind === Kind.PLAYER ? sp.cls : 0,
-        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, wplus: sp.kind === Kind.PLAYER ? sp.wplus : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
+        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, wplus: sp.kind === Kind.PLAYER ? sp.wplus : 0, cos: sp.kind === Kind.PLAYER ? sp.cos : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
         icon: sp.kind === Kind.LOOT ? sp.icon : '', rarity: sp.kind === Kind.LOOT ? sp.rarity : 0, owner: sp.kind === Kind.LOOT ? sp.owner : 0,
         ttlEnd: sp.kind === Kind.LOOT ? now + sp.ttl : 0, label: sp.kind === Kind.LOOT ? sp.label : '', hurtUntil: 0, spawnAt: now, deadAt: 0,
       };

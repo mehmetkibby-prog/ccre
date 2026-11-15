@@ -368,5 +368,88 @@
     "attackClips": [
       "Attack Slash"
     ]
+  },
+  "guardian_unique": {
+    "url": "guardian_unique.glb",
+    "height": 1.86,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Charged",
+      "Attack Slash",
+      "Attack Thrust"
+    ],
+    "animFrom": "guardian"
+  },
+  "w_guardian_unique": {
+    "url": "w_guardian_unique.glb",
+    "scale": 1
+  },
+  "hunter_unique": {
+    "url": "hunter_unique.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Archery Volley",
+      "attack": "Attack Draw Shoot"
+    },
+    "attackClips": [
+      "Attack Archery Shot",
+      "Attack Draw Shoot"
+    ],
+    "animFrom": "hunter"
+  },
+  "w_hunter_unique": {
+    "url": "w_hunter_unique.glb",
+    "scale": 1
+  },
+  "arcanist_unique": {
+    "url": "arcanist_unique.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "run": "Run",
+      "hurt": "Hit Reaction",
+      "dead": "Death",
+      "cast": "Cast Charged Spell",
+      "attack": "Attack Magic 1"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ],
+    "animFrom": "arcanist"
+  },
+  "w_arcanist_unique": {
+    "url": "w_arcanist_unique.glb",
+    "scale": 1
+  },
+  "pet_dog": {
+    "url": "pet_dog.glb",
+    "scale": 1
+  },
+  "pet_monkey": {
+    "url": "pet_monkey.glb",
+    "scale": 1
+  },
+  "pet_bird": {
+    "url": "pet_bird.glb",
+    "scale": 1
+  },
+  "wings_crimson": {
+    "url": "wings_crimson.glb",
+    "scale": 1
   }
 }

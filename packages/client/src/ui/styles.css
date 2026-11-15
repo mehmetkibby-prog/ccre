@@ -1085,3 +1085,13 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 @media (pointer: coarse) and (max-width: 560px) and (min-height: 600px) {
   .chat { width: min(calc(100vw - 86px), 280px); }
 }
+
+/* ── Haso: Artı Bas / Dönüşüm sekmeleri, Eşsiz görünümü ── */
+.forge-tabs { margin-bottom: 10px; }
+.forge-tabs .uq { margin-left: 6px; padding: 1px 6px; border-radius: 99px; font-size: 9.5px; font-weight: 800; letter-spacing: .5px; color: #3a2a06; background: linear-gradient(180deg, #fff1b0, #ffd84a 55%, #d9a62a); }
+.uq-btn:not(:disabled) { background: linear-gradient(180deg, #fff3c4, #ffd84a 45%, #c9921f) !important; color: #3a2606 !important; box-shadow: 0 0 18px rgba(255, 216, 74, .55), inset 0 1px 0 rgba(255, 255, 255, .7) !important; }
+.forge-fx.uq.hit { background: radial-gradient(circle, rgba(255, 236, 160, .95), rgba(255, 216, 74, .45) 35%, transparent 70%) !important; }
+/* Eşsiz: kendine özgü simgesi olmayan ekipman (miğfer, takı, çizme) altın tona bürünür */
+.cell.r-unique img.uq-tint { filter: sepia(.6) saturate(2.1) hue-rotate(-6deg) brightness(1.12) drop-shadow(0 0 4px rgba(255, 216, 74, .75)); }
+.cell.r-unique { animation: uq-pulse 2.6s ease-in-out infinite; }
+@keyframes uq-pulse { 50% { box-shadow: inset 0 0 0 1px var(--r-unique), inset 0 0 22px rgba(255, 216, 74, .55), 0 0 10px rgba(255, 216, 74, .35); } }

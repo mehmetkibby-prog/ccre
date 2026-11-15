@@ -29,6 +29,8 @@ const TIERS: Record<number, Tier> = {
   1: { w: [9, 5], a: [14, 6], spark: 0x6fb0ff, spark2: 0xd8ecff, smoke: 0x3a6cff, dark: 0, smokeA: 0.32, rise: 0.55 },
   2: { w: [14, 9], a: [20, 10], spark: 0xffa030, spark2: 0xfff0b0, smoke: 0xff7418, dark: 0, smokeA: 0.4, rise: 0.75 },
   3: { w: [22, 16], a: [30, 20], spark: 0xff2a20, spark2: 0xffc070, smoke: 0xff1a28, dark: 0, smokeA: 0.34, rise: 1.0 },
+  // Eşsiz: altın-beyaz parıltı ve bol, yumuşak altın duman (hafifçe örten: gerçek duman gibi)
+  4: { w: [24, 22], a: [32, 30], spark: 0xffd84a, spark2: 0xffffff, smoke: 0xd9a845, dark: 0.5, smokeA: 0.55, rise: 1.15 },
 };
 
 const VERT = /* glsl */ `
@@ -131,7 +133,7 @@ function points(tier: number, aura: boolean, y0 = 0.1, y1 = 0.9) {
 
 /** Silah parıltısı (nadirlik 1+). Silah grubunun yerel ekseninde konumlanır. */
 export function weaponFx(rarity: number, kind: string): THREE.Points | null {
-  const tier = Math.min(3, rarity);
+  const tier = Math.min(4, rarity);
   if (tier <= 0) return null;
   return kind === 'bow' ? points(tier, false, -0.6, 0.6) : kind === 'staff' ? points(tier, false, 0.55, 1.35) : points(tier, false, 0.15, 1.0);
 }
@@ -140,17 +142,17 @@ const discGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
 const discMats = new Map<number, THREE.MeshBasicMaterial>();
 /** Zırh aurası (nadirlik 1+): ayak altında renkli ışıma + yükselen kıvılcım ve duman. Karakter köküne eklenir. */
 export function armorFx(rarity: number): THREE.Object3D | null {
-  const tier = Math.min(3, rarity);
+  const tier = Math.min(4, rarity);
   if (tier <= 0) return null;
   const g = new THREE.Group(); g.name = 'gear-fx';
   const p = points(tier, true); p.name = '';
   let dm = discMats.get(tier);
   if (!dm) {
-    dm = new THREE.MeshBasicMaterial({ map: glowTexture(), color: TIERS[tier].spark, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: [0, 0.35, 0.45, 0.6][tier] });
+    dm = new THREE.MeshBasicMaterial({ map: glowTexture(), color: TIERS[tier].spark, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: [0, 0.35, 0.45, 0.6, 0.7][tier] });
     discMats.set(tier, dm);
   }
   const disc = new THREE.Mesh(discGeo, dm);
-  disc.scale.setScalar([0, 1.3, 1.5, 1.8][tier]); disc.position.y = 0.04; disc.renderOrder = 2;
+  disc.scale.setScalar([0, 1.3, 1.5, 1.8, 2.0][tier]); disc.position.y = 0.04; disc.renderOrder = 2;
   g.add(disc, p);
   return g;
 }

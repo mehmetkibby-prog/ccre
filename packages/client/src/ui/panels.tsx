@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass } from './extras.tsx';
@@ -171,7 +171,7 @@ export function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; lab
   const { onTapCard, ...handlers } = bind ?? {};
   return (
     <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
-      {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} alt="" /> : <span className="lbl">{label}</span>}
+      {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} className={it.rarity === 'unique' && !itemIconName(it).endsWith('_unique') ? 'uq-tint' : undefined} alt="" /> : <span className="lbl">{label}</span>}
       {it?.plus ? <span className={'plus' + (it.plus >= 6 ? ' p6' : it.plus >= 5 ? ' p5' : '')}>+{it.plus}</span> : null}
       {it?.locked ? <span className="lock">🔒</span> : null}
     </div>
@@ -569,8 +569,90 @@ function Shop({ game }: { game: Game }) {
   );
 }
 
-/** Demirci: silah ve zırhı +6'ya kadar güçlendirir. Malzeme, Mücevher ve şans yönetim panelinden gelir. */
+/** Demirci Haso: Artı Bas ve Dönüşüm sekmeleri. */
 function Upgrade({ game }: { game: Game }) {
+  const [mode, setMode] = useState<'arti' | 'donusum'>('arti');
+  const tabs = (
+    <div className="bag-tabs forge-tabs">
+      <button className={mode === 'arti' ? 'on' : ''} onClick={() => setMode('arti')}>Artı Bas</button>
+      <button className={mode === 'donusum' ? 'on' : ''} onClick={() => setMode('donusum')}>Dönüşüm <small className="uq">Eşsiz</small></button>
+    </div>
+  );
+  return mode === 'arti' ? <PlusForge game={game} tabs={tabs} /> : <TransformForge game={game} tabs={tabs} />;
+}
+
+/** Haso · Dönüşüm: ekipmanı Eşsiz'e çevirir; efsun, artı ve evrim korunur. Bedeller yönetimden. */
+function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
+  const self = useStore((s) => s.self);
+  const res = useStore((s) => s.transformResult);
+  const [sel, setSel] = useState<string | null>(null);
+  const { tip, bind } = useTip();
+  if (!self) return null;
+  const conf = transformConf();
+  const all = [...Object.values(self.equip).filter(Boolean) as ItemInstance[], ...self.bag];
+  const items = all.filter((i) => transformGroup(i) && i.rarity !== 'unique' && conf.from.includes(i.rarity));
+  const it = items.find((i) => i.id === sel) ?? (res?.ok ? all.find((i) => i.id === res.item) ?? null : null);
+  const g = it ? transformGroup(it) : null;
+  const cost = g ? conf.cost[g] : null;
+  const m = self.materials;
+  const lacks = cost ? Object.entries(cost.mats).filter(([k, q]) => (m[k] ?? 0) < q).length + (self.gems < cost.gems ? 1 : 0) + (self.level < cost.minLevel ? 1 : 0) + (it && it.plus < cost.minPlus ? 1 : 0) : 1;
+  const done = it?.rarity === 'unique';
+  const after = it && !done ? itemPower({ ...it, rarity: 'unique' }) : 0;
+  const go = () => { if (!it) return; sfx.play('ui'); game.send({ t: 'transform', item: it.id, req: reqId() }); };
+  return (
+    <Panel title="Demirci Haso · Dönüşüm" width={820}>
+      {tabs}
+      {!conf.enabled ? <div className="muted" style={{ padding: 20 }}>Dönüşüm şu an kapalı.</div> : (
+        <div className="forge">
+          <div className="forge-pick">
+            <div className="sect">Dönüşebilecek eşyalar ({conf.from.map((r) => RARITY[r].name).join(', ')})</div>
+            <div className="bag">
+              {items.map((i) => <Cell key={i.id} it={i} sel={sel === i.id} bind={bind(i)} onClick={() => setSel(i.id)} />)}
+              {items.length === 0 && <div className="muted" style={{ gridColumn: '1 / -1', fontSize: 13 }}>Çantanda ya da üzerinde dönüşebilecek ekipman yok.</div>}
+            </div>
+            <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
+            <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+              Silah, zırh, miğfer, takılar ve çizme <b style={{ color: RARITY.unique.color }}>Eşsiz</b>'e dönüşür. <b>Efsunlar, artı ve evrim aynen kalır</b>; yalnız güç artar.
+              Eşsiz silah ve zırh altın parıltı ve hafif duman saçar. Başarısızlıkta eşya bozulmaz, yalnız bedel gider.
+            </div>
+          </div>
+          <div className="anvil">
+            <div key={res?.at ?? 0} className={'forge-fx' + (res?.ok ? ' hit uq' : '')} />
+            {!it ? <div className="muted" style={{ textAlign: 'center', padding: '40px 10px' }}>Dönüştürmek için soldan bir eşya seç.</div> : (
+              <>
+                <div className="stage">
+                  <Cell it={it} bind={bind(it)} />
+                  <span className="arrow">›</span>
+                  <Cell it={{ ...it, rarity: 'unique' }} />
+                </div>
+                <div className="nm" style={{ color: RARITY[done ? 'unique' : it.rarity].color }}>{itemDisplayName(it)}</div>
+                {done ? <div className="ok" style={{ textAlign: 'center' }}>Eşsiz'e dönüştü! Efsunları ve artısı korundu.</div> : cost && (
+                  <>
+                    <div className="gain"><span>{g === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b style={{ color: RARITY.unique.color }}>{after}</b></span>{cost.chance < 100 && <span> · Başarı %{cost.chance}</span>}</div>
+                    <div className="req">
+                      {Object.entries(cost.mats).map(([k, q]) => {
+                        const have = m[k] ?? 0, md = MATERIAL.get(k);
+                        return <div key={k} className={'r ' + (have >= q ? 'have' : 'miss')} title={md?.desc}><img src={iconUrl(md?.icon ?? 'bag')} alt="" />{md?.name ?? k}<span className="q">{have.toLocaleString('tr-TR')} / {q}</span></div>;
+                      })}
+                      <div className={'r ' + (self.gems >= cost.gems ? 'have' : 'miss')}><img src={iconUrl('gem')} alt="" />Mücevher<span className="q">{self.gems.toLocaleString('tr-TR')} / {cost.gems.toLocaleString('tr-TR')}</span></div>
+                      {cost.minPlus > 0 && <div className={'r ' + (it.plus >= cost.minPlus ? 'have' : 'miss')}>En az artı<span className="q">+{it.plus} / +{cost.minPlus}</span></div>}
+                      {cost.minLevel > 1 && <div className={'r ' + (self.level >= cost.minLevel ? 'have' : 'miss')}>Seviye<span className="q">{self.level} / {cost.minLevel}</span></div>}
+                    </div>
+                    <button className="btn ember uq-btn" style={{ width: '100%', padding: 12, fontSize: 15 }} disabled={lacks > 0} onClick={go}>{lacks > 0 ? 'Gereksinim eksik' : 'Dönüştür · Eşsiz'}</button>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      {tip && <ItemTip {...tip} />}
+    </Panel>
+  );
+}
+
+/** Demirci: silah ve zırhı +6'ya kadar güçlendirir. Malzeme, Mücevher ve şans yönetim panelinden gelir. */
+function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
   const self = useStore((s) => s.self);
   const [sel, setSel] = useState<string | null>(null);
   const [mastery, setMastery] = useState(false);
@@ -591,6 +673,7 @@ function Upgrade({ game }: { game: Game }) {
   const go = () => { if (!it) return; setHit((h) => h + 1); sfx.play('ui'); game.send({ t: 'upgrade', item: it.id, expectPlus: it.plus, mastery, req: reqId() }); };
   return (
     <Panel title="Demirci Haso · Örs" width={820}>
+      {tabs}
       <div className="forge">
         <div className="forge-pick">
           <div className="sect">Silah ve zırhların</div>

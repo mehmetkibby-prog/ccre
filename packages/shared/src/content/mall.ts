@@ -88,3 +88,10 @@ export function charBuffs(buffs: Record<string, number> | undefined, now: number
   if (on('pet_dog')) b.xpPct += 20;
   return b;
 }
+
+/** Görünen kozmetik baytı (diğer oyuncular da görür): bit0-1 evcil hayvan (1 kuş, 2 maymun, 3 köpek), bit2 kanat. */
+export function cosmeticByte(buffs: Record<string, number> | undefined, now: number): number {
+  const b = buffs ?? {};
+  const pet = PET_KEYS.findIndex((k) => (b[k] ?? 0) > now) + 1;
+  return pet | ((b.crimson_wings ?? 0) > now ? 4 : 0);
+}

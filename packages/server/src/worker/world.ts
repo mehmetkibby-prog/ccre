@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall } from '../types.ts';
@@ -1564,7 +1564,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), guild: '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: '' };
   }
 
   private flushOut() {

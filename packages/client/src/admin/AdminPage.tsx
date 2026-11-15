@@ -8,7 +8,7 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
+import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -69,12 +69,12 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'balik' | 'market';
+type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market';
 const TABS: [Tab, string, string][] = [
   ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
-  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
+  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'harita']);
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -187,6 +187,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'ganimet' && <><RarityTable t={t} setT={setTT} dis={busy} /><LootTab t={t} setMon={setMon} dis={busy} /></>}
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
             {tab === 'arti' && <UpgradeTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'donusum' && <TransformTab t={t} setT={setTT} dis={busy} />}
             {tab === 'harita' && <MapTab t={t} setT={setTT} setSpawn={setSpawn} dis={busy} />}
           </div>
         )}
