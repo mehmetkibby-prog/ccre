@@ -9,6 +9,9 @@ export function ipcDiagnostic(code,{method,error,bytes}={}){
  if(Number.isSafeInteger(bytes)&&bytes>=0)detail.bytes=bytes;
  if(error!==undefined){
   detail.name=names.has(error?.name)?error.name:'Error';
+  // Numeric SQLite result codes are safe to retain even when the exception
+  // text contains a query, bound value, account identifier or filesystem path.
+  if(error?.code==='ERR_SQLITE_ERROR'&&Number.isSafeInteger(error.errcode)&&error.errcode>=0&&error.errcode<=65535){detail.sqliteCode=error.errcode;detail.sqlitePrimaryCode=error.errcode&255;}
   // Never emit an error message, payload, URL, absolute path or stack argument.
   // Preserve only the first three stack positions and sanitized code locations.
   detail.stack=[detail.name+': [message omitted]',...String(error?.stack??'').split('\n').slice(1,3).map(line=>{
