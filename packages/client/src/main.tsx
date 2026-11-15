@@ -47,7 +47,7 @@ function AppScreens() {
     catch { setScreen({ s: 'auth' }); }
   };
   useEffect(() => { refresh(); }, []);
-  if (screen.s === 'loading') return <div className="screen"><div className="logo">Tuğra<small>ONLINE</small></div></div>;
+  if (screen.s === 'loading') return <div className="screen"><div className="logo">Core of Life<small>3D</small></div></div>;
   if (screen.s === 'auth') return <AuthScreen onDone={refresh} />;
   if (screen.s === 'chars' && me) return <CharScreen me={me} error={lastError} onReload={refresh} onPlay={(id) => { setLastError(''); setScreen({ s: 'channels', charId: id }); }} onLogout={async () => { await api('/api/logout', {}).catch(() => {}); setScreen({ s: 'auth' }); }} />;
   if (screen.s === 'channels') return <ChannelScreen charId={screen.charId} onBack={() => setScreen({ s: 'chars' })} onEnter={(ticket, ch) => setScreen({ s: 'game', ticket, charId: screen.charId, channel: ch })} />;
@@ -85,8 +85,8 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
       <div className="auth-layout">
         <div className="auth-brand">
           <TugraMark />
-          <h1 className="brand-title">TUĞRA</h1>
-          <div className="brand-online"><i />ONLINE<i /></div>
+          <h1 className="brand-title">CORE OF LIFE</h1>
+          <div className="brand-online"><i />3D<i /></div>
           <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen.</p>
           <RealmLine />
           <ClassicButton />

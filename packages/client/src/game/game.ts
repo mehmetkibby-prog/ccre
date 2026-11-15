@@ -601,12 +601,12 @@ export class Game {
     const blob = await this.renderer.capture();
     if (!blob) return notify('Ekran görüntüsü alınamadı.', 'error');
     const d = new Date(), z = (n: number) => String(n).padStart(2, '0');
-    const name = `tugra-${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.png`;
+    const name = `coreoflife3d-${d.getFullYear()}${z(d.getMonth() + 1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}${z(d.getSeconds())}.png`;
     sfx.play('ui');
     const file = new File([blob], name, { type: 'image/png' });
     const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean };
     if (matchMedia('(pointer: coarse)').matches && nav.canShare?.({ files: [file] })) {
-      try { await nav.share({ files: [file], title: 'Tuğra Online' }); return; } catch { /* paylaşım kapatıldı: indirmeye düş */ }
+      try { await nav.share({ files: [file], title: 'Core of Life 3D' }); return; } catch { /* paylaşım kapatıldı: indirmeye düş */ }
     }
     const url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();

@@ -87,7 +87,7 @@ export function AdminPage() {
     try { const m = await api('/api/me'); setMe({ username: m.account.username, role: m.account.role }); } catch { setMe(null); }
   }, []);
   useEffect(() => { check(); if (OFFLINE) return onConfig(() => check()); }, [check]);
-  useEffect(() => { document.title = 'Tuğra Yönetim'; }, []);
+  useEffect(() => { document.title = 'Core of Life 3D Yönetim'; }, []);
   if (me === undefined) return <div className="adm-page center"><div className="adm-spin" /></div>;
   if (!me) return OFFLINE ? <div className="adm-page center"><div className="adm-card narrow"><h2>Yönetim</h2><p className="muted">Bu test sürümünde ayarları yalnız sayfanın sahibi değiştirebilir.</p><a className="btn" href="./">Oyuna dön</a></div></div> : <AdminLogin onDone={check} />;
   if (me.role !== 'admin' && me.role !== 'owner') return (
@@ -109,7 +109,7 @@ function AdminLogin({ onDone }: { onDone: () => void }) {
   return (
     <div className="adm-page center">
       <form className="adm-card narrow" onSubmit={submit}>
-        <div className="adm-brand big">Tuğra<small>Yönetim Paneli</small></div>
+        <div className="adm-brand big">Core of Life 3D<small>Yönetim Paneli</small></div>
         <div className="field"><label>Kullanıcı adı</label><input autoComplete="username" value={u} onChange={(e) => setU(e.target.value)} /></div>
         <div className="field"><label>Parola</label><input type="password" autoComplete="current-password" value={p} onChange={(e) => setP(e.target.value)} /></div>
         {err && <div className="err">{err}</div>}
@@ -162,7 +162,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
   return (
     <div className={'adm-page' + (dirty ? ' has-save' : '')}>
       <header className="adm-top">
-        <div className="adm-brand">Tuğra<small>Yönetim</small></div>
+        <div className="adm-brand">Core of Life 3D<small>Yönetim</small></div>
         {online !== null && <span className="adm-live"><i />{online} çevrimiçi</span>}
         <div className="spacer" />
         <span className="adm-me">{me.username}<small>{ROLE_NAME[me.role] ?? me.role}</small></span>
