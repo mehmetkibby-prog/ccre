@@ -1,7 +1,7 @@
 {
   "baselineManifestSha256": "bb3a6cc689c695d97f127a2eefb9ad141b0e655eb39bbebeea5f05704074ad3b",
   "file": "dist-vds/client/assets/game-client-BqwJQUwu-ga4172-v418ws-3-e510-8225403c2fcc-c087214145.js",
-  "name": "game-client-core511-r118-a4d21f5a07c2cb04.js",
+  "name": "game-client-core511-r119-6558907cd29913ad.js",
   "tower": {
     "sourceSha256": "a3613545a410471baa2d2991ab5296508708673ba0d1f07515e48dd33f528320",
     "patchedSha256": "d13d5b29589c3dc601096600fbe34bd5f1797c111b15bdb5068c1c22d0ecc1f7",
@@ -241,9 +241,9 @@
   },
   "portal": {
     "file": "dist-vds/client/assets/auth-portal-CUXGSvU-auth4172-4a78aa0-e510-8225403c2fcc-91f1cff705.js",
-    "name": "auth-portal-core511-r118-e25fc8036012412d.js",
+    "name": "auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
     "sourceSha256": "83c9b1e81698751f1f65b111ca7121d5fdce99703f92b61a102176635426a499",
-    "patchedSha256": "e25fc8036012412dd8f826e7ea86fc86e2b33451f693e429302f2e655d3649e5",
+    "patchedSha256": "9b81ddc8fb6f9d73a2c8dd9b62aa5b6c8553456759657fbeba504fbda0328858",
     "entryProof": {
       "edits": [
         {
@@ -281,7 +281,7 @@
   "transportSourceSha256": "96330eb1e98bcac6b164464753875aae1e930ce6e5eb99035aee0be9830076a0",
   "bridgeSha256": "c4d1b9128f0795674ccc869666edfc14c22794393602c537fbe5ded6ad3c6911",
   "sourceSha256": "2a6a5b1fb8b0862dc8a5c3f8458fdf91ffb75a76b3c5a5c0cd35ba674440074b",
-  "patchedSha256": "a4d21f5a07c2cb04364ec1c7453754338138f6402ab9bbe0fe46c5df887b00ae",
+  "patchedSha256": "6558907cd29913ad85286602c71dd36c7eee4971b5040dd7fedf3e028bf3541d",
   "bridge": "core511-transport-r118-c4d1b9128f079567.js",
   "edits": [
     {
@@ -6268,6 +6268,62 @@
         "from": "n2 === \"kadim_tower\" && X.createElement",
         "to": "n2 === \"royal_r118\" && X.createElement(colRoyalAdminR118),n2 === \"champions_r118\" && X.createElement(colChampionsAdminR118),n2 === \"kadim_tower\" && X.createElement",
         "count": 1
+      }
+    ]
+  },
+  "r119MonsterMotion": {
+    "version": "R119_MOTION1",
+    "sourcePackageSha256": "8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5",
+    "sourceCore": "0a603b75d3e5b7cd1d18753f760b2e92566b115cca8a6701e4bf07198308be28",
+    "sourceModuleSha256": "7ab011bd130cf795a744961ac43d9222c4c139008a3e07885e4506862eb50c88",
+    "map": "core511-map-r119-06c782d779f19e50.js",
+    "assets": [
+      {
+        "name": "core511-map-r119-06c782d779f19e50.js",
+        "sha256": "06c782d779f19e507a53f3335161a8af0fe2496e9c0c8a6336e4314be063765e",
+        "bytes": 3088
+      },
+      {
+        "name": "game-client-core511-r119-6558907cd29913ad.js",
+        "sha256": "6558907cd29913ad85286602c71dd36c7eee4971b5040dd7fedf3e028bf3541d",
+        "bytes": 1757082
+      },
+      {
+        "name": "auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+        "sha256": "9b81ddc8fb6f9d73a2c8dd9b62aa5b6c8553456759657fbeba504fbda0328858",
+        "bytes": 84195
+      }
+    ],
+    "edits": [
+      {
+        "label": "new immutable map module",
+        "from": "core511-map-r118-d1ca010e7892c254.js",
+        "to": "core511-map-r119-06c782d779f19e50.js"
+      },
+      {
+        "label": "reuse the North Forest renderer",
+        "from": "createChampionsViewR118(ROYAL_MEDIA_R118)",
+        "to": "createChampionsViewR118(ROYAL_MEDIA_R118,Zy)"
+      },
+      {
+        "label": "reuse impact and quality inputs",
+        "from": "colChampionsR118.drawEnemy(n3,i5,_r2.current===t4.id,a3,S2,E3,r6.travel,x3)",
+        "to": "colChampionsR118.drawEnemy(n3,i5,_r2.current===t4.id,a3,S2,E3,r6.travel,x3,c5,P2.tier)"
+      },
+      {
+        "label": "optional atlas descriptor; legacy callers stay identical",
+        "from": "g2) {\n  let _2 = mv(n2), v2 = _2 === 2",
+        "to": "g2, championProfileR119 = null) {\n  let _2 = championProfileR119?.species ?? mv(n2), v2 = _2 === 2"
+      },
+      {
+        "label": "champion scale; default remains one",
+        "from": "y2 = n2.is_boss ? 1.75 : n2.variant === `katil` ? 1.2 : n2.variant === `agresif` ? 1.08 : 1, b2 =",
+        "to": "y2 = (n2.is_boss ? 1.75 : n2.variant === `katil` ? 1.2 : n2.variant === `agresif` ? 1.08 : 1) * (championProfileR119?.scale ?? 1), b2 ="
+      },
+      {
+        "label": "select the species rows in the champion atlas",
+        "from": "Ud(e3, g2, _2, 6, D2, O2 + 28,",
+        "to": "Ud(e3, g2, championProfileR119?.atlasIndex ?? _2, championProfileR119?.rows ?? 6, D2, O2 + 28,"
       }
     ]
   }

@@ -1,0 +1,24 @@
+{
+  "namespace": "core511-f3b670dfef6c25f1",
+  "game": "game-client-core511-r119-6558907cd29913ad.js",
+  "portal": "auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+  "admin": "admin-client-core511-r118-bd266dccdc24b06a.js",
+  "map": "core511-map-r119-06c782d779f19e50.js",
+  "clientNew": [
+    "core511-map-r119-06c782d779f19e50.js",
+    "game-client-core511-r119-6558907cd29913ad.js",
+    "auth-portal-core511-r119-9b81ddc8fb6f9d73.js",
+    "admin-client-core511-r118-bd266dccdc24b06a.js"
+  ],
+  "files": [
+    "champions-client-r118.mjs",
+    "generated/native-client-proof.json",
+    "generated/client/core511-map-r119-06c782d779f19e50.js",
+    "generated/client/game-client-core511-r119-6558907cd29913ad.js",
+    "generated/client/auth-portal-core511-r119-9b81ddc8fb6f9d73.js"
+  ],
+  "inversePatchVerified": true,
+  "newUnresolvedReferences": 0,
+  "serverLogicChanges": false,
+  "artFilesUnchanged": true
+}
