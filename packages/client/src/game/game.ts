@@ -101,12 +101,13 @@ export class Game {
     this.lastFrame = performance.now();
     // kare sınırı (ayarlar): 120 Hz ekranlı telefon sınırsızken saniyede 120 kare çizip ısınıyordu
     let lastDraw = 0;
+    const TOUCH = matchMedia('(pointer: coarse)').matches; // Isınma modu yalnız telefon/tablette
     const loop = (t: number) => {
       if (this.stopped) return;
       this.raf = requestAnimationFrame(loop);
       const st = store.get().settings;
       // Isınma modu: akıcılık korunur (60 kare; 120 Hz ekranda 120'ye çıkmaz); ısıyı çizim ayrıntısı azaltır
-      const cap = st.cool ? 60 : st.fpsCap;
+      const cap = st.cool && TOUCH ? 60 : st.fpsCap;
       if (cap > 0 && t - lastDraw < 1000 / cap - 3) return;
       lastDraw = t;
       this.frame(t);

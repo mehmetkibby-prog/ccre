@@ -13,6 +13,7 @@ import { iconUrl } from '../game/art/icons.ts';
 import { SkillIcon } from './icons.tsx';
 import { sfx } from '../game/audio.ts';
 
+const TOUCH_UI = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 const RIDX = ['white', 'blue', 'orange', 'crimson', 'unique', 'infinite', 'purple', 'emerald'];
 const close = () => store.set({ panel: null, npc: null, shop: null, stallView: null });
 
@@ -476,17 +477,17 @@ function Settings() {
   const set = (p: Partial<typeof s>) => store.set({ settings: { ...s, ...p } });
   return (
     <Panel title="Ayarlar" width={480}>
-      <div className={'field cool-field' + (s.cool ? ' on' : '')}>
+      {matchMedia('(pointer: coarse)').matches && <div className={'field cool-field' + (s.cool ? ' on' : '')}>
         <label>Isınma modu</label>
         <button className={'btn ' + (s.cool ? 'primary' : '')} style={{ width: '100%' }} onClick={() => set({ cool: !s.cool })}>{s.cool ? '❄ Isınma modu AÇIK' : 'Isınma modunu aç'}</button>
         <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa aç: akıcılık aynı kalır (saniyede 60 kare), ısıyı azaltmak için gölge ve çimen kapanır, çözünürlük biraz düşer, uzaktaki oyuncu ve efektler sadeleşir. Oyun, hasar ve kurallar aynen kalır.</div>
-      </div>
+      </div>}
       <div className="field"><label>Görüntü kalitesi</label>
         <div className="row">{(['low', 'medium', 'high'] as const).map((q) => <button key={q} className={'btn small ' + (s.quality === q ? 'primary' : '')} onClick={() => set({ quality: q })}>{q === 'low' ? 'Düşük' : q === 'medium' ? 'Orta' : 'Yüksek'}</button>)}</div>
         <div className="muted" style={{ fontSize: 11 }}>Düşük: gölge, çimen ve parıltı kapalı. Oyun kuralları değişmez; kritik savaş bilgileri her profilde görünür.</div>
       </div>
       <div className="field"><label>Kare hızı</label>
-        <div className="row">{([[30, '30 · Pil tasarrufu'], [60, '60'], [0, 'Sınırsız']] as const).map(([v, l]) => <button key={v} disabled={!!s.cool} className={'btn small ' + (s.fpsCap === v && !s.cool ? 'primary' : '')} onClick={() => set({ fpsCap: v })}>{l}</button>)}</div>
+        <div className="row">{([[30, '30 · Pil tasarrufu'], [60, '60'], [0, 'Sınırsız']] as const).map(([v, l]) => <button key={v} disabled={!!s.cool && TOUCH_UI} className={'btn small ' + (s.fpsCap === v && !(s.cool && TOUCH_UI) ? 'primary' : '')} onClick={() => set({ fpsCap: v })}>{l}</button>)}</div>
         <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa 30 seç. Sınırsız, 120 Hz ekranlarda saniyede 120 kare çizer ve pili hızlı tüketir.</div>
       </div>
       <div className="field"><label>Yakınlaştırma: {s.zoom.toFixed(2)}</label><input type="range" min={0.7} max={1.6} step={0.05} value={s.zoom} onChange={(e) => set({ zoom: Number(e.target.value) })} /></div>

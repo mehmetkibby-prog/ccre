@@ -41,7 +41,7 @@ const FX_MAX = MOBILE ? 6 : 16, FX_FAR2 = (MOBILE ? 700 : 1100) ** 2;
  *  ötekiler gölgesiz ve kozmetiksiz çizilir. 20+ oyunculu meydanda çizim çağrısı ve üçgen sayısı sınırlı kalır. */
 const PLAYER_FULL = MOBILE ? 10 : 22;
 /** Isınma modu (Ayarlar): gölge ve çimen kapalı, düşük çözünürlük, daha az efekt ve ayrıntı */
-const cool = () => !!store.get().settings.cool;
+const cool = () => MOBILE && !!store.get().settings.cool; // yalnız telefon/tablet
 let blobGeo: THREE.PlaneGeometry | null = null, blobMat: THREE.MeshBasicMaterial | null = null;
 function blobShadow(r: number) {
   if (!blobGeo) {
