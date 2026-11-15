@@ -1,3 +1,4 @@
+import {CHAMPIONS_WORLD_R118,CHAMPIONS_ENTRY_R118,championsEligibleR118,championsWalkableR118,championsSegmentR118,championsMonsterKeyR118,prepareChampionsDropsR118} from '../champions-config-r118.mjs';
 import {armorDamageReduction} from '../armor-mitigation-r102.mjs';
 import {ZUMRUT_WORLD_R93,ZUMRUT_ENTRY_R93,isZumrutWalkableR93,isZumrutSegmentR93,canZumrutFishR93} from '../zumrut-map-r93.mjs';
 import {CASTLE_AREA,castleEnabled} from '../castle-model-r59.mjs';
@@ -152,7 +153,7 @@ function validateFishingCatch482(input){
 function readFishingCatch482(raw){try{const value=typeof raw==='string'?JSON.parse(raw):raw;return validateFishingCatch482(value?.fishingCatchWeights482??defaultFishingCatch482());}catch{return defaultFishingCatch482();}}
 async function colSupportCast456(database,player,settings,payload,receivedAt){
  const branch=colSpec456(player.role,player.specialization,settings),time=Date.now();
- const areas=['forest','frozen','sanctum','dragon','sinsi','black','war','arena','ancient','afk','event','rune','rune_v2'];
+ const areas=['forest','frozen','sanctum','dragon','sinsi','black','war','arena','ancient','afk','event','rune','rune_v2','champions'];
  if(!branch||!['heal','guard'].includes(branch.effect)||player.level<30||player.hp<=0||player.rod_equipped||(!isAdventureArea(player.area)&&!areas.includes(player.area)))return Response.json({error:'Bu uzmanlık becerisi kullanılamıyor.'},{status:409});
  if(globalThis.__colDungeon?.locked(player.id))return Response.json({error:'Beceriyi zindan kontrollerinden kullanmalısın.'},{status:409});
  const gear=equippedEnchantItems(player),cooldown=effectiveSkillCooldown444(branch.cooldown,Math.min(50,enchantmentTotal(gear,'cast_speed')+(player.jewelry_cast_speed||0))),until=receivedAt+cooldown;
@@ -200,7 +201,7 @@ const EMERALD_SET444=Object.freeze({name:'Kadim Zümrüt Seti',slots:['weapon','
 function emeraldName444(kind,role){return kind==='weapon'?({muhafiz:'Kadim Zümrüt Hükümkılıcı',avci:'Kadim Zümrüt Ufuk Yayı',arkanist:'Kadim Zümrüt Öz Asası'}[role]??'Kadim Zümrüt Hükümkılıcı'):({armor:'Kadim Zümrüt Zırhı',helmet:'Kadim Zümrüt Tacı',necklace:'Kadim Zümrüt Kalbi',shoes:'Kadim Zümrüt Çizmeleri'}[kind]??'Kadim Zümrüt');}
 function emeraldPower444(kind,settings={}){if(kind==='weapon')return 350;if(kind==='armor')return 300;const unique=Math.max(1,Number(settings[kind==='weapon'?'unique_weapon_power':'unique_armor_power'])||(kind==='weapon'?180:150));const percent=Number.isFinite(Number(settings.infinite_power_percent))?Math.max(0,Number(settings.infinite_power_percent)):30;const weaponBase=Math.max(1,Number(settings.infinite_weapon_power)||230);const infinite=globalThis.__colDragonBoss?.infinitePower?.({kind,power:unique})??(kind==='weapon'&&unique<=180?Math.max(unique,weaponBase):kind==='weapon'?Math.max(unique,Math.round(unique*(1+percent/100)),weaponBase):Math.round(unique*(1+percent/100)));return Math.min(100000,Math.ceil(infinite*1.15));}
 function colRuneFactor(p,stat){return globalThis.__colRunes?.factor(p,stat)??1;}
-var PROGRESSION_MATERIALS = Object.freeze({forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
+var PROGRESSION_MATERIALS = Object.freeze({emerald_dust:{label:'Zümrüt Tozu',image:'../assets/royal-icon-emerald_dust-r118-489c24fa11893ae1',note:'Demirci Haso’da 1 Kadim Zümrüt eşyasından elde edilir. Kraliyet dönüşümünde kullanılır.'},royal_crown:{label:'Kraliyet Tacı',image:'../assets/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0',note:'Şampiyonlar Diyarı ganimeti; Kraliyet dönüşümünde kullanılır.'},forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
 	solo_key: {
 		label: "Zindan Anahtarı",
 		image: "solo-key-v410",
@@ -924,7 +925,7 @@ function monsterSpecies(monster) {
 	if (id.startsWith("yutan-") || name.includes("yutan")) return "yutan";
 	return null;
 }
-function resolveLootSourceKey(monster) {
+function resolveLootSourceKey(monster) {if(monster.area==='champions'){const key=championsMonsterKeyR118(monster);return key?'champions.'+key:null;}
  if(isBlackStoneBoss476(monster.id))return "boss.black_stone";if(monster.area==='event')return EVENT_BOSSES444.find(b=>b.kind===eventKind444(monster))?.source??null;
  if(monster.area==='rune_v2'){const k=runeV2MonsterKey(monster);return k?'rune_v2.'+k:null;}if(monster.area==='rune'){const k=runeMonsterKey(monster);return k?'rune.'+k:null;}
 	const id = String(monster.id ?? "");
@@ -1724,12 +1725,12 @@ var EQUIPMENT_SETS = Object.freeze({
 	}
 ,emerald:EMERALD_SET444});
 function equipmentSetState(rarity,items){
- const definition=EQUIPMENT_SETS[rarity];if(!definition)return null;
- const worn=new Set(items.filter(item=>item.equipped===1&&item.rarity===rarity).map(item=>item.kind));
+ const definition=EQUIPMENT_SETS[rarity==='royal'?'emerald':rarity];if(!definition)return null;
+ const worn=new Set(items.filter(item=>item.equipped===1&&((rarity==='emerald'||rarity==='royal')?(item.rarity==='emerald'||item.rarity==='royal'):item.rarity===rarity)).map(item=>item.kind));
  const count=definition.slots.filter(slot=>worn.has(slot)).length;
  const thresholds=Object.fromEntries(Object.keys(definition.bonuses).map(key=>[key,colEquipmentSetThreshold473(key,definition)]));
  const activeBonuses=Object.fromEntries(Object.entries(definition.bonuses).map(([key,value])=>[key,count>=thresholds[key]?value:0]));
- return {...definition,rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
+ return {...definition,...(rarity==='royal'?{name:'Hükümdar Kraliyet Seti'}:{}),rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
 }
 function colEquipmentSetThreshold473(key,definition){
  // V476: each lower tier remains active when a higher-tier piece is removed.
@@ -2364,7 +2365,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='champions')return CHAMPIONS_WORLD_R118;if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -2393,7 +2394,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='champions')return championsWalkableR118(x,y);if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
@@ -2405,7 +2406,7 @@ function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutW
 	if (area === "fishing") return ((x - FISHING_LAKE$1.x) / FISHING_LAKE$1.radiusX) ** 2 + ((y - FISHING_LAKE$1.y) / FISHING_LAKE$1.radiusY) ** 2 >= 1.02;
 	return true;
 }
-function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {if(area==='zumrut')return isZumrutSegmentR93(fromX,fromY,toX,toY);if(isAdventureArea(area))return adventureSegment(area,fromX,fromY,toX,toY);if(area==='event')return eventSegment444(fromX,fromY,toX,toY);
+function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {if(area==='champions')return championsSegmentR118(fromX,fromY,toX,toY);if(area==='zumrut')return isZumrutSegmentR93(fromX,fromY,toX,toY);if(isAdventureArea(area))return adventureSegment(area,fromX,fromY,toX,toY);if(area==='event')return eventSegment444(fromX,fromY,toX,toY);
  if(area==='rune'||area==='rune_v2')return runeWalkableSegment(fromX,fromY,toX,toY);
 	if (guildArea(area)) return guildSegment(area, fromX, fromY, toX, toY);
 	if (area === "forest") return insideForestBounds(fromX, fromY) && insideForestBounds(toX, toY) && forestCoreSegment(fromX, fromY, toX, toY);
@@ -3063,11 +3064,11 @@ async function tryFinalizePendingDropEnchantments(database, settings, scope) {
 		console.error("Bekleyen ganimet efsunları tamamlanamadı; sonraki istekte yeniden denenecek.", error);
 	}
 }
-function profileFromDefeat(defeat, fallbackKey, settings) {
+function profileFromDefeat(defeat, fallbackKey, settings) {if(String(fallbackKey).startsWith('champions.')){const saved=JSON.parse(defeat.loot_profile_json);if(saved?.version!==1||saved.key!==fallbackKey||!saved.championsLoot)throw Error('champions_reward_snapshot_r118');return saved;}
  if(String(fallbackKey).startsWith('rune.')||String(fallbackKey).startsWith('rune_v2.')){const saved=JSON.parse(defeat.loot_profile_json);if(saved?.version!==1||saved.key!==fallbackKey||!saved.runeLoot)throw Error('Rün ganimeti kaydı geçersiz.');return saved;}
 	return parseLiveLootProfileSnapshot(defeat, directLootProfile(buildDefaultLootProfile(fallbackKey, settings)));
 }
-function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {
+function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {if(profile.championsLoot)return prepareChampionsDropsR118(profile,participants,monsterId,center,settings,now,{role:rollLootRole,name:resolveLootItemName,power:rollLootPower,enchants:rollEnchantments,random:()=>Math.random(),uuid:()=>crypto.randomUUID()});
  // Only this frozen boss profile grants independent existing rolls to each
  // authoritative participant. Old pending deaths and ordinary rune mobs keep
  // their original single-owner distribution; no ranking reward is duplicated.
@@ -3198,7 +3199,7 @@ function profileDropInsertStatements(database, rows, gate) {
 	return [gate.kind === "boss" ? statement.bind(JSON.stringify(rows), gate.bossRound, gate.claimToken) : statement.bind(JSON.stringify(rows), gate.monsterId, gate.spawnRound, gate.claimToken)];
 }
 var defaultLootSnapshotCache = /* @__PURE__ */ new WeakMap();
-function defaultLootSnapshot(target, settings) {if(isAdventureArea(target.area)){const p=globalThis.__colAdventure?.profile(target);if(!p)throw Error('adventure_loot_profile_missing');return {lootSourceKey:'adventure.catalog',lootProfileRevision:1,lootProfileJson:JSON.stringify(p)};}if(target.area==='event'){const p=globalThis.__colEventIsland444?.profile(target);if(p?.loot)return p.loot;}
+function defaultLootSnapshot(target, settings) {if(target.area==='champions'){const snapshot=globalThis.__colChampionsR118?.lootSnapshot(target);if(!snapshot)throw Error('champions_loot_snapshot_missing_r118');return snapshot;}if(isAdventureArea(target.area)){const p=globalThis.__colAdventure?.profile(target);if(!p)throw Error('adventure_loot_profile_missing');return {lootSourceKey:'adventure.catalog',lootProfileRevision:1,lootProfileJson:JSON.stringify(p)};}if(target.area==='event'){const p=globalThis.__colEventIsland444?.profile(target);if(p?.loot)return p.loot;}
  if(target.area==='rune_v2')return runeLootSnapshot498(globalThis.__colRuneV2?.lootSnapshot(target)??null);if(target.area==='rune')return runeLootSnapshot498(globalThis.__colRunes?.lootSnapshot(target)??null);
 	if (target.id === "dragon-world-1") return {
 		lootSourceKey: "boss.dragon",
@@ -3262,8 +3263,8 @@ function prepareMonsterXp(database, settings, now, monsterId, spawnRound, reward
     UNION ALL SELECT level+1,total_xp+next_cost,COALESCE(CAST(json_extract((SELECT xp_curve_json FROM game_settings WHERE id=1),'$['||level||']') AS INTEGER),0) FROM curve WHERE level<65)
     UPDATE players SET ${globalThis.__colQuests438?.enabled&&questMonsterEligible438(questMonster438)?questKillSql438()+',':''}${battlePassXpSql('CASE WHEN level>=65 AND rank_tier>0 THEN ROUND((SELECT amount FROM boosted WHERE id=players.id)*'+wisdomSql()+') ELSE (SELECT amount FROM boosted WHERE id=players.id) END','players','((SELECT seen_since FROM reward_input)+30)*1000')},${globalThis.__colRanks ? `rank_xp=CASE WHEN level>=65 AND rank_tier>0 THEN MIN(9000000000000,rank_xp+ROUND((SELECT amount FROM boosted WHERE id=players.id)*${wisdomSql()})) ELSE rank_xp END,` : ""}xp=CASE WHEN level>=${levelCapSql()} THEN xp ELSE MIN((SELECT total_xp FROM curve WHERE level=${levelCapSql()}),xp+(SELECT amount FROM boosted WHERE id=players.id)) END,level=MAX(level,COALESCE((SELECT MAX(level) FROM curve WHERE level<=${levelCapSql()} AND total_xp<=xp+(SELECT amount FROM boosted WHERE id=players.id)),1))
     WHERE id IN(SELECT player_id FROM monster_xp_claims WHERE claim_token=?) AND id IN(SELECT id FROM boosted) RETURNING id,xp,level${globalThis.__colRanks ? ",rank_xp" : ""}`).bind(now - 30, xp, token, now, token),
-        ...cauldronDropStatements488(database,settings,questMonster438,monsterId,token,now,colLabIsMonster),
-        ...forgeDropStatements491(database,settings,questMonster438,monsterId,token,colLabIsMonster)
+        ...(monsterId.startsWith('champions-')?[]:cauldronDropStatements488(database,settings,questMonster438,monsterId,token,now,colLabIsMonster)),
+        ...(monsterId.startsWith('champions-')?[]:forgeDropStatements491(database,settings,questMonster438,monsterId,token,colLabIsMonster))
 	];
 }
 async function awardProfileBossRewards(database, settings, now, pending) {
@@ -3333,7 +3334,7 @@ async function awardPendingBossRewards(database, settings, now, preferredBossRou
 	if (!pending) return null;
 	return awardProfileBossRewards(database, settings, now, pending);
 }
-function monsterXpReward(target, settings) {if(isAdventureArea(target.area))return globalThis.__colAdventure?.profile(target)?.xp??0;if(isBlackStoneBoss476(target.id))return settings.black_stone_boss_xp_reward;if(target.area==='event')return globalThis.__colEventIsland444?.profile(target)?.xp??0;
+function monsterXpReward(target, settings) {if(target.area==='champions')return globalThis.__colChampionsR118?.monster(target)?.xp??0;if(isAdventureArea(target.area))return globalThis.__colAdventure?.profile(target)?.xp??0;if(isBlackStoneBoss476(target.id))return settings.black_stone_boss_xp_reward;if(target.area==='event')return globalThis.__colEventIsland444?.profile(target)?.xp??0;
  if(target.area==='rune_v2')return globalThis.__colRuneV2?.monster(target)?.xp??0;if(target.area==='rune')return globalThis.__colRunes?.monster(target)?.xp??0;
 	if (isFrozenBossId(target.id)) return settings.frozen_boss_xp_reward;
 	if (target.id === "ancient-boss-1") return settings.ancient_boss_xp_reward;
@@ -3535,7 +3536,7 @@ async function tryAwardPendingSinsiStoneRewards(database, settings, now, preferr
 	}
 }
 function normalPendingSourceKey(pending) {
- if(/^rune_v2\.(tide|warden|sentinel|wraith|boss)$/.test(pending.loot_source_key))return pending.loot_source_key;if(/^rune\.(tide|warden|sentinel|wraith)$/.test(pending.loot_source_key))return pending.loot_source_key;
+ if(/^champions\.(ivory_guard|golden_lion|crescent_hunter|royal_colossus)$/.test(pending.loot_source_key))return pending.loot_source_key;if(/^rune_v2\.(tide|warden|sentinel|wraith|boss)$/.test(pending.loot_source_key))return pending.loot_source_key;if(/^rune\.(tide|warden|sentinel|wraith)$/.test(pending.loot_source_key))return pending.loot_source_key;
 	if (isLootSourceKey(pending.loot_source_key)) return pending.loot_source_key;
 	return resolveLootSourceKey({
 		id: pending.monster_id,
@@ -3868,7 +3869,7 @@ async function tryCreateArenaMatch(database, mode, channel, settings, worldCycle
 		teamBName,
 		serverAt: nowMs
 	};
-	await Promise.all([...new Set(selected.map((entry) => entry.area))].filter((area) => /^(zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area)).map((area) => publishRealtimeRoomEvent(worldCycle, channel, area, matchFoundEvent)));
+	await Promise.all([...new Set(selected.map((entry) => entry.area))].filter((area) => /^(champions|zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area)).map((area) => publishRealtimeRoomEvent(worldCycle, channel, area, matchFoundEvent)));
 	return {
 		matchId,
 		startsAtMs,
@@ -3990,7 +3991,7 @@ async function colNotifyPvpGemLoss479(player,hit,targetId,hpRevision,nowMs){
 function mixedNative(database){const wallNowSql473="CAST(unixepoch('subsec')*1000 AS INTEGER)";
 const failure=code=>Object.assign(new Error(code),{code});async function commitMixedBlack473(database,{player,center,playerPlans,monsterPlans,cooldownAtMs,cooldownMs,nowMs,respawnSeconds}){
  colLabAssertPlans(player,playerPlans.map(p=>p.target),monsterPlans.map(p=>p.target));
- if((!isMistArea(player.area)&&!['black','rune_v2'].includes(player.area))||player.arena_match_id||!['avci','arkanist'].includes(player.role)||!playerPlans.length||!monsterPlans.length)throw failure('mixed_cast_internal_scope');
+ if((!isMistArea(player.area)&&!['black','rune_v2','champions'].includes(player.area))||player.arena_match_id||!['avci','arkanist'].includes(player.role)||!playerPlans.length||!monsterPlans.length)throw failure('mixed_cast_internal_scope');
  if(!['player','monster'].includes(center.kind)||typeof database.combatHit!=='function')throw failure('mixed_cast_internal_plan');
  if(playerPlans.length>29)throw failure('mixed_cast_internal_target_limit');
  if(new Set(playerPlans.map(p=>p.target.id)).size!==playerPlans.length||new Set(monsterPlans.map(p=>p.target.id)).size!==monsterPlans.length)throw failure('mixed_cast_duplicate_target');
@@ -4032,12 +4033,12 @@ const failure=code=>Object.assign(new Error(code),{code});async function commitM
    players,Math.floor(nowMs/1000)-30,center.x,center.x,center.y,center.y,monsters,nowMs);
  const hasLethalGems479=playerPlans.some(p=>p.target.hp<=p.totalDamage);
  const hp=database.prepare(`${hasLethalGems479 ? "WITH before_gems479 AS MATERIALIZED (SELECT victim.id,victim.gems AS before_gems FROM json_each(?) prior JOIN players victim ON victim.id=json_extract(prior.value,'$.id') WHERE victim.hp>0 AND victim.hp<=CAST(json_extract(prior.value,'$.damage') AS INTEGER)) " : ""}UPDATE players SET hp=MAX(0,players.hp-CAST(json_extract(hit.value,'$.damage') AS INTEGER)),hp_revision=players.hp_revision+1,
-   ${hasLethalGems479 ? "gems=CASE WHEN players.loadlab_run_id='' AND players.hp<=CAST(json_extract(hit.value,'$.damage') AS INTEGER) THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-CAST((SELECT before_gems FROM before_gems479 WHERE id=players.id)/20 AS INTEGER) ELSE players.gems END," : ""}
+   ${hasLethalGems479 ? "gems=CASE WHEN players.loadlab_run_id='' AND players.area<>'champions' AND players.hp<=CAST(json_extract(hit.value,'$.damage') AS INTEGER) THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-CAST((SELECT before_gems FROM before_gems479 WHERE id=players.id)/20 AS INTEGER) ELSE players.gems END," : ""}
    respawn_at_ms=CASE WHEN players.hp-CAST(json_extract(hit.value,'$.damage') AS INTEGER)<=0 THEN ? ELSE 0 END,
    last_monster_hit_at=?,combat_lock_until_ms=MAX(players.combat_lock_until_ms,?) FROM json_each(?) hit
   WHERE players.id=json_extract(hit.value,'$.id') AND players.hp_revision=json_extract(hit.value,'$.revision') AND players.realtime_scope_version=json_extract(hit.value,'$.scope')
    AND EXISTS(SELECT 1 WHERE players.area=? AND players.channel=? AND players.arena_match_id='')
-  RETURNING id,hp,hp_revision,respawn_at_ms,gems${hasLethalGems479 ? ",CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(hasLethalGems479?[players]:[]),nowMs+respawnSeconds*1000,nowMs,nowMs+5000,players,player.area,player.channel);
+  RETURNING id,hp,hp_revision,respawn_at_ms,gems${hasLethalGems479 ? ",CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(hasLethalGems479?[players]:[]),nowMs+respawnSeconds*1000,nowMs,nowMs+5000,players,player.area,player.channel);
  const events=database.prepare(`INSERT INTO combat_events(player_id,target_id,role,ability,created_at)
   SELECT ?,json_extract(hit.value,'$.id'),?,2,? FROM json_each(?) hit ORDER BY CAST(hit.key AS INTEGER)`)
   .bind(player.id,player.role,nowMs,players);
@@ -4199,7 +4200,7 @@ async function runMixedBlack473(context473){
                                     damage: Math.max(1, Math.round(directDamage * icePercent / 100))
                                 }] : []];
                         const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-                        const respawn = isAdventureArea(target.area)?0:target.area === 'event' ? 0 : now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? ( target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+                        const respawn = isAdventureArea(target.area)?0:target.area === 'event' ? 0 : now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? ( target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
                         const hitStatements = [...targetIndex === 0 ? [database.prepare("INSERT INTO combat_events (player_id, target_id, role, ability, created_at) VALUES (?, ?, ?, ?, ?)").bind(playerId, monster.id, player.role, ability, nowMs)] : [], (isDragonRankBoss498(target.id)?dragonParticipant498(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isRuneV2Boss(target.id)?runeV2Participant483(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isBlackStoneBoss476(target.id)?database.prepare(STONE_PARTICIPANT_SQL476).bind(playerId,now,rolled,nowMs,target.id,target.spawn_round):database.prepare(`INSERT INTO monster_participants (monster_id, spawn_round, player_id, created_at)
              SELECT id, spawn_round, ?, ? FROM monsters WHERE id = ? AND hp > 0 AND spawn_round = ?
              ON CONFLICT(monster_id, spawn_round, player_id) DO UPDATE SET created_at = excluded.created_at`).bind(playerId, now, target.id, target.spawn_round))];
@@ -4344,7 +4345,7 @@ async function runMixedBlack473(context473){
 }return {selectMixedMonsters473,prepareMixedPlayers473,runMixedBlack473:context=>{ports.beforeMixed?.(context);return runMixedBlack473(context);}};}
 function mixedMemory(port){const failure=code=>Object.assign(new Error(code),{code});function commitMixedMemory({player,center,playerPlans,monsterPlans,cooldownAtMs,cooldownMs,nowMs,respawnSeconds}){
  colLabAssertPlans(player,playerPlans.map(p=>p.target),monsterPlans.map(p=>p.target));
- if((!isMistArea(player.area)&&!['black','rune_v2'].includes(player.area))||player.arena_match_id||!['avci','arkanist'].includes(player.role)||!playerPlans.length||!monsterPlans.length)throw failure('mixed_cast_internal_scope');
+ if((!isMistArea(player.area)&&!['black','rune_v2','champions'].includes(player.area))||player.arena_match_id||!['avci','arkanist'].includes(player.role)||!playerPlans.length||!monsterPlans.length)throw failure('mixed_cast_internal_scope');
  if(!['player','monster'].includes(center.kind)||typeof port.commit!=='function')throw failure('mixed_cast_internal_plan');
  if(playerPlans.length>29)throw failure('mixed_cast_internal_target_limit');
  if(new Set(playerPlans.map(p=>p.target.id)).size!==playerPlans.length||new Set(monsterPlans.map(p=>p.target.id)).size!==monsterPlans.length)throw failure('mixed_cast_duplicate_target');
@@ -4451,7 +4452,7 @@ return port.commit({player,center,playerPlans,monsterPlans,cooldownAtMs,cooldown
                                     damage: Math.max(1, Math.round(directDamage * icePercent / 100))
                                 }] : []];
                         const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-                        const respawn = isAdventureArea(target.area)?0:target.area === 'event' ? 0 : now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? ( target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+                        const respawn = isAdventureArea(target.area)?0:target.area === 'event' ? 0 : now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? ( target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
                         return port.monsterPlan({target,targetIndex,directDamage,elemental,rolled,respawn,attackingPlayer,monster,ability,nowMs,now,targetsCount:targets.length});};
                     
  if(center473.kind==='player'){
@@ -4521,7 +4522,7 @@ async function nativeAttack(database,context){const {player,playerId,payload,set
 							error
 						}, { status });
 					};
-					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
+					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "champions" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
 					if (player.area === "afk") {
 						if (!settings.afk_island_enabled && !player.is_gm) return rejectMonsterAttack("Ada oyunculara henüz açık değil.", 403);
 						const hunt = await database.prepare("SELECT day,used_ms,bonus_ms,active,tick_at_ms FROM afk_hunt_state WHERE player_id=?").bind(playerId).first();
@@ -4615,7 +4616,7 @@ async function nativeAttack(database,context){const {player,playerId,payload,set
 					const cooldownMs = ability === 0 ? effectiveAttackCooldownMs(baseCooldownMs, enchantmentTotals("attack_speed") + (player.set_speed ?? 0)) : effectiveSkillCooldown444(baseCooldownMs, Math.min(50,enchantmentTotals("cast_speed")+(player.jewelry_cast_speed||0)));
 					const cooldownGraceMs = ability === 0 ? 220 : 0;
 					const cooldownAtMs = requestReceivedAtMs;
-if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2')&&ability===2&&player.role!=='muhafiz'){
+if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'||player.area==='champions')&&ability===2&&player.role!=='muhafiz'){
   const mixedPoint473=areaSkillPoint(monster,attackingPlayer,readAreaSkillHints(payload.areaTargets).get(monster.id),nowMs,true,false);
   const mixedPlayers473=await prepareMixedPlayers473(player,settings,mixedPoint473,nowMs,null);
   if(mixedPlayers473.length){
@@ -4735,7 +4736,7 @@ if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2')&&ab
 							damage: Math.max(1, Math.round(directDamage * icePercent / 100))
 						}] : []];
 						const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
 						const hitStatements = [...targetIndex === 0 ? [database.prepare("INSERT INTO combat_events (player_id, target_id, role, ability, created_at) VALUES (?, ?, ?, ?, ?)").bind(playerId, monster.id, player.role, ability, nowMs)] : [], (isDragonRankBoss498(target.id)?dragonParticipant498(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isRuneV2Boss(target.id)?runeV2Participant483(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isBlackStoneBoss476(target.id)?database.prepare(STONE_PARTICIPANT_SQL476).bind(playerId,now,rolled,nowMs,target.id,target.spawn_round):database.prepare(`INSERT INTO monster_participants (monster_id, spawn_round, player_id, created_at)
              SELECT id, spawn_round, ?, ? FROM monsters WHERE id = ? AND hp > 0 AND spawn_round = ?
              ON CONFLICT(monster_id, spawn_round, player_id) DO UPDATE SET created_at = excluded.created_at`).bind(playerId, now, target.id, target.spawn_round))];
@@ -5087,7 +5088,7 @@ async function nativePvp(database,context){const {actionSnapshot,playerId,payloa
 						if(player.area===CASTLE_AREA&&!globalThis.__colCastle?.mayDamage(player,target,Date.now()))return rejectPvpAttack("Kalede yalnız savaş saatinde rakip loncaya saldırabilirsin.",423);
 if (player.area!==CASTLE_AREA&&control?.same_party497) return rejectPvpAttack("Parti arkadaşına saldıramazsın.", 400);
 if (!await pvpContinuity(currentPvpSnapshot)) return rejectPvpAttack("Savaş alanı veya hedefin durumu değişti; hedefi yeniden seç.", 409);
-						if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== "war" && player.area !== "black" && player.area !== "rune_v2" && !isArena) return rejectPvpAttack("Oyuncularla Savaş Meydanı, Kara Bölge veya Arena'da savaşabilirsin.", 400);
+						if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== "war" && player.area !== "black" && player.area !== "rune_v2" && player.area !== "champions" && !isArena) return rejectPvpAttack("Oyuncularla Savaş Meydanı, Kara Bölge veya Arena'da savaşabilirsin.", 400);
 						if (player.rod_equipped) return rejectPvpAttack("Savaşmak için bir silah kuşanmalısın.", 400);
 						const attacker = player;
 						if (!targetPlayerId || targetPlayerId === playerId) return rejectPvpAttack("Geçerli bir rakip seç.", 400);
@@ -5250,7 +5251,7 @@ colLabTagWarReward(warEconomyWrites,player,target);
 return {target,arenaScoreWrites,warEconomyWrites,killClaimId,totalDamage,directDamage,fireDamage,iceDamage,attackBlocked,critical,wouldKill,criticalRoll,spreadRoll,roleBase,weaponPower,multiplier,skillLevel,criticalChance,strongPlayers,armorReduction,classDefense,resistantPlayers,firePercent,icePercent};
 
   });
-if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
+if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'||player.area==='champions'){
   const mixedCenter473={kind:'player',id:target.id,x:center472.x,y:center472.y};
   const mixedTargets473=await selectMixedMonsters473(player,mixedCenter473,null,payload,nowMs);
   if(mixedTargets473.length){
@@ -5289,14 +5290,14 @@ if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
   const hasLethalGems479=plans472.some(p=>p.wouldKill);
  const targetUpdates472 = database.prepare(`${hasLethalGems479 ? "WITH before_gems479 AS MATERIALIZED (SELECT victim.id,victim.gems AS before_gems FROM json_each(?) prior JOIN players victim ON victim.id=json_extract(prior.value,'$.id') WHERE victim.hp>0 AND victim.hp<=CAST(json_extract(prior.value,'$.damage') AS INTEGER)) " : ""}UPDATE players SET
       hp=MAX(0,players.hp-CAST(json_extract(hit.value,'$.damage') AS INTEGER)), hp_revision=players.hp_revision+1,
-   ${hasLethalGems479 ? "gems=CASE WHEN players.loadlab_run_id='' AND players.hp<=CAST(json_extract(hit.value,'$.damage') AS INTEGER) THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-CAST((SELECT before_gems FROM before_gems479 WHERE id=players.id)/20 AS INTEGER) ELSE players.gems END," : ""}
+   ${hasLethalGems479 ? "gems=CASE WHEN players.loadlab_run_id='' AND players.area<>'champions' AND players.hp<=CAST(json_extract(hit.value,'$.damage') AS INTEGER) THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-CAST((SELECT before_gems FROM before_gems479 WHERE id=players.id)/20 AS INTEGER) ELSE players.gems END," : ""}
       respawn_at_ms=CASE WHEN players.hp-CAST(json_extract(hit.value,'$.damage') AS INTEGER)<=0 THEN ? ELSE 0 END,
       last_monster_hit_at=?, combat_lock_until_ms=MAX(players.combat_lock_until_ms,?)
     FROM json_each(?) AS hit
     WHERE players.id=json_extract(hit.value,'$.id') AND players.id!=? AND players.hp>0
       AND players.hp_revision=json_extract(hit.value,'$.revision') AND players.realtime_scope_version=json_extract(hit.value,'$.scope')
       AND EXISTS(SELECT 1 WHERE players.area=? AND players.channel=? AND players.arena_match_id=?)
-    RETURNING players.id AS id, hp, hp_revision, respawn_at_ms, gems${hasLethalGems479 ? ",CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`)
+    RETURNING players.id AS id, hp, hp_revision, respawn_at_ms, gems${hasLethalGems479 ? ",CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479 WHERE id=players.id)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`)
     .bind(...(hasLethalGems479?[damageRows472]:[]),nowMs+settings.pvp_respawn_seconds*1000,nowMs,nowMs+5000,damageRows472,playerId,player.area,player.channel,arenaMatchId);
   const eventInserts472 = database.prepare(`INSERT INTO combat_events(player_id,target_id,role,ability,created_at)
     SELECT ?,json_extract(hit.value,'$.id'),?,?,? FROM json_each(?) AS hit
@@ -5432,7 +5433,7 @@ if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
 							return rejectPvpAttack("Yetenek henüz hazır değil.", 429);
 						}
 						timing.mark("pvp_validation");
-						const targetUpdate = isArena ? database.prepare(`${wouldKill ? "WITH before_gems479 AS MATERIALIZED (SELECT gems AS before_gems FROM players WHERE id=?) " : ""}UPDATE players SET ${wouldKill ? "gems=CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479)-CAST((SELECT before_gems FROM before_gems479)/20 AS INTEGER) ELSE gems END," : ""}hp = MAX(0, hp - ?), hp_revision = hp_revision + 1,
+						const targetUpdate = isArena ? database.prepare(`${wouldKill ? "WITH before_gems479 AS MATERIALIZED (SELECT gems AS before_gems FROM players WHERE id=?) " : ""}UPDATE players SET ${wouldKill ? "gems=CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479)-CAST((SELECT before_gems FROM before_gems479)/20 AS INTEGER) ELSE gems END," : ""}hp = MAX(0, hp - ?), hp_revision = hp_revision + 1,
             respawn_at_ms = CASE WHEN hp - ? <= 0 THEN ? ELSE 0 END, last_monster_hit_at = ?,
             combat_lock_until_ms = MAX(combat_lock_until_ms, ?)
            WHERE id = ? AND hp > 0 AND hp_revision = ? ${wouldKill ? "" : "AND changes() = 1"} AND area = 'arena' AND arena_match_id = ?
@@ -5448,7 +5449,7 @@ if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
                JOIN arena_match_players defender ON defender.match_id = m.id AND defender.player_id = ?
                WHERE m.id = ? AND m.status IN ('countdown','active') AND m.starts_at_ms <= ? AND attacker.team != defender.team
                AND (m.id NOT LIKE 'guild-%' OR m.starts_at_ms+600000 > CAST(unixepoch('subsec')*1000 AS INTEGER)))
-           RETURNING hp, hp_revision, respawn_at_ms, gems${wouldKill ? ",CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(wouldKill?[target.id]:[]),totalDamage, totalDamage, nowMs + settings.pvp_respawn_seconds * 1e3, nowMs, nowMs + 5e3, target.id, target.hp_revision, arenaMatchId, target.realtime_scope_version, playerId, player.channel, arenaMatchId, player.realtime_scope_version, playerId, target.id, arenaMatchId, nowMs) : database.prepare(`${wouldKill ? "WITH before_gems479 AS MATERIALIZED (SELECT gems AS before_gems FROM players WHERE id=?) " : ""}UPDATE players SET ${wouldKill ? "gems=CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479)-CAST((SELECT before_gems FROM before_gems479)/20 AS INTEGER) ELSE gems END," : ""}hp = MAX(0, hp - ?), hp_revision = hp_revision + 1,
+           RETURNING hp, hp_revision, respawn_at_ms, gems${wouldKill ? ",CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(wouldKill?[target.id]:[]),totalDamage, totalDamage, nowMs + settings.pvp_respawn_seconds * 1e3, nowMs, nowMs + 5e3, target.id, target.hp_revision, arenaMatchId, target.realtime_scope_version, playerId, player.channel, arenaMatchId, player.realtime_scope_version, playerId, target.id, arenaMatchId, nowMs) : database.prepare(`${wouldKill ? "WITH before_gems479 AS MATERIALIZED (SELECT gems AS before_gems FROM players WHERE id=?) " : ""}UPDATE players SET ${wouldKill ? "gems=CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479)-CAST((SELECT before_gems FROM before_gems479)/20 AS INTEGER) ELSE gems END," : ""}hp = MAX(0, hp - ?), hp_revision = hp_revision + 1,
             respawn_at_ms = CASE WHEN hp - ? <= 0 THEN ? ELSE 0 END, last_monster_hit_at = ?,
             combat_lock_until_ms = MAX(combat_lock_until_ms, ?)
            WHERE id = ? AND hp > 0 AND hp_revision = ? ${wouldKill ? "" : "AND changes() = 1"} AND area = ? AND channel = ?
@@ -5459,7 +5460,7 @@ if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
                  AND live_attacker.channel = ? AND live_attacker.arena_match_id = ''
                  AND NOT EXISTS(SELECT 1 FROM party_members party_actor497 JOIN party_members party_peer497 ON party_peer497.party_id=party_actor497.party_id WHERE party_actor497.player_id=live_attacker.id AND party_peer497.player_id=players.id)
  AND live_attacker.realtime_scope_version = ? AND (live_attacker.area!='war' OR (live_attacker.x-1800)*(live_attacker.x-1800)/202500.0+(live_attacker.y-996)*(live_attacker.y-996)/116964.0>1))
-           RETURNING hp, hp_revision, respawn_at_ms, gems${wouldKill ? ",CASE WHEN loadlab_run_id='' THEN (SELECT before_gems FROM before_gems479)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(wouldKill?[target.id]:[]),totalDamage, totalDamage, nowMs + settings.pvp_respawn_seconds * 1e3, nowMs, nowMs + 5e3, target.id, target.hp_revision, player.area, player.channel, target.realtime_scope_version, playerId, player.area, player.channel, player.realtime_scope_version);
+           RETURNING hp, hp_revision, respawn_at_ms, gems${wouldKill ? ",CASE WHEN loadlab_run_id='' AND area<>'champions' THEN (SELECT before_gems FROM before_gems479)-gems ELSE NULL END AS pvp_gems_lost479" : ""}`).bind(...(wouldKill?[target.id]:[]),totalDamage, totalDamage, nowMs + settings.pvp_respawn_seconds * 1e3, nowMs, nowMs + 5e3, target.id, target.hp_revision, player.area, player.channel, target.realtime_scope_version, playerId, player.area, player.channel, player.realtime_scope_version);
 						const eventInsert = isArena ? database.prepare(`INSERT INTO combat_events (player_id, target_id, role, ability, created_at)
            SELECT ?, ?, ?, ?, ? WHERE ${wouldKill ? "1" : "changes() = 1"} AND EXISTS (
              SELECT 1 FROM players WHERE id = ? AND hp_revision = ? AND area = 'arena' AND arena_match_id = ?
@@ -5737,7 +5738,7 @@ if(scoredMatch&&scoredMatch.status!=="finished"&&!arenaMatchId.startsWith("guild
 							}] : []],
 							tickCount: settings.elemental_tick_count,
 							tickIntervalMs: settings.elemental_tick_interval_ms,
-							message: attackBlocked ? `${target.name} saldırını blokladı!` : (isMistArea(player.area) || player.area === "black" || player.area === "rune_v2") && killed ? `${target.name} yenildi.` : isArena ? matchFinished && scoredMatch ? `${scoredMatch.winner_team === 1 ? scoredMatch.team_a_name : scoredMatch.team_b_name} Arena savaşını kazandı!` : killed ? arenaScoreMessage : `${target.name}: ${totalDamage} hasar.` : killed ? settings.pvp_kill_reward_gems <= 0 ? `${target.name} yenildi · Savaş Meydanı ödülü yönetici tarafından kapalı` : warRewardGranted ? `${target.name} yenildi · +${settings.pvp_kill_reward_gems} Mücevher · yeni ödül 30 dakika sonra` : `${target.name} yenildi · savaş devam ediyor · ödül hakkına ${Math.max(1, Math.ceil((warRewardAvailableAtMs - nowMs) / 6e4))} dakika kaldı` : `${target.name}: ${totalDamage} hasar${classDefense ? ` · %${classDefense} ${defenseKind === "arrow_defense" ? "ok" : defenseKind === "magic_defense" ? "büyü" : "kılıç"} savunması` : ""}${resistantPlayers ? ` · %${resistantPlayers} oyuncu savunması` : ""}.`
+							message: attackBlocked ? `${target.name} saldırını blokladı!` : (isMistArea(player.area) || player.area === "black" || player.area === "rune_v2" || player.area === "champions") && killed ? `${target.name} yenildi.` : isArena ? matchFinished && scoredMatch ? `${scoredMatch.winner_team === 1 ? scoredMatch.team_a_name : scoredMatch.team_b_name} Arena savaşını kazandı!` : killed ? arenaScoreMessage : `${target.name}: ${totalDamage} hasar.` : killed ? settings.pvp_kill_reward_gems <= 0 ? `${target.name} yenildi · Savaş Meydanı ödülü yönetici tarafından kapalı` : warRewardGranted ? `${target.name} yenildi · +${settings.pvp_kill_reward_gems} Mücevher · yeni ödül 30 dakika sonra` : `${target.name} yenildi · savaş devam ediyor · ödül hakkına ${Math.max(1, Math.ceil((warRewardAvailableAtMs - nowMs) / 6e4))} dakika kaldı` : `${target.name}: ${totalDamage} hasar${classDefense ? ` · %${classDefense} ${defenseKind === "arrow_defense" ? "ok" : defenseKind === "magic_defense" ? "büyü" : "kılıç"} savunması` : ""}${resistantPlayers ? ` · %${resistantPlayers} oyuncu savunması` : ""}.`
 						});
 					}
 					return Response.json({ error: "Hedefin durumu değişti; yeniden dene." }, { status: 409 });
@@ -5788,7 +5789,7 @@ if(scoredMatch&&scoredMatch.status!=="finished"&&!arenaMatchId.startsWith("guild
 						if(player.area===CASTLE_AREA&&!globalThis.__colCastle?.mayDamage(player,target,Date.now()))return rejectPvpAttack("Kalede yalnız savaş saatinde rakip loncaya saldırabilirsin.",423);
 if (player.area!==CASTLE_AREA&&control?.same_party497) return rejectPvpAttack("Parti arkadaşına saldıramazsın.", 400);
 if (!pvpContinuity(currentPvpSnapshot)) return rejectPvpAttack("Savaş alanı veya hedefin durumu değişti; hedefi yeniden seç.", 409);
-						if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== "war" && player.area !== "black" && player.area !== "rune_v2" && !isArena) return rejectPvpAttack("Oyuncularla Savaş Meydanı, Kara Bölge veya Arena'da savaşabilirsin.", 400);
+						if (player.area!==CASTLE_AREA && !isMistArea(player.area) && player.area !== "war" && player.area !== "black" && player.area !== "rune_v2" && player.area !== "champions" && !isArena) return rejectPvpAttack("Oyuncularla Savaş Meydanı, Kara Bölge veya Arena'da savaşabilirsin.", 400);
 						if (player.rod_equipped) return rejectPvpAttack("Savaşmak için bir silah kuşanmalısın.", 400);
 						const attacker = player;
 						if (!targetPlayerId || targetPlayerId === playerId) return rejectPvpAttack("Geçerli bir rakip seç.", 400);
@@ -5882,7 +5883,7 @@ colLabTagWarReward(warEconomyWrites,player,target);
 return {target,arenaScoreWrites,warEconomyWrites,killClaimId,totalDamage,directDamage,fireDamage,iceDamage,attackBlocked,critical,wouldKill,criticalRoll,spreadRoll,roleBase,weaponPower,multiplier,skillLevel,criticalChance,strongPlayers,armorReduction,classDefense,resistantPlayers,firePercent,icePercent};
 
   });
-if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'){
+if(isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'||player.area==='champions'){
   const mixedCenter473={kind:'player',id:target.id,x:center472.x,y:center472.y};
   const mixedTargets473=selectMixedMonsters473(player,mixedCenter473,null,payload,nowMs);
   if(mixedTargets473.length){
@@ -6198,7 +6199,7 @@ if(scoredMatch&&scoredMatch.status!=="finished"&&!arenaMatchId.startsWith("guild
 							}] : []],
 							tickCount: settings.elemental_tick_count,
 							tickIntervalMs: settings.elemental_tick_interval_ms,
-							message: attackBlocked ? `${target.name} saldırını blokladı!` : (isMistArea(player.area) || player.area === "black" || player.area === "rune_v2") && killed ? `${target.name} yenildi.` : isArena ? matchFinished && scoredMatch ? `${scoredMatch.winner_team === 1 ? scoredMatch.team_a_name : scoredMatch.team_b_name} Arena savaşını kazandı!` : killed ? arenaScoreMessage : `${target.name}: ${totalDamage} hasar.` : killed ? settings.pvp_kill_reward_gems <= 0 ? `${target.name} yenildi · Savaş Meydanı ödülü yönetici tarafından kapalı` : warRewardGranted ? `${target.name} yenildi · +${settings.pvp_kill_reward_gems} Mücevher · yeni ödül 30 dakika sonra` : `${target.name} yenildi · savaş devam ediyor · ödül hakkına ${Math.max(1, Math.ceil((warRewardAvailableAtMs - nowMs) / 6e4))} dakika kaldı` : `${target.name}: ${totalDamage} hasar${classDefense ? ` · %${classDefense} ${defenseKind === "arrow_defense" ? "ok" : defenseKind === "magic_defense" ? "büyü" : "kılıç"} savunması` : ""}${resistantPlayers ? ` · %${resistantPlayers} oyuncu savunması` : ""}.`
+							message: attackBlocked ? `${target.name} saldırını blokladı!` : (isMistArea(player.area) || player.area === "black" || player.area === "rune_v2" || player.area === "champions") && killed ? `${target.name} yenildi.` : isArena ? matchFinished && scoredMatch ? `${scoredMatch.winner_team === 1 ? scoredMatch.team_a_name : scoredMatch.team_b_name} Arena savaşını kazandı!` : killed ? arenaScoreMessage : `${target.name}: ${totalDamage} hasar.` : killed ? settings.pvp_kill_reward_gems <= 0 ? `${target.name} yenildi · Savaş Meydanı ödülü yönetici tarafından kapalı` : warRewardGranted ? `${target.name} yenildi · +${settings.pvp_kill_reward_gems} Mücevher · yeni ödül 30 dakika sonra` : `${target.name} yenildi · savaş devam ediyor · ödül hakkına ${Math.max(1, Math.ceil((warRewardAvailableAtMs - nowMs) / 6e4))} dakika kaldı` : `${target.name}: ${totalDamage} hasar${classDefense ? ` · %${classDefense} ${defenseKind === "arrow_defense" ? "ok" : defenseKind === "magic_defense" ? "büyü" : "kılıç"} savunması` : ""}${resistantPlayers ? ` · %${resistantPlayers} oyuncu savunması` : ""}.`
 						});
 					}
 					return Response.json({ error: "Hedefin durumu değişti; yeniden dene." }, { status: 409 });
@@ -6366,8 +6367,8 @@ case "respawn":{
 							y: arenaResult.y
 						});
 					}
-					const respawnArea = player.area===CASTLE_AREA||player.area==='rune_v2'?'bazaar':player.area==='event'&&globalThis.__colEventIsland444?.settings().config.enabled?'event':player.area==='rune'&&runeEligible(player)?'rune':player.area === "dragon" ? "dragon" : player.area === "ancient" ? "ancient" : player.area === "black" ? "black" : player.area === "war" ? "war" : player.area === "frozen" ? "frozen" : player.area === "sanctum" ? "sanctum" : "forest";
-					const respawnPoint = respawnArea==='event'?EVENT_SPAWN444:respawnArea==='bazaar'?BAZAAR_SPAWN:respawnArea==='rune'?RUNE_SPAWN:respawnArea === "dragon" ? DRAGON_ENTRY : respawnArea === "ancient" ? ANCIENT_SPAWN : respawnArea === "black" ? BLACK_SPAWN : respawnArea === "war" ? WAR_ENTRY : respawnArea === "frozen" ? FROZEN_SPAWN : respawnArea === "sanctum" ? BOSS_SANCTUM_ENTRY : FOREST_SPAWN;
+					const respawnArea = player.area==='champions'?(championsEligibleR118(player)&&globalThis.__colChampionsR118?.settings().config.enabled?'champions':'bazaar'):player.area===CASTLE_AREA||player.area==='rune_v2'?'bazaar':player.area==='event'&&globalThis.__colEventIsland444?.settings().config.enabled?'event':player.area==='rune'&&runeEligible(player)?'rune':player.area === "dragon" ? "dragon" : player.area === "ancient" ? "ancient" : player.area === "black" ? "black" : player.area === "war" ? "war" : player.area === "frozen" ? "frozen" : player.area === "sanctum" ? "sanctum" : "forest";
+					const respawnPoint = respawnArea==='champions'?CHAMPIONS_ENTRY_R118:respawnArea==='event'?EVENT_SPAWN444:respawnArea==='bazaar'?BAZAAR_SPAWN:respawnArea==='rune'?RUNE_SPAWN:respawnArea === "dragon" ? DRAGON_ENTRY : respawnArea === "ancient" ? ANCIENT_SPAWN : respawnArea === "black" ? BLACK_SPAWN : respawnArea === "war" ? WAR_ENTRY : respawnArea === "frozen" ? FROZEN_SPAWN : respawnArea === "sanctum" ? BOSS_SANCTUM_ENTRY : FOREST_SPAWN;
 					const result = await database.prepare(`UPDATE players SET hp = max_hp, hp_revision = hp_revision + 1, respawn_at_ms = 0,
           area = ?, arena_match_id = '', x = ?, y = ?, last_seen = ?, movement_checked_at_ms = ?, movement_debt_ms = 0,
           motion_stream_id = '', motion_sequence = 0, position_revision = position_revision + 1, realtime_scope_version = realtime_scope_version + 1,
@@ -6401,7 +6402,7 @@ case "respawn":{
 case "collect":{
  let lootAmount473;const lootResponse473=(value,options)=>{if(value?.ok!==true)return Response.json(value,options);const amount=Number(lootAmount473??drop?.amount);return Response.json(Number.isSafeInteger(amount)&&amount>0?{...value,lootReceipts473:[{id:drop.id,ownerId:playerId,label:drop.item_name,amount}]}:value,options);};
 
-					if (player.area !== "bazaar" && player.area !== "event" && player.area !== "rune_v2" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black") return lootResponse473({ error: "Bu bölgede ganimet toplanamaz." }, { status: 400 });
+					if (player.area !== "bazaar" && player.area !== "event" && player.area !== "rune_v2" && player.area !== "champions" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black") return lootResponse473({ error: "Bu bölgede ganimet toplanamaz." }, { status: 400 });
 					const targetId = typeof payload.targetId === "string" ? payload.targetId : "";
 					let drop = await database.prepare("SELECT id, owner_id, monster_id, kind, item_name, rarity, power, amount, role, enchantments, x, y, expires_at, collectible_at FROM world_drops WHERE id = ? AND owner_id = ?").bind(targetId, playerId).first();
 					if (groundLoot30s && drop && groundLootExpired(drop.expires_at, now)) return lootResponse473({ code: "loot_expired", error: "Ganimet artık burada değil." }, { status: 404 });
@@ -6415,11 +6416,11 @@ case "collect":{
 					if (!drop || groundLootExpired(drop.expires_at, now)) return lootResponse473({ error: "Ganimet artık burada değil." }, { status: 404 });
 					if (drop.enchantments === PENDING_DROP_ENCHANTMENTS || drop.enchantments === PROFILE_PENDING_DROP_ENCHANTMENTS) return lootResponse473({ error: "Eşyanın efsunları hazırlanıyor; bir an sonra tekrar dene." }, { status: 409 });
 					if (payload.automatic === true && drop.collectible_at > now) return lootResponse473({ error: "Ganimet henüz yerde görünüyor." }, { status: 409 });
-					if ((drop.monster_id.startsWith('event-')?(globalThis.__colEventIsland444.settings().config.enabled?'event':'bazaar'):drop.monster_id.startsWith('rune-v2-')?'rune_v2':drop.monster_id.startsWith('rune-')?'rune':drop.monster_id === "dragon-world-1" ? "dragon" : drop.monster_id === "dunya-bosu-1" ? "sanctum" : drop.monster_id.includes("-ancient-") || drop.monster_id === "ancient-boss-1" ? "ancient" : drop.monster_id.includes("-black-") ? "black" : drop.monster_id.startsWith("frozen-") || drop.monster_id.includes("-frozen-") ? "frozen" : drop.monster_id.startsWith("sinsi-tasi-") || drop.monster_id.includes("-sinsi-") ? "sinsi" : "forest") !== player.area) return lootResponse473({ error: "Bu ganimet başka bir bölgede." }, { status: 409 });
+					if ((drop.monster_id.startsWith('event-')?(globalThis.__colEventIsland444.settings().config.enabled?'event':'bazaar'):drop.monster_id.startsWith('champions-')?'champions':drop.monster_id.startsWith('rune-v2-')?'rune_v2':drop.monster_id.startsWith('rune-')?'rune':drop.monster_id === "dragon-world-1" ? "dragon" : drop.monster_id === "dunya-bosu-1" ? "sanctum" : drop.monster_id.includes("-ancient-") || drop.monster_id === "ancient-boss-1" ? "ancient" : drop.monster_id.includes("-black-") ? "black" : drop.monster_id.startsWith("frozen-") || drop.monster_id.includes("-frozen-") ? "frozen" : drop.monster_id.startsWith("sinsi-tasi-") || drop.monster_id.includes("-sinsi-") ? "sinsi" : "forest") !== player.area) return lootResponse473({ error: "Bu ganimet başka bir bölgede." }, { status: 409 });
 					if (drop.collectible_at > now && distance(player, drop) > DROP_COLLECTION_RANGE) return lootResponse473({ error: "Ganimete biraz daha yaklaşmalısın." }, { status: 400 });
 					if(eventKind444(drop.monster_id)&&['dragon','solo','dungeon'].includes(eventKind444(drop.monster_id)))return lootResponse473(await globalThis.__colEventIsland444.collect(playerId,drop.id));
  if (drop.monster_id === "dragon-world-1") return lootResponse473(await dragonService().collect(playerId, drop.id));
-					if ((UPGRADE_MATERIAL_KINDS.includes(drop.kind)||Object.hasOwn(RUNE_TYPES,drop.kind)||['weathered_iron','wing','infinite','pet','halloween_pumpkin','witch_wand','halloween_candy'].includes(drop.kind))) {
+					if ((UPGRADE_MATERIAL_KINDS.includes(drop.kind)||Object.hasOwn(RUNE_TYPES,drop.kind)||['royal_crown','weathered_iron','wing','infinite','pet','halloween_pumpkin','witch_wand','halloween_candy'].includes(drop.kind))) {
 						if (!(await database.batch([database.prepare(`INSERT INTO dungeon_materials(player_id,kind,amount) SELECT ?,kind,amount FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?
             ON CONFLICT(player_id,kind) DO UPDATE SET amount=amount+excluded.amount RETURNING amount`).bind(playerId, drop.id, playerId, drop.kind, now), database.prepare("DELETE FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?").bind(drop.id, playerId, drop.kind, now)]))[0].results[0]) return lootResponse473({ error: "Ganimet az önce toplandı." }, { status: 409 });
 						return lootResponse473({
@@ -6444,7 +6445,7 @@ case "collect":{
 						});
 					}
 					if(drop.kind==='gems'||drop.kind==='potions'){
- const col=drop.kind;const result=await database.batch([database.prepare(`UPDATE players SET ${col}=${col}+(SELECT amount FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?) WHERE id=? AND area IN ('rune','rune_v2') AND EXISTS(SELECT 1 FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?) RETURNING ${col}`).bind(drop.id,playerId,col,now,playerId,drop.id,playerId,col,now),database.prepare("DELETE FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=? AND changes()>0").bind(drop.id,playerId,col,now)]);
+ const col=drop.kind;const result=await database.batch([database.prepare(`UPDATE players SET ${col}=${col}+(SELECT amount FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?) WHERE id=? AND area IN ('rune','rune_v2','champions') AND EXISTS(SELECT 1 FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?) RETURNING ${col}`).bind(drop.id,playerId,col,now,playerId,drop.id,playerId,col,now),database.prepare("DELETE FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=? AND changes()>0").bind(drop.id,playerId,col,now)]);
  if(!result[0].results[0])return lootResponse473({error:'Ganimet az önce toplandı.'},{status:409});return lootResponse473({ok:true,...result[0].results[0],message:drop.item_name+' topladın.'});}
  if (drop.kind === "pearl") {
 						const results = await database.batch([database.prepare(`UPDATE players SET pearls = pearls + ?, last_seen = ? WHERE id = ? AND EXISTS (
@@ -6583,7 +6584,7 @@ case "use_potion":{
 					});
 				}
 case "guardian_dash":{
-					if (player.role !== "muhafiz" || player.level < settings.skill_three_unlock_level || (!isAdventureArea(player.area)&&!["forest","frozen","sanctum","dragon","sinsi","black","war","arena","ancient","afk","event","rune","rune_v2"].includes(player.area))) return Response.json({ error: "Bu hamle şu anda kullanılamaz." }, { status: 400 });
+					if (player.role !== "muhafiz" || player.level < settings.skill_three_unlock_level || (!isAdventureArea(player.area)&&!["forest","frozen","sanctum","dragon","sinsi","black","war","arena","ancient","afk","event","rune","rune_v2",'champions'].includes(player.area))) return Response.json({ error: "Bu hamle şu anda kullanılamaz." }, { status: 400 });
 					if (player.area === "arena") {
 						const match = await database.prepare("SELECT starts_at_ms,status FROM arena_matches WHERE id=?").bind(player.arena_match_id).first();
 						if (!match || Date.now() < match.starts_at_ms || !["active", "countdown"].includes(match.status)) return Response.json({ error: "Arena geri sayımını bekle." }, { status: 409 });
@@ -6941,22 +6942,22 @@ case "leave_party":{
 						message: "Partiden ayrıldın."
 					});
 				}
-case "travel_zumrut":case "travel_event":case "travel_dragon":case "travel_rune_v2":case "travel_rune":case "travel_ancient":case "travel_afk":case "travel_market":case "travel_forest":case "travel_frozen":case "travel_fishing":case "travel_sanctum":case "travel_sinsi":case "travel_war":case "travel_black":{
+case "travel_champions":case "travel_zumrut":case "travel_event":case "travel_dragon":case "travel_rune_v2":case "travel_rune":case "travel_ancient":case "travel_afk":case "travel_market":case "travel_forest":case "travel_frozen":case "travel_fishing":case "travel_sanctum":case "travel_sinsi":case "travel_war":case "travel_black":{
 					if (player.area === "arena" || player.arena_match_id) return Response.json({ error: "Arena maçı bitmeden bölgeden ayrılamazsın." }, { status: 409 });
 					if ((await settlePveEngagement(database, playerId, settings, requestReceivedAtMs))?.dead) return Response.json({ error: "Yaratığın vuruşu önce gerçekleşti; yeniden doğmayı bekliyorsun." }, { status: 409 });
 					if (player.combat_lock_until_ms > requestReceivedAtMs) return Response.json({ error: "Savaş sürerken ışınlanamazsın. Birkaç saniye uzak durup tekrar dene." }, { status: 409 });
 					if (payload.action === "travel_afk" && (player.level < 30 || !settings.afk_island_enabled && !player.is_gm)) return Response.json({ error: "Otomatik Av Adası şu anda yalnızca yönetici ön izlemesine açık veya 30. seviye gerekiyor." }, { status: 403 });
 					if (payload.action === "travel_black" && player.level < 40) return Response.json({ error: "Kara Bölge 40. seviyede açılır." }, { status: 403 });
 					if (payload.action === "travel_dragon" && !dragonService()?.settings().config.enabled) return Response.json({ error: "Ejderha haritası şu anda kapalı." }, { status: 409 });
-					if(payload.action==='travel_rune_v2'&&payload.confirmPvp!==true)return Response.json({error:'PvP ve ölümde %5 mücevher kaybı uyarısını onaylamalısın.',code:'rune_v2_pvp_confirmation_required'},{status:403});if(payload.action==='travel_rune_v2'&&(!runeEligible(player)||!globalThis.__colRuneV2?.settings().config.enabled))return Response.json({error:'Karanlık Rün Sahili şu anda kapalı veya 65. seviye ve rütbe gerekiyor.'},{status:403});if(payload.action==='travel_rune'&&(!runeEligible(player)||!globalThis.__colRunes?.settings().config.enabled))return Response.json({error:RUNE_GATE_MESSAGE},{status:403});
+					if(payload.action==='travel_champions'&&(!championsEligibleR118(player)||!globalThis.__colChampionsR118?.settings().config.enabled))return Response.json({error:'Şampiyonlar Diyarı için Şampiyon Lv 1 gerekiyor; harita açık olmalı.',code:'champions_access_r118'},{status:403});if(payload.action==='travel_champions'&&payload.confirmPvp!==true)return Response.json({error:'Bu haritada PvP açık. Giriş uyarısını onayla.',code:'champions_pvp_confirmation_r118'},{status:403});if(payload.action==='travel_rune_v2'&&payload.confirmPvp!==true)return Response.json({error:'PvP ve ölümde %5 mücevher kaybı uyarısını onaylamalısın.',code:'rune_v2_pvp_confirmation_required'},{status:403});if(payload.action==='travel_rune_v2'&&(!runeEligible(player)||!globalThis.__colRuneV2?.settings().config.enabled))return Response.json({error:'Karanlık Rün Sahili şu anda kapalı veya 65. seviye ve rütbe gerekiyor.'},{status:403});if(payload.action==='travel_rune'&&(!runeEligible(player)||!globalThis.__colRunes?.settings().config.enabled))return Response.json({error:RUNE_GATE_MESSAGE},{status:403});
  if(payload.action==='travel_event'&&!globalThis.__colEventIsland444?.settings().config.enabled)return Response.json({error:'Etkinlik Adası şu anda kapalı.'},{status:403});
  if(payload.action==='travel_zumrut'){const zumrutConfigR93=globalThis.__colZumrutR93?.config();if(!zumrutConfigR93?.enabled)return Response.json({error:'Zümrüt Vadisi şu anda kapalı.'},{status:403});if(zumrutConfigR93.access!=='public'&&Number(player.is_gm)!==1)return Response.json({error:'Zümrüt Vadisi şu anda yalnızca yönetici ön izlemesine açık.'},{status:403});}
- const destination = payload.action==='travel_zumrut'?'zumrut':payload.action==='travel_rune_v2'?'rune_v2':payload.action==='travel_event'?'event':payload.action==='travel_rune'?'rune':payload.action === "travel_dragon" ? "dragon" : payload.action === "travel_afk" ? "afk" : payload.action === "travel_ancient" ? "ancient" : payload.action === "travel_black" ? "black" : payload.action === "travel_market" ? "bazaar" : payload.action === "travel_frozen" ? "frozen" : payload.action === "travel_fishing" ? "fishing" : payload.action === "travel_sanctum" ? "sanctum" : payload.action === "travel_sinsi" ? "sinsi" : payload.action === "travel_war" ? "war" : "forest";
+ const destination = payload.action==='travel_champions'?'champions':payload.action==='travel_zumrut'?'zumrut':payload.action==='travel_rune_v2'?'rune_v2':payload.action==='travel_event'?'event':payload.action==='travel_rune'?'rune':payload.action === "travel_dragon" ? "dragon" : payload.action === "travel_afk" ? "afk" : payload.action === "travel_ancient" ? "ancient" : payload.action === "travel_black" ? "black" : payload.action === "travel_market" ? "bazaar" : payload.action === "travel_frozen" ? "frozen" : payload.action === "travel_fishing" ? "fishing" : payload.action === "travel_sanctum" ? "sanctum" : payload.action === "travel_sinsi" ? "sinsi" : payload.action === "travel_war" ? "war" : "forest";
 					if (destination === "ancient" && !canEnterAncient(settings, player)) return Response.json({ error: "Bu bölge henüz sana açık değil veya 50 seviyeye ulaşmadın." }, { status: 403 });
 					if (destination === "sinsi" && player.level < settings.sinsi_stone_unlock_level) return Response.json({ error: `Sinsi Taş Vadisi ${settings.sinsi_stone_unlock_level}. seviyede açılır.` }, { status: 403 });
 					if (destination === "frozen" && !settings.frozen_zone_enabled) return Response.json({ error: "Donmuş Çam Geçidi şu anda kapalı." }, { status: 403 });
 					if (destination === "frozen" && player.level < 20) return Response.json({ error: `Donmuş Çam Geçidi 20. seviyede açılır.` }, { status: 403 });
-					const target = destination === "zumrut" ? ZUMRUT_ENTRY_R93 : destination === "event" ? EVENT_SPAWN444 : (destination === "rune" || destination === "rune_v2") ? RUNE_SPAWN : destination === "dragon" ? DRAGON_ENTRY : destination === "afk" ? AFK_SPAWN : destination === "ancient" ? ANCIENT_SPAWN : destination === "black" ? BLACK_SPAWN : destination === "frozen" ? FROZEN_SPAWN : destination === "fishing" ? FISHING_SPAWN : destination === "sanctum" ? BOSS_SANCTUM_ENTRY : destination === "sinsi" ? SINSI_STONE_ENTRY : destination === "war" ? WAR_ENTRY : destination === "bazaar" ? BAZAAR_SPAWN : FOREST_SPAWN;
+					const target = destination === "champions" ? CHAMPIONS_ENTRY_R118 : destination === "zumrut" ? ZUMRUT_ENTRY_R93 : destination === "event" ? EVENT_SPAWN444 : (destination === "rune" || destination === "rune_v2") ? RUNE_SPAWN : destination === "dragon" ? DRAGON_ENTRY : destination === "afk" ? AFK_SPAWN : destination === "ancient" ? ANCIENT_SPAWN : destination === "black" ? BLACK_SPAWN : destination === "frozen" ? FROZEN_SPAWN : destination === "fishing" ? FISHING_SPAWN : destination === "sanctum" ? BOSS_SANCTUM_ENTRY : destination === "sinsi" ? SINSI_STONE_ENTRY : destination === "war" ? WAR_ENTRY : destination === "bazaar" ? BAZAAR_SPAWN : FOREST_SPAWN;
 					if (!await database.prepare(`UPDATE players SET red_pearls=red_pearls-(CASE WHEN ?='dragon' AND area!='dragon' THEN 1 ELSE 0 END),gems=gems-100*(CASE WHEN ?='dragon' AND area!='dragon' THEN 1 ELSE 0 END),essence=essence-200*(CASE WHEN ?='dragon' AND area!='dragon' THEN 1 ELSE 0 END),area = ?, x = ?, y = ?, last_seen = ?,
           movement_checked_at_ms = ?, movement_debt_ms = 0, motion_stream_id = '', motion_sequence = 0, position_revision = position_revision + 1,
           realtime_scope_version = realtime_scope_version + 1, combat_lock_until_ms = 0
@@ -6964,15 +6965,15 @@ case "travel_zumrut":case "travel_event":case "travel_dragon":case "travel_rune_
             AND (? != 'frozen' OR level >= ?)
             AND (? != 'afk' OR (level >= 30 AND ((SELECT afk_island_enabled FROM combat_settings WHERE id=1)=1 OR is_gm=1)))
             AND (? != 'ancient' OR (level>=50 AND ${levelCapSql()}=65))
- AND (? != 'event' OR json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1) AND (? NOT IN ('rune','rune_v2') OR (level>=65 AND rank_tier>=1)) AND (CASE WHEN ?='rune_v2' THEN json_extract((SELECT config_json FROM rune_v2_settings WHERE id=1),'$.enabled') ELSE 1 END)=1 AND (?!='dragon' OR area='dragon' OR (red_pearls>=1 AND gems>=100 AND essence>=200))
-          RETURNING id`).bind(destination,destination,destination,destination, target.x, target.y, now, Date.now(), playerId, requestReceivedAtMs, player.realtime_scope_version, destination, 20, destination, destination, destination,destination,destination,destination).first()) return Response.json({ error: destination==="dragon"?"Ejderha girişi için 1 Kırmızı İnci, 100 Mücevher ve 200 Öz gerekir. Savaş dışında tekrar dene.":"Savaş veya karakter durumu değişti; bölge geçişini tekrar dene." }, { status: 409 });
+ AND (? != 'champions' OR (champion_level_r102>=1 AND json_extract((SELECT config_json FROM champions_settings_r118 WHERE id=1),'$.enabled')=1)) AND (? != 'event' OR json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1) AND (? NOT IN ('rune','rune_v2') OR (level>=65 AND rank_tier>=1)) AND (CASE WHEN ?='rune_v2' THEN json_extract((SELECT config_json FROM rune_v2_settings WHERE id=1),'$.enabled') ELSE 1 END)=1 AND (?!='dragon' OR area='dragon' OR (red_pearls>=1 AND gems>=100 AND essence>=200))
+          RETURNING id`).bind(destination,destination,destination,destination, target.x, target.y, now, Date.now(), playerId, requestReceivedAtMs, player.realtime_scope_version, destination, 20, destination, destination, destination,destination,destination,destination,destination).first()) return Response.json({ error: destination==="dragon"?"Ejderha girişi için 1 Kırmızı İnci, 100 Mücevher ve 200 Öz gerekir. Savaş dışında tekrar dene.":"Savaş veya karakter durumu değişti; bölge geçişini tekrar dene." }, { status: 409 });
 					if(player.area==='zumrut'||destination==='zumrut')await database.prepare('DELETE FROM fishing_sessions WHERE player_id = ?').bind(playerId).run();
 					return Response.json({
 						ok: true,
 						area: destination,
 						x: target.x,
 						y: target.y,
-						message: destination === "zumrut" ? "Zümrüt Vadisi’ne vardın." : destination === "rune_v2" ? "Karanlık Rün Sahili’ye vardın." : destination === "event" ? "Etkinlik Adası’na vardın." : destination === "rune" ? "Kadim Rün Sahili’ne vardın." : destination === "dragon" ? "Külkanat Krateri’ne vardın." : destination === "afk" ? "Otomatik Av Adası’na vardın. Oto avı açarak süreyi başlat." : destination === "ancient" ? "Kadim Kök Vadisi’ne vardın." : destination === "black" ? "Kara Bölge: PvP açık. Ölünce eşyaların korunur ve burada yeniden doğarsın." : destination === "bazaar" ? "Pazar Köyü'ne vardın." : destination === "frozen" ? "Donmuş Çam Geçidi'ne vardın." : destination === "fishing" ? "Şelale Gölü'ne vardın." : destination === "sanctum" ? "Yaşam Çekirdeği Tapınağı'na ışınlandın." : destination === "sinsi" ? "Sinsi Taş Vadisi'ne vardın." : destination === "war" ? "Savaş Meydanı'na girdin. Tüm gezginler artık rakibin." : "Kuzey Ormanı'na döndün."
+						message: destination === "champions" ? "Şampiyonlar Diyarı’na vardın. PvP açık." : destination === "zumrut" ? "Zümrüt Vadisi’ne vardın." : destination === "rune_v2" ? "Karanlık Rün Sahili’ye vardın." : destination === "event" ? "Etkinlik Adası’na vardın." : destination === "rune" ? "Kadim Rün Sahili’ne vardın." : destination === "dragon" ? "Külkanat Krateri’ne vardın." : destination === "afk" ? "Otomatik Av Adası’na vardın. Oto avı açarak süreyi başlat." : destination === "ancient" ? "Kadim Kök Vadisi’ne vardın." : destination === "black" ? "Kara Bölge: PvP açık. Ölünce eşyaların korunur ve burada yeniden doğarsın." : destination === "bazaar" ? "Pazar Köyü'ne vardın." : destination === "frozen" ? "Donmuş Çam Geçidi'ne vardın." : destination === "fishing" ? "Şelale Gölü'ne vardın." : destination === "sanctum" ? "Yaşam Çekirdeği Tapınağı'na ışınlandın." : destination === "sinsi" ? "Sinsi Taş Vadisi'ne vardın." : destination === "war" ? "Savaş Meydanı'na girdin. Tüm gezginler artık rakibin." : "Kuzey Ormanı'na döndün."
 					});
 				}default:throw Error("native_action_unbound");}}
 function planMemory(port,context){const {player,playerId,payload,settings,attackTargetId,preloadedAttackMonster,requestReceivedAtMs,now,auth}=context;
@@ -7004,7 +7005,7 @@ function planMemory(port,context){const {player,playerId,payload,settings,attack
 							error
 						}, { status });
 					};
-					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
+					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "champions" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
 					if (player.area === "afk") {
 						if (!settings.afk_island_enabled && !player.is_gm) return rejectMonsterAttack("Ada oyunculara henüz açık değil.", 403);
 						const hunt = port.afk(playerId);
@@ -7098,7 +7099,7 @@ function planMemory(port,context){const {player,playerId,payload,settings,attack
 					const cooldownMs = ability === 0 ? effectiveAttackCooldownMs(baseCooldownMs, enchantmentTotals("attack_speed") + (player.set_speed ?? 0)) : effectiveSkillCooldown444(baseCooldownMs, Math.min(50,enchantmentTotals("cast_speed")+(player.jewelry_cast_speed||0)));
 					const cooldownGraceMs = ability === 0 ? 220 : 0;
 					const cooldownAtMs = requestReceivedAtMs;
-if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2')&&ability===2&&player.role!=='muhafiz'){
+if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'||player.area==='champions')&&ability===2&&player.role!=='muhafiz'){
   const mixedPoint473=areaSkillPoint(monster,attackingPlayer,readAreaSkillHints(payload.areaTargets).get(monster.id),nowMs,true,false);
   const mixedPlayers473=prepareMixedPlayers473(player,settings,mixedPoint473,nowMs,null);
   if(mixedPlayers473.length){
@@ -7205,7 +7206,7 @@ if(!cooldownAccepted){if(ability===0){deliverRealtime(publishMonsterAttackReject
 							damage: Math.max(1, Math.round(directDamage * icePercent / 100))
 						}] : []];
 						const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
 						
 return {target,targetIndex,directDamage,elemental,rolled,respawn};};
 return {accepted:true,player,attackingPlayer,monster,combatMonster,ability,intentId,attackPveHit,attackColumn,cooldownMs,cooldownAtMs,cooldownGraceMs,nowMs,branch456,critical,enchantmentTotals,targets,plans:targets.map(prepareMonsterHit),monsterPreviews,eventRates,foreignRealtimeChannels};}
@@ -7238,7 +7239,7 @@ return {accepted:true,player,attackingPlayer,monster,combatMonster,ability,inten
 							error
 						}, { status });
 					};
-					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
+					if (!isAdventureArea(player.area) && player.area !== "event" && player.area !== "rune_v2" && player.area !== "champions" && player.area !== "rune" && player.area !== "ancient" && player.area !== "forest" && player.area !== "frozen" && player.area !== "sanctum" && player.area !== "dragon" && player.area !== "sinsi" && player.area !== "black" && player.area !== "afk") return rejectMonsterAttack("Bu bölgede savaşılmaz.", 400);
 					if (player.area === "afk") {
 						if (!settings.afk_island_enabled && !player.is_gm) return rejectMonsterAttack("Ada oyunculara henüz açık değil.", 403);
 						const hunt = port.afk(playerId);
@@ -7332,7 +7333,7 @@ return {accepted:true,player,attackingPlayer,monster,combatMonster,ability,inten
 					const cooldownMs = ability === 0 ? effectiveAttackCooldownMs(baseCooldownMs, enchantmentTotals("attack_speed") + (player.set_speed ?? 0)) : effectiveSkillCooldown444(baseCooldownMs, Math.min(50,enchantmentTotals("cast_speed")+(player.jewelry_cast_speed||0)));
 					const cooldownGraceMs = ability === 0 ? 220 : 0;
 					const cooldownAtMs = requestReceivedAtMs;
-if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2')&&ability===2&&player.role!=='muhafiz'){
+if((isMistArea(player.area)||player.area==='black'||player.area==='rune_v2'||player.area==='champions')&&ability===2&&player.role!=='muhafiz'){
   const mixedPoint473=areaSkillPoint(monster,attackingPlayer,readAreaSkillHints(payload.areaTargets).get(monster.id),nowMs,true,false);
   const mixedPlayers473=prepareMixedPlayers473(player,settings,mixedPoint473,nowMs,null);
   if(mixedPlayers473.length){
@@ -7445,7 +7446,7 @@ const memoryCombat=(guard,plans)=>port.commitHits(guard,plans),nativeGuardedBatc
 							damage: Math.max(1, Math.round(directDamage * icePercent / 100))
 						}] : []];
 						const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
 						return port.hitPlan({target,targetIndex,directDamage,elemental,rolled,respawn,attackingPlayer,monster,ability,nowMs,now,targetsCount:targets.length});};
 					const memoryPlans = memoryCombat ? targets.map((target,index)=>prepareMonsterHit(target,index,null,false)) : null;
 					const memoryPlanByIdR53=attackIndexR53&&memoryPlans?new Map(memoryPlans.map(plan=>[plan.target.id,plan])):null;
@@ -7763,7 +7764,7 @@ const memoryCombat=(guard,plans)=>port.commitHits(guard,plans),nativeGuardedBatc
 }
  function supportMemory(port,player,settings,payload,receivedAt){
  const branch=colSpec456(player.role,player.specialization,settings),time=Date.now();
- const areas=['forest','frozen','sanctum','dragon','sinsi','black','war','arena','ancient','afk','event','rune','rune_v2'];
+ const areas=['forest','frozen','sanctum','dragon','sinsi','black','war','arena','ancient','afk','event','rune','rune_v2','champions'];
  if(!branch||!['heal','guard'].includes(branch.effect)||player.level<30||player.hp<=0||player.rod_equipped||(!isAdventureArea(player.area)&&!areas.includes(player.area)))return Response.json({error:'Bu uzmanlık becerisi kullanılamıyor.'},{status:409});
  if(globalThis.__colDungeon?.locked(player.id))return Response.json({error:'Beceriyi zindan kontrollerinden kullanmalısın.'},{status:409});
  const gear=equippedEnchantItems(player),cooldown=effectiveSkillCooldown444(branch.cooldown,Math.min(50,enchantmentTotal(gear,'cast_speed')+(player.jewelry_cast_speed||0))),until=receivedAt+cooldown;
@@ -7795,7 +7796,7 @@ const memoryCombat=(guard,plans)=>port.commitHits(guard,plans),nativeGuardedBatc
  return Response.json({ok:true,specialEffect:effect,cooldownRemainingMs:cooldown,reservedUntilMs:Number(reserved.reserved_until),...(own?{hp:own.hp,maxHp:own.max_hp,hpRevision:own.hp_revision}:{}),special_guard_until_ms:Number(reserved.special_guard_until_ms)});
 }
  function dashActionMemory(port,context){const {player,playerId,payload,settings,requestReceivedAtMs}=context;
-					if (player.role !== "muhafiz" || player.level < settings.skill_three_unlock_level || (!isAdventureArea(player.area)&&!["forest","frozen","sanctum","dragon","sinsi","black","war","arena","ancient","afk","event","rune","rune_v2"].includes(player.area))) return Response.json({ error: "Bu hamle şu anda kullanılamaz." }, { status: 400 });
+					if (player.role !== "muhafiz" || player.level < settings.skill_three_unlock_level || (!isAdventureArea(player.area)&&!["forest","frozen","sanctum","dragon","sinsi","black","war","arena","ancient","afk","event","rune","rune_v2",'champions'].includes(player.area))) return Response.json({ error: "Bu hamle şu anda kullanılamaz." }, { status: 400 });
 					if (player.area === "arena") {
 						const match = port.arena(player.arena_match_id);
 						if (!match || Date.now() < match.starts_at_ms || !["active", "countdown"].includes(match.status)) return Response.json({ error: "Arena geri sayımını bekle." }, { status: 409 });
@@ -7852,7 +7853,7 @@ function prepareHits(database,context,plan){const {player,playerId,payload,setti
 							damage: Math.max(1, Math.round(directDamage * icePercent / 100))
 						}] : []];
 						const rolled = rolledHit465?.rolled ?? Math.max(1, Math.floor((directDamage + elemental.reduce((sum, entry) => sum + entry.damage, 0)) * regionMultiplier(target)));
-						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
+						const respawn = isAdventureArea(target.area)?0:target.area==='event'?0:now + ((target.area==='champions'?globalThis.__colChampionsR118?.monster(target)?.respawnSeconds:target.area==='rune_v2'?globalThis.__colRuneV2?.monster(target)?.respawnSeconds:target.area==='rune'?globalThis.__colRunes?.monster(target)?.respawnSeconds:undefined) ?? (target.id === "dragon-world-1" ? dragonService()?.settings().config.interval ?? 10800 : isBlackStoneBoss476(target.id) ? settings.black_stone_boss_respawn_seconds : isFrozenBossId(target.id) ? settings.frozen_boss_respawn_seconds : target.id === "ancient-boss-1" ? settings.ancient_boss_respawn_seconds : isFrozenWaterId(target.id) ? settings.frozen_water_respawn_seconds : target.is_boss ? settings.boss_respawn_seconds : target.is_stone ? settings.sinsi_stone_respawn_seconds : target.summoned ? 2 : target.area === "ancient" ? settings.ancient_monster_respawn_seconds : target.area === "forest" ? colLabNormalRespawnSecondsR10(target, settings.forest_monster_respawn_seconds) : target.area === "frozen" ? settings.frozen_monster_respawn_seconds : target.area === "black" ? settings.black_monster_respawn_seconds : target.area === "afk" ? settings.afk_island_respawn_seconds : 18));
 						const hitStatements = [...targetIndex === 0 ? [database.prepare("INSERT INTO combat_events (player_id, target_id, role, ability, created_at) VALUES (?, ?, ?, ?, ?)").bind(playerId, monster.id, player.role, ability, nowMs)] : [], (isDragonRankBoss498(target.id)?dragonParticipant498(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isRuneV2Boss(target.id)?runeV2Participant483(database,playerId,now,rolled,nowMs,target.id,target.spawn_round):isBlackStoneBoss476(target.id)?database.prepare(STONE_PARTICIPANT_SQL476).bind(playerId,now,rolled,nowMs,target.id,target.spawn_round):database.prepare(`INSERT INTO monster_participants (monster_id, spawn_round, player_id, created_at)
              SELECT id, spawn_round, ?, ? FROM monsters WHERE id = ? AND hp > 0 AND spawn_round = ?
              ON CONFLICT(monster_id, spawn_round, player_id) DO UPDATE SET created_at = excluded.created_at`).bind(playerId, now, target.id, target.spawn_round))];

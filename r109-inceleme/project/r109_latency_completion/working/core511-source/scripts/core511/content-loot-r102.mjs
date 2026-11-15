@@ -4,7 +4,7 @@ export function createContentLootR102(sql){
  const tables=new Set(sql.prepare("SELECT name FROM sqlite_schema WHERE type='table'").all().map(r=>r.name));
  const cols=new Set(sql.prepare('PRAGMA table_info(players)').all().map(r=>r.name));
  if(cols.has('daily_monster_kills'))sql.exec(`CREATE TRIGGER IF NOT EXISTS content_stocking_drop_r102 AFTER UPDATE OF daily_monster_kills ON players
- WHEN NEW.is_gm=0 AND NEW.daily_monster_kills>0 AND
+ WHEN NEW.is_gm=0 AND NEW.area<>'champions' AND NEW.daily_monster_kills>0 AND
  (NEW.daily_monster_day<>OLD.daily_monster_day OR NEW.daily_monster_kills>OLD.daily_monster_kills)
  AND (SELECT json_extract(config,'$.newyear.enabled') FROM content_settings_r102 WHERE id=1)=1
  BEGIN

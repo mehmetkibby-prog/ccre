@@ -5,7 +5,7 @@ import {prepareCached477} from './writer-statements.mjs';
 import {kernelError} from './contract.mjs';
 import {r35Options} from './r35-options.mjs';
 import {authorityReadR57,deathBatchR57} from './r57-options.mjs';
-export const LOCAL_MIXED_AREAS=new Set(['forest','frozen','ancient','sanctum']);
+export const LOCAL_MIXED_AREAS=new Set(['forest','frozen','ancient','sanctum','champions']);
 // The whole local monster population is leased, including dead rows that may
 // respawn. Re-read CURRENT DB in the authority transaction. The native target
 // selector, damage, controls and reward SQL are not reimplemented here.

@@ -842,7 +842,7 @@ var MONSTERS_SQL = `SELECT id, name, x, y, hp, max_hp, respawn_at, variant, is_b
 var DROPS_SQL = `SELECT id, owner_id, monster_id, kind, item_name, rarity, power, amount, role, enchantments, x, y, expires_at, collectible_at
   FROM world_drops WHERE owner_id = ? AND expires_at ${groundLoot30s ? '>' : '>='} ? AND enchantments NOT IN ('__pending__','__profile_pending__')
   AND monster_id NOT LIKE '%-afk-%'
-  AND ((? = CASE WHEN monster_id LIKE 'event-%' THEN CASE WHEN json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1 THEN 'event' ELSE 'bazaar' END WHEN monster_id LIKE 'rune-v2-%' THEN 'rune_v2' WHEN monster_id LIKE 'rune-%' THEN 'rune' WHEN monster_id='dragon-world-1' THEN 'dragon' WHEN monster_id LIKE '%-ancient-%' OR monster_id = 'ancient-boss-1' THEN 'ancient' ELSE 'forest' END AND monster_id != 'dunya-bosu-1' AND monster_id NOT LIKE 'sinsi-tasi-%' AND monster_id NOT LIKE '%-sinsi-%' AND monster_id NOT LIKE 'frozen-%' AND (monster_id LIKE 'event-%' OR monster_id NOT LIKE '%-frozen-%') AND monster_id NOT LIKE '%-black-%')
+  AND ((? = CASE WHEN monster_id LIKE 'champions-%' THEN 'champions' WHEN monster_id LIKE 'event-%' THEN CASE WHEN json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1 THEN 'event' ELSE 'bazaar' END WHEN monster_id LIKE 'rune-v2-%' THEN 'rune_v2' WHEN monster_id LIKE 'rune-%' THEN 'rune' WHEN monster_id='dragon-world-1' THEN 'dragon' WHEN monster_id LIKE '%-ancient-%' OR monster_id = 'ancient-boss-1' THEN 'ancient' ELSE 'forest' END AND monster_id != 'dunya-bosu-1' AND monster_id NOT LIKE 'sinsi-tasi-%' AND monster_id NOT LIKE '%-sinsi-%' AND monster_id NOT LIKE 'frozen-%' AND (monster_id LIKE 'event-%' OR monster_id NOT LIKE '%-frozen-%') AND monster_id NOT LIKE '%-black-%')
     OR (? = 'black' AND monster_id LIKE '%-black-%')
     OR (? = 'sanctum' AND monster_id = 'dunya-bosu-1')
     OR (? = 'sinsi' AND (monster_id LIKE 'sinsi-tasi-%' OR monster_id LIKE '%-sinsi-%'))
@@ -991,7 +991,7 @@ const membership = viewer?.party_id ? { party_id: viewer.party_id } : null;
            AND m.id > COALESCE(dismissal.dismissed_through_id, 0) AND m.id > ?
          ORDER BY m.id DESC LIMIT 40`).bind(playerId, playerId, playerId, playerId, auth.gamePresence?.chatAfterId ?? 0),
 			database.prepare(DROPS_SQL).bind(playerId, now, area, area, area, area, area),
-			database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
+			database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
 			database.prepare("SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot").bind(playerId),
 			database.prepare("SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind").bind(playerId),
 			database.prepare("SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at").bind(playerId),
@@ -1040,7 +1040,7 @@ const membership = viewer?.party_id ? { party_id: viewer.party_id } : null;
 			},
 			players: playersProjected ? players.results : withRankPlayers(players.results, playerId),
 			eventIsland:globalThis.__colEventIsland444?.public(channel)??{enabled:false,activeKinds:[]},
- runeBonusPerLevel:globalThis.__colRunes?.settings().config.bonusPerLevel??.2,runeV2:{enabled:globalThis.__colRuneV2?.settings().config.enabled===true,revision:globalThis.__colRuneV2?.settings().revision??0},
+ runeBonusPerLevel:globalThis.__colRunes?.settings().config.bonusPerLevel??.2,champions:{enabled:globalThis.__colChampionsR118?.settings().config.enabled===true,revision:globalThis.__colChampionsR118?.settings().revision??0},runeV2:{enabled:globalThis.__colRuneV2?.settings().config.enabled===true,revision:globalThis.__colRuneV2?.settings().revision??0},
  ranks: rankService()?.settings() ?? null,
 			dragon: dragonService()?.settings() ?? null,
 			monsters: monsters.results.filter(m=>colLabCanSeeMonster(playerId,m)),
@@ -1083,7 +1083,7 @@ function readCommittedSectionsR113(read,player,nowMs){
  const owner=createWorldPlayerProjector(read)(rows,id,nowMs)[0];
  if(!owner)throw Error('committed_owner_projection_missing');
  const data={owner,drops:dragonService()?.describeDrops?.(read(DROPS_SQL,[id,now,area,area,area,area,area]))??read(DROPS_SQL,[id,now,area,area,area,area,area])};
- data.inventory=read("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC",[id]);
+ data.inventory=read("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC",[id]);
  data.storageItems=read("SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot",[id]);
  data.stones=read("SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind",[id]);
  data.pets=read("SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at",[id]);

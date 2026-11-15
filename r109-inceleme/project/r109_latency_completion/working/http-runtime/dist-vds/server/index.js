@@ -16757,7 +16757,7 @@ async function AdminPage() {
 }
 //#endregion
 //#region lib/progression-materials.mjs
-var PROGRESSION_MATERIALS = Object.freeze({forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
+var PROGRESSION_MATERIALS = Object.freeze({emerald_dust:{label:'Zümrüt Tozu',image:'../assets/royal-icon-emerald_dust-r118-489c24fa11893ae1',note:'Demirci Haso’da 1 Kadim Zümrüt eşyasından elde edilir. Kraliyet dönüşümünde kullanılır.'},royal_crown:{label:'Kraliyet Tacı',image:'../assets/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0',note:'Şampiyonlar Diyarı ganimeti; Kraliyet dönüşümünde kullanılır.'},forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
 	solo_key: {
 		label: "Zindan Anahtarı",
 		image: "solo-key-v410",
@@ -18405,12 +18405,12 @@ Object.freeze({
 	necklace: "Kolye"
 });
 function equipmentSetState(rarity,items){
- const definition=EQUIPMENT_SETS[rarity];if(!definition)return null;
- const worn=new Set(items.filter(item=>item.equipped===1&&item.rarity===rarity).map(item=>item.kind));
+ const definition=EQUIPMENT_SETS[rarity==='royal'?'emerald':rarity];if(!definition)return null;
+ const worn=new Set(items.filter(item=>item.equipped===1&&((rarity==='emerald'||rarity==='royal')?(item.rarity==='emerald'||item.rarity==='royal'):item.rarity===rarity)).map(item=>item.kind));
  const count=definition.slots.filter(slot=>worn.has(slot)).length;
  const thresholds=Object.fromEntries(Object.keys(definition.bonuses).map(key=>[key,colEquipmentSetThreshold473(key,definition)]));
  const activeBonuses=Object.fromEntries(Object.entries(definition.bonuses).map(([key,value])=>[key,count>=thresholds[key]?value:0]));
- return {...definition,rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
+ return {...definition,...(rarity==='royal'?{name:'Hükümdar Kraliyet Seti'}:{}),rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
 }
 function colEquipmentSetThreshold473(key,definition){
  // V476: each lower tier remains active when a higher-tier piece is removed.
@@ -26855,7 +26855,7 @@ return Response.json({
            SELECT ?, 'npc:' || item.id, 'npc_sale', '', item.player_id, item.kind, item.id, item.item_name,
              item.rarity, item.power, item.role, item.enchantments, 1,
              CASE item.rarity WHEN 'purple' THEN 50 WHEN 'red' THEN ? WHEN 'orange' THEN ? WHEN 'blue' THEN ? ELSE ? END, ?, 0
-           FROM player_items item WHERE item.id = ? AND item.player_id = ? AND item.equipped = 0 AND item.sale_locked499 = 0 AND item.kind NOT IN ('rune_attack','rune_defense','rune_hp','earring','bracelet') AND item.rarity NOT IN ('unique','infinite','emerald')
+           FROM player_items item WHERE item.id = ? AND item.player_id = ? AND item.equipped = 0 AND item.sale_locked499 = 0 AND item.kind NOT IN ('rune_attack','rune_defense','rune_hp','earring','bracelet') AND item.rarity NOT IN ('unique','infinite','emerald','royal')
            RETURNING id`).bind(settlementId, settings.item_sale_red, settings.item_sale_orange, settings.item_sale_blue, settings.item_sale_white, Date.now(), itemId, playerId),
 						database.prepare("UPDATE market_settlements SET applied_at_ms = -1 WHERE id = ? AND applied_at_ms = 0 AND changes() > 0").bind(settlementId),
 						database.prepare("DELETE FROM player_items WHERE id = ? AND player_id = ? AND EXISTS (SELECT 1 FROM market_settlements WHERE id = ? AND applied_at_ms = -1)").bind(itemId, playerId, settlementId),
@@ -30852,6 +30852,14 @@ async function POST$45(request) {
 	try {
 		if (!await requireAdmin()) return Response.json({ error: "Bu alan yalnızca oyun yöneticisine açık." }, { status: 403 });
 		assertSameOrigin(request);
+ if(['royal-r118','champions-r118'].includes(new URL(request.url).searchParams.get('core511'))){
+  try{const input=await readJsonObject(request),identity=await getChatGPTUser(),service=db().core511RoyalR118;if(!service)return Response.json({error:'Kraliyet hizmeti hazırlanıyor.'},{status:503});
+   const authorization={adminId:identity?.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}};
+   const champions=new URL(request.url).searchParams.get('core511')==='champions-r118';
+   const result=champions?await service.championsAdmin(input,authorization):await service.admin(input,authorization);
+   return Response.json(champions?{champions:result}:{royal:result},{headers:{'cache-control':'no-store'}});
+  }catch(error){const status=[400,401,403,404,409,413,415,422,423,429,503].includes(error?.status)?error.status:500;return Response.json({error:status===500?'İşlem doğrulanamadı. Paneli yenile.':error.message,code:error.gameCode},{status,headers:{'cache-control':'no-store'}});}
+ }
  if(new URL(request.url).searchParams.get('core511')==='content-r102'){
   try{const input=await readJsonObject(request),identity=await getChatGPTUser(),service=db().core511ContentR102;if(!service)return Response.json({error:'İçerik hizmeti hazırlanıyor.'},{status:503});
    const content=await service.admin(input,{adminId:identity?.id,reauthorize:async()=>{assertSameOrigin(request);if(!await requireAdmin())return null;return (await getChatGPTUser())?.id??null;}});
@@ -31851,7 +31859,7 @@ if (payload.action === "save_forest_loot_policy") {
 		} else if (payload.action === "grant_item") {
 			const playerId = typeof payload.playerId === "string" && /^[a-zA-Z0-9-]{8,64}$/.test(payload.playerId) ? payload.playerId : "";
 			if (!(playerId ? await database.prepare("SELECT id FROM players WHERE id = ?").bind(playerId).first() : null)) return Response.json({ error: "Eşya verilecek oyuncu bulunamadı." }, { status: 404 });
-			const item = payload.item ?? {};if(item.rarity==='emerald'&&!EMERALD_SET444.slots.includes(item.kind))return Response.json({error:'Kadim Zümrüt yalnız silah, zırh, kask, kolye ve ayakkabıdır.'},{status:400});
+			const item = payload.item ?? {};if(['emerald','royal'].includes(item.rarity)&&!EMERALD_SET444.slots.includes(item.kind))return Response.json({error:'Kadim Zümrüt yalnız silah, zırh, kask, kolye ve ayakkabıdır.'},{status:400});
 			if (!isGearKind(item.kind)) return Response.json({ error: "Eşya türü geçersiz." }, { status: 400 });
 			const rarities = new Set([
 				"white",
@@ -31861,7 +31869,7 @@ if (payload.action === "save_forest_loot_policy") {
 				"purple",
 				"unique",
 				"infinite"
-			,"emerald"]);
+			,"emerald","royal"]);
 			const roles = new Set([
 				"muhafiz",
 				"avci",
@@ -36187,7 +36195,7 @@ async function readOwnerFields441(database, playerId, now, nowMs, channel, area,
   database.prepare(OWNER_PLAYER_SQL).bind(playerId, now - 30, playerId, channel, area, playerId, playerId)
  ];
  const add=(table,name,sql,args=[playerId])=>{if(dirty.has(table)){names.push(name);queries.push(database.prepare(sql).bind(...args));}};
- add('player_items','inventory',"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC");
+ add('player_items','inventory',"SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC");
  add('player_storage_items','storageItems',"SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot");
  add('player_stones','stones',"SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind");
  add('player_pets','pets',"SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at");
@@ -36326,7 +36334,7 @@ if (auth.playerAccess?.area === "ancient") await repairAncientAccess(database, p
 			const { snapshot: [world, players, inventory, storageItems, stones, pets, dungeonMaterials, dungeonWings, drops], arenaPayload, snapshotAtMs, playersProjected } = await worldBatch(database, playerId, nowMs, [
 				database.prepare("SELECT health, updated_at, layout_version, cycle, reset_at, guardian_reward_at FROM world_state WHERE id = 1"),
 				database.prepare(OWNER_PLAYER_SQL).bind(playerId, now - 30, playerId, channel, area, playerId, playerId),
-				database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
+				database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
 				database.prepare("SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot").bind(playerId),
 				database.prepare("SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind").bind(playerId),
 				database.prepare("SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at").bind(playerId),
@@ -36429,7 +36437,7 @@ if (auth.playerAccess?.area === "ancient") await repairAncientAccess(database, p
            AND m.id > COALESCE(dismissal.dismissed_through_id, 0) AND m.id > ?
          ORDER BY m.id DESC LIMIT 40`).bind(playerId, playerId, playerId, playerId, auth.gamePresence?.chatAfterId ?? 0),
 			database.prepare(DROPS_SQL).bind(playerId, now, area, area, area, area, area),
-			database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
+			database.prepare("SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'royal' THEN 8 WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC").bind(playerId),
 			database.prepare("SELECT id, player_id, slot, kind, item_name, rarity, power, role, enchantments, created_at FROM player_storage_items WHERE player_id = ? ORDER BY slot").bind(playerId),
 			database.prepare("SELECT kind,amount FROM player_stones WHERE player_id=? ORDER BY kind").bind(playerId),
 			database.prepare("SELECT kind,name,equipped,acquired_at FROM player_pets WHERE player_id=? AND acquired_at+(CASE WHEN kind='starter' THEN 259200 ELSE 604800 END)>unixepoch() ORDER BY acquired_at").bind(playerId),

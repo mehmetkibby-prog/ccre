@@ -56,7 +56,7 @@ export function createLootProfileCacheR61({enabled=process.env.CORE511_R61_LOOT_
  if(!enabled)return null;
  const entries=new Map();let settingsIdentity=null,bytes=0;
  return (defeat,fallbackKey,settings,derive)=>{
-  if(typeof fallbackKey!=='string'||fallbackKey.length>128||fallbackKey.startsWith('rune.')||fallbackKey.startsWith('rune_v2.')||!plain(defeat))return derive();
+  if(typeof fallbackKey!=='string'||fallbackKey.length>128||fallbackKey.startsWith('champions.')||fallbackKey.startsWith('rune.')||fallbackKey.startsWith('rune_v2.')||!plain(defeat))return derive();
   if(settingsIdentity===null||settings!==settingsIdentity){entries.clear();bytes=0;settingsIdentity=null;if(!immutableSettings(settings))return derive();settingsIdentity=settings;}
   const fields=['loot_source_key','loot_profile_revision','loot_profile_json'].map(key=>Object.getOwnPropertyDescriptor(defeat,key));
   if(fields.some(d=>!d||!Object.hasOwn(d,'value')))return derive();

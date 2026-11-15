@@ -80,7 +80,7 @@ const original=database;database=fourChannels?{...original,prepare:sql=>original
 			database.prepare(`DELETE FROM pve_engagements WHERE ${resetGate}`).bind(stateCycle, claimedResetAt),
 			database.prepare(`DELETE FROM messages WHERE recipient_id IS NULL AND ${resetGate}`).bind(stateCycle, claimedResetAt),
 			database.prepare(`DELETE FROM monsters WHERE summoned = 1 AND ${resetGate}`).bind(stateCycle, claimedResetAt),
-			...["forest","frozen","ancient","afk","event","rune","rune_v2"].flatMap((area) => [
+			...["forest","frozen","ancient","afk","event","rune","rune_v2",'champions'].flatMap((area) => [
 				"golge",
 				"curuk",
 				"yutan"

@@ -10,7 +10,7 @@ export function afkExempt(player,officialAfk,state,now=Date.now()){
 export function afkQuestionEligible({player,dungeon=false,engagement=null,monster=()=>null,recentCombatUntil=0,now=Date.now()}){
  if(!player||player.hp<=0||dungeon||player.arena_match_id||player.instance_id)return false;
  const area=String(player.area??'');
- if(!area||area==='arena'||area==='war'||area==='afk'||area==='rune_v2'||area.startsWith('guild_')||area.startsWith('dungeon')||isAdventureArea(area))return false;
+ if(!area||area==='arena'||area==='war'||area==='afk'||area==='rune_v2'||area==='champions'||area.startsWith('guild_')||area.startsWith('dungeon')||isAdventureArea(area))return false;
  if(recentCombatUntil>now)return false;
  if(engagement){
   const target=monster(engagement.monster_id);if(target?.hp>0&&(target.is_boss||target.is_stone))return false;
@@ -28,7 +28,7 @@ export function afkNormalAttack({player,input,monster=()=>null,monsters=()=>[]})
  // An AoE whose primary target is a boss/player can still farm normal mobs.
  // While locked, conservatively disallow that AoE if this room contains any
  // living normal monster; the ordinary single-target PvP/boss path stays open.
- const mixed=input.action==='pvp_attack'&&ability===2&&player.role!=='muhafiz'&&(player.area==='black'||player.area==='rune_v2'||isAdventureArea(player.area));
+ const mixed=input.action==='pvp_attack'&&ability===2&&player.role!=='muhafiz'&&(player.area==='black'||player.area==='rune_v2'||player.area==='champions'||isAdventureArea(player.area));
  const areaAttack=input.action==='attack'&&ability>0;
  if(mixed||areaAttack)for(const m of monsters())if(normal(m,player))return true;
  return false;

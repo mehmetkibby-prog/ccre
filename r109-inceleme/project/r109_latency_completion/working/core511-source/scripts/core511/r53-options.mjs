@@ -9,6 +9,6 @@ export const controlCoalesceR53=memoryCombatR53&&process.env.CORE511_CONTROL_COA
 export const boundedClaimR53=memoryCombatR53&&process.env.CORE511_BOUNDED_CLAIM_R53!=='0';
 export const R53_CHECKPOINT_START_MS=1500;
 export const R53_MEMORY_WINDOW_MS=2000;
-const ordinaryAreasR53=new Set(['forest','frozen','black','ancient','sanctum']);
+const ordinaryAreasR53=new Set(['forest','frozen','black','ancient','sanctum','champions']);
 export const normalPlayerR53=p=>Boolean(memoryCombatR53&&p&&ordinaryAreasR53.has(p.area)&&!p.arena_match_id&&!p.instance_id&&!p.instanceId);
 export const normalMonsterR53=m=>Boolean(memoryCombatR53&&m&&ordinaryAreasR53.has(m.area)&&m.channel>0&&!m.is_boss&&!m.is_stone);

@@ -2,7 +2,7 @@ import {isAdventureArea} from '../adventure-maps.mjs';
 import {optimizeR18} from "../../../../native510-bb3a6cc689c6/vds-server/src/perf-r18-features.mjs";
 import {entriesR53 as nativeEntries} from '../engagement-memory-r53.mjs';
 import {colLabSamePlayerCohort,colLabMayAffectMonster} from "../../../../native510-bb3a6cc689c6/vds-server/src/loadlab-gameplay.mjs";
-const EVENT_NEARBY_AREAS444=new Set(['forest','frozen','sanctum','dragon','sinsi','black','ancient','rune','rune_v2','event']);
+const EVENT_NEARBY_AREAS444=new Set(['forest','frozen','sanctum','dragon','sinsi','black','ancient','rune','rune_v2','event','champions']);
 const entries=new WeakMap();
 export function pveEntries489(row){if(!row)return [];if(!Object.isFrozen(row))return nativeEntries(row);let value=entries.get(row);if(!value){value=nativeEntries(row);entries.set(row,value);}return value;}
 export class NativeAggroRules {

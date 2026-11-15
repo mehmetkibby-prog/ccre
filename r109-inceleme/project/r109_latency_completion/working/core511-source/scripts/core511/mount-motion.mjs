@@ -1,3 +1,4 @@
+import {championsSegmentR118} from './champions-config-r118.mjs';
 // R49: reversible native motion validator extension; walking stays byte-exact.
 import {acceptMotion as acceptNativeMotion} from '../../../native510-bb3a6cc689c6/realtime-server/src/motion.mjs';
 import {runeWalkableSegment} from '../../../native510-bb3a6cc689c6/realtime-server/src/rune-map.mjs';
@@ -65,6 +66,7 @@ export function acceptMountMotion(player, payload, now, walkable, speedMultiplie
   // Anchor previews to the last persisted position. Dropping HTTP checkpoints
   // cannot let a client roam the map while its actual character stands still.
   if (debt > 180 || distance > speed * 1.2 || Math.hypot(x - player.x, y - player.y) > speed * 1.84) return null;
+  if(player.area==='champions'&&!championsSegmentR118(fromX,fromY,x,y))return null;
   if((player.area==='rune'||player.area==='rune_v2')&&!runeWalkableSegment(fromX,fromY,x,y))return null;
   if(player.area === "forest" && !forestCoreSegment(fromX,fromY,x,y))return null;
   if(player.area === "ancient" && !ancientCoreSegment(fromX,fromY,x,y))return null;

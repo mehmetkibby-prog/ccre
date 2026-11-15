@@ -50,7 +50,7 @@ export class PvpMemory{
   // native reservation branch reject it in memory before taking death lanes.
   const actor=this.player(this.t.actor),reservation=this.t.reservation;
   if(castleEnabled()&&actor?.area===CASTLE_AREA&&(this.t.areaAttack?actor.attack_three_at>this.t.receivedAtMs:reservation&&actor[reservation.attackColumn]>reservation.cooldownAtMs+reservation.cooldownGraceMs))return false;
-  if(this.t.areaAttack&&(isMistArea(this.player(this.t.actor)?.area)||['black','rune_v2'].includes(this.player(this.t.actor)?.area))){if(this.blocked(target.id))throw busy;return target.hp<=damage;}return this.requireNonlethal(target,damage);}
+  if(this.t.areaAttack&&(isMistArea(this.player(this.t.actor)?.area)||['black','rune_v2','champions'].includes(this.player(this.t.actor)?.area))){if(this.blocked(target.id))throw busy;return target.hp<=damage;}return this.requireNonlethal(target,damage);}
  reservePlan(data){this.t.reservation=data;return {kind:'reserve',...data};}
  reserve(data,apply=true){const {player,attackColumn,cooldownAtMs,cooldownMs,cooldownGraceMs,nowMs}=data,p=this.player(player.id);
   if(!p||p.hp<=0||p.stun_until_ms>nowMs||p[attackColumn]>cooldownAtMs+cooldownGraceMs||!same(p,player)||p.realtime_scope_version!==player.realtime_scope_version)return null;

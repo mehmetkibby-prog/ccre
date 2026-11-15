@@ -10,7 +10,7 @@ import {demand} from './contract.mjs';
 import {captureLocalDeaths,publishLocalDeaths} from './local-deaths.mjs';
 import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
 import {ordinaryRuneRewardR87} from './rune-reward-scope-r87.mjs';
-const localDeathAreas=new Set(['forest','frozen','black','ancient','sanctum']);
+const localDeathAreas=new Set(['forest','frozen','black','ancient','sanctum','champions']);
 
 // Only the channel's trusted context/footprint providers may construct frames
 // and affected-actor sets. Client payloads cannot choose ownership or rewards.

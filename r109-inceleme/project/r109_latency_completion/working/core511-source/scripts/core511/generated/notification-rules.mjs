@@ -12,7 +12,7 @@ function roomKey({ cycle, channel, area, arenaMatchId }) {
 }
 function safeArea(value) {
   if(isAdventureArea(value))return value;
-  return typeof value === "string" && /^(zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(value) ? value : null;
+  return typeof value === "string" && /^(champions|zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(value) ? value : null;
 }
 function send(socket, payload, essential = true) {
   motionCorkR11.prepare(socket,essential);
@@ -109,7 +109,7 @@ function safeArenaMatchId(value) {
 function realtimeRoomName(cycle, channel, area, arenaMatchId) {
 	const safeCycle = Math.max(1, Math.floor(Number(cycle) || 1));
 	const safeChannel = Math.max(1, Math.floor(Number(channel) || 1));
-	const safeArea = isAdventureArea(area) ? area : /^(zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area) ? area : "forest";
+	const safeArea = isAdventureArea(area) ? area : /^(champions|zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area) ? area : "forest";
 	return `cycle:${safeCycle}:channel:${safeChannel}:area:${safeArea}${safeArea === "arena" ? `:match:${safeArenaMatchId(arenaMatchId) || "invalid"}` : ""}`;
 }
  return {roomKey,safeArea,safeArenaMatchId,realtimeRoomName,broadcast,broadcastWorldEvent,broadcastPlayerEvent,MAX_EVENT_BYTES};

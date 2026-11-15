@@ -9,7 +9,7 @@ import {olderGroupWaitingR57} from './group-fairness-r57.mjs';
 import {demand} from './contract.mjs';
 import {beginActionMovementR88,stopDeathMovementR86,rebaseDeathCheckpointR86} from './death-movement-r86.mjs';
 
-const plans=new WeakSet(),areas=new Set(['forest','frozen','black','ancient','rune_v2']);
+const plans=new WeakSet(),areas=new Set(['forest','frozen','black','ancient','rune_v2','champions']);
 export const POTION_BATCH_EXTRA_LIMIT_R61=POTION_BATCH_LIMIT_R86-1;
 
 // Planning has no input, mount, journal or resource mutation. A busy extension

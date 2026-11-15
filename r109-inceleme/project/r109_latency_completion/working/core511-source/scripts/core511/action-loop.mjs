@@ -31,7 +31,7 @@ const runePotionPlayerR88=p=>Boolean(runeScopeR88&&memoryCombatForRuneR88&&p&&p.
 // combat on the channel for every item. Event/dragon catalog collectors also
 // only grant owned inventory and delete the drop/payload. Adventure/arena and
 // unfamiliar scopes retain the full drain. The writer revalidates drop/party.
-const groundCollectAreasR79=new Set(['forest','frozen','black','ancient','sanctum','bazaar','event','dragon','sinsi','rune','rune_v2']);
+const groundCollectAreasR79=new Set(['forest','frozen','black','ancient','sanctum','bazaar','event','dragon','sinsi','rune','rune_v2','champions']);
 export function collectWithoutCombatDrainR79({id,input,footprint,ids,kernel}){
  const scope=footprint.localScope;
  return memoryCombatR53&&process.env.CORE511_COLLECT_SCOPED_DRAIN_R79!=='0'&&input.action==='collect'&&scope?.kind==='collect'&&scope.owner===id&&scope.target===input.targetId&&scope.absent===false&&typeof scope.monster==='string'&&scope.monster.length>0&&ids.every(actor=>{const p=kernel.state.read('players',actor);return p&&groundCollectAreasR79.has(p.area)&&p.hp>0&&!p.arena_match_id&&!p.arenaMatchId&&!p.instance_id&&!p.instanceId;})&&footprint.resources.length>0&&footprint.resources.every(key=>key.startsWith('player:')&&ids.includes(key.slice(7)));

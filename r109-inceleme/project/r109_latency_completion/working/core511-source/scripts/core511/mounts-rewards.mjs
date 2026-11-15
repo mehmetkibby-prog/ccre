@@ -3,6 +3,7 @@ import {mountDropConfigR55,awardMountMaterialsR55} from './mount-drops-r55.mjs';
 // Called only after the native claim-gated award succeeds, inside its existing
 // sole-writer transaction. No timer, global hold, scan of players, or new RNG.
 export function recordMountReward(service,key,outcome){
+ if(typeof key==='string'&&key.startsWith('normal:champions-'))return outcome;
  if(!mountEnabled()||!service?.enabled||!outcome?.awarded||typeof outcome.claimToken!=='string')return outcome;
  service.requireTransaction();const q=text=>service.statement(text),sql=service.sql,time=service.now();
  const config=mountDropConfigR55(sql)?.config,custom=config?.materials.some(x=>x.mode==='chance');

@@ -47,7 +47,7 @@ export function foregroundClaimTargetsR85(input){
 
 // R112 also fences the external reward worker with the SAME selected scope
 // and TEMP write/refresh audit. Unknown/special-map claims retain all-owner holds.
-const claimantAreas=new Set(['sanctum','sinsi','forest','frozen','ancient']);
+const claimantAreas=new Set(['sanctum','sinsi','forest','frozen','ancient','champions']);
 export function foregroundClaimScopeR85(sql,input,actor,channel){
  const targets=foregroundClaimTargetsR85(input);if(!targets)return null;
  const player=prepareCached477(sql,'SELECT area,channel,arena_match_id FROM players WHERE id=?').get(actor);
@@ -84,7 +84,7 @@ export function foregroundClaimScopeR85(sql,input,actor,channel){
 export function foregroundAttackScopeR112(sql,input,actor,channel){
  if(input?.action!=='attack'||typeof input.targetId!=='string'||!/^[a-z0-9-]{1,64}$/.test(input.targetId))return null;
  const p=prepareCached477(sql,'SELECT area,channel,arena_match_id FROM players WHERE id=?').get(actor);
- if(!p||p.channel!==channel||p.arena_match_id||!['forest','frozen','ancient','black','rune_v2'].includes(p.area)&&!instanceRewardAreaR71(p.area))return null;
+ if(!p||p.channel!==channel||p.arena_match_id||!['forest','frozen','ancient','black','rune_v2','champions'].includes(p.area)&&!instanceRewardAreaR71(p.area))return null;
  const m=prepareCached477(sql,'SELECT id,area,channel,spawn_round FROM monsters WHERE id=?').get(input.targetId);
  if(!m||m.area!==p.area||![0,channel].includes(m.channel)||m.id==='dunya-bosu-1')return null;
  if(instanceRewardAreaR71(p.area)){

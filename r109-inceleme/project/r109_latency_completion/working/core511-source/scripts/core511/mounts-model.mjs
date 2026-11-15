@@ -31,7 +31,7 @@ export const MOUNT_ACTIONS=Object.freeze(['start','craft','tame_start','tame_ste
 export const MOUNT_TAME=Object.freeze({steps:3,delayMs:1600,windowMs:900,lifetimeMs:30000});
 export const mountDefinition=kind=>MOUNTS.find(m=>m.kind===kind)??null;
 export const mountItem=kind=>MOUNT_ITEMS.find(m=>m.kind===kind)??null;
-const TRAVEL_AREAS=new Set(['zumrut','bazaar','forest','frozen','black','ancient','sanctum','fishing','sinsi','dragon','event','rune','rune_v2']);
+const TRAVEL_AREAS=new Set(['zumrut','bazaar','forest','frozen','black','ancient','sanctum','fishing','sinsi','dragon','event','rune','rune_v2','champions']);
 export function mountAllowed(player,now=Date.now(),{locked=false,riding=false}={}){
  return Boolean(player&&player.hp>0&&!player.arena_match_id&&!locked&&TRAVEL_AREAS.has(player.area)&&(riding||Number(player.combat_lock_until_ms??0)<=now&&Number(player.root_until_ms??0)<=now&&Number(player.stun_until_ms??0)<=now));
 }

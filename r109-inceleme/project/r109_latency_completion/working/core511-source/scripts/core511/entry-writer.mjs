@@ -71,6 +71,7 @@ export class EntryWriter {
    const adventure=globals.__colAdventure?.current(id);
    if(adventure?.status==='active'&&adventure.channel!==channel)return {accepted:false,result:{status:409,body:{code:'entry_adventure_channel_locked',currentChannel:adventure.channel,channel,error:`Seferin Kanal ${adventure.channel} üzerinde sürüyor. O kanalı seçip seferden ayrıldıktan sonra kanal değiştirebilirsin.`}},events};
    const initialEntry=unowned&&Number.isSafeInteger(lastSeen)&&lastSeen*1000<=nowMs-40000;
+   if(session.playerAccess?.area==='champions'){const allowed=globals.__colChampionsR118?.settings().config.enabled===true;sql.prepare("UPDATE players SET area='bazaar',arena_match_id='',x=1200,y=920,movement_checked_at_ms=?,movement_debt_ms=0,motion_stream_id='',motion_sequence=0,position_revision=position_revision+1,realtime_scope_version=realtime_scope_version+1,combat_lock_until_ms=0 WHERE id=? AND area='champions' AND (champion_level_r102<1 OR ?=0)").run(nowMs,id,allowed?1:0);}
    if(session.playerAccess?.area==='rune_v2')rules.colRepairRuneV2Access(db,id);
    if(session.playerAccess?.area==='rune')rules.colRepairRuneAccess(db,id);
    if(session.playerAccess?.area==='ancient')rules.repairAncientAccess(db,id);

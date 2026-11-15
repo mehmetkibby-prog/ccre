@@ -1,5 +1,5 @@
 import {instanceRewardAreaR71} from './instance-reward-scope-r71.mjs';
-export const combatAreaR113=area=>['forest','frozen','ancient','black','rune_v2'].includes(area)||instanceRewardAreaR71(area);
+export const combatAreaR113=area=>['forest','frozen','ancient','black','rune_v2','champions'].includes(area)||instanceRewardAreaR71(area);
 // Only the native sanctuary boss. Its existing global signed lease and every
 // actor hold remain in force; this selects the execution connection, not a new
 // authority. Other world-ending/administrative operations keep their old path.

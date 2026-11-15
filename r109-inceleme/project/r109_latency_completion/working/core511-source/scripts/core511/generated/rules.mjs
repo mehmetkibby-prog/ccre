@@ -1,3 +1,4 @@
+import {CHAMPIONS_WORLD_R118,championsWalkableR118,championsSegmentR118,prepareChampionsDropsR118} from '../champions-config-r118.mjs';
 import {armorDamageReduction} from '../armor-mitigation-r102.mjs';
 import {ZUMRUT_WORLD_R93,ZUMRUT_ENTRY_R93,isZumrutWalkableR93,isZumrutSegmentR93,canZumrutFishR93} from '../zumrut-map-r93.mjs';
 import {GROUND_LOOT_SECONDS} from '../ground-loot-expiry.mjs';
@@ -53,7 +54,7 @@ const EMERALD_SET444=Object.freeze({name:'Kadim Zümrüt Seti',slots:['weapon','
 function emeraldName444(kind,role){return kind==='weapon'?({muhafiz:'Kadim Zümrüt Hükümkılıcı',avci:'Kadim Zümrüt Ufuk Yayı',arkanist:'Kadim Zümrüt Öz Asası'}[role]??'Kadim Zümrüt Hükümkılıcı'):({armor:'Kadim Zümrüt Zırhı',helmet:'Kadim Zümrüt Tacı',necklace:'Kadim Zümrüt Kalbi',shoes:'Kadim Zümrüt Çizmeleri'}[kind]??'Kadim Zümrüt');}
 function emeraldPower444(kind,settings={}){if(kind==='weapon')return 350;if(kind==='armor')return 300;const unique=Math.max(1,Number(settings[kind==='weapon'?'unique_weapon_power':'unique_armor_power'])||(kind==='weapon'?180:150));const percent=Number.isFinite(Number(settings.infinite_power_percent))?Math.max(0,Number(settings.infinite_power_percent)):30;const weaponBase=Math.max(1,Number(settings.infinite_weapon_power)||230);const infinite=globalThis.__colDragonBoss?.infinitePower?.({kind,power:unique})??(kind==='weapon'&&unique<=180?Math.max(unique,weaponBase):kind==='weapon'?Math.max(unique,Math.round(unique*(1+percent/100)),weaponBase):Math.round(unique*(1+percent/100)));return Math.min(100000,Math.ceil(infinite*1.15));}
 function colRuneFactor(p,stat){return globalThis.__colRunes?.factor(p,stat)??1;}
-var PROGRESSION_MATERIALS = Object.freeze({forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
+var PROGRESSION_MATERIALS = Object.freeze({emerald_dust:{label:'Zümrüt Tozu',image:'../assets/royal-icon-emerald_dust-r118-489c24fa11893ae1',note:'Demirci Haso’da 1 Kadim Zümrüt eşyasından elde edilir. Kraliyet dönüşümünde kullanılır.'},royal_crown:{label:'Kraliyet Tacı',image:'../assets/royal-icon-royal_crown-r118-7fd15c76f9b1f4c0',note:'Şampiyonlar Diyarı ganimeti; Kraliyet dönüşümünde kullanılır.'},forge_ember491:{"label":"Kor Mührü","image":"../game/forge-ember-v491","note":"Tüm canavarlardan kazanılabilen artı basma malzemesi. Demirci Haso’da kullanılır; pazarda satılabilir."},"rune_defense":{label:"Safir Siper Parçası",image:"rune-defense-v422-shard"},"rune_attack":{label:"Kızıl Kudret Parçası",image:"rune-attack-v422-shard"},"rune_hp":{label:"Zümrüt Yaşam Parçası",image:"rune-hp-v422-shard"},
 	solo_key: {
 		label: "Zindan Anahtarı",
 		image: "solo-key-v410",
@@ -1199,12 +1200,12 @@ var EQUIPMENT_SETS = Object.freeze({
 	}
 ,emerald:EMERALD_SET444});
 function equipmentSetState(rarity,items){
- const definition=EQUIPMENT_SETS[rarity];if(!definition)return null;
- const worn=new Set(items.filter(item=>item.equipped===1&&item.rarity===rarity).map(item=>item.kind));
+ const definition=EQUIPMENT_SETS[rarity==='royal'?'emerald':rarity];if(!definition)return null;
+ const worn=new Set(items.filter(item=>item.equipped===1&&((rarity==='emerald'||rarity==='royal')?(item.rarity==='emerald'||item.rarity==='royal'):item.rarity===rarity)).map(item=>item.kind));
  const count=definition.slots.filter(slot=>worn.has(slot)).length;
  const thresholds=Object.fromEntries(Object.keys(definition.bonuses).map(key=>[key,colEquipmentSetThreshold473(key,definition)]));
  const activeBonuses=Object.fromEntries(Object.entries(definition.bonuses).map(([key,value])=>[key,count>=thresholds[key]?value:0]));
- return {...definition,rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
+ return {...definition,...(rarity==='royal'?{name:'Hükümdar Kraliyet Seti'}:{}),rarity,count,complete:count===definition.slots.length,missing:definition.slots.filter(slot=>!worn.has(slot)),thresholds,activeBonuses};
 }
 function colEquipmentSetThreshold473(key,definition){
  // V476: each lower tier remains active when a higher-tier piece is removed.
@@ -1695,7 +1696,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='champions')return CHAMPIONS_WORLD_R118;if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -1724,7 +1725,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='champions')return championsWalkableR118(x,y);if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
@@ -1736,7 +1737,7 @@ function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutW
 	if (area === "fishing") return ((x - FISHING_LAKE$1.x) / FISHING_LAKE$1.radiusX) ** 2 + ((y - FISHING_LAKE$1.y) / FISHING_LAKE$1.radiusY) ** 2 >= 1.02;
 	return true;
 }
-function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {if(area==='zumrut')return isZumrutSegmentR93(fromX,fromY,toX,toY);if(isAdventureArea(area))return adventureSegment(area,fromX,fromY,toX,toY);if(area==='event')return eventSegment444(fromX,fromY,toX,toY);
+function isAreaWalkableSegment(area, fromX, fromY, toX, toY) {if(area==='champions')return championsSegmentR118(fromX,fromY,toX,toY);if(area==='zumrut')return isZumrutSegmentR93(fromX,fromY,toX,toY);if(isAdventureArea(area))return adventureSegment(area,fromX,fromY,toX,toY);if(area==='event')return eventSegment444(fromX,fromY,toX,toY);
  if(area==='rune'||area==='rune_v2')return runeWalkableSegment(fromX,fromY,toX,toY);
 	if (guildArea(area)) return guildSegment(area, fromX, fromY, toX, toY);
 	if (area === "forest") return insideForestBounds(fromX, fromY) && insideForestBounds(toX, toY) && forestCoreSegment(fromX, fromY, toX, toY);
@@ -1891,8 +1892,8 @@ function movementPathDistance(from, to, raw, walkable) {
 	}
 	return distance;
 }
-function validArea(area) {if(isAdventureArea(area))return true;
-	return typeof area === "string" && /^(zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area);
+function validArea(area) {if(area==='champions')return true;if(isAdventureArea(area))return true;
+	return typeof area === "string" && /^(champions|zumrut|forest|frozen|bazaar|fishing|sanctum|sinsi|war|arena|black|ancient|event|rune|rune_v2|afk|dragon|guild_village_[1-9][0-9]{0,3}|guild_hall_[A-Za-z0-9-]{1,64})$/.test(area);
 }
 function areaSkillPoint(target, player, hint, nowMs, primary = false, recentlyProvoked = false) {
 	if (Number(target.root_until_ms) > nowMs && Number.isFinite(target.control_x) && Number.isFinite(target.control_y)) return {
@@ -1951,7 +1952,7 @@ function droppedGearName(kind, role, rarity, currentName) {
 	const className = role === "avci" ? "Avcı" : role === "arkanist" ? "Rün" : "Muhafız";
 	return kind === "shoes" ? `${prefix} ${className} Çizmeleri` : kind === "helmet" ? `${prefix} ${className} ${role === "arkanist" ? "Tacı" : role === "avci" ? "Başlığı" : "Miğferi"}` : `${prefix} ${className} Kolyesi`;
 }
-function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {
+function prepareProfileDrops(profile, participants, monsterId, center, settings, now, eventSnapshot, pearlsRetired = false) {if(profile.championsLoot)return prepareChampionsDropsR118(profile,participants,monsterId,center,settings,now,{role:rollLootRole,name:resolveLootItemName,power:rollLootPower,enchants:rollEnchantments,random:()=>Math.random(),uuid:()=>crypto.randomUUID()});
  // Only this frozen boss profile grants independent existing rolls to each
  // authoritative participant. Old pending deaths and ordinary rune mobs keep
  // their original single-owner distribution; no ranking reward is duplicated.
@@ -2049,7 +2050,7 @@ function prepareProfileDrops(profile, participants, monsterId, center, settings,
 	});
 	return prepared;
 }
-function monsterXpReward(target, settings) {if(isAdventureArea(target.area))return globalThis.__colAdventure?.profile(target)?.xp??0;if(isBlackStoneBoss476(target.id))return settings.black_stone_boss_xp_reward;if(target.area==='event')return globalThis.__colEventIsland444?.profile(target)?.xp??0;
+function monsterXpReward(target, settings) {if(target.area==='champions')return globalThis.__colChampionsR118?.monster(target)?.xp??0;if(isAdventureArea(target.area))return globalThis.__colAdventure?.profile(target)?.xp??0;if(isBlackStoneBoss476(target.id))return settings.black_stone_boss_xp_reward;if(target.area==='event')return globalThis.__colEventIsland444?.profile(target)?.xp??0;
  if(target.area==='rune_v2')return globalThis.__colRuneV2?.monster(target)?.xp??0;if(target.area==='rune')return globalThis.__colRunes?.monster(target)?.xp??0;
 	if (isFrozenBossId(target.id)) return settings.frozen_boss_xp_reward;
 	if (target.id === "ancient-boss-1") return settings.ancient_boss_xp_reward;
@@ -2080,7 +2081,7 @@ function monsterXpReward(target, settings) {if(isAdventureArea(target.area))retu
 	if (target.id.startsWith("yutan-")) return settings.essence_devourer_xp_reward;
 	return 0;
 }
-function pveDamage(monster, armorPower, player, settings) {if(isAdventureArea(monster.area)){const p=globalThis.__colAdventure?.profile(monster);if(!p)throw Error('adventure_combat_profile_missing');const raw=monster.runeDamageOverride484??p.damage;if(!raw)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw};}
+function pveDamage(monster, armorPower, player, settings) {if(monster.area==='champions'){const cfg=globalThis.__colChampionsR118?.monster(monster);if(!cfg)throw Error('champions_damage_config_missing_r118');if(cfg.damage===0)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:cfg.damage};}if(isAdventureArea(monster.area)){const p=globalThis.__colAdventure?.profile(monster);if(!p)throw Error('adventure_combat_profile_missing');const raw=monster.runeDamageOverride484??p.damage;if(!raw)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw};}
  if(monster.area==='rune_v2'){const raw484=isRuneV2Boss(monster.id)&&Number.isSafeInteger(monster.runeDamageOverride484)&&monster.runeDamageOverride484>=0&&monster.runeDamageOverride484<=1000000?monster.runeDamageOverride484:globalThis.__colRuneV2?.monster(monster)?.damage??0;if(raw484===0)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw484};}if(monster.area==='rune'&&globalThis.__colRunes?.monster(monster)?.damage===0)return {raw:0,amount:0,blocked:0};
  if(monster.area==='rune')monster={...monster,exact_hit_damage:globalThis.__colRunes?.monster(monster)?.damage??0};
 	if (monster.area === "afk") return {

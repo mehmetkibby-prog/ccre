@@ -1,4 +1,4 @@
-const areas=new Set(['forest','frozen','black','ancient','sanctum']);
+const areas=new Set(['forest','frozen','black','ancient','sanctum','champions']);
 // The same post-ACK R32 predicates, with common lease/actor checks once per
 // synchronous batch. No DB work, event send or ACK is performed here. A pending
 // checkpoint is joined before reading any fence; no await follows validation.

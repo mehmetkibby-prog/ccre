@@ -1,3 +1,4 @@
+import {CHAMPIONS_WORLD_R118,championsWalkableR118} from '../champions-config-r118.mjs';
 import {armorDamageReduction} from '../armor-mitigation-r102.mjs';
 import {ZUMRUT_WORLD_R93,ZUMRUT_ENTRY_R93,isZumrutWalkableR93,isZumrutSegmentR93,canZumrutFishR93} from '../zumrut-map-r93.mjs';
 import {isAdventureArea,isMistArea,adventureBounds,adventureWalkable,adventureSegment,adventureMonsterId} from '../adventure-maps.mjs';
@@ -260,7 +261,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='champions')return CHAMPIONS_WORLD_R118;if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -289,7 +290,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='champions')return championsWalkableR118(x,y);if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
@@ -364,7 +365,7 @@ function pveAttackCadenceMs(monster) {if(isAdventureArea(monster.area))return gl
 	const jitter = [...monster.id].reduce((sum, character) => sum * 33 + character.charCodeAt(0) >>> 0, 0) % 221;
 	return base + (monster.is_boss || monster.id === "dragon-world-1" || isBlackStoneBoss476(monster.id) || (isFrozenBossId(monster.id)||isRuneV2Boss(monster.id)) || monster.id === "ancient-boss-1" || isFrozenWaterId(monster.id) ? jitter : jitter % 81);
 }
-function pveDamage(monster, armorPower, player, settings) {if(isAdventureArea(monster.area)){const p=globalThis.__colAdventure?.profile(monster);if(!p)throw Error('adventure_combat_profile_missing');const raw=monster.runeDamageOverride484??p.damage;if(!raw)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw};}
+function pveDamage(monster, armorPower, player, settings) {if(monster.area==='champions'){const cfg=globalThis.__colChampionsR118?.monster(monster);if(!cfg)throw Error('champions_damage_config_missing_r118');if(cfg.damage===0)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:cfg.damage};}if(isAdventureArea(monster.area)){const p=globalThis.__colAdventure?.profile(monster);if(!p)throw Error('adventure_combat_profile_missing');const raw=monster.runeDamageOverride484??p.damage;if(!raw)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw};}
  if(monster.area==='rune_v2'){const raw484=isRuneV2Boss(monster.id)&&Number.isSafeInteger(monster.runeDamageOverride484)&&monster.runeDamageOverride484>=0&&monster.runeDamageOverride484<=1000000?monster.runeDamageOverride484:globalThis.__colRuneV2?.monster(monster)?.damage??0;if(raw484===0)return {raw:0,amount:0,blocked:0};monster={...monster,exact_hit_damage:raw484};}if(monster.area==='rune'&&globalThis.__colRunes?.monster(monster)?.damage===0)return {raw:0,amount:0,blocked:0};
  if(monster.area==='rune')monster={...monster,exact_hit_damage:globalThis.__colRunes?.monster(monster)?.damage??0};
 	if (monster.area === "afk") return {

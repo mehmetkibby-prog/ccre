@@ -344,7 +344,7 @@ function randomVariant() {
 	if (roll < .4) return "agresif";
 	return "normal";
 }
-function plan(database,settings,monsters,now){const due={results:monsters};const respawns = due.results.filter(monster=>colLabMonsterActive(monster)).map((monster) => {
+function plan(database,settings,monsters,now){const special=[];monsters=monsters.filter(monster=>{if(monster.area!=='champions')return true;if(!colLabMonsterActive(monster))return false;const cfg=globalThis.__colChampionsR118?.monster(monster);if(!cfg)throw Error('champions_respawn_config_missing_r118');special.push(database.prepare("UPDATE monsters SET name=?,hp=?,max_hp=?,variant='normal',respawn_at=0,spawn_round=spawn_round+1 WHERE id=? AND area='champions' AND loadlab_run_id='' AND hp<=0 AND spawn_round=? AND respawn_at=? AND respawn_at<=?").bind(cfg.name,cfg.hp,cfg.hp,monster.id,monster.spawn_round,monster.respawn_at,now));return false;});const due={results:monsters};const respawns = due.results.filter(monster=>colLabMonsterActive(monster)).map((monster) => {
  if(colLabIsMonster(monster.id))return database.prepare("UPDATE monsters SET hp=max_hp,respawn_at=0,despawn_at=0,spawn_round=spawn_round+1 WHERE id=? AND loadlab_run_id<>'' AND hp<=0 AND spawn_round=? AND respawn_at=? AND respawn_at<=? RETURNING id").bind(monster.id,monster.spawn_round,monster.respawn_at,now);
  if(monster.area==='rune_v2'){const cfg=globalThis.__colRuneV2?.monster(monster);if(!cfg)throw Error('Karanlık Rün Sahili canavarı ayarı bulunamadı.');const boss484=isRuneV2Boss(monster.id);return database.prepare("UPDATE monsters SET name=?,hp=?,max_hp=?,variant=?,x=CASE WHEN ? THEN ? ELSE x END,y=CASE WHEN ? THEN ? ELSE y END,respawn_at=0,spawn_round=spawn_round+1 WHERE id=? AND area='rune_v2' AND loadlab_run_id='' AND hp<=0 AND spawn_round=? AND respawn_at=? AND respawn_at<=?").bind(cfg.name,cfg.hp,cfg.hp,boss484?'rune_v2_boss':'normal',boss484?1:0,RUNE_V2_BOSS_SPAWN.x,boss484?1:0,RUNE_V2_BOSS_SPAWN.y,monster.id,monster.spawn_round,monster.respawn_at,now);}if(monster.area==='rune'){const cfg=globalThis.__colRunes?.monster(monster);if(!cfg)throw Error('Rün canavarı ayarı bulunamadı.');return database.prepare("UPDATE monsters SET hp=?,max_hp=?,variant='normal',respawn_at=0,spawn_round=spawn_round+1 WHERE id=? AND hp<=0 AND spawn_round=? AND respawn_at=? AND respawn_at<=?").bind(cfg.hp,cfg.hp,monster.id,monster.spawn_round,monster.respawn_at,now);}
 		if (monster.summoned) return database.prepare("UPDATE monsters SET respawn_at = 0 WHERE id = ? AND summoned = 1 AND hp <= 0 AND spawn_round = ? AND respawn_at = ? AND respawn_at <= ?").bind(monster.id, monster.spawn_round, monster.respawn_at, now);
@@ -381,7 +381,7 @@ function plan(database,settings,monsters,now){const due={results:monsters};const
          variant = ?, respawn_at = 0, spawn_round = spawn_round + 1
        WHERE id = ? AND hp <= 0 AND spawn_round = ? AND respawn_at = ? AND respawn_at <= ?`).bind(profileKey, legacyHp, profileKey, legacyHp, variant, monster.id, monster.spawn_round, monster.respawn_at, now);
 	});
-return respawns;}
+return special.concat(respawns);}
 function repairPlan(database,now){return [
 		database.prepare(`DELETE FROM monsters
        WHERE summoned = 1 AND hp <= 0 AND respawn_at <= 0

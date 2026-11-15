@@ -18,7 +18,7 @@ import {ordinaryRuneRewardR87} from './rune-reward-scope-r87.mjs';
 // existing owner/resource guards and native transaction run before it. Unknown
 // cold-table effects, player columns, equipment, level and scope retain R51's
 // complete authoritative reload. There is no persistent cache or new timer.
-const areas=new Set(['forest','frozen','black','ancient','sanctum','rune_v2']);
+const areas=new Set(['forest','frozen','black','ancient','sanctum','rune_v2','champions']);
 const tables=new Set(['players','monster_xp_claims','normal_reward_claims','world_drops','pve_engagements','auth_rate_limits']);
 export const ACTOR_REFRESH_FIELDS_R52=Object.freeze(['xp','essence','essence_bonus_remainder','gems','potions','pearls','stone_dust','hp','hp_revision','last_seen','last_monster_hit_at','combat_lock_until_ms','attack_one_at','attack_two_at','attack_three_at','attack_four_at','daily_monster_day','daily_monster_kills']);
 export const ACTOR_REFRESH_LIMITS_R52=Object.freeze({actors:25,drops:512,proofBytes:128*1024,readBatch:4});
@@ -34,7 +34,7 @@ export const actorSectionMetricsR52={candidateChecks:0,notCandidate:0,statusFall
 export const ACTOR_DROPS_SQL_R52=`SELECT id, owner_id, monster_id, kind, item_name, rarity, power, amount, role, enchantments, x, y, expires_at, collectible_at
   FROM world_drops WHERE owner_id = ? AND expires_at ${groundLoot30s ? '>' : '>='} ? AND enchantments NOT IN ('__pending__','__profile_pending__')
   AND monster_id NOT LIKE '%-afk-%'
-  AND ((? = CASE WHEN monster_id LIKE 'event-%' THEN CASE WHEN json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1 THEN 'event' ELSE 'bazaar' END WHEN monster_id LIKE 'rune-v2-%' THEN 'rune_v2' WHEN monster_id LIKE 'rune-%' THEN 'rune' WHEN monster_id='dragon-world-1' THEN 'dragon' WHEN monster_id LIKE '%-ancient-%' OR monster_id = 'ancient-boss-1' THEN 'ancient' ELSE 'forest' END AND monster_id != 'dunya-bosu-1' AND monster_id NOT LIKE 'sinsi-tasi-%' AND monster_id NOT LIKE '%-sinsi-%' AND monster_id NOT LIKE 'frozen-%' AND (monster_id LIKE 'event-%' OR monster_id NOT LIKE '%-frozen-%') AND monster_id NOT LIKE '%-black-%')
+  AND ((? = CASE WHEN monster_id LIKE 'champions-%' THEN 'champions' WHEN monster_id LIKE 'event-%' THEN CASE WHEN json_extract((SELECT config_json FROM event_island_settings444 WHERE id=1),'$.enabled')=1 THEN 'event' ELSE 'bazaar' END WHEN monster_id LIKE 'rune-v2-%' THEN 'rune_v2' WHEN monster_id LIKE 'rune-%' THEN 'rune' WHEN monster_id='dragon-world-1' THEN 'dragon' WHEN monster_id LIKE '%-ancient-%' OR monster_id = 'ancient-boss-1' THEN 'ancient' ELSE 'forest' END AND monster_id != 'dunya-bosu-1' AND monster_id NOT LIKE 'sinsi-tasi-%' AND monster_id NOT LIKE '%-sinsi-%' AND monster_id NOT LIKE 'frozen-%' AND (monster_id LIKE 'event-%' OR monster_id NOT LIKE '%-frozen-%') AND monster_id NOT LIKE '%-black-%')
     OR (? = 'black' AND monster_id LIKE '%-black-%')
     OR (? = 'sanctum' AND monster_id = 'dunya-bosu-1')
     OR (? = 'sinsi' AND (monster_id LIKE 'sinsi-tasi-%' OR monster_id LIKE '%-sinsi-%'))

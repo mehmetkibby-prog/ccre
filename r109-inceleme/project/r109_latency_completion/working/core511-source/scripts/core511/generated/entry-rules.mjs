@@ -1,3 +1,4 @@
+import {CHAMPIONS_WORLD_R118,championsWalkableR118} from '../champions-config-r118.mjs';
 import {CAPACITY} from '../contract.mjs';
 import {ZUMRUT_WORLD_R93,ZUMRUT_ENTRY_R93,isZumrutWalkableR93,isZumrutSegmentR93,canZumrutFishR93} from '../zumrut-map-r93.mjs';
 import {isAdventureArea,isMistArea,adventureBounds,adventureWalkable,adventureSegment,adventureMonsterId} from '../adventure-maps.mjs';
@@ -202,7 +203,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='champions')return CHAMPIONS_WORLD_R118;if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -231,7 +232,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='champions')return championsWalkableR118(x,y);if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
@@ -1455,7 +1456,7 @@ var FOREST_WALKABLE_POLYGON = [
 	[5355, 3330],
 	[45, 3330]
 ];
-function areaWorld(area) {if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
+function areaWorld(area) {if(area==='champions')return CHAMPIONS_WORLD_R118;if(area==='zumrut')return ZUMRUT_WORLD_R93;if(isAdventureArea(area))return adventureBounds(area);if(area==='event')return EVENT_WORLD444;
  if(area==='rune'||area==='rune_v2')return RUNE_WORLD;
 	const social = guildArea(area);
 	if (social) return social.kind === "village" ? GUILD_VILLAGE_WORLD : GUILD_HALL_WORLD;
@@ -1484,7 +1485,7 @@ function isFrozenWalkablePosition(x, y) {
 	if (x < 55 || x > FROZEN_WORLD.width - 55 || y < 80 || y > FROZEN_WORLD.height - 55) return false;
 	return ((x - FROZEN_LAKE.x) / FROZEN_LAKE.radiusX) ** 2 + ((y - FROZEN_LAKE.y) / FROZEN_LAKE.radiusY) ** 2 > 1;
 }
-function isAreaWalkablePosition(area, x, y) {if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
+function isAreaWalkablePosition(area, x, y) {if(area==='champions')return championsWalkableR118(x,y);if(area==='zumrut')return isZumrutWalkableR93(x,y);if(isAdventureArea(area))return adventureWalkable(area,x,y);if(area==='event')return eventWalkable444(x,y);
  if(area==='rune'||area==='rune_v2')return runeWalkable(x,y);
 	if (guildArea(area)) return guildWalkable(area, x, y);
 	if (area === "forest") return isForestWalkablePosition(x, y);
