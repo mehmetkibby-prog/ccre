@@ -34,13 +34,24 @@ Bu depodaki dosya canlıya otomatik kurulum yapmaz.
 
 ## İndir ve kur
 
-- [R118 güncelleme paketi](r118.zip)
+- [Düzeltilmiş R118 güncelleme paketi](r118-duzeltilmis.zip)
 - [Kurulum adımları](KURULUM.md)
 - [Dosya doğrulama değerleri](SHA256SUMS)
 
-Paket SHA256: `640cf76b08b9d072db55d88cd8b8d539fb74b442cb26e78d3a437b5b37422fd7`.
+Paket SHA256: `8a41b77d3cc136729468f0951ce651da56a01d8b71852b730de8e7f26c3c78e5`.
+
+İlk paketin ön kontrolünü durduran, yalnız testlerde kullanılan dosya dağıtım
+kapsamından çıkarıldı. Oyun kodu, içerik ve veri geçişi aynı; üretim dosyası
+bütünlük kontrolleri korunuyor. Eski `r118.zip` arşiv amaçlı tutuluyor; yeni
+kurulumda yukarıdaki düzeltilmiş dosya kullanılmalı.
 
 ## Doğrulama kapsamı
+
+Kurulum düzeltmesi: farklı veya eksik test dosyasıyla kurulum/geri dönüş ve
+üretim dosyası değişikliğini reddetme kontrolleri geçti. Yeni ZIP
+kurulduktan sonra iki dünya/sekiz kanal, captcha ve WebSocket testleri 3/3
+geçti; test dosyası bu başlangıçta hiç yoktu. Oyun içeriğine ait önceki
+sonuçlar, kalan 113 dosyanın birebir aynı olduğu doğrulanarak korunur.
 
 Efsane/Akademi masaüstü ve mobil akışları 4/4 geçti: dönüşüm, Haso, yeni alana
 giriş/savaş/dönüş ve yönetici ayarları. Son ZIP'ten kurulan iki sunucu, sekiz
