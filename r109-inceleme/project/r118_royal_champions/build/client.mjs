@@ -10,6 +10,7 @@ import {patchGameR118} from './patch-game.mjs';
 import {patchAdminR118} from './patch-admin.mjs';
 
 const project=path.resolve(import.meta.dirname,'..');
+const review=path.resolve(project,'../..');
 const core=path.resolve(project,'../r109_latency_completion/working/core511-source/scripts/core511');
 const generated=path.join(core,'generated/client');
 const hash=s=>createHash('sha256').update(s).digest('hex');
@@ -22,7 +23,7 @@ const read=name=>fs.readFileSync(path.join(generated,name),'utf8');
 const files=[],assets=[],sources=[];
 const immutable=(name,data)=>{const target=path.join(generated,name);if(fs.existsSync(target))assert.equal(hash(fs.readFileSync(target)),hash(data),name+' immutable');else fs.writeFileSync(target,data);files.push('generated/client/'+name);assets.push({name,sha256:hash(data),bytes:Buffer.byteLength(data)});return name;};
 const js=(prefix,text)=>{execFileSync(process.execPath,['--check','--input-type=module'],{input:text,stdio:['pipe','pipe','pipe']});return immutable(prefix+'-'+hash(text).slice(0,16)+'.js',text);};
-const bundle=async(file,prefix)=>{const result=await build({entryPoints:[path.join(core,file)],bundle:true,write:false,format:'esm',target:'es2020',charset:'utf8',minify:false,legalComments:'none',metafile:true});for(const input of Object.keys(result.metafile.inputs)){const full=path.resolve(input);if(full.startsWith(core+path.sep)){const local=path.relative(core,full);if(!sources.includes(local))sources.push(local);}}return js(prefix,result.outputFiles[0].text);};
+const bundle=async(file,prefix)=>{const result=await build({absWorkingDir:review,entryPoints:[path.join(core,file)],bundle:true,write:false,format:'esm',target:'es2020',charset:'utf8',minify:false,legalComments:'none',metafile:true});for(const input of Object.keys(result.metafile.inputs)){const full=path.resolve(review,input);if(full.startsWith(core+path.sep)){const local=path.relative(core,full);if(!sources.includes(local))sources.push(local);}}return js(prefix,result.outputFiles[0].text);};
 const artManifest=JSON.parse(fs.readFileSync(path.join(project,'art/manifest.json')));
 const media=[];for(const entry of Object.values(artManifest.assets)){const data=fs.readFileSync(path.join(project,'art/optimized',entry.file));assert.equal(hash(data),entry.sha256);assert.equal(data.length,entry.bytes);immutable(entry.file,data);media.push({name:entry.file,sha256:entry.sha256,bytes:entry.bytes});}
 const names={};
