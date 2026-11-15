@@ -40,6 +40,8 @@ const FX_MAX = MOBILE ? 6 : 16, FX_FAR2 = (MOBILE ? 700 : 1100) ** 2;
 /** Kalabalık bütçesi: yalnız en yakın PLAYER_FULL oyuncu tam ayrıntılı (gölge, evcil hayvan, kanat);
  *  ötekiler gölgesiz ve kozmetiksiz çizilir. 20+ oyunculu meydanda çizim çağrısı ve üçgen sayısı sınırlı kalır. */
 const PLAYER_FULL = MOBILE ? 10 : 22;
+/** Isınma modu (Ayarlar): gölge ve çimen kapalı, düşük çözünürlük, daha az efekt ve ayrıntı */
+const cool = () => !!store.get().settings.cool;
 let blobGeo: THREE.PlaneGeometry | null = null, blobMat: THREE.MeshBasicMaterial | null = null;
 function blobShadow(r: number) {
   if (!blobGeo) {
@@ -97,6 +99,7 @@ export class Renderer3D {
   ringMesh: THREE.Mesh;
   selfRing: THREE.Mesh;
   grass: GrassField | null = null;
+  private coolOn = false;
   private propsGroup: THREE.Group | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
   camYaw = 0; camZoom = 1; camPitch = 0.62; private camYawS = 0; private camZoomS = 1; private camPitchS = 0.62;
@@ -193,7 +196,7 @@ export class Renderer3D {
     this.quality = q;
     // Telefonda efekt zinciri yok: sahne doğrudan ekrana çizilir (donanım kenar yumuşatma, ton eşleme aynı geçişte).
     // Bu, her karede 4–6 tam ekran geçişi ve ortam gölgelendirmesi için sahnenin ikinci kez çizilmesini kaldırır.
-    if (q === 'low' || MOBILE) { this.composer = null; this.bloom = null; return; }
+    if (q === 'low' || MOBILE || cool()) { this.composer = null; this.bloom = null; return; }
     // Not: ara görüntü MSAA'lı (samples) yapılınca GTAO derinliği bozup uzak sahneyi kızıla boyadı; kenar yumuşatma
     // bunun yerine zincirin sonundaki SMAA geçişiyle yapılır (antialias yalnız ekran tamponunu etkiler).
     this.composer = new EffectComposer(this.renderer);
@@ -243,7 +246,7 @@ export class Renderer3D {
     const q = store.get().settings.quality;
     this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS);
     this.world.add(this.propsGroup);
-    if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.dyn.add(this.grass.group); }
+    if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.grass.group.visible = !cool(); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
       const def = l.def.npcs.find((d) => d.id === n.id);
@@ -281,7 +284,7 @@ export class Renderer3D {
     // hedef akıcı 60 FPS: 50'nin altında çözünürlük kademeli düşer, 57'nin üstünde geri çıkar
     // hedef, seçilen kare sınırı (30 seçiliyken 60'a ulaşamadığı için çözünürlüğü boşuna düşürüyordu);
     // telefonda en düşük %80: daha düşük çözünürlükte zemin ve çimen kenarları titriyordu
-    const cap = store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
+    const cap = cool() ? 30 : store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
     if (fps < cap * 0.83 && this.dynScale > floor) this.dynScale = Math.max(floor, this.dynScale * (fps < cap * 0.6 ? 0.85 : 0.92));
     else if (fps > cap * 0.95 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
   }
@@ -309,8 +312,15 @@ export class Renderer3D {
 
   resize() {
     const q = store.get().settings.quality;
-    if (q !== this.quality) { this.setupComposer(); this.renderer.shadowMap.enabled = q !== 'low' && DYN_SHADOWS; }
-    const maxDpr = MOBILE ? (q === 'high' ? 1.5 : q === 'medium' ? 1.2 : 1) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
+    const cm = cool();
+    if (q !== this.quality || cm !== this.coolOn) {
+      this.coolOn = cm;
+      this.setupComposer();
+      this.renderer.shadowMap.enabled = q !== 'low' && DYN_SHADOWS && !cm;
+      if (this.grass) this.grass.group.visible = !cm;
+      this.shadowDirty = true;
+    }
+    const maxDpr = cm ? (MOBILE ? 0.85 : 1) : MOBILE ? (q === 'high' ? 1.5 : q === 'medium' ? 1.2 : 1) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
     const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     if (w !== this.w || h !== this.h || dpr !== this.dpr) {
@@ -475,12 +485,13 @@ export class Renderer3D {
     // ayrıntı kısma: kameradan uzak (~24 m+) olanların iskelet animasyonu 3 karede bir, biriken süreyle güncellenir
     // (kalabalıkta/ormanda kare süresinin çoğu iskelet hesabıydı). Durum değişimi ve vuruş başlangıcı hemen işlenir.
     const lv = v as View & { lodAcc?: number; lodSlot?: number };
-    const far = v.obj.position.distanceToSquared(this.camTarget) > 24 * 24;
+    const cm = cool(), lodD = cm ? 14 : 24, lodN = cm ? 4 : 3;
+    const far = v.obj.position.distanceToSquared(this.camTarget) > lodD * lodD;
     let adt = dt;
     if (far && !restart) {
       lv.lodAcc = (lv.lodAcc ?? 0) + dt;
       lv.lodSlot ??= (Math.random() * 3) | 0;
-      if ((this.frameNo + lv.lodSlot) % 3 !== 0) return;
+      if ((this.frameNo + lv.lodSlot) % lodN !== 0) return;
       adt = lv.lodAcc; lv.lodAcc = 0;
     } else lv.lodAcc = 0;
     if (v.glb) v.glb.update(v.state, adt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
@@ -568,10 +579,12 @@ export class Renderer3D {
     }
     for (const [id, v] of this.views) if (!seen.has(id)) { this.dyn.remove(v.obj); this.views.delete(id); }
     // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)
-    if (fxNear.length > FX_MAX) fxNear.sort((a, b) => a.d - b.d);
-    for (let i = 0; i < fxNear.length; i++) { const on = i < FX_MAX && fxNear[i].d < FX_FAR2; for (const o of fxNear[i].v.gfx!) o.visible = on; }
-    if (crowd.length > PLAYER_FULL) crowd.sort((a, b) => a.d - b.d);
-    for (let i = 0; i < crowd.length; i++) this.setDetail(crowd[i].v, i < PLAYER_FULL);
+    if (fxNear.length > (cool() ? 3 : FX_MAX)) fxNear.sort((a, b) => a.d - b.d);
+    const fxMax = cool() ? 3 : FX_MAX;
+    for (let i = 0; i < fxNear.length; i++) { const on = i < fxMax && fxNear[i].d < FX_FAR2; for (const o of fxNear[i].v.gfx!) o.visible = on; }
+    const full = cool() ? 4 : PLAYER_FULL;
+    if (crowd.length > full) crowd.sort((a, b) => a.d - b.d);
+    for (let i = 0; i < crowd.length; i++) this.setDetail(crowd[i].v, i < full);
     // NPC'ler: oyuncuya döner
     for (const v of this.npcViews) {
       const toSelf = Math.hypot(g.dx - v.lx, g.dy - v.ly) < 360;
@@ -590,7 +603,7 @@ export class Renderer3D {
       this.ringMesh.rotation.z = now / 1500;
     }
     // çimen
-    this.grass?.update(g.dx * U, g.dy * U);
+    if (this.grass?.group.visible) this.grass.update(g.dx * U, g.dy * U);
     // pazar tezgâhları
     this.syncStalls();
     // efektler

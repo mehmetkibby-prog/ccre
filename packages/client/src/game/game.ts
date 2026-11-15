@@ -104,7 +104,10 @@ export class Game {
     const loop = (t: number) => {
       if (this.stopped) return;
       this.raf = requestAnimationFrame(loop);
-      const cap = store.get().settings.fpsCap;
+      const st = store.get().settings;
+      // Isınma modu: 30 kare; 15 sn hiç hareket/saldırı yoksa 15 kare (oyun durumu sunucuda, hiçbir şey kaçmaz)
+      const idle = t - this.lastMoveAt > 15000 && t - this.lastAttackSent > 15000;
+      const cap = st.cool ? (idle ? 15 : 30) : st.fpsCap;
       if (cap > 0 && t - lastDraw < 1000 / cap - 3) return;
       lastDraw = t;
       this.frame(t);

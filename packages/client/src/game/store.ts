@@ -47,7 +47,7 @@ export interface UiState {
   fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
   marketResults: { q: string; list: { stall: string; owner: string; title: string; item: ItemInstance; price: number; x: number; y: number }[] } | null;
   mallTarget: string | null;
-  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number };
+  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number; /** Isınma modu: telefon ısınmasın diye çizim yükü azaltılır (oyun kuralları değişmez) */ cool?: boolean };
 }
 
 const SETTINGS_KEY = 'col_settings';

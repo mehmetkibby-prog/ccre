@@ -1095,3 +1095,4 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .cell.r-unique img.uq-tint { filter: sepia(.6) saturate(2.1) hue-rotate(-6deg) brightness(1.12) drop-shadow(0 0 4px rgba(255, 216, 74, .75)); }
 .cell.r-unique { animation: uq-pulse 2.6s ease-in-out infinite; }
 @keyframes uq-pulse { 50% { box-shadow: inset 0 0 0 1px var(--r-unique), inset 0 0 22px rgba(255, 216, 74, .55), 0 0 10px rgba(255, 216, 74, .35); } }
+.cool-field.on { box-shadow: inset 0 0 0 1px rgba(124, 200, 255, .5); border-radius: 10px; padding: 8px; background: rgba(60, 120, 170, .12); }
