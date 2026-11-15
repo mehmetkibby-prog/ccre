@@ -479,7 +479,7 @@ function Settings() {
       <div className={'field cool-field' + (s.cool ? ' on' : '')}>
         <label>Isınma modu</label>
         <button className={'btn ' + (s.cool ? 'primary' : '')} style={{ width: '100%' }} onClick={() => set({ cool: !s.cool })}>{s.cool ? '❄ Isınma modu AÇIK' : 'Isınma modunu aç'}</button>
-        <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa aç: saniyede 30 kare (bir süre hareket etmezsen 15), gölge ve çimen kapalı, biraz düşük çözünürlük, uzaktaki oyuncu ve efektler sadeleşir. Oyun, hasar ve kurallar aynen kalır.</div>
+        <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa aç: akıcılık aynı kalır (saniyede 60 kare), ısıyı azaltmak için gölge ve çimen kapanır, çözünürlük biraz düşer, uzaktaki oyuncu ve efektler sadeleşir. Oyun, hasar ve kurallar aynen kalır.</div>
       </div>
       <div className="field"><label>Görüntü kalitesi</label>
         <div className="row">{(['low', 'medium', 'high'] as const).map((q) => <button key={q} className={'btn small ' + (s.quality === q ? 'primary' : '')} onClick={() => set({ quality: q })}>{q === 'low' ? 'Düşük' : q === 'medium' ? 'Orta' : 'Yüksek'}</button>)}</div>

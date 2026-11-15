@@ -284,7 +284,7 @@ export class Renderer3D {
     // hedef akıcı 60 FPS: 50'nin altında çözünürlük kademeli düşer, 57'nin üstünde geri çıkar
     // hedef, seçilen kare sınırı (30 seçiliyken 60'a ulaşamadığı için çözünürlüğü boşuna düşürüyordu);
     // telefonda en düşük %80: daha düşük çözünürlükte zemin ve çimen kenarları titriyordu
-    const cap = cool() ? 30 : store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
+    const cap = cool() ? 60 : store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
     if (fps < cap * 0.83 && this.dynScale > floor) this.dynScale = Math.max(floor, this.dynScale * (fps < cap * 0.6 ? 0.85 : 0.92));
     else if (fps > cap * 0.95 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
   }
