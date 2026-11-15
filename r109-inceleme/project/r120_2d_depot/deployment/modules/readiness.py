@@ -3,8 +3,8 @@ import time
 from r63_support import local
 class NotReady(RuntimeError):pass
 
-def probe(manifest,version='R120_2D_DEPOT1',request=local):
- if version in ('R119_MOTION1','R120_2D_DEPOT1'):version='R118_ROYAL1' # Client-only patch; authoritative runtime is R118.
+def probe(manifest,version='R120_2D_DEPOT2',request=local):
+ if version in ('R119_MOTION1','R120_2D_DEPOT2'):version='R118_ROYAL1' # Client-only patch; authoritative runtime is R118.
  target=version
  if version in ('R112_FLOW1','R113_ENGINE1','R114_RUNE_FORUM1','R115_SHARED_SCOPE1','R116_ADMISSION_TRANSFER1','R117_HOOK10','R118_ROYAL1'):version='R111_COMBAT1'
  health={};issues=[]
@@ -47,7 +47,7 @@ def probe(manifest,version='R120_2D_DEPOT1',request=local):
  except Exception:issues.append('hesap: yerel servis henüz yanıt vermiyor')
  return health,issues
 
-def wait(manifest,version='R120_2D_DEPOT1',timeout=120,request=local,say=print):
+def wait(manifest,version='R120_2D_DEPOT2',timeout=120,request=local,say=print):
  end=time.monotonic()+timeout;reported=0
  while time.monotonic()<end:
   health,issues=probe(manifest,version,request)

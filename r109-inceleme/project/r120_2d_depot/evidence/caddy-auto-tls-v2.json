@@ -1,0 +1,14 @@
+{
+  "scope": "Actual isolated Caddy; local issuer used to avoid production ACME. Trust limited to test process. No Cloudflare/live test.",
+  "newHostnameCertificate": {
+    "names": [
+      "2d.coreoflife.net"
+    ],
+    "notAfter": "Nov 16 07:49:36 2026 GMT",
+    "tls": "TLSv1.3"
+  },
+  "oldCertificateUnchanged": true,
+  "oldAndNewHostsServeHomepage": true,
+  "untrustedCertificateRejected": true,
+  "noManualCertificateLoaders": true
+}

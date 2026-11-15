@@ -1,0 +1,7 @@
+{
+  "source": "User Cloudflare Overview and VDS short TLS audit screenshots, 15 Nov 2026",
+  "cloudflare": {"mode":"full","automaticMode":true,"nextScanShown":"Dec 8","changesMade":false},
+  "caddy": {"fileMatchesRunning":true,"server":"srv0","listen":[":443"],"httpsDisabled":false,"certAutomationDisabled":false,"tlsPolicies":0,"explicitCertificateLoaders":[],"apexTls":"TLSv1.3","apexCertificateNames":["coreoflife.net"],"apexCertificateExpires":"Dec 25 08:25:15 2026 GMT","newHostHandshake":"TLSV1_ALERT_INTERNAL_ERROR"},
+  "interpretation":"Existing default automatic HTTPS serves the apex. New host is not configured. Empty explicit loaders do not mean absent TLS.",
+  "fullRulesInventory":"pending"
+}

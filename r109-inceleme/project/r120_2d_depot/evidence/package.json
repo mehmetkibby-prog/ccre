@@ -1,17 +1,17 @@
 {
-  "file": "artifacts/R120_2D_DEPOT_074a106a8fd8.zip",
-  "sha256": "afc268526f78b8e895e92b2d6048055e02f74fc17bf939ee69d49911c3ac12cc",
-  "bytes": 1452588,
+  "file": "artifacts/R120_2D_DEPOT_4cdc1af31b61.zip",
+  "sha256": "5fcf4d850076257437166f5634519041f803866b8956d95901bf2141c1664ff6",
+  "bytes": 1458847,
   "sourceVersions": [
     "R118_ROYAL1",
     "R119_MOTION1"
   ],
-  "targetVersion": "R120_2D_DEPOT1",
+  "targetVersion": "R120_2D_DEPOT2",
   "targetCore": "a216bbf26f9129220c59e6d24ce92bfcb7bf76c7a75028e238b219d960a14ff1",
   "namespace": "core511-17d72e47dc4df4fa",
   "changedCodeFiles": 14,
   "databaseScope": "none",
-  "acceptance": "local-functional-passed; live VDS, TLS certificate and Cloudflare pending",
+  "acceptance": "29 targeted installer/TLS/domain tests passed; game/forum payload identical to locally verified v1; live deployment pending",
   "deployed": false,
   "publicDomainTests": "pending"
 }

@@ -1,0 +1,25 @@
+[
+  {
+    "test": "domain_test.py",
+    "exit": 0,
+    "seconds": 0.59,
+    "log": "evidence/domain_test-v2.log"
+  },
+  {
+    "test": "web_cli_test.py",
+    "exit": 0,
+    "seconds": 0.48,
+    "log": "evidence/web_cli_test-v2.log"
+  },
+  {
+    "test": "web_prepare_test.py",
+    "exit": 0,
+    "seconds": 0.36,
+    "log": "evidence/web_prepare_test-v2.log"
+  },
+  {
+    "check": "v1-v2-game-and-forum-payload-identical",
+    "files": 16,
+    "passed": true
+  }
+]

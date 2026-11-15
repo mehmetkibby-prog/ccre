@@ -72,7 +72,7 @@ class Installation(unittest.TestCase):
   f=self.fixture(source);beforedb={k:digest(v['path']) for k,v in f.f.databases.items()};prior=f.result();oldBackup={str(p):digest(p) for p in Path(prior['directory']).rglob('*') if p.is_file()}
   m.apply(f.live,f.z,f.plan);j=f.result();m.validate_record(j,completed=True)
   self.assertEqual(beforedb,{k:digest(v['path']) for k,v in f.f.databases.items()});self.assertEqual(oldBackup,{p:digest(p) for p in oldBackup})
-  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT1');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
+  self.assertEqual(json.loads(f.f.statefile.read_text())['r64Deployment']['version'],'R120_2D_DEPOT2');self.assertIn('2d.coreoflife.net',f.site.read_text());self.assertTrue(f.newconf.exists())
   for p in f.settings:self.assertIn('2d.coreoflife.net',json.loads(p.read_text())['hosts'])
   for row in f.f.databases.values():
    with sqlite3.connect(row['path']) as db:db.execute('UPDATE players SET gems=98765');db.commit()
@@ -83,6 +83,14 @@ class Installation(unittest.TestCase):
    with sqlite3.connect(row['path']) as db:self.assertEqual(db.execute('SELECT gems FROM players').fetchone()[0],98765);self.assertEqual(db.execute("SELECT count(*) FROM monsters WHERE area='champions'").fetchone()[0],192)
  def test_r118_cumulative_apply_and_rollback(self):self.roundtrip('R118_ROYAL1')
  def test_r119_apply_and_rollback(self):self.roundtrip('R119_MOTION1')
+ def test_prepared_web_alias_apply_and_rollback_do_not_reload_caddy(self):
+  f=self.fixture();f.initial=m.domain_move.caddy_alias(f.initial);f.caddy=copy.deepcopy(f.initial);f.config.write_bytes(encoded(f.initial))
+  m.apply(f.live,f.z,f.plan);j=f.result()
+  self.assertNotIn(str(f.config),j['external'])
+  self.assertFalse(any(call.args for call in m.domain_move.api.call_args_list))
+  j['phase']='rollback-requested';m.persist(j);m.rollback(f.live,j)
+  self.assertEqual(f.caddy,f.initial);self.assertEqual(json.loads(f.config.read_text()),f.initial)
+  self.assertFalse(any(call.args for call in m.domain_move.api.call_args_list))
  def test_failed_https_restores_every_domain_setting_and_keeps_progress(self):
   f=self.fixture();f.fail=True
   with self.assertRaisesRegex(RuntimeError,'injected R120'):m.apply(f.live,f.z,f.plan)

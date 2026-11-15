@@ -1,0 +1,50 @@
+{"level":"info","ts":1794772175.9928577,"msg":"maxprocs: Updating GOMAXPROCS=4: determined from CPU quota"}
+{"level":"info","ts":1794772175.993688,"msg":"GOMEMLIMIT is updated","package":"github.com/KimMachineGun/automemlimit/memlimit","GOMEMLIMIT":30923764531,"previous":9223372036854775807}
+{"level":"info","ts":1794772175.9937449,"msg":"using config from file","file":"/tmp/tmpuuvzwvx2/config.json"}
+{"level":"info","ts":1794772176.001398,"logger":"admin","msg":"admin endpoint started","address":"127.0.0.1:58283","enforce_origin":false,"origins":["//localhost:58283","//[::1]:58283","//127.0.0.1:58283"]}
+{"level":"info","ts":1794772176.00265,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"s","https_port":48331}
+{"level":"info","ts":1794772176.0028725,"logger":"http.auto_https","msg":"automatic HTTP->HTTPS redirects are disabled","server_name":"s"}
+{"level":"info","ts":1794772176.002886,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc0002f2f00"}
+{"level":"info","ts":1794772176.0032794,"logger":"http","msg":"enabling HTTP/3 listener","addr":"127.0.0.1:48331"}
+{"level":"info","ts":1794772176.0042272,"logger":"http.log","msg":"server running","name":"s","protocols":["h1","h2","h3"]}
+{"level":"info","ts":1794772176.0042691,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["www.coreoflife.net","coreoflife.net"]}
+{"level":"info","ts":1794772176.0045207,"logger":"pki.ca.local","msg":"root certificate trust store installation disabled; unconfigured clients may show warnings","path":"storage:pki/authorities/local/root.crt"}
+{"level":"info","ts":1794772176.005034,"logger":"tls.obtain","msg":"acquiring lock","identifier":"coreoflife.net"}
+{"level":"info","ts":1794772176.0051324,"logger":"tls.obtain","msg":"lock acquired","identifier":"coreoflife.net"}
+{"level":"info","ts":1794772176.0051854,"logger":"tls.obtain","msg":"obtaining certificate","identifier":"coreoflife.net"}
+{"level":"info","ts":1794772176.0053055,"logger":"tls.obtain","msg":"acquiring lock","identifier":"www.coreoflife.net"}
+{"level":"info","ts":1794772176.0053487,"logger":"tls.obtain","msg":"lock acquired","identifier":"www.coreoflife.net"}
+{"level":"info","ts":1794772176.005387,"logger":"tls.obtain","msg":"obtaining certificate","identifier":"www.coreoflife.net"}
+{"level":"info","ts":1794772176.005465,"logger":"tls","msg":"cleaning storage unit","storage":"FileStorage:/tmp/tmpuuvzwvx2/storage"}
+{"level":"info","ts":1794772176.0055544,"logger":"tls","msg":"finished cleaning storage units"}
+{"level":"info","ts":1794772176.0058455,"msg":"autosaved config (load with --resume flag)","file":"/home/agent/.config/caddy/autosave.json"}
+{"level":"info","ts":1794772176.005855,"msg":"serving initial configuration"}
+{"level":"info","ts":1794772176.0079246,"logger":"tls.obtain","msg":"certificate obtained successfully","identifier":"www.coreoflife.net","issuer":"local"}
+{"level":"info","ts":1794772176.008072,"logger":"tls.obtain","msg":"releasing lock","identifier":"www.coreoflife.net"}
+{"level":"info","ts":1794772176.0082064,"logger":"tls.obtain","msg":"certificate obtained successfully","identifier":"coreoflife.net","issuer":"local"}
+{"level":"info","ts":1794772176.008312,"logger":"tls.obtain","msg":"releasing lock","identifier":"coreoflife.net"}
+{"level":"warn","ts":1794772176.0085163,"logger":"tls","msg":"stapling OCSP","identifiers":["www.coreoflife.net"]}
+{"level":"warn","ts":1794772176.008537,"logger":"tls","msg":"stapling OCSP","identifiers":["coreoflife.net"]}
+{"level":"info","ts":1794772176.087632,"logger":"admin.api","msg":"received request","method":"POST","host":"127.0.0.1:58283","uri":"/load","remote_ip":"127.0.0.1","remote_port":"43494","headers":{"Accept-Encoding":["identity"],"Connection":["close"],"Content-Length":["754"],"Content-Type":["application/json"],"User-Agent":["Python-urllib/3.12"]}}
+{"level":"info","ts":1794772176.0885012,"logger":"admin","msg":"admin endpoint started","address":"127.0.0.1:58283","enforce_origin":false,"origins":["//localhost:58283","//[::1]:58283","//127.0.0.1:58283"]}
+{"level":"info","ts":1794772176.0885942,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"s","https_port":48331}
+{"level":"info","ts":1794772176.0886092,"logger":"http.auto_https","msg":"automatic HTTP->HTTPS redirects are disabled","server_name":"s"}
+{"level":"info","ts":1794772176.0886488,"logger":"pki.ca.local","msg":"root certificate trust store installation disabled; unconfigured clients may show warnings","path":"storage:pki/authorities/local/root.crt"}
+{"level":"info","ts":1794772176.0886877,"logger":"http","msg":"enabling HTTP/3 listener","addr":"127.0.0.1:48331"}
+{"level":"info","ts":1794772176.088696,"logger":"http.log","msg":"server running","name":"s","protocols":["h1","h2","h3"]}
+{"level":"info","ts":1794772176.0886993,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["2d.coreoflife.net","coreoflife.net","www.coreoflife.net"]}
+{"level":"info","ts":1794772176.088779,"logger":"http","msg":"servers shutting down with eternal grace period"}
+{"level":"info","ts":1794772176.0890107,"logger":"tls.obtain","msg":"acquiring lock","identifier":"2d.coreoflife.net"}
+{"level":"info","ts":1794772176.089089,"logger":"tls.obtain","msg":"lock acquired","identifier":"2d.coreoflife.net"}
+{"level":"info","ts":1794772176.089126,"logger":"tls.obtain","msg":"obtaining certificate","identifier":"2d.coreoflife.net"}
+{"level":"info","ts":1794772176.0891156,"msg":"autosaved config (load with --resume flag)","file":"/home/agent/.config/caddy/autosave.json"}
+{"level":"info","ts":1794772176.0891485,"logger":"admin.api","msg":"load complete"}
+{"level":"info","ts":1794772176.0898643,"logger":"tls.obtain","msg":"certificate obtained successfully","identifier":"2d.coreoflife.net","issuer":"local"}
+{"level":"info","ts":1794772176.0899115,"logger":"tls.obtain","msg":"releasing lock","identifier":"2d.coreoflife.net"}
+{"level":"warn","ts":1794772176.0900877,"logger":"tls","msg":"stapling OCSP","identifiers":["2d.coreoflife.net"]}
+{"level":"info","ts":1794772176.0905168,"logger":"admin","msg":"stopped previous server","address":"127.0.0.1:58283"}
+{"level":"info","ts":1794772176.240566,"msg":"shutting down apps, then terminating","signal":"SIGTERM"}
+{"level":"warn","ts":1794772176.2406113,"msg":"exiting; byeee!! 👋","signal":"SIGTERM"}
+{"level":"info","ts":1794772176.2407718,"logger":"http","msg":"servers shutting down with eternal grace period"}
+{"level":"info","ts":1794772176.2409298,"logger":"admin","msg":"stopped previous server","address":"127.0.0.1:58283"}
+{"level":"info","ts":1794772176.2409348,"msg":"shutdown complete","signal":"SIGTERM","exit_code":0}

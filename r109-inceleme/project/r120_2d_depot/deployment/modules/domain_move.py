@@ -21,6 +21,23 @@ def tree(value,fn):
  if isinstance(value,dict):return {k:tree(v,fn) for k,v in value.items()}
  return value
 def caddy_alias(config):
+ # A successful --prepare-web already added our exact aliases. Accept only
+ # those byte-equivalent routes, never a custom/partially edited 2d route.
+ clean=copy.deepcopy(config);owned=False
+ for server in clean.get('apps',{}).get('http',{}).get('servers',{}).values():
+  keep=[]
+  for route in server.get('routes',[]):
+   if str(route.get('@id','')).startswith('r120-2d-'):
+    owned=True
+    require(route.get('match') and all(m.get('host')==[HOST] for m in route['match']),'Hazırlanmış 2D kuralı değiştirilmiş')
+   else:keep.append(route)
+  server['routes']=keep
+ if owned:
+  require(_caddy_alias_new(clean)==config,'Hazırlanmış 2D kuralları beklenen yönlendirmelerle eşleşmiyor')
+  return copy.deepcopy(config)
+ return _caddy_alias_new(config)
+
+def _caddy_alias_new(config):
  out=copy.deepcopy(config);count=0
  for server in out.get('apps',{}).get('http',{}).get('servers',{}).values():
   routes=server.get('routes',[]);added=[]
@@ -70,6 +87,17 @@ def origins(value):
 def realtime_dropin(unit,old):
  require(unit in ('coreoflife-rt-r1.service','coreoflife-rt-r2.service'),'Realtime servis kapsamı farklı')
  return (SYSTEMD/(unit+'.d')/'zz-r120-2d.conf',('[Service]\nEnvironmentFile='+str(ENVROOT/(unit+'.env'))+'\n').encode(),ENVROOT/(unit+'.env'),('ALLOWED_ORIGINS='+origins(old)+'\n').encode())
+def tls_context(certificate=None):
+ context=ssl.create_default_context(cafile=certificate)
+ if certificate:context.verify_flags|=ssl.VERIFY_X509_PARTIAL_CHAIN
+ return context
+
+def tls_info(host=HOST,certificate=None,port=443):
+ with socket.create_connection(('127.0.0.1',port),timeout=4) as raw:
+  with tls_context(certificate).wrap_socket(raw,server_hostname=host) as connection:
+   value=connection.getpeercert()
+   return {'names':[v for k,v in value.get('subjectAltName',[]) if k=='DNS'],'notAfter':value.get('notAfter'),'tls':connection.version()}
+
 def certificate_ready(config):
  now=time.time();found=[]
  for row in config.get('apps',{}).get('tls',{}).get('certificates',{}).get('load_files',[]):
@@ -77,7 +105,12 @@ def certificate_ready(config):
   if not p:continue
   d=ssl._ssl._test_decode_cert(p);names=[v for k,v in d.get('subjectAltName',[]) if k=='DNS']
   if (HOST in names or '*.coreoflife.net' in names) and ssl.cert_time_to_seconds(d['notAfter'])>now and ssl.cert_time_to_seconds(d['notBefore'])<=now:found.append({'path':p,'names':names,'notAfter':d['notAfter']})
- require(found,'2d.coreoflife.net adını kapsayan geçerli sertifika bulunamadı. Wildcard Origin Certificate veya bu ada özel sertifikayı Caddy’ye ekleyin; mevcut sertifikayı silmeyin.')
+ if not found:
+  try:
+   info=tls_info()
+   found.append({'path':None,'source':'automatic-or-system-trusted',**info})
+  except (OSError,ValueError):pass
+ require(found,'2d.coreoflife.net için doğrulanmış sertifika henüz hazır değil. Önce aynı paketle --check-web, ardından bakımda --prepare-web çalıştırın.')
  return found
 def site_changes(root):
  root=Path(root).resolve();require(root.is_dir(),'Ana site bulunamadı');rows=[]
@@ -131,7 +164,8 @@ def apply(prepared,j,external,persist,run):
  for p,before,data in prepared['rows']:
   require(not p.is_symlink() and (digest(p) if p.exists() else None)==before,'Geçiş dosyası ön kontrolden sonra değişti: '+str(p))
   external(j,p,data)
- external(j,CONFIG,encoded(prepared['afterConfig']));api(prepared['afterConfig'])
+ if prepared['afterConfig']!=prepared['beforeConfig']:
+  external(j,CONFIG,encoded(prepared['afterConfig']));api(prepared['afterConfig'])
  require(api()==prepared['afterConfig'],'Yeni Caddy ayarı etkinleşmedi')
  run(['systemctl','daemon-reload']);run(['systemctl','restart','coreoflife-forum.service'])
  j['domain']['phase']='published';persist(j)
@@ -144,16 +178,15 @@ def restore(j,run):
  if current!=d['beforeConfig']:api(d['beforeConfig'])
  run(['systemctl','daemon-reload']);run(['systemctl','restart','coreoflife-forum.service'])
 
-def request_origin(path,certificate,port=443):
+def request_origin(path,certificate=None,port=443,host=HOST):
  # Trust exactly the locally configured certificate, including Cloudflare
  # Origin certificates. Check hostname, dates and handshake without -k.
- context=ssl.create_default_context(cafile=certificate)
- context.verify_flags|=ssl.VERIFY_X509_PARTIAL_CHAIN
+ context=tls_context(certificate)
  class Pinned(http.client.HTTPSConnection):
-  def connect(self):self.sock=context.wrap_socket(socket.create_connection(('127.0.0.1',port),timeout=8),server_hostname=HOST)
- connection=Pinned(HOST,timeout=8,context=context)
+  def connect(self):self.sock=context.wrap_socket(socket.create_connection(('127.0.0.1',port),timeout=8),server_hostname=host)
+ connection=Pinned(host,timeout=8,context=context)
  try:
-  connection.request('GET',path,headers={'Host':HOST});response=connection.getresponse();body=response.read(2*1024*1024)
+  connection.request('GET',path,headers={'Host':host});response=connection.getresponse();body=response.read(2*1024*1024)
   return response.status,dict(response.getheaders()),body
  finally:connection.close()
 
@@ -165,4 +198,4 @@ def health(j):
   if p=='/':require(b'2d.coreoflife.net' in body,'2D ana site adresi güncellenmedi')
   if p=='/forum/api/health':require(json.loads(body).get('ok') is True,'Forum hazır değil')
   checks[p]=status
- return {'localPinnedTls':True,'hostname':HOST,'routes':checks,'publicCloudflareTest':'pending'}
+ return {'localVerifiedTls':True,'trust':'configured-certificate' if j['domain']['certificate'] else 'system-ca','hostname':HOST,'routes':checks,'publicCloudflareTest':'pending'}

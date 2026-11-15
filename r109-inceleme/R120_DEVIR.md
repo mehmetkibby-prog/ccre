@@ -1,6 +1,6 @@
 # R120 devamı — 15 Kasım 2026
 
-Aktif ağaç R120_2D_DEPOT1 adayıdır. Canlıda doğrulanan backend hâlâ
+Güncel kurucu R120_2D_DEPOT2; oyun/istemci dosyaları ilk R120 ile aynıdır. Canlıda doğrulanan backend hâlâ
 R118_ROYAL1; R119 istemci kurulumunun durumu bilinmiyor. Yeni paket tam R118
 veya R119 üzerine uygulanır, R119 animasyonları dahil. Tarihsel ZIP/SHA değişmedi.
 
@@ -37,7 +37,33 @@ Kullanıcı 2d A kaydını eklediğini bildirdi. Bu oturumda VDS/Cloudflare yön
 bağlantısı yok; yeni hosta erişim çalışma ortamı CONNECT proxy'sinde 403 ile
 engelleniyor. Eski apex temiz browser HTTP200, service worker kayıt listesi boş.
 Kullanıcının eski cihaz kayıtları bununla doğrulanmış sayılmaz.
-Salt okunur VDS audit çıktısı ve SSL modu/kural envanteri istendi, yanıt bekleniyor.
+VDS TLS ve Cloudflare modu ekranları geldi: Full + otomatik mod; Caddy varsayılan
+otomatik HTTPS, yalnız apex sertifikası var. Cloudflare kural envanteri hâlâ bekliyor.
 Gerçek sertifika, public mobil/PC giriş/oyun/ses/e-posta testleri ve daha sonraki
 apex DNS kesimi sonrası sıfır apex isteği testi tamamlanmadan "2D hazır" denmez.
 `CLOUDFLARE-VE-CANLI-KONTROL.md` kullanıcıya tam adımları verir.
+
+## V2 — mevcut otomatik sertifika düzeni (15 Kasım 2026)
+
+İlk paket yukarıdaki SHA ile korunur; v2 tercih edilmeli. Yeni dosya:
+`project/r120_2d_depot/artifacts/R120_2D_DEPOT_4cdc1af31b61.zip`
+SHA256 `5fcf4d850076257437166f5634519041f803866b8956d95901bf2141c1664ff6`
+Sürüm `R120_2D_DEPOT2`; çekirdek/namespace ve oyun/forum payload byte olarak aynı.
+
+`--check-web` salt okunur. Bakım geri sayımı bittikten sonra `--prepare-web`
+yalnız Caddy 2d eşlerini ekler, otomatik sertifikayı bekler, mevcut apex sayfasını
+ve Cloudflare 2d ana sayfasını doğrular. Sonra normal `--check` / `--apply`.
+Caddy reload WebSocket'leri yeniden bağlatabileceğinden aynı bakım aralığında.
+Hata durumunda özel 0600 günlüğünden tam Caddy geri dönüşü; güç kesilmesinde
+`--rollback-web`. Başka kurulum/bilinmeyen dış değişiklik üzerine yazılmaz.
+Ana oyun geri dönüşü hazırlanmış 2d eşlerini korur; gerekirse ardından web geri dönüşü.
+
+29 hedefli kontrol geçti (9 alan/koruma, 11 web hazırlık/hata, 3 CLI bakım,
+1 gerçek Caddy otomatik TLS, 5 arşivden kurulum/geri dönüş). İlk R120 oyun
+testleri geçerlidir; 16 oyun/forum payload dosyasının aynı olduğu doğrulandı.
+Kanıt `evidence/verification-v2.json`. Yerel Caddy testi izole internal CA kullandı;
+canlı ACME/Cloudflare ve telefon/PC akışları yapılmış gibi sunulmaz.
+
+Cloudflare bölgesi Full; otomatik mod açık (sonraki tarama Dec 8). Bölge değişmedi.
+Gerekiyorsa yalnız apex/www için Full Configuration Rule envanter sonrası
+kullanıcıya tarif edilir; mevcut Full nedeniyle bugün strict istisnası zorunlu değil.

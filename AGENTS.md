@@ -83,3 +83,8 @@ R120 continuation (15 Nov 2026): read `r109-inceleme/R120_DEVIR.md`. Active cand
 adds depot visibility and 2d domain transition on exact R118/R119; includes R119
 animation behavior. Live domain/SSL/Cloudflare verification remains pending.
 Preserve all prior artifacts, host-only cookies and protected DNS. No 3D changes.
+
+R120 v2 continuation (15 Nov 2026): screenshots confirm Cloudflare Full with automatic
+mode, and Caddy default certificate automation. Use R120_2D_DEPOT2 and its
+maintenance-gated --prepare-web, then --check/--apply. Game bytes equal v1.
+Read the updated R120_DEVIR.md; live end-to-end acceptance remains pending.

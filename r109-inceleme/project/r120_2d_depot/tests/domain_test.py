@@ -29,8 +29,12 @@ class Domain(unittest.TestCase):
   self.assertEqual(new[2]['handle'][0]['headers']['Location'],['https://accounts.coreoflife.net{http.request.uri}'])
   self.assertIn(d.HOST,after['apps']['http']['servers']['https']['tls_connection_policies'][0]['match']['sni'])
   self.assertEqual(len({r['@id'] for r in new}),len(new))
- def test_preexisting_alias_is_not_overwritten(self):
-  with self.assertRaisesRegex(RuntimeError,'zaten'):d.caddy_alias(d.caddy_alias(config()))
+ def test_exact_prepared_alias_is_idempotent_and_custom_alias_is_not_overwritten(self):
+  ready=d.caddy_alias(config());self.assertEqual(d.caddy_alias(ready),ready)
+  custom=config();custom['apps']['http']['servers']['https']['routes'].insert(0,{'match':[{'host':[d.HOST]}],'handle':[]})
+  with self.assertRaisesRegex(RuntimeError,'zaten'):d.caddy_alias(custom)
+  ready['apps']['http']['servers']['https']['routes'][0]['handle'][0]['body']='changed'
+  with self.assertRaisesRegex(RuntimeError,'eşleşmiyor'):d.caddy_alias(ready)
  def test_game_origins_keep_both_hosts_and_no_domain_cookie(self):
   for account in ('https://coreoflife.net','https://accounts.coreoflife.net'):
    before={'hosts':['r1.coreoflife.net'],'environment':{'ALLOWED_ORIGINS':'https://coreoflife.net,https://www.coreoflife.net','AUTH_PUBLIC_ORIGIN':account,'REALTIME_URL':'wss://realtime.coreoflife.net/ws','AUTH_EMAIL_FROM':'Core <send@coreoflife.net>'},'database':'unchanged.sqlite'}

@@ -1,0 +1,16 @@
+test_certificate_failure_restores_old_site_without_services_or_database (__main__.Preparation.test_certificate_failure_restores_old_site_without_services_or_database) ... ok
+test_default_auto_https_preflight_is_read_only (__main__.Preparation.test_default_auto_https_preflight_is_read_only) ... ok
+test_disabled_auto_https_or_no_443_is_not_overridden (__main__.Preparation.test_disabled_auto_https_or_no_443_is_not_overridden) ... ok
+test_edited_2d_route_not_accepted (__main__.Preparation.test_edited_2d_route_not_accepted) ... ok
+test_external_change_is_never_overwritten (__main__.Preparation.test_external_change_is_never_overwritten) ... ok
+test_failed_caddy_load_restores_persisted_file (__main__.Preparation.test_failed_caddy_load_restores_persisted_file) ... ok
+test_interrupted_config_write_explicit_recovery (__main__.Preparation.test_interrupted_config_write_explicit_recovery) ... ok
+test_old_home_changes_trigger_rollback (__main__.Preparation.test_old_home_changes_trigger_rollback) ... ok
+test_private_journal_symlink_is_rejected_before_any_write (__main__.Preparation.test_private_journal_symlink_is_rejected_before_any_write) ... ok
+test_public_cloudflare_failure_restores_old_site (__main__.Preparation.test_public_cloudflare_failure_restores_old_site) ... ok
+test_success_retry_and_rollback_preserve_exact_bytes_permissions (__main__.Preparation.test_success_retry_and_rollback_preserve_exact_bytes_permissions) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.081s
+
+OK

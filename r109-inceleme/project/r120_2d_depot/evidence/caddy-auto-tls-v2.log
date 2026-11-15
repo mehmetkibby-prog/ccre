@@ -1,0 +1,6 @@
+test_new_host_gets_separate_cert_old_host_unchanged_all_tls_verified (__main__.AutomaticTLS.test_new_host_gets_separate_cert_old_host_unchanged_all_tls_verified) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.368s
+
+OK

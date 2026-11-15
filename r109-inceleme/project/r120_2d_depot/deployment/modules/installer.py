@@ -1,6 +1,6 @@
 """R118/R119 to R120: depot, 2D alias and origins; no player data migration."""
 import argparse,hashlib,json,os,re,shutil,stat,subprocess,sys,time,uuid,zipfile
-import asset_graph,runtime_imports,site_delta,domain_move
+import asset_graph,runtime_imports,site_delta,domain_move,web_prepare
 from pathlib import Path
 from types import SimpleNamespace
 import inplace_stage as inplace
@@ -8,7 +8,7 @@ import source_identity,readiness,r63_support as identity
 from storage import atomic,descriptor,digest,encoded,read,require,sync_dir,lock
 STATE=Path('/var/lib/core511/state.json');CONTROL=STATE.parent/'r102-admin-fix';ACTIVE=CONTROL/'active.json'
 RELEASES=Path('/opt/core511/releases');SYSTEMD=Path('/etc/systemd/system');HERE=Path(__file__).resolve().parent
-VERSION='R120_2D_DEPOT1';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
+VERSION='R120_2D_DEPOT2';POLICY={'keep':1,'scope':'changed-code-only'};SCOPE='none';UNITS=('coreoflife-r1.service','coreoflife-r2.service','coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service')
 START=('coreoflife-accounts.service','coreoflife-rt-r1.service','coreoflife-rt-r2.service','coreoflife-r1.service','coreoflife-r2.service')
 def say(s):print(s,flush=True)
 
@@ -319,11 +319,25 @@ def apply(live,z,plan,prepared=None):
 
 def main(archive):
  p=argparse.ArgumentParser(description='R120 depo, canavar animasyonları ve 2D alan adı geçişi (tam R118/R119 üzerine)');g=p.add_mutually_exclusive_group(required=True)
- for name in ('check','apply','recover','rollback','cleanup','status'):g.add_argument('--'+name,action='store_true')
+ for name in ('check','apply','recover','rollback','cleanup','status','check-web','prepare-web','rollback-web'):g.add_argument('--'+name,action='store_true')
  args=p.parse_args();require(os.geteuid()==0,'VDS üzerinde root ile çalıştırın')
  if args.status:say(json.dumps({'pending':ACTIVE.exists(),'adminFix':read(STATE).get('r102AdminFix')},ensure_ascii=False));return
  with lock(STATE.parent/'r23-backups/install.lock'):
   live=discover()
+  if args.check_web or args.prepare_web or args.rollback_web:
+   require(not ACTIVE.exists(),'Önce bekleyen oyun güncellemesini --recover ile tamamlayın')
+   require(not(CONTROL/'prune-intent.json').exists(),'Yarım yedek temizliği var; önce kendi paketiyle --cleanup çalıştırın')
+   for other in ('r102-updates/active.json','r101/active.json','r64-updates/active.json','launch-reset-r63/active.json'):
+    require(not(STATE.parent/other).exists(),'Başka kurulum devam ediyor; web ayarı değiştirilmedi')
+   with zipfile.ZipFile(archive) as z:
+    plan=json.loads(z.read('plan.json'));validate_plan(plan);source_identity.resolve(live,plan)
+   if args.check_web:
+    web_prepare.preflight(run);say('WEB ÖN KONTROLÜ GEÇTİ. Ayar değişmedi. Ana panelden bakımı başlatıp geri sayımı bekleyin; ardından --prepare-web çalıştırın.');return
+   policy=central(live,'r1')
+   require(policy['phase']=='maintenance' and policy.get('deadlineMs',0)<=int(time.time()*1000),'Caddy yenilemesi bağlantıları yeniden kurabilir. Ana panelden bakımı başlatıp geri sayımı bekleyin.')
+   if args.rollback_web:web_prepare.rollback(say)
+   else:web_prepare.prepare(run,say)
+   return
   if args.recover:
    require(ACTIVE.exists(),'Bekleyen birleşik güncelleme yaması yok');j=read(ACTIVE)
    recover(live,j)

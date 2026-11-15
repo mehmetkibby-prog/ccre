@@ -88,3 +88,8 @@ notu bu kurucuya uygulanmaz. R114 burada canlıya kurulmadı.
 Yeni devir `r109-inceleme/R115_DEVIR.md`; R115 kurucusu tam R114 kaynaklıdır.
 `shared_partition_actor_changed` hatası eski yerel katılımcıyla yeniden üretildi
 ve iki realm için kapsam hesabı düzeltildi. Eski ZIP kimliklerini değiştirmeyin.
+
+R120 v2: güncel kurucu R120_2D_DEPOT2; üstteki v1 notu tarihseldir. Oyun
+dosyaları aynıdır. Cloudflare Full/otomatik ve Caddy otomatik HTTPS ekranla
+doğrulandı; bakımda --prepare-web yeni hostname sertifikasını hazırlayacak.
+29 hedefli test geçti; canlı kurulum ve uçtan uca kabul bekliyor.

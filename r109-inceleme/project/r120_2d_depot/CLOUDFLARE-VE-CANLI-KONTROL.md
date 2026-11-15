@@ -6,34 +6,39 @@
 - Bu ortamda Cloudflare oturumu/API yetkisi veya VDS SSH erişimi yok.
 - Yeni adrese bağlantı, çalışma ortamının HTTP CONNECT aracında 403 ile engellendi.
   Bu, origin'in HTTP yanıtı veya sitenin çalışmadığına dair kanıt değildir.
-- Mevcut SSL modu, etkin kurallar ve sertifika kapsamı henüz canlıdan okunmadı.
+- Kullanıcı ekranında SSL modu **Full**, otomatik mod açık; sonraki tarama Dec 8.
+- Canlı Caddy dosyası/çalışan ayar eşit. Apex sertifikası otomatik, adı
+  coreoflife.net ve bitişi 25 Aralık 2026. 2d için mevcut TLS el sıkışması başarısız.
+- Etkin Cloudflare yönlendirme/Worker/cache/SaaS kurallarının envanteri bekliyor.
 - Mevcut apex ana sayfası temiz tarayıcıda HTTP 200 verdi; service worker kaydı
   ve tarayıcı hatası görülmedi. Bu kontrol eski kullanıcı profillerini kapsamaz.
 - Apex/www DNS kesimi kullanıcıya aittir. Bu paket DNS API çağrısı yapmaz.
 
 ## 1. VDS / sertifika
 
-`tools/onsite-audit.py` yalnız mevcut Caddy host/yol kurallarını, hizmetlerin
-Origin değerlerini ve sertifika DNS adlarını okur. Anahtar içeriğini yazdırmaz.
-Çıktıda 2d.coreoflife.net veya *.coreoflife.net kapsayan güncel sertifika aranır.
+`tools/tls-short-audit.py` sonucu Caddy'nin **varsayılan otomatik HTTPS**
+kullandığını doğruladı. `certificates: []` sadece elle yüklenen sertifikaların
+olmadığını gösterir; sertifika yok demek değildir. 2d hostu henüz tanımlı değil.
 
-Eksikse Cloudflare → SSL/TLS → Origin Server → Create certificate:
-Hostnames listesinde `*.coreoflife.net` ve `coreoflife.net` bulunmalı. Sertifika
-ve private key yalnız 2D VDS'inde saklanmalı, private key 0600 olmalı. Caddy'nin
-`apps.tls.certificates.load_files` listesine yeni certificate/key çifti eklenir.
-Mevcut sertifikalar silinmez. Caddy JSON kopyası üzerinde validate yapılır;
-canlıya yükleme mevcut yapılandırma kontrolünden sonra yapılır. Audit çıktısı
-olmadan var olan sertifika yolunu tahmin eden komut çalıştırılmamalıdır.
+V2 kurucudaki `--check-web` salt okunurdur. Bakım sırasında `--prepare-web`
+eski apex kurallarını koruyarak 2d eşlerini ekler. Caddy mevcut sertifika
+sağlayıcısıyla yeni hostname sertifikasını otomatik alır. Elle sertifika/key
+listesi eklenmez, ACME/Cloudflare TLS doğrulaması kapatılmaz. Hazırlık hem
+localhost origin'i hostname/CA doğrulamasıyla hem Cloudflare ana sayfasını
+HTTPS ile kontrol eder; hata halinde eski Caddy ayarına döner.
 
-Kurucu bu sertifikayı ve 2d DNS çözümlemesini hizmetleri durdurmadan kontrol eder.
-Caddy mevcut apex rotalarını koruyarak yalnız 2d eşlerini ekler. Nginx olmadığı
-bu kurulumda `server_name` karşılığı Caddy host eşleştiricisidir.
+Kontrol bu çalışma ortamında gerçek Caddy + izole yerel CA ile yapıldı;
+canlı ACME sertifikası ancak kullanıcı VDS'te hazırlığı çalıştırınca doğrulanır.
+Caddy ayar yüklemesi WebSocket yeniden bağlanması yaratabileceğinden aynı bakım
+aralığında yapılır. `server_name` karşılığı Caddy host eşleştiricisidir.
 
 ## 2. SSL/TLS modu ve yalnız 3D hostlarına Full
 
-Önce Cloudflare → coreoflife.net → SSL/TLS → Overview bölümündeki etkin modu okuyun.
-Bölge genelini değiştirmeyin. Mod Full (strict) ise, 3D sertifikası strict desteklemediği
-sürece aşağıdaki dar kural 3D DNS kesiminden önce gerekir:
+Etkin mod ekranla **Full** olarak doğrulandı; şu an Full (strict) istisnası
+zorunlu değil. Otomatik mod açık olduğu için ileride seçilen mod değişebilir.
+3D'nin Full gereksinimini yalnız apex/www için sabitlemek istenirse aşağıdaki
+dar kural kullanılabilir. Bölge genelindeki modu değiştirmeyin. Bu paket
+Cloudflare kuralı oluşturmaz; mevcut kural envanteri önce incelenmelidir:
 
 1. Rules → Configuration Rules → Create rule.
 2. Ad: `3D apex TLS Full`.
@@ -45,7 +50,7 @@ sürece aşağıdaki dar kural 3D DNS kesiminden önce gerekir:
    bu dar kuralın iki host için etkili olduğunu Cloudflare Trace ile doğrulayın.
 
 `2d`, accounts, r1, r2, realtime, rt1, rt2 ve rt-r2 bu ifadeye girmez; bölgedeki
-Full (strict) güvenliği onlar için korunur. Panelinizde SSL ayarı sunulmuyorsa
+mevcut TLS ayarı onlar için korunur. Panelinizde SSL ayarı sunulmuyorsa
 bölgeyi düşürmeyin; ekran/plan desteği incelenerek hosta özgü seçenek belirlenmeli.
 
 ## 3. Kural envanteri

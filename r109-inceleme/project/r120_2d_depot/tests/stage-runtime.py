@@ -16,6 +16,6 @@ try:
    if not p.exists():p.symlink_to(native/name,target_is_directory=True)
   (out/runtime/'package.json').write_text('{"type":"module"}')
   (out/runtime/'dist-vds/server/__vite_rsc_assets_manifest.js').write_text('export default {serverResources:{},clientReferenceDeps:{}};')
- record={'release':str(out),'base':'Corrected immutable R118 installed, then exact R120 ZIP applied by its own installer','package':json.loads((ROOT/'evidence/package.json').read_text()),'installedVersion':'R120_2D_DEPOT1','targetCore':j['identity']['targetCore'],'overlay':[{'path':r['path'],'sha256':r['after']} for r in j['files']]}
+ record={'release':str(out),'base':'Corrected immutable R118 installed, then exact R120 ZIP applied by its own installer','package':json.loads((ROOT/'evidence/package.json').read_text()),'installedVersion':'R120_2D_DEPOT2','targetCore':j['identity']['targetCore'],'overlay':[{'path':r['path'],'sha256':r['after']} for r in j['files']]}
  (ROOT/'evidence/runtime-stage.json').write_text(json.dumps(record,indent=2)+'\n');print(out)
 finally:f.close()
