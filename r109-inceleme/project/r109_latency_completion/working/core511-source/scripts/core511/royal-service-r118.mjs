@@ -9,8 +9,13 @@ const canonical=value=>JSON.stringify(value,(_k,v)=>v&&typeof v==='object'&&!Arr
 const digest=value=>createHash('sha256').update(canonical(value)).digest('hex');
 const ownMaterial=id=>id==='material:emerald_dust'||id==='material:royal_crown';
 export function royalItemStampR118(item){return digest(item);}
-export function royalPowerR118(item){
- const upgrade=enhancementBonus491(item.kind,enhancementLevel491(item)),base=item.power-upgrade;
+export function royalPowerR118(item,forgeBefore=null){
+ // The historical Sonsuz operation scaled the entire power, including the
+ // then-current fixed +level bonus. Preserve that legacy gain, but do not
+ // scale it again by 8%. This makes royal/sonsuz order equivalent while
+ // keeping both the stored upgrade level and its native fixed bonus.
+ const forgeUpgrade=forgeBefore?.kind===item.kind?enhancementBonus491(item.kind,enhancementLevel491(forgeBefore)):0;
+ const upgrade=enhancementBonus491(item.kind,enhancementLevel491(item))+forgeUpgrade*0.2,base=item.power-upgrade;
  if(!Number.isFinite(base)||base<0||base>10000000)fail('Eşyanın gücü doğrulanamadı.','royal_item_power_r118',409);
  return Math.round((base*(1+ROYAL_POWER_BONUS_R118/100)+upgrade)*100)/100;
 }
@@ -55,15 +60,17 @@ export class RoyalServiceR118{
   if(input.itemStamp!==royalItemStampR118(item))fail('Eşya değişti. Listeyi yenileyip yeniden seç.','royal_item_changed_r118',409);
   return item;
  }
- itemView(item,knownInfinite){
-  const infinite=knownInfinite??!!this.q('SELECT 1 FROM content_forge_r102 WHERE item_id=?').get(item.id);
+ itemView(item,knownForge){
+  const forge=knownForge===undefined?this.q('SELECT before_json FROM content_forge_r102 WHERE item_id=?').get(item.id):knownForge;
+  let forgeBefore=null;if(forge){try{forgeBefore=JSON.parse(forge.before_json);}catch{fail('Sonsuz eşya kaydı doğrulanamadı.','royal_forge_history_r118',409);}}
+  const infinite=!!forge;
   const prefix=/^(\+[0-5]\s+)/u.exec(item.item_name)?.[1]??'';
-  return {id:item.id,kind:item.kind,role:item.role,name:item.item_name,power:item.power,royalPower:royalPowerR118(item),royalName:prefix+(infinite?'Sonsuz ':'')+royalNameR118(item.kind,item.role),enhancedLevel:enhancementLevel491(item),infinite,itemStamp:royalItemStampR118(item)};
+  return {id:item.id,kind:item.kind,role:item.role,name:item.item_name,power:item.power,royalPower:royalPowerR118(item,forgeBefore),royalName:prefix+(infinite?'Sonsuz ':'')+royalNameR118(item.kind,item.role),enhancedLevel:enhancementLevel491(item),infinite,itemStamp:royalItemStampR118(item)};
  }
  status(id){
   const p=this.player(id),{config,revision}=this.settings();
-  const forged=new Set(this.q("SELECT f.item_id FROM player_items i JOIN content_forge_r102 f ON f.item_id=i.id WHERE i.player_id=? AND i.rarity='emerald' AND i.equipped=0 AND i.sale_locked499=0 AND i.expires_at_ms=0").all(id).map(r=>r.item_id));
-  const items=this.q("SELECT * FROM player_items WHERE player_id=? AND rarity='emerald' AND equipped=0 AND sale_locked499=0 AND expires_at_ms=0 AND kind IN ('weapon','armor','helmet','shoes','necklace') ORDER BY created_at,id LIMIT 500").all(id).filter(i=>this.eligible(i)).map(i=>this.itemView(i,forged.has(i.id)));
+  const forged=new Map(this.q("SELECT f.item_id,f.before_json FROM player_items i JOIN content_forge_r102 f ON f.item_id=i.id WHERE i.player_id=? AND i.rarity='emerald' AND i.equipped=0 AND i.sale_locked499=0 AND i.expires_at_ms=0").all(id).map(r=>[r.item_id,r]));
+  const items=this.q("SELECT * FROM player_items WHERE player_id=? AND rarity='emerald' AND equipped=0 AND sale_locked499=0 AND expires_at_ms=0 AND kind IN ('weapon','armor','helmet','shoes','necklace') ORDER BY created_at,id LIMIT 500").all(id).filter(i=>this.eligible(i)).map(i=>this.itemView(i,forged.get(i.id)??null));
   return {revision,champion:p.champion_level_r102>=1,enabled:config.enabled,bonusPercent:ROYAL_POWER_BONUS_R118,location:ROYAL_LOCATIONS_R118,materials:{emerald_dust:this.balance(id,'emerald_dust'),royal_crown:this.balance(id,'royal_crown')},items,recipes:Object.fromEntries(ROYAL_KINDS_R118.map(kind=>[kind,{costs:this.costs(id,config.recipes[kind].costs)}]))};
  }
  transform(id,input){

@@ -1,0 +1,52 @@
+TAP version 13
+# pearl_reset {"applied":true,"appliedAtMs":1794751166199,"backupName":"before-pearl-reset-1794751166199-efbc8486-828d-43a6-ba42-94345e752d88.sqlite"}
+# Subtest: royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+ok 1 - royal conversion and salvage work against full native schema, existing triggers and native atomic commit
+  ---
+  duration_ms: 3874.240742
+  type: 'test'
+  ...
+# pearl_reset {"applied":true,"appliedAtMs":1794751170065,"backupName":"before-pearl-reset-1794751170065-1ede0531-edef-4569-b3f4-4526504afaa6.sqlite"}
+# Subtest: native Sonsuz and Royal transformations commute for every +level while preserving fixed enhancement bonuses
+not ok 2 - native Sonsuz and Royal transformations commute for every +level while preserving fixed enhancement bonuses
+  ---
+  duration_ms: 3783.055055
+  type: 'test'
+  location: '/workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-fixture.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /henüz dönüştürülmemiş/. Input:
+    
+    'Error: Kuşanılmamış, kilitsiz ve henüz Sonsuz yapılmamış Kadim Zümrüt veya Kraliyet eşyası seç.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+  error: 'Kuşanılmamış, kilitsiz ve henüz Sonsuz yapılmamış Kadim Zümrüt veya Kraliyet eşyası seç.'
+  stack: |-
+    contentErrorR102 (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-model-r102.mjs:12:95)
+    fail (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-service-r102.mjs:8:27)
+    ContentServiceR102.forge (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-service-r102.mjs:92:258)
+    ContentServiceR102.command (file:///workspace/coreoflife-r111/r109-inceleme/project/r109_latency_completion/working/core511-source/scripts/core511/content-service-r102.mjs:113:62)
+    Object.atomic (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-fixture.test.mjs:39:51)
+    perform (file:///tmp/col-r11-native-fixture-DW6vrM/runtime/vds-server/src/database.mjs:477:50)
+    withPreparedStatements477 (file:///tmp/col-r11-native-fixture-DW6vrM/runtime/vds-server/src/prepared-statements477.mjs:98:20)
+    scoped (file:///tmp/col-r11-native-fixture-DW6vrM/runtime/vds-server/src/database.mjs:479:28)
+    LocalDatabase.drainWrites (file:///tmp/col-r11-native-fixture-DW6vrM/runtime/vds-server/src/database.mjs:480:93)
+    file:///tmp/col-r11-native-fixture-DW6vrM/runtime/vds-server/src/database.mjs:431:78
+  operator: 'rejects'
+  stack: |-
+    async TestContext.<anonymous> (file:///workspace/coreoflife-r111/r109-inceleme/project/r118_royal_champions/tests/royal-native-fixture.test.mjs:46:3)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8689.861825
