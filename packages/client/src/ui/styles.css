@@ -1147,3 +1147,10 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 }
 .adm-give { margin: 8px 0; padding: 8px 10px; border-radius: 10px; background: rgba(255, 255, 255, .04); box-shadow: inset 0 0 0 1px rgba(226, 178, 80, .25); }
 .adm-give .adm-sel { max-width: 100%; }
+
+/* Ana menü: Core of Life 2D'ye geçiş (küçük, göze batmayan) */
+.classic-btn { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 12px 6px 6px; border-radius: 99px; background: rgba(10, 6, 3, .55); color: #f3e8d4; font-size: 13px; text-decoration: none; text-shadow: none; box-shadow: inset 0 0 0 1px rgba(226, 178, 80, .3); transition: background .2s, box-shadow .2s; }
+.classic-btn:hover { background: rgba(40, 26, 10, .75); box-shadow: inset 0 0 0 1px rgba(226, 178, 80, .7); }
+.classic-btn .cb-ic { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(160deg, #e9b65a, #9a6a22); color: #2a1a08; font-size: 10px; font-weight: 800; letter-spacing: .5px; }
+.classic-btn.small { margin: 0 6px; padding: 3px 10px 3px 3px; font-size: 12px; }
+.classic-btn.small .cb-ic { width: 20px; height: 20px; font-size: 9px; }

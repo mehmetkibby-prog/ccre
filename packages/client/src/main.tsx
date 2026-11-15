@@ -15,7 +15,7 @@ import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
-import { AnnouncementBar } from './admin/AdminPanel.tsx';
+import { AnnouncementBar, ClassicButton } from './admin/AdminPanel.tsx';
 import { AdminPage, isAdminRoute } from './admin/AdminPage.tsx';
 // Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
 if (OFFLINE) import('./admin/config.ts').then((m) => m.startConfigSync());
@@ -89,6 +89,7 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
           <div className="brand-online"><i />ONLINE<i /></div>
           <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen.</p>
           <RealmLine />
+          <ClassicButton />
         </div>
         <form className="auth-card" onSubmit={submit}>
           <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
@@ -443,7 +444,7 @@ function CharScreen({ me, onPlay, onReload, onLogout, error }: { me: Me; onPlay:
     <div className="screen">
       <div className="frame charsel">
         <div>
-          <div className="row"><div className="title" style={{ fontSize: 22 }}>Karakterler</div><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{me.account.username}</span><button className="btn small ghost" onClick={onLogout}>Çıkış</button></div>
+          <div className="row"><div className="title" style={{ fontSize: 22 }}>Karakterler</div><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{me.account.username}</span><ClassicButton small /><button className="btn small ghost" onClick={onLogout}>Çıkış</button></div>
           {error && <div className="err">{error}</div>}
           <div className="charlist" style={{ marginTop: 12 }}>
             {me.characters.map((c) => (

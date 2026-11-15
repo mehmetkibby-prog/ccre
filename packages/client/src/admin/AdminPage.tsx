@@ -255,6 +255,13 @@ function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | 
       </section>
 
       <section className="adm-card">
+        <h3>2D oyun düğmesi</h3>
+        <p className="muted adm-hint">Ana menüdeki küçük "Core of Life 2D" düğmesinin gideceği adres (https:// ile başlamalı). Boş bırakılırsa düğme gizlenir.</p>
+        <input className="adm-search" maxLength={200} disabled={!t} value={t?.classicUrl ?? ''} placeholder="https://2d.coreoflife.net" onChange={(e) => t && setT({ ...t, classicUrl: e.target.value })} />
+        <div className="row" style={{ marginTop: 8 }}><div className="spacer" /><button className="btn small primary" disabled={!dirty} onClick={save}>Kaydet</button></div>
+      </section>
+
+      <section className="adm-card">
         <h3>Kanallar</h3>
         <div className="adm-chs">
           {s?.channels.map((c) => (

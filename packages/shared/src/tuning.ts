@@ -48,6 +48,8 @@ export interface GameTuning {
   /** saldırı tuşu: hedef ölünce bu süre (sn) boyunca yeni canavara yürünmez, yalnız menzildekine vurulur */
   retargetDelay: number;
   announcement: string;
+  /** Ana menüdeki küçük "2D oyun" düğmesinin adresi (boşsa düğme gizlenir). */
+  classicUrl: string;
   monsters: Record<string, MonsterTune>;
   spawns: Record<string, SpawnTune>;
   enchants: EnchantTune;
@@ -72,11 +74,11 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, retargetDelay: 1.2, autoAttackMin: 120, announcement: '',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, retargetDelay: 1.2, autoAttackMin: 120, announcement: '', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1],
@@ -94,6 +96,8 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   const dn = (r.density && typeof r.density === 'object' ? r.density : {}) as Record<string, unknown>;
   for (const [k, v] of Object.entries(dn)) if (/^[a-z_]{1,24}$/.test(k)) out.density[k] = clamp(v, DENSITY_LIMITS, 1);
   out.announcement = typeof r.announcement === 'string' ? r.announcement.slice(0, 200) : '';
+  // yalnız https:// ya da site içi yol (javascript: vb. engellenir)
+  out.classicUrl = typeof r.classicUrl === 'string' && /^(https:\/\/[^\s"'<>]+|\/[^\s"'<>]*)?$/.test(r.classicUrl.trim()) ? r.classicUrl.trim().slice(0, 200) : DEFAULT_TUNING.classicUrl;
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

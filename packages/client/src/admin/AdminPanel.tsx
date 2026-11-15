@@ -546,6 +546,14 @@ export function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; 
 }
 
 /** Oyunun üstünde duyuru şeridi (boşsa görünmez). */
+/** Ana menüde küçük "2D oyun" düğmesi: Core of Life 2D'ye geçiş (adres yönetim panelinden). */
+export function ClassicButton({ small }: { small?: boolean }) {
+  const [url, setUrl] = useState(TUNING.classicUrl);
+  useEffect(() => onConfig((t) => setUrl(t.classicUrl)), []);
+  if (!url) return null;
+  return <a className={'classic-btn' + (small ? ' small' : '')} href={url} title="Core of Life 2D oyununa geç"><span className="cb-ic">2D</span><span>Core of Life 2D</span></a>;
+}
+
 export function AnnouncementBar() {
   const [text, setText] = useState(TUNING.announcement);
   useEffect(() => onConfig((t) => setText(t.announcement)), []);

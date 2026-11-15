@@ -60,5 +60,40 @@ case "${1:-}" in
     ;;
   yedek) yedek ;;
   kayit) journalctl -u coreoflife -n "${2:-100}" --no-pager ;;
-  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]}"; exit 1 ;;
+  alan)
+    # Oyunu yeni bir alan adına taşır (ör. coreoflife.net). Eski adres (tugraonline.net) yeni adrese yönlenir.
+    yeni="${2:-}"
+    [[ "$yeni" =~ ^[a-z0-9-]+(\.[a-z0-9-]+)+$ ]] || { echo "kullanım: tugra alan coreoflife.net"; exit 1; }
+    site=/etc/nginx/sites-available/coreoflife; SSLD=/etc/ssl/cloudflare
+    eski=$(grep -oP 'server_name \K[a-z0-9.-]+' "$site" | grep -v '^www\.' | grep -vx "$yeni" | head -1 || true)
+    pem=$SSLD/$yeni.pem; key=$SSLD/$yeni.key
+    if [ ! -s "$pem" ] || [ ! -s "$key" ]; then
+      # Cloudflare'in "Full" SSL modu için sunucuya özel sertifika (tarayıcı Cloudflare'in sertifikasını görür)
+      openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -subj "/CN=$yeni" -addext "subjectAltName=DNS:$yeni,DNS:www.$yeni" -keyout "$key" -out "$pem" 2>/dev/null
+      chmod 600 "$key"; echo "sunucu sertifikası üretildi: $pem (Cloudflare'de $yeni için SSL/TLS modu 'Full' olmalı)"
+    fi
+    cp "$site" "$site.yedek-$(date +%F-%H%M%S)"
+    {
+      echo "# tugra alan $yeni ile üretildi ($(date +%F))"
+      echo "server { listen 80; listen [::]:80; server_name $yeni www.$yeni; return 301 https://$yeni\$request_uri; }"
+      echo "server {"
+      echo "    listen 443 ssl http2; listen [::]:443 ssl http2;"
+      echo "    server_name $yeni www.$yeni;"
+      echo "    ssl_certificate $pem; ssl_certificate_key $key;"
+      echo "    client_max_body_size 64k;"
+      echo "    if (\$host = www.$yeni) { return 301 https://$yeni\$request_uri; }"
+      echo "    location /ws { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Upgrade \$http_upgrade; proxy_set_header Connection \"upgrade\"; proxy_set_header X-Real-IP \$remote_addr; proxy_read_timeout 3600s; proxy_buffering off; tcp_nodelay on; }"
+      echo "    location / { proxy_pass http://127.0.0.1:8080; proxy_http_version 1.1; proxy_set_header Host \$host; proxy_set_header X-Real-IP \$remote_addr; gzip on; gzip_types text/css application/javascript application/json; }"
+      echo "}"
+      if [ -n "$eski" ] && [ -s "$SSLD/origin.pem" ]; then
+        echo "# eski adres: her şey yeni adrese yönlenir (yer imleri ve ana ekrana eklenenler kaybolmaz)"
+        echo "server { listen 80; listen [::]:80; server_name $eski www.$eski; return 301 https://$yeni\$request_uri; }"
+        echo "server { listen 443 ssl http2; listen [::]:443 ssl http2; server_name $eski www.$eski; ssl_certificate $SSLD/origin.pem; ssl_certificate_key $SSLD/origin.key; return 301 https://$yeni\$request_uri; }"
+      fi
+    } > "$site.yeni"
+    mv "$site.yeni" "$site"
+    if nginx -t 2>/dev/null; then systemctl reload nginx; echo "tamam: oyun artık https://$yeni adresinde${eski:+, $eski → $yeni yönleniyor}"
+    else nginx -t; cp "$(ls -1t $site.yedek-* | head -1)" "$site"; systemctl reload nginx; echo "nginx ayarı hatalı, eski ayara dönüldü"; exit 1; fi
+    ;;
+  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI}"; exit 1 ;;
 esac
