@@ -1,0 +1,20 @@
+{
+  "confirmedCandidateIssue": {
+    "action": "royal_transform_r118",
+    "observed": "POST /api/action returned 428 core511_protocol_required in actual game after valid NPC/status/confirmation. No item or materials consumed. UI kept same requestId pending.",
+    "resolution": "Parent added royal_transform_r118, royal_salvage_r118 and travel_champions to existing browser transport command classifier. Real channel transform, salvage and map command passed in the next run."
+  },
+  "fixtureCorrections": [
+    "Initial test selector used a different heading than production; corrected exact selectors.",
+    "NPC test click now targets inside actual NPC bounds, using touch on mobile.",
+    "Full Admin root fixture now uses the production global and admin CSS.",
+    "Two genuine legacy public media assets missing from existing test cache were downloaded read-only and verified as WebP; no placeholder assets.",
+    "Return-travel fixture initially cleared a lock while still standing next to a retaliating monster and got a legitimate state-conflict 409. Test now disengages into clear entrance before normal return travel; production combat guards unchanged.",
+    "Mobile label cache coordinates initially treated detached canvas pixels as screen pixels. Test now follows cached drawImage into the visible canvas and checks the canvas is the true click/touch target.",
+    "Town-menu flow remembers its category. Test explicitly selects Av Bölgeleri before champion travel.",
+    "Realm driver now uses R102_TEST_REALM, since scripts/run.py intentionally overrides direct CORE101_REALM_ID. Reports from mistaken realm dispatch were not counted toward r2.",
+    "One desktop run clicked Haso during the previous Radix dialog exit animation. The harness now waits until the dialog and pointer lock are released and verifies a genuine unobstructed canvas hit. No production NPC/overlay changes were made.",
+    "r2-only legacy /api/admin/launch read initially used a central-account admin identity absent from this external-admin UI fixture and returned 403. Its unchanged launch card now receives an explicit read-only projection of the real isolated launch service. New R118 admin authentication and save routes remain actual and errors are not suppressed."
+  ],
+  "scope": "Production generated game+admin bundles, native HTTP/SQLite/channel processes and real WebSocket socket handoff in isolated database. Authenticated game identity and external admin identity controlled fixture. Admin legacy overview is a SQL projection; new configuration reads/saves use actual admin authorization handler and real settings services. Full admin UI is mounted using its production React renderer, with separate Vinext page hydration bootstrap held pending because server HTML fixture is not an actual SSR response. This is integration/UI validation, not live-VDS or load measurement. Unchanged legacy central-account launch GET is a read-only projection; no central launch authorization/mutation coverage is claimed."
+}

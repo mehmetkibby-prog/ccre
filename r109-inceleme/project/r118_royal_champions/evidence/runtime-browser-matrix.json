@@ -1,0 +1,154 @@
+[
+  {
+    "realm": "r1",
+    "layout": "desktop",
+    "passed": true,
+    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "checks": [
+      {
+        "name": "native champion entry",
+        "area": "bazaar",
+        "channels": 4
+      },
+      {
+        "name": "actual NPC, royal UI, durable transform and costs"
+      },
+      {
+        "name": "actual town menu royal entry opens one clean modal"
+      },
+      {
+        "name": "actual Haso dialog closes, salvage confirms one selected item"
+      },
+      {
+        "name": "real transport champion travel and combat, compiled map renderer"
+      },
+      {
+        "name": "return to normal forest renders normally"
+      },
+      {
+        "name": "actual compiled admin navigation and authenticated native config handlers",
+        "overview": "isolated SQL projection, external admin identity controlled fixture"
+      }
+    ],
+    "errors": [],
+    "missingAssets": [],
+    "nativeFaults": [],
+    "webSocketHandoffs": 1,
+    "durationMs": 67319,
+    "report": "runtime-browser-r1-desktop/report.json"
+  },
+  {
+    "realm": "r1",
+    "layout": "mobile",
+    "passed": true,
+    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "checks": [
+      {
+        "name": "native champion entry",
+        "area": "bazaar",
+        "channels": 4
+      },
+      {
+        "name": "actual NPC, royal UI, durable transform and costs"
+      },
+      {
+        "name": "actual town menu royal entry opens one clean modal"
+      },
+      {
+        "name": "actual Haso dialog closes, salvage confirms one selected item"
+      },
+      {
+        "name": "real transport champion travel and combat, compiled map renderer"
+      },
+      {
+        "name": "return to normal forest renders normally"
+      },
+      {
+        "name": "actual compiled admin navigation and authenticated native config handlers",
+        "overview": "isolated SQL projection, external admin identity controlled fixture"
+      }
+    ],
+    "errors": [],
+    "missingAssets": [],
+    "nativeFaults": [],
+    "webSocketHandoffs": 1,
+    "durationMs": 46505,
+    "report": "runtime-browser-r1-mobile/report.json"
+  },
+  {
+    "realm": "r2",
+    "layout": "desktop",
+    "passed": true,
+    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "checks": [
+      {
+        "name": "native champion entry",
+        "area": "bazaar",
+        "channels": 4
+      },
+      {
+        "name": "actual NPC, royal UI, durable transform and costs"
+      },
+      {
+        "name": "actual town menu royal entry opens one clean modal"
+      },
+      {
+        "name": "actual Haso dialog closes, salvage confirms one selected item"
+      },
+      {
+        "name": "real transport champion travel and combat, compiled map renderer"
+      },
+      {
+        "name": "return to normal forest renders normally"
+      },
+      {
+        "name": "actual compiled admin navigation and authenticated native config handlers",
+        "overview": "isolated SQL projection plus unchanged launch-read projection; external admin identity controlled fixture"
+      }
+    ],
+    "errors": [],
+    "missingAssets": [],
+    "nativeFaults": [],
+    "webSocketHandoffs": 1,
+    "durationMs": 54295,
+    "report": "runtime-browser-r2-desktop/report.json"
+  },
+  {
+    "realm": "r2",
+    "layout": "mobile",
+    "passed": true,
+    "client": "game-client-core511-r118-a3dda0259af155b6.js",
+    "checks": [
+      {
+        "name": "native champion entry",
+        "area": "bazaar",
+        "channels": 4
+      },
+      {
+        "name": "actual NPC, royal UI, durable transform and costs"
+      },
+      {
+        "name": "actual town menu royal entry opens one clean modal"
+      },
+      {
+        "name": "actual Haso dialog closes, salvage confirms one selected item"
+      },
+      {
+        "name": "real transport champion travel and combat, compiled map renderer"
+      },
+      {
+        "name": "return to normal forest renders normally"
+      },
+      {
+        "name": "actual compiled admin navigation and authenticated native config handlers",
+        "overview": "isolated SQL projection plus unchanged launch-read projection; external admin identity controlled fixture"
+      }
+    ],
+    "errors": [],
+    "missingAssets": [],
+    "nativeFaults": [],
+    "webSocketHandoffs": 1,
+    "durationMs": 36849,
+    "report": "runtime-browser-r2-mobile/report.json"
+  }
+]

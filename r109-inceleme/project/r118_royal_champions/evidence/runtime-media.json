@@ -1,0 +1,12 @@
+{
+  "assets/cauldron488-icon.webp": {
+    "source": "https://r1.coreoflife.net/assets/cauldron488-icon.webp",
+    "bytes": 10676,
+    "sha256": "f5a8bdbf8da020d66f82797d12d585bba291715fbaa2ff8e0d426cc645ada83f"
+  },
+  "game/festival-first-light-v286.webp": {
+    "source": "https://r1.coreoflife.net/game/festival-first-light-v286.webp",
+    "bytes": 412068,
+    "sha256": "0e8bd3ff80cb9afa1842f58470771043a81d8d7ba07a17bb7e3ac3de580beb5c"
+  }
+}
