@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: private channel valid hello after6s succeeds within its existing20s bootstrap budget
+ok 1 - private channel valid hello after6s succeeds within its existing20s bootstrap budget
+  ---
+  duration_ms: 6.172627
+  type: 'test'
+  ...
+# Subtest: private bootstrap still expires at20s and never authenticates a late hello
+ok 2 - private bootstrap still expires at20s and never authenticates a late hello
+  ---
+  duration_ms: 1.154659
+  type: 'test'
+  ...
+# Subtest: public default handshake deadline remains5s
+ok 3 - public default handshake deadline remains5s
+  ---
+  duration_ms: 1.284052
+  type: 'test'
+  ...
+# Subtest: private default handshake deadline remains5s
+ok 4 - private default handshake deadline remains5s
+  ---
+  duration_ms: 1.16798
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects an unqualified transport {"privatePipe":false}
+ok 5 - bootstrap override rejects an unqualified transport {"privatePipe":false}
+  ---
+  duration_ms: 1.134528
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects an unqualified transport {"name":"kernel511-world"}
+ok 6 - bootstrap override rejects an unqualified transport {"name":"kernel511-world"}
+  ---
+  duration_ms: 0.868499
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects an unqualified transport {"pid":null}
+ok 7 - bootstrap override rejects an unqualified transport {"pid":null}
+  ---
+  duration_ms: 0.639267
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration 0
+ok 8 - bootstrap override rejects invalid or unbounded duration 0
+  ---
+  duration_ms: 0.764181
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration -1
+ok 9 - bootstrap override rejects invalid or unbounded duration -1
+  ---
+  duration_ms: 0.867228
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration 20001
+ok 10 - bootstrap override rejects invalid or unbounded duration 20001
+  ---
+  duration_ms: 0.775006
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration Infinity
+ok 11 - bootstrap override rejects invalid or unbounded duration Infinity
+  ---
+  duration_ms: 0.495568
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration 1.5
+ok 12 - bootstrap override rejects invalid or unbounded duration 1.5
+  ---
+  duration_ms: 0.517911
+  type: 'test'
+  ...
+# Subtest: bootstrap override rejects invalid or unbounded duration 20000
+ok 13 - bootstrap override rejects invalid or unbounded duration 20000
+  ---
+  duration_ms: 0.523861
+  type: 'test'
+  ...
+# Subtest: longer bootstrap does not accept forged or stale identity {"proof":"forged"}
+ok 14 - longer bootstrap does not accept forged or stale identity {"proof":"forged"}
+  ---
+  duration_ms: 4.12507
+  type: 'test'
+  ...
+# Subtest: longer bootstrap does not accept forged or stale identity {"incarnation":"old-incarnation"}
+ok 15 - longer bootstrap does not accept forged or stale identity {"incarnation":"old-incarnation"}
+  ---
+  duration_ms: 0.543708
+  type: 'test'
+  ...
+# Subtest: longer bootstrap does not accept forged or stale identity {"realm":"wrong-realm"}
+ok 16 - longer bootstrap does not accept forged or stale identity {"realm":"wrong-realm"}
+  ---
+  duration_ms: 0.968213
+  type: 'test'
+  ...
+# Subtest: pre-auth requests stay forbidden and close cancels bootstrap cleanup
+ok 17 - pre-auth requests stay forbidden and close cancels bootstrap cleanup
+  ---
+  duration_ms: 0.861888
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 456.963536

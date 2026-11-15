@@ -200,9 +200,13 @@ export class StreamControl {
  receive(frame){demand(frame.type==='control_result'&&typeof frame.id==='string','invalid_control_result');const row=this.pending.get(frame.id);if(!row)return;const error=frame.ok===true?null:receiveFreezeFailureR85(receiveGlobalFreezeAbort(receiveActorIsolation(kernelError(typeof frame.code==='string'?frame.code:'ipc_control_failed'),frame.actorIsolation,row.frame.method,row.frame.payload),frame.globalFreezeAbort,row.frame.method,row.frame.payload),frame.freezeFailureR85,row.frame.method,row.frame.payload);this.pending.delete(frame.id);if(row.partsR116)this.partBytesR116-=row.partsR116.buffer.length;clearTimeout(row.timer);frame.ok===true?row.resolve(frame.value):row.reject(markIpcRequestError(error,row.frame.method,row.frame.payload));}
  close(){this.closed=true;this.send=null;for(const row of this.pending.values()){clearTimeout(row.timer);row.reject(markIpcRequestError(kernelError('ipc_control_outcome_unknown'),row.frame.method,row.frame.payload));}this.pending.clear();this.partBytesR116=0;this.sendingPartsR116=null;}
 }
-export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128,maxInflightFor=null,controlFor=null,onClose=()=>{},onSerializedR113=null}) {
+export function acceptStreamSocket(socket,{authenticate,dispatch,maxInflight=128,maxInflightFor=null,controlFor=null,onClose=()=>{},onSerializedR113=null,privateBootstrapMs=null}) {
+  // Only the supervisor's OS child pipe may use its existing bounded startup
+  // budget. It cannot send hello until the initial world and mechanics load.
+  // Public/default connections retain 5s; every hello still authenticates.
+  demand(privateBootstrapMs===null||socket instanceof ProcessStream&&socket.name==='kernel511'&&Number.isSafeInteger(socket.peer?.pid)&&socket.peer.pid>0&&Number.isSafeInteger(privateBootstrapMs)&&privateBootstrapMs>0&&privateBootstrapMs<=20000,'ipc_private_bootstrap_scope');
   let peer=null,pending=0,closed=false,authenticating=false;const readParts=ipcSafeStream?new ReadResultParts():null;
-  const deadline=setTimeout(()=>socket.destroy(),5000);
+  const deadline=setTimeout(()=>socket.destroy(),privateBootstrapMs??5000);
   let control=null;
   socket.on('error',()=>{});socket.on('close',()=>{closed=true;clearTimeout(deadline);readParts?.clear();control?.detach(send);onClose(peer);});
   const send=(frame,encoded)=>{if(!closed){const bytes=encoded??framed(frame);if(socket.writableLength+bytes.length>(ipcSafeStream&&peer&&socket instanceof ProcessStream&&socket.name==='kernel511'?64:4)*MAX_FRAME){socket.destroy();return;}socket.write(bytes);}};

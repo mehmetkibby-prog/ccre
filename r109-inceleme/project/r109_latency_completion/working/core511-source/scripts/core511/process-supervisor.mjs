@@ -83,7 +83,7 @@ export class ChannelProcessSupervisor {
     // retire their waiter/fence first. Existing ended() owns all recovery.
     signalOwner(this.core,row,'SIGKILL',recoveryCause(this.core,{code:row.failure,channel,requestMethod:row.failureMethod},'channel_ipc_close'));
    });
-   this.core.accept(server);
+   this.core.accept(server,{privateBootstrapMs:this.bootTimeoutMs});
    const config={peer,proof:credential.proof,initial,origins:[...this.core.origins],publicKey:createPublicKey(this.core.privateKey).export({type:'spki',format:'pem'}),mechanicsModule:this.mechanicsModule,webSocketModule:this.webSocketModule,listen:this.listeners?.[channel]??null,hostLock:this.core.host?.childDescriptor()??null};
    await new Promise((resolve,reject)=>child.send({type:'kernel511-init',config},error=>error?reject(error):resolve()));
    await timeout(readiness,this.bootTimeoutMs,'channel_boot_timeout');

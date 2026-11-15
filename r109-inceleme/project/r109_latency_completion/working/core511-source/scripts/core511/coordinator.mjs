@@ -134,7 +134,7 @@ export class CoreCoordinator {
  }
  async boot(peer,{revision=null}={}){const row=this.process(peer);revision??=(row.configRevision??-1)+1;demand(Number.isSafeInteger(revision)&&revision>(row.configRevision??-1),'coordinator_config_revision');row.configRevision=revision;const initial=(await this.reader.query('kernel511_channel_boot',[peer.channel,peer.incarnation,revision,this.clock()])).rows;initial.sharedWorld=this.sharedWorld?.bootDescriptor()??null;initial.maintenance=this.realm?.maintenance?.policy??null;if(this.afkCheck)initial.afkCheck=await this.afkCheck.boot();initial.motionStream=await this.motionSettings.boot();return initial;}
  async attachWorldState(peer){const row=this.process(peer);if(!this.writer.worldState)return;row.worldDelivery=new WorldStateDelivery({current:()=>this.writer.worldState.current,request:point=>{this.process(peer);return row.control.request('world_state',point);}});await row.worldDelivery.flush();await this.marketState?.attach(row);}
- accept(socket){acceptStreamSocket(socket,{authenticate:hello=>{
+ accept(socket,{privateBootstrapMs=null}={}){acceptStreamSocket(socket,{privateBootstrapMs,authenticate:hello=>{
   const row=this.processes.get(hello.channel);if(!row?.online||hello.realm!==this.realmId||hello.incarnation!==row.peer.incarnation||typeof hello.proof!=='string')return null;
   const a=Buffer.from(row.proof),b=Buffer.from(hello.proof);return a.length===b.length&&timingSafeEqual(a,b)?row.peer:null;
  },maxInflightFor:peer=>128*residentCapacityR59(peer.channel)/25,controlFor:peer=>this.process(peer).control,dispatch:(...args)=>this.dispatch(...args),onSerializedR113:(peer,id,text)=>this.process(peer).replay.retainSerializedR113(id,text)});}
