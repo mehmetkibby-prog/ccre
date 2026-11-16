@@ -473,11 +473,23 @@ function BigMap({ game }: { game: Game }) {
   return <Panel title={`Harita — ${MAPS[map]?.name}`} width={700}><canvas ref={ref} style={{ display: 'block', margin: '0 auto', borderRadius: 6, border: '1px solid #3a3322' }} /></Panel>;
 }
 
+/** Ayarlar: bağlantı gecikmesi ve kare hızı (oyun ekranında gösterilmez). */
+function NetStats() {
+  const ping = useStore((x) => x.ping), fps = useStore((x) => x.fps);
+  return (
+    <div className="netstats">
+      <div><small>Gecikme</small><b style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</b></div>
+      <div><small>Kare hızı</small><b>{fps} fps</b></div>
+    </div>
+  );
+}
+
 function Settings() {
   const s = useStore((x) => x.settings);
   const set = (p: Partial<typeof s>) => store.set({ settings: { ...s, ...p } });
   return (
     <Panel title="Ayarlar" width={480}>
+      <NetStats />
       {matchMedia('(pointer: coarse)').matches && <div className={'field cool-field' + (s.cool ? ' on' : '')}>
         <label>Isınma modu</label>
         <button className={'btn ' + (s.cool ? 'primary' : '')} style={{ width: '100%' }} onClick={() => set({ cool: !s.cool })}>{s.cool ? '❄ Isınma modu AÇIK' : 'Isınma modunu aç'}</button>

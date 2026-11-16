@@ -6,11 +6,12 @@ import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, R
 import { Game } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
-import { SkillIcon, MenuIcon, ClassIcon } from './icons.tsx';
+import { SkillIcon, MenuIcon } from './icons.tsx';
 import { Panels } from './panels.tsx';
 import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
+import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
 
 export let currentGame: Game | null = null;
 
@@ -185,9 +186,6 @@ function PlayerPlate() {
   const self = useStore((s) => s.self);
   const char = useStore((s) => s.char);
   const hp = useStore((s) => s.hp), max = useStore((s) => s.maxHp);
-  const ping = useStore((s) => s.ping);
-  const fps = useStore((s) => s.fps);
-  const online = useStore((s) => s.online);
   const ch = useStore((s) => s.channel);
   if (!self || !char) return null;
   const hk = Math.max(0, Math.min(1, hp / Math.max(1, max)));
@@ -202,7 +200,7 @@ function PlayerPlate() {
           <circle cx="46" cy="46" r="39" stroke="rgba(0,0,0,.65)" strokeWidth="6" fill="rgba(16,10,6,.88)" />
           <circle cx="46" cy="46" r="39" stroke={hk < 0.3 ? '#ff2a4a' : '#ff4767'} strokeWidth="6" fill="none" strokeDasharray={C1} strokeDashoffset={C1 * (1 - hk)} style={{ transition: 'stroke-dashoffset .15s', filter: 'drop-shadow(0 0 4px #ff4767)' }} />
         </svg>
-        <div className="core"><ClassIcon cls={char.cls} size={34} /></div>
+        <div className="core"><img className="portrait" src={`/portraits/${char.cls}.jpg`} alt="" draggable={false} /></div>
         <div className="lvl">{self.level}</div>
       </div>
       <div className="frame pinfo">
@@ -214,7 +212,7 @@ function PlayerPlate() {
           <span className="e" title="Yaşam Özü (Dünya Sağlığı'na bağışlanır)"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')}</span>
           <span className="c" title="Çekirdek Puanı"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')}</span>
         </div>
-        <div className="netinfo"><span>K{ch}</span><span style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</span><span>{fps} fps</span><span>{online} çevrimiçi</span></div>
+        <div className="netinfo"><span>Kanal {ch}</span></div>
         <ModelBadge />
       </div>
     </div>
@@ -458,7 +456,7 @@ function CameraControls({ game }: { game: Game }) {
       <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
       <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(2.3, r.camZoom * 1.015); })}>+</button>
       <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(0.6, r.camZoom / 1.015); })}>−</button>
-      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = 1; r.camPitch = 0.62; }}>⌂</button>
+      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = CAM_ZOOM_DEFAULT; r.camPitch = 0.62; }}>⌂</button>
     </div>
   );
 }
