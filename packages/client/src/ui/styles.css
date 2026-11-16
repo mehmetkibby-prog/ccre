@@ -1536,3 +1536,67 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .gd-card.war { box-shadow: inset 0 0 0 1px rgba(255, 80, 100, .6); }
 @media (max-width: 560px) { .gd-emb { grid-template-columns: repeat(6, 1fr); } .gd-hero { flex-wrap: wrap; } }
 @media (pointer: coarse) and (max-height: 500px) { .gw-bar { top: 44px; font-size: 11px; } }
+
+/* ═══════════ Deneyim barı (yeni): altta ortada parlak kapsül ═══════════ */
+.xpline { display: none; }
+.xpbar { position: absolute; left: 50%; bottom: 3px; transform: translateX(-50%); width: min(600px, 52vw); display: flex; align-items: center; gap: 6px; z-index: 3; pointer-events: auto; }
+.xp-lv { flex: none; min-width: 22px; height: 18px; padding: 0 5px; display: grid; place-items: center; border-radius: 6px; font: 800 11px var(--f-ui); color: #2a1406; background: linear-gradient(180deg, #ffe08a, #e09a2a); box-shadow: 0 0 0 1px #7a4a12, 0 2px 6px rgba(0, 0, 0, .5); }
+.xp-rail { position: relative; flex: 1; height: 11px; border-radius: 99px; background: linear-gradient(180deg, rgba(8, 5, 3, .85), rgba(30, 18, 8, .85)); box-shadow: inset 0 0 0 1px rgba(255, 200, 110, .35), 0 2px 8px rgba(0, 0, 0, .45); overflow: hidden; }
+.xp-rail > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(180deg, #ffd06a, #ff9a2a 55%, #c8600e); box-shadow: 0 0 10px rgba(255, 150, 40, .7); transition: width .4s; overflow: hidden; }
+.xp-rail > i::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .45) 50%, transparent 70%); background-size: 220% 100%; animation: xp-shine 3.2s linear infinite; }
+.xp-rail > b { position: absolute; top: 2px; bottom: 2px; width: 1px; background: rgba(0, 0, 0, .35); }
+.xp-t { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; white-space: pre; font: 800 8.5px var(--f-ui); letter-spacing: .4px; color: #fff4dc; text-shadow: 0 1px 2px #000, 0 0 3px #000; white-space: nowrap; font-variant-numeric: tabular-nums; }
+@keyframes xp-shine { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+.bottom { bottom: 22px; }
+
+/* ═══════════ PC: Nesne Market ve üst düğmeler bir tık küçük ═══════════ */
+@media (hover: hover) and (pointer: fine) {
+  .tr-btns { gap: 6px; }
+  .mall-btn, .boss-btn { width: 54px; padding: 5px 0 4px; font-size: 9.5px; border-radius: 13px; }
+  .ess-btn { width: 50px; padding: 4px 0; font-size: 9.5px; border-radius: 13px; }
+  .ess-btn img { width: 22px; height: 22px; }
+  .mall-btn-ic img { width: 26px; height: 26px; }
+  .mall-btn .two { font-size: 8.5px; max-width: 50px; }
+}
+.pc-only { }
+.mob-ic { display: none; }
+
+/* ═══════════ Telefon (dokunmatik) ═══════════ */
+@media (pointer: coarse) {
+  .pc-only { display: none !important; }
+  .mob-ic { display: flex; }
+  .xpbar { width: min(360px, 40vw); bottom: calc(2px + env(safe-area-inset-bottom, 0px)); gap: 4px; }
+  .xp-lv { height: 14px; min-width: 18px; font-size: 9px; border-radius: 5px; }
+  .xp-rail { height: 9px; }
+  .xp-t { font-size: 7.5px; }
+  .xp-n { display: none; }
+  /* alt menü sırası yok: Menü düğmesiyle açılan ızgara */
+  .menu { display: none !important; }
+  .menu.mopen { display: grid !important; grid-template-columns: repeat(4, 62px); gap: 6px; position: absolute; transform: none; left: auto; bottom: auto; top: calc(58px + env(safe-area-inset-top, 0px)); right: calc(118px + env(safe-area-inset-right, 0px)); max-height: none; padding: 8px; border-radius: 14px; background: rgba(14, 9, 5, .88); box-shadow: 0 10px 28px rgba(0, 0, 0, .6), inset 0 0 0 1px var(--edge2); z-index: 30; }
+  .menu.mopen button { width: 62px; height: 50px; }
+  .menu.mopen button .tag { font-size: 9.5px; }
+  .menu.mopen button svg { width: 20px; height: 20px; }
+  /* üst düğmeler: küçük simge + ince yazı */
+  .tr-btns { gap: 4px; }
+  .tr-btns .mall-btn, .tr-btns .boss-btn, .tr-btns .ess-btn { width: 42px; height: 42px; padding: 3px 0 2px; gap: 0; border-radius: 11px; font-size: 7.5px; letter-spacing: 0; justify-content: center; }
+  .tr-btns .mall-btn .two { font-size: 7px; max-width: 40px; line-height: 1; }
+  .tr-btns .mall-btn-ic img { width: 22px; height: 22px; }
+  .tr-btns .ess-btn img { width: 20px; height: 20px; }
+  .tr-btns .boss-btn svg { width: 16px; height: 16px; }
+  .tr-btns .mob-menu-btn.on { box-shadow: inset 0 0 0 1px #ffd27a, 0 0 12px rgba(255, 210, 122, .5); }
+  .bottom { bottom: 16px; }
+}
+@media (pointer: coarse) and (max-height: 500px) {
+  .tr-btns { right: calc(292px + env(safe-area-inset-right, 0px)); top: calc(6px + env(safe-area-inset-top, 0px)); }
+  .camctl { right: calc(114px + env(safe-area-inset-right, 0px)); top: calc(10px + env(safe-area-inset-top, 0px)); }
+  .camctl button { width: 30px; height: 30px; font-size: 14px; }
+  .camctl button.small { width: 26px; height: 26px; }
+  .menu.mopen { top: calc(52px + env(safe-area-inset-top, 0px)); right: calc(200px + env(safe-area-inset-right, 0px)); }
+  /* sohbet: dar ve kısa, profilin altında */
+  .chat { width: min(27vw, 210px); top: calc(84px + env(safe-area-inset-top, 0px)); padding: 3px 5px; gap: 2px; }
+  .chat .msgs { height: 40px; font-size: 10px; line-height: 1.3; }
+  .chat .tabs2 button { padding: 1px 4px; font-size: 8.5px; letter-spacing: .5px; }
+  .chat .in select { font-size: 10px; max-width: 58px; }
+  .chat .in input { padding: 3px 6px; font-size: 11px; }
+  .topbar { top: calc(52px + env(safe-area-inset-top, 0px)); }
+}

@@ -154,7 +154,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <XpLine />
       <AnnouncementBar />
       <Minimap game={game} />
-      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><FullscreenButton /></div>
+      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
       <BossCountdowns game={game} />
@@ -312,17 +312,31 @@ function PlayerPlate() {
   );
 }
 
-/** Ekranın altında boydan boya deneyim çizgisi (onda birlik bölmeli). */
+/** Deneyim barı: altta ortada ince, parlak kapsül; solda seviye rozeti, içinde yüzde (onda birlik çentikli). */
 function XpLine() {
   const self = useStore((s) => s.self);
   if (!self) return null;
   const k = Math.min(1, self.xp / Math.max(1, self.xpNext));
   return (
-    <div className="xpline" title="Deneyim">
-      <i style={{ width: `${k * 100}%` }} />
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} className="seg" style={{ left: `${n * 10}%` }} />)}
-      <span>Seviye {self.level} · {self.xp.toLocaleString('tr-TR')} / {self.xpNext.toLocaleString('tr-TR')} TP · %{(k * 100).toFixed(1)}</span>
+    <div className="xpbar" title={`Seviye ${self.level} · ${self.xp.toLocaleString('tr-TR')} / ${self.xpNext.toLocaleString('tr-TR')} TP`}>
+      <span className="xp-lv">{self.level}</span>
+      <div className="xp-rail">
+        <i style={{ width: `${k * 100}%` }} />
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} style={{ left: `${n * 10}%` }} />)}
+        <span className="xp-t"><span className="xp-n">{self.xp.toLocaleString('tr-TR')} / {self.xpNext.toLocaleString('tr-TR')} TP · </span>%{(k * 100).toFixed(1)}</span>
+      </div>
     </div>
+  );
+}
+
+/** Telefonda üst sıraya Ayarlar ve Menü (alt menü sırası yerine açılır ızgara). */
+function MobTopButtons() {
+  const open = useStore((s) => s.mobMenu);
+  return (
+    <>
+      <button className="boss-btn mob-ic" title="Ayarlar" onClick={() => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === 'settings' ? null : 'settings', mobMenu: false })); }}><MenuIcon k="gear" /><span>Ayarlar</span></button>
+      <button className={'boss-btn mob-ic mob-menu-btn' + (open ? ' on' : '')} title="Menü" onClick={() => { sfx.play('ui'); store.set({ mobMenu: !open }); }}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden><path d="M4 6h16M4 12h16M4 18h16" stroke="#f0d8a0" strokeWidth="2.6" strokeLinecap="round" /></svg><span>Menü</span></button>
+    </>
   );
 }
 
@@ -479,24 +493,25 @@ function BottomBar({ game }: { game: Game }) {
 function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void }) {
   // Çıkış düğmesi kaldırıldı; Ayarlar'daki "Kanal / karakter değiştir" bu olayı yollar
   useEffect(() => { const f = () => { currentGame?.stop(); onExit('', true); }; window.addEventListener('col-exit', f); return () => window.removeEventListener('col-exit', f); }, [onExit]);
-  const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p })); };
+  const open = (p: any) => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === p ? null : p, mobMenu: false })); };
+  const mopen = useStore((s) => s.mobMenu);
   const self = useStore((s) => s.self);
   const unread = useStore((s) => s.unread);
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
   const questReadyN = self?.quests ? TUNING.quests.filter((q) => self.quests!.a[q.id] && questReady(q, self, self.quests!.a[q.id])).length : 0;
   return (
-    <div className="menu">
+    <div className={'menu' + (mopen ? ' mopen' : '')}>
       <button onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
       <button onClick={() => open('character')}><MenuIcon k="char" /><small>C</small><span className="tag">Karakter</span>{statPts > 0 && <span className="badge">{statPts}</span>}</button>
       <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
-      <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
+      <button className="pc-only" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('quests')}><MenuIcon k="quest" /><small>J</small><span className="tag">Görev</span>{questReadyN > 0 && <span className="badge ok">{questReadyN}</span>}</button>
       <button onClick={() => open('guild')}><MenuIcon k="guild" /><small>G</small><span className="tag">Lonca</span></button>
       <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
       <button onClick={() => open('rankings')}><MenuIcon k="rank" /><span className="tag">Sıralama</span></button>
-      <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
-      <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
+      <button className="pc-only" onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
+      <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0, mobMenu: false }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
     </div>
   );
 }

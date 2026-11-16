@@ -557,11 +557,12 @@ function blobGeo() {
   blobPart = { geo: g, mat: new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }) };
   return blobPart;
 }
+const MOBILE_PROPS = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 export function buildProps(props: Prop[], heightAt: (x: number, y: number) => number, quality: string, blobs = false): THREE.Group {
   const root = new THREE.Group();
   const groups = new Map<string, Prop[]>();
   for (const p of props) {
-    if (quality === 'low' && (p.k === 'grasstuft' || p.k === 'flowers')) continue;
+    if ((quality === 'low' || MOBILE_PROPS) && (p.k === 'grasstuft' || p.k === 'flowers' || p.k === 'mushroom')) continue; // telefonda küçük süs yok
     // 40 m'lik hücreler: her hücre ayrı InstancedMesh → görüş/gölge dışı kalanlar çizilmez
     const cell = Math.floor((p.x * U) / 40) + ':' + Math.floor((p.y * U) / 40);
     const key = p.k + '|' + variantFor(p) + '|' + cell;

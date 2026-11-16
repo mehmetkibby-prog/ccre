@@ -79,6 +79,8 @@ export interface UiState {
   /** Kadim Kule: kat ve görev durumu (sunucudan); at = alındığı an */
   tower: TowerView | null; towerHold: { i: number; at: number } | null; towerReplayAt: number; /** mühür sırası gösteriminin başladığı an (performance.now) */ towerSeqAt: number;
   /** Lonca görünümü (ana sunucudan) ve savaş ilanı için lonca listesi */
+  /** telefonda açılır menü ızgarası */
+  mobMenu: boolean;
   guild: GuildView | null; guildList: { id: number; name: string; emblem: number; members: number; wins: number; losses: number }[] | null;
   arena: { active: boolean; endsAt: number; board: { id?: number; name: string; cls: string; kills: number; deaths: number }[]; at: number } | null;
   map: string; channel: number; entityId: number;
@@ -125,7 +127,7 @@ function loadSettings(): UiState['settings'] {
 }
 
 let state: UiState = {
-  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
+  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,

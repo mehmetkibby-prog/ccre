@@ -21,8 +21,10 @@ export class GrassField {
   private density: number;
   radius: number;
   constructor(private l: MapLayout, private heightAt: (x: number, y: number) => number, quality: string) {
-    this.density = quality === 'high' ? 3.6 : 1.5; // m² başına öbek (seyrek, sakin)
-    this.radius = quality === 'high' ? 30 : 18;
+    // telefonda çok daha az öbek ve kısa mesafe (akıcı 60 kare için)
+    const mob = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+    this.density = mob ? (quality === 'high' ? 1.2 : 0.8) : quality === 'high' ? 3.6 : 1.5; // m² başına öbek (seyrek, sakin)
+    this.radius = mob ? 14 : quality === 'high' ? 30 : 18;
     fadeR.value = this.radius;
     // 3 çapraz kart; normaller yukarı eğik (yumuşak ışık)
     const parts: THREE.BufferGeometry[] = [];

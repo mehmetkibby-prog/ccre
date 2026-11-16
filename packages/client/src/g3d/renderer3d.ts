@@ -326,7 +326,7 @@ export class Renderer3D {
       if (this.grass) this.grass.group.visible = !cm;
       this.shadowDirty = true;
     }
-    const maxDpr = cm ? (MOBILE ? 0.85 : 1) : MOBILE ? (q === 'high' ? 1.5 : q === 'medium' ? 1.2 : 1) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
+    const maxDpr = cm ? (MOBILE ? 0.85 : 1) : MOBILE ? (q === 'high' ? 1.3 : q === 'medium' ? 1.1 : 0.9) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
     const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
     if (w !== this.w || h !== this.h || dpr !== this.dpr) {
@@ -337,7 +337,7 @@ export class Renderer3D {
       this.composer?.setSize(w, h);
       this.camera.aspect = w / Math.max(1, h);
       this.camera.updateProjectionMatrix();
-      const odpr = Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2);
+      const odpr = Math.min(window.devicePixelRatio || 1, MOBILE ? 1.3 : 2);
       this.overlay.width = Math.round(w * odpr); this.overlay.height = Math.round(h * odpr);
       this.octx.setTransform(odpr, 0, 0, odpr, 0, 0);
       this.fx.setScale(h * dpr * 0.9);
