@@ -10,6 +10,7 @@ import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel }
 import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import { TowerPanel } from './tower.tsx';
 import { CraftPanel } from './craft.tsx';
+import { QuestPanel, NpcQuests } from './quests.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -55,6 +56,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'mount' && <MountPanel />}
       {p === 'tower' && <TowerPanel />}
       {p === 'craft' && <CraftPanel />}
+      {p === 'quests' && <QuestPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
@@ -551,6 +553,7 @@ function NpcDialog({ game }: { game: Game }) {
       <div className="hd"><span className="title">{npc.name}</span><span className="muted" style={{ marginLeft: 8, fontSize: 12 }}>{npc.title}</span><button className="x" onClick={close}>✕</button></div>
       <div className="bd">
         <div className="npc-greet">“{greet[npc.id] ?? 'Hoş geldin, yolcu.'}”</div>
+        <NpcQuests npc={npc.id} />
         <div className="npc-acts">{npc.actions.concat(npc.id === 'haso' ? ['sell'] : []).map((a) => <button key={a} className={'btn' + (a === 'upgrade' ? ' ember' : '')} onClick={() => act(a)}>{labels[a] ?? a}</button>)}</div>
       </div>
     </div>

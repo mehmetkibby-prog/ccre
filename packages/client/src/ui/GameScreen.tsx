@@ -16,6 +16,7 @@ import { api } from '../api.ts';
 import { CAM_ZOOM_DEFAULT, CAM_PITCH_DEFAULT, CAM_ZOOM_MIN, CAM_ZOOM_MAX } from '../g3d/renderer3d.ts';
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 import { TowerHud } from './tower.tsx';
+import { questReady } from './quests.tsx';
 
 export let currentGame: Game | null = null;
 /** Oyuna özgü fare imleçleri (altın ok, saldırıda kılıç, etkileşimde parıltılı ok); yedek olarak sistem imleci */
@@ -479,6 +480,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
   const self = useStore((s) => s.self);
   const unread = useStore((s) => s.unread);
   const statPts = self ? self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit) : 0;
+  const questReadyN = self?.quests ? TUNING.quests.filter((q) => self.quests!.a[q.id] && questReady(q, self, self.quests!.a[q.id])).length : 0;
   return (
     <div className="menu">
       <button onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
@@ -486,6 +488,8 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
+      <button onClick={() => open('quests')}><MenuIcon k="quest" /><small>J</small><span className="tag">Görev</span>{questReadyN > 0 && <span className="badge ok">{questReadyN}</span>}</button>
+      <button onClick={() => open('guild')}><MenuIcon k="guild" /><small>G</small><span className="tag">Lonca</span></button>
       <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
       <button onClick={() => open('rankings')}><MenuIcon k="rank" /><span className="tag">Sıralama</span></button>
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>

@@ -1,3 +1,4 @@
+import type { QuestState } from '@col/shared';
 import type { ClassId, ItemInstance, Slot, StatAlloc } from '@col/shared';
 
 export type Role = 'player' | 'moderator' | 'gm' | 'admin' | 'owner';
@@ -52,6 +53,8 @@ export interface CharMisc {
   protectSeal?: boolean;
   /** Kadim Kule: kat, ilerleme, bulmaca durumu, en iyi kat ve Azrail zaferi sayısı */
   tower?: TowerProgress;
+  /** görevler: etkin (ilerleme) ve biten (gün) */
+  quests?: QuestState;
 }
 export interface TowerProgress {
   f: number; n: number; done?: boolean; key?: boolean;

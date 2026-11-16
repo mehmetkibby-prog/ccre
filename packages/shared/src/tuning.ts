@@ -3,6 +3,7 @@
  * hepsi 1 / boşken davranış bu dosya yokmuş gibidir. Sunucu ve tarayıcı aynı nesneyi okur.
  */
 /** Canavar türü başına ayar (boş alan = varsayılan / harita ganimet profili). */
+import { QUESTS_DEFAULT, sanitizeQuests, type QuestDef } from './content/quests.ts';
 export interface MonsterTune {
   hpMul?: number; atkMul?: number; defAdd?: number; speedMul?: number; xpMul?: number; respawnMul?: number;
   equipChance?: number; // 0..1, ekipman düşme olasılığı
@@ -94,6 +95,8 @@ export interface GameTuning {
   tower: TowerTune;
   /** Üretim (Zanaatkâr Pakize): yönetimden tanımlanan tarifler */
   crafts: CraftRecipe[];
+  /** Görevler (yönetimden tasarlanır): bkz. content/quests.ts */
+  quests: QuestDef[];
 }
 /**
  * Üretim tarifi: girdiler (malzeme / market ürünü anahtarı → adet), mücevher ve öz bedeli; çıktı eşya, malzeme ya da
@@ -252,9 +255,10 @@ export const DEFAULT_TUNING: GameTuning = {
   killRank: structuredClone(KILLRANK_DEFAULT),
   tower: structuredClone(TOWER_DEFAULT),
   crafts: structuredClone(CRAFTS_DEFAULT),
+  quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
@@ -278,6 +282,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.killRank = sanitizeKillRank(r.killRank);
   out.tower = sanitizeTower(r.tower);
   out.crafts = sanitizeCrafts(r.crafts);
+  out.quests = sanitizeQuests(r.quests);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

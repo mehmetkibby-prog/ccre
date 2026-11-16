@@ -150,6 +150,7 @@ export type ClientCmd =
   | { t: 'mount'; op: 'quest' | 'claim' | 'ride' }
   | { t: 'tower'; op: 'enter' | 'leave' | 'state' }
   | { t: 'craft'; id: string; req: string }
+  | { t: 'quest'; op: 'accept' | 'abandon' | 'turnin'; id: string; req: string }
   | { t: 'npc'; id: string }
   | { t: 'use'; key: string; req: string; item?: string }
   | { t: 'mall_buy'; id: string; qty: number; req: string }

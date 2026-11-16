@@ -9,7 +9,7 @@ import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, trDayKey, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -932,11 +932,26 @@ export class Renderer3D {
       ctx.fillStyle = '#3a1414'; ctx.fillRect(p.x - w / 2, p.y + 3.5, w, 4);
       ctx.fillStyle = col; ctx.fillRect(p.x - w / 2, p.y + 3.5, w * k, 4);
     };
-    // NPC
+    // NPC (başında görev işareti: sarı ! alınabilir görev, yeşil ? teslime hazır görev)
+    const self = st.self, qs = self?.quests, today = trDayKey(Date.now());
     for (const v of this.npcViews) {
       const id = (v as unknown as { npc: string }).npc;
       const def = this.layout.def.npcs.find((d) => d.id === id);
-      if (def) tag(v.lx, v.ly, 2.25, def.name, '#ffd870', def.actions.includes('upgrade') ? '⚒ ' + def.title + ' · Artı Bas' : def.title, def.actions.includes('upgrade') ? '#ffb454' : '#a8e0b0');
+      if (!def) continue;
+      const p = tag(v.lx, v.ly, 2.25, def.name, '#ffd870', def.actions.includes('upgrade') ? '⚒ ' + def.title + ' · Artı Bas' : def.title, def.actions.includes('upgrade') ? '#ffb454' : '#a8e0b0');
+      if (!p || !self || !qs) continue;
+      let mark = '';
+      for (const q of TUNING.quests) {
+        if (q.off) continue;
+        const a = qs.a[q.id];
+        if (a && q.turnin === id && q.objs.every((o, i) => (o.kind === 'collect' ? self.materials?.[o.key] ?? 0 : o.kind === 'level' ? self.level : a.p[i] ?? 0) >= o.n)) { mark = '?'; break; }
+        if (!mark && !a && q.giver === id && self.level >= q.minLevel && (!q.prereq || qs.d[q.prereq]) && (q.repeat === 'daily' ? qs.d[q.id] !== today : !qs.d[q.id])) mark = '!';
+      }
+      if (mark) {
+        const y = p.y - 30 + Math.sin(now / 300) * 2.5;
+        ctx.font = '900 24px Nunito, sans-serif'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,8,6,0.9)';
+        ctx.strokeText(mark, p.x, y); ctx.fillStyle = mark === '?' ? '#7cf09a' : '#ffd84a'; ctx.fillText(mark, p.x, y);
+      }
     }
     for (const e of g.ents.values()) {
       if (e.kind === Kind.LOOT) {

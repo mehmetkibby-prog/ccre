@@ -878,6 +878,8 @@ export class Game {
       case 'F8': this.screenshot(); break;
       case 'KeyK': toggle('skills'); break;
       case 'KeyM': toggle('map'); break;
+      case 'KeyJ': toggle('quests'); break;
+      case 'KeyG': toggle('guild'); break;
       case 'KeyT': toggle('teleport'); break;
       case 'Escape': if (store.get().panel) store.set({ panel: null, npc: null }); else { this.setTarget(0); this.autoAttack = false; } break;
       case 'Enter': e.preventDefault(); store.set({ chatOpen: true, unread: 0 }); setTimeout(() => (document.getElementById('chat-input') as HTMLInputElement | null)?.focus(), 0); break;

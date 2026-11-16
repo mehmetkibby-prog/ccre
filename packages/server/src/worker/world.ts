@@ -5,7 +5,7 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
-  towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES,
+  towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive, TowerProgress } from '../types.ts';
@@ -305,6 +305,7 @@ export class World {
       case 'mount': return this.cmdMount(p, String(c.op));
       case 'tower': return this.cmdTower(p, String(c.op));
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
+      case 'quest': return this.cmdQuest(p, String(c.op), String(c.id), String(c.req ?? ''));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
       case 'ping': this.sendJson(p, { t: 'pong', c: c.c, s: this.now }); return;
       case 'sync': p.resetPending = true; this.sendFullSelf(p); return;
@@ -837,6 +838,7 @@ export class World {
     for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) {
       this.addXp(q, xp);
       if (m.sp.floor && q.zone.id === TOWER_MAP) this.towerKill(q, m);
+      this.questKill(q, m);
     }
     // Azrail: hasar veren herkese kesin Azrail Sandığı (boss ganimeti her katkı verene ayrı çağrılır)
     if (m.def.id === 'azrail') {
@@ -1149,6 +1151,7 @@ export class World {
   private cmdNpc(p: Player, id: string) {
     const def = p.zone.def.npcs.find((n) => n.id === id);
     if (!def || !this.nearNpc(p, id)) return this.notice(p, 'NPC\'ye yaklaş.');
+    this.questTalk(p, id);
     this.sendJson(p, { t: 'npc', id, name: def.name, title: def.title, actions: def.actions });
   }
 
@@ -1433,6 +1436,7 @@ export class World {
     this.towerPuzzleInit(t);
     c.misc.tower = t;
     p.towerPlate = -1; p.altarHold = null;
+    this.questTower(p, f);
     const z = this.zones.get(TOWER_MAP)!, r = towerRoom(f);
     this.moveToZone(p, z, r.entry.x + (rnd() - 0.5) * 50, r.entry.y);
     const ft = TUNING.tower.floors[f - 1];
@@ -1568,6 +1572,98 @@ export class World {
       this.towerSetFloor(p, 1);
     }
   }
+  // ───────────────────────────── görevler ─────────────────────────────
+  private qs(p: Player) { return (p.char.misc.quests ??= { a: {}, d: {} }); }
+  /** Görevin hedef ilerlemesi (gösterilen = teslimde denetlenen) */
+  private questProg(p: Player, q: QuestDef, i: number): number {
+    const o = q.objs[i], st = this.qs(p).a[q.id];
+    if (o.kind === 'collect') return p.char.materials[o.key] ?? 0;
+    if (o.kind === 'level') return p.char.level;
+    return st?.p[i] ?? 0;
+  }
+  private questReady(p: Player, q: QuestDef) { return q.objs.every((o, i) => this.questProg(p, q, i) >= o.n); }
+  private questOpen(p: Player, q: QuestDef): string | null {
+    const s = this.qs(p), c = p.char;
+    if (q.off) return 'Bu görev şu an verilmiyor.';
+    if (s.a[q.id]) return 'Bu görev zaten sende.';
+    if (q.repeat === 'daily' ? s.d[q.id] === trDayKey(this.now) : !!s.d[q.id]) return q.repeat === 'daily' ? 'Bu görevi bugün tamamladın; yarın yeniden alabilirsin.' : 'Bu görevi tamamladın.';
+    if (q.prereq && !s.d[q.prereq]) return 'Önce önceki görevi tamamlamalısın.';
+    if (c.level < q.minLevel) return `Bu görev için ${q.minLevel}. seviye gerekir.`;
+    if (Object.keys(s.a).length >= QUEST_MAX_ACTIVE) return `En çok ${QUEST_MAX_ACTIVE} görev alabilirsin.`;
+    return null;
+  }
+  private questKill(p: Player, m: Monster) {
+    const s = p.char.misc.quests; if (!s) return;
+    for (const [id, st] of Object.entries(s.a)) {
+      const q = TUNING.quests.find((x) => x.id === id); if (!q) continue;
+      q.objs.forEach((o, i) => {
+        if (o.kind !== 'kill' || (o.key !== 'any' && o.key !== m.def.id) || (o.map && o.map !== 'any' && o.map !== p.zone.id)) return;
+        if ((st.p[i] ?? 0) >= o.n) return;
+        st.p[i] = (st.p[i] ?? 0) + 1;
+        if (st.p[i] === o.n || st.p[i] % Math.max(1, Math.ceil(o.n / 5)) === 0) this.notice(p, `Görev · ${q.name}: ${st.p[i]}/${o.n}${st.p[i] === o.n ? ' ✔' : ''}`, st.p[i] === o.n ? 'ok' : 'info');
+      });
+    }
+    p.selfDirty |= 1;
+  }
+  private questTalk(p: Player, npc: string) {
+    const s = p.char.misc.quests; if (!s) return;
+    let ch = false;
+    for (const [id, st] of Object.entries(s.a)) {
+      const q = TUNING.quests.find((x) => x.id === id); if (!q) continue;
+      q.objs.forEach((o, i) => { if (o.kind === 'talk' && o.key === npc && !(st.p[i] >= 1)) { st.p[i] = 1; ch = true; this.notice(p, `Görev · ${q.name}: haber ulaştırıldı ✔`, 'ok'); } });
+    }
+    if (ch) { p.selfDirty |= 1; p.markSave(); }
+  }
+  private questTower(p: Player, f: number) {
+    const s = p.char.misc.quests; if (!s) return;
+    for (const [id, st] of Object.entries(s.a)) {
+      const q = TUNING.quests.find((x) => x.id === id); if (!q) continue;
+      q.objs.forEach((o, i) => { if (o.kind === 'tower' && (st.p[i] ?? 0) < f) { st.p[i] = f; if (f === o.n) this.notice(p, `Görev · ${q.name}: ${f}. kata ulaştın ✔`, 'ok'); } });
+    }
+    p.selfDirty |= 1;
+  }
+  private cmdQuest(p: Player, op: string, id: string, req: string) {
+    const q = TUNING.quests.find((x) => x.id === id);
+    const s = this.qs(p), c = p.char;
+    const R = (ok: boolean, msg: string) => this.reply(p, { t: 'quest', req }, ok, msg);
+    if (!q) { if (op === 'abandon' && s.a[id]) { delete s.a[id]; p.selfDirty |= 1; p.markSave(); return R(true, 'Görev bırakıldı.'); } return R(false, 'Böyle bir görev yok.'); }
+    if (op === 'abandon') { if (!s.a[id]) return; delete s.a[id]; p.selfDirty |= 1; p.markSave(); return R(true, `"${q.name}" bırakıldı.`); }
+    if (op === 'accept') {
+      if (!this.nearNpc(p, q.giver)) return R(false, 'Görevi veren NPC\'nin yanına git.');
+      const err = this.questOpen(p, q); if (err) return R(false, err);
+      s.a[id] = { p: q.objs.map(() => 0), day: trDayKey(this.now) };
+      // "konuş" hedefi görevi veren NPC ise hemen tamam (anlamsız bekleme olmasın)
+      q.objs.forEach((o, i) => { if (o.kind === 'talk' && o.key === q.giver) s.a[id].p[i] = 1; });
+      p.selfDirty |= 1; p.markSave();
+      return R(true, `Görev alındı: ${q.name}`);
+    }
+    if (op === 'turnin') {
+      if (!s.a[id]) return R(false, 'Bu görev sende değil.');
+      if (!this.nearNpc(p, q.turnin)) return R(false, 'Görevi teslim alacak NPC\'nin yanına git.');
+      if (this.seenReceipt(p, req)) return;
+      if (!this.questReady(p, q)) return R(false, 'Görevin hedefleri henüz tamamlanmadı.');
+      const items = q.reward.items.filter((x) => x.kind === 'item').reduce((a, x) => a + x.qty, 0);
+      if (c.bag.length + items > BAG_EQUIP_CAP) return R(false, 'Ödül için çantada yer aç.');
+      for (const o of q.objs) if (o.kind === 'collect') c.materials[o.key] -= o.n;
+      const rw = q.reward, lines: string[] = [];
+      if (rw.gems) { c.gems += rw.gems; lines.push(`${rw.gems.toLocaleString('tr-TR')} Mücevher`); }
+      if (rw.essence) { c.essence += rw.essence; lines.push(`${rw.essence.toLocaleString('tr-TR')} Öz`); }
+      if (rw.cp) { c.cp += rw.cp; lines.push(`${rw.cp} ÇP`); }
+      for (const it of rw.items) {
+        if (it.kind === 'item') {
+          if (!ITEM_TPL.has(it.key)) continue;
+          const r = (RARITIES as readonly string[]).includes(it.rarity ?? '') ? it.rarity as Rarity : 'blue';
+          for (let k = 0; k < it.qty; k++) { const x = makeItem(it.key, r, 'quest'); c.bag.push(x); lines.push(itemDisplayName(x)); }
+        } else if (MATERIAL.has(it.key) || MALL.has(it.key)) { c.materials[it.key] = (c.materials[it.key] ?? 0) + it.qty; lines.push(`${it.qty}× ${MATERIAL.get(it.key)?.name ?? MALL.get(it.key)?.name}`); }
+      }
+      if (rw.xp) { this.addXp(p, rw.xp); lines.push(`${rw.xp.toLocaleString('tr-TR')} TP`); }
+      delete s.a[id]; s.d[id] = trDayKey(this.now);
+      p.selfDirty |= 1 | 2 | 4; this.save(p, true);
+      this.sendJson(p, { t: 'chestResult', title: `Görev tamamlandı: ${q.name}`, rewards: lines.length ? lines : ['Teşekkürler!'] });
+      return;
+    }
+  }
+
   /** Üretim (Pakize): girdiler ve bedel tek adımda düşülür; başarıda çıktı, başarısızlıkta malzemelerin yarısı döner. */
   private cmdCraft(p: Player, id: string, req: string) {
     const r = TUNING.crafts.find((x) => x.id === id && !x.off);
@@ -1811,7 +1907,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {} });
+    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;

@@ -153,3 +153,38 @@ it('Üretim: Pakize yanında, malzeme ve bedel düşer; başarıda çıktı, sı
   expect(p.char.bag.at(-1)?.tpl).toBe('w_hunter'); expect(p.char.bag.at(-1)?.rarity).toBe('unique');
   applyTuning(structuredClone(DEFAULT_TUNING));
 });
+
+it('Görevler: al, öldür/getir/konuş ilerlemesi, başka NPC\'ye teslim, ödül, günlük tekrar', () => {
+  applyTuning({ ...structuredClone(DEFAULT_TUNING), quests: [
+    { id: 'qa', name: 'A', desc: '', giver: 'tuccar', turnin: 'haso', minLevel: 1, repeat: 'none', objs: [{ kind: 'kill', key: 'wild_fox', map: 'any', n: 2 }, { kind: 'collect', key: 'kor_seal', n: 2 }], reward: { gems: 100, essence: 5, xp: 10, cp: 0, items: [{ kind: 'mat', key: 'red_potion', qty: 3 }] } },
+    { id: 'qb', name: 'B', desc: '', giver: 'rauf', turnin: 'rauf', minLevel: 1, prereq: 'qa', repeat: 'daily', objs: [{ kind: 'talk', key: 'nur', n: 1 }], reward: { gems: 7, essence: 0, xp: 0, cp: 0, items: [] } },
+  ] });
+  const out: any[] = []; const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m) => out.push(m) });
+  const l = getLayout('bazaar'); const npc = (id: string) => l.npcs.find((n) => n.id === id)!;
+  const ch = mk(1, 5); w.join(1, ch); const p = w.bySid.get(1)!;
+  const at = (id: string) => { const n = npc(id); p.x = n.x + 60; p.y = n.y + 60; p.zone.players.move(p); };
+  const cmd = (c: any) => w.onCmd(1, JSON.stringify(c));
+  at('rauf'); cmd({ t: 'quest', op: 'accept', id: 'qb', req: 'x0' });
+  expect(p.char.misc.quests?.a.qb).toBeUndefined(); // önce qa bitmeli
+  at('tuccar'); cmd({ t: 'quest', op: 'accept', id: 'qa', req: 'x1' });
+  expect(p.char.misc.quests?.a.qa).toBeTruthy();
+  const fox = p.zone.monsterList.find((m: any) => m.def.id === 'wild_fox')!;
+  (w as any).rewardKill(p, fox); (w as any).rewardKill(p, fox);
+  expect(p.char.misc.quests?.a.qa.p[0]).toBe(2);
+  at('haso'); cmd({ t: 'quest', op: 'turnin', id: 'qa', req: 'x2' });
+  expect(p.char.misc.quests?.a.qa).toBeTruthy(); // Kor Mührü yok
+  p.char.materials.kor_seal = 3; const g0 = p.char.gems;
+  cmd({ t: 'quest', op: 'turnin', id: 'qa', req: 'x3' });
+  expect(p.char.misc.quests?.a.qa).toBeUndefined(); expect(p.char.misc.quests?.d.qa).toBeTruthy();
+  expect(p.char.materials.kor_seal).toBe(1); expect(p.char.gems).toBe(g0 + 100);
+  at('rauf'); cmd({ t: 'quest', op: 'accept', id: 'qb', req: 'x4' });
+  at('nur'); cmd({ t: 'npc', id: 'nur' });
+  at('rauf'); cmd({ t: 'quest', op: 'turnin', id: 'qb', req: 'x5' });
+  expect(p.char.misc.quests?.d.qb).toBeTruthy();
+  cmd({ t: 'quest', op: 'accept', id: 'qb', req: 'x6' }); // bugün yeniden alınamaz
+  expect(p.char.misc.quests?.a.qb).toBeUndefined();
+  p.char.misc.quests!.d.qb = '2000-01-01';
+  cmd({ t: 'quest', op: 'accept', id: 'qb', req: 'x7' });
+  expect(p.char.misc.quests?.a.qb).toBeTruthy();
+  applyTuning(structuredClone(DEFAULT_TUNING));
+});
