@@ -14,6 +14,11 @@ export interface MonsterTune {
   hp?: number; atk?: number; def?: number;
   /** yeniden doğma süresi (dakika; boss) */
   respawnMin?: number;
+  /**
+   * Doğrudan değerler (yönetim "Canavarlar"): ref seviyesindeki normal canavarın canı/saldırısı/TP'si. Başka seviye ve
+   * agresif/katil çeşitler aynı oranla ölçeklenir. speed: hız (birim/sn), respawnSec: yeniden doğma (saniye).
+   */
+  ref?: number; baseHp?: number; baseAtk?: number; baseXp?: number; speed?: number; respawnSec?: number;
   /** özel düşenler (boss paneli): eşya / malzeme / market ürünü, olasılık 0..1, adet */
   drops?: DropTune[];
 }
@@ -114,6 +119,8 @@ export interface CraftRecipe {
 export const CRAFTS_DEFAULT: CraftRecipe[] = [
   { id: 'r_mastery', name: 'Ustalık Mührü', out: { kind: 'mat', key: 'mastery_seal', qty: 1 }, inputs: { tower_seal: 3, mourn_silk: 2 }, gems: 500, essence: 0, chance: 100, minLevel: 25 },
   { id: 'r_necklace', name: 'Kadim Kolye', out: { kind: 'item', key: 'necklace', rarity: 'crimson', qty: 1 }, inputs: { tower_seal: 5, soul_ring: 3, sly_core: 2 }, gems: 2000, essence: 200, chance: 60, minLevel: 30 },
+  { id: 'r_earring', name: 'Kadim Küpe', out: { kind: 'item', key: 'earring', rarity: 'crimson', qty: 1 }, inputs: { tower_seal: 4, sly_core: 3, mourn_silk: 2 }, gems: 2000, essence: 200, chance: 60, minLevel: 30 },
+  { id: 'r_bracelet', name: 'Kadim Bilezik', out: { kind: 'item', key: 'bracelet', rarity: 'crimson', qty: 1 }, inputs: { tower_seal: 4, soul_ring: 3, mourn_silk: 2 }, gems: 2000, essence: 200, chance: 60, minLevel: 30 },
   { id: 'r_azrail_weapon', name: 'Azrail\'in Silahı (sınıfına)', out: { kind: 'item', key: 'w_cls', rarity: 'unique', qty: 1 }, inputs: { azrail_hook: 1, tower_seal: 10, soul_ring: 5, sly_core: 5, mourn_silk: 5 }, gems: 10000, essence: 1000, chance: 50, minLevel: 40 },
 ];
 export function sanitizeCrafts(raw: unknown): CraftRecipe[] {
@@ -332,6 +339,9 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     const mats: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(m.mats))) { const n = num(v, 0, 1); if (key(k) && n !== undefined) mats[k] = n; }
     if (Object.keys(mats).length) t.mats = mats;
     set('hp', num(m.hp, 1, 1e9)); set('atk', num(m.atk, 0, 1e7)); set('def', num(m.def, 0, 1e6)); set('respawnMin', num(m.respawnMin, 0.5, 24 * 60));
+    const ref = num(m.ref, 1, 120); if (ref !== undefined) t.ref = Math.round(ref);
+    set('baseHp', num(m.baseHp, 1, 1e9)); set('baseAtk', num(m.baseAtk, 0, 1e7)); set('baseXp', num(m.baseXp, 0, 1e8));
+    set('speed', num(m.speed, 0, 1000)); set('respawnSec', num(m.respawnSec, 1, 24 * 3600));
     if (Array.isArray(m.drops)) {
       const drops: DropTune[] = [];
       for (const raw2 of m.drops.slice(0, 24)) {

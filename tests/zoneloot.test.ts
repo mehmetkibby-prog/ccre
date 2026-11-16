@@ -58,3 +58,18 @@ it('boss: yeterince hasar veren herkes kendi ganimetini alır, çok az vuran alm
   // haftalık canavar sıralaması sayacı
   expect(a.char.misc.rankKills?.n).toBe(1); expect(c.char.misc.rankKills).toBeUndefined();
 });
+
+it('Canavar doğrudan değerleri: ref seviyede girilen can/saldırı, diğer seviye ve çeşitlerde aynı oranla; temel kritik 0; takı düşmez', () => {
+  applyTuning({ ...structuredClone(DEFAULT_TUNING), monsters: { shadow_wolf: { ref: 1, baseHp: 1000, baseAtk: 50, speed: 300, respawnSec: 5 } } });
+  const out: any[] = []; const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m) => out.push(m) });
+  const wolves = [...(w as any).zones.get('forest').monsterList].filter((m: any) => m.def.id === 'shadow_wolf');
+  const l1 = wolves.find((m: any) => m.sp.level === 1 && m.sp.variant === 0);
+  expect(l1.maxHp).toBe(1000); expect(l1.atk).toBe(50); expect(l1.def.speed).toBe(300);
+  const hi = wolves.find((m: any) => m.sp.level >= 5);
+  expect(hi.maxHp).toBeGreaterThan(1000);
+  expect((w as any).respawnDelay(l1.def)).toBe(5000);
+  w.join(1, mk(1, 20)); const p = w.bySid.get(1)!;
+  expect(p.stats.crit).toBe(0);
+  for (let i = 0; i < 400; i++) { const it = w.rollEquipment(p, { blue: 1 }, false); expect(['necklace', 'earring', 'bracelet']).not.toContain(it!.tpl); }
+  applyTuning(structuredClone(DEFAULT_TUNING));
+});

@@ -115,28 +115,31 @@ export function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: str
   return (
     <section className="admin-sec">
       <h4>Canavar türleri</h4>
-      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Çarpanlar genel çarpanlarla birlikte uygulanır. Değişiklik yeni doğan canavarlara geçer (haritadakiler öldükçe yenilenir). Can ve saldırı, canavarın oyunda doğduğu seviyedeki normal hâlinin gerçek değeridir.</div>
+      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Değerleri doğrudan yaz: canavarın <b>en düşük doğma seviyesindeki normal hâli</b> için can, saldırı, savunma, hız, TP ve yeniden doğma süresi. Daha yüksek seviyeli ve agresif/katil olanlar aynı oranla otomatik büyür. Boş kutu = oyunun varsayılanı. Kaydedince haritadaki canavarlara hemen uygulanır.</div>
       <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Canavar</th><th>Sabit can</th><th>Can ×</th><th>Saldırı ×</th><th>Savunma +</th><th>Hız ×</th><th>TP ×</th><th>Doğma ×</th></tr></thead>
-        <tbody>{MONSTERS.map((d) => {
-          const m = t.monsters[d.id] ?? {}, lv = spawnLevels(t, d.id) ?? [10, 10];
-          const hpAt = (l: number) => Math.round(m.hp ?? monsterStats(d, l, 0).maxHp * t.monsterHpMul * (m.hpMul ?? 1));
-          const atkAt = (l: number) => Math.round(m.atk ?? monsterStats(d, l, 0).atk * t.monsterAtkMul * (m.atkMul ?? 1));
-          const rng = (f: (l: number) => number) => lv[0] === lv[1] ? fmtN(f(lv[0]), 0) : `${fmtN(f(lv[0]), 0)}–${fmtN(f(lv[1]), 0)}`;
+        <thead><tr><th>Canavar</th><th>Can</th><th>Saldırı</th><th>Savunma</th><th>Hız</th><th>TP</th><th>Doğma (sn)</th><th /></tr></thead>
+        <tbody>{MONSTERS.filter((d) => !d.boss).map((d) => {
+          const m = t.monsters[d.id] ?? {}, lv = spawnLevels(t, d.id) ?? (d.id.startsWith('t_') ? [t.tower.floors.find((f) => f.monster === d.id)?.level[0] ?? 30, t.tower.floors.find((f) => f.monster === d.id)?.level[1] ?? 30] as [number, number] : [10, 10]);
+          const ref = lv[0], st = monsterStats(d, ref, 0);
+          const defHp = Math.round(st.maxHp * t.monsterHpMul * (m.hpMul ?? 1)), defAtk = Math.round(st.atk * t.monsterAtkMul * (m.atkMul ?? 1));
+          const defDef = st.def + (m.defAdd ?? 0), defSpd = Math.round(d.speed * (m.speedMul ?? 1)), defXp = Math.round(st.xp * (m.xpMul ?? 1));
+          const setAbs = (p: Partial<MonsterTune>) => setMon(d.id, { ...p, ref });
+          const custom = m.baseHp !== undefined || m.baseAtk !== undefined || m.def !== undefined || m.speed !== undefined || m.baseXp !== undefined || m.respawnSec !== undefined || m.hp !== undefined || m.hpMul !== undefined || m.atkMul !== undefined;
           return (
             <tr key={d.id}>
-              <td><b>{d.name}</b><small>Sv. {lv[0] === lv[1] ? lv[0] : `${lv[0]}–${lv[1]}`} · Can {rng(hpAt)} · Sld {rng(atkAt)} · Hız {fmtN(Math.round(d.speed * (m.speedMul ?? 1)), 0)}</small></td>
-              <td><Num v={m.hp} def={hpAt(lv[0])} min={1} max={1e9} step={1} on={(v) => setMon(d.id, { hp: v === undefined ? undefined : Math.round(v) })} dis={dis} w={70} /></td>
-              <td><Num v={m.hpMul} def={1} min={0.05} max={20} on={(v) => setMon(d.id, { hpMul: v })} dis={dis} w={58} /></td>
-              <td><Num v={m.atkMul} def={1} min={0.05} max={20} on={(v) => setMon(d.id, { atkMul: v })} dis={dis} w={58} /></td>
-              <td><Num v={m.defAdd} def={0} min={-200} max={2000} step={1} on={(v) => setMon(d.id, { defAdd: v })} dis={dis} w={58} /></td>
-              <td><Num v={m.speedMul} def={1} min={0.2} max={3} on={(v) => setMon(d.id, { speedMul: v })} dis={dis} w={58} /></td>
-              <td><Num v={m.xpMul} def={1} min={0} max={50} on={(v) => setMon(d.id, { xpMul: v })} dis={dis} w={58} /></td>
-              <td><Num v={m.respawnMul} def={1} min={0.1} max={20} on={(v) => setMon(d.id, { respawnMul: v })} dis={dis} w={58} /></td>
+              <td><b>{d.name}</b><small>Sv. {lv[0] === lv[1] ? lv[0] : `${lv[0]}–${lv[1]}`} · değerler Sv. {ref} için</small></td>
+              <td><Num v={m.baseHp ?? m.hp} def={defHp} min={1} max={1e9} step={1} on={(v) => setAbs({ baseHp: v === undefined ? undefined : Math.round(v), hp: undefined })} dis={dis} w={80} /></td>
+              <td><Num v={m.baseAtk ?? m.atk} def={defAtk} min={0} max={1e7} step={1} on={(v) => setAbs({ baseAtk: v === undefined ? undefined : Math.round(v), atk: undefined })} dis={dis} w={66} /></td>
+              <td><Num v={m.def} def={defDef} min={0} max={1e6} step={1} on={(v) => setMon(d.id, { def: v === undefined ? undefined : Math.round(v) })} dis={dis} w={60} /></td>
+              <td><Num v={m.speed} def={defSpd} min={0} max={1000} step={5} on={(v) => setMon(d.id, { speed: v })} dis={dis} w={60} /></td>
+              <td><Num v={m.baseXp} def={defXp} min={0} max={1e8} step={1} on={(v) => setAbs({ baseXp: v === undefined ? undefined : Math.round(v) })} dis={dis} w={66} /></td>
+              <td><Num v={m.respawnSec} def={Math.round(16 * t.respawnMul * (m.respawnMul ?? 1))} min={1} max={86400} step={1} on={(v) => setMon(d.id, { respawnSec: v })} dis={dis} w={60} /></td>
+              <td>{custom && <button className="btn small ghost" disabled={dis} title="Bu canavarın güç ayarlarını varsayılana döndür" onClick={() => setMon(d.id, { baseHp: undefined, baseAtk: undefined, baseXp: undefined, def: undefined, speed: undefined, respawnSec: undefined, hp: undefined, atk: undefined, hpMul: undefined, atkMul: undefined, defAdd: undefined, speedMul: undefined, xpMul: undefined, respawnMul: undefined, ref: undefined })}>Sıfırla</button>}</td>
             </tr>
           );
         })}</tbody>
       </table></div>
+      <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>Bosslar (Tilki Kral, Kara Taş, Azrail) <b>Bosslar</b> sekmesinde; Kadim Kule katlarındaki ek güç <b>Kadim Kule</b> sekmesinde.</div>
     </section>
   );
 }

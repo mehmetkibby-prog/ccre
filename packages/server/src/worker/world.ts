@@ -915,7 +915,8 @@ export class World {
     for (const [k, w] of entries) { if ((r -= w) <= 0) { rarity = k; break; } }
     if (shift && rnd() < 0.35) { const i = RARITIES.indexOf(rarity); rarity = RARITIES[Math.min(i + 1, 3)]; }
     // %60 kendi sınıfına uygun
-    const pool = ITEM_TEMPLATES.filter((t) => !t.cls || t.cls === p.char.cls || rnd() < 0.25);
+    // kolye, küpe ve bilezik canavardan düşmez (üretimle Kızıl seviyede gelir)
+    const pool = ITEM_TEMPLATES.filter((t) => t.slot !== 'necklace' && t.slot !== 'earring' && t.slot !== 'bracelet' && (!t.cls || t.cls === p.char.cls || rnd() < 0.25));
     const tpl = pool[Math.floor(rnd() * pool.length)];
     return makeItem(tpl.id, rarity, 'drop');
   }
@@ -2018,6 +2019,7 @@ export class World {
   respawnDelay(def: { id: string; boss?: boolean; respawnMin?: number }) {
     const mt = TUNING.monsters[def.id];
     if (def.boss) return (mt?.respawnMin ?? def.respawnMin ?? 10) * 60_000;
+    if (mt?.respawnSec) return mt.respawnSec * 1000;
     if (mt?.respawnMin) return mt.respawnMin * 60_000;
     return (12_000 + rnd() * 8000) * TUNING.respawnMul * (mt?.respawnMul ?? 1);
   }

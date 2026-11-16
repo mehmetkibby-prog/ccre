@@ -118,7 +118,8 @@ export class Monster {
   constructor(public def: MonsterDef, public sp: SpawnPoint) {
     // yönetim: canavar türü ayarı (hız tanımın kopyasında; diğer alanlar doğuşta)
     const mt = TUNING.monsters[def.id];
-    if (mt?.speedMul !== undefined) this.def = def = { ...def, speed: def.speed * mt.speedMul };
+    if (mt?.speed !== undefined) this.def = def = { ...def, speed: mt.speed };
+    else if (mt?.speedMul !== undefined) this.def = def = { ...def, speed: def.speed * mt.speedMul };
     this.tplIndex = MONSTER_INDEX.get(def.id)!;
     this.x = sp.x; this.y = sp.y;
     this.maxHp = 1; this.hp = 1; this.atk = 1; this.armor = 0; this.xp = 0;
@@ -131,10 +132,13 @@ export class Monster {
     const mt = TUNING.monsters[this.def.id];
     const s = monsterStats(this.def, this.sp.level, this.sp.variant);
     const ratio = this.maxHp > 0 ? this.hp / this.maxHp : 1;
-    const hp = Math.max(1, Math.round(mt?.hp ?? s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
+    // doğrudan değer (ref seviyesindeki normal hâl) verilmişse seviye ve çeşit oranıyla ölçeklenir
+    const r = monsterStats(this.def, mt?.ref ?? this.sp.level, 0);
+    const hp = Math.max(1, Math.round(mt?.hp ?? (mt?.baseHp !== undefined ? mt.baseHp * s.maxHp / Math.max(1, r.maxHp) : s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1))));
     this.maxHp = hp; this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(hp * ratio));
-    this.atk = Math.max(1, Math.round(mt?.atk ?? s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
-    this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
+    this.atk = Math.max(1, Math.round(mt?.atk ?? (mt?.baseAtk !== undefined ? mt.baseAtk * s.atk / Math.max(1, r.atk) : s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1))));
+    this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0));
+    this.xp = Math.max(0, Math.round(mt?.baseXp !== undefined ? mt.baseXp * s.xp / Math.max(1, r.xp) : s.xp * (mt?.xpMul ?? 1)));
     // Kadim Kule: kat başına can ve saldırı çarpanı (yönetim)
     const fl = this.sp.floor ? TUNING.tower.floors[this.sp.floor - 1] : undefined;
     if (fl && (fl.hpMul !== 1 || fl.atkMul !== 1)) {

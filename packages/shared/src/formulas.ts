@@ -53,7 +53,8 @@ export function computeStats(c: CharCore): CombatStats {
   let dfn = def.baseDef + def.defPerLevel * (c.level - 1);
   const s: CombatStats = {
     maxHp: 0, atk: 0, def: 0, speed: def.speed, range: def.range,
-    crit: 5, critDmg: 50, atkSpeed: 0, skillSpeed: 0, lifesteal: 0, block: 0, pvpPower: 0, pvpResist: 0, pvePower: 0, enchants: {},
+    // temel kritik şansı yok: kritik yalnız eşya efsunu (Kritik Şansı) ve Nesne Market etkilerinden gelir
+    crit: 0, critDmg: 50, atkSpeed: 0, skillSpeed: 0, lifesteal: 0, block: 0, pvpPower: 0, pvpResist: 0, pvePower: 0, enchants: {},
   };
   let hpFlat = 0, atkFlat = 0;
   for (const it of Object.values(c.equip)) {
