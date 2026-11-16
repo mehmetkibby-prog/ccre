@@ -51,7 +51,7 @@ function AppScreens() {
   if (screen.s === 'auth') return <AuthScreen onDone={refresh} />;
   if (screen.s === 'chars' && me) return <CharScreen me={me} error={lastError} onReload={refresh} onPlay={(id) => { setLastError(''); setScreen({ s: 'channels', charId: id }); }} onLogout={async () => { await api('/api/logout', {}).catch(() => {}); setScreen({ s: 'auth' }); }} />;
   if (screen.s === 'channels') return <ChannelScreen charId={screen.charId} onBack={() => setScreen({ s: 'chars' })} onEnter={(ticket, ch) => setScreen({ s: 'game', ticket, charId: screen.charId, channel: ch })} />;
-  if (screen.s === 'game') return <GameScreen key={screen.ticket} ticket={screen.ticket} onExit={(reason, toChannels) => { store.set({ connected: false, self: null, char: null, dead: null, panel: null }); if (reason) setLastError(reason); if (toChannels) setScreen({ s: 'channels', charId: screen.charId }); else refresh(); }} />;
+  if (screen.s === 'game') return <GameScreen key={screen.charId + ':' + screen.channel} ticket={screen.ticket} charId={screen.charId} channel={screen.channel} onExit={(reason, toChannels) => { store.set({ connected: false, self: null, char: null, dead: null, panel: null }); if (reason) setLastError(reason); if (toChannels) setScreen({ s: 'channels', charId: screen.charId }); else refresh(); }} />;
   return null;
 }
 

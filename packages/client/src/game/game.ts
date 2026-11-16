@@ -97,21 +97,59 @@ export class Game {
   }
 
   // ───────── bağlantı ─────────
-  start() {
+  /** Kopma sonrası yeni giriş bileti isteyen (GameScreen sağlar). null: yeniden bağlanma yok. */
+  requestTicket: (() => Promise<string>) | null = null;
+  private reconnecting = false;
+  private connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
     const url = `${proto}://${location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`;
     const ws: WebSocket = OFFLINE ? (window as unknown as { __colCreateSocket: (u: string) => WebSocket }).__colCreateSocket(url) : new WebSocket(url);
     ws.binaryType = 'arraybuffer';
     this.ws = ws;
-    let closedReason = '';
-    ws.onopen = () => { store.set({ connected: true, status: '' }); setTimeout(() => this.sendPing(), 1500); };
+    let closedReason = '', final = false, opened = false;
+    ws.onopen = () => { opened = true; store.set({ connected: true, status: '' }); this.pingSamples = []; setTimeout(() => this.sendPing(), 1500); };
     ws.onmessage = (e) => {
       // gecikme: yanıtın geldiği an (olayın zaman damgası; o sırada çizim sürüyorsa beklenen süre ölçüme katılmaz)
       if (typeof e.data === 'string' && e.data.startsWith('{"t":"pong"')) { this.onPong(JSON.parse(e.data), e.timeStamp); return; }
-      if (typeof e.data === 'string') this.onJson(JSON.parse(e.data), (r) => (closedReason = r));
+      if (typeof e.data === 'string') this.onJson(JSON.parse(e.data), (r, fin) => { closedReason = r; final = fin; });
       else this.onSnapshot(e.data as ArrayBuffer);
     };
-    ws.onclose = () => { store.set({ connected: false }); if (!this.stopped) this.onClose(closedReason || 'Bağlantı koptu.'); this.stop(); };
+    ws.onclose = () => {
+      if (this.ws !== ws) return; // eski bağlantı
+      store.set({ connected: false });
+      if (this.stopped) return;
+      // Ağ kesintisi, sunucu/kanal yeniden başlatması: oyuncu giriş ekranına DÜŞMEZ, arka planda yeniden bağlanılır.
+      // Yalnız kesin sebepler (başka yerden giriş, yasak) oyundan çıkarır.
+      if (!final && this.requestTicket) { void this.reconnect(closedReason, opened); return; }
+      this.onClose(closedReason || 'Bağlantı koptu.'); this.stop();
+    };
+  }
+  /** Yeniden bağlanma: artan aralıklarla (en çok ~2 dk) yeni bilet alıp aynı kanala döner. */
+  private async reconnect(reason: string, wasOpen: boolean) {
+    if (this.reconnecting) return;
+    this.reconnecting = true;
+    store.set({ status: 'Bağlantı yenileniyor…' });
+    const t0 = performance.now();
+    for (let i = 0; !this.stopped; i++) {
+      await new Promise((r) => setTimeout(r, i === 0 ? (wasOpen ? 400 : 1000) : Math.min(5000, 800 * i)));
+      if (this.stopped) break;
+      try {
+        const ticket = await this.requestTicket!();
+        this.ticket = ticket;
+        this.ents.clear(); this.pending = []; this.inputAcc = 0;
+        this.reconnecting = false;
+        this.connect();
+        return;
+      } catch (e) {
+        const msg = (e as Error).message || '';
+        const fatal = /kapalı|bakım|Oturum|giriş|yasak|askı|bulunamadı/i.test(msg) && !/yeniden başlatılıyor|dolu|yavaş/i.test(msg);
+        if (fatal || performance.now() - t0 > 120_000) { this.reconnecting = false; this.onClose(msg || reason || 'Bağlantı koptu.'); this.stop(); return; }
+      }
+    }
+    this.reconnecting = false;
+  }
+  start() {
+    this.connect();
     this.input.attach();
     this.input.onKey = (code, down, e) => this.onKey(code, down, e);
     this.lastFrame = performance.now();
@@ -170,7 +208,7 @@ export class Game {
     sfx.setMusic(id);
   }
 
-  private onJson(m: any, setReason: (r: string) => void) {
+  private onJson(m: any, setReason: (r: string, final: boolean) => void) {
     switch (m.t) {
       case 'welcome':
         if (OFFLINE) Object.assign(window, { __colGame: this });
@@ -239,8 +277,8 @@ export class Game {
       case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'shop': break;
-      case 'kicked': setReason(m.text); break;
-      case 'fatal': setReason(m.text); break;
+      case 'kicked': setReason(m.text, true); break;
+      case 'fatal': setReason(m.text, !m.retry); break;
     }
   }
 
@@ -605,6 +643,8 @@ export class Game {
       }
     } else { this.stuckBest = 1e9; this.stuckAt = performance.now(); }
     // kendi ganimetini otomatik al (5 sn sonra sunucu da toplar; yakında elle de)
+    // bağlantı tıkalıysa (mobil ağ takıldı) hareket gönderme: bayat girişler birikip sonra topluca gitmesin
+    if (dir !== NO_DIR && this.ws.bufferedAmount > 16384) dir = NO_DIR;
     if (dir !== NO_DIR) {
       const ox = this.px, oy = this.py;
       this.seq = (this.seq + 1) & 0xffff;

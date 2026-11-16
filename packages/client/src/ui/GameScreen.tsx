@@ -12,12 +12,13 @@ import { Panels } from './panels.tsx';
 import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
+import { api } from '../api.ts';
 import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 
 export let currentGame: Game | null = null;
 
-export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason: string, toChannels?: boolean) => void }) {
+export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string; charId?: number; channel?: number; onExit: (reason: string, toChannels?: boolean) => void }) {
   const gl = useRef<HTMLCanvasElement>(null);
   const ov = useRef<HTMLCanvasElement>(null);
   const [game, setGame] = useState<Game | null>(null);
@@ -27,6 +28,8 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     if (import.meta.env.DEV) (window as unknown as { __game: Game }).__game = g;
     (window as unknown as { __colGame?: Game }).__colGame = g;
     (window as unknown as { __colStore?: typeof store }).__colStore = store;
+    // bağlantı koparsa aynı karakter ve kanala yeni biletle sessizce dön (giriş ekranına atmadan)
+    if (charId && channel && !OFFLINE) g.requestTicket = async () => (await api<{ ticket: string }>('/api/admission', { characterId: charId, channel, nonce: Math.random().toString(36).slice(2) })).ticket;
     g.start();
     setGame(g);
     return () => { g.stop(); currentGame = null; };
@@ -172,8 +175,9 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
 
 function ConnStatus() {
   const c = useStore((s) => s.connected);
+  const st = useStore((s) => s.status);
   if (c) return null;
-  return <div className="overlay"><div className="frame dead"><div className="title" style={{ fontSize: 20 }}>Bağlanıyor…</div><div className="muted">Sunucuyla bağlantı kuruluyor.</div></div></div>;
+  return <div className="overlay reconn"><div className="frame dead"><div className="title" style={{ fontSize: 20 }}>{st || 'Bağlanıyor…'}</div><div className="muted">{st ? 'Bağlantı bir an koptu; oyunun kaldığı yerden devam edeceksin.' : 'Sunucuyla bağlantı kuruluyor.'}</div></div></div>;
 }
 
 function TopBar() {

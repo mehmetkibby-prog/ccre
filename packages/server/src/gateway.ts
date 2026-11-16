@@ -113,14 +113,14 @@ export class Gateway {
     const rel = this.charRelease.get(t.charId);
     if (rel) {
       const ok = await Promise.race([rel.promise.then(() => true), new Promise<boolean>((r) => setTimeout(() => r(false), 8000))]);
-      if (!ok) { this.sendJson(s, { t: 'fatal', text: 'Önceki oturum kapatılamadı, birkaç saniye sonra tekrar dene.' }); ws.close(); return; }
+      if (!ok) { this.sendJson(s, { t: 'fatal', text: 'Önceki oturum kapatılıyor…', retry: true }); ws.close(); return; }
     }
     if (s.state !== 'joining' || ws.readyState !== WebSocket.OPEN) return;
     let char: CharState | null;
     try { char = await this.store.load(t.charId); } catch (e) { console.error('[gw] load', e); char = null; }
     if (!char || char.accountId !== t.accountId) { this.sendJson(s, { t: 'fatal', text: 'Karakter yüklenemedi.' }); ws.close(); return; }
     if (s.state !== 'joining' || ws.readyState !== WebSocket.OPEN) return;
-    if (!this.channels.alive(t.channel)) { this.sendJson(s, { t: 'fatal', text: 'Kanal şu an hazır değil.' }); ws.close(); return; }
+    if (!this.channels.alive(t.channel)) { this.sendJson(s, { t: 'fatal', text: 'Kanal hazırlanıyor…', retry: true }); ws.close(); return; }
     char.role = t.role;
     s.name = char.name; s.cls = char.cls;
     // sahipliği al
@@ -155,7 +155,9 @@ export class Gateway {
     if (s.state !== 'active') return; // eski/kapanan oturum komut gönderemez
     const now = Date.now();
     if (now - s.msgWindow > 1000) { s.msgWindow = now; s.msgs = 0; }
-    if (++s.msgs > 60) { this.stats.badMsgs++; if (s.msgs > 200) this.kick(s, 'Çok fazla istek.'); return; }
+    // Saniyede 60'tan fazla mesaj yok sayılır. Mobil ağ takılıp biriken mesajlar tek seferde gelebilir: bu yüzden
+    // oyuncu ATILMAZ (eskiden 200'ü aşınca atılıyordu). Yalnız açıkça saldırı düzeyindeki akış (saniyede 3000+) kesilir.
+    if (++s.msgs > 60) { this.stats.badMsgs++; if (s.msgs > 3000) this.kick(s, 'Bağlantı kötüye kullanıldı.'); return; }
     if (isBinary) {
       const ab = data instanceof ArrayBuffer ? data : Buffer.isBuffer(data) ? data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) : null;
       if (!ab || ab.byteLength !== 4) return;
@@ -314,7 +316,7 @@ export class Gateway {
   onCrash(ch: number) {
     for (const s of [...this.sessions.values()]) {
       if (s.channel !== ch) continue;
-      this.sendJson(s, { t: 'fatal', text: 'Kanal yeniden başlatılıyor. Lütfen tekrar bağlan.' });
+      this.sendJson(s, { t: 'fatal', text: 'Kanal yeniden başlatılıyor…', retry: true });
       s.state = 'closing';
       this.sessions.delete(s.sid);
       if (this.byAccount.get(s.accountId) === s) this.byAccount.delete(s.accountId);

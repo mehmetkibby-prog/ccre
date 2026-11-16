@@ -70,7 +70,7 @@ async function main() {
     if (stopping) return; stopping = true;
     console.log(`[core-of-life] ${sig}: kapanıyor, oyuncular kaydediliyor...`);
     server.close();
-    for (const s of gateway.sessions.values()) gateway.sendJson(s, { t: 'fatal', text: 'Sunucu bakım için yeniden başlatılıyor.' });
+    for (const s of gateway.sessions.values()) gateway.sendJson(s, { t: 'fatal', text: 'Sunucu güncelleniyor, birazdan kaldığın yerden devam…', retry: true });
     await channels.stop();
     await new Promise((r) => setTimeout(r, 200));
     for (let i = 0; i < 20 && store.queueLength; i++) await store.flush();
