@@ -9,6 +9,7 @@ import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
 import { GeneralTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
+import { TowerTab } from './TowerAdmin.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -78,12 +79,21 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena';
+type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena' | 'kule';
 const TABS: [Tab, string, string][] = [
-  ['durum', 'Durum', '◉'], ...(backend.accounts ? [['kayit', 'Kayıtlar', '☰'] as [Tab, string, string]] : []), ['oyuncu', 'Oyuncular', '☺'], ['arena', 'Savaş Arenası', '⚔'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
-  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
+  ['durum', 'Durum', '◉'], ...(backend.accounts ? [['kayit', 'Kayıtlar', '☰'] as [Tab, string, string]] : []), ['oyuncu', 'Oyuncular', '☺'],
+  ['arena', 'Savaş Arenası', '⚔'], ['kule', 'Kadim Kule', '♜'], ['boss', 'Bosslar', '♛'],
+  ['genel', 'Genel', '⚙'], ['seviye', 'Seviye', '▲'], ['canavar', 'Canavarlar', '✶'], ['harita', 'Haritalar', '⌖'],
+  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['market', 'Nesne Market', '✦'], ['balik', 'Balıkçılık', '≈'],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena']);
+/** Sekme grupları: sol menüde başlık altında, telefonda yatay çubukta küçük ayraçla */
+const GROUPS: [string, Tab[]][] = [
+  ['Sunucu', ['durum', 'kayit', 'oyuncu']],
+  ['Etkinlikler', ['arena', 'kule', 'boss']],
+  ['Oyun dengesi', ['genel', 'seviye', 'canavar', 'harita']],
+  ['Ekonomi', ['ganimet', 'efsun', 'arti', 'donusum', 'market', 'balik']],
+];
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena', 'kule']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -177,7 +187,12 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
         {!OFFLINE && <button className="btn small ghost" onClick={onLogout}>Çıkış</button>}
       </header>
       <nav className="adm-nav" role="tablist">
-        {TABS.map(([k, l, ic]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => go(k)}><span className="ic">{ic}</span>{l}</button>)}
+        {GROUPS.map(([g, ks]) => (
+          <div className="adm-ng" key={g}>
+            <span className="adm-ngh">{g}</span>
+            {ks.map((k) => TABS.find((x) => x[0] === k)).filter((x): x is [Tab, string, string] => !!x).map(([k, l, ic]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? 'on' : ''} onClick={() => go(k)}><span className="ic">{ic}</span>{l}</button>)}
+          </div>
+        ))}
       </nav>
       <main className="adm-main">
         <h1 className="adm-h1">{title}</h1>
@@ -190,6 +205,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             <p className="muted adm-hint">Boş kutu = varsayılan değer. Değişiklikler <b>Kaydet</b> deyince oyundaki herkese anında uygulanır.</p>
             {tab === 'genel' && <GeneralTab t={t} setT={setTT} dis={busy} />}
             {tab === 'seviye' && <LevelTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'kule' && <TowerTab t={t} setT={setTT} dis={busy} />}
             {tab === 'boss' && <BossTab t={t} setMon={setMon} setSpawn={setSpawn} dis={busy} />}
             {tab === 'balik' && <FishingTab t={t} setT={setTT} dis={busy} />}
             {tab === 'market' && <MallTab t={t} setT={setTT} dis={busy} epin={backend.epinCreate ? <EpinBox toast={setToast} /> : undefined} />}

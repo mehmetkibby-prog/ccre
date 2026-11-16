@@ -15,6 +15,7 @@ import { OFFLINE } from '../mode.ts';
 import { api } from '../api.ts';
 import { CAM_ZOOM_DEFAULT, CAM_PITCH_DEFAULT, CAM_ZOOM_MIN, CAM_ZOOM_MAX } from '../g3d/renderer3d.ts';
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
+import { TowerHud } from './tower.tsx';
 
 export let currentGame: Game | null = null;
 /** Oyuna özgü fare imleçleri (altın ok, saldırıda kılıç, etkileşimde parıltılı ok); yedek olarak sistem imleci */
@@ -169,6 +170,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <PartyFrame />
       <MountButton />
       <ArenaHud />
+      <TowerHud />
       <InviteCards />
       <TradeWindow />
       <PlayerMenu />
@@ -222,12 +224,14 @@ function TopBar() {
 function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onClose: () => void }) {
   const map = useStore((s) => s.map);
   const lvl = useStore((s) => s.self?.level ?? 1);
+  const floor = useStore((s) => s.tower?.f);
   const [, force] = useState(0);
   useEffect(() => onConfig(() => force((n) => n + 1)), []);
   const def = MONSTERS[tpl];
   if (!def) return null;
   const theme = MAPS[map]?.theme ?? 'forest';
-  const r = resolveLoot(TUNING, map, theme, def.id, (id) => MATERIAL.has(id));
+  const r = resolveLoot(TUNING, map, theme, def.id, (id) => MATERIAL.has(id), floor);
+  if (def.id === 'azrail') r.drops = [{ kind: 'mat', key: 'azrail_chest', chance: 1, qty: [1, 1] }, ...r.drops];
   const over = overLevelMul(r, lvl);
   const vm = VARIANT_LOOT_MULT[variant] ?? 1;
   const pct = (x: number) => { const v = Math.min(1, x) * 100; return v >= 10 ? `%${v.toFixed(0)}` : v >= 1 ? `%${v.toFixed(1)}` : `%${v.toFixed(2)}`; };

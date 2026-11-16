@@ -39,8 +39,12 @@ export function pmSet(name: string, p: Partial<PmConv> | null) {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | null;
 
+export interface TowerView {
+  f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;
+  seq?: number[]; si: number; riddle?: { q: string; opts: string[] }; alt: number; altLeft: number; key: boolean; kills: number; at: number;
+}
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
 export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
 export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; biteAt: number; diff: number; motion: string }
@@ -64,6 +68,8 @@ export interface UiState {
   /** Fısıltı pencereleri (Metin2 tarzı): konuşma başına pencere; küçültülünce zarf simgesi */
   pms: PmConv[];
   /** Savaş Arenası: etkinlik durumu ve canlı sıralama (bütün kanallar ortak) */
+  /** Kadim Kule: kat ve görev durumu (sunucudan); at = alındığı an */
+  tower: TowerView | null; towerHold: { i: number; at: number } | null; towerReplayAt: number; /** mühür sırası gösteriminin başladığı an (performance.now) */ towerSeqAt: number;
   arena: { active: boolean; endsAt: number; board: { id?: number; name: string; cls: string; kills: number; deaths: number }[]; at: number } | null;
   map: string; channel: number; entityId: number;
   char: { id: number; name: string; cls: string; role: string } | null;
@@ -109,7 +115,7 @@ function loadSettings(): UiState['settings'] {
 }
 
 let state: UiState = {
-  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
+  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,

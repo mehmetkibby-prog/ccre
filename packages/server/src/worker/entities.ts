@@ -34,6 +34,10 @@ export class Player {
   lastAutoPotionAt = 0;
   /** balıkçılık: atılmış olta (sunucu belirler: balık ve vurma zamanı) */
   fishing?: { token: string; fish: string; biteAt: number };
+  /** Kadim Kule: üzerinde durulan taş (-1 yok) ve sunakta bekleme */
+  towerPlate = -1;
+  altarHold: { i: number; since: number } | null = null;
+  towerGateNote = 0;
   /** oto atak açık mı ve son sayım anı */
   autoOn = false; autoAt = 0;
   lastDamageAt = 0;
@@ -128,6 +132,12 @@ export class Monster {
     this.maxHp = hp; this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(hp * ratio));
     this.atk = Math.max(1, Math.round(mt?.atk ?? s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
     this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
+    // Kadim Kule: kat başına can ve saldırı çarpanı (yönetim)
+    const fl = this.sp.floor ? TUNING.tower.floors[this.sp.floor - 1] : undefined;
+    if (fl && (fl.hpMul !== 1 || fl.atkMul !== 1)) {
+      this.maxHp = Math.max(1, Math.round(this.maxHp * fl.hpMul)); this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(this.maxHp * ratio));
+      this.atk = Math.max(1, Math.round(this.atk * fl.atkMul));
+    }
   }
   get level() { return this.sp.level; }
   get variant() { return this.sp.variant; }

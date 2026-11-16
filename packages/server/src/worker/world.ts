@@ -5,9 +5,10 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
-import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive } from '../types.ts';
+import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive, TowerProgress } from '../types.ts';
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
@@ -173,7 +174,7 @@ export class World {
     if (this.bySid.has(sid)) return;
     char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
     if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
-    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
+    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
     char.x = pos.x; char.y = pos.y;
@@ -184,6 +185,7 @@ export class World {
     zone.addPlayer(p);
     this.sendJson(p, { t: 'welcome', entityId: p.id, channel: this.opt.channel, map: zone.id, x: p.x, y: p.y, serverTime: this.now, worldHealth: this.worldHealth, online: this.online });
     this.sendFullSelf(p);
+    if (zone.id === TOWER_MAP) this.towerSend(p);
     this.marketJoin(p);
     this.opt.post({ type: 'joined', sid, ok: true });
   }
@@ -301,6 +303,7 @@ export class World {
       case 'friends': if (c.op === 'remove') return this.social.removeFriend(p, String(c.name ?? '')); return this.social.sendFriends(p);
       case 'arena': return this.cmdArena(p, String(c.op));
       case 'mount': return this.cmdMount(p, String(c.op));
+      case 'tower': return this.cmdTower(p, String(c.op));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
       case 'ping': this.sendJson(p, { t: 'pong', c: c.c, s: this.now }); return;
       case 'sync': p.resetPending = true; this.sendFullSelf(p); return;
@@ -401,6 +404,7 @@ export class World {
         if (def.boss) this.bossSpawned(z, def, r.sp);
       }
     }
+    if (z.id === TOWER_MAP && this.tickNo % 2 === 0) this.tickTower(z);
     // 4) ganimet süresi ve otomatik toplama
     if (z.lootById.size) {
       for (const l of z.lootById.values()) {
@@ -829,7 +833,16 @@ export class World {
     const mod = lvMod(c.level);
     const bf = charBuffs(c.misc.buffs, this.now);
     // TP: grupta, canavarın çevresindeki (geniş menzil) grup üyeleri paylaşır; her üyenin kendi seviye ve buff çarpanıyla
-    for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) this.addXp(q, xp);
+    for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) {
+      this.addXp(q, xp);
+      if (m.sp.floor && q.zone.id === TOWER_MAP) this.towerKill(q, m);
+    }
+    // Azrail: hasar veren herkese kesin Azrail Sandığı (boss ganimeti her katkı verene ayrı çağrılır)
+    if (m.def.id === 'azrail') {
+      c.materials.azrail_chest = (c.materials.azrail_chest ?? 0) + 1;
+      this.sendJson(p, { t: 'loot', name: '1× Azrail Sandığı', rarity: 'crimson' });
+      p.selfDirty |= 2;
+    }
     c.kills++;
     const mq = c.misc.mount?.quest; if (mq && !c.misc.mount?.owned && mq.kills < MOUNT.kills) { mq.kills++; if (mq.kills === MOUNT.kills) this.notice(p, `Seyis görevi: ${MOUNT.kills} canavar tamam! Seyis Arda'ya dön.`, 'ok'); }
     const day = trDayKey(this.now);
@@ -843,7 +856,7 @@ export class World {
     const w = c.equip.weapon;
     if (w) w.kills = (w.kills ?? 0) + 1;
     // ganimet tablosu: harita profili → bölge ayarı → canavar türü ayarı (istemcideki "?" penceresiyle aynı hesap)
-    const prof = resolveLoot(TUNING, p.zone.id, p.zone.def.theme, m.def.id, (id) => MATERIAL.has(id));
+    const prof = resolveLoot(TUNING, p.zone.id, p.zone.def.theme, m.def.id, (id) => MATERIAL.has(id), m.sp.floor);
     // bölge seviye sınırı: haritanın üst sınırını aşan oyuncuya eşya/malzeme düşmesi çok azalır
     const over = overLevelMul(prof, lvl0);
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
@@ -944,6 +957,11 @@ export class World {
       // arena: etkinlik sürüyorsa arenada rastgele noktada tam canla, 4 sn korumalı doğ; bittiyse köyde
       if (this.arenaActive) { const pt = this.arenaPoint(); p.hp = p.stats.maxHp; this.moveToZone(p, z, pt.x, pt.y); this.arenaProt.set(p.char.id, this.now + 4000); }
       else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
+    } else if (target === TOWER_MAP) {
+      // kulede ölen o katın girişinde doğar (ilerleme korunur)
+      const t = this.towerProg(p), r = towerRoom(t.f);
+      this.moveToZone(p, z, r.entry.x + (rnd() - 0.5) * 60, r.entry.y);
+      this.towerSend(p);
     } else this.moveToZone(p, z, z.layout.spawn.x + (rnd() - 0.5) * 80, z.layout.spawn.y + (rnd() - 0.5) * 60);
     this.sendJson(p, { t: 'respawned', hp: p.hp });
     this.save(p);
@@ -1123,6 +1141,7 @@ export class World {
       return;
     }
     if (key === 'red_potion') return this.usePotion(p, false);
+    if (key === 'azrail_chest') return this.openAzrailChest(p);
     this.notice(p, 'Bu eşya doğrudan kullanılamaz.');
   }
 
@@ -1386,6 +1405,198 @@ export class World {
       p.recompute(true); p.dirty |= Upd.FLAGS | Upd.HP | Upd.MAXHP; p.selfDirty |= 1 | 4; p.markSave();
       return;
     }
+  }
+
+  // ───────────────────────────── Kadim Kule ─────────────────────────────
+  /** Oyuncunun kule durumu; konumu başka kattaysa (yönetim ışınlaması vb.) o kata uyarlanır. */
+  private towerProg(p: Player): TowerProgress {
+    const c = p.char;
+    let t = c.misc.tower;
+    const at = p.zone.id === TOWER_MAP ? towerFloorAt(p.x, p.y) : 0;
+    if (!t) t = c.misc.tower = { f: at || 1, n: 0 };
+    if (at && at !== t.f) { const best = t.best, clears = t.clears; t = c.misc.tower = { f: at, n: 0, best, clears }; this.towerPuzzleInit(t); }
+    return t;
+  }
+  private towerPuzzleInit(t: TowerProgress) {
+    const ft = TUNING.tower.floors[t.f - 1];
+    delete t.seq; delete t.si; delete t.rd; delete t.opts; delete t.alt; delete t.altAt; delete t.key;
+    if (!ft) return;
+    if (ft.puzzle === 'seq') { t.seq = Array.from({ length: 5 }, () => randInt(0, 3)); t.si = 0; }
+    else if (ft.puzzle === 'riddle') { t.rd = randInt(0, RIDDLES.length - 1); const o = [0, 1, 2, 3]; for (let i = 3; i > 0; i--) { const j = randInt(0, i); [o[i], o[j]] = [o[j], o[i]]; } t.opts = o; }
+    else if (ft.puzzle === 'altar') { t.alt = 0; t.altAt = 0; }
+  }
+  /** Kat başlangıcı: ilerleme sıfırlanır, bulmaca kurulur, oyuncu kat girişine taşınır. */
+  private towerSetFloor(p: Player, f: number) {
+    const c = p.char, old = c.misc.tower;
+    const t: TowerProgress = { f, n: 0, best: Math.max(old?.best ?? 0, f), clears: old?.clears ?? 0 };
+    this.towerPuzzleInit(t);
+    c.misc.tower = t;
+    p.towerPlate = -1; p.altarHold = null;
+    const z = this.zones.get(TOWER_MAP)!, r = towerRoom(f);
+    this.moveToZone(p, z, r.entry.x + (rnd() - 0.5) * 50, r.entry.y);
+    const ft = TUNING.tower.floors[f - 1];
+    this.notice(p, `Kadim Kule · ${f}. Kat — ${TOWER_PUZZLE_NAMES[ft?.puzzle ?? 'kill']}`, 'ok');
+    this.towerSend(p);
+    this.save(p);
+  }
+  private towerSend(p: Player) {
+    if (p.zone.id !== TOWER_MAP) { this.sendJson(p, { t: 'tower', f: 0 }); return; }
+    const t = this.towerProg(p), ft = TUNING.tower.floors[t.f - 1];
+    if (!ft) return;
+    const need = ft.puzzle === 'kill' ? ft.kills : ft.puzzle === 'seq' ? (t.seq?.length ?? 5) : ft.puzzle === 'altar' ? 3 : 1;
+    const have = ft.puzzle === 'kill' ? t.n : ft.puzzle === 'seq' ? (t.si ?? 0) : ft.puzzle === 'altar' ? [0, 1, 2].filter((i) => (t.alt ?? 0) & (1 << i)).length : t.done ? 1 : 0;
+    const rd = t.rd !== undefined ? RIDDLES[t.rd] : null;
+    this.sendJson(p, {
+      t: 'tower', f: t.f, puzzle: ft.puzzle, need, have, done: !!t.done, best: t.best ?? t.f, clears: t.clears ?? 0,
+      seq: t.seq, si: t.si ?? 0,
+      riddle: rd && t.opts ? { q: rd.q, opts: t.opts.map((o) => (o === 0 ? rd.a : rd.w[o - 1])) } : undefined,
+      alt: t.alt ?? 0, altLeft: t.altAt ? Math.max(0, t.altAt + ALTAR_WINDOW_MS - this.now) : 0,
+      key: !!t.key, kills: t.n,
+    });
+  }
+  private towerDone(p: Player, t: TowerProgress, msg: string) {
+    if (t.done) return;
+    t.done = true;
+    this.notice(p, msg, 'ok');
+    const r = towerRoom(t.f);
+    p.zone.emit(r.gate.x, r.gate.y, { e: Ev.FX, fx: Fx.TELEPORT, x: r.gate.x | 0, y: r.gate.y | 0, r: 80, ms: 1200, a: 0 }, p.id);
+    p.markSave();
+  }
+  private towerKill(p: Player, m: Monster) {
+    const t = this.towerProg(p);
+    if (m.sp.floor !== t.f || t.done) return;
+    const ft = TUNING.tower.floors[t.f - 1]; if (!ft) return;
+    if (ft.puzzle === 'kill') {
+      t.n++;
+      if (t.n >= ft.kills) this.towerDone(p, t, 'Kat temizlendi! Kuzeydeki kapı açıldı.');
+    } else if (ft.puzzle === 'key') {
+      t.n++;
+      if (rnd() < TUNING.tower.keyChance || t.n >= 15) { t.key = true; this.sendJson(p, { t: 'loot', name: 'Kat Anahtarı', rarity: 'orange' }); this.towerDone(p, t, 'Kat Anahtarı bulundu! Kapı açıldı.'); }
+    } else if (ft.puzzle === 'boss' && m.def.boss) {
+      t.clears = (t.clears ?? 0) + 1;
+      this.towerDone(p, t, 'Azrail yenildi! Kapıdan çıkıp zaferini kutla.');
+      const msg = JSON.stringify({ t: 'chat', ch: 'world', from: 'Kadim Kule', text: `${p.char.name} Azrail'i yendi ve Kadim Kule'yi fethetti!`, cls: '', gm: true });
+      for (const q of this.bySid.values()) this.pushOut(q.sid, msg);
+    }
+    this.towerSend(p);
+  }
+  /** Kuledeki oyuncular: kat taşları, sunaklar, kapı (2 tikte bir). */
+  private tickTower(z: Zone) {
+    for (const p of z.playerSet) {
+      if (p.dead) continue;
+      const t = this.towerProg(p), ft = TUNING.tower.floors[t.f - 1];
+      if (!ft) continue;
+      const room = towerRoom(t.f, ft.puzzle);
+      // kapı: görev bittiyse üst kata (son katta köye)
+      if (dist(p, room.gate) < GATE_R) {
+        if (t.done) {
+          if (t.f >= TOWER_FLOORS) { this.towerExit(p, true); continue; }
+          this.towerSetFloor(p, t.f + 1); continue;
+        }
+        if (this.now - p.towerGateNote > 4000) { p.towerGateNote = this.now; this.notice(p, 'Kapı mühürlü: önce bu katın görevini tamamla.'); }
+      }
+      if (t.done || !room.plates.length) continue;
+      let on = -1;
+      for (let i = 0; i < room.plates.length; i++) if (dist(p, room.plates[i]) < PLATE_R) { on = i; break; }
+      if (ft.puzzle === 'altar') {
+        // sunak: üzerinde 3 sn durunca yanar; ilk yanandan sonra 60 sn içinde üçü de yanmalı
+        if (t.altAt && this.now - t.altAt > ALTAR_WINDOW_MS) { t.alt = 0; t.altAt = 0; this.notice(p, 'Sunakların ateşi söndü. Yeniden dene.'); this.towerSend(p); }
+        if (on < 0 || ((t.alt ?? 0) & (1 << on))) { p.altarHold = null; continue; }
+        if (!p.altarHold || p.altarHold.i !== on) { p.altarHold = { i: on, since: this.now }; this.sendJson(p, { t: 'towerHold', i: on, ms: ALTAR_HOLD_MS }); continue; }
+        if (this.now - p.altarHold.since >= ALTAR_HOLD_MS) {
+          t.alt = (t.alt ?? 0) | (1 << on); if (!t.altAt) t.altAt = this.now; p.altarHold = null;
+          const pl = room.plates[on]; z.emit(pl.x, pl.y, { e: Ev.FX, fx: Fx.TELEPORT, x: pl.x | 0, y: pl.y | 0, r: 60, ms: 900, a: 0 }, p.id);
+          if (t.alt === 7) this.towerDone(p, t, 'Üç sunak da yandı! Kapı açıldı.');
+          this.towerSend(p);
+        }
+        continue;
+      }
+      if (on === p.towerPlate) continue;
+      p.towerPlate = on;
+      if (on < 0) continue;
+      if (ft.puzzle === 'seq' && t.seq) {
+        if (t.seq[t.si ?? 0] === on) {
+          t.si = (t.si ?? 0) + 1;
+          if (t.si >= t.seq.length) this.towerDone(p, t, 'Mühürler doğru sırayla açıldı! Kapı açıldı.');
+        } else {
+          this.towerZap(p, 0.12, `Yanlış mühür! Sıra: ${t.seq.map((i) => SEQ_NAMES[i]).join(' → ')}. Baştan başla.`);
+          t.si = 0;
+          this.sendJson(p, { t: 'towerReplay' });
+        }
+        this.towerSend(p);
+      } else if (ft.puzzle === 'riddle' && t.opts) {
+        if (t.opts[on] === 0) this.towerDone(p, t, 'Doğru cevap! Bilge taşlar kapıyı açtı.');
+        else {
+          this.towerZap(p, 0.1, 'Yanlış cevap! Taşlar seni girişe fırlattı. Yeni bilmece seni bekliyor.');
+          this.towerPuzzleInit(t); t.n = 0;
+          this.moveToZone(p, z, room.entry.x, room.entry.y); p.towerPlate = -1;
+        }
+        this.towerSend(p);
+      }
+    }
+  }
+  /** Bulmaca cezası: canın bir kısmı (öldürmez) */
+  private towerZap(p: Player, frac: number, msg: string) {
+    const dmg = Math.min(Math.max(0, Math.round(p.hp) - 1), Math.round(p.stats.maxHp * frac));
+    if (dmg > 0) { p.hp -= dmg; p.dirty |= Upd.HP; p.zone.emit(p.x, p.y, { e: Ev.DAMAGE, src: p.id, tgt: p.id, amount: dmg, flags: 0 }); }
+    this.notice(p, msg, 'error');
+  }
+  private towerExit(p: Player, won: boolean) {
+    const town = this.zones.get('bazaar')!;
+    const n = town.layout.npcs.find((x) => x.id === 'bekci');
+    const t = p.char.misc.tower;
+    if (t) { t.f = 1; t.n = 0; delete t.done; }
+    this.moveToZone(p, town, (n?.x ?? town.layout.spawn.x) + 60, (n?.y ?? town.layout.spawn.y) + 70);
+    this.sendJson(p, { t: 'tower', f: 0 });
+    if (won) this.notice(p, 'Kadim Kule\'den zaferle döndün!', 'ok');
+    this.save(p);
+  }
+  private cmdTower(p: Player, op: string) {
+    const T = TUNING.tower;
+    if (op === 'state') return this.towerSend(p);
+    if (op === 'leave') {
+      if (p.zone.id !== TOWER_MAP) return;
+      if (this.now < p.combatUntil) return this.notice(p, 'Savaştayken kuleden çıkamazsın.');
+      return this.towerExit(p, false);
+    }
+    if (op === 'enter') {
+      if (!T.enabled) return this.notice(p, 'Kadim Kule şu an kapalı.');
+      if (p.dead) return;
+      if (p.zone.id !== 'bazaar' || !this.nearNpc(p, 'bekci')) return this.notice(p, 'Zindan Bekçisi\'nin yanına git.');
+      if (p.char.level < T.minLevel) return this.notice(p, `Kadim Kule için en az ${T.minLevel}. seviye gerekir.`);
+      this.towerSetFloor(p, 1);
+    }
+  }
+  private openAzrailChest(p: Player) {
+    const c = p.char, ch = TUNING.tower.chest;
+    if ((c.materials.azrail_chest ?? 0) <= 0) return this.notice(p, 'Elinde yok.');
+    const items = ch.drops.filter((d) => d.kind === 'item');
+    if (items.length && c.bag.length + items.reduce((a, d) => a + d.qty[1], 0) > BAG_EQUIP_CAP) return this.notice(p, 'Sandığı açmak için çantada yer aç.');
+    c.materials.azrail_chest -= 1;
+    const rewards: string[] = [];
+    const gems = randInt(ch.gems[0], ch.gems[1]), ess = randInt(ch.essence[0], ch.essence[1]);
+    if (gems) { c.gems += gems; rewards.push(`${gems.toLocaleString('tr-TR')} Mücevher`); }
+    if (ess) { c.essence += ess; rewards.push(`${ess.toLocaleString('tr-TR')} Öz`); }
+    for (const d of ch.drops) {
+      if (rnd() >= d.chance) continue;
+      const q = randInt(d.qty[0], d.qty[1]);
+      if (d.kind === 'item') {
+        if (!ITEM_TPL.has(d.key)) continue;
+        const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
+        for (let k = 0; k < q; k++) { const it = makeItem(d.key, r, 'chest'); c.bag.push(it); rewards.push(itemDisplayName(it)); }
+      } else if (MATERIAL.has(d.key) || MALL.has(d.key)) {
+        c.materials[d.key] = (c.materials[d.key] ?? 0) + q;
+        rewards.push(`${q}× ${MATERIAL.get(d.key)?.name ?? MALL.get(d.key)?.name ?? d.key}`);
+      }
+    }
+    if (rnd() < ch.hookChance) {
+      c.materials.azrail_hook = (c.materials.azrail_hook ?? 0) + 1;
+      rewards.unshift('★ Azrail Kancası');
+      const msg = JSON.stringify({ t: 'chat', ch: 'world', from: 'Kadim Kule', text: `${c.name} Azrail Sandığı'ndan Azrail Kancası çıkardı!`, cls: '', gm: true });
+      for (const q of this.bySid.values()) this.pushOut(q.sid, msg);
+    }
+    p.selfDirty |= 1 | 2; this.save(p, true);
+    this.sendJson(p, { t: 'chestResult', title: 'Azrail Sandığı', rewards: rewards.length ? rewards : ['Sandık boş çıktı'] });
   }
 
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {

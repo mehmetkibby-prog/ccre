@@ -25,6 +25,7 @@ import { shared, mat as sharedMat } from './materials.ts';
 import { iconUrl } from '../game/art/icons.ts';
 import { glowTexture } from './textures.ts';
 import { store } from '../game/store.ts';
+import { TowerFx } from './tower3d.ts';
 
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
@@ -74,6 +75,8 @@ const THEME = {
   lake: { fog: 0xc6d6de, top: 0x78a6d8, sky: 0xdae8f4, ground: 0x857a62, sun: 0xfff0dc, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 130, far: 250 },
   frozen: { fog: 0xd4dee6, top: 0x8eaed0, sky: 0xe6eef6, ground: 0x9aa6b2, sun: 0xf4f6ff, sunI: 3.1, hemi: 1.1, exp: 1.12, near: 130, far: 250 },
   black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 130, far: 250 },
+  // Kadim Kule: karanlık, mor-mavi mistik ışık; kısa sis (komşu katlar boşlukta silik görünür)
+  tower: { fog: 0x1e1a2e, top: 0x0a0812, sky: 0x6a5c94, ground: 0x1c1626, sun: 0xd2c4ff, sunI: 2.6, hemi: 0.9, exp: 1.15, near: 38, far: 100 },
   ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 130, far: 250 },
 } as const;
 
@@ -87,6 +90,7 @@ export class Renderer3D {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(MOBILE ? 34 : 38, 1, 0.5, 260);
   composer: EffectComposer | null = null;
+  private towerFx: TowerFx | null = null;
   bloom: UnrealBloomPass | null = null;
   sun = new THREE.DirectionalLight(0xffffff, 2.5);
   hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.7);
@@ -238,6 +242,8 @@ export class Renderer3D {
     const q = store.get().settings.quality;
     this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS);
     this.world.add(this.propsGroup);
+    this.towerFx?.dispose(); this.towerFx = null;
+    if (l.def.id === 'tower') { this.towerFx = new TowerFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.towerFx.group); }
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.grass.group.visible = !cool(); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
@@ -744,6 +750,7 @@ export class Renderer3D {
     const g = this.g;
     shared.time.value = now / 1000;
     this.terrain.update(now);
+    if (this.towerFx) { const st = store.get(); this.towerFx.update(now, st.tower, st.towerHold, st.towerSeqAt); }
     // kendi karakter
     const sv = this.ensureSelf();
     const selfDead = (g.selfFlags & EFlag.DEAD) !== 0;
@@ -897,6 +904,7 @@ export class Renderer3D {
     if (th === 'frozen') for (let i = 0; i < k * 120; i++) this.fx.spawn(rx(), c.y + 14, rz() - 4, -0.5, -1.6, 0.2, 9000, 0.12, '#ffffff', 0, 0);
     if (th === 'forest' || th === 'village' || th === 'lake') if (Math.random() < k * 6) this.fx.spawn(rx(), c.y + 0.5 + Math.random() * 2, rz(), (Math.random() - 0.5) * 0.4, 0.1, (Math.random() - 0.5) * 0.4, 4000, 0.16, '#e8ff9a', 0, 0.2);
     if (th === 'forest' && Math.random() < k * 4) this.fx.spawn(rx(), c.y + 8, rz(), 0.6, -0.9, 0.3, 9000, 0.14, '#c8a040', -0.05, 0);
+    if (th === 'tower' && Math.random() < k * 14) this.fx.spawn(rx(), c.y + 0.2 + Math.random() * 3, rz(), (Math.random() - 0.5) * 0.2, 0.25 + Math.random() * 0.3, (Math.random() - 0.5) * 0.2, 6000, 0.1, Math.random() < 0.6 ? '#9a7cff' : '#5ce0d0', 0, 0.1);
     if (th === 'black' && Math.random() < k * 30) this.fx.spawn(rx(), c.y + 0.2, rz(), (Math.random() - 0.5) * 0.3, 0.8 + Math.random(), (Math.random() - 0.5) * 0.3, 5000, 0.12, Math.random() < 0.5 ? '#ff6a3a' : '#c060ff', 0.05, 0);
   }
 

@@ -90,6 +90,83 @@ export interface GameTuning {
   arena: ArenaTune;
   /** Canavar sıralaması: dönem (gün/hafta/ay) ve ilk sıraların ödülleri (ÇP, Mücevher). */
   killRank: KillRankTune;
+  /** Kadim Kule: kat başına canavar/güç/görev, kat malzemeleri ve Azrail Sandığı içeriği. */
+  tower: TowerTune;
+}
+/** Kat görevi: öldür / mühür sırası / anahtar / bilmece / sunak / boss (Azrail). */
+export type TowerPuzzle = 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss';
+export const TOWER_PUZZLES: TowerPuzzle[] = ['kill', 'seq', 'key', 'riddle', 'altar', 'boss'];
+export interface TowerFloorTune {
+  puzzle: TowerPuzzle; monster: string; count: number; level: [number, number];
+  /** canavar can ve saldırı çarpanı (bu kattaki canavarlara) */
+  hpMul: number; atkMul: number;
+  /** öldürme görevinde gereken canavar sayısı */
+  kills: number;
+  /** kat malzemelerinin düşme olasılığı (0..1) */
+  mats: Record<string, number>;
+}
+export interface TowerTune {
+  enabled: boolean; minLevel: number;
+  floors: TowerFloorTune[];
+  /** anahtar katında her öldürmede Kat Anahtarı olasılığı (0..1); 15 öldürmede kesin */
+  keyChance: number;
+  /** Azrail Sandığı: mücevher, öz, özel düşenler ve Azrail Kancası olasılığı */
+  chest: { gems: [number, number]; essence: [number, number]; drops: DropTune[]; hookChance: number };
+}
+export const TOWER_MATS = ['tower_seal', 'soul_ring', 'sly_core', 'mourn_silk'];
+const tf = (puzzle: TowerPuzzle, monster: string, count: number, level: [number, number], kills: number, k: number): TowerFloorTune =>
+  ({ puzzle, monster, count, level, hpMul: 1, atkMul: 1, kills, mats: { tower_seal: 0.03 * k, soul_ring: 0.02 * k, sly_core: 0.015 * k, mourn_silk: 0.015 * k } });
+export const TOWER_DEFAULT: TowerTune = {
+  enabled: true, minLevel: 25, keyChance: 0.12,
+  floors: [
+    tf('kill', 't_skeleton', 14, [26, 28], 12, 1), tf('kill', 't_skeleton', 16, [28, 30], 15, 1),
+    tf('seq', 't_gargoyle', 10, [30, 32], 0, 1.2), tf('kill', 't_gargoyle', 16, [32, 34], 15, 1.2),
+    tf('key', 't_wraith', 14, [34, 36], 0, 1.4), tf('kill', 't_wraith', 16, [36, 38], 18, 1.4),
+    tf('riddle', 't_knight', 8, [38, 40], 0, 1.6), tf('kill', 't_knight', 16, [40, 42], 18, 1.6),
+    tf('altar', 't_executioner', 10, [42, 44], 0, 2), tf('boss', 'azrail', 1, [50, 50], 0, 0),
+  ],
+  chest: {
+    gems: [400, 1000], essence: [150, 400], hookChance: 0.05,
+    drops: [
+      { kind: 'mat', key: 'tower_seal', chance: 0.6, qty: [1, 3] }, { kind: 'mat', key: 'soul_ring', chance: 0.45, qty: [1, 2] },
+      { kind: 'mat', key: 'sly_core', chance: 0.35, qty: [1, 2] }, { kind: 'mat', key: 'mourn_silk', chance: 0.35, qty: [1, 2] },
+      { kind: 'mat', key: 'red_potion', chance: 1, qty: [10, 20] },
+    ],
+  },
+};
+export function sanitizeTower(raw: unknown): TowerTune {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const D = TOWER_DEFAULT;
+  const num = (v: unknown, lo: number, hi: number, d: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+  const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
+  const pair = (v: unknown, lo: number, hi: number, d: [number, number]): [number, number] => {
+    if (!Array.isArray(v) || v.length !== 2) return [...d];
+    const a = Math.round(num(v[0], lo, hi, d[0])), b = Math.round(num(v[1], lo, hi, d[1])); return [Math.min(a, b), Math.max(a, b)];
+  };
+  const id = (v: unknown, d: string) => typeof v === 'string' && /^[a-z0-9_]{1,32}$/.test(v) ? v : d;
+  const fl = Array.isArray(r.floors) ? r.floors : [];
+  const floors = D.floors.map((d, i) => {
+    const o = obj(fl[i]);
+    const mats: Record<string, number> = { ...d.mats };
+    for (const [k, v] of Object.entries(obj(o.mats)).slice(0, 8)) if (/^[a-z0-9_]{1,32}$/.test(k)) mats[k] = num(v, 0, 1, 0);
+    const puzzle = TOWER_PUZZLES.includes(o.puzzle as TowerPuzzle) ? o.puzzle as TowerPuzzle : d.puzzle;
+    return {
+      puzzle: i === 9 ? 'boss' as const : puzzle === 'boss' ? 'kill' as const : puzzle,
+      monster: id(o.monster, d.monster), count: Math.round(num(o.count, i === 9 ? 1 : 0, 60, d.count)), level: pair(o.level, 1, 120, d.level),
+      hpMul: num(o.hpMul, 0.05, 50, d.hpMul), atkMul: num(o.atkMul, 0.05, 50, d.atkMul), kills: Math.round(num(o.kills, 0, 500, d.kills)), mats,
+    };
+  });
+  const c = obj(r.chest);
+  const drops: DropTune[] = [];
+  if (Array.isArray(c.drops)) for (const raw2 of c.drops.slice(0, 24)) {
+    const d = obj(raw2); const kind = d.kind === 'item' || d.kind === 'mat' || d.kind === 'mall' ? d.kind : null;
+    const k = typeof d.key === 'string' && /^[a-z0-9_:]{1,32}$/.test(d.key) ? d.key : null;
+    if (kind && k) drops.push({ kind, key: k, chance: num(d.chance, 0, 1, 0), qty: pair(d.qty, 1, 9999, [1, 1]), ...(typeof d.rarity === 'string' && /^[a-z]{1,16}$/.test(d.rarity) ? { rarity: d.rarity } : {}) });
+  }
+  return {
+    enabled: r.enabled === undefined ? D.enabled : !!r.enabled, minLevel: Math.round(num(r.minLevel, 1, 120, D.minLevel)), keyChance: num(r.keyChance, 0, 1, D.keyChance), floors,
+    chest: { gems: pair(c.gems, 0, 1e7, D.chest.gems), essence: pair(c.essence, 0, 1e7, D.chest.essence), hookChance: num(c.hookChance, 0, 1, D.chest.hookChance), drops: Array.isArray(c.drops) ? drops : structuredClone(D.chest.drops) },
+  };
 }
 export interface KillRankTune { period: 'day' | 'week' | 'month'; rewards: { cp: number; gems: number }[] }
 export const KILLRANK_DEFAULT: KillRankTune = { period: 'week', rewards: [{ cp: 100, gems: 0 }, { cp: 50, gems: 0 }, { cp: 0, gems: 1000 }] };
@@ -130,9 +207,10 @@ export const DEFAULT_TUNING: GameTuning = {
   monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),
+  tower: structuredClone(TOWER_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
@@ -154,6 +232,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.classicUrl = typeof r.classicUrl === 'string' && /^(https:\/\/[^\s"'<>]+|\/[^\s"'<>]*)?$/.test(r.classicUrl.trim()) ? r.classicUrl.trim().slice(0, 200) : DEFAULT_TUNING.classicUrl;
   out.arena = sanitizeArena(r.arena);
   out.killRank = sanitizeKillRank(r.killRank);
+  out.tower = sanitizeTower(r.tower);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

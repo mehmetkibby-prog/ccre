@@ -699,6 +699,7 @@ export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: S
       // haritadaki doğma grubu (seviye için)
       let spawnKey = '', baseLevel = 1, mapName = '';
       for (const mp of Object.values(MAPS)) mp.spawns.forEach((g, gi) => { if (g.monster === d.id && !spawnKey) { spawnKey = mp.id + ':' + gi; baseLevel = g.level[0]; mapName = mp.name; } });
+      if (d.id === 'azrail') { mapName = 'Kadim Kule · 10. kat (seviye Kadim Kule sekmesinde)'; baseLevel = t.tower.floors[9]?.level[0] ?? 50; }
       const lv = t.spawns[spawnKey]?.level?.[0] ?? baseLevel;
       const st = monsterStats(d, lv, 0);
       const defHp = Math.round(st.maxHp * TUNING_DEF(t, 'monsterHpMul') * (m.hpMul ?? 1)), defAtk = Math.round(st.atk * TUNING_DEF(t, 'monsterAtkMul') * (m.atkMul ?? 1));

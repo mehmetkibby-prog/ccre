@@ -1,4 +1,4 @@
-export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient';
+export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient' | 'tower';
 export type Region = 'near' | 'mid' | 'far' | 'any';
 
 export interface SpawnGroup {
@@ -49,7 +49,7 @@ export const MAPS: Record<string, MapDef> = {
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },
       { id: 'pakize', name: 'Pakize', title: 'Zanaatkâr', art: 'crafter', tx: 17, ty: 30, actions: ['craft'] },
       { id: 'nur', name: 'Nur', title: 'Işınlayıcı', art: 'mage', tx: 31, ty: 26, actions: ['teleport'] },
-      { id: 'bekci', name: 'Zindan Bekçisi', title: 'Seferler', art: 'warden', tx: 38, ty: 30, actions: ['dungeon'] },
+      { id: 'bekci', name: 'Zindan Bekçisi', title: 'Seferler', art: 'warden', tx: 38, ty: 30, actions: ['tower'] },
       { id: 'arda', name: 'Seyis Arda', title: 'Binek Ustası', art: 'stable', tx: 45, ty: 22, actions: ['mount'] },
       { id: 'tuccar', name: 'Tüccar Selim', title: 'Erzak', art: 'merchant', tx: 24, ty: 22, actions: ['shop_general', 'sell'] },
       { id: 'kemal', name: 'Balıkçı Kemal', title: '', art: 'fisher', tx: 15, ty: 35, actions: ['fishing_shop'] },
@@ -100,6 +100,12 @@ export const MAPS: Record<string, MapDef> = {
     respawnMap: 'lake', travelable: true, spawns: [],
     desc: 'Güvenli balıkçılık bölgesi. Balıkçı Hasan seni bekliyor.',
     npcs: [{ id: 'hasan', name: 'Balıkçı Hasan', title: 'Balıkçı', art: 'fisher', tx: 30, ty: 34, actions: ['fishing_shop'] }],
+  },
+  // Kadim Kule: 10 kat odası (bkz. content/tower.ts); giriş Zindan Bekçisi'nden, canavarlar kat ayarından
+  tower: {
+    id: 'tower', name: 'Kadim Kule', w: 200, h: 80, theme: 'tower', seed: 1299, safe: false, pvp: false, minLevel: 1,
+    respawnMap: 'tower', travelable: false, spawns: [], npcs: [],
+    desc: 'On katlı kadim kule. Her katta canavarlar ve bulmacalar; zirvede Azrail bekler.',
   },
 };
 export const MAP_IDS = Object.keys(MAPS);

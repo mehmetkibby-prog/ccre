@@ -19,4 +19,5 @@ export * from './content/mall.ts';
 export * from './content/fishing.ts';
 export * from './content/transform.ts';
 export * from './content/mount.ts';
+export * from './content/tower.ts';
 export { findPath, los, freeAt } from './nav.ts';

@@ -133,6 +133,13 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'fish_sokan', name: 'Sokan', icon: 'fish_sokan', color: '#8fb8c8', sellable: false, desc: 'Gölün en yaygın balığı. Balıkçı Hasan alır.' },
   { id: 'fish_zargana', name: 'Zargana', icon: 'fish_zargana', color: '#7fd6c8', sellable: false, desc: 'Uzun gagalı, çevik balık. Balıkçı Hasan alır.' },
   { id: 'fish_levrek', name: 'Levrek', icon: 'fish_levrek', color: '#b8c8d8', sellable: false, desc: 'Değerli, güçlü balık. Balıkçı Hasan alır.' },
+  // Kadim Kule
+  { id: 'tower_seal', name: 'Kadim Kat Mührü', icon: 'tower_seal', color: '#5ce0d0', sellable: false, desc: 'Kadim Kule katlarında düşer. Üretim ve geliştirmede kullanılır.' },
+  { id: 'soul_ring', name: 'Ruh Zinciri Halkası', icon: 'soul_ring', color: '#9ab8ff', sellable: false, desc: 'Kadim Kule katlarında düşer. Ruhları bağlayan kadim halka.' },
+  { id: 'sly_core', name: 'Sinsi Taş Çekirdeği', icon: 'sly_core', color: '#7cf06a', sellable: false, desc: 'Kadim Kule katlarında düşer. İçinde bir göz kıpırdar.' },
+  { id: 'mourn_silk', name: 'Matem İpeği', icon: 'mourn_silk', color: '#a78bd8', sellable: false, desc: 'Kadim Kule katlarında düşer. Yas tutan ruhların dokuduğu ipek.' },
+  { id: 'azrail_chest', name: 'Azrail Sandığı', icon: 'azrail_chest', color: '#ff3a5a', sellable: false, desc: 'Azrail\'den kesin düşer. Aç: Mücevher, Öz, kule malzemeleri ve şansla Azrail Kancası.' },
+  { id: 'azrail_hook', name: 'Azrail Kancası', icon: 'azrail_hook', color: '#ff2a4a', sellable: false, desc: 'Azrail Sandığı\'ndan nadiren çıkar. Efsanevi üretim malzemesi.' },
   { id: 'talisman_stone', name: 'Tılsım Taşı', icon: 'talisman', color: '#5ce0b0', sellable: false, desc: '20 tanesi Tılsımın Gücü olur.' },
 ];
 export const MATERIAL = new Map(MATERIALS.map((m) => [m.id, m] as const));

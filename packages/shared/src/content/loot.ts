@@ -57,6 +57,16 @@ export const LOOT_PROFILES: Record<string, LootProfile> = {
       { id: 'red_pearl', chance: 0.005, qty: [1, 1] },
     ],
   },
+  // Kadim Kule: kat malzemeleri kat ayarından gelir (TUNING.tower.floors[].mats), burada genel tablo
+  tower: {
+    equipChance: 0.09,
+    rarityWeights: { blue: 30, orange: 48, crimson: 20, unique: 2 },
+    gems: [6, 14], essence: [5, 10],
+    materials: [
+      { id: 'red_potion', chance: 0.08, qty: [1, 3] },
+      { id: 'kor_seal', chance: 0.05, qty: [1, 2] },
+    ],
+  },
 };
 /** Varyant çarpanları: agresif/katil daha iyi ganimet bırakır. */
 export const VARIANT_LOOT_MULT = [1, 1.35, 2.4];
@@ -73,12 +83,14 @@ export interface ResolvedLoot {
  * Bir canavarın geçerli ganimet tablosu: harita profili → bölge ayarı (yönetim) → canavar türü ayarı (yönetim).
  * Sunucu düşme hesabında, istemci canavar bilgisindeki "?" penceresinde aynısını kullanır (gösterilen = gerçek).
  */
-export function resolveLoot(t: GameTuning, mapId: string, theme: string, monsterId: string, isMat: (id: string) => boolean = () => true): ResolvedLoot {
+export function resolveLoot(t: GameTuning, mapId: string, theme: string, monsterId: string, isMat: (id: string) => boolean = () => true, floor?: number): ResolvedLoot {
   const base = LOOT_PROFILES[theme] ?? LOOT_PROFILES[mapId] ?? LOOT_PROFILES.forest;
   const z = t.zoneLoot?.[mapId], m = t.monsters?.[monsterId];
   const mats = new Map<string, { chance: number; qty: [number, number] }>();
   for (const x of base.materials) mats.set(x.id, { chance: x.chance, qty: x.qty });
-  for (const layer of [z?.mats, m?.mats]) for (const [id, ch] of Object.entries(layer ?? {})) {
+  // Kadim Kule: o katın malzeme olasılıkları (Kadim Kat Mührü, Ruh Zinciri Halkası, …)
+  const fl = mapId === 'tower' && floor ? t.tower?.floors?.[floor - 1] : undefined;
+  for (const layer of [fl?.mats, z?.mats, m?.mats]) for (const [id, ch] of Object.entries(layer ?? {})) {
     if (!isMat(id)) continue;
     const cur = mats.get(id); mats.set(id, { chance: ch, qty: cur?.qty ?? [1, 1] });
   }

@@ -3,6 +3,7 @@ import { TILE } from './constants.ts';
 import { MAPS, type MapDef, type Region } from './content/maps.ts';
 import { MONSTERS } from './content/monsters.ts';
 import { TUNING } from './tuning.ts';
+import { towerRoom, towerRoomTile, TOWER_FLOORS, TOWER_R } from './content/tower.ts';
 
 export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND = 5, SNOW = 6, ICE = 7, ASH = 8, STONE = 9, DEEP = 10, PLANK = 11 }
 
@@ -12,7 +13,7 @@ export type PropKind =
   | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
-export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number }
+export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number; /** Kadim Kule katı */ floor?: number }
 /** Bir canavar türünün yuvası: canavarlar bu dairenin içinde doğar ve dolaşır. */
 export interface MonsterZone { name: string; monster: string; x: number; y: number; r: number; level: [number, number]; count: number }
 
@@ -369,6 +370,75 @@ function genArena(l: MapLayout, rng: Rng) {
   l.spawn = { x: tc(cx - 0.5), y: tc(cy - 0.5) };
 }
 
+/**
+ * Kadim Kule: 10 yuvarlak taş oda, aralarında geçilmez karanlık uçurum. Oda kenarında kaya ve kristal duvar,
+ * meşaleler ve sancaklar; içeride kırık kemikler. Canavarlar kat ayarından (placeTowerSpawns).
+ */
+function genTower(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  l.ground.fill(G.ASH); l.blocked.fill(1); // oda dışı: karanlık uçurum (yükseklik istemcide derine iner)
+  for (let f = 1; f <= TOWER_FLOORS; f++) {
+    const { tx, ty } = towerRoomTile(f);
+    const R = TOWER_R;
+    for (let y = ty - R - 1; y <= ty + R + 1; y++) for (let x = tx - R - 1; x <= tx + R + 1; x++) {
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const d = Math.hypot(x + 0.5 - (tx + 0.5), y + 0.5 - (ty + 0.5)), i = idx(l, x, y);
+      if (d < R - 0.4) { l.ground[i] = G.STONE; l.blocked[i] = 0; }
+      else if (d < R + 0.8) l.ground[i] = G.STONE;
+    }
+    // kenar duvarı: kaya ve kristal; kameraya bakan güney yarısı alçak (görüşü kapatmasın), kuzey yarısı yüksek
+    for (let a = 0; a < Math.PI * 2; a += 0.16) {
+      const r = R + 0.5 + rng() * 0.4;
+      const south = Math.sin(a) > 0.2; // y aşağı = güney (kamera tarafı)
+      const crystal = rng() < (south ? 0.12 : 0.3);
+      const s = south ? 0.45 + rng() * 0.25 : crystal ? 1.1 + rng() * 0.6 : 0.8 + rng() * 0.45;
+      l.props.push({ k: crystal ? 'crystal' : 'rock', x: tc(tx + Math.cos(a) * r - 0.5), y: tc(ty + Math.sin(a) * r - 0.5), v: crystal ? (f - 1) % 3 : (rng() * 3) | 0, s });
+    }
+    // fener ve sancaklar: kapının iki yanında ve doğu-batı kenarında
+    for (const [ox, oy, k] of [[-3, -R + 2, 'lamp'], [3, -R + 2, 'lamp'], [-R + 2, -2, 'banner'], [R - 2, -2, 'banner']] as [number, number, PropKind][]) {
+      l.props.push({ k, x: tc(tx + ox), y: tc(ty + oy), v: f % 4, s: 1.2 });
+      l.blocked[idx(l, tx + ox, ty + oy)] = 1;
+    }
+    // süs: kemik ve taş kırıntısı (yürünebilir)
+    for (let n = 0; n < 7; n++) {
+      const a = rng() * Math.PI * 2, r = 3 + rng() * (R - 5);
+      l.props.push({ k: 'bones', x: tc(tx + Math.cos(a) * r), y: tc(ty + Math.sin(a) * r), v: (rng() * 3) | 0, s: 1 });
+    }
+  }
+  const r1 = towerRoom(1);
+  l.spawn = { x: r1.entry.x, y: r1.entry.y };
+  placeTowerSpawns(l, mulberry32(l.def.seed * 7 + 13));
+}
+
+/** Kat ayarından canavar noktaları: girişten, kapıdan ve bulmaca taşlarından uzak, oda içinde. */
+function placeTowerSpawns(l: MapLayout, rng: Rng) {
+  const T = TUNING.tower;
+  const mdefs = new Map(MONSTERS.map((m) => [m.id, m] as const));
+  for (let f = 1; f <= TOWER_FLOORS; f++) {
+    const ft = T.floors[f - 1]; if (!ft) continue;
+    const md = mdefs.get(ft.monster); if (!md) continue;
+    const room = towerRoom(f, ft.puzzle);
+    const { tx, ty } = towerRoomTile(f);
+    l.zones.push({ name: `${f}. Kat`, monster: ft.monster, x: room.cx, y: room.cy, r: room.r * 0.8, level: [ft.level[0], ft.level[1]], count: ft.count });
+    if (md.boss) { l.spawnPoints.push({ monster: ft.monster, level: ft.level[0], variant: 0, x: room.cx, y: room.cy - TILE * 2, floor: f }); continue; }
+    let placed = 0;
+    for (let tries = 0; placed < ft.count && tries < ft.count * 120; tries++) {
+      const a = rng() * Math.PI * 2, d = Math.sqrt(rng()) * (TOWER_R - 2.2);
+      const x = tc(tx) + Math.cos(a) * d * TILE, y = tc(ty) + Math.sin(a) * d * TILE;
+      if (Math.hypot(x - room.entry.x, y - room.entry.y) < TILE * 5) continue;
+      if (Math.hypot(x - room.gate.x, y - room.gate.y) < TILE * 2.2) continue;
+      if (room.plates.some((p) => Math.hypot(x - p.x, y - p.y) < TILE * 1.6)) continue;
+      if (!isFree(l, Math.floor(x / TILE), Math.floor(y / TILE))) continue;
+      if (tries < ft.count * 60 && l.spawnPoints.some((s) => s.floor === f && (s.x - x) ** 2 + (s.y - y) ** 2 < (TILE * 1.5) ** 2)) continue;
+      const r = rng() * 100;
+      const variant = (r < 60 ? 0 : r < 93 ? 1 : 2) as 0 | 1 | 2; // çoğu saldırılmadıkça dokunmaz; bir kısmı saldırgan
+      const level = ft.level[0] + ((rng() * (ft.level[1] - ft.level[0] + 1)) | 0);
+      l.spawnPoints.push({ monster: ft.monster, level, variant, x, y, floor: f });
+      placed++;
+    }
+  }
+}
+
 function genLake(l: MapLayout, rng: Rng) {
   const { w, h } = l;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
@@ -497,7 +567,8 @@ function placeSpawns(l: MapLayout, rng: Rng) {
 /** Yönetimden yoğunluk değişince yuvaları ve doğma noktalarını aynı tohumla yeniden kurar. */
 export function rebuildSpawns(l: MapLayout) {
   l.spawnPoints = []; l.zones = [];
-  if (l.def.spawns.length) placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
+  if (l.def.id === 'tower') placeTowerSpawns(l, mulberry32(l.def.seed * 7 + 13));
+  else if (l.def.spawns.length) placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 
 const cache = new Map<string, MapLayout>();
@@ -513,6 +584,7 @@ export function getLayout(mapId: string): MapLayout {
   };
   const rng = mulberry32(def.seed);
   if (def.id === 'arena') genArena(l, rng);
+  else if (def.id === 'tower') genTower(l, rng);
   else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);
   else genWild(l, rng);

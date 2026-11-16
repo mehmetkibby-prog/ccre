@@ -20,7 +20,7 @@ port.on('message', (m: ToWorker) => {
     case 'arena': world.setArena(m.active, m.endsAt); break;
     case 'arena_join_ok': world.arenaJoinResult(m.sid, m.err); break;
     case 'tuning': {
-      const key = (map: string) => JSON.stringify([TUNING.density[map] ?? 1, Object.entries(TUNING.spawns).filter(([k]) => k.startsWith(map + ':')).sort()]);
+      const key = (map: string) => JSON.stringify([TUNING.density[map] ?? 1, Object.entries(TUNING.spawns).filter(([k]) => k.startsWith(map + ':')).sort(), map === 'tower' ? TUNING.tower.floors.map((f) => [f.monster, f.count, f.level, f.puzzle]) : 0]);
       const before = new Map(Object.keys(MAPS).map((id) => [id, key(id)] as const));
       const ratios = world.xpRatios();
       applyTuning(m.data);

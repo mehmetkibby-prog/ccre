@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -32,6 +32,13 @@ export const MONSTERS: MonsterDef[] = [
   { id: 'black_stone', name: 'Kara Taş Muhafızı', art: 'blackstone', hpBase: 60000, hpPerLevel: 0, atkBase: 180, atkPerLevel: 0, def: 60, speed: 0, range: 320, attackMs: 2500, aggroRadius: 380, leash: 400, xpBase: 4000, size: 1.8, boss: true, respawnMin: 10 },
   // Pazar Köyü'nün güney ucundaki arenada: grup boss'u (değerler yönetim panelinden değişir)
   { id: 'fox_king', name: 'Tilki Kral', art: 'fox_king', hpBase: 36000, hpPerLevel: 0, atkBase: 75, atkPerLevel: 0, def: 22, speed: 160, range: 110, attackMs: 1700, aggroRadius: 360, leash: 560, xpBase: 2600, size: 1.2, boss: true, respawnMin: 60 },
+  // Kadim Kule (her iki katta bir yeni tür; kat başına can/saldırı yönetimden)
+  { id: 't_skeleton', name: 'Kadim İskelet', art: 't_skeleton', hpBase: 520, hpPerLevel: 46, atkBase: 40, atkPerLevel: 3.0, def: 14, speed: 175, range: 75, attackMs: 1400, aggroRadius: 300, leash: 900, xpBase: 90, size: 1 },
+  { id: 't_gargoyle', name: 'Kule Gargoylü', art: 't_gargoyle', hpBase: 700, hpPerLevel: 52, atkBase: 44, atkPerLevel: 3.2, def: 22, speed: 160, range: 85, attackMs: 1700, aggroRadius: 300, leash: 900, xpBase: 100, size: 1 },
+  { id: 't_wraith', name: 'Matem Hayaleti', art: 't_wraith', hpBase: 600, hpPerLevel: 48, atkBase: 48, atkPerLevel: 3.3, def: 12, speed: 185, range: 250, attackMs: 2000, aggroRadius: 320, leash: 900, xpBase: 110, size: 1 },
+  { id: 't_knight', name: 'Lanetli Şövalye', art: 't_knight', hpBase: 900, hpPerLevel: 58, atkBase: 52, atkPerLevel: 3.5, def: 28, speed: 145, range: 85, attackMs: 1800, aggroRadius: 300, leash: 900, xpBase: 130, size: 1 },
+  { id: 't_executioner', name: 'Kule Celladı', art: 't_executioner', hpBase: 1300, hpPerLevel: 66, atkBase: 62, atkPerLevel: 3.8, def: 30, speed: 135, range: 95, attackMs: 2200, aggroRadius: 300, leash: 900, xpBase: 160, size: 1 },
+  { id: 'azrail', name: 'Azrail', art: 'azrail', hpBase: 150000, hpPerLevel: 0, atkBase: 260, atkPerLevel: 0, def: 70, speed: 150, range: 140, attackMs: 2000, aggroRadius: 520, leash: 900, xpBase: 9000, size: 1, boss: true, respawnMin: 15 },
 ];
 export const MONSTER_INDEX = new Map(MONSTERS.map((m, i) => [m.id, i] as const));
 

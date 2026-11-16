@@ -272,6 +272,12 @@ export class Game {
       case 'cd': store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until } })); break;
       case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
       case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;
+      case 'tower': {
+        store.set({ tower: m.f ? { ...m, at: Date.now() } : null, towerHold: null });
+        break;
+      }
+      case 'towerHold': store.set({ towerHold: { i: m.i, at: performance.now() } }); break;
+      case 'towerReplay': store.set({ towerReplayAt: Date.now(), towerSeqAt: performance.now() + 700 }); sfx.play('ui'); break;
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
       case 'auto': store.set((st) => ({ self: st.self ? { ...st.self, autoOn: !!m.on, autoLeft: Number(m.left) || 0 } : st.self, autoSync: Date.now() })); if (!m.on) { this.autoAttack = false; this.walkToTarget = false; } break;
       case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;

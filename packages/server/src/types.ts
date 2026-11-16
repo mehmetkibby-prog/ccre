@@ -50,6 +50,18 @@ export interface CharMisc {
   stallSkin?: 0 | 1 | 2;
   /** Demircinin Koruma Mührü: sonraki başarısız artı basmada malzemelerin yarısı döner */
   protectSeal?: boolean;
+  /** Kadim Kule: kat, ilerleme, bulmaca durumu, en iyi kat ve Azrail zaferi sayısı */
+  tower?: TowerProgress;
+}
+export interface TowerProgress {
+  f: number; n: number; done?: boolean; key?: boolean;
+  /** mühür sırası (taş sırası) ve sıradaki adım */
+  seq?: number[]; si?: number;
+  /** bilmece: soru sırası ve taş → seçenek (0 doğru) */
+  rd?: number; opts?: number[];
+  /** sunak: yanan sunaklar (bit) ve ilk yanma anı */
+  alt?: number; altAt?: number;
+  best?: number; clears?: number;
 }
 
 // ana → worker
