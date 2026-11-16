@@ -165,3 +165,76 @@ export function buildMountains(themeId: string, seed = 7, lite = false): THREE.M
   // arka katman önce: ön katmanlar onun üstüne çizilir (derinlik yazılmadığı için sıra önemli)
   return m;
 }
+
+/**
+ * Meshy dağları: gerçek kayalık, karlı zirveli iki dağ modeli (sivri masif + geniş sırt) ufukta bir halka hâlinde
+ * dizilir; boyları, yönleri ve aralarındaki boşluklar çeşitlenir. Arkada eski çizimli sıralar boşlukları doldurur.
+ * Işık sahneden gelir (gece kararır); uzaklık pusu sahnenin sis rengine doğru karışır (gündüz mavimsi pus,
+ * gece lacivert). Halka kamerayla yatayda kayar: dağlar hep ufukta kalır, yaklaşılamaz.
+ */
+export interface MeshMountains { group: THREE.Group; haze: THREE.Color; dispose(): void }
+export function buildMeshMountains(themeId: string, seed: number, lite: boolean, get: (id: string) => THREE.Object3D | null): MeshMountains | null {
+  const A = get('mountain_a'), B = get('mountain_b');
+  if (!A || !B) return null;
+  const T = MOUNTAIN_THEMES[themeId] ?? MOUNTAIN_THEMES.forest;
+  const haze = new THREE.Color(T.haze);
+  const r = rng(seed * 31 + 9);
+  const group = new THREE.Group(); group.name = 'mesh-mountains'; group.renderOrder = -5;
+  const owned: THREE.Material[] = [];
+  const parts = [A, B].map((src) => {
+    let mesh: THREE.Mesh | undefined;
+    src.updateMatrixWorld(true);
+    src.traverse((o) => { if (!mesh && (o as THREE.Mesh).isMesh) mesh = o as THREE.Mesh; });
+    if (!mesh) return null;
+    const geo = mesh.geometry.clone(); geo.applyMatrix4(mesh.matrixWorld);
+    geo.computeBoundingBox();
+    const bb = geo.boundingBox!, c = bb.getCenter(new THREE.Vector3());
+    geo.translate(-c.x, -bb.min.y, -c.z); // taban y=0, ortada
+    const h = bb.max.y - bb.min.y, w = Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z);
+    const srcMat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
+    const mat = new THREE.MeshLambertMaterial({ map: srcMat.map ?? null, color: 0xffffff, fog: false });
+    if (themeId === 'frozen') mat.color.set(0xe4ecf6); else if (themeId === 'black') mat.color.set(0x9a8890); else if (themeId === 'ancient') mat.color.set(0xd8ccb0);
+    const uH = { value: haze };
+    mat.onBeforeCompile = (sh) => {
+      sh.uniforms.uHaze = uH;
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vH;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvH = position.y;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uHaze; varying float vH;')
+        .replace('#include <dithering_fragment>', `#include <dithering_fragment>
+          // hava perspektifi: dağın tamamı biraz, eteği daha çok pusa karışır
+          float hz = 0.16 + 0.42 * (1.0 - smoothstep(0.0, ${(h * 0.7).toFixed(2)}, vH));
+          gl_FragColor.rgb = mix(gl_FragColor.rgb, uHaze, hz);`);
+    };
+    mat.customProgramCacheKey = () => 'meshmtn' + h.toFixed(2);
+    owned.push(mat);
+    return { geo, mat, h, w };
+  });
+  if (parts.some((p) => !p)) return null;
+  // halka: açı boyunca sırayla geniş sırt ve sivri masif; aralarda boşluk
+  const N = lite ? 16 : 22; // birbirine değen, ufku kesintisiz saran sıra
+  const lists: THREE.Matrix4[][] = [[], []];
+  const q = new THREE.Quaternion(), s = new THREE.Vector3(), p = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 + (r() - 0.5) * 0.18;
+    const kind = (i + (r() < 0.3 ? 1 : 0)) % 2; // 0: sivri (A), 1: sırt (B)
+    const P = parts[kind]!;
+    const height = kind === 0 ? 72 + r() * 50 : 52 + r() * 30;
+    const k = height / P.h;
+    const R0 = 188 + r() * 30;
+    p.set(Math.cos(a) * R0, -26 - r() * 6, Math.sin(a) * R0);
+    // yüzü kabaca merkeze, biraz rastgele
+    q.setFromAxisAngle(up, -a - Math.PI / 2 + (r() - 0.5) * 0.9);
+    // genişlik: komşusuna değecek kadar (yay boyu / model genişliği)
+    const wantW = (Math.PI * 2 * R0 / N) * (kind === 1 ? 1.5 : 1.25), kw = Math.max(k, wantW / P.w);
+    s.set(kw, k, Math.min(kw, k * 1.4));
+    lists[kind].push(new THREE.Matrix4().compose(p, q, s));
+  }
+  lists.forEach((L, kind) => {
+    if (!L.length) return;
+    const P = parts[kind]!;
+    const im = new THREE.InstancedMesh(P.geo, P.mat, L.length);
+    L.forEach((m, i) => im.setMatrixAt(i, m));
+    im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.renderOrder = -5;
+    group.add(im);
+  });
+  return { group, haze, dispose() { for (const c of group.children) (c as THREE.InstancedMesh).geometry.dispose(); owned.forEach((m) => m.dispose()); } };
+}

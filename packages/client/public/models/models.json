@@ -455,5 +455,92 @@
   "mount_horse": {
     "url": "mount_horse.glb",
     "scale": 1
+  },
+  "mountain_a": {
+    "url": "mountain_a.glb",
+    "scale": 1
+  },
+  "mountain_b": {
+    "url": "mountain_b.glb",
+    "scale": 1
+  },
+  "azrail": {
+    "url": "azrail.glb",
+    "height": 3.2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
+  },
+  "t_executioner": {
+    "url": "t_executioner.glb",
+    "height": 2.2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
+  },
+  "t_gargoyle": {
+    "url": "t_gargoyle.glb",
+    "height": 2.2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
+  },
+  "t_knight": {
+    "url": "t_knight.glb",
+    "height": 2.1,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
+  },
+  "t_skeleton": {
+    "url": "t_skeleton.glb",
+    "height": 1.8,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
+  },
+  "t_wraith": {
+    "url": "t_wraith.glb",
+    "height": 2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
   }
 }

@@ -15,7 +15,7 @@ import { fixQuadWeights } from './monsters3d.ts';
  * önden kalkar, ön ayaklar basarken burun iner; boyun bu salınıma karşı sallanır, kuyruk geriye savrulur.
  * Basış süresince toynak yerde geriye kayar; süpürme hızı yer hızına eşit olsun diye adım sıklığı hızdan bulunur.
  */
-export interface MountRig { obj: THREE.Object3D; seat: THREE.Object3D; halfW: number; gallop: number; move: number; cycle: number; update(dt: number, now: number, speed: number): void }
+export interface MountRig { obj: THREE.Object3D; seat: THREE.Object3D; halfW: number; gallop: number; move: number; cycle: number; update(dt: number, now: number, speed: number): void; /** toynak yere bastığında (nal sesi) */ onHoof?: () => void }
 
 let measured: { seatY: number; seatZ: number; seatX: number; halfW: number; leg: number } | null = null;
 
@@ -34,10 +34,49 @@ function legPose(u: number, st: number, fwd: number, back: number, flexL: number
   return { up: back - (fwd + back) * ss(s), lo: flexL * f, pa: flexP * f };
 }
 
+/**
+ * Kuyruk ağırlıklarını düzeltir (bir kez, paylaşılan geometride): Meshy atının sarkan kuyruğu otomatik iskelette
+ * arka bacak kemiklerine bağlanmıştı (kuyruk bacaklarla oynayıp ata yapışık görünüyordu), kuyruk kemiği ise
+ * sağrıyı oynatıyordu. Kuyruk kökünün arkasında ve altındaki ince sütun kuyruk kemiklerine (yukarısı tail1,
+ * aşağısı tail2, arası yumuşak geçiş), kökün üstündeki sağrı ise gövdeye bağlanır.
+ */
+const _retailed = new WeakSet<THREE.Object3D>();
+function retailHorse(scene: THREE.Object3D) {
+  if (_retailed.has(scene)) return; _retailed.add(scene);
+  scene.updateMatrixWorld(true);
+  let t1: THREE.Bone | undefined, t2: THREE.Bone | undefined, body: THREE.Bone | undefined;
+  scene.traverse((o) => { if (o.name === 'tail1') t1 = o as THREE.Bone; if (o.name === 'tail2') t2 = o as THREE.Bone; if (o.name === 'body') body = o as THREE.Bone; });
+  if (!t1 || !t2 || !body) return;
+  const p1 = t1.getWorldPosition(new THREE.Vector3()), p2 = t2.getWorldPosition(new THREE.Vector3());
+  const v = new THREE.Vector3();
+  scene.traverse((o) => {
+    const m = o as THREE.SkinnedMesh;
+    if (!m.isSkinnedMesh) return;
+    const bones = m.skeleton.bones, i1 = bones.indexOf(t1!), i2 = bones.indexOf(t2!), ib = bones.indexOf(body!);
+    if (i1 < 0 || i2 < 0 || ib < 0) return;
+    const pos = m.geometry.attributes.position, si = m.geometry.attributes.skinIndex, sw = m.geometry.attributes.skinWeight;
+    for (let i = 0; i < pos.count; i++) {
+      v.fromBufferAttribute(pos, i); m.applyBoneTransform(i, v); v.applyMatrix4(m.matrixWorld);
+      const dx = Math.abs(v.x - p1.x);
+      if (v.z < p1.z - 0.02 && dx < 0.2 && v.y < p1.y + 0.15) {
+        // aşağı inildikçe tail2'ye geçiş
+        const k = THREE.MathUtils.clamp((p1.y - 0.05 - v.y) / Math.max(0.05, (p1.y - p2.y) * 1.4), 0, 1);
+        si.setXYZW(i, i1, i2, 0, 0); sw.setXYZW(i, 1 - k, k, 0, 0);
+      } else if (v.y >= p1.y + 0.15) {
+        // sağrı: kuyruk kemiğine bağlı kalmasın
+        let tw = 0; for (let c = 0; c < 4; c++) { const j = si.getComponent(i, c); if (j === i1 || j === i2) tw += sw.getComponent(i, c); }
+        if (tw > 0.01) { si.setXYZW(i, ib, 0, 0, 0); sw.setXYZW(i, 1, 0, 0, 0); }
+      }
+    }
+    si.needsUpdate = true; sw.needsUpdate = true;
+  });
+}
+
 export function createMount(): MountRig | null {
   const L = loadModel('mount_horse');
   if (!L) return null;
   fixQuadWeights(L.scene);
+  retailHorse(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
   const bones: Record<string, THREE.Bone> = {};
   inner.traverse((o) => {
@@ -84,7 +123,7 @@ export function createMount(): MountRig | null {
   bones.body.add(seat);
   const rest: Record<string, THREE.Vector3> = {};
   for (const [n, b] of Object.entries(bones)) rest[n] = b.position.clone();
-  let cycle = 0, move = 0, gallop = 0;
+  let cycle = 0, move = 0, gallop = 0, prevCycle = 0;
   const rig: MountRig = {
     obj: root, seat, halfW: M.halfW, gallop: 0, move: 0, cycle: 0,
     update(dt, now, speed) {
@@ -101,6 +140,9 @@ export function createMount(): MountRig | null {
       for (const [n, b] of Object.entries(bones)) b.position.copy(rest[n]);
       // bacaklar: [kemik öneki, adım evresi, dörtnala evresi, ön mü]
       const legs: [string, number, number, boolean][] = [['bl', 0.0, 0.12, false], ['fl', 0.25, 0.54, true], ['br', 0.5, 0.0, false], ['fr', 0.75, 0.42, true]];
+      // nal sesi: baskın yürüyüşte her bacağın basış anı (evre 0'dan geçiş)
+      if (a > 0.5 && rig.onHoof) for (const [, ow, og] of legs) { const o = g > 0.5 ? og : ow; const u0 = frac(prevCycle - o), u1 = frac(cycle - o); if (u1 < u0 && u0 - u1 > 0.5) rig.onHoof(); }
+      prevCycle = cycle;
       for (const [p, ow, og, front] of legs) {
         const W = legPose(frac(cycle - ow), 0.62, front ? 0.32 : 0.28, front ? 0.3 : 0.32, front ? 0.9 : -0.7, front ? 0.5 : 0.35);
         const G = legPose(frac(cycle - og), 0.36, front ? 0.8 : 0.62, front ? 0.55 : 0.62, front ? 1.6 : -1.15, front ? 0.9 : 0.6);
@@ -120,8 +162,12 @@ export function createMount(): MountRig | null {
       if (bones.head) bones.head.rotation.x = -bones.neck.rotation.x * 0.55 - bones.body.rotation.x * 0.5;
       if (a < 0.5) { bones.neck.rotation.x += Math.sin(t * 0.6) * 0.06 * (1 - a * 2); if (bones.head) bones.head.rotation.y = Math.sin(t * 0.37) * 0.15 * (1 - a * 2); }
       bones.chest.rotation.x = -bones.body.rotation.x * 0.3;
-      if (bones.tail1) { bones.tail1.rotation.x = 0.45 + 0.5 * g * a + Math.sin(TAU * cycle) * 0.08 * a; bones.tail1.rotation.y = Math.sin(t * (a > 0.5 ? 6 : 2.4)) * (0.12 + 0.2 * (1 - a)); }
-      if (bones.tail2) bones.tail2.rotation.x = -0.25 + 0.3 * g * a;
+      // sarkan kuyruk: dururken hafif yana savrulur (sinek kovar gibi), yürürken sallanır, dörtnalada geriye uçuşur
+      if (bones.tail1) {
+        bones.tail1.rotation.x = 0.12 + (0.25 * w + 0.85 * g) * a + Math.sin(TAU * cycle + 1) * 0.08 * a;
+        bones.tail1.rotation.z = Math.sin(t * (a > 0.5 ? 5 : 1.7)) * (0.07 + 0.1 * (1 - a)) + Math.max(0, Math.sin(t * 0.9)) ** 8 * 0.25 * (1 - a);
+      }
+      if (bones.tail2) { bones.tail2.rotation.x = (0.1 * w + 0.35 * g) * a + Math.sin(TAU * cycle + 0.4) * 0.12 * a; bones.tail2.rotation.z = Math.sin(t * (a > 0.5 ? 5 : 1.7) - 0.8) * 0.12; }
       rig.gallop = g; rig.move = a; rig.cycle = cycle;
     },
   };

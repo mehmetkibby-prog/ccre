@@ -22,9 +22,15 @@ export interface CEnt {
   hurtUntil: number; spawnAt: number; deadAt: number;
   /** vuruşla geri sekme: yön (birim vektör) ve bitiş anı */
   kbX?: number; kbY?: number; kbUntil?: number;
+  /** görüntü yumuşatma: ara değerlenen hedef ve gösterilen konum ayrı tutulur */
+  sx?: number; sy?: number;
 }
 
-const INTERP_MS = 110;
+/**
+ * Uzak varlık ara değerleme gecikmesi: ağın dalgalanmasına göre kendini ayarlar. Sabit 110 ms'de mobil ağda
+ * paketler geciktiğinde karakter bir an durup sonra sıçrıyor, yürüme-koşma-durma animasyonu gidip geliyordu.
+ */
+const INTERP_MIN = 100, INTERP_MAX = 280;
 const seqDiff = (a: number, b: number) => ((a - b + 0x8000) & 0xffff) - 0x8000;
 
 /** Muhafız kılıcının hedefe değdiği an (saldırı animasyonunun başından, ms). */
@@ -48,6 +54,8 @@ export class Game {
   seq = 0;
   pending: { seq: number; dir: number }[] = [];
   serverOffset: number | null = null;
+  /** paketlerin en iyi duruma göre ne kadar geç geldiği (ms, kayan ortalama) ve buna göre ara değerleme gecikmesi */
+  private netJitter = 0; private interpMs = INTERP_MIN; private lastInterpAt = 0;
   input = new Input();
   fx: Fx3D;
   renderer: Renderer3D;
@@ -240,9 +248,7 @@ export class Game {
     const reset = new Uint8Array(buf, 0, 1)[0] === 2;
     const s: Snapshot = readSnapshot(buf);
     const now = performance.now();
-    const off = s.t - now;
-    if (this.serverOffset === null || off > this.serverOffset) this.serverOffset = off;
-    else this.serverOffset += (off - this.serverOffset) * 0.02;
+    this.noteServerTime(s.t, now);
     if (reset) this.ents.clear();
     // kendi durumum + uzlaştırma
     this.reconcile(s);
@@ -424,24 +430,54 @@ export class Game {
   // ───────── çerçeve ─────────
   entPos(e: CEnt): { x: number; y: number } { return { x: e.x, y: e.y }; }
 
-  private interpolate(now: number) {
-    const rt = (this.serverOffset ?? 0) + now - INTERP_MS;
+  /**
+   * Uzak varlıklar: sunucu zamanında (şimdi − tampon) iki örnek arasında ara değerlenir. Tampon boşalırsa (paket
+   * gecikti) son hızla en çok 150 ms ileri tahmin edilir; böylece karakter durup sıçramaz. Gösterilen konum hedefi
+   * kısa bir süreyle (≈45 ms) yumuşakça izler: geç gelen paketle oluşan küçük geri-ileri düzeltmeler görünmez.
+   */
+  /** Sunucu saat farkı ve ağ dalgalanması: geç gelen paket tamponu hemen büyütür, sakin ağda yavaşça küçülür. */
+  noteServerTime(st: number, now: number) {
+    const off = st - now;
+    if (this.serverOffset === null || off > this.serverOffset) this.serverOffset = off;
+    else this.serverOffset += (off - this.serverOffset) * 0.02;
+    const late = Math.max(0, this.serverOffset - off);
+    this.netJitter += (late - this.netJitter) * (late > this.netJitter ? 0.25 : 0.03);
+    const want = Math.min(INTERP_MAX, Math.max(INTERP_MIN, 75 + this.netJitter * 2.2));
+    this.interpMs += (want - this.interpMs) * (want > this.interpMs ? 0.3 : 0.02);
+  }
+
+  interpolate(now: number) {
+    const rt = (this.serverOffset ?? 0) + now - this.interpMs;
+    const dt = this.lastInterpAt ? Math.min(100, now - this.lastInterpAt) : 16;
+    this.lastInterpAt = now;
+    const follow = 1 - Math.exp(-dt / 45);
     for (const e of this.ents.values()) {
       const s = e.samples;
-      if (s.length === 1 || e.kind === Kind.LOOT) { e.x = s[s.length - 1].x; e.y = s[s.length - 1].y; continue; }
-      let i = s.length - 1;
-      while (i > 0 && s[i - 1].t > rt) i--;
-      if (i === 0) { e.x = s[0].x; e.y = s[0].y; continue; }
-      const a = s[i - 1], b = s[i];
-      if (rt >= b.t) {
-        // ekstrapolasyon yok: son bilinen konumda bekle (ışınlanma titremesi olmasın)
-        e.x = b.x; e.y = b.y;
-      } else {
-        const k = (rt - a.t) / Math.max(1, b.t - a.t);
-        if (Math.hypot(b.x - a.x, b.y - a.y) > 300) { e.x = b.x; e.y = b.y; }
-        else { e.x = a.x + (b.x - a.x) * k; e.y = a.y + (b.y - a.y) * k; }
+      let tx: number, ty: number, snap = false;
+      if (s.length === 1 || e.kind === Kind.LOOT) { tx = s[s.length - 1].x; ty = s[s.length - 1].y; snap = e.sx === undefined || e.kind === Kind.LOOT; }
+      else {
+        let i = s.length - 1;
+        while (i > 0 && s[i - 1].t > rt) i--;
+        if (i === 0) { tx = s[0].x; ty = s[0].y; }
+        else {
+          const a = s[i - 1], b = s[i];
+          const jump = Math.hypot(b.x - a.x, b.y - a.y) > 300;
+          if (jump) { tx = b.x; ty = b.y; snap = rt >= a.t; }
+          else if (rt >= b.t) {
+            // tampon boş: son hızla kısa ileri tahmin (en çok 150 ms), sonra bekle
+            const over = Math.min(150, rt - b.t), span = Math.max(1, b.t - a.t);
+            const moving = b.t - a.t < 400 && (b.x !== a.x || b.y !== a.y);
+            tx = b.x + (moving ? (b.x - a.x) / span * over : 0); ty = b.y + (moving ? (b.y - a.y) / span * over : 0);
+          } else {
+            const k = (rt - a.t) / Math.max(1, b.t - a.t);
+            tx = a.x + (b.x - a.x) * k; ty = a.y + (b.y - a.y) * k;
+          }
+        }
+        while (s.length > 2 && s[1].t < rt - 300) s.shift();
       }
-      while (s.length > 2 && s[1].t < rt - 200) s.shift();
+      if (snap || e.sx === undefined || e.sy === undefined || Math.hypot(tx - e.sx, ty - e.sy) > 300) { e.sx = tx; e.sy = ty; }
+      else { e.sx += (tx - e.sx) * follow; e.sy += (ty - e.sy) * follow; }
+      e.x = e.sx; e.y = e.sy;
       if (e.slide) {
         // zincir: önce kısa gerilme, sonra hızla oyuncuya sürüklenme
         const k = (now - e.slide.t0) / 380;

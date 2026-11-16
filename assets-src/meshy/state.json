@@ -129,6 +129,24 @@
     },
     "rotguard": {
       "file": "assets-src/meshy/concepts/rotguard.png"
+    },
+    "azrail": {
+      "file": "assets-src/meshy/batch3/azrail.png"
+    },
+    "t_skeleton": {
+      "file": "assets-src/meshy/batch3/t_skeleton.png"
+    },
+    "t_gargoyle": {
+      "file": "assets-src/meshy/batch3/t_gargoyle.png"
+    },
+    "t_wraith": {
+      "file": "assets-src/meshy/batch3/t_wraith.png"
+    },
+    "t_executioner": {
+      "file": "assets-src/meshy/batch3/t_executioner.png"
+    },
+    "t_knight": {
+      "file": "assets-src/meshy/batch3/t_knight.png"
     }
   },
   "builds": {
@@ -438,6 +456,160 @@
         },
         "Death": {
           "task": "01a1dc7b-819f-73c4-b984-084c6fea4d56",
+          "actionId": 189
+        }
+      }
+    },
+    "azrail": {
+      "concept": "azrail",
+      "model": "01a1e503-5736-7181-a22e-981e3127e124",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-5736-7181-a22e-981e3127e124/output/model.glb?Expires=1795102926&Signature=P-5M1aSP0nNuBclhIabICoYRLlvWkvT4e6PLMG0IpsjB673c2eJQVQBsro40k4rjP5IRkahIyceGjnnVVLcK6cZwqWfOk4VslYRL7oKnsrz-CRCZyd7Pya0CQ6offGM4UUfB~1gAXrKHIzjEXDBahNNUIGQF0CF4Jofcih3IiL4tkjOBB1YC~RRb6-2rDkYM7SanrwH-ImYX4F01yH4M-hr95RkdZ5xdpgHO6y2fZJCMgZoIRAHZAnS4zDnh9FFb~cjWzA-tyvWsx8RC6b6p3sGXCWMll4VPkxXA1rxa2g9cCMB598wAdiUJqBctCNXA1WNBCSfgp1ap6Rm4yhb0UA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-de5a-7139-b00b-648f79675bac",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e506-52ac-7021-9b69-9d4b07556b1a",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e506-5450-7552-a729-72db89eaad86",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1e506-55cf-76e8-a021-d0b05168f1c9",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e506-57c9-723f-a81f-3f5992752b76",
+          "actionId": 189
+        },
+        "Cast Ground Slam": {
+          "task": "01a1e506-5947-72f7-a64a-852cab5aaf7a",
+          "actionId": 127
+        }
+      }
+    },
+    "t_skeleton": {
+      "concept": "t_skeleton",
+      "model": "01a1e503-5791-7542-93f1-7bdf7a2ab0df",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-5791-7542-93f1-7bdf7a2ab0df/output/model.glb?Expires=1795102889&Signature=lTEW6gqWpT~wY~5X5hN5qQCWUOvQeH3lypX-HcQQE8WCC4x4OXuU1ZKoJDJ1QhF-yd7sAjKfvWkARVQpPVFq2dUyB~H~mWPPIdjjgTjP~CpERmFbyuob~coFN0l2eKzV7eSa3I2rIStt4f8~4hXpMKF3atti1JadP4CpMRIdLAIe1zMr1EcnQnEAdWRMgrTHF7KAyLxVkEPhrNlhH1M5irg6MUsWW48nDyR4i6Q27wuxiUUEFhksVgRjsST9yqIk~Z8BDuRBnIEDW7LBJLtdL7A2B4ms6lp2deH45WX~y2lHhPzGZUE-8z5X~kExU98QsT9qffjulfq8mVHG~sRdcQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-4b01-7419-93aa-c71fdb046014",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e505-aee9-701c-89ca-fd8f88e29c3d",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e505-b0c5-75c4-9526-35012acdc966",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1e505-b35e-7652-b364-68df4500db7c",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e505-c16a-7267-a531-2ee845581a40",
+          "actionId": 189
+        }
+      }
+    },
+    "t_gargoyle": {
+      "concept": "t_gargoyle",
+      "model": "01a1e503-579b-741e-b71a-c4b02d92e443",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-579b-741e-b71a-c4b02d92e443/output/model.glb?Expires=1795102881&Signature=CEiWRl4m~zjRA7DqyMDumGhiyKSTXxdU23CHw37ay6Q16BQr4M7VIQIOwjifmUN16bFD0ibplplKdPY-cWLzKoXNX0j26myqs9rZNaN2GxffzH8pTC3jLcUG6ZiUn6TebLGd4b19JLaMLW8HI7n9m~Wn6HETdWrp51MZAiVTD3vVOlKbEerq7Gt7d2TQLGf~~3o-obsyI4ul1viv4gprViP9~qgdCeu54-IY-05jD5-cYLzerqgdLuOaB00qX8PkQdXoOQ5HPtECLAbkUoLOlTExcFglL6tX5FmPAVDaAaPuacEif4mfleIk6BdEuSOVZSborbD-v0DPZCWH3KLdTA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-2afa-74c2-b60f-364c72ee4d2c",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e505-7ec9-7559-bf48-4f760eb8b76a",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e505-8069-769c-a9e4-c1284d83558d",
+          "actionId": 112
+        },
+        "Attack Slash": {
+          "task": "01a1e505-81fd-7485-bd14-73487141090a",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e505-8379-70d9-bbc2-2b8d03c67e0d",
+          "actionId": 189
+        }
+      }
+    },
+    "t_wraith": {
+      "concept": "t_wraith",
+      "model": "01a1e503-576c-77c0-89e5-f3cc244c9aee",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-576c-77c0-89e5-f3cc244c9aee/output/model.glb?Expires=1795102906&Signature=Pt-zVZUg5yexHLx~QrmHvlS0VWnUgmg3xep6kzbiL09KdjlubABZPgFScGYyXgJ-w43eSB0CXIQ05J-KKjtdqkBqUWZPnvxpBnZk33ctPaE8e4IpUaXr9aQFu1OfM7UFi1llosgZeFvhsukkHuOQjCsONjPS95Bxt2~bgR2ywoMys4zfb00JBJ5DzocXvHGuE~VUHnOROEiMZFmZRvxAX9SywlUBQN2ffsqvAyGiIBbaDJ3xwVGRV1h5WI0FOSTEAId0aEb7l4jfji5dpo4dj6Vl6tQSNlT9NofvasdCvPUiQxTy~zW5~VqkqcKAkve3t-0QDkl9lqY7QeRut6vIeg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-8a4c-776d-8e72-96f1958840be",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e506-06d4-704c-8338-f164780260b3",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e506-08c6-775e-b0cc-e1e675c5c546",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1e506-0a61-71e2-a2f7-5c3ce472a68b",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e506-0bbc-74f7-bc2e-d8e2bc1eda40",
+          "actionId": 189
+        }
+      }
+    },
+    "t_executioner": {
+      "concept": "t_executioner",
+      "model": "01a1e503-5777-73d6-b119-e43d0cf07ff3",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-5777-73d6-b119-e43d0cf07ff3/output/model.glb?Expires=1795102904&Signature=GTYtlmaeoQO7BPjtnuxYoe2-mHZOhLmXNBdWSk4jmhRX6GqrpJtKQozQcVeiLp1LqdCHZqQFr6q7KNU2W19Ca00vR9A38OYAP5hE51jDJUSAo1r3p2kdV-jCT26ZmWr9sVZRtHPoOQdTVW2IosXiNJ68guerYriTUIQzl9ahyRXxsM1w0h5c4k8JtJ22TTYc-Cq6MYP00K~eOPL8c9VN-yr3EtMdJdDQQVo4FHhr63EeADqZMgL5o10~rDEYgsA8PPZfVoZZERNczF2~237g~YsNgmBmzK2ip-r1MyZ6Ou13Up~98j1SO5V3uKMOkLzPj6p4krvzvO5TG6fbq4cjDg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-8c61-74f2-8ea6-c4a918e2ffb0",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e505-f17d-7024-8f4b-1c1e1dc5114e",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e505-f34a-7469-a76a-39b8ab4abf95",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1e505-f53a-74fb-892a-6be97228bbf4",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e505-f6ce-7118-b517-36ae84cf67e7",
+          "actionId": 189
+        }
+      }
+    },
+    "t_knight": {
+      "concept": "t_knight",
+      "model": "01a1e503-5728-724d-a19e-02c028ef68c0",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1e503-5728-724d-a19e-02c028ef68c0/output/model.glb?Expires=1795102890&Signature=mEuP2sThYvfwL-lPBLHGjBUw6zoH4We0YyhrMe5pg7mpb~p8Amd0dEgPL1shNsaukZej6m-kc1gEcn6VNPiDxrLaE8LxZ2megMyuz~ta-wEYa2n51AGDdk9eqCnc2kKCnTpGrjncjO4ymDVS-n~ciZiOwqrGvmZ2MTDj-f252fq-cnbfWa0kUpvt9On3T8fq0nujnD~jCvOlxY1OKHr1XlSk8hY0wN4gnIwt1ZR1R5nKYc1z2GeFAD7q34Ucrq9xpAjNxVyp4SGs7JIM0BxnXto6GjnBQv9tp7xKps2c5A3-hlsHUVjZ3GHb6qOwTAeWGx8gRSdMU7qmlA3xnjcUbA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1e505-46eb-7519-bcab-782d0e64a2c4",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1e505-9d60-7033-bf93-42c2e6a2f22f",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1e505-9ef7-70c5-b70b-0a892a94a287",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1e505-a0ff-7192-86e2-4b821440fb8f",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1e505-a2a6-7500-9955-611f9b84c2a0",
           "actionId": 189
         }
       }

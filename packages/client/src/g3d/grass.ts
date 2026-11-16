@@ -42,7 +42,7 @@ export class GrassField {
     this.geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     const frozen = l.def.theme === 'frozen';
     // alpha-to-coverage KULLANILMAZ: donanım kenar yumuşatması kapalı cihazlarda kartın saydam köşeleri siyah dikdörtgen çiziliyordu
-    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.45, side: THREE.FrontSide, roughness: 1, color: frozen ? 0xdde6e2 : 0xe8f2dc });
+    const m = new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.45, side: THREE.FrontSide, roughness: 1, color: frozen ? 0xc8d4d0 : 0xb4c8a0 });
     addWind(m, 0.1, 0.4);
     addFade(m); // rüzgârdan önce çalışır
     this.mat = m;

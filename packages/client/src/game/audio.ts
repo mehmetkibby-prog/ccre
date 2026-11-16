@@ -93,21 +93,33 @@ class Sfx {
     s.connect(f).connect(g).connect(this.sfxGain); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
   }
 
+  /** Yumuşak ayak darbesi: kısa ama tıklamasız yükselen (6 ms) süzgeçli gürültü. */
+  private foot(dur: number, freq: number, q: number, vol: number, type: BiquadFilterType, delay = 0) {
+    const c = this.ctx!; const t = c.currentTime + delay;
+    const s = c.createBufferSource(); s.buffer = this.noiseBuf;
+    const f = c.createBiquadFilter(); f.type = type; f.frequency.setValueAtTime(freq, t); f.Q.value = q;
+    const g = c.createGain(); const v = Math.max(0.0002, vol * this.k);
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.006); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(f).connect(g).connect(this.sfxGain); s.start(t, Math.random() * 0.8); s.stop(t + dur + 0.05);
+  }
   /**
-   * Ayak sesi: zemine göre (çimen yumuşak hışırtı, taş kısa tık, toprak boğuk, kum kumlu, tahta tok).
-   * Çok kısık ve her adımda biraz farklı (tekrar eden "tık tık" rahatsız etmesin). k: uzaklık çarpanı.
+   * Ayak sesi (animasyonda ayak yere değdiği anda çalınır): zemine göre boğuk bir basış + yüzey dokusu
+   * (çimen hışırtısı, taşta kısa tık, karda gıcırtı, tahtada tok ses). Her adım biraz farklı; yumuşak, sürekli
+   * duyulunca rahatsız etmeyecek düzeyde. k: uzaklık çarpanı (diğer oyuncular).
    */
-  step(surface: 'grass' | 'stone' | 'dirt' | 'sand' | 'wood' | 'snow', k = 1) {
+  step(surface: 'grass' | 'stone' | 'dirt' | 'sand' | 'wood' | 'snow' | 'hoof', k = 1) {
     if (!this.ctx || this.ctx.state !== 'running' || k < 0.04) return;
-    const v = 0.55 + Math.random() * 0.25, pr = 0.85 + Math.random() * 0.3;
+    const v = 0.8 + Math.random() * 0.3, pr = 0.88 + Math.random() * 0.24;
     this.k = k;
     switch (surface) {
-      case 'grass': this.noise(0.09, 900 * pr, 0.8, 0.08 * v, 'lowpass'); this.noise(0.06, 2600 * pr, 1.5, 0.025 * v, 'bandpass', 0.01); break;
-      case 'stone': this.noise(0.04, 2200 * pr, 2.2, 0.07 * v, 'bandpass'); this.tone(170 * pr, 0.05, 'triangle', 0.035 * v, 0.7); break;
-      case 'dirt': this.noise(0.08, 520 * pr, 0.9, 0.09 * v, 'lowpass'); break;
-      case 'sand': this.noise(0.11, 1500 * pr, 0.7, 0.05 * v, 'bandpass', 0, 0.6); break;
-      case 'wood': this.tone(120 * pr, 0.08, 'triangle', 0.06 * v, 0.6); this.noise(0.05, 700 * pr, 1.2, 0.05 * v, 'bandpass'); break;
-      case 'snow': this.noise(0.12, 1200 * pr, 0.6, 0.06 * v, 'lowpass', 0, 0.5); break;
+      case 'grass': this.foot(0.11, 420 * pr, 0.7, 0.2 * v, 'lowpass'); this.foot(0.09, 2500 * pr, 0.9, 0.045 * v, 'bandpass', 0.008); break;
+      case 'stone': this.foot(0.07, 380 * pr, 0.8, 0.2 * v, 'lowpass'); this.foot(0.035, 2700 * pr, 2.5, 0.06 * v, 'bandpass'); break;
+      case 'dirt': this.foot(0.1, 300 * pr, 0.7, 0.24 * v, 'lowpass'); this.foot(0.06, 1400 * pr, 1, 0.03 * v, 'bandpass', 0.01); break;
+      case 'sand': this.foot(0.13, 1300 * pr, 0.6, 0.06 * v, 'bandpass'); this.foot(0.09, 320 * pr, 0.7, 0.13 * v, 'lowpass'); break;
+      case 'wood': this.foot(0.09, 260 * pr, 1.2, 0.22 * v, 'lowpass'); this.tone(150 * pr, 0.07, 'sine', 0.05 * v, 0.7); break;
+      case 'snow': this.foot(0.14, 700 * pr, 0.6, 0.12 * v, 'lowpass'); this.foot(0.11, 2600 * pr, 0.8, 0.04 * v, 'bandpass', 0.015); break;
+      // nal: tok bir "tak" + kısa yankı
+      case 'hoof': this.foot(0.05, 260 * pr, 0.8, 0.22 * v, 'lowpass'); this.foot(0.04, 1500 * pr, 2.2, 0.08 * v, 'bandpass'); this.tone(230 * pr, 0.05, 'triangle', 0.035 * v, 0.8); break;
     }
     this.k = 1;
   }

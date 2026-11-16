@@ -389,6 +389,11 @@ function BottomBar({ game }: { game: Game }) {
           </button>
           <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><MenuIcon k="pick" /></button>
           <button className="slot" title="Canavar seç / sıradakine geç (Tab)" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><span className="key">⇥</span><TargetIcon /></button>
+          {self.mount?.owned && !isMobile() && (
+            <button className={'slot mount-slot' + (self.mount.riding ? ' on' : '')} title={self.mount.riding ? 'Binekten in (H)' : 'Bineğe bin (H)'} onPointerDown={(e) => { e.preventDefault(); game.send({ t: 'mount', op: 'ride' }); }}>
+              <span className="key">H</span><img src="/icons/mount.jpg" alt="" />
+            </button>
+          )}
         </div>
       </div>
     </div>

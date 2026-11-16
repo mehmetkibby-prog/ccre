@@ -7,3 +7,5 @@ teslim/
 packages/client/dist-offline
 assets-src/meshy/concepts/
 assets-src/characters/
+assets-src/meshy/batch3/*.glb
+assets-src/meshy/batch3/*.png

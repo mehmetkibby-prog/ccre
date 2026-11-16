@@ -4,10 +4,10 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, twoBoneIK, rotateWorld, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
+import { createGlbChar, model as loadModelRaw, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, twoBoneIK, rotateWorld, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
-import { buildMountains } from './mountains.ts';
+import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
@@ -78,6 +78,7 @@ const THEME = {
 interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig; glb?: GlbChar; model?: string; speed?: number; height: number; phase: number; lx: number; ly: number; yaw: number; state: HState; stateAt: number; deadAt: number; sprite?: THREE.Sprite; beam?: THREE.Mesh; gfx?: THREE.Object3D[]; wpend?: string | null; apend?: string | null; /** asıl model yüklenirken boş yer tutucu */ ph?: boolean;
   /** Nesne Market: evcil hayvan ve sırttaki kanat; cpend yüklenmeyi bekleyen kozmetik modeli */ pet?: Pet | null; wings?: (THREE.Object3D & { tick?: (t: number, moving: boolean) => void }) | null; cpend?: string | null }
 
+const _footP = new THREE.Vector3();
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
   scene = new THREE.Scene();
@@ -252,6 +253,8 @@ export class Renderer3D {
     if (this.mountains) { this.scene.remove(this.mountains); this.mountains.geometry.dispose(); (this.mountains.material as THREE.Material).dispose(); }
     this.mountains = buildMountains(l.def.theme, l.def.id.length * 13 + 5, MOBILE);
     this.scene.add(this.mountains);
+    this.mtnTheme = l.def.theme; this.mtnSeed = l.def.id.length * 13 + 5;
+    this.rebuildMeshMountains();
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
     this.baseExp = th.exp;
@@ -435,9 +438,39 @@ export class Renderer3D {
     return t;
   }
 
+  /**
+   * Ayak sesi animasyonla senkron: ayak kemiğinin köke göre yüksekliği izlenir; ayak inip yere değdiği anda
+   * (alt eşiğin altına geçince) bir adım sesi çalınır, yeniden kalkınca tekrar kurulur. Eşikler her karakterin
+   * kendi animasyonundan öğrenilir (en alçak/en yüksek ayak yüksekliği), böylece yürüme ve koşmada da tutar.
+   */
+  private footContact(v: View, x: number, y: number) {
+    const b = v.glb!.bones; if (!b.footL || !b.footR) return;
+    const fv = v as View & { fc?: { min: number[]; max: number[]; armed: boolean[]; last: number; lastFoot: number } };
+    const walking = v.state === 'walk' && (v.speed ?? 0) > 0.6;
+    if (!walking) { if (fv.fc) fv.fc.armed = [false, false]; return; }
+    if (v !== this.self && Math.hypot(x - this.g.dx, y - this.g.dy) > 700) return;
+    const fc = (fv.fc ??= { min: [1e9, 1e9], max: [-1e9, -1e9], armed: [false, false], last: -1e9, lastFoot: -1 });
+    const now = performance.now();
+    const baseY = v.obj.position.y;
+    [b.footL, b.footR].forEach((f, i) => {
+      f.updateWorldMatrix(true, false);
+      const h = f.getWorldPosition(_footP).y - baseY;
+      // öğrenilen aralık yavaşça güncellenir (uç değerlere hızlı, geri yavaş)
+      fc.min[i] = h < fc.min[i] ? h : fc.min[i] + (h - fc.min[i]) * 0.012;
+      fc.max[i] = h > fc.max[i] ? h : fc.max[i] + (h - fc.max[i]) * 0.012;
+      const r = fc.max[i] - fc.min[i]; if (r < 0.04) return;
+      // ayaklar sırayla basar (aynı ayak art arda sayılmaz), iki adım arası en az 140 ms
+      if (fc.armed[i] && h < fc.min[i] + r * 0.38) {
+        fc.armed[i] = false;
+        if ((i !== fc.lastFoot || now - fc.last > 700) && now - fc.last > 140) { fc.last = now; fc.lastFoot = i; this.footstep(v === this.self, x, y); }
+      }
+      else if (!fc.armed[i] && h > fc.min[i] + r * 0.6) fc.armed[i] = true;
+    });
+  }
+
   private stepBudget = 0; private stepFrame = -1;
   /** Ayak sesi: kendi adımın tam, yakındaki oyuncularınki uzaklıkla kısılarak (karede en çok 3 yabancı adım). */
-  private footstep(isSelf: boolean, x: number, y: number) {
+  private footstep(isSelf: boolean, x: number, y: number, force?: 'hoof') {
     const l = this.layout; if (!l) return;
     let k = 1;
     if (!isSelf) {
@@ -451,7 +484,7 @@ export class Renderer3D {
     const tx = Math.floor(x / TILE), ty = Math.floor(y / TILE);
     const gr = l.ground[Math.max(0, Math.min(l.h - 1, ty)) * l.w + Math.max(0, Math.min(l.w - 1, tx))];
     const surf = gr === 11 ? 'wood' : gr === 3 || gr === 9 ? 'stone' : gr === 2 || gr === 8 ? 'dirt' : gr === 5 ? 'sand' : gr === 6 || gr === 7 ? 'snow' : 'grass';
-    sfx.step(surf, k);
+    sfx.step(force ?? surf, k);
   }
 
   /** Balık tutan oyuncu: elde olta, en yakın suya misina ve şamandıra. */
@@ -518,6 +551,7 @@ export class Renderer3D {
     if (!mv.mount) {
       const m = createMount(); if (!m) return;
       mv.mount = m; mv.mountBase = inner.position.clone(); v.obj.add(m.obj);
+      m.onHoof = () => { const p = v.obj.position; this.footstep(v === this.self, p.x / U, p.z / U, 'hoof'); };
       this.shadowDirty = true;
     }
     if (!mv.ride && b.upLegL && b.legL && b.footL && b.upLegR) {
@@ -602,14 +636,21 @@ export class Renderer3D {
     this.shadowDirty = true;
   }
 
-  private animateView(v: View, x: number, y: number, dir: number | null, anim: number, animStart: number, now: number, dt: number, dead: boolean) {
-    const dist = Math.hypot(x - v.lx, y - v.ly) * U;
+  private animateView(v: View, x: number, y: number, dir: number | null, anim: number, animStart: number, now: number, dt: number, dead: boolean, faceMotion = false) {
+    const mdx = x - v.lx, mdy = y - v.ly;
+    const dist = Math.hypot(mdx, mdy) * U;
     const moving = dist > 0.002;
     v.lx = x; v.ly = y;
     v.obj.position.set(x * U, this.heightAt(x, y), y * U);
-    // yön
+    // yön: uzak varlıklar yürürken gerçekten gittikleri yöne bakar (sunucunun yön bilgisi konumdan önce gelir;
+    // ona bakınca karakter daha dönmeden "aniden" ters yöne çeviriyordu). Dururken / saldırırken sunucu yönü.
     let targetYaw = v.yaw;
-    if (dir !== null) { const a = (dir / 256) * Math.PI * 2; targetYaw = Math.atan2(Math.cos(a), Math.sin(a)); }
+    const sv = v as View & { mvx?: number; mvy?: number };
+    if (dt > 0) { const kk = Math.min(1, dt / 120); sv.mvx = (sv.mvx ?? 0) * (1 - kk) + (mdx / dt) * kk; sv.mvy = (sv.mvy ?? 0) * (1 - kk) + (mdy / dt) * kk; }
+    const mspd = Math.hypot(sv.mvx ?? 0, sv.mvy ?? 0) * 1000 * U; // m/sn
+    const acting = anim === Anim.ATTACK || anim === Anim.CAST;
+    if (faceMotion && mspd > 0.8 && !(acting && now - animStart < 700)) targetYaw = Math.atan2(sv.mvx!, sv.mvy!);
+    else if (dir !== null) { const a = (dir / 256) * Math.PI * 2; targetYaw = Math.atan2(Math.cos(a), Math.sin(a)); }
     let d = targetYaw - v.yaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
     v.yaw += d * Math.min(1, dt / 90);
     v.obj.rotation.y = v.yaw;
@@ -622,12 +663,6 @@ export class Renderer3D {
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
     if (dead && !v.deadAt) v.deadAt = now;
     v.phase += dist * (Math.PI * 2 / 1.55);
-    // ayak sesi: yürüme döngüsünde her ayak basışında (döngü başına 2 adım)
-    if (v.kind === Kind.PLAYER) {
-      const sv2 = v as View & { stepN?: number }, n = Math.floor(v.phase / Math.PI);
-      if (sv2.stepN !== undefined && n !== sv2.stepN && moving && !dead) this.footstep(v === this.self, x, y);
-      sv2.stepN = n;
-    }
     const k = st === 'dead' ? (now - v.deadAt) / 700 : (now - v.stateAt) / (st === 'attack' ? 480 : 600);
     const tt = now / 1000;
     const sp = dt > 0 ? (dist / dt) * 1000 : 0;
@@ -650,6 +685,7 @@ export class Renderer3D {
       adt = lv.lodAcc; lv.lodAcc = 0;
     } else lv.lodAcc = 0;
     if (v.glb) v.glb.update(v.state, adt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
+    if (v.kind === Kind.PLAYER && v.glb && !dead && !(v as View & { mount?: unknown }).mount) this.footContact(v, x, y);
     else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
   }
@@ -658,6 +694,18 @@ export class Renderer3D {
   private baseExp = 1;
   private selfWR = 0;
   private mountains: THREE.Mesh | null = null;
+  /** Meshy dağ halkası (modeller yüklenince kurulur; o zamana dek yalnız çizimli sıralar görünür) */
+  private meshMtn: MeshMountains | null = null; private mtnTheme = 'forest'; private mtnSeed = 7; private mtnWait = false;
+  private rebuildMeshMountains() {
+    if (this.meshMtn) { this.scene.remove(this.meshMtn.group); this.meshMtn.dispose(); this.meshMtn = null; }
+    const get = (id: string) => loadModelRaw(id)?.scene ?? null;
+    this.meshMtn = buildMeshMountains(this.mtnTheme, this.mtnSeed, MOBILE, get);
+    if (this.meshMtn) { this.meshMtn.haze.copy((this.scene.fog as THREE.Fog).color); this.scene.add(this.meshMtn.group); this.shadowDirty = true; return; }
+    if (!this.mtnWait && (hasModel('mountain_a') || modelPending('mountain_a'))) {
+      this.mtnWait = true;
+      const off = onModelReady((id) => { if (id === 'mountain_a' || id === 'mountain_b') { if (loadModelRaw('mountain_a') && loadModelRaw('mountain_b')) { off(); this.mtnWait = false; this.rebuildMeshMountains(); } } });
+    }
+  }
   private stallObjs = new Map<string, THREE.Object3D>();
   private shadowDirty = true; private shadowAt = new THREE.Vector3(1e9, 0, 0);
   /** Oyuncu tezgâhları: satıcının çevresinde direkli tente ve önünde tezgâh masası. */
@@ -722,7 +770,7 @@ export class Renderer3D {
       }
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
       (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
-      this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead);
+      this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead, !e.slide);
       if (e.kind === Kind.PLAYER) { this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now); this.syncMount(v, (e.flags & EFlag.MOUNTED) !== 0 && !dead, now, dt); }
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       if (e.kind === Kind.PLAYER) crowd.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
@@ -804,6 +852,7 @@ export class Renderer3D {
     // alçak açıda biraz yukarı bak: ufuk görünsün
     this.camera.lookAt(this.camTarget.x, this.camTarget.y + 1.1 + (1 - Math.min(1, pitch / 0.6)) * 0.8, this.camTarget.z);
     if (this.mountains) this.mountains.position.set(this.camera.position.x, this.camTarget.y - 2, this.camera.position.z);
+    if (this.meshMtn) this.meshMtn.group.position.set(this.camera.position.x, this.camTarget.y - 2, this.camera.position.z);
     this.g.camYaw = this.camYawS;
     shared.cam.value.copy(this.camera.position);
     shared.focus.value.set(tx, ty + 1.0, tz);

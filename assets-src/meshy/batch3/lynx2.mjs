@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+const API = 'https://api.meshy.ai/openapi/v1';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function call(m, p, body) { for (let i = 0; ; i++) { const r = await fetch(API + p, { method: m, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }); const t = await r.text(); if (r.status === 429 && i < 8) { await sleep(4000 * (i + 1)); continue; } if (!r.ok) throw new Error(`${m} ${p} ${r.status} ${t.slice(0, 300)}`); return JSON.parse(t); } }
+const st = fs.existsSync('lynx2_state.json') ? JSON.parse(fs.readFileSync('lynx2_state.json')) : {};
+const save = () => fs.writeFileSync('lynx2_state.json', JSON.stringify(st));
+if (!st.img) { st.img = (await call('POST', '/text-to-image', { ai_model: 'nano-banana-pro', aspect_ratio: '16:9', prompt: 'A single wild frost snow lynx animal standing still in a neutral square stance, all four legs straight and vertical, evenly spaced and clearly separated, front legs together and hind legs together, full body exact side view facing right, head level looking forward, thick fluffy white and pale silver-grey fur with subtle dark grey spots, long black ear tufts, short black-tipped tail held slightly down, large furry paws flat on the ground, icy blue eyes, realistic proportions, semi-realistic fantasy game creature art, isolated on plain light grey studio background, soft even lighting, no snow, no ground, no shadow, no text, no frame' })).result; save(); }
+for (;;) { const t = await call('GET', `/text-to-image/${st.img}`); if (t.status === 'SUCCEEDED') { fs.writeFileSync('lynx2.png', Buffer.from(await (await fetch(t.image_urls[0])).arrayBuffer())); break; } if (t.status === 'FAILED') throw new Error('görsel başarısız'); await sleep(5000); }
+console.log('görsel tamam');
+if (!st.m) { st.m = (await call('POST', '/image-to-3d', { image_url: 'data:image/png;base64,' + fs.readFileSync('lynx2.png').toString('base64'), ai_model: 'latest', should_texture: true, enable_pbr: false, topology: 'triangle', target_polycount: 12000, should_remesh: true })).result; save(); }
+for (;;) { const t = await call('GET', `/image-to-3d/${st.m}`); if (t.status === 'SUCCEEDED') { fs.writeFileSync('lynx2.glb', Buffer.from(await (await fetch(t.model_urls.glb)).arrayBuffer())); break; } if (['FAILED', 'CANCELED'].includes(t.status)) throw new Error('3B başarısız'); await sleep(6000); }
+console.log('3B tamam; kredi', (await call('GET', '/balance')).balance);

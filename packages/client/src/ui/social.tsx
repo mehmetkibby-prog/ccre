@@ -195,7 +195,8 @@ export function MountPanel() {
 /** Oyun ekranında bin/in düğmesi (bineği olanlara). */
 export function MountButton() {
   const m = useStore((s) => s.self?.mount);
-  if (!m?.owned) return null;
+  // bilgisayarda binek tuşu beceri çubuğunda (H); bu yüzen düğme yalnız dokunmatik ekranda
+  if (!m?.owned || !matchMedia('(pointer: coarse)').matches) return null;
   return <button className={'mount-btn' + (m.riding ? ' on' : '')} title={m.riding ? 'Binekten in (H)' : 'Bineğe bin (H)'} onClick={() => send({ t: 'mount', op: 'ride' })}>🐎</button>;
 }
 
