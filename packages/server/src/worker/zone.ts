@@ -2,7 +2,7 @@ import { getLayout, type MapLayout, type MapDef, MONSTERS, type GameEvent } from
 import { Grid } from './grid.ts';
 import { Monster, Player, Loot } from './entities.ts';
 
-export interface ZoneEvent { x: number; y: number; ev: GameEvent; only?: number /* yalnız bu oyuncu varlık kimliği */ }
+export interface ZoneEvent { x: number; y: number; ev: GameEvent; only?: number /* yalnız bu oyuncu varlık kimliği */; bin?: Uint8Array /* adım içinde bir kez kodlanmış hâli */ }
 
 export class Zone {
   layout: MapLayout;

@@ -31,6 +31,10 @@ export class BinWriter {
     const n = Math.min(b.length, 255);
     this.ensure(1 + n); this.view.setUint8(this.pos++, n); this.u8.set(b.subarray(0, n), this.pos); this.pos += n;
   }
+  /** Önceden kodlanmış baytları kopyala (aynı varlık verisi her izleyiciye yeniden kodlanmasın diye). */
+  wBytes(b: Uint8Array) { this.ensure(b.length); this.u8.set(b, this.pos); this.pos += b.length; }
+  /** Yazılanların kopyası (küçük önbellek parçaları için). */
+  bytes(): Uint8Array { return this.u8.slice(0, this.pos); }
   /** Yerinde u16 yazmak için konum ayır (sayıları sonradan doldurmak için). */
   reserveU16(): number { const p = this.pos; this.wU16(0); return p; }
   patchU16(at: number, v: number) { this.view.setUint16(at, v, true); }

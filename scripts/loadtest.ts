@@ -19,7 +19,7 @@ const OUT = arg('out', '');
 const OFFSET = Number(arg('offset', '0'));
 const QUIET = process.argv.includes('--quiet');
 
-const stats = { connected: 0, failed: 0, snapshots: 0, bytes: 0, kills: 0, loot: 0, deaths: 0, gaps: [] as number[], rtts: [] as number[], errors: new Map<string, number>(), kicked: 0, closed: 0 };
+const stats = { connected: 0, failed: 0, snapshots: 0, bytes: 0, kills: 0, loot: 0, deaths: 0, gaps: [] as number[], rtts: [] as number[], acts: [] as number[], errors: new Map<string, number>(), kicked: 0, closed: 0 };
 const err = (k: string) => stats.errors.set(k, (stats.errors.get(k) ?? 0) + 1);
 
 async function api(path: string, body: unknown, token?: string) {
@@ -44,7 +44,7 @@ async function bot(i: number) {
   ws.binaryType = 'arraybuffer';
   const ents = new Map<number, { kind: number; x: number; y: number; hp: number; owner?: number; dead?: boolean }>();
   let me_x = 0, me_y = 0, myEntity = 0, myCharId = 0, dead = false, seq = 0, lastSnapAt = 0;
-  let target = 0;
+  let target = 0, pingAt = 0, actAt = 0;
   const stayVillage = Math.random() < VILLAGE;
   let wanderX = 0, wanderY = 0;
   await new Promise<void>((res, rej) => { ws.once('open', () => res()); ws.once('error', rej); });
@@ -71,7 +71,8 @@ async function bot(i: number) {
     else if (m.t === 'dead') { dead = true; stats.deaths++; setTimeout(() => ws.send(JSON.stringify({ t: 'respawn', where: 'here' })), 5500); }
     else if (m.t === 'respawned') dead = false;
     else if (m.t === 'loot') stats.loot++;
-    else if (m.t === 'pong') stats.rtts.push(Date.now() - m.c);
+    else if (m.t === 'pong') stats.rtts.push(performance.now() - pingAt);
+    else if (m.t === 'bosses') { if (actAt) stats.acts.push(performance.now() - actAt); actAt = 0; }
     else if (m.t === 'kicked') stats.kicked++;
     else if (m.t === 'fatal') err('fatal:' + m.text);
   });
@@ -103,7 +104,9 @@ async function bot(i: number) {
     const dir = want ? dirIndexFromVector(tx - me_x, ty - me_y) : NO_DIR;
     if (want) ws.send(encodeMove(++seq, dir));
     if (Math.random() < 0.002) ws.send(JSON.stringify({ t: 'chat', ch: Math.random() < 0.5 ? 'local' : 'world', text: 'merhaba ' + i }));
-    if (Math.random() < 0.01) ws.send(JSON.stringify({ t: 'ping', c: Date.now() }));
+    if (Math.random() < 0.02) { pingAt = performance.now(); ws.send(JSON.stringify({ t: 'ping', c: Date.now() })); }
+    // komut tepki süresi: dünya iş parçacığından dönen yanıt (oyun adımını bekler; saldırı/beceri yanıtıyla aynı yol)
+    if (!actAt && Math.random() < 0.02) { actAt = performance.now(); ws.send(JSON.stringify({ t: 'bosses' })); }
   }, 50);
   return () => { clearInterval(iv); ws.close(); };
 }
@@ -123,9 +126,11 @@ async function main() {
     const q = (p: number) => gaps.length ? Math.round(gaps[Math.min(gaps.length - 1, Math.floor(p * gaps.length))]) : 0;
     const rtts = stats.rtts.splice(0).sort((a, b) => a - b);
     const rq = (p: number) => rtts.length ? rtts[Math.min(rtts.length - 1, Math.floor(p * rtts.length))] : 0;
+    const acts = stats.acts.splice(0).sort((a, b) => a - b);
+    const aq = (p: number) => acts.length ? Math.round(acts[Math.min(acts.length - 1, Math.floor(p * acts.length))]) : 0;
     const row = {
       t: Math.round((Date.now() - t0) / 1000), connected: stats.connected, failed: stats.failed, online: m?.online,
-      snapGapMs: { p50: q(0.5), p95: q(0.95), p99: q(0.99) }, rttMs: { p50: rq(0.5), p95: rq(0.95), p99: rq(0.99) },
+      snapGapMs: { p50: q(0.5), p95: q(0.95), p99: q(0.99) }, rttMs: { p50: Math.round(rq(0.5)), p95: Math.round(rq(0.95)), p99: Math.round(rq(0.99)) }, actMs: { p50: aq(0.5), p95: aq(0.95), p99: aq(0.99) },
       kbInPerSec: Math.round(stats.bytes / 1024 / 5), kills: stats.kills, loot: stats.loot, deaths: stats.deaths,
       channels: m?.channels?.map((c: any) => ({ ch: c.channel, players: c.players, tick: c.tick, elu: c.elu, kbOut: Math.round(c.bytesOutPerSec / 1024) })),
       main: m?.mainThread, persistence: m?.persistence, host: m?.host?.loadavg,

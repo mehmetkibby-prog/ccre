@@ -18,7 +18,7 @@ interface Session {
   sid: number; ws: WebSocket; accountId: number; charId: number; channel: number; name: string; cls: string; role: Role;
   state: 'joining' | 'active' | 'closing';
   needResync: boolean; awaitingReset: boolean; dropped: number;
-  lastWorldChat: number; msgs: number; msgWindow: number; lastPm?: number;
+  lastWorldChat: number; msgs: number; msgWindow: number; lastPm?: number; lastPing?: number;
   /** bağlantı IP'si (arena hile denetimi: aynı bağlantıdan açılan tarayıcılar birbirinden puan alamaz) */
   ip: string;
 }
@@ -162,6 +162,15 @@ export class Gateway {
     }
     const text = data.toString();
     if (text.length > 1024) { this.stats.badMsgs++; return; }
+    // Gecikme ölçümü geçitte hemen yanıtlanır: dünya iş parçacığına gidip oyun adımının sonunu (0–50 ms)
+    // beklemesin; böylece gösterilen ms yalnız gerçek ağ gidiş-dönüşüdür.
+    if (text.startsWith('{"t":"ping"')) {
+      if (s.lastPing && now - s.lastPing < 400) return;
+      s.lastPing = now;
+      const m = /"c":(\d{1,16})/.exec(text);
+      if (m) s.ws.send(`{"t":"pong","c":${m[1]},"s":${Date.now()}}`);
+      return;
+    }
     if (!this.cmdLimiter.take(String(s.sid))) return;
     // Dünya/ticaret sohbeti tüm kanallara: geçitte işlenir
     if (text.includes('"chat"')) {

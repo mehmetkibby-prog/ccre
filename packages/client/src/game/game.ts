@@ -77,7 +77,7 @@ export class Game {
   frames = 0; fpsAt = 0;
   stopped = false;
   hoverId = 0;
-  pingSent = 0;
+  pingSent = 0; pingPerf = 0; pingSamples: number[] = [];
   camYaw = 0;
 
   constructor(public canvas: HTMLCanvasElement, overlay: HTMLCanvasElement, private ticket: string, private onClose: (reason: string) => void) {
@@ -95,8 +95,10 @@ export class Game {
     ws.binaryType = 'arraybuffer';
     this.ws = ws;
     let closedReason = '';
-    ws.onopen = () => store.set({ connected: true, status: '' });
+    ws.onopen = () => { store.set({ connected: true, status: '' }); setTimeout(() => this.sendPing(), 1500); };
     ws.onmessage = (e) => {
+      // gecikme: yanıtın geldiği an (olayın zaman damgası; o sırada çizim sürüyorsa beklenen süre ölçüme katılmaz)
+      if (typeof e.data === 'string' && e.data.startsWith('{"t":"pong"')) { this.onPong(JSON.parse(e.data), e.timeStamp); return; }
       if (typeof e.data === 'string') this.onJson(JSON.parse(e.data), (r) => (closedReason = r));
       else this.onSnapshot(e.data as ArrayBuffer);
     };
@@ -125,7 +127,17 @@ export class Game {
       this.frame(t);
     };
     this.raf = requestAnimationFrame(loop);
-    setInterval(() => { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.send({ t: 'ping', c: this.pingSent }); } }, 3000);
+    setInterval(() => this.sendPing(), 2500);
+  }
+  private sendPing() { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.pingPerf = performance.now(); this.send({ t: 'ping', c: this.pingSent }); } }
+  /** Gösterilen ms: son 5 ölçümün ortancası (mobil ağdaki tek tük sıçramalar sayıyı oynatmasın). */
+  private onPong(m: { c: number; s?: number }, ts: number) {
+    if (m.c !== this.pingSent) return;
+    const at = ts > 0 && ts >= this.pingPerf ? ts : performance.now();
+    const rtt = Math.max(1, Math.round(at - this.pingPerf));
+    this.pingSamples.push(rtt); if (this.pingSamples.length > 5) this.pingSamples.shift();
+    const med = [...this.pingSamples].sort((a, b) => a - b)[this.pingSamples.length >> 1];
+    store.set({ ping: med, clockSkew: typeof m.s === 'number' ? m.s - (this.pingSent + rtt / 2) : store.get().clockSkew });
   }
   stop() {
     sfx.setMusic(null);
@@ -218,7 +230,6 @@ export class Game {
       case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'upgradeResult': store.set({ upgradeResult: { ok: m.ok, before: m.before, after: m.after, chance: m.chance } }); sfx.play(m.ok ? 'levelup' : 'error'); break;
       case 'shop': break;
-      case 'pong': store.set({ ping: Date.now() - m.c, clockSkew: typeof m.s === 'number' ? m.s - (Date.now() + m.c) / 2 : store.get().clockSkew }); break;
       case 'kicked': setReason(m.text); break;
       case 'fatal': setReason(m.text); break;
     }

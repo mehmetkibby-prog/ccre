@@ -38,6 +38,10 @@ export class World {
   out: [number, string | ArrayBuffer][] = [];
   transfer: ArrayBuffer[] = [];
   writer = new BinWriter(64 * 1024);
+  /** Adım başına kodlama önbelleği: bir varlığın doğma/güncelleme baytları her izleyici için değil, adımda bir kez kodlanır. */
+  private encW = new BinWriter(1024);
+  private spawnBin = new Map<object, Uint8Array>();
+  private updBin = new Map<object, Uint8Array>();
   tickHist = new Histogram(1200);
   overruns = 0;
   bytesOut = 0; msgsOut = 0;
@@ -1767,8 +1771,19 @@ export class World {
     const maxP = this.opt.aoiMaxPlayers;
     const visPlayers: Player[] = [];
     const visD: number[] = [];
-    const seen = new Set<number>();
     const heartbeat = this.tickNo % 10 === 0;
+    const enc = this.encW, spawnBin = this.spawnBin, updBin = this.updBin;
+    spawnBin.clear(); updBin.clear();
+    const spawnOf = (e: object, make: () => EntitySpawn) => { let b = spawnBin.get(e); if (!b) { enc.reset(); writeSpawn(enc, make()); b = enc.bytes(); spawnBin.set(e, b); } return b; };
+    const updOf = (e: Player | Monster) => {
+      let b = updBin.get(e);
+      if (!b) {
+        enc.reset();
+        writeUpdate(enc, { id: e.id, mask: e.dirty, x: Math.round(e.x), y: Math.round(e.y), hp: Math.max(0, Math.round(e.hp)), dir: e.dir, anim: e.anim, maxHp: e instanceof Player ? e.stats.maxHp : e.maxHp, flags: e instanceof Player ? this.playerFlags(e) : e.state === MState.DEAD ? EFlag.DEAD : 0, level: e instanceof Player ? e.char.level : e.level });
+        b = enc.bytes(); updBin.set(e, b);
+      }
+      return b;
+    };
     for (const z of this.zones.values()) {
       if (!z.playerSet.size) continue;
       for (const p of z.playerSet) {
@@ -1781,7 +1796,6 @@ export class World {
         w.wU16(p.lastSeq);
         w.wF32(p.x); w.wF32(p.y);
         w.wU32(Math.max(0, Math.round(p.hp))); w.wU32(p.stats.maxHp); w.wU8(this.playerFlags(p));
-        seen.clear();
         // oyuncular: kalabalıkta en yakın N
         visPlayers.length = 0; visD.length = 0;
         z.players.query(x0, y0, x1, y1, (q) => {
@@ -1796,35 +1810,35 @@ export class World {
         const spawnAt = w.reserveU16(); let nSpawn = 0;
         const updates: Player[] | Monster[] = [];
         const updList: (Player | Monster)[] = updates as (Player | Monster)[];
+        const known = p.known, stamp = this.tickNo;
         for (const q of visPlayers) {
-          seen.add(q.id);
-          if (!p.known.has(q.id)) { p.known.set(q.id, Kind.PLAYER); writeSpawn(w, this.playerSpawn(q)); nSpawn++; }
+          const was = known.get(q.id); known.set(q.id, stamp);
+          if (was === undefined) { w.wBytes(spawnOf(q, () => this.playerSpawn(q))); nSpawn++; }
           else if (q.dirty) updList.push(q);
         }
         z.monsters.query(x0, y0, x1, y1, (m) => {
           if (m.x < x0 || m.x > x1 || m.y < y0 || m.y > y1) return;
-          if (m.state === MState.DEAD && !p.known.has(m.id)) return;
-          seen.add(m.id);
-          if (!p.known.has(m.id)) { p.known.set(m.id, Kind.MONSTER); writeSpawn(w, monsterSpawn(m)); nSpawn++; }
+          const was = known.get(m.id);
+          if (was === undefined && m.state === MState.DEAD) return;
+          known.set(m.id, stamp);
+          if (was === undefined) { w.wBytes(spawnOf(m, () => monsterSpawn(m))); nSpawn++; }
           else if (m.dirty) updList.push(m);
         });
         z.loot.query(x0, y0, x1, y1, (l) => {
-          seen.add(l.id);
-          if (!p.known.has(l.id)) { p.known.set(l.id, Kind.LOOT); writeSpawn(w, lootSpawn(l, this.now)); nSpawn++; }
+          const was = known.get(l.id); known.set(l.id, stamp);
+          if (was === undefined) { w.wBytes(spawnOf(l, () => lootSpawn(l, this.now))); nSpawn++; }
         });
         w.patchU16(spawnAt, nSpawn);
         w.wU16(updList.length);
-        for (const e of updList) {
-          const mask = e.dirty;
-          writeUpdate(w, { id: e.id, mask, x: Math.round(e.x), y: Math.round(e.y), hp: Math.max(0, Math.round(e.hp)), dir: e.dir, anim: e.anim, maxHp: e instanceof Player ? e.stats.maxHp : e.maxHp, flags: e instanceof Player ? this.playerFlags(e) : e.state === MState.DEAD ? EFlag.DEAD : 0, level: e instanceof Player ? e.char.level : e.level });
-        }
+        for (const e of updList) w.wBytes(updOf(e));
         const remAt = w.reserveU16(); let nRem = 0;
-        for (const id of p.known.keys()) if (!seen.has(id)) { p.known.delete(id); w.wU32(id); nRem++; }
+        for (const [id, st] of known) if (st !== stamp) { known.delete(id); w.wU32(id); nRem++; }
         w.patchU16(remAt, nRem);
         const evAt = w.reserveU16(); let nEv = 0;
         for (const ze of z.events) {
           if (!eventVisible(ze, p, x0, y0, x1, y1)) continue;
-          writeEvent(w, ze.ev); nEv++;
+          if (!ze.bin) { enc.reset(); writeEvent(enc, ze.ev); ze.bin = enc.bytes(); }
+          w.wBytes(ze.bin); nEv++;
         }
         w.patchU16(evAt, nEv);
         const hasContent = reset || nSpawn || updList.length || nRem || nEv || p.movedThisTick || p.inputs.length || p.dirty || heartbeat;

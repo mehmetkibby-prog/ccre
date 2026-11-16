@@ -39,7 +39,7 @@ export class Player {
   lastDamageAt = 0;
   lastActiveAt = Date.now();
   // görüş
-  known = new Map<number, number>(); // entityId → kind
+  known = new Map<number, number>(); // entityId → en son görüldüğü adım (görünmeyen olunca silinir)
   resetPending = true;
   lastSnapTick = 0;
   // kayıt
