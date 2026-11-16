@@ -118,8 +118,8 @@ function genVillage(l: MapLayout, rng: Rng) {
     if (d < 1) { l.ground[idx(l, x, y)] = d < 0.45 ? G.DEEP : G.WATER; l.blocked[idx(l, x, y)] = 1; }
     else if (d < 1.5 && l.ground[idx(l, x, y)] !== G.COBBLE) l.ground[idx(l, x, y)] = G.SAND;
   }
-  // çeşme
-  blockRect(l, cx - 1, cy - 1, 2, 2);
+  // çeşme (yeni yılda yerine ağaç gelir: 4×4 karo, havuzu da ağacın alt dallarını da kaplar)
+  blockRect(l, cx - 2, cy - 2, 4, 4);
   l.props.push({ k: 'fountain', x: cx * TILE, y: cy * TILE, v: 0, s: 1 });
   // evler: [tx, ty, roofVariant]
   const houses: [number, number, number][] = [

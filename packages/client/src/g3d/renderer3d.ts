@@ -26,6 +26,7 @@ import { iconUrl } from '../game/art/icons.ts';
 import { glowTexture } from './textures.ts';
 import { store } from '../game/store.ts';
 import { TowerFx } from './tower3d.ts';
+import { NewYearFx } from './newyear3d.ts';
 
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
@@ -91,6 +92,19 @@ export class Renderer3D {
   camera = new THREE.PerspectiveCamera(MOBILE ? 34 : 38, 1, 0.5, 260);
   composer: EffectComposer | null = null;
   private towerFx: TowerFx | null = null;
+  /** Pazar Köyü yeni yıl süsü (yönetimden aç/kapa) */
+  private nyFx: NewYearFx | null = null; private nyOn = false;
+  private nyActive(l: MapLayout | null = this.layout) { return !!l && l.def.id === 'bazaar' && TUNING.newYear >= 0.5; }
+  /** yeni yıl açıkken çeşmenin yerine ağaç gelir */
+  private propList(l: MapLayout) { return this.nyActive(l) ? l.props.filter((p) => p.k !== 'fountain') : l.props; }
+  private applyNewYear() {
+    const l = this.layout; if (!l || !this.terrain) return;
+    this.nyOn = this.nyActive();
+    this.nyFx?.dispose(); if (this.nyFx) this.world.remove(this.nyFx.group); this.nyFx = null;
+    if (this.nyOn) { this.nyFx = new NewYearFx(l, (x, y) => this.heightAt(x, y), MOBILE); this.world.add(this.nyFx.group); }
+    this.terrain.snow.value = this.nyOn ? 1 : 0;
+    this.shadowDirty = true;
+  }
   private emblemImgs = new Map<number, HTMLImageElement>();
   bloom: UnrealBloomPass | null = null;
   sun = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -187,7 +201,7 @@ export class Renderer3D {
       if (MESHY_TREES.includes(id) && this.propsGroup && this.layout?.props.some((p) => p.k === 'tree')) {
         const l = this.layout;
         this.world.remove(this.propsGroup);
-        this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), store.get().settings.quality, !DYN_SHADOWS);
+        this.propsGroup = buildProps(this.propList(l), (x, y) => this.heightAt(x, y), store.get().settings.quality, !DYN_SHADOWS);
         this.world.add(this.propsGroup);
         this.shadowDirty = true;
       }
@@ -241,8 +255,9 @@ export class Renderer3D {
     this.world.add(this.terrain.mesh);
     if (this.terrain.water) this.world.add(this.terrain.water);
     const q = store.get().settings.quality;
-    this.propsGroup = buildProps(l.props, (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS);
+    this.propsGroup = buildProps(this.propList(l), (x, y) => this.heightAt(x, y), q, !DYN_SHADOWS);
     this.world.add(this.propsGroup);
+    this.nyFx?.dispose(); this.nyFx = null; this.applyNewYear();
     this.towerFx?.dispose(); this.towerFx = null;
     if (l.def.id === 'tower') { this.towerFx = new TowerFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.towerFx.group); }
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.grass.group.visible = !cool(); this.dyn.add(this.grass.group); }
@@ -752,6 +767,16 @@ export class Renderer3D {
     shared.time.value = now / 1000;
     this.terrain.update(now);
     if (this.towerFx) { const st = store.get(); this.towerFx.update(now, st.tower, st.towerHold, st.towerSeqAt); }
+    // yönetimden yeni yıl aç/kapa: nesneler (çeşme ↔ ağaç) ve süs yeniden kurulur
+    if (this.layout && this.nyActive() !== this.nyOn && this.propsGroup) {
+      this.world.remove(this.propsGroup);
+      this.propsGroup = buildProps(this.propList(this.layout), (x, y) => this.heightAt(x, y), store.get().settings.quality, !DYN_SHADOWS);
+      this.world.add(this.propsGroup);
+      this.applyNewYear();
+    }
+    this.nyFx?.update(now, this.renderer.domElement.height);
+    // karlı zemin parlama eşiğini aşıp sahneyi pus gibi sarmasın: yalnız ampuller ve yıldız parlasın
+    if (this.bloom) this.bloom.threshold = this.nyOn ? 1.3 : 0.9;
     // kendi karakter
     const sv = this.ensureSelf();
     const selfDead = (g.selfFlags & EFlag.DEAD) !== 0;
@@ -902,7 +927,7 @@ export class Renderer3D {
     const c = this.camTarget;
     const k = dt / 1000 * (q === 'high' ? 1 : 0.5);
     const rx = () => c.x + (Math.random() - 0.5) * 50, rz = () => c.z + (Math.random() - 0.5) * 36;
-    if (th === 'frozen') for (let i = 0; i < k * 120; i++) this.fx.spawn(rx(), c.y + 14, rz() - 4, -0.5, -1.6, 0.2, 9000, 0.12, '#ffffff', 0, 0);
+    if (th === 'frozen' || this.nyOn) for (let i = 0; i < k * (this.nyOn ? 90 : 120); i++) this.fx.spawn(rx(), c.y + 14, rz() - 4, -0.5, -1.6, 0.2, 9000, 0.12, '#ffffff', 0, 0);
     if (th === 'forest' || th === 'village' || th === 'lake') if (Math.random() < k * 6) this.fx.spawn(rx(), c.y + 0.5 + Math.random() * 2, rz(), (Math.random() - 0.5) * 0.4, 0.1, (Math.random() - 0.5) * 0.4, 4000, 0.16, '#e8ff9a', 0, 0.2);
     if (th === 'forest' && Math.random() < k * 4) this.fx.spawn(rx(), c.y + 8, rz(), 0.6, -0.9, 0.3, 9000, 0.14, '#c8a040', -0.05, 0);
     if (th === 'tower' && Math.random() < k * 14) this.fx.spawn(rx(), c.y + 0.2 + Math.random() * 3, rz(), (Math.random() - 0.5) * 0.2, 0.25 + Math.random() * 0.3, (Math.random() - 0.5) * 0.2, 6000, 0.1, Math.random() < 0.6 ? '#9a7cff' : '#5ce0d0', 0, 0.1);

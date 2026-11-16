@@ -13,6 +13,8 @@ const DECK_Y = -0.08;
 export class Terrain {
   mesh: THREE.Mesh;
   water: THREE.Mesh | null = null;
+  /** yeni yıl karı (0–1), çalışırken değişebilir */
+  snow = { value: 0 };
   heights: Float32Array;
   hw: number; hh: number; // yükseklik ızgarası boyutu
   step: number; // metre
@@ -139,6 +141,7 @@ export class Terrain {
       sh.uniforms.uNorArr = { value: arr.normal };
       sh.uniforms.uMapSize = { value: new THREE.Vector2(l.w * TILE_M, l.h * TILE_M) };
       sh.uniforms.uTint = { value: tint };
+      sh.uniforms.uSnow = this.snow;
       sh.vertexShader = sh.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;\nvarying vec3 vWNor;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWPos = (modelMatrix * vec4(position,1.0)).xyz;\nvWNor = normalize(mat3(modelMatrix) * normal);');
@@ -149,7 +152,7 @@ precision highp sampler2DArray;
 varying vec3 vWPos; varying vec3 vWNor;
 uniform sampler2D uSplat0; uniform sampler2D uSplat1; uniform sampler2D uSplat2;
 uniform sampler2DArray uColArr; uniform sampler2DArray uNorArr;
-uniform vec2 uMapSize; uniform vec3 uTint;
+uniform vec2 uMapSize; uniform vec3 uTint; uniform float uSnow;
 // sin'siz karma (Dave Hoskins hash12): telefon GPU'larında büyük açılı sin hassas değil, gürültü ~1 m'lik bloklara bölünüp
 // yol kenarında basamaklar ve zeminde dikdörtgen açık/koyu yamalar yapıyordu
 float hsh(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
@@ -192,6 +195,12 @@ void groundBlend(){
   gCol = col / max(tot, 1e-4) * uTint;
   // geniş ölçekli renk varyasyonu (tekrar hissini kırar)
   gCol *= 0.82 + 0.3 * vn(vWPos.xz * 0.06) + 0.08 * vn(vWPos.xz * 0.5);
+  // yeni yıl: zemine yamalı ince kar (taş yollar ve meydan da serpilir, eğimde azalır)
+  if (uSnow > 0.0) {
+    float sn = vn(vWPos.xz * 0.28) * 0.55 + vn(vWPos.xz * 1.7) * 0.3 + vn(vWPos.xz * 6.0) * 0.15;
+    float cov = smoothstep(0.47, 0.62, sn) * (1.0 - slope) * uSnow;
+    gCol = mix(gCol, vec3(0.66, 0.7, 0.76) * (0.92 + 0.08 * vn(vWPos.xz * 3.0)), cov * 0.85);
+  }
   gNor = normalize(nor / max(tot, 1e-4));
 }`)
         .replace('#include <map_fragment>', 'groundBlend();\ndiffuseColor.rgb *= gCol;')

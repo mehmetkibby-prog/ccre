@@ -14,3 +14,10 @@ assets-src/meshy/emblems/state.json
 assets-src/meshy/shield/*.glb
 assets-src/meshy/shield/*.png
 assets-src/meshy/shield/state.json
+assets-src/meshy/mtn2/*.glb
+assets-src/meshy/mtn2/*.png
+assets-src/meshy/mtn2/state.json
+assets-src/meshy/newyear/*.glb
+assets-src/meshy/newyear/*.png
+assets-src/meshy/newyear/state.json
+assets-src/meshy/*/gen.log

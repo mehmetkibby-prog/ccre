@@ -39,10 +39,11 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
   { title: 'Dünya', items: [
     ...(OFFLINE ? [['bots', 'Test botu sayısı', 'Köyde dolaşan / ormanda avlanan oyuncular'] as [NumKey, string, string]] : []),
     ['brightness', 'Işık seviyesi', 'Bütün haritaların parlaklığı'],
+    ['newYear', 'Yeni yıl teması (Pazar Köyü)', '1 = açık: meydanda ışıklı yılbaşı ağacı, evlerde ampuller, kar yağışı · 0 = kapalı (çeşme geri gelir)'],
   ] },
 ];
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
-const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'bossShareMin' ? '%' + v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) : k === 'essxEss' || k === 'potionEss' ? Math.round(v) + ' Öz' : k === 'essxGems' ? Math.round(v) + ' Mücevher' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
+const fmt = (k: NumKey, v: number) => (k === 'newYear' ? (v >= 0.5 ? 'Açık' : 'Kapalı') : k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'bossShareMin' ? '%' + v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) : k === 'essxEss' || k === 'potionEss' ? Math.round(v) + ' Öz' : k === 'essxGems' ? Math.round(v) + ' Mücevher' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];

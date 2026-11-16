@@ -193,10 +193,12 @@ export function buildMeshMountains(themeId: string, seed: number, lite: boolean,
     const h = bb.max.y - bb.min.y, w = Math.max(bb.max.x - bb.min.x, bb.max.z - bb.min.z);
     const srcMat = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material) as THREE.MeshStandardMaterial;
     const mat = new THREE.MeshLambertMaterial({ map: srcMat.map ?? null, color: 0xffffff, fog: false });
-    if (themeId === 'frozen') mat.color.set(0xe4ecf6); else if (themeId === 'black') mat.color.set(0x9a8890); else if (themeId === 'ancient') mat.color.set(0xd8ccb0);
+
     const uH = { value: haze };
     // yeşil temalarda İsviçre görünümü: etekler ve düz yamaçlar çimen yeşili, dik yamaç kaya, zirve karlı
-    const alpine = themeId === 'village' || themeId === 'forest' || themeId === 'lake';
+    // yeni Meshy dağlarının dokusu zaten yeşil yamaçlı ve karlı: yeniden boyama kapalı (yalnız pus ayarı)
+    const alpine = false;
+    const lightHaze = themeId === 'village' || themeId === 'forest' || themeId === 'lake';
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uHaze = uH;
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vH; varying float vUp;')
@@ -208,6 +210,10 @@ export function buildMeshMountains(themeId: string, seed: number, lite: boolean,
             vUp = normalize((modelMatrix * vec4(objectNormal, 0.0)).xyz).y;
           #endif`);
       let fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uHaze; varying float vH; varying float vUp;');
+      // karlı / kara bölgelerde yeşil doku o bölgenin rengine çevrilir
+      if (themeId === 'frozen' || themeId === 'black' || themeId === 'ancient' || themeId === 'tower') fs = fs.replace('#include <map_fragment>', `#include <map_fragment>
+          { float lum = dot(diffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+            diffuseColor.rgb = ${themeId === 'frozen' ? 'mix(vec3(lum) * vec3(0.9, 0.95, 1.04), vec3(0.96, 0.98, 1.0), 0.45)' : themeId === 'black' ? 'vec3(lum) * vec3(0.62, 0.5, 0.56)' : themeId === 'tower' ? 'vec3(lum) * vec3(0.5, 0.46, 0.62)' : 'vec3(lum) * vec3(1.0, 0.92, 0.74)'}; }`);
       if (alpine) fs = fs.replace('#include <map_fragment>', `#include <map_fragment>
           {
             vec3 tex = diffuseColor.rgb;
@@ -230,10 +236,10 @@ export function buildMeshMountains(themeId: string, seed: number, lite: boolean,
           }`);
       sh.fragmentShader = fs.replace('#include <dithering_fragment>', `#include <dithering_fragment>
           // hava perspektifi: dağın tamamı biraz, eteği daha çok pusa karışır
-          float hz = ${alpine ? '0.03 + 0.16' : '0.16 + 0.42'} * (1.0 - smoothstep(0.0, ${(h * 0.7).toFixed(2)}, vH)) + ${alpine ? '0.03' : '0.0'};
+          float hz = ${lightHaze ? '0.03 + 0.18' : '0.16 + 0.42'} * (1.0 - smoothstep(0.0, ${(h * 0.7).toFixed(2)}, vH)) + ${lightHaze ? '0.03' : '0.0'};
           gl_FragColor.rgb = mix(gl_FragColor.rgb, uHaze, hz);`);
     };
-    mat.customProgramCacheKey = () => 'meshmtn' + h.toFixed(2) + (alpine ? 'a' : '');
+    mat.customProgramCacheKey = () => 'meshmtn2' + h.toFixed(2) + themeId;
     owned.push(mat);
     return { geo, mat, h, w };
   });

@@ -55,6 +55,8 @@ export interface GameTuning {
   monsterHpMul: number; monsterAtkMul: number; respawnMul: number;
   density: Record<string, number>; // harita başına canavar yoğunluğu çarpanı
   bots: number; worldDecayMul: number; brightness: number;
+  /** Pazar Köyü yeni yıl süsü (ağaç, ışıklar, kar): 1 açık, 0 kapalı */
+  newYear: number;
   /** Dünya Sağlığı: 1 Öz bağışının kazandırdığı puan (sağlık düştükçe etkisi artar). */
   worldDonateGain: number;
   /** saldırı tuşu: yakın dövüşçünün yürüyerek yaklaşacağı ek mesafe (px, ~64 = 1 adım) */
@@ -256,7 +258,7 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, bossShareMin: 3, announcement: '', classicUrl: 'https://2d.coreoflife.net',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, newYear: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, bossShareMin: 3, announcement: '', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),
@@ -268,7 +270,7 @@ export const DEFAULT_TUNING: GameTuning = {
 export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
-  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
+  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
 };
 export const DENSITY_LIMITS: [number, number, number] = [0.3, 3, 0.05];
 export const TUNING: GameTuning = structuredClone(DEFAULT_TUNING);
@@ -279,7 +281,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const out = structuredClone(DEFAULT_TUNING);
   for (const k of Object.keys(TUNING_LIMITS) as (keyof typeof TUNING_LIMITS)[]) out[k] = clamp(r[k], TUNING_LIMITS[k], DEFAULT_TUNING[k]);
-  out.bots = Math.round(out.bots);
+  out.bots = Math.round(out.bots); out.newYear = out.newYear >= 0.5 ? 1 : 0;
   const dn = (r.density && typeof r.density === 'object' ? r.density : {}) as Record<string, unknown>;
   for (const [k, v] of Object.entries(dn)) if (/^[a-z_]{1,24}$/.test(k)) out.density[k] = clamp(v, DENSITY_LIMITS, 1);
   out.announcement = typeof r.announcement === 'string' ? r.announcement.slice(0, 200) : '';
