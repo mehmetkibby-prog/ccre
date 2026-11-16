@@ -55,7 +55,8 @@ export function TowerHud() {
   const showSeq = useStore((s) => s.towerSeqAt);
   const setShowSeq = (v: number) => store.set({ towerSeqAt: v });
   const [, tick] = useState(0);
-  const [open, setOpen] = useState(true);
+  // telefonda tek satır başlar (sohbeti ve karakteri kapatmasın), dokununca açılır
+  const [open, setOpen] = useState(() => !matchMedia('(pointer: coarse)').matches);
   useEffect(() => { const id = setInterval(() => tick((n) => n + 1), 250); return () => clearInterval(id); }, []);
   if (!t || !t.f || map !== 'tower') return null;
   const ft = TUNING.tower.floors[t.f - 1];

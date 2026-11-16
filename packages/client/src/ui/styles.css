@@ -1416,8 +1416,8 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tw-altar .a.lit { background: rgba(255, 140, 40, .25); box-shadow: 0 0 12px rgba(255, 140, 40, .6); }
 .tw-altar .tw-bar { flex-basis: 100%; }
 .tw-hud.min { width: auto; }
-@media (pointer: coarse) { .tw-hud { left: calc(190px + env(safe-area-inset-left, 0px)); top: 100px; width: 240px; font-size: 11.5px; } }
-@media (max-width: 560px) { .tw-floors { grid-template-columns: 1fr; } .tw-hud { left: 10px; top: 150px; width: 220px; } }
+@media (pointer: coarse) { .tw-hud { left: 50%; transform: translateX(-50%); top: calc(100px + env(safe-area-inset-top, 0px)); width: min(300px, 64vw); font-size: 11.5px; } .tw-hud.min { width: auto; } }
+@media (max-width: 560px) { .tw-floors { grid-template-columns: 1fr; } }
 /* yönetim: sekme grupları */
 .adm-ng { display: contents; }
 .adm-ngh { flex: none; align-self: center; padding: 0 2px 0 8px; font: 800 9.5px var(--f-ui); letter-spacing: 1.2px; text-transform: uppercase; color: var(--core-dim); white-space: nowrap; opacity: .8; }
