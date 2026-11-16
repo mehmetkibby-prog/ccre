@@ -15,14 +15,14 @@ const nearSmith = (over: Partial<CharState>): CharState => {
 };
 
 describe('Dönüşüm (Haso)', () => {
-  it('Kızıl silah Eşsiz olur; efsun, artı ve evrim korunur; bedel düşer; güç artar', () => {
+  it('Kızıl silah Eşsiz olur; artı ve evrim korunur, efsunlar silinir; bedel düşer; güç artar', () => {
     const sw = makeItem('w_guardian', 'crimson', 't'); sw.plus = 3; sw.evo = 1;
     const ench = JSON.stringify(sw.ench);
     const { w } = world(); w.join(1, nearSmith({ bag: [sw] })); const p = w.bySid.get(1)!;
     const before = itemPower(sw);
     cmd(w, { t: 'transform', item: sw.id });
     expect(sw.rarity).toBe('unique');
-    expect(JSON.stringify(sw.ench)).toBe(ench); expect(sw.plus).toBe(3); expect(sw.evo).toBe(1);
+    expect(sw.ench).toEqual([]); expect(ench).not.toBe('[]'); expect(sw.plus).toBe(3); expect(sw.evo).toBe(1);
     expect(p.char.gems).toBe(100000 - transformConf().cost.weapon.gems);
     expect(itemPower(sw)).toBeGreaterThan(before);
   });

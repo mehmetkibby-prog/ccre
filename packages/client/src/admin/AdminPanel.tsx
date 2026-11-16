@@ -92,18 +92,33 @@ export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
   );
 }
 
+/** Canavarın haritalarda gerçekten doğduğu seviye aralığı (doğuş ayarı dahil); hiç doğmuyorsa null. */
+function spawnLevels(t: GameTuning, id: string): [number, number] | null {
+  let lo = Infinity, hi = -Infinity;
+  for (const mp of Object.values(MAPS)) mp.spawns.forEach((g, gi) => {
+    if (g.monster !== id) return;
+    const lv = t.spawns[mp.id + ':' + gi]?.level ?? g.level;
+    lo = Math.min(lo, lv[0]); hi = Math.max(hi, lv[1]);
+  });
+  return lo === Infinity ? null : [lo, hi];
+}
+
 export function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string, p: Partial<MonsterTune>) => void; dis: boolean }) {
   return (
     <section className="admin-sec">
       <h4>Canavar türleri</h4>
-      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Çarpanlar genel çarpanlarla birlikte uygulanır. Değişiklik yeni doğan canavarlara geçer. Örnek değerler Sv. 10 normal canavar içindir.</div>
+      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Çarpanlar genel çarpanlarla birlikte uygulanır. Değişiklik yeni doğan canavarlara geçer (haritadakiler öldükçe yenilenir). Can ve saldırı, canavarın oyunda doğduğu seviyedeki normal hâlinin gerçek değeridir.</div>
       <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Canavar</th><th>Can ×</th><th>Saldırı ×</th><th>Savunma +</th><th>Hız ×</th><th>TP ×</th><th>Doğma ×</th></tr></thead>
+        <thead><tr><th>Canavar</th><th>Sabit can</th><th>Can ×</th><th>Saldırı ×</th><th>Savunma +</th><th>Hız ×</th><th>TP ×</th><th>Doğma ×</th></tr></thead>
         <tbody>{MONSTERS.map((d) => {
-          const m = t.monsters[d.id] ?? {}, s = monsterStats(d, 10, 0);
+          const m = t.monsters[d.id] ?? {}, lv = spawnLevels(t, d.id) ?? [10, 10];
+          const hpAt = (l: number) => Math.round(m.hp ?? monsterStats(d, l, 0).maxHp * t.monsterHpMul * (m.hpMul ?? 1));
+          const atkAt = (l: number) => Math.round(m.atk ?? monsterStats(d, l, 0).atk * t.monsterAtkMul * (m.atkMul ?? 1));
+          const rng = (f: (l: number) => number) => lv[0] === lv[1] ? fmtN(f(lv[0]), 0) : `${fmtN(f(lv[0]), 0)}–${fmtN(f(lv[1]), 0)}`;
           return (
             <tr key={d.id}>
-              <td><b>{d.name}</b><small>Can {fmtN(Math.round(s.maxHp * (m.hpMul ?? 1)), 0)} · Sld {fmtN(Math.round(s.atk * (m.atkMul ?? 1)), 0)} · Hız {fmtN(Math.round(d.speed * (m.speedMul ?? 1)), 0)}</small></td>
+              <td><b>{d.name}</b><small>Sv. {lv[0] === lv[1] ? lv[0] : `${lv[0]}–${lv[1]}`} · Can {rng(hpAt)} · Sld {rng(atkAt)} · Hız {fmtN(Math.round(d.speed * (m.speedMul ?? 1)), 0)}</small></td>
+              <td><Num v={m.hp} def={hpAt(lv[0])} min={1} max={1e9} step={1} on={(v) => setMon(d.id, { hp: v === undefined ? undefined : Math.round(v) })} dis={dis} w={70} /></td>
               <td><Num v={m.hpMul} def={1} min={0.05} max={20} on={(v) => setMon(d.id, { hpMul: v })} dis={dis} w={58} /></td>
               <td><Num v={m.atkMul} def={1} min={0.05} max={20} on={(v) => setMon(d.id, { atkMul: v })} dis={dis} w={58} /></td>
               <td><Num v={m.defAdd} def={0} min={-200} max={2000} step={1} on={(v) => setMon(d.id, { defAdd: v })} dis={dis} w={58} /></td>
@@ -297,7 +312,7 @@ export function TransformTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis:
     <>
       <section className="admin-sec">
         <h4>Dönüşüm (Demirci Haso)</h4>
-        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Ekipman <b style={{ color: RARITY.unique.color }}>Eşsiz</b> nadirliğe dönüşür. Efsunlar, artı ve evrim aynen korunur; yalnız nadirlik ve güç değişir (Eşsiz, Kızıl'dan ~%13 güçlü). Şans %100 değilse başarısızlıkta yalnız bedel gider, eşya bozulmaz.</div>
+        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Ekipman <b style={{ color: RARITY.unique.color }}>Eşsiz</b> nadirliğe dönüşür. Artı ve evrim korunur, efsunlar silinir; nadirlik ve güç değişir (Eşsiz, Kızıl'dan ~%13 güçlü). Şans %100 değilse başarısızlıkta yalnız bedel gider, eşya bozulmaz.</div>
         <label className="row" style={{ fontSize: 13, marginBottom: 8 }}><input type="checkbox" disabled={dis} checked={tr.enabled ?? TRANSFORM_DEFAULTS.enabled} onChange={(e) => put({ enabled: e.target.checked })} /> Dönüşüm açık</label>
         <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Hangi nadirlikteki eşyalar dönüşebilir:</div>
         <div className="row wrap" style={{ gap: 6 }}>

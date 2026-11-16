@@ -131,6 +131,15 @@ export class World {
     }
   }
 
+  /** Yönetim: canavar ayarı değişince haritadaki canlı canavarlar da yeni can/saldırıyı hemen alır. */
+  restatMonsters() {
+    for (const z of this.zones.values()) for (const m of z.monsterList) {
+      if (m.state === MState.DEAD) continue;
+      const a = m.maxHp, h = m.hp; m.restat();
+      if (m.maxHp !== a || m.hp !== h) m.dirty |= Upd.HP | Upd.MAXHP;
+    }
+  }
+
   /** Yönetim: haritanın canavar yuvalarını güncel yoğunlukla yeniden kurar (oyuncuların görüşünden çıkanlar istemciden düşer). */
   reseedMonsters(mapId: string) {
     const z = this.zones.get(mapId);
@@ -1104,11 +1113,11 @@ export class World {
     for (const [k, q] of Object.entries(cost.mats)) m[k] -= q;
     ch.gems -= cost.gems;
     const ok = rnd() * 100 < cost.chance;
-    if (ok) it.rarity = 'unique';
+    if (ok) { it.rarity = 'unique'; it.ench = []; } // Eşsiz'e dönüşen eşyanın efsunları silinir (yeniden efsunlanır)
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'transformResult', req: c.req, ok, item: it.id });
-    if (ok) this.notice(p, `${itemDisplayName(it)} Eşsiz'e dönüştü! Efsunları ve artısı korundu.`, 'ok');
+    if (ok) this.notice(p, `${itemDisplayName(it)} Eşsiz'e dönüştü! Artısı korundu, efsunları silindi.`, 'ok');
     else this.notice(p, 'Dönüşüm başarısız oldu; eşyan zarar görmedi.', 'error');
   }
 

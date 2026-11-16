@@ -588,7 +588,7 @@ function Upgrade({ game }: { game: Game }) {
   return mode === 'arti' ? <PlusForge game={game} tabs={tabs} /> : <TransformForge game={game} tabs={tabs} />;
 }
 
-/** Haso · Dönüşüm: ekipmanı Eşsiz'e çevirir; efsun, artı ve evrim korunur. Bedeller yönetimden. */
+/** Haso · Dönüşüm: ekipmanı Eşsiz'e çevirir; artı ve evrim korunur, efsunlar silinir. Bedeller yönetimden. */
 function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
   const self = useStore((s) => s.self);
   const res = useStore((s) => s.transformResult);
@@ -619,7 +619,7 @@ function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
             </div>
             <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
             <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
-              Silah, zırh, miğfer, takılar ve çizme <b style={{ color: RARITY.unique.color }}>Eşsiz</b>'e dönüşür. <b>Efsunlar, artı ve evrim aynen kalır</b>; yalnız güç artar.
+              Silah, zırh, miğfer, takılar ve çizme <b style={{ color: RARITY.unique.color }}>Eşsiz</b>'e dönüşür. <b>Artı ve evrim kalır, efsunlar silinir</b>; güç artar.
               Eşsiz silah ve zırh altın parıltı ve hafif duman saçar. Başarısızlıkta eşya bozulmaz, yalnız bedel gider.
             </div>
           </div>
@@ -633,7 +633,7 @@ function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                   <Cell it={{ ...it, rarity: 'unique' }} />
                 </div>
                 <div className="nm" style={{ color: RARITY[done ? 'unique' : it.rarity].color }}>{itemDisplayName(it)}</div>
-                {done ? <div className="ok" style={{ textAlign: 'center' }}>Eşsiz'e dönüştü! Efsunları ve artısı korundu.</div> : cost && (
+                {done ? <div className="ok" style={{ textAlign: 'center' }}>Eşsiz'e dönüştü! Artısı korundu, efsunları silindi.</div> : cost && (
                   <>
                     <div className="gain"><span>{g === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b style={{ color: RARITY.unique.color }}>{after}</b></span>{cost.chance < 100 && <span> · Başarı %{cost.chance}</span>}</div>
                     <div className="req">

@@ -24,6 +24,7 @@ port.on('message', (m: ToWorker) => {
       applyTuning(m.data);
       world.applyXpRatios(ratios);
       for (const id of Object.keys(MAPS)) if (before.get(id) !== key(id)) world.reseedMonsters(id);
+      world.restatMonsters();
       break;
     }
     case 'admin':

@@ -34,3 +34,15 @@ it('canavar önündeki engelin etrafından dolanır (takılıp titremez)', () =>
   l.blocked[oy * l.w + ox] = saved;
   expect(Math.hypot(tx - mon.x, ty - mon.y)).toBeLessThan(25);
 });
+
+it('yönetim: canavara sabit can verilince haritadaki canlı canavarlar da hemen alır', async () => {
+  const { applyTuning, DEFAULT_TUNING } = await import('@col/shared');
+  const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+  const z: any = [...(w as any).zones.values()].find((q: any) => q.monsterList.some((m: any) => m.def.id === 'wild_fox'));
+  const fox = z.monsterList.find((m: any) => m.def.id === 'wild_fox');
+  fox.hp = Math.round(fox.maxHp / 2);
+  applyTuning({ ...structuredClone(DEFAULT_TUNING), monsters: { wild_fox: { hp: 616 } } });
+  w.restatMonsters();
+  expect(fox.maxHp).toBe(616); expect(fox.hp).toBe(308);
+  applyTuning(structuredClone(DEFAULT_TUNING)); w.restatMonsters();
+});

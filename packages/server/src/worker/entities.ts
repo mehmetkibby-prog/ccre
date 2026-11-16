@@ -111,12 +111,20 @@ export class Monster {
     if (mt?.speedMul !== undefined) this.def = def = { ...def, speed: def.speed * mt.speedMul };
     this.tplIndex = MONSTER_INDEX.get(def.id)!;
     this.x = sp.x; this.y = sp.y;
-    const s = monsterStats(def, sp.level, sp.variant);
-    // yönetim çarpanları doğuş anında uygulanır (yaşayan canavar değişmez, yeniden doğan yeni değeri alır)
-    const hp = Math.max(1, Math.round(mt?.hp ?? s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
-    this.maxHp = hp; this.hp = hp; this.atk = Math.max(1, Math.round(mt?.atk ?? s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
-    this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
+    this.maxHp = 1; this.hp = 1; this.atk = 1; this.armor = 0; this.xp = 0;
+    this.restat();
+    this.hp = this.maxHp;
     this.wanderAt = Date.now() + Math.random() * 8000;
+  }
+  /** Yönetim ayarından can/saldırı/savunma/TP'yi yeniden hesaplar; yaşayan canavarın can oranı korunur. */
+  restat() {
+    const mt = TUNING.monsters[this.def.id];
+    const s = monsterStats(this.def, this.sp.level, this.sp.variant);
+    const ratio = this.maxHp > 0 ? this.hp / this.maxHp : 1;
+    const hp = Math.max(1, Math.round(mt?.hp ?? s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1)));
+    this.maxHp = hp; this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(hp * ratio));
+    this.atk = Math.max(1, Math.round(mt?.atk ?? s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1)));
+    this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0)); this.xp = Math.max(0, Math.round(s.xp * (mt?.xpMul ?? 1)));
   }
   get level() { return this.sp.level; }
   get variant() { return this.sp.variant; }
