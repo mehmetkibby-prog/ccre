@@ -3,7 +3,17 @@
 set -euo pipefail
 KOK=/opt/coreoflife
 psqlc() { sudo -u postgres psql -d coreoflife -v ON_ERROR_STOP=1 -qtA "$@"; }
-yedek() { local f=/var/backups/coreoflife-$(date +%F-%H%M%S).dump; sudo -u postgres pg_dump -Fc coreoflife > "$f"; echo "yedek: $f ($(du -h "$f" | cut -f1))"; }
+yedek() {
+  local f=/var/backups/coreoflife-$(date +%F-%H%M%S).dump; sudo -u postgres pg_dump -Fc coreoflife > "$f"; echo "yedek: $f ($(du -h "$f" | cut -f1))"
+  # disk dolmasın: en yeni 20 yedek kalır, eskiler silinir
+  ls -1t /var/backups/coreoflife-*.dump 2>/dev/null | tail -n +21 | xargs -r rm -f
+}
+# sunucu kayıtları (journal) en çok 300 MB; bir kez kurulur
+kayit_siniri() {
+  local f=/etc/systemd/journald.conf.d/coreoflife.conf
+  [ -f "$f" ] && return 0
+  mkdir -p /etc/systemd/journald.conf.d && printf '[Journal]\nSystemMaxUse=300M\n' > "$f" && systemctl restart systemd-journald && journalctl --vacuum-size=300M >/dev/null 2>&1 || true
+}
 acilis() { # $1 mod, $2 mesaj
   psqlc -v mod="$1" -v msg="${2:-}" <<'SQL'
 UPDATE server_state SET value = jsonb_build_object('mode', :'mod', 'openAt', NULL, 'message', :'msg'),
@@ -30,6 +40,7 @@ case "${1:-}" in
     free -m | awk 'NR==2 {print "bellek: " $3 " / " $2 " MB"}'; df -h / | awk 'NR==2 {print "disk: " $3 " / " $2}'
     ;;
   guncelle)
+    kayit_siniri
     yedek
     eski=$(readlink -f $KOK/current)
     yeni=$KOK/releases/r$(date +%Y%m%d-%H%M%S)
@@ -59,6 +70,16 @@ case "${1:-}" in
     systemctl restart coreoflife; echo "oyuncu sınırı: $2 (oyun yeniden başlatıldı)"
     ;;
   yedek) yedek ;;
+  disk)
+    # disk kullanımı: neyin ne kadar yer kapladığı
+    df -h / | awk 'NR==2 {print "disk: " $3 " dolu / " $2 " (boş " $4 ")"}'
+    du -sh $KOK/releases 2>/dev/null | sed 's/^/oyun sürümleri (son 3): /'
+    du -ch /var/backups/coreoflife-*.dump 2>/dev/null | tail -1 | sed 's/^/veritabanı yedekleri (son 20): /'
+    sudo -u postgres psql -qtA -c "SELECT 'veritabanı: ' || pg_size_pretty(pg_database_size('coreoflife'))"
+    journalctl --disk-usage 2>/dev/null | sed 's/^/kayıtlar: /'
+    du -sh /var/log 2>/dev/null | sed 's/^/\/var\/log: /'
+    du -sh /root/.npm /home/*/.npm 2>/dev/null | sed 's/^/npm önbelleği: /'
+    ;;
   kayit) journalctl -u coreoflife -n "${2:-100}" --no-pager ;;
   alan)
     # Oyunu yeni bir alan adına taşır (ör. coreoflife.net). Eski adres (tugraonline.net) yeni adrese yönlenir.

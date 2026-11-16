@@ -38,6 +38,12 @@ async function main() {
     onlineIds: () => gateway.onlineCharIds(),
   });
   setInterval(() => { rankings.tick().catch((e) => console.error('[rank]', e)); }, 60_000);
+  // Veritabanı kendiliğinden şişmesin: süresi dolmuş oturumlar, eski şifre sıfırlamaları ve 180 günden eski
+  // denetim kayıtları günde bir silinir (açılıştan 1 dk sonra ilk temizlik)
+  const cleanup = () => pool.query(`DELETE FROM sessions WHERE expires_at < now() - interval '1 day';
+    DELETE FROM password_resets WHERE expires_at < now() - interval '7 days';
+    DELETE FROM audit_log WHERE created_at < now() - interval '180 days';`).catch((e) => console.error('[temizlik]', e.message));
+  setTimeout(cleanup, 60_000).unref(); setInterval(cleanup, 24 * 3600_000).unref();
   setTimeout(() => { rankings.tick().catch((e) => console.error('[rank]', e)); }, 5_000);
   const router = buildApi({ gateway, channels, opening, store, world, tuning, rankings });
 
