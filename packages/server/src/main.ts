@@ -9,6 +9,7 @@ import { WorldState } from './worldstate.ts';
 import { OpeningState } from './opening.ts';
 import { TuningState } from './tuning.ts';
 import { buildApi, handleApi } from './api.ts';
+import { Rankings } from './rankings.ts';
 import { parseCookies, readBody, serveStatic, json, type Req } from './http.ts';
 
 async function main() {
@@ -30,7 +31,14 @@ async function main() {
   });
   gateway = new Gateway(channels, store, world);
   channels.start();
-  const router = buildApi({ gateway, channels, opening, store, world, tuning });
+  const rankings = new Rankings(store, {
+    give: (charId, g) => { void gateway.giveTo(charId, g); },
+    announce: (text) => gateway.broadcastAll({ t: 'chat', ch: 'world', from: 'Duyuru', text, gm: true }),
+    onlineIds: () => gateway.onlineCharIds(),
+  });
+  setInterval(() => { rankings.tick().catch((e) => console.error('[rank]', e)); }, 60_000);
+  setTimeout(() => { rankings.tick().catch((e) => console.error('[rank]', e)); }, 5_000);
+  const router = buildApi({ gateway, channels, opening, store, world, tuning, rankings });
 
   const server = http.createServer(async (raw, res) => {
     const url = new URL(raw.url ?? '/', 'http://x');

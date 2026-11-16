@@ -86,6 +86,17 @@ export interface GameTuning {
   fishing?: FishingTune;
   /** Savaş Arenası: otomatik saatler, süre, en düşük seviye, sıralama ödülleri. */
   arena: ArenaTune;
+  /** Canavar sıralaması: dönem (gün/hafta/ay) ve ilk sıraların ödülleri (ÇP, Mücevher). */
+  killRank: KillRankTune;
+}
+export interface KillRankTune { period: 'day' | 'week' | 'month'; rewards: { cp: number; gems: number }[] }
+export const KILLRANK_DEFAULT: KillRankTune = { period: 'week', rewards: [{ cp: 100, gems: 0 }, { cp: 50, gems: 0 }, { cp: 0, gems: 1000 }] };
+function sanitizeKillRank(raw: unknown): KillRankTune {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const num = (v: unknown, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(0, Math.round(n))) : 0; };
+  const period = r.period === 'day' || r.period === 'month' || r.period === 'week' ? r.period : KILLRANK_DEFAULT.period;
+  const rewards = Array.isArray(r.rewards) ? r.rewards.slice(0, 10).map((x) => { const o = (x && typeof x === 'object' ? x : {}) as Record<string, unknown>; return { cp: num(o.cp, 1e6), gems: num(o.gems, 1e8) }; }) : structuredClone(KILLRANK_DEFAULT.rewards);
+  return { period, rewards };
 }
 /** Arena ödülü (sıra başına): mücevher, malzeme/market ürünleri (anahtar → adet), isteğe bağlı eşya. */
 export interface ArenaReward { gems: number; mats: Record<string, number>; item?: { tpl: string; rarity: string; plus: number } }
@@ -116,9 +127,10 @@ export const DEFAULT_TUNING: GameTuning = {
   density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, announcement: '', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
+  killRank: structuredClone(KILLRANK_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1],
@@ -139,6 +151,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   // yalnız https:// ya da site içi yol (javascript: vb. engellenir)
   out.classicUrl = typeof r.classicUrl === 'string' && /^(https:\/\/[^\s"'<>]+|\/[^\s"'<>]*)?$/.test(r.classicUrl.trim()) ? r.classicUrl.trim().slice(0, 200) : DEFAULT_TUNING.classicUrl;
   out.arena = sanitizeArena(r.arena);
+  out.killRank = sanitizeKillRank(r.killRank);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

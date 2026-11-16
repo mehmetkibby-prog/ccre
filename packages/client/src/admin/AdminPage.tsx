@@ -198,7 +198,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
             {tab === 'arti' && <UpgradeTab t={t} setT={setTT} dis={busy} />}
             {tab === 'donusum' && <TransformTab t={t} setT={setTT} dis={busy} />}
-            {tab === 'arena' && <ArenaTab t={t} setT={setTT} dis={busy} toast={setToast} />}
+            {tab === 'arena' && <><ArenaTab t={t} setT={setTT} dis={busy} toast={setToast} /><KillRankAdmin t={t} setT={setTT} dis={busy} /></>}
             {tab === 'harita' && <MapTab t={t} setT={setTT} setSpawn={setSpawn} dis={busy} />}
           </div>
         )}
@@ -526,6 +526,35 @@ function PlayerCard({ p, open, onToggle, toast, reload }: { p: APlayer; open: bo
         </div>
       )}
     </div>
+  );
+}
+
+/** Canavar Avcıları sıralaması: dönem ve ilk sıraların ödülleri (dönem bitince otomatik verilir). */
+function KillRankAdmin({ t, setT, dis }: { t: GameTuning; setT: React.Dispatch<React.SetStateAction<GameTuning>>; dis: boolean }) {
+  const k = t.killRank;
+  const set = (p: Partial<GameTuning['killRank']>) => setT({ ...t, killRank: { ...k, ...p } });
+  const setR = (i: number, p: Partial<{ cp: number; gems: number }>) => set({ rewards: k.rewards.map((r, j) => (j === i ? { ...r, ...p } : r)) });
+  return (
+    <section className="admin-sec">
+      <h4>Canavar Avcıları sıralaması</h4>
+      <div className="muted adm-hint">Oyuncular "Sıralama" düğmesinden en çok canavar avlayanları görür. Dönem bitince (Türkiye saatiyle) ilk sıralara aşağıdaki ödüller otomatik verilir ve herkese duyurulur; sayaç sıfırlanır. Yönetici/GM hesapları sıralamaya girmez.</div>
+      <label className="adm-inline" style={{ marginBottom: 8 }}><span>Dönem</span>
+        <select className="adm-sel" value={k.period} disabled={dis} onChange={(e) => set({ period: e.target.value as 'day' | 'week' | 'month' })}>
+          <option value="day">Günlük (her gece 00.00)</option><option value="week">Haftalık (Pazartesi 00.00)</option><option value="month">Aylık (ayın 1'i 00.00)</option>
+        </select>
+      </label>
+      <div className="drop-list">
+        {k.rewards.map((r, i) => (
+          <div className="drop-row" key={i}>
+            <b style={{ width: 54 }}>{i + 1}. sıra</b>
+            <label className="adm-inline"><span>ÇP</span><Num v={r.cp} def={0} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setR(i, { cp: v ?? 0 })} /></label>
+            <label className="adm-inline"><span>Mücevher</span><Num v={r.gems} def={0} min={0} max={1e8} step={1} w={100} dis={dis} on={(v) => setR(i, { gems: v ?? 0 })} /></label>
+            <button className="btn small ghost danger" disabled={dis} onClick={() => set({ rewards: k.rewards.filter((_, j) => j !== i) })}>✕</button>
+          </div>
+        ))}
+        {k.rewards.length < 10 && <button className="btn small" disabled={dis} onClick={() => set({ rewards: [...k.rewards, { cp: 0, gems: 500 }] })}>+ Sıra ekle</button>}
+      </div>
+    </section>
   );
 }
 

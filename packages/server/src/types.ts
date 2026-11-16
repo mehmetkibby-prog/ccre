@@ -29,6 +29,8 @@ export interface CharMisc {
   autoPotion?: boolean;
   statRev?: number;
   dailyKills?: { day: string; n: number };
+  /** canavar sıralaması: bu dönemin (k) av sayısı; dönem değişince önceki prev'e geçer (ödül hesabı için) */
+  rankKills?: { k: string; n: number; prev?: { k: string; n: number } };
   /** oto atak: bugün kullanılan süre (ms) */
   autoDay?: { day: string; ms: number };
   /** arkadaş listesi (karakter adları) */
@@ -102,4 +104,4 @@ export interface WorkerStats {
 }
 
 /** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
-export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number };
+export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number };

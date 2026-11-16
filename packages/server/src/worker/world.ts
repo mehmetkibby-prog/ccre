@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive } from '../types.ts';
@@ -1933,6 +1933,7 @@ export function applyGive(c: CharState, g: AdminGive): string {
     return `Yönetimden hediye: ${itemDisplayName(it)}`;
   }
   if (g.kind === 'gems') { const n = Math.max(0, Math.min(10_000_000, Math.round(g.qty))); c.gems += n; return `Ödül: ${n.toLocaleString('tr-TR')} Mücevher`; }
+  if (g.kind === 'cp') { const n = Math.max(0, Math.min(1_000_000, Math.round(g.qty))); c.cp += n; return `Ödül: ${n.toLocaleString('tr-TR')} ÇP`; }
   const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
   c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
   return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;

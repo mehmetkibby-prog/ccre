@@ -82,6 +82,8 @@ export class Gateway {
     this.wss.handleUpgrade(req, socket, head, (ws) => this.onConnect(ws, t, ip));
   }
 
+  /** Bütün oyunculara mesaj (duyuru vb.) */
+  broadcastAll(o: unknown) { const msg = JSON.stringify(o); for (const s of this.sessions.values()) if (s.state === 'active' && s.ws.readyState === WebSocket.OPEN) s.ws.send(msg); }
   /** Ödül/hediye: çevrimiçiyse kanal sunucusu çantaya koyar, değilse kayda yazılır. */
   async giveTo(charId: number, g: AdminGive) {
     const ch = this.onlineChannel(charId);

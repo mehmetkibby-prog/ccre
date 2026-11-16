@@ -7,7 +7,7 @@ import {
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
-import { FriendsPanel, MountPanel } from './social.tsx';
+import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -52,6 +52,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'friends' && <FriendsPanel />}
       {p === 'mount' && <MountPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
+      {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (

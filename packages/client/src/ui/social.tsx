@@ -3,6 +3,9 @@ import { RARITY, itemDisplayName, CLASSES, MOUNT, type ClassId, type ItemInstanc
 import { store, useStore } from '../game/store.ts';
 import { Cell, Panel } from './panels.tsx';
 import { currentGame } from './GameScreen.tsx';
+import { api } from '../api.ts';
+import { iconUrl } from '../game/art/icons.ts';
+import { ClassIcon } from './icons.tsx';
 
 /**
  * Oyuncular arası arayüz: sağ tık (telefonda uzun basma) menüsü, davet kartları, grup çerçevesi, güvenli ticaret
@@ -217,5 +220,60 @@ export function FriendsPanel() {
         </div>
       ))}
     </Panel>
+  );
+}
+
+/** Sıralamalar: en yüksek seviye ilk 10 ve dönemlik canavar avcıları ilk 10 (ilk sıralara ödül). */
+interface RankRow { charId: number; name: string; cls: string; level: number; kills: number }
+export function RankingsPanel() {
+  const me = useStore((s) => s.char?.name ?? '');
+  const [tab, setTab] = useState<'kills' | 'level'>('kills');
+  const [data, setData] = useState<{ level: RankRow[]; kills: RankRow[]; period: { key: string; end: number; kind: string }; rewards: { cp: number; gems: number }[] } | null>(null);
+  const [err, setErr] = useState('');
+  useEffect(() => { api('/api/rankings').then(setData).catch((e) => setErr((e as Error).message)); }, []);
+  const skew = useStore((s) => s.clockSkew);
+  const left = data ? Math.max(0, data.period.end - (Date.now() + (skew || 0))) : 0;
+  const d = Math.floor(left / 86400000), h = Math.floor((left % 86400000) / 3600000), m = Math.floor((left % 3600000) / 60000);
+  const rows = data ? (tab === 'kills' ? data.kills : data.level) : [];
+  const per = data?.period.kind === 'day' ? 'Günlük' : data?.period.kind === 'month' ? 'Aylık' : 'Haftalık';
+  return (
+    <Panel title="Sıralama" width={460}>
+      <div className="bag-tabs rank-tabs">
+        <button className={tab === 'kills' ? 'on' : ''} onClick={() => setTab('kills')}>Canavar Avcıları</button>
+        <button className={tab === 'level' ? 'on' : ''} onClick={() => setTab('level')}>En Yüksek Seviye</button>
+      </div>
+      {tab === 'kills' && data && (
+        <div className="rank-info">
+          <span>{per} yarış · bitimine <b>{d > 0 ? `${d} gün ` : ''}{h} sa {m} dk</b></span>
+          <div className="rank-rewards">{data.rewards.map((r, i) => <span key={i} className={'rw r' + (i + 1)}><i>{i + 1}.</i>{r.cp > 0 && <><img src={iconUrl('mall_cp_100')} alt="" onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} />{r.cp} ÇP</>}{r.cp > 0 && r.gems > 0 && ' + '}{r.gems > 0 && <><img src={iconUrl('gem')} alt="" />{r.gems.toLocaleString('tr-TR')}</>}</span>)}</div>
+        </div>
+      )}
+      {err && <div className="err">{err}</div>}
+      {!data && !err && <div className="adm-spin" />}
+      <div className="rank-list">
+        {rows.map((r, i) => (
+          <div key={r.charId} className={'rank-row' + (i < 3 ? ' top t' + (i + 1) : '') + (r.name === me ? ' me' : '')}>
+            <span className="pos">{i < 3 ? <Medal n={i + 1} /> : i + 1}</span>
+            <span className="cls"><ClassIcon cls={(r.cls in CLASSES ? r.cls : 'guardian') as ClassId} size={24} /></span>
+            <span className="nm">{r.name}<small>Sv. {r.level}</small></span>
+            <b className="val">{tab === 'kills' ? `${r.kills.toLocaleString('tr-TR')} av` : `Sv. ${r.level}`}</b>
+            {tab === 'kills' && i < (data?.rewards.length ?? 0) && <span className="prize">{data!.rewards[i].cp > 0 ? `${data!.rewards[i].cp} ÇP` : `${data!.rewards[i].gems.toLocaleString('tr-TR')} 💎`}</span>}
+          </div>
+        ))}
+        {data && !rows.length && <div className="muted" style={{ padding: 12, textAlign: 'center' }}>{tab === 'kills' ? 'Bu dönem henüz kimse canavar avlamadı. İlk sen ol!' : 'Henüz oyuncu yok.'}</div>}
+      </div>
+      <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>Sıralama birkaç saniyede bir yenilenir. Dönem bitince ödüller kazananların hesabına otomatik gönderilir.</div>
+    </Panel>
+  );
+}
+function Medal({ n }: { n: number }) {
+  const c = n === 1 ? ['#fff3b0', '#e2b13a', '#8a5a10'] : n === 2 ? ['#ffffff', '#b8c0cc', '#5a6270'] : ['#ffd2a8', '#c8783a', '#6a3a10'];
+  return (
+    <svg viewBox="0 0 32 36" width="26" height="30" aria-hidden>
+      <path d="M8 0 L14 12 L18 12 L24 0 Z" fill={n === 1 ? '#c83a3a' : n === 2 ? '#3a6ac8' : '#3a9a5a'} />
+      <circle cx="16" cy="22" r="11" fill={c[1]} stroke={c[2]} strokeWidth="2" />
+      <circle cx="16" cy="22" r="7.5" fill={c[0]} opacity=".55" />
+      <text x="16" y="26.5" textAnchor="middle" fontSize="11" fontWeight="900" fill={c[2]}>{n}</text>
+    </svg>
   );
 }

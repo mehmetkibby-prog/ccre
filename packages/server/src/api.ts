@@ -24,7 +24,7 @@ const loginLimiter = new RateLimiter(0.2, 8); // IP başına
 const registerLimiter = new RateLimiter(0.02, 3);
 const admissionLimiter = new RateLimiter(1, 5);
 
-export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: OpeningState; store: CharacterStore; world: WorldState; tuning: TuningState }
+export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: OpeningState; store: CharacterStore; world: WorldState; tuning: TuningState; rankings?: import('./rankings.ts').Rankings }
 
 const eld = monitorEventLoopDelay({ resolution: 10 });
 eld.enable();
@@ -161,6 +161,13 @@ export function buildApi(d: ApiDeps): Router {
       if (e.code === '23505') throw new HttpError(409, 'Bu karakter adı alınmış.');
       throw e;
     }
+  });
+
+  /** Sıralamalar: seviye ilk 10, dönemlik canavar avcıları ilk 10 ve ödüller. */
+  r.get('/api/rankings', async (req) => {
+    await requireAuth(req);
+    if (!d.rankings) throw new HttpError(503, 'Sıralama hazır değil.');
+    return d.rankings.get();
   });
 
   r.get('/api/channels', async (req) => {

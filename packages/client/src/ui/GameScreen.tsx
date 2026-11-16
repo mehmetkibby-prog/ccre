@@ -460,6 +460,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
+      <button onClick={() => open('rankings')}><MenuIcon k="rank" /><span className="tag">Sıralama</span></button>
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
     </div>
