@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { weaponModel, shieldModel, type HLook } from './humanoid.ts';
-import { attachToBone, boneRootPos, weaponGlb, type GlbChar } from './models.ts';
+import { attachToBone, boneRootPos, weaponGlb, model as loadModel, hasModel, modelPending, type GlbChar } from './models.ts';
 import { glowTexture } from './textures.ts';
 import { weaponFx, plusFx } from './gearfx.ts';
 
@@ -82,6 +82,20 @@ function bowModel() {
 
 const UP = new THREE.Vector3(0, 1, 0);
 
+const SHIELD_ID = 'shield_guardian';
+/** Meshy kalkan modelinden kola takılacak kopya: ortalanır, arka yüzü kola yaslanır, boyu ~0,62 m. */
+function shieldFromModel(src: THREE.Object3D): THREE.Object3D {
+  const c = src.clone(true);
+  c.updateMatrixWorld(true);
+  const bb = new THREE.Box3().setFromObject(c), size = bb.getSize(new THREE.Vector3()), ctr = bb.getCenter(new THREE.Vector3());
+  const k = 0.62 / Math.max(0.001, size.y);
+  c.position.set(-ctr.x * k, -ctr.y * k, -bb.min.z * k);
+  c.scale.multiplyScalar(k);
+  c.traverse((o) => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = false; } });
+  const g = new THREE.Group(); g.name = 'shield'; g.add(c);
+  return g;
+}
+
 /**
  * Hazır (GLB) karaktere sınıfının silahını ve kalkanını takar. Konum ve yön bağlanma pozunda,
  * elin gerçek geometrisinden hesaplanır; böylece silah avucun içinden geçer ve animasyonla birlikte doğru döner.
@@ -151,6 +165,7 @@ export function styleWeapon(g: THREE.Object3D, rarity: number, kind = 'sword', d
  * renklendirilmiş basit silah takılır ve beklenen modelin kimliği döner (gelince görünüm yeniden kurulur).
  */
 export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0, plus = 0): string | null {
+  let shieldPend: string | null = null;
   if (!L) return null;
   const { root, bones } = glb;
   const isBow = L.weapon === 'bow';
@@ -203,9 +218,12 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0, plus = 
     out.sub(up.clone().multiplyScalar(out.dot(up))).normalize(); // kolun dışı
     const X = new THREE.Vector3().crossVectors(up, out);
     const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(X, up, out));
-    const sh = shieldModel(L);
-    sh.scale.setScalar(0.8);
-    attachToBone(root, bones.foreArmL, sh, q, elbow.lerp(wrist, 0.55).addScaledVector(out, 0.075));
+    // Meshy kalkanı (kızıl yüz, altın aslan arması); yüklenene dek basit kalkan, yüklenince karakter yeniden kurulur
+    const sm = hasModel(SHIELD_ID) ? loadModel(SHIELD_ID) : null;
+    let sh: THREE.Object3D;
+    if (sm) sh = shieldFromModel(sm.scene);
+    else { sh = shieldModel(L); sh.scale.setScalar(0.8); if (hasModel(SHIELD_ID) && modelPending(SHIELD_ID)) shieldPend = SHIELD_ID; }
+    attachToBone(root, bones.foreArmL, sh, q, elbow.lerp(wrist, 0.55).addScaledVector(out, sm ? 0.05 : 0.075));
   }
-  return wid && !designed ? wid : null;
+  return (wid && !designed ? wid : null) ?? shieldPend;
 }

@@ -11,3 +11,6 @@ assets-src/meshy/batch3/*.glb
 assets-src/meshy/batch3/*.png
 assets-src/meshy/emblems/*.png
 assets-src/meshy/emblems/state.json
+assets-src/meshy/shield/*.glb
+assets-src/meshy/shield/*.png
+assets-src/meshy/shield/state.json
