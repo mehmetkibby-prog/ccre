@@ -78,16 +78,24 @@ void main() {
   vec2 p = vUv;
   // yumuşak, yatay yayılan doku (çimenli/ormanlı yamaç hissi); dikey yarık çizgisi yok
   float big = fbm(p * vec2(0.012, 0.05));
+#ifdef LITE
+  float fine = vnoise(p * vec2(0.06, 0.18));
+#else
   float fine = fbm(p * vec2(0.06, 0.18));
+#endif
   // tepe sırtına yakın daha açık (gökyüzü ışığı), eteğe doğru koyulaşır
   float rim = smoothstep(0.55, 1.0, vT);
   vec3 c = vCol * (0.78 + 0.28 * big + 0.08 * fine) * (0.82 + 0.3 * rim);
   // kayalık dağ: dikey oluk/kaya kırıkları (yalnız arka sıralar), zirveye yakın daha belirgin
+#ifndef LITE
   if (vInfo.z < 0.5) {
     float gully = fbm(vec2(p.x * 0.09, p.y * 0.035 + fbm(p * vec2(0.03, 0.02)) * 2.0));
     float strata = fbm(vec2(p.x * 0.02, p.y * 0.22));
     c *= 0.82 + 0.34 * gully + 0.1 * strata * smoothstep(0.3, 0.9, vT);
   }
+#else
+  if (vInfo.z < 0.5) c *= 0.84 + 0.3 * vnoise(vec2(p.x * 0.09, p.y * 0.035));
+#endif
   if (vInfo.z > 0.5) c = mix(c, uForest * (0.75 + 0.4 * fine), 0.35 * smoothstep(0.1, 0.8, vT));
   if (vInfo.y > 0.5) { float m = smoothstep(vInfo.x + (big - 0.5) * 10.0, vInfo.x + 3.0, p.y); c = mix(c, uSnow * (0.85 + 0.15 * fine), m); }
   // atmosfer: uzak sıra ve etekler sise karışır
@@ -96,7 +104,8 @@ void main() {
   gl_FragColor = vec4(c, 1.0);
 }`;
 
-export function buildMountains(themeId: string, seed = 7): THREE.Mesh {
+/** lite: telefonda gölgelendirici hafif (dağ ekranın büyük kısmını kapladığı için piksel başı maliyet önemli). */
+export function buildMountains(themeId: string, seed = 7, lite = false): THREE.Mesh {
   const T = MOUNTAIN_THEMES[themeId] ?? MOUNTAIN_THEMES.forest;
   const N = 1440;
   const pos: number[] = [], col: number[] = [], idx: number[] = [], info: number[] = [], map: number[] = [], mist: number[] = [];
@@ -148,7 +157,7 @@ export function buildMountains(themeId: string, seed = 7): THREE.Mesh {
   g.setIndex(idx);
   const forest = new THREE.Color(T.hill).multiplyScalar(0.62).lerp(new THREE.Color(0x2c5a34), 0.5);
   const mat = new THREE.ShaderMaterial({
-    vertexShader: VERT, fragmentShader: FRAG, vertexColors: true, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false,
+    vertexShader: VERT, fragmentShader: FRAG, defines: lite ? { LITE: 1 } : {}, vertexColors: true, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false,
     uniforms: { uHaze: { value: new THREE.Color(T.haze) }, uSnow: { value: new THREE.Color(T.snow) }, uForest: { value: forest } },
   });
   const m = new THREE.Mesh(g, mat);

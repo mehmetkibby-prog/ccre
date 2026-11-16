@@ -105,7 +105,9 @@ export class Game {
     this.input.onKey = (code, down, e) => this.onKey(code, down, e);
     this.lastFrame = performance.now();
     // kare sınırı (ayarlar): 120 Hz ekranlı telefon sınırsızken saniyede 120 kare çizip ısınıyordu
-    let lastDraw = 0;
+    // Kare sınırı biriken süreyle çalışır: 120 Hz'de her ikinci, 90 Hz ya da uyarlanabilir (Samsung 1–120 Hz)
+    // ekranlarda üç karenin ikisi çizilir → tam 60. Önceki "son çizimden bu yana" ölçüsü 90 Hz'de 45 karede kalıyordu.
+    let acc = 0, prevT = 0;
     const TOUCH = matchMedia('(pointer: coarse)').matches; // Isınma modu yalnız telefon/tablette
     const loop = (t: number) => {
       if (this.stopped) return;
@@ -113,8 +115,13 @@ export class Game {
       const st = store.get().settings;
       // Isınma modu: akıcılık korunur (60 kare; 120 Hz ekranda 120'ye çıkmaz); ısıyı çizim ayrıntısı azaltır
       const cap = st.cool && TOUCH ? 60 : st.fpsCap;
-      if (cap > 0 && t - lastDraw < 1000 / cap - 3) return;
-      lastDraw = t;
+      const step = prevT ? Math.min(100, t - prevT) : 16.7; prevT = t;
+      if (cap > 0) {
+        const ft = 1000 / cap;
+        acc = Math.min(acc + step, ft * 2);
+        if (acc < ft - 2) return;
+        acc -= ft; if (acc < 0) acc = 0;
+      }
       this.frame(t);
     };
     this.raf = requestAnimationFrame(loop);

@@ -250,7 +250,7 @@ export class Renderer3D {
     this.scene.background = this.skyGradient(th.top, th.fog);
     // ufukta dağlar (beyaz boşluk yerine manzara)
     if (this.mountains) { this.scene.remove(this.mountains); this.mountains.geometry.dispose(); (this.mountains.material as THREE.Material).dispose(); }
-    this.mountains = buildMountains(l.def.theme, l.def.id.length * 13 + 5);
+    this.mountains = buildMountains(l.def.theme, l.def.id.length * 13 + 5, MOBILE);
     this.scene.add(this.mountains);
     this.sun.color.set(th.sun); this.sun.intensity = th.sunI;
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
