@@ -522,9 +522,11 @@ export class Game {
           const jump = Math.hypot(b.x - a.x, b.y - a.y) > 300;
           if (jump) { tx = b.x; ty = b.y; snap = rt >= a.t; }
           else if (rt >= b.t) {
-            // tampon boş: son hızla kısa ileri tahmin (en çok 150 ms), sonra bekle
+            // tampon boş: son hızla kısa ileri tahmin (en çok 150 ms), sonra bekle. Yalnız hâlâ yürüyorsa: durduğunda
+            // sunucu yeni konum göndermez ("durdu" bilgisi gelir); eskiden son hızla ileri gidip durduğu yerin önünde
+            // kalıyor, sonraki adımda geri sıçrıyordu (diğer ekranda "buzda kayma")
             const over = Math.min(150, rt - b.t), span = Math.max(1, b.t - a.t);
-            const moving = b.t - a.t < 400 && (b.x !== a.x || b.y !== a.y);
+            const moving = e.anim === Anim.WALK && b.t - a.t < 400 && (b.x !== a.x || b.y !== a.y);
             tx = b.x + (moving ? (b.x - a.x) / span * over : 0); ty = b.y + (moving ? (b.y - a.y) / span * over : 0);
           } else {
             const k = (rt - a.t) / Math.max(1, b.t - a.t);

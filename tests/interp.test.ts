@@ -24,7 +24,7 @@ it('düzensiz ağda uzak oyuncu geri gitmez, takılmaz', async () => {
     packets.push({ at: k * 50 + 40 + jitter, t, x: 1000 + k * SPEED });
   }
   packets.sort((a, b) => a.at - b.at);
-  const e: any = { id: 1, kind: 1, x: 1000, y: 500, samples: [{ t: packets[0].t, x: 1000, y: 500 }] };
+  const e: any = { id: 1, kind: 1, anim: 1, x: 1000, y: 500, samples: [{ t: packets[0].t, x: 1000, y: 500 }] };
   g.ents.set(1, e);
   let pi = 0, prev = 1000, back = 0, stalls = 0, frames = 0; const speeds: number[] = [];
   for (let now = 0; now < 19000; now += 1000 / 60) {
@@ -48,4 +48,25 @@ it('düzensiz ağda uzak oyuncu geri gitmez, takılmaz', async () => {
   expect(back).toBe(0);
   expect(stalls / frames).toBeLessThan(0.01);
   expect(sd / mean).toBeLessThan(0.2);
+});
+
+it('uzak oyuncu durunca son konumunun önüne kaymaz', async () => {
+  const { Game } = await import('../packages/client/src/game/game.ts');
+  const g: any = Object.create(Game.prototype);
+  Object.assign(g, { serverOffset: null, netJitter: 0, interpMs: 100, lastInterpAt: 0, ents: new Map() });
+  const e: any = { id: 1, kind: 1, anim: 1, x: 1000, y: 500, samples: [{ t: 1_000_000, x: 1000, y: 500 }] };
+  g.ents.set(1, e);
+  // 1 sn yürür (20 adım), sonra durur: sunucu konum göndermeyi keser, "durdu" (IDLE) gelir
+  let maxX = 0;
+  for (let now = 0; now < 3000; now += 1000 / 60) {
+    const k = Math.floor((now - 40) / 50);
+    if (k >= 1 && k <= 20 && e.samples[e.samples.length - 1].t < 1_000_000 + k * 50) { g.noteServerTime(1_000_000 + k * 50, now); e.samples.push({ t: 1_000_000 + k * 50, x: 1000 + k * 12.4, y: 500 }); if (e.samples.length > 8) e.samples.shift(); }
+    if (k === 21) e.anim = 0;
+    g.interpolate(now);
+    maxX = Math.max(maxX, e.x);
+  }
+  const last = 1000 + 20 * 12.4;
+  console.log(`son konum ${last.toFixed(1)} · en ileri ${maxX.toFixed(1)} · durduğu yer ${e.x.toFixed(1)}`);
+  expect(maxX).toBeLessThanOrEqual(last + 1);
+  expect(Math.abs(e.x - last)).toBeLessThan(0.5);
 });
