@@ -46,6 +46,13 @@ export interface TowerView {
   f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;
   seq?: number[]; si: number; riddle?: { q: string; opts: string[] }; alt: number; altLeft: number; key: boolean; kills: number; at: number;
 }
+export interface GuildView {
+  g: { id: number; name: string; emblem: number; tax: number; bank: number; notice: string; wins: number; losses: number; myRank: number;
+    members: { id: number; name: string; cls: string; level: number; rank: number; contributed: number; online: boolean }[] } | null;
+  invite: { gid: number; name: string; emblem: number; from: string } | null;
+  war: { id: number; a: number; b: number; an: string; bn: string; ae: number; be: number; channel: number; startAt: number; endsAt: number; score: [number, number] } | null;
+  warReq: { gid: number; name: string; emblem: number; by: string } | null;
+}
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
 export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
 export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; biteAt: number; diff: number; motion: string }
@@ -71,6 +78,8 @@ export interface UiState {
   /** Savaş Arenası: etkinlik durumu ve canlı sıralama (bütün kanallar ortak) */
   /** Kadim Kule: kat ve görev durumu (sunucudan); at = alındığı an */
   tower: TowerView | null; towerHold: { i: number; at: number } | null; towerReplayAt: number; /** mühür sırası gösteriminin başladığı an (performance.now) */ towerSeqAt: number;
+  /** Lonca görünümü (ana sunucudan) ve savaş ilanı için lonca listesi */
+  guild: GuildView | null; guildList: { id: number; name: string; emblem: number; members: number; wins: number; losses: number }[] | null;
   arena: { active: boolean; endsAt: number; board: { id?: number; name: string; cls: string; kills: number; deaths: number }[]; at: number } | null;
   map: string; channel: number; entityId: number;
   char: { id: number; name: string; cls: string; role: string } | null;
@@ -116,7 +125,7 @@ function loadSettings(): UiState['settings'] {
 }
 
 let state: UiState = {
-  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
+  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,

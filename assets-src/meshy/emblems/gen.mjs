@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const API = 'https://api.meshy.ai/openapi/v1';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function call(m, p, body) { for (let i = 0; ; i++) { const r = await fetch(API + p, { method: m, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }); const t = await r.text(); if (r.status === 429 && i < 8) { await sleep(4000 * (i + 1)); continue; } if (!r.ok) throw new Error(`${m} ${p} ${r.status} ${t.slice(0, 300)}`); return JSON.parse(t); } }
+const prompt = 'A sprite sheet of 16 different fantasy guild emblem badges arranged in a strict 4 by 4 grid with wide even spacing, each emblem a separate heraldic shield or round crest badge of the same size, cute stylized MMORPG game icon style, bold clean silhouettes, thick dark outline, vibrant rich colors, gold and silver trims. The 16 emblems: a roaring golden lion, a howling grey wolf, a red dragon head, a blue phoenix, two crossed swords, a black raven, a green oak tree, a purple crescent moon with stars, a burning sun, a white stag head, a coiled serpent, a crowned skull, a blue snowflake crystal, a horned bull skull, an emerald eye, a golden crown. Flat solid pure magenta background (#FF00FF) behind and between all emblems, no gradient, no text, no letters, no numbers, no frame.';
+const st = fs.existsSync('state.json') ? JSON.parse(fs.readFileSync('state.json', 'utf8')) : {};
+console.log('kredi', (await call('GET', '/balance')).balance);
+if (!st.sheet) { st.sheet = (await call('POST', '/text-to-image', { ai_model: 'nano-banana', prompt, aspect_ratio: '1:1' })).result; fs.writeFileSync('state.json', JSON.stringify(st)); }
+for (;;) { const t = await call('GET', `/text-to-image/${st.sheet}`); if (t.status === 'SUCCEEDED') { fs.writeFileSync('sheet.png', Buffer.from(await (await fetch(t.image_urls[0])).arrayBuffer())); break; } if (t.status === 'FAILED') { console.log('HATA', JSON.stringify(t.task_error)); break; } await sleep(4000); }
+console.log('kredi', (await call('GET', '/balance')).balance);

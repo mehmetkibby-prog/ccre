@@ -17,6 +17,7 @@ import { CAM_ZOOM_DEFAULT, CAM_PITCH_DEFAULT, CAM_ZOOM_MIN, CAM_ZOOM_MAX } from 
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 import { TowerHud } from './tower.tsx';
 import { questReady } from './quests.tsx';
+import { GuildWarBar, GuildInviteCard } from './guild.tsx';
 
 export let currentGame: Game | null = null;
 /** Oyuna özgü fare imleçleri (altın ok, saldırıda kılıç, etkileşimde parıltılı ok); yedek olarak sistem imleci */
@@ -172,6 +173,8 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <MountButton />
       <ArenaHud />
       <TowerHud />
+      <GuildWarBar />
+      <GuildInviteCard />
       <InviteCards />
       <TradeWindow />
       <PlayerMenu />

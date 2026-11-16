@@ -278,6 +278,16 @@ export class Game {
       }
       case 'towerHold': store.set({ towerHold: { i: m.i, at: performance.now() } }); break;
       case 'towerReplay': store.set({ towerReplayAt: Date.now(), towerSeqAt: performance.now() + 700 }); sfx.play('ui'); break;
+      case 'guild': store.set({ guild: { g: m.g, invite: m.invite, war: m.war, warReq: m.warReq } }); break;
+      case 'guildList': store.set({ guildList: Array.isArray(m.list) ? m.list : [] }); break;
+      case 'guildInvite': notify(`${m.from} seni ${m.name} loncasına çağırıyor. Lonca panelinden (G) kabul et.`, 'info'); sfx.play('ui'); break;
+      case 'guildWarReq': notify(`${m.name} loncası loncana savaş ilan etti!`, 'error'); sfx.play('ui'); break;
+      case 'guildWar': {
+        const gv = store.get().guild;
+        if (gv) store.set({ guild: { ...gv, war: m.war } });
+        if (m.result) store.set({ modal: { title: 'Lonca savaşı bitti', lines: [`${m.result.an} ${m.result.score[0]} – ${m.result.score[1]} ${m.result.bn}`, m.result.win ? `Kazanan: ${m.result.win}` : 'Berabere'] } });
+        break;
+      }
       case 'craftResult': sfx.play(m.ok ? 'levelup' : 'ui'); if (m.ok) store.set({ modal: { title: 'Üretim başarılı', lines: [m.got] } }); break;
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
       case 'auto': store.set((st) => ({ self: st.self ? { ...st.self, autoOn: !!m.on, autoLeft: Number(m.left) || 0 } : st.self, autoSync: Date.now() })); if (!m.on) { this.autoAttack = false; this.walkToTarget = false; } break;

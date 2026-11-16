@@ -38,6 +38,9 @@ export class Player {
   towerPlate = -1;
   altarHold: { i: number; since: number } | null = null;
   towerGateNote = 0;
+  /** lonca etiketi (ana süreçten): ad etiketi ve öz vergisi */
+  guild: { gid: number; name: string; emblem: number; tax: number } | null = null;
+  taxFrac = 0;
   /** oto atak açık mı ve son sayım anı */
   autoOn = false; autoAt = 0;
   lastDamageAt = 0;

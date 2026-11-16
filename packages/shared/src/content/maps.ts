@@ -101,6 +101,12 @@ export const MAPS: Record<string, MapDef> = {
     desc: 'Güvenli balıkçılık bölgesi. Balıkçı Hasan seni bekliyor.',
     npcs: [{ id: 'hasan', name: 'Balıkçı Hasan', title: 'Balıkçı', art: 'fisher', tx: 30, ty: 34, actions: ['fishing_shop'] }],
   },
+  // Lonca savaşı meydanı: arena düzeni; iki lonca batı ve doğudan girer (bkz. server guilds.ts)
+  guildwar: {
+    id: 'guildwar', name: 'Lonca Savaş Meydanı', w: 44, h: 44, theme: 'village', seed: 1071, safe: false, pvp: true, minLevel: 1,
+    respawnMap: 'guildwar', travelable: false, spawns: [], npcs: [],
+    desc: 'Lonca savaşlarının yapıldığı meydan. 5 dakikada en çok rakip yenen lonca kazanır. Ölümde kayıp yok.',
+  },
   // Kadim Kule: 10 kat odası (bkz. content/tower.ts); giriş Zindan Bekçisi'nden, canavarlar kat ayarından
   tower: {
     id: 'tower', name: 'Kadim Kule', w: 200, h: 80, theme: 'tower', seed: 1299, safe: false, pvp: false, minLevel: 1,

@@ -11,6 +11,7 @@ import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import { TowerPanel } from './tower.tsx';
 import { CraftPanel } from './craft.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
+import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -57,6 +58,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'tower' && <TowerPanel />}
       {p === 'craft' && <CraftPanel />}
       {p === 'quests' && <QuestPanel />}
+      {p === 'guild' && <GuildPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}

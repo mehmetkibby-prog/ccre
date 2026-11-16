@@ -30,6 +30,7 @@ async function main() {
     onSpawn: (ch) => { channels.send(ch, { type: 'tuning', data: tuning.current() }); store.loadMarket(ch).then((state) => channels.send(ch, { type: 'market_load', state })).catch((e) => console.error(`[ch${ch}] pazar yüklenemedi`, e)); },
   });
   gateway = new Gateway(channels, store, world);
+  await gateway.guilds.load();
   channels.start();
   const rankings = new Rankings(store, {
     give: (charId, g) => { void gateway.giveTo(charId, g); },
@@ -75,6 +76,7 @@ async function main() {
     await new Promise((r) => setTimeout(r, 200));
     for (let i = 0; i < 20 && store.queueLength; i++) await store.flush();
     await world.persist();
+    await gateway.guilds.flush().catch(() => {});
     await pool.end();
     console.log('[core-of-life] kapandı.');
     process.exit(0);

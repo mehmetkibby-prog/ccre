@@ -188,3 +188,39 @@ it('Görevler: al, öldür/getir/konuş ilerlemesi, başka NPC\'ye teslim, ödü
   expect(p.char.misc.quests?.a.qb).toBeTruthy();
   applyTuning(structuredClone(DEFAULT_TUNING));
 });
+
+it('Lonca (kanal): kurma bedeli, öz vergisi, savaş meydanında yalnız rakibe vurulur, öldürme bildirilir', () => {
+  applyTuning(structuredClone(DEFAULT_TUNING));
+  const out: any[] = []; const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m) => out.push(m) });
+  for (const id of [1, 2, 3]) { const c = mk(id, 30); c.gems = 1500; w.join(id, c); }
+  const [a, b, c] = [1, 2, 3].map((id) => w.bySid.get(id)!);
+  w.guildCharge(1, 'r1', 1000, 20);
+  expect(a.char.gems).toBe(500); expect(out.find((m) => m.type === 'guild_charged')?.ok).toBe(true);
+  w.guildSet(1, { gid: 10, name: 'Kurtlar', emblem: 1, tax: 10 });
+  w.guildSet(2, { gid: 10, name: 'Kurtlar', emblem: 1, tax: 10 });
+  w.guildSet(3, { gid: 20, name: 'Aslanlar', emblem: 0, tax: 0 });
+  w.guildCharge(1, 'r2', 1000, 20); // zaten loncada
+  expect(a.char.gems).toBe(500);
+  // vergi
+  const fox = a.zone.monsterList.find((m: any) => m.def.id === 'wild_fox')!;
+  a.char.level = 1; const e0 = a.char.essence; // tilkiden öz alsın (yüksek seviyede öz düşmez)
+  for (let i = 0; i < 400; i++) (w as any).rewardKill(a, fox);
+  a.char.level = 30;
+  w.flushGuildTax();
+  const tax = out.filter((m) => m.type === 'guild_tax').flatMap((m) => m.items).reduce((s: number, x: any) => s + x[2], 0);
+  const got = a.char.essence - e0;
+  expect(tax).toBeGreaterThan(0); expect(Math.abs(tax / (tax + got) - 0.1)).toBeLessThan(0.08);
+  // savaş meydanı
+  const now = Date.now();
+  w.setGuildWars([{ id: 1, a: 10, b: 20, an: 'Kurtlar', bn: 'Aslanlar', channel: 1, startAt: now - 1000, endsAt: now + 60000 }]);
+  w.guildWarJoin(1, 0); w.guildWarJoin(2, 0); w.guildWarJoin(3, 1);
+  expect(a.zone.id).toBe('guildwar'); expect(c.zone.id).toBe('guildwar');
+  (w as any).arenaProt.clear();
+  expect((w as any).canPvp(a, c)).toBe(true);
+  expect((w as any).canPvp(a, b)).toBe(false); // aynı lonca
+  (w as any).killPlayer(c, a);
+  expect(out.some((m) => m.type === 'gwar_kill' && m.killer === a.char.id && m.victim === c.char.id)).toBe(true);
+  // savaş bitince meydandakiler köye döner
+  w.setGuildWars([]);
+  expect(a.zone.id).toBe('bazaar'); expect(c.zone.id).toBe('bazaar'); expect(c.dead).toBe(false);
+});

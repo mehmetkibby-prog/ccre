@@ -83,7 +83,14 @@ export type ToWorker =
   /** Savaş Arenası: etkinlik açıldı/kapandı; giriş isteğinin yanıtı */
   | { type: 'arena'; active: boolean; endsAt: number }
   | { type: 'arena_join_ok'; sid: number; err: string | null }
+  /** Lonca: karakterin lonca bilgisi (ad etiketi ve öz vergisi için), kurma bedeli tahsili, savaşlar, savaşa giriş */
+  | { type: 'guild_set'; charId: number; g: GuildTag | null }
+  | { type: 'guild_charge'; sid: number; req: string; gems: number; minLevel: number }
+  | { type: 'gwar'; wars: GuildWarInfo[] }
+  | { type: 'gwar_join'; sid: number; side: 0 | 1 }
   | { type: 'shutdown' };
+export interface GuildTag { gid: number; name: string; emblem: number; tax: number }
+export interface GuildWarInfo { id: number; a: number; b: number; an: string; bn: string; channel: number; startAt: number; endsAt: number }
 
 // worker → ana
 /** Kanalın pazarı: bağımsız dükkânlar ve sahibi yokken yapılan satışların bekleyen kazancı. */
@@ -102,6 +109,10 @@ export type FromWorker =
   | { type: 'arena_join'; sid: number; charId: number; level: number }
   | { type: 'arena_kill'; killer: number; victim: number; kLevel: number; vLevel: number }
   | { type: 'arena_left'; charId: number }
+  | { type: 'guild_charged'; sid: number; req: string; ok: boolean; err?: string }
+  /** öz vergisi: [lonca, karakter, miktar] */
+  | { type: 'guild_tax'; items: [number, number, number][] }
+  | { type: 'gwar_kill'; killer: number; victim: number }
   | { type: 'stats'; data: WorkerStats };
 
 export interface WorkerStats {
@@ -119,4 +130,4 @@ export interface WorkerStats {
 }
 
 /** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
-export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number };
+export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number } | { kind: 'essence'; qty: number };

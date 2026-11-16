@@ -583,7 +583,7 @@ export function getLayout(mapId: string): MapLayout {
     props: [], spawn: { x: 0, y: 0 }, spawnPoints: [], zones: [], npcs: [],
   };
   const rng = mulberry32(def.seed);
-  if (def.id === 'arena') genArena(l, rng);
+  if (def.id === 'arena' || def.id === 'guildwar') genArena(l, rng);
   else if (def.id === 'tower') genTower(l, rng);
   else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);

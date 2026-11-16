@@ -10,6 +10,7 @@ import { randomToken } from './auth.ts';
 import { RateLimiter } from './http.ts';
 import type { CharState, FromWorker, Role, AdminGive } from './types.ts';
 import { Arena } from './arena.ts';
+import { Guilds } from './guilds.ts';
 import { applyGive } from './worker/world.ts';
 import { pool } from './db/pool.ts';
 
@@ -21,6 +22,8 @@ interface Session {
   lastWorldChat: number; msgs: number; msgWindow: number; lastPm?: number; lastPing?: number;
   /** bağlantı IP'si (arena hile denetimi: aynı bağlantıdan açılan tarayıcılar birbirinden puan alamaz) */
   ip: string;
+  /** girişteki seviye (lonca üye listesi için) */
+  level?: number;
 }
 
 /**
@@ -43,6 +46,9 @@ export class Gateway {
 
   /** Savaş Arenası (bütün kanallar için ortak sıralama) */
   arena: Arena;
+  /** Loncalar (bütün kanallar ortak; bkz. guilds.ts) */
+  guilds: Guilds;
+  private activeByChar(charId: number) { for (const s of this.sessions.values()) if (s.charId === charId && s.state === 'active') return s; return undefined; }
 
   constructor(public channels: ChannelManager, public store: CharacterStore, public world: WorldState) {
     this.arena = new Arena({
@@ -52,6 +58,16 @@ export class Gateway {
       give: (charId, g) => { void this.giveTo(charId, g); },
       audit: (action, detail) => { pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES (NULL,$1,$2)`, [action, JSON.stringify(detail)]).catch(() => {}); },
     });
+    this.guilds = new Guilds({
+      byChar: (charId) => this.activeByChar(charId),
+      byName: (name) => { const n = name.trim().toLocaleLowerCase('tr'); for (const s of this.sessions.values()) if (s.state === 'active' && s.name.toLocaleLowerCase('tr') === n) return s; return undefined; },
+      send: (charId, o) => { const s = this.activeByChar(charId); if (s) this.sendJson(s, o); },
+      toWorker: (ch, m) => this.channels.send(ch, m),
+      toAllWorkers: (m) => this.channels.broadcast(m),
+      give: (charId, g) => { void this.giveTo(charId, g); },
+      announce: (text) => this.broadcastAll({ t: 'chat', ch: 'world', from: 'Lonca', text, gm: true }),
+    });
+    setInterval(() => { this.guilds.tick().catch((e) => console.error('[guild] tick', e)); }, 5000).unref();
     setInterval(() => this.arena.tick(), 5000).unref();
     setInterval(() => this.broadcastWorld(), 5000).unref();
     setInterval(() => { const now = Date.now(); for (const [k, t] of this.tickets) if (t.exp < now) { this.tickets.delete(k); if (this.accountTicket.get(t.accountId) === k) this.accountTicket.delete(t.accountId); } }, 10_000).unref();
@@ -122,7 +138,7 @@ export class Gateway {
     if (s.state !== 'joining' || ws.readyState !== WebSocket.OPEN) return;
     if (!this.channels.alive(t.channel)) { this.sendJson(s, { t: 'fatal', text: 'Kanal hazırlanıyor…', retry: true }); ws.close(); return; }
     char.role = t.role;
-    s.name = char.name; s.cls = char.cls;
+    s.name = char.name; s.cls = char.cls; s.level = char.level;
     // sahipliği al
     let resolve!: () => void;
     const promise = new Promise<void>((r) => (resolve = r));
@@ -154,6 +170,7 @@ export class Gateway {
     this.sessions.delete(s.sid);
     if (this.byAccount.get(s.accountId) === s) this.byAccount.delete(s.accountId);
     if (wasActive) this.channels.send(s.channel, { type: 'leave', sid: s.sid, reason: 'close' });
+    if (wasActive) this.guilds.onLeave(s.charId);
   }
 
   private onMessage(s: Session, data: RawData, isBinary: boolean) {
@@ -181,6 +198,8 @@ export class Gateway {
       return;
     }
     if (!this.cmdLimiter.take(String(s.sid))) return;
+    // Lonca: bütün kanallar ortak, ana süreçte işlenir
+    if (text.startsWith('{"t":"guild"')) { let c: any; try { c = JSON.parse(text); } catch { return; } void this.guilds.handle(s, c); return; }
     // Dünya/ticaret sohbeti tüm kanallara: geçitte işlenir
     if (text.includes('"chat"')) {
       let c: any; try { c = JSON.parse(text); } catch { return; }
@@ -271,9 +290,14 @@ export class Gateway {
         break;
       }
       case 'joined': {
-        if (!m.ok) { const s = this.sessions.get(m.sid); if (s) { this.sendJson(s, { t: 'fatal', text: m.err ?? 'Giriş başarısız.' }); s.ws.close(); } }
+        const s = this.sessions.get(m.sid);
+        if (!m.ok) { if (s) { this.sendJson(s, { t: 'fatal', text: m.err ?? 'Giriş başarısız.' }); s.ws.close(); } }
+        else if (s && s.state === 'active') this.guilds.onJoin(s, s.level ?? 1);
         break;
       }
+      case 'guild_charged': void this.guilds.onCharged(m.req, m.ok, m.err); break;
+      case 'guild_tax': this.guilds.onTax(m.items); break;
+      case 'gwar_kill': this.guilds.onWarKill(m.killer, m.victim); break;
       case 'arena_join': {
         const err = this.arena.canJoin(m.charId, m.level);
         this.channels.send(ch, { type: 'arena_join_ok', sid: m.sid, err });

@@ -8,7 +8,7 @@ import {
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
-import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive, TowerProgress } from '../types.ts';
+import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive, TowerProgress, GuildTag, GuildWarInfo } from '../types.ts';
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
@@ -174,7 +174,7 @@ export class World {
     if (this.bySid.has(sid)) return;
     char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
     if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
-    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
+    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled) || (char.map === 'guildwar' && !this.guildWars.length)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
     char.x = pos.x; char.y = pos.y;
@@ -331,6 +331,8 @@ export class World {
       for (const p of z.playerSet) p.dirty = 0;
     }
     this.periodicSaves();
+    if (this.tickNo % 200 === 0) this.flushGuildTax();
+    if (this.tickNo % 20 === 7) this.guildWarSweep();
     this.flushOut();
     const dt = performance.now() - t;
     this.tickHist.add(dt);
@@ -640,6 +642,12 @@ export class World {
     if (this.social.inDuel(a) || this.social.inDuel(b)) return false; // düellodakine üçüncü kişi karışamaz
     // arena: kapalıyken vuruşma yok; yeni doğan 4 sn korunur (doğuşta bekleyip kesme olmasın)
     if (a.zone.id === 'arena') return this.arenaActive && (this.arenaProt.get(b.char.id) ?? 0) <= this.now && (this.arenaProt.get(a.char.id) ?? 0) <= this.now;
+    // lonca savaşı: yalnız aynı savaştaki karşı loncalar, savaş başlamışken; yeni doğan 4 sn korunur
+    if (a.zone.id === 'guildwar') {
+      const w = this.warOf(a); if (!w || this.now < w.startAt || this.now > w.endsAt || !b.guild) return false;
+      const sa = a.guild!.gid === w.a ? 0 : 1, sb = b.guild.gid === w.a ? 0 : b.guild.gid === w.b ? 1 : -1;
+      return sb >= 0 && sa !== sb && (this.arenaProt.get(b.char.id) ?? 0) <= this.now;
+    }
     return a.zone.def.pvp;
   }
 
@@ -865,8 +873,16 @@ export class World {
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
     const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul * (1 + bf.essPct / 100));
-    c.gems += gems; c.essence += ess;
-    this.sendJson(p, { t: 'gain', gems, essence: ess, x: m.x | 0, y: m.y | 0 });
+    // lonca öz vergisi: kazancın vergi oranı kadarı lonca hazinesine (ana sürece toplu bildirilir)
+    let ess2 = ess;
+    if (p.guild && p.guild.tax > 0 && ess > 0) {
+      // küçük kazançlarda (1–3 Öz) kesir birikir: vergi aşağı yuvarlanıp hep 0 olmasın
+      p.taxFrac += ess * p.guild.tax / 100;
+      const tax = Math.min(ess, Math.floor(p.taxFrac));
+      if (tax > 0) { p.taxFrac -= tax; ess2 -= tax; const k = `${p.guild.gid}:${c.id}`; this.guildTax.set(k, (this.guildTax.get(k) ?? 0) + tax); }
+    }
+    c.gems += gems; c.essence += ess2;
+    this.sendJson(p, { t: 'gain', gems, essence: ess2, x: m.x | 0, y: m.y | 0 });
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
@@ -938,7 +954,8 @@ export class World {
     let lost = 0;
     // arena: öldürme ana sürece bildirilir (hile denetimi ve ortak sıralama orada); arenada kayıp yok
     if (killer && p.zone.id === 'arena' && this.arenaActive) this.opt.post({ type: 'arena_kill', killer: killer.char.id, victim: p.char.id, kLevel: killer.char.level, vLevel: p.char.level });
-    if (killer && p.zone.def.pvp && p.zone.id !== 'arena' && p.char.role === 'player') {
+    if (killer && p.zone.id === 'guildwar') this.opt.post({ type: 'gwar_kill', killer: killer.char.id, victim: p.char.id });
+    if (killer && p.zone.def.pvp && p.zone.id !== 'arena' && p.zone.id !== 'guildwar' && p.char.role === 'player') {
       lost = Math.floor(p.char.gems / 20);
       p.char.gems -= lost;
     }
@@ -959,6 +976,10 @@ export class World {
     if (target === 'arena') {
       // arena: etkinlik sürüyorsa arenada rastgele noktada tam canla, 4 sn korumalı doğ; bittiyse köyde
       if (this.arenaActive) { const pt = this.arenaPoint(); p.hp = p.stats.maxHp; this.moveToZone(p, z, pt.x, pt.y); this.arenaProt.set(p.char.id, this.now + 4000); }
+      else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
+    } else if (target === 'guildwar') {
+      const w = this.warOf(p);
+      if (w && this.now < w.endsAt) { const pt = this.warPoint(w, p); p.hp = p.stats.maxHp; this.moveToZone(p, z, pt.x, pt.y); this.arenaProt.set(p.char.id, this.now + 4000); }
       else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
     } else if (target === TOWER_MAP) {
       // kulede ölen o katın girişinde doğar (ilerleme korunur)
@@ -1728,6 +1749,64 @@ export class World {
     this.sendJson(p, { t: 'chestResult', title: 'Azrail Sandığı', rewards: rewards.length ? rewards : ['Sandık boş çıktı'] });
   }
 
+  // ───────────────────────────── loncalar ─────────────────────────────
+  private guildWars: GuildWarInfo[] = [];
+  private guildTax = new Map<string, number>();
+  guildSet(charId: number, g: GuildTag | null) {
+    const p = this.byCharId(charId); if (!p) return;
+    const before = p.guild ? `${p.guild.gid}|${p.guild.emblem}|${p.guild.name}` : '';
+    p.guild = g;
+    // ad etiketi değiştiyse çevredekiler oyuncuyu yeniden alsın
+    if ((g ? `${g.gid}|${g.emblem}|${g.name}` : '') !== before) for (const q of p.zone.playerSet) q.known.delete(p.id);
+  }
+  /** Lonca kurma bedeli: seviye ve mücevher kanal sunucusunda denetlenip düşülür */
+  guildCharge(sid: number, req: string, gems: number, minLevel: number) {
+    const p = this.bySid.get(sid);
+    const no = (err: string) => this.opt.post({ type: 'guild_charged', sid, req, ok: false, err });
+    if (!p) return no('Oyunda değilsin.');
+    if (p.guild) return no('Zaten bir loncadasın.');
+    if (p.char.level < minLevel) return no(`Lonca kurmak için ${minLevel}. seviye gerekir.`);
+    if (p.char.gems < gems) return no(`Lonca kurmak için ${gems.toLocaleString('tr-TR')} Mücevher gerekir.`);
+    p.char.gems -= gems; p.selfDirty |= 1; this.save(p, true);
+    this.opt.post({ type: 'guild_charged', sid, req, ok: true });
+  }
+  setGuildWars(wars: GuildWarInfo[]) { this.guildWars = wars; this.guildWarSweep(); }
+  flushGuildTax() {
+    if (!this.guildTax.size) return;
+    const items: [number, number, number][] = [...this.guildTax].map(([k, n]) => { const [g, c] = k.split(':').map(Number); return [g, c, n]; });
+    this.guildTax.clear();
+    this.opt.post({ type: 'guild_tax', items });
+  }
+  private warOf(p: Player) { const g = p.guild?.gid; return g ? this.guildWars.find((w) => w.a === g || w.b === g) : undefined; }
+  private warPoint(w: GuildWarInfo, p: Player) {
+    const l = this.zones.get('guildwar')!.layout, side = p.guild?.gid === w.a ? -1 : 1;
+    return { x: l.spawn.x + side * 11 * 64 + (rnd() - 0.5) * 120, y: l.spawn.y + (rnd() - 0.5) * 300 };
+  }
+  guildWarJoin(sid: number, side: 0 | 1) {
+    const p = this.bySid.get(sid); if (!p) return;
+    const w = this.warOf(p);
+    if (!w || this.now > w.endsAt) return this.notice(p, 'Loncan şu an savaşta değil.');
+    if (p.dead) return this.notice(p, 'Önce dirilmelisin.');
+    if (this.now < p.combatUntil) return this.notice(p, 'Savaştayken meydana geçemezsin.');
+    void side;
+    const z = this.zones.get('guildwar')!, pt = this.warPoint(w, p);
+    this.moveToZone(p, z, pt.x, pt.y);
+    this.arenaProt.set(p.char.id, Math.max(this.now, w.startAt) + 4000);
+    this.notice(p, this.now < w.startAt ? `Savaş ${Math.ceil((w.startAt - this.now) / 1000)} sn sonra başlıyor. Hazırlan!` : 'Savaş Meydanı\'ndasın. Rakip loncayı yen!', 'ok');
+  }
+  /** Savaşı bitmiş ya da loncası savaşmayan oyuncular meydandan köye döner */
+  private guildWarSweep() {
+    const z = this.zones.get('guildwar'); if (!z || !z.playerSet.size) return;
+    const town = this.zones.get('bazaar')!;
+    for (const p of [...z.playerSet]) {
+      const w = this.warOf(p);
+      if (w && this.now <= w.endsAt + 3000) continue;
+      if (p.dead) { p.dead = false; p.hp = p.stats.maxHp; p.anim = Anim.IDLE; p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS; this.sendJson(p, { t: 'respawned', hp: p.hp }); }
+      this.moveToZone(p, town, town.layout.spawn.x + (rnd() - 0.5) * 100, town.layout.spawn.y + (rnd() - 0.5) * 80);
+      if (w || this.guildWars.length === 0) this.notice(p, 'Lonca savaşı bitti; köye döndün.', 'info');
+    }
+  }
+
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {
     const def = MAPS[mapId];
     if (!def || !def.travelable) return this.notice(p, 'Bu bölgeye ışınlanılamaz.');
@@ -2227,7 +2306,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
   }
 
   private flushOut() {
@@ -2297,6 +2376,7 @@ export function applyGive(c: CharState, g: AdminGive): string {
   }
   if (g.kind === 'gems') { const n = Math.max(0, Math.min(10_000_000, Math.round(g.qty))); c.gems += n; return `Ödül: ${n.toLocaleString('tr-TR')} Mücevher`; }
   if (g.kind === 'cp') { const n = Math.max(0, Math.min(1_000_000, Math.round(g.qty))); c.cp += n; return `Ödül: ${n.toLocaleString('tr-TR')} ÇP`; }
+  if (g.kind === 'essence') { const n = Math.max(0, Math.min(1e9, Math.round(g.qty))); c.essence += n; return `${n.toLocaleString('tr-TR')} Öz aldın`; }
   const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
   c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
   return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;

@@ -36,7 +36,12 @@ port.on('message', (m: ToWorker) => {
       else if (m.op === 'rename') world.adminRename(m.charId, m.name ?? '');
       else world.adminResetPlayer(m.charId);
       break;
+    case 'guild_set': world.guildSet(m.charId, m.g); break;
+    case 'guild_charge': world.guildCharge(m.sid, m.req, m.gems, m.minLevel); break;
+    case 'gwar': world.setGuildWars(m.wars); break;
+    case 'gwar_join': world.guildWarJoin(m.sid, m.side); break;
     case 'shutdown':
+      world.flushGuildTax();
       for (const sid of [...world.bySid.keys()]) world.leave(sid);
       post({ type: 'stats', data: world.stats() });
       setTimeout(() => process.exit(0), 50);

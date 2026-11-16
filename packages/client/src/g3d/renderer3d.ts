@@ -91,6 +91,7 @@ export class Renderer3D {
   camera = new THREE.PerspectiveCamera(MOBILE ? 34 : 38, 1, 0.5, 260);
   composer: EffectComposer | null = null;
   private towerFx: TowerFx | null = null;
+  private emblemImgs = new Map<number, HTMLImageElement>();
   bloom: UnrealBloomPass | null = null;
   sun = new THREE.DirectionalLight(0xffffff, 2.5);
   hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.7);
@@ -932,6 +933,17 @@ export class Renderer3D {
       ctx.fillStyle = '#3a1414'; ctx.fillRect(p.x - w / 2, p.y + 3.5, w, 4);
       ctx.fillStyle = col; ctx.fillRect(p.x - w / 2, p.y + 3.5, w * k, 4);
     };
+    // lonca etiketi: ad satırının üstünde simge + lonca adı
+    const guildTag = (p: { x: number; y: number }, emblem: number, name: string) => {
+      let img = this.emblemImgs.get(emblem);
+      if (!img) { img = new Image(); img.src = `/emblems/${emblem}.png`; this.emblemImgs.set(emblem, img); }
+      ctx.font = '700 11px Nunito, sans-serif';
+      const w = ctx.measureText(name).width, x0 = p.x - (w + 18) / 2, y = p.y - 29;
+      if (img.complete && img.naturalWidth) ctx.drawImage(img, x0, y - 13, 16, 16);
+      ctx.textAlign = 'left'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.85)';
+      ctx.strokeText(name, x0 + 18, y); ctx.fillStyle = '#ffd98a'; ctx.fillText(name, x0 + 18, y);
+      ctx.textAlign = 'center';
+    };
     // NPC (başında görev işareti: sarı ! alınabilir görev, yeşil ? teslime hazır görev)
     const self = st.self, qs = self?.quests, today = trDayKey(Date.now());
     for (const v of this.npcViews) {
@@ -966,6 +978,7 @@ export class Renderer3D {
         if (!st.settings.showNames && g.targetId !== e.id) continue;
         const p = tag(e.x, e.y, 2.15, e.name, (e.flags & EFlag.GM) ? '#ffd84a' : (e.flags & EFlag.PVP) ? '#ff9a9a' : CLASS_COLORS[e.cls], `Sv. ${e.level}`);
         if (p && e.hp < e.maxHp) bar(p, e.hp, e.maxHp, 46, '#5fe07a');
+        if (p && e.guild) { const i = e.guild.indexOf('|'); if (i > 0) guildTag(p, Number(e.guild.slice(0, i)) | 0, e.guild.slice(i + 1)); }
       } else {
         const def = MONSTERS[e.tpl];
         const targeted = g.targetId === e.id;
@@ -975,7 +988,7 @@ export class Renderer3D {
         if (p) bar(p, e.hp, e.maxHp, def?.boss ? 120 : 56, def?.boss ? '#ff4d7a' : '#e84a3a');
       }
     }
-    if (st.char && st.settings.showNames) tag(g.dx, g.dy, 2.15, st.char.name, '#fff0c0', `Sv. ${st.self?.level ?? 1}`);
+    if (st.char && st.settings.showNames) { const p = tag(g.dx, g.dy, 2.15, st.char.name, '#fff0c0', `Sv. ${st.self?.level ?? 1}`); const mg = st.guild?.g; if (p && mg) guildTag(p, mg.emblem, mg.name); }
     // tezgâh tabelaları
     for (const sl of st.stalls) {
       if (Math.hypot(sl.x - g.dx, sl.y - g.dy) > 1700) continue;

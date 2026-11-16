@@ -84,6 +84,7 @@ export function PlayerMenu() {
   const m = useStore((s) => s.playerMenu);
   const party = useStore((s) => s.party);
   const me = useStore((s) => s.char?.id ?? 0);
+  const myGuild = useStore((s) => s.guild?.g);
   useEffect(() => {
     if (!m) return;
     const close = (e: PointerEvent) => { if (!(e.target as HTMLElement).closest?.('.pmenu')) store.set({ playerMenu: null }); };
@@ -93,6 +94,8 @@ export function PlayerMenu() {
   if (!m) return null;
   const inv = (kind: string) => { send({ t: 'social', op: 'invite', kind, target: m.id }); store.set({ playerMenu: null }); };
   const member = party.members.find((x) => x.eid === m.id);
+  // lonca daveti: lider/subaysan ve hedef bir loncada değilse
+  const targetGuild = currentGame?.ents.get(m.id)?.guild;
   const x = Math.min(m.x, window.innerWidth - 200), y = Math.min(m.y, window.innerHeight - 260);
   return (
     <div className="pmenu" style={{ left: x, top: y }} onContextMenu={(e) => e.preventDefault()}>
@@ -103,6 +106,7 @@ export function PlayerMenu() {
       <button onClick={() => inv('friend')}>★ Arkadaş ekle</button>
       {member ? (party.leader === me && <button onClick={() => { send({ t: 'party', op: 'kick', target: member.id }); store.set({ playerMenu: null }); }}>✕ Gruptan çıkar</button>)
         : <button onClick={() => inv('party')}>👥 Gruba davet et</button>}
+      {myGuild && myGuild.myRank >= 1 && !targetGuild && <button onClick={() => { send({ t: 'guild', op: 'invite', name: m.name }); store.set({ playerMenu: null }); }}>🛡 Loncaya davet et</button>}
     </div>
   );
 }
