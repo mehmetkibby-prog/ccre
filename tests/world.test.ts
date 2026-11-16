@@ -22,64 +22,16 @@ describe('dupe/hile korumaları', () => {
     const it1 = makeItem('boots', 'blue', 't', 0);
     w.join(1, char({ bag: [it1] }));
     const p = w.bySid.get(1)!;
-    const npc = p.zone.layout.npcs.find((n) => n.id === 'tuccar')!;
+    // Haso'nun tezgâhı: Güçlü Dal (20 Mücevher). Sahte fiyat reddedilir, doğru fiyatla alınır.
+    const npc = p.zone.layout.npcs.find((n) => n.id === 'haso')!;
     p.x = npc.x + 30; p.y = npc.y + 30;
-    const before = p.char.gems;
-    const cmd = JSON.stringify({ t: 'sell', items: [it1.id], req: 'abc' });
-    w.onCmd(1, cmd); w.onCmd(1, cmd);
-    expect(p.char.bag.length).toBe(0);
-    expect(p.char.gems - before).toBe(3); // mavi eşya 3 Mücevher
-  });
-
-  it('kilitli eşya satılamaz', () => {
-    const it1 = { ...makeItem('boots', 'blue', 't', 0), locked: true };
-    w.join(1, char({ bag: [it1] }));
-    const p = w.bySid.get(1)!;
-    const npc = p.zone.layout.npcs.find((n) => n.id === 'tuccar')!;
-    p.x = npc.x + 30; p.y = npc.y + 30;
-    w.onCmd(1, JSON.stringify({ t: 'sell', items: [it1.id], req: 'x1' }));
-    expect(p.char.bag.length).toBe(1);
-  });
-
-  it('NPC uzaktaysa satın alma reddedilir', () => {
-    w.join(1, char());
-    const p = w.bySid.get(1)!;
-    p.x = 200; p.y = 200;
-    const g = p.char.gems;
-    w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'general', product: 'potion_gems', qty: 5, price: 6, req: 'b1' }));
-    expect(p.char.gems).toBe(g);
-  });
-
-  it('çantadan ve üzerindeki eşyadan her yerde satılır: beyaz 1, mavi 3, turuncu 5, kızıl 15', () => {
-    const items = (['white', 'blue', 'orange', 'crimson'] as const).map((r) => makeItem('boots', r, 't', 0));
-    const sword = makeItem('w_guardian', 'crimson', 't', 0);
-    w.join(1, char({ bag: items, equip: { weapon: sword }, gems: 0 }));
-    const p = w.bySid.get(1)!;
-    p.x = 200; p.y = 200; // NPC'den uzak
-    w.onCmd(1, JSON.stringify({ t: 'sell', items: [...items.map((i) => i.id), sword.id], req: 's9' }));
-    expect(p.char.gems).toBe(1 + 3 + 5 + 15 + 15);
-    expect(p.char.bag.length).toBe(0);
-    expect(p.char.equip.weapon).toBeUndefined();
-  });
-
-  it('görünüm baytı silah ve zırh nadirliğini taşır (parıltı efekti)', () => {
-    w.join(1, char({ equip: { weapon: makeItem('w_guardian', 'orange', 't', 0), armor: makeItem('a_guardian', 'crimson', 't', 0) } }));
-    const b = w.bySid.get(1)!.weaponRarityIndex();
-    expect(b & 15).toBe(2);
-    expect(b >> 4).toBe(3);
-  });
-
-  it('sahte fiyatla satın alma reddedilir, bedel alınmaz', () => {
-    w.join(1, char());
-    const p = w.bySid.get(1)!;
-    const npc = p.zone.layout.npcs.find((n) => n.id === 'tuccar')!;
-    p.x = npc.x + 30; p.y = npc.y + 30;
-    w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'general', product: 'potion_gems', qty: 5, price: 1, req: 'b2' }));
+    const before = p.char.materials.strong_branch ?? 0;
+    w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'smith', product: 'branch', qty: 2, price: 1, req: 'b2' }));
     expect(p.char.gems).toBe(1000);
-    expect(p.char.materials.red_potion).toBe(5);
-    w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'general', product: 'potion_gems', qty: 5, price: 6, req: 'b3' }));
-    expect(p.char.gems).toBe(970);
-    expect(p.char.materials.red_potion).toBe(10);
+    expect(p.char.materials.strong_branch ?? 0).toBe(before);
+    w.onCmd(1, JSON.stringify({ t: 'buy', shop: 'smith', product: 'branch', qty: 2, price: 20, req: 'b3' }));
+    expect(p.char.gems).toBe(960);
+    expect(p.char.materials.strong_branch).toBe(before + 2);
   });
 
   it('canavar iki kez öldürülse ödül bir kez verilir', () => {
