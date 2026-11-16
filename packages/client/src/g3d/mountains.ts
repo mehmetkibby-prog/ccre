@@ -195,16 +195,45 @@ export function buildMeshMountains(themeId: string, seed: number, lite: boolean,
     const mat = new THREE.MeshLambertMaterial({ map: srcMat.map ?? null, color: 0xffffff, fog: false });
     if (themeId === 'frozen') mat.color.set(0xe4ecf6); else if (themeId === 'black') mat.color.set(0x9a8890); else if (themeId === 'ancient') mat.color.set(0xd8ccb0);
     const uH = { value: haze };
+    // yeşil temalarda İsviçre görünümü: etekler ve düz yamaçlar çimen yeşili, dik yamaç kaya, zirve karlı
+    const alpine = themeId === 'village' || themeId === 'forest' || themeId === 'lake';
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uHaze = uH;
-      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vH;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvH = position.y;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uHaze; varying float vH;')
-        .replace('#include <dithering_fragment>', `#include <dithering_fragment>
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vH; varying float vUp;')
+        .replace('#include <begin_vertex>', `#include <begin_vertex>
+          vH = position.y;
+          #ifdef USE_INSTANCING
+            vUp = normalize((modelMatrix * instanceMatrix * vec4(objectNormal, 0.0)).xyz).y;
+          #else
+            vUp = normalize((modelMatrix * vec4(objectNormal, 0.0)).xyz).y;
+          #endif`);
+      let fs = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uHaze; varying float vH; varying float vUp;');
+      if (alpine) fs = fs.replace('#include <map_fragment>', `#include <map_fragment>
+          {
+            vec3 tex = diffuseColor.rgb;
+            float lum = dot(tex, vec3(0.299, 0.587, 0.114));
+            float det = clamp(lum / 0.42, 0.55, 1.45);            // dokunun ayrıntısı (çatlak, gölge) korunur
+            float t = vH / ${h.toFixed(2)};                        // 0 etek … 1 zirve
+            float up = clamp(vUp, 0.0, 1.0);                      // 1 düz, 0 dik
+            float n = fract(sin(dot(floor(vec2(vH * 0.37, lum * 9.0)), vec2(12.9898, 78.233))) * 43758.5453);
+            vec3 grassA = vec3(0.22, 0.47, 0.12), grassB = vec3(0.14, 0.34, 0.09), forestC = vec3(0.07, 0.21, 0.07);
+            vec3 grass = mix(grassA, grassB, smoothstep(0.3, 0.7, t)) * mix(1.0, det, 0.6);
+            grass = mix(grass, forestC * det, smoothstep(0.62, 0.9, lum * 1.6) * (1.0 - smoothstep(0.3, 0.55, t)) * 0.7); // eteklerde koyu orman lekeleri
+            vec3 rock = mix(vec3(0.46, 0.45, 0.43), vec3(0.58, 0.55, 0.50), n) * det;
+            vec3 snow = vec3(0.95, 0.97, 1.0) * (0.86 + 0.14 * det);
+            float gw = (1.0 - smoothstep(0.64, 0.8, t)) * smoothstep(-0.25, 0.2, up);
+            float snowLine = 0.8 + 0.05 * (det - 1.0);
+            float sw = smoothstep(snowLine - 0.05, snowLine + 0.05, t) * smoothstep(0.02, 0.35, up + 0.3 * smoothstep(0.85, 0.97, t));
+            vec3 col = mix(rock, grass, gw);
+            col = mix(col, snow, clamp(sw, 0.0, 1.0));
+            diffuseColor.rgb = col;
+          }`);
+      sh.fragmentShader = fs.replace('#include <dithering_fragment>', `#include <dithering_fragment>
           // hava perspektifi: dağın tamamı biraz, eteği daha çok pusa karışır
-          float hz = 0.16 + 0.42 * (1.0 - smoothstep(0.0, ${(h * 0.7).toFixed(2)}, vH));
+          float hz = ${alpine ? '0.03 + 0.16' : '0.16 + 0.42'} * (1.0 - smoothstep(0.0, ${(h * 0.7).toFixed(2)}, vH)) + ${alpine ? '0.03' : '0.0'};
           gl_FragColor.rgb = mix(gl_FragColor.rgb, uHaze, hz);`);
     };
-    mat.customProgramCacheKey = () => 'meshmtn' + h.toFixed(2);
+    mat.customProgramCacheKey = () => 'meshmtn' + h.toFixed(2) + (alpine ? 'a' : '');
     owned.push(mat);
     return { geo, mat, h, w };
   });
