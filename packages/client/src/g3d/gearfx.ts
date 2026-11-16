@@ -210,7 +210,7 @@ uniform vec3 uA, uB;
 varying vec3 vN, vV, vW;
 float h(vec3 p) { p = fract(p * 0.1031); p += dot(p, p.zyx + 31.32); return fract((p.x + p.y) * p.z); }
 void main() {
-  float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.2);
+  float f = pow(max(0.0, 1.0 - abs(dot(normalize(vN), normalize(vV)))), 2.2);
   // yukarı akan alev bantları
   float band = 0.55 + 0.45 * sin(vW.y * 26.0 - uTime * 7.0 + sin(vW.x * 30.0 + uTime * 3.0) * 1.4);
   vec3 col = mix(uA, uB, band);

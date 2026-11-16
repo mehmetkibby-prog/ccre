@@ -13,10 +13,16 @@ import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
 import { api } from '../api.ts';
-import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
+import { CAM_ZOOM_DEFAULT, CAM_PITCH_DEFAULT, CAM_ZOOM_MIN, CAM_ZOOM_MAX } from '../g3d/renderer3d.ts';
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 
 export let currentGame: Game | null = null;
+/** Oyuna özgü fare imleçleri (altın ok, saldırıda kılıç, etkileşimde parıltılı ok); yedek olarak sistem imleci */
+const CURSOR = {
+  base: "url('/cursors/arrow.svg') 3 2, default",
+  attack: "url('/cursors/sword.svg') 2 2, crosshair",
+  talk: "url('/cursors/interact.svg') 3 2, pointer",
+};
 
 export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string; charId?: number; channel?: number; onExit: (reason: string, toChannels?: boolean) => void }) {
   const gl = useRef<HTMLCanvasElement>(null);
@@ -82,7 +88,7 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
         if (pinch && touches.size === 2) {
           const [a, b] = [...touches.values()];
           const d = Math.hypot(a.x - b.x, a.y - b.y), ang = Math.atan2(b.y - a.y, b.x - a.x);
-          game.renderer.camZoom = Math.max(0.6, Math.min(2.3, pinch.zoom * (d / Math.max(30, pinch.d))));
+          game.renderer.camZoom = Math.max(CAM_ZOOM_MIN, Math.min(CAM_ZOOM_MAX, pinch.zoom * (d / Math.max(30, pinch.d))));
           game.renderer.camYaw = pinch.yaw - (ang - pinch.a);
         } else if (drag && drag.id === e.pointerId) {
           const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
@@ -98,9 +104,9 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
       const p = pos(e);
       const now = performance.now();
       if (held && game.moveTarget) { const w = game.renderer.screenToWorld(p.x, p.y); game.moveTarget = w; }
-      if (now - lastHover > 80) { lastHover = now; const hit = game.renderer.pickScreen(p.x, p.y); game.hoverId = hit?.e?.id ?? 0; c.style.cursor = hit?.type === 'ent' ? 'crosshair' : hit ? 'pointer' : 'default'; }
+      if (now - lastHover > 80) { lastHover = now; const hit = game.renderer.pickScreen(p.x, p.y); game.hoverId = hit?.e?.id ?? 0; c.style.cursor = hit?.type === 'ent' ? (hit.e?.kind === Kind.PLAYER && !MAPS[game.layout.def.id]?.pvp ? CURSOR.talk : CURSOR.attack) : hit ? CURSOR.talk : CURSOR.base; }
     };
-    const wheel = (e: WheelEvent) => { if (!game) return; e.preventDefault(); game.renderer.camZoom = Math.max(0.6, Math.min(2.3, game.renderer.camZoom * (e.deltaY > 0 ? 0.9 : 1.1))); };
+    const wheel = (e: WheelEvent) => { if (!game) return; e.preventDefault(); game.renderer.camZoom = Math.max(CAM_ZOOM_MIN, Math.min(CAM_ZOOM_MAX, game.renderer.camZoom * (e.deltaY > 0 ? 0.9 : 1.1))); };
     const endTouch = (e: PointerEvent) => { touches.delete(e.pointerId); if (touches.size < 2) pinch = null; };
     const up = (e: PointerEvent) => {
       held = false;
@@ -386,7 +392,8 @@ function Chat() {
   const [text, setText] = useState('');
   const whisperTo = useStore((s) => s.whisperTo);
   const box = useRef<HTMLDivElement>(null);
-  useEffect(() => { box.current?.scrollTo(0, 1e9); }, [msgs.length, tab]);
+  // en yeni mesaj en üstte: yeni mesaj gelince liste başa döner (aşağı kaydırmak gerekmez)
+  useEffect(() => { box.current?.scrollTo(0, 0); }, [msgs.length, tab]);
   const send = () => {
     let t = text.trim();
     if (!t) return;
@@ -397,7 +404,7 @@ function Chat() {
     currentGame?.send({ t: 'chat', ch, text: t });
     setText('');
   };
-  const list = msgs.filter((m) => tab === 'all' || m.ch === tab);
+  const list = msgs.filter((m) => tab === 'all' || m.ch === tab).slice().reverse();
   const names: Record<string, string> = { world: 'Dünya', trade: 'Ticaret', local: 'Bölge', sys: 'Sistem', pm: 'Fısıltı' };
   return (
     <div className={'frame chat' + (chatOpen ? ' open' : '')}>
@@ -546,9 +553,9 @@ function CameraControls({ game }: { game: Game }) {
     <div className="camctl" aria-label="Kamera">
       <button aria-label="Kamerayı sola döndür" {...hold(() => { r.camYaw += 0.035; })}>⟲</button>
       <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
-      <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(2.3, r.camZoom * 1.015); })}>+</button>
-      <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(0.6, r.camZoom / 1.015); })}>−</button>
-      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = CAM_ZOOM_DEFAULT; r.camPitch = 0.62; }}>⌂</button>
+      <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(CAM_ZOOM_MAX, r.camZoom * 1.015); })}>+</button>
+      <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(CAM_ZOOM_MIN, r.camZoom / 1.015); })}>−</button>
+      <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = CAM_ZOOM_DEFAULT; r.camPitch = CAM_PITCH_DEFAULT; }}>⌂</button>
     </div>
   );
 }

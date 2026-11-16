@@ -39,3 +39,22 @@ it('Market: Öz → Mücevher ve Öz ile Kırmızı İksir; yetersiz Öz ve eski
   cmd({ t: 'essx', op: 'potion', n: 5, rate: 20, req: 'a4' });
   expect(p.char.materials.red_potion).toBe(5); expect(p.char.essence).toBe(300);
 });
+
+it('boss: yeterince hasar veren herkes kendi ganimetini alır, çok az vuran almaz', () => {
+  applyTuning(structuredClone(DEFAULT_TUNING));
+  const out: any[] = []; const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m) => out.push(m) });
+  for (const id of [1, 2, 3]) w.join(id, mk(id, 8)); // Pazar Köyü sınırı (Sv. 10) altında
+  const [a, b, c] = [1, 2, 3].map((id) => w.bySid.get(id)!);
+  const z: any = a.zone;
+  const boss = [...(w as any).zones.values()].flatMap((zz: any) => zz.monsterList).find((m: any) => m.def.boss);
+  // bossu oyuncuların bölgesine al
+  boss.zone.removeMonster(boss); z.addMonster(boss); boss.x = a.x + 30; boss.y = a.y; boss.killed = false; boss.hp = boss.maxHp;
+  boss.threat.set(a, boss.maxHp * 0.5); boss.threat.set(b, boss.maxHp * 0.2); boss.threat.set(c, boss.maxHp * 0.01);
+  const lootBefore = z.lootById.size;
+  (w as any).killMonster(boss, c);
+  const owners = new Set([...z.lootById.values()].map((l: any) => l.ownerChar));
+  console.log(`boss ganimeti: ${z.lootById.size - lootBefore} parça, sahipler ${[...owners].join(',')}`);
+  expect(owners.has(1)).toBe(true); expect(owners.has(2)).toBe(true); expect(owners.has(3)).toBe(false);
+  // haftalık canavar sıralaması sayacı
+  expect(a.char.misc.rankKills?.n).toBe(1); expect(c.char.misc.rankKills).toBeUndefined();
+});

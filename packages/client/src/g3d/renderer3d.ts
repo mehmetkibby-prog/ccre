@@ -31,6 +31,9 @@ const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 /** Dokunmatik (telefon/tablet): ekran kartı bant genişliği dar, tam ekran efekt geçişleri pahalı. */
 /** Varsayılan kamera yakınlığı (küçük = uzak). ~17 m: karakter ve çevresi rahat görünür. */
 export const CAM_ZOOM_DEFAULT = 0.85;
+/** varsayılan kamera eğimi (rad): daha tepeden, çevre daha geniş görünsün */
+export const CAM_PITCH_DEFAULT = 0.8;
+export const CAM_ZOOM_MIN = 0.45, CAM_ZOOM_MAX = 2.3;
 const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 /**
  * Telefonda karakter/canavar gerçek gölge düşürmez, yumuşak zemin gölgesi kullanır. Gölge haritasında
@@ -82,7 +85,7 @@ const _footP = new THREE.Vector3();
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(30, 1, 0.5, 260);
+  camera = new THREE.PerspectiveCamera(MOBILE ? 34 : 38, 1, 0.5, 260);
   composer: EffectComposer | null = null;
   bloom: UnrealBloomPass | null = null;
   sun = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -109,7 +112,7 @@ export class Renderer3D {
   private fishGears = new Map<View, { gear: FishGear; wx: number; wz: number; at: number; seen: number }>();
   private propsGroup: THREE.Group | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
-  camYaw = 0; camZoom = CAM_ZOOM_DEFAULT; camPitch = 0.62; private camYawS = 0; private camZoomS = CAM_ZOOM_DEFAULT; private camPitchS = 0.62;
+  camYaw = 0; camZoom = CAM_ZOOM_DEFAULT; camPitch = CAM_PITCH_DEFAULT; private camYawS = 0; private camZoomS = CAM_ZOOM_DEFAULT; private camPitchS = CAM_PITCH_DEFAULT;
   /** Dinamik çözünürlük: FPS düşünce piksel oranı kendiliğinden azalır. */
   private frameNo = 0;
   /** sabit çözünürlük ölçeği (giriş videosu kaydı); null: kare hızına göre uyarlanır */
@@ -835,10 +838,10 @@ export class Renderer3D {
     let dy = this.camYaw - this.camYawS; while (dy > Math.PI) dy -= Math.PI * 2; while (dy < -Math.PI) dy += Math.PI * 2;
     this.camYawS += dy * Math.min(1, dt / 90);
     this.camZoomS += (this.camZoom * zoom - this.camZoomS) * Math.min(1, dt / 110);
-    const zk = THREE.MathUtils.clamp((this.camZoomS - 0.6) / 1.7, 0, 1); // 0 uzak · 1 yakın
+    const zk = THREE.MathUtils.clamp((this.camZoomS - CAM_ZOOM_MIN) / (CAM_ZOOM_MAX - CAM_ZOOM_MIN), 0, 1); // 0 uzak · 1 yakın
     this.camPitch = THREE.MathUtils.clamp(this.camPitch, 0.1, 1.3);
     this.camPitchS += (this.camPitch - this.camPitchS) * Math.min(1, dt / 90);
-    const dist = co ? co.dist : THREE.MathUtils.lerp(19, 5.5, zk);
+    const dist = co ? co.dist : THREE.MathUtils.lerp(27, 5.5, zk);
     const pitch = co ? co.pitch : this.camPitchS;
     let sx = 0, sy = 0;
     if (this.shakeAmt > 0.002) { sx = (Math.random() - 0.5) * this.shakeAmt; sy = (Math.random() - 0.5) * this.shakeAmt; this.shakeAmt *= Math.pow(0.003, dt / 1000); }

@@ -420,7 +420,7 @@ export class Game {
             if (combo === 2) this.fx.burst(ev.x, ev.y, 0.1, 14, '#d9c7a1', 2, 500, 0.2, 1);
           }, MELEE_IMPACT_MS - 40);
         }
-        if (clsIdx === 0 && skill === 1 && ev.tgt) { const te = this.ents.get(ev.tgt); if (te && te.kind === Kind.MONSTER && !MONSTERS[te.tpl]?.boss) te.slide = { x0: te.x, y0: te.y, t0: now + 120 }; }
+        if (clsIdx === 0 && skill === 1 && ev.tgt) { const te = this.ents.get(ev.tgt); if (te && ((te.kind === Kind.MONSTER && !MONSTERS[te.tpl]?.boss) || te.kind === Kind.PLAYER)) te.slide = { x0: te.x, y0: te.y, t0: now + 120 }; }
         // ekran dışındaki uzak oyuncuların becerileri çizilmez (kalabalıkta gereksiz yük olmasın)
         if (skill > 0 && skill < 9 && clsIdx >= 0 && (isSelf || ev.tgt === this.selfId || Math.hypot(sp.x - this.dx, sp.y - this.dy) < 1500)) {
           this.fx.sk.play({

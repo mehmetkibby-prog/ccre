@@ -1373,3 +1373,8 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 }
 .tr-pickbar { position: fixed; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 1001; display: flex; gap: 8px; }
 .tr-it em { cursor: pointer; }
+
+/* oyuna özgü imleç: oyun ekranı ve arayüz (dokunmatik cihazlarda etkisiz) */
+.hud, .hud *, canvas.gl, .screen, .overlay { cursor: url('/cursors/arrow.svg') 3 2, default; }
+.hud button, .hud a, .hud [role=button], .hud select, .hud label, .screen button, .overlay button, .pm-env, .drop-q { cursor: url('/cursors/interact.svg') 3 2, pointer; }
+.hud input, .hud textarea, .screen input { cursor: text; }

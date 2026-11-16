@@ -722,6 +722,13 @@ export class World {
           target.x = np.x; target.y = np.y; z.monsters.move(target); target.dirty |= Upd.POS;
           target.stunUntil = this.now + 600;
         }
+        // oyuncu (PvP izni olan yerde: düello, arena, açık PvP bölgesi): zincirle önüne çekilir, kısa sersemler
+        if (sk.kind === 'pull' && target instanceof Player && target !== p) {
+          const a = Math.atan2(target.y - p.y, target.x - p.x);
+          const np = nearestFree(z.layout, p.x + Math.cos(a) * 70, p.y + Math.sin(a) * 70);
+          target.x = np.x; target.y = np.y; z.players.move(target); target.dirty |= Upd.POS;
+          target.inputs.length = 0; target.stunUntil = Math.max(target.stunUntil, this.now + 600);
+        }
         if (sk.kind === 'dash') {
           const a = Math.atan2(target.y - p.y, target.x - p.x);
           const np = nearestFree(z.layout, target.x - Math.cos(a) * 60, target.y - Math.sin(a) * 60);
@@ -797,16 +804,27 @@ export class World {
     m.hp = 0; m.state = MState.DEAD; m.anim = Anim.DEAD; m.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS;
     m.deadAt = this.now; m.removeAt = this.now + 1600; m.telegraphs.length = 0;
     z.emit(m.x, m.y, { e: Ev.DEATH, id: m.id, killer: killer.id });
-    // ödül: en çok hasar veren (boss) ya da öldüren
+    // ödül: boss'ta yeterince hasar veren HERKES kendi ganimetini alır (bossun canının en az bossShareMin %'si);
+    // duyuruda en çok hasar veren anılır. Normal canavarda öldüren.
     let owner = killer;
-    if (m.def.boss) { let top = 0; for (const [p, v] of m.threat) if (v > top && z.playerSet.has(p)) { top = v; owner = p; } }
+    if (m.def.boss) {
+      let top = 0; for (const [p, v] of m.threat) if (v > top && z.playerSet.has(p)) { top = v; owner = p; }
+      const min = m.maxHp * (TUNING.bossShareMin ?? 3) / 100;
+      const got = new Set<Player>();
+      for (const [p, v] of m.threat) if (z.playerSet.has(p) && !p.dead && (v >= min || p === owner)) got.add(p);
+      if (!got.size) got.add(killer);
+      m.threat.clear(); m.target = null;
+      for (const p of got) { this.rewardKill(p, m); if (p !== owner) this.notice(p, `${m.def.name} düştü: katkın için ganimet kazandın!`, 'ok'); }
+      this.bossDied(m, owner);
+      return;
+    }
     m.threat.clear(); m.target = null;
     this.rewardKill(owner, m);
-    if (m.def.boss) this.bossDied(m, owner);
   }
 
   private rewardKill(p: Player, m: Monster) {
     const c = p.char;
+    const lvl0 = c.level; // öldürme anındaki seviye (TP ile seviye atlamadan önce): bölge sınırı buna göre
     const lvMod = (lv: number) => { const df = lv - m.level; return df > 5 ? Math.max(0.1, 1 - (df - 5) * 0.12) : df < -3 ? 1.2 : 1; };
     const mod = lvMod(c.level);
     const bf = charBuffs(c.misc.buffs, this.now);
@@ -817,12 +835,17 @@ export class World {
     const day = trDayKey(this.now);
     if (!c.misc.dailyKills || c.misc.dailyKills.day !== day) c.misc.dailyKills = { day, n: 0 };
     c.misc.dailyKills.n++;
+    // canavar sıralaması (dönemlik yarış): dönem değişince önceki dönemin sayısı prev'e geçer (ödül hesabı için)
+    const rk = trPeriod(this.now, TUNING.killRank.period).key;
+    const rkc = c.misc.rankKills;
+    if (!rkc || rkc.k !== rk) c.misc.rankKills = { k: rk, n: 0, ...(rkc ? { prev: { k: rkc.k, n: rkc.n } } : {}) };
+    c.misc.rankKills!.n++;
     const w = c.equip.weapon;
     if (w) w.kills = (w.kills ?? 0) + 1;
     // ganimet tablosu: harita profili → bölge ayarı → canavar türü ayarı (istemcideki "?" penceresiyle aynı hesap)
     const prof = resolveLoot(TUNING, p.zone.id, p.zone.def.theme, m.def.id, (id) => MATERIAL.has(id));
     // bölge seviye sınırı: haritanın üst sınırını aşan oyuncuya eşya/malzeme düşmesi çok azalır
-    const over = overLevelMul(prof, c.level);
+    const over = overLevelMul(prof, lvl0);
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
     const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul * (1 + bf.essPct / 100));

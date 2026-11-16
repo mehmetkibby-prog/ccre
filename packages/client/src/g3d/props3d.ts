@@ -194,12 +194,15 @@ const B: Partial<Record<PropKind, Builder>> = {
     parts.push({ g: at(box(1.6, 0.2, 0.7, 1), 0, 0.1, fz + 0.4), m: 'stonewall' });
     // pencereler
     const win = (x: number, y: number, z: number, ry = 0, w = 0.9, h = 0.95) => {
-      parts.push({ g: at(box(w, h, 0.08), x, y, z, 0, ry, 0), m: 'glass_warm' });
-      const fz3 = 0.07;
-      parts.push({ g: at(box(w + 0.2, 0.12, 0.16, 0.6), x, y + h / 2, z, 0, ry), m: 'timber' });
-      parts.push({ g: at(box(w + 0.3, 0.14, 0.3, 0.6), x, y - h / 2 - 0.05, z, 0, ry), m: 'timber' });
-      parts.push({ g: at(box(0.08, h, 0.12, 0.6), x, y, z + fz3 * 0, 0, ry), m: 'timber' });
-      parts.push({ g: at(box(w, 0.07, 0.1, 0.6), x, y, z, 0, ry), m: 'timber' });
+      // Kayıtlar ve çerçeve kalın (≥12 cm) ve camın belirgin önünde: uzaktan / kenar yumuşatmasız (düşük kalite,
+      // ısınma modu) ekranda pikselden ince kalıp kamera kıpırdadıkça yanıp sönmesinler.
+      parts.push({ g: at(box(w, h, 0.06), x, y, z - 0.01, 0, ry, 0), m: 'glass_warm' });
+      parts.push({ g: at(box(w + 0.24, 0.16, 0.18, 0.6), x, y + h / 2, z + 0.02, 0, ry), m: 'timber' });
+      parts.push({ g: at(box(w + 0.32, 0.16, 0.3, 0.6), x, y - h / 2 - 0.05, z + 0.02, 0, ry), m: 'timber' });
+      parts.push({ g: at(box(0.14, h + 0.1, 0.18, 0.6), x - w / 2 - 0.05, y, z + 0.02, 0, ry), m: 'timber' });
+      parts.push({ g: at(box(0.14, h + 0.1, 0.18, 0.6), x + w / 2 + 0.05, y, z + 0.02, 0, ry), m: 'timber' });
+      parts.push({ g: at(box(0.12, h, 0.12, 0.6), x, y, z + 0.04, 0, ry), m: 'timber' });
+      parts.push({ g: at(box(w, 0.11, 0.1, 0.6), x, y, z + 0.035, 0, ry), m: 'timber' });
     };
     win(-W / 3, 0.6 + 1.45, fz + 0.02); win(W / 3, 0.6 + 1.45, fz + 0.02);
     win(-W / 4 - 0.4, 0.6 + H1 + 1.15, fz2 + 0.02, 0, 0.8, 0.8); win(W / 4 + 0.4, 0.6 + H1 + 1.15, fz2 + 0.02, 0, 0.8, 0.8);

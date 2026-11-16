@@ -112,14 +112,14 @@ const COLUMN_FS = `uniform sampler2D uNoise; uniform vec3 uColor; uniform float 
   void main(){
     float n = texture2D(uNoise, vec2(vUv.x * 2.0, vUv.y * 0.7 - uTime * 1.6)).r;
     float n2 = texture2D(uNoise, vec2(vUv.x * 3.0 + 0.3, vUv.y * 1.1 - uTime * 2.3)).r;
-    float edge = pow(1.0 - abs(dot(vN, vV)), 1.4);
-    float v = smoothstep(0.0, 0.08, vUv.y) * pow(1.0 - vUv.y, 1.5);
+    float edge = pow(max(0.0, 1.0 - abs(dot(vN, vV))), 1.4);
+    float v = smoothstep(0.0, 0.08, vUv.y) * pow(max(0.0, 1.0 - vUv.y), 1.5);
     float a = (0.15 + 0.85 * n * n2 + 0.5 * edge) * v * uFade;
     gl_FragColor = vec4(uColor * a * 1.05 + vec3(a * 0.1), a);
   }`;
 const DOME_FS = `uniform vec3 uColor; uniform float uTime; uniform float uFade; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
   void main(){
-    float f = pow(1.0 - abs(dot(vN, vV)), 2.2);
+    float f = pow(max(0.0, 1.0 - abs(dot(vN, vV))), 2.2);
     vec2 g = vec2(vUv.x * 18.0, vUv.y * 10.0);
     vec2 h = abs(fract(g + vec2(0.5 * floor(g.y), 0.0)) - 0.5);
     float hex = smoothstep(0.42, 0.5, max(h.x, h.y));

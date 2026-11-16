@@ -23,6 +23,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['monsterHpMul', 'Canavar canı', ''],
     ['monsterAtkMul', 'Canavar saldırısı', ''],
     ['respawnMul', 'Yeniden doğma süresi', '0,5 = iki kat hızlı doğar'],
+    ['bossShareMin', 'Boss ganimeti için en az hasar (%)', 'Bossun canının bu yüzdesi kadar vuran herkes kendi ganimetini alır'],
   ] },
   { title: 'Dünya Sağlığı', note: 'Sağlık zamanla azalır, oyuncuların Öz bağışıyla artar. Anlık değeri Durum sekmesinden ayarlayabilirsin.', items: [
     ['worldDecayMul', 'Azalma hızı', '1 = günde yaklaşık %26 · 0 = hiç azalmaz'],
@@ -41,7 +42,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
   ] },
 ];
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
-const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
+const fmt = (k: NumKey, v: number) => (k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'bossShareMin' ? '%' + v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) : k === 'essxEss' || k === 'potionEss' ? Math.round(v) + ' Öz' : k === 'essxGems' ? Math.round(v) + ' Mücevher' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];
