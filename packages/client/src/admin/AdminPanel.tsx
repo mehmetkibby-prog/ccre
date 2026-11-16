@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
   ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
-  transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
+  ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -13,6 +13,11 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['gemMul', 'Mücevher çarpanı', 'Canavardan düşen mücevher'],
     ['essenceMul', 'Öz çarpanı', 'Canavardan düşen Öz (Dünya Sağlığı bağışı için)'],
     ['dropMul', 'Eşya ve malzeme düşme', 'Ekipman ve malzeme düşme şansı'],
+  ] },
+  { title: 'Market (Öz)', note: 'Oyuncular Market düğmesinden Öz bozdurur ve Kırmızı İksir alır. Kırmızı İksir başka yerde satılmaz.', items: [
+    ['essxEss', 'Bozdurulan Öz', 'Bu kadar Öz …'],
+    ['essxGems', '… şu kadar Mücevhere dönüşür', 'Varsayılan: 200 Öz = 15 Mücevher'],
+    ['potionEss', 'Kırmızı İksir fiyatı (Öz)', 'Bir iksir'],
   ] },
   { title: 'Canavarlar', note: 'Can ve saldırı, yeni doğan canavarlara uygulanır.', items: [
     ['monsterHpMul', 'Canavar canı', ''],
@@ -160,6 +165,97 @@ export function RarityTable({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: 
         ))}</tbody>
       </table></div>
     </section>
+  );
+}
+
+/**
+ * Bölge ganimeti: haritadaki bütün canavarların ortak tablosu (ekipman şansı, nadirlik, mücevher/öz, malzemeler,
+ * özel düşenler) ve seviye sınırı (üstündeki oyuncuya düşme çarpanı). Canavara özel ayar varsa onun üstüne yazar.
+ */
+const LOOT_MAPS = () => Object.values(MAPS).filter((m) => m.spawns.length);
+export function ZoneLootTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const maps = LOOT_MAPS();
+  const [id, setId] = useState(maps[0]?.id ?? 'bazaar');
+  const [showAll, setShowAll] = useState(false);
+  const def = MAPS[id];
+  const prof = LOOT_PROFILES[def.theme] ?? LOOT_PROFILES[id] ?? LOOT_PROFILES.forest;
+  const z: ZoneLootTune = t.zoneLoot?.[id] ?? {};
+  const setZ = (p: Partial<ZoneLootTune>) => {
+    const n = { ...z, ...p } as Record<string, unknown>;
+    for (const k of Object.keys(n)) if (n[k] === undefined) delete n[k];
+    const all = { ...(t.zoneLoot ?? {}) };
+    if (Object.keys(n).length) all[id] = n as ZoneLootTune; else delete all[id];
+    setT({ ...t, zoneLoot: all });
+  };
+  const chance = z.equipChance ?? prof.equipChance;
+  const rw = (z.rarity ?? prof.rarityWeights) as Record<string, number>;
+  const wsum = RARITIES.reduce((a, r) => a + (rw[r] ?? 0) * (t.rarityDrop[r] ?? 1), 0);
+  const odds = (p: number) => (p <= 0 ? '—' : `≈ her ${fmtN(Math.max(1, 1 / p), 0)} öldürmede 1`);
+  const cap = z.maxLevel ?? ZONE_LEVEL_CAP[id] ?? 0, overMul = z.overMul ?? OVER_LEVEL_MUL;
+  const monsters = [...new Set(def.spawns.map((g) => g.monster))].map((mid) => MONSTERS.find((m) => m.id === mid)?.name ?? mid);
+  const custom = (mid: string) => !!(t.zoneLoot?.[mid] && Object.keys(t.zoneLoot[mid]).length);
+  return (
+    <>
+      <section className="admin-sec">
+        <h4>Bölge seç</h4>
+        <div className="row wrap">{maps.map((m) => <button key={m.id} className={'btn small' + (m.id === id ? ' primary' : '')} onClick={() => setId(m.id)}>{m.name}{custom(m.id) ? ' •' : ''}</button>)}</div>
+        <div className="muted adm-hint" style={{ marginTop: 6 }}>{def.name} canavarları: {monsters.join(', ')}. Buradaki ayarlar bölgedeki bütün canavarlara uygulanır; boş kutu = varsayılan. Agresif canavar 1,35 kat, katil 2,4 kat daha çok bırakır; genel düşme çarpanı ({fmtN(t.dropMul)}×) da uygulanır. Oyuncular canavara tıklayıp "?" ile bu listeyi anında görür.</div>
+      </section>
+      <section className="admin-sec">
+        <h4>Seviye sınırı</h4>
+        <div className="muted adm-hint">Bu seviyenin üstündeki oyuncular {def.name}'nde çok az eşya ve malzeme alır (mücevher ve öz etkilenmez). 0 = sınır yok.</div>
+        <div className="adm-fields">
+          <label><span>En yüksek seviye</span><Num v={z.maxLevel} def={ZONE_LEVEL_CAP[id] ?? 0} min={0} max={120} step={1} w={80} dis={dis} on={(v) => setZ({ maxLevel: v })} /></label>
+          <label><span>Sınır üstü düşme (%)</span><Num v={z.overMul === undefined ? undefined : +(z.overMul * 100).toFixed(2)} def={OVER_LEVEL_MUL * 100} min={0} max={100} step={1} w={80} dis={dis} on={(v) => setZ({ overMul: v === undefined ? undefined : v / 100 })} /></label>
+        </div>
+        <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>{cap > 0 ? `Sv. ${cap + 1} ve üstü: düşme şansları %${fmtN(overMul * 100, 1)} oranına iner.` : 'Bu bölgede seviye sınırı yok.'}</div>
+      </section>
+      <section className="admin-sec">
+        <h4>Ekipman düşmesi</h4>
+        <label className="admin-row"><span className="lab"><b>Düşme şansı (%)</b><small>{odds(chance * t.dropMul)} (normal canavar)</small></span>
+          <Num v={z.equipChance === undefined ? undefined : +(z.equipChance * 100).toFixed(3)} def={prof.equipChance * 100} min={0} max={100} on={(v) => setZ({ equipChance: v === undefined ? undefined : v / 100 })} dis={dis} /><span /></label>
+        <div className="adm-fields six">
+          {RARITIES.map((r) => {
+            const share = wsum > 0 ? ((rw[r] ?? 0) * (t.rarityDrop[r] ?? 1)) / wsum : 0;
+            return <label key={r}><span style={{ color: RARITY[r].color }}>{RARITY[r].name} <small className="muted">%{fmtN(share * 100, 1)}</small></span><Num v={z.rarity?.[r]} def={(prof.rarityWeights as Record<string, number>)[r] ?? 0} min={0} max={10000} step={1} w={70} dis={dis} on={(v) => { const n = { ...(z.rarity ?? (prof.rarityWeights as Record<string, number>)) }; if (!v) delete n[r]; else n[r] = v; setZ({ rarity: Object.keys(n).length ? n : undefined }); }} /></label>;
+          })}
+        </div>
+      </section>
+      <section className="admin-sec">
+        <h4>Mücevher ve Öz (öldürme başına)</h4>
+        <div className="adm-fields">
+          {(['gems', 'essence'] as const).map((k) => (
+            <React.Fragment key={k}>
+              <label><span>{k === 'gems' ? 'Mücevher' : 'Öz'} en az</span><Num v={z[k]?.[0]} def={prof[k][0]} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setZ({ [k]: v === undefined && !z[k] ? undefined : [v ?? prof[k][0], Math.max(v ?? 0, (z[k] ?? prof[k])[1])] } as Partial<ZoneLootTune>)} /></label>
+              <label><span>{k === 'gems' ? 'Mücevher' : 'Öz'} en çok</span><Num v={z[k]?.[1]} def={prof[k][1]} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setZ({ [k]: v === undefined && !z[k] ? undefined : [Math.min(v ?? 0, (z[k] ?? prof[k])[0]), v ?? prof[k][1]] } as Partial<ZoneLootTune>)} /></label>
+            </React.Fragment>
+          ))}
+        </div>
+      </section>
+      <section className="admin-sec">
+        <h4>Malzemeler</h4>
+        <div className="adm-table-wrap"><table className="adm-table">
+          <thead><tr><th>Malzeme</th><th>Şans (%)</th><th>Zorluk</th></tr></thead>
+          <tbody>{MATERIALS.map((md) => {
+            const dv = prof.materials.find((x) => x.id === md.id)?.chance ?? 0;
+            const cur = z.mats?.[md.id] ?? dv;
+            if (!dv && z.mats?.[md.id] === undefined && !showAll) return null;
+            return (
+              <tr key={md.id}>
+                <td><b style={{ color: md.color }}>{md.name}</b></td>
+                <td><Num v={z.mats?.[md.id] === undefined ? undefined : +(z.mats[md.id] * 100).toFixed(3)} def={dv * 100} min={0} max={100} on={(v) => { const mats = { ...(z.mats ?? {}) }; if (v === undefined) delete mats[md.id]; else mats[md.id] = v / 100; setZ({ mats: Object.keys(mats).length ? mats : undefined }); }} dis={dis} w={64} /></td>
+                <td><small>{odds(cur * t.dropMul)}</small></td>
+              </tr>
+            );
+          })}</tbody>
+        </table></div>
+        <button className="btn small ghost" style={{ marginTop: 6 }} onClick={() => setShowAll(!showAll)}>{showAll ? 'Yalnız düşenleri göster' : 'Bütün malzemeleri göster'}</button>
+      </section>
+      <section className="admin-sec">
+        <h4>Özel düşenler (bölgedeki her canavar)</h4>
+        <DropListEditor drops={z.drops ?? []} setDrops={(n) => setZ({ drops: n.length ? n : undefined })} dis={dis} empty="Özel düşen yok. Eşya, malzeme ya da Nesne Market ürünü ekleyebilirsin." />
+      </section>
+    </>
   );
 }
 
@@ -631,31 +727,37 @@ export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: S
             {RARITIES.map((r) => <label key={r}><span style={{ color: RARITY[r].color }}>{RARITY[r].name}</span><Num v={m.rarity?.[r]} def={rw[r] ?? 0} min={0} max={10000} step={1} w={70} dis={dis} on={(v) => { const n = { ...(m.rarity ?? {}) }; if (v === undefined) delete n[r]; else n[r] = v; setMon(d.id, { rarity: Object.keys(n).length ? n : undefined }); }} /></label>)}
           </div>
           <div className="sect" style={{ marginTop: 14 }}>Özel düşenler</div>
-          <div className="drop-list">
-            {drops.map((x, i) => {
-              const upd = (p: Partial<DropTune>) => setDrops(drops.map((y, j) => (j === i ? { ...y, ...p } : y)));
-              return (
-                <div className="drop-row" key={i}>
-                  <select className="adm-sel" value={x.kind} disabled={dis} onChange={(e) => { const k = e.target.value as DropTune['kind']; upd({ kind: k, key: dropOptions(k)[0]?.[0] ?? '', rarity: k === 'item' ? 'blue' : undefined }); }}>
-                    {(Object.keys(KIND_NAMES) as DropTune['kind'][]).map((k) => <option key={k} value={k}>{KIND_NAMES[k]}</option>)}
-                  </select>
-                  <select className="adm-sel grow" value={x.key} disabled={dis} onChange={(e) => upd({ key: e.target.value })}>{dropOptions(x.kind).map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
-                  {x.kind === 'item' && <select className="adm-sel" value={x.rarity ?? 'blue'} disabled={dis} onChange={(e) => upd({ rarity: e.target.value })}>{RARITIES.map((r) => <option key={r} value={r}>{RARITY[r].name}</option>)}</select>}
-                  <label className="adm-inline"><span>%</span><Num v={Math.round(x.chance * 10000) / 100} def={0} min={0} max={100} step={0.1} w={70} dis={dis} on={(v) => upd({ chance: (v ?? 0) / 100 })} /></label>
-                  <label className="adm-inline"><span>Adet</span><Num v={x.qty[0]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [v ?? 1, Math.max(v ?? 1, x.qty[1])] })} /><span>–</span><Num v={x.qty[1]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [Math.min(x.qty[0], v ?? 1), v ?? 1] })} /></label>
-                  <button className="btn small ghost danger" disabled={dis} onClick={() => setDrops(drops.filter((_, j) => j !== i))} aria-label="Sil">✕</button>
-                </div>
-              );
-            })}
-            {!drops.length && <div className="muted" style={{ fontSize: 12 }}>Özel düşen yok. Boss yalnız mücevher, öz ve ekipman bırakır.</div>}
-            <button className="btn small" disabled={dis} onClick={() => setDrops([...drops, { kind: 'mat', key: 'mastery_seal', chance: 0.25, qty: [1, 1] }])}>+ Düşen ekle</button>
-          </div>
+          <DropListEditor drops={drops} setDrops={setDrops} dis={dis} empty="Özel düşen yok. Boss yalnız mücevher, öz ve ekipman bırakır." />
         </section>
       );
     })}</>
   );
 }
 const TUNING_DEF = (t: GameTuning, k: 'monsterHpMul' | 'monsterAtkMul') => t[k] ?? 1;
+/** Özel düşen listesi (eşya / malzeme / market ürünü, şans, adet). */
+export function DropListEditor({ drops, setDrops, dis, empty }: { drops: DropTune[]; setDrops: (n: DropTune[]) => void; dis: boolean; empty: string }) {
+  return (
+          <div className="drop-list">
+      {drops.map((x, i) => {
+        const upd = (p: Partial<DropTune>) => setDrops(drops.map((y, j) => (j === i ? { ...y, ...p } : y)));
+        return (
+          <div className="drop-row" key={i}>
+            <select className="adm-sel" value={x.kind} disabled={dis} onChange={(e) => { const k = e.target.value as DropTune['kind']; upd({ kind: k, key: dropOptions(k)[0]?.[0] ?? '', rarity: k === 'item' ? 'blue' : undefined }); }}>
+              {(Object.keys(KIND_NAMES) as DropTune['kind'][]).map((k) => <option key={k} value={k}>{KIND_NAMES[k]}</option>)}
+            </select>
+            <select className="adm-sel grow" value={x.key} disabled={dis} onChange={(e) => upd({ key: e.target.value })}>{dropOptions(x.kind).map(([id, n]) => <option key={id} value={id}>{n}</option>)}</select>
+            {x.kind === 'item' && <select className="adm-sel" value={x.rarity ?? 'blue'} disabled={dis} onChange={(e) => upd({ rarity: e.target.value })}>{RARITIES.map((r) => <option key={r} value={r}>{RARITY[r].name}</option>)}</select>}
+            <label className="adm-inline"><span>%</span><Num v={Math.round(x.chance * 10000) / 100} def={0} min={0} max={100} step={0.1} w={70} dis={dis} on={(v) => upd({ chance: (v ?? 0) / 100 })} /></label>
+            <label className="adm-inline"><span>Adet</span><Num v={x.qty[0]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [v ?? 1, Math.max(v ?? 1, x.qty[1])] })} /><span>–</span><Num v={x.qty[1]} def={1} min={1} max={9999} step={1} w={56} dis={dis} on={(v) => upd({ qty: [Math.min(x.qty[0], v ?? 1), v ?? 1] })} /></label>
+            <button className="btn small ghost danger" disabled={dis} onClick={() => setDrops(drops.filter((_, j) => j !== i))} aria-label="Sil">✕</button>
+          </div>
+        );
+      })}
+      {!drops.length && <div className="muted" style={{ fontSize: 12 }}>{empty}</div>}
+      <button className="btn small" disabled={dis} onClick={() => setDrops([...drops, { kind: 'mat', key: 'mastery_seal', chance: 0.25, qty: [1, 1] }])}>+ Düşen ekle</button>
+    </div>
+  );
+}
 
 // ═══════════════════════ Balıkçılık ═══════════════════════
 export function FishingTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {

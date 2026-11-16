@@ -1,8 +1,9 @@
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
-import { MallButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
+import { onConfig } from '../admin/config.ts';
+import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, type ClassId, type ItemInstance } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
 import { Game } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -130,7 +131,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <XpLine />
       <AnnouncementBar />
       <Minimap game={game} />
-      <div className="tr-btns"><MallButton /><AutoButton /><BossButton /><FullscreenButton /></div>
+      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
       <BossCountdowns game={game} />
@@ -165,6 +166,8 @@ function ConnStatus() {
 
 function TopBar() {
   const t = useStore((s) => s.target);
+  const [dropOpen, setDropOpen] = useState(false);
+  useEffect(() => { setDropOpen(false); }, [t?.id]);
   const wh = useStore((s) => s.worldHealth);
   return (
     <div className="topbar">
@@ -178,12 +181,54 @@ function TopBar() {
         <div className="frame target">
           <div className="gem"><b>{t.level}</b></div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="row"><span className="nm" style={{ color: t.variant === 2 ? '#ff7a8a' : t.variant === 1 ? '#ffc070' : '#eef2fa' }}>{t.variant === 2 ? 'Katil ' : t.variant === 1 ? 'Agresif ' : ''}{t.name}</span></div>
+            <div className="row"><span className="nm" style={{ color: t.variant === 2 ? '#ff7a8a' : t.variant === 1 ? '#ffc070' : '#eef2fa' }}>{t.variant === 2 ? 'Katil ' : t.variant === 1 ? 'Agresif ' : ''}{t.name}</span>
+              {t.kind === Kind.MONSTER && t.tpl !== undefined && <button className="drop-q" title="Bu canavardan ne düşer?" onPointerDown={(e) => { e.stopPropagation(); setDropOpen((o) => !o); }}>?</button>}</div>
             <div className="bar"><i style={{ width: `${Math.max(0, (t.hp / Math.max(1, t.maxHp)) * 100)}%` }} /></div>
             <div className="hpt">{t.hp.toLocaleString('tr-TR')} / {t.maxHp.toLocaleString('tr-TR')}</div>
           </div>
+          {dropOpen && t.kind === Kind.MONSTER && t.tpl !== undefined && <DropInfo tpl={t.tpl} variant={t.variant} onClose={() => setDropOpen(false)} />}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * Canavarın düşme listesi: yönetim panelindeki güncel ayarlar (bölge + canavar türü) ikonlarıyla. Sunucunun
+ * kullandığı tabloyla aynı fonksiyondan hesaplanır; oyuncu bölgenin seviye sınırını aşmışsa uyarı gösterilir.
+ */
+function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onClose: () => void }) {
+  const map = useStore((s) => s.map);
+  const lvl = useStore((s) => s.self?.level ?? 1);
+  const [, force] = useState(0);
+  useEffect(() => onConfig(() => force((n) => n + 1)), []);
+  const def = MONSTERS[tpl];
+  if (!def) return null;
+  const theme = MAPS[map]?.theme ?? 'forest';
+  const r = resolveLoot(TUNING, map, theme, def.id, (id) => MATERIAL.has(id));
+  const over = overLevelMul(r, lvl);
+  const vm = VARIANT_LOOT_MULT[variant] ?? 1;
+  const pct = (x: number) => { const v = Math.min(1, x) * 100; return v >= 10 ? `%${v.toFixed(0)}` : v >= 1 ? `%${v.toFixed(1)}` : `%${v.toFixed(2)}`; };
+  const rw = Object.entries(r.rarityWeights).filter(([, w]) => (w ?? 0) > 0) as [string, number][];
+  const rTot = rw.reduce((a, [, w]) => a + w, 0) || 1;
+  const dropIcon = (d: { kind: string; key: string; rarity?: string }) => d.kind === 'item' ? iconUrl(ITEM_TPL.get(d.key)?.icon ?? 'sword', RARITIES.indexOf((d.rarity ?? 'blue') as never)) : d.kind === 'mall' ? iconUrl(mallIcon(d.key)) : iconUrl(MATERIAL.get(d.key)?.icon ?? 'dust');
+  const dropName = (d: { kind: string; key: string; rarity?: string }) => d.kind === 'item' ? `${ITEM_TPL.get(d.key)?.name ?? d.key}${d.rarity ? ` (${RARITY[d.rarity as keyof typeof RARITY]?.name ?? d.rarity})` : ''}` : d.kind === 'mall' ? MALL.get(d.key)?.name ?? d.key : MATERIAL.get(d.key)?.name ?? d.key;
+  return (
+    <div className="drop-info" onPointerDown={(e) => e.stopPropagation()}>
+      <div className="di-head"><b>{def.name}</b> · düşenler<button className="x" onClick={onClose}>✕</button></div>
+      {over < 1 && <div className="di-warn">Bu bölge Sv. {r.maxLevel}'e kadar: senin seviyende düşme şansı {pct(over)} oranına iner.</div>}
+      <div className="di-row cur"><img src={iconUrl('gem')} alt="" /><span>Mücevher</span><b>{Math.round(r.gems[0] * vm)}–{Math.round(r.gems[1] * vm)}</b></div>
+      {r.essence[1] > 0 && <div className="di-row cur"><img src={iconUrl('essence')} alt="" /><span>Öz</span><b>{Math.round(r.essence[0] * vm)}–{Math.round(r.essence[1] * vm)}</b></div>}
+      {r.equipChance > 0 && (
+        <div className="di-row"><img src={iconUrl('sword', 1)} alt="" /><span>Ekipman<small>{rw.map(([k, w]) => `${RARITY[k as keyof typeof RARITY]?.name ?? k} ${Math.round(w / rTot * 100)}%`).join(' · ')}</small></span><b>{pct(r.equipChance * vm * over * TUNING.dropMul)}</b></div>
+      )}
+      {r.materials.map((m) => (
+        <div key={m.id} className="di-row"><img src={iconUrl(MATERIAL.get(m.id)?.icon ?? 'dust')} alt="" /><span>{MATERIAL.get(m.id)?.name ?? m.id}{m.qty[1] > 1 && <small>{m.qty[0]}–{m.qty[1]} adet</small>}</span><b>{pct(m.chance * vm * over * TUNING.dropMul)}</b></div>
+      ))}
+      {r.drops.map((d, i) => (
+        <div key={'d' + i} className="di-row special"><img src={dropIcon(d)} alt="" /><span>{dropName(d)}{d.qty[1] > 1 && <small>{d.qty[0]}–{d.qty[1]} adet</small>}</span><b>{pct(d.chance * over)}</b></div>
+      ))}
+      {variant > 0 && <div className="di-note">{variant === 2 ? 'Katil' : 'Agresif'} canavar: şanslar ×{vm}</div>}
     </div>
   );
 }

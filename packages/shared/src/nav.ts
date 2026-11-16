@@ -1,4 +1,4 @@
-import type { MapLayout } from '@col/shared';
+import type { MapLayout } from './mapgen.ts';
 
 /**
  * Canavar yol bulma: karo ızgarasında (64 px) A*.

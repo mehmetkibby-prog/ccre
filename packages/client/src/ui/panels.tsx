@@ -6,7 +6,7 @@ import {
   transformConf, transformGroup, classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
-import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel } from './extras.tsx';
+import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
 import { FriendsPanel, MountPanel } from './social.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
@@ -51,6 +51,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'auto' && <AutoPanel game={game} />}
       {p === 'friends' && <FriendsPanel />}
       {p === 'mount' && <MountPanel />}
+      {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
@@ -576,6 +577,12 @@ function Shop({ game }: { game: Game }) {
   const shop = SHOPS[shopId];
   return (
     <Panel title={shop.name} width={560}>
+      {!shop.products.length && (
+        <div className="essm-card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: 14, marginBottom: 8 }}>Kırmızı İksir artık <b>Market</b>'te Öz ile satılıyor.</div>
+          <button className="btn primary" onClick={() => store.set({ panel: 'essmarket', npc: null })}>Market'i aç</button>
+        </div>
+      )}
       {shop.products.map((p) => {
         const q = qty[p.id] ?? 1;
         const wallet = p.currency === 'gems' ? self.gems : self.essence;

@@ -11,8 +11,8 @@ export interface SelfInfo {
 }
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
-export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | null;
+export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | null;
 
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
 export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }

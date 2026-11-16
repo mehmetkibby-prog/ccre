@@ -203,6 +203,22 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .target .nm { font: 600 13px var(--f-ui); }
 .target .bar { height: 8px; margin-top: 3px; }
 .target .bar > i { background: linear-gradient(90deg, #7a1428, var(--hp)); box-shadow: 0 0 10px var(--hp); }
+.target { position: relative; }
+.drop-q { margin-left: 8px; width: 18px; height: 18px; border-radius: 50%; border: none; font: 700 11px var(--f-ui); color: #1a120a; background: linear-gradient(#ffe39a, #d9a43a); cursor: pointer; box-shadow: 0 0 6px rgba(255, 210, 120, .5); line-height: 18px; padding: 0; flex: none; }
+.target .row { display: flex; align-items: center; }
+.drop-info { position: absolute; top: calc(100% + 6px); left: 0; right: 0; min-width: 260px; z-index: 30; padding: 8px 10px 9px; border-radius: 10px; background: rgba(18, 12, 8, .96); box-shadow: inset 0 0 0 1px var(--edge2), 0 10px 26px rgba(0, 0, 0, .55); max-height: 52vh; overflow: auto; text-align: left; }
+.drop-info .di-head { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.drop-info .di-head b { color: var(--core2); }
+.drop-info .di-head .x { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+.drop-info .di-row { display: flex; align-items: center; gap: 8px; padding: 4px 2px; border-top: 1px solid rgba(255, 228, 170, .06); font-size: 12.5px; }
+.drop-info .di-row img { width: 26px; height: 26px; object-fit: contain; flex: none; }
+.drop-info .di-row span { flex: 1; min-width: 0; display: flex; flex-direction: column; color: #eadfc8; }
+.drop-info .di-row small { color: var(--muted); font-size: 10.5px; }
+.drop-info .di-row b { color: #9be8a6; font-variant-numeric: tabular-nums; font-size: 12px; }
+.drop-info .di-row.special span { color: #ffd27a; }
+.drop-info .di-row.cur b { color: #ffe39a; }
+.drop-info .di-warn { font-size: 11.5px; color: #ffb4a0; background: rgba(160, 40, 30, .25); border-radius: 6px; padding: 5px 7px; margin-bottom: 4px; }
+.drop-info .di-note { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .target .hpt { font-size: 10.5px; color: #ffc2cc; text-align: right; font-variant-numeric: tabular-nums; margin-top: 1px; }
 
 /* ── mini harita (sağ üst): elmas ── */
@@ -856,6 +872,26 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .mall-btn, .boss-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px; width: 62px; padding: 6px 0 5px; border: none; cursor: pointer; border-radius: 16px; font: 700 10.5px var(--f-ui); letter-spacing: .3px; color: #5a2a10; }
 .mall-btn { background: radial-gradient(circle at 50% 20%, #fff6dc, #ffd99a 55%, #f0a860); box-shadow: 0 0 0 2px #fff3d6, 0 0 0 3.5px #c8862e, 0 6px 14px rgba(0, 0, 0, .45), 0 0 18px rgba(255, 200, 110, .55); animation: mall-glow 2.6s ease-in-out infinite; }
 .mall-btn.on { filter: brightness(1.08); }
+.ess-btn { position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px; width: 56px; padding: 5px 0 5px; border: none; cursor: pointer; border-radius: 16px; font: 700 10.5px var(--f-ui); color: #0e2a24; background: radial-gradient(circle at 50% 20%, #e4fff4, #8fe6c4 55%, #3fae8a); box-shadow: 0 0 0 2px #e6fff4, 0 0 0 3.5px #2c8a6a, 0 6px 14px rgba(0, 0, 0, .45); }
+.ess-btn img { width: 26px; height: 26px; }
+.ess-btn.on { filter: brightness(1.08); }
+.essm-bal { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 10px; background: rgba(0, 0, 0, .25); margin-bottom: 10px; font-size: 13px; }
+.essm-bal img { width: 22px; height: 22px; }
+.essm-bal b { color: #9be8c8; margin-right: 10px; }
+.essm-bal b.g { color: #ffe39a; }
+.essm-card { padding: 10px 12px 12px; border-radius: 12px; background: rgba(255, 228, 170, .04); box-shadow: inset 0 0 0 1px var(--edge); margin-bottom: 10px; }
+.essm-h { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.essm-h img { width: 34px; height: 34px; }
+.essm-h .arrow, .essm-sum .arrow { color: var(--core2); font-weight: 800; }
+.essm-h div { display: flex; flex-direction: column; margin-left: 4px; }
+.essm-h b { font-size: 15px; color: var(--core2); }
+.essm-h small { color: var(--muted); font-size: 12px; }
+.essm-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.essm-row input[type=range] { flex: 1; min-width: 120px; }
+.essm-row .adm-num { width: 80px; }
+.essm-sum { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 8px 0; font-size: 14px; }
+.essm-sum b { color: #9be8a6; }
+.essm-go { width: 100%; padding: 10px; }
 .mall-btn-ic img { width: 34px; height: 34px; display: block; filter: drop-shadow(0 2px 2px rgba(90, 40, 10, .35)); animation: mall-bob 2.4s ease-in-out infinite; }
 @keyframes mall-glow { 50% { box-shadow: 0 0 0 2px #fff3d6, 0 0 0 3.5px #c8862e, 0 6px 14px rgba(0, 0, 0, .45), 0 0 28px rgba(255, 210, 120, .9); } }
 @keyframes mall-bob { 50% { transform: translateY(-2px) rotate(-4deg); } }
@@ -1257,11 +1293,11 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 @media (max-width: 820px) { .partyframe { top: 112px; width: 140px; } .trade .tr-cols { grid-template-columns: 1fr; } }
 
 /* ── Savaş Arenası ── */
-.arena-bar { position: absolute; top: 58px; left: 50%; transform: translateX(-50%); z-index: 7; display: flex; align-items: center; gap: 10px; padding: 7px 10px 7px 14px; border-radius: 99px; background: linear-gradient(90deg, rgba(90, 16, 26, .92), rgba(40, 10, 14, .92)); box-shadow: 0 6px 18px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 120, 120, .45); color: #ffe2d8; font: 700 13px var(--f-ui); white-space: nowrap; }
+.arena-bar { position: absolute; bottom: 104px; left: 50%; transform: translateX(-50%); z-index: 7; display: flex; align-items: center; gap: 10px; padding: 7px 10px 7px 14px; border-radius: 99px; background: linear-gradient(90deg, rgba(90, 16, 26, .92), rgba(40, 10, 14, .92)); box-shadow: 0 6px 18px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 120, 120, .45); color: #ffe2d8; font: 700 13px var(--f-ui); white-space: nowrap; }
 .arena-bar .t { font-variant-numeric: tabular-nums; color: #ffd27a; }
 .arena-bar button { border: none; border-radius: 99px; padding: 6px 14px; font: 800 12px var(--f-ui); cursor: pointer; background: linear-gradient(180deg, #ffd27a, #c88a20); color: #2a1406; }
 .arena-bar button.leave { background: rgba(255, 255, 255, .14); color: #ffe2d8; }
-.arena-board { position: absolute; top: 100px; right: 10px; z-index: 6; width: 190px; padding: 8px 10px; border-radius: 12px; background: rgba(14, 8, 6, .72); box-shadow: inset 0 0 0 1px rgba(255, 120, 120, .35); font-size: 12px; }
+.arena-board { position: absolute; top: 330px; left: 10px; z-index: 6; width: 190px; padding: 8px 10px; border-radius: 12px; background: rgba(14, 8, 6, .72); box-shadow: inset 0 0 0 1px rgba(255, 120, 120, .35); font-size: 12px; }
 .arena-board .h { font: 800 11px var(--f-ui); letter-spacing: 1px; color: #ff9a8a; text-transform: uppercase; margin-bottom: 4px; }
 .arena-board .r { display: flex; gap: 6px; padding: 2px 0; }
 .arena-board .r.me { color: #ffd27a; font-weight: 700; }
@@ -1269,7 +1305,13 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .arena-board .r b { margin-left: auto; font-variant-numeric: tabular-nums; }
 .arena-rw { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid rgba(226, 178, 80, .12); }
 .arena-mat { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 6px; background: rgba(0, 0, 0, .3); font-size: 12px; }
-@media (max-width: 820px) { .arena-bar { top: 52px; font-size: 12px; } .arena-board { top: 150px; width: 160px; } }
+@media (max-width: 820px) { .arena-bar { font-size: 12px; } .arena-board { top: 150px; width: 160px; } }
+/* dokunmatik: çubuk alt menünün üstünde ortada; sıralama sol menü sütunlarının sağında, üç satır */
+@media (pointer: coarse) {
+  .arena-bar { bottom: calc(66px + env(safe-area-inset-bottom, 0px)); padding: 5px 8px 5px 12px; }
+  .arena-board { top: 112px; left: 300px; width: 150px; font-size: 11px; padding: 6px 8px; }
+  .arena-board .r:nth-child(n+5):not(.me) { display: none; }
+}
 
 /* ── Binek ── */
 .mount-btn { position: absolute; left: 14px; bottom: 150px; z-index: 6; width: 46px; height: 46px; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; background: radial-gradient(circle at 40% 35%, #3d2a19, #170f09); box-shadow: inset 0 0 0 1px var(--edge2), 0 4px 10px rgba(0, 0, 0, .5); }

@@ -5,7 +5,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, type MallCat } from '@col/shared';
 import type { Game } from '../game/game.ts';
-import { store, useStore, notify, type BossInfo } from '../game/store.ts';
+import { store, useStore, notify, reqId, type BossInfo } from '../game/store.ts';
+import { onConfig } from '../admin/config.ts';
 import { iconUrl } from '../game/art/icons.ts';
 import { api } from '../api.ts';
 import { sfx } from '../game/audio.ts';
@@ -112,6 +113,55 @@ export function AutoPanel({ game }: { game: Game }) {
         </button>
       </div>
     </div>
+  );
+}
+
+/** Market (Öz ile alışveriş): Öz → Mücevher bozdurma ve Kırmızı İksir. */
+export function EssMarketButton() {
+  const open = useStore((s) => s.panel === 'essmarket');
+  return (
+    <button className={'ess-btn' + (open ? ' on' : '')} title="Market: Öz bozdur, Kırmızı İksir al" onClick={() => { sfx.play('ui'); store.set((s) => ({ panel: s.panel === 'essmarket' ? null : 'essmarket' })); }}>
+      <img src={iconUrl('essence')} alt="" /><span>Market</span>
+    </button>
+  );
+}
+export function EssMarketPanel({ game }: { game: Game }) {
+  const self = useStore((s) => s.self);
+  const [, force] = useState(0);
+  useEffect(() => onConfig(() => force((n) => n + 1)), []);
+  const [units, setUnits] = useState(1);
+  const [pots, setPots] = useState(10);
+  if (!self) return null;
+  const E = Math.round(TUNING.essxEss), G = Math.round(TUNING.essxGems), P = Math.round(TUNING.potionEss);
+  const ess = self.essence ?? 0;
+  const maxU = Math.floor(ess / E), maxP = Math.floor(ess / P);
+  const u = Math.max(1, Math.min(units, Math.max(1, maxU))), q = Math.max(1, Math.min(pots, Math.max(1, maxP)));
+  const fmt = (n: number) => n.toLocaleString('tr-TR');
+  const buy = (op: 'gems' | 'potion', n: number) => { sfx.play('ui'); game.send({ t: 'essx', op, n, rate: op === 'gems' ? E * 100000 + G : P, req: reqId() }); };
+  return (
+    <Panel title="Market" width={460}>
+      <div className="essm-bal"><img src={iconUrl('essence')} alt="" /><span>Öz bakiyen</span><b>{fmt(ess)}</b><img src={iconUrl('gem')} alt="" /><b className="g">{fmt(self.gems)}</b></div>
+      <div className="essm-card">
+        <div className="essm-h"><img src={iconUrl('essence')} alt="" /><span className="arrow">→</span><img src={iconUrl('gem')} alt="" /><div><b>Öz Bozdur</b><small>{fmt(E)} Öz = {fmt(G)} Mücevher</small></div></div>
+        <div className="essm-row">
+          <button className="btn small ghost" onClick={() => setUnits(Math.max(1, u - 1))}>−</button>
+          <input type="range" min={1} max={Math.max(1, maxU)} value={u} disabled={maxU < 1} onChange={(e) => setUnits(Number(e.target.value))} />
+          <button className="btn small ghost" onClick={() => setUnits(Math.min(Math.max(1, maxU), u + 1))}>+</button>
+          <button className="btn small ghost" disabled={maxU < 1} onClick={() => setUnits(maxU)}>Hepsi</button>
+        </div>
+        <div className="essm-sum"><span>{fmt(E * u)} Öz</span><span className="arrow">→</span><b>{fmt(G * u)} Mücevher</b></div>
+        <button className="btn primary essm-go" disabled={maxU < 1} onClick={() => buy('gems', u)}>{maxU < 1 ? `En az ${fmt(E)} Öz gerekir` : 'Bozdur'}</button>
+      </div>
+      <div className="essm-card">
+        <div className="essm-h"><img src={iconUrl('potion_red')} alt="" /><div><b>Kırmızı İksir</b><small>Tanesi {fmt(P)} Öz · canının %20'sini doldurur</small></div></div>
+        <div className="essm-row">
+          {[1, 10, 50, 100].map((n) => <button key={n} className={'btn small' + (q === n ? ' primary' : ' ghost')} disabled={maxP < 1} onClick={() => setPots(n)}>{n}</button>)}
+          <input className="adm-num" type="number" min={1} max={Math.max(1, maxP)} value={q} onChange={(e) => setPots(Math.max(1, Number(e.target.value) || 1))} />
+        </div>
+        <div className="essm-sum"><span>{fmt(P * q)} Öz</span><span className="arrow">→</span><b>{fmt(q)} Kırmızı İksir</b></div>
+        <button className="btn primary essm-go" disabled={maxP < 1} onClick={() => buy('potion', q)}>{maxP < 1 ? `En az ${fmt(P)} Öz gerekir` : 'Satın al'}</button>
+      </div>
+    </Panel>
   );
 }
 

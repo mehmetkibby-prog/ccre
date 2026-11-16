@@ -75,9 +75,9 @@ export const MAPS: Record<string, MapDef> = {
     desc: 'Kırağı Vaşakları, Buzkök Golemleri ve Tipi Kâhinleri.',
     npcs: [],
     spawns: [
-      { monster: 'frost_lynx', count: 30, level: [20, 26], variants: [70, 25, 5], region: 'near' },
-      { monster: 'ice_golem', count: 24, level: [24, 32], variants: [65, 28, 7], region: 'mid' },
-      { monster: 'blizzard_seer', count: 22, level: [28, 36], variants: [55, 35, 10], region: 'far' },
+      { monster: 'frost_lynx', count: 56, level: [20, 26], variants: [70, 25, 5], region: 'near' },
+      { monster: 'ice_golem', count: 42, level: [24, 32], variants: [65, 28, 7], region: 'mid' },
+      { monster: 'blizzard_seer', count: 36, level: [28, 36], variants: [55, 35, 10], region: 'far' },
     ],
   },
   black: {

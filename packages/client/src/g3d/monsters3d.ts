@@ -261,6 +261,7 @@ export function createMonster(art: string, variant: number, size: number): Monst
   const glow = EYE[variant];
   if (art === 'fox') { const m = createMeshFox(variant, s); if (m) return m; }
   if (art === 'wolf') { const m = createMeshQuad('wolf_mesh', variant, s, 1.0, 1.3, [0xffffff, 0xd88a8a, 0x9aa8ff]); if (m) return m; }
+  if (art === 'lynx') { const m = createMeshQuad('lynx_mesh', variant, s, 1.1, 1.15, [0xffffff, 0xcfe2ff, 0xa8b4ff]); if (m) return m; }
   if (art === 'devourer') { const m = createMeshDevourer(variant, s); if (m) return m; }
   if (art === 'fox_king') return createMonster('rotguard', variant, size * 1.5); // 3B model yüklenemezse yedek
   if (art === 'goblin') return createMonster('rotguard', variant, size * 0.7); // 3B model yüklenemezse yedek
@@ -304,7 +305,7 @@ export function createMonster(art: string, variant: number, size: number): Monst
 }
 
 /** Hazır 3B modeli olan canavarlar: model kimliği → sanat adı (model gelince görünümler yeniden kurulur). */
-export const MONSTER_MESHES: Record<string, string> = { fox_mesh: 'fox', wolf_mesh: 'wolf', devourer_mesh: 'devourer' };
+export const MONSTER_MESHES: Record<string, string> = { fox_mesh: 'fox', wolf_mesh: 'wolf', devourer_mesh: 'devourer', lynx_mesh: 'lynx' };
 const foxMats = new Map<number, THREE.Material>();
 /**
  * Meshy'de tasarlanıp scripts/quad-rig.mjs ile dört ayaklı iskelete bağlanan tilki. Kemik adları QB ile aynı,

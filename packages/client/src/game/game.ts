@@ -1,6 +1,7 @@
 import { DIR_STEPS,
   readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
   MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
+  findPath, los,
 } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId } from './store.ts';
 import { Input } from './input.ts';
@@ -531,8 +532,8 @@ export class Game {
     if (st.self?.autoOn && performance.now() > this.autoPauseUntil) {
       const cur = this.targetId ? this.ents.get(this.targetId) : undefined;
       if (!cur || cur.hp <= 0 || cur.deadAt || cur.kind !== Kind.MONSTER) {
-        const nt = this.nearestEnemy(700);
-        if (nt) { this.setTarget(nt.id); this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
+        const nt = this.nearestEnemy(700, true);
+        if (nt) { this.setTarget(nt.id); this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; this.path = null; }
       } else { this.autoAttack = true; this.walkToTarget = true; }
     }
     // saldırı: basılı tutma veya otomatik hedef
@@ -571,7 +572,20 @@ export class Game {
         if (npc && Math.hypot(npc.x - this.px, npc.y - this.py) < 170) { this.send({ t: 'npc', id: npc.id }); this.interactNpc = null; this.moveTarget = null; dir = NO_DIR; }
       }
     }
-    // otomatik yürüyüşte (oto av, hedefe/tıklanan yere yürüme) engelin etrafından dolan: ağaç/nesneye takılıp kalmasın.
+    // otomatik yürüyüşte (oto av, hedefe/tıklanan yere yürüme) arada göl, ağaç kümesi, ev gibi engel varsa A* yolu
+    // izlenir (sunucudaki canavar yol bulmanın aynısı). Ulaşılamayan canavar oto avda 30 sn atlanır.
+    if (dir !== NO_DIR && !(mv.x || mv.y)) {
+      const tg0 = this.walkToTarget && this.targetId ? this.ents.get(this.targetId) : undefined;
+      const goal = tg0 && this.autoAttack ? tg0 : this.moveTarget;
+      if (goal) {
+        const pd = this.pathDir(goal.x, goal.y);
+        if (pd === -1) {
+          if (tg0 && st.self?.autoOn) { this.unreachable.set(tg0.id, performance.now() + 30_000); this.setTarget(0); dir = NO_DIR; }
+          else if (!tg0) { this.moveTarget = null; dir = NO_DIR; }
+        } else if (pd !== null) dir = pd;
+      }
+    } else this.path = null;
+    // yol izlenirken de yerel kaçınma: köşeye sürtünüp kalmasın.
     // Yan yönler sırayla denenir; seçilen taraf kısa süre korunur (sağ-sol arasında titremesin). Elle yürüyüşe dokunulmaz.
     if (dir !== NO_DIR && !(mv.x || mv.y)) {
       const sp = this.speed(), want = sp * 0.5;
@@ -587,7 +601,7 @@ export class Game {
       if (tg && st.self?.autoOn) {
         const dd = Math.hypot(tg.x - this.px, tg.y - this.py);
         if (dd < this.stuckBest - 8) { this.stuckBest = dd; this.stuckAt = performance.now(); }
-        else if (performance.now() - this.stuckAt > 2500) { this.setTarget(0); this.stuckBest = 1e9; this.stuckAt = performance.now(); }
+        else if (performance.now() - this.stuckAt > 2500) { this.unreachable.set(tg.id, performance.now() + 30_000); this.setTarget(0); this.path = null; this.stuckBest = 1e9; this.stuckAt = performance.now(); }
       }
     } else { this.stuckBest = 1e9; this.stuckAt = performance.now(); }
     // kendi ganimetini otomatik al (5 sn sonra sunucu da toplar; yakında elle de)
@@ -623,11 +637,31 @@ export class Game {
     return raw;
   }
 
-  nearestEnemy(maxD: number): CEnt | null {
+  /** A* yol izleme: hedef görünüyorsa null (düz yürü), yolun sonraki noktasına yön, ulaşılamazsa -1. */
+  private path: { x: number; y: number }[] | null = null; private pathGoal = { x: 0, y: 0 }; private pathAt = 0;
+  private unreachable = new Map<number, number>();
+  private pathDir(gx: number, gy: number): number | null {
+    const l = this.layout;
+    if (los(l, this.px, this.py, gx, gy, 14)) { this.path = null; return null; }
+    const now = performance.now();
+    if (!this.path || !this.path.length || Math.hypot(gx - this.pathGoal.x, gy - this.pathGoal.y) > 96 || now - this.pathAt > 1500) {
+      this.path = findPath(l, this.px, this.py, gx, gy, 5000); this.pathGoal = { x: gx, y: gy }; this.pathAt = now;
+      if (!this.path) return -1;
+    }
+    // ulaşılan ya da arkası görünen ara noktaları atla (köşeleri keserek doğal yürüyüş)
+    while (this.path.length > 1 && (Math.hypot(this.path[0].x - this.px, this.path[0].y - this.py) < 30 || los(l, this.px, this.py, this.path[1].x, this.path[1].y, 14))) this.path.shift();
+    const w = this.path[0];
+    if (!w || Math.hypot(w.x - this.px, w.y - this.py) < 4) return null;
+    return dirIndexFromVector(w.x - this.px, w.y - this.py);
+  }
+
+  nearestEnemy(maxD: number, skipUnreachable = false): CEnt | null {
     let best: CEnt | null = null, bd = maxD;
     const pvp = MAPS[this.layout.def.id]?.pvp;
+    const now = performance.now();
     for (const e of this.ents.values()) {
       if (e.hp <= 0 || e.deadAt) continue;
+      if (skipUnreachable && (this.unreachable.get(e.id) ?? 0) > now) continue;
       if (e.kind !== Kind.MONSTER && !(pvp && e.kind === Kind.PLAYER)) continue;
       const d = Math.hypot(e.x - this.px, e.y - this.py);
       if (d < bd) { bd = d; best = e; }
@@ -639,7 +673,7 @@ export class Game {
     this.targetId = id;
     const e = id ? this.ents.get(id) : null;
     if (!e) { store.set({ target: null }); return; }
-    store.set({ target: { id, name: e.name, level: e.level, hp: e.hp, maxHp: e.maxHp, kind: e.kind, variant: e.variant, boss: e.kind === Kind.MONSTER && !!MONSTERS[e.tpl]?.boss } });
+    store.set({ target: { id, name: e.name, level: e.level, hp: e.hp, maxHp: e.maxHp, kind: e.kind, variant: e.variant, boss: e.kind === Kind.MONSTER && !!MONSTERS[e.tpl]?.boss, tpl: e.kind === Kind.MONSTER ? e.tpl : undefined } });
   }
 
   // ───────── eylemler ─────────

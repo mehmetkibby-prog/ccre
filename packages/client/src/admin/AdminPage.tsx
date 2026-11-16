@@ -8,7 +8,7 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, MonsterTab, RarityTable, LootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
+import { GeneralTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -194,7 +194,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'balik' && <FishingTab t={t} setT={setTT} dis={busy} />}
             {tab === 'market' && <MallTab t={t} setT={setTT} dis={busy} epin={backend.epinCreate ? <EpinBox toast={setToast} /> : undefined} />}
             {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={busy} />}
-            {tab === 'ganimet' && <><RarityTable t={t} setT={setTT} dis={busy} /><LootTab t={t} setMon={setMon} dis={busy} /></>}
+            {tab === 'ganimet' && <><ZoneLootTab t={t} setT={setTT} dis={busy} /><details className="admin-sec adm-more"><summary>Canavara özel ganimet (isteğe bağlı, bölge ayarının üstüne yazar)</summary><LootTab t={t} setMon={setMon} dis={busy} /></details><RarityTable t={t} setT={setTT} dis={busy} /></>}
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
             {tab === 'arti' && <UpgradeTab t={t} setT={setTT} dis={busy} />}
             {tab === 'donusum' && <TransformTab t={t} setT={setTT} dis={busy} />}

@@ -4,10 +4,8 @@ export interface ShopProduct { id: string; name: string; kind: 'material' | 'equ
 export const SHOPS: Record<string, { name: string; npc: string; products: ShopProduct[] }> = {
   general: {
     name: 'Erzak', npc: 'tuccar',
-    products: [
-      { id: 'potion_gems', name: 'Kırmızı İksir', kind: 'material', ref: 'red_potion', qty: 1, price: 6, currency: 'gems' },
-      { id: 'potion_pack', name: '10× Kırmızı İksir', kind: 'material', ref: 'red_potion', qty: 10, price: 55, currency: 'gems' },
-    ],
+    // Kırmızı İksir artık yalnız Market'te (Öz ile) satılır
+    products: [],
   },
   smith: {
     name: 'Haso\'nun Tezgâhı', npc: 'haso',

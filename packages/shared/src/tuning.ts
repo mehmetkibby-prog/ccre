@@ -16,6 +16,16 @@ export interface MonsterTune {
   /** özel düşenler (boss paneli): eşya / malzeme / market ürünü, olasılık 0..1, adet */
   drops?: DropTune[];
 }
+/**
+ * Bölge (harita) ganimet ayarı: haritadaki bütün canavarların ortak tablosu. Boş alanlar haritanın varsayılan
+ * profilinden gelir; canavar türüne özel ayar (monsters) varsa onun üstüne yazar.
+ *  maxLevel: bu seviyenin üstündeki oyuncu bu haritada az ganimet alır (0 = sınır yok); overMul: o durumda
+ *  ekipman/malzeme/özel düşme çarpanı (ör. 0,1 = onda biri).
+ */
+export interface ZoneLootTune {
+  equipChance?: number; rarity?: Record<string, number>; gems?: [number, number]; essence?: [number, number];
+  mats?: Record<string, number>; drops?: DropTune[]; maxLevel?: number; overMul?: number;
+}
 export interface DropTune { kind: 'item' | 'mat' | 'mall'; key: string; rarity?: string; chance: number; qty: [number, number] }
 export interface MallTune { price?: Record<string, number>; off?: string[]; wings?: { atk?: number; def?: number; crit?: number } }
 /** Dönüşüm (Haso): bkz. content/transform.ts */
@@ -45,6 +55,8 @@ export interface GameTuning {
   meleeApproach: number;
   /** Tek hedefli saldırı becerilerinin hedef çevresine sıçrayan hasarı: yarıçap (px) ve çarpan (0 = kapalı) */
   splashRadius: number; splashMul: number;
+  /** Market: X Öz → Y Mücevher dönüşümü ve Öz ile Kırmızı İksir fiyatı */
+  essxEss: number; essxGems: number; potionEss: number;
   /** Oto atak: günlük kullanım süresi (dakika; Türkiye saatiyle 00.00'da yenilenir) */
   autoAttackMin: number;
   /** saldırı tuşu: hedef ölünce bu süre (sn) boyunca yeni canavara yürünmez, yalnız menzildekine vurulur */
@@ -53,6 +65,8 @@ export interface GameTuning {
   /** Ana menüdeki küçük "2D oyun" düğmesinin adresi (boşsa düğme gizlenir). */
   classicUrl: string;
   monsters: Record<string, MonsterTune>;
+  /** Bölge (harita) ganimet tabloları ve seviye sınırı */
+  zoneLoot: Record<string, ZoneLootTune>;
   spawns: Record<string, SpawnTune>;
   enchants: EnchantTune;
   /** Nadirlik başına güç çarpanı (silah / zırh-takı); boş = varsayılan denge. */
@@ -99,15 +113,15 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, announcement: '', classicUrl: 'https://2d.coreoflife.net',
-  monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, announcement: '', classicUrl: 'https://2d.coreoflife.net',
+  monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
-  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1],
+  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1],
 };
 export const DENSITY_LIMITS: [number, number, number] = [0.3, 3, 0.05];
 export const TUNING: GameTuning = structuredClone(DEFAULT_TUNING);
@@ -138,6 +152,30 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     return q.some((x) => x === undefined) ? undefined : q as [number, number, number, number];
   };
   const key = (k: string) => /^[a-z0-9_:]{1,32}$/.test(k);
+  const parseDrops = (v: unknown): DropTune[] | undefined => {
+    if (!Array.isArray(v)) return undefined;
+    const drops: DropTune[] = [];
+    for (const raw2 of v.slice(0, 24)) {
+      const d = obj(raw2); const kind = d.kind === 'item' || d.kind === 'mat' || d.kind === 'mall' ? d.kind : null;
+      const k = typeof d.key === 'string' && key(d.key) ? d.key : null; const ch = num(d.chance, 0, 1); const q = pair(d.qty, 1, 9999) ?? [1, 1];
+      if (kind && k && ch !== undefined) drops.push({ kind, key: k, chance: ch, qty: q, ...(typeof d.rarity === 'string' && key(d.rarity) ? { rarity: d.rarity } : {}) });
+    }
+    return drops.length ? drops : undefined;
+  };
+  for (const [id, raw] of Object.entries(obj(r.zoneLoot))) {
+    if (!key(id)) continue;
+    const m = obj(raw), t: ZoneLootTune = {};
+    const set = <K extends keyof ZoneLootTune>(k: K, v: ZoneLootTune[K] | undefined) => { if (v !== undefined) t[k] = v; };
+    set('equipChance', num(m.equipChance, 0, 1)); set('gems', pair(m.gems, 0, 1_000_000)); set('essence', pair(m.essence, 0, 1_000_000));
+    const rar: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(m.rarity))) { const n = num(v, 0, 10000); if (key(k) && n !== undefined) rar[k] = n; }
+    if (Object.keys(rar).length && Object.values(rar).some((x) => x > 0)) t.rarity = rar;
+    const mats: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(m.mats))) { const n = num(v, 0, 1); if (key(k) && n !== undefined) mats[k] = n; }
+    if (Object.keys(mats).length) t.mats = mats;
+    set('drops', parseDrops(m.drops));
+    const ml = num(m.maxLevel, 0, 120); if (ml !== undefined) t.maxLevel = Math.round(ml);
+    set('overMul', num(m.overMul, 0, 1));
+    if (Object.keys(t).length) out.zoneLoot[id] = t;
+  }
   for (const [id, raw] of Object.entries(obj(r.monsters))) {
     if (!key(id)) continue;
     const m = obj(raw), t: MonsterTune = {};

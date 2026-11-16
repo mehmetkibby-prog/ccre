@@ -137,6 +137,7 @@ export type ClientCmd =
   | { t: 'lock'; item: string; on: boolean }
   | { t: 'sell'; items: string[]; req: string }
   | { t: 'buy'; shop: string; product: string; qty: number; price: number; req: string }
+  | { t: 'essx'; op: 'gems' | 'potion'; n: number; rate: number; req: string }
   | { t: 'donate'; amount: number; req: string }
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'transform'; item: string; req: string }

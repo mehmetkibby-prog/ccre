@@ -1,4 +1,5 @@
 import type { Rarity } from './items.ts';
+import type { GameTuning, DropTune } from '../tuning.ts';
 
 /** Ganimet profilleri: harita × varyant. Değerler referans varsayılanıdır, yönetimden değişebilir. */
 export interface LootProfile {
@@ -60,3 +61,36 @@ export const LOOT_PROFILES: Record<string, LootProfile> = {
 /** Varyant çarpanları: agresif/katil daha iyi ganimet bırakır. */
 export const VARIANT_LOOT_MULT = [1, 1.35, 2.4];
 export const KILLER_RARITY_SHIFT = 1; // katil varyant bir üst nadirliğe kayma şansı
+
+/** Varsayılan bölge seviye sınırları: üstündeki oyuncu o haritada az ganimet alır (yönetimden değişir). */
+export const ZONE_LEVEL_CAP: Record<string, number> = { bazaar: 10, forest: 30, frozen: 50 };
+export const OVER_LEVEL_MUL = 0.1;
+export interface ResolvedLoot {
+  equipChance: number; rarityWeights: Partial<Record<Rarity, number>>; gems: [number, number]; essence: [number, number];
+  materials: { id: string; chance: number; qty: [number, number] }[]; drops: DropTune[]; maxLevel: number; overMul: number;
+}
+/**
+ * Bir canavarın geçerli ganimet tablosu: harita profili → bölge ayarı (yönetim) → canavar türü ayarı (yönetim).
+ * Sunucu düşme hesabında, istemci canavar bilgisindeki "?" penceresinde aynısını kullanır (gösterilen = gerçek).
+ */
+export function resolveLoot(t: GameTuning, mapId: string, theme: string, monsterId: string, isMat: (id: string) => boolean = () => true): ResolvedLoot {
+  const base = LOOT_PROFILES[theme] ?? LOOT_PROFILES[mapId] ?? LOOT_PROFILES.forest;
+  const z = t.zoneLoot?.[mapId], m = t.monsters?.[monsterId];
+  const mats = new Map<string, { chance: number; qty: [number, number] }>();
+  for (const x of base.materials) mats.set(x.id, { chance: x.chance, qty: x.qty });
+  for (const layer of [z?.mats, m?.mats]) for (const [id, ch] of Object.entries(layer ?? {})) {
+    if (!isMat(id)) continue;
+    const cur = mats.get(id); mats.set(id, { chance: ch, qty: cur?.qty ?? [1, 1] });
+  }
+  return {
+    equipChance: m?.equipChance ?? z?.equipChance ?? base.equipChance,
+    rarityWeights: (m?.rarity ?? z?.rarity ?? base.rarityWeights) as Partial<Record<Rarity, number>>,
+    gems: m?.gems ?? z?.gems ?? base.gems, essence: m?.essence ?? z?.essence ?? base.essence,
+    materials: [...mats].filter(([, v]) => v.chance > 0).map(([id, v]) => ({ id, chance: v.chance, qty: v.qty })),
+    drops: [...(z?.drops ?? []), ...(m?.drops ?? [])],
+    maxLevel: z?.maxLevel ?? ZONE_LEVEL_CAP[mapId] ?? 0,
+    overMul: z?.overMul ?? OVER_LEVEL_MUL,
+  };
+}
+/** Seviye sınırını aşan oyuncu için düşme çarpanı (1 = ceza yok). */
+export function overLevelMul(r: ResolvedLoot, level: number) { return r.maxLevel > 0 && level > r.maxLevel ? r.overMul : 1; }

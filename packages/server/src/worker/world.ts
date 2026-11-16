@@ -2,7 +2,7 @@ import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
   COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
-  LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
+  LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
@@ -11,7 +11,7 @@ import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, Admi
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
-import { findPath, los, freeAt } from './nav.ts';
+import { findPath, los, freeAt } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
 
 const DIR_TO_BYTE = 256 / DIR_STEPS;
@@ -270,6 +270,7 @@ export class World {
       case 'lock': return this.cmdLock(p, String(c.item), !!c.on);
       case 'sell': return this.cmdSell(p, Array.isArray(c.items) ? c.items.map(String).slice(0, 40) : [], String(c.req ?? ''));
       case 'buy': return this.cmdBuy(p, c);
+      case 'essx': return this.cmdEssx(p, c);
       case 'donate': return this.cmdDonate(p, Math.floor(Number(c.amount) || 0), String(c.req ?? ''));
       case 'upgrade': return this.cmdUpgrade(p, c);
       case 'transform': return this.cmdTransform(p, c);
@@ -818,15 +819,10 @@ export class World {
     c.misc.dailyKills.n++;
     const w = c.equip.weapon;
     if (w) w.kills = (w.kills ?? 0) + 1;
-    const base = LOOT_PROFILES[p.zone.def.theme] ?? LOOT_PROFILES[p.zone.id] ?? LOOT_PROFILES.forest;
-    // yönetim: canavar türüne özel ganimet tablosu (boş alanlar harita profilinden)
-    const mt = TUNING.monsters[m.def.id];
-    const prof = !mt ? base : {
-      equipChance: mt.equipChance ?? base.equipChance, rarityWeights: (mt.rarity as typeof base.rarityWeights) ?? base.rarityWeights,
-      gems: mt.gems ?? base.gems, essence: mt.essence ?? base.essence,
-      materials: [...base.materials.map((x) => ({ ...x, chance: mt.mats?.[x.id] ?? x.chance })),
-        ...Object.entries(mt.mats ?? {}).filter(([id, ch]) => ch > 0 && MATERIAL.has(id) && !base.materials.some((x) => x.id === id)).map(([id, chance]) => ({ id, chance, qty: [1, 1] as [number, number] }))],
-    };
+    // ganimet tablosu: harita profili → bölge ayarı → canavar türü ayarı (istemcideki "?" penceresiyle aynı hesap)
+    const prof = resolveLoot(TUNING, p.zone.id, p.zone.def.theme, m.def.id, (id) => MATERIAL.has(id));
+    // bölge seviye sınırı: haritanın üst sınırını aşan oyuncuya eşya/malzeme düşmesi çok azalır
+    const over = overLevelMul(prof, c.level);
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
     const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul * (1 + bf.essPct / 100));
@@ -835,17 +831,17 @@ export class World {
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
-      if (rnd() < prof.equipChance * VARIANT_LOOT_MULT[m.variant] * mod * TUNING.dropMul * (1 + bf.dropPct / 100) || m.def.boss) {
+      if (rnd() < prof.equipChance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul * (1 + bf.dropPct / 100) || (m.def.boss && over === 1)) {
         const item = this.rollEquipment(p, prof.rarityWeights, m.variant === 2);
         if (item) this.dropLoot(p, m, { kind: 'item', item });
       }
     }
     for (const mat of prof.materials) {
-      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * TUNING.dropMul) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
+      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
     }
-    // yönetim (boss paneli): özel düşenler
-    for (const d of mt?.drops ?? []) {
-      if (rnd() >= d.chance) continue;
+    // yönetim: bölge ve canavar özel düşenleri
+    for (const d of prof.drops) {
+      if (rnd() >= d.chance * over) continue;
       if (d.kind === 'item') {
         if (!ITEM_TPL.has(d.key)) continue;
         const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
@@ -1133,6 +1129,26 @@ export class World {
     if (equipped) { p.recompute(false); p.hp = Math.min(p.hp, p.stats.maxHp); p.dirty |= Upd.HP | Upd.MAXHP; }
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.notice(p, `${n} eşya satıldı: +${total} Mücevher`, 'ok');
+  }
+
+  /**
+   * Market (Öz): n paket Öz → Mücevher (paket = essxEss Öz → essxGems Mücevher) ya da n Kırmızı İksir (potionEss Öz).
+   * Oyuncunun gördüğü oran (rate) sunucudakiyle aynı değilse işlem yapılmaz (yönetim bu arada değiştirdiyse).
+   */
+  private cmdEssx(p: Player, c: Extract<ClientCmd, { t: 'essx' }>) {
+    const n = Math.floor(Number(c.n));
+    if (!(n >= 1 && n <= 100000)) return this.reply(p, c, false, 'Geçersiz miktar.');
+    const ch = p.char;
+    const ess = Math.round(TUNING.essxEss), gems = Math.round(TUNING.essxGems), pot = Math.round(TUNING.potionEss);
+    const rate = c.op === 'gems' ? ess * 100000 + gems : pot;
+    if (Number(c.rate) !== rate) { this.sendJson(p, { t: 'tuning', tuning: TUNING }); return this.reply(p, c, false, 'Oran değişti, lütfen tekrar bak.'); }
+    if (this.seenReceipt(p, c.req)) return;
+    const cost = c.op === 'gems' ? ess * n : pot * n;
+    if (ch.essence < cost) return this.reply(p, c, false, `Yetersiz Öz: ${cost.toLocaleString('tr-TR')} gerekir.`);
+    ch.essence -= cost;
+    if (c.op === 'gems') { ch.gems += gems * n; this.reply(p, c, true, `${cost.toLocaleString('tr-TR')} Öz → ${(gems * n).toLocaleString('tr-TR')} Mücevher`); }
+    else { ch.materials.red_potion = (ch.materials.red_potion ?? 0) + n; this.reply(p, c, true, `${n} Kırmızı İksir alındı.`); }
+    p.selfDirty |= 1 | 2; this.save(p, true);
   }
 
   private cmdBuy(p: Player, c: Extract<ClientCmd, { t: 'buy' }>) {
