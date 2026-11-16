@@ -134,3 +134,22 @@ it('Kadim Kule: Azrail hasar verenlere kesin sandık; sandık içeriği ve Azrai
   expect(p.zone.id).toBe('bazaar');
   applyTuning(structuredClone(DEFAULT_TUNING));
 });
+
+it('Üretim: Pakize yanında, malzeme ve bedel düşer; başarıda çıktı, sınıfa göre silah', () => {
+  applyTuning({ ...structuredClone(DEFAULT_TUNING), crafts: [
+    { id: 'r1', name: 'Mühür', out: { kind: 'mat', key: 'mastery_seal', qty: 2 }, inputs: { tower_seal: 3 }, gems: 100, essence: 0, chance: 100, minLevel: 1 },
+    { id: 'r2', name: 'Silah', out: { kind: 'item', key: 'w_cls', rarity: 'unique', qty: 1 }, inputs: { azrail_hook: 1 }, gems: 0, essence: 0, chance: 100, minLevel: 1 },
+  ] });
+  const out: any[] = []; const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m) => out.push(m) });
+  const ch = mk(1, 30); const pk = getLayout('bazaar').npcs.find((n) => n.id === 'pakize')!; ch.x = pk.x + 60; ch.y = pk.y + 60;
+  ch.gems = 150; ch.materials = { tower_seal: 4, azrail_hook: 1 }; ch.cls = 'hunter';
+  w.join(1, ch); const p = w.bySid.get(1)!;
+  const cmd = (c: any) => w.onCmd(1, JSON.stringify(c));
+  cmd({ t: 'craft', id: 'r1', req: 'k1' });
+  expect(p.char.materials.mastery_seal).toBe(2); expect(p.char.materials.tower_seal).toBe(1); expect(p.char.gems).toBe(50);
+  cmd({ t: 'craft', id: 'r1', req: 'k2' }); // yetersiz malzeme
+  expect(p.char.materials.mastery_seal).toBe(2);
+  cmd({ t: 'craft', id: 'r2', req: 'k3' });
+  expect(p.char.bag.at(-1)?.tpl).toBe('w_hunter'); expect(p.char.bag.at(-1)?.rarity).toBe('unique');
+  applyTuning(structuredClone(DEFAULT_TUNING));
+});

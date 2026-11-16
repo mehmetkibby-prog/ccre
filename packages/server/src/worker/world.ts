@@ -304,6 +304,7 @@ export class World {
       case 'arena': return this.cmdArena(p, String(c.op));
       case 'mount': return this.cmdMount(p, String(c.op));
       case 'tower': return this.cmdTower(p, String(c.op));
+      case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
       case 'ping': this.sendJson(p, { t: 'pong', c: c.c, s: this.now }); return;
       case 'sync': p.resetPending = true; this.sendFullSelf(p); return;
@@ -1567,6 +1568,38 @@ export class World {
       this.towerSetFloor(p, 1);
     }
   }
+  /** Üretim (Pakize): girdiler ve bedel tek adımda düşülür; başarıda çıktı, başarısızlıkta malzemelerin yarısı döner. */
+  private cmdCraft(p: Player, id: string, req: string) {
+    const r = TUNING.crafts.find((x) => x.id === id && !x.off);
+    if (!r) return this.reply(p, { t: 'craft', req }, false, 'Bu tarif artık yok.');
+    if (p.zone.id !== 'bazaar' || !this.nearNpc(p, 'pakize')) return this.reply(p, { t: 'craft', req }, false, 'Zanaatkâr Pakize\'nin yanına git.');
+    if (this.seenReceipt(p, req)) return;
+    const c = p.char;
+    if (c.level < r.minLevel) return this.reply(p, { t: 'craft', req }, false, `Bu tarif için ${r.minLevel}. seviye gerekir.`);
+    for (const [k, q] of Object.entries(r.inputs)) if ((c.materials[k] ?? 0) < q) return this.reply(p, { t: 'craft', req }, false, `Yeterli ${MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k} yok (${q} gerekir).`);
+    if (c.gems < r.gems) return this.reply(p, { t: 'craft', req }, false, `${r.gems.toLocaleString('tr-TR')} Mücevher gerekir.`);
+    if (c.essence < r.essence) return this.reply(p, { t: 'craft', req }, false, `${r.essence.toLocaleString('tr-TR')} Öz gerekir.`);
+    let tpl = r.out.key;
+    if (r.out.kind === 'item') {
+      if (/^[wah]_cls$/.test(tpl)) tpl = tpl.replace('cls', c.cls);
+      if (!ITEM_TPL.has(tpl)) return this.reply(p, { t: 'craft', req }, false, 'Tarifin çıktısı geçersiz.');
+      if (c.bag.length + r.out.qty > BAG_EQUIP_CAP) return this.reply(p, { t: 'craft', req }, false, 'Çantada yer aç.');
+    } else if (!MATERIAL.has(tpl) && !MALL.has(tpl)) return this.reply(p, { t: 'craft', req }, false, 'Tarifin çıktısı geçersiz.');
+    c.gems -= r.gems; c.essence -= r.essence;
+    for (const [k, q] of Object.entries(r.inputs)) c.materials[k] -= q;
+    const ok = rnd() * 100 < r.chance;
+    let got = '';
+    if (ok) {
+      if (r.out.kind === 'item') {
+        const rar = (RARITIES as readonly string[]).includes(r.out.rarity ?? '') ? r.out.rarity as Rarity : 'blue';
+        for (let i = 0; i < r.out.qty; i++) { const it = makeItem(tpl, rar, 'craft'); c.bag.push(it); got = itemDisplayName(it); }
+      } else { c.materials[tpl] = (c.materials[tpl] ?? 0) + r.out.qty; got = `${r.out.qty}× ${MATERIAL.get(tpl)?.name ?? MALL.get(tpl)?.name ?? tpl}`; }
+    } else for (const [k, q] of Object.entries(r.inputs)) c.materials[k] += Math.floor(q / 2);
+    p.selfDirty |= 1 | 2; this.save(p, true);
+    this.sendJson(p, { t: 'craftResult', ok, name: r.name, got });
+    this.reply(p, { t: 'craft', req }, true, ok ? `Üretildi: ${got}` : 'Üretim başarısız oldu; malzemelerin yarısı geri döndü.');
+  }
+
   private openAzrailChest(p: Player) {
     const c = p.char, ch = TUNING.tower.chest;
     if ((c.materials.azrail_chest ?? 0) <= 0) return this.notice(p, 'Elinde yok.');

@@ -1436,3 +1436,15 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tw-adm-h small { flex-basis: 100%; }
 .tw-adm-mats { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
 .tw-adm-mats img { width: 22px; height: 22px; }
+/* ───────── Üretim (Pakize) ───────── */
+.cr-list { display: flex; flex-direction: column; gap: 6px; max-height: 60vh; overflow: auto; }
+.cr-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: rgba(255, 255, 255, .04); }
+.cr-row.ok { box-shadow: inset 0 0 0 1px rgba(124, 240, 154, .4); }
+.cr-out { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.cr-out img { width: 42px; height: 42px; flex: none; }
+.cr-out b { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cr-in { display: flex; flex-wrap: wrap; gap: 4px; }
+.cr-m { display: inline-flex; align-items: center; gap: 2px; padding: 2px 6px 2px 2px; border-radius: 99px; background: rgba(255, 80, 80, .12); font: 700 11px var(--f-ui); color: #ffb4a8; font-variant-numeric: tabular-nums; }
+.cr-m.have { background: rgba(124, 240, 154, .12); color: #a8f0b8; }
+.cr-m img { width: 20px; height: 20px; }
+@media (max-width: 560px) { .cr-row { grid-template-columns: 1fr auto; } .cr-in { grid-column: 1 / -1; grid-row: 2; } }

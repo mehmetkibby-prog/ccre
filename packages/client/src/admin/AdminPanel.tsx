@@ -685,8 +685,8 @@ export function useCanAdmin() {
 // ═══════════════════════ Bosslar: güç, genel ayar, düşme tablosu ═══════════════════════
 type SetMon = (id: string, p: Partial<MonsterTune>) => void;
 type SetSpawn = (k: string, p: Partial<SpawnTune>) => void;
-const KIND_NAMES: Record<DropTune['kind'], string> = { item: 'Eşya', mat: 'Malzeme', mall: 'Market ürünü' };
-function dropOptions(kind: DropTune['kind']): [string, string][] {
+export const KIND_NAMES: Record<DropTune['kind'], string> = { item: 'Eşya', mat: 'Malzeme', mall: 'Market ürünü' };
+export function dropOptions(kind: DropTune['kind']): [string, string][] {
   if (kind === 'item') return ITEM_TEMPLATES.map((t) => [t.id, t.name] as [string, string]);
   if (kind === 'mat') return MATERIALS.filter((m) => !MALL.has(m.id)).map((m) => [m.id, m.name] as [string, string]);
   return MALL_ITEMS.filter((m) => !m.soon && !m.epin).map((m) => [m.id, m.name] as [string, string]);

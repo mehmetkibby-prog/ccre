@@ -92,6 +92,49 @@ export interface GameTuning {
   killRank: KillRankTune;
   /** Kadim Kule: kat başına canavar/güç/görev, kat malzemeleri ve Azrail Sandığı içeriği. */
   tower: TowerTune;
+  /** Üretim (Zanaatkâr Pakize): yönetimden tanımlanan tarifler */
+  crafts: CraftRecipe[];
+}
+/**
+ * Üretim tarifi: girdiler (malzeme / market ürünü anahtarı → adet), mücevher ve öz bedeli; çıktı eşya, malzeme ya da
+ * market ürünü. Eşya anahtarı "w_cls" / "a_cls" / "h_cls" ise üretenin kendi sınıfının silahı/zırhı/miğferi olur.
+ * Başarısızlıkta mücevher/öz gider, malzemelerin yarısı geri döner.
+ */
+export interface CraftRecipe {
+  id: string; name: string;
+  out: { kind: 'item' | 'mat' | 'mall'; key: string; rarity?: string; qty: number };
+  inputs: Record<string, number>; gems: number; essence: number;
+  /** başarı şansı (yüzde) ve en düşük seviye */
+  chance: number; minLevel: number;
+  off?: boolean;
+}
+export const CRAFTS_DEFAULT: CraftRecipe[] = [
+  { id: 'r_mastery', name: 'Ustalık Mührü', out: { kind: 'mat', key: 'mastery_seal', qty: 1 }, inputs: { tower_seal: 3, mourn_silk: 2 }, gems: 500, essence: 0, chance: 100, minLevel: 25 },
+  { id: 'r_necklace', name: 'Kadim Kolye', out: { kind: 'item', key: 'necklace', rarity: 'crimson', qty: 1 }, inputs: { tower_seal: 5, soul_ring: 3, sly_core: 2 }, gems: 2000, essence: 200, chance: 60, minLevel: 30 },
+  { id: 'r_azrail_weapon', name: 'Azrail\'in Silahı (sınıfına)', out: { kind: 'item', key: 'w_cls', rarity: 'unique', qty: 1 }, inputs: { azrail_hook: 1, tower_seal: 10, soul_ring: 5, sly_core: 5, mourn_silk: 5 }, gems: 10000, essence: 1000, chance: 50, minLevel: 40 },
+];
+export function sanitizeCrafts(raw: unknown): CraftRecipe[] {
+  if (!Array.isArray(raw)) return structuredClone(CRAFTS_DEFAULT);
+  const key = (v: unknown) => typeof v === 'string' && /^[a-z0-9_]{1,32}$/.test(v) ? v : null;
+  const num = (v: unknown, lo: number, hi: number, d: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
+  const out: CraftRecipe[] = []; const ids = new Set<string>();
+  for (const x of raw.slice(0, 60)) {
+    const o = (x && typeof x === 'object' ? x : {}) as Record<string, unknown>;
+    const id = key(o.id); if (!id || ids.has(id)) continue;
+    const oo = (o.out && typeof o.out === 'object' ? o.out : {}) as Record<string, unknown>;
+    const kind = oo.kind === 'item' || oo.kind === 'mat' || oo.kind === 'mall' ? oo.kind : null; const k = key(oo.key);
+    if (!kind || !k) continue;
+    const inputs: Record<string, number> = {};
+    for (const [ik, iv] of Object.entries((o.inputs && typeof o.inputs === 'object' ? o.inputs : {}) as Record<string, unknown>).slice(0, 8)) { const kk = key(ik), q = Math.round(num(iv, 0, 9999, 0)); if (kk && q > 0) inputs[kk] = q; }
+    ids.add(id);
+    out.push({
+      id, name: typeof o.name === 'string' && o.name.trim() ? o.name.trim().slice(0, 40) : id,
+      out: { kind, key: k, qty: Math.round(num(oo.qty, 1, 999, 1)), ...(kind === 'item' && typeof oo.rarity === 'string' && RARITY_IDS.includes(oo.rarity) ? { rarity: oo.rarity } : {}) },
+      inputs, gems: Math.round(num(o.gems, 0, 1e9, 0)), essence: Math.round(num(o.essence, 0, 1e9, 0)), chance: num(o.chance, 0, 100, 100), minLevel: Math.round(num(o.minLevel, 1, 120, 1)),
+      ...(o.off === true ? { off: true } : {}),
+    });
+  }
+  return out;
 }
 /** Kat görevi: öldür / mühür sırası / anahtar / bilmece / sunak / boss (Azrail). */
 export type TowerPuzzle = 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss';
@@ -208,9 +251,10 @@ export const DEFAULT_TUNING: GameTuning = {
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),
   tower: structuredClone(TOWER_DEFAULT),
+  crafts: structuredClone(CRAFTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
@@ -233,6 +277,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.arena = sanitizeArena(r.arena);
   out.killRank = sanitizeKillRank(r.killRank);
   out.tower = sanitizeTower(r.tower);
+  out.crafts = sanitizeCrafts(r.crafts);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

@@ -9,6 +9,7 @@ import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
 import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import { TowerPanel } from './tower.tsx';
+import { CraftPanel } from './craft.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -53,6 +54,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'friends' && <FriendsPanel />}
       {p === 'mount' && <MountPanel />}
       {p === 'tower' && <TowerPanel />}
+      {p === 'craft' && <CraftPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
@@ -527,7 +529,7 @@ function Settings() {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -537,11 +539,12 @@ function NpcDialog({ game }: { game: Game }) {
     else if (a === 'fishing_shop') store.set({ panel: 'fishshop' });
     else if (a === 'mount') store.set({ panel: 'mount' });
     else if (a === 'tower') store.set({ panel: 'tower' });
+    else if (a === 'craft') store.set({ panel: 'craft' });
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {
     haso: 'Ocak sıcak, örs hazır. Silahını ya da zırhını getir; artısını +6\'ya kadar ben dövüp çıkarırım. Güçlü Dal, mühür ve biraz da Mücevher lazım.', rauf: 'Eşyaların bende emanet, bir tanesi bile kaybolmaz.', nur: 'Çekirdeğin ışığı seni dilediğin yere taşır.',
-    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister.', bekci: 'Kadim Kule\'nin kapısını ben beklerim. On kat, on sınav… ve zirvede Azrail. Hazırsan geç.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.', kemal: 'Gölet küçük ama balığı bol!',
+    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister. Malzemeni getir, sana ne üretebileceğimi göstereyim.', bekci: 'Kadim Kule\'nin kapısını ben beklerim. On kat, on sınav… ve zirvede Azrail. Hazırsan geç.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.', kemal: 'Gölet küçük ama balığı bol!',
   };
   return (
     <div className="frame panel npcd" onPointerDown={(e) => e.stopPropagation()}>

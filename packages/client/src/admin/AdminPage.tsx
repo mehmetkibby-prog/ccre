@@ -10,6 +10,7 @@ import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
 import { GeneralTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 import { TowerTab } from './TowerAdmin.tsx';
+import { CraftTab } from './CraftAdmin.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -79,21 +80,21 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena' | 'kule';
+type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena' | 'kule' | 'uretim';
 const TABS: [Tab, string, string][] = [
   ['durum', 'Durum', '◉'], ...(backend.accounts ? [['kayit', 'Kayıtlar', '☰'] as [Tab, string, string]] : []), ['oyuncu', 'Oyuncular', '☺'],
   ['arena', 'Savaş Arenası', '⚔'], ['kule', 'Kadim Kule', '♜'], ['boss', 'Bosslar', '♛'],
   ['genel', 'Genel', '⚙'], ['seviye', 'Seviye', '▲'], ['canavar', 'Canavarlar', '✶'], ['harita', 'Haritalar', '⌖'],
-  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['market', 'Nesne Market', '✦'], ['balik', 'Balıkçılık', '≈'],
+  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['uretim', 'Üretim', '⚗'], ['market', 'Nesne Market', '✦'], ['balik', 'Balıkçılık', '≈'],
 ];
 /** Sekme grupları: sol menüde başlık altında, telefonda yatay çubukta küçük ayraçla */
 const GROUPS: [string, Tab[]][] = [
   ['Sunucu', ['durum', 'kayit', 'oyuncu']],
   ['Etkinlikler', ['arena', 'kule', 'boss']],
   ['Oyun dengesi', ['genel', 'seviye', 'canavar', 'harita']],
-  ['Ekonomi', ['ganimet', 'efsun', 'arti', 'donusum', 'market', 'balik']],
+  ['Ekonomi', ['ganimet', 'efsun', 'arti', 'donusum', 'uretim', 'market', 'balik']],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena', 'kule']);
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena', 'kule', 'uretim']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -206,6 +207,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'genel' && <GeneralTab t={t} setT={setTT} dis={busy} />}
             {tab === 'seviye' && <LevelTab t={t} setT={setTT} dis={busy} />}
             {tab === 'kule' && <TowerTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'uretim' && <CraftTab t={t} setT={setTT} dis={busy} />}
             {tab === 'boss' && <BossTab t={t} setMon={setMon} setSpawn={setSpawn} dis={busy} />}
             {tab === 'balik' && <FishingTab t={t} setT={setTT} dis={busy} />}
             {tab === 'market' && <MallTab t={t} setT={setTT} dis={busy} epin={backend.epinCreate ? <EpinBox toast={setToast} /> : undefined} />}
