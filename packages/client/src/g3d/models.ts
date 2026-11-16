@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
-import { guardianClips, bodyPart } from './charAnims.ts';
+import { guardianClips, hunterClips, arcanistClips, bodyPart } from './charAnims.ts';
 
 /**
  * Hazır 3B modeller (GLB). `models/models.json` dosyasında listelenen modeller yüklenir;
@@ -407,7 +407,10 @@ export function createGlbChar(id: string): GlbChar | null {
   const baseId = L.entry.animFrom ?? id;
   // Muhafız: elle çizilmiş kombo ve beceri klipleri (model başına bir kez kurulur; kemik adlarıyla bağlanır)
   let custom = customClips.get(id);
-  if (custom === undefined && baseId === 'guardian') { custom = guardianClips(inner, root); customClips.set(id, custom); }
+  if (custom === undefined && (baseId === 'guardian' || baseId === 'hunter' || baseId === 'arcanist')) {
+    custom = baseId === 'guardian' ? guardianClips(inner, root) : baseId === 'hunter' ? hunterClips(inner, root) : arcanistClips(inner, root);
+    customClips.set(id, custom);
+  }
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
   const skillClips = SKILL_CLIPS[baseId] ?? {};
   let attackN = 0, skillN = 0;

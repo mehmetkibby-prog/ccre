@@ -229,6 +229,195 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
   return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3 } as Record<number, THREE.AnimationClip> };
 }
 
+// ───────── Avcı (yay sol elde) ─────────
+/**
+ * Okçu duruşu: gövde sağa döner (sol omuz hedefe), baş hedefe bakar. Kol yönleri gövde çerçevesindedir:
+ * gövde -70° dönükken hedef yönü ≈ (0,94, 0, 0,34) (karakterin solu). Sol kol hedefe uzanır, sağ el kirişi
+ * yanağa çeker (dirsek ok hattının gerisinde), bırakınca el omuz üstünden geriye savrulur.
+ */
+const HUNT: Pose = {
+  Spine02: { e: [4, -6, 0] }, Spine01: { e: [2, 0, 0] }, Spine: { e: [2, 0, 0] }, Head: { e: [-4, 8, 0] },
+  LeftArm: { a: [0.38, -0.72, 0.58] }, LeftForeArm: { a: [0.12, -0.35, 0.93] },
+  RightArm: { a: [-0.4, -0.86, 0.32] }, RightForeArm: { a: [-0.12, -0.55, 0.83] },
+  LeftUpLeg: { e: [-8, 0, 7] }, LeftLeg: { e: [10, 0, 0] }, RightUpLeg: { e: [6, 0, -7] }, RightLeg: { e: [10, 0, 0] },
+};
+const HP = (over: Pose): Pose => ({ ...HUNT, ...over });
+/** yay çekme: gövde dönüşü (yaw, derece; toplam), yukarı nişan (rad), çekme (0..1) */
+function bowPose(yaw: number, up: number, draw: number, extra: Pose = {}): Pose {
+  const t = -yaw * D2R; // gövdeden bakınca hedef yönü
+  const fx = Math.sin(t), fz = Math.cos(t), cu = Math.cos(up), su = Math.sin(up);
+  const tgt: [number, number, number] = [fx * cu, su, fz * cu];
+  const back: [number, number, number] = [-fx * 0.92 * cu, 0.06 + su * 0.35, -fz * 0.92 * cu];
+  const k = draw;
+  return {
+    Spine: { e: [0, yaw * 0.2, 0] }, Spine01: { e: [0, yaw * 0.13, 0] }, Spine02: { e: [-4, yaw * 0.12, 0] },
+    neck: { e: [0, -yaw * 0.35, 0] }, Head: { e: [-up * 40, -yaw * 0.62, 0] },
+    LeftArm: { a: tgt }, LeftForeArm: { a: [tgt[0], tgt[1] + 0.02, tgt[2]] },
+    // sağ kol: çekmeden önce kirişe uzanır (öne), çekince dirsek ok hattının gerisine
+    RightArm: { a: [tgt[0] * (1 - k) + back[0] * k, 0.05 + su * 0.5, tgt[2] * (1 - k) + back[2] * k] },
+    RightForeArm: { a: [fx * cu * 0.92, 0.02 + su * 0.6, fz * cu * 0.92 + 0.3] },
+    LeftUpLeg: { e: [-6, 0, 12] }, LeftLeg: { e: [8, 0, 0] }, RightUpLeg: { e: [8, 0, -12] }, RightLeg: { e: [10, 0, 0] },
+    ...extra,
+  };
+}
+function releasePose(yaw: number, up: number, extra: Pose = {}): Pose {
+  const p = bowPose(yaw, up, 1, extra);
+  const t = -yaw * D2R, fx = Math.sin(t), fz = Math.cos(t);
+  // bırakış: sağ el kulağın arkasından geriye savrulur, yay kolu hafif geri teper
+  p.RightArm = { a: [-fx * 0.8, 0.28, -fz * 0.8 - 0.2] };
+  p.RightForeArm = { a: [-fx * 0.55, 0.55, -fz * 0.6] };
+  p.LeftForeArm = { a: [fx, Math.sin(up) + 0.12, fz] };
+  return p;
+}
+export const HUNTER_RELEASE_S = 0.19;
+export function hunterClips(inner: THREE.Object3D, root: THREE.Object3D) {
+  const R = HUNTER_RELEASE_S;
+  const H = (p: Pose, yaw: number, lean = 0) => B(p, yaw * 0.55, lean);
+  // 1) hızlı atış: dön, çek, bırak
+  const a1 = buildClip('H Atış 1', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.07, ease: 'out', p: H(bowPose(-62, 0.04, 0.35), -62) },
+    { t: 0.14, ease: 'inOut', hips: [-0.02, -0.02], p: H(bowPose(-70, 0.05, 1), -70, -2) },
+    { t: R - 0.005, ease: 'lin', hips: [-0.02, -0.02], p: H(bowPose(-70, 0.05, 1.04), -70, -2) },
+    { t: R + 0.06, ease: 'out', hips: [-0.02, -0.04], p: H(releasePose(-72, 0.07), -72, -4) },
+    { t: 0.36, ease: 'lin', hips: [-0.02, -0.03], p: H(releasePose(-70, 0.06), -70, -3) },
+    { t: 0.62, ease: 'inOut', p: HUNT },
+  ], 0.62);
+  // 2) güçlü çekiş: dize çöker gibi alçalır, sonuna kadar çeker, geri teper
+  const a2 = buildClip('H Atış 2', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.09, ease: 'out', hips: [-0.06, 0], p: H(bowPose(-66, 0.02, 0.5, { LeftUpLeg: { e: [-22, 0, 12] }, LeftLeg: { e: [30, 0, 0] }, RightUpLeg: { e: [16, 0, -12] }, RightLeg: { e: [26, 0, 0] } }), -66) },
+    { t: 0.15, ease: 'inOut', hips: [-0.08, -0.02], p: H(bowPose(-74, 0.03, 1.1, { LeftUpLeg: { e: [-24, 0, 12] }, LeftLeg: { e: [34, 0, 0] }, RightUpLeg: { e: [18, 0, -12] }, RightLeg: { e: [30, 0, 0] } }), -74, -3) },
+    { t: R, ease: 'lin', hips: [-0.08, -0.02], p: H(bowPose(-74, 0.03, 1.14, { LeftUpLeg: { e: [-24, 0, 12] }, LeftLeg: { e: [34, 0, 0] }, RightUpLeg: { e: [18, 0, -12] }, RightLeg: { e: [30, 0, 0] } }), -74, -3) },
+    { t: R + 0.07, ease: 'out', hips: [-0.06, -0.09], p: H(releasePose(-76, 0.06, { LeftUpLeg: { e: [-18, 0, 12] }, LeftLeg: { e: [24, 0, 0] }, RightUpLeg: { e: [20, 0, -12] }, RightLeg: { e: [22, 0, 0] } }), -76, -8) },
+    { t: 0.4, ease: 'lin', hips: [-0.04, -0.07], p: H(releasePose(-72, 0.05), -72, -5) },
+    { t: 0.62, ease: 'inOut', p: HUNT },
+  ], 0.62);
+  // 3) dönerek atış: gövdeyi daha çok çevirir, kalçadan çekip bırakır
+  const a3 = buildClip('H Atış 3', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.1, ease: 'out', hips: [-0.01, 0.03], p: H(bowPose(-80, -0.02, 0.6), -80, 4) },
+    { t: 0.16, ease: 'inOut', hips: [-0.02, 0.04], p: H(bowPose(-84, 0.0, 1), -84, 5) },
+    { t: R, ease: 'lin', hips: [-0.02, 0.04], p: H(bowPose(-84, 0.0, 1.04), -84, 5) },
+    { t: R + 0.06, ease: 'out', hips: [-0.02, 0.0], p: H(releasePose(-86, 0.02), -86, 0) },
+    { t: 0.38, ease: 'lin', p: H(releasePose(-80, 0.02), -80, 0) },
+    { t: 0.62, ease: 'inOut', p: HUNT },
+  ], 0.62);
+  // beceriler (0,95 sn)
+  // Yelpaze Atış: göğe doğru nişan alıp yayı yana savurarak art arda bırakır
+  const s1 = buildClip('H Yelpaze', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.16, ease: 'out', hips: [-0.03, -0.02], p: H(bowPose(-55, 0.55, 0.7), -55, -10) },
+    { t: 0.3, ease: 'inOut', hips: [-0.04, -0.03], p: H(bowPose(-62, 0.6, 1.05), -62, -12) },
+    { t: 0.38, ease: 'out', hips: [-0.04, -0.05], p: H(releasePose(-66, 0.62), -66, -12) },
+    { t: 0.52, ease: 'inOut', hips: [-0.04, -0.04], p: H(bowPose(-80, 0.5, 0.95), -80, -10) },
+    { t: 0.58, ease: 'out', hips: [-0.04, -0.06], p: H(releasePose(-84, 0.5), -84, -10) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
+  // Delici Ok: sağ dize çöker, uzun çeker, güçlü bırakışla geri sarsılır
+  const KNEEL: Pose = { LeftUpLeg: { e: [-48, 0, 10] }, LeftLeg: { e: [62, 0, 0] }, LeftFoot: { e: [-10, 0, 0] }, RightUpLeg: { e: [28, 0, -8] }, RightLeg: { e: [96, 0, 0] }, RightFoot: { e: [30, 0, 0] } };
+  const s2 = buildClip('H Delici', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.2, ease: 'out', hips: [-0.36, 0.02], p: H(bowPose(-68, 0.02, 0.6, KNEEL), -68, 4) },
+    { t: 0.46, ease: 'inOut', hips: [-0.38, 0.02], p: H(bowPose(-74, 0.03, 1.15, KNEEL), -74, 5) },
+    { t: 0.52, ease: 'out', hips: [-0.36, -0.06], p: H(releasePose(-78, 0.06, KNEEL), -78, -4) },
+    { t: 0.7, ease: 'lin', hips: [-0.34, -0.04], p: H(releasePose(-74, 0.04, KNEEL), -74, -2) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
+  // Şafak Oku: yayı göğe kaldırıp ışık toplar, aşağı indirip tek ağır atış
+  const s3 = buildClip('H Şafak', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.22, ease: 'out', hips: [0.02, 0], p: H(bowPose(-40, 1.1, 0.4, { Spine02: { e: [-18, -6, 0] } }), -40, -14) },
+    { t: 0.42, ease: 'inOut', hips: [-0.06, 0.02], p: H(bowPose(-72, 0.08, 1.15), -72, 2) },
+    { t: 0.48, ease: 'out', hips: [-0.06, -0.08], p: H(releasePose(-76, 0.08), -76, -8) },
+    { t: 0.68, ease: 'lin', hips: [-0.04, -0.05], p: H(releasePose(-72, 0.06), -72, -4) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
+  // Kök Oku: yere doğru nişan, dizleri kırık
+  const s4 = buildClip('H Kök', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.2, ease: 'out', hips: [-0.12, 0.04], p: H(bowPose(-66, -0.32, 0.7, { LeftUpLeg: { e: [-28, 0, 12] }, LeftLeg: { e: [40, 0, 0] }, RightUpLeg: { e: [20, 0, -12] }, RightLeg: { e: [34, 0, 0] } }), -66, 14) },
+    { t: 0.42, ease: 'inOut', hips: [-0.14, 0.05], p: H(bowPose(-72, -0.34, 1.1, { LeftUpLeg: { e: [-30, 0, 12] }, LeftLeg: { e: [44, 0, 0] }, RightUpLeg: { e: [22, 0, -12] }, RightLeg: { e: [38, 0, 0] } }), -72, 16) },
+    { t: 0.48, ease: 'out', hips: [-0.12, -0.02], p: H(releasePose(-74, -0.3), -74, 8) },
+    { t: 0.7, ease: 'lin', hips: [-0.08, -0.01], p: H(releasePose(-70, -0.2), -70, 4) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
+  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 4: s4 } as Record<number, THREE.AnimationClip> };
+}
+
+// ───────── Arkanist (asa sağ elde) ─────────
+const ARC: Pose = {
+  Spine02: { e: [4, 4, 0] }, Spine01: { e: [2, 0, 0] }, Spine: { e: [2, 0, 0] }, Head: { e: [-4, -4, 0] },
+  RightArm: { a: [-0.45, -0.8, 0.4] }, RightForeArm: { a: [-0.1, -0.15, 0.98] },
+  LeftArm: { a: [0.45, -0.85, 0.28] }, LeftForeArm: { a: [0.25, -0.45, 0.86] },
+  LeftUpLeg: { e: [-8, 0, 6] }, LeftLeg: { e: [10, 0, 0] }, RightUpLeg: { e: [8, 0, -6] }, RightLeg: { e: [10, 0, 0] },
+};
+const AP = (over: Pose): Pose => ({ ...ARC, ...over });
+export const ARCANIST_RELEASE_S = 0.25;
+export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
+  const R = ARCANIST_RELEASE_S;
+  const STEP: Pose = { LeftUpLeg: { e: [-26, 0, 6] }, LeftLeg: { e: [22, 0, 0] }, RightUpLeg: { e: [16, 0, -6] }, RightLeg: { e: [10, 0, 0] } };
+  // 1) asa itişi: asayı geri alıp öne savurur, sol avuç ileri
+  const a1 = buildClip('A Kıvılcım 1', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.12, ease: 'out', hips: [-0.02, -0.03], p: B(AP({ Spine02: { e: [-6, 22, 0] }, Spine: { e: [-2, 10, 0] }, Head: { e: [-4, -26, 0] }, RightArm: { a: [-0.75, -0.2, -0.62] }, RightForeArm: { a: [-0.35, 0.55, -0.75] }, LeftArm: { a: [0.5, 0.05, 0.86] }, LeftForeArm: { a: [0.1, 0.2, 0.97] } }), 14, -4) },
+    { t: R, ease: 'in', hips: [-0.06, 0.12], p: B(AP({ ...STEP, Spine02: { e: [16, -16, 0] }, Spine: { e: [8, -8, 0] }, Head: { e: [-14, 20, 0] }, RightArm: { a: [-0.15, 0.25, 0.96] }, RightForeArm: { a: [-0.05, 0.45, 0.9] }, LeftArm: { a: [0.62, -0.25, 0.75] }, LeftForeArm: { a: [0.55, -0.5, 0.67] } }), -12, 10) },
+    { t: 0.4, ease: 'out', hips: [-0.06, 0.13], p: B(AP({ ...STEP, Spine02: { e: [18, -20, 0] }, Spine: { e: [8, -10, 0] }, Head: { e: [-16, 24, 0] }, RightArm: { a: [-0.1, 0.18, 0.98] }, RightForeArm: { a: [0, 0.3, 0.95] }, LeftArm: { a: [0.65, -0.35, 0.68] }, LeftForeArm: { a: [0.5, -0.6, 0.62] } }), -14, 12) },
+    { t: 0.62, ease: 'inOut', p: ARC },
+  ], 0.62);
+  // 2) sol avuçtan küre: asa geride, sol el öne uzanır
+  const a2 = buildClip('A Kıvılcım 2', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.12, ease: 'out', hips: [-0.03, -0.02], p: B(AP({ Spine02: { e: [-4, -20, 0] }, Spine: { e: [-2, -10, 0] }, Head: { e: [-4, 24, 0] }, LeftArm: { a: [0.85, 0.1, -0.5] }, LeftForeArm: { a: [0.2, 0.75, -0.62] }, RightArm: { a: [-0.6, -0.65, 0.45] }, RightForeArm: { a: [-0.2, -0.2, 0.96] } }), -12, -4) },
+    { t: R, ease: 'in', hips: [-0.06, 0.12], p: B(AP({ ...STEP, Spine02: { e: [14, 18, 0] }, Spine: { e: [6, 10, 0] }, Head: { e: [-12, -24, 0] }, LeftArm: { a: [0.15, 0.2, 0.97] }, LeftForeArm: { a: [0.05, 0.15, 0.99] }, RightArm: { a: [-0.7, -0.45, -0.55] }, RightForeArm: { a: [-0.3, 0.2, -0.93] } }), 14, 10) },
+    { t: 0.4, ease: 'out', hips: [-0.06, 0.13], p: B(AP({ ...STEP, Spine02: { e: [16, 22, 0] }, Spine: { e: [6, 12, 0] }, Head: { e: [-14, -28, 0] }, LeftArm: { a: [0.1, 0.15, 0.98] }, LeftForeArm: { a: [0.02, 0.1, 1] }, RightArm: { a: [-0.72, -0.4, -0.56] }, RightForeArm: { a: [-0.3, 0.25, -0.92] } }), 16, 12) },
+    { t: 0.62, ease: 'inOut', p: ARC },
+  ], 0.62);
+  // 3) iki elle: asayı başın üstünden öne indirir
+  const a3 = buildClip('A Kıvılcım 3', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.13, ease: 'out', hips: [0.01, -0.04], p: B(AP({ Spine02: { e: [-16, 0, 0] }, Spine: { e: [-8, 0, 0] }, Head: { e: [6, 0, 0] }, RightArm: { a: [-0.25, 0.95, -0.1] }, RightForeArm: { a: [-0.05, 0.7, -0.7] }, LeftArm: { a: [0.25, 0.93, -0.05] }, LeftForeArm: { a: [-0.2, 0.75, -0.6] } }), 0, -8) },
+    { t: R, ease: 'in', hips: [-0.1, 0.12], p: B(AP({ ...STEP, Spine02: { e: [24, 0, 0] }, Spine: { e: [12, 0, 0] }, Head: { e: [-22, 0, 0] }, RightArm: { a: [-0.15, 0.1, 0.98] }, RightForeArm: { a: [0, -0.35, 0.94] }, LeftArm: { a: [0.18, 0.1, 0.98] }, LeftForeArm: { a: [-0.05, -0.3, 0.95] } }), 0, 14) },
+    { t: 0.42, ease: 'out', hips: [-0.11, 0.13], p: B(AP({ ...STEP, Spine02: { e: [26, 0, 0] }, Spine: { e: [12, 0, 0] }, Head: { e: [-24, 0, 0] }, RightArm: { a: [-0.15, 0.0, 0.99] }, RightForeArm: { a: [0, -0.45, 0.89] }, LeftArm: { a: [0.18, 0.0, 0.98] }, LeftForeArm: { a: [-0.05, -0.4, 0.92] } }), 0, 16) },
+    { t: 0.62, ease: 'inOut', p: ARC },
+  ], 0.62);
+  // beceriler
+  const WIDE: Pose = { LeftUpLeg: { e: [-14, 0, 14] }, LeftLeg: { e: [24, 0, 0] }, RightUpLeg: { e: [10, 0, -14] }, RightLeg: { e: [24, 0, 0] } };
+  // Öz Halkası: asayı göğe kaldırır, çömelip yere vurur
+  const s1 = buildClip('A Halka', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.26, ease: 'out', hips: [0.03, -0.02], p: AP({ Spine02: { e: [-20, 0, 0] }, Spine: { e: [-10, 0, 0] }, Head: { e: [-22, 0, 0] }, RightArm: { a: [-0.2, 0.97, 0.1] }, RightForeArm: { a: [-0.05, 0.98, 0.2] }, LeftArm: { a: [0.7, 0.6, 0.38] }, LeftForeArm: { a: [0.45, 0.85, 0.27] } }) },
+    { t: 0.36, ease: 'lin', hips: [0.04, -0.02], p: AP({ Spine02: { e: [-22, 0, 0] }, Spine: { e: [-12, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.18, 0.98, 0.08] }, RightForeArm: { a: [-0.05, 0.99, 0.15] }, LeftArm: { a: [0.72, 0.62, 0.3] }, LeftForeArm: { a: [0.45, 0.86, 0.22] } }) },
+    { t: 0.5, ease: 'in', hips: [-0.28, 0.08], p: AP({ ...WIDE, LeftUpLeg: { e: [-46, 0, 14] }, LeftLeg: { e: [68, 0, 0] }, RightUpLeg: { e: [30, 0, -14] }, RightLeg: { e: [70, 0, 0] }, Spine02: { e: [34, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-24, 0, 0] }, RightArm: { a: [-0.2, -0.35, 0.92] }, RightForeArm: { a: [-0.05, -0.85, 0.52] }, LeftArm: { a: [0.85, -0.25, 0.45] }, LeftForeArm: { a: [0.6, -0.5, 0.62] } }) },
+    { t: 0.72, ease: 'lin', hips: [-0.27, 0.08], p: AP({ ...WIDE, LeftUpLeg: { e: [-44, 0, 14] }, LeftLeg: { e: [64, 0, 0] }, RightUpLeg: { e: [28, 0, -14] }, RightLeg: { e: [66, 0, 0] }, Spine02: { e: [30, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.2, -0.35, 0.92] }, RightForeArm: { a: [-0.05, -0.85, 0.52] }, LeftArm: { a: [0.85, -0.2, 0.48] }, LeftForeArm: { a: [0.6, -0.45, 0.66] } }) },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
+  // Kırağı Mührü: iki avucunu öne uzatır, mührü iter
+  const s2 = buildClip('A Mühür', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.22, ease: 'out', hips: [-0.04, -0.03], p: AP({ Spine02: { e: [-6, 0, 0] }, RightArm: { a: [-0.6, -0.1, 0.79] }, RightForeArm: { a: [0.45, 0.2, 0.87] }, LeftArm: { a: [0.6, -0.1, 0.79] }, LeftForeArm: { a: [-0.45, 0.2, 0.87] } }) },
+    { t: 0.42, ease: 'in', hips: [-0.08, 0.12], p: AP({ ...STEP, Spine02: { e: [16, 0, 0] }, Spine: { e: [8, 0, 0] }, Head: { e: [-14, 0, 0] }, RightArm: { a: [-0.22, 0.12, 0.97] }, RightForeArm: { a: [-0.05, 0.1, 0.99] }, LeftArm: { a: [0.22, 0.12, 0.97] }, LeftForeArm: { a: [0.05, 0.1, 0.99] } }) },
+    { t: 0.7, ease: 'lin', hips: [-0.08, 0.12], p: AP({ ...STEP, Spine02: { e: [14, 0, 0] }, Spine: { e: [8, 0, 0] }, Head: { e: [-12, 0, 0] }, RightArm: { a: [-0.24, 0.1, 0.96] }, RightForeArm: { a: [-0.06, 0.12, 0.99] }, LeftArm: { a: [0.24, 0.1, 0.96] }, LeftForeArm: { a: [0.06, 0.12, 0.99] } }) },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
+  // Öz Patlaması: enerjiyi göğsünde toplar (kollar içe), sonra iki yana patlatır
+  const s3 = buildClip('A Patlama', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.3, ease: 'out', hips: [-0.12, -0.02], p: AP({ ...WIDE, Spine02: { e: [22, 0, 0] }, Spine: { e: [10, 0, 0] }, Head: { e: [-6, 0, 0] }, RightArm: { a: [-0.4, -0.55, 0.73] }, RightForeArm: { a: [0.7, 0.1, 0.7] }, LeftArm: { a: [0.4, -0.55, 0.73] }, LeftForeArm: { a: [-0.7, 0.1, 0.7] } }) },
+    { t: 0.44, ease: 'in', hips: [0.04, 0.03], p: AP({ Spine02: { e: [-24, 0, 0] }, Spine: { e: [-12, 0, 0] }, Head: { e: [-24, 0, 0] }, RightArm: { a: [-0.9, 0.42, 0.1] }, RightForeArm: { a: [-0.85, 0.5, 0.15] }, LeftArm: { a: [0.9, 0.42, 0.1] }, LeftForeArm: { a: [0.85, 0.5, 0.15] } }) },
+    { t: 0.7, ease: 'lin', hips: [0.03, 0.02], p: AP({ Spine02: { e: [-20, 0, 0] }, Spine: { e: [-10, 0, 0] }, Head: { e: [-20, 0, 0] }, RightArm: { a: [-0.9, 0.38, 0.15] }, RightForeArm: { a: [-0.85, 0.45, 0.2] }, LeftArm: { a: [0.9, 0.38, 0.15] }, LeftForeArm: { a: [0.85, 0.45, 0.2] } }) },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
+  // Yaşam Dalgası: asayı yükseltir, sol kolu açar, göğe bakar
+  const s4 = buildClip('A Dalga', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.3, ease: 'out', hips: [0.03, 0], p: AP({ Spine02: { e: [-18, 0, 0] }, Spine: { e: [-8, 0, 0] }, Head: { e: [-30, 0, 0] }, RightArm: { a: [-0.35, 0.92, 0.15] }, RightForeArm: { a: [-0.1, 0.97, 0.2] }, LeftArm: { a: [0.92, 0.3, 0.25] }, LeftForeArm: { a: [0.85, 0.45, 0.28] } }) },
+    { t: 0.7, ease: 'lin', hips: [0.04, 0], p: AP({ Spine02: { e: [-20, 0, 0] }, Spine: { e: [-10, 0, 0] }, Head: { e: [-34, 0, 0] }, RightArm: { a: [-0.32, 0.93, 0.15] }, RightForeArm: { a: [-0.08, 0.98, 0.2] }, LeftArm: { a: [0.93, 0.32, 0.18] }, LeftForeArm: { a: [0.86, 0.46, 0.22] } }) },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
+  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 4: s4 } as Record<number, THREE.AnimationClip> };
+}
+
 // ───────── üst / alt gövde ayrımı (yürürken vurmak için) ─────────
 const LOWER_RE = /(hips|upleg|leg|foot|toebase|toe_end)$/i;
 const partCache = new WeakMap<THREE.AnimationClip, { up?: THREE.AnimationClip; low?: THREE.AnimationClip }>();
