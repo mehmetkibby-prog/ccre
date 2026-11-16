@@ -3,7 +3,7 @@ import { DIR_STEPS,
   MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
   findPath, los,
 } from '@col/shared';
-import { store, notify, pushChat, pushLoot, reqId } from './store.ts';
+import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
 import type { Fx3D } from '../g3d/fx3d.ts';
@@ -202,7 +202,7 @@ export class Game {
       case 'stall_sold': store.set((st) => ({ stallLog: [`${m.buyer} · ${m.name} · ${Number(m.price).toLocaleString('tr-TR')} Mücevher`, ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
       case 'chat':
-        if (m.ch === 'pm') { pushChat({ ch: 'pm', from: m.self ? `→ ${m.to}` : m.from, text: m.text, cls: m.cls }); if (!m.self) { sfx.play('ui'); store.set({ whisperTo: store.get().whisperTo ?? m.from }); } }
+        if (m.ch === 'pm') { pushChat({ ch: 'pm', from: m.self ? `→ ${m.to}` : m.from, text: m.text, cls: m.cls }); pmPush(m.self ? m.to : m.from, !!m.self, m.text); if (!m.self) sfx.play('ui'); }
         else pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm, item: m.item });
         break;
       // ───────── oyuncular arası: davet, grup, ticaret, düello, arkadaşlık ─────────

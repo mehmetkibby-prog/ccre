@@ -9,6 +9,33 @@ export interface SelfInfo {
   statAlloc: StatAlloc; statRev: number; statBudget: number; skills: number[]; spec: string | null; skillBudget: number;
   combat: { maxHp: number; atk: number; def: number; crit: number; critDmg: number; speed: number; atkSpeed: number; block: number; lifesteal: number; pvpPower: number; pvpResist: number };
 }
+export interface PmConv { name: string; msgs: { me: boolean; text: string; at: number }[]; open: boolean; unread: number; z: number }
+let pmZ = 1;
+/** Fısıltı geldi/gitti: konuşmaya ekle. Yeni gelen konuşma küçük (zarf) başlar; açık penceresi varsa mesaj oraya düşer. */
+export function pmPush(name: string, me: boolean, text: string) {
+  store.set((s) => {
+    const list = [...s.pms];
+    let i = list.findIndex((c) => c.name.toLocaleLowerCase('tr') === name.toLocaleLowerCase('tr'));
+    if (i < 0) { list.push({ name, msgs: [], open: me, unread: 0, z: ++pmZ }); i = list.length - 1; }
+    const c = { ...list[i], msgs: [...list[i].msgs.slice(-80), { me, text, at: Date.now() }] };
+    if (!me && !c.open) c.unread++;
+    list[i] = c;
+    return { pms: list.slice(-8) };
+  });
+}
+/** Fısıltı penceresini aç (yoksa oluştur), öne getir. */
+export function pmOpen(name: string) {
+  store.set((s) => {
+    const list = [...s.pms];
+    const i = list.findIndex((c) => c.name.toLocaleLowerCase('tr') === name.toLocaleLowerCase('tr'));
+    if (i < 0) list.push({ name, msgs: [], open: true, unread: 0, z: ++pmZ });
+    else list[i] = { ...list[i], open: true, unread: 0, z: ++pmZ };
+    return { pms: list.slice(-8), playerMenu: null };
+  });
+}
+export function pmSet(name: string, p: Partial<PmConv> | null) {
+  store.set((s) => ({ pms: p === null ? s.pms.filter((c) => c.name !== name) : s.pms.map((c) => (c.name === name ? { ...c, ...p, ...(p.open ? { z: ++pmZ, unread: 0 } : {}) } : c)) }));
+}
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
@@ -34,6 +61,8 @@ export interface UiState {
   friends: { name: string; here: boolean }[];
   /** fısıltı: sohbet girişine hedef adı */
   whisperTo: string | null;
+  /** Fısıltı pencereleri (Metin2 tarzı): konuşma başına pencere; küçültülünce zarf simgesi */
+  pms: PmConv[];
   /** Savaş Arenası: etkinlik durumu ve canlı sıralama (bütün kanallar ortak) */
   arena: { active: boolean; endsAt: number; board: { id?: number; name: string; cls: string; kills: number; deaths: number }[]; at: number } | null;
   map: string; channel: number; entityId: number;
@@ -80,7 +109,7 @@ function loadSettings(): UiState['settings'] {
 }
 
 let state: UiState = {
-  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, arena: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
+  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,

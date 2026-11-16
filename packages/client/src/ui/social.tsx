@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { RARITY, itemDisplayName, CLASSES, MOUNT, type ClassId, type ItemInstance } from '@col/shared';
-import { store, useStore } from '../game/store.ts';
-import { Cell, Panel } from './panels.tsx';
+import { store, useStore, pmOpen, pmSet, type PmConv } from '../game/store.ts';
+import { Cell, Panel, ItemTip, useTip } from './panels.tsx';
 import { currentGame } from './GameScreen.tsx';
 import { api } from '../api.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -15,8 +15,68 @@ const send = (c: Record<string, unknown>) => currentGame?.send(c as never);
 const KIND: Record<string, string> = { party: 'grubuna katılmaya', trade: 'ticarete', duel: 'düelloya', friend: 'arkadaş olmaya' };
 
 export function openWhisper(name: string) {
-  store.set({ whisperTo: name, chatOpen: true, playerMenu: null });
-  setTimeout(() => (document.getElementById('chat-input') as HTMLInputElement | null)?.focus(), 30);
+  pmOpen(name);
+  setTimeout(() => (document.getElementById('pm-in-' + name) as HTMLInputElement | null)?.focus(), 40);
+}
+
+/**
+ * Fısıltı pencereleri: her konuşma ayrı pencere (başlıktan sürüklenir), küçültülünce zarf simgesine döner
+ * (okunmamış sayısıyla yanıp söner), ✕ ile kapanır. Telefonda tek pencere alttan açılır; zarflar sol kenarda.
+ */
+export function WhisperWindows() {
+  const pms = useStore((s) => s.pms);
+  const me = useStore((s) => s.char?.name ?? '');
+  const mobile = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+  const open = pms.filter((c) => c.open).sort((a, b) => a.z - b.z);
+  const shown = mobile ? open.slice(-1) : open.slice(-3);
+  const mini = pms.filter((c) => !c.open || !shown.includes(c));
+  return (
+    <>
+      {mini.length > 0 && (
+        <div className="pm-dock">
+          {mini.map((c) => (
+            <button key={c.name} className={'pm-env' + (c.unread ? ' new' : '')} title={`${c.name} ile fısıltı`} onClick={() => pmSet(c.name, { open: true })}>
+              <span className="ic">✉</span><span className="nm">{c.name}</span>{c.unread > 0 && <b>{c.unread}</b>}
+            </button>
+          ))}
+        </div>
+      )}
+      {shown.map((c, i) => <WhisperWindow key={c.name} c={c} me={me} idx={i} mobile={mobile} />)}
+    </>
+  );
+}
+function WhisperWindow({ c, me, idx, mobile }: { c: PmConv; me: string; idx: number; mobile: boolean }) {
+  const [text, setText] = useState('');
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const box = React.useRef<HTMLDivElement>(null);
+  const list = React.useRef<HTMLDivElement>(null);
+  useEffect(() => { list.current?.scrollTo({ top: 1e9 }); }, [c.msgs.length]);
+  const sendMsg = () => { const t = text.trim(); if (!t) return; currentGame?.send({ t: 'chat', ch: 'pm', to: c.name, text: t } as never); setText(''); };
+  const drag = (e: React.PointerEvent) => {
+    if (mobile || !box.current) return;
+    const r = box.current.getBoundingClientRect(), ox = e.clientX - r.left, oy = e.clientY - r.top;
+    const mv = (ev: PointerEvent) => setPos({ x: Math.max(0, Math.min(innerWidth - r.width, ev.clientX - ox)), y: Math.max(0, Math.min(innerHeight - 60, ev.clientY - oy)) });
+    const up = () => { removeEventListener('pointermove', mv); removeEventListener('pointerup', up); };
+    addEventListener('pointermove', mv); addEventListener('pointerup', up);
+  };
+  const style: React.CSSProperties = mobile ? {} : pos ? { left: pos.x, top: pos.y } : { left: `calc(50% - 450px + ${idx * 300}px)`, bottom: 150 };
+  return (
+    <div ref={box} className={'pm-win' + (mobile ? ' mob' : '')} style={{ ...style, zIndex: 40 + c.z % 50 }} onPointerDown={() => pmSet(c.name, { open: true })}>
+      <div className="pm-h" onPointerDown={drag}>
+        <span>✉ {c.name}</span>
+        <button title="Küçült" onPointerDown={(e) => e.stopPropagation()} onClick={() => pmSet(c.name, { open: false })}>–</button>
+        <button title="Kapat" onPointerDown={(e) => e.stopPropagation()} onClick={() => pmSet(c.name, null)}>✕</button>
+      </div>
+      <div className="pm-msgs" ref={list}>
+        {!c.msgs.length && <div className="muted" style={{ fontSize: 12, padding: 6 }}>{c.name} adlı oyuncuya fısıltı yaz. Yalnız ikiniz görürsünüz.</div>}
+        {c.msgs.map((m, i) => <div key={i} className={'pm-m' + (m.me ? ' me' : '')}><b>{m.me ? me : c.name}</b>{m.text}</div>)}
+      </div>
+      <form className="pm-in" onSubmit={(e) => { e.preventDefault(); sendMsg(); }}>
+        <input id={'pm-in-' + c.name} value={text} maxLength={200} placeholder="Mesaj yaz…" onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.stopPropagation()} />
+        <button className="btn small primary" type="submit">Gönder</button>
+      </form>
+    </div>
+  );
 }
 
 /** Oyuncu menüsü: fısıltı, ticaret, düello, arkadaşlık, grup. */
@@ -91,6 +151,10 @@ export function TradeWindow() {
   const self = useStore((s) => s.self);
   const [pick, setPick] = useState(false);
   const [gems, setGems] = useState('');
+  // eşya bilgisi: farede üstüne gelince; dokunmatikte dokununca sabit kart (+ "Teklife ekle")
+  const { tip, bind } = useTip();
+  const [touchPick, setTouchPick] = useState<ItemInstance | null>(null);
+  const touch = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
   useEffect(() => { if (tr) setGems(String(tr.me.gems || '')); }, [tr?.me.gems]);
   if (!tr || !self) return null;
   const myIds = tr.me.items.map((i) => i.id);
@@ -99,7 +163,7 @@ export function TradeWindow() {
     <div className={'tr-side' + (s.ok ? ' ok' : s.locked ? ' locked' : '')}>
       <div className="tr-h">{title} <span className="tr-st">{s.ok ? '✔ Onayladı' : s.locked ? '🔒 Kilitledi' : 'Hazırlanıyor'}</span></div>
       <div className="tr-items">
-        {s.items.map((it: ItemInstance) => <div key={it.id} className="tr-it" title={itemDisplayName(it)} onClick={() => mine && setOffer(myIds.filter((x) => x !== it.id))}><Cell it={it} /><span style={{ color: RARITY[it.rarity]?.color }}>{itemDisplayName(it)}</span>{mine && <em>✕</em>}</div>)}
+        {s.items.map((it: ItemInstance) => <div key={it.id} className="tr-it"><Cell it={it} bind={bind(it)} /><span style={{ color: RARITY[it.rarity]?.color }}>{itemDisplayName(it)}</span>{mine && <em title="Tekliften çıkar" onClick={() => setOffer(myIds.filter((x) => x !== it.id))}>✕</em>}</div>)}
         {!s.items.length && <div className="muted" style={{ fontSize: 12 }}>Eşya yok</div>}
       </div>
       <div className="tr-gems">💎 {s.gems.toLocaleString('tr-TR')} mücevher</div>
@@ -117,8 +181,16 @@ export function TradeWindow() {
           <button className="btn small" onClick={() => setPick(!pick)}>{pick ? 'Çantayı kapat' : '+ Çantadan eşya ekle'}</button>
           <label className="tr-g">💎 <input inputMode="numeric" value={gems} placeholder="0" onChange={(e) => setGems(e.target.value.replace(/\D/g, '').slice(0, 10))} onBlur={() => setOffer(myIds)} onKeyDown={(e) => { e.stopPropagation(); if (e.key === 'Enter') setOffer(myIds); }} /></label>
         </div>
-        {pick && <div className="tr-bag">{self.bag.filter((it) => !myIds.includes(it.id) && !it.locked).map((it) => <div key={it.id} title={itemDisplayName(it)} onClick={() => setOffer([...myIds, it.id])}><Cell it={it} /></div>)}</div>}
+        {pick && <div className="tr-bag">{self.bag.filter((it) => !myIds.includes(it.id) && !it.locked).map((it) => <div key={it.id}><Cell it={it} bind={touch ? {} : bind(it)} onClick={() => (touch ? setTouchPick(it) : setOffer([...myIds, it.id]))} /></div>)}</div>}
+        {pick && <div className="muted" style={{ fontSize: 11 }}>{touch ? 'Eşyaya dokun: özelliklerini gör, sonra "Teklife ekle".' : 'Eşyanın üstüne gel: özellikleri görünür. Tıkla: teklife ekle.'}</div>}
         <div className="muted" style={{ fontSize: 11 }}>İki taraf da önce kilitler, sonra onaylar. Teklif değişirse kilitler açılır. Kilitli (🔒) eşyalar takas edilemez.</div>
+        {tip && <ItemTip {...tip} />}
+        {touchPick && (
+          <>
+            <ItemTip it={touchPick} x={0} y={0} pinned onClose={() => setTouchPick(null)} />
+            <div className="tr-pickbar"><button className="btn primary" onClick={() => { setOffer([...myIds, touchPick.id]); setTouchPick(null); }}>Teklife ekle</button><button className="btn" onClick={() => setTouchPick(null)}>Vazgeç</button></div>
+          </>
+        )}
         <div className="row tr-btns">
           <button className="btn" disabled={tr.me.locked} onClick={() => send({ t: 'trade', op: 'lock' })}>{tr.me.locked ? '🔒 Kilitlendi' : 'Kilitle'}</button>
           <button className="btn primary" disabled={!tr.me.locked || !tr.them.locked || tr.me.ok} onClick={() => send({ t: 'trade', op: 'confirm' })}>{tr.me.ok ? 'Bekleniyor…' : 'Onayla'}</button>

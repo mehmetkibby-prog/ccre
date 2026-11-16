@@ -13,7 +13,7 @@ import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
 import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
-import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton } from './social.tsx';
+import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 
 export let currentGame: Game | null = null;
 
@@ -24,6 +24,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
   useEffect(() => {
     const g = new Game(gl.current!, ov.current!, ticket, (reason) => onExit(reason));
     currentGame = g;
+    if (import.meta.env.DEV) (window as unknown as { __game: Game }).__game = g;
     (window as unknown as { __colGame?: Game }).__colGame = g;
     (window as unknown as { __colStore?: typeof store }).__colStore = store;
     g.start();
@@ -59,7 +60,17 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
       }
       (document.activeElement as HTMLElement | null)?.blur?.();
       if (e.button === 2 || e.button === 1) { rot = { x: e.clientX, y: e.clientY, yaw: game.renderer.camYaw, pitch: game.renderer.camPitch, moved: false, btn: e.button }; c.setPointerCapture(e.pointerId); return; }
-      held = true; const p = pos(e); game.clickScreen(p.x, p.y);
+      held = true; const p = pos(e);
+      if (!openPlayerMenu(p.x, p.y, e.clientX, e.clientY)) game.clickScreen(p.x, p.y);
+    };
+    // sol tık / dokunma da oyuncu menüsünü açar (PvP bölgesinde sol tık saldırıdır; menü sağ tık / uzun basmayla)
+    const openPlayerMenu = (px: number, py: number, cx: number, cy: number) => {
+      if (!game) return false;
+      const hit = game.renderer.pickScreen(px, py);
+      if (!hit?.e || hit.e.kind !== Kind.PLAYER || hit.e.id === game.selfId || MAPS[game.layout.def.id]?.pvp) return false;
+      game.setTarget(hit.e.id);
+      store.set({ playerMenu: { id: hit.e.id, name: hit.e.name, x: cx, y: cy } });
+      return true;
     };
     const move = (e: PointerEvent) => {
       if (!game) return;
@@ -92,7 +103,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
       held = false;
       if (e.pointerType === 'touch') {
         if (drag && drag.id === e.pointerId && game && e.type === 'pointerup') {
-          if (!drag.rotating && !drag.menu && performance.now() - drag.t < 600) { const p = pos(e); game.clickScreen(p.x, p.y); }
+          if (!drag.rotating && !drag.menu && performance.now() - drag.t < 600) { const p = pos(e); if (!openPlayerMenu(p.x, p.y, e.clientX, e.clientY)) game.clickScreen(p.x, p.y); }
         }
         if (drag && drag.id === e.pointerId) drag = null;
         endTouch(e);
@@ -152,6 +163,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <InviteCards />
       <TradeWindow />
       <PlayerMenu />
+      <WhisperWindows />
       <DeathOverlay game={game} />
       <ConnStatus />
     </div>
@@ -186,9 +198,9 @@ function TopBar() {
             <div className="bar"><i style={{ width: `${Math.max(0, (t.hp / Math.max(1, t.maxHp)) * 100)}%` }} /></div>
             <div className="hpt">{t.hp.toLocaleString('tr-TR')} / {t.maxHp.toLocaleString('tr-TR')}</div>
           </div>
-          {dropOpen && t.kind === Kind.MONSTER && t.tpl !== undefined && <DropInfo tpl={t.tpl} variant={t.variant} onClose={() => setDropOpen(false)} />}
         </div>
       )}
+      {t && dropOpen && t.kind === Kind.MONSTER && t.tpl !== undefined && <DropInfo tpl={t.tpl} variant={t.variant} onClose={() => setDropOpen(false)} />}
     </div>
   );
 }
@@ -387,7 +399,7 @@ function Chat() {
     <div className={'frame chat' + (chatOpen ? ' open' : '')}>
       <div className="tabs2">{['all', 'world', 'trade', 'local', 'pm'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}<button className="chat-x" aria-label="Sohbeti kapat" onClick={() => store.set({ chatOpen: false })}>✕</button></div>
       <div className="msgs" ref={box}>
-        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined, cursor: m.ch === 'pm' || m.ch === 'world' || m.ch === 'local' || m.ch === 'trade' ? 'pointer' : undefined }} onClick={() => { const n = m.from.replace(/^→ /, ''); if (m.ch !== 'sys' && n !== store.get().char?.name) store.set({ whisperTo: n }); }}>{m.from}</b>: {m.item ? <a className="chat-item" style={{ color: RARITY[m.item.rarity]?.color }} onClick={(e) => setTip({ it: m.item!, x: e.clientX, y: e.clientY })}>{m.text}</a> : m.text}</div>)}
+        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined, cursor: m.ch === 'pm' || m.ch === 'world' || m.ch === 'local' || m.ch === 'trade' ? 'pointer' : undefined }} onClick={() => { const n = m.from.replace(/^→ /, ''); if (m.ch !== 'sys' && m.from !== 'Duyuru' && n !== store.get().char?.name) openWhisper(n); }}>{m.from}</b>: {m.item ? <a className="chat-item" style={{ color: RARITY[m.item.rarity]?.color }} onClick={(e) => setTip({ it: m.item!, x: e.clientX, y: e.clientY })}>{m.text}</a> : m.text}</div>)}
         {tip && <ItemTip it={tip.it} x={tip.x} y={tip.y} pinned onClose={() => setTip(null)} />}
       </div>
       <div className="in">
