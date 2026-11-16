@@ -15,7 +15,7 @@ import { pool } from './db/pool.ts';
 
 interface Ticket { accountId: number; charId: number; channel: number; role: Role; exp: number; nonce: string }
 interface Session {
-  sid: number; ws: WebSocket; accountId: number; charId: number; channel: number; name: string; cls: string; role: Role;
+  sid: number; ws: WebSocket; accountId: number; charId: number; channel: number; name: string; cls: string; role: Role; since: number;
   state: 'joining' | 'active' | 'closing';
   needResync: boolean; awaitingReset: boolean; dropped: number;
   lastWorldChat: number; msgs: number; msgWindow: number; lastPm?: number; lastPing?: number;
@@ -98,11 +98,11 @@ export class Gateway {
   private async onConnect(ws: WebSocket, t: Ticket, ip = '') {
     this.stats.connects++;
     const sid = this.nextSid++;
-    const s: Session = { sid, ws, accountId: t.accountId, charId: t.charId, channel: t.channel, name: '', cls: '', role: t.role, state: 'joining', needResync: false, awaitingReset: false, dropped: 0, lastWorldChat: 0, msgs: 0, msgWindow: Date.now(), ip };
+    const s: Session = { sid, ws, accountId: t.accountId, charId: t.charId, channel: t.channel, name: '', cls: '', role: t.role, state: 'joining', needResync: false, awaitingReset: false, dropped: 0, lastWorldChat: 0, msgs: 0, msgWindow: Date.now(), ip, since: Date.now() };
     this.sessions.set(sid, s);
     ws.binaryType = 'arraybuffer';
     ws.on('message', (data, isBinary) => this.onMessage(s, data, isBinary));
-    ws.on('close', () => this.onClose(s));
+    ws.on('close', (code) => this.onClose(s, code));
     ws.on('error', () => {});
 
     // Aynı hesabın eski oturumunu düşür
@@ -134,12 +134,17 @@ export class Gateway {
   kick(s: Session, reason: string) {
     if (s.state === 'closing') return;
     this.stats.kicks++;
+    console.warn(`[gw] atıldı ${s.name || '#' + s.charId} ch${s.channel}: ${reason}`);
     this.sendJson(s, { t: 'kicked', text: reason });
     this.release(s);
     setTimeout(() => s.ws.terminate(), 200);
   }
 
-  private onClose(s: Session) { this.release(s); }
+  private onClose(s: Session, code = 0) {
+    // 1000/1001 = oyuncu kendi kapattı; 1006 = ağ koptu (oyuncunun interneti, Cloudflare vb.)
+    if (s.state === 'active') console.log(`[gw] bağlantı kapandı ${s.name || '#' + s.charId} ch${s.channel} kod=${code} süre=${Math.round((Date.now() - s.since) / 1000)}sn`);
+    this.release(s);
+  }
 
   /** Oturumu kapat; worker'dan son durumu iste. Karakter sahipliği 'left' gelince serbest kalır. */
   private release(s: Session) {
@@ -317,6 +322,7 @@ export class Gateway {
     for (const s of [...this.sessions.values()]) {
       if (s.channel !== ch) continue;
       this.sendJson(s, { t: 'fatal', text: 'Kanal yeniden başlatılıyor…', retry: true });
+      console.warn(`[gw] kanal ${ch} çöktü: ${s.name || '#' + s.charId} yeniden bağlanacak`);
       s.state = 'closing';
       this.sessions.delete(s.sid);
       if (this.byAccount.get(s.accountId) === s) this.byAccount.delete(s.accountId);
