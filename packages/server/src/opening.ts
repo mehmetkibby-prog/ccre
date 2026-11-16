@@ -12,8 +12,9 @@ export class OpeningState {
     if (r.rowCount) this.state = { ...r.rows[0].value, revision: Number(r.rows[0].revision) };
     else await pool.query(`INSERT INTO server_state(key, value, revision) VALUES ('opening', $1, 0) ON CONFLICT DO NOTHING`, [JSON.stringify(this.state)]);
   }
-  isOpenFor(earlyAccess: boolean, staff: boolean): { ok: boolean; reason?: string } {
-    if (staff) return { ok: true };
+  /** staff ve test izni olan hesaplar (yönetimin kayıt listesinden izin verdikleri) kapalıyken ve bakımda da girer. */
+  isOpenFor(earlyAccess: boolean, staff: boolean, testAccess = false): { ok: boolean; reason?: string } {
+    if (staff || testAccess) return { ok: true };
     const s = this.state;
     if (s.mode === 'open') return { ok: true };
     if (s.mode === 'scheduled' && s.openAt && Date.now() >= s.openAt) return { ok: true };

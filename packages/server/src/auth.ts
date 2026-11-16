@@ -22,7 +22,7 @@ export async function verifyPassword(pw: string, stored: string): Promise<boolea
 export const sha256 = (s: string) => crypto.createHash('sha256').update(s).digest('hex');
 export const randomToken = (n = 32) => crypto.randomBytes(n).toString('base64url');
 
-export interface AuthAccount { id: number; username: string; role: Role; earlyAccess: boolean; bannedUntil: Date | null }
+export interface AuthAccount { id: number; username: string; role: Role; earlyAccess: boolean; testAccess: boolean; bannedUntil: Date | null }
 
 /** Oturum belirteci yalnız özeti (sha256) ile saklanır. Kısa süreli bellek önbelleği DB yükünü azaltır. */
 const cache = new Map<string, { acc: AuthAccount; at: number }>();
@@ -37,10 +37,10 @@ export async function sessionAccount(token: string | undefined): Promise<AuthAcc
   const th = sha256(token);
   const c = cache.get(th);
   if (c && Date.now() - c.at < 30_000) return c.acc;
-  const r = await pool.query(`SELECT a.id, a.username, a.role, a.early_access, a.banned_until FROM sessions s JOIN accounts a ON a.id=s.account_id WHERE s.token_hash=$1 AND s.expires_at > now()`, [th]);
+  const r = await pool.query(`SELECT a.id, a.username, a.role, a.early_access, a.test_access, a.banned_until FROM sessions s JOIN accounts a ON a.id=s.account_id WHERE s.token_hash=$1 AND s.expires_at > now()`, [th]);
   if (!r.rowCount) { cache.delete(th); return null; }
   const row = r.rows[0];
-  const acc: AuthAccount = { id: Number(row.id), username: row.username, role: row.role, earlyAccess: row.early_access, bannedUntil: row.banned_until };
+  const acc: AuthAccount = { id: Number(row.id), username: row.username, role: row.role, earlyAccess: row.early_access, testAccess: !!row.test_access, bannedUntil: row.banned_until };
   cache.set(th, { acc, at: Date.now() });
   return acc;
 }

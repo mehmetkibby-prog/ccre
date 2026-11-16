@@ -165,7 +165,7 @@ export function buildApi(d: ApiDeps): Router {
 
   r.get('/api/channels', async (req) => {
     const a = await requireAuth(req);
-    const open = d.opening.isOpenFor(a.earlyAccess, isStaff(a.role));
+    const open = d.opening.isOpenFor(a.earlyAccess, isStaff(a.role), a.testAccess);
     const list = [];
     for (let ch = 1; ch <= config.channels; ch++) {
       const pop = d.gateway.channelPopulation(ch);
@@ -181,7 +181,7 @@ export function buildApi(d: ApiDeps): Router {
     if (!admissionLimiter.take(String(a.id))) throw new HttpError(429, 'Biraz yavaş: tekrar dene.');
     const charId = Number(req.body?.characterId), ch = Number(req.body?.channel);
     const nonce = String(req.body?.nonce ?? '').slice(0, 40);
-    const open = d.opening.isOpenFor(a.earlyAccess, isStaff(a.role));
+    const open = d.opening.isOpenFor(a.earlyAccess, isStaff(a.role), a.testAccess);
     if (!open.ok) throw new HttpError(403, open.reason ?? 'Kapalı.');
     if (!(ch >= 1 && ch <= config.channels)) throw new HttpError(400, 'Geçersiz kanal.');
     if (!d.channels.alive(ch)) throw new HttpError(503, 'Kanal yeniden başlatılıyor, birazdan dene.');
@@ -447,6 +447,51 @@ export function buildApi(d: ApiDeps): Router {
     }
     invalidateAccountCache(acc);
     await audit(a.id, 'account.update', { accountId: acc, role, banHours, unban: !!unban });
+    return { ok: true };
+  });
+  // ───────── kayıt listesi ─────────
+  /**
+   * Sisteme kayıt olan tüm hesaplar (en yeni önce), arama ve süzgeçle: tümü / bakımda giriş izni olanlar / son 7 gün /
+   * yasaklılar. Her hesapta karakterleri (en yüksek seviyeli 3'ü), son giriş ve çevrimiçi durumu.
+   */
+  r.get('/api/admin/accounts', async (req) => {
+    await requireAdmin(req);
+    const q = String(req.query.get('q') ?? '').trim().toLowerCase().slice(0, 40);
+    const f = String(req.query.get('f') ?? 'all');
+    const offset = Math.max(0, Math.min(1e6, Number(req.query.get('offset') ?? 0) | 0));
+    const like = '%' + q.replace(/[%_\\]/g, (m) => '\\' + m) + '%';
+    const where = [`($1 = '' OR a.username_norm LIKE $2 OR lower(coalesce(a.email,'')) LIKE $2 OR EXISTS (SELECT 1 FROM characters c WHERE c.account_id=a.id AND c.deleted_at IS NULL AND c.name_norm LIKE $2))`];
+    if (f === 'access') where.push(`(a.test_access OR a.role IN ('gm','admin','owner'))`);
+    else if (f === 'new') where.push(`a.created_at > now() - interval '7 days'`);
+    else if (f === 'banned') where.push(`a.banned_until > now()`);
+    const W = where.join(' AND ');
+    const total = Number((await pool.query(`SELECT count(*) AS n FROM accounts a WHERE ${W}`, [q, like])).rows[0].n);
+    const rows = (await pool.query(
+      `SELECT a.id, a.username, a.email, a.role, a.test_access, a.banned_until, a.created_at, a.last_login,
+         (SELECT count(*) FROM characters c WHERE c.account_id=a.id AND c.deleted_at IS NULL) AS char_count,
+         (SELECT coalesce(json_agg(x), '[]') FROM (SELECT c.name, c.cls, c.level FROM characters c WHERE c.account_id=a.id AND c.deleted_at IS NULL ORDER BY c.level DESC, c.id LIMIT 3) x) AS chars
+       FROM accounts a WHERE ${W} ORDER BY a.created_at DESC, a.id DESC LIMIT 50 OFFSET ${offset}`, [q, like])).rows;
+    const st = (await pool.query(`SELECT count(*) AS total, count(*) FILTER (WHERE created_at > now() - interval '1 day') AS day,
+      count(*) FILTER (WHERE created_at > now() - interval '7 days') AS week, count(*) FILTER (WHERE test_access) AS access FROM accounts`)).rows[0];
+    return {
+      total, offset,
+      stats: { total: Number(st.total), day: Number(st.day), week: Number(st.week), access: Number(st.access) },
+      rows: rows.map((x) => ({
+        id: Number(x.id), username: x.username, email: x.email ?? null, role: x.role, testAccess: !!x.test_access,
+        banned: !!(x.banned_until && new Date(x.banned_until).getTime() > Date.now()), createdAt: x.created_at, lastLogin: x.last_login,
+        charCount: Number(x.char_count), chars: x.chars ?? [], online: d.gateway.byAccount.has(Number(x.id)),
+      })),
+    };
+  });
+  /** Bakımda / kapalıyken giriş izni ver ya da al. İzin alınınca oyun o hesaba kapalıysa oyundan çıkarılır. */
+  r.post('/api/admin/access', async (req) => {
+    const a = await requireAdmin(req);
+    const acc = Number(req.body?.accountId), allow = !!req.body?.allow;
+    const r2 = await pool.query('UPDATE accounts SET test_access=$2 WHERE id=$1 RETURNING role, early_access', [acc, allow]);
+    if (!r2.rowCount) throw new HttpError(404, 'Hesap bulunamadı.');
+    invalidateAccountCache(acc);
+    if (!allow && !d.opening.isOpenFor(!!r2.rows[0].early_access, isStaff(r2.rows[0].role)).ok) d.gateway.kickAccount(acc, 'Oyun şu an bakımda.');
+    await audit(a.id, allow ? 'account.access.grant' : 'account.access.revoke', { accountId: acc });
     return { ok: true };
   });
   r.post('/api/admin/kick', async (req) => {

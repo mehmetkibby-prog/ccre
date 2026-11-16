@@ -36,7 +36,12 @@ interface Backend {
   resetPlayer(id: number): Promise<string>;
   account?(accountId: number, body: Record<string, unknown>): Promise<void>;
   kick?(accountId: number): Promise<void>;
+  accounts?(q: string, f: AccFilter, offset: number): Promise<AccList>;
+  setAccess?(accountId: number, allow: boolean): Promise<void>;
 }
+type AccFilter = 'all' | 'access' | 'new' | 'banned';
+interface AAccount { id: number; username: string; email: string | null; role: string; testAccess: boolean; banned: boolean; createdAt: string; lastLogin: string | null; charCount: number; chars: { name: string; cls: string; level: number }[]; online: boolean }
+interface AccList { total: number; offset: number; stats: { total: number; day: number; week: number; access: number }; rows: AAccount[] }
 const serverBackend: Backend = {
   loadTuning: () => api('/api/admin/tuning'),
   saveTuning: async (tuning, revision) => { const r = await api('/api/admin/tuning', { tuning, revision }); applyRemoteTuning(r.tuning); return r; },
@@ -52,6 +57,8 @@ const serverBackend: Backend = {
   epinCreate: async (cp, count, note) => (await api('/api/admin/epin', { cp, count, note })).codes,
   account: async (accountId, body) => { await api('/api/admin/account', { accountId, ...body }); },
   kick: async (accountId) => { await api('/api/admin/kick', { accountId }); },
+  accounts: (q, f, offset) => api(`/api/admin/accounts?q=${encodeURIComponent(q)}&f=${f}&offset=${offset}`),
+  setAccess: async (accountId, allow) => { await api('/api/admin/access', { accountId, allow }); },
 };
 const localBackend: Backend = {
   loadTuning: async () => ({ tuning: structuredClone(TUNING), revision: 0 }),
@@ -71,9 +78,9 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena';
+type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena';
 const TABS: [Tab, string, string][] = [
-  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['arena', 'Savaş Arenası', '⚔'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
+  ['durum', 'Durum', '◉'], ...(backend.accounts ? [['kayit', 'Kayıtlar', '☰'] as [Tab, string, string]] : []), ['oyuncu', 'Oyuncular', '☺'], ['arena', 'Savaş Arenası', '⚔'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
   ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
 ];
 const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena']);
@@ -175,6 +182,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
       <main className="adm-main">
         <h1 className="adm-h1">{title}</h1>
         {tab === 'durum' && <StatusTab t={t} setT={setTT} onOnline={setOnline} toast={setToast} save={save} dirty={dirty} />}
+        {tab === 'kayit' && <AccountsTab toast={setToast} />}
         {tab === 'oyuncu' && <PlayersTab toast={setToast} />}
         {SETTING_TABS.has(tab) && !t && <div className="adm-spin" />}
         {SETTING_TABS.has(tab) && t && (
@@ -343,6 +351,82 @@ function Stat({ k, v, sub, accent }: { k: string; v: string; sub?: string; accen
 }
 
 // ───────── oyuncular: arama, kart, düzenleme ─────────
+/**
+ * Kayıt listesi: sisteme kayıt olan tüm hesaplar (en yeni önce). Her hesaba "Bakımda giriş" izni verilebilir:
+ * izinli hesaplar oyun kapalıyken ya da bakımdayken de (yönetici gibi) girer. GM/yönetici/kurucu zaten girer.
+ */
+function AccountsTab({ toast }: { toast: (x: { ok: boolean; text: string }) => void }) {
+  const [q, setQ] = useState('');
+  const [f, setF] = useState<AccFilter>('all');
+  const [data, setData] = useState<AccList | null>(null);
+  const [offset, setOffset] = useState(0);
+  const [busy, setBusy] = useState(0);
+  const load = useCallback(async () => { try { setData(await backend.accounts!(q.trim(), f, offset)); } catch (e) { toast({ ok: false, text: (e as Error).message }); } }, [q, f, offset, toast]);
+  useEffect(() => { const id = setTimeout(load, 250); return () => clearTimeout(id); }, [load]);
+  useEffect(() => { setOffset(0); }, [q, f]);
+  const toggle = async (a: AAccount) => {
+    setBusy(a.id);
+    try { await backend.setAccess!(a.id, !a.testAccess); toast({ ok: true, text: `${a.username}: ${a.testAccess ? 'bakımda giriş izni kaldırıldı.' : 'artık bakımda da girebilir.'}` }); await load(); }
+    catch (e) { toast({ ok: false, text: (e as Error).message }); }
+    setBusy(0);
+  };
+  const dt = (s: string | null) => s ? new Date(s).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+  const st = data?.stats;
+  const FILTERS: [AccFilter, string][] = [['all', 'Tümü'], ['access', 'Bakımda girebilenler'], ['new', 'Son 7 gün'], ['banned', 'Yasaklı']];
+  return (
+    <div>
+      {st && <div className="adm-accstats">
+        <div><b>{fmtN(st.total, 0)}</b><span>Toplam kayıt</span></div>
+        <div><b>{fmtN(st.day, 0)}</b><span>Son 24 saat</span></div>
+        <div><b>{fmtN(st.week, 0)}</b><span>Son 7 gün</span></div>
+        <div className="gold"><b>{fmtN(st.access, 0)}</b><span>Bakımda giriş izni</span></div>
+      </div>}
+      <p className="muted adm-hint">“Bakımda giriş” açık olan hesaplar, oyun kapalıyken ya da bakımdayken de senin gibi oyuna girebilir. GM, yönetici ve kurucu hesapları zaten her zaman girer.</p>
+      <div className="adm-search-row">
+        <input className="adm-search" placeholder="Hesap, e-posta ya da karakter adı ara…" value={q} onChange={(e) => setQ(e.target.value)} />
+      </div>
+      <div className="adm-chips">{FILTERS.map(([k, l]) => <button key={k} className={'btn small' + (f === k ? ' primary' : ' ghost')} onClick={() => setF(k)}>{l}</button>)}</div>
+      {!data && <div className="adm-spin" />}
+      {data && !data.rows.length && <p className="muted">Kayıt bulunamadı.</p>}
+      <div className="adm-acclist">
+        {data?.rows.map((a) => {
+          const staff = a.role === 'gm' || a.role === 'admin' || a.role === 'owner';
+          return (
+            <div key={a.id} className={'adm-accrow' + (a.banned ? ' banned' : '')}>
+              <div className="who">
+                <b>{a.username}</b>{a.online && <span className="dot on" title="Çevrimiçi" />}
+                <small>#{a.id}{a.email ? ` · ${a.email}` : ''}</small>
+                <div className="adm-tags">
+                  {a.role !== 'player' && <span className={'tag' + (staff ? ' gold' : '')}>{ROLE_NAME[a.role] ?? a.role}</span>}
+                  {a.banned && <span className="tag bad">Yasaklı</span>}
+                  {a.chars.length ? a.chars.map((c) => <span key={c.name} className="tag">{c.name} · Sv. {c.level}</span>) : <span className="tag">Karakter yok</span>}
+                  {a.charCount > a.chars.length && <span className="tag">+{a.charCount - a.chars.length}</span>}
+                </div>
+              </div>
+              <div className="when"><span>Kayıt: {dt(a.createdAt)}</span><span>Son giriş: {dt(a.lastLogin)}</span></div>
+              <div className="acc">
+                {staff
+                  ? <span className="tag gold">Her zaman girer</span>
+                  : <label className={'adm-switch' + (a.testAccess ? ' on' : '')}>
+                      <input type="checkbox" checked={a.testAccess} disabled={busy === a.id} onChange={() => toggle(a)} />
+                      <span className="knob" /><span className="lbl">Bakımda giriş</span>
+                    </label>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {data && data.total > 50 && (
+        <div className="adm-pager">
+          <button className="btn small ghost" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - 50))}>‹ Önceki</button>
+          <span>{offset + 1}–{Math.min(data.total, offset + 50)} / {data.total}</span>
+          <button className="btn small ghost" disabled={offset + 50 >= data.total} onClick={() => setOffset(offset + 50)}>Sonraki ›</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PlayersTab({ toast }: { toast: (x: { ok: boolean; text: string }) => void }) {
   const [q, setQ] = useState('');
   const [onlyOnline, setOnlyOnline] = useState(false);
