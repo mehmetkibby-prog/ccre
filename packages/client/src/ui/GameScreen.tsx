@@ -559,9 +559,15 @@ function MobileControls({ game }: { game: Game }) {
         <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><MenuIcon k="pick" /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>
+        {self?.mount?.owned && <button className={'mnt' + (self.mount.riding ? ' on' : '')} aria-label={self.mount.riding ? 'Binekten in' : 'Bineğe bin'} onPointerDown={(e) => { e.preventDefault(); game.send({ t: 'mount', op: 'ride' }); }}><HorseIcon /></button>}
       </div>
     </>
   );
+}
+
+/** Binek simgesi (at başı) */
+function HorseIcon() {
+  return <svg viewBox="0 0 24 24" width="60%" height="60%" aria-hidden><path d="M6 21 L7.5 13 C6.5 11 6.8 8.6 8.6 7 L10 3 L11.6 5.6 C14.6 5.4 17.4 7 18.6 9.8 L20 12.6 C20.4 13.6 19.6 14.6 18.6 14.4 L16 13.8 L14.6 15.6 L15.6 21 Z" fill="#e8b46a" stroke="#4a2a10" strokeWidth="1.3" strokeLinejoin="round" /><circle cx="13.6" cy="9" r="0.9" fill="#2a1406" /><path d="M10 3 L8 8.6 L7.4 13" fill="none" stroke="#6a3a14" strokeWidth="1.8" strokeLinecap="round" /></svg>;
 }
 
 /** Telefonda kamera düğmeleri: basılı tut = döndür, +/− = yakınlaştır. */
@@ -579,8 +585,8 @@ function CameraControls({ game }: { game: Game }) {
     <div className="camctl" aria-label="Kamera">
       <button aria-label="Kamerayı sola döndür" {...hold(() => { r.camYaw += 0.035; })}>⟲</button>
       <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
-      <button aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(CAM_ZOOM_MAX, r.camZoom * 1.015); })}>+</button>
-      <button aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(CAM_ZOOM_MIN, r.camZoom / 1.015); })}>−</button>
+      <button className="zoomb" aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(CAM_ZOOM_MAX, r.camZoom * 1.015); })}>+</button>
+      <button className="zoomb" aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(CAM_ZOOM_MIN, r.camZoom / 1.015); })}>−</button>
       <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = CAM_ZOOM_DEFAULT; r.camPitch = CAM_PITCH_DEFAULT; }}>⌂</button>
     </div>
   );
