@@ -451,5 +451,9 @@
   "wings_crimson": {
     "url": "wings_crimson.glb",
     "scale": 1
+  },
+  "mount_horse": {
+    "url": "mount_horse.glb",
+    "scale": 1
   }
 }

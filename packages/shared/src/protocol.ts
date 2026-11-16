@@ -146,6 +146,7 @@ export type ClientCmd =
   | { t: 'trade'; op: 'set' | 'lock' | 'confirm' | 'cancel'; items?: string[]; gems?: number }
   | { t: 'friends'; op: 'list' | 'remove'; name?: string }
   | { t: 'arena'; op: 'join' | 'leave' }
+  | { t: 'mount'; op: 'quest' | 'claim' | 'ride' }
   | { t: 'npc'; id: string }
   | { t: 'use'; key: string; req: string; item?: string }
   | { t: 'mall_buy'; id: string; qty: number; req: string }

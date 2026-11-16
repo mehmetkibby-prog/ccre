@@ -15,6 +15,7 @@ import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
 import { buildProps, MESHY_TREES } from './props3d.ts';
 import { createPet, createWings, PET_MODEL, type Pet } from './pets.ts';
+import { createMount, type MountRig } from './mount3d.ts';
 import { FishGear } from './fishing3d.ts';
 import { sfx } from '../game/audio.ts';
 import { createHumanoid, animateHumanoid, LOOKS, type Rig, type HState } from './humanoid.ts';
@@ -497,6 +498,36 @@ export class Renderer3D {
     }
   }
 
+  /**
+   * Binek: at görünüme çocuk olarak eklenir; binici eyer yüksekliğine kalkar (yürüyüşte at adımıyla hafif inip kalkar),
+   * bacakları IK ile atın iki yanına, üzengi hizasına iner. İnince her şey eski hâline döner.
+   */
+  private syncMount(v: View, on: boolean, now: number, dt: number) {
+    const mv = v as View & { mount?: MountRig | null; mountBaseY?: number };
+    const inner = v.glb?.root.children[0];
+    if (!on || !v.glb || !inner) {
+      if (mv.mount) { v.obj.remove(mv.mount.obj); mv.mount = null; if (inner && mv.mountBaseY !== undefined) inner.position.y = mv.mountBaseY; }
+      return;
+    }
+    if (!mv.mount) {
+      const m = createMount(); if (!m) return;
+      mv.mount = m; mv.mountBaseY = inner.position.y; v.obj.add(m.obj);
+      this.shadowDirty = true;
+    }
+    const m = mv.mount, moving = (v.speed ?? 0) > 0.3;
+    const bob = m.update(dt, now, moving, v.speed ?? 0);
+    // binicinin kalçası eyerin üstüne (karakter boyuna göre kalça yüksekliği ~%52)
+    const hipY = (v.glb.height - 0.2) * 0.52;
+    inner.position.y = (mv.mountBaseY ?? 0) + m.seatY - hipY + 0.06 + bob;
+    const b = v.glb.bones;
+    if (b.upLegL && b.legL && b.footL && b.upLegR && b.legR && b.footR) {
+      v.obj.updateMatrixWorld(true);
+      const tl = v.obj.localToWorld(new THREE.Vector3(m.halfW + 0.08, m.seatY - 0.72 + bob, -0.02));
+      const tr = v.obj.localToWorld(new THREE.Vector3(-(m.halfW + 0.08), m.seatY - 0.72 + bob, -0.02));
+      reachIK([b.upLegL, b.legL], b.footL, tl, 5); reachIK([b.upLegR, b.legR], b.footR, tr, 5);
+    }
+  }
+
   /** Oyuncu görünümünün ayrıntısı: tam (gölge, evcil hayvan, kanat) ya da hafif. Yalnız değişince dolaşır. */
   private setDetail(v: View, full: boolean) {
     const lv = v as View & { full?: boolean; casters?: THREE.Mesh[] };
@@ -525,6 +556,7 @@ export class Renderer3D {
     else if ((st === 'attack' || st === 'cast') && now - animStart > (st === 'cast' ? CAST_ANIM_MS : ATTACK_ANIM_MS)) st = moving ? 'walk' : 'idle';
     else if (st === 'idle' && moving) st = 'walk';
     else if (st === 'walk' && !moving && now - v.stateAt > 140) st = 'idle';
+    if (st === 'walk' && (v as View & { mount?: unknown }).mount) st = 'idle'; // binicinin bacakları yürümez (at yürür)
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
     if (dead && !v.deadAt) v.deadAt = now;
     v.phase += dist * (Math.PI * 2 / 1.55);
@@ -608,6 +640,7 @@ export class Renderer3D {
     (sv as View & { skill?: number }).skill = sAnim === Anim.ATTACK ? g.selfCombo : g.selfSkill;
     this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, this.frozen(g.selfId, now) ? 0 : dt, selfDead);
     this.syncFish(sv, (g.selfFlags & EFlag.FISHING) !== 0 && !selfDead, g.dx, g.dy, now);
+    this.syncMount(sv, (g.selfFlags & EFlag.MOUNTED) !== 0 && !selfDead, now, dt);
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
     const seen = new Set<number>();
@@ -628,7 +661,7 @@ export class Renderer3D {
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
       (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead);
-      if (e.kind === Kind.PLAYER) this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now);
+      if (e.kind === Kind.PLAYER) { this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now); this.syncMount(v, (e.flags & EFlag.MOUNTED) !== 0 && !dead, now, dt); }
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       if (e.kind === Kind.PLAYER) crowd.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur

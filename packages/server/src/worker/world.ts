@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
   LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
 import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, AdminGive } from '../types.ts';
@@ -295,6 +295,7 @@ export class World {
         return this.social.tradeCancel(p);
       case 'friends': if (c.op === 'remove') return this.social.removeFriend(p, String(c.name ?? '')); return this.social.sendFriends(p);
       case 'arena': return this.cmdArena(p, String(c.op));
+      case 'mount': return this.cmdMount(p, String(c.op));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
       case 'ping': this.sendJson(p, { t: 'pong', c: c.c, s: this.now }); return;
       case 'sync': p.resetPending = true; this.sendFullSelf(p); return;
@@ -418,6 +419,7 @@ export class World {
     if (p.shieldUntil > this.now) f |= EFlag.SHIELD;
     if (p.char.role === 'gm' || p.char.role === 'admin' || p.char.role === 'owner') f |= EFlag.GM;
     if (p.fishing && this.now - p.fishing.biteAt < 125_000) f |= EFlag.FISHING; // herkes oltayı ve şamandırayı görür
+    if (p.char.misc.mount?.owned && p.char.misc.mount.riding) f |= EFlag.MOUNTED; // herkes bineği görür
     return f;
   }
 
@@ -654,6 +656,7 @@ export class World {
 
   private cmdSkill(p: Player, s: number, id?: number, x?: number, y?: number) {
     if (s < 1 || s > 3) return;
+    if (p.char.misc.mount?.riding) return this.notice(p, 'Binekteyken yalnız düz saldırı yapabilirsin. Beceri için önce in.');
     if (this.now < p.stunUntil) return;
     const sk = classSkill(p.char.cls, s, p.char.spec);
     if (!sk) return this.notice(p, 'Bu beceri henüz açılmadı.');
@@ -805,6 +808,7 @@ export class World {
     // TP: grupta, canavarın çevresindeki (geniş menzil) grup üyeleri paylaşır; her üyenin kendi seviye ve buff çarpanıyla
     for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) this.addXp(q, xp);
     c.kills++;
+    const mq = c.misc.mount?.quest; if (mq && !c.misc.mount?.owned && mq.kills < MOUNT.kills) { mq.kills++; if (mq.kills === MOUNT.kills) this.notice(p, `Seyis görevi: ${MOUNT.kills} canavar tamam! Seyis Arda'ya dön.`, 'ok'); }
     const day = trDayKey(this.now);
     if (!c.misc.dailyKills || c.misc.dailyKills.day !== day) c.misc.dailyKills = { day, n: 0 };
     c.misc.dailyKills.n++;
@@ -1309,6 +1313,38 @@ export class World {
     this.notice(p, 'Savaş Arenası! Rakiplerini yen, puan topla. Aynı gruptakiler birbirine vuramaz.', 'ok');
   }
 
+  // ───────────────────────────── binek ─────────────────────────────
+  /** Seyis Arda: görev al / teslim et; sahibi bin-in yapar (her yerde, ölüyken ve balık tutarken değil). */
+  private cmdMount(p: Player, op: string) {
+    const c = p.char, m = c.misc.mount ?? (c.misc.mount = {});
+    if (op === 'quest' || op === 'claim') {
+      if (p.zone.id !== 'bazaar' || !this.nearNpc(p, MOUNT.npc)) return this.notice(p, "Seyis Arda'nın yanına git.");
+      if (m.owned) return this.notice(p, 'Bineğin zaten var.');
+      if (op === 'quest') {
+        if (c.level < MOUNT.level) return this.notice(p, `Seyis görevi ${MOUNT.level}. seviyede alınır.`);
+        if (m.quest) return this.notice(p, 'Görev zaten alındı.');
+        m.quest = { kills: 0 }; p.selfDirty |= 1; p.markSave();
+        return this.notice(p, `Görev alındı: ${MOUNT.kills} canavar öldür, ${MOUNT.seals} Kor Mührü ve ${MOUNT.gems} Mücevher getir.`, 'ok');
+      }
+      if (!m.quest) return this.notice(p, 'Önce görevi al.');
+      if (m.quest.kills < MOUNT.kills) return this.notice(p, `Daha ${MOUNT.kills - m.quest.kills} canavar öldürmelisin.`);
+      if ((c.materials[MOUNT.sealKey] ?? 0) < MOUNT.seals) return this.notice(p, `${MOUNT.seals} Kor Mührü gerekir.`);
+      if (c.gems < MOUNT.gems) return this.notice(p, `${MOUNT.gems} Mücevher gerekir.`);
+      c.materials[MOUNT.sealKey] -= MOUNT.seals; c.gems -= MOUNT.gems;
+      m.owned = true; delete m.quest;
+      p.selfDirty |= 1 | 2; this.save(p, true);
+      this.sendJson(p, { t: 'mountGot' });
+      return this.notice(p, `Tebrikler! ${MOUNT.name} artık senin. Binmek için "Binek" düğmesine bas.`, 'ok');
+    }
+    if (op === 'ride') {
+      if (!m.owned) return this.notice(p, "Bineğin yok. Seyis Arda'dan görev al.");
+      if (!m.riding && (p.dead || p.fishing)) return this.notice(p, 'Şu an binemezsin.');
+      m.riding = !m.riding;
+      p.recompute(true); p.dirty |= Upd.FLAGS | Upd.HP | Upd.MAXHP; p.selfDirty |= 1 | 4; p.markSave();
+      return;
+    }
+  }
+
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {
     const def = MAPS[mapId];
     if (!def || !def.travelable) return this.notice(p, 'Bu bölgeye ışınlanılamaz.');
@@ -1488,7 +1524,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn });
+    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {} });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;
@@ -1668,6 +1704,7 @@ export class World {
     return best;
   }
   private cmdFishCast(p: Player) {
+    if (p.char.misc.mount?.riding) return this.notice(p, 'Balık tutmak için önce binekten in.');
     const c = p.char;
     if (p.dead) return;
     if ((c.materials[ROD_ID] ?? 0) <= 0) return this.notice(p, 'Oltan yok. Pazar Köyü göletindeki Balıkçı Kemal\'den alabilirsin.');

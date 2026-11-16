@@ -33,6 +33,8 @@ export interface CharMisc {
   autoDay?: { day: string; ms: number };
   /** arkadaş listesi (karakter adları) */
   friends?: string[];
+  /** binek: sahiplik, binekte mi, Seyis görevi ilerlemesi */
+  mount?: { owned?: boolean; riding?: boolean; quest?: { kills: number } };
   receipts?: string[]; // son işlem kimlikleri (idempotency, sınırlı)
   tutorial?: number;
   deadAt?: number; // epoch ms (ölüm durumu kalıcı)

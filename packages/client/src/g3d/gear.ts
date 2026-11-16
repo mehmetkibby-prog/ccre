@@ -157,7 +157,13 @@ export function equipGlb(glb: GlbChar, L: HLook | undefined, rarity = 0, plus = 
   const wid = weaponModelId(L.weapon, rarity);
   const designed = wid ? weaponGlb(wid) : null;
   let w: { obj: THREE.Object3D } | null;
-  if (designed) { glowGlb(designed, rarity); const holder = new THREE.Group(); holder.add(designed); w = { obj: holder }; }
+  if (designed) {
+    glowGlb(designed, rarity);
+    const holder = new THREE.Group(); holder.add(designed);
+    // Muhafız'ın kızıl/eşsiz kılıcı heybetli dursun (model küçük kalıyordu): sap tutuş noktası etrafında büyütülür
+    if (L.weapon === 'sword') holder.scale.setScalar(rarity >= 4 ? 1.6 : 1.45);
+    w = { obj: holder };
+  }
   else w = isBow ? { obj: bowModel() } : weaponModel(L);
   const hand = isBow ? bones.handL : bones.handR;
   if (w && hand) {

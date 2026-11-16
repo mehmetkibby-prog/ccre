@@ -109,3 +109,28 @@ describe('Savaş Arenası hile koruması', () => {
     expect(A.canJoin(3, 1)).toMatch(/seviye/);
   });
 });
+
+describe('Binek', () => {
+  it('Seyis görevi: 10. seviye, 100 canavar, 10 Kor Mührü + 500 mücevher; binince hız ve +5 saldırı; binekte beceri yok', () => {
+    const { w } = world();
+    const l = getLayout('bazaar'); const arda = l.npcs.find((n) => n.id === 'arda')!;
+    w.join(1, mk(1, { level: 12, gems: 600, materials: { kor_seal: 10 }, x: arda.x + 40, y: arda.y }));
+    const p = w.bySid.get(1)!;
+    cmd(w, 1, { t: 'mount', op: 'quest' });
+    expect(p.char.misc.mount?.quest?.kills).toBe(0);
+    cmd(w, 1, { t: 'mount', op: 'claim' });
+    expect(p.char.misc.mount?.owned).toBeFalsy(); // 100 canavar yok
+    p.char.misc.mount!.quest!.kills = 100;
+    cmd(w, 1, { t: 'mount', op: 'claim' });
+    expect(p.char.misc.mount?.owned).toBe(true);
+    expect(p.char.gems).toBe(100); expect(p.char.materials.kor_seal).toBe(0);
+    const atk = p.stats.atk, sp = p.stats.speed;
+    cmd(w, 1, { t: 'mount', op: 'ride' });
+    expect(p.stats.atk).toBe(atk + 5); expect(p.stats.speed).toBeGreaterThan(sp);
+    const cd = p.cooldowns[1];
+    cmd(w, 1, { t: 'skill', s: 1, id: 0 });
+    expect(p.cooldowns[1]).toBe(cd); // binekte beceri kullanılmaz
+    cmd(w, 1, { t: 'mount', op: 'ride' });
+    expect(p.stats.atk).toBe(atk);
+  });
+});

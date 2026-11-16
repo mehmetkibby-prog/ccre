@@ -7,7 +7,7 @@ import {
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel } from './extras.tsx';
-import { FriendsPanel } from './social.tsx';
+import { FriendsPanel, MountPanel } from './social.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -50,6 +50,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'bosses' && <BossPanel game={game} />}
       {p === 'auto' && <AutoPanel game={game} />}
       {p === 'friends' && <FriendsPanel />}
+      {p === 'mount' && <MountPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
@@ -522,7 +523,7 @@ function Settings() {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi (yakında)', fishing_shop: 'Olta al · Balık sat' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Takı üretimi (yakında)', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -530,6 +531,7 @@ function NpcDialog({ game }: { game: Game }) {
     else if (a === 'sell') store.set({ panel: 'shop', shop: 'sell' });
     else if (a === 'upgrade') store.set({ panel: 'upgrade' });
     else if (a === 'fishing_shop') store.set({ panel: 'fishshop' });
+    else if (a === 'mount') store.set({ panel: 'mount' });
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {

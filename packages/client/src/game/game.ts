@@ -736,6 +736,7 @@ export class Game {
       case 'Digit4': this.useSkill(3); break;
       case 'KeyQ': case 'Digit5': this.potion(); break;
       case 'KeyZ': case 'KeyF': this.pickupNearby(); break;
+      case 'KeyH': if (store.get().self?.mount?.owned) this.send({ t: 'mount', op: 'ride' }); break;
       case 'Tab': this.cycleTarget(); break;
       case 'KeyI': case 'KeyB': toggle('inventory'); break;
       case 'KeyC': toggle('character'); break;

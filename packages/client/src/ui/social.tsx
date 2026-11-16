@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RARITY, itemDisplayName, CLASSES, type ClassId, type ItemInstance } from '@col/shared';
+import { RARITY, itemDisplayName, CLASSES, MOUNT, type ClassId, type ItemInstance } from '@col/shared';
 import { store, useStore } from '../game/store.ts';
 import { Cell, Panel } from './panels.tsx';
 import { currentGame } from './GameScreen.tsx';
@@ -154,6 +154,49 @@ export function ArenaHud() {
       )}
     </>
   );
+}
+
+/** Binek: Seyis Arda'nın görevi (al / ilerleme / teslim) ve sahibi için bin-in. */
+export function MountPanel() {
+  const self = useStore((s) => s.self);
+  if (!self) return null;
+  const m = self.mount ?? {};
+  const seals = self.materials?.[MOUNT.sealKey] ?? 0;
+  const q = m.quest;
+  const Row = ({ ok, children }: { ok: boolean; children: React.ReactNode }) => <div className={'mq-row' + (ok ? ' ok' : '')}><span>{ok ? '✔' : '○'}</span>{children}</div>;
+  return (
+    <Panel title="Binek · Seyis Arda" width={420}>
+      <div className="mount-hero"><img src="/icons/mount.jpg" alt="" onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')} /><div><b>{MOUNT.name}</b><div className="muted" style={{ fontSize: 12 }}>Binekteyken hareket hızı %{Math.round((MOUNT.speedMul - 1) * 100)} artar ve +{MOUNT.atk} saldırı kazanırsın. Binekte yalnız düz saldırı yapılır.</div></div></div>
+      {m.owned ? (
+        <>
+          <div className="ok" style={{ margin: '8px 0' }}>Bu binek senin.</div>
+          <button className="btn primary" style={{ width: '100%' }} onClick={() => send({ t: 'mount', op: 'ride' })}>{m.riding ? 'Binekten in' : 'Bineğe bin'}</button>
+          <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>Kısayol: H · Oyun ekranındaki at düğmesiyle de binip inebilirsin.</div>
+        </>
+      ) : !q ? (
+        <>
+          <p style={{ fontSize: 13 }}>“İyi bir binek iyi bir dosttur. Kendini kanıtla, sana en iyi atımı vereyim.”</p>
+          <Row ok={self.level >= MOUNT.level}>Seviye {MOUNT.level} (sen: {self.level})</Row>
+          <button className="btn primary" style={{ width: '100%', marginTop: 8 }} disabled={self.level < MOUNT.level} onClick={() => send({ t: 'mount', op: 'quest' })}>Görevi al</button>
+        </>
+      ) : (
+        <>
+          <Row ok={q.kills >= MOUNT.kills}>{MOUNT.kills} canavar öldür · {Math.min(q.kills, MOUNT.kills)}/{MOUNT.kills}</Row>
+          <Row ok={seals >= MOUNT.seals}>{MOUNT.seals} Kor Mührü · {Math.min(seals, MOUNT.seals)}/{MOUNT.seals}</Row>
+          <Row ok={self.gems >= MOUNT.gems}>{MOUNT.gems} Mücevher · {Math.min(self.gems, MOUNT.gems)}/{MOUNT.gems}</Row>
+          <div className="mq-bar"><i style={{ width: `${Math.min(1, q.kills / MOUNT.kills) * 100}%` }} /></div>
+          <button className="btn primary" style={{ width: '100%', marginTop: 8 }} disabled={q.kills < MOUNT.kills || seals < MOUNT.seals || self.gems < MOUNT.gems} onClick={() => send({ t: 'mount', op: 'claim' })}>Teslim et · Bineği al</button>
+        </>
+      )}
+    </Panel>
+  );
+}
+
+/** Oyun ekranında bin/in düğmesi (bineği olanlara). */
+export function MountButton() {
+  const m = useStore((s) => s.self?.mount);
+  if (!m?.owned) return null;
+  return <button className={'mount-btn' + (m.riding ? ' on' : '')} title={m.riding ? 'Binekten in (H)' : 'Bineğe bin (H)'} onClick={() => send({ t: 'mount', op: 'ride' })}>🐎</button>;
 }
 
 /** Arkadaş listesi (menüden açılır). */

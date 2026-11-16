@@ -169,7 +169,7 @@ export function model(id: string): Loaded | null {
   return null;
 }
 
-export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; foreArmR?: THREE.Object3D; armL?: THREE.Object3D; armR?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
+export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; foreArmR?: THREE.Object3D; armL?: THREE.Object3D; armR?: THREE.Object3D; upLegL?: THREE.Object3D; upLegR?: THREE.Object3D; legL?: THREE.Object3D; legR?: THREE.Object3D; footL?: THREE.Object3D; footR?: THREE.Object3D; hips?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
 
 const _ip = new THREE.Vector3(), _ie = new THREE.Vector3(), _iv1 = new THREE.Vector3(), _iv2 = new THREE.Vector3();
 const _iqa = new THREE.Quaternion(), _iqw = new THREE.Quaternion(), _iqp = new THREE.Quaternion();
@@ -359,6 +359,9 @@ export function createGlbChar(id: string): GlbChar | null {
     foreArmL: find(/(left|^l)[_ .-]?(fore[_ .-]?arm|lower[_ .-]?arm|elbow)$|(forearm|lowerarm)[_ .-]?l$/i),
     foreArmR: find(/(right|^r)[_ .-]?(fore[_ .-]?arm|lower[_ .-]?arm|elbow)$|(forearm|lowerarm)[_ .-]?r$/i),
     armL: find(/(left|^l)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?l$/i), armR: find(/(right|^r)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?r$/i),
+    upLegL: find(/(left|^l)[_ .-]?up[_ .-]?leg$|thigh[_ .-]?l$/i), upLegR: find(/(right|^r)[_ .-]?up[_ .-]?leg$|thigh[_ .-]?r$/i),
+    legL: find(/(left|^l)[_ .-]?leg$|calf[_ .-]?l$/i), legR: find(/(right|^r)[_ .-]?leg$|calf[_ .-]?r$/i),
+    footL: find(/(left|^l)[_ .-]?foot$|foot[_ .-]?l$/i), footR: find(/(right|^r)[_ .-]?foot$|foot[_ .-]?r$/i), hips: find(/^(mixamorig:?)?hips$|pelvis/i),
     fingerR: find(/(right|^r)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(right|^r)[_ .-]?middle[_ .-]?1$/i), fingerL: find(/(left|^l)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(left|^l)[_ .-]?middle[_ .-]?1$/i),
   };
   const hand = bones.handR;

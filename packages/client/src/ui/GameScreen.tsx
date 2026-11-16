@@ -12,7 +12,7 @@ import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
 import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
-import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud } from './social.tsx';
+import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton } from './social.tsx';
 
 export let currentGame: Game | null = null;
 
@@ -146,6 +146,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       {mobile && <CameraControls game={game} />}
       <Panels game={game} onExit={onExit} />
       <PartyFrame />
+      <MountButton />
       <ArenaHud />
       <InviteCards />
       <TradeWindow />

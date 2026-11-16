@@ -153,7 +153,7 @@ function quadPet(id: string, o: PetOpts = {}): Pet | null {
   if (id === 'pet_monkey') {
     let shoulder: THREE.Object3D | undefined;
     o.charRoot?.traverse((q) => { if (!shoulder && (q as THREE.Bone).isBone && /^(RightShoulder|RightArm)$/.test(q.name)) shoulder = q; });
-    root.scale.setScalar(0.62);
+    root.scale.setScalar(0.68);
     const sp = new THREE.Vector3();
     return {
       obj: root,
@@ -165,7 +165,7 @@ function quadPet(id: string, o: PetOpts = {}): Pet | null {
         bones.neck.rotation.y = Math.sin(t * 0.7) * 0.5; // etrafa bakınır
         if (bones.tail1) bones.tail1.rotation.z = Math.sin(t * 2.2) * 0.35;
         const yaw = owner.rotation.y, fx = Math.sin(yaw), fz = Math.cos(yaw);
-        if (shoulder) { shoulder.getWorldPosition(sp); sp.y += 0.1; sp.x -= fz * 0.05; sp.z += fx * 0.05; }
+        if (shoulder) { shoulder.getWorldPosition(sp); sp.y += 0.17; sp.x -= fz * 0.05; sp.z += fx * 0.05; }
         else sp.set(owner.position.x - fz * 0.22, owner.position.y + (o.height ?? 1.8) * 0.8, owner.position.z + fx * 0.22);
         sp.x -= fx * 0.04; sp.z -= fz * 0.04;
         place(root, owner, sp.x, sp.y + Math.abs(Math.sin(t * 1.6)) * 0.015, sp.z, yaw);
