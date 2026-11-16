@@ -345,6 +345,21 @@ export function buildApi(d: ApiDeps): Router {
     await audit(a.id, 'player.give', { charId, give: g });
     return { ok: true, text };
   });
+  // Savaş Arenası: durum, canlı sıralama, elle başlat/bitir (otomatik saatler ve ödüller oyun ayarlarında)
+  r.get('/api/admin/arena', async (req) => { await requireAdmin(req); return d.gateway.arena.adminView(); });
+  r.post('/api/admin/arena', async (req) => {
+    const a = await requireAdmin(req);
+    const op = String(req.body?.op ?? '');
+    if (op === 'start') {
+      const min = Math.max(1, Math.min(180, Math.round(Number(req.body?.minutes) || 15)));
+      if (!d.gateway.arena.start(min, 'yönetici')) throw new HttpError(409, 'Arena zaten açık.');
+      await audit(a.id, 'arena.manual_start', { minutes: min });
+    } else if (op === 'stop') {
+      if (!d.gateway.arena.stop('yönetici bitirdi')) throw new HttpError(409, 'Arena açık değil.');
+      await audit(a.id, 'arena.manual_stop', {});
+    } else throw new HttpError(400, 'Geçersiz işlem.');
+    return d.gateway.arena.adminView();
+  });
   // E-PIN kodları
   r.get('/api/admin/epin', async (req) => {
     await requireAdmin(req);

@@ -173,7 +173,17 @@ export class Game {
       case 'stall_away': store.set((st) => ({ stallLog: [...(m.sales ?? []).map((x: { buyer: string; name: string; price: number }) => `${x.buyer} · ${x.name} · ${Number(x.price).toLocaleString('tr-TR')} Mücevher (sen yokken)`), ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'stall_sold': store.set((st) => ({ stallLog: [`${m.buyer} · ${m.name} · ${Number(m.price).toLocaleString('tr-TR')} Mücevher`, ...st.stallLog].slice(0, 20) })); sfx.play('drop'); break;
       case 'result': if (m.msg) notify(m.msg, m.ok ? 'ok' : 'error'); break;
-      case 'chat': pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm, item: m.item }); break;
+      case 'chat':
+        if (m.ch === 'pm') { pushChat({ ch: 'pm', from: m.self ? `→ ${m.to}` : m.from, text: m.text, cls: m.cls }); if (!m.self) { sfx.play('ui'); store.set({ whisperTo: store.get().whisperTo ?? m.from }); } }
+        else pushChat({ ch: m.ch, from: m.from, text: m.text, cls: m.cls, gm: m.gm, item: m.item });
+        break;
+      // ───────── oyuncular arası: davet, grup, ticaret, düello, arkadaşlık ─────────
+      case 'invite': store.set((s) => ({ invites: [...s.invites.filter((i) => !(i.from === m.from && i.kind === m.kind)), { kind: m.kind, from: m.from, name: m.name, cls: m.cls, level: m.level, at: Date.now() }].slice(-5) })); sfx.play('ui'); break;
+      case 'party': store.set({ party: { members: Array.isArray(m.members) ? m.members : [], leader: m.leader | 0 } }); break;
+      case 'trade': if (m.op === 'close') store.set({ trade: null }); else if (m.op === 'state') store.set({ trade: { with: m.with, me: m.me, them: m.them } }); break;
+      case 'friends': store.set({ friends: Array.isArray(m.list) ? m.list : [] }); break;
+      case 'arena': store.set({ arena: { active: !!m.active, endsAt: Number(m.endsAt) || 0, board: Array.isArray(m.board) ? m.board : [], at: Date.now() } }); break;
+      case 'duel': if (m.op === 'start') { notify(`Düello: ${m.name}! ${Math.round((m.in ?? 3000) / 1000)} sn sonra başlıyor.`, 'zone'); sfx.play('skill'); } else { sfx.play(m.win ? 'levelup' : 'error'); } break;
       case 'bosses': store.set({ bosses: Array.isArray(m.list) ? m.list : [] }); break;
       case 'boss': {
         store.set({ bossBanner: { id: m.id, name: m.name, map: m.map, x: m.x, y: m.y, ev: m.ev, killer: m.killer, at: Date.now() } });

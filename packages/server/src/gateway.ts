@@ -8,14 +8,19 @@ import { WorldState } from './worldstate.ts';
 import { config } from './config.ts';
 import { randomToken } from './auth.ts';
 import { RateLimiter } from './http.ts';
-import type { CharState, FromWorker, Role } from './types.ts';
+import type { CharState, FromWorker, Role, AdminGive } from './types.ts';
+import { Arena } from './arena.ts';
+import { applyGive } from './worker/world.ts';
+import { pool } from './db/pool.ts';
 
 interface Ticket { accountId: number; charId: number; channel: number; role: Role; exp: number; nonce: string }
 interface Session {
   sid: number; ws: WebSocket; accountId: number; charId: number; channel: number; name: string; cls: string; role: Role;
   state: 'joining' | 'active' | 'closing';
   needResync: boolean; awaitingReset: boolean; dropped: number;
-  lastWorldChat: number; msgs: number; msgWindow: number;
+  lastWorldChat: number; msgs: number; msgWindow: number; lastPm?: number;
+  /** bağlantı IP'si (arena hile denetimi: aynı bağlantıdan açılan tarayıcılar birbirinden puan alamaz) */
+  ip: string;
 }
 
 /**
@@ -36,7 +41,18 @@ export class Gateway {
   private cmdLimiter = new RateLimiter(40, 80);
   stats = { connects: 0, kicks: 0, dropped: 0, resyncs: 0, badMsgs: 0 };
 
+  /** Savaş Arenası (bütün kanallar için ortak sıralama) */
+  arena: Arena;
+
   constructor(public channels: ChannelManager, public store: CharacterStore, public world: WorldState) {
+    this.arena = new Arena({
+      sessionByChar: (charId) => { for (const s of this.sessions.values()) if (s.charId === charId && s.state !== 'closing') return { charId, accountId: s.accountId, ip: s.ip, name: s.name, cls: s.cls, channel: s.channel }; return undefined; },
+      broadcastWorkers: (m) => this.channels.broadcast(m),
+      broadcastClients: (o) => { const msg = JSON.stringify(o); for (const s of this.sessions.values()) if (s.state === 'active' && s.ws.readyState === WebSocket.OPEN) s.ws.send(msg); },
+      give: (charId, g) => { void this.giveTo(charId, g); },
+      audit: (action, detail) => { pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES (NULL,$1,$2)`, [action, JSON.stringify(detail)]).catch(() => {}); },
+    });
+    setInterval(() => this.arena.tick(), 5000).unref();
     setInterval(() => this.broadcastWorld(), 5000).unref();
     setInterval(() => { const now = Date.now(); for (const [k, t] of this.tickets) if (t.exp < now) { this.tickets.delete(k); if (this.accountTicket.get(t.accountId) === k) this.accountTicket.delete(t.accountId); } }, 10_000).unref();
   }
@@ -61,13 +77,26 @@ export class Gateway {
     if (!t || t.exp < Date.now()) { socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n'); socket.destroy(); return; }
     this.tickets.delete(tk); // tek kullanımlık
     if (this.accountTicket.get(t.accountId) === tk) this.accountTicket.delete(t.accountId);
-    this.wss.handleUpgrade(req, socket, head, (ws) => this.onConnect(ws, t));
+    // gerçek oyuncu IP'si: nginx (Cloudflare real_ip ile) X-Real-IP olarak geçirir
+    const ip = String(req.headers['x-real-ip'] ?? req.socket.remoteAddress ?? '').slice(0, 64);
+    this.wss.handleUpgrade(req, socket, head, (ws) => this.onConnect(ws, t, ip));
   }
 
-  private async onConnect(ws: WebSocket, t: Ticket) {
+  /** Ödül/hediye: çevrimiçiyse kanal sunucusu çantaya koyar, değilse kayda yazılır. */
+  async giveTo(charId: number, g: AdminGive) {
+    const ch = this.onlineChannel(charId);
+    if (ch) { this.channels.send(ch, { type: 'admin', op: 'give', charId, give: g }); return; }
+    try {
+      const c = await this.store.load(charId);
+      if (!c) return;
+      applyGive(c, g); c.saveVersion++; this.store.enqueue(c, true);
+    } catch (e) { console.error('[gw] give', e); }
+  }
+
+  private async onConnect(ws: WebSocket, t: Ticket, ip = '') {
     this.stats.connects++;
     const sid = this.nextSid++;
-    const s: Session = { sid, ws, accountId: t.accountId, charId: t.charId, channel: t.channel, name: '', cls: '', role: t.role, state: 'joining', needResync: false, awaitingReset: false, dropped: 0, lastWorldChat: 0, msgs: 0, msgWindow: Date.now() };
+    const s: Session = { sid, ws, accountId: t.accountId, charId: t.charId, channel: t.channel, name: '', cls: '', role: t.role, state: 'joining', needResync: false, awaitingReset: false, dropped: 0, lastWorldChat: 0, msgs: 0, msgWindow: Date.now(), ip };
     this.sessions.set(sid, s);
     ws.binaryType = 'arraybuffer';
     ws.on('message', (data, isBinary) => this.onMessage(s, data, isBinary));
@@ -138,6 +167,7 @@ export class Gateway {
     if (text.includes('"chat"')) {
       let c: any; try { c = JSON.parse(text); } catch { return; }
       if (c.t === 'chat' && (c.ch === 'world' || c.ch === 'trade')) return this.worldChat(s, c.ch, String(c.text ?? ''));
+      if (c.t === 'chat' && c.ch === 'pm') return this.whisper(s, String(c.to ?? ''), String(c.text ?? ''));
     }
     this.channels.send(s.channel, { type: 'cmd', sid: s.sid, data: text });
   }
@@ -150,6 +180,22 @@ export class Gateway {
     s.lastWorldChat = now;
     const msg = JSON.stringify({ t: 'chat', ch, from: s.name, cls: s.cls, text, chn: s.channel, gm: s.role !== 'player' });
     for (const o of this.sessions.values()) if (o.state === 'active' && o.ws.readyState === WebSocket.OPEN) o.ws.send(msg);
+  }
+
+  /** Fısıltı (özel mesaj): bütün kanallarda, ada göre (büyük/küçük harf duyarsız). Saniyede en çok bir mesaj. */
+  private whisper(s: Session, to: string, raw: string) {
+    const text = sanitizeChat(raw, CHAT_MAX);
+    const name = to.trim().toLocaleLowerCase('tr');
+    if (!text || !name) return;
+    const now = Date.now();
+    if (now - (s.lastPm ?? 0) < 1000 && s.role === 'player') { this.sendJson(s, { t: 'notice', text: 'Biraz yavaş yaz.', kind: 'error' }); return; }
+    s.lastPm = now;
+    let target: Session | undefined;
+    for (const o of this.sessions.values()) if (o.state === 'active' && o.name.toLocaleLowerCase('tr') === name) { target = o; break; }
+    if (!target) { this.sendJson(s, { t: 'notice', text: `${to} şu an çevrimiçi değil.`, kind: 'error' }); return; }
+    if (target === s) return;
+    this.sendJson(target, { t: 'chat', ch: 'pm', from: s.name, cls: s.cls, text, chn: s.channel });
+    this.sendJson(s, { t: 'chat', ch: 'pm', from: s.name, to: target.name, cls: s.cls, text, chn: s.channel, self: true });
   }
 
   sendJson(s: Session, o: unknown) { if (s.ws.readyState === WebSocket.OPEN) s.ws.send(JSON.stringify(o)); }
@@ -210,6 +256,13 @@ export class Gateway {
         if (!m.ok) { const s = this.sessions.get(m.sid); if (s) { this.sendJson(s, { t: 'fatal', text: m.err ?? 'Giriş başarısız.' }); s.ws.close(); } }
         break;
       }
+      case 'arena_join': {
+        const err = this.arena.canJoin(m.charId, m.level);
+        this.channels.send(ch, { type: 'arena_join_ok', sid: m.sid, err });
+        break;
+      }
+      case 'arena_kill': this.arena.kill(m.killer, m.victim, m.kLevel, m.vLevel); break;
+      case 'arena_left': this.arena.left(m.charId); break;
       case 'donate': {
         const gain = this.world.donate(m.charId, m.name, m.amount);
         const s = this.sessions.get(m.sid);

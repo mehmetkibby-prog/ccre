@@ -121,53 +121,114 @@ function place(obj: THREE.Object3D, owner: THREE.Object3D, x: number, y: number,
   obj.rotation.y = yaw - owner.rotation.y;
 }
 
-function quadPet(id: string): Pet | null {
+export interface PetOpts { height?: number; charRoot?: THREE.Object3D; onBark?: (x: number, z: number) => void }
+
+function quadPet(id: string, o: PetOpts = {}): Pet | null {
   const L = loadModel(id);
   if (!L) return null;
   fixQuadWeights(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
   const bones: Record<string, THREE.Bone> = {};
-  inner.traverse((o) => {
-    if ((o as THREE.Bone).isBone) bones[o.name] = o as THREE.Bone;
-    const m = o as THREE.SkinnedMesh;
+  inner.traverse((o2) => {
+    if ((o2 as THREE.Bone).isBone) bones[o2.name] = o2 as THREE.Bone;
+    const m = o2 as THREE.SkinnedMesh;
     if (m.isSkinnedMesh) { m.castShadow = true; if (!m.geometry.boundingSphere) { m.geometry.computeBoundingSphere(); m.geometry.boundingSphere!.radius *= 1.5; } m.frustumCulled = true; }
   });
   if (!bones.body) return null;
   const restBodyY = bones.body.position.y;
   const bodyG = new THREE.Group(); bodyG.add(inner);
   const root = new THREE.Group(); root.add(bodyG); root.name = 'pet';
-  let x = NaN, z = 0, yaw = 0, phase = 0, idle = 0, sit = 0;
+  const sitPose = (k: number) => {
+    // oturuş: arka kalça yere iner, ön ayaklar dik kalır, gövde öne kalkık
+    bodyG.rotation.x = -0.55 * k;
+    bodyG.position.y = -0.08 * k;
+    bones.blU.rotation.x = bones.brU.rotation.x = 1.25 * k;
+    bones.blL.rotation.x = bones.brL.rotation.x = -1.9 * k;
+    bones.blP.rotation.x = bones.brP.rotation.x = 0.7 * k;
+    bones.flU.rotation.x = bones.frU.rotation.x = 0.55 * k;
+    bones.neck.rotation.x -= 0.35 * k;
+    if (bones.tail1) bones.tail1.rotation.x = 0.9 * k + 0.2;
+  };
+  // Maymun: sahibinin omzunda oturur (dört ayak iskeleti maymunun yürüyüşüne uymuyordu). Omuz kemiğini izler.
+  if (id === 'pet_monkey') {
+    let shoulder: THREE.Object3D | undefined;
+    o.charRoot?.traverse((q) => { if (!shoulder && (q as THREE.Bone).isBone && /^(RightShoulder|RightArm)$/.test(q.name)) shoulder = q; });
+    root.scale.setScalar(0.62);
+    const sp = new THREE.Vector3();
+    return {
+      obj: root,
+      update(_dt, now, owner) {
+        const t = now / 1000;
+        quadAnimate(bones, bodyG, 'idle', t, 0, 0);
+        bones.body.position.y += restBodyY - QB[0][3];
+        sitPose(1);
+        bones.neck.rotation.y = Math.sin(t * 0.7) * 0.5; // etrafa bakınır
+        if (bones.tail1) bones.tail1.rotation.z = Math.sin(t * 2.2) * 0.35;
+        const yaw = owner.rotation.y, fx = Math.sin(yaw), fz = Math.cos(yaw);
+        if (shoulder) { shoulder.getWorldPosition(sp); sp.y += 0.1; sp.x -= fz * 0.05; sp.z += fx * 0.05; }
+        else sp.set(owner.position.x - fz * 0.22, owner.position.y + (o.height ?? 1.8) * 0.8, owner.position.z + fx * 0.22);
+        sp.x -= fx * 0.04; sp.z -= fz * 0.04;
+        place(root, owner, sp.x, sp.y + Math.abs(Math.sin(t * 1.6)) * 0.015, sp.z, yaw);
+      },
+    };
+  }
+  // Köpek: sahibi yürürken yumuşakça takip eder (hızı sahibinin hızına uyar, takılmaz); sahibi durunca etrafında
+  // dolaşır, arada oturur, arada bir havlar.
+  let x = NaN, z = 0, vx = 0, vz = 0, yaw = 0, phase = 0, still = 0, sit = 0, walking = false;
+  let mode: 'follow' | 'roam' = 'follow', roamX = 0, roamZ = 0, roamUntil = 0, pauseUntil = 0, ownerIdle = 0, barkAt = 0, barkT = -10;
+  let lox = NaN, loz = 0, ownerSpd = 0;
   return {
     obj: root,
     update(dt, now, owner, ownerMoving, ground) {
-      const tg = followTarget(owner, 0.95, 0.6);
-      if (Number.isNaN(x)) { x = tg.x; z = tg.z; yaw = tg.yaw; }
-      const dx = tg.x - x, dz = tg.z - z, d = Math.hypot(dx, dz);
-      let step = 0;
-      if (d > 4) { x = tg.x; z = tg.z; } // ışınlanma: yanına gel
-      else if (d > 0.12) {
-        const sp = Math.min(7.5, 1.2 + d * 4.5); step = Math.min(d, sp * dt / 1000);
-        x += (dx / d) * step; z += (dz / d) * step;
-        const want = Math.atan2(dx, dz); let da = want - yaw; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2;
-        yaw += da * Math.min(1, dt / 120);
-      } else { let da = tg.yaw - yaw; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2; yaw += da * Math.min(1, dt / 400); }
-      const walking = step > 0.0005 || ownerMoving && d > 0.3;
-      phase += step * (Math.PI * 2 / 0.5);
-      idle = walking ? 0 : idle + dt;
-      sit += ((idle > 700 ? 1 : 0) - sit) * Math.min(1, dt / 260);
-      quadAnimate(bones, bodyG, walking ? 'walk' : 'idle', now / 1000, 0, phase);
-      bones.body.position.y += restBodyY - QB[0][3];
-      if (sit > 0.01) {
-        // oturuş: arka kalça yere iner, ön ayaklar dik kalır, gövde öne kalkık
-        bodyG.rotation.x = -0.55 * sit;
-        bodyG.position.y = -0.08 * sit;
-        bones.blU.rotation.x = bones.brU.rotation.x = 1.25 * sit;
-        bones.blL.rotation.x = bones.brL.rotation.x = -1.9 * sit;
-        bones.blP.rotation.x = bones.brP.rotation.x = 0.7 * sit;
-        bones.flU.rotation.x = bones.frU.rotation.x = 0.55 * sit;
-        bones.neck.rotation.x -= 0.35 * sit;
-        if (bones.tail1) bones.tail1.rotation.x = 0.9 * sit + 0.2;
+      const s = Math.min(0.1, dt / 1000), t = now / 1000;
+      // sahibin gerçek hızı (m/sn)
+      if (!Number.isNaN(lox) && s > 0) ownerSpd += (Math.hypot(owner.position.x - lox, owner.position.z - loz) / s - ownerSpd) * Math.min(1, dt / 200);
+      lox = owner.position.x; loz = owner.position.z;
+      ownerIdle = ownerMoving ? 0 : ownerIdle + dt;
+      if (!barkAt) barkAt = now + 9000 + Math.random() * 12000;
+      const ox = owner.position.x, oz = owner.position.z;
+      let tx: number, tz: number, maxSp: number;
+      const distOwner = Number.isNaN(x) ? 0 : Math.hypot(ox - x, oz - z);
+      if (ownerMoving || ownerIdle < 1500 || distOwner > 3.4) {
+        mode = 'follow';
+        const tg = followTarget(owner, 1.0, 0.6); tx = tg.x; tz = tg.z;
+        maxSp = Math.min(11, Math.max(2.2, ownerSpd * 1.25 + 0.6));
+      } else {
+        // dolaşma: sahibin çevresinde rastgele noktaya yürü, biraz bekle (bazen otur), yine yürü
+        if (mode !== 'roam' || (now > pauseUntil && now > roamUntil)) {
+          mode = 'roam';
+          const a = Math.random() * Math.PI * 2, r = 1.3 + Math.random() * 1.2;
+          roamX = ox + Math.cos(a) * r; roamZ = oz + Math.sin(a) * r; roamUntil = now + 4000;
+          pauseUntil = 0;
+        }
+        tx = roamX; tz = roamZ; maxSp = 1.5;
       }
+      if (Number.isNaN(x)) { x = tx; z = tz; yaw = owner.rotation.y; }
+      const dx = tx - x, dz = tz - z, d = Math.hypot(dx, dz);
+      if (d > 7) { x = tx; z = tz; vx = vz = 0; }
+      // istenen hız: uzaklıkla artar, yaklaşınca yavaşlar; hız yumuşakça değişir (sıçrama/takılma yok)
+      let wsp = Math.min(maxSp, d * 3.2); if (d < 0.15) wsp = 0;
+      if (mode === 'roam' && d < 0.2 && !pauseUntil) { pauseUntil = now + 1500 + Math.random() * 3500; roamUntil = 0; }
+      if (mode === 'roam' && pauseUntil && now < pauseUntil) wsp = 0;
+      const wvx = d > 1e-4 ? dx / d * wsp : 0, wvz = d > 1e-4 ? dz / d * wsp : 0;
+      const k = Math.min(1, dt / 140);
+      vx += (wvx - vx) * k; vz += (wvz - vz) * k;
+      x += vx * s; z += vz * s;
+      const sp = Math.hypot(vx, vz);
+      walking = walking ? sp > 0.12 : sp > 0.3;
+      if (walking) { const want = Math.atan2(vx, vz); let da = want - yaw; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2; yaw += da * Math.min(1, dt / 110); }
+      else if (mode === 'roam') { const want = Math.atan2(ox - x, oz - z); let da = want - yaw; while (da > Math.PI) da -= Math.PI * 2; while (da < -Math.PI) da += Math.PI * 2; yaw += da * Math.min(1, dt / 500); }
+      phase += sp * s * (Math.PI * 2 / 0.62);
+      still = walking ? 0 : still + dt;
+      const wantSit = !walking && (mode === 'follow' ? still > 900 : still > 2500 && (Math.floor(roamX * 7) & 1) === 0);
+      sit += ((wantSit ? 1 : 0) - sit) * Math.min(1, dt / 260);
+      quadAnimate(bones, bodyG, walking ? 'walk' : 'idle', t, 0, phase);
+      bones.body.position.y += restBodyY - QB[0][3];
+      if (sit > 0.01) sitPose(sit);
+      // havlama: dururken ara sıra (başını iki kez kaldırır); sesi sahibinin oyunu çalar
+      if (!walking && now > barkAt) { barkAt = now + 14000 + Math.random() * 20000; barkT = t; o.onBark?.(x, z); }
+      const bt = t - barkT;
+      if (bt >= 0 && bt < 0.55) { const b = Math.max(0, Math.sin(bt / 0.55 * Math.PI * 2)); bones.neck.rotation.x -= b * 0.35; if (bones.head) bones.head.rotation.x -= b * 0.25; if (bones.jaw) bones.jaw.rotation.x += b * 0.45; }
       place(root, owner, x, ground(x, z), z, yaw);
     },
   };
@@ -207,9 +268,9 @@ function birdPet(): Pet | null {
 }
 
 /** Evcil hayvan (1 kuş, 2 maymun, 3 köpek); model yüklenmediyse null (yüklenince görünüm yeniden kurulur). */
-export function createPet(kind: number): Pet | null {
+export function createPet(kind: number, o: PetOpts = {}): Pet | null {
   if (kind === 1) return birdPet();
-  if (kind === 2) return quadPet('pet_monkey');
-  if (kind === 3) return quadPet('pet_dog');
+  if (kind === 2) return quadPet('pet_monkey', o);
+  if (kind === 3) return quadPet('pet_dog', o);
   return null;
 }

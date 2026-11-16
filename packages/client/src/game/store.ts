@@ -11,7 +11,7 @@ export interface SelfInfo {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | null;
 
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
 export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
@@ -19,8 +19,22 @@ export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; bit
 export interface StallView { stall: string; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
 /** Oyuncunun kendi dükkânı (sahibinden bağımsız; oyundan çıksa da açık kalır). */
 export interface MyStall { id: string; title: string; zone: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; earned: number; openedAt: number }
+export interface InviteInfo { kind: 'party' | 'trade' | 'duel' | 'friend'; from: number; name: string; cls: string; level: number; at: number }
+export interface PartyMember { id: number; eid: number; name: string; cls: string; level: number; hp: number; maxHp: number; map: string; dead: boolean }
+export interface TradeSideView { items: ItemInstance[]; gems: number; locked: boolean; ok: boolean }
+export interface TradeView { with: string; me: TradeSideView; them: TradeSideView }
 export interface UiState {
   connected: boolean; status: string;
+  /** oyuncuya sağ tık (telefonda uzun basma) menüsü */
+  playerMenu: { id: number; name: string; x: number; y: number } | null;
+  invites: InviteInfo[];
+  party: { members: PartyMember[]; leader: number };
+  trade: TradeView | null;
+  friends: { name: string; here: boolean }[];
+  /** fısıltı: sohbet girişine hedef adı */
+  whisperTo: string | null;
+  /** Savaş Arenası: etkinlik durumu ve canlı sıralama (bütün kanallar ortak) */
+  arena: { active: boolean; endsAt: number; board: { id?: number; name: string; cls: string; kills: number; deaths: number }[]; at: number } | null;
   map: string; channel: number; entityId: number;
   char: { id: number; name: string; cls: string; role: string } | null;
   self: SelfInfo | null;
@@ -65,7 +79,7 @@ function loadSettings(): UiState['settings'] {
 }
 
 let state: UiState = {
-  connected: false, status: '', map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
+  connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, arena: null, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,

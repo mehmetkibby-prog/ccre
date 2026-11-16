@@ -7,6 +7,7 @@ import {
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel } from './extras.tsx';
+import { FriendsPanel } from './social.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -48,6 +49,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'mall' && <MallPanel game={game} />}
       {p === 'bosses' && <BossPanel game={game} />}
       {p === 'auto' && <AutoPanel game={game} />}
+      {p === 'friends' && <FriendsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (

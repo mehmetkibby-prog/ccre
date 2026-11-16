@@ -17,6 +17,8 @@ port.on('message', (m: ToWorker) => {
     case 'leave': world.leave(m.sid); break;
     case 'world': world.setWorld(m.health, m.online); break;
     case 'market_load': world.loadMarket(m.state); break;
+    case 'arena': world.setArena(m.active, m.endsAt); break;
+    case 'arena_join_ok': world.arenaJoinResult(m.sid, m.err); break;
     case 'tuning': {
       const key = (map: string) => JSON.stringify([TUNING.density[map] ?? 1, Object.entries(TUNING.spawns).filter(([k]) => k.startsWith(map + ':')).sort()]);
       const before = new Map(Object.keys(MAPS).map((id) => [id, key(id)] as const));

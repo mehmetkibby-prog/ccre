@@ -4,7 +4,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
+import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
@@ -368,7 +368,7 @@ export class Renderer3D {
       const cos = kind === Kind.PLAYER ? (gear >> 12) & 7 : 0;
       let cpend: string | null = null, wings: View['wings'] = null, pet: Pet | null = null;
       if (cos & 4) { wings = createWings(glb.height - 0.2, glb.root); if (wings) glb.root.add(wings); else if (modelPending('wings_crimson')) cpend = 'wings_crimson'; }
-      if (cos & 3) { pet = createPet(cos & 3); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[cos & 3])) cpend = PET_MODEL[cos & 3]; }
+      if (cos & 3) { pet = createPet(cos & 3, { height: glb.height, charRoot: glb.root, onBark: (wx, wz) => { const d = Math.hypot(wx / U - this.g.dx, wz / U - this.g.dy); if (d < 520) sfx.play('bark', (1 - d / 520) * 0.55); } }); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[cos & 3])) cpend = PET_MODEL[cos & 3]; }
       return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend, wings, pet, cpend };
     }
     // asıl model yükleniyorsa geçici prosedürel modeli gösterme: kısa bir süre boş kalsın, model gelince kurulur
@@ -480,8 +480,21 @@ export class Renderer3D {
     }
     f.seen = this.frameNo;
     const hand = new THREE.Vector3();
-    if (v.glb?.hand) v.glb.hand.getWorldPosition(hand); else hand.copy(v.obj.position).add(new THREE.Vector3(0, 1.2, 0));
-    f.gear.update(hand, new THREE.Vector3(f.wx, 0, f.wz), -0.32, now);
+    const b = v.glb?.bones;
+    if (b?.armR && b.foreArmR && b.handR && b.armL && b.foreArmL && b.handL) {
+      // iki elle tutuş: sağ el sapta (bel hizası önde), sol el biraz ileride ve yukarıda; kollar IK ile oraya uzanır
+      const P = v.obj.position, sc = Math.max(0.6, ((v.glb!.height ?? 2) - 0.2) / 1.8);
+      // karakterin baktığı yön (oyuncu suya döner); sağ el bel hizasında önde, sol el ileride ve yukarıda
+      const F = new THREE.Vector3(Math.sin(v.yaw), 0, Math.cos(v.yaw)), R = new THREE.Vector3(-F.z, 0, F.x);
+      const gripR = P.clone().addScaledVector(F, 0.24 * sc).addScaledVector(R, -0.1 * sc); gripR.y += 0.98 * sc;
+      const gripL = P.clone().addScaledVector(F, 0.46 * sc).addScaledVector(R, -0.02 * sc); gripL.y += 1.16 * sc;
+      reachIK([b.armR, b.foreArmR], b.handR, gripR); reachIK([b.armL, b.foreArmL], b.handL, gripL);
+      b.handR.getWorldPosition(hand); const hand2 = new THREE.Vector3(); b.handL.getWorldPosition(hand2);
+      f.gear.update(hand, new THREE.Vector3(f.wx, 0, f.wz), -0.32, now, hand2);
+    } else {
+      if (v.glb?.hand) v.glb.hand.getWorldPosition(hand); else hand.copy(v.obj.position).add(new THREE.Vector3(0, 1.2, 0));
+      f.gear.update(hand, new THREE.Vector3(f.wx, 0, f.wz), -0.32, now);
+    }
   }
 
   /** Oyuncu görünümünün ayrıntısı: tam (gölge, evcil hayvan, kanat) ya da hafif. Yalnız değişince dolaşır. */

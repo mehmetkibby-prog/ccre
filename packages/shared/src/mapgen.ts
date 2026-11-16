@@ -337,6 +337,38 @@ function genWild(l: MapLayout, rng: Rng) {
   placeSpawns(l, mulberry32(l.def.seed * 7 + 13)); // kendi RNG'si: yoğunluk değişince aynı tohumdan yeniden kurulabilir
 }
 
+/**
+ * Savaş Arenası: ortada yuvarlak kum meydan, çevresinde taş halka ve kaya duvar, dört yönde sancak ve fener.
+ * Engel yok denecek kadar az (açık dövüş); dışı çimen ve ağaç (yalnız görüntü, yürünmez).
+ */
+function genArena(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  const cx = w / 2, cy = h / 2, R = 17;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y), d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+    if (d < R - 1.6) l.ground[i] = (Math.hypot(x + 0.5 - cx, y + 0.5 - cy) < 3.2) ? G.COBBLE : G.SAND;
+    else if (d < R) l.ground[i] = G.STONE;
+    else { l.ground[i] = G.GRASS; l.blocked[i] = 1; }
+  }
+  // duvar: halkanın dışında sık kaya, arada ağaç
+  for (let a = 0; a < Math.PI * 2; a += 0.11) {
+    const r = R + 0.9 + rng() * 0.6;
+    l.props.push({ k: 'rock', x: tc(cx + Math.cos(a) * r - 0.5), y: tc(cy + Math.sin(a) * r - 0.5), v: (rng() * 3) | 0, s: 1.1 + rng() * 0.5 });
+  }
+  for (let a = 0.05; a < Math.PI * 2; a += 0.32) {
+    const r = R + 3.5 + rng() * 2.5;
+    l.props.push({ k: rng() < 0.5 ? 'tree' : 'pine', x: tc(cx + Math.cos(a) * r), y: tc(cy + Math.sin(a) * r), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.4 });
+  }
+  // sancak ve fenerler (dört yön + ara yönler), halka kenarında
+  for (let k = 0; k < 8; k++) {
+    const a = (k / 8) * Math.PI * 2, r = R - 1.1;
+    const x = Math.round(cx + Math.cos(a) * r - 0.5), y = Math.round(cy + Math.sin(a) * r - 0.5);
+    l.props.push({ k: k % 2 ? 'lamp' : 'banner', x: tc(x), y: tc(y), v: k % 4, s: 1.2 });
+    l.blocked[idx(l, x, y)] = 1;
+  }
+  l.spawn = { x: tc(cx - 0.5), y: tc(cy - 0.5) };
+}
+
 function genLake(l: MapLayout, rng: Rng) {
   const { w, h } = l;
   for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
@@ -480,7 +512,8 @@ export function getLayout(mapId: string): MapLayout {
     props: [], spawn: { x: 0, y: 0 }, spawnPoints: [], zones: [], npcs: [],
   };
   const rng = mulberry32(def.seed);
-  if (def.theme === 'village') genVillage(l, rng);
+  if (def.id === 'arena') genArena(l, rng);
+  else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);
   else genWild(l, rng);
   for (const n of def.npcs) {

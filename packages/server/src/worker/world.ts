@@ -12,6 +12,7 @@ import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
 import { findPath, los, freeAt } from './nav.ts';
+import { Social, type InviteKind } from './social.ts';
 
 const DIR_TO_BYTE = 256 / DIR_STEPS;
 const angleByte = (dx: number, dy: number) => { let a = Math.atan2(dy, dx); if (a < 0) a += Math.PI * 2; return Math.round((a / (Math.PI * 2)) * 256) & 255; };
@@ -42,8 +43,18 @@ export class World {
   bytesOut = 0; msgsOut = 0;
   worldHealth = 100; online = 0;
 
+  /** Oyuncular arası: grup, ticaret, düello, arkadaşlık (kanal içi). */
+  social: Social;
+  private byCharId(charId: number) { for (const q of this.bySid.values()) if (q.char.id === charId) return q; return undefined; }
+
   constructor(public opt: WorldOptions) {
     for (const id of Object.keys(MAPS)) this.zones.set(id, new Zone(id));
+    const w = this;
+    this.social = new Social({
+      get now() { return w.now; }, bagCap: BAG_EQUIP_CAP,
+      byChar: (id) => w.byCharId(id), sendJson: (p, o) => w.sendJson(p, o), notice: (p, t, k) => w.notice(p, t, k), save: (p, u) => w.save(p, u),
+    });
+    this.social.allCharNames = function* () { for (const q of w.bySid.values()) yield q.char.name; };
   }
   /**
    * Yönetim: bir karakterin seviyesini/cüzdanını değiştirir (çevrimiçiyse anında, istatistikleriyle).
@@ -158,7 +169,7 @@ export class World {
     if (this.bySid.has(sid)) return;
     char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
     if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
-    if (!this.zones.has(char.map)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
+    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
     char.x = pos.x; char.y = pos.y;
@@ -176,6 +187,8 @@ export class World {
   leave(sid: number) {
     const p = this.bySid.get(sid);
     if (!p) return;
+    this.social.onLeave(p);
+    if (p.zone.id === 'arena') this.opt.post({ type: 'arena_left', charId: p.char.id });
     this.bySid.delete(sid);
     p.zone.removePlayer(p);
     for (const m of p.zone.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
@@ -214,7 +227,7 @@ export class World {
   }
 
   private dispatch(p: Player, c: ClientCmd) {
-    if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
+    if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion', 'party', 'friends', 'trade', 'arena'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
     switch (c.t) {
       case 'gm_reset': {
         if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
@@ -267,6 +280,21 @@ export class World {
       case 'fish_end': return this.cmdFishEnd(p, String(c.token ?? ''), !!c.ok);
       case 'fish_rod': return this.cmdFishRod(p, String(c.req ?? ''));
       case 'fish_sell': return this.cmdFishSell(p, String(c.req ?? ''));
+      case 'social': {
+        const k = String(c.kind) as InviteKind;
+        if (!['party', 'trade', 'duel', 'friend'].includes(k)) return;
+        if (c.op === 'invite') { const t = this.findTarget(p.zone, Number(c.target) || 0); return this.social.invite(p, t instanceof Player ? t : null, k); }
+        if (c.op === 'answer') return this.social.answer(p, Number(c.from) || 0, k, !!c.accept);
+        return;
+      }
+      case 'party': if (c.op === 'leave') return this.social.leaveParty(p); if (c.op === 'kick') return this.social.kick(p, Number(c.target) || 0); return;
+      case 'trade':
+        if (c.op === 'set') return this.social.tradeSet(p, c.items, c.gems);
+        if (c.op === 'lock') return this.social.tradeLock(p);
+        if (c.op === 'confirm') return this.social.tradeConfirm(p);
+        return this.social.tradeCancel(p);
+      case 'friends': if (c.op === 'remove') return this.social.removeFriend(p, String(c.name ?? '')); return this.social.sendFriends(p);
+      case 'arena': return this.cmdArena(p, String(c.op));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
       case 'ping': this.sendJson(p, { t: 'pong', c: c.c, s: this.now }); return;
       case 'sync': p.resetPending = true; this.sendFullSelf(p); return;
@@ -280,6 +308,7 @@ export class World {
     this.now = Date.now();
     this.tickNo++;
     this.pathBudget = 24; // bir tikte en çok bu kadar yol hesabı (kalabalıkta sunucu yorulmasın)
+    if (this.tickNo % Math.round(1000 / TICK_MS) === 0) this.social.tick(); // saniyede bir: davet/ticaret/düello/grup
     for (const z of this.zones.values()) {
       if (z.playerSet.size === 0 && z.respawnQueue.length === 0 && z.lootById.size === 0) continue;
       this.tickZone(z);
@@ -592,8 +621,13 @@ export class World {
   }
 
   private canPvp(a: Player, b: Player): boolean {
-    if (a === b || a.zone !== b.zone || !a.zone.def.pvp || b.dead) return false;
-    return true;
+    if (a === b || a.zone !== b.zone || b.dead) return false;
+    if (this.social.sameParty(a, b)) return false; // aynı gruptakiler hiçbir yerde birbirine vuramaz
+    if (this.social.dueling(a, b)) return true; // karşılıklı kabul edilmiş düello: her haritada
+    if (this.social.inDuel(a) || this.social.inDuel(b)) return false; // düellodakine üçüncü kişi karışamaz
+    // arena: kapalıyken vuruşma yok; yeni doğan 4 sn korunur (doğuşta bekleyip kesme olmasın)
+    if (a.zone.id === 'arena') return this.arenaActive && (this.arenaProt.get(b.char.id) ?? 0) <= this.now && (this.arenaProt.get(a.char.id) ?? 0) <= this.now;
+    return a.zone.def.pvp;
   }
 
   private cmdAttack(p: Player, id: number) {
@@ -765,10 +799,11 @@ export class World {
 
   private rewardKill(p: Player, m: Monster) {
     const c = p.char;
-    const diff = c.level - m.level;
-    const mod = diff > 5 ? Math.max(0.1, 1 - (diff - 5) * 0.12) : diff < -3 ? 1.2 : 1;
+    const lvMod = (lv: number) => { const df = lv - m.level; return df > 5 ? Math.max(0.1, 1 - (df - 5) * 0.12) : df < -3 ? 1.2 : 1; };
+    const mod = lvMod(c.level);
     const bf = charBuffs(c.misc.buffs, this.now);
-    this.addXp(p, Math.max(1, Math.round(m.xp * mod * TUNING.xpMul * (1 + bf.xpPct / 100))));
+    // TP: grupta, canavarın çevresindeki (geniş menzil) grup üyeleri paylaşır; her üyenin kendi seviye ve buff çarpanıyla
+    for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) this.addXp(q, xp);
     c.kills++;
     const day = trDayKey(this.now);
     if (!c.misc.dailyKills || c.misc.dailyKills.day !== day) c.misc.dailyKills = { day, n: 0 };
@@ -852,11 +887,15 @@ export class World {
 
   private killPlayer(p: Player, killer: Player | null) {
     if (p.dead) return;
+    // düelloda ölüm yok: kaybeden 1 canda kalır, düello biter
+    if (killer && this.social.duelDown(p, killer)) { p.hp = 1; p.dirty |= Upd.HP; return; }
     p.dead = true; p.deadAt = this.now; p.hp = 0; p.anim = Anim.DEAD; p.inputs.length = 0;
     p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS;
     p.zone.emit(p.x, p.y, { e: Ev.DEATH, id: p.id, killer: killer?.id ?? 0 });
     let lost = 0;
-    if (killer && p.zone.def.pvp && p.char.role === 'player') {
+    // arena: öldürme ana sürece bildirilir (hile denetimi ve ortak sıralama orada); arenada kayıp yok
+    if (killer && p.zone.id === 'arena' && this.arenaActive) this.opt.post({ type: 'arena_kill', killer: killer.char.id, victim: p.char.id, kLevel: killer.char.level, vLevel: p.char.level });
+    if (killer && p.zone.def.pvp && p.zone.id !== 'arena' && p.char.role === 'player') {
       lost = Math.floor(p.char.gems / 20);
       p.char.gems -= lost;
     }
@@ -874,7 +913,11 @@ export class World {
     p.hp = Math.round(p.stats.maxHp * (where === 'town' ? 1 : 0.5));
     p.anim = Anim.IDLE; p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS;
     p.lastDamageAt = 0; p.combatUntil = 0;
-    this.moveToZone(p, z, z.layout.spawn.x + (rnd() - 0.5) * 80, z.layout.spawn.y + (rnd() - 0.5) * 60);
+    if (target === 'arena') {
+      // arena: etkinlik sürüyorsa arenada rastgele noktada tam canla, 4 sn korumalı doğ; bittiyse köyde
+      if (this.arenaActive) { const pt = this.arenaPoint(); p.hp = p.stats.maxHp; this.moveToZone(p, z, pt.x, pt.y); this.arenaProt.set(p.char.id, this.now + 4000); }
+      else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
+    } else this.moveToZone(p, z, z.layout.spawn.x + (rnd() - 0.5) * 80, z.layout.spawn.y + (rnd() - 0.5) * 60);
     this.sendJson(p, { t: 'respawned', hp: p.hp });
     this.save(p);
   }
@@ -883,6 +926,7 @@ export class World {
     const from = p.zone;
     const pos = nearestFree(z.layout, x, y);
     if (from !== z) {
+      this.social.onZoneChange(p);
       from.removePlayer(p);
       for (const m of from.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
       p.x = pos.x; p.y = pos.y;
@@ -1208,6 +1252,61 @@ export class World {
       if (!p.dead) this.notice(p, 'Bugünkü oto atak süren doldu. Gece 00.00\'da yenilenir.');
       this.autoSend(p);
     } else if (this.tickNo % 1200 < 20) this.autoSend(p); // dakikada bir kalan süre
+  }
+
+  // ───────────────────────────── Savaş Arenası (kanal tarafı) ─────────────────────────────
+  private arenaActive = false;
+  private arenaEndsAt = 0;
+  private arenaProt = new Map<number, number>(); // charId → doğuş koruması bitişi
+  /** Ana süreçten: etkinlik açıldı/kapandı. Kapanınca arenadaki herkes köye döner (ölüyse dirilerek). */
+  setArena(active: boolean, endsAt: number) {
+    this.arenaActive = active; this.arenaEndsAt = endsAt;
+    if (active) return;
+    const az = this.zones.get('arena'); if (!az) return;
+    const town = this.zones.get('bazaar')!;
+    for (const p of [...az.playerSet]) {
+      if (p.dead) { p.dead = false; p.anim = Anim.IDLE; p.dirty |= Upd.ANIM | Upd.FLAGS; }
+      p.hp = p.stats.maxHp; p.dirty |= Upd.HP;
+      this.moveToZone(p, town, town.layout.spawn.x + (rnd() - 0.5) * 120, town.layout.spawn.y + (rnd() - 0.5) * 80);
+      this.sendJson(p, { t: 'respawned', hp: p.hp });
+      this.notice(p, 'Arena kapandı; köye döndün.', 'info');
+    }
+    this.arenaProt.clear();
+  }
+  /** Arena içinde rastgele açık nokta (yuvarlak meydan). */
+  private arenaPoint() {
+    const az = this.zones.get('arena')!, l = az.layout;
+    const cx = (l.w / 2) * 64, cy = (l.h / 2) * 64;
+    for (let i = 0; i < 20; i++) { const a = rnd() * Math.PI * 2, r = rnd() * 13 * 64; const x = cx + Math.cos(a) * r, y = cy + Math.sin(a) * r; if (freeAt(l, x, y)) return { x, y }; }
+    return { x: cx, y: cy };
+  }
+  private cmdArena(p: Player, op: string) {
+    if (op === 'leave') {
+      if (p.zone.id !== 'arena') return;
+      const town = this.zones.get('bazaar')!;
+      if (p.dead) { p.dead = false; p.hp = Math.round(p.stats.maxHp * 0.5); p.anim = Anim.IDLE; p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS; this.sendJson(p, { t: 'respawned', hp: p.hp }); }
+      this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y);
+      this.opt.post({ type: 'arena_left', charId: p.char.id });
+      return;
+    }
+    if (!this.arenaActive) return this.notice(p, 'Arena şu an kapalı.');
+    if (p.zone.id === 'arena') return;
+    if (p.dead) return this.notice(p, 'Ölüyken arenaya giremezsin.');
+    if (p.char.level < TUNING.arena.minLevel) return this.notice(p, `Arenaya girmek için en az ${TUNING.arena.minLevel}. seviye gerekir.`);
+    if (this.now < p.combatUntil) return this.notice(p, 'Savaştayken arenaya giremezsin.');
+    // son karar ana süreçte (aynı bağlantıdan en çok 2 karakter)
+    this.opt.post({ type: 'arena_join', sid: p.sid, charId: p.char.id, level: p.char.level });
+  }
+  arenaJoinResult(sid: number, err: string | null) {
+    const p = this.bySid.get(sid); if (!p) return;
+    if (err) return this.notice(p, err);
+    if (!this.arenaActive || p.dead || p.zone.id === 'arena') return;
+    const az = this.zones.get('arena')!, pt = this.arenaPoint();
+    this.social.tradeCancel(p, 'Ticaret iptal: arenaya girildi.');
+    p.hp = p.stats.maxHp; p.dirty |= Upd.HP;
+    this.moveToZone(p, az, pt.x, pt.y);
+    this.arenaProt.set(p.char.id, this.now + 4000);
+    this.notice(p, 'Savaş Arenası! Rakiplerini yen, puan topla. Aynı gruptakiler birbirine vuramaz.', 'ok');
   }
 
   private cmdTravel(p: Player, mapId: string, confirm: boolean, req: string) {
@@ -1766,6 +1865,7 @@ export function applyGive(c: CharState, g: AdminGive): string {
     c.bag.push(it);
     return `Yönetimden hediye: ${itemDisplayName(it)}`;
   }
+  if (g.kind === 'gems') { const n = Math.max(0, Math.min(10_000_000, Math.round(g.qty))); c.gems += n; return `Ödül: ${n.toLocaleString('tr-TR')} Mücevher`; }
   const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
   c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
   return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;

@@ -31,6 +31,8 @@ export interface CharMisc {
   dailyKills?: { day: string; n: number };
   /** oto atak: bugün kullanılan süre (ms) */
   autoDay?: { day: string; ms: number };
+  /** arkadaş listesi (karakter adları) */
+  friends?: string[];
   receipts?: string[]; // son işlem kimlikleri (idempotency, sınırlı)
   tutorial?: number;
   deadAt?: number; // epoch ms (ölüm durumu kalıcı)
@@ -59,6 +61,9 @@ export type ToWorker =
   | { type: 'tuning'; data: unknown }
   /** Yönetim paneli: bu kanaldaki çevrimiçi karakteri düzenle / sıfırla. */
   | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename' | 'give'; charId: number; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string; give?: AdminGive }
+  /** Savaş Arenası: etkinlik açıldı/kapandı; giriş isteğinin yanıtı */
+  | { type: 'arena'; active: boolean; endsAt: number }
+  | { type: 'arena_join_ok'; sid: number; err: string | null }
   | { type: 'shutdown' };
 
 // worker → ana
@@ -74,6 +79,10 @@ export type FromWorker =
   | { type: 'joined'; sid: number; ok: boolean; err?: string }
   | { type: 'chat'; sid: number; ch: string; text: string }
   | { type: 'donate'; sid: number; charId: number; name: string; amount: number }
+  /** Savaş Arenası: giriş isteği (ana süreç hile/IP denetimi yapar), arenada öldürme, arenadan çıkış */
+  | { type: 'arena_join'; sid: number; charId: number; level: number }
+  | { type: 'arena_kill'; killer: number; victim: number; kLevel: number; vLevel: number }
+  | { type: 'arena_left'; charId: number }
   | { type: 'stats'; data: WorkerStats };
 
 export interface WorkerStats {
@@ -91,4 +100,4 @@ export interface WorkerStats {
 }
 
 /** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
-export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number };
+export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number };

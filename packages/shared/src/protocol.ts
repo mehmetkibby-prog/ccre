@@ -141,6 +141,11 @@ export type ClientCmd =
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'transform'; item: string; req: string }
   | { t: 'auto'; on: boolean }
+  | { t: 'social'; op: 'invite' | 'answer'; kind: 'party' | 'trade' | 'duel' | 'friend'; target?: number; from?: number; accept?: boolean }
+  | { t: 'party'; op: 'leave' | 'kick'; target?: number }
+  | { t: 'trade'; op: 'set' | 'lock' | 'confirm' | 'cancel'; items?: string[]; gems?: number }
+  | { t: 'friends'; op: 'list' | 'remove'; name?: string }
+  | { t: 'arena'; op: 'join' | 'leave' }
   | { t: 'npc'; id: string }
   | { t: 'use'; key: string; req: string; item?: string }
   | { t: 'mall_buy'; id: string; qty: number; req: string }

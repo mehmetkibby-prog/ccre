@@ -70,6 +70,29 @@ export interface GameTuning {
   mall?: MallTune;
   /** Balıkçılık: olta fiyatı, vurma süresi, av tablosu. */
   fishing?: FishingTune;
+  /** Savaş Arenası: otomatik saatler, süre, en düşük seviye, sıralama ödülleri. */
+  arena: ArenaTune;
+}
+/** Arena ödülü (sıra başına): mücevher, malzeme/market ürünleri (anahtar → adet), isteğe bağlı eşya. */
+export interface ArenaReward { gems: number; mats: Record<string, number>; item?: { tpl: string; rarity: string; plus: number } }
+export interface ArenaTune { auto: boolean; times: string[]; durationMin: number; minLevel: number; rewards: ArenaReward[] }
+export const ARENA_DEFAULT: ArenaTune = {
+  auto: false, times: ['21:00'], durationMin: 15, minLevel: 10,
+  rewards: [{ gems: 5000, mats: {} }, { gems: 3000, mats: {} }, { gems: 1500, mats: {} }],
+};
+function sanitizeArena(raw: unknown): ArenaTune {
+  const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  const num = (v: unknown, lo: number, hi: number, d: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n))) : d; };
+  const times = Array.isArray(r.times) ? [...new Set(r.times.map(String).filter((t) => /^([01]\d|2[0-3]):[0-5]\d$/.test(t)))].sort().slice(0, 12) : ARENA_DEFAULT.times;
+  const rewards = Array.isArray(r.rewards) ? r.rewards.slice(0, 10).map((x) => {
+    const o = (x && typeof x === 'object' ? x : {}) as Record<string, unknown>;
+    const mats: Record<string, number> = {};
+    for (const [k, v] of Object.entries((o.mats && typeof o.mats === 'object' ? o.mats : {}) as Record<string, unknown>).slice(0, 6)) if (/^[a-z0-9_]{1,32}$/.test(k)) { const q = num(v, 0, 9999, 0); if (q > 0) mats[k] = q; }
+    const it = o.item && typeof o.item === 'object' ? o.item as Record<string, unknown> : null;
+    const item = it && /^[a-z0-9_]{1,40}$/.test(String(it.tpl)) && RARITY_IDS.includes(String(it.rarity)) ? { tpl: String(it.tpl), rarity: String(it.rarity), plus: num(it.plus, 0, 9, 0) } : undefined;
+    return { gems: num(o.gems, 0, 10_000_000, 0), mats, ...(item ? { item } : {}) };
+  }) : structuredClone(ARENA_DEFAULT.rewards);
+  return { auto: r.auto === undefined ? ARENA_DEFAULT.auto : !!r.auto, times, durationMin: num(r.durationMin, 3, 120, ARENA_DEFAULT.durationMin), minLevel: num(r.minLevel, 1, 100, ARENA_DEFAULT.minLevel), rewards };
 }
 export interface UpgradeStepTune { chance: number; gems: number; mats: Record<string, number>; weapon: number; armor: number }
 export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
@@ -78,9 +101,10 @@ export const DEFAULT_TUNING: GameTuning = {
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
   density: {}, bots: 8, worldDecayMul: 1, brightness: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, announcement: '', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
+  arena: structuredClone(ARENA_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1],
@@ -100,6 +124,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.announcement = typeof r.announcement === 'string' ? r.announcement.slice(0, 200) : '';
   // yalnız https:// ya da site içi yol (javascript: vb. engellenir)
   out.classicUrl = typeof r.classicUrl === 'string' && /^(https:\/\/[^\s"'<>]+|\/[^\s"'<>]*)?$/.test(r.classicUrl.trim()) ? r.classicUrl.trim().slice(0, 200) : DEFAULT_TUNING.classicUrl;
+  out.arena = sanitizeArena(r.arena);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

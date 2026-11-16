@@ -129,6 +129,8 @@ class Sfx {
       case 'magic': this.tone(660, 0.25, 'sine', 0.15, 1.8); this.tone(990, 0.2, 'sine', 0.08, 1.4, 0.03); break;
       case 'skill': this.tone(440, 0.3, 'sawtooth', 0.08, 2); this.noise(0.3, 1200, 3, 0.2, 'bandpass', 0, 3); break;
       case 'boom': this.noise(0.5, 400, 0.7, 0.7, 'lowpass', 0, 0.3); this.tone(80, 0.4, 'sine', 0.4, 0.5); break;
+      // köpek havlaması: iki kısa "hav" (kısık; sık değil, ara sıra)
+      case 'bark': for (const dl of [0, 0.2]) { this.tone(420, 0.09, 'sawtooth', 0.07, 0.55, dl); this.noise(0.08, 900, 1.4, 0.12, 'bandpass', dl, 0.6); } break;
       // ── beceri sesleri ──
       case 'chain': for (let i = 0; i < 6; i++) this.noise(0.05, 3800 + i * 300, 6, 0.16, 'bandpass', i * 0.035); this.tone(1250, 0.25, 'triangle', 0.06, 0.6); break;
       case 'charge': this.noise(0.35, 500, 0.8, 0.35, 'bandpass', 0, 4); this.tone(110, 0.3, 'sawtooth', 0.06, 1.8); break;

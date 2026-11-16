@@ -71,12 +71,12 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market';
+type Tab = 'durum' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena';
 const TABS: [Tab, string, string][] = [
-  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
+  ['durum', 'Durum', '◉'], ['oyuncu', 'Oyuncular', '☺'], ['arena', 'Savaş Arenası', '⚔'], ['genel', 'Genel', '⚙'], ['market', 'Nesne Market', '✦'], ['seviye', 'Seviye', '▲'], ['boss', 'Bosslar', '♛'], ['canavar', 'Canavarlar', '✶'],
   ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['harita', 'Haritalar', '⌖'], ['balik', 'Balıkçılık', '≈'],
 ];
-const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita']);
+const SETTING_TABS = new Set<Tab>(['genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -190,6 +190,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'efsun' && <EnchantTab t={t} setT={setTT} dis={busy} />}
             {tab === 'arti' && <UpgradeTab t={t} setT={setTT} dis={busy} />}
             {tab === 'donusum' && <TransformTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'arena' && <ArenaTab t={t} setT={setTT} dis={busy} toast={setToast} />}
             {tab === 'harita' && <MapTab t={t} setT={setTT} setSpawn={setSpawn} dis={busy} />}
           </div>
         )}
@@ -451,6 +452,80 @@ export function isAdminRoute() {
 export default AdminPage;
 
 /** Oyuncuya eşya ver: silah/zırh/takı (nadirlik, artı) ya da malzeme / Nesne Market ürünü (adet). */
+/**
+ * Savaş Arenası: otomatik saatler (Türkiye saati), süre, en düşük seviye, sıra ödülleri; canlı sıralama ve elle
+ * başlat/bitir. Ödüller etkinlik bitince ilk sıralardaki oyuncuların çantasına gider (çevrimdışıysa girince).
+ */
+function ArenaTab({ t, setT, dis, toast }: { t: GameTuning; setT: React.Dispatch<React.SetStateAction<GameTuning>>; dis: boolean; toast: (x: { ok: boolean; text: string }) => void }) {
+  const A = t.arena;
+  const set = (p: Partial<GameTuning['arena']>) => setT((cur) => ({ ...cur, arena: { ...cur.arena, ...p } }));
+  const [st, setSt] = useState<{ active: boolean; endsAt: number; rejected: number; board: { name: string; cls: string; kills: number; deaths: number }[]; last: { at: number; board: { name: string; kills: number; deaths: number }[] } | null } | null>(null);
+  const [mins, setMins] = useState(String(A.durationMin));
+  const [timesTxt, setTimesTxt] = useState(A.times.join(', '));
+  useEffect(() => setTimesTxt(A.times.join(', ')), [A.times.join(',')]);
+  const load = useCallback(() => { if (!OFFLINE) api('/api/admin/arena').then(setSt).catch(() => {}); }, []);
+  useEffect(() => { load(); const iv = setInterval(load, 5000); return () => clearInterval(iv); }, [load]);
+  const act = async (op: 'start' | 'stop') => { try { setSt(await api('/api/admin/arena', { op, minutes: Number(mins) || A.durationMin })); toast({ ok: true, text: op === 'start' ? 'Arena başlatıldı.' : 'Arena bitirildi, ödüller dağıtıldı.' }); } catch (e) { toast({ ok: false, text: (e as Error).message }); } };
+  const setReward = (i: number, p: Partial<GameTuning['arena']['rewards'][number]>) => set({ rewards: A.rewards.map((r, k) => (k === i ? { ...r, ...p } : r)) });
+  const matOptions = [...MATERIALS.map((m) => [m.id, m.name] as const), ...MALL_ITEMS.filter((m) => m.cat !== 'yakinda' && !m.epin).map((m) => [m.id, m.name] as const)];
+  const left = st?.active ? Math.max(0, Math.round((st.endsAt - Date.now()) / 1000)) : 0;
+  return (
+    <>
+      <section className="adm-card">
+        <h3>Durum</h3>
+        {OFFLINE ? <p className="muted">Test sürümünde arena yalnız sunucuda çalışır.</p> : !st ? <p className="muted">Yükleniyor…</p> : (
+          <>
+            <p><b style={{ color: st.active ? '#5ef0a6' : undefined }}>{st.active ? `AÇIK · kalan ${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : 'Kapalı'}</b>{st.active && <small className="muted"> · hile denetiminde sayılmayan öldürme: {st.rejected}</small>}</p>
+            <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+              {!st.active ? <><label className="muted" style={{ fontSize: 12 }}>Süre (dk) <input className="adm-num" style={{ width: 60 }} value={mins} onChange={(e) => setMins(e.target.value.replace(/\D/g, ''))} /></label><button className="btn small primary" onClick={() => act('start')}>Şimdi başlat</button></>
+                : <button className="btn small" onClick={() => act('stop')}>Şimdi bitir ve ödülleri dağıt</button>}
+            </div>
+            {(st.active ? st.board : st.last?.board ?? []).length > 0 && (
+              <table className="adm-table" style={{ marginTop: 10 }}><thead><tr><th>#</th><th>Oyuncu</th><th>Öldürme</th><th>Ölüm</th></tr></thead>
+                <tbody>{(st.active ? st.board : st.last!.board).map((b, i) => <tr key={i}><td>{i + 1}</td><td>{b.name}</td><td>{b.kills}</td><td>{b.deaths}</td></tr>)}</tbody></table>
+            )}
+            {!st.active && st.last && <p className="muted" style={{ fontSize: 11 }}>Son etkinlik: {new Date(st.last.at).toLocaleString('tr-TR')}</p>}
+          </>
+        )}
+      </section>
+      <section className="adm-card">
+        <h3>Otomatik saatler</h3>
+        <p className="muted adm-hint">Türkiye saatiyle her gün bu saatlerde kendiliğinden açılır. Virgülle ayır (ör. 13:00, 21:00). Değişiklikten sonra üstteki Kaydet'e bas.</p>
+        <label className="row" style={{ gap: 8 }}><input type="checkbox" disabled={dis} checked={A.auto} onChange={(e) => set({ auto: e.target.checked })} /> Otomatik açılsın</label>
+        <input className="adm-search" disabled={dis} value={timesTxt} placeholder="21:00" onChange={(e) => setTimesTxt(e.target.value)} onBlur={() => set({ times: timesTxt.split(/[,\s]+/).map((x) => x.trim()).filter((x) => /^([01]\d|2[0-3]):[0-5]\d$/.test(x)) })} />
+        <div className="row" style={{ gap: 14, marginTop: 8, flexWrap: 'wrap' }}>
+          <label>Süre (dk) <Num v={A.durationMin} def={15} min={3} max={120} step={1} on={(v) => set({ durationMin: Math.round(v ?? 15) })} dis={dis} w={60} /></label>
+          <label>En düşük seviye <Num v={A.minLevel} def={10} min={1} max={100} step={1} on={(v) => set({ minLevel: Math.round(v ?? 10) })} dis={dis} w={60} /></label>
+        </div>
+      </section>
+      <section className="adm-card">
+        <h3>Ödüller (sıraya göre)</h3>
+        <p className="muted adm-hint">En çok rakip yenen 1. olur (eşitlikte ölümü az olan, o da eşitse puana önce ulaşan). En az 1 geçerli öldürmesi olan ödül alır. Aynı hesap ya da aynı IP'den gelen öldürmeler, aynı rakipten 3'ten fazlası, yeni doğanı kesmek ve 20 seviye altındakini kesmek sayılmaz.</p>
+        {A.rewards.map((r, i) => (
+          <div key={i} className="arena-rw">
+            <b>{i + 1}.</b>
+            <label>💎 <Num v={r.gems} def={0} min={0} max={10_000_000} step={100} on={(v) => setReward(i, { gems: Math.round(v ?? 0) })} dis={dis} w={90} /></label>
+            {Object.entries(r.mats).map(([k, q]) => (
+              <span key={k} className="arena-mat">{matOptions.find((m) => m[0] === k)?.[1] ?? k} ×<input className="adm-num" style={{ width: 52 }} value={q} disabled={dis} onChange={(e) => setReward(i, { mats: { ...r.mats, [k]: Math.max(1, Math.min(9999, Number(e.target.value) || 1)) } })} /><button className="btn small" disabled={dis} onClick={() => { const m = { ...r.mats }; delete m[k]; setReward(i, { mats: m }); }}>✕</button></span>
+            ))}
+            <select className="adm-search" style={{ width: 'auto' }} disabled={dis || Object.keys(r.mats).length >= 6} value="" onChange={(e) => e.target.value && setReward(i, { mats: { ...r.mats, [e.target.value]: 1 } })}>
+              <option value="">+ malzeme / market ürünü</option>
+              {matOptions.filter((m) => !(m[0] in r.mats)).map((m) => <option key={m[0]} value={m[0]}>{m[1]}</option>)}
+            </select>
+            <select className="adm-search" style={{ width: 'auto' }} disabled={dis} value={r.item ? `${r.item.tpl}|${r.item.rarity}` : ''} onChange={(e) => { const [tpl, rarity] = e.target.value.split('|'); setReward(i, { item: tpl ? { tpl, rarity, plus: r.item?.plus ?? 0 } : undefined }); }}>
+              <option value="">(eşya yok)</option>
+              {ITEM_TEMPLATES.flatMap((tp) => (['orange', 'crimson', 'unique'] as const).map((ra) => <option key={tp.id + ra} value={`${tp.id}|${ra}`}>{tp.name} · {RARITY[ra]?.name ?? ra}</option>))}
+            </select>
+            {r.item && <label>+<Num v={r.item.plus} def={0} min={0} max={MAX_PLUS} step={1} on={(v) => setReward(i, { item: { ...r.item!, plus: Math.round(v ?? 0) } })} dis={dis} w={44} /></label>}
+            <button className="btn small" disabled={dis} onClick={() => set({ rewards: A.rewards.filter((_, k) => k !== i) })}>Sırayı sil</button>
+          </div>
+        ))}
+        <button className="btn small" disabled={dis || A.rewards.length >= 10} onClick={() => set({ rewards: [...A.rewards, { gems: 500, mats: {} }] })}>+ Sıra ekle</button>
+      </section>
+    </>
+  );
+}
+
 function GiveBox({ busy, onGive }: { busy: boolean; onGive: (g: Record<string, unknown>) => void }) {
   const [kind, setKind] = useState<'item' | 'mat'>('item');
   const [tpl, setTpl] = useState(ITEM_TEMPLATES[0]?.id ?? '');

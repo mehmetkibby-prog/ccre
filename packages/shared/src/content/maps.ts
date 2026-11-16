@@ -90,6 +90,11 @@ export const MAPS: Record<string, MapDef> = {
       { monster: 'blizzard_seer', count: 20, level: [40, 46], variants: [40, 45, 15], region: 'any' },
     ],
   },
+  arena: {
+    id: 'arena', name: 'Savaş Arenası', w: 44, h: 44, theme: 'village', seed: 1453, safe: false, pvp: true, minLevel: 1,
+    respawnMap: 'arena', travelable: false, spawns: [], npcs: [],
+    desc: 'Etkinlik saatlerinde açılan PvP arenası. En çok rakip yenen ödülleri kazanır. Ölümde kayıp yok.',
+  },
   lake: {
     id: 'lake', name: 'Şelale Gölü', w: 64, h: 48, theme: 'lake', seed: 31, safe: true, pvp: false, minLevel: 1,
     respawnMap: 'lake', travelable: true, spawns: [],

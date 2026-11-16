@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 /**
- * Ufuk manzarası: haritayı çevreleyen iki sıra dağ (önde alçak, mavimsi ormanlı tepeler; arkada karlı yüksek zirveler).
+ * Ufuk manzarası: haritayı çevreleyen üç sıra (önde ormanlı alçak tepeler, ortada kayalık sırtlar, arkada karlı sivri zirveler).
  * Kamerayla birlikte yatayda kayar (gökyüzü gibi sonsuz uzakta görünür), ilk çizilir ve derinlik yazmaz:
  * dünyadaki her şey üstüne çizilir. Tek ağ, tek çizim çağrısı, ışık/sis hesabı yok (köşe renkleri hazır).
  */
@@ -28,7 +28,7 @@ function noise1(seed: number, cells: number) {
 
 /**
  * Açıya göre tepe yüksekliği: birkaç ölçekte yumuşak (kosinüs ara değerli) gürültü toplamı → yuvarlak, dalgalı,
- * birbirine akan tepeler (keskin zirve yok). Tepe üstleri hafifçe basık: daha "toprak tepe" görünümü.
+ * birbirine akan tepeler (ön sıra: ormanlı alçak tepeler).
  */
 function ridge(seed: number, base: number, amp: number, cells: number) {
   const n1 = noise1(seed + 1, cells), n2 = noise1(seed + 2, cells * 2 + 3), n3 = noise1(seed + 3, cells * 5 + 7);
@@ -36,6 +36,25 @@ function ridge(seed: number, base: number, amp: number, cells: number) {
     const v = n1(a) * 0.62 + n2(a) * 0.28 + n3(a) * 0.1;
     const r = Math.max(0, v - 0.22) / 0.78;
     return base + amp * (1 - Math.pow(1 - r, 1.7));
+  };
+}
+
+/** Doğrusal ara değerli döngüsel gürültü (sivri sırt kırıkları için; yumuşatma yok). */
+function noiseLin(seed: number, cells: number) {
+  const r = rng(seed * 13 + 5), v = Array.from({ length: cells }, () => r());
+  return (a: number) => { const x = ((a / (Math.PI * 2)) % 1 + 1) % 1 * cells, i = Math.floor(x), f = x - i; return v[i % cells] * (1 - f) + v[(i + 1) % cells] * f; };
+}
+
+/**
+ * Gerçek dağ silueti: sırtlı (ridged) çok ölçekli gürültü. Her ölçekte 1-|2n-1| sivri tepe üretir; büyük ölçek
+ * birkaç ana zirve, küçükler omuz, çentik ve kayalık kırıkları ekler. Zirveler üs alınarak sivriltilir.
+ */
+function peaks(seed: number, base: number, amp: number, cells: number) {
+  const oct = [0, 1, 2, 3, 4].map((o) => ({ n: o < 2 ? noise1(seed + 31 * o, cells * (1 << o) + o * 3) : noiseLin(seed + 31 * o, cells * (1 << o) + o * 5), w: [0.56, 0.24, 0.12, 0.055, 0.025][o] }));
+  return (a: number) => {
+    let v = 0, wt = 1;
+    for (const { n, w } of oct) { const r = 1 - Math.abs(2 * n(a) - 1); v += w * r * r * (0.55 + 0.45 * wt); wt = r; }
+    return base + amp * Math.pow(Math.max(0, v - 0.08) / 0.92, 1.45);
   };
 }
 
@@ -63,6 +82,12 @@ void main() {
   // tepe sırtına yakın daha açık (gökyüzü ışığı), eteğe doğru koyulaşır
   float rim = smoothstep(0.55, 1.0, vT);
   vec3 c = vCol * (0.78 + 0.28 * big + 0.08 * fine) * (0.82 + 0.3 * rim);
+  // kayalık dağ: dikey oluk/kaya kırıkları (yalnız arka sıralar), zirveye yakın daha belirgin
+  if (vInfo.z < 0.5) {
+    float gully = fbm(vec2(p.x * 0.09, p.y * 0.035 + fbm(p * vec2(0.03, 0.02)) * 2.0));
+    float strata = fbm(vec2(p.x * 0.02, p.y * 0.22));
+    c *= 0.82 + 0.34 * gully + 0.1 * strata * smoothstep(0.3, 0.9, vT);
+  }
   if (vInfo.z > 0.5) c = mix(c, uForest * (0.75 + 0.4 * fine), 0.35 * smoothstep(0.1, 0.8, vT));
   if (vInfo.y > 0.5) { float m = smoothstep(vInfo.x + (big - 0.5) * 10.0, vInfo.x + 3.0, p.y); c = mix(c, uSnow * (0.85 + 0.15 * fine), m); }
   // atmosfer: uzak sıra ve etekler sise karışır
@@ -77,13 +102,14 @@ export function buildMountains(themeId: string, seed = 7): THREE.Mesh {
   const pos: number[] = [], col: number[] = [], idx: number[] = [], info: number[] = [], map: number[] = [], mist: number[] = [];
   const c = new THREE.Color();
   // katman: yarıçap, sırt, taban rengi, kar var mı, pusa karışma
-  const snowy = themeId === 'frozen';
+  // arka sıra: karlı, sivri, yüksek gerçek dağlar; orta: kayalık sırtlar; ön: ormanlı alçak tepeler
+  const snowy = themeId !== 'black' && themeId !== 'ancient';
   const blue = new THREE.Color(0x3f5f94);
-  const far = new THREE.Color(T.far).lerp(blue, 0.45), mid = new THREE.Color(T.rock).lerp(blue, 0.35), near = new THREE.Color(T.hill).lerp(new THREE.Color(T.rock), 0.5);
+  const far = new THREE.Color(T.far).lerp(blue, 0.4), mid = new THREE.Color(T.rock).lerp(blue, 0.25), near = new THREE.Color(T.hill).lerp(new THREE.Color(T.rock), 0.5);
   const layers = [
-    { r: 252, f: ridge(seed, 24 * T.peak, 68 * T.peak, 8), base: far, snowy, mist: 0.2, forest: false },
-    { r: 238, f: ridge(seed + 11, 14 * T.peak, 46 * T.peak, 11), base: mid, snowy, mist: 0.1, forest: false },
-    { r: 224, f: ridge(seed + 23, 5, 18, 16), base: near, snowy: false, mist: 0.05, forest: themeId !== 'frozen' && themeId !== 'black' },
+    { r: 252, f: peaks(seed, 18 * T.peak, 118 * T.peak, 6), base: far, snowy, snowK: themeId === 'frozen' ? 1 : 1.12, mist: 0.16, forest: false },
+    { r: 238, f: peaks(seed + 11, 10 * T.peak, 62 * T.peak, 9), base: mid, snowy: themeId === 'frozen', snowK: 1, mist: 0.08, forest: false },
+    { r: 224, f: ridge(seed + 23, 5, 18, 16), base: near, snowy: false, snowK: 1, mist: 0.04, forest: themeId !== 'frozen' && themeId !== 'black' },
   ];
   const ROWS = [0, 0.3, 0.5, 0.66, 0.8, 0.9, 1];
   for (const L of layers) {
@@ -95,8 +121,8 @@ export function buildMountains(themeId: string, seed = 7): THREE.Mesh {
       // yamaç ışığı: güneşe bakan yüz açık, öteki koyu (sırt boyunca eğime göre)
       // geniş aralıkta eğim: kırık sırt komşu sütunlarda ışığı zıplatıp dikey çizgi yapmasın
       const slope = (L.f(a + 0.03) - L.f(a - 0.03)) / 0.06;
-      const lit = THREE.MathUtils.clamp(0.62 + slope / (hMax * 9), 0.4, 0.85);
-      const sl = T.snowLine * hMax * (0.92 + 0.12 * Math.sin(a * 13 + i * 0.01));
+      const lit = THREE.MathUtils.clamp(0.62 + slope / (hMax * (L.forest ? 9 : 4)), 0.32, 0.92);
+      const sl = Math.min(hMax * 0.92, T.snowLine * L.snowK * hMax) * (0.92 + 0.12 * Math.sin(a * 13 + i * 0.01));
       for (const t of ROWS) {
         const y = -30 + (h + 30) * t;
         pos.push(Math.cos(a) * L.r, y, Math.sin(a) * L.r);

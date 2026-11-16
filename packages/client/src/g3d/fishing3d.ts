@@ -32,13 +32,21 @@ export class FishGear {
     this.obj.name = 'fishgear';
   }
   /** Dünya koordinatlarında (metre): el, yüz yönü ve şamandıranın düşeceği su noktası. */
-  update(hand: THREE.Vector3, water: THREE.Vector3, waterY: number, now: number) {
+  update(hand: THREE.Vector3, water: THREE.Vector3, waterY: number, now: number, hand2?: THREE.Vector3) {
     const t = now / 1000;
-    // kamış: elden suya doğru, yukarı kalkık
-    _a.set(water.x - hand.x, 0, water.z - hand.z); const hl = _a.length() || 1; _a.multiplyScalar(1 / hl);
-    const tip = _b.copy(hand).addScaledVector(_a, 1.05).add(_up.clone().multiplyScalar(1.15 + Math.sin(t * 1.3) * 0.03));
-    const dir = tip.clone().sub(hand); const len = dir.length();
-    this.rod.position.copy(hand); this.rod.scale.set(1, len, 1);
+    let tip: THREE.Vector3, butt: THREE.Vector3;
+    if (hand2) {
+      // iki elle: arkadaki el sapın dibine yakın, öndeki el yukarıda; kamış iki elin hizasında uzanır
+      const d = hand2.clone().sub(hand).normalize();
+      butt = hand.clone().addScaledVector(d, -0.18);
+      tip = hand.clone().addScaledVector(d, 1.75); tip.y += Math.sin(t * 1.3) * 0.03;
+    } else {
+      // kamış: elden suya doğru, yukarı kalkık
+      _a.set(water.x - hand.x, 0, water.z - hand.z); const hl = _a.length() || 1; _a.multiplyScalar(1 / hl);
+      tip = _b.copy(hand).addScaledVector(_a, 1.05).add(_up.clone().multiplyScalar(1.15 + Math.sin(t * 1.3) * 0.03)); butt = hand;
+    }
+    const dir = tip.clone().sub(butt); const len = dir.length();
+    this.rod.position.copy(butt); this.rod.scale.set(1, len, 1);
     this.rod.quaternion.copy(_q.setFromUnitVectors(_up, dir.normalize()));
     // şamandıra: su yüzeyinde hafif inip kalkar
     const by = waterY + 0.02 + Math.sin(t * 2.6) * 0.025;

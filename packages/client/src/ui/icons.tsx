@@ -49,6 +49,7 @@ export function MenuIcon({ k }: { k: string }) {
     pick: <><path d="M10 30 L24 16 L38 30" stroke={gold} strokeWidth="4" /><path d="M24 16 V42" stroke={gold} strokeWidth="4" /></>,
     camera: <><rect x="6" y="14" width="36" height="24" rx="4" fill="#4a3a2a" stroke={gold} strokeWidth="2.5" /><path d="M16 14 L19 9 H29 L32 14" fill="#4a3a2a" stroke={gold} strokeWidth="2.5" /><circle cx="24" cy="26" r="7" fill="#1a1410" stroke="#c8c0b0" strokeWidth="2.5" /><circle cx="26" cy="24" r="2" fill="#fff" opacity=".7" /></>,
     chat: <><path d="M8 10 H40 V32 H22 L12 40 V32 H8 Z" fill="#2a3a2a" stroke={gold} strokeWidth="2.5" /></>,
+    friends: <><circle cx="18" cy="17" r="6" fill="#e8c8a0" stroke={dark} strokeWidth="2" /><circle cx="31" cy="15" r="5.5" fill="#d8b890" stroke={dark} strokeWidth="2" /><path d="M6 40 C6 29 30 29 30 40 Z" fill="#6a8ab0" stroke={dark} strokeWidth="2" /><path d="M24 31 C27 26 42 26 42 38 H31" fill="#8a5a8a" stroke={dark} strokeWidth="2" /></>,
     exit: <><path d="M20 8 H8 V40 H20" stroke="#c8c0b0" strokeWidth="3.5" /><path d="M18 24 H42 M34 16 L42 24 L34 32" stroke="#ff8a7a" strokeWidth="3.5" /></>,
   };
   return <G size={26}>{p[k]}</G>;

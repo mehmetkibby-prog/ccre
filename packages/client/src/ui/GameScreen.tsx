@@ -12,6 +12,7 @@ import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
 import { OFFLINE } from '../mode.ts';
 import { CAM_ZOOM_DEFAULT } from '../g3d/renderer3d.ts';
+import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud } from './social.tsx';
 
 export let currentGame: Game | null = null;
 
@@ -37,7 +38,7 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
     const touches = new Map<number, { x: number; y: number }>();
     let pinch: { d: number; a: number; zoom: number; yaw: number } | null = null;
     // tek parmak: dokun-bırak = tıkla; yana kaydır = kamerayı döndür
-    let drag: { id: number; x: number; y: number; t: number; yaw: number; pitch: number; rotating: boolean } | null = null;
+    let drag: { id: number; x: number; y: number; t: number; yaw: number; pitch: number; rotating: boolean; menu?: boolean } | null = null;
     const pos = (e: PointerEvent) => { const r = c.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
     const down = (e: PointerEvent) => {
       if (!game) return;
@@ -46,6 +47,13 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
         if (touches.size === 2) { drag = null; const [a, b] = [...touches.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), a: Math.atan2(b.y - a.y, b.x - a.x), zoom: game.renderer.camZoom, yaw: game.renderer.camYaw }; return; }
         drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), yaw: game.renderer.camYaw, pitch: game.renderer.camPitch, rotating: false };
         try { c.setPointerCapture(e.pointerId); } catch { /* */ }
+        // uzun basma (0,55 sn, kaydırmadan): oyuncunun üstündeyse etkileşim menüsü
+        const d0 = drag, cx = e.clientX, cy = e.clientY;
+        setTimeout(() => {
+          if (!game || drag !== d0 || d0.rotating || touches.size !== 1) return;
+          const r = c.getBoundingClientRect(); const hit = game.renderer.pickScreen(cx - r.left, cy - r.top);
+          if (hit?.e && hit.e.kind === Kind.PLAYER && hit.e.id !== game.selfId) { d0.menu = true; store.set({ playerMenu: { id: hit.e.id, name: hit.e.name, x: cx, y: cy } }); navigator.vibrate?.(15); }
+        }, 550);
         return;
       }
       (document.activeElement as HTMLElement | null)?.blur?.();
@@ -83,14 +91,18 @@ export function GameScreen({ ticket, onExit }: { ticket: string; onExit: (reason
       held = false;
       if (e.pointerType === 'touch') {
         if (drag && drag.id === e.pointerId && game && e.type === 'pointerup') {
-          if (!drag.rotating && performance.now() - drag.t < 600) { const p = pos(e); game.clickScreen(p.x, p.y); }
+          if (!drag.rotating && !drag.menu && performance.now() - drag.t < 600) { const p = pos(e); game.clickScreen(p.x, p.y); }
         }
         if (drag && drag.id === e.pointerId) drag = null;
         endTouch(e);
       }
       if (rot && game) {
-        // sürüklemeden sağ tık: hedefe saldır
-        if (!rot.moved && rot.btn === 2) { const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; game.walkToTarget = true; } }
+        // sürüklemeden sağ tık: oyuncuysa etkileşim menüsü (fısıltı, ticaret, düello, arkadaş, grup), canavarsa saldır
+        if (!rot.moved && rot.btn === 2) {
+          const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y);
+          if (hit?.e && hit.e.kind === Kind.PLAYER && hit.e.id !== game.selfId) store.set({ playerMenu: { id: hit.e.id, name: hit.e.name, x: e.clientX, y: e.clientY } });
+          else if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; game.walkToTarget = true; }
+        }
         rot = null;
       }
     };
@@ -133,6 +145,11 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       {mobile && <MobileControls game={game} />}
       {mobile && <CameraControls game={game} />}
       <Panels game={game} onExit={onExit} />
+      <PartyFrame />
+      <ArenaHud />
+      <InviteCards />
+      <TradeWindow />
+      <PlayerMenu />
       <DeathOverlay game={game} />
       <ConnStatus />
     </div>
@@ -305,25 +322,31 @@ function Chat() {
   const chatOpen = useStore((s) => s.chatOpen);
   const [ch, setCh] = useState<'local' | 'world' | 'trade'>('local');
   const [text, setText] = useState('');
+  const whisperTo = useStore((s) => s.whisperTo);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => { box.current?.scrollTo(0, 1e9); }, [msgs.length, tab]);
   const send = () => {
-    const t = text.trim();
+    let t = text.trim();
     if (!t) return;
+    // "/w İsim mesaj" ya da "/f İsim mesaj": fısıltı
+    const wm = /^\/(w|f|fısıltı)\s+(\S+)\s+([\s\S]+)$/i.exec(t);
+    if (wm) { store.set({ whisperTo: wm[2] }); currentGame?.send({ t: 'chat', ch: 'pm', to: wm[2], text: wm[3] }); setText(''); return; }
+    if (whisperTo) { currentGame?.send({ t: 'chat', ch: 'pm', to: whisperTo, text: t }); setText(''); return; }
     currentGame?.send({ t: 'chat', ch, text: t });
     setText('');
   };
   const list = msgs.filter((m) => tab === 'all' || m.ch === tab);
-  const names: Record<string, string> = { world: 'Dünya', trade: 'Ticaret', local: 'Bölge', sys: 'Sistem' };
+  const names: Record<string, string> = { world: 'Dünya', trade: 'Ticaret', local: 'Bölge', sys: 'Sistem', pm: 'Fısıltı' };
   return (
     <div className={'frame chat' + (chatOpen ? ' open' : '')}>
-      <div className="tabs2">{['all', 'world', 'trade', 'local'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}<button className="chat-x" aria-label="Sohbeti kapat" onClick={() => store.set({ chatOpen: false })}>✕</button></div>
+      <div className="tabs2">{['all', 'world', 'trade', 'local', 'pm'].map((t) => <button key={t} className={tab === t ? 'on' : ''} onClick={() => store.set({ chatTab: t })}>{t === 'all' ? 'Tümü' : names[t]}</button>)}<button className="chat-x" aria-label="Sohbeti kapat" onClick={() => store.set({ chatOpen: false })}>✕</button></div>
       <div className="msgs" ref={box}>
-        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined }}>{m.from}</b>: {m.item ? <a className="chat-item" style={{ color: RARITY[m.item.rarity]?.color }} onClick={(e) => setTip({ it: m.item!, x: e.clientX, y: e.clientY })}>{m.text}</a> : m.text}</div>)}
+        {list.map((m) => <div key={m.id} className={'m ch-' + m.ch}>[{names[m.ch] ?? m.ch}] <b style={{ color: m.gm ? '#ffd84a' : undefined, cursor: m.ch === 'pm' || m.ch === 'world' || m.ch === 'local' || m.ch === 'trade' ? 'pointer' : undefined }} onClick={() => { const n = m.from.replace(/^→ /, ''); if (m.ch !== 'sys' && n !== store.get().char?.name) store.set({ whisperTo: n }); }}>{m.from}</b>: {m.item ? <a className="chat-item" style={{ color: RARITY[m.item.rarity]?.color }} onClick={(e) => setTip({ it: m.item!, x: e.clientX, y: e.clientY })}>{m.text}</a> : m.text}</div>)}
         {tip && <ItemTip it={tip.it} x={tip.x} y={tip.y} pinned onClose={() => setTip(null)} />}
       </div>
       <div className="in">
-        <select value={ch} onChange={(e) => setCh(e.target.value as 'local')}><option value="local">Bölge</option><option value="world">Dünya</option><option value="trade">Ticaret</option></select>
+        {whisperTo ? <button className="pm-to" title="Fısıltıyı kapat" onClick={() => store.set({ whisperTo: null })}>✉ {whisperTo} ✕</button>
+          : <select value={ch} onChange={(e) => setCh(e.target.value as 'local')}><option value="local">Bölge</option><option value="world">Dünya</option><option value="trade">Ticaret</option></select>}
         <input id="chat-input" value={text} maxLength={140} placeholder="Enter ile yaz…" onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { e.stopPropagation(); if (e.key === 'Enter') { send(); (e.target as HTMLInputElement).blur(); } if (e.key === 'Escape') (e.target as HTMLInputElement).blur(); }} />
       </div>
     </div>
@@ -385,6 +408,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
       <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
+      <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
       <button onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0 }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
     </div>

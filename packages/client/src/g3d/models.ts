@@ -169,7 +169,30 @@ export function model(id: string): Loaded | null {
   return null;
 }
 
-export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
+export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; foreArmR?: THREE.Object3D; armL?: THREE.Object3D; armR?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
+
+const _ip = new THREE.Vector3(), _ie = new THREE.Vector3(), _iv1 = new THREE.Vector3(), _iv2 = new THREE.Vector3();
+const _iqa = new THREE.Quaternion(), _iqw = new THREE.Quaternion(), _iqp = new THREE.Quaternion();
+/**
+ * Kol IK'si (CCD): üst kol ve ön kolu, el verilen dünya noktasına ulaşacak şekilde döndürür. Kemik eksenlerinden
+ * bağımsız çalışır; animasyon karıştırıcısından SONRA çağrılır (o karenin duruşunu üzerine yazar).
+ */
+export function reachIK(chain: THREE.Object3D[], end: THREE.Object3D, target: THREE.Vector3, iters = 6) {
+  for (let it = 0; it < iters; it++) {
+    for (let i = chain.length - 1; i >= 0; i--) {
+      const b = chain[i];
+      if (!b.parent) continue;
+      b.getWorldPosition(_ip); end.getWorldPosition(_ie);
+      _iv1.subVectors(_ie, _ip); _iv2.subVectors(target, _ip);
+      if (_iv1.lengthSq() < 1e-8 || _iv2.lengthSq() < 1e-8) continue;
+      _iqa.setFromUnitVectors(_iv1.normalize(), _iv2.normalize());
+      b.getWorldQuaternion(_iqw).premultiply(_iqa);
+      b.parent.getWorldQuaternion(_iqp);
+      b.quaternion.copy(_iqp.invert().multiply(_iqw));
+      b.updateMatrixWorld(true);
+    }
+  }
+}
 export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
@@ -334,6 +357,8 @@ export function createGlbChar(id: string): GlbChar | null {
   const bones: GlbBones = {
     handR: find(/(right|^r)[_ .-]?hand$|hand[_ .-]?r$/i), handL: find(/(left|^l)[_ .-]?hand$|hand[_ .-]?l$/i),
     foreArmL: find(/(left|^l)[_ .-]?(fore[_ .-]?arm|lower[_ .-]?arm|elbow)$|(forearm|lowerarm)[_ .-]?l$/i),
+    foreArmR: find(/(right|^r)[_ .-]?(fore[_ .-]?arm|lower[_ .-]?arm|elbow)$|(forearm|lowerarm)[_ .-]?r$/i),
+    armL: find(/(left|^l)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?l$/i), armR: find(/(right|^r)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?r$/i),
     fingerR: find(/(right|^r)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(right|^r)[_ .-]?middle[_ .-]?1$/i), fingerL: find(/(left|^l)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(left|^l)[_ .-]?middle[_ .-]?1$/i),
   };
   const hand = bones.handR;
