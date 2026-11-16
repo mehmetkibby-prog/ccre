@@ -465,7 +465,7 @@ export class SkillFx {
     const fx = this.fx, after = (ms: number, f: () => void) => window.setTimeout(f, ms);
     const S = (name: string, k = 1) => c.sound(name, c.near * k);
     const light = (p: P, h: number, col: string, i: number, ms: number) => { if (q > 0) fx.light(p.x, p.y, h, col, i, ms); };
-    const impact = (power: number) => { if (c.self) { c.shake(power); if (c.tgt) c.hitStop([c.src, c.tgt], Math.min(120, 40 + power * 10)); } };
+    const impact = (power: number) => { if (c.self) { c.shake(power); if (c.tgt) c.hitStop([c.tgt], Math.min(100, 30 + power * 8)); } };
     const sp = c.sp, tp = c.tp;
     const cast = (name: Circle, col: string) => { this.decal(name, sp, 62, 650, { follow: c.src, spin: 1.6, grow: [0.5, 1.05], color: col, fadeOut: 0.4 }); fx.burst(sp.x, sp.y, 0.15, n(14), col, 1.3, 600, 0.13, 2.4); };
 

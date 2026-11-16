@@ -3,8 +3,6 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
-import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
@@ -204,33 +202,15 @@ export class Renderer3D {
     // Telefonda efekt zinciri yok: sahne doğrudan ekrana çizilir (donanım kenar yumuşatma, ton eşleme aynı geçişte).
     // Bu, her karede 4–6 tam ekran geçişi ve ortam gölgelendirmesi için sahnenin ikinci kez çizilmesini kaldırır.
     if (q === 'low' || MOBILE || cool()) { this.composer = null; this.bloom = null; return; }
-    // Not: ara görüntü MSAA'lı (samples) yapılınca GTAO derinliği bozup uzak sahneyi kızıla boyadı; kenar yumuşatma
-    // bunun yerine zincirin sonundaki SMAA geçişiyle yapılır (antialias yalnız ekran tamponunu etkiler).
-    this.composer = new EffectComposer(this.renderer);
+    // Ortam gölgelendirmesi (GTAO) kaldırıldı: düşük çözünürlüklü gürültüsü kamera hareket ettikçe duvar, pencere ve
+    // zeminde kayan desenler bırakıyordu ("dalgalanma"). Kenar yumuşatma artık ara görüntüde donanım MSAA'sı ile
+    // (ince çit ve pencere çıtaları yürürken titremesin); SMAA'ya gerek kalmadı.
+    const rt = new THREE.WebGLRenderTarget(Math.max(1, this.w), Math.max(1, this.h), { type: THREE.HalfFloatType, samples: 4 });
+    this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
-    if (q === 'high') {
-      const ao = new GTAOPass(this.scene, this.camera, 512, 512);
-      ao.updateGtaoMaterial({ radius: 0.6, distanceExponent: 1.5, thickness: 1.2, scale: 1.0, samples: 12 });
-      ao.blendIntensity = 0.85;
-      // GTAO sahneyi düz yüzey olarak bir kez daha çizer ve yalnız nokta/çizgileri gizler. Hale, büyü ve ganimet
-      // resimleri (sprite), saydam/toplamalı efektler ve alfa kesimli çimen kartları orada dolu dörtgen olup
-      // çevrelerini karartıyordu (bakış açısına göre beliren siyah çerçeveler). Bunlar da gizlenir.
-      const cache = (ao as unknown as { _visibilityCache: Map<THREE.Object3D, boolean> })._visibilityCache;
-      (ao as unknown as { overrideVisibility: () => void }).overrideVisibility = () => {
-        this.scene.traverse((o) => {
-          cache.set(o, o.visible);
-          const x = o as THREE.Mesh & { isPoints?: boolean; isLine?: boolean; isSprite?: boolean };
-          const m = x.material as THREE.Material | THREE.Material[] | undefined;
-          const mm = Array.isArray(m) ? m[0] : m;
-          if (x.isPoints || x.isLine || x.isSprite || (mm && (mm.transparent || !mm.depthWrite || mm.alphaTest > 0 || mm.blending !== THREE.NormalBlending))) o.visible = false;
-        });
-      };
-      this.composer.addPass(ao);
-    }
     this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
-    this.composer.addPass(new SMAAPass(Math.max(1, this.w), Math.max(1, this.h))); // bilgisayarda kenar yumuşatma
   }
 
   heightAt(x: number, y: number) { return this.terrain ? this.terrain.heightAt(x, y) : 0; }
@@ -281,6 +261,7 @@ export class Renderer3D {
   }
 
   /** Son 2 sn'nin ortalamasına göre çizim çözünürlüğünü ayarla (hedef 60 FPS). */
+  private resLow = 0; private resHigh = 0;
   private adaptResolution(now: number, dt: number) {
     if (this.fixedScale !== null) { this.dynScale = this.fixedScale; return; }
     if (document.hidden) return;
@@ -291,9 +272,13 @@ export class Renderer3D {
     // hedef akıcı 60 FPS: 50'nin altında çözünürlük kademeli düşer, 57'nin üstünde geri çıkar
     // hedef, seçilen kare sınırı (30 seçiliyken 60'a ulaşamadığı için çözünürlüğü boşuna düşürüyordu);
     // telefonda en düşük %80: daha düşük çözünürlükte zemin ve çimen kenarları titriyordu
+    // Çözünürlük her değiştiğinde ince çizgiler (çit, pencere, zemin deseni) bir an kayar; yürürken sık sık inip
+    // çıkması "dalgalanma" gibi görünüyordu. Artık 0,1'lik kademelerle ve ancak birkaç ölçüm üst üste aynı yönü
+    // gösterince değişir (düşük: 2 ölçüm ≈ 4 sn, yüksek: 4 ölçüm ≈ 8 sn); arada salınım olmaz.
     const cap = cool() ? 60 : store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
-    if (fps < cap * 0.83 && this.dynScale > floor) this.dynScale = Math.max(floor, this.dynScale * (fps < cap * 0.6 ? 0.85 : 0.92));
-    else if (fps > cap * 0.95 && this.dynScale < 1) this.dynScale = Math.min(1, this.dynScale * 1.05);
+    if (fps < cap * 0.8) { this.resLow++; this.resHigh = 0; } else if (fps > cap * 0.95) { this.resHigh++; this.resLow = 0; } else { this.resLow = 0; this.resHigh = 0; }
+    if (this.resLow >= 2 && this.dynScale > floor) { this.dynScale = Math.max(floor, Math.round((this.dynScale - 0.1) * 10) / 10); this.resLow = 0; }
+    else if (this.resHigh >= 4 && this.dynScale < 1) { this.dynScale = Math.min(1, Math.round((this.dynScale + 0.1) * 10) / 10); this.resHigh = 0; }
   }
 
   private skyGradient(top: number, horizon: number): THREE.Texture {
@@ -674,8 +659,11 @@ export class Renderer3D {
     this.syncStalls();
     // efektler
     this.fx.sk.q = cool() ? 0 : MOBILE ? 1 : 2;
-    if (!this.skWarm) { this.skWarm = true; this.fx.sk.warm(); }
+    const warmNow = !this.skWarm;
+    if (warmNow) { this.skWarm = true; this.fx.sk.warm(); this.fx.warmShapes(); }
     this.fx.update(dt, now);
+    // efekt gölgelendiricileri ilk karede derlenir (ilk vuruş/beceride takılma olmaz)
+    if (warmNow) { try { this.renderer.compile(this.scene, this.camera); } catch { /* derleme sonraki karede olur */ } }
     this.ambient(dt);
     // kamera
     const zoom = store.get().settings.zoom;

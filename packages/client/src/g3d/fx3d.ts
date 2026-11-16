@@ -46,6 +46,14 @@ export class Fx3D {
     for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xffffff, 0, 9, 1.6); this.lights.push(l); this.group.add(l); }
   }
 
+  /** İlk vuruşta takılma olmasın: kılıç izi, patlama, halka vb. bir kez görünmez yerde oluşturulur (gölgelendiriciler derlenir). */
+  warmShapes() {
+    const t0 = performance.now(), far = { x: -99999, y: -99999, r: 40, a: 0, t0, dur: 40, color: '#ffffff' };
+    for (const kind of ['slash', 'blast', 'heal', 'pillar', 'teleport', 'shield', 'circle', 'ring', 'line'] as const) for (const r2 of kind === 'slash' ? [0, 1, 2] : [0]) this.shapes.push({ ...far, kind, r2 });
+    for (const kind of ['arrow', 'orb', 'ice'] as const) this.projs.push({ x0: -99999, y0: -99999, tx: -99990, ty: -99990, tgt: 0, t0, dur: 40, kind, color: '#ffffff' });
+    this.burst(-99999, -99999, 0, 4, '#ffffff');
+  }
+
   setScale(px: number) { (this.points.material as THREE.ShaderMaterial).uniforms.uScale.value = px; }
 
   text(x: number, y: number, h: number, text: string, color: string, size = 18, dur = 900) {

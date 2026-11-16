@@ -296,7 +296,8 @@ export class Game {
           if (sp) { const a = Math.atan2(pos.y - sp.y, pos.x - sp.x); t.kbX = Math.cos(a); t.kbY = Math.sin(a); t.kbUntil = now + 200; }
           if (mine) {
             const crit = (ev.flags & DmgFlag.CRIT) !== 0;
-            this.renderer.hitStop([this.selfId, ev.tgt], crit ? 110 : 70);
+            // yalnız vurulan kısa süre durur (kendi karakterin donmaz: takılma gibi hissettiriyordu)
+            this.renderer.hitStop([ev.tgt], crit ? 90 : 55);
             this.renderer.shake(crit ? 4.5 : 2.4);
             this.fx.shapes.push({ kind: 'blast', x: pos.x, y: pos.y, r: crit ? 70 : 46, r2: 0, a: 0, t0: now, dur: 200, color: crit ? '#ffd84a' : '#fff4d8' });
             this.fx.light(pos.x, pos.y, 1.1, '#ffe2b0', crit ? 4 : 2.5, 160);
