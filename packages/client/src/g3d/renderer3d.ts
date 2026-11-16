@@ -31,7 +31,7 @@ const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 /** Dokunmatik (telefon/tablet): ekran kartı bant genişliği dar, tam ekran efekt geçişleri pahalı. */
 /** Varsayılan kamera yakınlığı (küçük = uzak). ~17 m: karakter ve çevresi rahat görünür. */
-export const CAM_ZOOM_DEFAULT = 0.85;
+export const CAM_ZOOM_DEFAULT = 0.8;
 /** varsayılan kamera eğimi (rad): daha tepeden, çevre daha geniş görünsün */
 export const CAM_PITCH_DEFAULT = 0.8;
 export const CAM_ZOOM_MIN = 0.45, CAM_ZOOM_MAX = 2.3;
@@ -849,7 +849,7 @@ export class Renderer3D {
     const zk = THREE.MathUtils.clamp((this.camZoomS - CAM_ZOOM_MIN) / (CAM_ZOOM_MAX - CAM_ZOOM_MIN), 0, 1); // 0 uzak · 1 yakın
     this.camPitch = THREE.MathUtils.clamp(this.camPitch, 0.1, 1.3);
     this.camPitchS += (this.camPitch - this.camPitchS) * Math.min(1, dt / 90);
-    const dist = co ? co.dist : THREE.MathUtils.lerp(27, 5.5, zk);
+    const dist = co ? co.dist : THREE.MathUtils.lerp(MOBILE ? 29 : 34, 5.5, zk); // en uzak: PC 34 m, telefon 29 m
     const pitch = co ? co.pitch : this.camPitchS;
     let sx = 0, sy = 0;
     if (this.shakeAmt > 0.002) { sx = (Math.random() - 0.5) * this.shakeAmt; sy = (Math.random() - 0.5) * this.shakeAmt; this.shakeAmt *= Math.pow(0.003, dt / 1000); }

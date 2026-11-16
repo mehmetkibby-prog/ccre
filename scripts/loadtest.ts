@@ -66,7 +66,7 @@ async function bot(i: number) {
       return;
     }
     const m = JSON.parse(data.toString());
-    if (m.t === 'welcome') { myEntity = m.entityId; if (!stayVillage) ws.send(JSON.stringify({ t: 'travel', map: 'forest', req: `tr${i}${Date.now()}` })); }
+    if (m.t === 'welcome') { myEntity = m.entityId; ws.send(JSON.stringify(i % 10 < 7 ? { t: 'view', w: 2350, h: 1700 } : { t: 'view', w: 1650, h: 1200 })); if (!stayVillage) ws.send(JSON.stringify({ t: 'travel', map: 'forest', req: `tr${i}${Date.now()}` })); }
     else if (m.t === 'char') myCharId = m.id;
     else if (m.t === 'dead') { dead = true; stats.deaths++; setTimeout(() => ws.send(JSON.stringify({ t: 'respawn', where: 'here' })), 5500); }
     else if (m.t === 'respawned') dead = false;

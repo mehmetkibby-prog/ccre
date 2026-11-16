@@ -304,6 +304,7 @@ export class World {
       case 'arena': return this.cmdArena(p, String(c.op));
       case 'mount': return this.cmdMount(p, String(c.op));
       case 'tower': return this.cmdTower(p, String(c.op));
+      case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
       case 'quest': return this.cmdQuest(p, String(c.op), String(c.id), String(c.req ?? ''));
       case 'bosses': this.sendJson(p, { t: 'bosses', list: this.bossStatus() }); return;
@@ -2247,7 +2248,7 @@ export class World {
     for (const z of this.zones.values()) {
       if (!z.playerSet.size) continue;
       for (const p of z.playerSet) {
-        const x0 = p.x - VIEW_HALF_W, x1 = p.x + VIEW_HALF_W, y0 = p.y - VIEW_HALF_H, y1 = p.y + VIEW_HALF_H;
+        const x0 = p.x - p.viewW, x1 = p.x + p.viewW, y0 = p.y - p.viewH, y1 = p.y + p.viewH;
         const reset = p.resetPending;
         if (reset) { p.known.clear(); p.resetPending = false; }
         w.reset();

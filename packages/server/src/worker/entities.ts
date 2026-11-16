@@ -1,4 +1,4 @@
-import { computeStats, charBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT } from '@col/shared';
+import { VIEW_HALF_W, VIEW_HALF_H, computeStats, charBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT } from '@col/shared';
 import type { CharState } from '../types.ts';
 import type { Zone } from './zone.ts';
 
@@ -41,6 +41,8 @@ export class Player {
   /** lonca etiketi (ana süreçten): ad etiketi ve öz vergisi */
   guild: { gid: number; name: string; emblem: number; tax: number } | null = null;
   taxFrac = 0;
+  /** görüş alanı yarı genişlik/yükseklik (istemci bildirir: PC geniş, telefon dar) */
+  viewW = VIEW_HALF_W; viewH = VIEW_HALF_H;
   /** oto atak açık mı ve son sayım anı */
   autoOn = false; autoAt = 0;
   lastDamageAt = 0;

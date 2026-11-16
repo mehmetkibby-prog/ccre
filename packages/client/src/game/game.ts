@@ -214,6 +214,8 @@ export class Game {
         if (OFFLINE) Object.assign(window, { __colGame: this });
         this.selfId = m.entityId;
         this.setMap(m.map, m.x, m.y);
+        // görüş alanı: bilgisayarda uzaktaki oyuncu ve canavarlar da görünsün; telefonda biraz daha dar (akıcılık)
+        this.send(matchMedia('(pointer: coarse)').matches ? { t: 'view', w: 1650, h: 1200 } : { t: 'view', w: 2350, h: 1700 });
         store.set({ entityId: m.entityId, channel: m.channel, worldHealth: m.worldHealth, online: m.online });
         this.fx.shapes.push({ kind: 'teleport', x: m.x, y: m.y, r: 0, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '' });
         break;
