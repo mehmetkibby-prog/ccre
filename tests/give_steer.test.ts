@@ -26,7 +26,7 @@ it('canavar önündeki engelin etrafından dolanır (takılıp titremez)', () =>
   const saved = l.blocked[oy * l.w + ox]; l.blocked[oy * l.w + ox] = 1;
   const m: any = [...z.monsters.all ? z.monsters.all() : []][0] ?? z.monsterList?.[0];
   const mon = m ?? { id: 7, x: 0, y: 0, dir: 0, anim: 0, animUntil: 0, dirty: 0 };
-  const zz = { layout: l, monsters: { move() {} } };
+  const zz = { layout: l, monsters: { move() {}, radius() {} } };
   mon.x = (ox - 2) * 64 + 32; mon.y = oy * 64 + 32;
   const tx = (ox + 3) * 64 + 32, ty = oy * 64 + 32;
   let steps = 0;
@@ -60,4 +60,25 @@ it('tek hedefli saldırı becerisi hedefin çevresindeki canavarlara da vurur', 
   const after = foxes.map((m: any) => m.hp);
   expect(after[0]).toBeLessThan(before[0]);
   expect(after[1]).toBeLessThan(before[1]); expect(after[2]).toBeLessThan(before[2]);
+});
+
+it('canavar U şeklindeki engelin (göl kıyısı/ağaç kümesi) etrafından yol bulup hedefe ulaşır', () => {
+  const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+  const z: any = [...(w as any).zones.values()].find((q: any) => q.id === 'bazaar');
+  const l = z.layout;
+  // 14x12 karoluk açık bir alan bul
+  let ox = -1, oy = -1;
+  for (let y = 60; y < l.h - 14 && ox < 0; y++) for (let x = 5; x < l.w - 16; x++) { let ok = true; for (let dy = 0; dy < 12 && ok; dy++) for (let dx = 0; dx < 14; dx++) if (l.blocked[(y + dy) * l.w + x + dx]) { ok = false; break; } if (ok) { ox = x; oy = y; break; } }
+  expect(ox).toBeGreaterThan(0);
+  const saved = l.blocked.slice();
+  // U: dikey duvar x=ox+7, y oy+2..oy+9; üst ve alt kollar sola doğru 4 karo (canavar U'nun içinde)
+  for (let y = oy + 2; y <= oy + 9; y++) l.blocked[y * l.w + ox + 7] = 1;
+  for (let x = ox + 3; x <= ox + 7; x++) { l.blocked[(oy + 2) * l.w + x] = 1; l.blocked[(oy + 9) * l.w + x] = 1; }
+  const mon = z.monsterList[0];
+  mon.state = 0; mon.x = (ox + 5) * 64 + 32; mon.y = (oy + 5) * 64 + 32; z.monsters.move(mon);
+  const tx = (ox + 11) * 64 + 32, ty = (oy + 5) * 64 + 32;
+  let steps = 0;
+  while (Math.hypot(tx - mon.x, ty - mon.y) > 24 && steps < 600) { (w as any).tickNo++; (w as any).pathBudget = 24; (w as any).navTo(z, mon, tx, ty, 200); steps++; }
+  l.blocked.set(saved);
+  expect(Math.hypot(tx - mon.x, ty - mon.y)).toBeLessThan(30);
 });

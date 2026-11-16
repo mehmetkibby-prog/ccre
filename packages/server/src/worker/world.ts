@@ -11,6 +11,7 @@ import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, Admi
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
+import { findPath, los, freeAt } from './nav.ts';
 
 const DIR_TO_BYTE = 256 / DIR_STEPS;
 const angleByte = (dx: number, dy: number) => { let a = Math.atan2(dy, dx); if (a < 0) a += Math.PI * 2; return Math.round((a / (Math.PI * 2)) * 256) & 255; };
@@ -30,6 +31,7 @@ export class World {
   zones = new Map<string, Zone>();
   bySid = new Map<number, Player>();
   tickNo = 0;
+  private pathBudget = 24;
   t0 = Date.now();
   now = Date.now();
   out: [number, string | ArrayBuffer][] = [];
@@ -277,6 +279,7 @@ export class World {
     const t = performance.now();
     this.now = Date.now();
     this.tickNo++;
+    this.pathBudget = 24; // bir tikte en çok bu kadar yol hesabı (kalabalıkta sunucu yorulmasın)
     for (const z of this.zones.values()) {
       if (z.playerSet.size === 0 && z.respawnQueue.length === 0 && z.lootById.size === 0) continue;
       this.tickZone(z);
@@ -415,7 +418,7 @@ export class World {
         const d = dist(m, t);
         const reach = def.range + 16;
         if (d > reach) {
-          if (now >= m.rootUntil && now >= m.stunUntil && def.speed > 0) this.stepMonster(z, m, t.x + Math.cos(m.id) * 18, t.y + Math.sin(m.id) * 12, def.speed);
+          if (now >= m.rootUntil && now >= m.stunUntil && def.speed > 0) this.navTo(z, m, t.x + Math.cos(m.id) * 18, t.y + Math.sin(m.id) * 12, def.speed);
         } else if (now >= m.nextAttackAt && now >= m.stunUntil) {
           m.nextAttackAt = now + def.attackMs;
           m.dir = angleByte(t.x - m.x, t.y - m.y);
@@ -431,15 +434,20 @@ export class World {
       if (d < 24) {
         m.state = MState.IDLE; m.hp = m.maxHp; m.dirty |= Upd.HP; m.telegraphs.length = 0;
         if (m.anim !== Anim.IDLE) { m.anim = Anim.IDLE; m.dirty |= Upd.ANIM; }
-      } else this.stepMonster(z, m, m.sp.x, m.sp.y, Math.max(def.speed, 160) * 1.5, true);
+      } else {
+        const mm = m as Monster & { retStuck?: number };
+        const sp = Math.max(def.speed, 160) * 1.5;
+        if ((mm.retStuck ?? 0) > 50 || !this.navTo(z, m, m.sp.x, m.sp.y, sp)) { mm.retStuck = (mm.retStuck ?? 0) + 1; if (mm.retStuck > 50) this.stepMonster(z, m, m.sp.x, m.sp.y, sp, true); }
+        else mm.retStuck = 0;
+      }
     }
     if (m.state === MState.IDLE) {
       // savaş dışı can yenilenme ve küçük gezinti
       if (m.hp < m.maxHp && now - m.lastHitAt > 5000 && this.tickNo % 10 === 0) { m.hp = Math.min(m.maxHp, m.hp + Math.ceil(m.maxHp * 0.1)); m.dirty |= Upd.HP; }
       if (def.speed > 0 && now >= m.wanderAt) {
-        if (m.wx === 0) { m.wx = m.sp.x + (rnd() - 0.5) * 220; m.wy = m.sp.y + (rnd() - 0.5) * 220; }
+        if (m.wx === 0) { m.wx = m.sp.x + (rnd() - 0.5) * 220; m.wy = m.sp.y + (rnd() - 0.5) * 220; if (!freeAt(z.layout, m.wx, m.wy) || !los(z.layout, m.x, m.y, m.wx, m.wy)) { m.wx = 0; m.wanderAt = now + 2000 + rnd() * 4000; } }
         const d = Math.hypot(m.wx - m.x, m.wy - m.y);
-        if (d < 10 || !this.stepMonster(z, m, m.wx, m.wy, def.speed * 0.45)) { m.wx = 0; m.wanderAt = now + 4000 + rnd() * 9000; if (m.anim === Anim.WALK) { m.anim = Anim.IDLE; m.dirty |= Upd.ANIM; } }
+        if (m.wx === 0) { /* uygun nokta yok: sonra yine dener */ } else if (d < 10 || !this.stepMonster(z, m, m.wx, m.wy, def.speed * 0.45)) { m.wx = 0; m.wanderAt = now + 4000 + rnd() * 9000; if (m.anim === Anim.WALK) { m.anim = Anim.IDLE; m.dirty |= Upd.ANIM; } }
       }
     }
     // bekleyen tehlike alanları
@@ -450,6 +458,33 @@ export class World {
    * Canavar adımı: engel (ağaç, kaya, ev) önündeyse etrafından dolanır. Yan açıları sırayla dener; bir kez seçtiği
    * yönü (sağ/sol) kısa süre korur, böylece iki yön arasında gidip gelip titremez. Bakış yönü gerçek hareket yönüdür.
    */
+  /**
+   * Canavarı hedefe götürür: arada engel yoksa düz gider; ağaç kümesi, göl, ev arkasındaysa A* ile etrafından dolanan
+   * yolu bulur ve önündeki açık noktaya kestirir (yol 3 sn'de bir ya da hedef karosu değişince yenilenir).
+   */
+  private navTo(z: Zone, m: Monster, tx: number, ty: number, speed: number): boolean {
+    const l = z.layout;
+    const mm = m as Monster & { path?: { x: number; y: number }[]; pathI?: number; pathGoal?: number; pathAt?: number; losOk?: boolean };
+    // düz yol açık mı: her canavar 4 tikte bir yoklar (yük dağıtılır)
+    if (mm.losOk === undefined || (this.tickNo + m.id) % 4 === 0) mm.losOk = los(l, m.x, m.y, tx, ty);
+    if (mm.losOk) { mm.path = undefined; return this.stepMonster(z, m, tx, ty, speed); }
+    const gk = Math.floor(tx / 64) + Math.floor(ty / 64) * 4096;
+    if (!mm.path || mm.pathGoal !== gk || this.now - (mm.pathAt ?? 0) > 3000) {
+      if (this.pathBudget > 0) {
+        this.pathBudget--;
+        mm.path = findPath(l, m.x, m.y, tx, ty) ?? []; mm.pathI = 0; mm.pathGoal = gk; mm.pathAt = this.now;
+      } else if (!mm.path) return this.stepMonster(z, m, tx, ty, speed);
+    }
+    const path = mm.path!;
+    if (!path.length) return this.stepMonster(z, m, tx, ty, speed); // ulaşılmaz: eski davranış
+    let i = mm.pathI ?? 0;
+    // ip çekme: bir sonraki noktaya düz yol açıksa ara noktayı atla (köşe köşe değil, doğal kavisle gider)
+    if (i < path.length - 1 && (this.tickNo + m.id) % 2 === 0 && los(l, m.x, m.y, path[i + 1].x, path[i + 1].y)) i++;
+    if (Math.hypot(path[i].x - m.x, path[i].y - m.y) < 14 && i < path.length - 1) i++;
+    mm.pathI = i;
+    return this.stepMonster(z, m, path[i].x, path[i].y, speed);
+  }
+
   private stepMonster(z: Zone, m: Monster, tx: number, ty: number, speed: number, ghost = false): boolean {
     const dx = tx - m.x, dy = ty - m.y;
     const d = Math.hypot(dx, dy);
@@ -475,6 +510,19 @@ export class World {
           break;
         }
         if (moved) break;
+      }
+      // ayrışma: yakındaki canavarlardan hafifçe uzaklaş (üst üste yığılıp birbirine takılmasınlar)
+      if (moved) {
+        let sx = 0, sy = 0;
+        z.monsters.radius(m.x, m.y, 44, (o) => {
+          if (o === m || o.state === MState.DEAD) return;
+          const ddx = m.x - o.x, ddy = m.y - o.y, dd = Math.hypot(ddx, ddy) || 1, k = (44 - dd) / 44;
+          if (k > 0) { sx += (dd < 1 ? Math.cos(m.id) : ddx / dd) * k; sy += (dd < 1 ? Math.sin(m.id) : ddy / dd) * k; }
+        });
+        if (sx || sy) {
+          const nx = mx + sx * step * 0.55, ny = my + sy * step * 0.55;
+          if (free(m.x + nx, m.y + ny)) { mx = nx; my = ny; }
+        }
       }
     }
     if (moved) {
