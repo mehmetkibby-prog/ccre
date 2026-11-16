@@ -4,7 +4,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GrassField } from './grass.ts';
-import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
+import { createGlbChar, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, twoBoneIK, rotateWorld, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { buildMountains } from './mountains.ts';
@@ -499,33 +499,95 @@ export class Renderer3D {
   }
 
   /**
-   * Binek: at görünüme çocuk olarak eklenir; binici eyer yüksekliğine kalkar (yürüyüşte at adımıyla hafif inip kalkar),
-   * bacakları IK ile atın iki yanına, üzengi hizasına iner. İnince her şey eski hâline döner.
+   * Binek: at görünüme çocuk olarak eklenir. Binici her karede atın gövde kemiğine bağlı eyer noktasına oturtulur
+   * (atın inip kalkması ve yalpalaması kalçaya birebir geçer). Animasyondan sonra:
+   *  - kalça eyerin üstüne taşınır, gövde dörtnalada öne eğilir ve atın yalpasına karşı dengelenir (baş sabit kalır);
+   *  - bacaklar iki kemikli IK ile: uyluk atın gövdesini sarar, diz öne-dışa kırılır, ayak üzengide;
+   *  - sol el dizgini tutar (saldırı başlayınca yumuşakça bırakır, sağ el silahla serbest).
+   * İnince her şey eski hâline döner.
    */
   private syncMount(v: View, on: boolean, now: number, dt: number) {
-    const mv = v as View & { mount?: MountRig | null; mountBaseY?: number };
+    type MV = View & { mount?: MountRig | null; mountBase?: THREE.Vector3; ride?: { a: number; b: number; ua: number; ub: number; hipW: number; reinW: number; touched?: [THREE.Object3D, THREE.Quaternion, THREE.Quaternion][] } };
+    const mv = v as MV;
     const inner = v.glb?.root.children[0];
     if (!on || !v.glb || !inner) {
-      if (mv.mount) { v.obj.remove(mv.mount.obj); mv.mount = null; if (inner && mv.mountBaseY !== undefined) inner.position.y = mv.mountBaseY; }
+      if (mv.mount) { v.obj.remove(mv.mount.obj); mv.mount = null; if (inner && mv.mountBase) inner.position.copy(mv.mountBase); }
       return;
     }
+    const b = v.glb.bones;
     if (!mv.mount) {
       const m = createMount(); if (!m) return;
-      mv.mount = m; mv.mountBaseY = inner.position.y; v.obj.add(m.obj);
+      mv.mount = m; mv.mountBase = inner.position.clone(); v.obj.add(m.obj);
       this.shadowDirty = true;
     }
-    const m = mv.mount, moving = (v.speed ?? 0) > 0.3;
-    const bob = m.update(dt, now, moving, v.speed ?? 0);
-    // binicinin kalçası eyerin üstüne (karakter boyuna göre kalça yüksekliği ~%52)
-    const hipY = (v.glb.height - 0.2) * 0.52;
-    inner.position.y = (mv.mountBaseY ?? 0) + m.seatY - hipY + 0.06 + bob;
-    const b = v.glb.bones;
-    if (b.upLegL && b.legL && b.footL && b.upLegR && b.legR && b.footR) {
+    if (!mv.ride && b.upLegL && b.legL && b.footL && b.upLegR) {
+      const P = (o?: THREE.Object3D) => (o ? o.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3());
       v.obj.updateMatrixWorld(true);
-      const tl = v.obj.localToWorld(new THREE.Vector3(m.halfW + 0.08, m.seatY - 0.72 + bob, -0.02));
-      const tr = v.obj.localToWorld(new THREE.Vector3(-(m.halfW + 0.08), m.seatY - 0.72 + bob, -0.02));
-      reachIK([b.upLegL, b.legL], b.footL, tl, 5); reachIK([b.upLegR, b.legR], b.footR, tr, 5);
+      mv.ride = { a: P(b.upLegL).distanceTo(P(b.legL)), b: P(b.legL).distanceTo(P(b.footL)), ua: b.armL && b.foreArmL ? P(b.armL).distanceTo(P(b.foreArmL)) : 0, ub: b.foreArmL && b.handL ? P(b.foreArmL).distanceTo(P(b.handL)) : 0, hipW: P(b.upLegL).distanceTo(P(b.upLegR)) / 2, reinW: 1 };
     }
+    const m = mv.mount;
+    m.update(dt, now, v.speed ?? 0);
+    const R = mv.ride;
+    if (!R || !b.hips) return;
+    // uzak görünümlerde iskelet her karede güncellenmez: önceki karenin eklemeleri birikmesin diye, animasyon
+    // dokunmadıysa (kemik hâlâ bizim bıraktığımız açıda) animasyonun verdiği açıya geri dönülür
+    const touchList = [b.hips, b.spine, b.spine2, b.upLegL, b.legL, b.upLegR, b.legR, b.armL, b.foreArmL].filter(Boolean) as THREE.Object3D[];
+    if (R.touched) for (const [o, pre, post] of R.touched) if (o.quaternion.equals(post)) o.quaternion.copy(pre);
+    const pre = touchList.map((o) => o.quaternion.clone());
+    v.obj.updateMatrixWorld(true);
+    const S = m.seat.matrixWorld;
+    const W = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z).applyMatrix4(S);
+    // 1) kalça eyerin üstüne (kalça kemiği bacak köklerinin biraz üstünde; oturma kemikleri eyere değsin)
+    const hipNow = b.hips.getWorldPosition(new THREE.Vector3());
+    const want = W(0, R.a * 0.2, -0.04);
+    const par = inner.parent!;
+    const d = par.worldToLocal(want.clone()).sub(par.worldToLocal(hipNow.clone()));
+    inner.position.add(d);
+    inner.updateMatrixWorld(true);
+    // 2) gövde: eyerin eğimiyle döner, sonra dörtnala eğilmesi + yalpaya karşı denge
+    const sideAx = new THREE.Vector3(1, 0, 0).transformDirection(v.obj.matrixWorld);
+    const sq = new THREE.Quaternion(); S.decompose(new THREE.Vector3(), sq, new THREE.Vector3());
+    const oq = v.obj.getWorldQuaternion(new THREE.Quaternion());
+    const rel = oq.clone().invert().multiply(sq);
+    const pitch = Math.asin(THREE.MathUtils.clamp(2 * (rel.w * rel.x - rel.y * rel.z), -1, 1));
+    // dövüş duruşu kalçayı/omuzları yana çevirir: atın üstünde leğen ve omuz hattı atın yanal eksenine hizalanır
+    const upAx = new THREE.Vector3(0, 1, 0).transformDirection(S), latT = new THREE.Vector3(1, 0, 0).transformDirection(S);
+    const yawTo = (l: THREE.Object3D, r: THREE.Object3D) => {
+      const lat = l.getWorldPosition(new THREE.Vector3()).sub(r.getWorldPosition(new THREE.Vector3()));
+      lat.addScaledVector(upAx, -lat.dot(upAx)).normalize();
+      return Math.atan2(new THREE.Vector3().crossVectors(lat, latT).dot(upAx), lat.dot(latT));
+    };
+    if (b.upLegL && b.upLegR) rotateWorld(b.hips, upAx, yawTo(b.upLegL, b.upLegR));
+    rotateWorld(b.hips, sideAx, pitch);
+    // eğim dönmesi kalçayı oynatmasın: yeniden eyere oturt
+    const hip2 = b.hips.getWorldPosition(new THREE.Vector3());
+    inner.position.add(par.worldToLocal(want.clone()).sub(par.worldToLocal(hip2)));
+    inner.updateMatrixWorld(true);
+    const lean = 0.08 + 0.26 * m.gallop * m.move;
+    const spine = b.spine ?? b.hips;
+    rotateWorld(spine, sideAx, lean * 0.6 - pitch * 0.55);
+    if (b.spine2) rotateWorld(b.spine2, sideAx, lean * 0.4 - pitch * 0.35);
+    if (b.armL && b.armR) rotateWorld(b.spine2 ?? spine, upAx, yawTo(b.armL, b.armR) * 0.85);
+    // 3) bacaklar: diz öne-dışa, ayak üzengide (topuk biraz aşağıda)
+    const hw = m.halfW, reach = R.a + R.b;
+    for (const s of [1, -1]) {
+      const up = s > 0 ? b.upLegL : b.upLegR, lo = s > 0 ? b.legL : b.legR, ft = s > 0 ? b.footL : b.footR;
+      if (!up || !lo || !ft) continue;
+      const foot = W(s * (hw + 0.05), R.a * 0.2 - reach * 0.86, 0.06);
+      const pole = new THREE.Vector3(s * 0.45, 0, 1).transformDirection(S);
+      twoBoneIK(up, lo, ft, foot, pole, R.a, R.b);
+    }
+    // 4) dizgin: sol el atın boynunun önünde; saldırıda bırakılır
+    const attacking = v.state === 'attack' || v.state === 'cast';
+    R.reinW += ((attacking ? 0 : 1) - R.reinW) * Math.min(1, dt / (attacking ? 60 : 220));
+    if (R.reinW > 0.02 && b.armL && b.foreArmL && b.handL && R.ua > 0) {
+      const save = [b.armL.quaternion.clone(), b.foreArmL.quaternion.clone()];
+      const hand = W(0.1, R.a * 0.2 + reach * 0.3, 0.36 + 0.08 * m.gallop);
+      const pole = new THREE.Vector3(0.5, -0.6, -0.6).transformDirection(S);
+      twoBoneIK(b.armL, b.foreArmL, b.handL, hand, pole, R.ua, R.ub);
+      if (R.reinW < 0.98) { b.armL.quaternion.copy(save[0].slerp(b.armL.quaternion, R.reinW)); b.foreArmL.quaternion.copy(save[1].slerp(b.foreArmL.quaternion, R.reinW)); b.armL.updateMatrixWorld(true); }
+    }
+    R.touched = touchList.map((o, i) => [o, pre[i], o.quaternion.clone()]);
   }
 
   /** Oyuncu görünümünün ayrıntısı: tam (gölge, evcil hayvan, kanat) ya da hafif. Yalnız değişince dolaşır. */

@@ -169,7 +169,7 @@ export function model(id: string): Loaded | null {
   return null;
 }
 
-export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; foreArmR?: THREE.Object3D; armL?: THREE.Object3D; armR?: THREE.Object3D; upLegL?: THREE.Object3D; upLegR?: THREE.Object3D; legL?: THREE.Object3D; legR?: THREE.Object3D; footL?: THREE.Object3D; footR?: THREE.Object3D; hips?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
+export interface GlbBones { handR?: THREE.Object3D; handL?: THREE.Object3D; foreArmL?: THREE.Object3D; foreArmR?: THREE.Object3D; armL?: THREE.Object3D; armR?: THREE.Object3D; upLegL?: THREE.Object3D; upLegR?: THREE.Object3D; legL?: THREE.Object3D; legR?: THREE.Object3D; footL?: THREE.Object3D; footR?: THREE.Object3D; hips?: THREE.Object3D; spine?: THREE.Object3D; spine2?: THREE.Object3D; fingerR?: THREE.Object3D; fingerL?: THREE.Object3D }
 
 const _ip = new THREE.Vector3(), _ie = new THREE.Vector3(), _iv1 = new THREE.Vector3(), _iv2 = new THREE.Vector3();
 const _iqa = new THREE.Quaternion(), _iqw = new THREE.Quaternion(), _iqp = new THREE.Quaternion();
@@ -192,6 +192,34 @@ export function reachIK(chain: THREE.Object3D[], end: THREE.Object3D, target: TH
       b.updateMatrixWorld(true);
     }
   }
+}
+const _tH = new THREE.Vector3(), _tF = new THREE.Vector3(), _tU = new THREE.Vector3(), _tP = new THREE.Vector3(), _tK = new THREE.Vector3();
+/**
+ * İki kemikli analitik IK (bacak/kol): üst kemik dizi/dirseği "pole" yönüne bükerek, uç kemiği hedefe getirir.
+ * CCD'nin aksine diz her zaman doğru yöne kırılır. a/b: kemik boyları (bağlanma pozundan ölçülür).
+ */
+export function twoBoneIK(upper: THREE.Object3D, lower: THREE.Object3D, end: THREE.Object3D, target: THREE.Vector3, pole: THREE.Vector3, a: number, b: number) {
+  upper.getWorldPosition(_tH);
+  _tU.subVectors(target, _tH);
+  let d = _tU.length(); if (d < 1e-5) return;
+  _tU.divideScalar(d);
+  d = Math.min(d, (a + b) * 0.999);
+  const p = (a * a - b * b + d * d) / (2 * d), h = Math.sqrt(Math.max(0, a * a - p * p));
+  _tP.copy(pole).addScaledVector(_tU, -pole.dot(_tU));
+  if (_tP.lengthSq() < 1e-8) _tP.set(0, 0, 1); _tP.normalize();
+  _tK.copy(_tH).addScaledVector(_tU, p).addScaledVector(_tP, h);
+  _tF.copy(_tH).addScaledVector(_tU, d);
+  reachIK([upper], lower, _tK, 1);
+  reachIK([lower], end, _tF, 1);
+}
+/** Kemiği dünya uzayındaki bir eksen etrafında döndürür (animasyondan sonra, üzerine eklenir). */
+export function rotateWorld(bone: THREE.Object3D, axis: THREE.Vector3, angle: number) {
+  if (!bone.parent || !angle) return;
+  _iqa.setFromAxisAngle(axis, angle);
+  bone.getWorldQuaternion(_iqw).premultiply(_iqa);
+  bone.parent.getWorldQuaternion(_iqp);
+  bone.quaternion.copy(_iqp.invert().multiply(_iqw));
+  bone.updateMatrixWorld(true);
 }
 export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
@@ -361,7 +389,7 @@ export function createGlbChar(id: string): GlbChar | null {
     armL: find(/(left|^l)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?l$/i), armR: find(/(right|^r)[_ .-]?(arm|upper[_ .-]?arm)$|upper[_ .-]?arm[_ .-]?r$/i),
     upLegL: find(/(left|^l)[_ .-]?up[_ .-]?leg$|thigh[_ .-]?l$/i), upLegR: find(/(right|^r)[_ .-]?up[_ .-]?leg$|thigh[_ .-]?r$/i),
     legL: find(/(left|^l)[_ .-]?leg$|calf[_ .-]?l$/i), legR: find(/(right|^r)[_ .-]?leg$|calf[_ .-]?r$/i),
-    footL: find(/(left|^l)[_ .-]?foot$|foot[_ .-]?l$/i), footR: find(/(right|^r)[_ .-]?foot$|foot[_ .-]?r$/i), hips: find(/^(mixamorig:?)?hips$|pelvis/i),
+    footL: find(/(left|^l)[_ .-]?foot$|foot[_ .-]?l$/i), footR: find(/(right|^r)[_ .-]?foot$|foot[_ .-]?r$/i), hips: find(/^(mixamorig:?)?hips$|pelvis/i), spine: find(/^(mixamorig:?)?spine$/i), spine2: find(/^(mixamorig:?)?spine0?2$/i),
     fingerR: find(/(right|^r)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(right|^r)[_ .-]?middle[_ .-]?1$/i), fingerL: find(/(left|^l)[_ .-]?hand[_ .-]?middle[_ .-]?1$|(left|^l)[_ .-]?middle[_ .-]?1$/i),
   };
   const hand = bones.handR;
