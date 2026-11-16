@@ -644,9 +644,20 @@ export class World {
           this.aoe(p, target.x, target.y, sk.radius, sk.maxTargets ?? 4, mult, sk);
           return;
         }
-        this.hit(p, target, mult, sk);
+        this.splash(p, target, mult, sk); // tek hedefli saldırı becerileri çevredekilere de vurur
       }
     }
+  }
+
+  /** Tek hedefli saldırı becerisi: ana hedefe tam vuruş, çevresindeki en çok 4 düşmana sıçrayan hasar (yönetimden ayarlı). */
+  private splash(p: Player, main: Monster | Player, mult: number, sk: SkillDef) {
+    this.hit(p, main, mult, sk);
+    const r = TUNING.splashRadius, k = TUNING.splashMul;
+    if (r <= 0 || k <= 0) return;
+    const z = p.zone, cx = main.x, cy = main.y, sm = mult * k;
+    let n = 0;
+    z.monsters.radius(cx, cy, r + MONSTER_RADIUS, (m) => { if (n < 4 && m !== main && m.state !== MState.DEAD) { n++; this.hit(p, m, sm, sk); } });
+    if (z.def.pvp && n < 4) z.players.radius(cx, cy, r, (q) => { if (n < 4 && q !== main && this.canPvp(p, q)) { n++; this.hit(p, q, sm, sk); } });
   }
 
   private aoe(p: Player, x: number, y: number, r: number, max: number, mult: number, sk: SkillDef) {

@@ -46,3 +46,18 @@ it('yönetim: canavara sabit can verilince haritadaki canlı canavarlar da hemen
   expect(fox.maxHp).toBe(616); expect(fox.hp).toBe(308);
   applyTuning(structuredClone(DEFAULT_TUNING)); w.restatMonsters();
 });
+
+it('tek hedefli saldırı becerisi hedefin çevresindeki canavarlara da vurur', () => {
+  const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+  w.join(1, mk({ id: 3, cls: 'hunter', level: 30, spec: 'marksman' }));
+  const p: any = w.bySid.get(1)!;
+  const z: any = p.zone;
+  const foxes = z.monsterList.filter((m: any) => m.def.id === 'wild_fox').slice(0, 3);
+  // üç tilkiyi oyuncunun önüne yan yana diz
+  foxes.forEach((m: any, i: number) => { m.x = p.x + 200 + i * 40; m.y = p.y; z.monsters.move(m); m.hp = m.maxHp = 100000; });
+  const before = foxes.map((m: any) => m.hp);
+  (w as any).cmdSkill(p, 3, foxes[0].id);
+  const after = foxes.map((m: any) => m.hp);
+  expect(after[0]).toBeLessThan(before[0]);
+  expect(after[1]).toBeLessThan(before[1]); expect(after[2]).toBeLessThan(before[2]);
+});

@@ -474,7 +474,7 @@ export class SkillFx {
       if (c.skill === 1) { // Zincir Çekişi
         cast('holy', G); S('chain');
         this.chain(c.src, c.tgt, sp, tp, 700);
-        after(210, () => { const p = this.pos(c.tgt) ?? tp; this.flash(p, 1.1, 2.2, 260, '#ffe08a'); fx.burst(p.x, p.y, 1.0, n(22), '#ffd27a', 3.5, 500, 0.16, -3); light(p, 1.2, G, 4, 300); impact(2); });
+        after(210, () => { const p = this.pos(c.tgt) ?? tp; this.flash(p, 1.1, 2.2, 260, '#ffe08a'); this.shock(p, 150, 380, '#ffd27a'); fx.burst(p.x, p.y, 1.0, n(22), '#ffd27a', 3.5, 500, 0.16, -3); light(p, 1.2, G, 4, 300); impact(2); });
       } else if (c.skill === 2) { // Kalkan Hücumu
         S('charge'); cast('holy', G);
         this.beam(sp, 1.0, tp, 1.0, 1.1, 320, '#ffd98a');
