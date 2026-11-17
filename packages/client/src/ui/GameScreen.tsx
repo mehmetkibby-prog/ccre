@@ -150,8 +150,8 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
   return (
     <div className="hud">
       <TopBar />
-      <PlayerPlate />
-      <XpLine />
+      {mobile ? <div className="mleft"><PlayerPlate /><TargetFrame /></div> : <PlayerPlate />}
+      {!mobile && <XpLine />}
       <AnnouncementBar />
       <Minimap game={game} />
       <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
@@ -194,30 +194,44 @@ function ConnStatus() {
 
 function TopBar() {
   const t = useStore((s) => s.target);
-  const [dropOpen, setDropOpen] = useState(false);
-  useEffect(() => { setDropOpen(false); }, [t?.id]);
+  const dropOpen = useStore((s) => s.dropOpen);
+  const setDropOpen = (v: boolean) => store.set({ dropOpen: v });
+  useEffect(() => { store.set({ dropOpen: false }); }, [t?.id]);
   const wh = useStore((s) => s.worldHealth);
+  const mobile = isMobile();
   return (
-    <div className={'topbar' + (t ? ' has-t' : '')}>
+    <div className="topbar">
       <button className="worldhp" title="Ortak Dünya Sağlığı: Öz bağışlarıyla artar, zamanla azalır. Bağış için dokun." onClick={() => store.set((s) => ({ panel: s.panel === 'donate' ? null : 'donate' }))}>
         <div className="lbl"><span>DÜNYA SAĞLIĞI</span><span>%{wh.toFixed(1)}</span></div>
         <div className={'bar' + (wh < 30 ? ' low' : '')}><i style={{ width: `${wh}%` }} /></div>
         <span className="donate-cta">Öz Bağışla</span>
       </button>
 
-      {t && (
+      {t && !mobile && <TargetFrame />}
+      {t && dropOpen && t.kind === Kind.MONSTER && t.tpl !== undefined && <DropInfo tpl={t.tpl} variant={t.variant} onClose={() => setDropOpen(false)} />}
+    </div>
+  );
+}
+
+/** Hedef çerçevesi: bilgisayarda üst ortada; telefonda sol üstte karakter kartının altında, onun genişliğinde ince. */
+function TargetFrame() {
+  const t = useStore((s) => s.target);
+  const dropOpen = useStore((s) => s.dropOpen);
+  if (!t) return null;
+  return (
+    <>
+      {(
         <div className="frame target">
           <div className="gem"><b>{t.level}</b></div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="row"><span className="nm" style={{ color: t.variant === 2 ? '#ff7a8a' : t.variant === 1 ? '#ffc070' : '#eef2fa' }}>{t.variant === 2 ? 'Katil ' : t.variant === 1 ? 'Agresif ' : ''}{t.name}</span>
-              {t.kind === Kind.MONSTER && t.tpl !== undefined && <button className="drop-q" title="Bu canavardan ne düşer?" onPointerDown={(e) => { e.stopPropagation(); setDropOpen((o) => !o); }}>?</button>}</div>
+              {t.kind === Kind.MONSTER && t.tpl !== undefined && <button className="drop-q" title="Bu canavardan ne düşer?" onPointerDown={(e) => { e.stopPropagation(); store.set({ dropOpen: !dropOpen }); }}>?</button>}</div>
             <div className="bar"><i style={{ width: `${Math.max(0, (t.hp / Math.max(1, t.maxHp)) * 100)}%` }} /></div>
             <div className="hpt">{t.hp.toLocaleString('tr-TR')} / {t.maxHp.toLocaleString('tr-TR')}</div>
           </div>
         </div>
       )}
-      {t && dropOpen && t.kind === Kind.MONSTER && t.tpl !== undefined && <DropInfo tpl={t.tpl} variant={t.variant} onClose={() => setDropOpen(false)} />}
-    </div>
+    </>
   );
 }
 
@@ -305,6 +319,13 @@ function PlayerPlate() {
           <span className="e" title="Yaşam Özü (Dünya Sağlığı'na bağışlanır)"><img src={iconUrl('essence')} alt="" />{self.essence.toLocaleString('tr-TR')}</span>
           <span className="c" title="Çekirdek Puanı"><img src={iconUrl('cp')} alt="" />{self.cp.toLocaleString('tr-TR')}</span>
         </div>
+        {isMobile() && (
+          <div className="xp-tube" title={`${self.xp.toLocaleString('tr-TR')} / ${self.xpNext.toLocaleString('tr-TR')} TP`}>
+            <i style={{ width: `${xk * 100}%` }} />
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} style={{ left: `${n * 10}%` }} />)}
+            <span>TP %{(xk * 100).toFixed(1)}</span>
+          </div>
+        )}
         <div className="netinfo"><span>Kanal {ch}</span></div>
         <ModelBadge />
       </div>
@@ -391,6 +412,7 @@ function Minimap({ game }: { game: Game }) {
     <div className="mm" onClick={() => store.set({ panel: 'map' })} title="Harita (M)">
       <div className="dia"><canvas ref={ref} /></div>
       <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
+      {isMobile() && <QuickBtns />}
       {isMobile() && <TowerHud />}
     </div>
   );
@@ -528,6 +550,17 @@ function TargetIcon() {
   );
 }
 
+/** Telefonda çanta ve ışınlanma: her zaman görünür, mini haritanın altında yan yana. */
+function QuickBtns() {
+  const openP = (p: 'inventory' | 'teleport') => { sfx.play('ui'); store.set((st) => ({ panel: st.panel === p ? null : p, mobMenu: false })); };
+  return (
+    <div className="quick-btns" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+      <button onClick={() => openP('inventory')}><MenuIcon k="bag" /><span>Çanta</span></button>
+      <button onClick={() => openP('teleport')}><MenuIcon k="tp" /><span>Işınlan</span></button>
+    </div>
+  );
+}
+
 function MobileControls({ game }: { game: Game }) {
   const joy = useRef<HTMLDivElement>(null);
   const knob = useRef<HTMLElement>(null);
@@ -551,14 +584,8 @@ function MobileControls({ game }: { game: Game }) {
   const cd = (s: number) => { const l = Math.max(0, (cds[s] ?? 0) - now); return l > 0 ? <div className="cdo">{(l / 1000).toFixed(0)}</div> : null; };
   const self = store.get().self; const cls = store.get().char?.cls as ClassId;
   const sk = (s: number) => cls ? classSkill(cls, s, self?.spec ?? null) : null;
-  const openP = (p: 'inventory' | 'teleport') => { sfx.play('ui'); store.set((st) => ({ panel: st.panel === p ? null : p, mobMenu: false })); };
   return (
     <>
-      {/* çanta ve ışınlanma: telefonda her zaman ana ekranda, beceri kümesinin solunda (sağ başparmak erişiminde) */}
-      <div className="quick-btns">
-        <button onClick={() => openP('inventory')}><MenuIcon k="bag" /><span>Çanta</span></button>
-        <button onClick={() => openP('teleport')}><MenuIcon k="tp" /><span>Işınlan</span></button>
-      </div>
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
         <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>

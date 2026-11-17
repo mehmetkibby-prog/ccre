@@ -111,6 +111,8 @@ export interface UiState {
   fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
   marketResults: { q: string; list: { stall: string; owner: string; title: string; item: ItemInstance; price: number; x: number; y: number }[] } | null;
   mallTarget: string | null;
+  /** hedef canavarın düşme listesi açık mı (telefonda ? düğmesi soldaki çerçevede, liste üstte) */
+  dropOpen: boolean;
   settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number; /** Isınma modu: telefon ısınmasın diye çizim yükü azaltılır (oyun kuralları değişmez) */ cool?: boolean };
 }
 
@@ -130,7 +132,7 @@ let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
-  bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null,
+  bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false,
 };
 const listeners = new Set<() => void>();
 export const store = {
