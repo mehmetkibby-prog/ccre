@@ -174,16 +174,21 @@ export class Game {
       this.frame(t);
     };
     this.raf = requestAnimationFrame(loop);
-    setInterval(() => this.sendPing(), 2500);
+    setInterval(() => this.sendPing(), 2000);
   }
   private sendPing() { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.pingPerf = performance.now(); this.send({ t: 'ping', c: this.pingSent }); } }
-  /** Gösterilen ms: son 5 ölçümün ortancası (mobil ağdaki tek tük sıçramalar sayıyı oynatmasın). */
+  /**
+   * Gösterilen ms: son 6 ölçümün en düşük ikisinin ortalaması. Yanıt, tarayıcıda o an çizilen kare bitince
+   * işlenebildiği için tek tek ölçümlere 10–40 ms kare beklemesi karışıyordu (telefonda belirgin); en hızlı
+   * ölçümler gerçek ağ gidiş-dönüşünü verir. Ağ gerçekten kötüleşirse bütün ölçümler yükselir, sayı da yükselir.
+   */
   private onPong(m: { c: number; s?: number }, ts: number) {
     if (m.c !== this.pingSent) return;
     const at = ts > 0 && ts >= this.pingPerf ? ts : performance.now();
     const rtt = Math.max(1, Math.round(at - this.pingPerf));
-    this.pingSamples.push(rtt); if (this.pingSamples.length > 5) this.pingSamples.shift();
-    const med = [...this.pingSamples].sort((a, b) => a - b)[this.pingSamples.length >> 1];
+    this.pingSamples.push(rtt); if (this.pingSamples.length > 6) this.pingSamples.shift();
+    const so = [...this.pingSamples].sort((a, b) => a - b);
+    const med = so.length >= 2 ? Math.round((so[0] + so[1]) / 2) : so[0];
     store.set({ ping: med, clockSkew: typeof m.s === 'number' ? m.s - (this.pingSent + rtt / 2) : store.get().clockSkew });
   }
   stop() {

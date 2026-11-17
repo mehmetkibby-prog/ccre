@@ -547,13 +547,28 @@ function BigMap({ game }: { game: Game }) {
 }
 
 /** Ayarlar: bağlantı gecikmesi ve kare hızı (oyun ekranında gösterilmez). */
+const COLO_NAMES: Record<string, string> = { IST: 'İstanbul', ADB: 'İzmir', ESB: 'Ankara', SOF: 'Sofya', OTP: 'Bükreş', ATH: 'Atina', BUD: 'Budapeşte', VIE: 'Viyana', FRA: 'Frankfurt', AMS: 'Amsterdam', LHR: 'Londra', CDG: 'Paris', MXP: 'Milano', WAW: 'Varşova', PRG: 'Prag', MUC: 'Münih', DUS: 'Düsseldorf', HAM: 'Hamburg', TLV: 'Tel Aviv', TBS: 'Tiflis', KBP: 'Kiev' };
+let coloCache: string | null = null;
+/** Bağlantının geçtiği Cloudflare noktası (yurt dışı bir nokta ise gecikmeyi ağ yolu artırır, oyun değil). */
+function useColo() {
+  const [c, setC] = useState(coloCache);
+  useEffect(() => {
+    if (coloCache !== null) return;
+    fetch('/cdn-cgi/trace', { cache: 'no-store' }).then((r) => (r.ok ? r.text() : '')).then((t) => { const m = /colo=([A-Z]{3})/.exec(t); coloCache = m ? m[1] : ''; setC(coloCache); }).catch(() => { coloCache = ''; setC(''); });
+  }, []);
+  return c;
+}
 function NetStats() {
   const ping = useStore((x) => x.ping), fps = useStore((x) => x.fps);
+  const colo = useColo();
   return (
-    <div className="netstats">
-      <div><small>Gecikme</small><b style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</b></div>
-      <div><small>Kare hızı</small><b>{fps} fps</b></div>
-    </div>
+    <>
+      <div className="netstats">
+        <div><small>Gecikme</small><b style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</b></div>
+        <div><small>Kare hızı</small><b>{fps} fps</b></div>
+      </div>
+      {colo && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı noktası: <b>{COLO_NAMES[colo] ?? colo}</b> ({colo}){colo !== 'IST' && colo !== 'ADB' && colo !== 'ESB' ? ' · yurt dışından geçiyor, gecikmeyi bu yol artırır' : ''}</div>}
+    </>
   );
 }
 
