@@ -21,3 +21,6 @@ assets-src/meshy/newyear/*.glb
 assets-src/meshy/newyear/*.png
 assets-src/meshy/newyear/state.json
 assets-src/meshy/*/gen.log
+assets-src/meshy/trees2/*.glb
+assets-src/meshy/trees2/*.png
+assets-src/meshy/trees2/state.json
