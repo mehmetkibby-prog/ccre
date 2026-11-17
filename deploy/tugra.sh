@@ -134,27 +134,27 @@ case "${1:-}" in
     else nginx -t; cp "$(ls -1t $site.yedek-* | head -1)" "$site"; systemctl reload nginx; echo "nginx ayarı hatalı, eski ayara dönüldü"; exit 1; fi
     ;;
   ssl)
-    # Tarayıcıların tanıdığı ücretsiz Let's Encrypt sertifikası (90 günde bir kendiliğinden yenilenir).
-    # Bundan sonra Cloudflare'de turuncu bulut kapatılabilir: oyuncular sunucuya doğrudan bağlanır (düşük gecikme).
-    site=/etc/nginx/sites-available/coreoflife
-    alan_adi="${2:-$(grep -oP 'server_name \K[a-z0-9.-]+' "$site" | grep -v '^www\.' | head -1)}"
-    [ -n "$alan_adi" ] || { echo "alan adı bulunamadı: tugra ssl coreoflife.net"; exit 1; }
-    command -v certbot >/dev/null || { echo "certbot kuruluyor..."; apt-get update -qq && apt-get install -y -qq certbot >/dev/null; }
-    mkdir -p /var/www/acme
-    "$0" alan "$alan_adi" >/dev/null   # doğrulama konumu nginx'e eklenir (mevcut sertifikayla)
-    alanlar=(-d "$alan_adi"); getent hosts "www.$alan_adi" >/dev/null && alanlar+=(-d "www.$alan_adi")
-    # yenilenince nginx her zaman yeniden yüklensin (komut seçeneklerinden bağımsız, kalıcı kanca)
-    mkdir -p /etc/letsencrypt/renewal-hooks/deploy
-    printf '#!/bin/sh\nsystemctl reload nginx\n' > /etc/letsencrypt/renewal-hooks/deploy/nginx-reload.sh
-    chmod +x /etc/letsencrypt/renewal-hooks/deploy/nginx-reload.sh
-    # RSA anahtar: ECDSA (YE1) zinciri bazı telefon Chrome'larında "Sertifika Şeffaflığı" hatası verdi
-    if certbot certonly --webroot -w /var/www/acme --cert-name "$alan_adi" "${alanlar[@]}" --key-type rsa --preferred-chain "ISRG Root X1" --agree-tos --register-unsafely-without-email -n --keep-until-expiring; then
-      "$0" alan "$alan_adi"
-      echo "sertifika: $(openssl x509 -in /etc/letsencrypt/live/$alan_adi/fullchain.pem -noout -issuer -enddate | tr '\n' ' ')"
-      echo "TAMAM. Artık Cloudflare'de $alan_adi kaydının turuncu bulutunu gri yapabilirsin (DNS only)."
-    else
-      echo "sertifika alınamadı; oyun eskisi gibi çalışmaya devam ediyor. Çıktıyı Claude'a gönder."; exit 1
+    # Tarayıcıların (Chrome, Firefox, Samsung, eski telefonlar) tanıdığı ZeroSSL sertifikası (Sectigo/USERTrust zinciri).
+    # Let's Encrypt'in yeni YE1/YR1 zinciri Firefox'ta tanınmadı. acme.sh 60 günde bir kendiliğinden yeniler.
+    # Kullanım: tugra ssl E-POSTA [alan]  (e-posta yalnız ilk kurulumda ZeroSSL kaydı için)
+    site=/etc/nginx/sites-available/coreoflife; SSLD=/etc/ssl/cloudflare
+    alan_adi="${3:-$(grep -oP 'server_name \K[a-z0-9.-]+' "$site" | grep -v '^www\.' | head -1)}"
+    [ -n "$alan_adi" ] || { echo "alan adı bulunamadı: tugra ssl E-POSTA coreoflife.net"; exit 1; }
+    AC=~/.acme.sh/acme.sh
+    if [ ! -x "$AC" ]; then
+      [ -n "${2:-}" ] || { echo "ilk kurulum için e-posta gerekli: tugra ssl E-POSTA"; exit 1; }
+      curl -fsSL https://get.acme.sh | sh -s email="$2" >/dev/null
     fi
+    mkdir -p /var/www/acme
+    "$0" alan "$alan_adi" >/dev/null
+    alanlar=(-d "$alan_adi"); getent hosts "www.$alan_adi" >/dev/null && alanlar+=(-d "www.$alan_adi")
+    "$AC" --issue --server zerossl "${alanlar[@]}" -w /var/www/acme --keylength 2048 || [ $? -eq 2 ]   # 2 = zaten geçerli
+    "$AC" --install-cert -d "$alan_adi" --key-file "$SSLD/$alan_adi.key" --fullchain-file "$SSLD/$alan_adi.pem" --reloadcmd "systemctl reload nginx"
+    # eski certbot sertifikası kalırsa nginx onu tercih eder: kaldır
+    command -v certbot >/dev/null && certbot delete --cert-name "$alan_adi" -n >/dev/null 2>&1 || true
+    "$0" alan "$alan_adi"
+    echo | openssl s_client -connect 127.0.0.1:443 -servername "$alan_adi" 2>/dev/null | openssl x509 -noout -issuer -enddate
+    echo "TAMAM. Cloudflare'de $alan_adi kaydı gri bulut (DNS only) olabilir."
     ;;
-  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI|ssl}"; exit 1 ;;
+  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI|ssl E-POSTA}"; exit 1 ;;
 esac
