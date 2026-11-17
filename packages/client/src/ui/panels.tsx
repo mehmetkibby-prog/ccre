@@ -259,6 +259,21 @@ function Inventory({ game }: { game: Game }) {
               {self.bag.map((it) => <Cell key={it.id} it={it} sel={sel === it.id} bind={bind(it)} onClick={() => pick(it.id)} />)}
               {Array.from({ length: Math.max(0, 35 - self.bag.length) }).slice(0, 14).map((_, i) => <div key={'e' + i} className="cell" />)}
             </div>
+            {/* toplu satış: o renkteki kilitsiz çanta eşyalarının hepsi (kuşanılmış ve kilitli eşyalar satılmaz) */}
+            <div className="bulk-sell">
+              <span className="muted">Toplu sat:</span>
+              {(['white', 'blue', 'orange', 'crimson'] as const).map((r) => {
+                const list = self.bag.filter((it) => it.rarity === r && !it.locked);
+                const sum = list.length * sellPrice(r);
+                return (
+                  <button key={r} className="btn small bs-btn" style={{ borderColor: RARITY[r].color, color: RARITY[r].color }} disabled={!list.length}
+                    title={list.length ? `${list.length} eşya · +${sum} Mücevher` : `Çantada kilitsiz ${RARITY[r].name.toLocaleLowerCase('tr')} eşya yok`}
+                    onClick={() => { if (confirm(`Çantadaki ${list.length} adet ${RARITY[r].name} eşya satılsın mı? (+${sum.toLocaleString('tr-TR')} Mücevher)\nKilitli ve kuşanılmış eşyalar satılmaz.`)) { game.send({ t: 'sell', items: list.map((it) => it.id), req: reqId() }); setSel(null); clear(); } }}>
+                    {RARITY[r].name === 'Sıradan' ? 'Beyaz' : RARITY[r].name}{list.length > 0 && <small>{list.length}</small>}
+                  </button>
+                );
+              })}
+            </div>
             {selItem && (
               <div className="row" style={{ marginTop: 10, flexWrap: 'wrap' }}>
                 <span style={{ color: RARITY[selItem.rarity].color, fontWeight: 800 }}>{itemDisplayName(selItem)}</span>

@@ -181,6 +181,8 @@ export class World {
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
     char.x = pos.x; char.y = pos.y;
+    // kaska can efsunu artık gelmiyor: eski kasklardakini değiştir
+    for (const it of [...char.bag, ...Object.values(char.equip)]) fixHelmetHp(it as ItemInstance | undefined);
     const p = new Player(sid, char);
     if (char.misc.deadAt && char.hp <= 0) { p.dead = true; p.deadAt = Math.min(this.now, char.misc.deadAt); p.hp = 0; p.anim = Anim.DEAD; }
     if (p.hp <= 0 && !p.dead) p.hp = p.stats.maxHp;
@@ -2400,6 +2402,27 @@ export function applyGive(c: CharState, g: AdminGive): string {
   const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
   c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
   return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;
+}
+
+/**
+ * Kaska Azami Can efsunu gelmez. Önceden gelmiş kasklardaki can efsunu, aynı kademede kaska uygun ve eşyada
+ * olmayan başka bir efsunla değiştirilir (oyuncu girişte). Değişiklik olduysa true.
+ */
+export function fixHelmetHp(it: ItemInstance | undefined): boolean {
+  if (!it || ITEM_TPL.get(it.tpl)?.slot !== 'helmet') return false;
+  let changed = false;
+  for (let i = 0; i < it.ench.length; i++) {
+    const e = it.ench[i];
+    if (e.t !== 'hp') continue;
+    const have = new Set(it.ench.map((x) => x.t));
+    const pool = (Object.keys(ENCHANTS) as EnchantType[]).filter((k) => !ENCHANTS[k].legacy && ENCHANTS[k].slots.includes('helmet') && !have.has(k));
+    if (!pool.length) { it.ench.splice(i, 1); i--; changed = true; continue; }
+    const t = pool[Math.floor(rnd() * pool.length)];
+    const tier = Math.max(0, Math.min(3, e.tier ?? 0));
+    it.ench[i] = { t, v: (TUNING.enchants.values?.[t] ?? ENCHANTS[t].tiers)[tier], tier };
+    changed = true;
+  }
+  return changed;
 }
 
 export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?: number): ItemInstance {

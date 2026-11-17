@@ -58,15 +58,15 @@ export const MAPS: Record<string, MapDef> = {
   forest: {
     id: 'forest', name: 'Kuzey Ormanı', w: 96, h: 72, theme: 'forest', seed: 4242, safe: false, pvp: false, minLevel: 10,
     respawnMap: 'forest', travelable: true,
-    desc: 'Başlangıç av bölgesi. Gölge Kurtları, Çürük Muhafızlar ve Öz Yutanlar.',
+    desc: 'Sv. 10–19 av bölgesi. Gölge Kurtları, Çürük Muhafızlar ve Öz Yutanlar.',
     npcs: [],
     spawns: [
       // her satır kendi yuvalarına bölünür (yaklaşık 9 canavarlık sürüler), bkz. mapgen placeSpawns
-      { monster: 'shadow_wolf', count: 40, level: [1, 6], variants: [80, 18, 2], region: 'near' },
-      { monster: 'shadow_wolf', count: 24, level: [6, 10], variants: [60, 32, 8], region: 'mid' },
-      { monster: 'rot_guard', count: 30, level: [5, 12], variants: [65, 28, 7], region: 'mid' },
-      { monster: 'essence_eater', count: 30, level: [9, 16], variants: [55, 35, 10], region: 'far' },
-      { monster: 'rot_guard', count: 18, level: [12, 18], variants: [45, 40, 15], region: 'far' },
+      { monster: 'shadow_wolf', count: 40, level: [10, 12], variants: [80, 18, 2], region: 'near' },
+      { monster: 'shadow_wolf', count: 24, level: [12, 14], variants: [60, 32, 8], region: 'mid' },
+      { monster: 'rot_guard', count: 30, level: [13, 16], variants: [65, 28, 7], region: 'mid' },
+      { monster: 'essence_eater', count: 30, level: [15, 18], variants: [55, 35, 10], region: 'far' },
+      { monster: 'rot_guard', count: 18, level: [17, 19], variants: [45, 40, 15], region: 'far' },
     ],
   },
   frozen: {

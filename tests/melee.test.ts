@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { World, makeItem, resetCharState } from '../packages/server/src/worker/world.ts';
+import { World, makeItem, resetCharState, fixHelmetHp } from '../packages/server/src/worker/world.ts';
 import type { CharState } from '../packages/server/src/types.ts';
 import { getLayout } from '@col/shared';
 
@@ -76,5 +76,16 @@ describe('ganimet: sınıf ayrımı yok', () => {
     const seen = new Set<string>();
     for (let i = 0; i < 600; i++) { const it = w.rollEquipment(p, { white: 1 }, false); const c = it ? /_(guardian|hunter|arcanist)$/.exec(it.tpl)?.[1] : null; if (c) seen.add(c); }
     expect([...seen].sort()).toEqual(['arcanist', 'guardian', 'hunter']);
+  });
+});
+
+describe('kask: can efsunu yok', () => {
+  it('yeni kasklara can efsunu gelmez; eski kasktaki aynı kademede başka efsuna döner', () => {
+    for (let i = 0; i < 200; i++) expect(makeItem('h_guardian', 'crimson', 'drop', 4).ench.some((e) => e.t === 'hp')).toBe(false);
+    const h = makeItem('h_hunter', 'blue', 'drop', 1); h.ench = [{ t: 'hp', v: 1000, tier: 2 }];
+    expect(fixHelmetHp(h)).toBe(true);
+    expect(h.ench.length).toBe(1); expect(h.ench[0].t).not.toBe('hp'); expect(h.ench[0].tier).toBe(2);
+    const a = makeItem('a_hunter', 'blue', 'drop', 1); a.ench = [{ t: 'hp', v: 1000, tier: 2 }];
+    expect(fixHelmetHp(a)).toBe(false);
   });
 });

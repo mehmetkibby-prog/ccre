@@ -71,7 +71,7 @@ export const ENCHANTS: Record<EnchantType, { name: string; unit: '%' | ''; slots
   pvp_resist: { name: 'Oyunculara Karşı Savunma', unit: '%', slots: ['armor', 'necklace', 'bracelet'], tiers: [3, 6, 12, 15], group: 'def', desc: 'Oyunculardan gelen hasar azalır.' },
   block: { name: 'Saldırı Bloklama', unit: '%', slots: ['armor', 'bracelet'], tiers: [2, 4, 8, 10], group: 'def', desc: 'Gelen saldırıyı tamamen engelleme olasılığı.' },
   lifesteal: { name: 'Can Çalma', unit: '%', slots: ['weapon', 'necklace'], tiers: [1, 2, 3, 5], group: 'def', desc: 'Verilen hasarın bu kadarı can olarak geri gelir (canavar ve oyuncu).' },
-  hp: { name: 'Azami Can', unit: '', slots: ['armor', 'helmet', 'boots', 'necklace', 'earring', 'bracelet'], tiers: [300, 600, 1000, 1500], group: 'def', desc: 'Azami cana sabit artış.' },
+  hp: { name: 'Azami Can', unit: '', slots: ['armor', 'boots', 'necklace', 'earring', 'bracelet'], tiers: [300, 600, 1000, 1500], group: 'def', desc: 'Azami cana sabit artış.' },
   forest_power: { name: 'Orman Canavarlarına Güç', unit: '%', slots: ['weapon', 'necklace', 'earring'], tiers: [3, 5, 8, 12], group: 'atk', legacy: true, desc: 'Kuzey Ormanı canavarlarına verilen hasar artar (eski efsun).' },
 };
 /** Canavardan düşen eşyada efsun sayısı (1–4) ağırlıkları; nadirlik yükseldikçe çok efsun olasılığı artar. */
