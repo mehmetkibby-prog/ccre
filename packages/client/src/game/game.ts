@@ -126,6 +126,7 @@ export class Game {
       clearTimeout(directTimer);
       store.set({ connected: false });
       // doğrudan bağlantı hiç açılamadı: bu cihazda bir süre kullanma, hemen site adresi üzerinden yeniden bağlan
+      // doğrudan bağlantı açılamadı (sunucu yeniden başlıyor, ağ…): bu seferlik site adresiyle gir; Türkiye yolu arka planda denenmeye devam eder
       if (this.viaDirect && !opened) markDirectBad();
       if (this.stopped) return;
       // Ağ kesintisi, sunucu/kanal yeniden başlatması: oyuncu giriş ekranına DÜŞMEZ, arka planda yeniden bağlanılır.
@@ -185,6 +186,18 @@ export class Game {
     };
     this.raf = requestAnimationFrame(loop);
     setInterval(() => this.sendPing(), 2000);
+    // Cloudflare (Amsterdam) yolundaysak 30 sn'de bir doğrudan (Türkiye) yolu yokla; açıksa sessizce oraya geç
+    setInterval(() => { void this.tryDirectAgain(); }, 30_000);
+  }
+  private probing = false;
+  private async tryDirectAgain() {
+    if (this.probing || this.stopped || this.reconnecting || !this.requestTicket) return;
+    if (!directWsHost || store.get().netPath !== 'cf' || this.ws?.readyState !== 1) return;
+    this.probing = true;
+    try {
+      const ok = await probeDirect();
+      if (ok && !this.stopped && !this.reconnecting && store.get().netPath === 'cf') { clearDirectBad(); this.ws?.close(); } // onclose → yeni biletle doğrudan bağlanır
+    } finally { this.probing = false; }
   }
   private sendPing() { if (this.ws?.readyState === 1) { this.pingSent = Date.now(); this.pingPerf = performance.now(); this.send({ t: 'ping', c: this.pingSent }); } }
   /**
@@ -921,12 +934,22 @@ export const RARITY_IDS = RARITIES;
 function strip(m: any) { const { t, ...rest } = m; return rest; }
 export { TILE };
 
-/** Doğrudan oyun adresi (sunucu bilette bildirir). Cihazda son 6 saatte başarısız olduysa boş. */
+/** Doğrudan oyun adresi (sunucu bilette bildirir). Son başarısız denemeden 20 sn geçmediyse boş (o bağlantı site adresiyle kurulur). */
 let directWsHost = '';
+let directBadAt = 0;
 export function setDirectWs(h: string | undefined) { directWsHost = (h ?? '').trim(); }
 function directHost() {
   if (!directWsHost || directWsHost === location.host) return '';
-  try { const t = Number(localStorage.getItem('col_direct_bad') ?? 0); if (Date.now() - t < 6 * 3600_000) return ''; } catch { /* depolama kapalı */ }
+  if (Date.now() - directBadAt < 20_000) return '';
   return directWsHost;
 }
-function markDirectBad() { try { localStorage.setItem('col_direct_bad', String(Date.now())); } catch { /* */ } }
+function markDirectBad() { directBadAt = Date.now(); }
+function clearDirectBad() { directBadAt = 0; }
+/** Doğrudan adres şu an erişilebilir mi (sertifika ve ağ dahil): sunucunun sağlık adresi */
+async function probeDirect(): Promise<boolean> {
+  try {
+    const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 4000);
+    await fetch(`${location.protocol}//${directWsHost}/api/health`, { mode: 'no-cors', cache: 'no-store', signal: ctl.signal });
+    clearTimeout(t); return true;
+  } catch { return false; }
+}
