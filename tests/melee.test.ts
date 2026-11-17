@@ -106,3 +106,15 @@ describe('ölüyken çıkıp yeniden girme', () => {
     expect(p.zone.id).toBe('forest'); expect(Math.hypot(p.x - x0, p.y - y0)).toBeLessThan(1);
   });
 });
+
+describe('Market: Mücevherle Kırmızı İksir', () => {
+  it('1 Mücevher = 1 Kırmızı İksir; yetmezse alınmaz', () => {
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mkChar({ gems: 30, materials: { red_potion: 0 } }));
+    const p = w.bySid.get(1)!;
+    w.onCmd(1, JSON.stringify({ t: 'essx', op: 'gpotion', n: 25, rate: 1, req: 'a1' }));
+    expect(p.char.gems).toBe(5); expect(p.char.materials.red_potion).toBe(25);
+    w.onCmd(1, JSON.stringify({ t: 'essx', op: 'gpotion', n: 10, rate: 1, req: 'a2' }));
+    expect(p.char.gems).toBe(5); expect(p.char.materials.red_potion).toBe(25);
+  });
+});

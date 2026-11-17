@@ -18,6 +18,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
     ['essxEss', 'Bozdurulan Öz', 'Bu kadar Öz …'],
     ['essxGems', '… şu kadar Mücevhere dönüşür', 'Varsayılan: 200 Öz = 15 Mücevher'],
     ['potionEss', 'Kırmızı İksir fiyatı (Öz)', 'Bir iksir'],
+    ['potionGems', 'Kırmızı İksir fiyatı (Mücevher)', 'Bir iksir · Market'],
   ] },
   { title: 'Canavarlar', note: 'Can ve saldırı, yeni doğan canavarlara uygulanır.', items: [
     ['monsterHpMul', 'Canavar canı', ''],
@@ -43,7 +44,7 @@ const ROWS: { title: string; note?: string; items: [NumKey, string, string][] }[
   ] },
 ];
 const DENSITY_MAPS = Object.values(MAPS).filter((m) => m.spawns.length > 0);
-const fmt = (k: NumKey, v: number) => (k === 'newYear' ? (v >= 0.5 ? 'Açık' : 'Kapalı') : k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'bossShareMin' ? '%' + v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) : k === 'essxEss' || k === 'potionEss' ? Math.round(v) + ' Öz' : k === 'essxGems' ? Math.round(v) + ' Mücevher' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
+const fmt = (k: NumKey, v: number) => (k === 'newYear' ? (v >= 0.5 ? 'Açık' : 'Kapalı') : k === 'bots' ? String(v) : k === 'meleeApproach' || k === 'splashRadius' ? Math.round(v) + ' px' : k === 'splashMul' ? '%' + Math.round(v * 100) : k === 'retargetDelay' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + ' sn' : k === 'autoAttackMin' ? Math.round(v) + ' dk' : k === 'bossShareMin' ? '%' + v.toLocaleString('tr-TR', { maximumFractionDigits: 1 }) : k === 'essxEss' || k === 'potionEss' ? Math.round(v) + ' Öz' : k === 'essxGems' || k === 'potionGems' ? Math.round(v) + ' Mücevher' : k === 'worldDonateGain' ? v.toLocaleString('tr-TR', { maximumFractionDigits: 3 }) + ' puan' : v.toLocaleString('tr-TR', { maximumFractionDigits: 2 }) + '×');
 
 type Tab = 'genel' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'harita' | 'oyuncu';
 const TABS: [Tab, string][] = [['genel', 'Genel'], ['canavar', 'Canavarlar'], ['ganimet', 'Ganimet'], ['efsun', 'Efsunlar'], ['arti', 'Artı Basma'], ['harita', 'Haritalar'], ['oyuncu', 'Oyuncular']];

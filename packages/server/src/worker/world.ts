@@ -1230,10 +1230,18 @@ export class World {
     const n = Math.floor(Number(c.n));
     if (!(n >= 1 && n <= 100000)) return this.reply(p, c, false, 'Geçersiz miktar.');
     const ch = p.char;
-    const ess = Math.round(TUNING.essxEss), gems = Math.round(TUNING.essxGems), pot = Math.round(TUNING.potionEss);
-    const rate = c.op === 'gems' ? ess * 100000 + gems : pot;
+    const ess = Math.round(TUNING.essxEss), gems = Math.round(TUNING.essxGems), pot = Math.round(TUNING.potionEss), gpot = Math.max(1, Math.round(TUNING.potionGems ?? 1));
+    const rate = c.op === 'gems' ? ess * 100000 + gems : c.op === 'gpotion' ? gpot : pot;
     if (Number(c.rate) !== rate) { this.sendJson(p, { t: 'tuning', tuning: TUNING }); return this.reply(p, c, false, 'Oran değişti, lütfen tekrar bak.'); }
     if (this.seenReceipt(p, c.req)) return;
+    // Mücevherle Kırmızı İksir (Market)
+    if (c.op === 'gpotion') {
+      const g = gpot * n;
+      if (ch.gems < g) return this.reply(p, c, false, `Yetersiz Mücevher: ${g.toLocaleString('tr-TR')} gerekir.`);
+      ch.gems -= g; ch.materials.red_potion = (ch.materials.red_potion ?? 0) + n;
+      this.reply(p, c, true, `${n} Kırmızı İksir alındı (−${g.toLocaleString('tr-TR')} Mücevher).`);
+      p.selfDirty |= 1 | 2; this.save(p, true); return;
+    }
     const cost = c.op === 'gems' ? ess * n : pot * n;
     if (ch.essence < cost) return this.reply(p, c, false, `Yetersiz Öz: ${cost.toLocaleString('tr-TR')} gerekir.`);
     ch.essence -= cost;

@@ -131,16 +131,28 @@ export function EssMarketPanel({ game }: { game: Game }) {
   useEffect(() => onConfig(() => force((n) => n + 1)), []);
   const [units, setUnits] = useState(1);
   const [pots, setPots] = useState(10);
+  const [gpots, setGpots] = useState(10);
   if (!self) return null;
-  const E = Math.round(TUNING.essxEss), G = Math.round(TUNING.essxGems), P = Math.round(TUNING.potionEss);
+  const E = Math.round(TUNING.essxEss), G = Math.round(TUNING.essxGems), P = Math.round(TUNING.potionEss), GP = Math.max(1, Math.round(TUNING.potionGems ?? 1));
   const ess = self.essence ?? 0;
   const maxU = Math.floor(ess / E), maxP = Math.floor(ess / P);
   const u = Math.max(1, Math.min(units, Math.max(1, maxU))), q = Math.max(1, Math.min(pots, Math.max(1, maxP)));
+  const maxGP = Math.floor((self.gems ?? 0) / GP), gq = Math.max(1, Math.min(gpots, Math.max(1, maxGP)));
   const fmt = (n: number) => n.toLocaleString('tr-TR');
-  const buy = (op: 'gems' | 'potion', n: number) => { sfx.play('ui'); game.send({ t: 'essx', op, n, rate: op === 'gems' ? E * 100000 + G : P, req: reqId() }); };
+  const buy = (op: 'gems' | 'potion' | 'gpotion', n: number) => { sfx.play('ui'); game.send({ t: 'essx', op, n, rate: op === 'gems' ? E * 100000 + G : op === 'gpotion' ? GP : P, req: reqId() }); };
   return (
     <Panel title="Market" width={460}>
       <div className="essm-bal"><img src={iconUrl('essence')} alt="" /><span>Öz bakiyen</span><b>{fmt(ess)}</b><img src={iconUrl('gem')} alt="" /><b className="g">{fmt(self.gems)}</b></div>
+      {/* Mücevherle Kırmızı İksir */}
+      <div className="essm-card">
+        <div className="essm-h"><img src={iconUrl('gem')} alt="" /><span className="arrow">→</span><img src={iconUrl('potion_red')} alt="" /><div><b>Kırmızı İksir (Mücevherle)</b><small>Tanesi {fmt(GP)} Mücevher · canının %20'sini doldurur</small></div></div>
+        <div className="essm-row">
+          {[1, 10, 50, 100].map((n) => <button key={n} className={'btn small' + (gq === n ? ' primary' : ' ghost')} disabled={maxGP < 1} onClick={() => setGpots(n)}>{n}</button>)}
+          <input className="adm-num" type="number" min={1} max={Math.max(1, maxGP)} value={gq} onChange={(e) => setGpots(Math.max(1, Number(e.target.value) || 1))} />
+        </div>
+        <div className="essm-sum"><span>{fmt(GP * gq)} Mücevher</span><span className="arrow">→</span><b>{fmt(gq)} Kırmızı İksir</b></div>
+        <button className="btn primary essm-go" disabled={maxGP < 1} onClick={() => buy('gpotion', gq)}>{maxGP < 1 ? `En az ${fmt(GP)} Mücevher gerekir` : 'Satın al'}</button>
+      </div>
       <div className="essm-card">
         <div className="essm-h"><img src={iconUrl('essence')} alt="" /><span className="arrow">→</span><img src={iconUrl('gem')} alt="" /><div><b>Öz Bozdur</b><small>{fmt(E)} Öz = {fmt(G)} Mücevher</small></div></div>
         <div className="essm-row">
@@ -153,7 +165,7 @@ export function EssMarketPanel({ game }: { game: Game }) {
         <button className="btn primary essm-go" disabled={maxU < 1} onClick={() => buy('gems', u)}>{maxU < 1 ? `En az ${fmt(E)} Öz gerekir` : 'Bozdur'}</button>
       </div>
       <div className="essm-card">
-        <div className="essm-h"><img src={iconUrl('potion_red')} alt="" /><div><b>Kırmızı İksir</b><small>Tanesi {fmt(P)} Öz · canının %20'sini doldurur</small></div></div>
+        <div className="essm-h"><img src={iconUrl('potion_red')} alt="" /><div><b>Kırmızı İksir (Özle)</b><small>Tanesi {fmt(P)} Öz · canının %20'sini doldurur</small></div></div>
         <div className="essm-row">
           {[1, 10, 50, 100].map((n) => <button key={n} className={'btn small' + (q === n ? ' primary' : ' ghost')} disabled={maxP < 1} onClick={() => setPots(n)}>{n}</button>)}
           <input className="adm-num" type="number" min={1} max={Math.max(1, maxP)} value={q} onChange={(e) => setPots(Math.max(1, Number(e.target.value) || 1))} />
