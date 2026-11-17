@@ -172,7 +172,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <PartyFrame />
       <MountButton />
       <ArenaHud />
-      <TowerHud />
+      {!mobile && <TowerHud />}
       <GuildWarBar />
       <GuildInviteCard />
       <InviteCards />
@@ -198,7 +198,7 @@ function TopBar() {
   useEffect(() => { setDropOpen(false); }, [t?.id]);
   const wh = useStore((s) => s.worldHealth);
   return (
-    <div className="topbar">
+    <div className={'topbar' + (t ? ' has-t' : '')}>
       <button className="worldhp" title="Ortak Dünya Sağlığı: Öz bağışlarıyla artar, zamanla azalır. Bağış için dokun." onClick={() => store.set((s) => ({ panel: s.panel === 'donate' ? null : 'donate' }))}>
         <div className="lbl"><span>DÜNYA SAĞLIĞI</span><span>%{wh.toFixed(1)}</span></div>
         <div className={'bar' + (wh < 30 ? ' low' : '')}><i style={{ width: `${wh}%` }} /></div>
@@ -391,6 +391,7 @@ function Minimap({ game }: { game: Game }) {
     <div className="mm" onClick={() => store.set({ panel: 'map' })} title="Harita (M)">
       <div className="dia"><canvas ref={ref} /></div>
       <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
+      {isMobile() && <TowerHud />}
     </div>
   );
 }

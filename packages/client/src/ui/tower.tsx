@@ -65,7 +65,7 @@ export function TowerHud() {
   const seqVisible = t.puzzle === 'seq' && !!t.seq && showSeq > 0 && seqT > -1000 && seqStep < t.seq.length + 2;
   const holdK = hold ? Math.min(1, (performance.now() - hold.at) / ALTAR_HOLD_MS) : 0;
   return (
-    <div className={'tw-hud' + (open ? '' : ' min')} onPointerDown={(e) => e.stopPropagation()}>
+    <div className={'tw-hud' + (open ? '' : ' min')} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
       <div className="tw-hd" onClick={() => setOpen(!open)}>
         <span className="fl">{t.f}. Kat</span><span className="nm">{name}</span>
         {t.done ? <span className="ok">✔ Kapı açık</span> : <span className="pr">{t.puzzle === 'boss' ? 'Azrail' : `${t.have}/${t.need}`}</span>}
