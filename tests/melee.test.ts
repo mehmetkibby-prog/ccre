@@ -67,3 +67,14 @@ describe('düz saldırı ağ dalgalanması', () => {
     } finally { Date.now = realNow; }
   });
 });
+
+describe('ganimet: sınıf ayrımı yok', () => {
+  it('canavardan her sınıfın eşyası düşebilir', () => {
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mkChar({ cls: 'hunter' }));
+    const p = w.bySid.get(1)!;
+    const seen = new Set<string>();
+    for (let i = 0; i < 600; i++) { const it = w.rollEquipment(p, { white: 1 }, false); const c = it ? /_(guardian|hunter|arcanist)$/.exec(it.tpl)?.[1] : null; if (c) seen.add(c); }
+    expect([...seen].sort()).toEqual(['arcanist', 'guardian', 'hunter']);
+  });
+});

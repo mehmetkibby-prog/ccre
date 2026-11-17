@@ -1085,16 +1085,19 @@ export class Renderer3D {
     return { x: p.x / U, y: p.z / U };
   }
   /** Ekranda en yakın varlık/NPC (piksel mesafesi). */
-  pickScreen(sx: number, sy: number): { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null {
-    let best: { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null = null, bd = 46;
+  /** Ekrandaki noktaya en yakın varlık. onlyPlayers: yalnız diğer oyuncular (sağ tık menüsü; yanındaki canavar/eşya araya girmesin). */
+  pickScreen(sx: number, sy: number, onlyPlayers = false): { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null {
+    let best: { type: 'ent' | 'loot' | 'npc'; e?: CEnt; npc?: string } | null = null, bd = onlyPlayers ? 64 : 46;
     for (const e of this.g.ents.values()) {
       if (e.deadAt) continue;
+      if (onlyPlayers && (e.kind !== Kind.PLAYER || e.id === this.g.selfId)) continue;
       const v = this.views.get(e.id);
       const h = e.kind === Kind.LOOT ? 0.5 : (v?.height ?? 1.6) * 0.5;
       const p = this.project(e.x, e.y, h);
       const d = Math.hypot(p.x - sx, p.y - sy) * (e.kind === Kind.LOOT ? 0.8 : 1);
       if (d < bd) { bd = d; best = { type: e.kind === Kind.LOOT ? 'loot' : 'ent', e }; }
     }
+    if (onlyPlayers) return best;
     for (const v of this.npcViews) {
       const p = this.project(v.lx, v.ly, 1.0);
       const d = Math.hypot(p.x - sx, p.y - sy);

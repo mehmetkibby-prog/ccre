@@ -100,7 +100,7 @@ export function PlayerMenu() {
   return (
     <div className="pmenu" style={{ left: x, top: y }} onContextMenu={(e) => e.preventDefault()}>
       <div className="pm-h">{m.name}</div>
-      <button onClick={() => openWhisper(m.name)}>💬 Fısıltı</button>
+      <button onClick={() => { openWhisper(m.name); store.set({ playerMenu: null }); }}>💬 Fısıltı (sohbet)</button>
       <button onClick={() => inv('trade')}>🤝 Ticaret</button>
       <button onClick={() => inv('duel')}>⚔ Düello</button>
       <button onClick={() => inv('friend')}>★ Arkadaş ekle</button>

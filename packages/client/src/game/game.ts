@@ -51,6 +51,8 @@ export class Game {
   // Sunucu düzeltmesi görüntüde sıçrama yapmasın diye ayrı bir ofsette tutulur ve hızla söner.
   private ppx = 0; private ppy = 0; // bir önceki adımın tahmini
   private corrX = 0; private corrY = 0;
+  /** Düellodaki rakibin varlık kimliği (0: düello yok). Düellodayken rakibe sol tık saldırıdır, menü yalnız sağ tıkla. */
+  duelWith = 0;
   sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; selfSkill = 0; lastMoveAt = 0; selfFlags = 0;
   seq = 0;
   pending: { seq: number; dir: number }[] = [];
@@ -279,7 +281,7 @@ export class Game {
       case 'trade': if (m.op === 'close') store.set({ trade: null }); else if (m.op === 'state') store.set({ trade: { with: m.with, me: m.me, them: m.them } }); break;
       case 'friends': store.set({ friends: Array.isArray(m.list) ? m.list : [] }); break;
       case 'arena': store.set({ arena: { active: !!m.active, endsAt: Number(m.endsAt) || 0, board: Array.isArray(m.board) ? m.board : [], at: Date.now() } }); break;
-      case 'duel': if (m.op === 'start') { notify(`Düello: ${m.name}! ${Math.round((m.in ?? 3000) / 1000)} sn sonra başlıyor.`, 'zone'); sfx.play('skill'); } else { sfx.play(m.win ? 'levelup' : 'error'); } break;
+      case 'duel': if (m.op === 'start') { this.duelWith = Number(m.vs) || 0; notify(`Düello: ${m.name}! ${Math.round((m.in ?? 3000) / 1000)} sn sonra başlıyor.`, 'zone'); sfx.play('skill'); } else { this.duelWith = 0; sfx.play(m.win ? 'levelup' : 'error'); } break;
       case 'bosses': store.set({ bosses: Array.isArray(m.list) ? m.list : [] }); break;
       case 'boss': {
         store.set({ bossBanner: { id: m.id, name: m.name, map: m.map, x: m.x, y: m.y, ev: m.ev, killer: m.killer, at: Date.now() } });
@@ -868,7 +870,7 @@ export class Game {
     if (hit?.type !== 'npc') { const sl = this.stallAt(wx, wy); if (sl && !(hit?.type === 'ent' && hit.e!.kind === Kind.MONSTER)) { this.openStall(sl); return; } }
     if (hit?.type === 'ent') {
       this.setTarget(hit.e!.id);
-      if (hit.e!.kind === Kind.MONSTER || (MAPS[this.layout.def.id]?.pvp && hit.e!.kind === Kind.PLAYER)) { this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
+      if (hit.e!.kind === Kind.MONSTER || (hit.e!.kind === Kind.PLAYER && (MAPS[this.layout.def.id]?.pvp || hit.e!.id === this.duelWith))) { this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
       return;
     }
     if (hit?.type === 'npc') {

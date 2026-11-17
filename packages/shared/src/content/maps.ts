@@ -56,7 +56,7 @@ export const MAPS: Record<string, MapDef> = {
     ],
   },
   forest: {
-    id: 'forest', name: 'Kuzey Ormanı', w: 96, h: 72, theme: 'forest', seed: 4242, safe: false, pvp: false, minLevel: 1,
+    id: 'forest', name: 'Kuzey Ormanı', w: 96, h: 72, theme: 'forest', seed: 4242, safe: false, pvp: false, minLevel: 10,
     respawnMap: 'forest', travelable: true,
     desc: 'Başlangıç av bölgesi. Gölge Kurtları, Çürük Muhafızlar ve Öz Yutanlar.',
     npcs: [],

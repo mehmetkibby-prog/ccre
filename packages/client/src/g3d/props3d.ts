@@ -493,11 +493,11 @@ function crystalModel(v: number, m: string): Part[] {
 
 // ───────────── örnekleme (instancing) ─────────────
 const modelCache = new Map<string, Part[]>();
-/** Meshy'de üretilen ağaç (tree_oak, sonbahar: tree_oak_autumn); yüklenince çizilmiş ağacın yerini alır. */
-export const MESHY_TREES = ['tree_oak', 'tree_oak_autumn'];
+/** Meshy'de üretilen sevimli ağaç (tree_oak); tüm ağaç çeşitleri bunu kullanır, yüklenince çizilmiş ağacın yerini alır. */
+export const MESHY_TREES = ['tree_oak'];
 const meshyTreeCache = new Map<string, Part[]>();
 function meshyTree(v: number): Part[] | null {
-  const id = v === 2 ? 'tree_oak_autumn' : 'tree_oak';
+  const id = 'tree_oak'; // eski köşeli "sonbahar" ağacı kaldırıldı: her çeşit yeni ağaç (yalnız boy ve ton farkı)
   const hit = meshyTreeCache.get(id + v);
   if (hit) return hit;
   const L = loadGlb(id);
@@ -522,7 +522,7 @@ function meshyTree(v: number): Part[] | null {
     g.scale(sc, sc, sc);
     g.computeBoundingSphere();
     const src = m.material as THREE.MeshStandardMaterial;
-    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xffffff : 0xeef6e4 });
+    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xf6f2dc : v === 1 ? 0xe4f2dc : 0xeef6e4 });
     if (mt.map) { mt.map.colorSpace = THREE.SRGBColorSpace; mt.map.anisotropy = 4; }
     addWind(mt, 0.06, H); // taç hafifçe salınır, gövde dibi sabit
     addSnowCap(mt, 0.35); // yeni yılda taç üstü hafif karlı

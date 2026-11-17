@@ -75,11 +75,13 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
       held = true; const p = pos(e);
       if (!openPlayerMenu(p.x, p.y, e.clientX, e.clientY)) game.clickScreen(p.x, p.y);
     };
-    // sol tık / dokunma da oyuncu menüsünü açar (PvP bölgesinde sol tık saldırıdır; menü sağ tık / uzun basmayla)
+    // sol tık / dokunma da oyuncu menüsünü açar (fısıltı, ticaret, düello, arkadaş, grup).
+    // Savaş durumunda (PvP bölgesi: arena, Kara Bölge, lonca savaşı; ya da o oyuncuyla düellodaysan) sol tık saldırıdır;
+    // menü o zaman yalnız sağ tık / uzun basmayla açılır.
     const openPlayerMenu = (px: number, py: number, cx: number, cy: number) => {
       if (!game) return false;
       const hit = game.renderer.pickScreen(px, py);
-      if (!hit?.e || hit.e.kind !== Kind.PLAYER || hit.e.id === game.selfId || MAPS[game.layout.def.id]?.pvp) return false;
+      if (!hit?.e || hit.e.kind !== Kind.PLAYER || hit.e.id === game.selfId || MAPS[game.layout.def.id]?.pvp || game.duelWith === hit.e.id) return false;
       game.setTarget(hit.e.id);
       store.set({ playerMenu: { id: hit.e.id, name: hit.e.name, x: cx, y: cy } });
       return true;
@@ -103,7 +105,7 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
         }
         return;
       }
-      if (rot) { const dx = e.clientX - rot.x, dy = e.clientY - rot.y; if (Math.hypot(dx, dy) > 4) rot.moved = true; game.renderer.camYaw = rot.yaw - dx * 0.008; game.renderer.camPitch = Math.max(0.1, Math.min(1.3, rot.pitch + dy * 0.005)); return; }
+      if (rot) { const dx = e.clientX - rot.x, dy = e.clientY - rot.y; if (Math.hypot(dx, dy) > 9) rot.moved = true; game.renderer.camYaw = rot.yaw - dx * 0.008; game.renderer.camPitch = Math.max(0.1, Math.min(1.3, rot.pitch + dy * 0.005)); return; }
       const p = pos(e);
       const now = performance.now();
       if (held && game.moveTarget) { const w = game.renderer.screenToWorld(p.x, p.y); game.moveTarget = w; }
@@ -123,9 +125,9 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
       if (rot && game) {
         // sürüklemeden sağ tık: oyuncuysa etkileşim menüsü (fısıltı, ticaret, düello, arkadaş, grup), canavarsa saldır
         if (!rot.moved && rot.btn === 2) {
-          const p = pos(e); const hit = game.renderer.pickScreen(p.x, p.y);
-          if (hit?.e && hit.e.kind === Kind.PLAYER && hit.e.id !== game.selfId) store.set({ playerMenu: { id: hit.e.id, name: hit.e.name, x: e.clientX, y: e.clientY } });
-          else if (hit?.e) { game.setTarget(hit.e.id); game.autoAttack = true; game.walkToTarget = true; }
+          const p = pos(e); const ph = game.renderer.pickScreen(p.x, p.y, true);
+          if (ph?.e) { game.setTarget(ph.e.id); store.set({ playerMenu: { id: ph.e.id, name: ph.e.name, x: e.clientX, y: e.clientY } }); }
+          else { const hit = game.renderer.pickScreen(p.x, p.y); if (hit?.e && hit.e.kind !== Kind.LOOT) { game.setTarget(hit.e.id); game.autoAttack = true; game.walkToTarget = true; } }
         }
         rot = null;
       }

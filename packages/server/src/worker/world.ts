@@ -29,6 +29,9 @@ const RECEIPT_KEEP = 64;
 export interface WorldOptions { channel: number; aoiMaxPlayers: number; saveIntervalMs: number; post: (m: FromWorker, transfer?: ArrayBuffer[]) => void }
 
 /** Bir kanalın tüm bölgeleri. Tek thread, tek yazar: kanal içi her durum değişikliği burada sıralı işlenir. */
+/** Canavarlardan asla düşmeyen malzemeler (yönetim ganimet tablosuna eklense bile). */
+const NO_MONSTER_DROP = new Set(['mastery_seal']);
+
 export class World {
   zones = new Map<string, Zone>();
   bySid = new Map<number, Player>();
@@ -900,11 +903,14 @@ export class World {
         if (item) this.dropLoot(p, m, { kind: 'item', item });
       }
     }
+    // Ustalık Mührü canavardan hiç düşmez (yalnız market, görev ve üretimle); yönetim ganimetine eklense bile atlanır
     for (const mat of prof.materials) {
+      if (NO_MONSTER_DROP.has(mat.id)) continue;
       if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
     }
     // yönetim: bölge ve canavar özel düşenleri
     for (const d of prof.drops) {
+      if (NO_MONSTER_DROP.has(d.key)) continue;
       if (rnd() >= d.chance * over) continue;
       if (d.kind === 'item') {
         if (!ITEM_TPL.has(d.key)) continue;
@@ -923,9 +929,9 @@ export class World {
     let r = rnd() * tot; let rarity: Rarity = entries[0][0];
     for (const [k, w] of entries) { if ((r -= w) <= 0) { rarity = k; break; } }
     if (shift && rnd() < 0.35) { const i = RARITIES.indexOf(rarity); rarity = RARITIES[Math.min(i + 1, 3)]; }
-    // %60 kendi sınıfına uygun
+    // her sınıfa her sınıfın eşyası eşit şansla düşebilir (avcıya muhafız zırhı vb.); kendi eşyasını bulmak kolay olmasın
     // kolye, küpe ve bilezik canavardan düşmez (üretimle Kızıl seviyede gelir)
-    const pool = ITEM_TEMPLATES.filter((t) => t.slot !== 'necklace' && t.slot !== 'earring' && t.slot !== 'bracelet' && (!t.cls || t.cls === p.char.cls || rnd() < 0.25));
+    const pool = ITEM_TEMPLATES.filter((t) => t.slot !== 'necklace' && t.slot !== 'earring' && t.slot !== 'bracelet');
     const tpl = pool[Math.floor(rnd() * pool.length)];
     return makeItem(tpl.id, rarity, 'drop');
   }
