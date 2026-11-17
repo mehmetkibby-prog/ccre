@@ -102,6 +102,7 @@ function texMat(name: string, opts: THREE.MeshStandardMaterialParameters = {}, r
 const SIGN_TEXTS: { title: string; sub: string }[] = [
   { title: 'PAZAR ALANI', sub: '(Değerli eşyalarınızı burada satın)' },
   { title: 'BALIK TUTMA YERİ', sub: '(Oltanı at, balığını tut)' },
+  { title: 'TİLKİ KORUSU', sub: '(Güneyde · yabani tilkiler ve goblinler)' },
 ];
 function signMaterial(v: number) {
   const t = SIGN_TEXTS[v] ?? SIGN_TEXTS[0];

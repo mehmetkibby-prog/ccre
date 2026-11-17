@@ -344,6 +344,7 @@ export class World {
     const now = this.now;
     // 1) oyuncu hareketleri
     for (const p of z.playerSet) {
+      if (p.queuedAtk && now + 60 >= p.cooldowns[0]) { const id = p.queuedAtk; p.queuedAtk = 0; if (now <= p.queuedAtkUntil && !p.dead) this.cmdAttack(p, id); }
       p.movedThisTick = false;
       p.moveBudget = Math.min(p.moveBudget + TICK_MS, 300);
       const blocked = p.dead || now < p.stunUntil || now < p.rootUntil;
@@ -656,7 +657,13 @@ export class World {
     if (this.now < p.stunUntil) return;
     const sk = classSkill(p.char.cls, 0)!;
     const cd = attackCooldown(sk.cooldownMs, p.stats.atkSpeed);
-    if (this.now + 60 < p.cooldowns[0]) return; // ağ titremesi toleransı
+    // ağ titremesi: biraz erken gelen istek reddedilmez, sıraya alınır ve bekleme bitince vurulur
+    // (eskiden reddediliyordu; istemci bir tam bekleme daha bekleyince vuruşlar arasında ~1 sn takılma oluyordu)
+    if (this.now + 60 < p.cooldowns[0]) {
+      if (p.cooldowns[0] - this.now <= 400) { p.queuedAtk = id; p.queuedAtkUntil = p.cooldowns[0] + 200; }
+      return;
+    }
+    p.queuedAtk = 0;
     const t = this.findTarget(p.zone, id);
     if (!t) return;
     if (t instanceof Monster && t.state === MState.DEAD) return;

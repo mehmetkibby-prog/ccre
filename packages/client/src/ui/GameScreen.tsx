@@ -499,7 +499,7 @@ function BottomBar({ game }: { game: Game }) {
           <button className="slot" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
-          <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><MenuIcon k="pick" /></button>
+          <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><img className="pick-img" src="/icons/pickup.png" alt="" draggable={false} /></button>
           <button className="slot" title="Canavar seç / sıradakine geç (Tab)" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><span className="key">⇥</span><TargetIcon /></button>
           {self.mount?.owned && !isMobile() && (
             <button className={'slot mount-slot' + (self.mount.riding ? ' on' : '')} title={self.mount.riding ? 'Binekten in (H)' : 'Bineğe bin (H)'} onPointerDown={(e) => { e.preventDefault(); game.send({ t: 'mount', op: 'ride' }); }}>
@@ -590,7 +590,7 @@ function MobileControls({ game }: { game: Game }) {
         <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
         {[1, 2, 3].map((s) => <button key={s} className={'s' + s} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{sk(s) ? <SkillIcon id={sk(s)!.id} /> : s + 1}{cd(s)}</button>)}
         <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /></button>
-        <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><MenuIcon k="pick" /></button>
+        <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><img className="pick-img" src="/icons/pickup.png" alt="" draggable={false} /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>
         {self?.mount?.owned && <button className={'mnt' + (self.mount.riding ? ' on' : '')} aria-label={self.mount.riding ? 'Binekten in' : 'Bineğe bin'} onPointerDown={(e) => { e.preventDefault(); game.send({ t: 'mount', op: 'ride' }); }}><HorseIcon /></button>}
       </div>

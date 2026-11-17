@@ -195,6 +195,15 @@ function genVillage(l: MapLayout, rng: Rng) {
     }
     for (const sx of [-3, 3]) l.props.push({ k: 'lamp', x: tc(cx + sx), y: tc(GY - 1), v: 0, s: 1 });
     l.props.push({ k: 'banner', x: tc(cx - 3), y: tc(GY + 1), v: 0, s: 1 });
+    // ahşap yön tabelaları (v=2 "TİLKİ KORUSU"): kapının köy tarafında ve köy yolunun ortasında, yolun kenarında
+    for (const [sx, sy] of [[cx + 4, GY - 3], [cx + 3, Math.round((cy + GY) / 2)]] as const) {
+      for (const dx of [0, 1, -7, 2]) {
+        const x = sx + dx, i = idx(l, x, sy);
+        if (l.blocked[i] || l.ground[i] === G.DIRT || l.ground[i] === G.COBBLE) continue;
+        l.props.push({ k: 'signpost', x: tc(x), y: tc(sy), v: 2, s: 0.8 }); l.blocked[i] = 1;
+        break;
+      }
+    }
     // ağaç kümeleri (açıklıklar inlere kalır)
     for (let y = GY + 1; y < h - 3; y++) for (let x = 3; x < w - 3; x++) {
       const i = idx(l, x, y);

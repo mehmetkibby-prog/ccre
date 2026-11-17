@@ -46,3 +46,24 @@ describe('Yönetim: karakteri sıfırla', () => {
     expect(p.char.level).toBe(1); expect(p.zone.id).toBe('bazaar'); expect(p.hp).toBe(p.stats.maxHp);
   });
 });
+
+describe('düz saldırı ağ dalgalanması', () => {
+  it('biraz erken gelen saldırı reddedilmez, bekleme bitince uygulanır', () => {
+    const realNow = Date.now; let t = realNow();
+    Date.now = () => t;
+    try {
+      const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+      w.join(1, mkChar({ stats: { str: 0, res: 0, vit: 0 } }));
+      const p = w.bySid.get(1)!;
+      const fox = p.zone.monsterList.find((m) => m.def.id === 'wild_fox')!;
+      fox.hp = fox.maxHp = 1e6;
+      p.x = fox.x - 60; p.y = fox.y; p.zone.players.move(p);
+      w.now = t; w.onCmd(1, JSON.stringify({ t: 'attack', id: fox.id }));
+      const hp1 = fox.hp; expect(hp1).toBeLessThan(1e6);
+      t += 450; w.now = t; w.onCmd(1, JSON.stringify({ t: 'attack', id: fox.id })); // 200 ms erken
+      expect(fox.hp).toBe(hp1);
+      t += 200; fox.x = p.x + 60; fox.y = p.y; w.tick();
+      expect(fox.hp).toBeLessThan(hp1);
+    } finally { Date.now = realNow; }
+  });
+});

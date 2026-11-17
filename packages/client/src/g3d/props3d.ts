@@ -522,7 +522,7 @@ function meshyTree(v: number): Part[] | null {
     g.scale(sc, sc, sc);
     g.computeBoundingSphere();
     const src = m.material as THREE.MeshStandardMaterial;
-    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xffffff : 0xd6f0c4 });
+    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xffffff : 0xeef6e4 });
     if (mt.map) { mt.map.colorSpace = THREE.SRGBColorSpace; mt.map.anisotropy = 4; }
     addWind(mt, 0.06, H); // taç hafifçe salınır, gövde dibi sabit
     addSnowCap(mt, 0.35); // yeni yılda taç üstü hafif karlı

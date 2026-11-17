@@ -382,13 +382,17 @@ function ClassPreview({ cls }: { cls: ClassId }) {
     let rig: ReturnType<typeof createHumanoid> | null = null;
     let glb: GlbChar | null = null;
     let manifestReady = false;
+    let dead = false;
     const show = () => {
-      if (glb) return;
+      if (glb || dead) return;
       const g = createGlbChar(cls);
       if (g) {
+        // önce işaretle: equipGlb silah modelini isterken model-durum olayı show()'u yeniden çağırabiliyor
+        // (eskiden ikinci bir karakter daha ekleniyordu: seçim ekranında üst üste iki gövde)
+        glb = g;
         equipGlb(g, LOOKS[cls]);
         if (rig) scene.remove(rig.root);
-        rig = null; glb = g;
+        rig = null;
         scene.add(g.root);
         setWaiting(false);
       } else if (!rig && manifestReady && !modelPending(cls)) {
@@ -418,7 +422,7 @@ function ClassPreview({ cls }: { cls: ClassId }) {
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
-    return () => { cancelAnimationFrame(raf); off(); offSt(); r.dispose(); };
+    return () => { dead = true; cancelAnimationFrame(raf); off(); offSt(); r.dispose(); };
   }, [cls]);
   return <div className="preview-wrap"><canvas ref={ref} className="preview3d" />{waiting && <div className="preview-wait"><i /><span>Karakter yükleniyor…</span></div>}</div>;
 }

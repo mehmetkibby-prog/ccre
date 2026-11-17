@@ -23,6 +23,8 @@ export class Player {
   movedThisTick = false;
   // savaş
   cooldowns = [0, 0, 0, 0];
+  /** Bekleme bitmeden (ağ dalgalanmasıyla) erken gelen düz saldırı: reddedilmez, süre dolunca uygulanır. */
+  queuedAtk = 0; queuedAtkUntil = 0;
   combatUntil = 0;
   dead = false;
   deadAt = 0;
