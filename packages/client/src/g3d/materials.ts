@@ -141,8 +141,8 @@ export function mat(key: string): THREE.Material {
     case 'bush': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('broad'), alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.85, color: 0xb2cc82 }), 0.05, 1.2); break;
     case 'grass': m = addWind(new THREE.MeshStandardMaterial({ map: leafTexture('grass'), alphaTest: 0.45, side: THREE.FrontSide, roughness: 0.95, color: 0xb4c8a0 }), 0.12, 0.6); break;
     // anime ağaç taçları: köşe renkli dolgun kütle (yaprak kartı yok), hafif rüzgâr
-    case 'canopy': m = addSnowCap(addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6), 1.1), 0.8); break;
-    case 'canopy_low': m = addSnowCap(addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5), 0.7), 0.65); break;
+    case 'canopy': m = addSnowCap(addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.05, 6), 1.1), 0.4); break;
+    case 'canopy_low': m = addSnowCap(addCanopyLeaves(addWind(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92 }), 0.03, 1.5), 0.7), 0.3); break;
     case 'pine_core': m = new THREE.MeshStandardMaterial({ color: 0x35553a, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'pine_core_snow': m = new THREE.MeshStandardMaterial({ color: 0x3a5a52, roughness: 0.95, side: THREE.DoubleSide }); break;
     case 'snow': m = new THREE.MeshStandardMaterial({ color: 0xf4f8ff, roughness: 0.7 }); break;
@@ -213,7 +213,7 @@ export function addSnowCap(m: THREE.Material, amount = 0.8) {
         if (uSnowCap > 0.0) {
           vec3 sn = normalize(vSnN);
           float nz = sin(vSnP.x * 1.7 + sin(vSnP.z * 1.3)) * sin(vSnP.z * 1.9 + vSnP.y * 0.7) * 0.5 + 0.5;
-          float k = smoothstep(0.2, 0.75, sn.y + (nz - 0.5) * 0.35) * uSnowCap * ${amount.toFixed(2)};
+          float k = smoothstep(0.5, 0.92, sn.y + (nz - 0.5) * 0.35) * uSnowCap * ${amount.toFixed(2)};
           diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.86, 0.9, 0.96), k);
         }`);
   });

@@ -144,10 +144,14 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
   );
   // telefonda: dokununca sabit kart, "Kapat" ile kapanır
   // panelin kırpma alanı kartı kesmesin: sayfanın en üst katmanına çizilir
+  // Kart uzun olunca alttaki "Kapat" ekran dışında kalıyordu: köşede her zaman görünen ✕, kartın dışına dokununca da kapanır.
   if (pinned) return createPortal(
-    <div className="frame tip tip-sheet" role="dialog" aria-label="Eşya özellikleri" onPointerDown={(e) => e.stopPropagation()}>
-      {body}
-      <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>
+    <div className="tip-back" onPointerDown={(e) => { e.stopPropagation(); if (e.target === e.currentTarget) onClose?.(); }}>
+      <div className="frame tip tip-sheet" role="dialog" aria-label="Eşya özellikleri" onPointerDown={(e) => e.stopPropagation()}>
+        <button className="tip-x" aria-label="Kapat" onClick={() => onClose?.()}>✕</button>
+        {body}
+        <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>
+      </div>
     </div>, document.body,
   );
   return <FloatingTip x={x} y={y}>{body}</FloatingTip>;

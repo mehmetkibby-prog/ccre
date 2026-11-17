@@ -201,8 +201,8 @@ void groundBlend(){
     // yumuşatılır: yakında net, uzakta pikselden ince kalıp titremez
     float sn = vn(vWPos.xz * 0.22) * 0.65 + vn(vWPos.xz * 0.85) * 0.35;
     float aa = fwidth(sn) * 1.5 + 0.035;
-    float cov = smoothstep(0.5 - aa, 0.56 + aa, sn) * (1.0 - slope) * uSnow;
-    gCol = mix(gCol, vec3(0.66, 0.7, 0.76) * (0.94 + 0.06 * vn(vWPos.xz * 0.5)), cov * 0.85);
+    float cov = smoothstep(0.64 - aa, 0.7 + aa, sn) * (1.0 - slope) * uSnow;
+    gCol = mix(gCol, vec3(0.66, 0.7, 0.76) * (0.94 + 0.06 * vn(vWPos.xz * 0.5)), cov * 0.7);
   }
   gNor = normalize(nor / max(tot, 1e-4));
 }`)

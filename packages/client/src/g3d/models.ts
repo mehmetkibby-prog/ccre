@@ -18,7 +18,7 @@ import { guardianClips, hunterClips, arcanistClips, bodyPart } from './charAnims
  * }
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
-export interface ModelEntry { url: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
+export interface ModelEntry { url: string; /** dosya değişince artırılan sürüm: aynı adla güncellenen modeli tarayıcı önbellekten eski haliyle vermesin */ v?: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
 interface Loaded { sphere?: THREE.Sphere; scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
@@ -155,7 +155,7 @@ export function model(id: string): Loaded | null {
   if (!entry) return null;
   loading.add(id);
   modelStatus.total++; bumpStatus();
-  fetchModel(BASE + entry.url).then(async (gltf) => {
+  fetchModel(BASE + entry.url + (entry.v ? '?v=' + entry.v : '')).then(async (gltf) => {
     if (entry.animFrom) { const b = await whenLoaded(entry.animFrom); if (b) gltf.animations = b.clips; }
     loading.delete(id);
     loaded.set(id, prepare(id, gltf, entry));

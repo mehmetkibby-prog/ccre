@@ -501,10 +501,10 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
   const questReadyN = self?.quests ? TUNING.quests.filter((q) => self.quests!.a[q.id] && questReady(q, self, self.quests!.a[q.id])).length : 0;
   return (
     <div className={'menu' + (mopen ? ' mopen' : '')}>
-      <button onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
+      <button className="pc-only" onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
+      <button className="pc-only" onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('character')}><MenuIcon k="char" /><small>C</small><span className="tag">Karakter</span>{statPts > 0 && <span className="badge">{statPts}</span>}</button>
       <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
-      <button onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button className="pc-only" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('quests')}><MenuIcon k="quest" /><small>J</small><span className="tag">Görev</span>{questReadyN > 0 && <span className="badge ok">{questReadyN}</span>}</button>
       <button onClick={() => open('guild')}><MenuIcon k="guild" /><small>G</small><span className="tag">Lonca</span></button>
@@ -550,8 +550,14 @@ function MobileControls({ game }: { game: Game }) {
   const cd = (s: number) => { const l = Math.max(0, (cds[s] ?? 0) - now); return l > 0 ? <div className="cdo">{(l / 1000).toFixed(0)}</div> : null; };
   const self = store.get().self; const cls = store.get().char?.cls as ClassId;
   const sk = (s: number) => cls ? classSkill(cls, s, self?.spec ?? null) : null;
+  const openP = (p: 'inventory' | 'teleport') => { sfx.play('ui'); store.set((st) => ({ panel: st.panel === p ? null : p, mobMenu: false })); };
   return (
     <>
+      {/* çanta ve ışınlanma: telefonda her zaman ana ekranda, beceri kümesinin solunda (sağ başparmak erişiminde) */}
+      <div className="quick-btns">
+        <button onClick={() => openP('inventory')}><MenuIcon k="bag" /><span>Çanta</span></button>
+        <button onClick={() => openP('teleport')}><MenuIcon k="tp" /><span>Işınlan</span></button>
+      </div>
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
         <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
