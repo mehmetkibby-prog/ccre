@@ -183,6 +183,19 @@ export class Renderer3D {
     this.dyn.add(this.ringMesh, this.selfRing);
     this.fx.posOf = (id) => (id === this.g.selfId ? { x: this.g.dx, y: this.g.dy } : this.g.ents.get(id) ?? null);
     this.fx.heightAt = (x, y) => this.heightAt(x, y);
+    // asa ucu: eldeki silahın kutusunun merkezinden, el → merkez yönünde silahın uzak ucuna
+    const tipBox = new THREE.Box3(), tipC = new THREE.Vector3(), tipH = new THREE.Vector3();
+    this.fx.tipOf = (id) => {
+      const v = id === this.g.selfId ? this.self : this.views.get(id);
+      const w = v?.obj.getObjectByName('held-weapon');
+      if (!v || !w || !v.glb?.hand) return null;
+      v.obj.updateMatrixWorld(true);
+      tipBox.setFromObject(w); tipBox.getCenter(tipC);
+      v.glb.hand.getWorldPosition(tipH);
+      const d = tipC.clone().sub(tipH), len = d.length();
+      if (len < 0.05) return tipC.clone();
+      return tipC.clone().addScaledVector(d.normalize(), len + 0.22);
+    };
     this.setupComposer();
     loadManifest();
     // model yüklenemezse boş yer tutucular prosedürel modelle yeniden kurulur

@@ -25,6 +25,8 @@ export class Fx3D {
   lights: THREE.PointLight[] = [];
   heightAt: (x: number, y: number) => number = () => 0;
   posOf: (id: number) => { x: number; y: number } | null = () => null;
+  /** elde tutulan silahın (asa) ucunun dünya konumu; yoksa null */
+  tipOf: (id: number) => THREE.Vector3 | null = () => null;
   /** Beceri efektleri (rün daireleri, şok dalgası, zincir, ok yağmuru…). */
   sk = new SkillFx(this);
 

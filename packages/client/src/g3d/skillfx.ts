@@ -1,3 +1,4 @@
+import { ARCANIST_RELEASE_S } from './charAnims.ts';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { glowTexture } from './textures.ts';
@@ -410,7 +411,7 @@ export class SkillFx {
   }
 
   /** Mermi: süzülen ışık/ok; yol boyunca iz bırakır, varınca onHit(hedef konumu). */
-  missile(sp: P, tgt: number, tp: P, dur: number, kind: 'arrow' | 'orb' | 'ice', color: THREE.ColorRepresentation, size: number, onHit?: (p: P) => void, trail = 2) {
+  missile(sp: P, tgt: number, tp: P, dur: number, kind: 'arrow' | 'orb' | 'ice', color: THREE.ColorRepresentation, size: number, onHit?: (p: P) => void, trail = 2, from3: THREE.Vector3 | null = null) {
     const g = new THREE.Group();
     const mats: THREE.Material[] = [], own: THREE.BufferGeometry[] = [];
     const gm = new THREE.SpriteMaterial({ map: glowTexture(), color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false });
@@ -430,8 +431,14 @@ export class SkillFx {
       const f = Math.min(1, k * (dur + 30) / dur);
       const b = this.pos(tgt); if (b) { end.x = b.x; end.y = b.y; }
       const x = sp.x + (end.x - sp.x) * f, y = sp.y + (end.y - sp.y) * f;
-      const h = 1.3 + Math.sin(f * Math.PI) * (kind === 'arrow' ? 0.35 : 0.5) - f * 0.25;
-      g.position.set(x * U, this.gy(x, y) + h, y * U);
+      if (from3) {
+        // asanın ucundan çıkar, hedefin göğsüne yay çizerek gider
+        const ex = end.x * U, ez = end.y * U, ey = this.gy(end.x, end.y) + 1.05;
+        g.position.set(from3.x + (ex - from3.x) * f, from3.y + (ey - from3.y) * f + Math.sin(f * Math.PI) * 0.35, from3.z + (ez - from3.z) * f);
+      } else {
+        const h = 1.3 + Math.sin(f * Math.PI) * (kind === 'arrow' ? 0.35 : 0.5) - f * 0.25;
+        g.position.set(x * U, this.gy(x, y) + h, y * U);
+      }
       g.lookAt(end.x * U, this.gy(end.x, end.y) + 1.05, end.y * U);
       for (let i = 0; i < trail; i++) this.fx.spawn(g.position.x, g.position.y, g.position.z, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, 320, size * 0.28, col);
       if (f >= 1 && !hit) { hit = true; g.visible = false; onHit?.(end); }
@@ -450,11 +457,17 @@ export class SkillFx {
         if (!lite) this.fx.burst(p.x, p.y, 1.0, Math.ceil(6 * this.pk), '#c8ff9a', 2.6, 320, 0.1, -2);
       }, lite ? 0 : 1);
     } else if (cls === 2) {
-      this.missile(sp, tgt, tp, 250, 'orb', '#7cf3ff', 1.0, (p) => {
-        if (!this.full(self)) return;
-        this.flash(p, 1.1, 1.6, 200, '#bff8ff');
-        if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
-      }, lite ? 1 : 2);
+      // küre, büyünün salındığı anda (asa öne savrulduğunda) asanın ucundan çıkar
+      const fire = () => {
+        const tip = this.fx.tipOf(src);
+        if (tip && !lite) { const ix = tip.x / U, iy = tip.z / U; this.fx.burst(ix, iy, Math.max(0, tip.y - this.gy(ix, iy)), Math.ceil(6 * this.pk), '#bff8ff', 1.4, 260, 0.1, 0); }
+        this.missile(sp, tgt, tp, 190, 'orb', '#7cf3ff', 1.0, (p) => {
+          if (!this.full(self)) return;
+          this.flash(p, 1.1, 1.6, 200, '#bff8ff');
+          if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
+        }, lite ? 1 : 2, tip);
+      };
+      window.setTimeout(fire, ARCANIST_RELEASE_S * 1000 * 0.85);
     }
   }
 

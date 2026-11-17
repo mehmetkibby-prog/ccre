@@ -119,11 +119,11 @@ function localFor(rig: Rig, name: string, pose: Pose, out: THREE.Quaternion) {
 }
 
 const rigCache = new WeakMap<THREE.Object3D, Rig>();
-export function buildClip(name: string, inner: THREE.Object3D, root: THREE.Object3D, keys: Key[], dur: number): THREE.AnimationClip {
+export function buildClip(name: string, inner: THREE.Object3D, root: THREE.Object3D, keys: Key[], dur: number, hipK = 1): THREE.AnimationClip {
   let rig = rigCache.get(inner);
   if (!rig) { rig = readRig(inner, root); rigCache.set(inner, rig); }
   const names = [...new Set(keys.flatMap((k) => Object.keys(k.p)))].filter((n) => rig!.bones.has(n));
-  const FPS = 30, n = Math.round(dur * FPS) + 1;
+  const FPS = 60, n = Math.round(dur * FPS) + 1; // 60 kare/sn örnek: hızlı savuruşta kademeli (kesik kesik) görünmesin
   const times = Float32Array.from({ length: n }, (_, i) => Math.min(dur, i / FPS));
   const seg = (t: number) => { let i = 0; while (i < keys.length - 2 && t > keys[i + 1].t) i++; const a = keys[i], b = keys[i + 1]; const u = THREE.MathUtils.clamp((t - a.t) / Math.max(1e-4, b.t - a.t), 0, 1); return { a, b, u: EASE[b.ease ?? 'inOut'](u) }; };
   const tracks: THREE.KeyframeTrack[] = [];
@@ -144,7 +144,7 @@ export function buildClip(name: string, inner: THREE.Object3D, root: THREE.Objec
     for (let i = 0; i < n; i++) {
       const { a, b, u } = seg(times[i]);
       const ha = a.hips ?? [0, 0], hb = b.hips ?? [0, 0];
-      v.set(0, ha[0] + (hb[0] - ha[0]) * u, ha[1] + (hb[1] - ha[1]) * u).applyQuaternion(inv).divideScalar(rig.hipsScale || 1).add(rig.hipsPos);
+      v.set(0, (ha[0] + (hb[0] - ha[0]) * u) * hipK, (ha[1] + (hb[1] - ha[1]) * u) * hipK).applyQuaternion(inv).divideScalar(rig.hipsScale || 1).add(rig.hipsPos);
       v.toArray(vals, i * 3);
     }
     tracks.push(new THREE.VectorKeyframeTrack(`${rig.bones.get('Hips')!.name}.position`, times, vals));
@@ -181,7 +181,7 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: I, ease: 'in', hips: [-0.1, 0.13], p: B(P({ ...LUNGE_L, Spine02: { e: [12, 18, 0] }, Spine: { e: [6, 12, 0] }, Head: { e: [-10, -34, 0] }, RightArm: { a: [0.15, 0.02, 1] }, RightForeArm: { a: [0.8, -0.02, 0.6], bl: [-0.2, 0.05, 1] } }), 20, 10) },
     { t: 0.31, ease: 'out', hips: [-0.11, 0.15], p: B(P({ ...LUNGE_L, Spine02: { e: [12, 32, 0] }, Spine: { e: [6, 20, 0] }, Head: { e: [-10, -50, 0] }, RightArm: { a: [0.62, -0.12, 0.7] }, RightForeArm: { a: [0.96, -0.12, -0.15], bl: [0.3, 0, 1] } }), 30, 12) },
     { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62);
+  ], 0.62, 0.45);
   // 2) ters kesik: soldan sağa yükselen
   const a2 = buildClip('G Kesik 2', inner, root, [
     { t: 0, p: GUARD },
@@ -189,7 +189,7 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: I, ease: 'in', hips: [-0.09, 0.12], p: B(P({ ...LUNGE_R, Spine02: { e: [4, -18, 0] }, Spine: { e: [0, -10, 0] }, Head: { e: [-8, 32, 0] }, RightArm: { a: [-0.38, 0.28, 0.88] }, RightForeArm: { a: [-0.72, 0.55, 0.42], bl: [-0.5, 0.6, 0.6] } }), -20, 6) },
     { t: 0.31, ease: 'out', hips: [-0.08, 0.14], p: B(P({ ...LUNGE_R, Spine02: { e: [-2, -30, 0] }, Spine: { e: [-4, -16, 0] }, Head: { e: [-6, 48, 0] }, RightArm: { a: [-0.85, 0.48, 0.25] }, RightForeArm: { a: [-0.58, 0.78, -0.25], bl: [-0.6, 0.7, -0.2] } }), -30, 2) },
     { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62);
+  ], 0.62, 0.45);
   // 3) tepeden iniş: geriye yaylanıp bütün ağırlıkla aşağı
   const a3 = buildClip('G Kesik 3', inner, root, [
     { t: 0, p: GUARD },
@@ -197,7 +197,7 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: I + 0.02, ease: 'in', hips: [-0.17, 0.16], p: B(P({ LeftUpLeg: { e: [-40, 0, 5] }, LeftLeg: { e: [50, 0, 0] }, RightUpLeg: { e: [28, 0, -5] }, RightLeg: { e: [34, 0, 0] }, Spine02: { e: [30, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.12, 0.02, 1] }, RightForeArm: { a: [0, -0.55, 0.84], bl: [0, 1, 0.3] } }), 6, 14) },
     { t: 0.34, ease: 'out', hips: [-0.18, 0.17], p: B(P({ LeftUpLeg: { e: [-40, 0, 5] }, LeftLeg: { e: [52, 0, 0] }, RightUpLeg: { e: [28, 0, -5] }, RightLeg: { e: [36, 0, 0] }, Spine02: { e: [34, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-30, 0, 0] }, RightArm: { a: [-0.12, -0.42, 0.9] }, RightForeArm: { a: [0, -0.88, 0.47], bl: [0, 0.4, 1] } }), 8, 16) },
     { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62);
+  ], 0.62, 0.45);
 
   // ─ beceriler (0,95 sn) ─
   // Zincir Çekişi: zinciri fırlat, hedefi kendine çek

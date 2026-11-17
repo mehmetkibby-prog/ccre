@@ -432,7 +432,7 @@ export function createGlbChar(id: string): GlbChar | null {
     // hazır klipler ekranda kalma süresine sığacak kadar hızlanır (en çok 2,2 kat); çizilenler zaten o süreye göre
     const ts = swing && !designed ? THREE.MathUtils.clamp(clip.duration / (screenMs / 1000 * 0.92), 0.9, SWING_MAX_SPEED) : 1;
     if (swing) {
-      endSwing(0.06);
+      endSwing(0.09);
       const up = act(bodyPart(clip, true)), low = act(bodyPart(clip, false));
       for (const a of [up, low]) { a.reset(); a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.timeScale = ts; a.setEffectiveWeight(1); a.play(); }
       const wc = L.map.walk ? bodyPart(L.map.walk, false) : null;
@@ -440,7 +440,7 @@ export function createGlbChar(id: string): GlbChar | null {
       if (walk) { walk.setLoop(THREE.LoopRepeat, Infinity); walk.enabled = true; walk.play(); }
       walkMix = moving ? 1 : 0;
       low.setEffectiveWeight(1 - walkMix); walk?.setEffectiveWeight(walkMix);
-      up.fadeIn(0.06); low.fadeIn(0.06);
+      up.fadeIn(0.09); low.fadeIn(0.09);
       if (current) { current.fadeOut(0.08); current = null; }
       swingSet = { up, low, walk };
       return;
