@@ -103,6 +103,7 @@ export class Renderer3D {
     this.nyFx?.dispose(); if (this.nyFx) this.world.remove(this.nyFx.group); this.nyFx = null;
     if (this.nyOn) { this.nyFx = new NewYearFx(l, (x, y) => this.heightAt(x, y), MOBILE); this.world.add(this.nyFx.group); }
     this.terrain.snow.value = this.nyOn ? 1 : 0;
+    shared.snow.value = this.nyOn ? 1 : 0; // ağaç ve çalı tepelerinde kar
     this.shadowDirty = true;
   }
   private emblemImgs = new Map<number, HTMLImageElement>();

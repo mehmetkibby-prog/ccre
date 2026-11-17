@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import type { Prop, PropKind } from '@col/shared';
 import { box, cyl, lathe, at, merge, colorize, radialNormals, rng } from './geom.ts';
-import { mat, addWind } from './materials.ts';
+import { mat, addWind, addSnowCap } from './materials.ts';
 import { model as loadGlb } from './models.ts';
 import { fbm } from './textures.ts';
 import { U } from './terrain.ts';
@@ -525,6 +525,7 @@ function meshyTree(v: number): Part[] | null {
     const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.9, metalness: 0, side: THREE.FrontSide, color: v === 2 ? 0xffffff : 0xd6f0c4 });
     if (mt.map) { mt.map.colorSpace = THREE.SRGBColorSpace; mt.map.anisotropy = 4; }
     addWind(mt, 0.06, H); // taç hafifçe salınır, gövde dibi sabit
+    addSnowCap(mt, 0.75); // yeni yılda taç üstü hafif karlı
     parts.push({ geo: g, mat: mt });
   });
   meshyTreeCache.set(id + v, parts);
