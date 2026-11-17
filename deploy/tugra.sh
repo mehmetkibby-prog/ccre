@@ -150,7 +150,10 @@ case "${1:-}" in
     alanlar=(-d "$alan_adi")
     for alt in www oyun; do getent hosts "$alt.$alan_adi" >/dev/null && alanlar+=(-d "$alt.$alan_adi"); done
     echo "sertifika alanları: ${alanlar[*]}"
-    "$AC" --issue --server zerossl "${alanlar[@]}" -w /var/www/acme --keylength 2048 --force
+    # Google Trust Services hesabı açılmışsa onu kullan (Cloudflare'in de kullandığı, telefonlarda sorunsuz zincir); yoksa ZeroSSL
+    CA=zerossl; ls -d ~/.acme.sh/ca/*pki.goog* >/dev/null 2>&1 && CA=google
+    echo "sertifika sağlayıcısı: $CA"
+    "$AC" --issue --server "$CA" "${alanlar[@]}" -w /var/www/acme --keylength 2048 --force
     "$AC" --install-cert -d "$alan_adi" --key-file "$SSLD/$alan_adi.key" --fullchain-file "$SSLD/$alan_adi.pem" --reloadcmd "systemctl reload nginx"
     # eski certbot sertifikası kalırsa nginx onu tercih eder: kaldır
     command -v certbot >/dev/null && certbot delete --cert-name "$alan_adi" -n >/dev/null 2>&1 || true
