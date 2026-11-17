@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, STAT_MAX, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -404,10 +404,10 @@ function Character({ game }: { game: Game }) {
       <div className="stats">
         <div>
           <div className="row"><b>Statü puanları</b><div className="spacer" /><span style={{ color: left > 0 ? '#8fe08a' : '#a9a08a', fontWeight: 800 }}>Kalan: {left}</span></div>
-          <div className="muted" style={{ fontSize: 11, margin: '4px 0 8px' }}>Her seviye 3 puan. Her statü en fazla 64. 64 puanda: saldırı %10 / savunma %10 / can %12.</div>
-          {row('str', 'Güç', `Saldırı +%${(draft.str / 64 * 10).toFixed(1)}`)}
-          {row('res', 'Direnç', `Savunma +%${(draft.res / 64 * 10).toFixed(1)}`)}
-          {row('vit', 'Canlılık', `Maks. can +%${(draft.vit / 64 * 12).toFixed(1)}`)}
+          <div className="muted" style={{ fontSize: 11, margin: '4px 0 8px' }}>Seviye atlamak can, saldırı ve savunmayı artırmaz; her seviye 3 statü puanı verir. Her statü en fazla 64. Puan başına: Güç +{STAT_GAIN.str} saldırı, Direnç +{STAT_GAIN.res} savunma, Canlılık +{STAT_GAIN.vit} can.</div>
+          {row('str', 'Güç', `Saldırı +${draft.str * STAT_GAIN.str}`)}
+          {row('res', 'Direnç', `Savunma +${draft.res * STAT_GAIN.res}`)}
+          {row('vit', 'Canlılık', `Maks. can +${draft.vit * STAT_GAIN.vit}`)}
           <div className="row" style={{ marginTop: 8 }}>
             <button className="btn small" onClick={() => setDraft({ str: 0, res: 0, vit: 0 })}>Sıfırla</button>
             <button className="btn small" onClick={() => setDraft(self.statAlloc)}>Geri al</button>
@@ -598,8 +598,9 @@ function Settings() {
         <div className="muted" style={{ fontSize: 11 }}>Telefon ısınıyorsa 30 seç. Sınırsız, 120 Hz ekranlarda saniyede 120 kare çizer ve pili hızlı tüketir.</div>
       </div>
       <div className="field"><label>Yakınlaştırma: {s.zoom.toFixed(2)}</label><input type="range" min={0.7} max={1.6} step={0.05} value={s.zoom} onChange={(e) => set({ zoom: Number(e.target.value) })} /></div>
-      <div className="field"><label>Müzik (köy müziği ve ambiyans): {Math.round(s.music * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.music} onChange={(e) => set({ music: Number(e.target.value) })} /></div>
-      <div className="field"><label>Efekt sesi: {Math.round(s.sfx * 100)}</label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
+      {/* müzik ve efekt sesi birbirinden bağımsız; yanındaki düğme yalnız o sesi kapatır/açar */}
+      <div className="field"><label className="row" style={{ gap: 8 }}><span>Müzik (köy müziği ve ambiyans): {Math.round(s.music * 100)}</span><div className="spacer" /><button className="btn small" onClick={() => set({ music: s.music > 0 ? 0 : 0.5 })}>{s.music > 0 ? '🔇 Müziği kapat' : '🔊 Müziği aç'}</button></label><input type="range" min={0} max={1} step={0.05} value={s.music} onChange={(e) => set({ music: Number(e.target.value) })} /></div>
+      <div className="field"><label className="row" style={{ gap: 8 }}><span>Efekt sesi (vuruş, adım, arayüz): {Math.round(s.sfx * 100)}</span><div className="spacer" /><button className="btn small" onClick={() => set({ sfx: s.sfx > 0 ? 0 : 0.7 })}>{s.sfx > 0 ? '🔇 Efektleri kapat' : '🔊 Efektleri aç'}</button></label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
       <label className="row" style={{ fontSize: 14 }}><input type="checkbox" checked={s.showNames} onChange={(e) => set({ showNames: e.target.checked })} /> Oyuncu isimlerini göster</label>
       <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.showDamage} onChange={(e) => set({ showDamage: e.target.checked })} /> Başkalarının hasar sayıları</label>
       <div className="row" style={{ marginTop: 14, gap: 8, flexWrap: 'wrap' }}>

@@ -108,7 +108,7 @@ class Sfx {
    * duyulunca rahatsız etmeyecek düzeyde. k: uzaklık çarpanı (diğer oyuncular).
    */
   step(surface: 'grass' | 'stone' | 'dirt' | 'sand' | 'wood' | 'snow' | 'hoof', k = 1) {
-    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04) return;
+    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04 || store.get().settings.sfx <= 0) return;
     const v = 0.8 + Math.random() * 0.3, pr = 0.88 + Math.random() * 0.24;
     this.k = k;
     switch (surface) {
@@ -125,7 +125,7 @@ class Sfx {
   }
 
   play(name: string, k = 1) {
-    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04) return;
+    if (!this.ctx || this.ctx.state !== 'running' || k < 0.04 || store.get().settings.sfx <= 0) return;
     const now = performance.now();
     if (now - (this.last.get(name) ?? 0) < 45) return;
     this.last.set(name, now);

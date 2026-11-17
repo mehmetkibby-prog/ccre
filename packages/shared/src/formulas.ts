@@ -6,7 +6,9 @@ import { ITEM_TPL, itemPower, type ItemInstance, type Slot, type EnchantType } f
 export const LEVEL_CAP_BASE = 65;
 export const LEVEL_CAP_EXPANSION = 65;
 export const STAT_MAX = 64;
-export const STAT_BONUS_AT_MAX = { str: 0.10, res: 0.10, vit: 0.12 }; // 64 puanda toplam katkı
+export const STAT_BONUS_AT_MAX = { str: 0.10, res: 0.10, vit: 0.12 }; // (eski yüzdelik sistem; artık kullanılmıyor)
+/** Seviye atlamak can/saldırı/savunmayı ARTIRMAZ; yalnız statü puanları artırır. Puan başına: */
+export const STAT_GAIN = { str: 3, res: 2, vit: 40 };
 
 /**
  * Varsayılan TP tablosu: index 0 = 1→2 seviyesi için gereken TP … index 63 = 64→65.
@@ -86,10 +88,10 @@ export function computeStats(c: CharCore): CombatStats {
   if (c.buffs?.atkFlat) atkFlat += c.buffs.atkFlat;
   if (c.buffs?.hpFlat) hpFlat += c.buffs.hpFlat;
   const st = c.stats;
-  atk = (atk + atkFlat) * (1 + (STAT_BONUS_AT_MAX.str * st.str) / STAT_MAX);
-  dfn = (dfn + (c.buffs?.defFlat ?? 0)) * (1 + (STAT_BONUS_AT_MAX.res * st.res) / STAT_MAX);
+  atk = atk + atkFlat + STAT_GAIN.str * st.str;
+  dfn = dfn + (c.buffs?.defFlat ?? 0) + STAT_GAIN.res * st.res;
   if (c.buffs?.critPct) s.crit += c.buffs.critPct;
-  maxHp = (maxHp + hpFlat) * (1 + (STAT_BONUS_AT_MAX.vit * st.vit) / STAT_MAX);
+  maxHp = maxHp + hpFlat + STAT_GAIN.vit * st.vit;
   s.maxHp = Math.round(maxHp);
   s.atk = Math.round(atk);
   s.def = Math.round(dfn);

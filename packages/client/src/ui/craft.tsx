@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TUNING, MATERIAL, MALL, ITEM_TPL, RARITY, SLOT_NAMES, CLASSES, mallIcon, type CraftRecipe, type Rarity, type ClassId } from '@col/shared';
+import { TUNING, MATERIAL, MALL, ITEM_TPL, RARITY, SLOT_NAMES, CLASSES, mallIcon, itemPower, type CraftRecipe, type Rarity, type ClassId } from '@col/shared';
 import { useStore, reqId } from '../game/store.ts';
 import { Panel } from './panels.tsx';
 import { currentGame } from './GameScreen.tsx';
@@ -45,7 +45,7 @@ export function CraftPanel() {
           return (
             <div className={'cr-wrap'} key={r.id}>
             <div className={'cr-row' + (ok ? ' ok' : '')}>
-              <div className={'cr-out tap' + (info === r.id + '|out|' ? ' on' : '')} onClick={() => tap(r.id + '|out|')}><img src={iconUrl(o.icon, o.rar)} alt="" /><div><b style={{ color: o.color }}>{r.name}</b><div className="muted" style={{ fontSize: 11 }}>{o.name} · şans %{r.chance}{r.minLevel > 1 ? ` · Sv. ${r.minLevel}` : ''}</div></div></div>
+              <div className={'cr-out tap' + (info === r.id + '|out|' ? ' on' : '')} onClick={() => tap(r.id + '|out|')} onPointerEnter={(e) => { if (e.pointerType === 'mouse') setInfo(r.id + '|out|'); }}><img src={iconUrl(o.icon, o.rar)} alt="" /><div><b style={{ color: o.color }}>{r.name}</b><div className="muted" style={{ fontSize: 11 }}>{o.name} · şans %{r.chance}{r.minLevel > 1 ? ` · Sv. ${r.minLevel}` : ''}</div></div></div>
               <div className="cr-in">
                 {ins.map(([k, q]) => { const have = self.materials?.[k] ?? 0; return <span key={k} className={'cr-m tap' + (have >= q ? ' have' : '') + (info === `${r.id}|mat|${k}` ? ' on' : '')} title={matName(k)} onClick={() => tap(`${r.id}|mat|${k}`)}><img src={iconUrl(matIcon(k))} alt="" />{Math.min(have, q)}/{q}</span>; })}
                 {r.gems > 0 && <span className={'cr-m tap' + (self.gems >= r.gems ? ' have' : '')} onClick={() => tap(`${r.id}|gem|`)}><img src={iconUrl('gem')} alt="" />{r.gems.toLocaleString('tr-TR')}</span>}
@@ -73,7 +73,16 @@ function CraftInfo({ r, cls, what, have, gems, essence, onClose }: { r: CraftRec
     if (r.out.kind === 'item') {
       const k = /^[wah]_cls$/.test(r.out.key) ? r.out.key.replace('cls', cls) : r.out.key;
       const t = ITEM_TPL.get(k);
-      if (t) lines.push(`${SLOT_NAMES[t.slot]}${t.cls ? ' · ' + CLASSES[t.cls as ClassId].name : ''} · ${RARITY[(r.out.rarity ?? 'blue') as Rarity]?.name ?? ''} nadirlik`);
+      if (t) {
+        const rarity = (r.out.rarity ?? 'blue') as Rarity;
+        lines.push(`${SLOT_NAMES[t.slot]}${t.cls ? ' · ' + CLASSES[t.cls as ClassId].name : ''} · ${RARITY[rarity]?.name ?? ''} nadirlik`);
+        // eşyanın vereceği özellik (artısız, efsunsuz hali; hesap oyundakiyle aynı)
+        const p = itemPower({ id: 'onizleme', tpl: k, rarity, plus: 0, ench: [] } as never);
+        if (t.slot === 'weapon') lines.push(`Saldırı +${p.toLocaleString('tr-TR')}`);
+        else if (t.slot === 'armor' || t.slot === 'helmet' || t.slot === 'boots') lines.push(`Savunma +${p.toLocaleString('tr-TR')}`);
+        else lines.push(`Savunma +${Math.round(p * 0.4).toLocaleString('tr-TR')} · Maks. can +${(p * 6).toLocaleString('tr-TR')}`);
+        lines.push(`Gereken seviye ${RARITY[rarity]?.minLevel ?? 1} · Efsunlar üretimde rastgele belirlenir.`);
+      }
       lines.push('Üretilen ekipman çantana gelir.');
     } else {
       const d = MATERIAL.get(r.out.key)?.desc ?? MALL.get(r.out.key)?.desc;
@@ -88,7 +97,7 @@ function CraftInfo({ r, cls, what, have, gems, essence, onClose }: { r: CraftRec
     lines.push(`Elinde: ${(have[key] ?? 0).toLocaleString('tr-TR')} · Gereken: ${r.inputs[key]}`);
   } else if (kind === 'gem') {
     icon = 'gem'; title = 'Mücevher';
-    lines = ['Oyunun ana parası. Canavarlardan, görevlerden ve satıştan kazanılır.', `Elinde: ${gems.toLocaleString('tr-TR')} · Gereken: ${r.gems.toLocaleString('tr-TR')}`];
+    lines = ['Oyunun ana parası. Eşya satışı, görevler ve ödüllerden kazanılır.', `Elinde: ${gems.toLocaleString('tr-TR')} · Gereken: ${r.gems.toLocaleString('tr-TR')}`];
   } else {
     icon = 'essence'; title = 'Öz';
     lines = ['Canavarlardan düşen öz. Market\'te bozdurulabilir.', `Elinde: ${essence.toLocaleString('tr-TR')} · Gereken: ${r.essence.toLocaleString('tr-TR')}`];

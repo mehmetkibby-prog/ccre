@@ -69,7 +69,7 @@ describe('efsunlar', () => {
   it('oyuncular arasında Ok Savunması Avcıya işler, Can Çalma oyuncuya karşı da can verir', () => {
     w.join(1, char(1, 'black', { cls: 'hunter' })); w.join(2, char(2, 'black'));
     const a = w.bySid.get(1)!, d = w.bySid.get(2)!;
-    a.stats.crit = 0; d.stats.block = 0;
+    a.stats.crit = 0; d.stats.block = 0; a.stats.atk = 300; // en düşük hasar sınırına takılmasın
     const dealt = (ench: Record<string, number>) => { d.stats.enchants = ench as never; return avg(2000, () => { d.hp = 1e9; d.dead = false; W().hit(a, d, 1); return 1e9 - d.hp; }); };
     const base = dealt({});
     expect(dealt({ arrow_def: 12 }) / base).toBeLessThan(0.92);

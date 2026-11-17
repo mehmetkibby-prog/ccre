@@ -36,7 +36,7 @@ export interface ItemTemplate {
 /** Sınıf başına isim havuzu; nadirlik ad ön ekini ve gücü belirler. */
 const WEAPON_NAMES: Record<ClassId, string> = { guardian: 'Kılıç', hunter: 'Yay', arcanist: 'Asa' };
 const ARMOR_NAMES: Record<ClassId, string> = { guardian: 'Plaka Zırh', hunter: 'Deri Yelek', arcanist: 'Cübbe' };
-const HELM_NAMES: Record<ClassId, string> = { guardian: 'Tolga', hunter: 'Başlık', arcanist: 'Taç' };
+const HELM_NAMES: Record<ClassId, string> = { guardian: 'Miğfer', hunter: 'Başlık', arcanist: 'Taç' };
 
 export const ITEM_TEMPLATES: ItemTemplate[] = [];
 for (const cls of ['guardian', 'hunter', 'arcanist'] as ClassId[]) {

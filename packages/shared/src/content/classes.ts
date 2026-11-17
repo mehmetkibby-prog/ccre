@@ -42,7 +42,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   guardian: {
     id: 'guardian', name: 'Muhafız', weapon: 'sword',
     desc: 'Kalkanı ve kılıcıyla ön safta durur. Düşmanı çeker, üstüne atılır, sersemletir.',
-    baseHp: 280, hpPerLevel: 44, baseAtk: 15, atkPerLevel: 3.2, baseDef: 9, defPerLevel: 1.8,
+    baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 12, defPerLevel: 0,
     speed: 225 * BASE_MULT, range: 85,
     skills: [
       { id: 'g_basic', name: 'Kılıç Darbesi', desc: 'Yakın mesafe kılıç vuruşu.', kind: 'melee', unlock: 1, cooldownMs: 650, range: 85, mult: 1 },
@@ -57,7 +57,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   hunter: {
     id: 'hunter', name: 'Avcı', weapon: 'bow',
     desc: 'Uzaktan ok yağdırır. Hızlıdır, kritik vuruşları ölümcüldür.',
-    baseHp: 220, hpPerLevel: 34, baseAtk: 16, atkPerLevel: 3.5, baseDef: 6, defPerLevel: 1.2,
+    baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 5, defPerLevel: 0,
     speed: 250 * BASE_MULT, range: 470,
     skills: [
       { id: 'h_basic', name: 'Ok Atışı', desc: 'Tek hedefe ok.', kind: 'projectile', unlock: 1, cooldownMs: 650, range: 470, mult: 1 },
@@ -72,7 +72,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   arcanist: {
     id: 'arcanist', name: 'Arkanist', weapon: 'staff',
     desc: 'Yaşam Özü\'nü büyüye dönüştürür. Alan hasarı ve iyileştirme ustası.',
-    baseHp: 205, hpPerLevel: 32, baseAtk: 18, atkPerLevel: 3.7, baseDef: 5, defPerLevel: 1.1,
+    baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 5, defPerLevel: 0,
     speed: 225 * BASE_MULT, range: 440,
     skills: [
       { id: 'a_basic', name: 'Öz Kıvılcımı', desc: 'Tek hedefe büyü küresi.', kind: 'projectile', unlock: 1, cooldownMs: 650, range: 440, mult: 1 },

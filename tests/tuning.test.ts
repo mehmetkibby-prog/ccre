@@ -13,7 +13,7 @@ function char(over: Partial<CharState> = {}): CharState {
 }
 
 describe('yönetim ayarları oyunda işler', () => {
-  it('canavara özel ganimet: her öldürmede yalnız Kızıl ekipman, sabit Mücevher', () => {
+  it('canavara özel ganimet: her öldürmede yalnız Kızıl ekipman, mücevher düşmez', () => {
     applyTuning({ monsters: { shadow_wolf: { equipChance: 1, rarity: { crimson: 1 }, gems: [7, 7], mats: { red_potion: 0, kor_seal: 0, strong_branch: 0, white_pearl: 0 } } } });
     const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
     w.join(1, char()); const p = w.bySid.get(1)!;
@@ -26,7 +26,7 @@ describe('yönetim ayarları oyunda işler', () => {
     const items = [...z.lootById.values()].filter((l) => l.payload.kind === 'item');
     expect(items.length).toBe(20);
     expect(items.every((l) => l.payload.kind === 'item' && l.payload.item.rarity === 'crimson')).toBe(true);
-    expect(p.char.gems).toBe(140);
+    expect(p.char.gems).toBe(0); // canavarlardan mücevher düşmez
   });
 
   it('efsun: sayı oranı, kapalı efsun ve kademe değerleri', () => {
@@ -60,6 +60,6 @@ describe('yönetim ayarları oyunda işler', () => {
     w.join(1, char()); const p = w.bySid.get(1)!;
     const hp0 = p.stats.maxHp;
     expect(w.adminSetPlayer(1, { level: 40, gems: 999 })).toBe(true);
-    expect(p.char.level).toBe(40); expect(p.char.gems).toBe(999); expect(p.stats.maxHp).toBeGreaterThan(hp0); expect(p.hp).toBe(p.stats.maxHp);
+    expect(p.char.level).toBe(40); expect(p.char.gems).toBe(999); expect(p.stats.maxHp).toBe(hp0); expect(p.hp).toBe(p.stats.maxHp); // seviye canı artırmaz (yalnız statü puanı)
   });
 });

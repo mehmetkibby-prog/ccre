@@ -872,7 +872,8 @@ export class World {
     // bölge seviye sınırı: haritanın üst sınırını aşan oyuncuya eşya/malzeme düşmesi çok azalır
     const over = overLevelMul(prof, lvl0);
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
-    const gems = Math.round(randInt(prof.gems[0], prof.gems[1]) * vm * TUNING.gemMul);
+    // canavarlardan mücevher düşmez (mücevher yalnız satış, görev ve ödüllerden kazanılır)
+    const gems = 0;
     const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul * (1 + bf.essPct / 100));
     // lonca öz vergisi: kazancın vergi oranı kadarı lonca hazinesine (ana sürece toplu bildirilir)
     let ess2 = ess;
@@ -988,6 +989,9 @@ export class World {
       const t = this.towerProg(p), r = towerRoom(t.f);
       this.moveToZone(p, z, r.entry.x + (rnd() - 0.5) * 60, r.entry.y);
       this.towerSend(p);
+    } else if (where === 'here' && z === p.zone) {
+      // "burada doğ": öldüğü yerde (aynı haritada) doğar; köy merkezine taşınmaz
+      p.dirty |= Upd.POS;
     } else this.moveToZone(p, z, z.layout.spawn.x + (rnd() - 0.5) * 80, z.layout.spawn.y + (rnd() - 0.5) * 60);
     this.sendJson(p, { t: 'respawned', hp: p.hp });
     this.save(p);
