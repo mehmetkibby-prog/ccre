@@ -856,7 +856,9 @@ export class World {
     const c = p.char;
     const lvl0 = c.level; // öldürme anındaki seviye (TP ile seviye atlamadan önce): bölge sınırı buna göre
     const lvMod = (lv: number) => { const df = lv - m.level; return df > 5 ? Math.max(0.1, 1 - (df - 5) * 0.12) : df < -3 ? 1.2 : 1; };
-    const mod = lvMod(c.level);
+    // ganimet (ekipman, malzeme, öz) seviye farkıyla gizlice azalmaz: yönetimde yazan şans geçerli. Çok yüksek seviyeli
+    // oyuncu için tek kural bölgenin "seviye sınırı" (yönetimde görünür). Seviye farkı yalnız TP'yi etkiler.
+    const mod = 1;
     const bf = charBuffs(c.misc.buffs, this.now);
     // TP: grupta, canavarın çevresindeki (geniş menzil) grup üyeleri paylaşır; her üyenin kendi seviye ve buff çarpanıyla
     for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) {
@@ -903,7 +905,8 @@ export class World {
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
-      if (rnd() < prof.equipChance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul * (1 + bf.dropPct / 100) || (m.def.boss && over === 1)) {
+      const pe = prof.equipChance * VARIANT_LOOT_MULT[m.variant] * over * TUNING.dropMul * (1 + bf.dropPct / 100);
+      if ((m.def.boss && over === 1) || this.equipRoll(p, pe)) {
         const item = this.rollEquipment(p, prof.rarityWeights, m.variant === 2);
         if (item) this.dropLoot(p, m, { kind: 'item', item });
       }
@@ -924,6 +927,19 @@ export class World {
       } else if (MATERIAL.has(d.key) || MALL.has(d.key)) this.dropLoot(p, m, { kind: 'mat', key: d.key, qty: randInt(d.qty[0], d.qty[1]) });
     }
     p.selfDirty |= 1; p.markSave();
+  }
+
+  /**
+   * Ekipman düşer mi: saf zar yerine sayaç. Her öldürmede şans (biraz oynayarak) birikir, 1'i geçince eşya düşer.
+   * Yönetimde "%33" ise gerçekten ortalama her 3 öldürmede 1 düşer; şanssızlıktan 10-15 öldürme boş geçmez.
+   */
+  equipRoll(p: Player, chance: number): boolean {
+    if (chance <= 0) return false;
+    if (chance >= 1) return true;
+    p.equipAcc = (p.equipAcc ?? rnd() * 0.6) + chance * (0.75 + rnd() * 0.5);
+    if (p.equipAcc < 1) return false;
+    p.equipAcc -= 1;
+    return true;
   }
 
   rollEquipment(p: Player, weights: Partial<Record<Rarity, number>>, shift: boolean): ItemInstance | null {

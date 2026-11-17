@@ -200,7 +200,7 @@ export function ZoneLootTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: 
   const chance = z.equipChance ?? prof.equipChance;
   const rw = (z.rarity ?? prof.rarityWeights) as Record<string, number>;
   const wsum = RARITIES.reduce((a, r) => a + (rw[r] ?? 0) * (t.rarityDrop[r] ?? 1), 0);
-  const odds = (p: number) => (p <= 0 ? '—' : `≈ her ${fmtN(Math.max(1, 1 / p), 0)} öldürmede 1`);
+  const odds = (p: number) => (p <= 0 ? 'hiç düşmez' : p >= 1 ? 'her öldürmede' : `ortalama her ${fmtN(1 / p, 1 / p < 10 ? 1 : 0)} öldürmede 1`);
   const cap = z.maxLevel ?? ZONE_LEVEL_CAP[id] ?? 0, overMul = z.overMul ?? OVER_LEVEL_MUL;
   const monsters = [...new Set(def.spawns.map((g) => g.monster))].map((mid) => MONSTERS.find((m) => m.id === mid)?.name ?? mid);
   const custom = (mid: string) => !!(t.zoneLoot?.[mid] && Object.keys(t.zoneLoot[mid]).length);
@@ -222,8 +222,16 @@ export function ZoneLootTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: 
       </section>
       <section className="admin-sec">
         <h4>Ekipman düşmesi</h4>
-        <label className="admin-row"><span className="lab"><b>Düşme şansı (%)</b><small>{odds(chance * t.dropMul)} (normal canavar)</small></span>
+        <label className="admin-row"><span className="lab"><b>Düşme şansı (%)</b><small>Normal canavarda {odds(chance * t.dropMul)} ekipman</small></span>
           <Num v={z.equipChance === undefined ? undefined : +(z.equipChance * 100).toFixed(3)} def={prof.equipChance * 100} min={0} max={100} on={(v) => setZ({ equipChance: v === undefined ? undefined : v / 100 })} dis={dis} /><span /></label>
+        {/* oyunda gerçekte ne olur: sayaçlı düşme (uzun şanssız seri yok), çeşit ve seviye sınırı dahil */}
+        <div className="drop-explain">
+          <div><span>Normal canavar</span><b>{odds(chance * t.dropMul)}</b></div>
+          <div><span>Agresif canavar (×1,35)</span><b>{odds(chance * t.dropMul * 1.35)}</b></div>
+          <div><span>Katil canavar (×2,4)</span><b>{odds(chance * t.dropMul * 2.4)}</b></div>
+          {cap > 0 && <div className="warn"><span>Sv. {cap + 1}+ oyuncu (seviye sınırı, ×%{fmtN(overMul * 100, 1)})</span><b>{odds(chance * t.dropMul * overMul)}</b></div>}
+          <small>Şans her öldürmede birikir; birikim dolunca eşya düşer. Bu yüzden yazan sıklık gerçekten tutar, 10-15 öldürmelik şanssız seriler olmaz (küçük oynamayla, tam düzenli değil).{t.dropMul !== 1 ? ` Genel düşme çarpanı ${fmtN(t.dropMul)}× dahil.` : ''} Nadirlik dağılımı aşağıda: düşen eşyanın rengini belirler.</small>
+        </div>
         <div className="adm-fields six">
           {RARITIES.map((r) => {
             const share = wsum > 0 ? ((rw[r] ?? 0) * (t.rarityDrop[r] ?? 1)) / wsum : 0;
@@ -283,7 +291,7 @@ export function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string
   };
   const matIds = useMemo(() => MATERIALS.map((x) => x.id), []);
   const effective = (p: number) => p * t.dropMul; // genel düşme çarpanı
-  const odds = (p: number) => (p <= 0 ? '—' : `≈ her ${fmtN(Math.max(1, 1 / p), 0)} öldürmede 1`);
+  const odds = (p: number) => (p <= 0 ? 'hiç düşmez' : p >= 1 ? 'her öldürmede' : `ortalama her ${fmtN(1 / p, 1 / p < 10 ? 1 : 0)} öldürmede 1`);
   return (
     <>
       <section className="admin-sec">

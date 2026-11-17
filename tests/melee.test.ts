@@ -118,3 +118,15 @@ describe('Market: Mücevherle Kırmızı İksir', () => {
     expect(p.char.gems).toBe(5); expect(p.char.materials.red_potion).toBe(25);
   });
 });
+
+describe('ekipman düşmesi: yazan sıklık tutar', () => {
+  it('%33 şans: ortalama her 3 öldürmede 1, uzun şanssız seri yok', () => {
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mkChar()); const p = w.bySid.get(1)!;
+    let n = 0, gap = 0, maxGap = 0;
+    for (let i = 0; i < 300; i++) { if (w.equipRoll(p, 0.33)) { n++; maxGap = Math.max(maxGap, gap); gap = 0; } else gap++; }
+    expect(n).toBeGreaterThanOrEqual(92); expect(n).toBeLessThanOrEqual(108);
+    expect(maxGap).toBeLessThanOrEqual(4);
+    expect(w.equipRoll(p, 0)).toBe(false); expect(w.equipRoll(p, 1)).toBe(true);
+  });
+});
