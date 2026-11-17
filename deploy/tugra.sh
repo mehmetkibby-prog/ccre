@@ -88,7 +88,10 @@ case "${1:-}" in
     site=/etc/nginx/sites-available/coreoflife; SSLD=/etc/ssl/cloudflare
     eski=$(grep -oP 'server_name \K[a-z0-9.-]+' "$site" | grep -v '^www\.' | grep -vx "$yeni" | head -1 || true)
     pem=$SSLD/$yeni.pem; key=$SSLD/$yeni.key
-    if [ ! -s "$pem" ] || [ ! -s "$key" ]; then
+    # 'tugra ssl' ile alınan Let's Encrypt sertifikası varsa o kullanılır (Cloudflare bulutu kapalıyken tarayıcılar tanır)
+    le=/etc/letsencrypt/live/$yeni
+    if [ -s "$le/fullchain.pem" ] && [ -s "$le/privkey.pem" ]; then pem=$le/fullchain.pem; key=$le/privkey.pem
+    elif [ ! -s "$pem" ] || [ ! -s "$key" ]; then
       # Cloudflare'in "Full" SSL modu için sunucuya özel sertifika (tarayıcı Cloudflare'in sertifikasını görür)
       openssl req -x509 -newkey rsa:2048 -nodes -days 3650 -subj "/CN=$yeni" -addext "subjectAltName=DNS:$yeni,DNS:www.$yeni" -keyout "$key" -out "$pem" 2>/dev/null
       chmod 600 "$key"; echo "sunucu sertifikası üretildi: $pem (Cloudflare'de $yeni için SSL/TLS modu 'Full' olmalı)"
@@ -98,6 +101,7 @@ case "${1:-}" in
       echo "# tugra alan $yeni ile üretildi ($(date +%F))"
       konum() {
         echo "    client_max_body_size 64k;"
+        echo "    location ^~ /.well-known/acme-challenge/ { root /var/www/acme; default_type text/plain; }"
         echo "    if (\$host = www.$yeni) { return 301 https://$yeni\$request_uri; }"
         # eski 2D sayfalarına giden bağlantılar (rehber, forum, ön kayıt…) 2D'nin yeni adresine yönlenir
         echo "    location ~ ^/(rehber|forum|on-kayit|akademi-kayit|col-site|_game|game|voice)(/|\$) { return 301 https://2d.$yeni\$request_uri; }"
@@ -108,7 +112,8 @@ case "${1:-}" in
       echo "server {"
       echo "    listen 80; listen [::]:80;"
       echo "    server_name $yeni www.$yeni;"
-      echo "    if (\$http_x_forwarded_proto != \"https\") { return 301 https://$yeni\$request_uri; }"
+      echo "    set \$yonlen 1; if (\$http_x_forwarded_proto = \"https\") { set \$yonlen 0; } if (\$request_uri ~ ^/\\.well-known/acme-challenge/) { set \$yonlen 0; }"
+      echo "    if (\$yonlen) { return 301 https://$yeni\$request_uri; }"
       konum
       echo "}"
       # 443: Cloudflare "Full" modu
@@ -128,5 +133,23 @@ case "${1:-}" in
     if nginx -t 2>/dev/null; then systemctl reload nginx; echo "tamam: oyun artık https://$yeni adresinde${eski:+, $eski → $yeni yönleniyor}"
     else nginx -t; cp "$(ls -1t $site.yedek-* | head -1)" "$site"; systemctl reload nginx; echo "nginx ayarı hatalı, eski ayara dönüldü"; exit 1; fi
     ;;
-  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI}"; exit 1 ;;
+  ssl)
+    # Tarayıcıların tanıdığı ücretsiz Let's Encrypt sertifikası (90 günde bir kendiliğinden yenilenir).
+    # Bundan sonra Cloudflare'de turuncu bulut kapatılabilir: oyuncular sunucuya doğrudan bağlanır (düşük gecikme).
+    site=/etc/nginx/sites-available/coreoflife
+    alan_adi="${2:-$(grep -oP 'server_name \K[a-z0-9.-]+' "$site" | grep -v '^www\.' | head -1)}"
+    [ -n "$alan_adi" ] || { echo "alan adı bulunamadı: tugra ssl coreoflife.net"; exit 1; }
+    command -v certbot >/dev/null || { echo "certbot kuruluyor..."; apt-get update -qq && apt-get install -y -qq certbot >/dev/null; }
+    mkdir -p /var/www/acme
+    "$0" alan "$alan_adi" >/dev/null   # doğrulama konumu nginx'e eklenir (mevcut sertifikayla)
+    alanlar=(-d "$alan_adi"); getent hosts "www.$alan_adi" >/dev/null && alanlar+=(-d "www.$alan_adi")
+    if certbot certonly --webroot -w /var/www/acme "${alanlar[@]}" --agree-tos --register-unsafely-without-email -n --keep-until-expiring --deploy-hook "systemctl reload nginx"; then
+      "$0" alan "$alan_adi"
+      echo "sertifika: $(openssl x509 -in /etc/letsencrypt/live/$alan_adi/fullchain.pem -noout -issuer -enddate | tr '\n' ' ')"
+      echo "TAMAM. Artık Cloudflare'de $alan_adi kaydının turuncu bulutunu gri yapabilirsin (DNS only)."
+    else
+      echo "sertifika alınamadı; oyun eskisi gibi çalışmaya devam ediyor. Çıktıyı Claude'a gönder."; exit 1
+    fi
+    ;;
+  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI|ssl}"; exit 1 ;;
 esac
