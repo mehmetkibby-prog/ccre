@@ -33,6 +33,8 @@ export interface MonsterTune {
 export interface ZoneLootTune {
   equipChance?: number; rarity?: Record<string, number>; gems?: [number, number]; essence?: [number, number];
   mats?: Record<string, number>; drops?: DropTune[]; maxLevel?: number; overMul?: number;
+  /** malzeme adedi (en az, en çok) */
+  matQty?: Record<string, [number, number]>;
 }
 export interface DropTune { kind: 'item' | 'mat' | 'mall'; key: string; rarity?: string; chance: number; qty: [number, number] }
 export interface MallTune { price?: Record<string, number>; off?: string[]; wings?: { atk?: number; def?: number; crit?: number } }
@@ -328,6 +330,8 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     if (Object.keys(rar).length && Object.values(rar).some((x) => x > 0)) t.rarity = rar;
     const mats: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(m.mats))) { const n = num(v, 0, 1); if (key(k) && n !== undefined) mats[k] = n; }
     if (Object.keys(mats).length) t.mats = mats;
+    const mq: Record<string, [number, number]> = {}; for (const [k, v] of Object.entries(obj(m.matQty))) { const q = pair(v, 1, 9999); if (key(k) && q) mq[k] = [Math.round(q[0]), Math.round(Math.max(q[0], q[1]))]; }
+    if (Object.keys(mq).length) t.matQty = mq;
     set('drops', parseDrops(m.drops));
     const ml = num(m.maxLevel, 0, 120); if (ml !== undefined) t.maxLevel = Math.round(ml);
     set('overMul', num(m.overMul, 0, 1));

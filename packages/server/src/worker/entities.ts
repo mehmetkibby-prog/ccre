@@ -25,8 +25,6 @@ export class Player {
   cooldowns = [0, 0, 0, 0];
   /** Bekleme bitmeden (ağ dalgalanmasıyla) erken gelen düz saldırı: reddedilmez, süre dolunca uygulanır. */
   queuedAtk = 0; queuedAtkUntil = 0;
-  /** ekipman düşme sayacı (bkz. World.equipRoll) */
-  equipAcc: number | undefined = undefined;
   combatUntil = 0;
   dead = false;
   deadAt = 0;

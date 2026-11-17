@@ -1799,3 +1799,9 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .drop-explain > div b { color: #ffe3a0; }
 .drop-explain > div.warn b { color: #ff9a8a; }
 .drop-explain small { opacity: .75; font-size: 11px; margin-top: 3px; line-height: 1.35; }
+
+/* yönetim: ganimet sayfası */
+.loot-howto { margin-top: 8px; font-size: 12.5px; line-height: 1.5; padding: 8px 10px; border-radius: 8px; background: rgba(255, 216, 120, .06); border: 1px solid rgba(255, 216, 120, .18); }
+.loot-cap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
+.loot-table td { vertical-align: middle; }
+.loot-table tr.sum td { border-top: 1px solid rgba(255, 216, 120, .25); }

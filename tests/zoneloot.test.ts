@@ -75,3 +75,24 @@ it('Canavar doğrudan değerleri: ref seviyede girilen can/saldırı, diğer sev
   for (let i = 0; i < 400; i++) { const it = w.rollEquipment(p, { blue: 1 }, false); expect(['necklace', 'earring', 'bracelet']).not.toContain(it!.tpl); }
   applyTuning(structuredClone(DEFAULT_TUNING));
 });
+
+it('ganimet gerçek zar: %33 ekipman ortalamada tutar; bölge sınırı Öz ve malzemeye de uygulanır; malzeme adedi bölgeden', () => {
+  applyTuning({ ...structuredClone(DEFAULT_TUNING), zoneLoot: { bazaar: { equipChance: 0.33, rarity: { white: 70, blue: 30 }, essence: [10, 10], maxLevel: 10, overMul: 0.1, mats: { red_potion: 1 }, matQty: { red_potion: [3, 3] } } } });
+  const run = (level: number) => {
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mk(1, level)); const p = w.bySid.get(1)!;
+    (w as any).addXp = () => {}; // seviye sabit kalsın (TP ile Sv. 10'u geçip sınıra takılmasın)
+    const fox = [...(w as any).zones.get('bazaar').monsterList].find((m: any) => m.def.id === 'wild_fox' && m.sp.variant === 0);
+    for (let i = 0; i < 3000; i++) (w as any).rewardKill(p, fox);
+    const loot = [...p.zone.lootById.values()] as any[];
+    return { items: loot.filter((l) => l.payload.kind === 'item').length, pots: loot.filter((l) => l.payload.kind === 'mat' && l.payload.key === 'red_potion').map((l) => l.payload.qty), ess: p.char.essence };
+  };
+  const a = run(5);
+  expect(a.items).toBeGreaterThan(3000 * 0.33 * 0.85); expect(a.items).toBeLessThan(3000 * 0.33 * 1.15);
+  expect(a.pots.length).toBe(3000); expect(a.pots.every((q) => q === 3)).toBe(true);
+  expect(a.ess).toBe(30000);
+  const b = run(11); // Sv. 11 > sınır 10: her şeyin %10'u
+  expect(b.items).toBeLessThan(a.items * 0.2);
+  expect(b.ess).toBe(3000);
+  applyTuning(structuredClone(DEFAULT_TUNING));
+});

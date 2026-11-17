@@ -265,8 +265,8 @@ function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onC
   return (
     <div className="drop-info" onPointerDown={(e) => e.stopPropagation()}>
       <div className="di-head"><b>{def.name}</b> · düşenler<button className="x" onClick={onClose}>✕</button></div>
-      {over < 1 && <div className="di-warn">Bu bölge Sv. {r.maxLevel}'e kadar: senin seviyende düşme şansı {pct(over)} oranına iner.</div>}
-      {r.essence[1] > 0 && <div className="di-row cur"><img src={iconUrl('essence')} alt="" /><span>Öz</span><b>{Math.round(r.essence[0] * vm)}–{Math.round(r.essence[1] * vm)}</b></div>}
+      {over < 1 && <div className="di-warn">Bu bölge Sv. {r.maxLevel}'e kadar: senin seviyende ganimet (eşya, malzeme, Öz) {pct(over)} oranına iner.</div>}
+      {r.essence[1] > 0 && <div className="di-row cur"><img src={iconUrl('essence')} alt="" /><span>Öz</span><b>{Math.round(r.essence[0] * vm * over)}–{Math.round(r.essence[1] * vm * over)}</b></div>}
       {r.equipChance > 0 && (
         <div className="di-row"><img src={iconUrl('sword', 1)} alt="" /><span>Ekipman<small>{rw.map(([k, w]) => `${RARITY[k as keyof typeof RARITY]?.name ?? k} ${Math.round(w / rTot * 100)}%`).join(' · ')}</small></span><b>{pct(r.equipChance * vm * over * TUNING.dropMul)}</b></div>
       )}

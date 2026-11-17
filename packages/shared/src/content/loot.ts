@@ -72,8 +72,11 @@ export const LOOT_PROFILES: Record<string, LootProfile> = {
 export const VARIANT_LOOT_MULT = [1, 1.35, 2.4];
 export const KILLER_RARITY_SHIFT = 1; // katil varyant bir üst nadirliğe kayma şansı
 
-/** Varsayılan bölge seviye sınırları: üstündeki oyuncu o haritada az ganimet alır (yönetimden değişir). */
-export const ZONE_LEVEL_CAP: Record<string, number> = { bazaar: 10, forest: 30, frozen: 50 };
+/**
+ * Bölge seviye sınırı: bu seviyenin üstündeki oyuncu o haritada ganimetin (ekipman, malzeme, özel eşya, Öz) yalnız
+ * overMul kadarını alır. Ceza canavara göre değil bölgeye göre (Pazar Köyü Sv. 10'a kadar). Yönetimden değişir.
+ */
+export const ZONE_LEVEL_CAP: Record<string, number> = { bazaar: 10, forest: 20, frozen: 35 };
 export const OVER_LEVEL_MUL = 0.1;
 export interface ResolvedLoot {
   equipChance: number; rarityWeights: Partial<Record<Rarity, number>>; gems: [number, number]; essence: [number, number];
@@ -94,6 +97,7 @@ export function resolveLoot(t: GameTuning, mapId: string, theme: string, monster
     if (!isMat(id)) continue;
     const cur = mats.get(id); mats.set(id, { chance: ch, qty: cur?.qty ?? [1, 1] });
   }
+  for (const [id, q] of Object.entries(z?.matQty ?? {})) { const cur = mats.get(id); if (cur) cur.qty = q; }
   return {
     equipChance: m?.equipChance ?? z?.equipChance ?? base.equipChance,
     rarityWeights: (m?.rarity ?? z?.rarity ?? base.rarityWeights) as Partial<Record<Rarity, number>>,

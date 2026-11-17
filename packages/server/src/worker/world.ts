@@ -891,7 +891,8 @@ export class World {
     const vm = VARIANT_LOOT_MULT[m.variant] * (m.def.boss ? 20 : 1) * mod;
     // canavarlardan mücevher düşmez (mücevher yalnız satış, görev ve ödüllerden kazanılır)
     const gems = 0;
-    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * TUNING.essenceMul * (1 + bf.essPct / 100));
+    // Öz de bölge seviye sınırına tabi (sınırı aşan oyuncu ganimetin yalnız overMul kadarını alır)
+    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * over * TUNING.essenceMul * (1 + bf.essPct / 100));
     // lonca öz vergisi: kazancın vergi oranı kadarı lonca hazinesine (ana sürece toplu bildirilir)
     let ess2 = ess;
     if (p.guild && p.guild.tax > 0 && ess > 0) {
@@ -905,8 +906,9 @@ export class World {
     // ekipman
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
+      // gerçek zar: %2 ise ortalama 50 öldürmede 1, ama 3. öldürmede de 200.de de düşebilir
       const pe = prof.equipChance * VARIANT_LOOT_MULT[m.variant] * over * TUNING.dropMul * (1 + bf.dropPct / 100);
-      if ((m.def.boss && over === 1) || this.equipRoll(p, pe)) {
+      if ((m.def.boss && over === 1) || rnd() < pe) {
         const item = this.rollEquipment(p, prof.rarityWeights, m.variant === 2);
         if (item) this.dropLoot(p, m, { kind: 'item', item });
       }
@@ -927,19 +929,6 @@ export class World {
       } else if (MATERIAL.has(d.key) || MALL.has(d.key)) this.dropLoot(p, m, { kind: 'mat', key: d.key, qty: randInt(d.qty[0], d.qty[1]) });
     }
     p.selfDirty |= 1; p.markSave();
-  }
-
-  /**
-   * Ekipman düşer mi: saf zar yerine sayaç. Her öldürmede şans (biraz oynayarak) birikir, 1'i geçince eşya düşer.
-   * Yönetimde "%33" ise gerçekten ortalama her 3 öldürmede 1 düşer; şanssızlıktan 10-15 öldürme boş geçmez.
-   */
-  equipRoll(p: Player, chance: number): boolean {
-    if (chance <= 0) return false;
-    if (chance >= 1) return true;
-    p.equipAcc = (p.equipAcc ?? rnd() * 0.6) + chance * (0.75 + rnd() * 0.5);
-    if (p.equipAcc < 1) return false;
-    p.equipAcc -= 1;
-    return true;
   }
 
   rollEquipment(p: Player, weights: Partial<Record<Rarity, number>>, shift: boolean): ItemInstance | null {

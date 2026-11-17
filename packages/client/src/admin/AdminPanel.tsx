@@ -183,6 +183,18 @@ export function RarityTable({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: 
  * özel düşenler) ve seviye sınırı (üstündeki oyuncuya düşme çarpanı). Canavara özel ayar varsa onun üstüne yazar.
  */
 const LOOT_MAPS = () => Object.values(MAPS).filter((m) => m.spawns.length);
+/** "ortalama her N öldürmede 1" (gerçek zar: daha önce de, çok daha sonra da düşebilir). */
+function oneIn(p: number) {
+  if (p <= 0) return '—';
+  if (p >= 1) return 'her öldürmede';
+  const n = 1 / p;
+  return `ort. ${n < 10 ? fmtN(n, 1) : Math.round(n).toLocaleString('tr-TR')} öldürmede 1`;
+}
+
+/**
+ * Ganimet: bölge bölge, tek sayfa. Her satır "öldürme başına şans (%)": ne yazılırsa o (gerçek zar).
+ * Bölge seviye sınırını aşan oyuncu her şeyin (ekipman, malzeme, özel eşya, Öz) yalnız belirlenen yüzdesini alır.
+ */
 export function ZoneLootTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const maps = LOOT_MAPS();
   const [id, setId] = useState(maps[0]?.id ?? 'bazaar');
@@ -197,81 +209,106 @@ export function ZoneLootTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: 
     if (Object.keys(n).length) all[id] = n as ZoneLootTune; else delete all[id];
     setT({ ...t, zoneLoot: all });
   };
-  const chance = z.equipChance ?? prof.equipChance;
-  const rw = (z.rarity ?? prof.rarityWeights) as Record<string, number>;
-  const wsum = RARITIES.reduce((a, r) => a + (rw[r] ?? 0) * (t.rarityDrop[r] ?? 1), 0);
-  const odds = (p: number) => (p <= 0 ? 'hiç düşmez' : p >= 1 ? 'her öldürmede' : `ortalama her ${fmtN(1 / p, 1 / p < 10 ? 1 : 0)} öldürmede 1`);
   const cap = z.maxLevel ?? ZONE_LEVEL_CAP[id] ?? 0, overMul = z.overMul ?? OVER_LEVEL_MUL;
   const monsters = [...new Set(def.spawns.map((g) => g.monster))].map((mid) => MONSTERS.find((m) => m.id === mid)?.name ?? mid);
   const custom = (mid: string) => !!(t.zoneLoot?.[mid] && Object.keys(t.zoneLoot[mid]).length);
+  // ekipman: her renk için öldürme başına şans (iç kayıt: toplam şans + renk ağırlıkları)
+  const baseW = (z.rarity ?? prof.rarityWeights) as Record<string, number>;
+  const wsum = RARITIES.reduce((a, r) => a + (baseW[r] ?? 0), 0);
+  const chance = z.equipChance ?? prof.equipChance;
+  const per = (r: string) => (wsum > 0 ? (chance * (baseW[r] ?? 0)) / wsum : 0);
+  const effW = RARITIES.reduce((a, r) => a + (baseW[r] ?? 0) * (t.rarityDrop[r] ?? 1), 0);
+  const eff = (r: string) => (effW > 0 ? (chance * t.dropMul * (baseW[r] ?? 0) * (t.rarityDrop[r] ?? 1)) / effW : 0); // genel çarpanlar dahil
+  const setPer = (r: string, pct: number | undefined) => {
+    const cur: Record<string, number> = Object.fromEntries(RARITIES.map((x) => [x, per(x)]));
+    cur[r] = pct === undefined ? (wsum > 0 ? per(r) : 0) : pct / 100;
+    const tot = Object.values(cur).reduce((a, b) => a + b, 0);
+    if (tot <= 0) return setZ({ equipChance: 0, rarity: undefined });
+    setZ({ equipChance: Math.min(1, tot), rarity: Object.fromEntries(Object.entries(cur).filter(([, v]) => v > 0).map(([k, v]) => [k, +((v / tot) * 1000).toFixed(4)])) });
+  };
+  const ess = z.essence ?? prof.essence;
+  const qtyOf = (mid: string): [number, number] => z.matQty?.[mid] ?? prof.materials.find((x) => x.id === mid)?.qty ?? [1, 1];
+  const setQty = (mid: string, q: [number, number] | undefined) => { const n = { ...(z.matQty ?? {}) }; if (q) n[mid] = q; else delete n[mid]; setZ({ matQty: Object.keys(n).length ? n : undefined }); };
+  const globalNote = t.dropMul !== 1 || Object.values(t.rarityDrop).some((v) => v !== 1);
   return (
     <>
       <section className="admin-sec">
-        <h4>Bölge seç</h4>
+        <h4>Ganimet · bölge seç</h4>
         <div className="row wrap">{maps.map((m) => <button key={m.id} className={'btn small' + (m.id === id ? ' primary' : '')} onClick={() => setId(m.id)}>{m.name}{custom(m.id) ? ' •' : ''}</button>)}</div>
-        <div className="muted adm-hint" style={{ marginTop: 6 }}>{def.name} canavarları: {monsters.join(', ')}. Buradaki ayarlar bölgedeki bütün canavarlara uygulanır; boş kutu = varsayılan. Agresif canavar 1,35 kat, katil 2,4 kat daha çok bırakır; genel düşme çarpanı ({fmtN(t.dropMul)}×) da uygulanır. Oyuncular canavara tıklayıp "?" ile bu listeyi anında görür.</div>
+        <div className="loot-howto">
+          <b>{def.name}</b> · canavarlar: {monsters.join(', ')}.<br />
+          Her satıra <b>öldürme başına şans (%)</b> yaz; oyunda tam o şansla zar atılır. %2 = ortalama 50 öldürmede 1 ama şansa göre 3. öldürmede de, 200. öldürmede de düşebilir. <b>Zor düşen zor düşer.</b>{' '}
+          Agresif canavar ×1,35, katil ×2,4 kat daha çok bırakır. Boş kutu = varsayılan.
+        </div>
       </section>
       <section className="admin-sec">
         <h4>Seviye sınırı</h4>
-        <div className="muted adm-hint">Bu seviyenin üstündeki oyuncular {def.name}'nde çok az eşya ve malzeme alır (mücevher ve öz etkilenmez). 0 = sınır yok.</div>
-        <div className="adm-fields">
-          <label><span>En yüksek seviye</span><Num v={z.maxLevel} def={ZONE_LEVEL_CAP[id] ?? 0} min={0} max={120} step={1} w={80} dis={dis} on={(v) => setZ({ maxLevel: v })} /></label>
-          <label><span>Sınır üstü düşme (%)</span><Num v={z.overMul === undefined ? undefined : +(z.overMul * 100).toFixed(2)} def={OVER_LEVEL_MUL * 100} min={0} max={100} step={1} w={80} dis={dis} on={(v) => setZ({ overMul: v === undefined ? undefined : v / 100 })} /></label>
+        <div className="loot-cap">
+          <span>Sv.</span><Num v={z.maxLevel} def={ZONE_LEVEL_CAP[id] ?? 0} min={0} max={120} step={1} w={60} dis={dis} on={(v) => setZ({ maxLevel: v })} />
+          <span>'e kadar tam ganimet. Üstündeki oyuncu bu bölgede her şeyin</span>
+          <Num v={z.overMul === undefined ? undefined : +(z.overMul * 100).toFixed(2)} def={OVER_LEVEL_MUL * 100} min={0} max={100} step={1} w={60} dis={dis} on={(v) => setZ({ overMul: v === undefined ? undefined : v / 100 })} />
+          <span>%'ini alır (ekipman, malzeme, özel eşya, Öz).</span>
         </div>
-        <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>{cap > 0 ? `Sv. ${cap + 1} ve üstü: düşme şansları %${fmtN(overMul * 100, 1)} oranına iner.` : 'Bu bölgede seviye sınırı yok.'}</div>
+        <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>{cap > 0 ? `Örn. Sv. ${cap + 1} oyuncu burada %${fmtN(overMul * 100, 1)} ganimet alır. Ceza canavarın değil bölgenin seviyesine göre.` : '0 = bu bölgede seviye sınırı yok.'} TP bu sınırdan etkilenmez.</div>
       </section>
       <section className="admin-sec">
-        <h4>Ekipman düşmesi</h4>
-        <label className="admin-row"><span className="lab"><b>Düşme şansı (%)</b><small>Normal canavarda {odds(chance * t.dropMul)} ekipman</small></span>
-          <Num v={z.equipChance === undefined ? undefined : +(z.equipChance * 100).toFixed(3)} def={prof.equipChance * 100} min={0} max={100} on={(v) => setZ({ equipChance: v === undefined ? undefined : v / 100 })} dis={dis} /><span /></label>
-        {/* oyunda gerçekte ne olur: sayaçlı düşme (uzun şanssız seri yok), çeşit ve seviye sınırı dahil */}
-        <div className="drop-explain">
-          <div><span>Normal canavar</span><b>{odds(chance * t.dropMul)}</b></div>
-          <div><span>Agresif canavar (×1,35)</span><b>{odds(chance * t.dropMul * 1.35)}</b></div>
-          <div><span>Katil canavar (×2,4)</span><b>{odds(chance * t.dropMul * 2.4)}</b></div>
-          {cap > 0 && <div className="warn"><span>Sv. {cap + 1}+ oyuncu (seviye sınırı, ×%{fmtN(overMul * 100, 1)})</span><b>{odds(chance * t.dropMul * overMul)}</b></div>}
-          <small>Şans her öldürmede birikir; birikim dolunca eşya düşer. Bu yüzden yazan sıklık gerçekten tutar, 10-15 öldürmelik şanssız seriler olmaz (küçük oynamayla, tam düzenli değil).{t.dropMul !== 1 ? ` Genel düşme çarpanı ${fmtN(t.dropMul)}× dahil.` : ''} Nadirlik dağılımı aşağıda: düşen eşyanın rengini belirler.</small>
-        </div>
-        <div className="adm-fields six">
-          {RARITIES.map((r) => {
-            const share = wsum > 0 ? ((rw[r] ?? 0) * (t.rarityDrop[r] ?? 1)) / wsum : 0;
-            return <label key={r}><span style={{ color: RARITY[r].color }}>{RARITY[r].name} <small className="muted">%{fmtN(share * 100, 1)}</small></span><Num v={z.rarity?.[r]} def={(prof.rarityWeights as Record<string, number>)[r] ?? 0} min={0} max={10000} step={1} w={70} dis={dis} on={(v) => { const n = { ...(z.rarity ?? (prof.rarityWeights as Record<string, number>)) }; if (!v) delete n[r]; else n[r] = v; setZ({ rarity: Object.keys(n).length ? n : undefined }); }} /></label>;
-          })}
-        </div>
+        <h4>Ekipman</h4>
+        <div className="adm-table-wrap"><table className="adm-table loot-table">
+          <thead><tr><th>Renk</th><th>Şans (%)</th><th>Normal canavar</th>{cap > 0 && <th>Sv. {cap + 1}+ oyuncu</th>}</tr></thead>
+          <tbody>
+            {RARITIES.map((r) => (
+              <tr key={r}>
+                <td><b style={{ color: RARITY[r].color }}>{RARITY[r].name}</b><small>Kuşanmak için Sv. {RARITY[r].minLevel}</small></td>
+                <td><Num v={(z.rarity || z.equipChance !== undefined) && per(r) > 0 ? +(per(r) * 100).toFixed(4) : undefined} def={+(per(r) * 100).toFixed(4)} min={0} max={100} step={0.01} w={74} dis={dis} on={(v) => setPer(r, v)} /></td>
+                <td>{oneIn(eff(r))}</td>
+                {cap > 0 && <td className="muted">{oneIn(eff(r) * overMul)}</td>}
+              </tr>
+            ))}
+            <tr className="sum"><td><b>Toplam ekipman</b></td><td><b>%{fmtN(chance * 100, 2)}</b></td><td><b>{oneIn(chance * t.dropMul)}</b></td>{cap > 0 && <td className="muted">{oneIn(chance * t.dropMul * overMul)}</td>}</tr>
+          </tbody>
+        </table></div>
+        {globalNote && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>"Ortalama" sütunu Genel sekmesindeki düşme çarpanını ({fmtN(t.dropMul)}×) ve aşağıdaki nadirlik çarpanlarını içerir.</div>}
+        <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Düşen ekipmanın sınıfı rastgele (her sınıfa her sınıfın eşyası düşebilir). Kolye, küpe, bilezik canavardan düşmez.</div>
       </section>
       <section className="admin-sec">
-        <h4>Mücevher ve Öz (öldürme başına)</h4>
-        <div className="adm-fields">
-          {(['gems', 'essence'] as const).map((k) => (
-            <React.Fragment key={k}>
-              <label><span>{k === 'gems' ? 'Mücevher' : 'Öz'} en az</span><Num v={z[k]?.[0]} def={prof[k][0]} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setZ({ [k]: v === undefined && !z[k] ? undefined : [v ?? prof[k][0], Math.max(v ?? 0, (z[k] ?? prof[k])[1])] } as Partial<ZoneLootTune>)} /></label>
-              <label><span>{k === 'gems' ? 'Mücevher' : 'Öz'} en çok</span><Num v={z[k]?.[1]} def={prof[k][1]} min={0} max={1e6} step={1} w={80} dis={dis} on={(v) => setZ({ [k]: v === undefined && !z[k] ? undefined : [Math.min(v ?? 0, (z[k] ?? prof[k])[0]), v ?? prof[k][1]] } as Partial<ZoneLootTune>)} /></label>
-            </React.Fragment>
-          ))}
+        <h4>Öz (her öldürmede)</h4>
+        <div className="loot-cap">
+          <span>En az</span><Num v={z.essence?.[0]} def={prof.essence[0]} min={0} max={1e6} step={1} w={70} dis={dis} on={(v) => setZ({ essence: v === undefined && !z.essence ? undefined : [v ?? prof.essence[0], Math.max(v ?? 0, ess[1])] })} />
+          <span>en çok</span><Num v={z.essence?.[1]} def={prof.essence[1]} min={0} max={1e6} step={1} w={70} dis={dis} on={(v) => setZ({ essence: v === undefined && !z.essence ? undefined : [Math.min(v ?? 0, ess[0]), v ?? prof.essence[1]] })} />
+          <span>Öz</span>
         </div>
+        <div className="muted" style={{ fontSize: 11.5, marginTop: 4 }}>Agresif ×1,35, katil ×2,4{cap > 0 ? `; Sv. ${cap + 1}+ oyuncu %${fmtN(overMul * 100, 1)}` : ''}. Genel Öz çarpanı: {fmtN(t.essenceMul)}×. Canavarlar Mücevher bırakmaz.</div>
       </section>
       <section className="admin-sec">
         <h4>Malzemeler</h4>
-        <div className="adm-table-wrap"><table className="adm-table">
-          <thead><tr><th>Malzeme</th><th>Şans (%)</th><th>Zorluk</th></tr></thead>
+        <div className="adm-table-wrap"><table className="adm-table loot-table">
+          <thead><tr><th>Malzeme</th><th>Şans (%)</th><th>Adet</th><th>Normal canavar</th>{cap > 0 && <th>Sv. {cap + 1}+ oyuncu</th>}</tr></thead>
           <tbody>{MATERIALS.map((md) => {
             const dv = prof.materials.find((x) => x.id === md.id)?.chance ?? 0;
             const cur = z.mats?.[md.id] ?? dv;
             if (!dv && z.mats?.[md.id] === undefined && !showAll) return null;
+            const q = qtyOf(md.id);
             return (
               <tr key={md.id}>
                 <td><b style={{ color: md.color }}>{md.name}</b></td>
-                <td><Num v={z.mats?.[md.id] === undefined ? undefined : +(z.mats[md.id] * 100).toFixed(3)} def={dv * 100} min={0} max={100} on={(v) => { const mats = { ...(z.mats ?? {}) }; if (v === undefined) delete mats[md.id]; else mats[md.id] = v / 100; setZ({ mats: Object.keys(mats).length ? mats : undefined }); }} dis={dis} w={64} /></td>
-                <td><small>{odds(cur * t.dropMul)}</small></td>
+                <td><Num v={z.mats?.[md.id] === undefined ? undefined : +(z.mats[md.id] * 100).toFixed(4)} def={dv * 100} min={0} max={100} step={0.01} on={(v) => { const mats = { ...(z.mats ?? {}) }; if (v === undefined) delete mats[md.id]; else mats[md.id] = v / 100; setZ({ mats: Object.keys(mats).length ? mats : undefined }); }} dis={dis} w={74} /></td>
+                <td><span className="row" style={{ gap: 4 }}>
+                  <Num v={z.matQty?.[md.id]?.[0]} def={q[0]} min={1} max={9999} step={1} w={48} dis={dis} on={(v) => setQty(md.id, v === undefined ? undefined : [v, Math.max(v, q[1])])} />
+                  <span className="muted">–</span>
+                  <Num v={z.matQty?.[md.id]?.[1]} def={q[1]} min={1} max={9999} step={1} w={48} dis={dis} on={(v) => setQty(md.id, v === undefined ? undefined : [Math.min(q[0], v), v])} />
+                </span></td>
+                <td>{oneIn(cur * t.dropMul)}</td>
+                {cap > 0 && <td className="muted">{oneIn(cur * t.dropMul * overMul)}</td>}
               </tr>
             );
           })}</tbody>
         </table></div>
-        <button className="btn small ghost" style={{ marginTop: 6 }} onClick={() => setShowAll(!showAll)}>{showAll ? 'Yalnız düşenleri göster' : 'Bütün malzemeleri göster'}</button>
+        <button className="btn small ghost" style={{ marginTop: 6 }} onClick={() => setShowAll(!showAll)}>{showAll ? 'Yalnız düşenleri göster' : '+ Başka malzeme ekle (bütün malzemeleri göster)'}</button>
       </section>
       <section className="admin-sec">
-        <h4>Özel düşenler (bölgedeki her canavar)</h4>
-        <DropListEditor drops={z.drops ?? []} setDrops={(n) => setZ({ drops: n.length ? n : undefined })} dis={dis} empty="Özel düşen yok. Eşya, malzeme ya da Nesne Market ürünü ekleyebilirsin." />
+        <h4>Özel eşyalar (isteğe bağlı)</h4>
+        <div className="muted" style={{ fontSize: 11.5, marginBottom: 6 }}>Belirli bir eşya (ör. Mavi Muhafız Zırhı), malzeme ya da Nesne Market ürünü; şans ve adet yine öldürme başına.</div>
+        <DropListEditor drops={z.drops ?? []} setDrops={(n) => setZ({ drops: n.length ? n : undefined })} dis={dis} empty="Özel eşya yok." />
       </section>
     </>
   );
