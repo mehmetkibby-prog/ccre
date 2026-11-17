@@ -204,6 +204,7 @@ function Inventory({ game }: { game: Game }) {
   const [sel, setSel] = useState<string | null>(null);
   const [tab, setTab] = useState<BagTab>(() => (target ? 'esya' : 'esya'));
   const [rename, setRename] = useState('');
+  const [encItem, setEncItem] = useState<string | null>(null);
   const now = useClock(1000);
   if (!self) return null;
   const selItem = self.bag.find((b) => b.id === sel);
@@ -213,6 +214,8 @@ function Inventory({ game }: { game: Game }) {
   const layout: (Slot | null)[] = ['earring', 'helmet', 'necklace', 'weapon', 'armor', 'bracelet', null, 'boots', null];
   // market ürünü bir ekipmana uygulanacaksa: eşyaya dokununca uygulanır
   const pick = (id: string) => {
+    // efsun ürünleri: eşya bir kez seçilir, panelde Değiştir/Artır art arda basılır
+    if (target === 'enchant_change' || target === 'enchant_add') { setEncItem(id); store.set({ mallTarget: null }); setSel(null); clear(); return; }
     if (target) { game.useItem(target, id); store.set({ mallTarget: null }); setSel(null); clear(); return; }
     setSel(sel === id ? null : id);
   };
@@ -311,7 +314,64 @@ function Inventory({ game }: { game: Game }) {
         </div>
       </div>
       {tip && <ItemTip {...tip} />}
+      {encItem && <EnchantBox game={game} itemId={encItem} onClose={() => setEncItem(null)} />}
     </Panel>
+  );
+}
+
+/** Efsun penceresi: seçili ekipmanın efsunları; Değiştir / Artır düğmelerine art arda basılır (her basış 1 ürün harcar). */
+function EnchantBox({ game, itemId, onClose }: { game: Game; itemId: string; onClose: () => void }) {
+  const self = useStore((s) => s.self);
+  const [pending, setPending] = useState(0);
+  const [flash, setFlash] = useState(0);
+  const it = self ? (self.bag.find((x) => x.id === itemId) ?? Object.values(self.equip).find((x) => x?.id === itemId)) : undefined;
+  const sig = it ? JSON.stringify(it.ench) : '';
+  const [lastSig, setLastSig] = useState(sig);
+  // sunucudan yeni efsunlar gelince bekleme biter ve satırlar parlar
+  useEffect(() => { if (sig !== lastSig) { setLastSig(sig); setPending(0); setFlash((f) => f + 1); } }, [sig, lastSig]);
+  useEffect(() => { if (!pending) return; const t = setTimeout(() => setPending(0), 2500); return () => clearTimeout(t); }, [pending]);
+  if (!self || !it) return null;
+  const tpl = ITEM_TPL.get(it.tpl);
+  const nChange = self.materials.enchant_change ?? 0, nAdd = self.materials.enchant_add ?? 0;
+  const use = (k: 'enchant_change' | 'enchant_add') => { if (pending) return; setPending(Date.now()); game.useItem(k, it.id); };
+  const full = it.ench.length >= 4;
+  return createPortal(
+    <div className="enc-back" onPointerDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="enc-box" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="enc-hd">
+          <img src={iconUrl(itemIconName(it))} alt="" />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <b style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</b>
+            <div className="muted" style={{ fontSize: 11.5 }}>{tpl ? SLOT_NAMES[tpl.slot] : ''} · Efsun {it.ench.length}/4</div>
+          </div>
+          <button className="btn small ghost" onClick={onClose}>✕</button>
+        </div>
+        <div key={flash} className={'enc-list' + (flash ? ' flash' : '')}>
+          {it.ench.length === 0 && <div className="muted" style={{ fontSize: 12.5, padding: 6 }}>Bu eşyada efsun yok. Önce <b>Artır</b> ile efsun ekle.</div>}
+          {it.ench.map((e, i) => {
+            const E = ENCHANTS[e.t], tier = e.tier ?? 0;
+            return (
+              <div key={i} className={'er t' + tier}>
+                <span className="k">{E.name}</span>
+                <span className="v">{E.unit === '%' ? `%${e.v}` : `+${e.v.toLocaleString('tr-TR')}`}</span>
+                <span className="tr" title={TIER_NAMES[tier]}>{[0, 1, 2, 3].map((q) => <i key={q} className={q <= tier ? 'on' : ''} />)}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="enc-acts">
+          <button className="btn primary" disabled={!!pending || nChange <= 0 || it.ench.length === 0} onClick={() => use('enchant_change')}>
+            <img src={iconUrl(mallIcon('enchant_change'))} alt="" /> Değiştir <small>× {nChange}</small>
+          </button>
+          <button className="btn green" disabled={!!pending || nAdd <= 0 || full} onClick={() => use('enchant_add')} title={full ? 'Bu eşyada 4 efsun var' : ''}>
+            <img src={iconUrl(mallIcon('enchant_add'))} alt="" /> Artır <small>× {nAdd}</small>
+          </button>
+        </div>
+        {nChange <= 0 && nAdd <= 0 && <div className="muted" style={{ fontSize: 12, marginTop: 6 }}>Efsun ürünün kalmadı. <button className="btn small" onClick={() => store.set({ panel: 'mall' })}>Nesne Market</button></div>}
+        <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>Her basış 1 ürün harcar. Beğendiğin efsunlar gelince pencereyi kapatman yeterli.</div>
+      </div>
+    </div>,
+    document.body,
   );
 }
 

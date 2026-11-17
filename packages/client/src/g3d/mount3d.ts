@@ -41,6 +41,24 @@ function legPose(u: number, st: number, fwd: number, back: number, flexL: number
  * aşağısı tail2, arası yumuşak geçiş), kökün üstündeki sağrı ise gövdeye bağlanır.
  */
 const _retailed = new WeakSet<THREE.Object3D>();
+/** Dokudan (uv → 0–255 parlaklık) okuyucu; doku okunamazsa null. */
+function texLum(map: THREE.Texture | null | undefined): ((u: number, v: number) => number) | null {
+  const img = map?.image as CanvasImageSource & { width: number; height: number } | undefined;
+  if (!img || !img.width || typeof document === 'undefined') return null;
+  try {
+    const W = Math.min(512, img.width), H = Math.min(512, img.height);
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const x = c.getContext('2d', { willReadFrequently: true }); if (!x) return null;
+    x.drawImage(img, 0, 0, W, H);
+    const px = x.getImageData(0, 0, W, H).data;
+    const flip = map!.flipY;
+    return (u, v) => {
+      const X = Math.min(W - 1, Math.max(0, Math.floor((u - Math.floor(u)) * W)));
+      const vv = v - Math.floor(v), Y = Math.min(H - 1, Math.max(0, Math.floor((flip ? 1 - vv : vv) * H)));
+      const k = (Y * W + X) * 4; return (px[k] + px[k + 1] + px[k + 2]) / 3;
+    };
+  } catch { return null; }
+}
 function retailHorse(scene: THREE.Object3D) {
   if (_retailed.has(scene)) return; _retailed.add(scene);
   scene.updateMatrixWorld(true);
@@ -54,18 +72,50 @@ function retailHorse(scene: THREE.Object3D) {
     if (!m.isSkinnedMesh) return;
     const bones = m.skeleton.bones, i1 = bones.indexOf(t1!), i2 = bones.indexOf(t2!), ib = bones.indexOf(body!);
     if (i1 < 0 || i2 < 0 || ib < 0) return;
-    const pos = m.geometry.attributes.position, si = m.geometry.attributes.skinIndex, sw = m.geometry.attributes.skinWeight;
+    const pos = m.geometry.attributes.position, si = m.geometry.attributes.skinIndex, sw = m.geometry.attributes.skinWeight, uv = m.geometry.attributes.uv;
+    // Kuyruk kılı siyah: dokudan köşe parlaklığı okunur. Kuyruğun sağrıya bakan ön yüzü (kuyruk kökünün hemen
+    // önünde) geometrik ölçüte girmiyordu ve arka bacak kemiklerinde kalıyordu: at koşunca kuyruktan bacağa
+    // gerilen siyah bir perde oluşuyordu. Siyah + kuyruk sütununda olan her köşe artık kuyruk kemiklerine bağlı.
+    const lum = texLum((m.material as THREE.MeshStandardMaterial).map);
+    const wp = new Float32Array(pos.count * 3), lumA = new Float32Array(pos.count);
+    const toTail = (i: number, y: number) => {
+      // aşağı inildikçe tail2'ye geçiş
+      const k = THREE.MathUtils.clamp((p1.y - 0.05 - y) / Math.max(0.05, (p1.y - p2.y) * 1.4), 0, 1);
+      si.setXYZW(i, i1, i2, 0, 0); sw.setXYZW(i, 1 - k, k, 0, 0);
+    };
     for (let i = 0; i < pos.count; i++) {
       v.fromBufferAttribute(pos, i); m.applyBoneTransform(i, v); v.applyMatrix4(m.matrixWorld);
+      wp[i * 3] = v.x; wp[i * 3 + 1] = v.y; wp[i * 3 + 2] = v.z;
       const dx = Math.abs(v.x - p1.x);
-      if (v.z < p1.z - 0.02 && dx < 0.2 && v.y < p1.y + 0.15) {
-        // aşağı inildikçe tail2'ye geçiş
-        const k = THREE.MathUtils.clamp((p1.y - 0.05 - v.y) / Math.max(0.05, (p1.y - p2.y) * 1.4), 0, 1);
-        si.setXYZW(i, i1, i2, 0, 0); sw.setXYZW(i, 1 - k, k, 0, 0);
-      } else if (v.y >= p1.y + 0.15) {
+      const L = lum && uv ? lum(uv.getX(i), uv.getY(i)) : -1;
+      lumA[i] = L;
+      const hair = L >= 0 && L < 50 && dx < 0.26 && v.z < p1.z + 0.15 && v.y < p1.y + 0.12 && v.y > 0.12;
+      if (hair || (v.z < p1.z - 0.02 && dx < 0.2 && v.y < p1.y + 0.15)) toTail(i, v.y);
+      else if (v.y >= p1.y + 0.15) {
         // sağrı: kuyruk kemiğine bağlı kalmasın
         let tw = 0; for (let c = 0; c < 4; c++) { const j = si.getComponent(i, c); if (j === i1 || j === i2) tw += sw.getComponent(i, c); }
         if (tw > 0.01) { si.setXYZW(i, ib, 0, 0, 0); sw.setXYZW(i, 1, 0, 0, 0); }
+      }
+    }
+    // kuyruk kenarı: kuyruk köşesiyle aynı üçgendeki, hâlâ arka bacağa bağlı koyu/arka köşeler de kuyruğa geçer
+    // (yoksa o üçgenler koşarken bacağa doğru gerilen sivri siyah dikenler olur)
+    const idx = m.geometry.index;
+    if (idx) {
+      const isLeg = bones.map((b) => /^b[lr][ULP]$/.test(b.name));
+      const dom = (i: number) => { let b = 0, w = 0; for (let c = 0; c < 4; c++) { const ww = sw.getComponent(i, c); if (ww > w) { w = ww; b = si.getComponent(i, c); } } return b; };
+      for (let pass = 0; pass < 3; pass++) {
+        const add: number[] = [];
+        for (let t = 0; t < idx.count; t += 3) {
+          const a = [idx.getX(t), idx.getX(t + 1), idx.getX(t + 2)], d = a.map(dom);
+          if (!d.some((b) => b === i1 || b === i2)) continue;
+          for (let j = 0; j < 3; j++) {
+            const i = a[j];
+            if (!isLeg[d[j]] || wp[i * 3 + 2] > p1.z + 0.12 || wp[i * 3 + 1] < 0.12 || Math.abs(wp[i * 3] - p1.x) > 0.28) continue;
+            if (lumA[i] >= 0 && lumA[i] < 62) add.push(i);
+          }
+        }
+        if (!add.length) break;
+        for (const i of add) toTail(i, wp[i * 3 + 1]);
       }
     }
     si.needsUpdate = true; sw.needsUpdate = true;
@@ -164,10 +214,10 @@ export function createMount(): MountRig | null {
       bones.chest.rotation.x = -bones.body.rotation.x * 0.3;
       // sarkan kuyruk: dururken hafif yana savrulur (sinek kovar gibi), yürürken sallanır, dörtnalada geriye uçuşur
       if (bones.tail1) {
-        bones.tail1.rotation.x = 0.12 + (0.25 * w + 0.85 * g) * a + Math.sin(TAU * cycle + 1) * 0.08 * a;
+        bones.tail1.rotation.x = 0.24 + (0.14 * w + 0.45 * g) * a + Math.sin(TAU * cycle + 1) * 0.08 * a;
         bones.tail1.rotation.z = Math.sin(t * (a > 0.5 ? 5 : 1.7)) * (0.07 + 0.1 * (1 - a)) + Math.max(0, Math.sin(t * 0.9)) ** 8 * 0.25 * (1 - a);
       }
-      if (bones.tail2) { bones.tail2.rotation.x = (0.1 * w + 0.35 * g) * a + Math.sin(TAU * cycle + 0.4) * 0.12 * a; bones.tail2.rotation.z = Math.sin(t * (a > 0.5 ? 5 : 1.7) - 0.8) * 0.12; }
+      if (bones.tail2) { bones.tail2.rotation.x = (0.08 * w + 0.22 * g) * a + Math.sin(TAU * cycle + 0.4) * 0.12 * a; bones.tail2.rotation.z = Math.sin(t * (a > 0.5 ? 5 : 1.7) - 0.8) * 0.12; }
       rig.gallop = g; rig.move = a; rig.cycle = cycle;
     },
   };

@@ -1635,3 +1635,23 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
   .tr-btns { right: calc(124px + env(safe-area-inset-right, 0px)); }
   .menu.mopen { top: calc(62px + env(safe-area-inset-top, 0px)); right: calc(124px + env(safe-area-inset-right, 0px)); }
 }
+
+/* efsun penceresi */
+.enc-back { position: fixed; inset: 0; z-index: 80; background: rgba(8, 6, 4, .45); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.enc-box { width: min(380px, 100%); max-height: calc(100dvh - 32px); overflow: auto; background: var(--glass2); border-radius: 14px; padding: 14px; box-shadow: 0 18px 50px rgba(0,0,0,.55), inset 0 0 0 1px var(--core-dim, #8a6a30); }
+.enc-hd { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.enc-hd img { width: 42px; height: 42px; object-fit: contain; }
+.enc-list { display: flex; flex-direction: column; gap: 4px; min-height: 40px; }
+.enc-list .er { display: flex; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 8px; background: rgba(255,255,255,.05); font-size: 13px; }
+.enc-list .er .k { flex: 1; }
+.enc-list .er .v { font-weight: 800; }
+.enc-list .er.t1 .v { color: #7ad0ff; } .enc-list .er.t2 .v { color: #c890ff; } .enc-list .er.t3 .v { color: #ffb040; }
+.enc-list .er .tr { display: flex; gap: 2px; }
+.enc-list .er .tr i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.18); }
+.enc-list .er .tr i.on { background: var(--core, #e2b250); }
+.enc-list.flash .er { animation: encflash .6s ease-out; }
+@keyframes encflash { from { background: rgba(255, 214, 120, .45); } to { background: rgba(255,255,255,.05); } }
+.enc-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.enc-acts .btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 6px; font-size: 14px; }
+.enc-acts .btn img { width: 22px; height: 22px; object-fit: contain; }
+.enc-acts .btn small { opacity: .8; font-size: 11px; }
