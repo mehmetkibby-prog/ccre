@@ -44,7 +44,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'skills' && <Skills game={game} />}
       {p === 'teleport' && <Teleport game={game} />}
       {p === 'map' && <BigMap game={game} />}
-      {p === 'settings' && <Settings />}
+      {p === 'settings' && <Settings game={game} />}
       {p === 'npc' && <NpcDialog game={game} />}
       {p === 'shop' && <Shop game={game} />}
       {p === 'upgrade' && <Upgrade game={game} />}
@@ -562,8 +562,11 @@ function useColo() {
   }, []);
   return c;
 }
-function NetStats() {
+function NetStats({ game }: { game: Game }) {
   const ping = useStore((x) => x.ping), fps = useStore((x) => x.fps);
+  // tanı: ekran kartında tutulan geometri/doku/program sayısı (uzun oturumda sürekli artıyorsa sızıntı var)
+  const [mem, setMem] = useState('');
+  useEffect(() => { const f = () => { const i = game.renderer.renderer.info; setMem(`${i.memory.geometries} geo · ${i.memory.textures} doku · ${i.programs?.length ?? 0} program`); }; f(); const iv = setInterval(f, 1000); return () => clearInterval(iv); }, [game]);
   const colo = useColo();
   const path = useStore((x) => x.netPath);
   return (
@@ -573,17 +576,18 @@ function NetStats() {
         <div><small>Kare hızı</small><b>{fps} fps</b></div>
       </div>
       {path === 'direct' && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı: <b>doğrudan sunucuya</b> (Türkiye)</div>}
+      <div className="muted" style={{ fontSize: 10, marginTop: 2, opacity: 0.7 }}>Bellek: {mem}</div>
       {path !== 'direct' && colo && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı noktası: <b>{COLO_NAMES[colo] ?? colo}</b> ({colo}){colo !== 'IST' && colo !== 'ADB' && colo !== 'ESB' ? ' · yurt dışından geçiyor, gecikmeyi bu yol artırır' : ''}</div>}
     </>
   );
 }
 
-function Settings() {
+function Settings({ game }: { game: Game }) {
   const s = useStore((x) => x.settings);
   const set = (p: Partial<typeof s>) => store.set({ settings: { ...s, ...p } });
   return (
     <Panel title="Ayarlar" width={480}>
-      <NetStats />
+      <NetStats game={game} />
       {matchMedia('(pointer: coarse)').matches && <div className={'field cool-field' + (s.cool ? ' on' : '')}>
         <label>Isınma modu</label>
         <button className={'btn ' + (s.cool ? 'primary' : '')} style={{ width: '100%' }} onClick={() => set({ cool: !s.cool })}>{s.cool ? '❄ Isınma modu AÇIK' : 'Isınma modunu aç'}</button>

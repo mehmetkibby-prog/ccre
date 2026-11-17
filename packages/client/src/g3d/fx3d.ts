@@ -289,11 +289,14 @@ export class Fx3D {
   }
 }
 
+/**
+ * Efekt nesnesinin geometrisini bırakır. Malzeme dispose edilmez: son kopyası silinen gölgelendirici programı
+ * ekran kartından atılıyor ve bir sonraki vuruşta yeniden derleniyordu (vuruş anında takılma). Efekt
+ * malzemelerinin dokuları paylaşımlı/önbellekte olduğu için malzeme nesnesi bırakılınca çöpe gider.
+ */
 function disposeObj(o: THREE.Object3D) {
   o.traverse((c) => {
     const m = c as THREE.Mesh;
-    if (m.geometry) m.geometry.dispose();
-    const mat = m.material as THREE.Material | THREE.Material[] | undefined;
-    if (Array.isArray(mat)) mat.forEach((x) => x.dispose()); else mat?.dispose();
+    if (m.geometry && !(c as THREE.Sprite).isSprite) m.geometry.dispose();
   });
 }

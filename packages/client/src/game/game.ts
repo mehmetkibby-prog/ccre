@@ -187,10 +187,12 @@ export class Game {
       this.frame(t);
     };
     this.raf = requestAnimationFrame(loop);
-    setInterval(() => this.sendPing(), 2000);
+    this.timers.push(window.setInterval(() => this.sendPing(), 2000));
     // Cloudflare (Amsterdam) yolundaysak 30 sn'de bir doğrudan (Türkiye) yolu yokla; açıksa sessizce oraya geç
-    setInterval(() => { void this.tryDirectAgain(); }, 30_000);
+    this.timers.push(window.setInterval(() => { void this.tryDirectAgain(); }, 30_000));
   }
+  /** stop()'ta temizlenir: önceden durdurulmuyordu, karakter ekranına dönüp yeniden girince eski oyunun bütün dünyası bellekte kalıyordu. */
+  private timers: number[] = [];
   private probing = false;
   private async tryDirectAgain() {
     if (this.probing || this.stopped || this.reconnecting || !this.requestTicket) return;
@@ -221,8 +223,12 @@ export class Game {
     if (this.stopped) return;
     this.stopped = true;
     cancelAnimationFrame(this.raf);
+    for (const t of this.timers) clearInterval(t);
+    this.timers = [];
     this.input.detach();
     try { this.ws?.close(); } catch { /* */ }
+    // ekran kartı kaynaklarını ve WebGL bağlamını bırak (yeni oyun ekranı kendi bağlamını kurar)
+    this.renderer.dispose();
   }
   send(c: ClientCmd) { if (this.ws?.readyState === 1) this.ws.send(JSON.stringify(c)); }
 

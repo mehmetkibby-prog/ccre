@@ -163,7 +163,8 @@ export class SkillFx {
       const k = (now - el.t0) / el.dur;
       if (k >= 1) {
         this.group.remove(el.o);
-        for (const m of el.mats) m.dispose();
+        // malzemeler bilerek dispose edilmez: son kopyası silinen gölgelendirici programı ekran kartından atılıyor,
+        // bir sonraki vuruşta yeniden derleniyordu (vuruş anında takılma). Dokuları önbellekte; malzeme nesnesi çöpe gider.
         el.own?.forEach((g) => g.dispose());
         this.els[i] = this.els[this.els.length - 1]; this.els.pop();
         continue;

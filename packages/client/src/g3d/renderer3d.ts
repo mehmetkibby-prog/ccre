@@ -64,6 +64,17 @@ function blobShadow(r: number) {
   const m = new THREE.Mesh(blobGeo, blobMat!); m.scale.setScalar(r); m.position.y = 0.04; m.renderOrder = 1; m.name = 'blob';
   return m;
 }
+/**
+ * Sahneden çıkan bir varlık görünümünün ekran kartı kaynaklarını bırakır. Her canavar/oyuncu kopyasının kendi
+ * iskeleti (kemik dokusu) ve yere düşen eşyanın ışın geometrisi vardı; görünüm kaldırılınca silinmiyordu. Uzun
+ * oturumda (çok canavar öldürüp yeniden doğdukça) bunlar birikiyor, oyun bir süre sonra ~1 sn donmaya başlıyordu;
+ * yalnız sayfa kapatılınca düzeliyordu. Model geometrisi/malzemesi önbellekle paylaşıldığı için onlara dokunulmaz.
+ */
+function releaseView(v: { obj: THREE.Object3D; beam?: THREE.Mesh }) {
+  v.obj.parent?.remove(v.obj);
+  v.obj.traverse((o) => { const sm = o as THREE.SkinnedMesh; if (sm.isSkinnedMesh && sm.skeleton) sm.skeleton.dispose(); });
+  if (v.beam) v.beam.geometry.dispose();
+}
 function prepDynamic(obj: THREE.Object3D, r: number) {
   obj.traverse((o) => { if ((o as THREE.Mesh).isMesh && o.name !== 'blob') { o.castShadow = DYN_SHADOWS; } });
   if (!DYN_SHADOWS && !obj.userData.blob) { obj.userData.blob = true; obj.add(blobShadow(r)); }
@@ -199,9 +210,9 @@ export class Renderer3D {
     this.setupComposer();
     loadManifest();
     // model yüklenemezse boş yer tutucular prosedürel modelle yeniden kurulur
-    onModelStatus(() => {
-      for (const [eid, v] of this.views) if (v.ph && !modelPending(v.model!)) { this.dyn.remove(v.obj); this.views.delete(eid); }
-      if (this.self?.ph && !modelPending(this.self.model!)) { this.dyn.remove(this.self.obj); this.self = null; }
+    this.offs.push(onModelStatus(() => {
+      for (const [eid, v] of this.views) if (v.ph && !modelPending(v.model!)) { releaseView(v); this.views.delete(eid); }
+      if (this.self?.ph && !modelPending(this.self.model!)) { releaseView(this.self); this.self = null; }
       this.npcViews = this.npcViews.map((v) => {
         if (!v.ph || modelPending(v.model!)) return v;
         const nv = this.humanView(v.model!, 99, v.lx, v.ly);
@@ -209,8 +220,8 @@ export class Renderer3D {
         this.dyn.remove(v.obj); this.dyn.add(nv.obj);
         return Object.assign(nv, { npc: (v as unknown as { npc: string }).npc });
       });
-    });
-    onModelReady((id) => {
+    }));
+    this.offs.push(onModelReady((id) => {
       // Meshy ağacı geldi: haritanın nesneleri yeni ağaçla yeniden kurulur
       if (MESHY_TREES.includes(id) && this.propsGroup && this.layout?.props.some((p) => p.k === 'tree')) {
         const l = this.layout;
@@ -220,9 +231,9 @@ export class Renderer3D {
         this.shadowDirty = true;
       }
       // model geldi: o modeli kullanan görünümleri yeniden kur
-      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id || v.cpend === id) { this.dyn.remove(v.obj); this.views.delete(eid); }
-      if (this.self && (this.self.wpend === id || this.self.apend === id || this.self.cpend === id)) { this.dyn.remove(this.self.obj); this.self = null; }
-      if (this.self && this.self.model === id && !this.self.glb) { this.dyn.remove(this.self.obj); this.self = null; }
+      for (const [eid, v] of this.views) if ((v.model === id && !v.glb) || (MONSTER_MESHES[id] && v.model === MONSTER_MESHES[id]) || v.wpend === id || v.apend === id || v.cpend === id) { releaseView(v); this.views.delete(eid); }
+      if (this.self && (this.self.wpend === id || this.self.apend === id || this.self.cpend === id)) { releaseView(this.self); this.self = null; }
+      if (this.self && this.self.model === id && !this.self.glb) { releaseView(this.self); this.self = null; }
       // NPC'ler: yerinde yeni modelle değiştir
       this.npcViews = this.npcViews.map((v) => {
         if (v.model !== id || v.glb) return v;
@@ -231,7 +242,7 @@ export class Renderer3D {
         this.dyn.remove(v.obj); this.dyn.add(nv.obj);
         return Object.assign(nv, { npc: (v as unknown as { npc: string }).npc });
       });
-    });
+    }));
   }
 
   private setupComposer() {
@@ -258,9 +269,9 @@ export class Renderer3D {
     // eski dünyayı temizle
     if (this.terrain) { this.world.remove(this.terrain.mesh); if (this.terrain.water) this.world.remove(this.terrain.water); this.terrain.dispose(); }
     for (const c of [...this.world.children]) { this.world.remove(c); }
-    for (const v of this.views.values()) this.dyn.remove(v.obj);
+    for (const v of this.views.values()) releaseView(v);
     this.views.clear();
-    for (const v of this.npcViews) this.dyn.remove(v.obj);
+    for (const v of this.npcViews) releaseView(v);
     this.npcViews = [];
     this.shadowDirty = true; // yeni harita: durağan gölge haritası yeniden çizilsin
     if (this.grass) { this.dyn.remove(this.grass.group); this.grass.dispose(); this.grass = null; }
@@ -341,6 +352,17 @@ export class Renderer3D {
   shake(n: number) { this.shakeAmt = Math.max(this.shakeAmt, n * 0.02); }
   /** Vuruş duraklaması: verilen varlıkların animasyonu kısa süre donar (darbe ağırlığı hissi). */
   private stops = new Map<number, number>();
+  /** Model yükleme aboneliklerinin kaldırıcıları (oyun kapanınca bırakılır; yoksa eski dünya bellekte kalıyordu). */
+  private offs: (() => void)[] = [];
+  /** Oyun ekranı kapanınca: abonelikleri kaldır, ekran kartı kaynaklarını ve WebGL bağlamını bırak. */
+  dispose() {
+    for (const f of this.offs) f();
+    this.offs = [];
+    this.nyFx?.dispose();
+    for (const v of this.views.values()) releaseView(v);
+    this.views.clear();
+    try { this.renderer.dispose(); this.renderer.forceContextLoss(); } catch { /* */ }
+  }
   hitStop(ids: number[], ms: number) { const until = performance.now() + ms; for (const id of ids) this.stops.set(id, until); }
   private frozen(id: number, now: number) { const u = this.stops.get(id); if (u === undefined) return false; if (now < u) return true; this.stops.delete(id); return false; }
   clickMark(x: number, y: number) { this.clicks.push({ x, y, t: performance.now() }); }
@@ -381,7 +403,7 @@ export class Renderer3D {
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
     const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
-    if (this.self) this.dyn.remove(this.self.obj);
+    if (this.self) releaseView(this.self);
     this.selfWR = wr;
     this.self = this.humanView(cls, Kind.PLAYER, this.g.dx, this.g.dy, wr);
     this.selfCls = cls;
@@ -423,7 +445,7 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
-    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12))) { this.dyn.remove(v.obj); this.views.delete(e.id); v = undefined; }
+    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12))) { releaseView(v); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
       const gb = e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12);
@@ -833,7 +855,7 @@ export class Renderer3D {
         v.obj.position.x += (e.kbX ?? 0) * push; v.obj.position.z += (e.kbY ?? 0) * push;
       } else if (now < e.hurtUntil) { v.obj.position.x += (Math.random() - 0.5) * 0.04; v.obj.position.z += (Math.random() - 0.5) * 0.04; }
     }
-    for (const [id, v] of this.views) if (!seen.has(id)) { this.dyn.remove(v.obj); this.views.delete(id); }
+    for (const [id, v] of this.views) if (!seen.has(id)) { releaseView(v); this.views.delete(id); }
     for (const [v, f] of this.fishGears) if (f.seen !== this.frameNo) { this.dyn.remove(f.gear.obj); this.fishGears.delete(v); }
     // nadir eşya efektleri: yalnız yakındaki en çok FX_MAX oyuncuda (kalabalıkta cihaz yorulmasın)
     if (fxNear.length > (cool() ? 3 : FX_MAX)) fxNear.sort((a, b) => a.d - b.d);
