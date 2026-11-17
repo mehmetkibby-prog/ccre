@@ -143,7 +143,12 @@ case "${1:-}" in
     mkdir -p /var/www/acme
     "$0" alan "$alan_adi" >/dev/null   # doğrulama konumu nginx'e eklenir (mevcut sertifikayla)
     alanlar=(-d "$alan_adi"); getent hosts "www.$alan_adi" >/dev/null && alanlar+=(-d "www.$alan_adi")
-    if certbot certonly --webroot -w /var/www/acme "${alanlar[@]}" --agree-tos --register-unsafely-without-email -n --keep-until-expiring --deploy-hook "systemctl reload nginx"; then
+    # yenilenince nginx her zaman yeniden yüklensin (komut seçeneklerinden bağımsız, kalıcı kanca)
+    mkdir -p /etc/letsencrypt/renewal-hooks/deploy
+    printf '#!/bin/sh\nsystemctl reload nginx\n' > /etc/letsencrypt/renewal-hooks/deploy/nginx-reload.sh
+    chmod +x /etc/letsencrypt/renewal-hooks/deploy/nginx-reload.sh
+    # RSA anahtar: ECDSA (YE1) zinciri bazı telefon Chrome'larında "Sertifika Şeffaflığı" hatası verdi
+    if certbot certonly --webroot -w /var/www/acme --cert-name "$alan_adi" "${alanlar[@]}" --key-type rsa --preferred-chain "ISRG Root X1" --agree-tos --register-unsafely-without-email -n --keep-until-expiring; then
       "$0" alan "$alan_adi"
       echo "sertifika: $(openssl x509 -in /etc/letsencrypt/live/$alan_adi/fullchain.pem -noout -issuer -enddate | tr '\n' ' ')"
       echo "TAMAM. Artık Cloudflare'de $alan_adi kaydının turuncu bulutunu gri yapabilirsin (DNS only)."
