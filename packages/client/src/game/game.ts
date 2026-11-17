@@ -99,15 +99,22 @@ export class Game {
   // ───────── bağlantı ─────────
   /** Kopma sonrası yeni giriş bileti isteyen (GameScreen sağlar). null: yeniden bağlanma yok. */
   requestTicket: (() => Promise<string>) | null = null;
+  /** Bu bağlantı doğrudan sunucuya mı (Cloudflare'siz) */
+  private viaDirect = false;
   private reconnecting = false;
   private connect() {
     const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    const url = `${proto}://${location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`;
+    // Doğrudan adres (Cloudflare'siz, düşük gecikme) tanımlıysa ve bu cihazda son 6 saatte başarısız olmadıysa önce o denenir
+    const direct = !OFFLINE ? directHost() : '';
+    this.viaDirect = !!direct;
+    const url = `${proto}://${direct || location.host}/ws?ticket=${encodeURIComponent(this.ticket)}`;
     const ws: WebSocket = OFFLINE ? (window as unknown as { __colCreateSocket: (u: string) => WebSocket }).__colCreateSocket(url) : new WebSocket(url);
     ws.binaryType = 'arraybuffer';
     this.ws = ws;
     let closedReason = '', final = false, opened = false;
-    ws.onopen = () => { opened = true; store.set({ connected: true, status: '' }); this.pingSamples = []; setTimeout(() => this.sendPing(), 1500); };
+    // doğrudan bağlantı 4 sn içinde açılmazsa (sertifika, ağ engeli…) kapatılır → onclose'ta Cloudflare yoluna geçilir
+    const directTimer = this.viaDirect ? setTimeout(() => { if (!opened && this.ws === ws) ws.close(); }, 4000) : 0;
+    ws.onopen = () => { opened = true; clearTimeout(directTimer); store.set({ connected: true, status: '', netPath: this.viaDirect ? 'direct' : 'cf' }); this.pingSamples = []; setTimeout(() => this.sendPing(), 1500); };
     ws.onmessage = (e) => {
       // gecikme: yanıtın geldiği an (olayın zaman damgası; o sırada çizim sürüyorsa beklenen süre ölçüme katılmaz)
       if (typeof e.data === 'string' && e.data.startsWith('{"t":"pong"')) { this.onPong(JSON.parse(e.data), e.timeStamp); return; }
@@ -116,7 +123,10 @@ export class Game {
     };
     ws.onclose = () => {
       if (this.ws !== ws) return; // eski bağlantı
+      clearTimeout(directTimer);
       store.set({ connected: false });
+      // doğrudan bağlantı hiç açılamadı: bu cihazda bir süre kullanma, hemen site adresi üzerinden yeniden bağlan
+      if (this.viaDirect && !opened) markDirectBad();
       if (this.stopped) return;
       // Ağ kesintisi, sunucu/kanal yeniden başlatması: oyuncu giriş ekranına DÜŞMEZ, arka planda yeniden bağlanılır.
       // Yalnız kesin sebepler (başka yerden giriş, yasak) oyundan çıkarır.
@@ -910,3 +920,13 @@ export const RAR_COLORS = ['#f2f0ea', '#5fa8ff', '#ffa53d', '#ff4d5a', '#ffd84a'
 export const RARITY_IDS = RARITIES;
 function strip(m: any) { const { t, ...rest } = m; return rest; }
 export { TILE };
+
+/** Doğrudan oyun adresi (sunucu bilette bildirir). Cihazda son 6 saatte başarısız olduysa boş. */
+let directWsHost = '';
+export function setDirectWs(h: string | undefined) { directWsHost = (h ?? '').trim(); }
+function directHost() {
+  if (!directWsHost || directWsHost === location.host) return '';
+  try { const t = Number(localStorage.getItem('col_direct_bad') ?? 0); if (Date.now() - t < 6 * 3600_000) return ''; } catch { /* depolama kapalı */ }
+  return directWsHost;
+}
+function markDirectBad() { try { localStorage.setItem('col_direct_bad', String(Date.now())); } catch { /* */ } }

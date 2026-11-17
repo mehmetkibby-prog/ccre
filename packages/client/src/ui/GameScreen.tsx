@@ -4,7 +4,7 @@ import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, 
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
-import { Game } from '../game/game.ts';
+import { Game, setDirectWs } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
 import { SkillIcon, MenuIcon } from './icons.tsx';
@@ -38,7 +38,7 @@ export function GameScreen({ ticket, charId, channel, onExit }: { ticket: string
     (window as unknown as { __colGame?: Game }).__colGame = g;
     (window as unknown as { __colStore?: typeof store }).__colStore = store;
     // bağlantı koparsa aynı karakter ve kanala yeni biletle sessizce dön (giriş ekranına atmadan)
-    if (charId && channel && !OFFLINE) g.requestTicket = async () => (await api<{ ticket: string }>('/api/admission', { characterId: charId, channel, nonce: Math.random().toString(36).slice(2) })).ticket;
+    if (charId && channel && !OFFLINE) g.requestTicket = async () => { const r = await api<{ ticket: string; direct?: string }>('/api/admission', { characterId: charId, channel, nonce: Math.random().toString(36).slice(2) }); setDirectWs(r.direct); return r.ticket; };
     g.start();
     setGame(g);
     return () => { g.stop(); currentGame = null; };

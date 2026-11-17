@@ -200,7 +200,7 @@ export function buildApi(d: ApiDeps): Router {
     if (!isStaff(a.role) && !sameChannel && pop >= config.channelCapacity) throw new HttpError(409, 'Kanal dolu. Başka kanal seç.');
     if (!isStaff(a.role) && !already && d.gateway.online() >= config.realmCapacity) throw new HttpError(409, 'Sunucu dolu. Biraz sonra tekrar dene.');
     const ticket = d.gateway.issueTicket({ accountId: a.id, charId, channel: ch, role: a.role, nonce });
-    return { ok: true, ticket, nonce, channel: ch };
+    return { ok: true, ticket, nonce, channel: ch, ...(config.directWs ? { direct: config.directWs } : {}) };
   });
 
   // ───────── yönetim (temel) ─────────

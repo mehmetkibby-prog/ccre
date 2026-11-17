@@ -565,13 +565,15 @@ function useColo() {
 function NetStats() {
   const ping = useStore((x) => x.ping), fps = useStore((x) => x.fps);
   const colo = useColo();
+  const path = useStore((x) => x.netPath);
   return (
     <>
       <div className="netstats">
         <div><small>Gecikme</small><b style={{ color: ping > 200 ? '#ff6b7d' : ping > 100 ? '#ffdca3' : '#5ef0a6' }}>{ping} ms</b></div>
         <div><small>Kare hızı</small><b>{fps} fps</b></div>
       </div>
-      {colo && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı noktası: <b>{COLO_NAMES[colo] ?? colo}</b> ({colo}){colo !== 'IST' && colo !== 'ADB' && colo !== 'ESB' ? ' · yurt dışından geçiyor, gecikmeyi bu yol artırır' : ''}</div>}
+      {path === 'direct' && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı: <b>doğrudan sunucuya</b> (Türkiye)</div>}
+      {path !== 'direct' && colo && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı noktası: <b>{COLO_NAMES[colo] ?? colo}</b> ({colo}){colo !== 'IST' && colo !== 'ADB' && colo !== 'ESB' ? ' · yurt dışından geçiyor, gecikmeyi bu yol artırır' : ''}</div>}
     </>
   );
 }

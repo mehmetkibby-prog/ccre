@@ -6,6 +6,7 @@ import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, MONSTER_INDEX, validat
 import { Renderer3D } from './g3d/renderer3d.ts';
 import { shared as sharedU } from './g3d/materials.ts';
 import type { CEnt } from './game/game.ts';
+import { setDirectWs } from './game/game.ts';
 import { api } from './api.ts';
 import { store, useStore } from './game/store.ts';
 import { GameScreen } from './ui/GameScreen.tsx';
@@ -493,7 +494,8 @@ function ChannelScreen({ charId, onBack, onEnter }: { charId: number; onBack: ()
     nonceRef.current = nonce;
     setPending(ch); setErr('');
     try {
-      const r = await api<{ ticket: string; nonce: string; channel: number }>('/api/admission', { characterId: charId, channel: ch, nonce });
+      const r = await api<{ ticket: string; nonce: string; channel: number; direct?: string }>('/api/admission', { characterId: charId, channel: ch, nonce });
+      setDirectWs(r.direct);
       if (r.nonce !== nonceRef.current) return; // geç gelen eski yanıt
       onEnter(r.ticket, r.channel);
     } catch (e) { setErr((e as Error).message); }

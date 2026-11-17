@@ -111,7 +111,7 @@ case "${1:-}" in
       # 80: Cloudflare "Flexible" modunda istek buraya HTTPS olarak işaretli gelir → oyunu sun; doğrudan HTTP ise HTTPS'e yönlendir
       echo "server {"
       echo "    listen 80; listen [::]:80;"
-      echo "    server_name $yeni www.$yeni;"
+      echo "    server_name $yeni www.$yeni oyun.$yeni;"
       echo "    set \$yonlen 1; if (\$http_x_forwarded_proto = \"https\") { set \$yonlen 0; } if (\$request_uri ~ ^/\\.well-known/acme-challenge/) { set \$yonlen 0; }"
       echo "    if (\$yonlen) { return 301 https://$yeni\$request_uri; }"
       konum
@@ -119,7 +119,7 @@ case "${1:-}" in
       # 443: Cloudflare "Full" modu
       echo "server {"
       echo "    listen 443 ssl http2; listen [::]:443 ssl http2;"
-      echo "    server_name $yeni www.$yeni;"
+      echo "    server_name $yeni www.$yeni oyun.$yeni;"
       echo "    ssl_certificate $pem; ssl_certificate_key $key;"
       konum
       echo "}"
@@ -147,8 +147,10 @@ case "${1:-}" in
     fi
     mkdir -p /var/www/acme
     "$0" alan "$alan_adi" >/dev/null
-    alanlar=(-d "$alan_adi"); getent hosts "www.$alan_adi" >/dev/null && alanlar+=(-d "www.$alan_adi")
-    "$AC" --issue --server zerossl "${alanlar[@]}" -w /var/www/acme --keylength 2048 || [ $? -eq 2 ]   # 2 = zaten geçerli
+    alanlar=(-d "$alan_adi")
+    for alt in www oyun; do getent hosts "$alt.$alan_adi" >/dev/null && alanlar+=(-d "$alt.$alan_adi"); done
+    echo "sertifika alanları: ${alanlar[*]}"
+    "$AC" --issue --server zerossl "${alanlar[@]}" -w /var/www/acme --keylength 2048 --force
     "$AC" --install-cert -d "$alan_adi" --key-file "$SSLD/$alan_adi.key" --fullchain-file "$SSLD/$alan_adi.pem" --reloadcmd "systemctl reload nginx"
     # eski certbot sertifikası kalırsa nginx onu tercih eder: kaldır
     command -v certbot >/dev/null && certbot delete --cert-name "$alan_adi" -n >/dev/null 2>&1 || true
@@ -156,5 +158,21 @@ case "${1:-}" in
     echo | openssl s_client -connect 127.0.0.1:443 -servername "$alan_adi" 2>/dev/null | openssl x509 -noout -issuer -enddate
     echo "TAMAM. Cloudflare'de $alan_adi kaydı gri bulut (DNS only) olabilir."
     ;;
-  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI|ssl E-POSTA}"; exit 1 ;;
+  hizli)
+    # Oyun bağlantısı Cloudflare'i atlayıp doğrudan sunucuya (düşük gecikme). Site Cloudflare'de (turuncu) kalır.
+    # Cloudflare'de bu adres için gri bulutlu A kaydı ve sertifikada bu ad olmalı (tugra ssl). Kapatmak: tugra hizli kapat
+    h="${2:-}"
+    [ -n "$h" ] || { echo "kullanım: tugra hizli oyun.coreoflife.net   |   tugra hizli kapat   (şu an: $(grep -E '^DIRECT_WS=' /etc/coreoflife.env | cut -d= -f2 || true))"; exit 1; }
+    sed -i '/^DIRECT_WS=/d' /etc/coreoflife.env
+    if [ "$h" != "kapat" ]; then
+      [[ "$h" =~ ^[a-z0-9.-]+$ ]] || { echo "geçersiz adres: $h"; exit 1; }
+      if ! echo | openssl s_client -connect 127.0.0.1:443 -servername "$h" 2>/dev/null | openssl x509 -noout -checkhost "$h" 2>/dev/null | grep -q 'does match'; then
+        echo "sertifika $h adını içermiyor: önce Cloudflare'de '$h' için gri bulutlu A kaydı ekle, sonra 'tugra ssl' çalıştır"; exit 1
+      fi
+      echo "DIRECT_WS=$h" >> /etc/coreoflife.env
+    fi
+    systemctl restart coreoflife
+    echo "tamam: oyun bağlantısı ${h/kapat/site adresi üzerinden (Cloudflare)}; bağlanamayan oyuncu kendiliğinden Cloudflare yoluna geçer"
+    ;;
+  *) echo "kullanım: tugra {durum|yonetici AD|ac|kapat|bakim [mesaj]|kapasite SAYI|guncelle|geri|yedek|kayit [satır]|alan ALAN_ADI|ssl E-POSTA|hizli ADRES}"; exit 1 ;;
 esac
