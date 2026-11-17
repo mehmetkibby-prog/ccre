@@ -156,7 +156,7 @@ case "${1:-}" in
     command -v certbot >/dev/null && certbot delete --cert-name "$alan_adi" -n >/dev/null 2>&1 || true
     "$0" alan "$alan_adi"
     echo | openssl s_client -connect 127.0.0.1:443 -servername "$alan_adi" 2>/dev/null | openssl x509 -noout -issuer -enddate
-    echo "TAMAM. Cloudflare'de $alan_adi kaydı gri bulut (DNS only) olabilir."
+    echo "TAMAM. Site Cloudflare'de (turuncu) kalabilir; doğrudan oyun bağlantısı için: tugra hizli oyun.$alan_adi"
     ;;
   hizli)
     # Oyun bağlantısı Cloudflare'i atlayıp doğrudan sunucuya (düşük gecikme). Site Cloudflare'de (turuncu) kalır.
