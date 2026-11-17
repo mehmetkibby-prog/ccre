@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
   ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
@@ -116,26 +116,30 @@ export function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: str
   return (
     <section className="admin-sec">
       <h4>Canavar türleri</h4>
-      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Değerleri doğrudan yaz: canavarın <b>en düşük doğma seviyesindeki normal hâli</b> için can, saldırı, savunma, hız, TP ve yeniden doğma süresi. Daha yüksek seviyeli ve agresif/katil olanlar aynı oranla otomatik büyür. Boş kutu = oyunun varsayılanı. Kaydedince haritadaki canavarlara hemen uygulanır.</div>
+      <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Her canavarın <b>tek bir seviyesi</b> var: haritadaki bütün kopyaları o seviyede doğar. Seviyeyi ve o seviyedeki can, saldırı, savunma, hız, TP ve yeniden doğma süresini doğrudan yaz; yazdığın değer aynen uygulanır (yalnız agresif/katil çeşitler kendi oranıyla güçlüdür). Boş kutu = oyunun varsayılanı. Kaydedince haritadaki canavarlar hemen yeni ayarla doğar.</div>
       <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Canavar</th><th>Can</th><th>Saldırı</th><th>Savunma</th><th>Hız</th><th>TP</th><th>Doğma (sn)</th><th /></tr></thead>
+        <thead><tr><th>Canavar</th><th>Seviye</th><th>Can</th><th>Saldırı</th><th>Savunma</th><th>Hız</th><th>TP</th><th>Doğma (sn)</th><th /></tr></thead>
         <tbody>{MONSTERS.filter((d) => !d.boss).map((d) => {
-          const m = t.monsters[d.id] ?? {}, lv = spawnLevels(t, d.id) ?? (d.id.startsWith('t_') ? [t.tower.floors.find((f) => f.monster === d.id)?.level[0] ?? 30, t.tower.floors.find((f) => f.monster === d.id)?.level[1] ?? 30] as [number, number] : [10, 10]);
-          const ref = lv[0], st = monsterStats(d, ref, 0);
+          const m = t.monsters[d.id] ?? {};
+          const sl = spawnLevels(t, d.id), fl = t.tower.floors.find((f) => f.monster === d.id);
+          const defLv = MONSTER_LEVEL[d.id] ?? (fl ? fl.level[0] : sl ? sl[0] : 10);
+          const ref = m.level ?? defLv, st = monsterStats(d, ref, 0);
+          const where = Object.values(MAPS).filter((mp) => mp.spawns.some((g) => g.monster === d.id)).map((mp) => mp.name).join(', ') || (fl ? 'Kadim Kule' : '');
           const defHp = Math.round(st.maxHp * t.monsterHpMul * (m.hpMul ?? 1)), defAtk = Math.round(st.atk * t.monsterAtkMul * (m.atkMul ?? 1));
           const defDef = st.def + (m.defAdd ?? 0), defSpd = Math.round(d.speed * (m.speedMul ?? 1)), defXp = Math.round(st.xp * (m.xpMul ?? 1));
           const setAbs = (p: Partial<MonsterTune>) => setMon(d.id, { ...p, ref });
-          const custom = m.baseHp !== undefined || m.baseAtk !== undefined || m.def !== undefined || m.speed !== undefined || m.baseXp !== undefined || m.respawnSec !== undefined || m.hp !== undefined || m.hpMul !== undefined || m.atkMul !== undefined;
+          const custom = m.level !== undefined || m.baseHp !== undefined || m.baseAtk !== undefined || m.def !== undefined || m.speed !== undefined || m.baseXp !== undefined || m.respawnSec !== undefined || m.hp !== undefined || m.hpMul !== undefined || m.atkMul !== undefined;
           return (
             <tr key={d.id}>
-              <td><b>{d.name}</b><small>Sv. {lv[0] === lv[1] ? lv[0] : `${lv[0]}–${lv[1]}`} · değerler Sv. {ref} için</small></td>
+              <td><b>{d.name}</b><small>{where}</small></td>
+              <td><Num v={m.level} def={defLv} min={1} max={120} step={1} on={(v) => setMon(d.id, { level: v === undefined ? undefined : Math.round(v) })} dis={dis} w={52} /></td>
               <td><Num v={m.baseHp ?? m.hp} def={defHp} min={1} max={1e9} step={1} on={(v) => setAbs({ baseHp: v === undefined ? undefined : Math.round(v), hp: undefined })} dis={dis} w={80} /></td>
               <td><Num v={m.baseAtk ?? m.atk} def={defAtk} min={0} max={1e7} step={1} on={(v) => setAbs({ baseAtk: v === undefined ? undefined : Math.round(v), atk: undefined })} dis={dis} w={66} /></td>
               <td><Num v={m.def} def={defDef} min={0} max={1e6} step={1} on={(v) => setMon(d.id, { def: v === undefined ? undefined : Math.round(v) })} dis={dis} w={60} /></td>
               <td><Num v={m.speed} def={defSpd} min={0} max={1000} step={5} on={(v) => setMon(d.id, { speed: v })} dis={dis} w={60} /></td>
               <td><Num v={m.baseXp} def={defXp} min={0} max={1e8} step={1} on={(v) => setAbs({ baseXp: v === undefined ? undefined : Math.round(v) })} dis={dis} w={66} /></td>
               <td><Num v={m.respawnSec} def={Math.round(16 * t.respawnMul * (m.respawnMul ?? 1))} min={1} max={86400} step={1} on={(v) => setMon(d.id, { respawnSec: v })} dis={dis} w={60} /></td>
-              <td>{custom && <button className="btn small ghost" disabled={dis} title="Bu canavarın güç ayarlarını varsayılana döndür" onClick={() => setMon(d.id, { baseHp: undefined, baseAtk: undefined, baseXp: undefined, def: undefined, speed: undefined, respawnSec: undefined, hp: undefined, atk: undefined, hpMul: undefined, atkMul: undefined, defAdd: undefined, speedMul: undefined, xpMul: undefined, respawnMul: undefined, ref: undefined })}>Sıfırla</button>}</td>
+              <td>{custom && <button className="btn small ghost" disabled={dis} title="Bu canavarın güç ayarlarını varsayılana döndür" onClick={() => setMon(d.id, { level: undefined, baseHp: undefined, baseAtk: undefined, baseXp: undefined, def: undefined, speed: undefined, respawnSec: undefined, hp: undefined, atk: undefined, hpMul: undefined, atkMul: undefined, defAdd: undefined, speedMul: undefined, xpMul: undefined, respawnMul: undefined, ref: undefined })}>Sıfırla</button>}</td>
             </tr>
           );
         })}</tbody>
@@ -642,7 +646,7 @@ export function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; 
             <input type="range" min={DENSITY_LIMITS[0]} max={DENSITY_LIMITS[1]} step={DENSITY_LIMITS[2]} value={dens} disabled={dis} onChange={(e) => setT({ ...t, density: { ...t.density, [m.id]: Number(e.target.value) } })} />
             <span className={'val' + (dens !== 1 ? ' changed' : '')}>{fmtN(dens)}×</span></label>
           <div className="adm-table-wrap"><table className="adm-table">
-            <thead><tr><th>Grup</th><th>Sayı</th><th>Sv. en az</th><th>Sv. en çok</th><th>Normal</th><th>Agresif</th><th>Katil</th></tr></thead>
+            <thead><tr><th>Grup</th><th>Sayı</th><th>Seviye</th><th>Normal</th><th>Agresif</th><th>Katil</th></tr></thead>
             <tbody>{m.spawns.map((g, i) => {
               const key = m.id + ':' + i, o = t.spawns[key] ?? {}, md = MONSTERS.find((x) => x.id === g.monster);
               const lv = o.level ?? g.level, va = o.variants ?? g.variants;
@@ -650,8 +654,8 @@ export function MapTab({ t, setT, setSpawn, dis }: { t: GameTuning; setT: SetT; 
                 <tr key={key}>
                   <td><b>{md?.name ?? g.monster}</b><small>{g.region === 'near' ? 'Yakın' : g.region === 'mid' ? 'Orta' : g.region === 'far' ? 'Uzak' : 'Her yer'} bölge</small></td>
                   <td><Num v={o.count} def={g.count} min={0} max={400} step={1} dis={dis} w={54} on={(v) => setSpawn(key, { count: v })} /></td>
-                  <td><Num v={o.level?.[0]} def={g.level[0]} min={1} max={120} step={1} dis={dis} w={50} on={(v) => setSpawn(key, { level: v === undefined && !o.level ? undefined : [v ?? g.level[0], lv[1]] })} /></td>
-                  <td><Num v={o.level?.[1]} def={g.level[1]} min={1} max={120} step={1} dis={dis} w={50} on={(v) => setSpawn(key, { level: v === undefined && !o.level ? undefined : [lv[0], v ?? g.level[1]] })} /></td>
+                  {/* her canavar türünün tek seviyesi var: "Canavar türleri" tablosundan; bossun seviyesi "Bosslar"da */}
+                  <td className="muted" style={{ fontSize: 12 }}>Sv. {md?.boss ? lv[0] : (t.monsters[g.monster]?.level ?? MONSTER_LEVEL[g.monster] ?? lv[0])}</td>
                   {[0, 1, 2].map((vi) => <td key={vi}><Num v={o.variants?.[vi]} def={g.variants[vi]} min={0} max={1000} step={1} dis={dis} w={50} on={(v) => { const n = [...va] as [number, number, number]; n[vi] = v ?? g.variants[vi]; setSpawn(key, { variants: n.every((x, j) => x === g.variants[j]) ? undefined : n }); }} /></td>)}
                 </tr>
               );

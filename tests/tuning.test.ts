@@ -47,11 +47,14 @@ describe('yönetim ayarları oyunda işler', () => {
 
   it('doğma grubu sayısı haritayı değiştirir; 0 grubu kaldırır', () => {
     const l = getLayout('forest');
-    applyTuning({ spawns: { 'forest:0': { count: 0 }, 'forest:2': { count: 45, level: [20, 22] } } });
+    // her canavar türü tek seviyede doğar: seviye "Canavar türleri"nden (TUNING.monsters[id].level)
+    applyTuning({ spawns: { 'forest:0': { count: 0 }, 'forest:2': { count: 45 } }, monsters: { rot_guard: { level: 21 } } });
     rebuildSpawns(l);
-    const guards = l.spawnPoints.filter((s) => s.monster === 'rot_guard' && s.level >= 20);
+    const guards = l.spawnPoints.filter((s) => s.monster === 'rot_guard');
     expect(guards.length).toBeGreaterThan(30);
-    expect(l.spawnPoints.filter((s) => s.monster === 'shadow_wolf' && s.level < 6).length).toBe(0);
+    expect(guards.every((s) => s.level === 21)).toBe(true);
+    expect(l.spawnPoints.filter((s) => s.monster === 'shadow_wolf').every((s) => s.level === 10)).toBe(true);
+    expect(l.spawnPoints.filter((s) => s.monster === 'shadow_wolf').length).toBeLessThan(40); // yakın grup kapandı
     applyTuning(DEFAULT_TUNING); rebuildSpawns(l);
   });
 

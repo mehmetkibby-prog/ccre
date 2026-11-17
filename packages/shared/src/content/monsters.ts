@@ -20,6 +20,16 @@ export interface MonsterDef {
   respawnMin?: number;
 }
 
+/**
+ * Her canavar türünün tek, sabit seviyesi (haritadaki bütün kopyalar bu seviyede doğar). Yönetim "Canavar türleri"
+ * tablosundan değişir (TUNING.monsters[id].level). Bosslar ve kule katları kendi ayarındaki seviyeyi kullanır.
+ */
+export const MONSTER_LEVEL: Record<string, number> = {
+  wild_fox: 2, sneaky_goblin: 4,
+  shadow_wolf: 10, rot_guard: 13, essence_eater: 16,
+  frost_lynx: 20, ice_golem: 25, blizzard_seer: 30,
+};
+
 export const MONSTERS: MonsterDef[] = [
   { id: 'sneaky_goblin', name: 'Sinsi Goblin', art: 'goblin', hpBase: 52, hpPerLevel: 15, atkBase: 4, atkPerLevel: 1.3, def: 1, speed: 175, range: 70, attackMs: 1350, aggroRadius: 220, leash: 600, xpBase: 26, size: 1 },
   { id: 'wild_fox', name: 'Yabani Tilki', art: 'fox', hpBase: 34, hpPerLevel: 12, atkBase: 3, atkPerLevel: 1, def: 0, speed: 200, range: 60, attackMs: 1300, aggroRadius: 220, leash: 600, xpBase: 18, size: 0.8 },

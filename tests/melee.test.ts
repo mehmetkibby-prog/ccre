@@ -89,3 +89,20 @@ describe('kask: can efsunu yok', () => {
     expect(fixHelmetHp(a)).toBe(false);
   });
 });
+
+describe('ölüyken çıkıp yeniden girme', () => {
+  it('ölüm penceresi yeniden gelir ve "burada doğ" çalışır', () => {
+    const out: string[] = [];
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: (m: any) => { if (m.type === 'out') for (const [, d] of m.batch) if (typeof d === 'string') out.push(d); } });
+    w.now = Date.now();
+    w.join(1, mkChar({ map: 'forest', x: 3000, y: 2000, hp: 0, misc: { deadAt: Date.now() - 60_000 } }));
+    const p = w.bySid.get(1)!;
+    expect(p.dead).toBe(true);
+    w.tick();
+    expect(out.some((d) => d.startsWith('{"t":"dead"'))).toBe(true);
+    const x0 = p.x, y0 = p.y;
+    w.onCmd(1, JSON.stringify({ t: 'respawn', where: 'here' }));
+    expect(p.dead).toBe(false); expect(p.hp).toBeGreaterThan(0);
+    expect(p.zone.id).toBe('forest'); expect(Math.hypot(p.x - x0, p.y - y0)).toBeLessThan(1);
+  });
+});

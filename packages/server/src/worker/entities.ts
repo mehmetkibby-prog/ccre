@@ -136,8 +136,9 @@ export class Monster {
     const mt = TUNING.monsters[this.def.id];
     const s = monsterStats(this.def, this.sp.level, this.sp.variant);
     const ratio = this.maxHp > 0 ? this.hp / this.maxHp : 1;
-    // doğrudan değer (ref seviyesindeki normal hâl) verilmişse seviye ve çeşit oranıyla ölçeklenir
-    const r = monsterStats(this.def, mt?.ref ?? this.sp.level, 0);
+    // doğrudan değer (yönetim tablosu) canavarın kendi seviyesindeki normal hâlidir; yalnız agresif/katil çeşit oranıyla büyür
+    // (her tür tek seviyede doğar; eski kayıtlardaki ref yok sayılır)
+    const r = monsterStats(this.def, this.sp.level, 0);
     const hp = Math.max(1, Math.round(mt?.hp ?? (mt?.baseHp !== undefined ? mt.baseHp * s.maxHp / Math.max(1, r.maxHp) : s.maxHp * TUNING.monsterHpMul * (mt?.hpMul ?? 1))));
     this.maxHp = hp; this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(hp * ratio));
     this.atk = Math.max(1, Math.round(mt?.atk ?? (mt?.baseAtk !== undefined ? mt.baseAtk * s.atk / Math.max(1, r.atk) : s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1))));

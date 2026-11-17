@@ -4,11 +4,11 @@ import type { CharState } from '../packages/server/src/types.ts';
 import { getLayout, MAPS } from '@col/shared';
 
 describe('Tilki Korusu', () => {
-  it('Pazar Köyü güneyinde 1. seviye pasif tilkiler var; köy yerleşimi değişmedi', () => {
+  it('Pazar Köyü güneyinde tek seviyeli (Sv. 2) pasif tilkiler var; köy yerleşimi değişmedi', () => {
     const l = getLayout('bazaar');
     const fox = l.spawnPoints.filter((s) => s.monster === 'wild_fox');
     expect(fox.length).toBeGreaterThan(20);
-    expect(fox.every((s) => s.level === 1 && s.variant === 0 && s.y > 60 * 64)).toBe(true);
+    expect(fox.every((s) => s.level === 2 && s.variant === 0 && s.y > 60 * 64)).toBe(true);
     expect(MAPS.bazaar.market?.tx).toBe(67);
     expect(l.npcs.find((n) => n.id === 'haso')).toMatchObject({ x: 17 * 64 + 32, y: 14 * 64 + 32 });
   });

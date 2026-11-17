@@ -306,7 +306,7 @@ export class Game {
       case 'loot': pushLoot(m.name, m.rarity); sfx.play('loot'); break;
       case 'dead': store.set({ dead: { killer: m.killer, lost: m.lost, at: Date.now(), respawnIn: m.respawnIn, town: m.town } }); this.autoAttack = false; sfx.play('death'); break;
       case 'respawned': store.set({ dead: null }); break;
-      case 'state': if (!m.dead) store.set({ dead: null }); break;
+      case 'state': if (!m.dead) store.set({ dead: null }); else if (!store.get().dead) store.set({ dead: { killer: null, lost: 0, at: Date.now(), respawnIn: 0, town: undefined } }); break; // ölü ama pencere yoksa göster
       case 'cd': store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until } })); break;
       case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
       case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;

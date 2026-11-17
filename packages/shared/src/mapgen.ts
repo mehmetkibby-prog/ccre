@@ -1,7 +1,7 @@
 import { mulberry32, smoothNoise, noise2, type Rng } from './rng.ts';
 import { TILE } from './constants.ts';
 import { MAPS, type MapDef, type Region } from './content/maps.ts';
-import { MONSTERS } from './content/monsters.ts';
+import { MONSTERS, MONSTER_LEVEL } from './content/monsters.ts';
 import { TUNING } from './tuning.ts';
 import { towerRoom, towerRoomTile, TOWER_FLOORS, TOWER_R } from './content/tower.ts';
 
@@ -428,8 +428,9 @@ function placeTowerSpawns(l: MapLayout, rng: Rng) {
     const md = mdefs.get(ft.monster); if (!md) continue;
     const room = towerRoom(f, ft.puzzle);
     const { tx, ty } = towerRoomTile(f);
-    l.zones.push({ name: `${f}. Kat`, monster: ft.monster, x: room.cx, y: room.cy, r: room.r * 0.8, level: [ft.level[0], ft.level[1]], count: ft.count });
-    if (md.boss) { l.spawnPoints.push({ monster: ft.monster, level: ft.level[0], variant: 0, x: room.cx, y: room.cy - TILE * 2, floor: f }); continue; }
+    const flv = fixedLevel(ft.monster, ft.level[0]);
+    l.zones.push({ name: `${f}. Kat`, monster: ft.monster, x: room.cx, y: room.cy, r: room.r * 0.8, level: [flv, flv], count: ft.count });
+    if (md.boss) { l.spawnPoints.push({ monster: ft.monster, level: flv, variant: 0, x: room.cx, y: room.cy - TILE * 2, floor: f }); continue; }
     let placed = 0;
     for (let tries = 0; placed < ft.count && tries < ft.count * 120; tries++) {
       const a = rng() * Math.PI * 2, d = Math.sqrt(rng()) * (TOWER_R - 2.2);
@@ -441,8 +442,7 @@ function placeTowerSpawns(l: MapLayout, rng: Rng) {
       if (tries < ft.count * 60 && l.spawnPoints.some((s) => s.floor === f && (s.x - x) ** 2 + (s.y - y) ** 2 < (TILE * 1.5) ** 2)) continue;
       const r = rng() * 100;
       const variant = (r < 60 ? 0 : r < 93 ? 1 : 2) as 0 | 1 | 2; // çoğu saldırılmadıkça dokunmaz; bir kısmı saldırgan
-      const level = ft.level[0] + ((rng() * (ft.level[1] - ft.level[0] + 1)) | 0);
-      l.spawnPoints.push({ monster: ft.monster, level, variant, x, y, floor: f });
+      l.spawnPoints.push({ monster: ft.monster, level: flv, variant, x, y, floor: f });
       placed++;
     }
   }
@@ -506,6 +506,11 @@ const PACK = 9;
  * içinde, birbirine çok yapışmadan dağıtılır. Yeniden doğma aynı noktada olduğundan yuva korunur.
  * Önceden canavarlar haritanın her yerine 1–3'lük gruplarla serpiliyordu (dağınık ve seyrek).
  */
+/** Canavar türünün sabit seviyesi: yönetim ayarı, yoksa varsayılan; tabloda yoksa (boss, kule) verilen seviye. */
+export function fixedLevel(id: string, fallback: number): number {
+  return TUNING.monsters[id]?.level ?? MONSTER_LEVEL[id] ?? fallback;
+}
+
 function placeSpawns(l: MapLayout, rng: Rng) {
   const mdefs = new Map(MONSTERS.map((m) => [m.id, m] as const));
   const dens = TUNING.density[l.def.id] ?? 1;
@@ -514,7 +519,10 @@ function placeSpawns(l: MapLayout, rng: Rng) {
   for (let gi = 0; gi < l.def.spawns.length; gi++) {
     // yönetim: doğma grubu ayarı (sayı, seviye aralığı, normal/agresif/katil oranı)
     const ov = TUNING.spawns[l.def.id + ':' + gi];
-    const g = ov ? { ...l.def.spawns[gi], count: ov.count ?? l.def.spawns[gi].count, level: ov.level ?? l.def.spawns[gi].level, variants: ov.variants ?? l.def.spawns[gi].variants } : l.def.spawns[gi];
+    const g0 = ov ? { ...l.def.spawns[gi], count: ov.count ?? l.def.spawns[gi].count, level: ov.level ?? l.def.spawns[gi].level, variants: ov.variants ?? l.def.spawns[gi].variants } : l.def.spawns[gi];
+    // her tür tek seviyede doğar (aralık yok)
+    const lv = fixedLevel(g0.monster, g0.level[0]);
+    const g = { ...g0, level: [lv, lv] as [number, number] };
     const md = mdefs.get(g.monster);
     if (g.count <= 0) continue;
     const total = md?.boss ? g.count : Math.max(1, Math.round(g.count * dens));

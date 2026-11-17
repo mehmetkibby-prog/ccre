@@ -190,6 +190,9 @@ export class World {
     zone.addPlayer(p);
     this.sendJson(p, { t: 'welcome', entityId: p.id, channel: this.opt.channel, map: zone.id, x: p.x, y: p.y, serverTime: this.now, worldHealth: this.worldHealth, online: this.online });
     this.sendFullSelf(p);
+    // ölüyken çıkıp yeniden giren: ölüm penceresi (Burada doğ / Köyde doğ) yeniden gösterilir. Önceden gönderilmiyordu;
+    // karakter ölü kalıyor, ne yerinde doğabiliyor ne ışınlanabiliyordu.
+    if (p.dead) this.sendJson(p, { t: 'dead', killer: null, lost: 0, respawnIn: Math.max(0, RESPAWN_DELAY_MS - (this.now - p.deadAt)), town: MAPS[zone.def.respawnMap]?.name });
     if (zone.id === TOWER_MAP) this.towerSend(p);
     this.marketJoin(p);
     this.opt.post({ type: 'joined', sid, ok: true });

@@ -65,8 +65,10 @@ it('Canavar doğrudan değerleri: ref seviyede girilen can/saldırı, diğer sev
   const wolves = [...(w as any).zones.get('forest').monsterList].filter((m: any) => m.def.id === 'shadow_wolf');
   const l1 = wolves.find((m: any) => m.sp.level === 10 && m.sp.variant === 0); // Kuzey Ormanı Sv. 10'dan başlar
   expect(l1.maxHp).toBe(1000); expect(l1.atk).toBe(50); expect(l1.def.speed).toBe(300);
-  const hi = wolves.find((m: any) => m.sp.level >= 12 && m.sp.variant === 0);
-  expect(hi.maxHp).toBeGreaterThan(1000);
+  // tek seviye: bütün normal kurtlar aynı değerde; agresif/katil daha güçlü
+  expect(wolves.filter((m: any) => m.sp.variant === 0).every((m: any) => m.maxHp === 1000 && m.sp.level === 10)).toBe(true);
+  const strong = wolves.find((m: any) => m.sp.variant > 0);
+  expect(strong.maxHp).toBeGreaterThan(1000);
   expect((w as any).respawnDelay(l1.def)).toBe(5000);
   w.join(1, mk(1, 20)); const p = w.bySid.get(1)!;
   expect(p.stats.crit).toBe(0);

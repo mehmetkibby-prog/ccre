@@ -12,6 +12,8 @@ export interface MonsterTune {
   mats?: Record<string, number>; // malzeme düşme olasılığı (0..1)
   /** mutlak değerler (boss paneli): verilirse çarpanların yerine geçer */
   hp?: number; atk?: number; def?: number;
+  /** canavar türünün sabit seviyesi (yönetim); boşsa MONSTER_LEVEL varsayılanı */
+  level?: number;
   /** yeniden doğma süresi (dakika; boss) */
   respawnMin?: number;
   /**
@@ -342,6 +344,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     if (Object.keys(mats).length) t.mats = mats;
     set('hp', num(m.hp, 1, 1e9)); set('atk', num(m.atk, 0, 1e7)); set('def', num(m.def, 0, 1e6)); set('respawnMin', num(m.respawnMin, 0.5, 24 * 60));
     const ref = num(m.ref, 1, 120); if (ref !== undefined) t.ref = Math.round(ref);
+    const lvl = num(m.level, 1, 120); if (lvl !== undefined) t.level = Math.round(lvl);
     set('baseHp', num(m.baseHp, 1, 1e9)); set('baseAtk', num(m.baseAtk, 0, 1e7)); set('baseXp', num(m.baseXp, 0, 1e8));
     set('speed', num(m.speed, 0, 1000)); set('respawnSec', num(m.respawnSec, 1, 24 * 3600));
     if (Array.isArray(m.drops)) {
