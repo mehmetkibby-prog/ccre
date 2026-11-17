@@ -190,7 +190,10 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
 function ConnStatus() {
   const c = useStore((s) => s.connected);
   const st = useStore((s) => s.status);
-  if (c) return null;
+  // kısa kopmalarda (yeniden bağlanma genelde 1 sn'den kısa sürer) ekranı kaplayan pencere hiç görünmesin
+  const [late, setLate] = useState(false);
+  useEffect(() => { if (c) { setLate(false); return; } const t = setTimeout(() => setLate(true), 1800); return () => clearTimeout(t); }, [c]);
+  if (c || !late) return null;
   return <div className="overlay reconn"><div className="frame dead"><div className="title" style={{ fontSize: 20 }}>{st || 'Bağlanıyor…'}</div><div className="muted">{st ? 'Bağlantı bir an koptu; oyunun kaldığı yerden devam edeceksin.' : 'Sunucuyla bağlantı kuruluyor.'}</div></div></div>;
 }
 

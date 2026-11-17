@@ -197,6 +197,10 @@ export class Game {
   private async tryDirectAgain() {
     if (this.probing || this.stopped || this.reconnecting || !this.requestTicket) return;
     if (!directWsHost || store.get().netPath !== 'cf' || this.ws?.readyState !== 1) return;
+    // yalnız oyuncu boştayken geç (yürümüyor, vurmuyor, oto av kapalı, ölü değil): oynarken kısa bir kopma
+    // ve yükleme ekranı olarak görünüyordu
+    const nowP = performance.now();
+    if (nowP - Math.max(this.lastMoveAt, this.lastAttackSent) < 20_000 || this.autoAttack || store.get().self?.autoOn || store.get().dead) return;
     this.probing = true;
     try {
       const ok = await probeDirect();
