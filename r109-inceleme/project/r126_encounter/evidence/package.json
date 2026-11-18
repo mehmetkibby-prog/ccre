@@ -1,0 +1,11 @@
+{
+  "file": "artifacts/R126_ENCOUNTER_ce09ea6316de.zip",
+  "sha256": "8838bffefee002964455e0273deb4f788b5acf1c14d4ebb76aafe54902946e5e",
+  "bytes": 106494,
+  "source": "R125_RUNE_CLIENT1",
+  "targetVersion": "R126_ENCOUNTER1",
+  "targetCore": "493a6668d0b215608db04510dfc54186c495f9e1be3f5385032ba9d96cfd4237",
+  "changedCodeFiles": 1,
+  "deployed": false,
+  "acceptance": "pending"
+}
