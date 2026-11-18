@@ -1,3 +1,4 @@
+import { TUNING } from '../tuning.ts';
 export type ClassId = 'guardian' | 'hunter' | 'arcanist';
 export const CLASS_IDS: ClassId[] = ['guardian', 'hunter', 'arcanist'];
 
@@ -88,7 +89,9 @@ export const CLASSES: Record<ClassId, ClassDef> = {
 
 export function classSkill(cls: ClassId, idx: number, spec?: string | null): SkillDef | null {
   const c = CLASSES[cls];
-  if (idx >= 0 && idx < 3) return c.skills[idx];
-  if (idx === 3 && spec) return c.specs.find((s) => s.id === spec)?.skill ?? null;
+  // açılma seviyesi yönetimden (Seviye sekmesi → Beceriler): düz vuruş hep Sv. 1, uzmanlık becerisi uzmanlık seviyesinde
+  if (idx === 0) return c.skills[0];
+  if (idx > 0 && idx < 3) { const sk = c.skills[idx]; const u = TUNING.skillUnlock?.[sk.id]; return u !== undefined && u !== sk.unlock ? { ...sk, unlock: u } : sk; }
+  if (idx === 3 && spec) { const sk = c.specs.find((s) => s.id === spec)?.skill; return sk ? { ...sk, unlock: TUNING.specLevel ?? sk.unlock } : null; }
   return null;
 }

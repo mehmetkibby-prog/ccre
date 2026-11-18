@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, skillUpCost, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -475,14 +475,14 @@ function Skills({ game }: { game: Game }) {
           </div>
         );
       })}
-      <div className="title" style={{ fontSize: 16, margin: '12px 0 6px' }}>Uzmanlık (Sv. 30)</div>
+      <div className="title" style={{ fontSize: 16, margin: '12px 0 6px' }}>Uzmanlık (Sv. {TUNING.specLevel})</div>
       {!self.spec ? (
         <div className="row" style={{ alignItems: 'stretch' }}>
           {spec.map((sp) => (
             <div key={sp.id} className="skillrow" style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start' }}>
               <div className="row"><div className="ic"><SkillIcon id={sp.skill.id} /></div><b>{sp.name}</b></div>
               <div className="muted" style={{ fontSize: 12 }}>{sp.skill.name}: {sp.skill.desc}</div>
-              <button className="btn small primary" disabled={self.level < 30} onClick={() => { if (confirm(`${sp.name} dalını seçmek istiyor musun? Değiştirmek için sıfırlama parşömeni gerekir.`)) game.send({ t: 'spec', spec: sp.id, req: reqId() }); }}>Seç</button>
+              <button className="btn small primary" disabled={self.level < TUNING.specLevel} onClick={() => { if (confirm(`${sp.name} dalını seçmek istiyor musun? Değiştirmek için sıfırlama parşömeni gerekir.`)) game.send({ t: 'spec', spec: sp.id, req: reqId() }); }}>Seç</button>
             </div>
           ))}
         </div>

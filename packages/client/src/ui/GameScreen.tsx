@@ -485,7 +485,7 @@ function BottomBar({ game }: { game: Game }) {
     const locked = !sk || self.level < sk.unlock;
     const left = s > 0 ? Math.max(0, (cds[s] ?? 0) - now) : 0;
     return (
-      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (locked ? ' locked' : '')} title={sk ? `${sk.name} — ${sk.desc}${locked ? ` (Sv. ${sk.unlock})` : ''}` : 'Uzmanlık (Sv. 30)'}
+      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (locked ? ' locked' : '')} title={sk ? `${sk.name} — ${sk.desc}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>

@@ -112,6 +112,10 @@ export interface GameTuning {
   quests: QuestDef[];
   /** Beceri geliştirme maliyeti: [0] = Sv. 1→2 … [8] = Sv. 9→10 (Mücevher, uzmanlık becerisi Mücevheri, malzemeler) */
   skillUp: SkillUpStep[];
+  /** becerilerin açılma seviyesi (beceri kimliği → seviye); boş = sınıf tanımındaki */
+  skillUnlock: Record<string, number>;
+  /** uzmanlık seçme (ve uzmanlık becerisi) seviyesi */
+  specLevel: number;
 }
 export interface SkillUpStep { gems: number; specGems: number; mats: Record<string, number> }
 /** Varsayılan: Mücevher = seviye × 5, uzmanlık becerisi iki katı, malzeme yok (önceki sabit kural). */
@@ -281,13 +285,14 @@ export const DEFAULT_TUNING: GameTuning = {
   tower: structuredClone(TOWER_DEFAULT),
   crafts: structuredClone(CRAFTS_DEFAULT),
   skillUp: structuredClone(SKILLUP_DEFAULT),
+  skillUnlock: {}, specLevel: 30,
   quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests' | 'skillUp'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
-  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
+  bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], specLevel: [1, 120, 1], bossShareMin: [0, 50, 0.5],
 };
 export const DENSITY_LIMITS: [number, number, number] = [0.3, 3, 0.05];
 export const TUNING: GameTuning = structuredClone(DEFAULT_TUNING);
@@ -310,6 +315,8 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.crafts = sanitizeCrafts(r.crafts);
   out.quests = sanitizeQuests(r.quests);
   out.skillUp = sanitizeSkillUp(r.skillUp);
+  out.specLevel = Math.round(out.specLevel);
+  { const su = (r.skillUnlock && typeof r.skillUnlock === 'object' && !Array.isArray(r.skillUnlock) ? r.skillUnlock : {}) as Record<string, unknown>; for (const [k, v] of Object.entries(su)) { const n = Number(v); if (/^[a-z0-9_]{1,24}$/.test(k) && Number.isFinite(n)) out.skillUnlock[k] = Math.round(Math.min(120, Math.max(1, n))); } }
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {

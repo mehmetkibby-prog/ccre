@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, SKILLUP_DEFAULT, type SkillUpStep, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, SKILLUP_DEFAULT, CLASSES, CLASS_IDS, type SkillUpStep, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
   ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
@@ -638,10 +638,30 @@ export function SkillUpTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
     put(i, { mats });
   };
   const matOpts = [...MATERIALS.filter((m) => !['starter_chest'].includes(m.id)).map((m) => ({ id: m.id, name: m.name })), ...MALL_ITEMS.map((m) => ({ id: m.id, name: m.name + ' (Market)' }))];
+  const setUnlock = (id: string, v: number | undefined, def: number) => { const n = { ...(t.skillUnlock ?? {}) }; if (v === undefined || Math.round(v) === def) delete n[id]; else n[id] = Math.round(v); setT({ ...t, skillUnlock: n }); };
   return (
+    <>
+    <section className="admin-sec">
+      <h4>Becerilerin açılma seviyesi</h4>
+      <div className="muted adm-hint">Her sınıfın becerisi hangi seviyede açılsın. Düz vuruş her zaman Sv. 1'de açıktır. Uzmanlık seçimi ve uzmanlık becerisi bütün sınıflarda aynı seviyededir. Boş kutu = varsayılan.</div>
+      <div className="adm-table-wrap"><table className="adm-table">
+        <thead><tr><th>Sınıf</th>{[1, 2].map((i) => <th key={i}>{i}. beceri</th>)}<th>Uzmanlık</th></tr></thead>
+        <tbody>{CLASS_IDS.map((cid) => (
+          <tr key={cid}>
+            <td><b>{CLASSES[cid].name}</b></td>
+            {[1, 2].map((i) => { const sk = CLASSES[cid].skills[i]; const cur = t.skillUnlock?.[sk.id]; return (
+              <td key={i}><div className="col" style={{ gap: 2 }}><small>{sk.name}</small><span className="row" style={{ gap: 4 }}><span className="muted">Sv.</span><Num v={cur} def={sk.unlock} min={1} max={120} step={1} w={56} dis={dis} on={(v) => setUnlock(sk.id, v, sk.unlock)} /></span></div></td>
+            ); })}
+            <td><small className="muted">{CLASSES[cid].specs.map((sp) => sp.skill.name).join(' / ')}</small></td>
+          </tr>
+        ))}</tbody>
+      </table></div>
+      <label className="admin-row" style={{ marginTop: 8 }}><span className="lab"><b>Uzmanlık seçme seviyesi</b><small>Uzmanlık dalı ve uzmanlık becerisi bu seviyede açılır (bütün sınıflar)</small></span>
+        <Num v={t.specLevel !== 30 ? t.specLevel : undefined} def={30} min={1} max={120} step={1} w={70} dis={dis} on={(v) => setT({ ...t, specLevel: Math.round(v ?? 30) })} /><span /></label>
+    </section>
     <section className="admin-sec">
       <h4>Beceri geliştirme bedeli</h4>
-      <div className="muted adm-hint">Oyuncu bir beceriyi geliştirirken her kademede bu bedeli öder. Malzeme ekleyebilirsin (ör. Sv. 5→6 için 3 Kor Mührü). Uzmanlık becerisi (Sv. 30) kendi Mücevher sütununu kullanır, malzemeler ortak.</div>
+      <div className="muted adm-hint">Oyuncu bir beceriyi geliştirirken her kademede bu bedeli öder. Malzeme ekleyebilirsin (ör. Sv. 5→6 için 3 Kor Mührü). Uzmanlık becerisi kendi Mücevher sütununu kullanır, malzemeler ortak.</div>
       <div className="adm-table-wrap"><table className="adm-table">
         <thead><tr><th>Kademe</th><th>Mücevher</th><th>Uzmanlık Mücevher</th><th>Malzemeler</th></tr></thead>
         <tbody>{steps.map((st, i) => (
@@ -666,6 +686,7 @@ export function SkillUpTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
       </table></div>
       <button className="btn small ghost" style={{ marginTop: 6 }} disabled={dis} onClick={() => setT({ ...t, skillUp: structuredClone(SKILLUP_DEFAULT) })}>Varsayılana dön</button>
     </section>
+    </>
   );
 }
 

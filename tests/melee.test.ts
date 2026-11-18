@@ -146,3 +146,21 @@ describe('beceri geliştirme bedeli (yönetimden)', () => {
     applyTuning(structuredClone(DEFAULT_TUNING));
   });
 });
+
+describe('becerilerin açılma seviyesi (yönetimden)', () => {
+  it('Kalkan Hücumu Sv. 30 yerine Sv. 3 ayarlanınca Sv. 3 oyuncuda açılır; uzmanlık seviyesi ayarlanır', async () => {
+    const { applyTuning, DEFAULT_TUNING, classSkill } = await import('@col/shared');
+    expect(classSkill('guardian', 2)!.unlock).toBe(30);
+    applyTuning({ ...structuredClone(DEFAULT_TUNING), skillUnlock: { g_dash: 3 }, specLevel: 25 });
+    expect(classSkill('guardian', 2)!.unlock).toBe(3);
+    expect(classSkill('guardian', 3, 'steel')!.unlock).toBe(25);
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mkChar({ level: 3 })); const p = w.bySid.get(1)!;
+    const fox = p.zone.monsterList.find((m) => m.def.id === 'wild_fox')!;
+    p.x = fox.x - 100; p.y = fox.y; p.zone.players.move(p);
+    w.onCmd(1, JSON.stringify({ t: 'skill', s: 2, id: fox.id, x: fox.x, y: fox.y }));
+    expect(p.cooldowns[2]).toBeGreaterThan(0); // kullanıldı
+    applyTuning(structuredClone(DEFAULT_TUNING));
+    expect(classSkill('guardian', 2)!.unlock).toBe(30);
+  });
+});

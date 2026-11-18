@@ -1166,7 +1166,7 @@ export class World {
 
   private cmdSpec(p: Player, spec: string, req: string) {
     const ch = p.char;
-    if (ch.level < 30) return this.notice(p, 'Uzmanlık 30. seviyede açılır.');
+    if (ch.level < TUNING.specLevel) return this.notice(p, `Uzmanlık ${TUNING.specLevel}. seviyede açılır.`);
     if (ch.spec) return this.notice(p, 'Uzmanlık zaten seçili. Değiştirmek için sıfırlama parşömeni gerekir.');
     if (!CLASSES[ch.cls].specs.some((s) => s.id === spec)) return;
     if (this.seenReceipt(p, req)) return;
