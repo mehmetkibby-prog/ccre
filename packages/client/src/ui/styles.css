@@ -1816,3 +1816,50 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 /* mobil: iksir düğmesinde kalan sayı */
 .mact .pot img { transform: translateY(-5px); }
 .mact .pot .pot-n { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 0 3px #000, 0 1px 2px #000; pointer-events: none; }
+
+/* ───── Kor Kulesi ───── */
+.fg-hero img { filter: drop-shadow(0 0 12px rgba(255, 130, 40, .6)); }
+.fg-floors { grid-template-columns: 1fr; }
+.fg-hud { box-shadow: 0 8px 22px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 130, 50, .45); background: linear-gradient(180deg, rgba(34, 18, 12, .92), rgba(16, 9, 6, .88)); }
+.fg-hud .tw-hd { background: linear-gradient(90deg, rgba(255, 120, 40, .22), transparent); }
+.fg-hud .tw-hd .fl { color: #ffb070; }
+.fg-hud .tw-bar i { background: linear-gradient(90deg, #ff6a1a, #ffc060); }
+.fg-hud .tw-bar.boss i { background: linear-gradient(90deg, #a0140a, #ff5a2a); }
+.fg-steps { display: flex; gap: 4px; margin-bottom: 6px; }
+.fg-steps .s { flex: 1; text-align: center; padding: 3px 0; border-radius: 6px; font-size: 10.5px; font-weight: 700; color: #a08070; background: rgba(255, 255, 255, .05); }
+.fg-steps .s.done { color: #2a1206; background: linear-gradient(180deg, #ffb060, #e0702a); }
+.fg-steps .s.now { color: #ffe0b0; box-shadow: inset 0 0 0 1px #ff8a3a; animation: fgpulse 1.4s ease-in-out infinite; }
+@keyframes fgpulse { 50% { background: rgba(255, 120, 40, .22); } }
+.fg-mold { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.fg-mold .m { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; font: 800 18px var(--f-ui); color: #806050; background: rgba(0, 0, 0, .35); box-shadow: inset 0 0 0 1px #5a3a2a; border: 1px solid transparent; }
+.fg-mold .m.open { background: rgba(255, 255, 255, .08); text-shadow: 0 0 8px currentColor; }
+.fg-mold .m.found { background: rgba(255, 160, 60, .14); text-shadow: 0 0 10px currentColor; box-shadow: inset 0 0 0 1px currentColor; }
+.fg-ember { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+.fg-ember .e { font-size: 18px; color: #7a5a4a; }
+.fg-ember .e.lit { filter: drop-shadow(0 0 6px #ff8a2a); }
+.fg-ember .tw-bar { flex-basis: 100%; }
+
+/* ───── Evrim ───── */
+.forge-tabs .evo-tag { margin-left: 6px; padding: 1px 6px; border-radius: 99px; font-size: 9px; font-weight: 800; letter-spacing: .5px; color: #fff; background: linear-gradient(90deg, #4ad8ff, #b070ff 50%, #ffc83a); }
+.btn.evo-act { background: linear-gradient(180deg, #4a2a6a, #2a1640); box-shadow: inset 0 0 0 1px #b070ff, 0 0 12px rgba(176, 112, 255, .3); color: #f0e0ff; }
+.evo-cell { position: relative; }
+.evo-pip { position: absolute; right: 2px; top: 0; font-size: 9px; letter-spacing: -1px; text-shadow: 0 0 4px #000, 0 0 6px currentColor; pointer-events: none; }
+.evo-ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+.evo-ladder .st { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 4px; border-radius: 9px; background: rgba(255, 255, 255, .04); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.evo-ladder .st b { font: 400 18px var(--f-title); color: var(--ec); text-shadow: 0 0 10px var(--ec); }
+.evo-ladder .st span { font-size: 11.5px; font-weight: 700; }
+.evo-ladder .st small { font-size: 10px; color: var(--muted); }
+.evo-ladder .st.done { background: color-mix(in srgb, var(--ec) 16%, transparent); box-shadow: inset 0 0 0 1px var(--ec); }
+.evo-ladder .st.now { box-shadow: inset 0 0 0 1px var(--ec), 0 0 14px color-mix(in srgb, var(--ec) 40%, transparent); animation: fgpulse 1.6s ease-in-out infinite; }
+.evo-tier { font: 400 15px var(--f-title); letter-spacing: 1px; text-shadow: 0 0 10px currentColor; }
+.evo-kills { width: 100%; }
+.evo-kills .lb { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 3px; }
+.evo-kills .lb b { font-variant-numeric: tabular-nums; }
+.btn.evo-btn:not(:disabled) { background: linear-gradient(180deg, color-mix(in srgb, var(--ec) 70%, #fff), color-mix(in srgb, var(--ec) 70%, #000)); color: #160a20; box-shadow: 0 0 16px color-mix(in srgb, var(--ec) 60%, transparent); }
+.forge-fx.evo-hit.hit { animation: forgehit 1s ease-out; }
+.forge-fx.evo-hit.hit.e1 { background: radial-gradient(circle at 50% 35%, rgba(74, 216, 255, .75), transparent 60%); }
+.forge-fx.evo-hit.hit.e2 { background: radial-gradient(circle at 50% 35%, rgba(176, 112, 255, .8), transparent 60%); }
+.forge-fx.evo-hit.hit.e3 { background: radial-gradient(circle at 50% 35%, rgba(255, 236, 160, .95), rgba(255, 200, 58, .5) 35%, transparent 70%); }
+.tip-evo { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; padding: 7px 14px; font-size: 11.5px; box-shadow: inset 0 -1px 0 rgba(96, 70, 42, .6); }
+.tip-evo .ev { font-weight: 700; letter-spacing: .3px; text-shadow: 0 0 8px currentColor; }
+@media (max-width: 720px) { .forge.evo { grid-template-columns: 1fr; } }

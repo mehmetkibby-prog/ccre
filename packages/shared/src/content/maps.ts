@@ -1,4 +1,4 @@
-export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient' | 'tower';
+export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient' | 'tower' | 'forge';
 export type Region = 'near' | 'mid' | 'far' | 'any';
 
 export interface SpawnGroup {
@@ -45,11 +45,11 @@ export const MAPS: Record<string, MapDef> = {
     market: { tx: 67, ty: 24, rx: 14, ry: 11, name: 'Pazar Meydanı' },
     desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar; güneydeki Tilki Korusu yeni başlayanların ilk avıdır; korunun en ucundaki arenada Tilki Kral bekler.',
     npcs: [
-      { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'shop_smith'] },
+      { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'evolve', 'shop_smith'] },
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },
       { id: 'pakize', name: 'Pakize', title: 'Zanaatkâr', art: 'crafter', tx: 17, ty: 30, actions: ['craft'] },
       { id: 'nur', name: 'Nur', title: 'Işınlayıcı', art: 'mage', tx: 31, ty: 26, actions: ['teleport'] },
-      { id: 'bekci', name: 'Zindan Bekçisi', title: 'Seferler', art: 'warden', tx: 38, ty: 30, actions: ['tower'] },
+      { id: 'bekci', name: 'Zindan Bekçisi', title: 'Seferler', art: 'warden', tx: 38, ty: 30, actions: ['forge', 'tower'] },
       { id: 'arda', name: 'Seyis Arda', title: 'Binek Ustası', art: 'stable', tx: 45, ty: 22, actions: ['mount'] },
       { id: 'tuccar', name: 'Tüccar Selim', title: 'Erzak', art: 'merchant', tx: 24, ty: 22, actions: ['shop_general', 'sell'] },
       { id: 'kemal', name: 'Balıkçı Kemal', title: '', art: 'fisher', tx: 15, ty: 35, actions: ['fishing_shop'] },
@@ -112,6 +112,12 @@ export const MAPS: Record<string, MapDef> = {
     id: 'tower', name: 'Kadim Kule', w: 200, h: 80, theme: 'tower', seed: 1299, safe: false, pvp: false, minLevel: 1,
     respawnMap: 'tower', travelable: false, spawns: [], npcs: [],
     desc: 'On katlı kadim kule. Her katta canavarlar ve bulmacalar; zirvede Azrail bekler.',
+  },
+  // Kor Kulesi: her grubun kendi 3 katı (bkz. content/forge.ts); giriş Zindan Bekçisi'nden
+  forge: {
+    id: 'forge', name: 'Kor Kulesi', w: 108, h: 264, theme: 'forge', seed: 7311, safe: false, pvp: false, minLevel: 1,
+    respawnMap: 'forge', travelable: false, spawns: [], npcs: [],
+    desc: 'Üç katlı demirci kulesi. Dalga dalga Cüruf Golemleri, kalıp ve köz bulmacaları; zirvede Karademir.',
   },
 };
 export const MAP_IDS = Object.keys(MAPS);

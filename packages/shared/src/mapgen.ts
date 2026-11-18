@@ -4,6 +4,7 @@ import { MAPS, type MapDef, type Region } from './content/maps.ts';
 import { MONSTERS, MONSTER_LEVEL } from './content/monsters.ts';
 import { TUNING } from './tuning.ts';
 import { towerRoom, towerRoomTile, TOWER_FLOORS, TOWER_R } from './content/tower.ts';
+import { forgeRoom, forgeRoomTile, FORGE_FLOORS, FORGE_SLOTS, FORGE_R } from './content/forge.ts';
 
 export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND = 5, SNOW = 6, ICE = 7, ASH = 8, STONE = 9, DEEP = 10, PLANK = 11 }
 
@@ -13,7 +14,11 @@ export type PropKind =
   | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
-export interface SpawnPoint { monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number; /** Kadim Kule katı */ floor?: number }
+export interface SpawnPoint {
+  monster: string; level: number; variant: 0 | 1 | 2; x: number; y: number; /** Kadim Kule katı */ floor?: number;
+  /** Kor Kulesi: bir kez doğar (yeniden doğmaz); mutlak güç (yönetim) ve ait olduğu grup odası */
+  once?: boolean; st?: { hp: number; atk: number; def: number; xp: number }; forge?: number;
+}
 /** Bir canavar türünün yuvası: canavarlar bu dairenin içinde doğar ve dolaşır. */
 export interface MonsterZone { name: string; monster: string; x: number; y: number; r: number; level: [number, number]; count: number }
 
@@ -419,6 +424,55 @@ function genTower(l: MapLayout, rng: Rng) {
   placeTowerSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 
+/**
+ * Kor Kulesi: her grubun üç yuvarlak demirhane odası (FORGE_SLOTS sıra × 3 kat), aralarında lav uçurumu.
+ * Kenarda kara kaya ve kızıl kristal, kapının iki yanında ocak, ortada örs, duvar diplerinde varil ve sandık.
+ * Canavarlar haritada sabit durmaz: dalgalar sunucuda grubun odasında doğar.
+ */
+function genForge(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  l.ground.fill(G.ASH); l.blocked.fill(1);
+  for (let slot = 0; slot < FORGE_SLOTS; slot++) for (let f = 1; f <= FORGE_FLOORS; f++) {
+    const { tx, ty } = forgeRoomTile(slot, f);
+    const R = FORGE_R, room = forgeRoom(slot, f);
+    for (let y = ty - R - 1; y <= ty + R + 1; y++) for (let x = tx - R - 1; x <= tx + R + 1; x++) {
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const d = Math.hypot(x + 0.5 - (tx + 0.5), y + 0.5 - (ty + 0.5)), i = idx(l, x, y);
+      if (d < R - 0.4) { l.ground[i] = d < 3.2 || (d > 6 && d < 6.8) ? G.COBBLE : G.STONE; l.blocked[i] = 0; }
+      else if (d < R + 0.8) l.ground[i] = G.STONE;
+    }
+    // kenar: kara kaya, aralarda kızıl kristal (güney yarı alçak: kamerayı kapatmasın)
+    for (let a = 0; a < Math.PI * 2; a += 0.17) {
+      const r = R + 0.5 + rng() * 0.4;
+      const south = Math.sin(a) > 0.2;
+      const crystal = rng() < (south ? 0.1 : 0.28);
+      const sc = south ? 0.45 + rng() * 0.25 : crystal ? 1.0 + rng() * 0.6 : 0.85 + rng() * 0.45;
+      l.props.push({ k: crystal ? 'crystal' : 'rock', x: tc(tx + Math.cos(a) * r - 0.5), y: tc(ty + Math.sin(a) * r - 0.5), v: crystal ? 1 : (rng() * 3) | 0, s: sc });
+    }
+    // kapının iki yanında ocak, doğu-batıda sancak; örs ortanın güneyinde (kor taşıma hedefi)
+    for (const [ox, oy, k, sc] of [[-3, -R + 2, 'forge', 1], [3, -R + 2, 'forge', 1], [-R + 2, -1, 'banner', 1.2], [R - 2, -1, 'banner', 1.2]] as [number, number, PropKind, number][]) {
+      l.props.push({ k, x: tc(tx + ox), y: tc(ty + oy), v: 2, s: sc });
+      l.blocked[idx(l, tx + ox, ty + oy)] = 1;
+    }
+    const at = Math.floor(room.anvil.x / TILE), aty = Math.floor(room.anvil.y / TILE);
+    l.props.push({ k: 'anvil', x: room.anvil.x, y: room.anvil.y, v: 0, s: 1.5 });
+    l.blocked[idx(l, at, aty)] = 1;
+    // süs: varil ve sandık duvar dibinde
+    for (let n = 0; n < 4; n++) {
+      const a = rng() * Math.PI * 2, r = R - 1.6;
+      const x = Math.round(tx + Math.cos(a) * r), y = Math.round(ty + Math.sin(a) * r);
+      if (Math.abs(x - tx) < 4) continue; // giriş ve kapı yolu açık
+      const wx = tc(x), wy = tc(y);
+      if ([...room.emberSpots, ...room.rifts].some((q) => Math.hypot(q.x - wx, q.y - wy) < TILE * 1.6)) continue;
+      if (!isFree(l, x, y)) continue;
+      l.props.push({ k: rng() < 0.5 ? 'barrel' : 'crate', x: tc(x), y: tc(y), v: 0, s: 1 });
+      l.blocked[idx(l, x, y)] = 1;
+    }
+  }
+  const r0 = forgeRoom(0, 1);
+  l.spawn = { x: r0.entry.x, y: r0.entry.y };
+}
+
 /** Kat ayarından canavar noktaları: girişten, kapıdan ve bulmaca taşlarından uzak, oda içinde. */
 function placeTowerSpawns(l: MapLayout, rng: Rng) {
   const T = TUNING.tower;
@@ -602,6 +656,7 @@ export function getLayout(mapId: string): MapLayout {
   const rng = mulberry32(def.seed);
   if (def.id === 'arena' || def.id === 'guildwar') genArena(l, rng);
   else if (def.id === 'tower') genTower(l, rng);
+  else if (def.id === 'forge') genForge(l, rng);
   else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);
   else genWild(l, rng);

@@ -89,7 +89,7 @@ export class Terrain {
         const d = (W_(x0, y0) * (1 - u) + W_(x0 + 1, y0) * u) * (1 - v) + (W_(x0, y0 + 1) * (1 - u) + W_(x0 + 1, y0 + 1) * u) * v;
         if (d < 4) h = Math.min(h, THREE.MathUtils.lerp(WATER_Y + 0.08, Math.max(h, WATER_Y + 0.08), THREE.MathUtils.smoothstep(d, 0.3, 4))); // kıyıya yumuşak iniş
       }
-      if (theme === 'tower') {
+      if (theme === 'tower' || theme === 'forge') {
         // Kadim Kule: oda zemini düz taş, odalar arası derin uçurum (köşedeki dört karodan biri oda ise zemin)
         let room = false;
         for (let dy = -1; dy <= 0 && !room; dy++) for (let dx = -1; dx <= 0; dx++) { const x0 = Math.floor(tx) + dx, y0 = Math.floor(ty) + dy; if (x0 >= 0 && y0 >= 0 && x0 < l.w && y0 < l.h && l.ground[y0 * l.w + x0] !== 8) { room = true; break; } }
@@ -132,7 +132,7 @@ export class Terrain {
     });
     const arr = groundTextureArrays();
     const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 });
-    const tint = theme === 'frozen' ? new THREE.Color(0.95, 0.98, 1.05) : theme === 'black' ? new THREE.Color(0.85, 0.8, 0.9) : theme === 'tower' ? new THREE.Color(0.5, 0.48, 0.6) : new THREE.Color(1, 1, 1);
+    const tint = theme === 'frozen' ? new THREE.Color(0.95, 0.98, 1.05) : theme === 'black' ? new THREE.Color(0.85, 0.8, 0.9) : theme === 'tower' ? new THREE.Color(0.5, 0.48, 0.6) : theme === 'forge' ? new THREE.Color(0.66, 0.54, 0.48) : new THREE.Color(1, 1, 1);
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uSplat0 = { value: splatTex[0] };
       sh.uniforms.uSplat1 = { value: splatTex[1] };

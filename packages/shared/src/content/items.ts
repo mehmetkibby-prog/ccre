@@ -1,5 +1,6 @@
 import { TUNING } from '../tuning.ts';
 import { isUpgradable, plusBonus } from './upgrade.ts';
+import { evoPct, EVO_NAMES } from '../forgeTune.ts';
 import type { ClassId } from './classes.ts';
 
 export type Slot = 'weapon' | 'armor' | 'helmet' | 'boots' | 'necklace' | 'earring' | 'bracelet';
@@ -101,7 +102,7 @@ export function itemDisplayName(it: ItemInstance): string {
   const r = RARITY[it.rarity];
   const base = t ? t.name : it.tpl;
   const prefix = it.rarity === 'white' ? '' : r.name + ' ';
-  return `${prefix}${base}${it.plus ? ' +' + it.plus : ''}`;
+  return `${it.evo ? EVO_NAMES[Math.min(3, it.evo)] + ' ' : ''}${prefix}${base}${it.plus ? ' +' + it.plus : ''}`;
 }
 export function itemPower(it: ItemInstance): number {
   const t = ITEM_TPL.get(it.tpl);
@@ -111,7 +112,9 @@ export function itemPower(it: ItemInstance): number {
   const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
   const base = Math.round(t.basePower * mult);
   const plus = isUpgradable(t.slot) ? plusBonus(t.slot, it.plus, base) : PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0;
-  return base + plus;
+  // evrim: silahta saldırı, zırhta savunma toplam yüzdesi (yönetimden)
+  const ev = it.evo ? evoPct(TUNING, t.slot, it.evo) : 0;
+  return ev ? Math.round((base + plus) * (1 + ev / 100)) : base + plus;
 }
 
 export interface MaterialDef { id: string; name: string; icon: string; color: string; sellable: boolean; desc: string }
@@ -137,6 +140,11 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'tower_seal', name: 'Kadim Kat Mührü', icon: 'tower_seal', color: '#5ce0d0', sellable: false, desc: 'Kadim Kule katlarında düşer. Üretim ve geliştirmede kullanılır.' },
   { id: 'soul_ring', name: 'Ruh Zinciri Halkası', icon: 'soul_ring', color: '#9ab8ff', sellable: false, desc: 'Kadim Kule katlarında düşer. Ruhları bağlayan kadim halka.' },
   { id: 'sly_core', name: 'Sinsi Taş Çekirdeği', icon: 'sly_core', color: '#7cf06a', sellable: false, desc: 'Kadim Kule katlarında düşer. İçinde bir göz kıpırdar.' },
+  // Kor Kulesi: evrim malzemeleri
+  { id: 'ember_stone', name: 'Kor Taşı', icon: 'ember_stone', color: '#ff7a2a', sellable: false, desc: 'Kor Kulesi\'nde düşer. İçinde hâlâ ocak ateşi yanan taş; silah ve zırh evriminin temel malzemesi.' },
+  { id: 'star_iron', name: 'Yıldız Demiri', icon: 'star_iron', color: '#8fb4ff', sellable: false, desc: 'Kor Kulesi\'nde düşer. Gökten düşmüş taşın demiri; evrimde silaha ve zırha sertlik verir.' },
+  { id: 'evo_crystal', name: 'Evrim Kristali', icon: 'evo_crystal', color: '#e8b8ff', sellable: false, desc: 'Karademir\'den ve Kor Sandığı\'ndan zor düşer. 2. ve 3. evrim kademesi için gerekir.' },
+  { id: 'forge_chest', name: 'Kor Sandığı', icon: 'forge_chest', color: '#ff9a3a', sellable: false, desc: 'Karademir\'i yenen herkese verilir. Çantadan aç: Mücevher, Öz, Kor Taşı, Yıldız Demiri ve şansına Evrim Kristali.' },
   { id: 'mourn_silk', name: 'Matem İpeği', icon: 'mourn_silk', color: '#a78bd8', sellable: false, desc: 'Kadim Kule katlarında düşer. Yas tutan ruhların dokuduğu ipek.' },
   { id: 'azrail_chest', name: 'Azrail Sandığı', icon: 'azrail_chest', color: '#ff3a5a', sellable: false, desc: 'Azrail\'den kesin düşer. Aç: Mücevher, Öz, kule malzemeleri ve şansla Azrail Kancası.' },
   { id: 'azrail_hook', name: 'Azrail Kancası', icon: 'azrail_hook', color: '#ff2a4a', sellable: false, desc: 'Azrail Sandığı\'ndan nadiren çıkar. Efsanevi üretim malzemesi.' },

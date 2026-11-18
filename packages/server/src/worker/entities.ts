@@ -144,6 +144,12 @@ export class Monster {
     this.atk = Math.max(1, Math.round(mt?.atk ?? (mt?.baseAtk !== undefined ? mt.baseAtk * s.atk / Math.max(1, r.atk) : s.atk * TUNING.monsterAtkMul * (mt?.atkMul ?? 1))));
     this.armor = Math.max(0, mt?.def ?? s.def + (mt?.defAdd ?? 0));
     this.xp = Math.max(0, Math.round(mt?.baseXp !== undefined ? mt.baseXp * s.xp / Math.max(1, r.xp) : s.xp * (mt?.xpMul ?? 1)));
+    // Kor Kulesi: dalga canavarının gücü kulenin yönetim ayarından (mutlak)
+    if (this.sp.st) {
+      this.maxHp = Math.max(1, Math.round(this.sp.st.hp)); this.hp = Math.max(this.hp > 0 ? 1 : 0, Math.round(this.maxHp * ratio));
+      this.atk = Math.max(1, Math.round(this.sp.st.atk)); this.armor = Math.max(0, this.sp.st.def); this.xp = Math.max(0, Math.round(this.sp.st.xp));
+      return;
+    }
     // Kadim Kule: kat başına can ve saldırı çarpanı (yönetim)
     const fl = this.sp.floor ? TUNING.tower.floors[this.sp.floor - 1] : undefined;
     if (fl && (fl.hpMul !== 1 || fl.atkMul !== 1)) {

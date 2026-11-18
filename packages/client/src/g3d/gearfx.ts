@@ -352,6 +352,13 @@ export function plusFx(g: THREE.Object3D, plus: number, kind: string) {
   g.add(fx);
 }
 
+/** Yatay dönen rün halkası (evrim efektleri de kullanır). */
+export function runeRing(col: number, spin: number, star = false): THREE.Mesh {
+  const m = new THREE.Mesh(ringGeo, ringMat(spin, star, col));
+  m.rotation.x = -Math.PI / 2; m.renderOrder = 2; m.name = 'plus-fx';
+  return m;
+}
+
 /** +6 silahlı karakterin ayak altında dönen rün mührü. */
 export function sigilFx(): THREE.Object3D {
   const m = new THREE.Mesh(ringGeo, ringMat(0.35, true, 0xffffff));

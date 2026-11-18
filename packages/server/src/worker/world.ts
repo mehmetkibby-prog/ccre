@@ -5,6 +5,7 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  FORGE_MAP, EVO_TIERS, EVO_NAMES,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
@@ -14,6 +15,7 @@ import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from 
 import { Histogram } from '../metrics.ts';
 import { findPath, los, freeAt } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
+import { Forge } from './forge.ts';
 
 const DIR_TO_BYTE = 256 / DIR_STEPS;
 const angleByte = (dx: number, dy: number) => { let a = Math.atan2(dy, dx); if (a < 0) a += Math.PI * 2; return Math.round((a / (Math.PI * 2)) * 256) & 255; };
@@ -53,6 +55,8 @@ export class World {
 
   /** Oyuncular arası: grup, ticaret, düello, arkadaşlık (kanal içi). */
   social: Social;
+  /** Kor Kulesi: grup başına örnek koşular */
+  forge: Forge;
   private byCharId(charId: number) { for (const q of this.bySid.values()) if (q.char.id === charId) return q; return undefined; }
 
   constructor(public opt: WorldOptions) {
@@ -63,6 +67,17 @@ export class World {
       byChar: (id) => w.byCharId(id), sendJson: (p, o) => w.sendJson(p, o), notice: (p, t, k) => w.notice(p, t, k), save: (p, u) => w.save(p, u),
     });
     this.social.allCharNames = function* () { for (const q of w.bySid.values()) yield q.char.name; };
+    this.forge = new Forge({
+      get now() { return w.now; },
+      zone: () => w.zones.get(FORGE_MAP)!,
+      byChar: (id) => w.byCharId(id), partyMembers: (p) => w.social.partyMembers(p),
+      sendJson: (p, o) => w.sendJson(p, o), notice: (p, t, k) => w.notice(p, t, k), save: (p, u) => w.save(p, u),
+      moveToZone: (p, z, x, y) => w.moveToZone(p, z, x, y),
+      toTown: (p) => { const town = w.zones.get('bazaar')!; const n = town.layout.npcs.find((x) => x.id === 'bekci'); w.moveToZone(p, town, (n?.x ?? town.layout.spawn.x) + 60, (n?.y ?? town.layout.spawn.y) + 70); w.save(p); },
+      zap: (p, f, m) => w.towerZap(p, f, m),
+      broadcastWorld: (from, text) => { const msg = JSON.stringify({ t: 'chat', ch: 'world', from, text, cls: '', gm: true }); for (const q of w.bySid.values()) w.pushOut(q.sid, msg); },
+      nearWarden: (p) => w.nearNpc(p, 'bekci'),
+    });
   }
   /**
    * Yönetim: bir karakterin seviyesini/cüzdanını değiştirir (çevrimiçiyse anında, istatistikleriyle).
@@ -177,13 +192,14 @@ export class World {
     if (this.bySid.has(sid)) return;
     char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
     if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
-    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled) || (char.map === 'guildwar' && !this.guildWars.length)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
+    if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled) || (char.map === FORGE_MAP && !this.forge.hasChar(char.id)) || (char.map === 'guildwar' && !this.guildWars.length)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
     char.x = pos.x; char.y = pos.y;
     // kaska can efsunu artık gelmiyor: eski kasklardakini değiştir
     for (const it of [...char.bag, ...Object.values(char.equip)]) fixHelmetHp(it as ItemInstance | undefined);
     const p = new Player(sid, char);
+    if (zone.id === FORGE_MAP) this.forge.rejoin(p);
     if (char.misc.deadAt && char.hp <= 0) { p.dead = true; p.deadAt = Math.min(this.now, char.misc.deadAt); p.hp = 0; p.anim = Anim.DEAD; }
     if (p.hp <= 0 && !p.dead) p.hp = p.stats.maxHp;
     this.bySid.set(sid, p);
@@ -194,6 +210,7 @@ export class World {
     // karakter ölü kalıyor, ne yerinde doğabiliyor ne ışınlanabiliyordu.
     if (p.dead) this.sendJson(p, { t: 'dead', killer: null, lost: 0, respawnIn: Math.max(0, RESPAWN_DELAY_MS - (this.now - p.deadAt)), town: MAPS[zone.def.respawnMap]?.name });
     if (zone.id === TOWER_MAP) this.towerSend(p);
+    if (zone.id === FORGE_MAP) this.forge.sendTo(p);
     this.marketJoin(p);
     this.opt.post({ type: 'joined', sid, ok: true });
   }
@@ -312,6 +329,13 @@ export class World {
       case 'arena': return this.cmdArena(p, String(c.op));
       case 'mount': return this.cmdMount(p, String(c.op));
       case 'tower': return this.cmdTower(p, String(c.op));
+      case 'forge': {
+        if (c.op === 'enter') return this.forge.enter(p);
+        if (c.op === 'state') return this.forge.sendTo(p);
+        if (c.op === 'leave') { if (p.zone.id !== FORGE_MAP) return; if (this.now < p.combatUntil) return this.notice(p, 'Savaştayken kuleden çıkamazsın.'); return this.forge.leave(p, false); }
+        return;
+      }
+      case 'evolve': return this.cmdEvolve(p, String(c.item ?? ''), String(c.req ?? ''));
       case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
       case 'quest': return this.cmdQuest(p, String(c.op), String(c.id), String(c.req ?? ''));
@@ -342,6 +366,7 @@ export class World {
     this.periodicSaves();
     if (this.tickNo % 200 === 0) this.flushGuildTax();
     if (this.tickNo % 20 === 7) this.guildWarSweep();
+    if (this.forge.runs.size && this.tickNo % 2 === 1) this.forge.tick();
     this.flushOut();
     const dt = performance.now() - t;
     this.tickHist.add(dt);
@@ -401,7 +426,7 @@ export class World {
     for (let i = list.length - 1; i >= 0; i--) {
       const m = list[i];
       if (m.state === MState.DEAD) {
-        if (now >= m.removeAt) { z.removeMonster(m); z.respawnQueue.push({ at: now + this.respawnDelay(m.def), sp: m.sp }); if (m.def.boss) this.broadcastBosses(); }
+        if (now >= m.removeAt) { z.removeMonster(m); if (!m.sp.once) { z.respawnQueue.push({ at: now + this.respawnDelay(m.def), sp: m.sp }); if (m.def.boss) this.broadcastBosses(); } }
         continue;
       }
       if (!z.awakeCells[m.cell] && m.state === MState.IDLE) continue;
@@ -595,9 +620,11 @@ export class World {
     const pick = (this.tickNo + m.id) % 3;
     const warn = 1300;
     let tg: Telegraph;
-    if (pick === 0) tg = { at: this.now + warn, shape: 'circle', x: t.x, y: t.y, r: 190, dmgMult: 2.2 };
-    else if (pick === 1) tg = { at: this.now + warn, shape: 'ring', x: m.x, y: m.y, r: 340, r2: 170, dmgMult: 2 };
-    else { const a = Math.atan2(t.y - m.y, t.x - m.x); tg = { at: this.now + warn, shape: 'line', x: m.x, y: m.y, r: 70, a, len: 620, dmgMult: 2.6 }; }
+    // Kor Kulesi'nde Karademir'in yer çatlağı gücü yönetimden (varsayılan 2,2 = diğer bosslarla aynı)
+    const k = m.sp.forge !== undefined ? TUNING.forge.boss.slamMul / 2.2 : 1;
+    if (pick === 0) tg = { at: this.now + warn, shape: 'circle', x: t.x, y: t.y, r: 190, dmgMult: 2.2 * k };
+    else if (pick === 1) tg = { at: this.now + warn, shape: 'ring', x: m.x, y: m.y, r: 340, r2: 170, dmgMult: 2 * k };
+    else { const a = Math.atan2(t.y - m.y, t.x - m.x); tg = { at: this.now + warn, shape: 'line', x: m.x, y: m.y, r: 70, a, len: 620, dmgMult: 2.6 * k }; }
     m.telegraphs.push(tg);
     const fx = tg.shape === 'circle' ? Fx.TELEGRAPH_CIRCLE : tg.shape === 'ring' ? Fx.TELEGRAPH_RING : Fx.TELEGRAPH_LINE;
     const aParam = tg.shape === 'line' ? Math.round(((tg.a! + Math.PI * 2) % (Math.PI * 2)) * 1000) : tg.shape === 'ring' ? tg.r2! : 0;
@@ -834,6 +861,7 @@ export class World {
     m.hp = 0; m.state = MState.DEAD; m.anim = Anim.DEAD; m.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS;
     m.deadAt = this.now; m.removeAt = this.now + 1600; m.telegraphs.length = 0;
     z.emit(m.x, m.y, { e: Ev.DEATH, id: m.id, killer: killer.id });
+    if (m.sp.forge !== undefined) this.forge.monsterDied(m);
     // ödül: boss'ta yeterince hasar veren HERKES kendi ganimetini alır (bossun canının en az bossShareMin %'si);
     // duyuruda en çok hasar veren anılır. Normal canavarda öldüren.
     let owner = killer;
@@ -845,7 +873,7 @@ export class World {
       if (!got.size) got.add(killer);
       m.threat.clear(); m.target = null;
       for (const p of got) { this.rewardKill(p, m); if (p !== owner) this.notice(p, `${m.def.name} düştü: katkın için ganimet kazandın!`, 'ok'); }
-      this.bossDied(m, owner);
+      if (m.sp.forge === undefined) this.bossDied(m, owner);
       return;
     }
     m.threat.clear(); m.target = null;
@@ -882,8 +910,12 @@ export class World {
     const rkc = c.misc.rankKills;
     if (!rkc || rkc.k !== rk) c.misc.rankKills = { k: rk, n: 0, ...(rkc ? { prev: { k: rkc.k, n: rkc.n } } : {}) };
     c.misc.rankKills!.n++;
-    const w = c.equip.weapon;
-    if (w) w.kills = (w.kills ?? 0) + 1;
+    // evrim sayacı: kuşanılmış silah ve zırh (çok düşük seviyeli canavar sayılmaz: yönetimde "seviye farkı")
+    const gap = TUNING.evo.maxGap;
+    if (!gap || m.level >= lvl0 - gap) {
+      for (const it of [c.equip.weapon, c.equip.armor]) if (it && (it.evo ?? 0) < EVO_TIERS) it.kills = (it.kills ?? 0) + 1;
+    }
+    if (m.sp.forge !== undefined) { this.forgeLoot(p, m); p.selfDirty |= 1 | 2; p.markSave(); return; }
     // ganimet tablosu: harita profili → bölge ayarı → canavar türü ayarı (istemcideki "?" penceresiyle aynı hesap)
     const prof = resolveLoot(TUNING, p.zone.id, p.zone.def.theme, m.def.id, (id) => MATERIAL.has(id), m.sp.floor);
     // bölge seviye sınırı: haritanın üst sınırını aşan oyuncuya eşya/malzeme düşmesi çok azalır
@@ -1007,6 +1039,11 @@ export class World {
       const w = this.warOf(p);
       if (w && this.now < w.endsAt) { const pt = this.warPoint(w, p); p.hp = p.stats.maxHp; this.moveToZone(p, z, pt.x, pt.y); this.arenaProt.set(p.char.id, this.now + 4000); }
       else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
+    } else if (target === FORGE_MAP) {
+      // Kor Kulesi: koşunun güncel katının girişinde (koşu bittiyse köyde)
+      const pt = this.forge.respawnPoint(p);
+      if (pt) this.moveToZone(p, z, pt.x, pt.y);
+      else { const town = this.zones.get('bazaar')!; this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y); }
     } else if (target === TOWER_MAP) {
       // kulede ölen o katın girişinde doğar (ilerleme korunur)
       const t = this.towerProg(p), r = towerRoom(t.f);
@@ -1025,6 +1062,7 @@ export class World {
     const pos = nearestFree(z.layout, x, y);
     if (from !== z) {
       this.social.onZoneChange(p);
+      if (from.id === FORGE_MAP) this.forge.detach(p);
       from.removePlayer(p);
       for (const m of from.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
       p.x = pos.x; p.y = pos.y;
@@ -1083,6 +1121,7 @@ export class World {
     c.equip[tpl.slot] = it;
     p.recompute(true);
     p.dirty |= Upd.MAXHP | Upd.HP;
+    if (tpl.slot === 'weapon' || tpl.slot === 'armor') this.relook(p);
     p.selfDirty |= 2 | 4; p.markSave();
   }
   private cmdUnequip(p: Player, slot: Slot) {
@@ -1094,6 +1133,7 @@ export class World {
     c.bag.push(it);
     p.recompute(true);
     p.dirty |= Upd.MAXHP | Upd.HP;
+    if (slot === 'weapon' || slot === 'armor') this.relook(p);
     p.selfDirty |= 2 | 4; p.markSave();
   }
   private cmdLock(p: Player, itemId: string, on: boolean) {
@@ -1196,6 +1236,7 @@ export class World {
     }
     if (key === 'red_potion') return this.usePotion(p, false);
     if (key === 'azrail_chest') return this.openAzrailChest(p);
+    if (key === 'forge_chest') return this.openForgeChest(p);
     this.notice(p, 'Bu eşya doğrudan kullanılamaz.');
   }
 
@@ -1317,6 +1358,7 @@ export class World {
       this.notice(p, back.length ? `Koruma Mührü: ${back.join(', ')} geri verildi.` : 'Koruma Mührü kullanıldı.', 'ok');
     }
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
+    if (it.plus !== before && ch.equip.weapon === it) this.relook(p);
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'upgradeResult', req: c.req, ok, before, after: it.plus, chance, item: it.id });
   }
@@ -1754,6 +1796,90 @@ export class World {
     this.sendJson(p, { t: 'craftResult', ok, name: r.name, got });
     this.reply(p, { t: 'craft', req }, true, ok ? `Üretildi: ${got}` : 'Üretim başarısız oldu; malzemelerin yarısı geri döndü.');
   }
+
+  /** Kor Kulesi ganimeti: kat malzemeleri (elit daha cömert), Karademir'de doğrudan düşenler + herkese Kor Sandığı */
+  private forgeLoot(p: Player, m: Monster) {
+    const T = TUNING.forge, c = p.char;
+    const give = (d: { kind: string; key: string; chance: number; qty: [number, number]; rarity?: string }, mul = 1) => {
+      if (rnd() >= Math.min(1, d.chance * mul * TUNING.dropMul)) return;
+      if (d.kind === 'item') {
+        if (!ITEM_TPL.has(d.key)) return;
+        const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
+        for (let k = randInt(d.qty[0], d.qty[1]); k > 0; k--) this.dropLoot(p, m, { kind: 'item', item: makeItem(d.key, r, 'drop') });
+      } else if (MATERIAL.has(d.key) || MALL.has(d.key)) this.dropLoot(p, m, { kind: 'mat', key: d.key, qty: randInt(d.qty[0], d.qty[1]) });
+    };
+    if (m.def.id === 'f_boss') {
+      for (const d of T.boss.drops) give(d);
+      c.materials.forge_chest = (c.materials.forge_chest ?? 0) + 1;
+      this.sendJson(p, { t: 'loot', name: '1× Kor Sandığı', rarity: 'orange' });
+      return;
+    }
+    const fl = T.floors[Math.max(0, Math.min(T.floors.length - 1, (this.forge.runs.get(m.sp.forge!)?.floor ?? 1) - 1))];
+    const mul = m.variant === 2 ? T.eliteLoot : 1;
+    for (const d of fl?.mats ?? []) give({ kind: 'mat', ...d }, mul);
+  }
+  private openForgeChest(p: Player) {
+    const c = p.char, ch = TUNING.forge.chest;
+    if ((c.materials.forge_chest ?? 0) <= 0) return this.notice(p, 'Elinde yok.');
+    const items = ch.drops.filter((d) => d.kind === 'item');
+    if (items.length && c.bag.length + items.reduce((a, d) => a + d.qty[1], 0) > BAG_EQUIP_CAP) return this.notice(p, 'Sandığı açmak için çantada yer aç.');
+    c.materials.forge_chest -= 1;
+    const rewards: string[] = [];
+    const gems = randInt(ch.gems[0], ch.gems[1]), ess = randInt(ch.essence[0], ch.essence[1]);
+    if (gems) { c.gems += gems; rewards.push(`${gems.toLocaleString('tr-TR')} Mücevher`); }
+    if (ess) { c.essence += ess; rewards.push(`${ess.toLocaleString('tr-TR')} Öz`); }
+    for (const d of ch.drops) {
+      if (rnd() >= d.chance) continue;
+      const q = randInt(d.qty[0], d.qty[1]);
+      if (d.kind === 'item') {
+        if (!ITEM_TPL.has(d.key)) continue;
+        const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
+        for (let k = 0; k < q; k++) { const it = makeItem(d.key, r, 'chest'); c.bag.push(it); rewards.push(itemDisplayName(it)); }
+      } else if (MATERIAL.has(d.key) || MALL.has(d.key)) {
+        c.materials[d.key] = (c.materials[d.key] ?? 0) + q;
+        rewards.push(`${q}× ${MATERIAL.get(d.key)?.name ?? MALL.get(d.key)?.name ?? d.key}`);
+        if (d.key === 'evo_crystal') rewards.unshift('★ Evrim Kristali');
+      }
+    }
+    p.selfDirty |= 1 | 2; this.save(p, true);
+    this.sendJson(p, { t: 'chestResult', title: 'Kor Sandığı', rewards: rewards.length ? rewards : ['Sandık boş çıktı'] });
+  }
+
+  /**
+   * Silah / zırh evrimi (Demirci Haso): eşyanın av sayacı kademenin istediğine ulaşınca Mücevher ve malzemeyle bir
+   * üst kademeye geçer; sayaç sıfırlanır (sonraki kademe yeniden av ister). Silahta saldırı, zırhta savunma artar.
+   */
+  private cmdEvolve(p: Player, itemId: string, req: string) {
+    const c = p.char, E = TUNING.evo;
+    const R = (ok: boolean, msg: string) => this.reply(p, { t: 'evolve', req }, ok, msg);
+    if (!E.enabled) return R(false, 'Evrim şu an kapalı.');
+    if (p.zone.id !== 'bazaar' || !this.nearNpc(p, 'haso')) return R(false, 'Demirci Haso\'nun yanına git.');
+    const it = c.bag.find((x) => x.id === itemId) ?? Object.values(c.equip).find((x) => x?.id === itemId);
+    if (!it) return R(false, 'Eşya bulunamadı.');
+    const tpl = ITEM_TPL.get(it.tpl);
+    if (!tpl || (tpl.slot !== 'weapon' && tpl.slot !== 'armor')) return R(false, 'Yalnız silah ve zırh evrilir.');
+    const cur = it.evo ?? 0;
+    if (cur >= EVO_TIERS) return R(false, 'Bu eşya son evrim kademesinde.');
+    const st = E[tpl.slot][cur];
+    if ((it.kills ?? 0) < st.kills) return R(false, `Bu kademe için ${st.kills.toLocaleString('tr-TR')} canavar öldürmesi gerekir (şu an ${(it.kills ?? 0).toLocaleString('tr-TR')}).`);
+    if (c.gems < st.gems) return R(false, `${st.gems.toLocaleString('tr-TR')} Mücevher gerekir.`);
+    for (const [k, q] of Object.entries(st.mats)) if ((c.materials[k] ?? 0) < q) return R(false, `${q}× ${MATERIAL.get(k)?.name ?? k} gerekir (sende ${c.materials[k] ?? 0}).`);
+    c.gems -= st.gems;
+    for (const [k, q] of Object.entries(st.mats)) c.materials[k] -= q;
+    it.evo = cur + 1; it.kills = 0;
+    const equipped = Object.values(c.equip).includes(it);
+    if (equipped) { p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; this.relook(p); }
+    p.selfDirty |= 1 | 2 | 4; this.save(p, true);
+    p.zone.emit(p.x, p.y, { e: Ev.FX, fx: Fx.LEVELUP, x: p.x | 0, y: p.y | 0, r: 120, ms: 1400, a: 0 });
+    this.sendJson(p, { t: 'evolved', item: it.id, evo: it.evo, name: itemDisplayName(it) });
+    if (it.evo === EVO_TIERS) {
+      const msg = JSON.stringify({ t: 'chat', ch: 'world', from: 'Demirci Haso', text: `${c.name} ${itemDisplayName(it)} eşyasını son kademeye (${EVO_NAMES[EVO_TIERS]}) evriltti!`, cls: '', gm: true });
+      for (const q of this.bySid.values()) this.pushOut(q.sid, msg);
+    }
+    return R(true, `${itemDisplayName(it)}: ${it.evo}. evrim tamam! ${tpl.slot === 'weapon' ? 'Saldırı' : 'Savunma'} +%${st.pct}.`);
+  }
+  /** Görünüm değişti (silah/zırh, evrim): çevredeki oyuncular karakteri yeniden kurar */
+  private relook(p: Player) { for (const q of p.zone.playerSet) if (q !== p) q.known.delete(p.id); }
 
   private openAzrailChest(p: Player) {
     const c = p.char, ch = TUNING.tower.chest;
@@ -2345,7 +2471,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(255, q.char.equip.weapon?.plus ?? 0), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(15, q.char.equip.weapon?.plus ?? 0) | (Math.min(3, q.char.equip.weapon?.evo ?? 0) << 4) | (Math.min(3, q.char.equip.armor?.evo ?? 0) << 6), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
   }
 
   private flushOut() {

@@ -40,11 +40,19 @@ export function pmSet(name: string, p: Partial<PmConv> | null) {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'craft' | 'quests' | 'guild' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | null;
 
 export interface TowerView {
   f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;
   seq?: number[]; si: number; riddle?: { q: string; opts: string[] }; alt: number; altLeft: number; key: boolean; kills: number; at: number;
+}
+/** Kor Kulesi koşusu (sunucudan) */
+export interface ForgeView {
+  slot: number; f: number; stage: 'w1' | 'w2' | 'puzzle' | 'w3' | 'boss' | 'done'; pending: string | null; wait: number; at: number;
+  alive: number; total: number; puzzle: 'mold' | 'ember' | null; members: number;
+  mold?: { n: number; show: number[]; found: number };
+  ember?: { spot: number; carrier: number; cool: number; done: number; need: number };
+  boss?: number;
 }
 export interface GuildView {
   g: { id: number; name: string; emblem: number; tax: number; bank: number; notice: string; wins: number; losses: number; myRank: number;
@@ -102,6 +110,8 @@ export interface UiState {
   modal: { title: string; lines: string[] } | null;
   upgradeResult: { ok: boolean; before: number; after: number; chance: number } | null;
   transformResult: { ok: boolean; item: string; at: number } | null;
+  evolveResult: { item: string; evo: number; at: number } | null;
+  forge: ForgeView | null;
   /** oto atak durumunun sunucudan son geldiği an (kalan süre bundan geri sayılır) */
   autoSync: number;
   lootFeed: { id: number; text: string; rarity: string; at: number }[];
@@ -133,7 +143,7 @@ function loadSettings(): UiState['settings'] {
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
-  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
+  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();

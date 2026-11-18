@@ -149,6 +149,8 @@ export type ClientCmd =
   | { t: 'arena'; op: 'join' | 'leave' }
   | { t: 'mount'; op: 'quest' | 'claim' | 'ride' }
   | { t: 'tower'; op: 'enter' | 'leave' | 'state' }
+  | { t: 'forge'; op: 'enter' | 'leave' | 'state' }
+  | { t: 'evolve'; item: string; req: string }
   | { t: 'craft'; id: string; req: string }
   | { t: 'view'; w: number; h: number }
   | { t: 'quest'; op: 'accept' | 'abandon' | 'turnin'; id: string; req: string }

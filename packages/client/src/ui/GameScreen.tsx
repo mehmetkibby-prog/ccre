@@ -16,6 +16,7 @@ import { api } from '../api.ts';
 import { CAM_ZOOM_DEFAULT, CAM_PITCH_DEFAULT, CAM_ZOOM_MIN, CAM_ZOOM_MAX } from '../g3d/renderer3d.ts';
 import { PlayerMenu, InviteCards, PartyFrame, TradeWindow, ArenaHud, MountButton, WhisperWindows, openWhisper } from './social.tsx';
 import { TowerHud } from './tower.tsx';
+import { ForgeHud } from './forge.tsx';
 import { questReady } from './quests.tsx';
 import { GuildWarBar, GuildInviteCard } from './guild.tsx';
 
@@ -175,6 +176,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <MountButton />
       <ArenaHud />
       {!mobile && <TowerHud />}
+      {!mobile && <ForgeHud />}
       <GuildWarBar />
       <GuildInviteCard />
       <InviteCards />
@@ -248,6 +250,7 @@ function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onC
   const map = useStore((s) => s.map);
   const lvl = useStore((s) => s.self?.level ?? 1);
   const floor = useStore((s) => s.tower?.f);
+  const forgeFloor = useStore((s) => s.forge?.f);
   const [, force] = useState(0);
   useEffect(() => onConfig(() => force((n) => n + 1)), []);
   const def = MONSTERS[tpl];
@@ -255,6 +258,14 @@ function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onC
   const theme = MAPS[map]?.theme ?? 'forest';
   const r = resolveLoot(TUNING, map, theme, def.id, (id) => MATERIAL.has(id), floor);
   if (def.id === 'azrail') r.drops = [{ kind: 'mat', key: 'azrail_chest', chance: 1, qty: [1, 1] }, ...r.drops];
+  if (def.id.startsWith('f_')) {
+    // Kor Kulesi: yalnız kulenin kendi tablosu (kat malzemeleri; elitte çarpan) · Karademir: doğrudan düşenler + Kor Sandığı
+    const F = TUNING.forge, fl = F.floors[Math.max(0, Math.min(F.floors.length - 1, (forgeFloor ?? 1) - 1))];
+    const k = variant === 2 ? F.eliteLoot : 1;
+    r.essence = [0, 0]; r.equipChance = 0; r.maxLevel = 0;
+    r.materials = def.id === 'f_boss' ? [] : (fl?.mats ?? []).map((m) => ({ id: m.key, chance: Math.min(1, m.chance * k), qty: m.qty }));
+    r.drops = def.id === 'f_boss' ? [{ kind: 'mat', key: 'forge_chest', chance: 1, qty: [1, 1] }, ...F.boss.drops] : [];
+  }
   const over = overLevelMul(r, lvl);
   const vm = VARIANT_LOOT_MULT[variant] ?? 1;
   const pct = (x: number) => { const v = Math.min(1, x) * 100; return v >= 10 ? `%${v.toFixed(0)}` : v >= 1 ? `%${v.toFixed(1)}` : `%${v.toFixed(2)}`; };
@@ -418,6 +429,7 @@ function Minimap({ game }: { game: Game }) {
       <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
       {isMobile() && <QuickBtns />}
       {isMobile() && <TowerHud />}
+      {isMobile() && <ForgeHud />}
     </div>
   );
 }

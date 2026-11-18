@@ -26,3 +26,6 @@ assets-src/meshy/trees2/*.png
 assets-src/meshy/trees2/state.json
 assets-src/meshy/armor_icons/*.png
 assets-src/meshy/armor_icons/state.json
+assets-src/meshy/forge/*.png
+assets-src/meshy/forge/state.json
+assets-src/meshy/forge/*.log

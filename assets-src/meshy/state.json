@@ -147,6 +147,12 @@
     },
     "t_knight": {
       "file": "assets-src/meshy/batch3/t_knight.png"
+    },
+    "f_slag": {
+      "file": "assets-src/meshy/forge/f_slag.png"
+    },
+    "f_boss": {
+      "file": "assets-src/meshy/forge/f_boss.png"
     }
   },
   "builds": {
@@ -611,6 +617,60 @@
         "Death": {
           "task": "01a1e505-a2a6-7500-9955-611f9b84c2a0",
           "actionId": 189
+        }
+      }
+    },
+    "f_slag": {
+      "concept": "f_slag",
+      "model": "01a1ef83-858b-767b-b2e7-798e3ed7e4ea",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1ef83-858b-767b-b2e7-798e3ed7e4ea/output/model.glb?Expires=1795279045&Signature=VYiH6lDWEttUuT4onbgSUCwPNJBvuPvI30NgRimkiM0u8lKhnHsQJrLuVEfCHBdaU9587sSP4TwLliNMzSWX1gSeqE5nr0eKwOIFEPJgiGIoy0-at5wy3FtYqthyQIbRD-2qYGnjeXwQ30fAGyvjf9Tm4Q5NpRo1Ktbt9vlSxOHwi5tmm1bFR3YsI9F7wVs2yTEjQvkTrc2LAHZQgtc5mLzHl23UZoY2Ahv0QLvTxtElfQyYk4BoUUDnTsKLjrfNfh2s-Owue0iHTsL868bam6IkK0e15W1t~4FdtX2ZX-F05u3Qowq-5kkOHN8FZFdxtIGazu2ErVZPl42GcPmRWQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1ef85-3a9c-7449-b9b1-70489430d314",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1ef85-a1a0-7276-91a6-4410439ac18d",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1ef85-a461-73bb-8712-98ab9f96fe95",
+          "actionId": 112
+        },
+        "Attack Slash": {
+          "task": "01a1ef85-a623-725f-9cc9-50bf2b2935b9",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1ef85-a994-72fb-bf68-8a8af7361a9b",
+          "actionId": 189
+        }
+      }
+    },
+    "f_boss": {
+      "concept": "f_boss",
+      "model": "01a1ef83-85a1-711f-95dd-eba74b15fa6e",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1ef83-85a1-711f-95dd-eba74b15fa6e/output/model.glb?Expires=1795279040&Signature=UEC10CL8dYBu4M1vBup36SFISEpR-Wijj0UkubxudLq2PnodVfCgtdfvXQOLr8nojSNJAb3xTgQLv5aOZ8vgaZtoKqrSCz8nnjEBO7cp80vmj8Z2TzP6G9u7mskC0XoWSRmpKvjIIlyzKaLA8IVpfTwJ0dQxWAu1KVn1DpynUqdtMr9lF8V0TT-mECQVn9RVMNM1yiBbKumslxdN1LTjWGFhuDEBBs-dmzvuGQUiOs~ddwHvUJhR6pxagHWH9fG9HwBc2dRgSCxpXKeVJHVPR3iMD9eMc-1xVM4n8ouhoDLwzTGxRpU~zfILKq1Vha3FasW3uMV8bEBin~8wMnWKag__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1ef85-2b1e-71c4-b44b-471442c16dcb",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1ef85-979c-73d8-a0d0-de5a5ccdd066",
+          "actionId": 0
+        },
+        "Walk": {
+          "task": "01a1ef85-9b33-71e1-9f92-f1aab19ab6b7",
+          "actionId": 21
+        },
+        "Attack Slash": {
+          "task": "01a1ef85-9d7f-71c8-8082-a4eb24da4bcf",
+          "actionId": 97
+        },
+        "Death": {
+          "task": "01a1ef85-a02d-7169-af7b-7e67b9d4790c",
+          "actionId": 189
+        },
+        "Cast Ground Slam": {
+          "task": "01a1ef85-a279-7535-8b45-5198cc83d6db",
+          "actionId": 127
         }
       }
     }

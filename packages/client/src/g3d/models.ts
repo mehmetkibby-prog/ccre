@@ -5,6 +5,7 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
 import { guardianClips, hunterClips, arcanistClips, bodyPart } from './charAnims.ts';
+import { shared } from './materials.ts';
 
 /**
  * Hazır 3B modeller (GLB). `models/models.json` dosyasında listelenen modeller yüklenir;
@@ -119,6 +120,22 @@ const PATTERNS: [HState | 'run', RegExp][] = [
   ['idle', /idle|stand|breath|wait/i],
 ];
 
+/**
+ * Kor Kulesi canavarları: dokudaki turuncu-kızıl lav çatlakları kendi ışığıyla yanar ve yavaşça nabız atar
+ * (kara cüruf ve pas parlamaz). Malzeme modelin bütün kopyalarınca paylaşılır; karede CPU işi yok.
+ */
+const LAVA_GLOW = new Set(['f_slag', 'f_boss']);
+function lavaGlow(m: THREE.MeshStandardMaterial) {
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uLavaT = shared.time;
+    sh.fragmentShader = 'uniform float uLavaT;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      float lava = smoothstep(0.28, 0.6, diffuseColor.r - diffuseColor.b) * smoothstep(0.05, 0.25, diffuseColor.g);
+      totalEmissiveRadiance += diffuseColor.rgb * lava * (4.5 + 1.3 * sin(uLavaT * 2.3 + vViewPosition.y * 3.0));`);
+  };
+  m.customProgramCacheKey = () => 'lava-glow';
+  m.needsUpdate = true;
+}
+
 function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   const scene = gltf.scene;
   scene.traverse((o) => {
@@ -126,7 +143,7 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
     if (m.isMesh) {
       m.castShadow = true; m.receiveShadow = true;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
-      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; }
+      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; if (LAVA_GLOW.has(id)) lavaGlow(s); }
     }
   });
   // ölçek: hedef boy (m), ayaklar y=0

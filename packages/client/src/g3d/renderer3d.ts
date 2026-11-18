@@ -7,6 +7,7 @@ import { GrassField } from './grass.ts';
 import { createGlbChar, model as loadModelRaw, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, twoBoneIK, rotateWorld, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
+import { evoArmorFx, gearEvo } from './evofx.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
 import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, trDayKey, type MapLayout } from '@col/shared';
@@ -26,6 +27,7 @@ import { iconUrl } from '../game/art/icons.ts';
 import { glowTexture } from './textures.ts';
 import { store } from '../game/store.ts';
 import { TowerFx } from './tower3d.ts';
+import { ForgeFx } from './forge3d.ts';
 import { NewYearFx } from './newyear3d.ts';
 
 const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
@@ -89,6 +91,8 @@ const THEME = {
   black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 130, far: 250 },
   // Kadim Kule: karanlık, mor-mavi mistik ışık; kısa sis (komşu katlar boşlukta silik görünür)
   tower: { fog: 0x1e1a2e, top: 0x0a0812, sky: 0x6a5c94, ground: 0x1c1626, sun: 0xd2c4ff, sunI: 2.6, hemi: 0.9, exp: 1.15, near: 38, far: 100 },
+  // Kor Kulesi: koyu is, alttan lavın turuncu ışığı; kısa sis
+  forge: { fog: 0x2a140c, top: 0x0c0604, sky: 0x8a3a18, ground: 0x2a1408, sun: 0xffc090, sunI: 2.5, hemi: 0.95, exp: 1.18, near: 40, far: 105 },
   ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 130, far: 250 },
 } as const;
 
@@ -103,6 +107,7 @@ export class Renderer3D {
   camera = new THREE.PerspectiveCamera(MOBILE ? 34 : 38, 1, 0.5, 260);
   composer: EffectComposer | null = null;
   private towerFx: TowerFx | null = null;
+  private forgeFx: ForgeFx | null = null;
   /** Pazar Köyü yeni yıl süsü (yönetimden aç/kapa) */
   private nyFx: NewYearFx | null = null; private nyOn = false;
   private nyActive(l: MapLayout | null = this.layout) { return !!l && l.def.id === 'bazaar' && TUNING.newYear >= 0.5; }
@@ -286,6 +291,8 @@ export class Renderer3D {
     this.nyFx?.dispose(); this.nyFx = null; this.applyNewYear();
     this.towerFx?.dispose(); this.towerFx = null;
     if (l.def.id === 'tower') { this.towerFx = new TowerFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.towerFx.group); }
+    this.forgeFx?.dispose(); if (this.forgeFx) this.world.remove(this.forgeFx.group); this.forgeFx = null;
+    if (l.def.id === 'forge') { this.forgeFx = new ForgeFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.forgeFx.group); }
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.grass.group.visible = !cool(); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
@@ -402,7 +409,7 @@ export class Renderer3D {
     const cls = this.g.cls;
     // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
-    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12) | (Math.min(3, eq?.weapon?.evo ?? 0) << 16) | (Math.min(3, eq?.armor?.evo ?? 0) << 18);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) releaseView(this.self);
     this.selfWR = wr;
@@ -421,13 +428,16 @@ export class Renderer3D {
     let glb = designed ? createGlbChar(vid) : null;
     const apend = designed && !glb ? vid : null;
     glb ??= createGlbChar(modelId);
-    const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon, gr.plus) : null;
+    const ev = gearEvo(gear);
+    const wpend = glb ? equipGlb(glb, LOOKS[modelId], gr.weapon, gr.plus, kind === Kind.PLAYER ? ev.weapon : 0) : null;
     if (glb) {
       prepDynamic(glb.root, 0.55);
       if (kind === Kind.PLAYER && !designed) equipArmor(glb, modelId, gr.armor);
       const aura = armorFx(gr.armor);
       if (aura) glb.root.add(aura);
       if (gr.plus >= 6) glb.root.add(sigilFx());
+      const evoAura = kind === Kind.PLAYER ? evoArmorFx(ev.armor, glb.height) : null;
+      if (evoAura) glb.root.add(evoAura);
       const gfx: THREE.Object3D[] = [];
       if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx' || o.name === 'plus-fx') gfx.push(o); });
       // Nesne Market kozmetikleri (bit 12-14): kanat sırta, evcil hayvan yanına
@@ -446,10 +456,11 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
-    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== (e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12))) { releaseView(v); this.views.delete(e.id); v = undefined; }
+    const gbOf = (q: CEnt) => q.weapon | ((q.wplus & 15) << 8) | ((q.cos ?? 0) << 12) | (((q.wplus >> 4) & 15) << 16);
+    if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== gbOf(e)) { releaseView(v); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {
-      const gb = e.weapon | (Math.min(15, e.wplus) << 8) | ((e.cos ?? 0) << 12);
+      const gb = gbOf(e);
       v = this.humanView(CLASS_IDS[e.cls] ?? 'guardian', e.kind, e.x, e.y, gb);
       (v as View & { wr?: number }).wr = gb;
     } else if (e.kind === Kind.MONSTER) {
@@ -807,6 +818,7 @@ export class Renderer3D {
     shared.time.value = now / 1000;
     this.terrain.update(now);
     if (this.towerFx) { const st = store.get(); this.towerFx.update(now, st.tower, st.towerHold, st.towerSeqAt); }
+    if (this.forgeFx) { const st = store.get(); this.forgeFx.update(now, st.forge, (id) => (id === st.entityId ? this.self?.obj.position : this.views.get(id)?.obj.position) ?? null); }
     // yönetimden yeni yıl aç/kapa: nesneler (çeşme ↔ ağaç) ve süs yeniden kurulur
     if (this.layout && this.nyActive() !== this.nyOn && this.propsGroup) {
       this.world.remove(this.propsGroup);
@@ -971,6 +983,7 @@ export class Renderer3D {
     if (th === 'forest' || th === 'village' || th === 'lake') if (Math.random() < k * 6) this.fx.spawn(rx(), c.y + 0.5 + Math.random() * 2, rz(), (Math.random() - 0.5) * 0.4, 0.1, (Math.random() - 0.5) * 0.4, 4000, 0.16, '#e8ff9a', 0, 0.2);
     if (th === 'forest' && Math.random() < k * 4) this.fx.spawn(rx(), c.y + 8, rz(), 0.6, -0.9, 0.3, 9000, 0.14, '#c8a040', -0.05, 0);
     if (th === 'tower' && Math.random() < k * 14) this.fx.spawn(rx(), c.y + 0.2 + Math.random() * 3, rz(), (Math.random() - 0.5) * 0.2, 0.25 + Math.random() * 0.3, (Math.random() - 0.5) * 0.2, 6000, 0.1, Math.random() < 0.6 ? '#9a7cff' : '#5ce0d0', 0, 0.1);
+    if (th === 'forge' && Math.random() < k * 22) this.fx.spawn(rx(), c.y + 0.1 + Math.random() * 1.5, rz(), (Math.random() - 0.5) * 0.25, 0.7 + Math.random() * 0.9, (Math.random() - 0.5) * 0.25, 4500, 0.09, Math.random() < 0.7 ? '#ff7a2a' : '#ffd060', 0.02, 0);
     if (th === 'black' && Math.random() < k * 30) this.fx.spawn(rx(), c.y + 0.2, rz(), (Math.random() - 0.5) * 0.3, 0.8 + Math.random(), (Math.random() - 0.5) * 0.3, 5000, 0.12, Math.random() < 0.5 ? '#ff6a3a' : '#c060ff', 0.05, 0);
   }
 

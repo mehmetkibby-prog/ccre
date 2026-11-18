@@ -120,7 +120,7 @@ export function MonsterTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: str
       <div className="muted" style={{ fontSize: 11, marginBottom: 8 }}>Her canavarın <b>tek bir seviyesi</b> var: haritadaki bütün kopyaları o seviyede doğar. Seviyeyi ve o seviyedeki can, saldırı, savunma, hız, TP ve yeniden doğma süresini doğrudan yaz; yazdığın değer aynen uygulanır (yalnız agresif/katil çeşitler kendi oranıyla güçlüdür). Boş kutu = oyunun varsayılanı. Kaydedince haritadaki canavarlar hemen yeni ayarla doğar.</div>
       <div className="adm-table-wrap"><table className="adm-table">
         <thead><tr><th>Canavar</th><th>Seviye</th><th>Can</th><th>Saldırı</th><th>Savunma</th><th>Hız</th><th>TP</th><th>Doğma (sn)</th><th /></tr></thead>
-        <tbody>{MONSTERS.filter((d) => !d.boss).map((d) => {
+        <tbody>{MONSTERS.filter((d) => !d.boss && !d.id.startsWith('f_')).map((d) => {
           const m = t.monsters[d.id] ?? {};
           const sl = spawnLevels(t, d.id), fl = t.tower.floors.find((f) => f.monster === d.id);
           const defLv = MONSTER_LEVEL[d.id] ?? (fl ? fl.level[0] : sl ? sl[0] : 10);
@@ -334,7 +334,7 @@ export function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string
       <section className="admin-sec">
         <h4>Canavar seç</h4>
         <div className="row wrap">
-          {MONSTERS.map((x) => <button key={x.id} className={'btn small' + (x.id === id ? ' primary' : '')} onClick={() => setId(x.id)}>{x.name}{t.monsters[x.id] && (t.monsters[x.id].equipChance !== undefined || t.monsters[x.id].rarity || t.monsters[x.id].gems || t.monsters[x.id].essence || t.monsters[x.id].mats) ? ' •' : ''}</button>)}
+          {MONSTERS.filter((x) => !x.id.startsWith('f_')).map((x) => <button key={x.id} className={'btn small' + (x.id === id ? ' primary' : '')} onClick={() => setId(x.id)}>{x.name}{t.monsters[x.id] && (t.monsters[x.id].equipChance !== undefined || t.monsters[x.id].rarity || t.monsters[x.id].gems || t.monsters[x.id].essence || t.monsters[x.id].mats) ? ' •' : ''}</button>)}
         </div>
         <div className="muted" style={{ fontSize: 11, marginTop: 6 }}>{d.name}: varsayılanlar {MAPS[Object.keys(MAPS).find((k) => MAPS[k].theme === theme) ?? 'forest']?.name} ganimet profilinden gelir. Agresif canavar 1,35 kat, katil 2,4 kat daha çok bırakır; genel "Eşya ve malzeme düşme" çarpanı ({fmtN(t.dropMul)}×) da uygulanır.</div>
       </section>
@@ -809,7 +809,7 @@ export function dropOptions(kind: DropTune['kind']): [string, string][] {
   return MALL_ITEMS.filter((m) => !m.soon && !m.epin).map((m) => [m.id, m.name] as [string, string]);
 }
 export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: SetMon; setSpawn: SetSpawn; dis: boolean }) {
-  const bosses = MONSTERS.filter((d) => d.boss);
+  const bosses = MONSTERS.filter((d) => d.boss && !d.id.startsWith('f_')); // Karademir: Kor Kulesi sekmesinde
   return (
     <>{bosses.map((d) => {
       const m = t.monsters[d.id] ?? {};

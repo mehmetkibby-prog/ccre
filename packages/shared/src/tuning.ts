@@ -4,6 +4,7 @@
  */
 /** Canavar türü başına ayar (boş alan = varsayılan / harita ganimet profili). */
 import { QUESTS_DEFAULT, sanitizeQuests, type QuestDef } from './content/quests.ts';
+import { FORGE_DEFAULT, sanitizeForge, EVO_DEFAULT, sanitizeEvo, type ForgeTune, type EvoTune } from './forgeTune.ts';
 export interface MonsterTune {
   hpMul?: number; atkMul?: number; defAdd?: number; speedMul?: number; xpMul?: number; respawnMul?: number;
   equipChance?: number; // 0..1, ekipman düşme olasılığı
@@ -106,6 +107,10 @@ export interface GameTuning {
   killRank: KillRankTune;
   /** Kadim Kule: kat başına canavar/güç/görev, kat malzemeleri ve Azrail Sandığı içeriği. */
   tower: TowerTune;
+  /** Kor Kulesi (Sv. 10+): dalgalar, katların canavar gücü, bulmacalar, Karademir ve Kor Sandığı */
+  forge: ForgeTune;
+  /** Silah/zırh evrimi: kademe başına av, Mücevher, malzeme ve artış */
+  evo: EvoTune;
   /** Üretim (Zanaatkâr Pakize): yönetimden tanımlanan tarifler */
   crafts: CraftRecipe[];
   /** Görevler (yönetimden tasarlanır): bkz. content/quests.ts */
@@ -283,13 +288,15 @@ export const DEFAULT_TUNING: GameTuning = {
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),
   tower: structuredClone(TOWER_DEFAULT),
+  forge: structuredClone(FORGE_DEFAULT),
+  evo: structuredClone(EVO_DEFAULT),
   crafts: structuredClone(CRAFTS_DEFAULT),
   skillUp: structuredClone(SKILLUP_DEFAULT),
   skillUnlock: {}, specLevel: 30,
   quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'forge' | 'evo' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], specLevel: [1, 120, 1], bossShareMin: [0, 50, 0.5],
@@ -312,6 +319,8 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.arena = sanitizeArena(r.arena);
   out.killRank = sanitizeKillRank(r.killRank);
   out.tower = sanitizeTower(r.tower);
+  out.forge = sanitizeForge(r.forge);
+  out.evo = sanitizeEvo(r.evo);
   out.crafts = sanitizeCrafts(r.crafts);
   out.quests = sanitizeQuests(r.quests);
   out.skillUp = sanitizeSkillUp(r.skillUp);

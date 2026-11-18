@@ -15,7 +15,7 @@ export function TowerTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boo
   const set = (p: Partial<GameTuning['tower']>) => setT({ ...t, tower: { ...T, ...p } });
   const setF = (i: number, p: Partial<TowerFloorTune>) => set({ floors: T.floors.map((f, j) => (j === i ? { ...f, ...p } : f)) });
   const setChest = (p: Partial<GameTuning['tower']['chest']>) => set({ chest: { ...T.chest, ...p } });
-  const mons = MONSTERS.filter((m) => !m.boss || m.id === 'azrail');
+  const mons = MONSTERS.filter((m) => (!m.boss || m.id === 'azrail') && !m.id.startsWith('f_'));
   return (
     <>
       <section className="admin-sec">

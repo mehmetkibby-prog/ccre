@@ -322,6 +322,8 @@ export class Game {
         store.set({ tower: m.f ? { ...m, at: Date.now() } : null, towerHold: null });
         break;
       }
+      case 'forge': store.set({ forge: m.on ? { ...m, at: performance.now() } : null }); break;
+      case 'evolved': store.set({ evolveResult: { item: m.item, evo: m.evo, at: Date.now() } }); sfx.play('levelup'); notify(`${m.name}: ${m.evo}. evrim!`, 'ok'); break;
       case 'towerHold': store.set({ towerHold: { i: m.i, at: performance.now() } }); break;
       case 'towerReplay': store.set({ towerReplayAt: Date.now(), towerSeqAt: performance.now() + 700 }); sfx.play('ui'); break;
       case 'guild': store.set({ guild: { g: m.g, invite: m.invite, war: m.war, warReq: m.warReq } }); break;

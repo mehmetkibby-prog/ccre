@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -50,6 +50,10 @@ export const MONSTERS: MonsterDef[] = [
   { id: 't_knight', name: 'Lanetli Şövalye', art: 't_knight', hpBase: 900, hpPerLevel: 58, atkBase: 52, atkPerLevel: 3.5, def: 28, speed: 145, range: 85, attackMs: 1800, aggroRadius: 300, leash: 900, xpBase: 130, size: 1 },
   { id: 't_executioner', name: 'Kule Celladı', art: 't_executioner', hpBase: 1300, hpPerLevel: 66, atkBase: 62, atkPerLevel: 3.8, def: 30, speed: 135, range: 95, attackMs: 2200, aggroRadius: 300, leash: 900, xpBase: 160, size: 1 },
   { id: 'azrail', name: 'Azrail', art: 'azrail', hpBase: 150000, hpPerLevel: 0, atkBase: 260, atkPerLevel: 0, def: 70, speed: 150, range: 140, attackMs: 2000, aggroRadius: 520, leash: 900, xpBase: 9000, size: 1, boss: true, respawnMin: 15 },
+  // Kor Kulesi (Sv. 10+): güç, seviye ve TP kulenin yönetim ayarından (kat başına mutlak değer); buradakiler yedek
+  { id: 'f_slag', name: 'Cüruf Golemi', art: 'f_slag', hpBase: 1000, hpPerLevel: 0, atkBase: 40, atkPerLevel: 0, def: 8, speed: 150, range: 85, attackMs: 1800, aggroRadius: 1400, leash: 1600, xpBase: 70, size: 1 },
+  { id: 'f_brute', name: 'Kızgın Cüruf Golemi', art: 'f_slag', hpBase: 1400, hpPerLevel: 0, atkBase: 50, atkPerLevel: 0, def: 10, speed: 160, range: 90, attackMs: 1700, aggroRadius: 1400, leash: 1600, xpBase: 95, size: 1.18 },
+  { id: 'f_boss', name: 'Karademir', art: 'f_boss', hpBase: 24000, hpPerLevel: 0, atkBase: 80, atkPerLevel: 0, def: 14, speed: 140, range: 140, attackMs: 2100, aggroRadius: 1400, leash: 1600, xpBase: 3000, size: 1.2, boss: true, respawnMin: 0 },
 ];
 export const MONSTER_INDEX = new Map(MONSTERS.map((m, i) => [m.id, i] as const));
 

@@ -138,7 +138,9 @@
   "t_gargoyle": 2.2,
   "t_wraith": 2.0,
   "t_executioner": 2.2,
-  "t_knight": 2.1
+  "t_knight": 2.1,
+  "f_slag": 2.0,
+  "f_boss": 3.1
  },
  "animations": {
   "guardian": {
@@ -230,6 +232,19 @@
    "Walk": 21,
    "Attack Slash": 97,
    "Death": 189
+  },
+  "f_slag": {
+   "Idle": 0,
+   "Walk": 112,
+   "Attack Slash": 97,
+   "Death": 189
+  },
+  "f_boss": {
+   "Idle": 0,
+   "Walk": 21,
+   "Attack Slash": 97,
+   "Death": 189,
+   "Cast Ground Slam": 127
   }
  }
 }

@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
 import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import { TowerPanel } from './tower.tsx';
+import { ForgePanel } from './forge.tsx';
 import { CraftPanel } from './craft.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
 import { GuildPanel } from './guild.tsx';
@@ -56,6 +57,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'friends' && <FriendsPanel />}
       {p === 'mount' && <MountPanel />}
       {p === 'tower' && <TowerPanel />}
+      {p === 'forge' && <ForgePanel />}
       {p === 'craft' && <CraftPanel />}
       {p === 'quests' && <QuestPanel />}
       {p === 'guild' && <GuildPanel />}
@@ -98,7 +100,7 @@ const TIER_NAMES = ['1. kademe', '2. kademe', '3. kademe', '4. kademe'];
 export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
   const tpl = ITEM_TPL.get(it.tpl);
   const r = RARITY[it.rarity];
-  const power = itemPower(it), base = itemPower({ ...it, plus: 0 });
+  const power = itemPower(it);
   const self = store.get().self;
   const lvlOk = !self || self.level >= r.minLevel;
   const body = (
@@ -114,8 +116,14 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
       <div className="tip-stat">
         <span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'}</span>
         <b>+{power.toLocaleString('tr-TR')}</b>
-        {it.plus > 0 && <small>{base} + {power - base} (artı)</small>}
+        {(it.plus > 0 || !!it.evo) && <small>{itemPower({ ...it, plus: 0, evo: 0 })}{it.plus > 0 ? ` + ${itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)` : ''}{it.evo ? ` + %${evoPct(TUNING, tpl?.slot ?? '', it.evo)} (evrim)` : ''}</small>}
       </div>
+      {(tpl?.slot === 'weapon' || tpl?.slot === 'armor') && (it.evo || it.kills) ? (
+        <div className="tip-evo">
+          {it.evo ? <span className="ev" style={{ color: EVO_COLORS[Math.min(3, it.evo)] }}>{'◆'.repeat(it.evo)}{'◇'.repeat(EVO_TIERS - it.evo)} {it.evo}. Evrim · {EVO_NAMES[Math.min(3, it.evo)]}</span> : <span className="ev muted">Evrilmemiş</span>}
+          {(it.evo ?? 0) < EVO_TIERS && <span className="muted">Evrim avı {(it.kills ?? 0).toLocaleString('tr-TR')} / {TUNING.evo[tpl.slot][it.evo ?? 0].kills.toLocaleString('tr-TR')}</span>}
+        </div>
+      ) : null}
       {it.ench.length > 0 && (
         <div className="tip-ench">
           <div className="sect">Efsunlar · {it.ench.length}</div>
@@ -137,7 +145,6 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
       <div className="tip-ft">
         <span style={{ color: lvlOk ? undefined : 'var(--bad)' }}>Gereken seviye {r.minLevel}</span>
         <span>Satış <b>{sellPrice(it.rarity)}</b> Mücevher</span>
-        {it.kills ? <span>Silahla av {it.kills.toLocaleString('tr-TR')}</span> : null}
         {it.locked && <span style={{ color: 'var(--ember2)' }}>🔒 Kilitli</span>}
       </div>
     </>
@@ -649,7 +656,7 @@ function Settings({ game }: { game: Game }) {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule (Sv. 25+)', forge: 'Kor Kulesi (Sv. 10+)', evolve: 'Evrim (silah ve zırh)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -659,12 +666,14 @@ function NpcDialog({ game }: { game: Game }) {
     else if (a === 'fishing_shop') store.set({ panel: 'fishshop' });
     else if (a === 'mount') store.set({ panel: 'mount' });
     else if (a === 'tower') store.set({ panel: 'tower' });
+    else if (a === 'forge') store.set({ panel: 'forge' });
+    else if (a === 'evolve') { upgradeTab.next = 'evrim'; store.set({ panel: 'upgrade' }); }
     else if (a === 'craft') store.set({ panel: 'craft' });
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {
     haso: 'Ocak sıcak, örs hazır. Silahını ya da zırhını getir; artısını +6\'ya kadar ben dövüp çıkarırım. Güçlü Dal, mühür ve biraz da Mücevher lazım.', rauf: 'Eşyaların bende emanet, bir tanesi bile kaybolmaz.', nur: 'Çekirdeğin ışığı seni dilediğin yere taşır.',
-    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister. Malzemeni getir, sana ne üretebileceğimi göstereyim.', bekci: 'Kadim Kule\'nin kapısını ben beklerim. On kat, on sınav… ve zirvede Azrail. Hazırsan geç.', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.', kemal: 'Gölet küçük ama balığı bol!',
+    tuccar: 'Yolculuğa iksirsiz çıkılmaz, yiğit!', pakize: 'İnce işçilik sabır ister. Malzemeni getir, sana ne üretebileceğimi göstereyim.', bekci: 'İki kulenin kapısını ben beklerim. Kor Kulesi\'nde Karademir\'in ocağı yanar; Kadim Kule\'nin zirvesinde Azrail bekler. Hangisine hazırsın?', arda: 'İyi bir binek, iyi bir dosttur.', hasan: 'Göl bugün cömert görünüyor.', kemal: 'Gölet küçük ama balığı bol!',
   };
   return (
     <div className="frame panel npcd" onPointerDown={(e) => e.stopPropagation()}>
@@ -672,7 +681,7 @@ function NpcDialog({ game }: { game: Game }) {
       <div className="bd">
         <div className="npc-greet">“{greet[npc.id] ?? 'Hoş geldin, yolcu.'}”</div>
         <NpcQuests npc={npc.id} />
-        <div className="npc-acts">{npc.actions.concat(npc.id === 'haso' ? ['sell'] : []).map((a) => <button key={a} className={'btn' + (a === 'upgrade' ? ' ember' : '')} onClick={() => act(a)}>{labels[a] ?? a}</button>)}</div>
+        <div className="npc-acts">{npc.actions.concat(npc.id === 'haso' ? ['sell'] : []).map((a) => <button key={a} className={'btn' + (a === 'upgrade' || a === 'forge' ? ' ember' : a === 'evolve' ? ' evo-act' : '')} onClick={() => act(a)}>{labels[a] ?? a}</button>)}</div>
       </div>
     </div>
   );
@@ -729,14 +738,110 @@ function Shop({ game }: { game: Game }) {
 
 /** Demirci Haso: Artı Bas ve Dönüşüm sekmeleri. */
 function Upgrade({ game }: { game: Game }) {
-  const [mode, setMode] = useState<'arti' | 'donusum'>('arti');
+  const [mode, setMode] = useState<'arti' | 'donusum' | 'evrim'>(() => { const t = upgradeTab.next; upgradeTab.next = 'arti'; return t; });
   const tabs = (
     <div className="bag-tabs forge-tabs">
       <button className={mode === 'arti' ? 'on' : ''} onClick={() => setMode('arti')}>Artı Bas</button>
       <button className={mode === 'donusum' ? 'on' : ''} onClick={() => setMode('donusum')}>Dönüşüm <small className="uq">Eşsiz</small></button>
+      <button className={mode === 'evrim' ? 'on' : ''} onClick={() => setMode('evrim')}>Evrim <small className="evo-tag">I · II · III</small></button>
     </div>
   );
-  return mode === 'arti' ? <PlusForge game={game} tabs={tabs} /> : <TransformForge game={game} tabs={tabs} />;
+  return mode === 'arti' ? <PlusForge game={game} tabs={tabs} /> : mode === 'evrim' ? <EvolveForge game={game} tabs={tabs} /> : <TransformForge game={game} tabs={tabs} />;
+}
+/** NPC menüsünden "Evrim" seçilince Haso paneli o sekmeyle açılır */
+export const upgradeTab: { next: 'arti' | 'donusum' | 'evrim' } = { next: 'arti' };
+
+/**
+ * Haso · Evrim: silah ve zırh, kuşanılıp canavar öldürdükçe av sayar. Sayaç kademenin istediğine ulaşınca
+ * Kor Kulesi malzemeleri ve Mücevherle evrilir (sayaç sıfırlanır). Silahta saldırı, zırhta savunma artar; her
+ * kademede yeni efekt (III en görkemlisi). Bedeller yönetimden.
+ */
+function EvolveForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
+  const self = useStore((s) => s.self);
+  const res = useStore((s) => s.evolveResult);
+  const [sel, setSel] = useState<string | null>(null);
+  const { tip, bind } = useTip();
+  if (!self) return null;
+  const E = TUNING.evo;
+  const all = [...Object.values(self.equip).filter(Boolean) as ItemInstance[], ...self.bag];
+  const slotOf = (i: ItemInstance) => ITEM_TPL.get(i.tpl)?.slot;
+  const items = all.filter((i) => slotOf(i) === 'weapon' || slotOf(i) === 'armor').sort((a, b) => (b.evo ?? 0) - (a.evo ?? 0) || (b.kills ?? 0) - (a.kills ?? 0));
+  const it = items.find((i) => i.id === sel) ?? null;
+  const slot = it ? slotOf(it) as 'weapon' | 'armor' : null;
+  const cur = it?.evo ?? 0;
+  const max = cur >= EVO_TIERS;
+  const st = slot && !max ? E[slot][cur] : null;
+  const m = self.materials;
+  const kills = it?.kills ?? 0;
+  const lacks = st ? Object.entries(st.mats).filter(([k, q]) => (m[k] ?? 0) < q).length + (self.gems < st.gems ? 1 : 0) + (kills < st.kills ? 1 : 0) : 1;
+  const equipped = new Set(Object.values(self.equip).map((x) => x?.id));
+  const go = () => { if (!it) return; sfx.play('ui'); game.send({ t: 'evolve', item: it.id, req: reqId() }); };
+  return (
+    <Panel title="Demirci Haso · Evrim" width={820}>
+      {tabs}
+      {!E.enabled ? <div className="muted" style={{ padding: 20 }}>Evrim şu an kapalı.</div> : (
+        <div className="forge evo">
+          <div className="forge-pick">
+            <div className="sect">Silah ve zırhların</div>
+            <div className="bag">
+              {items.map((i) => (
+                <div key={i.id} className="evo-cell">
+                  <Cell it={i} sel={sel === i.id} bind={bind(i)} label={equipped.has(i.id) ? 'Kuşanılı' : undefined} onClick={() => setSel(i.id)} />
+                  {(i.evo ?? 0) > 0 && <span className="evo-pip" style={{ color: EVO_COLORS[Math.min(3, i.evo ?? 0)] }}>{'◆'.repeat(i.evo ?? 0)}</span>}
+                </div>
+              ))}
+              {items.length === 0 && <div className="muted" style={{ gridColumn: '1 / -1', fontSize: 13 }}>Çantanda ya da üzerinde silah veya zırh yok.</div>}
+            </div>
+            <div className="sect" style={{ marginTop: 6 }}>Nasıl evrilir?</div>
+            <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
+              Silahın ve zırhın <b>kuşanılıyken</b> öldürdüğün her canavarı sayar{E.maxGap ? ` (senden ${E.maxGap} seviyeden fazla düşük canavarlar sayılmaz)` : ''}. Sayaç dolunca
+              <b> Kor Kulesi</b> malzemeleri ve Mücevherle bir üst kademeye geçer; sayaç sıfırlanır. Artı, efsun ve nadirlik korunur.
+            </div>
+            <div className="evo-ladder">
+              {[0, 1, 2].map((k) => (
+                <div key={k} className={'st' + (it && cur > k ? ' done' : it && cur === k ? ' now' : '')} style={{ ['--ec' as string]: EVO_COLORS[k + 1] }}>
+                  <b>{['I', 'II', 'III'][k]}</b><span>{EVO_NAMES[k + 1]}</span>
+                  <small>{slot ? `${slot === 'weapon' ? 'Saldırı' : 'Savunma'} +%${E[slot][k].pct}` : `Silah +%${E.weapon[k].pct} · Zırh +%${E.armor[k].pct}`}</small>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="anvil">
+            <div key={res?.at ?? 0} className={'forge-fx evo-hit' + (res && res.item === it?.id ? ' hit e' + res.evo : '')} />
+            {!it ? <div className="muted" style={{ textAlign: 'center', padding: '40px 10px' }}>Evriltmek için soldan bir silah ya da zırh seç.</div> : (
+              <>
+                <div className="stage">
+                  <Cell it={it} bind={bind(it)} />
+                  {!max && <><span className="arrow">›</span><Cell it={{ ...it, evo: cur + 1, kills: 0 }} /></>}
+                </div>
+                <div className="nm" style={{ color: RARITY[it.rarity].color }}>{itemDisplayName(it)}</div>
+                <div className="evo-tier" style={{ color: max ? EVO_COLORS[3] : EVO_COLORS[cur + 1] }}>{max ? `Son kademe · ${EVO_NAMES[3]}` : `${cur + 1}. Evrim · ${EVO_NAMES[cur + 1]}`}</div>
+                {max ? <div className="ok" style={{ textAlign: 'center' }}>Bu eşya evrimin son kademesinde. Altın efekti seninle!</div> : st && (
+                  <>
+                    <div className="evo-kills">
+                      <div className="lb"><span>Evrim avı</span><b>{kills.toLocaleString('tr-TR')} / {st.kills.toLocaleString('tr-TR')}</b></div>
+                      <div className="tw-bar"><i style={{ width: `${Math.min(1, kills / Math.max(1, st.kills)) * 100}%`, background: EVO_COLORS[cur + 1] }} /></div>
+                      {!equipped.has(it.id) && <div className="muted" style={{ fontSize: 11 }}>Bu eşya kuşanılı değil: av sayması için kuşan.</div>}
+                    </div>
+                    <div className="gain"><span>{slot === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b style={{ color: EVO_COLORS[cur + 1] }}>{itemPower({ ...it, evo: cur + 1 })}</b></span></div>
+                    <div className="req">
+                      {Object.entries(st.mats).map(([k, q]) => {
+                        const have = m[k] ?? 0, md = MATERIAL.get(k);
+                        return <div key={k} className={'r ' + (have >= q ? 'have' : 'miss')} title={md?.desc}><img src={iconUrl(md?.icon ?? 'bag')} alt="" />{md?.name ?? k}<span className="q">{have.toLocaleString('tr-TR')} / {q}</span></div>;
+                      })}
+                      {st.gems > 0 && <div className={'r ' + (self.gems >= st.gems ? 'have' : 'miss')}><img src={iconUrl('gem')} alt="" />Mücevher<span className="q">{self.gems.toLocaleString('tr-TR')} / {st.gems.toLocaleString('tr-TR')}</span></div>}
+                    </div>
+                    <button className="btn ember evo-btn" style={{ width: '100%', padding: 12, fontSize: 15, ['--ec' as string]: EVO_COLORS[cur + 1] }} disabled={lacks > 0} onClick={go}>{lacks > 0 ? (kills < st.kills ? 'Av sayısı yetmiyor' : 'Malzeme eksik') : `Evrilt · ${EVO_NAMES[cur + 1]}`}</button>
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      {tip && <ItemTip {...tip} />}
+    </Panel>
+  );
 }
 
 /** Haso · Dönüşüm: ekipmanı Eşsiz'e çevirir; artı ve evrim korunur, efsunlar silinir. Bedeller yönetimden. */
