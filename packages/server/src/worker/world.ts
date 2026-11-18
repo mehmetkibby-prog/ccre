@@ -5,7 +5,7 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
-  FORGE_MAP, EVO_TIERS, EVO_NAMES,
+  FORGE_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
@@ -282,7 +282,8 @@ export class World {
       case 'stall_view': return this.cmdStallView(p, String(c.stall ?? ''));
       case 'stall_buy': return this.cmdStallBuy(p, c);
       case 'attack': return this.cmdAttack(p, c.id);
-      case 'skill': return this.cmdSkill(p, c.s | 0, c.id, c.x, c.y);
+      case 'skill': return this.cmdSkill(p, c.s | 0, c.id, c.x, c.y, !!c.qte);
+      case 'qte': return this.cmdQteStart(p, c.s | 0);
       case 'pickup': return this.cmdPickup(p, c.id);
       case 'respawn': return this.cmdRespawn(p, c.where === 'town' ? 'town' : 'here');
       case 'potion': return this.usePotion(p, false);
@@ -417,6 +418,7 @@ export class World {
       if (this.tickNo % 40 === (p.sid % 40)) this.expireBuffs(p);
       if (p.autoOn && this.tickNo % 20 === (p.sid % 20)) this.autoTick(p, now);
       if (p.shieldUntil && now > p.shieldUntil) { p.shieldUntil = 0; p.shieldPct = 0; p.dirty |= Upd.FLAGS; }
+      if (p.sbuff && now >= p.sbuff.until) { p.sbuff = null; p.recompute(true); p.selfDirty |= 4; }
       const flags = this.playerFlags(p);
       if (flags !== p.flags) { p.flags = flags; p.dirty |= Upd.FLAGS; }
     }
@@ -716,8 +718,16 @@ export class World {
     p.combatUntil = this.now + COMBAT_LOCK_MS;
   }
 
-  private cmdSkill(p: Player, s: number, id?: number, x?: number, y?: number) {
-    if (s < 1 || s > 3) return;
+  /** Zamanlama çubuğu başladı: bekleme ve açılma uygunsa başlangıç anı sunucu saatiyle tutulur (yeşil bölge sunucuda denetlenir). */
+  private cmdQteStart(p: Player, s: number) {
+    if (s !== 4 || p.dead || this.now < p.stunUntil) return;
+    const sk = classSkill(p.char.cls, 4, p.char.spec);
+    if (!sk?.qte || p.char.level < sk.unlock || this.now + 60 < p.cooldowns[4]) return;
+    p.qteAt = this.now;
+  }
+
+  private cmdSkill(p: Player, s: number, id?: number, x?: number, y?: number, qte = false) {
+    if (s < 1 || s > 4) return;
     if (p.char.misc.mount?.riding) return this.notice(p, 'Binekteyken yalnız düz saldırı yapabilirsin. Beceri için önce in.');
     if (this.now < p.stunUntil) return;
     const sk = classSkill(p.char.cls, s, p.char.spec);
@@ -726,7 +736,18 @@ export class World {
     if (this.now + 60 < p.cooldowns[s]) return;
     const z = p.zone;
     const lvl = p.char.skills[s] ?? 1;
-    const mult = sk.mult * skillDamageMult(lvl);
+    let mult = sk.mult * skillDamageMult(lvl);
+    // Sv. 7 becerisi: çubuk yeşilde durdurulduysa 1,5 kat (süre sunucuda ölçülür; ağ dalgalanması için küçük pay)
+    let perfect = false;
+    if (sk.qte) {
+      const c = p.char, n = c.misc.qn ?? 0;
+      if (qte && p.qteAt && this.now - p.qteAt <= QTE_SWEEP_MS + 500) {
+        const k = (this.now - p.qteAt) / QTE_SWEEP_MS, [z0, z1] = qteZone(n, c.id);
+        perfect = k >= z0 - QTE_TOL && k <= z1 + QTE_TOL;
+      }
+      p.qteAt = 0; c.misc.qn = n + 1;
+      if (perfect) mult *= QTE_MULT;
+    }
     const target = id ? this.findTarget(z, id) : null;
     const validTarget = (t: Monster | Player | null): t is Monster | Player =>
       !!t && (t instanceof Monster ? t.state !== MState.DEAD : this.canPvp(p, t));
@@ -735,9 +756,11 @@ export class World {
       p.cooldowns[s] = this.now + cd;
       this.faceAndAnim(p, tx, ty, Anim.CAST, 480);
       // uzmanlık becerisinde ikinci yol 4 olarak gider (istemci doğru efekti seçsin)
-      const castId = s === 3 && sk.spec && CLASSES[p.char.cls].specs[1]?.id === sk.spec ? 4 : s;
+      // Sv. 7 becerisi 5 (mükemmel vuruşta 6) olarak gider
+      const castId = s === 4 ? (perfect ? 6 : 5) : s === 3 && sk.spec && CLASSES[p.char.cls].specs[1]?.id === sk.spec ? 4 : s;
       z.emit(p.x, p.y, { e: Ev.CAST, src: p.id, skill: castId, tgt: tgtId, x: tx | 0, y: ty | 0 });
-      this.sendJson(p, { t: 'cd', s, until: p.cooldowns[s] - this.now });
+      this.sendJson(p, { t: 'cd', s, until: p.cooldowns[s] - this.now, ...(sk.qte ? { qn: p.char.misc.qn ?? 0, perfect } : {}) });
+      if (sk.buff) this.skillBuff(p, sk, lvl);
     };
     switch (sk.kind) {
       case 'buff': {
@@ -758,13 +781,16 @@ export class World {
       }
       case 'aoe': {
         let cx = x ?? p.x, cy = y ?? p.y;
-        if (validTarget(target)) { cx = target.x; cy = target.y; }
+        if (sk.selfCenter) { cx = p.x; cy = p.y; }
+        else if (validTarget(target)) { cx = target.x; cy = target.y; }
         if (Math.hypot(cx - p.x, cy - p.y) > sk.range + RANGE_TOLERANCE) {
           // menzil dışı nokta: menzile kırp
           const a = Math.atan2(cy - p.y, cx - p.x); cx = p.x + Math.cos(a) * sk.range; cy = p.y + Math.sin(a) * sk.range;
         }
         use(cx, cy, validTarget(target) ? target.id : 0);
         z.emit(cx, cy, { e: Ev.FX, fx: Fx.AOE_BLAST, x: cx | 0, y: cy | 0, r: sk.radius ?? 150, ms: 600, a: s });
+        // Öz Girdabı: alandaki canavarları merkeze çeker (boss hariç)
+        if (sk.buff?.k === 'leech') this.vortexPull(z, cx, cy, sk.radius ?? 180);
         this.aoe(p, cx, cy, sk.radius ?? 150, sk.maxTargets ?? 5, mult, sk);
         return;
       }
@@ -801,6 +827,28 @@ export class World {
         this.splash(p, target, mult, sk); // tek hedefli saldırı becerileri çevredekilere de vurur
       }
     }
+  }
+
+  /** Sv. 7 becerisinin 3 sn'lik sınıf güçlendirmesi (değer beceri seviyesiyle artar) */
+  private skillBuff(p: Player, sk: SkillDef, lvl: number) {
+    const b = skillBuffVal(sk, lvl); if (!b) return;
+    if (b.k === 'iron') {
+      // Demir Deri: kalkan alanları (Çelik İrade ile aynı yol; hangisi güçlüyse o)
+      p.shieldPct = Math.max(p.shieldUntil > this.now ? p.shieldPct : 0, b.v); p.shieldUntil = Math.max(p.shieldUntil, this.now + b.ms);
+      p.dirty |= Upd.FLAGS;
+    } else {
+      p.sbuff = { k: b.k, until: this.now + b.ms, v: b.v, v2: b.v2 };
+      p.recompute(true); p.selfDirty |= 4;
+    }
+  }
+  private vortexPull(z: Zone, cx: number, cy: number, r: number) {
+    z.monsters.radius(cx, cy, r + MONSTER_RADIUS, (m) => {
+      if (m.state === MState.DEAD || m.def.boss) return;
+      const d = Math.hypot(m.x - cx, m.y - cy); if (d < 30) return;
+      const k = Math.min(d - 24, 70) / d;
+      const np = nearestFree(z.layout, m.x + (cx - m.x) * k, m.y + (cy - m.y) * k);
+      m.x = np.x; m.y = np.y; z.monsters.move(m); m.dirty |= Upd.POS; m.stunUntil = Math.max(m.stunUntil, this.now + 350);
+    });
   }
 
   /** Tek hedefli saldırı becerisi: ana hedefe tam vuruş, çevresindeki en çok 4 düşmana sıçrayan hasar (yönetimden ayarlı). */
@@ -1185,13 +1233,14 @@ export class World {
 
   private cmdSkillUp(p: Player, s: number, req: string) {
     const ch = p.char;
-    if (s < 0 || s > 3) return;
+    if (s < 0 || s > 4) return;
     if (this.seenReceipt(p, req)) return;
     const cur = ch.skills[s] ?? 1;
     if (cur >= 10) return this.notice(p, 'Beceri en üst seviyede.');
     if (s === 3) { if (!ch.spec) return this.notice(p, 'Önce uzmanlık seç.'); }
     else {
-      const used = (ch.skills[0] ?? 1) + (ch.skills[1] ?? 1) + (ch.skills[2] ?? 1);
+      if (s === 4) { const sk = classSkill(ch.cls, 4); if (sk && ch.level < sk.unlock) return this.notice(p, `${sk.name} ${sk.unlock}. seviyede açılır.`); }
+      const used = (ch.skills[0] ?? 1) + (ch.skills[1] ?? 1) + (ch.skills[2] ?? 1) + Math.max(0, (ch.skills[4] ?? 1) - 1);
       if (used >= skillUpgradeBudget(ch.level)) return this.notice(p, 'Geliştirme hakkın yok; seviye atladıkça açılır.');
     }
     // maliyet yönetimden (kademe başına Mücevher + malzemeler)
@@ -2150,7 +2199,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
+    if (mask & 1) Object.assign(o, { qn: c.misc.qn ?? 0, level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;
@@ -2521,7 +2570,7 @@ function lootSpawn(l: Loot, now: number): EntitySpawn {
 export function resetCharState(c: CharState) {
   const l = getLayout('bazaar');
   c.level = 1; c.xp = 0; c.kills = 0; c.spec = null;
-  c.stats = { str: 0, res: 0, vit: 0 }; c.skills = [1, 1, 1, 1];
+  c.stats = { str: 0, res: 0, vit: 0 }; c.skills = [1, 1, 1, 1, 1];
   c.gems = 0; c.essence = 0; c.cp = 0; c.arenaCoin = 0;
   c.bag = [];
   c.equip = { weapon: makeItem(`w_${c.cls}`, 'white', 'starter', 0), armor: makeItem(`a_${c.cls}`, 'white', 'starter', 0) };

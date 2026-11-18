@@ -1,5 +1,5 @@
 import { DIR_STEPS,
-  readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
+  readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, qteZone, QTE_SWEEP_MS, type SkillDef, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
   MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
   findPath, los,
 } from '@col/shared';
@@ -315,7 +315,11 @@ export class Game {
       case 'drink': this.lastDrinkAt = performance.now(); sfx.play('drink'); break;
       case 'respawned': store.set({ dead: null }); break;
       case 'state': if (!m.dead) store.set({ dead: null }); else if (!store.get().dead) store.set({ dead: { killer: null, lost: 0, at: Date.now(), respawnIn: 0, town: undefined } }); break; // ölü ama pencere yoksa göster
-      case 'cd': store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until } })); break;
+      case 'cd': {
+        store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until }, ...(m.qn !== undefined && s.self ? { self: { ...s.self, qn: m.qn } } : {}) }));
+        if (m.perfect !== undefined) { store.set({ qteRes: { perfect: !!m.perfect, at: performance.now() } }); if (m.perfect) sfx.play('levelup'); }
+        break;
+      }
       case 'npc': store.set({ npc: { id: m.id, name: m.name, title: m.title, actions: m.actions }, panel: 'npc' }); sfx.play('ui'); break;
       case 'confirmTravel': store.set({ confirmTravel: { map: m.map, text: m.text } }); break;
       case 'tower': {
@@ -462,7 +466,8 @@ export class Game {
         const sp = isSelf ? { x: this.dx, y: this.dy } : src ? this.entPos(src) : null;
         if (!sp) break;
         // 4 = uzmanlık becerisinin ikinci yolu (ör. Hüküm Darbesi, Kök Oku, Yaşam Dalgası)
-        const variant = ev.skill === 4 ? 1 : 0, skill = ev.skill === 4 ? 3 : ev.skill;
+        // 5/6 = Sv. 7 alan becerisi (6: zamanlama çubuğu yeşilde); animasyon ve efekt sırası 5
+        const variant = ev.skill === 4 || ev.skill === 6 ? 1 : 0, skill = ev.skill === 4 ? 3 : ev.skill === 6 ? 5 : ev.skill;
         if (isSelf) { this.selfAnim = skill === 0 ? Anim.ATTACK : Anim.CAST; this.selfAnimStart = now; this.selfSkill = skill; this.sdir = Math.round(Math.atan2(ev.y - this.dy, ev.x - this.dx) / (Math.PI * 2) * 256) & 255; }
         else if (src) { src.anim = skill === 0 ? Anim.ATTACK : Anim.CAST; src.animStart = now; src.skill = skill; }
         const clsIdx = isSelf ? CLASS_IDS.indexOf(this.cls) : src?.kind === Kind.PLAYER ? src.cls : -1;
@@ -820,17 +825,41 @@ export class Game {
     setTimeout(() => URL.revokeObjectURL(url), 4000);
     notify('Ekran görüntüsü kaydedildi (İndirilenler)', 'ok');
   }
+  private qteTimer = 0;
   useSkill(s: number) {
+    // zamanlama çubuğu açıkken aynı tuş/düğme: çubuğu durdurur ve beceriyi atar
+    if (s === 4 && store.get().qte) return this.qteFire();
     const sk = classSkill(this.cls, s, store.get().self?.spec ?? null);
     if (!sk) return notify('Bu beceri henüz açılmadı.', 'error');
     const lvl = store.get().self?.level ?? 1;
     if (lvl < sk.unlock) return notify(`${sk.name} ${sk.unlock}. seviyede açılır.`, 'error');
     const cdEnd = store.get().cooldowns[s] ?? 0;
     if (performance.now() < cdEnd - 50) return;
+    if (sk.qte) {
+      // Sv. 7 becerisi: çubuk açılır; ibre yeşildeyken yeniden bas → 1,5× (süre sunucuda ölçülür). Basmazsan sonunda normal atılır.
+      if (this.selfFlags & EFlag.MOUNTED) return notify('Binekteyken yalnız düz saldırı yapabilirsin. Beceri için önce in.', 'error');
+      const n = store.get().self?.qn ?? 0, [z0, z1] = qteZone(n, this.charId);
+      this.send({ t: 'qte', s });
+      store.set({ qte: { start: performance.now(), z0, z1 } });
+      clearTimeout(this.qteTimer); this.qteTimer = window.setTimeout(() => this.qteFire(), QTE_SWEEP_MS + 40);
+      sfx.play('ui');
+      return;
+    }
+    this.castAt(s, sk, false);
+  }
+  /** Zamanlama çubuğunu durdur ve Sv. 7 becerisini at */
+  qteFire() {
+    clearTimeout(this.qteTimer);
+    const q = store.get().qte; if (!q) return;
+    store.set({ qte: null });
+    const sk = classSkill(this.cls, 4, store.get().self?.spec ?? null); if (!sk) return;
+    this.castAt(4, sk, true);
+  }
+  private castAt(s: number, sk: SkillDef, qte: boolean) {
     let t = this.targetId ? this.ents.get(this.targetId) : undefined;
-    if ((!t || t.hp <= 0) && sk.kind !== 'buff' && sk.kind !== 'heal') { const nt = this.nearestEnemy(sk.range + 100); if (nt) { this.setTarget(nt.id); t = nt; } }
+    if ((!t || t.hp <= 0) && sk.kind !== 'buff' && sk.kind !== 'heal' && !sk.selfCenter) { const nt = this.nearestEnemy(sk.range + 100); if (nt) { this.setTarget(nt.id); t = nt; } }
     if (sk.kind !== 'buff' && sk.kind !== 'heal' && !t && sk.kind !== 'aoe') return notify('Önce bir hedef seç.', 'error');
-    this.send({ t: 'skill', s, id: t?.id, x: Math.round(t?.x ?? this.px), y: Math.round(t?.y ?? this.py) });
+    this.send({ t: 'skill', s, id: t?.id, x: Math.round(t?.x ?? this.px), y: Math.round(t?.y ?? this.py), ...(qte ? { qte: 1 } : {}) });
   }
   pickupNearby() {
     let best: CEnt | null = null, bd = LOOT_PICKUP_RANGE;
@@ -929,7 +958,8 @@ export class Game {
       case 'Digit2': this.useSkill(1); break;
       case 'Digit3': this.useSkill(2); break;
       case 'Digit4': this.useSkill(3); break;
-      case 'KeyQ': case 'Digit5': this.potion(); break;
+      case 'Digit5': this.useSkill(4); break;
+      case 'KeyQ': this.potion(); break;
       case 'KeyZ': case 'KeyF': this.pickupNearby(); break;
       case 'KeyH': if (store.get().self?.mount?.owned) this.send({ t: 'mount', op: 'ride' }); break;
       case 'Tab': this.cycleTarget(); break;

@@ -3,7 +3,7 @@ import { onConfig } from '../admin/config.ts';
 import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
 import { Game, setDirectWs } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -167,6 +167,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <LootFeed />
       <Chat />
       <BottomBar game={game} />
+      <QteBar game={game} />
       <Menu onExit={onExit} />
       <StallFab game={game} />
       {mobile && <MobileControls game={game} />}
@@ -483,6 +484,44 @@ function Chat() {
   );
 }
 
+/**
+ * Sv. 7 becerisinin zamanlama çubuğu: ibre 1 sn'de soldan sağa geçer; yeşil bölgedeyken beceri tuşuna (5), beceri
+ * düğmesine ya da çubuğa yeniden basılırsa 1,5× hasar. Basılmazsa sonunda normal atılır (oyuncuyu bekletmez).
+ */
+function QteBar({ game }: { game: Game }) {
+  const q = useStore((s) => s.qte);
+  const res = useStore((s) => s.qteRes);
+  const needle = useRef<HTMLElement>(null);
+  const [, force] = useState(0);
+  useEffect(() => {
+    if (!q) return;
+    let raf = 0;
+    const f = () => { const k = Math.min(1, (performance.now() - q.start) / QTE_SWEEP_MS); if (needle.current) needle.current.style.left = `${k * 100}%`; raf = requestAnimationFrame(f); };
+    f();
+    return () => cancelAnimationFrame(raf);
+  }, [q]);
+  useEffect(() => { if (!res) return; const id = setTimeout(() => force((n) => n + 1), 1000); return () => clearTimeout(id); }, [res]);
+  const showRes = !q && res && performance.now() - res.at < 950;
+  if (!q && !showRes) return null;
+  const pct = Math.round((QTE_MULT - 1) * 100);
+  return (
+    <div className="qte" onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (q) game.qteFire(); }}>
+      {q && (
+        <>
+          <div className="qte-track">
+            <i className="qte-green" style={{ left: `${q.z0 * 100}%`, width: `${(q.z1 - q.z0) * 100}%` }} />
+            <b ref={needle} className="qte-needle" />
+          </div>
+          <div className="qte-hint">İbre <span className="g">yeşildeyken</span> {isMobile() ? 'çubuğa ya da beceriye dokun' : <>bas · <kbd>5</kbd></>} · +%{pct} hasar</div>
+        </>
+      )}
+      {showRes && res && (res.perfect
+        ? <div className="qte-res ok"><img src="/icons/qte_perfect.jpg" alt="" />MÜKEMMEL! <b>×{String(QTE_MULT).replace('.', ',')}</b></div>
+        : <div className="qte-res">Normal vuruş</div>)}
+    </div>
+  );
+}
+
 function useNow(ms = 100) { const [, set] = useState(0); useEffect(() => { const iv = setInterval(() => set((x) => x + 1), ms); return () => clearInterval(iv); }, [ms]); return performance.now(); }
 
 function BottomBar({ game }: { game: Game }) {
@@ -492,12 +531,13 @@ function BottomBar({ game }: { game: Game }) {
   const now = useNow(100);
   if (!self || !cls) return null;
   const pots = self.materials?.red_potion ?? 0;
+  const qteOn = !!store.get().qte;
   const slot = (s: number, key: string) => {
     const sk = classSkill(cls, s, self.spec);
     const locked = !sk || self.level < sk.unlock;
     const left = s > 0 ? Math.max(0, (cds[s] ?? 0) - now) : 0;
     return (
-      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (locked ? ' locked' : '')} title={sk ? `${sk.name} — ${sk.desc}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
+      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} — ${sk.desc}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
@@ -513,6 +553,7 @@ function BottomBar({ game }: { game: Game }) {
           {slot(1, '2')}{slot(2, '3')}
           {slot(0, '1')}
           {slot(3, '4')}
+          {slot(4, '5')}
           <button className="slot" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
@@ -605,7 +646,7 @@ function MobileControls({ game }: { game: Game }) {
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
         <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
-        {[1, 2, 3].map((s) => <button key={s} className={'s' + s} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{sk(s) ? <SkillIcon id={sk(s)!.id} /> : s + 1}{cd(s)}</button>)}
+        {[1, 2, 3, 4].map((s) => <button key={s} className={'s' + s} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{sk(s) ? <SkillIcon id={sk(s)!.id} /> : s + 1}{cd(s)}</button>)}
         <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /><span className="pot-n">{self?.materials?.red_potion ?? 0}</span></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><img className="pick-img" src="/icons/pickup.png" alt="" draggable={false} /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>

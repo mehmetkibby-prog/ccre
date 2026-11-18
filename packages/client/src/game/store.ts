@@ -4,7 +4,7 @@ import type { ItemInstance, Slot, StatAlloc, QuestState } from '@col/shared';
 export interface SelfInfo {
   level: number; xp: number; xpNext: number; gems: number; essence: number; cp: number; kills: number; autoPotion: boolean; daily: number;
   mount?: { owned?: boolean; riding?: boolean; quest?: { kills: number } };
-  quests?: QuestState; towerBest?: number;
+  quests?: QuestState; towerBest?: number; /** Sv. 7 becerisi atış sayacı (zamanlama çubuğunun yeşil bölgesi) */ qn?: number;
   buffs?: Record<string, number>; autoLeft?: number; autoOn?: boolean; autoPool?: number; bait?: number; stallSkin?: number;
   bag: ItemInstance[]; equip: Partial<Record<Slot, ItemInstance>>; materials: Record<string, number>;
   statAlloc: StatAlloc; statRev: number; statBudget: number; skills: number[]; spec: string | null; skillBudget: number;
@@ -111,6 +111,8 @@ export interface UiState {
   upgradeResult: { ok: boolean; before: number; after: number; chance: number } | null;
   transformResult: { ok: boolean; item: string; at: number } | null;
   evolveResult: { item: string; evo: number; at: number } | null;
+  /** Sv. 7 becerisinin zamanlama çubuğu (başlangıç performance.now, yeşil bölge 0..1) ve son sonucu */
+  qte: { start: number; z0: number; z1: number } | null; qteRes: { perfect: boolean; at: number } | null;
   forge: ForgeView | null;
   /** oto atak durumunun sunucudan son geldiği an (kalan süre bundan geri sayılır) */
   autoSync: number;
@@ -143,7 +145,7 @@ function loadSettings(): UiState['settings'] {
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
-  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
+  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, qte: null, qteRes: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();

@@ -13,7 +13,7 @@ export function ClassIcon({ cls, size = 30 }: { cls: string; size?: number }) {
 }
 
 /** Meshy ile çizilmiş skill ikonları (public/icons/skills). Diğerleri için el çizimi SVG. */
-const SKILL_ART = new Set(['g_basic', 'g_pull', 'g_dash', 'g_steel', 'g_judge', 'h_basic', 'h_multi', 'h_pierce', 'h_dawn', 'h_root', 'a_basic', 'a_nova', 'a_frost', 'a_burst', 'a_wave']);
+const SKILL_ART = new Set(['g_basic', 'g_pull', 'g_dash', 'g_steel', 'g_judge', 'h_basic', 'h_multi', 'h_pierce', 'h_dawn', 'h_root', 'a_basic', 'a_nova', 'a_frost', 'a_burst', 'a_wave', 'g_quake', 'h_storm', 'a_vortex']);
 
 export function SkillIcon({ id }: { id: string }) {
   if (SKILL_ART.has(id)) return <img className="sk-img" src={`/icons/skills/${id}.jpg`} alt="" draggable={false} />;

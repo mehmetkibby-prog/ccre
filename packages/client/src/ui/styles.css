@@ -1604,7 +1604,7 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
   .topbar { top: calc(52px + env(safe-area-inset-top, 0px)); }
 }
 /* binek: beceri kümesinin dış yayında, iksir ile toplama arasında */
-.mact .mnt { width: 50px; height: 50px; right: 150px; bottom: 150px; }
+.mact .mnt { width: 46px; height: 46px; right: 206px; bottom: 158px; }
 .mact .mnt.on { background: radial-gradient(circle at 40% 35%, #6a4a1a, #2a1a08); box-shadow: inset 0 0 0 2px #ffd27a, 0 0 14px rgba(255, 210, 122, .55); }
 /* Nesne Market düğmesi diğerleriyle aynı boyda (PC ve telefon) */
 .nm-short { display: none; }
@@ -1863,3 +1863,24 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tip-evo { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; padding: 7px 14px; font-size: 11.5px; box-shadow: inset 0 -1px 0 rgba(96, 70, 42, .6); }
 .tip-evo .ev { font-weight: 700; letter-spacing: .3px; text-shadow: 0 0 8px currentColor; }
 @media (max-width: 720px) { .forge.evo { grid-template-columns: 1fr; } }
+
+/* ───── Sv. 7 becerisi: zamanlama çubuğu ───── */
+.qte { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); z-index: 9; width: min(360px, 76vw); padding: 10px 14px 8px; border-radius: 14px; background: linear-gradient(180deg, rgba(24, 16, 10, .9), rgba(12, 8, 5, .86)); box-shadow: 0 10px 26px rgba(0, 0, 0, .5), inset 0 0 0 1px rgba(255, 210, 122, .35); touch-action: none; cursor: pointer; animation: qtein .14s ease-out; }
+@keyframes qtein { from { opacity: 0; transform: translateX(-50%) scale(.92); } }
+.qte-track { position: relative; height: 22px; border-radius: 9px; background: linear-gradient(180deg, #2a1d14, #120c08); box-shadow: inset 0 0 0 1px #5a3a24, inset 0 2px 6px rgba(0, 0, 0, .6); }
+.qte-green { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: linear-gradient(180deg, #8dff7a, #2fb84a); box-shadow: 0 0 14px rgba(120, 255, 120, .65), inset 0 0 0 1px rgba(220, 255, 210, .7); animation: qteg .5s ease-in-out infinite alternate; }
+@keyframes qteg { to { filter: brightness(1.25); } }
+.qte-needle { position: absolute; top: -2px; bottom: -2px; width: 6px; margin-left: -3px; border-radius: 3px; background: #fffbe8; box-shadow: 0 0 0 2px #1a0e06, 0 0 10px #ffd27a; }
+.qte-hint { margin-top: 6px; text-align: center; font-size: 12px; color: #e8d8c0; }
+.qte-hint .g { color: #8dff7a; font-weight: 800; }
+.qte-hint kbd, .sk-buff kbd { padding: 0 5px; border-radius: 4px; background: rgba(255, 255, 255, .12); font: 700 11px var(--f-ui); }
+.qte-res { display: flex; align-items: center; justify-content: center; gap: 8px; font: 400 15px var(--f-title); letter-spacing: 1px; color: #cbb8a0; }
+.qte-res.ok { color: #ffe680; text-shadow: 0 0 12px #ffb020; font-size: 20px; animation: qteok .5s ease-out; }
+.qte-res.ok img { width: 34px; height: 34px; border-radius: 6px; box-shadow: 0 0 14px #ffd040; }
+@keyframes qteok { from { transform: scale(1.35); opacity: 0; } }
+.slot.qte-slot.armed { box-shadow: 0 0 0 2px #8dff7a, 0 0 16px rgba(120, 255, 120, .6); }
+.sk-new { padding: 1px 6px; border-radius: 99px; font-size: 9.5px; font-weight: 800; color: #10260c; background: linear-gradient(180deg, #c8ff9a, #6fd64a); }
+.sk-buff { margin-top: 3px; font-size: 11.5px; color: #e0cfb4; }
+.sk-buff b { color: #ffe08a; }
+.mact .s4 { width: 56px; height: 56px; right: 150px; bottom: 150px; }
+@media (pointer: coarse) { .qte { bottom: auto; top: 58%; } }

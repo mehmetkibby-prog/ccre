@@ -237,8 +237,24 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.7, ease: 'lin', hips: [-0.3, 0.08], p: P({ Spine02: { e: [38, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.12, -0.5, 0.86] }, RightForeArm: { a: [0, -0.2, 0.98], bl: [0, -1, 0] }, LeftArm: { a: [0.42, -0.5, 0.75] }, LeftForeArm: { a: [-0.3, 0.1, 0.95] }, LeftUpLeg: { e: [-58, 0, 5] }, LeftLeg: { e: [78, 0, 0] }, RightUpLeg: { e: [24, 0, -5] }, RightLeg: { e: [84, 0, 0] } }) },
     { t: 0.95, ease: 'inOut', p: GUARD },
   ], 0.95);
-  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3 } as Record<number, THREE.AnimationClip> };
+  // Yer Sarsan (Sv. 7): sıçrar, kılıcı ters (uç aşağı) iki eliyle başının üstüne kaldırır, geniş çömelişle toprağa saplar
+  const UP2: Pose = { RightArm: { a: [-0.2, 0.95, 0.2] }, RightForeArm: { a: [0.3, 0.9, 0.3], bl: [0, -1, 0.1] }, LeftArm: { a: [0.2, 0.95, 0.22] }, LeftForeArm: { a: [-0.32, 0.9, 0.3] } };
+  // saplama: önkollar öne yatay, iki el göğüs önünde kabzada; bıçak dimdik aşağı, ucu toprakta
+  const PLANT: Pose = { RightArm: { a: [-0.12, -0.62, 0.78] }, RightForeArm: { a: [0.4, -0.05, 0.92], bl: [0, -1, 0] }, LeftArm: { a: [0.12, -0.62, 0.78] }, LeftForeArm: { a: [-0.4, -0.05, 0.92] } };
+  const SQUAT: Pose = { LeftUpLeg: { e: [-62, 0, 18] }, LeftLeg: { e: [86, 0, 0] }, LeftFoot: { e: [-14, 0, 0] }, RightUpLeg: { e: [-56, 0, -18] }, RightLeg: { e: [84, 0, 0] }, RightFoot: { e: [-14, 0, 0] } };
+  const s5 = buildClip('G Yer Sarsan', inner, root, [
+    { t: 0, p: GUARD },
+    { t: 0.12, ease: 'out', hips: [-0.16, -0.02], p: P({ ...SQUAT, Spine02: { e: [18, 0, 0] }, Spine: { e: [8, 0, 0] }, Head: { e: [-14, 0, 0] }, RightArm: { a: [-0.3, -0.3, 0.9] }, RightForeArm: { a: [0, 0.2, 0.98], bl: [0, 1, 0] }, LeftArm: { a: [0.3, -0.3, 0.9] }, LeftForeArm: { a: [0, 0.2, 0.98] } }) },
+    { t: 0.26, ease: 'out', hips: [0.16, 0.02], p: P({ ...UP2, LeftUpLeg: { e: [-30, 0, 8] }, LeftLeg: { e: [52, 0, 0] }, RightUpLeg: { e: [-22, 0, -8] }, RightLeg: { e: [58, 0, 0] }, Spine02: { e: [-16, 0, 0] }, Spine: { e: [-8, 0, 0] }, Head: { e: [-18, 0, 0] } }) },
+    { t: 0.32, ease: 'lin', hips: [0.17, 0.03], p: P({ ...UP2, LeftUpLeg: { e: [-32, 0, 8] }, LeftLeg: { e: [56, 0, 0] }, RightUpLeg: { e: [-24, 0, -8] }, RightLeg: { e: [60, 0, 0] }, Spine02: { e: [-18, 0, 0] }, Spine: { e: [-9, 0, 0] }, Head: { e: [-20, 0, 0] } }) },
+    { t: 0.4, ease: 'in', hips: [-0.34, 0.06], p: P({ ...SQUAT, ...PLANT, Spine02: { e: [38, 0, 0] }, Spine: { e: [16, 0, 0] }, Head: { e: [-30, 0, 0] } }) },
+    { t: 0.74, ease: 'lin', hips: [-0.32, 0.06], p: P({ ...SQUAT, ...PLANT, Spine02: { e: [34, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-34, 0, 0] } }) },
+    { t: 0.95, ease: 'inOut', p: GUARD },
+  ], 0.95);
+  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 5: s5 } as Record<number, THREE.AnimationClip> };
 }
+/** Sv. 7 becerilerinde vuruşun yere değdiği an (sn): efektler buna göre */
+export const SKILL7_IMPACT_S = [0.4, 0.46, 0.46];
 
 // ───────── Avcı (yay sol elde) ─────────
 /**
@@ -356,8 +372,19 @@ export function hunterClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.7, ease: 'lin', hips: [-0.08, -0.01], p: H(releasePose(-70, -0.2), -70, 4) },
     { t: 0.95, ease: 'inOut', p: HUNT },
   ], 0.95);
+  // Fırtına Oku (Sv. 7): geriye yaslanıp yayı dimdik göğe çeker, bırakınca gövde geri teper; ok yağarken diz kırıp bekler
+  const SKY: Pose = { LeftUpLeg: { e: [-20, 0, 14] }, LeftLeg: { e: [18, 0, 0] }, RightUpLeg: { e: [24, 0, -14] }, RightLeg: { e: [34, 0, 0] } };
+  const s5 = buildClip('H Fırtına', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.14, ease: 'out', hips: [-0.06, -0.03], p: H(bowPose(-50, 0.75, 0.5, { ...SKY, Spine02: { e: [-8, -4, 0] }, Spine: { e: [-4, 0, 0] } }), -50, -4) },
+    { t: 0.3, ease: 'inOut', hips: [-0.09, -0.05], p: H(bowPose(-54, 1.08, 1.15, { ...SKY, Spine02: { e: [-12, -4, 0] }, Spine: { e: [-6, 0, 0] } }), -54, -6) },
+    { t: 0.38, ease: 'lin', hips: [-0.09, -0.05], p: H(bowPose(-55, 1.1, 1.18, { ...SKY, Spine02: { e: [-13, -4, 0] }, Spine: { e: [-6, 0, 0] } }), -55, -7) },
+    { t: 0.46, ease: 'out', hips: [-0.11, -0.1], p: H(releasePose(-58, 1.12, { ...SKY, Spine02: { e: [-14, -6, 0] }, Spine: { e: [-7, 0, 0] } }), -58, -9) },
+    { t: 0.72, ease: 'inOut', hips: [-0.15, 0.02], p: H(bowPose(-66, 0.1, 0.2, { LeftUpLeg: { e: [-30, 0, 12] }, LeftLeg: { e: [44, 0, 0] }, RightUpLeg: { e: [20, 0, -12] }, RightLeg: { e: [40, 0, 0] } }), -66, 6) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4 } as Record<number, THREE.AnimationClip> };
+  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── Arkanist (asa sağ elde) ─────────
@@ -424,8 +451,19 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.7, ease: 'lin', hips: [0.04, 0], p: AP({ Spine02: { e: [-20, 0, 0] }, Spine: { e: [-10, 0, 0] }, Head: { e: [-34, 0, 0] }, RightArm: { a: [-0.32, 0.93, 0.15] }, RightForeArm: { a: [-0.08, 0.98, 0.2] }, LeftArm: { a: [0.93, 0.32, 0.18] }, LeftForeArm: { a: [0.86, 0.46, 0.22] } }) },
     { t: 0.95, ease: 'inOut', p: ARC },
   ], 0.95);
+  // Öz Girdabı (Sv. 7): asayı başının üstünde iki kez çevirir (gövde sola-sağa burulur), sonra öne hamleyle girdabı iter
+  const SWIRL = (yaw: number, side: number): Pose => B(AP({ ...WIDE, Spine02: { e: [-14, yaw * 0.5, side * 8] }, Spine: { e: [-6, yaw * 0.3, 0] }, Head: { e: [-20, -yaw * 0.4, 0] }, RightArm: { a: [-0.3 + side * 0.25, 0.94, 0.15 - side * 0.2] }, RightForeArm: { a: [side * 0.45, 0.85, 0.25] }, RightHand: { e: [20, side * 40, 0] }, LeftArm: { a: [0.85, 0.35 + side * 0.15, 0.3] }, LeftForeArm: { a: [0.7, 0.55, 0.3] } }), yaw * 0.4, -6);
+  const s5 = buildClip('A Girdap', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.13, ease: 'out', hips: [-0.06, 0], p: SWIRL(34, 1) },
+    { t: 0.26, ease: 'inOut', hips: [-0.07, 0], p: SWIRL(-34, -1) },
+    { t: 0.36, ease: 'inOut', hips: [-0.08, -0.04], p: SWIRL(26, 1) },
+    { t: R + 0.21, ease: 'in', hips: [-0.15, 0.22], p: B(AP({ ...LUNGE, ...SHOT, Spine02: { e: [14, 4, 0] }, Spine01: { e: [5, 2, 0] }, Spine: { e: [4, 0, 0] }, Head: { e: [-16, -4, 0] } }), 4, 12) },
+    { t: 0.72, ease: 'lin', hips: [-0.16, 0.24], p: B(AP({ ...LUNGE2, ...FOLLOW, Spine02: { e: [16, 6, 0] }, Spine01: { e: [6, 2, 0] }, Spine: { e: [5, 0, 0] }, Head: { e: [-18, -6, 0] } }), 6, 14) },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4 } as Record<number, THREE.AnimationClip> };
+  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── üst / alt gövde ayrımı (yürürken vurmak için) ─────────

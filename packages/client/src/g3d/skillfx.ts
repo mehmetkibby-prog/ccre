@@ -1,4 +1,4 @@
-import { ARCANIST_RELEASE_S } from './charAnims.ts';
+import { ARCANIST_RELEASE_S, SKILL7_IMPACT_S } from './charAnims.ts';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { glowTexture } from './textures.ts';
@@ -178,7 +178,7 @@ export class SkillFx {
     const far = { x: -99999, y: -99999 };
     this.decal('holy', far, 10, 50); this.shock(far, 10, 50, '#fff'); this.column(far, 1, 1, 50, '#fff'); this.dome(0, far, 50, '#fff');
     this.beam(far, 1, far, 1, 0.2, 50, '#fff'); this.flash(far, 1, 1, 50, '#fff'); this.spikes(far, 'ice', 1, 10, 50); this.spikes(far, 'thorn', 1, 10, 50);
-    this.rocks(far, 1, '#777'); this.sword(far, 50, '#fff'); this.chain(0, 0, far, far, 50); this.arrowRain(far, 10, 1, 50, '#fff');
+    this.rocks(far, 1, '#777'); this.sword(far, 50, '#fff'); this.spikes(far, 'stone', 1, 10, 50); this.vortex(far, 10, 50, '#fff'); this.chain(0, 0, far, far, 50); this.arrowRain(far, 10, 1, 50, '#fff');
     for (const el of this.els) el.o.position.y -= 500;
   }
 
@@ -275,11 +275,13 @@ export class SkillFx {
   }
 
   /** Yerden fışkıran buz sarkıtları ya da kıvrık dikenler (r: sunucu birimi). */
-  spikes(p: P, kind: 'ice' | 'thorn', n: number, r: number, dur: number) {
+  spikes(p: P, kind: 'ice' | 'thorn' | 'stone', n: number, r: number, dur: number) {
     const mat = kind === 'ice'
       ? new THREE.MeshStandardMaterial({ color: '#cff6ff', emissive: '#3fb6e8', emissiveIntensity: 0.75, roughness: 0.12, metalness: 0.05, transparent: true, opacity: 0.88 })
-      : new THREE.MeshStandardMaterial({ color: '#5a4426', emissive: '#2f7a1e', emissiveIntensity: 0.22, roughness: 0.85, transparent: true, opacity: 1 });
-    const im = new THREE.InstancedMesh(kind === 'ice' ? iceGeo() : thornGeo(), mat, n);
+      : kind === 'stone'
+        ? new THREE.MeshStandardMaterial({ color: '#3e3832', emissive: '#ff4a10', emissiveIntensity: 0.12, roughness: 0.95, flatShading: true, transparent: true, opacity: 1 })
+        : new THREE.MeshStandardMaterial({ color: '#5a4426', emissive: '#2f7a1e', emissiveIntensity: 0.22, roughness: 0.85, transparent: true, opacity: 1 });
+    const im = new THREE.InstancedMesh(kind === 'thorn' ? thornGeo() : iceGeo(), mat, n);
     const parts: { x: number; y: number; ry: number; tilt: number; s: number; d: number }[] = [];
     for (let i = 0; i < n; i++) {
       const a = (i / n) * Math.PI * 2 + Math.random() * 0.6, rr = (i === 0 ? 0 : 0.35 + Math.random() * 0.65) * r;
@@ -384,6 +386,30 @@ export class SkillFx {
   }
 
   /** Gökten ok yağmuru (r: sunucu birimi). Her ok yere saplanınca toz kalkar. */
+  /** Girdap: kıvılcımlar dış halkadan dönerek merkeze çekilir (r: sunucu birimi). */
+  vortex(p: P, r: number, dur: number, color: THREE.ColorRepresentation) {
+    const N = Math.max(16, Math.round(70 * this.pk));
+    const pos = new Float32Array(N * 3);
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({ map: glowTexture(), color, size: 0.45, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
+    const pts = new THREE.Points(geo, mat); pts.renderOrder = 5;
+    const R = r * U;
+    const ps = Array.from({ length: N }, (_, i) => ({ a: (i / N) * Math.PI * 2 * 3 + Math.random(), rr: R * (0.25 + Math.random() * 0.75), h: Math.random() * 1.2 }));
+    let last = performance.now();
+    return this.add(pts, dur, (k, now) => {
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      const gy = this.gy(p.x, p.y), cx = p.x * U, cz = p.y * U;
+      for (let i = 0; i < N; i++) {
+        const q = ps[i];
+        q.rr -= dt * R * (0.9 + 1.6 * k); q.a += dt * (3 + 9 * (1 - q.rr / R)); q.h += dt * (0.4 + 1.6 * (1 - q.rr / R));
+        if (q.rr < R * 0.05) { q.rr = R * (0.85 + Math.random() * 0.15); q.h = Math.random() * 0.3; }
+        pos[i * 3] = cx + Math.cos(q.a) * q.rr; pos[i * 3 + 1] = gy + 0.15 + q.h; pos[i * 3 + 2] = cz + Math.sin(q.a) * q.rr;
+      }
+      geo.attributes.position.needsUpdate = true;
+      mat.opacity = Math.min(1, k * 5) * (k > 0.8 ? (1 - k) / 0.2 : 1);
+    }, [mat], [geo]);
+  }
+
   arrowRain(p: P, r: number, n: number, dur: number, color: THREE.ColorRepresentation) {
     const mat = new THREE.MeshStandardMaterial({ color: '#d8e6c8', emissive: color, emissiveIntensity: 1.1, roughness: 0.5, transparent: true });
     const im = new THREE.InstancedMesh(arrowGeo(), mat, n);
@@ -494,6 +520,7 @@ export class SkillFx {
     const sp = c.sp, tp = c.tp;
     const cast = (name: Circle, col: string) => { this.decal(name, sp, 62, 650, { follow: c.src, spin: 1.6, grow: [0.5, 1.05], color: col, fadeOut: 0.4 }); fx.burst(sp.x, sp.y, 0.15, n(14), col, 1.3, 600, 0.13, 2.4); };
 
+    if (c.skill === 5) { this.skill7(c, n, after, S, light, impact, cast, full); return; }
     if (c.cls === 0) { // ─── Muhafız: kutsal çelik, altın
       const G = '#ffc94a';
       if (c.skill === 1) { // Zincir Çekişi
@@ -632,6 +659,84 @@ export class SkillFx {
         for (let i = 0; i < n(36); i++) { const a = Math.random() * 6.28, r = Math.random() * 6; fx.spawn(sp.x * U + Math.cos(a) * r, this.gy(sp.x, sp.y) + 0.1, sp.y * U + Math.sin(a) * r, 0, 0.9 + Math.random() * 1.2, 0, 1400, 0.16, Math.random() < 0.5 ? L : '#e6ffb0', 0, 0.3); }
         light(sp, 1.4, L, 5, 800);
       }
+    }
+  }
+
+  /**
+   * Sv. 7 alan becerileri (variant 1 = zamanlama çubuğu yeşilde: altın "mükemmel" patlaması eklenir) ve 3 sn'lik sınıf
+   * güçlendirmesinin görseli: Muhafız çelik kubbe, Avcı rüzgâr hortumu, Arkanist emilim aurası.
+   */
+  private skill7(c: SkillCtx, n: (x: number) => number, after: (ms: number, f: () => void) => void, S: (name: string, k?: number) => void,
+    light: (p: P, h: number, col: string, i: number, ms: number) => void, impact: (power: number) => void, cast: (name: Circle, col: string) => void, full: boolean) {
+    const fx = this.fx, sp = c.sp, tp = c.tp, perfect = c.variant === 1;
+    const IMP = SKILL7_IMPACT_S[c.cls] * 1000;
+    const gold = (p: P) => {
+      S('holy', 1.1);
+      this.shock(p, 360, 680, '#fff1a0', 0.05); after(90, () => this.shock(p, 260, 520, '#ffffff', 0.1));
+      this.flash(p, 1.4, 4.4, 400, '#fff4b0');
+      this.column(p, 1.5, 7.5, 760, '#ffd860');
+      fx.burst(p.x, p.y, 1.2, n(40), '#ffe680', 6, 800, 0.2, -1.5);
+      light(p, 1.8, '#ffe680', 11, 550);
+    };
+    if (c.cls === 0) { // ─── Yer Sarsan: kılıç toprağa saplanır, yer yarılır, taş sivriler fışkırır
+      const G = '#ffb347';
+      S('charge');
+      this.decal('holy', sp, 70, 650, { follow: c.src, spin: 2.2, grow: [0.4, 1], color: '#ffd27a' });
+      fx.burst(sp.x, sp.y, 0.1, n(12), '#d9c7a1', 1.6, 500, 0.2, 1);
+      after(IMP, () => {
+        S('impact', 1.3); S('boom', 0.8);
+        this.decal('crack', sp, 215, 2400, { spin: 0, fadeIn: 0.02, fadeOut: 0.45, grow: [0.45, 1], color: '#ffb060' });
+        this.shock(sp, 300, 620, G); after(120, () => this.shock(sp, 400, 720, '#ffe0a0', 0.2));
+        if (full) this.spikes(sp, 'stone', n(12) + 3, 205, 1500);
+        this.flash(sp, 0.6, 3.8, 320, '#ffd9a0');
+        if (full) this.rocks(sp, n(16), '#6e5e4c', 7);
+        fx.burst(sp.x, sp.y, 0.15, n(56), '#d9c7a1', 5, 1100, 0.32, 1.2); fx.burst(sp.x, sp.y, 0.4, n(28), G, 6, 650, 0.16, -3);
+        light(sp, 1, G, 9, 650); impact(9);
+        if (perfect) gold(sp);
+        // Demir Deri: 3 sn çelik mavisi kubbe
+        this.dome(c.src, sp, 3000, '#9fc4e8');
+      });
+    } else if (c.cls === 1) { // ─── Fırtına Oku: göğe ok, hedefte dönen fırtına bulutu, ok ve şimşek yağmuru
+      const V = '#8dff5a';
+      S('volley'); cast('nature', V);
+      const sky = { x: sp.x + 1, y: sp.y + 1 };
+      after(IMP, () => {
+        S('beam', 0.7);
+        this.beam(sp, 1.6, sky, 16, 0.55, 480, '#d8ffb0', true);
+        this.flash(sp, 2.0, 2.2, 260, '#eaffd0');
+      });
+      after(IMP + 200, () => {
+        this.decal('nature', tp, 240, 1800, { spin: 2.6, grow: [0.3, 1], fadeIn: 0.12, fadeOut: 0.3, color: '#4a7a2a', h: 6.5, opacity: 0.75 });
+        this.decal('nature', tp, 185, 1700, { spin: -1.5, grow: [0.5, 1], fadeIn: 0.1, fadeOut: 0.3, color: V, opacity: 0.85 });
+        this.arrowRain(tp, 175, n(c.self ? 26 : 14), 1250, V);
+        for (let i = 0; i < 3; i++) after(160 + i * 320, () => {
+          const a = Math.random() * 6.28, r = Math.random() * 150, q = { x: tp.x + Math.cos(a) * r, y: tp.y + Math.sin(a) * r };
+          this.beam({ x: q.x + 1, y: q.y + 1 }, 7, q, 0.1, 0.32, 210, '#f0ffd8'); this.flash(q, 0.4, 1.8, 220, '#eaffd0'); S('pierce', 0.5);
+        });
+        after(520, () => { this.shock(tp, 230, 540, V); if (full) this.shock(tp, 160, 420, '#e8ffd0', 0.1); impact(4); light(tp, 1.2, V, 7, 520); if (perfect) gold(tp); });
+      });
+      // Rüzgâr Adımı: 3 sn yeşil rüzgâr hortumu
+      this.column(sp, 0.75, 2.6, 3000, '#7dff5a', c.src);
+      this.decal('nature', sp, 72, 3000, { follow: c.src, spin: 4.5, color: V, fadeIn: 0.05, fadeOut: 0.2, opacity: 0.7 });
+    } else { // ─── Öz Girdabı: dönen rün halkaları, merkeze çekilen kıvılcımlar, içe çöküp patlama
+      const A = '#c07bff';
+      S('arcane'); cast('arcane', A);
+      this.decal('arcane', tp, 205, IMP + 900, { spin: 6, grow: [0.2, 1], fadeIn: 0.1, fadeOut: 0.35, color: A });
+      if (full) this.decal('arcane', tp, 130, IMP + 900, { spin: -9, grow: [0.3, 1], fadeIn: 0.1, fadeOut: 0.35, color: '#f0c8ff', h: 0.02 });
+      this.vortex(tp, 210, IMP + 500, '#d6a8ff');
+      this.column(tp, 1.2, 4.5, IMP + 700, '#a060ff');
+      after(IMP, () => {
+        S('explode');
+        this.flash(tp, 1.2, 4, 380, '#e8d0ff');
+        this.shock(tp, 300, 640, A); if (full) this.shock(tp, 200, 440, '#ffffff', 0.05);
+        this.decal('arcane', tp, 150, 1500, { spin: 0.4, fadeIn: 0.02, fadeOut: 0.6, grow: [1.2, 0.9], color: '#8a4aff', opacity: 0.7 });
+        fx.burst(tp.x, tp.y, 0.6, n(54), A, 6, 900, 0.22, -0.8); fx.burst(tp.x, tp.y, 1.6, n(20), '#ffffff', 4, 500, 0.14, -2);
+        light(tp, 1.5, A, 9, 600); impact(7);
+        if (perfect) gold(tp);
+      });
+      // Öz Emilimi: 3 sn pembe-mor aura
+      this.decal('arcane', sp, 82, 3000, { follow: c.src, spin: -2.2, color: '#ff7ad8', opacity: 0.75, fadeIn: 0.05, fadeOut: 0.2 });
+      this.column(sp, 0.62, 2.4, 3000, '#ff6ad0', c.src);
     }
   }
 }

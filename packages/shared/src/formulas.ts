@@ -32,7 +32,8 @@ export function xpToNext(level: number): number {
   return (t && t.length === LEVEL_CAP_BASE - 1 ? t : DEFAULT_XP_TABLE)[L - 1];
 }
 export function statBudget(level: number): number { return (level - 1) * 3; }
-export function skillUpgradeBudget(level: number): number { return Math.min(30, Math.max(3, level)); }
+/** Toplam geliştirme hakkı (düz vuruş + 3 beceri; Sv. 7 becerisinin ilk kademesi bedava): seviye başına 1, en çok 39 */
+export function skillUpgradeBudget(level: number): number { return Math.min(39, Math.max(3, level)); }
 
 export interface StatAlloc { str: number; res: number; vit: number }
 export interface CombatStats {

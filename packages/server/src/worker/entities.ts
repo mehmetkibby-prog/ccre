@@ -22,7 +22,11 @@ export class Player {
   moveBudget = 0;
   movedThisTick = false;
   // savaş
-  cooldowns = [0, 0, 0, 0];
+  cooldowns = [0, 0, 0, 0, 0];
+  /** Sv. 7 becerisi: zamanlama çubuğunun başladığı an (sunucu saati; 0 = yok) */
+  qteAt = 0;
+  /** 3 sn'lik beceri güçlendirmesi (rüzgâr: saldırı/koşu hızı, emilim: can çalma; demir deri kalkan alanlarında) */
+  sbuff: { k: 'wind' | 'leech'; until: number; v: number; v2: number } | null = null;
   /** Bekleme bitmeden (ağ dalgalanmasıyla) erken gelen düz saldırı: reddedilmez, süre dolunca uygulanır. */
   queuedAtk = 0; queuedAtkUntil = 0;
   combatUntil = 0;
@@ -74,6 +78,11 @@ export class Player {
     // binek: hareket hızı ve saldırı bonusu (istemci hızı istatistikten okuduğu için tahmin de aynı)
     const mt = this.char.misc.mount;
     if (mt?.owned && mt.riding) { this.stats.atk += MOUNT.atk; this.stats.speed *= MOUNT.speedMul; }
+    const sb = this.sbuff;
+    if (sb && sb.until > Date.now()) {
+      if (sb.k === 'wind') { this.stats.atkSpeed += sb.v; this.stats.speed *= 1 + sb.v2 / 100; }
+      else this.stats.lifesteal += sb.v;
+    }
     if (keepRatio && oldMax > 0) {
       // max can değişimi bedava iyileşme sağlamaz: mevcut can korunur, yalnız üst sınıra kırpılır
       this.hp = Math.min(this.hp, this.stats.maxHp);

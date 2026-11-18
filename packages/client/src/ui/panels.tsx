@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, skillBuffVal, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -453,7 +453,7 @@ function Skills({ game }: { game: Game }) {
   const self = useStore((s) => s.self);
   const cls = useStore((s) => s.char?.cls) as ClassId;
   if (!self || !cls) return null;
-  const used = (self.skills[0] ?? 1) + (self.skills[1] ?? 1) + (self.skills[2] ?? 1);
+  const used = (self.skills[0] ?? 1) + (self.skills[1] ?? 1) + (self.skills[2] ?? 1) + Math.max(0, (self.skills[4] ?? 1) - 1);
   const spec = CLASSES[cls].specs;
   // geliştirme bedeli (yönetimden: Mücevher + malzemeler) ve yeterli mi
   const costOf = (lvl: number, isSpec: boolean) => skillUpCost(lvl, isSpec);
@@ -467,14 +467,15 @@ function Skills({ game }: { game: Game }) {
   return (
     <Panel title="Beceriler" width={640}>
       <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Geliştirme hakkı: {used} / {self.skillBudget} (seviyenle artar). Her kademe +%4 hasar; bedel her geliştirmenin altında yazar.</div>
-      {[0, 1, 2].map((s) => {
+      {[0, 1, 2, 4].map((s) => classSkill(cls, s)!).map((sk, i) => ({ sk, s: [0, 1, 2, 4][i] })).sort((a, b) => a.sk.unlock - b.sk.unlock).map(({ s }) => {
         const sk = classSkill(cls, s)!;
         const lvl = self.skills[s] ?? 1;
         const locked = self.level < sk.unlock;
         return (
           <div key={s} className="skillrow" style={locked ? { opacity: 0.55 } : undefined}>
             <div className="ic"><SkillIcon id={sk.id} /></div>
-            <div style={{ flex: 1 }}><b>{sk.name}</b> <span className="muted" style={{ fontSize: 12 }}>Sv. {lvl}/10 · {(sk.cooldownMs / 1000).toFixed(sk.cooldownMs < 1000 ? 2 : 0)} sn · menzil {sk.range}</span><div className="muted" style={{ fontSize: 12 }}>{sk.desc}{locked ? ` — ${sk.unlock}. seviyede açılır` : ''}</div></div>
+            <div style={{ flex: 1 }}><b>{sk.name}</b> {sk.qte && <span className="sk-new">Zamanlama çubuklu</span>} <span className="muted" style={{ fontSize: 12 }}>Sv. {lvl}/10 · {(sk.cooldownMs / 1000).toFixed(sk.cooldownMs < 1000 ? 2 : 0)} sn{sk.range ? ` · menzil ${sk.range}` : ' · çevrene'}</span><div className="muted" style={{ fontSize: 12 }}>{sk.desc}{locked ? ` — ${sk.unlock}. seviyede açılır` : ''}</div>
+              {sk.buff && <div className="sk-buff">3 sn güçlendirme şimdi <b>%{skillBuffVal(sk, lvl)!.v}</b>{lvl < 10 && <> → geliştirince <b>%{skillBuffVal(sk, lvl + 1)!.v}</b></>} · çubuk yeşilde: <b>×1,5</b> hasar · tuş <kbd>5</kbd></div>}</div>
             <div className="sk-up">
               <button className="btn small" disabled={locked || lvl >= 10 || used >= self.skillBudget || !canPay(costOf(lvl, false))} onClick={() => game.send({ t: 'skillup', s, req: reqId() })}>Geliştir</button>
               {lvl < 10 && <CostLine c={costOf(lvl, false)} />}

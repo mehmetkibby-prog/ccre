@@ -122,7 +122,9 @@ export function encodeMove(seq: number, dir: number): ArrayBuffer {
 /** İstemci→sunucu JSON komutları */
 export type ClientCmd =
   | { t: 'attack'; id: number }
-  | { t: 'skill'; s: number; id?: number; x?: number; y?: number }
+  | { t: 'skill'; s: number; id?: number; x?: number; y?: number; /** zamanlama çubuğuyla atıldı */ qte?: number }
+  /** Sv. 7 becerisi: zamanlama çubuğu başladı (süre sunucu saatiyle ölçülür) */
+  | { t: 'qte'; s: number }
   | { t: 'pickup'; id: number }
   | { t: 'respawn'; where: 'here' | 'town' }
   | { t: 'chat'; ch: 'world' | 'trade' | 'local' | 'guild' | 'pm'; text: string; to?: string; req?: string }

@@ -53,6 +53,8 @@ export interface CharMisc {
   protectSeal?: boolean;
   /** Kadim Kule: kat, ilerleme, bulmaca durumu, en iyi kat ve Azrail zaferi sayısı */
   tower?: TowerProgress;
+  /** Sv. 7 becerisi: atış sayacı (zamanlama çubuğunun yeşil bölgesi buna göre değişir) */
+  qn?: number;
   /** Kor Kulesi: son giriş anı (bekleme süresi) */
   forgeAt?: number;
   /** görevler: etkin (ilerleme) ve biten (gün) */
