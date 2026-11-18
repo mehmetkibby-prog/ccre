@@ -35,8 +35,8 @@ test('one cold family does not monopolize the next family',async t=>{
  for(let i=0;i<3;i++)await f.tick();
  assert.equal(count(f,'kernel511_notifications'),0);assert(count(f,'kernel511_system_receipts')<30);
 });
-test('15-minute boundary and unacknowledged recipients remain protected',async t=>{
- const f=fixture(t);f.system(1,NOW-900001);f.system(2,NOW-900000);f.system(3,NOW);
+test('24-hour receipt boundary and 15-minute notification boundary and unacknowledged recipients remain protected',async t=>{
+ const f=fixture(t);f.system(1,NOW-86400001);f.system(2,NOW-86400000);f.system(3,NOW);
  f.notification(1,{created:NOW-900001,ack:1});f.notification(2,{created:NOW-900001,ack:0});f.notification(3,{created:NOW-900000,ack:1});
  f.maintenance.familyBatches={channel:128,system:128,images:128,notifications:128};
  // Eligibility stays at the exact boundary; a bounded pass may yield before
@@ -88,9 +88,9 @@ test('pruning system receipt preserves epoch/sequence and forbids duplicate work
 });
 test('continuous fresh appends do not strand a now-expired row behind the cursor',async t=>{
  const f=fixture(t);f.system(1,NOW);await f.maintenance.step();assert.equal(count(f,'kernel511_system_receipts'),1);
- f.setClock(NOW+900001);let id=2;
+ f.setClock(NOW+86400001);let id=2;
  for(let pass=0;pass<12;pass++){
-  for(let i=0;i<16;i++)f.system(id++,NOW+900001+pass*1001);
+  for(let i=0;i<16;i++)f.system(id++,NOW+86400001+pass*1001);
   f.maintenance.batch=1;await f.tick();
  }
  assert.equal(f.sql.prepare("SELECT 1 FROM kernel511_system_receipts WHERE operation_id='sys1'").get(),undefined);

@@ -11,7 +11,7 @@ export class WriterMaintenance {
   Object.assign(this,{writer,database:writer.database,clock,retention,idleCheckpoint,minutes});this.timer=null;this.retryTimer=null;this.running=null;this.closed=false;this.batch=1;this.familyBatches={};this.familyBacklog=new Set();this.family='channel';this.catchUp=false;this.lastProgressAt=0;this.lastLogAt=0;this.cursors={system:0,notifications:0};this.ceilings={system:null,notifications:null};this.nextFamily=0;this.lastCheckpoint=0;this.nextPassAt=0;this.budgetMs=0;this.metrics={passes:0,skipped:0,receipts:0,system:0,notifications:0,images:0,checkpoints:0,errors:0,maxBatchMs:0,batches:0,budgetOverruns:0};
  }
  idle(){const d=this.database,w=d.walSync;return !this.closed&&!d.closed&&!d.maintenance&&!d.sqlite.isTransaction&&!d.writeQueue?.length&&!d.writeDrain&&!w?.running&&!w?.waiting?.length&&!this.writer.inflight&&!this.writer.system.pending&&!this.writer.sharedCombat?.busy&&!this.writer.sharedCombat?.terminal;}
- snapshot(){return {version:'R122_RETENTION1',enabled:this.retention,minutes:this.minutes,lastProgressAt:this.lastProgressAt,catchUp:this.catchUp,batchByFamily:{...this.familyBatches},...this.metrics};}
+ snapshot(){return {version:'R122_RETENTION1',enabled:this.retention,minutes:this.minutes,receiptMinutes:Math.max(this.minutes,1440),lastProgressAt:this.lastProgressAt,catchUp:this.catchUp,batchByFamily:{...this.familyBatches},...this.metrics};}
  poll(){void this.step().catch(error=>{this.metrics.errors++;if(this.metrics.errors<=4)console.warn(JSON.stringify({type:'core511_writer_maintenance',code:error.code??'maintenance_failed',sqliteCode:Number.isInteger(error.errcode)?error.errcode:null}));}).finally(()=>{const now=this.clock();if(now-this.lastLogAt>=60000){this.lastLogAt=now;console.log(JSON.stringify({type:'core511_retention_r122',...this.snapshot()}));}});}
  start(){if(this.timer||this.closed||!this.retention&&!this.idleCheckpoint)return;this.timer=setInterval(()=>this.poll(),100);this.timer.unref?.();}
  // A busy one-second tick must not be the only chance to observe an idle gap.
@@ -47,7 +47,10 @@ export class WriterMaintenance {
   return result;
  }
  async run(){
-  this.metrics.passes++;const before=Math.floor(this.clock()-this.minutes*60000);
+  this.metrics.passes++;
+  const now=this.clock();
+  const before=Math.floor(now-this.minutes*60000);
+  const receiptBefore=Math.floor(now-Math.max(this.minutes,1440)*60000);
   if(this.retention){
    // Rotate first service even if an earlier family consumed the whole budget
    // or foreground work interrupted the pass. A cold channel delete cannot
@@ -61,8 +64,8 @@ export class WriterMaintenance {
     // Reuse the exact authority pruning operation, through an idle-only
     // database port. No ownership/replay implementation is duplicated here.
     const port=Object.create(this.writer.authority);port.database={atomic:work=>this.atomic(work)};
-    const result=await port.pruneReceipts(before,this.batch);this.metrics.receipts+=Number(result.changes??0);
-    }else if(family==='images'){const r=await this.atomic(sql=>({changes:pruneCommittedImagesR113(sql,before,this.batch)}));this.metrics.images+=r.changes;}else await this.pruneRows(family,before);
+    const result=await port.pruneReceipts(receiptBefore,this.batch);this.metrics.receipts+=Number(result.changes??0);
+    }else if(family==='images'){const r=await this.atomic(sql=>({changes:pruneCommittedImagesR113(sql,before,this.batch)}));this.metrics.images+=r.changes;}else await this.pruneRows(family,family==='system'?receiptBefore:before);
     await immediate();
    }
   }
