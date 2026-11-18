@@ -35,7 +35,8 @@ const INTERP_MIN = 100, INTERP_MAX = 280;
 const seqDiff = (a: number, b: number) => ((a - b + 0x8000) & 0xffff) - 0x8000;
 
 /** Muhafız kılıcının hedefe değdiği an (saldırı animasyonunun başından, ms). */
-export const MELEE_IMPACT_MS = 170;
+/** muhafız kılıcının değme anı (charAnims GUARDIAN_IMPACT_S ile aynı): hasar sayısı ve kesik izi bu ana kayar */
+export const MELEE_IMPACT_MS = 340;
 
 export class Game {
   ws: WebSocket | null = null;
@@ -53,6 +54,8 @@ export class Game {
   private corrX = 0; private corrY = 0;
   /** Düellodaki rakibin varlık kimliği (0: düello yok). Düellodayken rakibe sol tık saldırıdır, menü yalnız sağ tıkla. */
   duelWith = 0;
+  /** son iksir içme anı (iyileşme sesi yerine içme sesi çalınsın) */
+  lastDrinkAt = 0;
   sdir = 64; selfAnim = Anim.IDLE; selfAnimStart = 0; selfSkill = 0; lastMoveAt = 0; selfFlags = 0;
   seq = 0;
   pending: { seq: number; dir: number }[] = [];
@@ -309,6 +312,7 @@ export class Game {
       }
       case 'loot': pushLoot(m.name, m.rarity); sfx.play('loot'); break;
       case 'dead': store.set({ dead: { killer: m.killer, lost: m.lost, at: Date.now(), respawnIn: m.respawnIn, town: m.town } }); this.autoAttack = false; sfx.play('death'); break;
+      case 'drink': this.lastDrinkAt = performance.now(); sfx.play('drink'); break;
       case 'respawned': store.set({ dead: null }); break;
       case 'state': if (!m.dead) store.set({ dead: null }); else if (!store.get().dead) store.set({ dead: { killer: null, lost: 0, at: Date.now(), respawnIn: 0, town: undefined } }); break; // ölü ama pencere yoksa göster
       case 'cd': store.set((s) => ({ cooldowns: { ...s.cooldowns, [m.s]: performance.now() + m.until } })); break;
@@ -447,7 +451,7 @@ export class Game {
       case Ev.HEAL: {
         const pos = ev.tgt === this.selfId ? { x: this.dx, y: this.dy } : (() => { const t = this.ents.get(ev.tgt); return t ? this.entPos(t) : null; })();
         if (pos) { this.fx.text(pos.x, pos.y, 2.1, `+${ev.amount}`, '#6dff9a', 18); this.fx.burst(pos.x, pos.y, 0.6, 14, '#8dffb0', 1.2, 900, 0.2, 1.5); }
-        if (ev.tgt === this.selfId) sfx.play('heal');
+        if (ev.tgt === this.selfId && performance.now() - this.lastDrinkAt > 400) sfx.play('heal'); // iksirde ayrı içme sesi çalındı
         break;
       }
       case Ev.CAST: {

@@ -158,6 +158,15 @@ class Sfx {
       case 'shatter': for (let i = 0; i < 7; i++) this.noise(0.07, 4500 + Math.random() * 3000, 4, 0.16, 'bandpass', i * 0.03); this.tone(2400, 0.3, 'sine', 0.05, 0.8); this.noise(0.4, 400, 0.7, 0.3, 'lowpass'); break;
       case 'explode': this.noise(1.0, 500, 0.6, 0.9, 'lowpass', 0, 0.2); this.tone(48, 0.8, 'sine', 0.6, 0.4); this.tone(660, 0.5, 'sine', 0.08, 0.3); this.noise(0.25, 3000, 1, 0.25, 'bandpass'); break;
       case 'heal': [523, 659, 784].forEach((f, i) => this.tone(f, 0.35, 'sine', 0.1, 1, i * 0.06)); break;
+      // iksir içme: cam şişenin hafif tıkırtısı, iki yumuşak yudum (aşağı kayan boğuk gürültü + alçak "gulp"), sonda tek kabarcık
+      case 'drink':
+        this.tone(2350, 0.05, 'sine', 0.035, 0.92);
+        for (const [dl, pf] of [[0.07, 1], [0.24, 0.9]] as const) {
+          this.noise(0.11, 520 * pf, 1.1, 0.16, 'lowpass', dl, 0.55);
+          this.tone(210 * pf, 0.1, 'sine', 0.12, 0.6, dl + 0.01);
+        }
+        this.tone(900, 0.06, 'sine', 0.025, 1.6, 0.42);
+        break;
       case 'kill': this.tone(300, 0.2, 'triangle', 0.15, 0.4); break;
       case 'loot': this.tone(1046, 0.12, 'sine', 0.12); this.tone(1568, 0.16, 'sine', 0.1, 1, 0.05); break;
       case 'drop': this.tone(784, 0.25, 'triangle', 0.12, 1.2); break;

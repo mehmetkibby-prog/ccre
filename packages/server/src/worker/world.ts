@@ -1114,6 +1114,7 @@ export class World {
     p.hp = Math.min(p.stats.maxHp, p.hp + h); p.dirty |= Upd.HP;
     if (auto) p.lastAutoPotionAt = this.now; else p.lastPotionAt = this.now;
     p.zone.emit(p.x, p.y, { e: Ev.HEAL, tgt: p.id, amount: h });
+    this.sendJson(p, { t: 'drink' }); // istemci iksir içme sesini çalar (iyileştirme becerisinin sesi değil)
     p.selfDirty |= 2; p.markSave();
   }
 
