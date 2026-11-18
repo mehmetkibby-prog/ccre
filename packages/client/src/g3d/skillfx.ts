@@ -468,7 +468,18 @@ export class SkillFx {
           if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
         }, lite ? 1 : 2, tip);
       };
-      window.setTimeout(fire, ARCANIST_RELEASE_S * 1000 * 0.85);
+      // küre zamanlayıcıya göre değil animasyona göre çıkar: asa atış pozuna (ucu hedefe dönük) ulaştığı karede.
+      // Önceden 250 ms'lik zamanlayıcı vardı; kareler yavaşlayınca küre asa daha başın üstündeyken çıkıyordu.
+      const R = ARCANIST_RELEASE_S, t0 = performance.now();
+      let started = false, done = false;
+      const tick = () => {
+        if (done) return;
+        const st = this.fx.swingTimeOf(src), el = performance.now() - t0;
+        if (st >= 0 && st < R * 0.6) started = true; // yeni savuruş başladı (öncekinin zamanı karışmasın)
+        if ((started && st >= R) || el > 900 || (st < 0 && el > R * 1000 + 60)) { done = true; fire(); return; }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     }
   }
 

@@ -207,6 +207,7 @@ export class Renderer3D {
       if (len < 0.05) return tipC.clone();
       return tipC.clone().addScaledVector(d.normalize(), len + 0.22);
     };
+    this.fx.swingTimeOf = (id) => { const v = id === this.g.selfId ? this.self : this.views.get(id); return v?.glb?.swingTime?.() ?? -1; };
     this.setupComposer();
     loadManifest();
     // model yüklenemezse boş yer tutucular prosedürel modelle yeniden kurulur

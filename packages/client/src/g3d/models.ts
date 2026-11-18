@@ -221,7 +221,7 @@ export function rotateWorld(bone: THREE.Object3D, axis: THREE.Vector3, angle: nu
   bone.quaternion.copy(_iqp.invert().multiply(_iqw));
   bone.updateMatrixWorld(true);
 }
-export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
+export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; /** oynayan saldırı/beceri klibinin zamanı (sn); yoksa -1 */ swingTime?(): number; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
 /**
@@ -461,6 +461,7 @@ export function createGlbChar(id: string): GlbChar | null {
   return {
     id, root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
     /** Geliştirme: çizilmiş klibi verilen anda dondurur (kind: 'a' saldırı / 's' beceri). */
+    swingTime() { return swingSet ? swingSet.up.time : -1; },
     debugPose(kind: 'a' | 's', idx: number, t: number) {
       const clip = kind === 'a' ? custom?.attacks[idx] : custom?.skills[idx];
       if (!clip) return;
