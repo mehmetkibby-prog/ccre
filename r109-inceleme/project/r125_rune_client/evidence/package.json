@@ -1,0 +1,11 @@
+{
+  "file": "artifacts/R125_RUNE_f5d222064ed8.zip",
+  "sha256": "c34f755fab0fabb2bb45247342f11da558c5f0fb96038bd0f147b17d3a867615",
+  "bytes": 589213,
+  "source": "R124_RUNE1",
+  "targetVersion": "R125_RUNE_CLIENT1",
+  "targetCore": "932f4c86fc1f292f0efce5ffd1a98b06e791dbc227aa1e9ecac2690e0e45a0da",
+  "changedCodeFiles": 2,
+  "deployed": false,
+  "acceptance": "pending"
+}
