@@ -1805,3 +1805,10 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .loot-cap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 13px; }
 .loot-table td { vertical-align: middle; }
 .loot-table tr.sum td { border-top: 1px solid rgba(255, 216, 120, .25); }
+
+/* beceri geliştirme bedeli */
+.sk-up { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.sk-cost { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; font-size: 11.5px; font-weight: 700; }
+.sk-cost span { display: inline-flex; align-items: center; gap: 2px; }
+.sk-cost span.miss { color: #ff8a7a; }
+.sk-cost img { width: 16px; height: 16px; }

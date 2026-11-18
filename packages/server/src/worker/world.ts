@@ -2,7 +2,7 @@ import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
   COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
-  LEVEL_CAP_BASE, STAT_MAX, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
+  LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
@@ -1148,19 +1148,19 @@ export class World {
     if (this.seenReceipt(p, req)) return;
     const cur = ch.skills[s] ?? 1;
     if (cur >= 10) return this.notice(p, 'Beceri en üst seviyede.');
-    if (s === 3) {
-      if (!ch.spec) return this.notice(p, 'Önce uzmanlık seç.');
-      const cost = 2 * 5 * cur;
-      if (ch.gems < cost) return this.notice(p, `${cost} Mücevher gerekir.`);
-      ch.gems -= cost; ch.skills[3] = cur + 1;
-    } else {
+    if (s === 3) { if (!ch.spec) return this.notice(p, 'Önce uzmanlık seç.'); }
+    else {
       const used = (ch.skills[0] ?? 1) + (ch.skills[1] ?? 1) + (ch.skills[2] ?? 1);
       if (used >= skillUpgradeBudget(ch.level)) return this.notice(p, 'Geliştirme hakkın yok; seviye atladıkça açılır.');
-      const cost = cur * 5;
-      if (ch.gems < cost) return this.notice(p, `${cost} Mücevher gerekir.`);
-      ch.gems -= cost; ch.skills[s] = cur + 1;
     }
-    p.selfDirty |= 1 | 4; p.markSave();
+    // maliyet yönetimden (kademe başına Mücevher + malzemeler)
+    const cost = skillUpCost(cur, s === 3);
+    if (ch.gems < cost.gems) return this.notice(p, `${cost.gems.toLocaleString('tr-TR')} Mücevher gerekir.`);
+    for (const [k, q] of Object.entries(cost.mats)) if ((ch.materials[k] ?? 0) < q) return this.notice(p, `Yeterli ${MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k} yok (${q} gerekir).`);
+    ch.gems -= cost.gems;
+    for (const [k, q] of Object.entries(cost.mats)) ch.materials[k] -= q;
+    ch.skills[s] = cur + 1;
+    p.selfDirty |= 1 | 2 | 4; p.markSave();
     this.notice(p, 'Beceri geliştirildi.', 'ok');
   }
 
@@ -2448,7 +2448,10 @@ export function makeItem(tplId: string, rarity: Rarity, src: string, enchCount?:
   const et = TUNING.enchants;
   const pick = (w: readonly number[]) => { const tot = w.reduce((a, b) => a + b, 0); let r = rnd() * tot; for (let k = 0; k < w.length; k++) if ((r -= w[k]) <= 0) return k; return 0; };
   const cw = et.countWeights?.[rarity] ?? et.countWeights?.default ?? ENCHANT_COUNT_WEIGHTS[rarity] ?? ENCHANT_COUNT_WEIGHTS.default;
-  const grp = et.chance && rarity in et.chance ? rarity : 'default';
+  // efsunlu düşme grubu: Sıradan / Mavi / Turuncu kendi grubu, Kızıl ve üstü "default". Grupta değer yoksa %100
+  // (yönetimde %100 seçilince kayda yazılmıyor). Önceden kayıtta olmayan "white" yanlışlıkla "default" (Kızıl ve üstü)
+  // oranını alıyordu: %100 ayarlanan sıradan eşyalar çoğunlukla efsunsuz düşüyordu.
+  const grp = rarity === 'white' || rarity === 'blue' || rarity === 'orange' ? rarity : 'default';
   const enchanted = src !== 'drop' || rnd() < (et.chance?.[grp] ?? 1);
   const n = enchCount ?? (src === 'drop' ? (enchanted ? pick(cw) + 1 : 0) : rarity === 'white' ? 0 : rarity === 'blue' ? randInt(1, 2) : rarity === 'orange' ? randInt(2, 3) : 4);
   const off = new Set(et.disabled ?? []);

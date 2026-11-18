@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
+  transformConf, transformGroup, classSkill, skillUpCost, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -448,9 +448,18 @@ function Skills({ game }: { game: Game }) {
   if (!self || !cls) return null;
   const used = (self.skills[0] ?? 1) + (self.skills[1] ?? 1) + (self.skills[2] ?? 1);
   const spec = CLASSES[cls].specs;
+  // geliştirme bedeli (yönetimden: Mücevher + malzemeler) ve yeterli mi
+  const costOf = (lvl: number, isSpec: boolean) => skillUpCost(lvl, isSpec);
+  const canPay = (c: ReturnType<typeof costOf>) => self.gems >= c.gems && Object.entries(c.mats).every(([k, q]) => (self.materials[k] ?? 0) >= q);
+  const CostLine = ({ c }: { c: ReturnType<typeof costOf> }) => (
+    <div className="sk-cost">
+      <span className={self.gems >= c.gems ? '' : 'miss'}><img src={iconUrl('gem')} alt="" />{c.gems.toLocaleString('tr-TR')}</span>
+      {Object.entries(c.mats).map(([k, q]) => <span key={k} className={(self.materials[k] ?? 0) >= q ? '' : 'miss'} title={MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k}><img src={iconUrl(MATERIAL.get(k)?.icon ?? (MALL.has(k) ? mallIcon(k) : 'dust'))} alt="" />{(self.materials[k] ?? 0).toLocaleString('tr-TR')}/{q}</span>)}
+    </div>
+  );
   return (
     <Panel title="Beceriler" width={640}>
-      <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Geliştirme hakkı: {used} / {self.skillBudget} (seviyenle artar). Bedel: mevcut seviye × 5 Mücevher. Her kademe +%4 hasar.</div>
+      <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Geliştirme hakkı: {used} / {self.skillBudget} (seviyenle artar). Her kademe +%4 hasar; bedel her geliştirmenin altında yazar.</div>
       {[0, 1, 2].map((s) => {
         const sk = classSkill(cls, s)!;
         const lvl = self.skills[s] ?? 1;
@@ -459,7 +468,10 @@ function Skills({ game }: { game: Game }) {
           <div key={s} className="skillrow" style={locked ? { opacity: 0.55 } : undefined}>
             <div className="ic"><SkillIcon id={sk.id} /></div>
             <div style={{ flex: 1 }}><b>{sk.name}</b> <span className="muted" style={{ fontSize: 12 }}>Sv. {lvl}/10 · {(sk.cooldownMs / 1000).toFixed(sk.cooldownMs < 1000 ? 2 : 0)} sn · menzil {sk.range}</span><div className="muted" style={{ fontSize: 12 }}>{sk.desc}{locked ? ` — ${sk.unlock}. seviyede açılır` : ''}</div></div>
-            <button className="btn small" disabled={locked || lvl >= 10 || used >= self.skillBudget || self.gems < lvl * 5} onClick={() => game.send({ t: 'skillup', s, req: reqId() })}>Geliştir ({lvl * 5})</button>
+            <div className="sk-up">
+              <button className="btn small" disabled={locked || lvl >= 10 || used >= self.skillBudget || !canPay(costOf(lvl, false))} onClick={() => game.send({ t: 'skillup', s, req: reqId() })}>Geliştir</button>
+              {lvl < 10 && <CostLine c={costOf(lvl, false)} />}
+            </div>
           </div>
         );
       })}
@@ -481,7 +493,10 @@ function Skills({ game }: { game: Game }) {
           <div className="skillrow">
             <div className="ic"><SkillIcon id={sk.id} /></div>
             <div style={{ flex: 1 }}><b>{sk.name}</b> <span className="muted" style={{ fontSize: 12 }}>Güç {lvl}/10</span><div className="muted" style={{ fontSize: 12 }}>{sk.desc}</div></div>
-            <button className="btn small" disabled={lvl >= 10 || self.gems < lvl * 10} onClick={() => game.send({ t: 'skillup', s: 3, req: reqId() })}>Geliştir ({lvl * 10})</button>
+            <div className="sk-up">
+              <button className="btn small" disabled={lvl >= 10 || !canPay(costOf(lvl, true))} onClick={() => game.send({ t: 'skillup', s: 3, req: reqId() })}>Geliştir</button>
+              {lvl < 10 && <CostLine c={costOf(lvl, true)} />}
+            </div>
           </div>
         );
       })()}

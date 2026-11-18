@@ -110,6 +110,16 @@ export interface GameTuning {
   crafts: CraftRecipe[];
   /** Görevler (yönetimden tasarlanır): bkz. content/quests.ts */
   quests: QuestDef[];
+  /** Beceri geliştirme maliyeti: [0] = Sv. 1→2 … [8] = Sv. 9→10 (Mücevher, uzmanlık becerisi Mücevheri, malzemeler) */
+  skillUp: SkillUpStep[];
+}
+export interface SkillUpStep { gems: number; specGems: number; mats: Record<string, number> }
+/** Varsayılan: Mücevher = seviye × 5, uzmanlık becerisi iki katı, malzeme yok (önceki sabit kural). */
+export const SKILLUP_DEFAULT: SkillUpStep[] = Array.from({ length: 9 }, (_, i) => ({ gems: (i + 1) * 5, specGems: (i + 1) * 10, mats: {} }));
+/** Beceri cur → cur+1 maliyeti (spec: uzmanlık becerisi). */
+export function skillUpCost(cur: number, spec: boolean, t: { skillUp?: SkillUpStep[] } = TUNING): { gems: number; mats: Record<string, number> } {
+  const st = (t.skillUp ?? SKILLUP_DEFAULT)[Math.max(0, Math.min(8, cur - 1))] ?? SKILLUP_DEFAULT[0];
+  return { gems: spec ? st.specGems : st.gems, mats: st.mats ?? {} };
 }
 /**
  * Üretim tarifi: girdiler (malzeme / market ürünü anahtarı → adet), mücevher ve öz bedeli; çıktı eşya, malzeme ya da
@@ -270,10 +280,11 @@ export const DEFAULT_TUNING: GameTuning = {
   killRank: structuredClone(KILLRANK_DEFAULT),
   tower: structuredClone(TOWER_DEFAULT),
   crafts: structuredClone(CRAFTS_DEFAULT),
+  skillUp: structuredClone(SKILLUP_DEFAULT),
   quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'crafts' | 'quests' | 'skillUp'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], bossShareMin: [0, 50, 0.5],
@@ -298,6 +309,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.tower = sanitizeTower(r.tower);
   out.crafts = sanitizeCrafts(r.crafts);
   out.quests = sanitizeQuests(r.quests);
+  out.skillUp = sanitizeSkillUp(r.skillUp);
   const obj = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {});
   const num = (v: unknown, lo: number, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : undefined; };
   const pair = (v: unknown, lo: number, hi: number): [number, number] | undefined => {
@@ -450,4 +462,16 @@ export function applyTuning(raw: unknown): GameTuning {
   const t = sanitizeTuning(raw);
   Object.assign(TUNING, t);
   return TUNING;
+}
+
+function sanitizeSkillUp(raw: unknown): SkillUpStep[] {
+  const arr = Array.isArray(raw) ? raw : [];
+  return SKILLUP_DEFAULT.map((d, i) => {
+    const o = (arr[i] && typeof arr[i] === 'object' ? arr[i] : {}) as Record<string, unknown>;
+    const n = (v: unknown, dv: number) => { const x = Number(v); return Number.isFinite(x) ? Math.round(Math.min(1e9, Math.max(0, x))) : dv; };
+    const mats: Record<string, number> = {};
+    const m = o.mats && typeof o.mats === 'object' && !Array.isArray(o.mats) ? o.mats as Record<string, unknown> : {};
+    for (const [k, v] of Object.entries(m).slice(0, 8)) { const q = n(v, 0); if (/^[a-z0-9_]{1,40}$/.test(k) && q > 0) mats[k] = q; }
+    return { gems: n(o.gems, d.gems), specGems: n(o.specGems, d.specGems), mats };
+  });
 }

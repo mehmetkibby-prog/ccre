@@ -118,3 +118,31 @@ describe('Market: Mücevherle Kırmızı İksir', () => {
     expect(p.char.gems).toBe(5); expect(p.char.materials.red_potion).toBe(25);
   });
 });
+
+describe('efsunlu düşme oranı', () => {
+  it('Sıradan %100 (kayıtta yok) iken Kızıl ve üstü %39 olsa bile sıradan eşyaların hepsi efsunlu', async () => {
+    const { applyTuning, DEFAULT_TUNING } = await import('@col/shared');
+    applyTuning({ ...structuredClone(DEFAULT_TUNING), enchants: { countWeights: { white: [30, 0, 31, 39] }, chance: { white: 1, blue: 0.79, default: 0.39 } } });
+    for (let i = 0; i < 300; i++) expect(makeItem('w_hunter', 'white', 'drop').ench.length).toBeGreaterThan(0);
+    let none = 0; for (let i = 0; i < 2000; i++) if (makeItem('w_hunter', 'crimson', 'drop').ench.length === 0) none++;
+    expect(none / 2000).toBeGreaterThan(0.5); expect(none / 2000).toBeLessThan(0.7); // Kızıl: %39 efsunlu
+    applyTuning(structuredClone(DEFAULT_TUNING));
+  });
+});
+
+describe('beceri geliştirme bedeli (yönetimden)', () => {
+  it('Mücevher + malzeme ister; malzeme yetmezse geliştirmez', async () => {
+    const { applyTuning, DEFAULT_TUNING, SKILLUP_DEFAULT } = await import('@col/shared');
+    const su = structuredClone(SKILLUP_DEFAULT); su[0] = { gems: 7, specGems: 14, mats: { kor_seal: 2 } };
+    applyTuning({ ...structuredClone(DEFAULT_TUNING), skillUp: su });
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    w.join(1, mkChar({ level: 20, gems: 100, skills: [1, 1, 1, 1], materials: { kor_seal: 1 } }));
+    const p = w.bySid.get(1)!;
+    w.onCmd(1, JSON.stringify({ t: 'skillup', s: 1, req: 's1' }));
+    expect(p.char.skills[1]).toBe(1); expect(p.char.gems).toBe(100); // 1 mühür var, 2 gerekir
+    p.char.materials.kor_seal = 3;
+    w.onCmd(1, JSON.stringify({ t: 'skillup', s: 1, req: 's2' }));
+    expect(p.char.skills[1]).toBe(2); expect(p.char.gems).toBe(93); expect(p.char.materials.kor_seal).toBe(1);
+    applyTuning(structuredClone(DEFAULT_TUNING));
+  });
+});

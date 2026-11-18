@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
-  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
+  ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, SKILLUP_DEFAULT, type SkillUpStep, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
   ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
@@ -627,6 +627,48 @@ const BRACKETS: [number, number, string][] = [
   [40, 45, 'Zorlu son seviyeler'], [45, 50, 'Zorlu son seviyeler'], [50, 55, 'Zorlu son seviyeler'], [55, 60, 'Zorlu son seviyeler'], [60, 65, 'Zorlu son seviyeler'],
 ];
 const fmtMin = (m: number) => (m < 120 ? `${fmtN(m, 0)} dakika` : m < 60 * 48 ? `${Math.floor(m / 60)} sa ${Math.round(m % 60)} dk` : `${fmtN(m / 60 / 24, 1)} gün`);
+/** Beceri geliştirme bedeli: her kademe (Sv. 1→2 … 9→10) için Mücevher, uzmanlık becerisi Mücevheri ve malzemeler. */
+export function SkillUpTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const steps = t.skillUp ?? SKILLUP_DEFAULT;
+  const put = (i: number, p: Partial<SkillUpStep>) => setT({ ...t, skillUp: steps.map((x, k) => (k === i ? { ...x, ...p } : x)) });
+  const setMat = (i: number, oldKey: string | null, key: string, qty: number) => {
+    const mats = { ...steps[i].mats };
+    if (oldKey && oldKey !== key) delete mats[oldKey];
+    if (qty > 0) mats[key] = qty; else delete mats[key];
+    put(i, { mats });
+  };
+  const matOpts = [...MATERIALS.filter((m) => !['starter_chest'].includes(m.id)).map((m) => ({ id: m.id, name: m.name })), ...MALL_ITEMS.map((m) => ({ id: m.id, name: m.name + ' (Market)' }))];
+  return (
+    <section className="admin-sec">
+      <h4>Beceri geliştirme bedeli</h4>
+      <div className="muted adm-hint">Oyuncu bir beceriyi geliştirirken her kademede bu bedeli öder. Malzeme ekleyebilirsin (ör. Sv. 5→6 için 3 Kor Mührü). Uzmanlık becerisi (Sv. 30) kendi Mücevher sütununu kullanır, malzemeler ortak.</div>
+      <div className="adm-table-wrap"><table className="adm-table">
+        <thead><tr><th>Kademe</th><th>Mücevher</th><th>Uzmanlık Mücevher</th><th>Malzemeler</th></tr></thead>
+        <tbody>{steps.map((st, i) => (
+          <tr key={i}>
+            <td><b>Sv. {i + 1} → {i + 2}</b></td>
+            <td><Num v={st.gems !== SKILLUP_DEFAULT[i].gems ? st.gems : undefined} def={SKILLUP_DEFAULT[i].gems} min={0} max={1e9} step={1} w={80} dis={dis} on={(v) => put(i, { gems: Math.round(v ?? SKILLUP_DEFAULT[i].gems) })} /></td>
+            <td><Num v={st.specGems !== SKILLUP_DEFAULT[i].specGems ? st.specGems : undefined} def={SKILLUP_DEFAULT[i].specGems} min={0} max={1e9} step={1} w={80} dis={dis} on={(v) => put(i, { specGems: Math.round(v ?? SKILLUP_DEFAULT[i].specGems) })} /></td>
+            <td>
+              <div className="col" style={{ gap: 4 }}>
+                {Object.entries(st.mats).map(([k, q]) => (
+                  <div key={k} className="row" style={{ gap: 4 }}>
+                    <select className="adm-sel" disabled={dis} value={k} onChange={(e) => setMat(i, k, e.target.value, q)}>{matOpts.map((m) => <option key={m.id} value={m.id} disabled={m.id !== k && m.id in st.mats}>{m.name}</option>)}</select>
+                    <Num v={q} def={q} min={0} max={9999} step={1} w={58} dis={dis} on={(v) => setMat(i, k, k, Math.round(v ?? 0))} />
+                    <button className="btn small ghost" disabled={dis} onClick={() => setMat(i, k, k, 0)} aria-label="Kaldır">✕</button>
+                  </div>
+                ))}
+                {Object.keys(st.mats).length < 6 && <button className="btn small ghost" disabled={dis} onClick={() => { const f = matOpts.find((m) => !(m.id in st.mats)); if (f) setMat(i, null, f.id, 1); }}>+ Malzeme</button>}
+              </div>
+            </td>
+          </tr>
+        ))}</tbody>
+      </table></div>
+      <button className="btn small ghost" style={{ marginTop: 6 }} disabled={dis} onClick={() => setT({ ...t, skillUp: structuredClone(SKILLUP_DEFAULT) })}>Varsayılana dön</button>
+    </section>
+  );
+}
+
 export function LevelTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const custom = t.xpTable?.length === LEVEL_CAP_BASE - 1;
   const table = custom ? t.xpTable! : [...DEFAULT_XP_TABLE];

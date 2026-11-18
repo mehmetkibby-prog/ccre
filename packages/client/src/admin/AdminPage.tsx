@@ -8,7 +8,7 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
+import { GeneralTab, SkillUpTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 import { TowerTab } from './TowerAdmin.tsx';
 import { CraftTab } from './CraftAdmin.tsx';
 import { QuestTab } from './QuestAdmin.tsx';
@@ -206,7 +206,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
           <div className="adm-settings">
             <p className="muted adm-hint">Boş kutu = varsayılan değer. Değişiklikler <b>Kaydet</b> deyince oyundaki herkese anında uygulanır.</p>
             {tab === 'genel' && <GeneralTab t={t} setT={setTT} dis={busy} />}
-            {tab === 'seviye' && <LevelTab t={t} setT={setTT} dis={busy} />}
+            {tab === 'seviye' && <><LevelTab t={t} setT={setTT} dis={busy} /><SkillUpTab t={t} setT={setTT} dis={busy} /></>}
             {tab === 'kule' && <TowerTab t={t} setT={setTT} dis={busy} />}
             {tab === 'uretim' && <CraftTab t={t} setT={setTT} dis={busy} />}
             {tab === 'gorev' && <QuestTab t={t} setT={setTT} dis={busy} />}
