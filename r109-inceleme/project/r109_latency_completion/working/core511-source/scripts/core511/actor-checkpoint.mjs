@@ -7,6 +7,7 @@ import {CHECKPOINT_MS,demand} from './contract.mjs';
 import {randomUUID} from 'node:crypto';
 import {writeEncounterCheckpoint} from './encounter-checkpoint.mjs';
 import {actorRejection} from './actor-rejection.mjs';
+import {demandFence} from './fence-diagnostics.mjs';
 import {checkpointConflict} from './checkpoint-rejection.mjs';
 import {actorFaultIsolation} from './r48-options.mjs';
 import {memoryCombatR53,R53_CHECKPOINT_START_MS,R53_MEMORY_WINDOW_MS} from './r53-options.mjs';
@@ -85,7 +86,10 @@ export class ActorCheckpoints {
   const entry=this.entries.get(id);demand(entry&&!entry.pending&&!entry.joinedR53,'checkpoint_join_pending');
   if(quarantineDrainR531&&entry.rejectedR531)throw entry.rejectedR531;
   const owner=this.state.assertOwner(id,entry.epoch),current=pick(this.state.read('players',id)),pve=this.encounters?.snapshot(id);
-  demand(same(entry.base,current,scope),'checkpoint_scope_changed');
+  demandFence(same(entry.base,current,scope),'checkpoint_scope_changed',()=>({
+   actor:id,requestEpoch:entry.epoch,operation:'actor_checkpoint',phase:'capture',
+   checkpointColumns:scope.filter(name=>!Object.is(entry.base[name],current[name])),
+  }));
   const token={id,entry,owner,at:this.clock(),payload:{base:entry.base,current,...(pve===undefined?{}:{pve})}};
   entry.joinedR53=token;return token;
  }
@@ -104,7 +108,10 @@ export class ActorCheckpoints {
   if(quarantineDrainR531&&entry.rejectedR531)throw entry.rejectedR531;
   const owner=this.state.assertOwner(id,entry.epoch,{allowQuiesced:true}),row=this.state.read('players',id),snapshot=pick(row);
   if(same(snapshot,entry.base)&&!this.encounters?.changed(id)){entry.at=this.clock();entry.pollDelayR89=R53_CHECKPOINT_START_MS;return Promise.resolve({unchanged:true});}
-  demand(same(snapshot,entry.base,scope),'checkpoint_scope_changed');
+  demandFence(same(snapshot,entry.base,scope),'checkpoint_scope_changed',()=>({
+   actor:id,requestEpoch:entry.epoch,operation:'actor_checkpoint',phase:'flush',
+   checkpointColumns:scope.filter(name=>!Object.is(snapshot[name],entry.base[name])),
+  }));
   const pve=this.encounters?.snapshot(id),capturedAt=this.clock();
   const event={actor:id,key:'checkpoint:'+this.incarnation+':'+(++this.serial),kind:'actor_checkpoint',payload:{base:entry.base,current:snapshot,...(pve===undefined?{}:{pve})}};
   owner.pending++;
