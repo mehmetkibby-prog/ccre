@@ -1,0 +1,12 @@
+{
+  "file": "artifacts/R124_RUNE_78d7898a56ea.zip",
+  "sha256": "e21f4af9cb1db4810799dc6e12ae2694027dbfad5e5a4014f771fa05a678fb2b",
+  "bytes": 157838,
+  "source": "R123_FREEZE1",
+  "targetVersion": "R124_RUNE1",
+  "targetCore": "5d108e93e6368a1031731567614bcb0ae3c91797558b888ca75b0d04faea12e4",
+  "changedCodeFiles": 4,
+  "compactScope": "expired transport receipts/images; acknowledged old notifications; fixed conservative cutoff; all other rows exact",
+  "deployed": false,
+  "acceptance": "pending"
+}
