@@ -106,15 +106,26 @@ export function attackActorsR115(sql,actor,area,channel,extraActors=[]){
 }
 export const foregroundScopeR112=(sql,input,actor,channel)=>input?.action==='attack'?foregroundAttackScopeR112(sql,input,actor,channel):foregroundClaimScopeR85(sql,input,actor,channel);
 
+// A departure can shrink the required recipient set after the hold starts.
+// The original held set remains the write ceiling. New recipients and
+// changes to the target, spawn round, map or cycle still require a new hold.
+export function claimScopeCoveredR124(current, held) {
+ if (!current || !held) return false;
+ const {actors: currentActors, ...currentTarget} = current;
+ const {actors: heldActors, ...heldTarget} = held;
+ return JSON.stringify(currentTarget) === JSON.stringify(heldTarget)
+  && currentActors.every(id => heldActors.includes(id));
+}
+
 // Parent and worker share these fences; the worker receives only a parent-made
 // snapshot, never a caller-provided permission list. Called inside its sole
 // writer transaction, before native reward SQL and before COMMIT respectively.
 export function assertClaimWorkerScopeR112(sql,claim,payload,context){
  if(!claim)return;
  const scope=foregroundScopeR112(sql,payload.input,context.actor,context.peer.channel);
- demand(JSON.stringify(payload.input)===claim.input&&JSON.stringify(scope)===JSON.stringify(claim.scope),'shared_terminal_actor_fenced');
+ demand(JSON.stringify(payload.input)===claim.input&&claimScopeCoveredR124(scope,claim.scope),'shared_terminal_actor_fenced');
  const ids=(payload.resources??[]).filter(k=>k.startsWith('player:')).map(k=>k.slice(7));
- demand(ids.every(id=>scope.actors.includes(id))&&scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
+ demand(ids.every(id=>claim.scope.actors.includes(id))&&claim.scope.actors.every(id=>ids.includes(id)),'shared_terminal_actor_fenced');
 }
 export function assertClaimRefreshR112(claim,proof,payload,result,context){
  if(!claim)return true;

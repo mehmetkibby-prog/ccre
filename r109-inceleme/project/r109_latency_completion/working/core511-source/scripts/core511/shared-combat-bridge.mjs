@@ -12,7 +12,7 @@ import {demand} from './contract.mjs';
 import {recoveryWatchdog} from './r47-options.mjs';
 import {captureReturnSessions,rehomeWorldActors} from './global-return.mjs';
 import {coldSettlementResources} from './settlement-resources.mjs';
-import {foregroundClaimTargetsR85,foregroundScopeR112,assertClaimRefreshR112} from './reward-actor-scope-r85.mjs';
+import {foregroundClaimTargetsR85,foregroundScopeR112,assertClaimRefreshR112,claimScopeCoveredR124} from './reward-actor-scope-r85.mjs';
 
 // Private parent pipe. HP and contribution proposals live only in the world
 // owner; this book retains authority until the source confirms local promotion.
@@ -173,7 +173,7 @@ export class SharedCombatBridge {
   for(let held;(held=this.blocking(peer,request));){this.conflict('wait',peer,request,held);if(recoveryWatchdog)demand(!this.core.recoveringWorld,'global_world_busy');await new Promise((resolve,reject)=>this.waiters.add({resolve,reject,peer,request}));this.core.process(peer);}
  }
  assertRefresh(payload,result,context){const h=this.terminal;return assertClaimRefreshR112(h?.foregroundClaimR85,h?.row.proof,payload,result,context);}
- claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||JSON.stringify(foregroundScopeR112(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel))===JSON.stringify(claim.scope);}
+ claimScopeCurrent(held){const claim=held.foregroundClaimR85;return !claim||claimScopeCoveredR124(foregroundScopeR112(this.core.database.sqlite,JSON.parse(claim.input),held.row.source.actor,held.row.source.channel),claim.scope);}
  assertClaimCommand(held,payload,operation){
   const claim=held?.foregroundClaimR85;if(!claim)return;
   const actors=new Set(claim.scope.actors),resources=payload.resources??[],ids=resources.filter(k=>k.startsWith('player:')).map(k=>k.slice(7));
