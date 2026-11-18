@@ -39,6 +39,12 @@ export function rejectUnsubmittedSharedActorJob(error,peer,request){
  if(!actorFaultIsolation||!unsubmittedSharedCodes.has(error?.code)||!validSharedLease(sharedLease))return error;
  known.set(error,Object.freeze({actor:request.playerId,epoch:request.epoch,sequence:request.sequence,key:request.operationId,operation:request.operation,channel:peer.channel,incarnation:peer.incarnation,sharedLease,unsubmitted:true,outcome:'not_executed'}));return error;
 }
+// Channel-local proof. The checkpoint checked scope before queueing a write.
+export function rejectLocalCheckpointScope(error,id,owner){
+ demand(actorFaultIsolation&&error.code==='checkpoint_scope_changed'&&owner?.epoch>0,'invalid_local_checkpoint_rejection');
+ known.set(error,Object.freeze({actor:id,epoch:owner.epoch,channel:owner.channel,incarnation:owner.incarnation,operation:'actor_checkpoint',outcome:'not_executed'}));
+ return error;
+}
 export function actorRejection(error){return known.get(error)??null;}
 export function receiveActorRejection(error,outcome,method,request){
  if(outcome===undefined)return error;

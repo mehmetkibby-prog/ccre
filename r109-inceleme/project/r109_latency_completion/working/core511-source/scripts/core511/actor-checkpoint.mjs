@@ -6,9 +6,10 @@ import {dirtyWriter} from '../../../native510-bb3a6cc689c6/vds-server/src/dirty-
 import {CHECKPOINT_MS,demand} from './contract.mjs';
 import {randomUUID} from 'node:crypto';
 import {writeEncounterCheckpoint} from './encounter-checkpoint.mjs';
-import {actorRejection} from './actor-rejection.mjs';
+import {actorRejection,rejectLocalCheckpointScope} from './actor-rejection.mjs';
 import {demandFence} from './fence-diagnostics.mjs';
 import {checkpointConflict} from './checkpoint-rejection.mjs';
+import {retiredActorIsolation} from './r48_2-options.mjs';
 import {actorFaultIsolation} from './r48-options.mjs';
 import {memoryCombatR53,R53_CHECKPOINT_START_MS,R53_MEMORY_WINDOW_MS} from './r53-options.mjs';
 import {checkpointScheduleR57} from './r57-options.mjs';
@@ -72,8 +73,8 @@ export function createActorCheckpointHandler(){
 // pending. ACK advances only the durable base, never overwrites newer resident
 // coordinates/HP. The owner pending counter prevents transfer/exit until drain.
 export class ActorCheckpoints {
- constructor({state,submit,encounters=null,pollable=()=>true,clock=()=>performance.now(),onFatal=()=>{},onRejected=()=>{}}){
-  demand(state&&typeof submit==='function'&&typeof pollable==='function','checkpoint_dependencies');Object.assign(this,{state,submit,encounters,pollable,clock,onFatal,onRejected});
+ constructor({state,submit,peer=null,encounters=null,pollable=()=>true,clock=()=>performance.now(),onFatal=()=>{},onRejected=()=>{}}){
+  demand(state&&typeof submit==='function'&&typeof pollable==='function','checkpoint_dependencies');Object.assign(this,{state,submit,peer,encounters,pollable,clock,onFatal,onRejected});
   this.entries=new Map();this.incarnation=randomUUID();this.serial=0;this.failure=null;
  }
  hydrate(row){demand(!this.entries.get(row.id)?.pending,'checkpoint_pending');const owner=this.state.owners.get(row.id);demand(owner,'owner_epoch_fenced');this.entries.set(row.id,{base:pick(row),epoch:owner.epoch,at:this.clock(),pollDelayR89:firstCheckpointDelayR89(row.id),pending:null});}
@@ -105,13 +106,22 @@ export class ActorCheckpoints {
   if(entry.pending)return entry.pending;
   // Preserve this exact entry's writer-proven rollback. A later party drain
   // must not replace it with an unproven owner error after quarantine froze it.
-  if(quarantineDrainR531&&entry.rejectedR531)throw entry.rejectedR531;
+  if((quarantineDrainR531||retiredActorIsolation)&&entry.rejectedR531)return Promise.reject(entry.rejectedR531);
   const owner=this.state.assertOwner(id,entry.epoch,{allowQuiesced:true}),row=this.state.read('players',id),snapshot=pick(row);
   if(same(snapshot,entry.base)&&!this.encounters?.changed(id)){entry.at=this.clock();entry.pollDelayR89=R53_CHECKPOINT_START_MS;return Promise.resolve({unchanged:true});}
-  demandFence(same(snapshot,entry.base,scope),'checkpoint_scope_changed',()=>({
-   actor:id,requestEpoch:entry.epoch,operation:'actor_checkpoint',phase:'flush',
-   checkpointColumns:scope.filter(name=>!Object.is(snapshot[name],entry.base[name])),
-  }));
+  try{
+   demandFence(same(snapshot,entry.base,scope),'checkpoint_scope_changed',()=>({
+    actor:id,requestEpoch:entry.epoch,operation:'actor_checkpoint',phase:'flush',
+    checkpointColumns:scope.filter(name=>!Object.is(snapshot[name],entry.base[name])),
+   }));
+  }catch(error){
+   if(!retiredActorIsolation||error.code!=='checkpoint_scope_changed'||entry.joinedR53||!this.peer)return Promise.reject(error);
+   rejectLocalCheckpointScope(error,id,{...this.peer,epoch:entry.epoch});
+   entry.rejectedR531=error;
+   this.state.freeze(id,entry.epoch);
+   this.onRejected(id,error);
+   return Promise.reject(error);
+  }
   const pve=this.encounters?.snapshot(id),capturedAt=this.clock();
   const event={actor:id,key:'checkpoint:'+this.incarnation+':'+(++this.serial),kind:'actor_checkpoint',payload:{base:entry.base,current:snapshot,...(pve===undefined?{}:{pve})}};
   owner.pending++;
