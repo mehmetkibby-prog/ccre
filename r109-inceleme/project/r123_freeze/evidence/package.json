@@ -1,0 +1,11 @@
+{
+  "file": "artifacts/R123_FREEZE_932ebb79e8d4.zip",
+  "sha256": "3ae25e97216edd7e9f311093bd2d74a505ad7cb525ea1983c230d86eaf355d8e",
+  "bytes": 121357,
+  "source": "R121_CLEANUP1 on exact R120 client",
+  "targetVersion": "R123_FREEZE1",
+  "targetCore": "35d6475a2e0e06d8d50a2f1557a366bf0f2d99ba84c4f10bf34faadeb0849213",
+  "changedCodeFiles": 5,
+  "deployed": false,
+  "acceptance": "pending"
+}
