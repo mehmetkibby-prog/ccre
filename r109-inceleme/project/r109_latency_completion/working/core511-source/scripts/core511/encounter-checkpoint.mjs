@@ -49,10 +49,17 @@ export function writeEncounterCheckpoint(sqlite,{base,current,transitions=[]},co
   // Old entries may refer to a previous spawn; they must not be converted into
   // an attack in a different area/channel by a stale or malformed checkpoint.
   const ids=new Set([current.monster_id,...Object.keys(JSON.parse(current.attackers489))]);
+  const assertScope = monster => {
+   if (!monster || monster.area !== p.area || (monster.channel !== 0 && monster.channel !== p.channel)) {
+    // Treat an obsolete target as an actor checkpoint conflict. The writer
+    // certifies rollback before the channel retires the affected actor.
+    throw actorFrameConflict('encounter_snapshot_conflict', context, sqlite);
+   }
+  };
   if(rewardIdleCostR54){
    const rows=prepareCached477(sqlite,'SELECT id,area,channel FROM monsters WHERE id IN(SELECT value FROM json_each(?))').all(JSON.stringify([...ids])),found=new Map(rows.map(m=>[m.id,m]));
-   for(const id of ids){const m=found.get(id);demand(m&&m.area===p.area&&(m.channel===0||m.channel===p.channel),'encounter_scope');}
-  }else for(const id of ids){const m=prepareCached477(sqlite,'SELECT area,channel FROM monsters WHERE id=?').get(id);demand(m&&m.area===p.area&&(m.channel===0||m.channel===p.channel),'encounter_scope');}
+   for(const id of ids)assertScope(found.get(id));
+  }else for(const id of ids)assertScope(prepareCached477(sqlite,'SELECT area,channel FROM monsters WHERE id=?').get(id));
   if(transitions.some(step=>step.after===null))prepareCached477(sqlite,'DELETE FROM pve_engagements WHERE player_id=?').run(context.actor);
   const keys=ENCOUNTER_FIELDS;prepareCached477(sqlite,'INSERT INTO pve_engagements ('+keys.join(',')+') VALUES ('+keys.map(()=>'?').join(',')+') ON CONFLICT(player_id) DO UPDATE SET '+keys.slice(1).map(k=>k+'=excluded.'+k).join(',')).run(...keys.map(k=>current[k]));
  }else prepareCached477(sqlite,'DELETE FROM pve_engagements WHERE player_id=?').run(context.actor);

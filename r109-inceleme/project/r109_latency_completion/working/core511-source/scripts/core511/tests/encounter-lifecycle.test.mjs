@@ -24,3 +24,19 @@ test('private operation overlays preserve clear/rearm order and recycled storage
  let live=base;const journal=new EncounterCheckpoints(()=>live);journal.hydrate('p',base);for(const [id,next]of plan){journal.observe(id,live,next);live=next;}
  assert.equal(journal.snapshot('p').transitions.length,2);
 });
+
+test('an out-of-channel encounter target is rejected with exact actor rollback provenance', async t=>{
+ const {db,base}=fixture(t);
+ const {actorFrameConflictProof}=await import('../actor-frame-rejection.mjs');
+ const peer={channel:4,incarnation:'fixture-4'};
+ const context={actor:'p',epoch:1,key:'checkpoint-1',peer};
+ db.exec("UPDATE monsters SET channel=1 WHERE id='n'; BEGIN");
+ try {
+  assert.throws(()=>writeEncounterCheckpoint(db,{base,current:row(9,200,'n')},context),error=>{
+   assert.equal(error.code,'encounter_snapshot_conflict');
+   assert(actorFrameConflictProof(error,peer,{operation:'actor_checkpoint',playerId:'p',epoch:1,operationId:'checkpoint-1'}));
+   return true;
+  });
+  assert.equal(db.prepare('SELECT monster_id FROM pve_engagements').get().monster_id,'m');
+ } finally { db.exec('ROLLBACK'); }
+});
