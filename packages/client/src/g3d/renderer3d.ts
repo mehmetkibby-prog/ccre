@@ -746,7 +746,10 @@ export class Renderer3D {
       if ((this.frameNo + lv.lodSlot) % lodN !== 0) return;
       adt = lv.lodAcc; lv.lodAcc = 0;
     } else lv.lodAcc = 0;
-    if (v.glb) v.glb.update(v.state, adt, moving, v.speed, restart, (v as View & { skill?: number }).skill);
+    // vuruşta bacaklar: yalnız gerçekten yürürken yürüme bacakları, dururken vuruşun kendi alt gövdesi (öne hamle, kalça,
+    // gövde dönüşü). Önceden kare başına 2 mm'lik konum düzeltmesi bile "yürüyor" sayılıyordu: vuruşta yalnız kol ve göğüs oynuyordu.
+    const legsWalk = moving && (v.speed ?? 0) > 0.9;
+    if (v.glb) v.glb.update(v.state, adt, (v.state === 'attack' || v.state === 'cast') ? legsWalk : moving, v.speed, restart, (v as View & { skill?: number }).skill);
     if (v.kind === Kind.PLAYER && v.glb && !dead && !(v as View & { mount?: unknown }).mount) this.footContact(v, x, y);
     else if (v.rig) animateHumanoid(v.rig, v.state, tt, k, v.phase);
     else if (v.mon) v.mon.update(v.state, tt, k, v.phase);
