@@ -179,7 +179,8 @@
       "Attack Slash",
       "Attack Thrust"
     ],
-    "animFrom": "guardian"
+    "animFrom": "guardian",
+    "v": "35e9fc3b"
   },
   "guardian_crimson": {
     "url": "guardian_crimson.glb",
@@ -586,5 +587,12 @@
     "url": "crystal_chest.glb",
     "scale": 1,
     "v": "ace6a618"
+  },
+  "herbalist": {
+    "url": "herbalist.glb",
+    "height": 1.65,
+    "anims": {
+      "idle": "Idle"
+    }
   }
 }
