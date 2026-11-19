@@ -134,6 +134,8 @@ export class CharacterStore {
     }
   }
 
+  /** Bellekteki bütün karakterler (oyunda olanlar ve yazılmayı bekleyenler; en yenisi), kopyalanmadan. */
+  *liveChars(): Iterable<CharState> { const seen = new Set<number>(); for (const c of this.queue.values()) { seen.add(c.id); yield c; } for (const e of this.cache.values()) if (!seen.has(e.char.id)) yield e.char; }
   /** Bellekteki en yeni durum (oyunda olan ya da yazılmayı bekleyen), kopyalanmadan. */
   peek(charId: number): CharState | undefined { return this.queue.get(charId) ?? this.cache.get(charId)?.char; }
   async load(charId: number): Promise<CharState | null> {

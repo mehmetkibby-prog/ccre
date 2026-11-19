@@ -23,6 +23,7 @@ const dist = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.
 const rnd = Math.random;
 const randInt = (a: number, b: number) => a + Math.floor(rnd() * (b - a + 1));
 const MONSTER_RADIUS = 22;
+const PLAYER_HIT_R = 14; // oyuncu gövde yarıçapı: alan vuruşlarında kenardan değen oyuncu da sayılır
 const RANGE_TOLERANCE = 48;
 const MELEE_TOLERANCE = 30;
 const NPC_RANGE = 260;
@@ -858,15 +859,22 @@ export class World {
     if (r <= 0 || k <= 0) return;
     const z = p.zone, cx = main.x, cy = main.y, sm = mult * k;
     let n = 0;
+    const pl = () => { if (this.pvpHere(p) && n < 4) z.players.radius(cx, cy, r + PLAYER_HIT_R, (q) => { if (n < 4 && q !== main && this.canPvp(p, q)) { n++; this.hit(p, q, sm, sk); } }); };
+    if (this.social.inDuel(p)) pl(); // düelloda rakip, çevredeki canavarlardan önce sayılır
     z.monsters.radius(cx, cy, r + MONSTER_RADIUS, (m) => { if (n < 4 && m !== main && m.state !== MState.DEAD) { n++; this.hit(p, m, sm, sk); } });
-    if (z.def.pvp && n < 4) z.players.radius(cx, cy, r, (q) => { if (n < 4 && q !== main && this.canPvp(p, q)) { n++; this.hit(p, q, sm, sk); } });
+    if (!this.social.inDuel(p)) pl();
   }
+
+  /** Bu oyuncunun alan vuruşları oyunculara da işler mi: PvP haritası ya da süren bir düello (her haritada). */
+  private pvpHere(p: Player) { return p.zone.def.pvp || this.social.inDuel(p); }
 
   private aoe(p: Player, x: number, y: number, r: number, max: number, mult: number, sk: SkillDef) {
     let n = 0;
-    const z = p.zone;
+    const z = p.zone, duel = this.social.inDuel(p);
+    const pl = () => { if (this.pvpHere(p) && n < max) z.players.radius(x, y, r + PLAYER_HIT_R, (q) => { if (n < max && this.canPvp(p, q)) { n++; this.hit(p, q, mult, sk); } }); };
+    if (duel) pl(); // düelloda rakip, çevredeki canavarlardan önce sayılır
     z.monsters.radius(x, y, r + MONSTER_RADIUS, (m) => { if (n < max && m.state !== MState.DEAD) { n++; this.hit(p, m, mult, sk); } });
-    if (z.def.pvp && n < max) z.players.radius(x, y, r, (q) => { if (n < max && this.canPvp(p, q)) { n++; this.hit(p, q, mult, sk); } });
+    if (!duel) pl();
   }
 
   private hit(p: Player, t: Monster | Player, mult: number, sk?: SkillDef) {

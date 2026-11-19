@@ -10,6 +10,7 @@ import type { AdminGive } from './types.ts';
  * hangi dönemin ödüllendiği server_state'te tutulur (yeniden başlatma iki kez ödül vermez).
  */
 export interface RankRow { charId: number; name: string; cls: string; level: number; kills: number }
+const STAFF = new Set(['gm', 'admin', 'owner']);
 export interface RankHost { give(charId: number, g: AdminGive): void; announce(text: string): void; onlineIds(): Set<number> }
 
 export class Rankings {
@@ -31,6 +32,13 @@ export class Rankings {
       if (rk) row.kills = rk.k === key ? rk.n : rk.prev?.k === key && prev ? rk.prev.n : row.kills;
       if (live) row.level = live.level;
     }
+    // oyunda olan (ya da kaydı yazılmayı bekleyen) oyuncular: veritabanı birkaç saniye geride kalsa da listeye girer
+    for (const c of this.store.liveChars()) {
+      if (STAFF.has(c.role) || rows.some((r) => r.charId === c.id)) continue;
+      const rk = c.misc.rankKills;
+      const n = rk ? (rk.k === key ? rk.n : prev && rk.prev?.k === key ? rk.prev.n : 0) : 0;
+      if (n > 0) rows.push({ charId: c.id, name: c.name, cls: c.cls, level: c.level, kills: n });
+    }
     return rows.filter((x) => x.kills > 0).sort((a, b) => b.kills - a.kills || b.level - a.level).slice(0, 10);
   }
 
@@ -38,9 +46,17 @@ export class Rankings {
     const now = Date.now(), per = trPeriod(now, TUNING.killRank.period);
     if (!this.cache || now - this.cache.at > 20_000 || this.cache.key !== per.key) {
       const lv = await pool.query(
-        `SELECT c.id, c.name, c.cls, c.level, c.kills FROM characters c JOIN accounts a ON a.id=c.account_id
-         WHERE c.deleted_at IS NULL AND a.role NOT IN ('gm','admin','owner') ORDER BY c.level DESC, c.xp DESC LIMIT 10`);
-      const level = lv.rows.map((x) => ({ charId: Number(x.id), name: x.name, cls: x.cls, level: Number(x.level), kills: Number(x.kills) }));
+        `SELECT c.id, c.name, c.cls, c.level, c.kills, c.xp FROM characters c JOIN accounts a ON a.id=c.account_id
+         WHERE c.deleted_at IS NULL AND a.role NOT IN ('gm','admin','owner') ORDER BY c.level DESC, c.xp DESC LIMIT 20`);
+      const level = lv.rows.map((x) => ({ charId: Number(x.id), name: x.name, cls: x.cls, level: Number(x.level), kills: Number(x.kills), xp: Number(x.xp) }));
+      // bellekteki güncel seviyeler (oyundakiler)
+      for (const c of this.store.liveChars()) {
+        if (STAFF.has(c.role)) continue;
+        const row = level.find((r) => r.charId === c.id);
+        if (row) { row.level = c.level; row.xp = c.xp; row.kills = c.kills; }
+        else level.push({ charId: c.id, name: c.name, cls: c.cls, level: c.level, kills: c.kills, xp: c.xp });
+      }
+      level.sort((a, b) => b.level - a.level || b.xp - a.xp); level.length = Math.min(level.length, 10);
       this.cache = { at: now, level, kills: await this.query(per.key), key: per.key };
     }
     return { level: this.cache.level, kills: this.cache.kills, period: { key: per.key, end: per.end, kind: TUNING.killRank.period }, rewards: TUNING.killRank.rewards.slice(0, 3) };

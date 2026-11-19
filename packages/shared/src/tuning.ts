@@ -286,7 +286,7 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, newYear: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, potionGems: 1, bossShareMin: 3, announcement: '', classicUrl: 'https://2d.coreoflife.net',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, newYear: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, potionGems: 5, bossShareMin: 3, announcement: '', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),

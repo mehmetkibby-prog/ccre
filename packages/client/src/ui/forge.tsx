@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { TUNING, MONSTERS, MATERIAL, FORGE_PUZZLE_NAMES, FORGE_PUZZLE_HINTS, FORGE_STAGE_NAMES, MOLD_SYMBOLS, FORGE_MAP } from '@col/shared';
 import { store, useStore } from '../game/store.ts';
 import { Panel } from './panels.tsx';
@@ -62,6 +62,13 @@ export function ForgeHud() {
   const [, tick] = useState(0);
   const [open, setOpen] = useState(() => !matchMedia('(pointer: coarse)').matches);
   useEffect(() => { const id = setInterval(() => tick((n) => n + 1), 250); return () => clearInterval(id); }, []);
+  // bilgisayarda kutu sol üstte karakter kutusunun altında: grup çerçevesi kutunun boyu kadar aşağı kayar
+  const box = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const h = box.current && !matchMedia('(pointer: coarse)').matches ? box.current.offsetHeight + 8 : 0;
+    document.documentElement.style.setProperty('--fghud-h', h + 'px');
+  });
+  useEffect(() => () => document.documentElement.style.setProperty('--fghud-h', '0px'), []);
   if (!f || map !== FORGE_MAP) return null;
   const el = performance.now() - f.at;
   const wait = Math.max(0, f.wait - el);
@@ -71,7 +78,7 @@ export function ForgeHud() {
   const cur = f.stage === 'done' ? 4 : steps.indexOf(f.pending ?? f.stage);
   const cool = f.ember && f.ember.cool > 0 ? Math.max(0, f.ember.cool - el) : 0;
   return (
-    <div className={'tw-hud fg-hud' + (open ? '' : ' min')} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
+    <div ref={box} className={'tw-hud fg-hud' + (open ? '' : ' min')} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => e.stopPropagation()}>
       <div className="tw-hd" onClick={() => setOpen(!open)}>
         <span className="fl">{f.f === 3 ? 'Zirve' : `${f.f}. Kat`}</span><span className="nm">{stName}</span>
         {f.stage === 'done' ? <span className="ok">✔ Kapı açık</span> : f.pending ? <span className="pr">{Math.ceil(wait / 1000)} sn</span>

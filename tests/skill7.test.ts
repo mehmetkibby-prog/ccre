@@ -85,3 +85,23 @@ it('Sv. 7 becerisi geliştirilir; ilk kademesi bütçeden yemez', () => {
   expect(g.p.shieldPct).toBe(30 + (g.p.char.skills[4] - 1));
   expect(skillUpgradeBudget(60)).toBe(39);
 });
+
+it('Sv. 7 becerisi düelloda (PvP olmayan haritada) rakibe hasar verir, yabancıya vermez', () => {
+  applyTuning(structuredClone(DEFAULT_TUNING));
+  for (const cls of ['guardian', 'hunter', 'arcanist']) {
+    const w = new World({ channel: 1, aoiMaxPlayers: 48, saveIntervalMs: 15000, post: () => {} });
+    (w as any).addXp = () => {};
+    w.join(1, mk(1, cls, 12)); w.join(2, mk(2, 'guardian', 12)); w.join(3, mk(3, 'guardian', 12));
+    const a = w.bySid.get(1)!, b = w.bySid.get(2)!, c = w.bySid.get(3)!;
+    expect(a.zone.def.pvp).toBeFalsy();
+    w.onCmd(1, JSON.stringify({ t: 'social', op: 'invite', kind: 'duel', target: b.id }));
+    w.onCmd(2, JSON.stringify({ t: 'social', op: 'answer', kind: 'duel', from: a.char.id, accept: true }));
+    (w as any).now += 3500;
+    // çevrede bol canavar olsa da rakip sayılır
+    for (const m of a.zone.monsterList.slice(0, 8)) { m.x = a.x + 30; m.y = a.y + 20; m.maxHp = m.hp = 1e7; a.zone.monsters.move(m); }
+    for (const q of [b, c]) { q.x = a.x + 40; q.y = a.y; a.zone.players.move(q); q.maxHp = q.hp = 1e6; }
+    w.onCmd(1, JSON.stringify({ t: 'skill', s: 4, id: b.id, x: b.x, y: b.y }));
+    expect(b.hp, cls).toBeLessThan(1e6);
+    expect(c.hp, cls).toBe(1e6);
+  }
+});
