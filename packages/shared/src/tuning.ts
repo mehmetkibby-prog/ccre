@@ -80,6 +80,12 @@ export interface GameTuning {
   /** saldırı tuşu: hedef ölünce bu süre (sn) boyunca yeni canavara yürünmez, yalnız menzildekine vurulur */
   retargetDelay: number;
   announcement: string;
+  /** duyurunun ekranda kalma süresi (sn); 0 = kaldırılana kadar */
+  annSec: number;
+  /** duyurunun yayınlandığı an (epoch ms) */
+  annAt: number;
+  /** duyuru şeridinin rengi */
+  annStyle: 'gold' | 'red' | 'green' | 'blue';
   /** Ana menüdeki küçük "2D oyun" düğmesinin adresi (boşsa düğme gizlenir). */
   classicUrl: string;
   monsters: Record<string, MonsterTune>;
@@ -286,7 +292,7 @@ export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
-  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, newYear: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, potionGems: 5, bossShareMin: 3, announcement: '', classicUrl: 'https://2d.coreoflife.net',
+  density: {}, bots: 8, worldDecayMul: 1, brightness: 1, newYear: 1, worldDonateGain: 0.02, meleeApproach: 90, splashRadius: 140, splashMul: 0.7, retargetDelay: 1.2, autoAttackMin: 120, essxEss: 200, essxGems: 15, potionEss: 20, potionGems: 5, bossShareMin: 3, announcement: '', annSec: 60, annAt: 0, annStyle: 'gold', classicUrl: 'https://2d.coreoflife.net',
   monsters: {}, zoneLoot: {}, spawns: {}, enchants: {}, rarityPower: {}, rarityDrop: {}, sellPrice: {}, upgrade: {},
   arena: structuredClone(ARENA_DEFAULT),
   killRank: structuredClone(KILLRANK_DEFAULT),
@@ -300,7 +306,7 @@ export const DEFAULT_TUNING: GameTuning = {
   quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'forge' | 'dayNight' | 'evo' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'annSec' | 'annAt' | 'annStyle' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'forge' | 'dayNight' | 'evo' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], specLevel: [1, 120, 1], bossShareMin: [0, 50, 0.5],
@@ -318,6 +324,9 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   const dn = (r.density && typeof r.density === 'object' ? r.density : {}) as Record<string, unknown>;
   for (const [k, v] of Object.entries(dn)) if (/^[a-z_]{1,24}$/.test(k)) out.density[k] = clamp(v, DENSITY_LIMITS, 1);
   out.announcement = typeof r.announcement === 'string' ? r.announcement.slice(0, 200) : '';
+  { const n = Number(r.annSec); out.annSec = Number.isFinite(n) ? Math.round(Math.min(86400, Math.max(0, n))) : DEFAULT_TUNING.annSec; }
+  { const n = Number(r.annAt); out.annAt = Number.isFinite(n) && n > 0 ? Math.round(n) : 0; }
+  out.annStyle = (['gold', 'red', 'green', 'blue'] as const).includes(r.annStyle as 'gold') ? r.annStyle as GameTuning['annStyle'] : 'gold';
   // yalnız https:// ya da site içi yol (javascript: vb. engellenir)
   out.classicUrl = typeof r.classicUrl === 'string' && /^(https:\/\/[^\s"'<>]+|\/[^\s"'<>]*)?$/.test(r.classicUrl.trim()) ? r.classicUrl.trim().slice(0, 200) : DEFAULT_TUNING.classicUrl;
   out.arena = sanitizeArena(r.arena);

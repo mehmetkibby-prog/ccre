@@ -8,7 +8,7 @@ import { api } from '../api.ts';
 import { OFFLINE } from '../mode.ts';
 import { ClassIcon } from '../ui/icons.tsx';
 import { configState, onConfig, saveConfig, applyRemoteTuning } from './config.ts';
-import { GeneralTab, SkillUpTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
+import { AnnouncementBar, GeneralTab, SkillUpTab, MonsterTab, RarityTable, LootTab, ZoneLootTab, EnchantTab, UpgradeTab, TransformTab, MapTab, LevelTab, BossTab, FishingTab, MallTab, Num, fmtN } from './AdminPanel.tsx';
 import { TowerTab } from './TowerAdmin.tsx';
 import { ForgeTab, EvoTab } from './ForgeAdmin.tsx';
 import { CraftTab } from './CraftAdmin.tsx';
@@ -155,10 +155,11 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (toast) { const id = setTimeout(() => setToast(null), 4200); return () => clearTimeout(id); } }, [toast]);
   const dirty = !!t && JSON.stringify(sanitizeTuning(t)) !== base;
-  const save = async () => {
+  const save = async (patch?: Partial<GameTuning>) => {
     if (!t) return;
+    const next = patch ? { ...t, ...patch } : t;
     setBusy(true);
-    try { const r = await backend.saveTuning(t, rev); setT(structuredClone(r.tuning)); setBase(JSON.stringify(sanitizeTuning(r.tuning))); setRev(r.revision); setToast({ ok: true, text: 'Kaydedildi. Oyundaki herkese anında uygulandı.' }); }
+    try { const r = await backend.saveTuning(next, rev); setT(structuredClone(r.tuning)); setBase(JSON.stringify(sanitizeTuning(r.tuning))); setRev(r.revision); setToast({ ok: true, text: 'Kaydedildi. Oyundaki herkese anında uygulandı.' }); }
     catch (e) { setToast({ ok: false, text: (e as Error).message }); }
     setBusy(false);
   };
@@ -231,7 +232,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
           <span>Kaydedilmemiş değişiklik</span>
           <div className="spacer" />
           <button className="btn small ghost" disabled={busy} onClick={() => t && setT(JSON.parse(base))}>Geri al</button>
-          <button className="btn small primary" disabled={busy} onClick={save}>{busy ? 'Kaydediliyor…' : 'Kaydet ve uygula'}</button>
+          <button className="btn small primary" disabled={busy} onClick={() => save()}>{busy ? 'Kaydediliyor…' : 'Kaydet ve uygula'}</button>
         </div>
       )}
       {toast && <div className={'adm-toast ' + (toast.ok ? 'ok' : 'bad')} role="status">{toast.text}</div>}
@@ -239,9 +240,54 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
   );
 }
 
+// ───────── duyuru ─────────
+const ANN_DUR: [number, string][] = [[10, '10 sn'], [30, '30 sn'], [60, '1 dk'], [300, '5 dk'], [900, '15 dk'], [3600, '1 saat'], [0, 'Kaldırılana kadar']];
+const ANN_STYLES: [GameTuning['annStyle'], string][] = [['gold', 'Altın'], ['red', 'Kırmızı'], ['green', 'Yeşil'], ['blue', 'Mavi']];
+/** Duyuru: "Yönetim — mesaj" şeridi; süre, renk, canlı önizleme; yayınla ya da hemen kaldır. */
+function AnnounceCard({ t, save }: { t: GameTuning | null; save: (patch?: Partial<GameTuning>) => void }) {
+  const [text, setText] = useState('');
+  const [sec, setSec] = useState(60);
+  const [custom, setCustom] = useState('');
+  const [style, setStyle] = useState<GameTuning['annStyle']>('gold');
+  const [, tick] = useState(0);
+  useEffect(() => { const id = setInterval(() => tick((n) => n + 1), 1000); return () => clearInterval(id); }, []);
+  const active = !!t && !!t.announcement.trim() && (t.annSec === 0 || t.annAt + t.annSec * 1000 > Date.now());
+  const left = t && t.annSec > 0 ? Math.max(0, Math.round((t.annAt + t.annSec * 1000 - Date.now()) / 1000)) : 0;
+  const fmtS = (s: number) => s >= 3600 ? `${Math.floor(s / 3600)} sa${s % 3600 >= 60 ? ` ${Math.floor((s % 3600) / 60)} dk` : ''}` : s >= 60 ? `${Math.floor(s / 60)} dk${s % 60 ? ` ${s % 60} sn` : ''}` : `${s} sn`;
+  const dur = custom ? Math.max(1, Math.round(Number(custom) * 60)) : sec;
+  return (
+    <section className="adm-card adm-ann">
+      <h3>Duyuru</h3>
+      <p className="muted adm-hint">Oyundaki herkesin ekranının üstünde <b>“YÖNETİM — mesaj”</b> olarak kayarak belirir; seçtiğin süre dolunca kendiliğinden kalkar.</p>
+      {active && t && (
+        <div className="adm-ann-now">
+          <span className="dot on" /> <b>Yayında:</b> <span className="txt">{t.announcement}</span>
+          <span className="muted">{t.annSec === 0 ? 'kaldırılana kadar' : `${fmtS(left)} kaldı`}</span>
+          <button className="btn small red" onClick={() => save({ announcement: '', annAt: 0 })}>Şimdi kaldır</button>
+        </div>
+      )}
+      <textarea className="admin-ta" maxLength={200} disabled={!t} value={text} placeholder="Ör. Bu akşam 21:00'de çift TP etkinliği başlıyor!" onChange={(e) => setText(e.target.value)} />
+      <div className="adm-ann-row"><span className="lb">Ekranda kalma</span>
+        <div className="adm-chips">{ANN_DUR.map(([s, l]) => <button key={s} className={'btn small' + (!custom && sec === s ? ' primary' : ' ghost')} onClick={() => { setSec(s); setCustom(''); }}>{l}</button>)}
+          <label className="adm-inline"><input className="adm-num" style={{ width: 64 }} type="number" min={1} max={1440} placeholder="dk" value={custom} onChange={(e) => setCustom(e.target.value)} /><span className="muted">dakika</span></label>
+        </div>
+      </div>
+      <div className="adm-ann-row"><span className="lb">Renk</span>
+        <div className="adm-chips">{ANN_STYLES.map(([k, l]) => <button key={k} className={'btn small ann-sw ann-sw-' + k + (style === k ? ' on' : '')} onClick={() => setStyle(k)}>{l}</button>)}</div>
+      </div>
+      {text.trim() && <><div className="lb muted" style={{ fontSize: 12, marginTop: 6 }}>Önizleme</div><AnnouncementBar preview={{ text: text.trim(), sec: custom || sec ? 1 : 0, style }} /></>}
+      <div className="row" style={{ marginTop: 10 }}>
+        <span className="muted" style={{ fontSize: 12 }}>{text.trim() ? `${custom || sec ? fmtS(dur) : 'Kaldırılana kadar'} görünecek` : ''}</span>
+        <div className="spacer" />
+        <button className="btn primary" disabled={!t || !text.trim()} onClick={() => { save({ announcement: text.trim(), annSec: custom ? dur : sec, annAt: Date.now(), annStyle: style }); setText(''); }}>📣 Yayınla</button>
+      </div>
+    </section>
+  );
+}
+
 // ───────── durum: açılış, duyuru, kanallar, sunucu ─────────
 const MODES: [Opening['mode'], string, string][] = [['open', 'Açık', 'Herkes girebilir'], ['closed', 'Kapalı', 'Yalnız yöneticiler'], ['maintenance', 'Bakım', 'Mesaj gösterilir']];
-function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | null; setT: React.Dispatch<React.SetStateAction<GameTuning>>; onOnline: (n: number) => void; toast: (x: { ok: boolean; text: string }) => void; save: () => void; dirty: boolean }) {
+function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | null; setT: React.Dispatch<React.SetStateAction<GameTuning>>; onOnline: (n: number) => void; toast: (x: { ok: boolean; text: string }) => void; save: (patch?: Partial<GameTuning>) => void; dirty: boolean }) {
   const [s, setS] = useState<Summary | null>(null);
   const [msg, setMsg] = useState('');
   const [pending, setPending] = useState(false);
@@ -279,18 +325,13 @@ function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | 
 
       {s?.worldHealth !== undefined && <WorldCard s={s} toast={toast} reload={load} />}
 
-      <section className="adm-card">
-        <h3>Duyuru şeridi</h3>
-        <p className="muted adm-hint">Oyunun en üstünde herkese görünen kısa mesaj. Boş bırakılırsa gizlenir.</p>
-        <textarea className="admin-ta" maxLength={200} disabled={!t} value={t?.announcement ?? ''} placeholder="Ör. Bu akşam çift TP etkinliği!" onChange={(e) => t && setT({ ...t, announcement: e.target.value })} />
-        <div className="row" style={{ marginTop: 8 }}><div className="spacer" /><button className="btn small primary" disabled={!dirty} onClick={save}>Yayınla</button></div>
-      </section>
+      <AnnounceCard t={t} save={save} />
 
       <section className="adm-card">
         <h3>2D oyun düğmesi</h3>
         <p className="muted adm-hint">Ana menüdeki küçük "Core of Life 2D" düğmesinin gideceği adres (https:// ile başlamalı). Boş bırakılırsa düğme gizlenir.</p>
         <input className="adm-search" maxLength={200} disabled={!t} value={t?.classicUrl ?? ''} placeholder="https://2d.coreoflife.net" onChange={(e) => t && setT({ ...t, classicUrl: e.target.value })} />
-        <div className="row" style={{ marginTop: 8 }}><div className="spacer" /><button className="btn small primary" disabled={!dirty} onClick={save}>Kaydet</button></div>
+        <div className="row" style={{ marginTop: 8 }}><div className="spacer" /><button className="btn small primary" disabled={!dirty} onClick={() => save()}>Kaydet</button></div>
       </section>
 
       <section className="adm-card">

@@ -119,10 +119,6 @@ export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
         </div>
       </section>
       <DayNightSec t={t} setT={setT} dis={dis} />
-      <section className="admin-sec">
-        <h4>Duyuru</h4>
-        <textarea className="admin-ta" maxLength={200} disabled={dis} placeholder="Oyunun üstünde herkese görünen kısa mesaj (boş bırakılırsa gizlenir)" value={t.announcement} onChange={(e) => setT({ ...t, announcement: e.target.value })} />
-      </section>
       {ROWS.map((sec) => (
         <section className="admin-sec" key={sec.title}>
           <h4>{sec.title === 'Canavarlar' ? 'Bütün canavarlar' : sec.title}</h4>
@@ -829,11 +825,32 @@ export function ClassicButton({ small }: { small?: boolean }) {
   return <a className={'classic-btn' + (small ? ' small' : '')} href={url} title="Core of Life 2D oyununa geç"><span className="cb-ic">2D</span><span>Core of Life 2D</span></a>;
 }
 
-export function AnnouncementBar() {
-  const [text, setText] = useState(TUNING.announcement);
-  useEffect(() => onConfig((t) => setText(t.announcement)), []);
-  if (!text.trim()) return null;
-  return <div className="announce" role="status">{text}</div>;
+/**
+ * Yönetim duyurusu: "YÖNETİM — mesaj" biçiminde üstte kayarak gelen şerit; yönetimin seçtiği süre kadar kalır,
+ * altındaki ince çubuk kalan süreyi gösterir (0 sn = kaldırılana kadar). Kapat düğmesiyle oyuncu gizleyebilir.
+ */
+export function AnnouncementBar({ preview }: { preview?: { text: string; sec: number; style: string } }) {
+  const pick = () => ({ text: TUNING.announcement, sec: TUNING.annSec ?? 60, at: TUNING.annAt ?? 0, style: TUNING.annStyle ?? 'gold' });
+  const [a, setA] = useState(pick);
+  const [, tick] = useState(0);
+  const [closed, setClosed] = useState(0);
+  useEffect(() => onConfig(() => setA(pick())), []);
+  useEffect(() => { const id = setInterval(() => tick((n) => n + 1), 250); return () => clearInterval(id); }, []);
+  const d = preview ? { text: preview.text, sec: preview.sec, at: Date.now(), style: preview.style } : a;
+  if (!d.text.trim() || (!preview && closed === d.at)) return null;
+  const left = d.sec > 0 ? d.at + d.sec * 1000 - Date.now() : Infinity;
+  if (!preview && left <= 0) return null;
+  const k = d.sec > 0 && Number.isFinite(left) ? Math.max(0, Math.min(1, left / (d.sec * 1000))) : 1;
+  return (
+    <div key={d.at} className={'announce ann-' + d.style + (preview ? ' preview' : '')} role="status">
+      <span className="ann-ic" aria-hidden>📣</span>
+      <span className="ann-from">Yönetim</span>
+      <span className="ann-sep">—</span>
+      <span className="ann-text">{d.text}</span>
+      {!preview && <button className="ann-x" title="Kapat" onClick={() => setClosed(d.at)}>×</button>}
+      {d.sec > 0 && <i className="ann-bar" style={{ transform: `scaleX(${k})` }} />}
+    </div>
+  );
 }
 
 /** Yönetim düğmesi: yalnız düzenleme yetkisi olanlara görünür. */
