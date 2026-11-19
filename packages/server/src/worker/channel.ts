@@ -34,6 +34,7 @@ port.on('message', (m: ToWorker) => {
       else if (m.op === 'addcp') world.adminAddCp(m.charId, m.amount ?? 0);
       else if (m.op === 'give' && m.give) world.adminGive(m.charId, m.give);
       else if (m.op === 'rename') world.adminRename(m.charId, m.name ?? '');
+      else if (m.op === 'role') world.adminSetRole(m.charId, m.role ?? 'player');
       else world.adminResetPlayer(m.charId);
       break;
     case 'guild_set': world.guildSet(m.charId, m.g); break;

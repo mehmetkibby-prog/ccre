@@ -83,7 +83,7 @@ export type ToWorker =
   /** Yönetim paneli: yeni oyun ayarları (canavar yoğunluğu değiştiyse harita yeniden kurulur). */
   | { type: 'tuning'; data: unknown }
   /** Yönetim paneli: bu kanaldaki çevrimiçi karakteri düzenle / sıfırla. */
-  | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename' | 'give'; charId: number; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string; give?: AdminGive }
+  | { type: 'admin'; op: 'set' | 'reset' | 'addcp' | 'rename' | 'give' | 'role'; charId: number; role?: string; patch?: { level?: number; gems?: number; potions?: number; cp?: number }; amount?: number; name?: string; give?: AdminGive }
   /** Savaş Arenası: etkinlik açıldı/kapandı; giriş isteğinin yanıtı */
   | { type: 'arena'; active: boolean; endsAt: number }
   | { type: 'arena_join_ok'; sid: number; err: string | null }

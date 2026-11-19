@@ -45,7 +45,7 @@ export const MAPS: Record<string, MapDef> = {
     market: { tx: 67, ty: 24, rx: 14, ry: 11, name: 'Pazar Meydanı' },
     desc: 'Güvenli sosyal merkez. Doğudaki Pazar Meydanı\'nda oyuncular tezgâh kurup eşya satar; güneydeki Tilki Korusu yeni başlayanların ilk avıdır; korunun en ucundaki arenada Tilki Kral bekler.',
     npcs: [
-      { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'evolve', 'shop_smith'] },
+      { id: 'haso', name: 'Haso', title: 'Demirci', art: 'smith', tx: 17, ty: 14, actions: ['upgrade', 'evolve'] },
       { id: 'rauf', name: 'Rauf', title: 'Depocu', art: 'keeper', tx: 38, ty: 14, actions: ['storage', 'bank'] },
       { id: 'pakize', name: 'Pakize', title: 'Zanaatkâr', art: 'crafter', tx: 17, ty: 30, actions: ['craft'] },
       { id: 'nur', name: 'Nur', title: 'Işınlayıcı', art: 'mage', tx: 31, ty: 26, actions: ['teleport'] },

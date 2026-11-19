@@ -253,6 +253,10 @@ export class Gateway {
   onlineChannel(charId: number) { for (const s of this.sessions.values()) if (s.charId === charId && s.state !== 'closing') return s.channel; return 0; }
   onlineCharIds() { const out = new Set<number>(); for (const s of this.sessions.values()) if (s.state !== 'closing') out.add(s.charId); return out; }
   /** Yönetim: hesabın açık oturumlarını düşür (yasaklama sonrası). */
+  /** hesabın rolü değişti: açık oturumlara ve oyundaki karaktere anında uygula */
+  setAccountRole(accountId: number, role: Role) {
+    for (const s of this.sessions.values()) if (s.accountId === accountId) { s.role = role; if (s.state === 'active') this.channels.send(s.channel, { type: 'admin', op: 'role', charId: s.charId, role }); }
+  }
   kickAccount(accountId: number, reason: string) { for (const s of [...this.sessions.values()]) if (s.accountId === accountId) this.kick(s, reason); }
 
   /** Worker mesajları */

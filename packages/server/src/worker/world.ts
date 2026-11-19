@@ -122,6 +122,14 @@ export class World {
     return true;
   }
   /** İsim Değiştirme: ad veritabanında değişti; burada bellekteki ad güncellenir ve ürün tüketilir. */
+  /** Yönetimden rol değişti: oyundaki karaktere anında yansır (GM yazısı başında belirir/kalkar). */
+  adminSetRole(charId: number, role: string) {
+    const p = this.findPlayer(charId); if (!p) return;
+    p.char.role = role as typeof p.char.role;
+    this.sendJson(p, { t: 'char', id: p.char.id, name: p.char.name, cls: p.char.cls, role: p.char.role });
+    this.notice(p, role === 'gm' || role === 'admin' ? 'Artık Oyun Yöneticisisin (GM).' : 'Rolün güncellendi.', 'info');
+  }
+
   adminRename(charId: number, name: string): boolean {
     const p = this.findPlayer(charId); if (!p || !name) return false;
     const c = p.char;

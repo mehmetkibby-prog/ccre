@@ -393,6 +393,13 @@ function AccountsTab({ toast }: { toast: (x: { ok: boolean; text: string }) => v
     catch (e) { toast({ ok: false, text: (e as Error).message }); }
     setBusy(0);
   };
+  /** rol: GM yapılan oyuncunun başında oyunda anında "GM" yazısı belirir */
+  const setRole = async (a: AAccount, role: string) => {
+    setBusy(a.id);
+    try { await backend.account!(a.id, { role }); toast({ ok: true, text: `${a.username}: rol ${ROLE_NAME[role] ?? role} oldu.${role === 'gm' || role === 'admin' ? ' Oyunda başında GM yazısı görünür.' : ''}` }); await load(); }
+    catch (e) { toast({ ok: false, text: (e as Error).message }); }
+    setBusy(0);
+  };
   const dt = (s: string | null) => s ? new Date(s).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
   const st = data?.stats;
   const FILTERS: [AccFilter, string][] = [['all', 'Tümü'], ['access', 'Bakımda girebilenler'], ['new', 'Son 7 gün'], ['banned', 'Yasaklı']];
@@ -428,6 +435,13 @@ function AccountsTab({ toast }: { toast: (x: { ok: boolean; text: string }) => v
               </div>
               <div className="when"><span>Kayıt: {dt(a.createdAt)}</span><span>Son giriş: {dt(a.lastLogin)}</span></div>
               <div className="acc">
+                {backend.account && a.role !== 'owner' && (
+                  <label className="adm-inline adm-role"><span>Rol</span>
+                    <select className="adm-sel" disabled={busy === a.id} value={a.role} onChange={(e) => setRole(a, e.target.value)}>
+                      {['player', 'moderator', 'gm', 'admin'].map((r) => <option key={r} value={r}>{ROLE_NAME[r]}</option>)}
+                    </select>
+                  </label>
+                )}
                 {staff
                   ? <span className="tag gold">Her zaman girer</span>
                   : <label className={'adm-switch' + (a.testAccess ? ' on' : '')}>

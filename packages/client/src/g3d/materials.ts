@@ -100,7 +100,7 @@ function texMat(name: string, opts: THREE.MeshStandardMaterialParameters = {}, r
 
 /** Tabela yazıları (prop çeşidi = sıra). */
 const SIGN_TEXTS: { title: string; sub: string }[] = [
-  { title: 'PAZAR ALANI', sub: '(Değerli eşyalarınızı burada satın)' },
+  { title: 'PAZAR ALANI', sub: '' },
   { title: 'BALIK TUTMA YERİ', sub: '(Oltanı at, balığını tut)' },
   { title: 'TİLKİ KORUSU', sub: '(Güneyde · yabani tilkiler ve goblinler)' },
 ];
@@ -121,9 +121,12 @@ function signMaterial(v: number) {
   c.textAlign = 'center'; c.textBaseline = 'middle';
   c.shadowColor = 'rgba(0,0,0,.6)'; c.shadowBlur = 6; c.shadowOffsetY = 3;
   c.fillStyle = '#f8e2a4'; c.font = 'bold 128px Georgia, "Times New Roman", serif';
-  c.fillText(t.title, 512, 205, 900);
-  c.fillStyle = '#f3e8d4'; c.font = 'italic 54px Georgia, "Times New Roman", serif';
-  c.fillText(t.sub, 512, 360, 900);
+  if (!t.sub) { c.font = 'bold 150px Georgia, "Times New Roman", serif'; c.fillText(t.title, 512, 262, 900); }
+  else {
+    c.fillText(t.title, 512, 205, 900);
+    c.fillStyle = '#f3e8d4'; c.font = 'italic 54px Georgia, "Times New Roman", serif';
+    c.fillText(t.sub, 512, 360, 900);
+  }
   const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
   return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85, transparent: false });
 }

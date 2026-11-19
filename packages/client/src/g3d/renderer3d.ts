@@ -1117,6 +1117,39 @@ export class Renderer3D {
       if (sub) { ctx.font = '600 11px Nunito, sans-serif'; ctx.strokeText(sub, p.x, p.y - 14); ctx.fillStyle = subColor; ctx.fillText(sub, p.x, p.y - 14); }
       return p;
     };
+    /** Oyuncu/canavar adı: seviye adın solunda turuncu ve belirgin ("Lv 20  Ad"). */
+    const nameTag = (x: number, y: number, h: number, name: string, color: string, level: number, lvColor = '#ffa53a') => {
+      const p = this.project(x, y, h); if (!p.vis) return null;
+      ctx.textBaseline = 'bottom'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.88)';
+      ctx.font = '800 12px Nunito, sans-serif'; const lv = `Lv ${level}`, lw = ctx.measureText(lv).width;
+      ctx.font = '700 13px Nunito, sans-serif'; const nw = ctx.measureText(name).width;
+      const x0 = p.x - (lw + 5 + nw) / 2;
+      ctx.textAlign = 'left';
+      ctx.font = '800 12px Nunito, sans-serif'; ctx.strokeText(lv, x0, p.y); ctx.fillStyle = lvColor; ctx.fillText(lv, x0, p.y);
+      ctx.font = '700 13px Nunito, sans-serif'; ctx.strokeText(name, x0 + lw + 5, p.y); ctx.fillStyle = color; ctx.fillText(name, x0 + lw + 5, p.y);
+      ctx.textAlign = 'center';
+      return p;
+    };
+    /** GM rozeti: adın üstünde hafifçe süzülen, altın ışıltısı gezinen "GM" yazısı (Metin2 tarzı). */
+    const gmTag = (p: { x: number; y: number }, up: number) => {
+      const t = now / 1000, y = p.y - 16 - up + Math.sin(t * 2.4) * 1.6;
+      ctx.save();
+      ctx.font = '900 italic 15px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      const w = ctx.measureText('GM').width;
+      // nabız gibi atan sıcak hale
+      ctx.shadowColor = `rgba(255, 190, 60, ${0.55 + Math.sin(t * 3.2) * 0.25})`; ctx.shadowBlur = 10 + Math.sin(t * 3.2) * 4;
+      ctx.lineWidth = 3.5; ctx.strokeStyle = 'rgba(40,16,0,0.9)'; ctx.strokeText('GM', p.x, y);
+      ctx.shadowBlur = 0;
+      // soldan sağa kayan parıltı
+      const sx = p.x - w / 2 + ((t * 0.7) % 1.6 - 0.3) * w;
+      const gr = ctx.createLinearGradient(p.x - w / 2, y, p.x + w / 2, y);
+      const k = Math.max(0, Math.min(1, (sx - (p.x - w / 2)) / w));
+      gr.addColorStop(0, '#ffb02e'); gr.addColorStop(Math.max(0, k - 0.18), '#ffcf4a'); gr.addColorStop(k, '#fffbe6'); gr.addColorStop(Math.min(1, k + 0.18), '#ffcf4a'); gr.addColorStop(1, '#ff9a1e');
+      ctx.fillStyle = gr; ctx.fillText('GM', p.x, y);
+      // iki yanında küçük yıldız kıvılcımı
+      for (const sd of [-1, 1]) { const a = 0.5 + 0.5 * Math.sin(t * 4 + sd); ctx.fillStyle = `rgba(255,236,170,${a})`; ctx.font = '700 9px Nunito, sans-serif'; ctx.fillText('✦', p.x + sd * (w / 2 + 7), y - 3 - a * 2); }
+      ctx.restore();
+    };
     const bar = (p: { x: number; y: number }, hp: number, max: number, w: number, col: string) => {
       const k = Math.max(0, Math.min(1, hp / Math.max(1, max)));
       ctx.fillStyle = 'rgba(10,8,6,0.85)'; ctx.fillRect(p.x - w / 2 - 1.5, p.y + 2, w + 3, 7);
@@ -1128,7 +1161,7 @@ export class Renderer3D {
       let img = this.emblemImgs.get(emblem);
       if (!img) { img = new Image(); img.src = `/emblems/${emblem}.png`; this.emblemImgs.set(emblem, img); }
       ctx.font = '700 11px Nunito, sans-serif';
-      const w = ctx.measureText(name).width, x0 = p.x - (w + 18) / 2, y = p.y - 29;
+      const w = ctx.measureText(name).width, x0 = p.x - (w + 18) / 2, y = p.y - 16;
       if (img.complete && img.naturalWidth) ctx.drawImage(img, x0, y - 13, 16, 16);
       ctx.textAlign = 'left'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.85)';
       ctx.strokeText(name, x0 + 18, y); ctx.fillStyle = '#ffd98a'; ctx.fillText(name, x0 + 18, y);
@@ -1166,19 +1199,27 @@ export class Renderer3D {
       if (!v || e.deadAt || (e.flags & EFlag.DEAD)) continue;
       if (e.kind === Kind.PLAYER) {
         if (!st.settings.showNames && g.targetId !== e.id) continue;
-        const p = tag(e.x, e.y, 2.15, e.name, (e.flags & EFlag.GM) ? '#ffd84a' : (e.flags & EFlag.PVP) ? '#ff9a9a' : CLASS_COLORS[e.cls], `Sv. ${e.level}`);
+        const gm = (e.flags & EFlag.GM) !== 0;
+        const p = nameTag(e.x, e.y, 2.15, e.name, gm ? '#ffe08a' : (e.flags & EFlag.PVP) ? '#ff9a9a' : CLASS_COLORS[e.cls], e.level);
         if (p && e.hp < e.maxHp) bar(p, e.hp, e.maxHp, 46, '#5fe07a');
-        if (p && e.guild) { const i = e.guild.indexOf('|'); if (i > 0) guildTag(p, Number(e.guild.slice(0, i)) | 0, e.guild.slice(i + 1)); }
+        const hasG = !!p && !!e.guild && e.guild.indexOf('|') > 0;
+        if (p && hasG) { const i = e.guild.indexOf('|'); guildTag(p, Number(e.guild.slice(0, i)) | 0, e.guild.slice(i + 1)); }
+        if (p && gm) gmTag(p, hasG ? 16 : 0);
       } else {
         const def = MONSTERS[e.tpl];
         const targeted = g.targetId === e.id;
         if (!(targeted || g.hoverId === e.id || e.hp < e.maxHp || def?.boss)) continue;
         const pre = e.variant === 2 ? 'Katil ' : e.variant === 1 ? 'Agresif ' : '';
-        const p = tag(e.x, e.y, v.height + 0.35, pre + (def?.name ?? ''), e.variant === 2 ? '#ff6a6a' : e.variant === 1 ? '#ffb35a' : '#f2ecdc', `Sv. ${e.level}`, def?.boss ? '#ffd84a' : '#c8c0b0');
+        const p = nameTag(e.x, e.y, v.height + 0.35, pre + (def?.name ?? ''), e.variant === 2 ? '#ff6a6a' : e.variant === 1 ? '#ffb35a' : '#f2ecdc', e.level, def?.boss ? '#ffd84a' : '#ffa53a');
         if (p) bar(p, e.hp, e.maxHp, def?.boss ? 120 : 56, def?.boss ? '#ff4d7a' : '#e84a3a');
       }
     }
-    if (st.char && st.settings.showNames) { const p = tag(g.dx, g.dy, 2.15, st.char.name, '#fff0c0', `Sv. ${st.self?.level ?? 1}`); const mg = st.guild?.g; if (p && mg) guildTag(p, mg.emblem, mg.name); }
+    if (st.char && st.settings.showNames) {
+      const gm = st.char.role === 'gm' || st.char.role === 'admin' || st.char.role === 'owner';
+      const p = nameTag(g.dx, g.dy, 2.15, st.char.name, gm ? '#ffe08a' : '#fff0c0', st.self?.level ?? 1); const mg = st.guild?.g;
+      if (p && mg) guildTag(p, mg.emblem, mg.name);
+      if (p && gm) gmTag(p, mg ? 16 : 0);
+    }
     // tezgâh tabelaları
     for (const sl of st.stalls) {
       if (Math.hypot(sl.x - g.dx, sl.y - g.dy) > 1700) continue;

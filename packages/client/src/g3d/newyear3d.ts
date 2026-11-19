@@ -146,6 +146,29 @@ export class NewYearFx {
       const x = p.x * U, z = p.y * U, y0 = heightAt(p.x, p.y);
       for (let i = 0; i < 14; i++) { const t = i / 13, a = t * Math.PI * 2 * 3; bulbs.add(x + Math.cos(a) * 0.14, y0 + 0.35 + t * 2.5, z + Math.sin(a) * 0.14, i % 2 ? 0 : 1, i * 0.45 + p.x, 0.17); }
     }
+    // ── Pazar Alanı kapısı (tabela): saçaklarda sarkık diziler, sütunlara sarmal, tabela çerçevesinde ampuller ──
+    for (const [gi, p] of l.props.filter((q) => q.k === 'gate').entries()) {
+      const ox = p.x * U, oz = p.y * U, oy = heightAt(p.x, p.y) - 0.03, s = p.s, Z = 4.1, L = 2.2;
+      const P = (x: number, y: number, z: number): [number, number, number] => [ox + x * s, oy + y * s, oz + z * s];
+      for (const sx of [-1, 1]) {
+        // çatı saçağı boyunca dört parça sarkık dizi
+        for (let k = 0; k < 4; k++) {
+          const z0 = -(Z + 0.75) + ((2 * Z + 1.5) * k) / 4, z1 = -(Z + 0.75) + ((2 * Z + 1.5) * (k + 1)) / 4;
+          const a = P(sx * 0.98, 5.82 + L, z0), b2 = P(sx * 0.98, 5.82 + L, z1);
+          bulbs.string(a[0], a[1], a[2], b2[0], b2[1], b2[2], 7, 0.3 * s, gi * 41 + k * 9 + (sx > 0 ? 3 : 0), 0.3);
+        }
+        // tabela çerçevesi (üst ve alt altın çıta)
+        for (const y of [5.42 + L, 2.88 + L]) {
+          const a = P(sx * 0.16, y, -3.2), b2 = P(sx * 0.16, y, 3.2);
+          bulbs.string(a[0], a[1], a[2], b2[0], b2[1], b2[2], 14, 0, gi * 23 + y * 3 + (sx > 0 ? 1 : 0), 0.24);
+        }
+      }
+      // sütunlara sarmal ampul
+      for (const z of [-Z, Z]) {
+        const c = P(0, 0, z);
+        for (let i = 0; i < 26; i++) { const t = i / 25, a = t * Math.PI * 2 * 4; bulbs.add(c[0] + Math.cos(a) * 0.46 * s, oy + (0.7 + t * (5.0 + L)) * s, c[2] + Math.sin(a) * 0.46 * s, i % 2 ? 0 : 1, i * 0.5 + z, 0.22); }
+      }
+    }
     this.group.add(bulbs.build(this.mat));
     // ── meydan ağacı ──
     const f = l.props.find((p) => p.k === 'fountain');

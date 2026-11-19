@@ -444,6 +444,7 @@ export function buildApi(d: ApiDeps): Router {
       if (!['player', 'moderator', 'gm', 'admin'].includes(role)) throw new HttpError(400, 'Geçersiz rol.');
       if (role === 'admin' && a.role !== 'owner') throw new HttpError(403, 'Yönetici rolünü yalnız kurucu verebilir.');
       await pool.query('UPDATE accounts SET role=$2 WHERE id=$1', [acc, role]);
+      d.gateway.setAccountRole(acc, role);
     }
     if (unban) await pool.query('UPDATE accounts SET banned_until=NULL, ban_reason=NULL WHERE id=$1', [acc]);
     else if (banHours) {
