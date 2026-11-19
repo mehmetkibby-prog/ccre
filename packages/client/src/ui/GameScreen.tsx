@@ -539,7 +539,7 @@ function BottomBar({ game }: { game: Game }) {
     return (
       <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} — ${sk.desc}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
-        onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
+        onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerCancel={() => s === 0 && game.input.attackHeld && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
         {sk ? <SkillIcon id={sk.id} /> : <SkillIcon id="" />}
         {left > 0 && <div className="cd"><span>{(left / 1000).toFixed(left < 3000 ? 1 : 0)}</span></div>}
@@ -635,8 +635,8 @@ function MobileControls({ game }: { game: Game }) {
     const down = (e: PointerEvent) => { id = e.pointerId; el.setPointerCapture(e.pointerId); set(e); };
     const move = (e: PointerEvent) => { if (e.pointerId === id) set(e); };
     const up = (e: PointerEvent) => { if (e.pointerId !== id) return; id = null; game.input.joy = { x: 0, y: 0, active: false }; if (knob.current) knob.current.style.transform = ''; };
-    el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
-    return () => { el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); };
+    el.addEventListener('pointerdown', down); el.addEventListener('pointermove', move); el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+    return () => { el.removeEventListener('pointerdown', down); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); el.removeEventListener('pointercancel', up); el.removeEventListener('lostpointercapture', up); };
   }, [game]);
   const cd = (s: number) => { const l = Math.max(0, (cds[s] ?? 0) - now); return l > 0 ? <div className="cdo">{(l / 1000).toFixed(0)}</div> : null; };
   const self = store.get().self; const cls = store.get().char?.cls as ClassId;

@@ -707,12 +707,20 @@ export class Game {
         for (const o of [6, 12, 18, 24]) { for (const sg of [side, -side]) { const d2 = (dir + o * sg + DIR_STEPS) % DIR_STEPS; if (moves(d2)) { found = d2; this.avoidSide = sg; break; } } if (found >= 0) break; }
         if (found >= 0) { dir = found; this.avoidUntil = performance.now() + 700; }
       }
-      // uzun süre hedefe yaklaşamıyorsa (oto av) başka canavara geç
+      // uzun süre hedefe/tıklanan yere yaklaşamıyorsa dur (engelin kenarında sonsuza dek sürtünüp "takılı gitmesin");
+      // oto avda başka canavara geçilir
       const tg = this.targetId ? this.ents.get(this.targetId) : undefined;
-      if (tg && st.self?.autoOn) {
-        const dd = Math.hypot(tg.x - this.px, tg.y - this.py);
+      const goalP = tg && (this.autoAttack || this.walkToTarget) ? tg : this.moveTarget;
+      if (goalP) {
+        const dd = Math.hypot(goalP.x - this.px, goalP.y - this.py);
         if (dd < this.stuckBest - 8) { this.stuckBest = dd; this.stuckAt = performance.now(); }
-        else if (performance.now() - this.stuckAt > 2500) { this.unreachable.set(tg.id, performance.now() + 30_000); this.setTarget(0); this.path = null; this.stuckBest = 1e9; this.stuckAt = performance.now(); }
+        else if (performance.now() - this.stuckAt > 2500) {
+          if (tg && goalP === tg) {
+            if (st.self?.autoOn) { this.unreachable.set(tg.id, performance.now() + 30_000); this.setTarget(0); }
+            else { this.autoAttack = false; this.walkToTarget = false; notify('Hedefe ulaşılamıyor.', 'error'); }
+          } else { this.moveTarget = null; this.interactNpc = null; }
+          this.path = null; this.stuckBest = 1e9; this.stuckAt = performance.now(); dir = NO_DIR;
+        }
       }
     } else { this.stuckBest = 1e9; this.stuckAt = performance.now(); }
     // kendi ganimetini otomatik al (5 sn sonra sunucu da toplar; yakında elle de)
