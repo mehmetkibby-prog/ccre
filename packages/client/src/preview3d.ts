@@ -95,7 +95,7 @@ const loop = (t: number) => {
   const ft = (window as any).__ft ??= []; ft.push(dt); if (ft.length > 600) ft.shift();
   (window as any).__phase = [...g.ents.values()].map((e: CEnt) => Math.round(t - e.animStart));
   if (sfxq && !q.get('manual') && t - sfxAt > Number(q.get('period') ?? 2600)) { sfxAt = t; (window as any).__sfx(t); }
-  if ((window as any).__hideSelf) { const sv = (r as any).self; if (sv) sv.obj.visible = false; }
+  if ((window as any).__hideSelf) { const sv = (r as any).self; if (sv) sv.obj.visible = false; r.selfRing.visible = false; }
   r.draw(t, dt);
   if ((window as any).__hideSelf) { const sv = (r as any).self; if (sv) sv.obj.visible = false; }
   if (++frames >= maxFrames) { (window as any).done = true; return; }
