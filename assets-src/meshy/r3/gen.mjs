@@ -1,0 +1,11 @@
+// Takı simgeleri (kolye, küpe, bilezik, yüzük) 2×2 sayfa, eflatun zemin.  node gen.mjs
+import fs from 'node:fs';
+const API = 'https://api.meshy.ai/openapi/v1';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function call(m, p, body) { for (let i = 0; ; i++) { const r = await fetch(API + p, { method: m, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }); const t = await r.text(); if (r.status === 429 && i < 8) { await sleep(4000 * (i + 1)); continue; } if (!r.ok) throw new Error(`${m} ${p} ${r.status} ${t.slice(0, 300)}`); return JSON.parse(t); } }
+const prompt = 'A 2 by 2 grid of four separate premium fantasy RPG jewelry item icons on a flat solid pure magenta background (#FF00FF), each centered in its own quarter with wide empty magenta space around it, no grid lines. Top-left: an ornate amulet necklace, a fine gold chain with an engraved gold pendant holding a large glowing sapphire-blue gem framed by small leaves. Top-right: a pair of elegant dangling earrings, gold hooks with teardrop ruby gems and tiny pearl accents. Bottom-left: a wide ornate bracelet bangle of polished gold with silver filigree and three inset emerald gems. Bottom-right: a heroic signet ring of gold with a large amethyst stone. Stylized painterly semi-realistic MMORPG item icon art with soft cel shading, clean bold silhouettes with thin dark outlines, rich saturated colors and bright specular highlights, no text, no border, no shadow on the background.';
+const st = fs.existsSync('state.json') ? JSON.parse(fs.readFileSync('state.json', 'utf8')) : {};
+console.log('kredi', (await call('GET', '/balance')).balance);
+if (!st.sheet) { st.sheet = (await call('POST', '/text-to-image', { ai_model: 'nano-banana-pro', prompt, aspect_ratio: '1:1' })).result; fs.writeFileSync('state.json', JSON.stringify(st)); }
+for (;;) { const t = await call('GET', `/text-to-image/${st.sheet}`); if (t.status === 'SUCCEEDED') { fs.writeFileSync('sheet.png', Buffer.from(await (await fetch(t.image_urls[0])).arrayBuffer())); break; } if (t.status === 'FAILED') throw new Error('fail'); await sleep(4000); }
+console.log('kredi', (await call('GET', '/balance')).balance);

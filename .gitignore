@@ -35,3 +35,6 @@ assets-src/meshy/r2/*.png
 assets-src/meshy/r2/*.glb
 assets-src/meshy/r2/state.json
 assets-src/meshy/r2/*.log
+assets-src/meshy/r3/*.png
+assets-src/meshy/r3/state.json
+assets-src/meshy/r3/*.log

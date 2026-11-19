@@ -1,5 +1,5 @@
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
-import { EventBadges } from './events.tsx';
+import { EventBadges, EventButton } from './events.tsx';
 import { GatherHud } from './garden.tsx';
 import { onConfig } from '../admin/config.ts';
 import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
@@ -160,7 +160,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <AnnouncementBar />
       <GatherHud />
       <Minimap game={game} />
-      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
+      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><EventButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
       <BossCountdowns game={game} />

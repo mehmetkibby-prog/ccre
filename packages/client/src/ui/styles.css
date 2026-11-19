@@ -1988,3 +1988,18 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .gd-adm-row { padding: 10px 12px; border-radius: 10px; background: rgba(0, 0, 0, .22); box-shadow: inset 3px 0 0 #8ad070, inset 0 0 0 1px rgba(255, 255, 255, .06); }
 .gd-adm-row .hd { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .gd-adm-row .hd img { width: 32px; height: 32px; object-fit: contain; }
+/* etkinlik düğmesi ve penceresi */
+.ev-btn.on { box-shadow: inset 0 0 0 1px #ffd25a, 0 0 14px rgba(255, 200, 80, .55), 0 6px 14px rgba(0, 0, 0, .45); animation: ev-btn-pulse 1.8s ease-in-out infinite; }
+@keyframes ev-btn-pulse { 50% { box-shadow: inset 0 0 0 1px #ffe8a0, 0 0 22px rgba(255, 210, 90, .8), 0 6px 14px rgba(0, 0, 0, .45); } }
+.ev-btn .ev-n { position: absolute; top: -4px; right: -4px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; background: #5ad16a; color: #08200a; font: 800 10.5px/17px var(--f-ui, sans-serif); font-style: normal; box-shadow: 0 0 0 2px #1c120a; }
+.evp-sec { font: 700 11.5px var(--f-ui, sans-serif); letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); margin: 6px 0 6px; }
+.evp-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 8px; }
+.evp-card { --c: #ffd25a; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; background: rgba(0, 0, 0, .25); box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.evp-card.live { background: linear-gradient(90deg, color-mix(in srgb, var(--c) 16%, rgba(0, 0, 0, .3)), rgba(0, 0, 0, .25)); box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px color-mix(in srgb, var(--c) 45%, transparent); }
+.evp-card.ev-drop { --c: #ffa25a; } .evp-card.ev-essence { --c: #7cd8ff; } .evp-card.ev-chest { --c: #a8f0ff; }
+.evp-card .ic { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--c) 25%, transparent); color: var(--c); font-size: 18px; flex: 0 0 auto; }
+.evp-card img { width: 36px; height: 36px; object-fit: contain; flex: 0 0 auto; }
+.evp-card .mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; }
+.evp-card .mid b { color: var(--c); font-size: 14px; } .evp-card .mid span { color: #e0d6c0; }
+.evp-card .tm { display: flex; flex-direction: column; align-items: flex-end; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.evp-card .tm small { font-size: 10.5px; color: var(--muted); } .evp-card .tm b { font-size: 14px; color: #fff; }

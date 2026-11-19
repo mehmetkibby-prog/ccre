@@ -12,6 +12,7 @@ import { TowerPanel } from './tower.tsx';
 import { ForgePanel } from './forge.tsx';
 import { CraftPanel } from './craft.tsx';
 import { GardenPanel } from './garden.tsx';
+import { EventsPanel } from './events.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
 import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
@@ -66,6 +67,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'garden' && <GardenPanel />}
+      {p === 'events' && <EventsPanel />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
