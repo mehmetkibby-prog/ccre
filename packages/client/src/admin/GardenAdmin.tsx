@@ -1,10 +1,11 @@
 import React from 'react';
-import { GARDEN_DEFAULT, HERBS, POTIONS, POTION_EFFECT, MATERIAL, type GameTuning, type Recipe, type PotionKey, type HerbKey } from '@col/shared';
+import { GARDEN_DEFAULT, RECIPE_INPUTS, POTIONS, POTION_EFFECT, MATERIAL, type GameTuning, type Recipe, type PotionKey } from '@col/shared';
 import { Num } from './AdminPanel.tsx';
 import { iconUrl } from '../game/art/icons.ts';
 
 type SetT = React.Dispatch<React.SetStateAction<GameTuning>>;
 const name = (k: string) => MATERIAL.get(k)?.name ?? k;
+const icon = (k: string) => iconUrl(MATERIAL.get(k)?.icon ?? k);
 
 /** Şifa Bahçesi: orak fiyatı, toplama/büyüme süreleri, çıkan ot ve her iksirin tarifi + etkisi. */
 export function GardenTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
@@ -16,11 +17,11 @@ export function GardenTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: bo
     <>
       <section className="admin-sec">
         <h4><img src={iconUrl('herb_basket')} alt="" style={{ width: 28, verticalAlign: 'middle' }} /> Şifa Bahçesi</h4>
-        <div className="muted adm-hint">Pazar Köyü'nde tilkilere giden yolun doğusunda 4 sıra × 4 bitki. Şifacı Reyhan orak satar ve iksir kaynatır. Her oyuncu için bitki, topladıktan sonra ayrı yeniden büyür.</div>
+        <div className="muted adm-hint">Pazar Köyü'nde tilkilere giden yolun doğusunda 4 sıra × 10 bitki. Şifacı Reyhan orak satar ve iksir kaynatır. Her oyuncu için bitki, topladıktan sonra ayrı yeniden büyür.</div>
         <div className="adm-fields six">
           <label className={'adm-switch' + (T.enabled ? ' on' : '')}><input type="checkbox" checked={T.enabled} disabled={dis} onChange={() => set({ enabled: !T.enabled })} /><span className="knob" /><span className="lbl">Bahçe açık</span></label>
           <label><span>Orak fiyatı (Mücevher)</span><Num v={T.sicklePrice} def={D.sicklePrice} min={0} max={1e7} step={1} w={90} dis={dis} on={(v) => set({ sicklePrice: Math.round(v ?? D.sicklePrice) })} /></label>
-          <label><span>Yeniden büyüme (dk)</span><Num v={+(T.regrowSec / 60).toFixed(2)} def={D.regrowSec / 60} min={0.1} max={1440} step={0.5} w={70} dis={dis} on={(v) => set({ regrowSec: Math.round((v ?? D.regrowSec / 60) * 60) })} /></label>
+          <label><span>Yeniden doğma (sn)</span><Num v={T.regrowSec} def={D.regrowSec} min={1} max={86400} step={1} w={80} dis={dis} on={(v) => set({ regrowSec: Math.max(1, Math.round(v ?? D.regrowSec)) })} /></label>
           <label><span>Toplama süresi (sn)</span><Num v={+(T.gatherMs / 1000).toFixed(2)} def={D.gatherMs / 1000} min={0.3} max={10} step={0.1} w={70} dis={dis} on={(v) => set({ gatherMs: Math.round((v ?? D.gatherMs / 1000) * 1000) })} /></label>
           <label><span>Çıkan ot en az</span><Num v={T.qty[0]} def={D.qty[0]} min={1} max={99} step={1} w={60} dis={dis} on={(v) => set({ qty: [v ?? 1, Math.max(v ?? 1, T.qty[1])] })} /></label>
           <label><span>Çıkan ot en çok</span><Num v={T.qty[1]} def={D.qty[1]} min={1} max={99} step={1} w={60} dis={dis} on={(v) => set({ qty: [Math.min(T.qty[0], v ?? 1), v ?? 1] })} /></label>
@@ -28,7 +29,7 @@ export function GardenTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: bo
       </section>
       <section className="admin-sec">
         <h4>İksirler: tarif ve etki</h4>
-        <div className="muted adm-hint">Her iksir için hangi otlardan kaç tane, kaç Mücevher ve bir kaynatmada kaç iksir çıkacağı; içince etkisi ve süresi.</div>
+        <div className="muted adm-hint">Her iksir için hangi otlardan, kaç Kor Mührü ve hangi balıklardan kaç tane, kaç Mücevher ve bir kaynatmada kaç iksir çıkacağı; içince etkisi ve süresi.</div>
         <div className="gd-adm">
           {T.recipes.map((r, i) => (
             <div key={i} className="gd-adm-row">
@@ -40,8 +41,8 @@ export function GardenTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: bo
                 <button className="btn small ghost" disabled={dis} onClick={() => set({ recipes: T.recipes.filter((_, j) => j !== i) })}>✕</button>
               </div>
               <div className="adm-fields six">
-                {HERBS.map((h) => (
-                  <label key={h}><span><img src={iconUrl(h)} alt="" style={{ width: 16, verticalAlign: 'middle' }} /> {name(h)}</span><Num v={r.herbs[h] ?? 0} def={0} min={0} max={999} step={1} w={56} dis={dis} on={(v) => { const herbs = { ...r.herbs }; if (v) herbs[h as HerbKey] = Math.round(v); else delete herbs[h as HerbKey]; setR(i, { herbs }); }} /></label>
+                {RECIPE_INPUTS.map((h) => (
+                  <label key={h}><span><img src={icon(h)} alt="" style={{ width: 16, verticalAlign: 'middle' }} /> {name(h)}</span><Num v={r.herbs[h] ?? 0} def={0} min={0} max={999} step={1} w={56} dis={dis} on={(v) => { const herbs = { ...r.herbs }; if (v) herbs[h] = Math.round(v); else delete herbs[h]; setR(i, { herbs }); }} /></label>
                 ))}
                 <label><span>Mücevher</span><Num v={r.gems} def={0} min={0} max={1e7} step={1} w={70} dis={dis} on={(v) => setR(i, { gems: Math.round(v ?? 0) })} /></label>
                 <label><span>Çıkan iksir</span><Num v={r.out} def={1} min={1} max={99} step={1} w={56} dis={dis} on={(v) => setR(i, { out: Math.round(v ?? 1) })} /></label>
@@ -51,7 +52,7 @@ export function GardenTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: bo
             </div>
           ))}
         </div>
-        <button className="btn" style={{ marginTop: 8 }} disabled={dis || T.recipes.length >= 12} onClick={() => set({ recipes: [...T.recipes, { potion: 'potion_swift', herbs: { herb_wind: 3 }, gems: 20, out: 1 }] })}>+ Tarif ekle</button>
+        <button className="btn" style={{ marginTop: 8 }} disabled={dis || T.recipes.length >= 12} onClick={() => set({ recipes: [...T.recipes, { potion: 'potion_swift', herbs: { herb_wind: 3, kor_seal: 1 }, gems: 20, out: 1 }] })}>+ Tarif ekle</button>
       </section>
     </>
   );

@@ -7,7 +7,7 @@ import { U } from './terrain.ts';
 /**
  * Şifa Bahçesi bitkileri (prosedürel, hafif): her sıra ayrı tür. Olgun bitki rüzgârda hafif sallanır ve üstünde
  * küçük bir ışıltı nabız gibi atar; toplanınca filize döner, yeniden olgunlaşınca büyüyerek açar.
- * Bitki başına birkaç birleştirilmiş ağ (toplam ~16 × 3 çizim), malzemeler ortak.
+ * 40 bitki toplu çizilir (InstancedMesh): tür başına parça sayısı kadar çizim çağrısı, toplam ~13; telefonda da hafif.
  */
 const ROW_GLOW = ['#bfffe0', '#ff8a8a', '#ffd27a', '#d6b8ff'];
 
@@ -40,7 +40,7 @@ function petal(len: number, wid: number) {
 const place = (g: THREE.BufferGeometry, rx: number, ry: number, rz: number, x = 0, y = 0, z = 0) => { g.rotateX(rx); g.rotateZ(rz); g.rotateY(ry); g.translate(x, y, z); return g; };
 
 interface Fly { s: THREE.Sprite; cx: number; cz: number; y: number; r: number; ph: number; sp: number }
-interface PlantView { root: THREE.Group; full: THREE.Group; sprout: THREE.Mesh; glow: THREE.Sprite; row: number; ripe: boolean; grow: number; seed: number }
+interface PlantView { i: number; row: number; slot: number; x: number; y: number; z: number; ry: number; ripe: boolean; grow: number; seed: number }
 
 export class GardenFx {
   group = new THREE.Group();
@@ -48,6 +48,12 @@ export class GardenFx {
   private mats: THREE.Material[] = [];
   private geos: THREE.BufferGeometry[] = [];
   private flies: Fly[] = [];
+  /** tür (sıra) başına o türün parçaları (her parça bir InstancedMesh, sıradaki bitki sayısı kadar örnek) */
+  private rowMeshes: THREE.InstancedMesh[][] = [];
+  private sproutIM!: THREE.InstancedMesh;
+  private glowPts!: THREE.Points;
+  private readonly M = new THREE.Matrix4(); private readonly Q = new THREE.Quaternion(); private readonly E = new THREE.Euler();
+  private readonly P = new THREE.Vector3(); private readonly S = new THREE.Vector3();
 
   constructor(heightAt: (x: number, y: number) => number) {
     this.group.name = 'garden';
@@ -121,17 +127,17 @@ export class GardenFx {
       for (const s of [-1, 1]) { const pl = new THREE.Mesh(longG, plankM); pl.position.set(0, 0.08, s * (bw / 2 + 0.03)); pl.castShadow = pl.receiveShadow = true; bed.add(pl); const ed = new THREE.Mesh(endG, plankM); ed.position.set(s * (len / 2 + 0.03), 0.08, 0); bed.add(ed); }
       this.group.add(bed);
       // sıranın önünde basamak taşları
-      if (ri < GARDEN_ROWS.length - 1) for (let k = 0; k < 7; k++) {
-        const sx = x0 + ((k + 0.5) / 7) * (x1 - x0), sy = (ty + 2) * TILE, st = new THREE.Mesh(stoneG, stoneM);
+      if (ri < GARDEN_ROWS.length - 1) for (let k = 0, ns = Math.round(len / 1.6); k < ns; k++) {
+        const sx = x0 + ((k + 0.5) / ns) * (x1 - x0), sy = (ty + 2) * TILE, st = new THREE.Mesh(stoneG, stoneM);
         st.position.set(sx * U, heightAt(sx, sy) + 0.01, sy * U); st.rotation.y = k * 1.7; st.receiveShadow = true; this.group.add(st);
       }
     }
     // yatakların boş aralarında küçük yeşillikler (tek instanced çizim)
     {
-      const n = GARDEN_ROWS.length * 12, im = new THREE.InstancedMesh(sproutG, leafM, n), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), P = new THREE.Vector3();
+      const per = GARDEN_COLS.length * 3, n = GARDEN_ROWS.length * per, im = new THREE.InstancedMesh(sproutG, leafM, n), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), S = new THREE.Vector3(), P = new THREE.Vector3();
       let k = 0;
-      for (const ty of GARDEN_ROWS) for (let j = 0; j < 12; j++) {
-        const sx = x0 + ((j + 0.5) / 12) * (x1 - x0) + (rnd(k + 300) - 0.5) * 30, sy = (ty + 0.5) * TILE + (rnd(k + 400) - 0.5) * 34;
+      for (const ty of GARDEN_ROWS) for (let j = 0; j < per; j++) {
+        const sx = x0 + ((j + 0.5) / per) * (x1 - x0) + (rnd(k + 300) - 0.5) * 30, sy = (ty + 0.5) * TILE + (rnd(k + 400) - 0.5) * 34;
         if (GARDEN_PLANTS.some((pl) => Math.hypot(pl.x - sx, pl.y - sy) < 34)) { S.setScalar(0.0001); } else S.setScalar(0.7 + rnd(k + 500) * 0.6);
         Q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd(k + 600) * 6.28); P.set(sx * U, heightAt(sx, sy) + 0.13, sy * U);
         M.compose(P, Q, S); im.setMatrixAt(k++, M);
@@ -141,44 +147,68 @@ export class GardenFx {
     // kelebekler: küçük renkli parıltılar bahçe üstünde süzülür (çok hafif)
     const flyCols = ['#fff3a0', '#ffb0e0', '#a8e0ff', '#ffffff', '#c8ffb0'];
     const gx = ((x0 + x1) / 2) * U, gz = ((GARDEN_ROWS[0] + GARDEN_ROWS[GARDEN_ROWS.length - 1]) / 2 + 0.5) * TILE * U;
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 12; i++) {
       const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: flyCols[i % flyCols.length], blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.85 }));
       s.scale.setScalar(0.22); this.mats.push(s.material); this.group.add(s);
       this.flies.push({ s, cx: gx + (rnd(i + 40) - 0.5) * len * 0.8, cz: gz + (rnd(i + 50) - 0.5) * 6, y: heightAt(gx / U, gz / U) + 0.8 + rnd(i + 60) * 0.7, r: 0.8 + rnd(i + 70) * 1.6, ph: rnd(i + 80) * 6.28, sp: 0.4 + rnd(i + 90) * 0.5 });
     }
-    for (const pl of GARDEN_PLANTS) {
-      const root = new THREE.Group();
-      root.position.set(pl.x * U, heightAt(pl.x, pl.y) + 0.12, pl.y * U);
-      root.rotation.y = rnd(pl.i + 11) * Math.PI * 2;
-      const m = new THREE.Mesh(mound, soilM); m.receiveShadow = true; root.add(m);
-      const full = base[pl.row].clone() as THREE.Group; full.position.y = 0.06; full.scale.setScalar(1.9 + rnd(pl.i) * 0.3);
-      full.traverse((o) => { const mm = o as THREE.Mesh; if (mm.isMesh) mm.castShadow = true; });
-      const sprout = new THREE.Mesh(sproutG, leafM); sprout.position.y = 0.06; sprout.visible = false;
-      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: ROW_GLOW[pl.row], blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: 0.5 }));
-      glow.scale.setScalar(1.2); glow.position.y = 1.0; this.mats.push(glow.material);
-      root.add(full, sprout, glow);
-      this.group.add(root);
-      this.plants.push({ root, full, sprout, glow, row: pl.row, ripe: true, grow: 1, seed: rnd(pl.i + 5) * 10 });
+    // bitkiler: tür başına parça parça InstancedMesh; tümseği ve filizi ortak birer InstancedMesh; ışıltılar tek nokta bulutu
+    const N = GARDEN_PLANTS.length;
+    for (const [row] of GARDEN_ROWS.entries()) {
+      const cnt = GARDEN_PLANTS.filter((p) => p.row === row).length, parts: THREE.InstancedMesh[] = [];
+      base[row].traverse((o) => {
+        const mm = o as THREE.Mesh; if (!mm.isMesh) return;
+        const im = new THREE.InstancedMesh(mm.geometry, mm.material as THREE.Material, cnt);
+        im.castShadow = true; im.frustumCulled = false; im.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        parts.push(im); this.group.add(im);
+      });
+      this.rowMeshes.push(parts);
     }
+    const moundIM = new THREE.InstancedMesh(mound, soilM, N); moundIM.receiveShadow = true; moundIM.frustumCulled = false;
+    this.sproutIM = new THREE.InstancedMesh(sproutG, leafM, N); this.sproutIM.frustumCulled = false; this.sproutIM.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    const gPos = new Float32Array(N * 3), gCol = new Float32Array(N * 3);
+    const slots = GARDEN_ROWS.map(() => 0);
+    for (const pl of GARDEN_PLANTS) {
+      const y = heightAt(pl.x, pl.y) + 0.12, ry = rnd(pl.i + 11) * Math.PI * 2;
+      this.Q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), ry); this.P.set(pl.x * U, y, pl.y * U);
+      moundIM.setMatrixAt(pl.i, this.M.compose(this.P, this.Q, this.S.setScalar(1)));
+      this.plants.push({ i: pl.i, row: pl.row, slot: slots[pl.row]++, x: pl.x * U, y, z: pl.y * U, ry, ripe: true, grow: 1, seed: rnd(pl.i + 5) * 10 });
+      gPos.set([pl.x * U, y + 1, pl.y * U], pl.i * 3);
+    }
+    moundIM.instanceMatrix.needsUpdate = true; this.group.add(moundIM, this.sproutIM);
+    const gg = G(new THREE.BufferGeometry());
+    gg.setAttribute('position', new THREE.BufferAttribute(gPos, 3).setUsage(THREE.DynamicDrawUsage));
+    gg.setAttribute('color', new THREE.BufferAttribute(gCol, 3).setUsage(THREE.DynamicDrawUsage));
+    const gm = new THREE.PointsMaterial({ map: glowTexture(), size: 1.2, sizeAttenuation: true, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false });
+    this.mats.push(gm);
+    this.glowPts = new THREE.Points(gg, gm); this.glowPts.frustumCulled = false; this.group.add(this.glowPts);
   }
 
   /** ready: bitki başına kalan olgunlaşma süresi (ms, at anında) */
   update(now: number, dt: number, garden: { ready: number[]; at: number } | null) {
     const t = now / 1000;
-    for (let i = 0; i < this.plants.length; i++) {
-      const p = this.plants[i];
-      const ripe = !garden || (garden.ready[i] ?? 0) - (now - garden.at) <= 0;
+    const { M, Q, E, P, S } = this, zero = S.clone().setScalar(0);
+    const gPos = this.glowPts.geometry.attributes.position as THREE.BufferAttribute, gCol = this.glowPts.geometry.attributes.color as THREE.BufferAttribute;
+    const col = new THREE.Color();
+    for (const p of this.plants) {
+      const ripe = !garden || (garden.ready[p.i] ?? 0) - (now - garden.at) <= 0;
       if (ripe !== p.ripe) { p.ripe = ripe; p.grow = ripe ? 0 : 1; }
       if (ripe && p.grow < 1) p.grow = Math.min(1, p.grow + dt / 700);
       const e = 1 - Math.pow(1 - p.grow, 3);
-      p.full.visible = ripe; p.sprout.visible = !ripe;
-      p.full.scale.setScalar((1.9 + (p.seed % 1) * 0.3) * (0.35 + 0.65 * e));
-      // rüzgârda hafif salınım
-      p.full.rotation.z = Math.sin(t * 1.6 + p.seed) * 0.05; p.full.rotation.x = Math.sin(t * 1.2 + p.seed * 1.7) * 0.035;
-      p.glow.visible = ripe;
-      (p.glow.material as THREE.SpriteMaterial).opacity = 0.18 + 0.22 * (0.5 + 0.5 * Math.sin(t * 2.2 + p.seed));
-      p.glow.position.y = 0.95 + p.row * 0.06 + Math.sin(t * 1.4 + p.seed) * 0.06;
+      // olgun bitki: rüzgârda hafif salınım, büyüyerek açar; olgun değilse yerinde filiz
+      E.set(Math.sin(t * 1.2 + p.seed * 1.7) * 0.035, p.ry, Math.sin(t * 1.6 + p.seed) * 0.05, 'YXZ'); Q.setFromEuler(E);
+      P.set(p.x, p.y + 0.06, p.z);
+      const sc = ripe ? (1.9 + (p.seed % 1) * 0.3) * (0.35 + 0.65 * e) : 0;
+      M.compose(P, Q, S.setScalar(sc));
+      for (const im of this.rowMeshes[p.row]) im.setMatrixAt(p.slot, M);
+      Q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), p.ry);
+      this.sproutIM.setMatrixAt(p.i, M.compose(P, Q, ripe ? zero : S.setScalar(1)));
+      const k = ripe ? 0.18 + 0.22 * (0.5 + 0.5 * Math.sin(t * 2.2 + p.seed)) : 0;
+      col.set(ROW_GLOW[p.row]).multiplyScalar(k); gCol.setXYZ(p.i, col.r, col.g, col.b);
+      gPos.setY(p.i, p.y + 0.95 + p.row * 0.06 + Math.sin(t * 1.4 + p.seed) * 0.06);
     }
+    for (const parts of this.rowMeshes) for (const im of parts) im.instanceMatrix.needsUpdate = true;
+    this.sproutIM.instanceMatrix.needsUpdate = true; gPos.needsUpdate = true; gCol.needsUpdate = true;
     for (const f of this.flies) {
       const a = t * f.sp + f.ph;
       f.s.position.set(f.cx + Math.cos(a) * f.r, f.y + Math.sin(a * 2.3) * 0.25, f.cz + Math.sin(a * 1.3) * f.r * 0.6);

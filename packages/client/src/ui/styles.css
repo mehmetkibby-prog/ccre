@@ -748,7 +748,7 @@ a.btn { text-decoration: none; display: inline-block; }
   .adm-main { padding: 20px 24px 60px; width: 100%; }
   .adm-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .adm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .adm-grid > .adm-stats { grid-column: 1 / -1; }
+  .adm-grid > .adm-stats, .adm-grid > .adm-wide { grid-column: 1 / -1; }
   .adm-search-row { top: 53px; }
 }
 @media (max-width: 420px) {
@@ -2003,3 +2003,40 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .evp-card .mid b { color: var(--c); font-size: 14px; } .evp-card .mid span { color: #e0d6c0; }
 .evp-card .tm { display: flex; flex-direction: column; align-items: flex-end; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .evp-card .tm small { font-size: 10.5px; color: var(--muted); } .evp-card .tm b { font-size: 14px; color: #fff; }
+
+/* yönetim: canlı işlem yükü ve sohbet akışı */
+.ld-prof { padding: 12px 14px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--edge); background: rgba(0, 0, 0, .2); margin-bottom: 10px; }
+.ld-pstate { margin-top: 10px; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.ld-pstate.error { color: var(--bad); }
+.ld-pstate .ld-bar { flex-basis: 100%; }
+.ld-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.ld-c { padding: 14px; border-radius: 12px; background: linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(0, 0, 0, .25)); box-shadow: inset 0 0 0 1px var(--edge); --lc: var(--ok); }
+.ld-c.mid { --lc: #ffc65a; } .ld-c.bad { --lc: var(--bad); }
+.ld-lv { font-size: 11px; color: var(--lc); }
+.ld-big { font: 700 34px/1.1 var(--f-ui, inherit); color: var(--lc); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.ld-big small { font-size: 16px; margin-left: 3px; }
+.ld-sub { font-size: 12px; margin: 2px 0 10px; }
+.ld-bar { height: 5px; border-radius: 3px; background: rgba(0, 0, 0, .45); overflow: hidden; }
+.ld-bar i { display: block; height: 100%; background: var(--lc, var(--ok)); border-radius: 3px; transition: width .6s; }
+.ld-kv { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; font-size: 12.5px; margin: 12px 0 10px; padding-bottom: 10px; border-bottom: 1px solid var(--edge); }
+.ld-kv span { color: var(--muted, #b9b2a2); } .ld-kv b { font-variant-numeric: tabular-nums; }
+.ld-kv .warn, .ld-job .warn { color: #ffc65a; }
+.ld-jobs summary { cursor: pointer; font-size: 13px; }
+.ld-jobs summary i { font-style: normal; font-size: 11px; background: rgba(255, 198, 90, .2); color: #ffc65a; border-radius: 8px; padding: 0 6px; margin-left: 4px; }
+.ld-jobs > div { font-size: 12px; margin-top: 6px; }
+.ld-job { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; padding: 5px 0; border-top: 1px dashed rgba(255, 255, 255, .06); }
+.ld-job em { font-style: normal; font-variant-numeric: tabular-nums; }
+.ld-job small { grid-column: 2 / -1; }
+.cf-box { max-height: 340px; min-height: 140px; overflow-y: auto; border-radius: 10px; background: rgba(0, 0, 0, .3); box-shadow: inset 0 0 0 1px var(--edge); padding: 6px 4px; font-size: 13px; }
+.cf-m { display: flex; flex-wrap: wrap; gap: 4px 8px; padding: 4px 8px; border-radius: 6px; }
+.cf-m:hover { background: rgba(255, 255, 255, .04); }
+.cf-m .t { color: var(--muted, #9a9384); font-variant-numeric: tabular-nums; font-size: 11.5px; }
+.cf-m .c { font-size: 11px; padding: 0 6px; border-radius: 6px; background: rgba(255, 255, 255, .07); }
+.cf-m.world .c { color: #ffd27a; } .cf-m.trade .c { color: #8fdc8a; } .cf-m.local .c { color: #9fd8ff; }
+.cf-m b { color: var(--core2, #f2e2b8); }
+.cf-m .x { flex: 1 1 200px; word-break: break-word; }
+/* dükkân: malzeme / Nesne Market yığını */
+.cell.mat-cell { cursor: pointer; }
+.cell.mat-cell img { width: 44px; height: 44px; object-fit: contain; }
+.cell.mat-cell .qty { position: absolute; right: 4px; bottom: 2px; font-size: 11px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px #000, 0 0 4px #000; }
+.stall-row .price.qty input { width: 64px; }

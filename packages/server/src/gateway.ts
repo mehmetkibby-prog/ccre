@@ -217,6 +217,17 @@ export class Gateway {
     s.lastWorldChat = now;
     const msg = JSON.stringify({ t: 'chat', ch, from: s.name, cls: s.cls, text, chn: s.channel, gm: s.role !== 'player' });
     for (const o of this.sessions.values()) if (o.state === 'active' && o.ws.readyState === WebSocket.OPEN) o.ws.send(msg);
+    this.logChat(ch, s.channel, s.name, text);
+  }
+
+  /** Yönetim: sohbetin canlı akışı (dünya, ticaret, bölge; fısıltı tutulmaz). Bellekte son 300 ileti. */
+  chatLog: { id: number; at: number; ch: 'world' | 'trade' | 'local'; chn: number; from: string; text: string; map?: string }[] = [];
+  private chatSeq = 0;
+  /** CPU profili sonucu (api.ts bağlar) */
+  onProfile?: (ch: number, m: Extract<FromWorker, { type: 'profile' }>) => void;
+  logChat(ch: 'world' | 'trade' | 'local', chn: number, from: string, text: string, map?: string) {
+    this.chatLog.push({ id: ++this.chatSeq, at: Date.now(), ch, chn, from, text, map });
+    if (this.chatLog.length > 300) this.chatLog.splice(0, this.chatLog.length - 300);
   }
 
   /** Fısıltı (özel mesaj): bütün kanallarda, ada göre (büyük/küçük harf duyarsız). Saniyede en çok bir mesaj. */
@@ -262,6 +273,8 @@ export class Gateway {
   /** Worker mesajları */
   onWorker(ch: number, m: FromWorker) {
     switch (m.type) {
+      case 'chatlog': this.logChat('local', ch, m.from, m.text, m.map); break;
+      case 'profile': this.onProfile?.(ch, m); break;
       case 'out': {
         for (const [sid, data] of m.batch) {
           const s = this.sessions.get(sid);

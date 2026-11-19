@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { World, makeItem } from '../packages/server/src/worker/world.ts';
 import type { CharState, FromWorker } from '../packages/server/src/types.ts';
-import { getLayout, applyTuning, DEFAULT_TUNING, itemPower, MAX_PLUS } from '@col/shared';
+import { getLayout, applyTuning, DEFAULT_TUNING, itemPower, MAX_PLUS, upgradeStep, plusPct, DEFAULT_UPGRADE, evoPct } from '@col/shared';
 
 function char(over: Partial<CharState> = {}): CharState {
   const l = getLayout('bazaar');
@@ -25,20 +25,40 @@ describe('Demirci / artı basma', () => {
     expect(boots.plus).toBe(0); expect(p.char.gems).toBe(g);
   });
 
-  it('en çok +6; ayarlanan malzeme ve Mücevher düşülür; her artı güç verir', () => {
-    applyTuning({ ...structuredClone(DEFAULT_TUNING), upgrade: { steps: Array.from({ length: 6 }, (_, i) => ({ chance: 100, gems: 10 * (i + 1), mats: { strong_branch: 2 }, weapon: 10 * (i + 1), armor: 5 })) } });
+  it('en çok +6; ayarlanan malzeme ve Mücevher düşülür; her artı toplam saldırıyı yönetimdeki yüzde kadar artırır', () => {
+    applyTuning({ ...structuredClone(DEFAULT_TUNING), upgrade: { total: true, steps: Array.from({ length: 6 }, (_, i) => ({ chance: 100, gems: 10 * (i + 1), mats: { strong_branch: 2 }, weapon: 10 * (i + 1), armor: 5 })) } });
     const sw = makeItem('w_guardian', 'white', 't', 0);
-    w.join(1, char({ bag: [sw] }));
+    w.join(1, char({ equip: { weapon: sw } }));
     const p = nearSmith(1);
     const g0 = p.char.gems, b0 = p.char.materials.strong_branch;
-    let last = itemPower(sw);
+    const base = p.stats.atk;
     for (let i = 0; i < 8; i++) {
       w.onCmd(1, JSON.stringify({ t: 'upgrade', item: sw.id, expectPlus: sw.plus, mastery: false, req: 'u' + i }));
-      if (i < 6) { expect(itemPower(sw)).toBeGreaterThan(last); last = itemPower(sw); }
+      p.recompute(true);
+      if (i < 6) expect(p.stats.atk).toBe(Math.round(base * (1 + (10 * (i + 1)) / 100)));
     }
     expect(sw.plus).toBe(MAX_PLUS);
+    expect(itemPower(sw)).toBe(itemPower({ ...sw, plus: 0 })); // eşyanın kendi gücü değişmez, yüzde toplamdan
     expect(g0 - p.char.gems).toBe(10 + 20 + 30 + 40 + 50 + 60);
     expect(b0 - p.char.materials.strong_branch).toBe(12);
+  });
+
+  it('eski kayıtlı tablo (yüzde eşya gücüne göreydi): şans/bedel korunur, yüzde yeni varsayılandan', () => {
+    applyTuning({ ...structuredClone(DEFAULT_TUNING), upgrade: { steps: Array.from({ length: 6 }, () => ({ chance: 100, gems: 7, mats: {}, weapon: 78, armor: 58 })) } });
+    expect(upgradeStep(6)!.weapon).toBe(DEFAULT_UPGRADE[5].weapon);
+    expect(upgradeStep(6)!.gems).toBe(7);
+    expect(plusPct('armor', 3)).toBe(DEFAULT_UPGRADE[2].armor);
+    expect(plusPct('boots', 3)).toBe(0);
+  });
+
+  it('artı ve evrim toplanır (zırh: toplam savunma)', () => {
+    const ar = { ...makeItem('a_guardian', 'white', 't', 0), plus: 4, evo: 1 };
+    w.join(1, char({ equip: { armor: { ...ar, plus: 0, evo: 0 } } }));
+    const p = w.bySid.get(1)!; p.recompute(true);
+    const d0 = p.stats.def;
+    p.char.equip.armor = ar; p.recompute(true);
+    const pct = DEFAULT_UPGRADE[3].armor + evoPct(DEFAULT_TUNING, 'armor', 1);
+    expect(p.stats.def).toBe(Math.round(d0 * (1 + pct / 100)));
   });
 
   it('malzeme eksikse hiçbir şey harcanmaz', () => {

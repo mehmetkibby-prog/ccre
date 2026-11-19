@@ -1,5 +1,5 @@
 import { TUNING } from '../tuning.ts';
-import { isUpgradable, plusBonus } from './upgrade.ts';
+import { isUpgradable } from './upgrade.ts';
 import { EVO_NAMES } from '../forgeTune.ts';
 import type { ClassId } from './classes.ts';
 
@@ -111,8 +111,8 @@ export function itemPower(it: ItemInstance): number {
   const r = RARITY[it.rarity], ov = TUNING.rarityPower[it.rarity];
   const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
   const base = Math.round(t.basePower * mult);
-  const plus = isUpgradable(t.slot) ? plusBonus(t.slot, it.plus, base) : PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0;
-  // evrim burada değil: karakterin TOPLAM saldırısına/savunmasına yüzde olarak işler (computeStats)
+  // silah/zırh artısı ve evrim burada değil: karakterin TOPLAM saldırısına/savunmasına yüzde olarak işler (computeStats)
+  const plus = isUpgradable(t.slot) ? 0 : PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0;
   return base + plus;
 }
 

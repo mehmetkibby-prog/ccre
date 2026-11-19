@@ -153,7 +153,7 @@ function genVillage(l: MapLayout, rng: Rng) {
     l.props.push({ k: 'lamp', x: x * TILE, y: y * TILE, v: 0, s: 1 });
   }
   for (const [x, y] of [[25, 12], [31, 12]] as const) l.props.push({ k: 'banner', x: x * TILE, y: y * TILE, v: 0, s: 1 });
-  // ── Şifa Bahçesi (tilkilere giden yolun doğusu): sürülmüş 4 sıra, çit, yol tarafında giriş, fener ve tabela ──
+  // ── Şifa Bahçesi (tilkilere giden yolun doğusu): sürülmüş 4 uzun sıra, çit, yol tarafında giriş ve fenerler ──
   if (l.def.id === GARDEN_MAP) {
     const A = GARDEN_AREA;
     for (let y = A.y0 - 1; y <= A.y1 + 1; y++) for (let x = A.x0 - 1; x <= A.x1 + 1; x++) {
@@ -168,7 +168,7 @@ function genVillage(l: MapLayout, rng: Rng) {
       l.props.push({ k: 'fence', x: tc(x), y: tc(y), v: 1, s: 1 }); l.blocked[idx(l, x, y)] = 1;
     }
     for (const y of [44, 47]) l.props.push({ k: 'lamp', x: tc(A.x0 - 1), y: tc(y), v: 0, s: 1 });
-    l.props.push({ k: 'signpost', x: tc(A.x0 - 3), y: tc(43), v: 3, s: 0.85 }); l.blocked[idx(l, A.x0 - 3, 43)] = 1;
+    for (const x of [44, 53]) for (const y of [A.y0 - 1, A.y1 + 1]) l.props.push({ k: 'lamp', x: tc(x), y: tc(y) + (y < 50 ? -18 : 18), v: 0, s: 1 });
     // şifacının tezgâhı çevresi: kurutma için saman, sandık, fıçı; bahçe içinde kenarlarda çiçek
     l.props.push({ k: 'hay', x: tc(A.x0 - 3) , y: tc(49), v: 0, s: 0.8 }); l.blocked[idx(l, A.x0 - 3, 49)] = 1;
     l.props.push({ k: 'crate', x: tc(A.x0 - 2), y: tc(48), v: 0, s: 0.9 }); l.blocked[idx(l, A.x0 - 2, 48)] = 1;

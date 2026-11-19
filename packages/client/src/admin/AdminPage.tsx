@@ -15,6 +15,7 @@ import { CraftTab } from './CraftAdmin.tsx';
 import { EventsTab } from './EventsAdmin.tsx';
 import { GardenTab } from './GardenAdmin.tsx';
 import { QuestTab } from './QuestAdmin.tsx';
+import { LoadCard, ChatFeed } from './LiveAdmin.tsx';
 
 // ───────── veri katmanı ─────────
 export interface APlayer {
@@ -350,6 +351,9 @@ function StatusTab({ t, setT, onOnline, toast, save, dirty }: { t: GameTuning | 
           ))}
         </div>
       </section>
+
+      {!OFFLINE && <ChatFeed />}
+      {!OFFLINE && <LoadCard toast={toast} />}
 
       {s && s.heapMB > 0 && (
         <section className="adm-card">

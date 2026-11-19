@@ -29,7 +29,7 @@ describe('pazar: bağımsız dükkân', () => {
     expect(w.market.stalls.length).toBe(1);
     expect(p.char.bag.map((b) => b.id)).toEqual([keep.id]);
     const m = lastMarket()!;
-    expect(m.state.stalls[0].items.map((x) => x.item.id).sort()).toEqual([sword.id, boots.id].sort());
+    expect(m.state.stalls[0].items.map((x) => x.item!.id).sort()).toEqual([sword.id, boots.id].sort());
     expect(m.chars.find((c) => c.id === 1)!.bag.map((b) => b.id)).toEqual([keep.id]);
     const x0 = p.x;
     for (let i = 0; i < 6; i++) { w.onMove(1, encodeMove(i + 1, 0)); w.tick(); }
@@ -101,5 +101,46 @@ describe('pazar: bağımsız dükkân', () => {
     cmd(1, { t: 'stall_close' });
     expect(w.market.stalls.length).toBe(0);
     expect(p.char.bag.some((x) => x.id === a.id)).toBe(true);
+  });
+});
+
+describe('pazar: malzeme ve Nesne Market yığınları', () => {
+  it('malzeme yığını dükkâna geçer, bütün olarak satılır, kapatınca kalan geri döner', () => {
+    w.join(1, char(1, { materials: { kor_seal: 10, herb_wind: 4, trade_glass: 2, sickle: 1 } }));
+    w.join(2, char(2, { gems: 1000, materials: {} }));
+    const p1 = w.bySid.get(1)!, p2 = w.bySid.get(2)!;
+    // satılamaz: orak; çantada olandan fazla
+    cmd(1, { t: 'stall_open', title: '', items: [], mats: [{ key: 'sickle', qty: 1, price: 10 }], req: 'x1' });
+    expect(w.market.stalls.length).toBe(0);
+    cmd(1, { t: 'stall_open', title: '', items: [], mats: [{ key: 'kor_seal', qty: 11, price: 10 }], req: 'x2' });
+    expect(w.market.stalls.length).toBe(0);
+    cmd(1, { t: 'stall_open', title: 'Mühür', items: [], mats: [{ key: 'kor_seal', qty: 6, price: 120 }, { key: 'trade_glass', qty: 2, price: 300 }, { key: 'herb_wind', qty: 4, price: 40 }], req: 'o1' });
+    expect(w.market.stalls.length).toBe(1);
+    expect(p1.char.materials.kor_seal).toBe(4);
+    expect(p1.char.materials.trade_glass ?? 0).toBe(0);
+    const st = w.market.stalls[0];
+    const seal = st.items.find((e) => e.mat?.key === 'kor_seal')!;
+    cmd(2, { t: 'stall_view', stall: st.id });
+    p2.x = st.x + 50; p2.y = st.y;
+    cmd(2, { t: 'stall_buy', stall: st.id, item: seal.mat!.id, price: 120, req: 'b1' });
+    expect(p2.char.materials.kor_seal).toBe(6);
+    expect(p2.char.gems).toBe(880);
+    expect(p1.char.gems).toBe(1120);
+    // pahalı Nesne Market ürünü: para yetmez
+    const glass = st.items.find((e) => e.mat?.key === 'trade_glass')!;
+    p2.char.gems = 100;
+    cmd(2, { t: 'stall_buy', stall: st.id, item: glass.mat!.id, price: 300, req: 'b2' });
+    expect(p2.char.materials.trade_glass ?? 0).toBe(0);
+    // kapatınca satılmayanlar geri döner
+    cmd(1, { t: 'stall_close' });
+    expect(p1.char.materials.trade_glass).toBe(2);
+    expect(p1.char.materials.herb_wind).toBe(4);
+    expect(p1.char.materials.kor_seal).toBe(4);
+  });
+  it('kayıttan yüklenen dükkânda malzeme satırı korunur, bozuk satır atlanır', () => {
+    w.loadMarket({ v: 1, pending: {}, stalls: [{ id: 's1', ownerId: 9, ownerName: 'X', zone: 'bazaar', title: '', x: MX, y: MY, openedAt: 0, earned: 0,
+      items: [{ mat: { id: 'm1', key: 'kor_seal', qty: 3 }, price: 50 }, { mat: { id: 'm2', key: 'yok_boyle', qty: 3 }, price: 50 }] as any }] });
+    expect(w.market.stalls[0].items.length).toBe(1);
+    expect(w.market.stalls[0].items[0].mat?.qty).toBe(3);
   });
 });

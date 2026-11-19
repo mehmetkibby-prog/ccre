@@ -1,5 +1,5 @@
 import type { QuestState } from '@col/shared';
-import type { ClassId, ItemInstance, Slot, StatAlloc } from '@col/shared';
+import type { ClassId, ItemInstance, Slot, StatAlloc, StallMat } from '@col/shared';
 
 export type Role = 'player' | 'moderator' | 'gm' | 'admin' | 'owner';
 
@@ -75,6 +75,7 @@ export interface TowerProgress {
 
 // ana → worker
 export type ToWorker =
+  | { type: 'profile'; id: number; ms: number }
   | { type: 'join'; sid: number; char: CharState }
   | { type: 'leave'; sid: number; reason: string }
   | { type: 'cmd'; sid: number; data: string }
@@ -100,9 +101,14 @@ export interface GuildWarInfo { id: number; a: number; b: number; an: string; bn
 
 // worker → ana
 /** Kanalın pazarı: bağımsız dükkânlar ve sahibi yokken yapılan satışların bekleyen kazancı. */
-export interface MarketStall { id: string; ownerId: number; ownerName: string; zone: string; title: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; openedAt: number; earned: number; skin?: string }
+export interface MarketStall { id: string; ownerId: number; ownerName: string; zone: string; title: string; x: number; y: number; items: StallEntry[]; openedAt: number; earned: number; skin?: string }
+/** dükkân satırı: item (ekipman) ya da mat (malzeme yığını) */
+export interface StallEntry { item?: ItemInstance; mat?: StallMat; price: number }
 export interface MarketState { v: 1; stalls: MarketStall[]; pending: Record<string, { gems: number; sales: { buyer: string; name: string; price: number; at: number }[] }> }
 export type FromWorker =
+  | { type: 'profile'; id: number; data?: string; err?: string }
+  /** yönetim sohbet akışı: bölge sohbeti (dünya/ticaret ana işlemde zaten görülür) */
+  | { type: 'chatlog'; from: string; text: string; map: string }
   | { type: 'out'; batch: [number, string | ArrayBuffer][] }
   | { type: 'save'; char: CharState; urgent: boolean }
   /** Pazar değişti: durum ve etkilenen karakterler tek işlemde yazılmalı. */
@@ -133,7 +139,13 @@ export interface WorkerStats {
   msgsOutPerSec: number;
   heapMB: number;
   at: number;
+  /** canlı yük (işlem yoğunluğu, döngü duraklaması, yavaş işler) */
+  load?: LoadSnap;
 }
 
 /** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
 export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number } | { kind: 'essence'; qty: number };
+
+/** canlı yük ölçümü (loadmon.ts) */
+export interface LoadJob { at: number; name: string; ms: number; detail?: string }
+export interface LoadSnap { elu: number; delayMs: number; heapMB: number; rssMB: number; jobs: LoadJob[]; at: number }

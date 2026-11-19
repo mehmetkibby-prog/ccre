@@ -2,8 +2,8 @@ import { installAvailable, onInstallChange, promptInstall } from '../game/instal
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, MALL, mallIcon, skillBuffVal, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
+  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, plusPct, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
+  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MALL, mallIcon, skillBuffVal, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -16,7 +16,7 @@ import { EventsPanel } from './events.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
 import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
-import { store, useStore, reqId, notify } from '../game/store.ts';
+import { store, useStore, reqId, notify, type StallEntryC } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
 import { SkillIcon } from './icons.tsx';
 import { sfx } from '../game/audio.ts';
@@ -120,7 +120,8 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
       <div className="tip-stat">
         <span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'}</span>
         <b>+{power.toLocaleString('tr-TR')}</b>
-        {(it.plus > 0 || !!it.evo) && <small>{itemPower({ ...it, plus: 0, evo: 0 })}{it.plus > 0 ? ` + ${itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)` : ''}</small>}
+        {it.plus > 0 && isUpgradable(tpl?.slot) && <small style={{ color: '#ffd27a' }}>Artı +{it.plus}: toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{plusPct(tpl?.slot, it.plus)}</small>}
+        {it.plus > 0 && !isUpgradable(tpl?.slot) && <small>{itemPower({ ...it, plus: 0, evo: 0 })} + {itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)</small>}
         {!!it.evo && <small style={{ color: EVO_COLORS[Math.min(3, it.evo)] }}>Evrim: toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{evoPct(TUNING, tpl?.slot ?? '', it.evo)}</small>}
       </div>
       {(tpl?.slot === 'weapon' || tpl?.slot === 'armor') && (it.evo || it.kills) ? (
@@ -953,7 +954,8 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
   const chance = step ? (mastery && step.chance < 100 ? masteryChance(step.chance) : step.chance) : 0;
   const lacks = step ? Object.entries(step.mats).filter(([k, q]) => (m[k] ?? 0) < q).length + (self.gems < step.gems ? 1 : 0) : 1;
   const C = 2 * Math.PI * 52;
-  const next = it && step ? itemPower({ ...it, plus: it.plus + 1 }) : 0;
+  const slotU = tpl?.slot;
+  const pNow = it ? plusPct(slotU, it.plus) : 0, pNext = it && step ? plusPct(slotU, it.plus + 1) : 0;
   const equipped = new Set(Object.values(self.equip).map((x) => x?.id));
   const go = () => { if (!it) return; setHit((h) => h + 1); sfx.play('ui'); game.send({ t: 'upgrade', item: it.id, expectPlus: it.plus, mastery, req: reqId() }); };
   return (
@@ -966,7 +968,7 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
             {items.map((i) => <Cell key={i.id} it={i} sel={sel === i.id} bind={bind(i)} onClick={() => setSel(i.id)} />)}
             {items.length === 0 && <div className="muted" style={{ gridColumn: '1 / -1', fontSize: 13 }}>Çantanda ya da üzerinde silah veya zırh yok.</div>}
           </div>
-          <div className="muted" style={{ fontSize: 11.5 }}>{equipped.size ? 'Üzerindekiler de listede. ' : ''}Yalnız silah ve gövde zırhına artı basılır; en çok +{MAX_PLUS}. Silahta her artı saldırıyı, zırhta savunma ve canı artırır.</div>
+          <div className="muted" style={{ fontSize: 11.5 }}>{equipped.size ? 'Üzerindekiler de listede. ' : ''}Yalnız silah ve gövde zırhına artı basılır; en çok +{MAX_PLUS}. Kuşandığın silahın artısı toplam saldırını, zırhınki toplam savunmanı yüzde olarak artırır (evrimle toplanır).</div>
           <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
           <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
             Başarıda eşya bir kademe yükselir. {upgradeFailDown() ? 'Başarısızlıkta bir kademe düşer (+0 altına inmez).' : 'Başarısızlıkta kademe korunur.'} Eşya hiçbir zaman yok olmaz.
@@ -990,7 +992,7 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                     <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" stroke="rgba(0,0,0,.5)" strokeWidth="8" fill="none" /><circle cx="60" cy="60" r="52" stroke={chance >= 70 ? '#5ef0a6' : chance >= 40 ? '#ffb454' : '#ff6b7d'} strokeWidth="8" fill="none" strokeDasharray={C} strokeDashoffset={C * (1 - chance / 100)} style={{ transition: 'stroke-dashoffset .3s' }} /></svg>
                     <div className="v"><div><b>%{chance}</b><small>Başarı</small></div></div>
                   </div>
-                  <div className="gain"><span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b>{next}</b></span></div>
+                  <div className="gain"><span>Toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{pNow} → <b>+%{pNext}</b></span></div>
                   <div className="req">
                     {Object.entries(step.mats).map(([k, q]) => {
                       const have = m[k] ?? 0, md = MATERIAL.get(k);
@@ -1013,6 +1015,19 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
 
 // ───────── pazar tezgâhı ─────────
 const fmtG = (n: number) => n.toLocaleString('tr-TR');
+const matNm = (k: string) => MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k;
+const matIc = (k: string) => iconUrl(MATERIAL.get(k)?.icon ?? (MALL.has(k) ? mallIcon(k) : 'dust'));
+/** malzeme / Nesne Market yığını hücresi (adet köşede) */
+function MatCell({ k, n, sel, onClick }: { k: string; n: number; sel?: boolean; onClick?: () => void }) {
+  return <div className={'cell mat-cell' + (sel ? ' sel' : '')} title={matNm(k)} onClick={onClick}><img src={matIc(k)} alt="" /><span className="qty">{n.toLocaleString('tr-TR')}</span></div>;
+}
+/** dükkân satırının adı ve hücresi (ekipman ya da yığın) */
+function EntryView({ e, bind }: { e: StallEntryC; bind: ReturnType<typeof useTip>['bind'] }) {
+  if (e.item) return <><Cell it={e.item} bind={bind(e.item)} /><span className="nm" style={{ color: RARITY[e.item.rarity].color }}>{itemDisplayName(e.item)}</span></>;
+  const m = e.mat!;
+  return <><MatCell k={m.key} n={m.qty} /><span className="nm" style={{ color: MALL.has(m.key) ? '#ffb8e0' : '#cfe8b8' }}>{m.qty.toLocaleString('tr-TR')}× {matNm(m.key)}{MALL.has(m.key) ? <small className="muted"> · Nesne Market</small> : null}</span></>;
+}
+const entryId = (e: StallEntryC) => e.item?.id ?? e.mat?.id ?? '';
 const suggestPrice = (it: ItemInstance) => Math.max(1, Math.round((MARKET_VALUE[it.rarity] ?? 5) * (1 + it.plus * 0.6)));
 function Market({ game }: { game: Game }) {
   const view = useStore((s) => s.stallView);
@@ -1027,20 +1042,33 @@ function StallSetup({ game }: { game: Game }) {
   const { tip, bind } = useTip();
   const [title, setTitle] = useState('');
   const [prices, setPrices] = useState<Record<string, string>>({});
+  /** malzeme yığınları: anahtar → { adet, fiyat } */
+  const [mats, setMats] = useState<Record<string, { qty: string; price: string }>>({});
+  const [tab, setTab] = useState<'eq' | 'mat'>('eq');
   const [here, setHere] = useState(() => inMarket(MAPS[map], game.px, game.py));
   useEffect(() => { const iv = setInterval(() => setHere(MAPS[map] ? inMarket(MAPS[map], game.px, game.py) : false), 400); return () => clearInterval(iv); }, [map, game]);
   if (!self) return null;
   const mk = MAPS[map]?.market;
   const chosen = Object.keys(prices).filter((id) => self.bag.some((b) => b.id === id));
+  const sellable = Object.entries(self.materials).filter(([k, n]) => n > 0 && !STALL_NO_SELL.has(k) && (MATERIAL.has(k) || MALL.has(k)));
+  const matKeys = Object.keys(mats).filter((k) => (self.materials[k] ?? 0) > 0);
+  const rows = chosen.length + matKeys.length;
   const toggle = (it: ItemInstance) => {
     if (it.locked) return notify('Kilitli eşya satılamaz. Önce çantada kilidini aç.', 'error');
     const next = { ...prices };
     if (next[it.id] !== undefined) delete next[it.id];
-    else { if (chosen.length >= STALL_MAX_ITEMS) return notify(`Tezgâha en çok ${STALL_MAX_ITEMS} eşya konabilir.`, 'error'); next[it.id] = String(suggestPrice(it)); }
+    else { if (rows >= STALL_MAX_ITEMS) return notify(`Tezgâha en çok ${STALL_MAX_ITEMS} satır konabilir.`, 'error'); next[it.id] = String(suggestPrice(it)); }
     setPrices(next);
   };
-  const bad = chosen.some((id) => { const n = Number(prices[id]); return !Number.isInteger(n) || n < 1 || n > STALL_MAX_PRICE; });
-  const open = () => game.send({ t: 'stall_open', title, items: chosen.map((id) => ({ id, price: Number(prices[id]) })), req: reqId() });
+  const toggleMat = (k: string) => {
+    const next = { ...mats };
+    if (next[k]) delete next[k];
+    else { if (rows >= STALL_MAX_ITEMS) return notify(`Tezgâha en çok ${STALL_MAX_ITEMS} satır konabilir.`, 'error'); next[k] = { qty: String(self.materials[k] ?? 1), price: '' }; }
+    setMats(next);
+  };
+  const okPrice = (v: string) => { const n = Number(v); return Number.isInteger(n) && n >= 1 && n <= STALL_MAX_PRICE; };
+  const bad = chosen.some((id) => !okPrice(prices[id])) || matKeys.some((k) => { const q = Number(mats[k].qty); return !okPrice(mats[k].price) || !Number.isInteger(q) || q < 1 || q > (self.materials[k] ?? 0); });
+  const open = () => game.send({ t: 'stall_open', title, items: chosen.map((id) => ({ id, price: Number(prices[id]) })), mats: matKeys.map((k) => ({ key: k, qty: Number(mats[k].qty), price: Number(mats[k].price) })), req: reqId() });
   return (
     <Panel title="Dükkân Kur" width={720}>
       {!mk ? <div className="muted">Dükkân yalnız Pazar Köyü'ndeki Pazar Meydanı'nda kurulur. Işınlayıcı Nur seni köye götürebilir.</div> : (
@@ -1050,13 +1078,33 @@ function StallSetup({ game }: { game: Game }) {
             {!here && <button className="btn small primary" onClick={() => { game.goToMarket(); close(); }}>Meydana yürü</button>}
           </div>
           <div className="field"><label>Dükkân adı</label><input value={title} maxLength={STALL_TITLE_MAX} placeholder={`${store.get().char?.name ?? ''} Dükkânı`} onChange={(e) => setTitle(e.target.value)} /></div>
-          <div className="row"><b>Çantan</b><span className="muted" style={{ fontSize: 12 }}>Satmak istediklerine dokun · {chosen.length}/{STALL_MAX_ITEMS}</span></div>
-          <div className="bag" style={{ marginTop: 6 }}>
-            {self.bag.map((it) => <Cell key={it.id} it={it} sel={prices[it.id] !== undefined} bind={bind(it)} onClick={() => toggle(it)} />)}
-            {self.bag.length === 0 && <div className="muted" style={{ fontSize: 13, gridColumn: '1 / -1' }}>Çantanda satılacak ekipman yok.</div>}
+          <div className="row"><b>Çantan</b><span className="muted" style={{ fontSize: 12 }}>Satmak istediklerine dokun · {rows}/{STALL_MAX_ITEMS}</span></div>
+          <div className="gd-tabs" style={{ marginTop: 6 }}>
+            <button className={tab === 'eq' ? 'on' : ''} onClick={() => setTab('eq')}>Ekipman</button>
+            <button className={tab === 'mat' ? 'on' : ''} onClick={() => setTab('mat')}>Malzeme ve Nesne Market</button>
           </div>
-          {chosen.length > 0 && (
+          {tab === 'eq' ? (
+            <div className="bag" style={{ marginTop: 6 }}>
+              {self.bag.map((it) => <Cell key={it.id} it={it} sel={prices[it.id] !== undefined} bind={bind(it)} onClick={() => toggle(it)} />)}
+              {self.bag.length === 0 && <div className="muted" style={{ fontSize: 13, gridColumn: '1 / -1' }}>Çantanda satılacak ekipman yok.</div>}
+            </div>
+          ) : (
+            <div className="bag" style={{ marginTop: 6 }}>
+              {sellable.map(([k, n]) => <MatCell key={k} k={k} n={n} sel={!!mats[k]} onClick={() => toggleMat(k)} />)}
+              {sellable.length === 0 && <div className="muted" style={{ fontSize: 13, gridColumn: '1 / -1' }}>Çantanda satılacak malzeme ya da Nesne Market ürünü yok.</div>}
+            </div>
+          )}
+          {rows > 0 && (
             <div className="stall-list">
+              {matKeys.map((k) => (
+                <div className="stall-row" key={k}>
+                  <MatCell k={k} n={self.materials[k] ?? 0} />
+                  <span className="nm" style={{ color: MALL.has(k) ? '#ffb8e0' : '#cfe8b8' }}>{matNm(k)}</span>
+                  <label className="price qty"><input inputMode="numeric" value={mats[k].qty} onChange={(e) => setMats({ ...mats, [k]: { ...mats[k], qty: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) } })} /><span>/ {fmtG(self.materials[k] ?? 0)} adet</span></label>
+                  <label className="price"><input inputMode="numeric" placeholder="toplam" value={mats[k].price} onChange={(e) => setMats({ ...mats, [k]: { ...mats[k], price: e.target.value.replace(/[^0-9]/g, '').slice(0, 9) } })} /><span>Mücevher</span></label>
+                  <button className="btn small ghost" onClick={() => toggleMat(k)} aria-label="Çıkar">✕</button>
+                </div>
+              ))}
               {chosen.map((id) => {
                 const it = self.bag.find((b) => b.id === id)!;
                 return (
@@ -1071,9 +1119,9 @@ function StallSetup({ game }: { game: Game }) {
             </div>
           )}
           <div className="row" style={{ marginTop: 12 }}>
-            <span className="muted" style={{ fontSize: 12 }}>Seçtiğin eşyalar çantandan dükkâna geçer. Dükkânı kapatınca satılmayanlar geri döner.</span>
+            <span className="muted" style={{ fontSize: 12 }}>Seçtiklerin çantandan dükkâna geçer. Malzeme yığını bütün olarak, yazdığın toplam fiyata satılır. Dükkânı kapatınca satılmayanlar geri döner.</span>
             <div className="spacer" />
-            <button className="btn primary" disabled={!here || chosen.length === 0 || bad} onClick={open}>Dükkânı Aç</button>
+            <button className="btn primary" disabled={!here || rows === 0 || bad} onClick={open}>Dükkânı Aç</button>
           </div>
         </>
       )}
@@ -1091,17 +1139,16 @@ function MyStallPanel({ game }: { game: Game }) {
       <div className="stall-where ok">Dükkânın Pazar Meydanı'nda açık. İstediğin yere gidebilirsin; oyundan çıksan da açık kalır. Sen yokken satılanların parası oyuna girince hesabına geçer.</div>
       <div className="row" style={{ fontSize: 13 }}><span className="muted">Şimdiye kadar kazanç:</span><b style={{ color: '#ffd27a' }}>{fmtG(my.earned)} Mücevher</b></div>
       <div className="stall-list">
-        {my.items.map(({ item, price }) => (
-          <div className="stall-row" key={item.id}>
-            <Cell it={item} bind={bind(item)} />
-            <span className="nm" style={{ color: RARITY[item.rarity].color }}>{itemDisplayName(item)}</span>
-            <span className="pv">{fmtG(price)} <small>Mücevher</small></span>
+        {my.items.map((e) => (
+          <div className="stall-row" key={entryId(e)}>
+            <EntryView e={e} bind={bind} />
+            <span className="pv">{fmtG(e.price)} <small>Mücevher</small></span>
           </div>
         ))}
       </div>
       {log.length > 0 && <><div style={{ marginTop: 12 }}><b>Satışlar</b></div>{log.map((l, i) => <div key={i} className="muted" style={{ fontSize: 12 }}>✓ {l}</div>)}</>}
       <div className="row" style={{ marginTop: 14 }}>
-        <span className="muted" style={{ fontSize: 12 }}>Kapatınca kalan {my.items.length} eşya çantana döner{free < my.items.length ? ` (çantanda ${free} boş yer var)` : ''}.</span>
+        <span className="muted" style={{ fontSize: 12 }}>Kapatınca kalan {my.items.length} satır çantana döner{free < my.items.filter((e) => e.item).length ? ` (çantanda ${free} boş yer var)` : ''}.</span>
         <div className="spacer" /><button className="btn red" onClick={() => game.send({ t: 'stall_close' })}>Dükkânı Kapat</button>
       </div>
       {tip && <ItemTip {...tip} />}
@@ -1129,22 +1176,21 @@ function StallBuy({ game }: { game: Game }) {
       <div className="row" style={{ marginBottom: 8 }}><span className="muted">Satıcı: <b style={{ color: '#f1ead8' }}>{v.name ?? '…'}</b></span><div className="spacer" /><span>Mücevherin: <b style={{ color: '#ffd27a' }}>{fmtG(gems)}</b></span></div>
       {v.closed ? <div className="muted">Bu dükkân kapanmış.</div> : !v.items ? <div className="muted">Dükkâna yürüyorsun…</div> : v.items.length === 0 ? <div className="muted">Dükkânda eşya kalmamış.</div> : (
         <div className="stall-list">
-          {v.items.map(({ item, price }) => {
-            const poor = gems < price;
+          {v.items.map((e) => {
+            const { price } = e, id = entryId(e), poor = gems < price, full = bagFull && !!e.item;
             return (
-              <div className="stall-row" key={item.id}>
-                <Cell it={item} bind={bind(item)} />
-                <span className="nm" style={{ color: RARITY[item.rarity].color }}>{itemDisplayName(item)}</span>
+              <div className="stall-row" key={id}>
+                <EntryView e={e} bind={bind} />
                 <span className={'pv' + (poor ? ' poor' : '')}>{fmtG(price)} <small>Mücevher</small></span>
-                {confirm === item.id
-                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', stall: v.stall, item: item.id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
-                  : <button className="btn small primary" disabled={poor || bagFull} title={poor ? 'Yeterli Mücevherin yok' : bagFull ? 'Çantan dolu' : ''} onClick={() => setConfirm(item.id)}>Satın al</button>}
+                {confirm === id
+                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', stall: v.stall, item: id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
+                  : <button className="btn small primary" disabled={poor || full} title={poor ? 'Yeterli Mücevherin yok' : full ? 'Çantan dolu' : ''} onClick={() => setConfirm(id)}>Satın al</button>}
               </div>
             );
           })}
         </div>
       )}
-      {bagFull && <div className="err">Çantan dolu; satın almak için yer aç.</div>}
+      {bagFull && v.items?.some((e) => e.item) && <div className="err">Çantan dolu; ekipman almak için yer aç (malzeme alabilirsin).</div>}
       {tip && <ItemTip {...tip} />}
     </Panel>
   );

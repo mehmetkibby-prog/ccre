@@ -50,8 +50,13 @@ it('Şifa Bahçesi: iksir kaynatma ve etkisi (saldırı hızı, can, kritik, can
   const npc = l.npcs.find((n) => n.id === 'reyhan')!; p.x = npc.x; p.y = npc.y + 40;
   p.char.materials.herb_wind = 3; p.char.materials.herb_life = 6;
   const gems = p.char.gems;
+  // Kor Mührü ve balık da istenir: eksikken kaynamaz
+  cmd({ t: 'garden', op: 'brew', r: 0, n: 1, req: 'k0' });
+  expect(p.char.materials.potion_swift ?? 0).toBe(0);
+  p.char.materials.kor_seal = 3; p.char.materials.fish_zargana = 1; p.char.materials.fish_sokan = 4;
   cmd({ t: 'garden', op: 'brew', r: 0, n: 1, req: 'k1' });
   expect(p.char.materials.potion_swift).toBe(1); expect(p.char.materials.herb_wind ?? 0).toBe(0); expect(p.char.gems).toBe(gems - DEFAULT_TUNING.garden.recipes[0].gems);
+  expect(p.char.materials.kor_seal).toBe(2); expect(p.char.materials.fish_zargana ?? 0).toBe(0);
   cmd({ t: 'garden', op: 'brew', r: 0, n: 1, req: 'k2' });
   expect(p.char.materials.potion_swift).toBe(1); // ot yetmiyor
   cmd({ t: 'garden', op: 'brew', r: 2, n: 2, req: 'k3' });
@@ -62,4 +67,20 @@ it('Şifa Bahçesi: iksir kaynatma ve etkisi (saldırı hızı, can, kritik, can
   expect(p.stats.atkSpeed).toBe(as0 + DEFAULT_TUNING.garden.effects.potion_swift.value);
   expect(p.stats.maxHp).toBe(Math.round(hp0 * (1 + DEFAULT_TUNING.garden.effects.potion_life.value / 100)));
   expect(p.char.materials.potion_swift ?? 0).toBe(0);
+});
+
+it('Şifa Bahçesi: 4 sıra × 10 bitki, yeniden doğma saniye ile ayarlanır', () => {
+  const { w, p, cmd, l } = setup();
+  expect(GARDEN_PLANTS.length).toBe(40);
+  for (const row of [0, 1, 2, 3]) expect(GARDEN_PLANTS.filter((q) => q.row === row).length).toBe(10);
+  for (const pl of GARDEN_PLANTS) expect(l.blocked[Math.floor(pl.y / TILE) * l.w + Math.floor(pl.x / TILE)]).toBe(0);
+  const t = structuredClone(DEFAULT_TUNING); t.garden.regrowSec = 7; applyTuning(t);
+  p.char.materials.sickle = 1;
+  const pl = GARDEN_PLANTS[39]; p.x = pl.x; p.y = pl.y + 40;
+  cmd({ t: 'garden', op: 'start', i: pl.i }); (w as any).now += t.garden.gatherMs; cmd({ t: 'garden', op: 'done', i: pl.i });
+  const had = p.char.materials[pl.herb];
+  expect(had).toBeGreaterThanOrEqual(1);
+  (w as any).now += 6000; cmd({ t: 'garden', op: 'start', i: pl.i }); expect(p.gather).toBeNull();
+  (w as any).now += 1100; cmd({ t: 'garden', op: 'start', i: pl.i }); expect(p.gather?.i).toBe(pl.i);
+  applyTuning(structuredClone(DEFAULT_TUNING));
 });

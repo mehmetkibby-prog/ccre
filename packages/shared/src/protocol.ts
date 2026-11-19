@@ -168,7 +168,7 @@ export type ClientCmd =
   | { t: 'fish_rod'; req: string }
   | { t: 'fish_sell'; req: string }
   | { t: 'bosses' }
-  | { t: 'stall_open'; title: string; items: { id: string; price: number }[]; req: string }
+  | { t: 'stall_open'; title: string; items: { id: string; price: number }[]; mats?: { key: string; qty: number; price: number }[]; req: string }
   | { t: 'stall_close' }
   | { t: 'gm_set'; name: string; level?: number; gems?: number; essence?: number; potions?: number }
   | { t: 'gm_reset'; name: string }

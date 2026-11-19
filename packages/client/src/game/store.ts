@@ -64,9 +64,11 @@ export interface GuildView {
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
 export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
 export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; biteAt: number; diff: number; motion: string }
-export interface StallView { stall: string; name?: string; title?: string; items?: { item: ItemInstance; price: number }[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
+/** dükkân satırı: ekipman ya da malzeme / Nesne Market yığını */
+export interface StallEntryC { item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number }
+export interface StallView { stall: string; name?: string; title?: string; items?: StallEntryC[]; own?: boolean; closed?: boolean; far?: boolean; x?: number; y?: number }
 /** Oyuncunun kendi dükkânı (sahibinden bağımsız; oyundan çıksa da açık kalır). */
-export interface MyStall { id: string; title: string; zone: string; x: number; y: number; items: { item: ItemInstance; price: number }[]; earned: number; openedAt: number }
+export interface MyStall { id: string; title: string; zone: string; x: number; y: number; items: StallEntryC[]; earned: number; openedAt: number }
 export interface InviteInfo { kind: 'party' | 'trade' | 'duel' | 'friend'; from: number; name: string; cls: string; level: number; at: number }
 export interface PartyMember { id: number; eid: number; name: string; cls: string; level: number; hp: number; maxHp: number; map: string; dead: boolean }
 export interface TradeSideView { items: ItemInstance[]; gems: number; locked: boolean; ok: boolean }
@@ -126,7 +128,7 @@ export interface UiState {
   /** sunucu saati farkı (ms): geri sayımlar için */
   clockSkew: number;
   fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
-  marketResults: { q: string; list: { stall: string; owner: string; title: string; item: ItemInstance; price: number; x: number; y: number }[] } | null;
+  marketResults: { q: string; list: { stall: string; owner: string; title: string; item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number; x: number; y: number }[] } | null;
   mallTarget: string | null;
   /** hedef canavarın düşme listesi açık mı (telefonda ? düğmesi soldaki çerçevede, liste üstte) */
   dropOpen: boolean;

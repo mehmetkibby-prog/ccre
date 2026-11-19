@@ -3,17 +3,24 @@ import { performance } from 'node:perf_hooks';
 import { TICK_MS, TUNING, MAPS, applyTuning } from '@col/shared';
 import { World } from './world.ts';
 import type { ToWorker, FromWorker } from '../types.ts';
+import { LoadMon, cpuProfile } from '../loadmon.ts';
 
 const { channel, aoiMaxPlayers, saveIntervalMs } = workerData as { channel: number; aoiMaxPlayers: number; saveIntervalMs: number };
 const port = parentPort!;
 const post = (m: FromWorker, transfer?: ArrayBuffer[]) => port.postMessage(m, transfer ?? []);
 const world = new World({ channel, aoiMaxPlayers, saveIntervalMs, post });
+const lm = new LoadMon();
+/** komut adı (yavaş iş kaydı için): {"t":"garden",...} */
+const cmdName = (raw: string) => /"t"\s*:\s*"([\w-]{1,24})"/.exec(raw)?.[1] ?? '?';
 
 port.on('message', (m: ToWorker) => {
   switch (m.type) {
     case 'move': world.onMove(m.sid, m.data); break;
-    case 'cmd': world.onCmd(m.sid, m.data); break;
-    case 'join': world.join(m.sid, m.char); break;
+    case 'cmd': { const t0 = performance.now(); world.onCmd(m.sid, m.data); const ms = performance.now() - t0; if (ms >= 15) lm.job(`Komut: ${cmdName(m.data)}`, ms, `oyuncu #${m.sid}`); break; }
+    case 'join': { const t0 = performance.now(); world.join(m.sid, m.char); const ms = performance.now() - t0; if (ms >= 30) lm.job('Oyuncu girişi', ms, m.char.map); break; }
+    case 'profile':
+      cpuProfile(m.ms).then((data) => post({ type: 'profile', id: m.id, data }), (e) => post({ type: 'profile', id: m.id, err: String(e?.message ?? e) }));
+      break;
     case 'leave': world.leave(m.sid); break;
     case 'world': world.setWorld(m.health, m.online); break;
     case 'market_load': world.loadMarket(m.state); break;
@@ -57,7 +64,11 @@ let lastBytes = 0, lastMsgs = 0, lastStatAt = performance.now();
 function loop() {
   const now = performance.now();
   let n = 0;
-  while (now >= next && n < 3) { world.tick(); next += TICK_MS; n++; }
+  while (now >= next && n < 3) {
+    const t0 = performance.now(); world.tick(); const ms = performance.now() - t0;
+    if (ms >= TICK_MS * 0.8) lm.job('Dünya adımı (tick)', ms, `${world.bySid.size} oyuncu`);
+    next += TICK_MS; n++;
+  }
   if (now - next > TICK_MS * 5) next = now + TICK_MS; // uzun duraklama: biriktirme
   setTimeout(loop, Math.max(0, next - performance.now()));
 }
@@ -73,6 +84,7 @@ setInterval(() => {
   s.bytesOutPerSec = Math.round((world.bytesOut - lastBytes) / sec);
   s.msgsOutPerSec = Math.round((world.msgsOut - lastMsgs) / sec);
   s.heapMB = Math.round(process.memoryUsage().heapUsed / 1048576);
+  s.load = lm.snapshot();
   lastBytes = world.bytesOut; lastMsgs = world.msgsOut; lastStatAt = t;
   post({ type: 'stats', data: s });
 }, 2000);

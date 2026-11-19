@@ -1,5 +1,5 @@
 /**
- * Şifa Bahçesi (Pazar Köyü, tilkilere giden yolun doğusu): 4 sıra × 4 bitki. Her sıra ayrı tür; orakla eğilip
+ * Şifa Bahçesi (Pazar Köyü, tilkilere giden yolun doğusu): 4 sıra × 10 bitki. Her sıra ayrı tür; orakla eğilip
  * toplanır, her oyuncu için ayrı yeniden büyür (oyuncular birbirinin bitkisini kapmaz). Şifacı Reyhan orak satar
  * ve bitkilerden iksir yapar. Fiyatlar, süreler, tarifler ve iksir etkileri yönetimden.
  */
@@ -18,19 +18,25 @@ export const POTION_EFFECT: Record<PotionKey, { name: string; unit: string }> = 
 };
 
 /** bahçe karoları (Pazar Köyü haritası) */
-export const GARDEN_AREA = { x0: 33, y0: 42, x1: 45, y1: 55 };
-export const GARDEN_COLS = [35, 37.5, 40, 42.5];
+export const GARDEN_AREA = { x0: 33, y0: 42, x1: 55, y1: 55 };
+/** her sırada 10 bitki: kapıdan (batı) arkaya, doğuya doğru */
+export const GARDEN_COLS = Array.from({ length: 10 }, (_, c) => 35 + c * 2);
 export const GARDEN_ROWS = [44, 47, 50, 53];
 export interface GardenPlant { i: number; row: number; herb: HerbKey; x: number; y: number }
-/** 16 bitki: sıra sıra (0: Rüzgâr Otu, 1: Avcı Yaprağı, 2: Hayat Çiçeği, 3: Yıldız Menekşesi) */
+/** 40 bitki: sıra sıra (0: Rüzgâr Otu, 1: Avcı Yaprağı, 2: Hayat Çiçeği, 3: Yıldız Menekşesi) */
 export const GARDEN_PLANTS: GardenPlant[] = GARDEN_ROWS.flatMap((ty, row) => GARDEN_COLS.map((tx, c) => ({
-  i: row * 4 + c, row, herb: HERBS[row], x: (tx + 0.5) * TILE, y: (ty + 0.5) * TILE,
+  i: row * GARDEN_COLS.length + c, row, herb: HERBS[row], x: (tx + 0.5) * TILE, y: (ty + 0.5) * TILE,
 })));
 export const GARDEN_MAP = 'bazaar';
 /** bitkiye eğilmek için en çok uzaklık (dünya birimi) */
 export const GARDEN_REACH = 96;
 
-export interface Recipe { potion: PotionKey; herbs: Partial<Record<HerbKey, number>>; gems: number; out: number }
+/** tarifte istenebilecek balıklar (Şelale Gölü) */
+export const RECIPE_FISH = ['fish_sokan', 'fish_zargana', 'fish_levrek'] as const;
+/** tarif malzemeleri: dört ot, Kor Mührü ve bütün balık çeşitleri (yönetimden adet) */
+export const RECIPE_INPUTS: string[] = [...HERBS, 'kor_seal', ...RECIPE_FISH];
+/** herbs: malzeme anahtarı → adet (adı eski kayıtlarla uyum için "herbs"; otların yanında Kor Mührü ve balık da olur) */
+export interface Recipe { potion: PotionKey; herbs: Partial<Record<string, number>>; gems: number; out: number }
 export interface PotionTune { value: number; min: number }
 export interface GardenTune {
   enabled: boolean;
@@ -49,10 +55,10 @@ export interface GardenTune {
 export const GARDEN_DEFAULT: GardenTune = {
   enabled: true, sicklePrice: 300, regrowSec: 600, gatherMs: 1800, qty: [1, 2],
   recipes: [
-    { potion: 'potion_swift', herbs: { herb_wind: 3 }, gems: 20, out: 1 },
-    { potion: 'potion_hunter', herbs: { herb_blood: 3 }, gems: 20, out: 1 },
-    { potion: 'potion_life', herbs: { herb_life: 3 }, gems: 20, out: 1 },
-    { potion: 'potion_star', herbs: { herb_star: 3 }, gems: 25, out: 1 },
+    { potion: 'potion_swift', herbs: { herb_wind: 3, kor_seal: 1, fish_zargana: 1 }, gems: 20, out: 1 },
+    { potion: 'potion_hunter', herbs: { herb_blood: 3, kor_seal: 1, fish_levrek: 1 }, gems: 20, out: 1 },
+    { potion: 'potion_life', herbs: { herb_life: 3, kor_seal: 1, fish_sokan: 2 }, gems: 20, out: 1 },
+    { potion: 'potion_star', herbs: { herb_star: 3, kor_seal: 1, fish_levrek: 1 }, gems: 25, out: 1 },
   ],
   effects: {
     potion_swift: { value: 12, min: 10 },
@@ -73,7 +79,7 @@ export function sanitizeGarden(raw: unknown): GardenTune {
     const o = obj(x);
     if (!POTIONS.includes(o.potion as PotionKey)) continue;
     const herbs: Recipe['herbs'] = {};
-    for (const [k, v] of Object.entries(obj(o.herbs))) if (HERBS.includes(k as HerbKey)) { const n = Math.round(num(v, 0, 999, 0)); if (n > 0) herbs[k as HerbKey] = n; }
+    for (const [k, v] of Object.entries(obj(o.herbs))) if (RECIPE_INPUTS.includes(k)) { const n = Math.round(num(v, 0, 999, 0)); if (n > 0) herbs[k as HerbKey] = n; }
     recipes.push({ potion: o.potion as PotionKey, herbs, gems: Math.round(num(o.gems, 0, 1e7, 0)), out: Math.round(num(o.out, 1, 99, 1)) });
   }
   const effects = {} as GardenTune['effects'];
@@ -82,7 +88,7 @@ export function sanitizeGarden(raw: unknown): GardenTune {
   return {
     enabled: r.enabled !== false,
     sicklePrice: Math.round(num(r.sicklePrice, 0, 1e7, D.sicklePrice)),
-    regrowSec: Math.round(num(r.regrowSec, 5, 86400, D.regrowSec)),
+    regrowSec: Math.round(num(r.regrowSec, 1, 86400, D.regrowSec)),
     gatherMs: Math.round(num(r.gatherMs, 300, 10000, D.gatherMs)),
     qty: [Math.min(a, b), Math.max(a, b)],
     recipes: Array.isArray(r.recipes) ? recipes : structuredClone(D.recipes),

@@ -17,7 +17,8 @@ import type { TuningState } from './tuning.ts';
 import { resetCharState } from './worker/world.ts';
 import { RateLimiter } from './http.ts';
 import os from 'node:os';
-import { monitorEventLoopDelay } from 'node:perf_hooks';
+import { monitorEventLoopDelay, performance } from 'node:perf_hooks';
+import { LoadMon, cpuProfile } from './loadmon.ts';
 
 const COOKIE = 'col_session';
 const loginLimiter = new RateLimiter(0.2, 8); // IP başına
@@ -28,6 +29,17 @@ export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: 
 
 const eld = monitorEventLoopDelay({ resolution: 10 });
 eld.enable();
+/** ana işlemin canlı yükü (yönetim > Durum > Canlı işlem yükü) */
+export const mainLoad = new LoadMon();
+const PROFILE_MS = 60_000, PROFILE_KEEP_MS = 5 * 60_000;
+interface ProfileJob { id: number; target: string; label: string; startedAt: number; endsAt: number; state: 'running' | 'ready' | 'error'; data?: string; err?: string; readyAt?: number }
+let profile: ProfileJob | null = null, profileSeq = 0;
+function profileView() {
+  if (profile && profile.state !== 'running' && (profile.readyAt ?? 0) + PROFILE_KEEP_MS < Date.now()) profile = null; // hazır dosya 5 dk saklanır
+  if (!profile) return null;
+  const { data, ...v } = profile;
+  return { ...v, sizeKB: data ? Math.round(data.length / 1024) : 0, expiresAt: profile.readyAt ? profile.readyAt + PROFILE_KEEP_MS : null };
+}
 
 async function requireAuth(req: Req): Promise<AuthAccount> {
   const tok = req.cookies[COOKIE] ?? (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : undefined);
@@ -217,6 +229,53 @@ export function buildApi(d: ApiDeps): Router {
       mainThread: { eventLoopDelayMs: { p50: eld.percentile(50) / 1e6, p99: eld.percentile(99) / 1e6, max: eld.max / 1e6 }, heapMB: Math.round(process.memoryUsage().heapUsed / 1048576), rssMB: Math.round(process.memoryUsage().rss / 1048576) },
       host: { cpus: os.cpus().length, loadavg: load, freeMemMB: Math.round(os.freemem() / 1048576), note: 'loadavg tüm VDS içindir; kanal ELU tek worker thread yüküdür.' },
     };
+  });
+  // ───────── canlı işlem yükü, CPU profili, sohbet akışı ─────────
+  d.gateway.onProfile = (ch, m) => {
+    if (!profile || profile.id !== m.id || profile.state !== 'running') return;
+    if (m.data) { profile.state = 'ready'; profile.data = m.data; } else { profile.state = 'error'; profile.err = m.err ?? 'Profil alınamadı.'; }
+    profile.readyAt = Date.now();
+  };
+  r.get('/api/admin/load', async (req) => {
+    await requireAdmin(req);
+    const mm = mainLoad.snapshot();
+    const procs = [
+      { id: 'main', name: 'Ana işlem', alive: true, elu: mm.elu, delayMs: mm.delayMs, memMB: mm.rssMB, memKind: 'RSS', players: d.gateway.online(), cap: config.realmCapacity, jobs: mm.jobs, note: 'Bağlantılar, giriş/kayıt, dünya ve ticaret sohbeti, kayıt yazma; RSS bütün işlemindir (kanallar dahil).' },
+      ...d.channels.population.map((pop, i) => {
+        if (i === 0) return null;
+        const st = d.channels.stats[i], ld = st?.load, alive = d.channels.alive(i), fresh = !!st && Date.now() - st.at < 8000;
+        return { id: 'ch' + i, name: `Kanal ${i}`, alive: alive && fresh, elu: ld?.elu ?? st?.elu ?? 0, delayMs: ld?.delayMs ?? 0, memMB: ld?.heapMB ?? st?.heapMB ?? 0, memKind: 'Yığın', players: pop ?? 0, cap: config.channelCapacity, jobs: ld?.jobs ?? [], tickP95: st?.tick.p95 ?? 0, monsters: st?.awakeMonsters ?? 0, restarts: d.channels.restarts[i] ?? 0 };
+      }).filter(Boolean),
+    ];
+    return { at: Date.now(), procs, profile: profileView(), host: { cpus: os.cpus().length, load1: os.loadavg()[0], freeMemMB: Math.round(os.freemem() / 1048576), totalMemMB: Math.round(os.totalmem() / 1048576) } };
+  });
+  r.post('/api/admin/profile', async (req) => {
+    await requireAdmin(req);
+    const v = profileView();
+    if (v?.state === 'running') throw new HttpError(409, `Şu an ${v.label} ölçülüyor; aynı anda tek süreç ölçülür.`);
+    const target = String(req.body?.target ?? 'main');
+    const ch = target === 'main' ? 0 : Number(target.replace(/^ch/, ''));
+    if (target !== 'main' && !(ch >= 1 && d.channels.alive(ch))) throw new HttpError(400, 'Bu kanal şu an çalışmıyor.');
+    const id = ++profileSeq, now = Date.now();
+    profile = { id, target, label: ch ? `Kanal ${ch}` : 'Ana işlem', startedAt: now, endsAt: now + PROFILE_MS, state: 'running' };
+    const done = (data?: string, err?: string) => { if (profile?.id !== id || profile.state !== 'running') return; if (data) { profile.state = 'ready'; profile.data = data; } else { profile.state = 'error'; profile.err = err; } profile.readyAt = Date.now(); };
+    if (!ch) cpuProfile(PROFILE_MS).then((x) => done(x), (e) => done(undefined, String(e?.message ?? e)));
+    else d.channels.send(ch, { type: 'profile', id, ms: PROFILE_MS });
+    setTimeout(() => done(undefined, 'Süreç yanıt vermedi (yeniden başlamış olabilir).'), PROFILE_MS + 20_000).unref();
+    return profileView();
+  });
+  r.get('/api/admin/profile/file', async (req, res) => {
+    await requireAdmin(req);
+    profileView();
+    if (!profile?.data) throw new HttpError(404, 'Hazır profil yok (5 dakika saklanır).');
+    const stamp = new Date(profile.startedAt).toISOString().slice(0, 16).replace(/[:T]/g, '-');
+    res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store', 'content-disposition': `attachment; filename="coreoflife-${profile.target}-${stamp}.cpuprofile"` });
+    res.end(profile.data);
+  });
+  r.get('/api/admin/chat', async (req) => {
+    await requireAdmin(req);
+    const after = Number(req.query.get('after') ?? 0) || 0;
+    return { msgs: d.gateway.chatLog.filter((m) => m.id > after).slice(-200) };
   });
   r.get('/api/admin/opening', async (req) => { await requireAdmin(req); return d.opening.state; });
   r.post('/api/admin/opening', async (req) => {
@@ -522,9 +581,12 @@ export async function handleApi(router: Router, req: Req, res: ServerResponse) {
     const host = req.headers.host;
     if (origin && host && new URL(origin).host !== host && !config.devMode) return json(res, 403, { error: 'Geçersiz köken' });
   }
+  const t0 = performance.now();
   try {
     const out = await route.h(req, res);
     if (!res.headersSent) json(res, 200, out ?? { ok: true });
+    const ms = performance.now() - t0;
+    if (ms >= 500) mainLoad.job(`İstek: ${req.method} ${req.path}`, ms, 'bekleme dahil (veritabanı, parola doğrulama)');
   } catch (e) {
     if (e instanceof HttpError) return json(res, e.status, { error: e.message, code: e.code });
     console.error('[api]', req.method, req.path, e);

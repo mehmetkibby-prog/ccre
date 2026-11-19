@@ -173,7 +173,7 @@ class Backend {
   private botShop() {
     if (performance.now() < this.nextBotBuy) return;
     this.nextBotBuy = performance.now() + 70_000 + Math.random() * 110_000;
-    const offers = this.world.market.stalls.filter((s) => s.ownerId > 0).flatMap((s) => s.items.filter((m) => m.price <= (MARKET_VALUE[m.item.rarity] ?? 5) * 1.4).map((m) => ({ s, m })));
+    const offers = this.world.market.stalls.filter((s) => s.ownerId > 0).flatMap((s) => s.items.filter((m) => !!m.item && m.price <= (MARKET_VALUE[m.item.rarity] ?? 5) * 1.4).map((m) => ({ s, m })));
     const shoppers = this.bots.filter((b) => !b.forest && !this.world.market.stalls.some((s) => s.ownerId === -(b.sid - 10_000 + 1)));
     if (!offers.length || !shoppers.length) return;
     const { s, m } = offers[Math.floor(Math.random() * offers.length)];
@@ -182,7 +182,7 @@ class Backend {
     p.x = s.x + 60; p.y = s.y + 90; b.tx = p.x; b.ty = p.y;
     if (p.char.bag.length > 20) p.char.bag = [];
     p.char.gems = Math.max(p.char.gems, m.price);
-    this.world.onCmd(b.sid, JSON.stringify({ t: 'stall_buy', stall: s.id, item: m.item.id, price: m.price, req: 'botbuy' + Date.now() }));
+    this.world.onCmd(b.sid, JSON.stringify({ t: 'stall_buy', stall: s.id, item: m.item!.id, price: m.price, req: 'botbuy' + Date.now() }));
   }
   private driveBots() {
     this.botShop();

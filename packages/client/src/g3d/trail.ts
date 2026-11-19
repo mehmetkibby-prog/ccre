@@ -18,7 +18,9 @@ const VERT = /* glsl */ `
 const FRAG = /* glsl */ `
   uniform vec3 uCol; uniform vec3 uCore; uniform float uAlpha; varying vec2 vUv;
   void main() {
-    float age = clamp(vUv.x, 0.0, 1.0), s = vUv.y;               // age: 0 yeni → 1 eski; s: 0 kabza → 1 uç
+    // s sıkıştırılır: ara değerlemede çok küçük eksi değer çıkabiliyor, pow(eksi) NaN verir; NaN piksel parlama
+    // (bloom) bulanıklığıyla bütün ekrana siyah leke olarak yayılıyordu ("vuruşta ekran kararıyor")
+    float age = clamp(vUv.x, 0.0, 1.0), s = clamp(vUv.y, 0.0, 1.0); // age: 0 yeni → 1 eski; s: 0 kabza → 1 uç
     float fade = pow(1.0 - age, 2.0);
     float edge = smoothstep(0.0, 0.55, s) * (1.0 - smoothstep(0.93, 1.0, s));
     float core = clamp(pow(s, 6.0) * 1.6 - age * 2.0, 0.0, 1.0); // uçta ve yeni kısımda beyaz çekirdek

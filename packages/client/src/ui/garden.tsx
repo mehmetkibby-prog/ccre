@@ -7,6 +7,14 @@ import { iconUrl } from '../game/art/icons.ts';
 
 const send = (c: Record<string, unknown>) => currentGame?.send(c as never);
 const name = (k: string) => MATERIAL.get(k)?.name ?? k;
+const icon = (k: string) => iconUrl(MATERIAL.get(k)?.icon ?? k);
+/** saniyeyi okunur süreye çevirir: 45 sn, 2 dk 30 sn, 1 sa 5 dk */
+export const fmtDur = (sec: number) => {
+  sec = Math.max(0, Math.round(sec));
+  if (sec < 60) return `${sec} sn`;
+  if (sec < 3600) { const m = Math.floor(sec / 60), r = sec % 60; return r ? `${m} dk ${r} sn` : `${m} dk`; }
+  const h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60); return m ? `${h} sa ${m} dk` : `${h} sa`;
+};
 const ROW_NAMES = ['1. sıra', '2. sıra', '3. sıra', '4. sıra'];
 
 /** Şifacı Reyhan: orak, bahçe bilgisi ve iksir tarifleri (malzeme / mücevher / çıkan adet, etkisi ve süresi). */
@@ -26,7 +34,7 @@ export function GardenPanel() {
         <img src={iconUrl('herb_basket')} alt="" />
         <div>
           <b>“Bahçemdeki her sıranın otu başka bir derde deva, evladım.”</b>
-          <div className="muted" style={{ fontSize: 12 }}>Orakla olgun bitkiye eğil, topla; otları bana getir, iksirini kaynatayım. Her bitki sen topladıktan sonra yeniden büyür.</div>
+          <div className="muted" style={{ fontSize: 12 }}>Orakla olgun bitkiye eğil, topla; otları, Kor Mührü'nü ve gölün balıklarını bana getir, iksirini kaynatayım. Her bitki sen topladıktan sonra yeniden büyür.</div>
         </div>
       </div>
       <div className="gd-tabs">
@@ -45,7 +53,7 @@ export function GardenPanel() {
                   <b>{r.out > 1 ? `${r.out}× ` : ''}{name(r.potion)}</b>
                   <span className="ef">{POTION_EFFECT[r.potion].name} +{ef.value}{POTION_EFFECT[r.potion].unit} · {ef.min} dk</span>
                   <div className="req">
-                    {Object.entries(r.herbs).map(([k, q]) => <span key={k} className={(m[k] ?? 0) >= (q ?? 0) ? 'have' : 'miss'} title={MATERIAL.get(k)?.desc}><img src={iconUrl(k)} alt="" />{name(k)} <i>{m[k] ?? 0}/{q}</i></span>)}
+                    {Object.entries(r.herbs).map(([k, q]) => <span key={k} className={(m[k] ?? 0) >= (q ?? 0) ? 'have' : 'miss'} title={MATERIAL.get(k)?.desc}><img src={icon(k)} alt="" />{name(k)} <i>{m[k] ?? 0}/{q}</i></span>)}
                     {r.gems > 0 && <span className={self.gems >= r.gems ? 'have' : 'miss'}><img src={iconUrl('gem')} alt="" />{r.gems} Mücevher</span>}
                     {(m[r.potion] ?? 0) > 0 && <span className="muted">Çantanda: {m[r.potion]}</span>}
                   </div>
@@ -78,12 +86,12 @@ export function GardenPanel() {
               return (
                 <div key={h} className="gd-row">
                   <img src={iconUrl(h)} alt="" /><div className="mid"><b>{name(h)}</b><span className="muted">{ROW_NAMES[row]} · {MATERIAL.get(h)?.desc.split('. ')[1] ?? ''}</span></div>
-                  <span className={'gd-ripe' + (ripe ? ' on' : '')}>{ripe}/4 olgun</span>
+                  <span className={'gd-ripe' + (ripe ? ' on' : '')}>{ripe}/{plants.length} olgun</span>
                 </div>
               );
             })}
           </div>
-          <div className="muted" style={{ fontSize: 11.5 }}>Bir bitki topladıktan sonra senin için {Math.round(T.regrowSec / 60)} dk içinde yeniden olgunlaşır; her toplamada {T.qty[0] === T.qty[1] ? T.qty[0] : `${T.qty[0]}–${T.qty[1]}`} ot çıkar.</div>
+          <div className="muted" style={{ fontSize: 11.5 }}>Bir bitki topladıktan sonra senin için {fmtDur(T.regrowSec)} içinde yeniden olgunlaşır; her toplamada {T.qty[0] === T.qty[1] ? T.qty[0] : `${T.qty[0]}–${T.qty[1]}`} ot çıkar.</div>
         </div>
       )}
     </Panel>

@@ -3,7 +3,7 @@
  * Ticaret Camı araması.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, type MallCat } from '@col/shared';
+import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, MATERIAL, type MallCat } from '@col/shared';
 import type { Game } from '../game/game.ts';
 import { store, useStore, notify, reqId, type BossInfo } from '../game/store.ts';
 import { onConfig } from '../admin/config.ts';
@@ -510,6 +510,7 @@ export function FishShop({ game }: { game: Game }) {
 }
 
 // ═══════════════════════ Ticaret Camı ═══════════════════════
+const matName = (k: string) => MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k;
 export function TradeGlass({ game }: { game: Game }) {
   const r = useStore((s) => s.marketResults);
   const [q, setQ] = useState(r?.q ?? '');
@@ -522,8 +523,8 @@ export function TradeGlass({ game }: { game: Game }) {
       </div>
       <div className="tg-list">
         {r?.list.map((x, i) => (
-          <div key={i} className="tg-row" onClick={(e) => setTip({ it: x.item, x: e.clientX, y: e.clientY })}>
-            <b style={{ color: RARITY[x.item.rarity]?.color }}>{itemDisplayName(x.item)}</b>
+          <div key={i} className="tg-row" onClick={(e) => x.item && setTip({ it: x.item, x: e.clientX, y: e.clientY })}>
+            {x.item ? <b style={{ color: RARITY[x.item.rarity]?.color }}>{itemDisplayName(x.item)}</b> : <b style={{ color: '#cfe8b8' }}>{x.mat ? `${x.mat.qty}× ${matName(x.mat.key)}` : '?'}</b>}
             <span className="muted">{x.owner}{x.title ? ` · ${x.title}` : ''}</span>
             <span className="tg-price">{x.price.toLocaleString('tr-TR')} Mücevher</span>
           </div>

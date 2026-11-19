@@ -296,6 +296,12 @@ export class Renderer3D {
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.38, 0.4, 0.9);
+    // güvenlik: herhangi bir efekt bozuk (NaN/sonsuz) renk üretirse parlama onu bütün ekrana yaymasın (siyah leke)
+    {
+      const hp = this.bloom.materialHighPassFilter;
+      hp.fragmentShader = hp.fragmentShader.replace('vec4 texel = texture2D( tDiffuse, vUv );', 'vec4 texel = texture2D( tDiffuse, vUv ); if (any(isnan(texel)) || any(isinf(texel))) texel = vec4(0.0); texel = min(texel, vec4(64.0));');
+      hp.needsUpdate = true;
+    }
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
   }
