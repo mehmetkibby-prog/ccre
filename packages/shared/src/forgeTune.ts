@@ -116,6 +116,7 @@ const pair = (v: unknown, lo: number, hi: number, d: [number, number]): [number,
   if (!Array.isArray(v) || v.length !== 2) return [...d];
   const a = int(v[0], lo, hi, d[0]), b = int(v[1], lo, hi, d[1]); return [Math.min(a, b), Math.max(a, b)];
 };
+export function sanitizeDrops(v: unknown, d: DropTune[]): DropTune[] { return drops(v, d); }
 function drops(v: unknown, d: DropTune[]): DropTune[] {
   if (!Array.isArray(v)) return structuredClone(d);
   const out: DropTune[] = [];

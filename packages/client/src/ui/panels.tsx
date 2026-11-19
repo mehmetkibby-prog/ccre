@@ -300,7 +300,7 @@ function Inventory({ game }: { game: Game }) {
                 return (
                   <div key={k} className="mat" title={m?.desc}>
                     <img src={iconUrl(m?.icon ?? 'bag')} alt="" /><div style={{ flex: 1 }}>{m?.name ?? k}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
-                    {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'red_potion') && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' ? 'Kullan' : 'Aç'}</button>}
+                    {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion') && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' ? 'Kullan' : 'Aç'}</button>}
                   </div>
                 );
               })}

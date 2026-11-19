@@ -602,6 +602,23 @@ export class Renderer3D {
         beam = new THREE.Mesh(bg, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
         grp.add(beam);
       }
+      // Kristal Sandık (etkinlik): simge yerine küçük 3B sandık; tek model paylaşılır (geometri/doku kopyalanmaz),
+      // gölge yok, ışık yok — yalnız camgöbeği hale ve sandığın hafif süzülüp dönmesi. Model gelene dek simge görünür.
+      if (e.icon === 'crystal_chest') {
+        const put = () => {
+          const L = loadModelRaw('crystal_chest'); if (!L) return false;
+          const m = L.scene.clone(true);
+          const box = new THREE.Box3().setFromObject(m), sz = box.getSize(new THREE.Vector3());
+          const k = 0.62 / Math.max(0.01, sz.x, sz.y, sz.z);
+          m.scale.setScalar(k); m.position.set(-(box.min.x + box.max.x) / 2 * k, -box.min.y * k, -(box.min.z + box.max.z) / 2 * k);
+          m.traverse((o) => { const mm = o as THREE.Mesh; if (mm.isMesh) { mm.castShadow = false; mm.receiveShadow = false; } });
+          const hold = new THREE.Group(); hold.name = 'chest3d'; hold.add(m); grp.add(hold);
+          sp.visible = false; glow.scale.set(1.5, 0.6, 1);
+          return true;
+        };
+        if (!put()) { const off = onModelReady((id) => { if (id === 'crystal_chest' && put()) off(); }); }
+        (glow.material as THREE.SpriteMaterial).color.set('#7ff0ff');
+      }
       v = { kind: e.kind, obj: grp, height: 1, phase: 0, lx: e.x, ly: e.y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, sprite: sp, beam };
     } else return null;
     if (e.kind !== Kind.LOOT) prepDynamic(v.obj, e.kind === Kind.MONSTER ? 0.8 : 0.55);
@@ -963,6 +980,8 @@ export class Renderer3D {
       if (e.kind === Kind.LOOT) {
         v.obj.position.set(e.x * U, this.heightAt(e.x, e.y), e.y * U);
         if (v.sprite) v.sprite.position.y = 0.55 + Math.sin(now / 300 + e.id) * 0.06;
+        const c3 = v.obj.children.find((o) => o.name === 'chest3d');
+        if (c3) { c3.position.y = 0.12 + Math.sin(now / 420 + e.id) * 0.05; c3.rotation.y = now / 1400 + e.id; }
         if (v.beam) (v.beam.material as THREE.MeshBasicMaterial).opacity = 0.7 + Math.sin(now / 250) * 0.3;
         const mine = e.owner === g.charId;
         (v.sprite!.material as THREE.SpriteMaterial).opacity = mine ? 1 : 0.5;

@@ -111,6 +111,12 @@
    "group": "npc",
    "model": "fisher",
    "prompt": "An old weathered fisherman with a white beard, thick knitted wool sweater, oiled canvas waders and boots, knitted cap, rope belt with a small knife"
+  },
+  {
+   "id": "n_herbalist",
+   "group": "npc",
+   "model": "herbalist",
+   "prompt": "A kind elderly village herbalist woman with silver hair in a loose braid under a green headscarf, warm wrinkled smiling face, earthy green and brown layered linen dress with a long apron full of pockets holding herb bundles, a woven sash with small drying flowers and little potion vials, soft leather boots"
   }
  ],
  "roles": {
@@ -140,7 +146,8 @@
   "t_executioner": 2.2,
   "t_knight": 2.1,
   "f_slag": 2.0,
-  "f_boss": 3.1
+  "f_boss": 3.1,
+  "herbalist": 1.65
  },
  "animations": {
   "guardian": {

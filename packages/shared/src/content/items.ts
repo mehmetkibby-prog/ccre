@@ -143,6 +143,7 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'ember_stone', name: 'Kor Taşı', icon: 'ember_stone', color: '#ff7a2a', sellable: false, desc: 'Kor Kulesi\'nde düşer. İçinde hâlâ ocak ateşi yanan taş; silah ve zırh evriminin temel malzemesi.' },
   { id: 'star_iron', name: 'Yıldız Demiri', icon: 'star_iron', color: '#8fb4ff', sellable: false, desc: 'Kor Kulesi\'nde düşer. Gökten düşmüş taşın demiri; evrimde silaha ve zırha sertlik verir.' },
   { id: 'evo_crystal', name: 'Evrim Kristali', icon: 'evo_crystal', color: '#e8b8ff', sellable: false, desc: 'Karademir\'den ve Kor Sandığı\'ndan zor düşer. 2. ve 3. evrim kademesi için gerekir.' },
+  { id: 'crystal_chest', name: 'Kristal Sandık', icon: 'crystal_chest', color: '#8fe8ff', sellable: false, desc: 'Etkinlik sırasında canavarlardan düşer. Çantadan aç: Mücevher, Öz ve sürpriz ödüller.' },
   { id: 'forge_chest', name: 'Kor Sandığı', icon: 'forge_chest', color: '#ff9a3a', sellable: false, desc: 'Karademir\'i yenen herkese verilir. Çantadan aç: Mücevher, Öz, Kor Taşı, Yıldız Demiri ve şansına Evrim Kristali.' },
   { id: 'mourn_silk', name: 'Matem İpeği', icon: 'mourn_silk', color: '#a78bd8', sellable: false, desc: 'Kadim Kule katlarında düşer. Yas tutan ruhların dokuduğu ipek.' },
   { id: 'azrail_chest', name: 'Azrail Sandığı', icon: 'azrail_chest', color: '#ff3a5a', sellable: false, desc: 'Azrail\'den kesin düşer. Aç: Mücevher, Öz, kule malzemeleri ve şansla Azrail Kancası.' },

@@ -1917,3 +1917,35 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .adm-ann .ann-sw-red { background: linear-gradient(180deg, #ff7a6a, #c2352a); color: #2a0806; }
 .adm-ann .ann-sw-green { background: linear-gradient(180deg, #8ce07a, #3f9a3a); color: #0c2408; }
 .adm-ann .ann-sw-blue { background: linear-gradient(180deg, #7cc8ff, #2f78c2); color: #06182a; }
+/* etkinlik rozetleri (oyun) */
+.ev-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 5px; pointer-events: none; }
+.ev-badge { --c: #ffd25a; display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 5px; border-radius: 99px; background: linear-gradient(180deg, rgba(30, 20, 10, .9), rgba(14, 10, 6, .88)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 70%, transparent), 0 0 10px color-mix(in srgb, var(--c) 35%, transparent); font-size: 11.5px; font-weight: 700; color: #f6ecd8; animation: ev-glow 2.6s ease-in-out infinite; }
+.ev-badge .ic { width: 18px; height: 18px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--c); font-size: 11px; }
+.ev-badge img { width: 20px; height: 20px; object-fit: contain; filter: drop-shadow(0 0 4px var(--c)); }
+.ev-badge .nm { color: var(--c); }
+.ev-badge .tm { font-variant-numeric: tabular-nums; color: #e8dcc0; font-weight: 600; opacity: .9; }
+.ev-badge.ev-drop { --c: #ffa25a; } .ev-badge.ev-essence { --c: #7cd8ff; } .ev-badge.ev-chest { --c: #a8f0ff; }
+@keyframes ev-glow { 50% { box-shadow: inset 0 0 0 1px var(--c), 0 0 16px color-mix(in srgb, var(--c) 55%, transparent); } }
+/* yönetim: etkinlikler */
+.ev-quick { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+.ev-qc { --c: #ffd25a; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 8px; border: none; border-radius: 10px; cursor: pointer; color: #f6ecd8; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 22%, rgba(20, 14, 8, .9)), rgba(14, 10, 6, .9)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 55%, transparent); transition: transform .12s, box-shadow .12s; }
+.ev-qc:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 0 0 1px var(--c), 0 6px 18px color-mix(in srgb, var(--c) 30%, transparent); }
+.ev-qc .ic { font-size: 22px; color: var(--c); } .ev-qc img { width: 34px; height: 34px; object-fit: contain; }
+.ev-qc b { font-size: 13px; } .ev-qc small { color: var(--muted); font-size: 11px; }
+.ev-qc.ev-drop, .ev-card.ev-drop { --c: #ffa25a; } .ev-qc.ev-essence, .ev-card.ev-essence { --c: #7cd8ff; } .ev-qc.ev-chest, .ev-card.ev-chest { --c: #a8f0ff; }
+.ev-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.ev-card { --c: #ffd25a; padding: 10px 12px; border-radius: 10px; background: rgba(0, 0, 0, .22); box-shadow: inset 3px 0 0 var(--c), inset 0 0 0 1px rgba(255, 255, 255, .06); }
+.ev-card.st-off { opacity: .6; }
+.ev-card .ev-hd { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ev-card .ev-hd .ic { font-size: 18px; color: var(--c); } .ev-card .ev-hd img { width: 26px; height: 26px; object-fit: contain; }
+.ev-st { font-size: 11.5px; padding: 2px 9px; border-radius: 99px; background: rgba(255, 255, 255, .06); color: var(--muted); }
+.ev-st.st-live { background: rgba(90, 209, 106, .16); color: #8ff09a; box-shadow: inset 0 0 0 1px rgba(90, 209, 106, .45); }
+.ev-st.st-next { background: rgba(124, 200, 255, .12); color: #9fd6ff; }
+.ev-fields { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.ev-fields > label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ev-fields > label > span:first-child { min-width: 130px; font-size: 12.5px; color: var(--muted); }
+.ev-fields .adm-chips { margin: 0; display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.adm-seg.ev-seg { display: inline-grid; grid-template-columns: repeat(3, auto); gap: 6px; }
+.adm-seg.ev-seg button { min-height: 0; padding: 6px 14px; }
+.adm-seg.ev-seg button b { font-size: 13px; }
+.adm-seg.ev-seg button.on { background: color-mix(in srgb, var(--c) 22%, transparent); box-shadow: inset 0 0 0 2px var(--c); color: #fff; }

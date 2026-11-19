@@ -13,7 +13,7 @@ import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, Admi
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
-import { findPath, los, freeAt } from '@col/shared';
+import { findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
 import { Forge } from './forge.ts';
 
@@ -357,12 +357,30 @@ export class World {
   }
 
   // ───────────────────────────── tick ─────────────────────────────
+  /** Etkin etkinlikler (saniyede bir hesaplanır): TP/eşya/Öz çarpanları ve Kristal Sandık şansı */
+  private evNow: ActiveEvents = { xp: 1, drop: 1, essence: 1, chest: 0, list: [] };
+  private evSeen = new Set<string>();
+  private tickEvents() {
+    const ev = activeEvents(TUNING.events, this.now);
+    const ids = new Set(ev.list.map((x) => x.e.id + ':' + x.end));
+    if (TUNING.events.announce) {
+      for (const { e, end } of ev.list) if (!this.evSeen.has(e.id + ':' + end)) {
+        const min = Math.max(1, Math.round((end - this.now) / 60000));
+        const what = e.kind === 'chest' ? `canavarlardan Kristal Sandık düşüyor (%${+(e.chance * 100).toFixed(1)})` : `${EVENT_NAMES[e.kind]} ×${+e.mult.toFixed(2)}`;
+        if (this.evSeen.size || this.tickNo > 50) this.chatAll(`Etkinlik başladı: ${what} · ${min >= 60 ? `${Math.floor(min / 60)} sa ${min % 60 ? (min % 60) + ' dk' : ''}` : min + ' dk'} sürecek!`);
+      }
+      for (const k of this.evSeen) if (!ids.has(k)) { const e = this.evNow.list.find((x) => x.e.id + ':' + x.end === k)?.e; if (e) this.chatAll(`Etkinlik sona erdi: ${EVENT_NAMES[e.kind]}. Katılan herkese teşekkürler!`); }
+    }
+    this.evSeen = ids; this.evNow = ev;
+  }
+  private chatAll(text: string) { for (const p of this.bySid.values()) this.sendJson(p, { t: 'chat', ch: 'world', from: 'Etkinlik', text, gm: true }); }
+
   tick() {
     const t = performance.now();
     this.now = Date.now();
     this.tickNo++;
     this.pathBudget = 24; // bir tikte en çok bu kadar yol hesabı (kalabalıkta sunucu yorulmasın)
-    if (this.tickNo % Math.round(1000 / TICK_MS) === 0) this.social.tick(); // saniyede bir: davet/ticaret/düello/grup
+    if (this.tickNo % Math.round(1000 / TICK_MS) === 0) { this.social.tick(); this.tickEvents(); } // saniyede bir: davet/ticaret/düello/grup, etkinlikler
     for (const z of this.zones.values()) {
       if (z.playerSet.size === 0 && z.respawnQueue.length === 0 && z.lootById.size === 0) continue;
       this.tickZone(z);
@@ -953,7 +971,7 @@ export class World {
     const mod = 1;
     const bf = charBuffs(c.misc.buffs, this.now);
     // TP: grupta, canavarın çevresindeki (geniş menzil) grup üyeleri paylaşır; her üyenin kendi seviye ve buff çarpanıyla
-    for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) {
+    for (const [q, xp] of this.social.shareXp(p, m.x, m.y, (q) => m.xp * lvMod(q.char.level) * TUNING.xpMul * this.evNow.xp * (1 + charBuffs(q.char.misc.buffs, this.now).xpPct / 100))) {
       this.addXp(q, xp);
       if (m.sp.floor && q.zone.id === TOWER_MAP) this.towerKill(q, m);
       this.questKill(q, m);
@@ -988,7 +1006,7 @@ export class World {
     // canavarlardan mücevher düşmez (mücevher yalnız satış, görev ve ödüllerden kazanılır)
     const gems = 0;
     // Öz de bölge seviye sınırına tabi (sınırı aşan oyuncu ganimetin yalnız overMul kadarını alır)
-    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * over * TUNING.essenceMul * (1 + bf.essPct / 100));
+    const ess = Math.round(randInt(prof.essence[0], prof.essence[1]) * vm * over * TUNING.essenceMul * this.evNow.essence * (1 + bf.essPct / 100));
     // lonca öz vergisi: kazancın vergi oranı kadarı lonca hazinesine (ana sürece toplu bildirilir)
     let ess2 = ess;
     if (p.guild && p.guild.tax > 0 && ess > 0) {
@@ -1003,7 +1021,7 @@ export class World {
     const drops = m.def.boss ? 3 : 1;
     for (let i = 0; i < drops; i++) {
       // gerçek zar: %2 ise ortalama 50 öldürmede 1, ama 3. öldürmede de 200.de de düşebilir
-      const pe = prof.equipChance * VARIANT_LOOT_MULT[m.variant] * over * TUNING.dropMul * (1 + bf.dropPct / 100);
+      const pe = prof.equipChance * VARIANT_LOOT_MULT[m.variant] * over * TUNING.dropMul * this.evNow.drop * (1 + bf.dropPct / 100);
       if ((m.def.boss && over === 1) || rnd() < pe) {
         const item = this.rollEquipment(p, prof.rarityWeights, m.variant === 2);
         if (item) this.dropLoot(p, m, { kind: 'item', item });
@@ -1012,18 +1030,20 @@ export class World {
     // Ustalık Mührü canavardan hiç düşmez (yalnız market, görev ve üretimle); yönetim ganimetine eklense bile atlanır
     for (const mat of prof.materials) {
       if (NO_MONSTER_DROP.has(mat.id)) continue;
-      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
+      if (rnd() < mat.chance * VARIANT_LOOT_MULT[m.variant] * mod * over * TUNING.dropMul * this.evNow.drop) this.dropLoot(p, m, { kind: 'mat', key: mat.id, qty: randInt(mat.qty[0], mat.qty[1]) });
     }
     // yönetim: bölge ve canavar özel düşenleri
     for (const d of prof.drops) {
       if (NO_MONSTER_DROP.has(d.key)) continue;
-      if (rnd() >= d.chance * over) continue;
+      if (rnd() >= d.chance * over * this.evNow.drop) continue;
       if (d.kind === 'item') {
         if (!ITEM_TPL.has(d.key)) continue;
         const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
         for (let k = randInt(d.qty[0], d.qty[1]); k > 0; k--) this.dropLoot(p, m, { kind: 'item', item: makeItem(d.key, r, 'drop') });
       } else if (MATERIAL.has(d.key) || MALL.has(d.key)) this.dropLoot(p, m, { kind: 'mat', key: d.key, qty: randInt(d.qty[0], d.qty[1]) });
     }
+    // Kristal Sandık etkinliği: her canavar öldürmede yönetimin verdiği şansla sandık düşer (bölge seviye sınırına tabi)
+    if (this.evNow.chest > 0 && rnd() < this.evNow.chest * over) this.dropLoot(p, m, { kind: 'mat', key: 'crystal_chest', qty: 1 });
     p.selfDirty |= 1; p.markSave();
   }
 
@@ -1302,6 +1322,7 @@ export class World {
     if (key === 'red_potion') return this.usePotion(p, false);
     if (key === 'azrail_chest') return this.openAzrailChest(p);
     if (key === 'forge_chest') return this.openForgeChest(p);
+    if (key === 'crystal_chest') return this.openCrystalChest(p);
     this.notice(p, 'Bu eşya doğrudan kullanılamaz.');
   }
 
@@ -1883,6 +1904,33 @@ export class World {
     const mul = m.variant === 2 ? T.eliteLoot : 1;
     for (const d of fl?.mats ?? []) give({ kind: 'mat', ...d }, mul);
   }
+  /** Kristal Sandık (etkinlikten): içerik yönetimin Etkinlikler bölümünden */
+  private openCrystalChest(p: Player) {
+    const c = p.char, ch = TUNING.events.chest;
+    if ((c.materials.crystal_chest ?? 0) <= 0) return this.notice(p, 'Elinde yok.');
+    const items = ch.drops.filter((d) => d.kind === 'item');
+    if (items.length && c.bag.length + items.reduce((a, d) => a + d.qty[1], 0) > BAG_EQUIP_CAP) return this.notice(p, 'Sandığı açmak için çantada yer aç.');
+    c.materials.crystal_chest -= 1;
+    const rewards: string[] = [];
+    const gems = randInt(ch.gems[0], ch.gems[1]), ess = randInt(ch.essence[0], ch.essence[1]);
+    if (gems) { c.gems += gems; rewards.push(`${gems.toLocaleString('tr-TR')} Mücevher`); }
+    if (ess) { c.essence += ess; rewards.push(`${ess.toLocaleString('tr-TR')} Öz`); }
+    for (const d of ch.drops) {
+      if (rnd() >= d.chance) continue;
+      const q = randInt(d.qty[0], d.qty[1]);
+      if (d.kind === 'item') {
+        if (!ITEM_TPL.has(d.key)) continue;
+        const r = (RARITIES as readonly string[]).includes(d.rarity ?? '') ? d.rarity as Rarity : 'blue';
+        for (let k = 0; k < q; k++) { const it = makeItem(d.key, r, 'chest'); c.bag.push(it); rewards.push(itemDisplayName(it)); }
+      } else if (MATERIAL.has(d.key) || MALL.has(d.key)) {
+        c.materials[d.key] = (c.materials[d.key] ?? 0) + q;
+        rewards.push(`${q}× ${MATERIAL.get(d.key)?.name ?? MALL.get(d.key)?.name ?? d.key}`);
+      }
+    }
+    p.selfDirty |= 1 | 2; this.save(p, true);
+    this.sendJson(p, { t: 'chestResult', title: 'Kristal Sandık', rewards: rewards.length ? rewards : ['Sandık boş çıktı'] });
+  }
+
   private openForgeChest(p: Player) {
     const c = p.char, ch = TUNING.forge.chest;
     if ((c.materials.forge_chest ?? 0) <= 0) return this.notice(p, 'Elinde yok.');

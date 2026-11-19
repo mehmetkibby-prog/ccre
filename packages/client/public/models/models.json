@@ -581,5 +581,10 @@
     "attackClips": [
       "Attack Slash"
     ]
+  },
+  "crystal_chest": {
+    "url": "crystal_chest.glb",
+    "scale": 1,
+    "v": "ace6a618"
   }
 }

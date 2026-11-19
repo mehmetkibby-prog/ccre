@@ -153,6 +153,12 @@
     },
     "f_boss": {
       "file": "assets-src/meshy/forge/f_boss.png"
+    },
+    "n_herbalist": {
+      "task": "01a1f4a4-28ae-7585-8c79-102531e37609",
+      "prompt": "A kind elderly village herbalist woman with silver hair in a loose braid under a green headscarf, warm wrinkled smiling face, earthy green and brown layered linen dress with a long apron full of pockets holding herb bundles, a woven sash with small drying flowers and little potion vials, soft leather boots. Single character only, full body from head to feet fully visible, front view facing the camera, A-pose with arms slightly away from the body, legs slightly apart, empty open hands, plain light grey studio background, soft even lighting, realistic human proportions, semi-realistic dark fantasy action RPG character art, highly detailed worn materials (steel, leather, wool, cloth), no weapon in hands, no shield in hands, no text, no logo, no frame",
+      "url": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/uploads/image_01a1f4a4-28ae-7585-8c79-102531e37609_0.png?Expires=1795365002&Signature=pQ97NTQOEwUPEtwmOdF1K7ESANALq4LHr8u65NZgeMYLGE2jr4JwfR3Ti~qBs~4Jr5hj79voidsO7mE1tcHiLWy13P4A5PKxk6kGnvGMP4cJHnmXpm2yk82KRHLVZnXtu6XUAj7SBMUp8uDYQs80T2-2Mue8~nwDpgjV4rzKGyhjM1JjSG1k8~HM-hDmeXWcAnO7Uiqx4ZHqFMkP~aTVFJCbaIKF5ZivQ1JyzEI-kDQfHVqeQp1N-Jsf7USYKYlg-VB2qWnwohyie7D0DunsvzbZrI2TjnINvBjdPYOyDhEF8mg5cwazbz2gekf33CjCQg-oe78RbB7CyaypvvkGHQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "file": "assets-src/meshy/concepts/n_herbalist.png"
     }
   },
   "builds": {
@@ -671,6 +677,19 @@
         "Cast Ground Slam": {
           "task": "01a1ef85-a279-7535-8b45-5198cc83d6db",
           "actionId": 127
+        }
+      }
+    },
+    "herbalist": {
+      "concept": "n_herbalist",
+      "model": "01a1f4a4-f974-7185-8fae-222b2f6880ee",
+      "modelGlb": "https://assets.meshy.ai/dd16ab36-5ee3-4014-8cf3-b7cb4886b8bc/tasks/01a1f4a4-f974-7185-8fae-222b2f6880ee/output/model.glb?Expires=1795365112&Signature=cYqeWPICUrBmgmR-M317EIs4FrzdAIr99JZamGV5w-xGMgN1PJEBclv-odZoGSrZamFo5lfTPFmOPtlP7-fj~eIg1sffmBEzoF9nZ91E4DuUM4S4DeDL~xp-xKBqlJ-fzinfnNGnsg8-g5YZuLx8RW6u-09EDm0VDbxDV6fQlgNYWqGBHzeqNJQcnfVlmGLfSXqur-gDi0SfEaER3kaR~oONolPEpi5y6Jgf~7G1nw7CiE12zpeYXS0gbrkkEhPwJ9nfxFb5sVu4ehbbOcTdQGJOs370n5RaNdOM~Oum-YLJVlk1z5WM~Py5DN5qO7QtRk6o~NUIIRBXJo7bRuXDqw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "rig": "01a1f4a6-7c5a-73d5-a2a3-7753410ef1d6",
+      "rigLogged": true,
+      "anims": {
+        "Idle": {
+          "task": "01a1f4a6-e344-7425-b346-76178666509d",
+          "actionId": 0
         }
       }
     }
