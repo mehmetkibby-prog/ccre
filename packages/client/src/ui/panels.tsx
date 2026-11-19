@@ -622,6 +622,7 @@ function NetStats({ game }: { game: Game }) {
 
 function Settings({ game }: { game: Game }) {
   const s = useStore((x) => x.settings);
+  const dayPhase = useStore((x) => x.dayPhase);
   const set = (p: Partial<typeof s>) => store.set({ settings: { ...s, ...p } });
   return (
     <Panel title="Ayarlar" width={480}>
@@ -645,11 +646,14 @@ function Settings({ game }: { game: Game }) {
       <div className="field"><label className="row" style={{ gap: 8 }}><span>Efekt sesi (vuruş, adım, arayüz): {Math.round(s.sfx * 100)}</span><div className="spacer" /><button className="btn small" onClick={() => set({ sfx: s.sfx > 0 ? 0 : 0.7 })}>{s.sfx > 0 ? '🔇 Efektleri kapat' : '🔊 Efektleri aç'}</button></label><input type="range" min={0} max={1} step={0.05} value={s.sfx} onChange={(e) => set({ sfx: Number(e.target.value) })} /></div>
       <label className="row" style={{ fontSize: 14 }}><input type="checkbox" checked={s.showNames} onChange={(e) => set({ showNames: e.target.checked })} /> Oyuncu isimlerini göster</label>
       <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.showDamage} onChange={(e) => set({ showDamage: e.target.checked })} /> Başkalarının hasar sayıları</label>
+      {TUNING.dayNight.enabled && (
+        <label className="row" style={{ fontSize: 14, marginTop: 6 }}><input type="checkbox" checked={s.dayNight !== false} onChange={(e) => set({ dayNight: e.target.checked })} /> Gece-gündüz döngüsü (Türkiye saati) <span className="muted" style={{ fontSize: 12, marginLeft: 6 }}>{s.dayNight !== false ? `şu an: ${dayPhase}` : 'kapalı: hep gündüz'}</span></label>
+      )}
       <div className="row" style={{ marginTop: 14, gap: 8, flexWrap: 'wrap' }}>
         <InstallButton />
         <button className="btn small ghost" title="Karakter ve kanal seçimine döner" onClick={() => window.dispatchEvent(new Event('col-exit'))}>Kanal / karakter değiştir</button>
       </div>
-      <div className="muted" style={{ fontSize: 11, marginTop: 12 }}>Kısayollar: WASD/oklar yürü · Fare ile tıkla-yürü/hedef · Boşluk/1 saldır · 2-3-4 beceri · Q iksir · Z topla · Tab hedef değiştir · I çanta · C karakter · K beceri · T ışınlan · M harita · Enter sohbet</div>
+      <div className="muted" style={{ fontSize: 11, marginTop: 12 }}>Kısayollar: WASD/oklar yürü · Fare ile tıkla-yürü/hedef · Boşluk/1 saldır · 2-3-4-5 beceri · Q iksir · Z topla · Tab hedef değiştir · I çanta · C karakter · K beceri · T ışınlan · M harita · Enter sohbet</div>
     </Panel>
   );
 }

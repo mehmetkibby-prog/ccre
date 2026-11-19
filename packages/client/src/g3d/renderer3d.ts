@@ -8,9 +8,10 @@ import { createGlbChar, model as loadModelRaw, hasModel, modelPending, onModelRe
 import { equipGlb } from './gear.ts';
 import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { evoArmorFx, gearEvo } from './evofx.ts';
+import { mtnLight } from './mountains.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, trDayKey, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, trDayKey, dayNightAt, trHour, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -317,6 +318,8 @@ export class Renderer3D {
     this.hemi.color.set(th.sky); this.hemi.groundColor.set(th.ground); this.hemi.intensity = th.hemi;
     this.baseExp = th.exp;
     this.renderer.toneMappingExposure = th.exp * TUNING.brightness;
+    this.th = th; this.thId = l.def.theme; this.dnAt = 0; this.skyKey = '';
+    this.buildLampGlow(l);
     // kendi karakterini yeniden ekle
     if (this.self) this.dyn.add(this.self.obj);
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
@@ -341,6 +344,86 @@ export class Renderer3D {
     if (fps < cap * 0.8) { this.resLow++; this.resHigh = 0; } else if (fps > cap * 0.95) { this.resHigh++; this.resLow = 0; } else { this.resLow = 0; this.resHigh = 0; }
     if (this.resLow >= 2 && this.dynScale > floor) { this.dynScale = Math.max(floor, Math.round((this.dynScale - 0.1) * 10) / 10); this.resLow = 0; }
     else if (this.resHigh >= 4 && this.dynScale < 1) { this.dynScale = Math.min(1, Math.round((this.dynScale + 0.1) * 10) / 10); this.resHigh = 0; }
+  }
+
+  // ───────── gece-gündüz (Türkiye saati) ─────────
+  private th: (typeof THEME)[keyof typeof THEME] | null = null; private thId = 'forest';
+  private dnAt = 0; private dnExp = 1; private skyKey = ''; private dnNight = 0;
+  private stars: THREE.Points | null = null;
+  private lampGlow: THREE.Group | null = null; private lampMat: THREE.SpriteMaterial | null = null; private lampPool: THREE.MeshBasicMaterial | null = null;
+  private dnC = { a: new THREE.Color(), b: new THREE.Color() };
+  private mtnHaze = new THREE.Color(); private mtnHazeOf: THREE.Object3D | null = null;
+  /** Köy fenerleri: gece sıcak hale ve yerde ışık havuzu (ışık kaynağı yok: ucuz) */
+  private buildLampGlow(l: MapLayout) {
+    if (this.lampGlow) { this.world.remove(this.lampGlow); this.lampGlow.traverse((o) => { const m = o as THREE.Mesh; if (m.geometry && m.geometry !== this.poolGeo) m.geometry.dispose(); }); this.lampGlow = null; }
+    const lamps = l.props.filter((p) => p.k === 'lamp');
+    if (!lamps.length) return;
+    this.lampMat ??= new THREE.SpriteMaterial({ map: glowTexture(), color: 0xffb860, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0, fog: false });
+    this.lampPool ??= new THREE.MeshBasicMaterial({ map: glowTexture(), color: 0xffa040, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 });
+    const g = new THREE.Group(); g.visible = false;
+    for (const p of lamps) {
+      const s = p.s ?? 1, y = this.heightAt(p.x, p.y);
+      const sp = new THREE.Sprite(this.lampMat); sp.position.set(p.x * U, y + 3.15 * s, p.y * U); sp.scale.setScalar(2.4 * s); g.add(sp);
+      const d = new THREE.Mesh(this.poolGeo, this.lampPool); d.position.set(p.x * U, y + 0.06, p.y * U); d.scale.setScalar(5 * s); d.renderOrder = 1; g.add(d);
+    }
+    this.lampGlow = g; this.world.add(g);
+  }
+  private poolGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+  /** Yıldızlar: kameranın etrafında üst yarım küre (sise girmez) */
+  private buildStars() {
+    const n = MOBILE ? 260 : 520, pos = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, e = 0.12 + Math.pow(Math.random(), 0.7) * 1.3, r = 200;
+      pos.set([Math.cos(a) * Math.cos(e) * r, Math.sin(e) * r, Math.sin(a) * Math.cos(e) * r], i * 3);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color: 0xdfe8ff, size: MOBILE ? 1.6 : 2, sizeAttenuation: false, transparent: true, depthWrite: false, fog: false, opacity: 0 });
+    this.stars = new THREE.Points(g, m); this.stars.renderOrder = -20; this.stars.frustumCulled = false;
+    this.scene.add(this.stars);
+  }
+  /**
+   * Saate göre ışık: gündüz (tema), akşamüstü (altın-turuncu güneş, pembe-mor gök, sıcak pus), gece (ay ışığı mavisi,
+   * koyu lacivert gök, yıldızlar, fenerler yanar). Gece zifiri değil: güneş/gök ışığı ve pozlama yönetimdeki
+   * "koyuluk" oranında kısılır (en çok %85). Kapalı alan haritaları (kuleler) etkilenmez. 250 ms'de bir hesaplanır.
+   */
+  private applyDayNight(now: number) {
+    const th = this.th; if (!th) return;
+    if (this.dnAt && now - this.dnAt < 250) return;
+    this.dnAt = now;
+    const T = TUNING.dayNight, st = store.get();
+    const indoor = this.thId === 'tower' || this.thId === 'forge';
+    const on = T.enabled && !indoor && st.settings.dayNight !== false;
+    const w = on ? dayNightAt(T, trHour(Date.now() + (st.clockSkew ?? 0))) : { night: 0, dusk: 0, label: 'Gündüz' as const };
+    const n = w.night, d = w.dusk * (1 - n), dk = T.dark;
+    const C = (day: number, dusk: number, night: number, out: THREE.Color) => out.set(day).lerp(this.dnC.a.set(dusk), d).lerp(this.dnC.b.set(night), n);
+    // gece paleti koyuluğa göre: koyu lacivert ↔ okunaklı ay mavisi
+    const nightFog = new THREE.Color(0x0e1630).lerp(new THREE.Color(0x3a4a70), 1 - dk);
+    const fog = (this.scene.fog as THREE.Fog | null)?.color;
+    if (fog) C(th.fog, 0xf08a5a, nightFog.getHex(), fog);
+    C(th.sun, 0xff7428, 0x86a2ff, this.sun.color);
+    C(th.sky, 0xff9a64, 0x5468a8, this.hemi.color);
+    C(th.ground, 0x6a4a3a, 0x1e2232, this.hemi.groundColor);
+    const lerp = (a: number, b: number, c: number) => a + (b - a) * d + (c - (a + (b - a) * d)) * n;
+    this.sun.intensity = lerp(th.sunI, th.sunI * 0.85, th.sunI * (0.42 - 0.4 * dk));
+    this.hemi.intensity = lerp(th.hemi, th.hemi * 0.85, th.hemi * (0.62 - 0.45 * dk));
+    this.dnExp = lerp(1, 0.94, 1 - 0.5 * dk);
+    this.scene.environmentIntensity = lerp(0.55, 0.4, 0.55 * (1 - 0.9 * dk));
+    // gökyüzü degradesi: renk değiştikçe yeniden çizilir (küçük doku)
+    const top = C(th.top, 0x6a4a8c, new THREE.Color(0x040818).lerp(new THREE.Color(0x182446), 1 - dk).getHex(), new THREE.Color());
+    const key = top.getHexString() + (fog?.getHexString() ?? '');
+    if (key !== this.skyKey && fog) { this.skyKey = key; this.scene.background = this.skyGradient(top.getHex(), fog.getHex()); }
+    // dağlar: ışık çarpanı ve pus
+    mtnLight.value.setRGB(1, 1, 1).lerp(this.dnC.a.setRGB(1.05, 0.7, 0.55), d).lerp(this.dnC.b.setRGB(0.28 + 0.4 * (1 - dk), 0.33 + 0.4 * (1 - dk), 0.5 + 0.35 * (1 - dk)), n);
+    const mu = (this.mountains?.material as THREE.ShaderMaterial | undefined)?.uniforms?.uHaze;
+    if (mu && fog) { if (this.mtnHazeOf !== this.mountains) { this.mtnHazeOf = this.mountains; this.mtnHaze.copy(mu.value); } mu.value.copy(this.mtnHaze).lerp(fog, Math.max(d * 0.6, n)); }
+    if (this.meshMtn && fog) this.meshMtn.haze.copy(fog);
+    // yıldızlar ve fenerler
+    this.dnNight = n;
+    if (n > 0.05 && !indoor) { if (!this.stars) this.buildStars(); }
+    if (this.stars) { this.stars.visible = n > 0.05 && !indoor; (this.stars.material as THREE.PointsMaterial).opacity = Math.max(0, n - 0.1) * 0.95; this.stars.position.copy(this.camera.position); }
+    const lamp = Math.max(n, d * 0.5);
+    if (this.lampGlow) { this.lampGlow.visible = lamp > 0.05; if (this.lampMat) this.lampMat.opacity = 0.85 * lamp; if (this.lampPool) this.lampPool.opacity = 0.32 * lamp; }
+    if (st.dayPhase !== w.label && on) store.set({ dayPhase: w.label });
   }
 
   private skyGradient(top: number, horizon: number): THREE.Texture {
@@ -810,7 +893,8 @@ export class Renderer3D {
     this.sun.target.updateMatrixWorld();
   }
   draw(now: number, dt: number) {
-    this.renderer.toneMappingExposure = this.baseExp * TUNING.brightness; // yönetim panelinden ışık seviyesi
+    this.applyDayNight(now);
+    this.renderer.toneMappingExposure = this.baseExp * TUNING.brightness * this.dnExp; // yönetim panelinden ışık seviyesi; gece biraz kısık
     this.adaptResolution(now, dt);
     this.resize();
     if (!this.terrain) return;

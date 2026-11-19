@@ -3,6 +3,7 @@ import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
   ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, SKILLUP_DEFAULT, CLASSES, CLASS_IDS, type SkillUpStep, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
   ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
+  DAYNIGHT_DEFAULT, dayNightAt, trHour,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -64,6 +65,45 @@ export function Num({ v, def, on, min, max, step = 0.01, w = 72, dis }: { v: num
 }
 
 export type SetT = React.Dispatch<React.SetStateAction<GameTuning>>;
+/**
+ * Gece-gündüz (Türkiye saati): aç/kapa, gecenin koyuluğu (zifiri olmaz), dilim saatleri ve önizleme
+ * (Kaydet deyince oyundaki herkese o an uygulanır; önizlemeyi "Otomatik"e döndürmeyi unutma).
+ */
+function DayNightSec({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
+  const D = t.dayNight;
+  const set = (p: Partial<GameTuning['dayNight']>) => setT({ ...t, dayNight: { ...D, ...p } });
+  const [, tick] = useState(0);
+  useEffect(() => { const id = setInterval(() => tick((n) => n + 1), 30_000); return () => clearInterval(id); }, []);
+  const h = trHour(Date.now()), now = dayNightAt({ ...D, force: 'auto' }, h);
+  const hm = (x: number) => `${String(Math.floor(x)).padStart(2, '0')}:${String(Math.round((x % 1) * 60)).padStart(2, '0')}`;
+  const hourIn = (k: 'dawn' | 'day' | 'dusk' | 'night', label: string) => (
+    <label key={k}><span>{label}</span><Num v={D[k]} def={DAYNIGHT_DEFAULT[k]} min={0} max={23.75} step={0.25} w={70} dis={dis} on={(v) => set({ [k]: v ?? DAYNIGHT_DEFAULT[k] })} /><small className="muted">{hm(D[k])}</small></label>
+  );
+  return (
+    <section className="admin-sec">
+      <h4>Gece-gündüz (Türkiye saati)</h4>
+      <div className="muted adm-hint">
+        Açık haritalarda ışık saate göre değişir: <b>Şafak</b> (pembe alaca) → <b>Gündüz</b> → <b>Akşamüstü</b> (altın-turuncu gün batımı) → <b>Gece</b> (ay ışığı mavisi, yıldızlar, fenerler yanar).
+        Gece zifiri olmaz; koyuluğu aşağıdan ayarlarsın. Kuleler etkilenmez. Oyuncu Ayarlar'dan kendi ekranında kapatabilir.
+        Şu an Türkiye saati <b>{hm(h)}</b> · oyunda <b>{now.label}</b>.
+      </div>
+      <div className="adm-fields six">
+        <label><span>Gece-gündüz açık</span><button type="button" className={'switch' + (D.enabled ? ' on' : '')} disabled={dis} onClick={() => set({ enabled: !D.enabled })}><i /></button></label>
+        <label><span>Gecenin koyuluğu %</span><Num v={Math.round(D.dark * 100)} def={DAYNIGHT_DEFAULT.dark * 100} min={0} max={85} step={5} w={64} dis={dis} on={(v) => set({ dark: (v ?? DAYNIGHT_DEFAULT.dark * 100) / 100 })} /><small className="muted">{D.dark < 0.35 ? 'hafif' : D.dark < 0.7 ? 'dengeli' : 'koyu'}</small></label>
+        <label><span>Önizleme</span>
+          <select className="adm-sel" value={D.force} disabled={dis} onChange={(e) => set({ force: e.target.value as GameTuning['dayNight']['force'] })}>
+            <option value="auto">Otomatik (saate göre)</option><option value="day">Hep gündüz</option><option value="dusk">Hep akşamüstü</option><option value="night">Hep gece</option>
+          </select>
+        </label>
+      </div>
+      <div className="adm-fields six">
+        {hourIn('dawn', 'Şafak başlar')}{hourIn('day', 'Gündüz başlar')}{hourIn('dusk', 'Akşamüstü başlar')}{hourIn('night', 'Gece başlar')}
+      </div>
+      {D.force !== 'auto' && <div className="err" style={{ marginTop: 6 }}>Önizleme açık: kaydedersen herkes "{D.force === 'day' ? 'gündüz' : D.force === 'dusk' ? 'akşamüstü' : 'gece'}" görür. İşin bitince "Otomatik"e döndür.</div>}
+    </section>
+  );
+}
+
 export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
   const preset = (p: Partial<GameTuning>) => setT({ ...t, ...p });
   return (
@@ -78,6 +118,7 @@ export function GeneralTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
           <button className="btn small ghost" disabled={dis} onClick={() => setT(structuredClone(DEFAULT_TUNING))}>Her şeyi varsayılana dön</button>
         </div>
       </section>
+      <DayNightSec t={t} setT={setT} dis={dis} />
       <section className="admin-sec">
         <h4>Duyuru</h4>
         <textarea className="admin-ta" maxLength={200} disabled={dis} placeholder="Oyunun üstünde herkese görünen kısa mesaj (boş bırakılırsa gizlenir)" value={t.announcement} onChange={(e) => setT({ ...t, announcement: e.target.value })} />

@@ -68,7 +68,7 @@ void main() {
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 }`;
 const FRAG = /* glsl */`
-uniform vec3 uHaze; uniform vec3 uSnow; uniform vec3 uForest;
+uniform vec3 uHaze; uniform vec3 uSnow; uniform vec3 uForest; uniform vec3 uLight;
 varying vec3 vCol; varying vec2 vUv; varying vec3 vInfo; varying float vT; varying float vMist;
 float hash(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
 float vnoise(vec2 p) { vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);
@@ -100,9 +100,13 @@ void main() {
   if (vInfo.y > 0.5) { float m = smoothstep(vInfo.x + (big - 0.5) * 10.0, vInfo.x + 3.0, p.y); c = mix(c, uSnow * (0.85 + 0.15 * fine), m); }
   // atmosfer: uzak sıra ve etekler sise karışır
   float hz = clamp(vMist + pow(1.0 - vT, 2.0) * 0.45, 0.0, 0.85);
+  c *= uLight; // gece-gündüz: akşamüstü kızıl, gece ay ışığı
   c = mix(c, uHaze, hz);
   gl_FragColor = vec4(c, 1.0);
 }`;
+
+/** Gece-gündüz ışık çarpanı (bütün çizimli dağlar paylaşır; renderer günceller) */
+export const mtnLight = { value: new THREE.Color(1, 1, 1) };
 
 /** lite: telefonda gölgelendirici hafif (dağ ekranın büyük kısmını kapladığı için piksel başı maliyet önemli). */
 export function buildMountains(themeId: string, seed = 7, lite = false): THREE.Mesh {
@@ -158,7 +162,7 @@ export function buildMountains(themeId: string, seed = 7, lite = false): THREE.M
   const forest = new THREE.Color(T.hill).multiplyScalar(0.62).lerp(new THREE.Color(0x2c5a34), 0.5);
   const mat = new THREE.ShaderMaterial({
     vertexShader: VERT, fragmentShader: FRAG, defines: lite ? { LITE: 1 } : {}, vertexColors: true, depthWrite: false, side: THREE.DoubleSide, fog: false, toneMapped: false,
-    uniforms: { uHaze: { value: new THREE.Color(T.haze) }, uSnow: { value: new THREE.Color(T.snow) }, uForest: { value: forest } },
+    uniforms: { uHaze: { value: new THREE.Color(T.haze) }, uSnow: { value: new THREE.Color(T.snow) }, uForest: { value: forest }, uLight: mtnLight },
   });
   const m = new THREE.Mesh(g, mat);
   m.renderOrder = -10; m.frustumCulled = false; m.name = 'mountains';

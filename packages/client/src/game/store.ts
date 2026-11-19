@@ -112,7 +112,9 @@ export interface UiState {
   transformResult: { ok: boolean; item: string; at: number } | null;
   evolveResult: { item: string; evo: number; at: number } | null;
   /** Sv. 7 becerisinin zamanlama çubuğu (başlangıç performance.now, yeşil bölge 0..1) ve son sonucu */
-  qte: { start: number; z0: number; z1: number } | null; qteRes: { perfect: boolean; at: number } | null;
+  qte: { start: number; z0: number; z1: number } | null;
+  /** gece-gündüz: şu anki dilim (ayarlar ve saat yazısı için) */
+  dayPhase: string; qteRes: { perfect: boolean; at: number } | null;
   forge: ForgeView | null;
   /** oto atak durumunun sunucudan son geldiği an (kalan süre bundan geri sayılır) */
   autoSync: number;
@@ -127,7 +129,7 @@ export interface UiState {
   dropOpen: boolean;
   /** oyun bağlantısının yolu: doğrudan sunucuya / Cloudflare üzerinden */
   netPath: 'direct' | 'cf' | '';
-  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number; /** Isınma modu: telefon ısınmasın diye çizim yükü azaltılır (oyun kuralları değişmez) */ cool?: boolean };
+  settings: { music: number; sfx: number; quality: 'low' | 'medium' | 'high'; zoom: number; showNames: boolean; showDamage: boolean; fpsCap: number; v?: number; /** Isınma modu: telefon ısınmasın diye çizim yükü azaltılır (oyun kuralları değişmez) */ cool?: boolean; /** gece-gündüz döngüsü (false = hep gündüz) */ dayNight?: boolean };
 }
 
 const SETTINGS_KEY = 'col_settings';
@@ -145,7 +147,7 @@ function loadSettings(): UiState['settings'] {
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
-  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, qte: null, qteRes: null, autoSync: 0, lootFeed: [], settings: loadSettings(),
+  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();

@@ -1,10 +1,12 @@
 // Yalnız geliştirme: sunucusuz 3B sahne ön izlemesi (ekran görüntüsü için).
 import { Renderer3D } from './g3d/renderer3d.ts';
-import { getLayout, Kind, Anim, MONSTER_INDEX } from '@col/shared';
+import { getLayout, Kind, Anim, MONSTER_INDEX, TUNING } from '@col/shared';
 import type { CEnt } from './game/game.ts';
 import { store } from './game/store.ts';
 
 const q = new URLSearchParams(location.search);
+if (q.get('dn')) TUNING.dayNight.force = q.get('dn') as 'night'; // gece-gündüz önizlemesi
+if (q.get('dark')) TUNING.dayNight.dark = Number(q.get('dark'));
 const map = q.get('map') ?? 'bazaar';
 const cls = (q.get('cls') ?? 'guardian') as 'guardian';
 store.set({ settings: { ...store.get().settings, quality: (q.get('q') as 'high') ?? 'high', zoom: Number(q.get('zoom') ?? 1) } });
