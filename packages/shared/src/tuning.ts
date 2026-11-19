@@ -297,8 +297,8 @@ function sanitizeArena(raw: unknown): ArenaTune {
   return { auto: r.auto === undefined ? ARENA_DEFAULT.auto : !!r.auto, times, durationMin: num(r.durationMin, 3, 120, ARENA_DEFAULT.durationMin), minLevel: num(r.minLevel, 1, 100, ARENA_DEFAULT.minLevel), rewards };
 }
 export interface UpgradeStepTune { chance: number; gems: number; mats: Record<string, number>; weapon: number; armor: number }
-/** total: yüzdeler toplam saldırı/savunmaya (yeni anlam). Yoksa eski kayıt: yüzdeler varsayılandan alınır. */
-export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean; total?: boolean }
+/** flat: kademe değerleri düz güç (yeni anlam). Yoksa eski kayıt: değerler varsayılandan alınır. */
+export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean; flat?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
   xpMul: 1, gemMul: 1, essenceMul: 1, dropMul: 1,
   monsterHpMul: 1, monsterAtkMul: 1, respawnMul: 1,
@@ -461,7 +461,7 @@ export function sanitizeTuning(raw: unknown): GameTuning {
     out.upgrade.steps = steps;
   }
   if (typeof up.failDown === 'boolean') out.upgrade.failDown = up.failDown;
-  if (up.total === true) out.upgrade.total = true;
+  if (up.flat === true) out.upgrade.flat = true;
   // dönüşüm (Haso): kaynak nadirlikler, grup başına mücevher/malzeme/şans/en az artı/seviye
   const tr = obj(r.transform);
   if (Object.keys(tr).length) {

@@ -430,14 +430,14 @@ export function LootTab({ t, setMon, dis }: { t: GameTuning; setMon: (id: string
 
 /** Demirci: 6 kademenin şansı, Mücevher bedeli, malzemeleri ve kazandırdığı güç. */
 export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boolean }) {
-  // eski kayıt (total yok): yüzdeler eşyanın kendi gücüne göreydi; ekranda ve kayıtta yeni varsayılan yüzdeler kullanılır
+  // eski kayıt (flat yok): değerler yüzdeydi; ekranda ve kayıtta yeni varsayılan düz değerler kullanılır
   const steps: UpgradeStepTune[] = t.upgrade.steps?.length === MAX_PLUS
-    ? t.upgrade.steps.map((s, i) => (t.upgrade.total ? s : { ...s, weapon: DEFAULT_UPGRADE[i].weapon, armor: DEFAULT_UPGRADE[i].armor }))
+    ? t.upgrade.steps.map((s, i) => (t.upgrade.flat ? s : { ...s, weapon: DEFAULT_UPGRADE[i].weapon, armor: DEFAULT_UPGRADE[i].armor }))
     : DEFAULT_UPGRADE.map(({ target, ...s }) => { void target; return structuredClone(s); });
   const custom = t.upgrade.steps?.length === MAX_PLUS;
   const put = (i: number, patch: Partial<UpgradeStepTune>) => {
     const n = steps.map((s, j) => (j === i ? { ...s, ...patch } : s));
-    setT({ ...t, upgrade: { ...t.upgrade, steps: n, total: true } });
+    setT({ ...t, upgrade: { ...t.upgrade, steps: n, flat: true } });
   };
   const setMat = (i: number, oldKey: string | null, key: string, qty: number) => {
     const mats = { ...steps[i].mats };
@@ -450,22 +450,22 @@ export function UpgradeTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
     <>
       <section className="admin-sec">
         <h4>Artı basma (Demirci)</h4>
-        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Yalnız silah ve gövde zırhına basılır, en çok +{MAX_PLUS}. "Güç %" o kademedeki eşyayı kuşanınca karakterin <b>toplam saldırısına</b> (silah) ya da <b>toplam savunmasına</b> (zırh) eklenen yüzdedir; evrim yüzdesiyle toplanır (ör. +4 silah %15 + 2. evrim %16 = toplam saldırıya +%31). Her kademede en çok 6 malzeme.</div>
+        <div className="muted" style={{ fontSize: 11.5, marginBottom: 8 }}>Yalnız silah ve gövde zırhına basılır, en çok +{MAX_PLUS}. Silah/zırh sütunları o kademede eşyanın gücüne eklenen <b>düz değerdir</b> (o kademedeki toplam): ör. gücü 10 olan silah, +1 değeri 10 ise +1'de 20 olur. Evrimin değeriyle toplanır. Oyuncu eşya bilgisinde dökümü görür. Her kademede en çok 6 malzeme.</div>
         <label className="row" style={{ fontSize: 13, marginBottom: 8 }}><input type="checkbox" disabled={dis} checked={t.upgrade.failDown ?? true} onChange={(e) => setT({ ...t, upgrade: { ...t.upgrade, failDown: e.target.checked } })} /> Başarısızlıkta eşya bir kademe düşsün</label>
         <div className="row wrap">
           <span className={'pill' + (custom ? '' : ' ok')}>{custom ? 'Özel tablo' : 'Varsayılan tablo'}</span>
-          {custom && <button className="btn small ghost" disabled={dis} onClick={() => setT({ ...t, upgrade: { ...t.upgrade, steps: undefined, total: undefined } })}>Varsayılana dön</button>}
+          {custom && <button className="btn small ghost" disabled={dis} onClick={() => setT({ ...t, upgrade: { ...t.upgrade, steps: undefined, flat: undefined } })}>Varsayılana dön</button>}
         </div>
       </section>
       <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Kademe</th><th>Şans %</th><th>Mücevher</th><th>Silah: toplam saldırı +%</th><th>Zırh: toplam savunma +%</th><th>Malzemeler (ad · adet)</th></tr></thead>
+        <thead><tr><th>Kademe</th><th>Şans %</th><th>Mücevher</th><th>Silah: + saldırı</th><th>Zırh: + savunma</th><th>Malzemeler (ad · adet)</th></tr></thead>
         <tbody>{steps.map((s, i) => (
           <tr key={i}>
             <td><b>+{i + 1}</b><small>{i === 4 ? '+5 efekti' : i === 5 ? '+6 efekti' : ''}</small></td>
             <td><Num v={custom ? s.chance : undefined} def={s.chance} min={0} max={100} step={1} w={58} dis={dis} on={(v) => put(i, { chance: v ?? DEFAULT_UPGRADE[i].chance })} /></td>
             <td><Num v={custom ? s.gems : undefined} def={s.gems} min={0} max={1e7} step={1} w={78} dis={dis} on={(v) => put(i, { gems: Math.round(v ?? DEFAULT_UPGRADE[i].gems) })} /></td>
-            <td><Num v={custom ? s.weapon : undefined} def={DEFAULT_UPGRADE[i].weapon} min={0} max={300} step={0.5} w={58} dis={dis} on={(v) => put(i, { weapon: v ?? DEFAULT_UPGRADE[i].weapon })} /></td>
-            <td><Num v={custom ? s.armor : undefined} def={DEFAULT_UPGRADE[i].armor} min={0} max={300} step={0.5} w={58} dis={dis} on={(v) => put(i, { armor: v ?? DEFAULT_UPGRADE[i].armor })} /></td>
+            <td><Num v={custom ? s.weapon : undefined} def={DEFAULT_UPGRADE[i].weapon} min={0} max={1e6} step={1} w={66} dis={dis} on={(v) => put(i, { weapon: Math.round(v ?? DEFAULT_UPGRADE[i].weapon) })} /></td>
+            <td><Num v={custom ? s.armor : undefined} def={DEFAULT_UPGRADE[i].armor} min={0} max={1e6} step={1} w={66} dis={dis} on={(v) => put(i, { armor: Math.round(v ?? DEFAULT_UPGRADE[i].armor) })} /></td>
             <td>
               <div className="col" style={{ gap: 4 }}>
                 {Object.entries(s.mats).map(([k, q]) => (

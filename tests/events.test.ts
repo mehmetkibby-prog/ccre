@@ -49,3 +49,22 @@ it('Kristal Sandık etkinliği: canavardan sandık düşer, açınca ödül veri
   expect(sent.find((m) => m.t === 'chestResult')?.title).toBe('Kristal Sandık');
   expect(p.char.gems).toBeGreaterThanOrEqual(DEFAULT_TUNING.events.chest.gems[0]);
 });
+
+it('“Hemen başlat” etkinliği sunucu saatiyle başlar (yönetici cihazının saati 1 saat geride olsa da)', async () => {
+  const { anchorNowEvents } = await import('../packages/server/src/api.ts');
+  const prev = { events: { list: [{ id: 'old', mode: 'now', start: 1000, on: true }] } };
+  const skewed = Date.now() - 59 * 60_000; // cihaz saati 59 dk geride
+  const next = { events: { list: [
+    { id: 'new1', mode: 'now', start: skewed, on: true, kind: 'chest' },      // yeni: sunucu saati
+    { id: 'old', mode: 'now', start: 1000, on: true, kind: 'xp' },            // değişmemiş: korunur
+    { id: 'day', mode: 'daily', start: 5, on: true, kind: 'xp' },             // günlük: dokunulmaz
+  ] } };
+  anchorNowEvents(next, prev as any);
+  expect(Math.abs(next.events.list[0].start - Date.now())).toBeLessThan(2000);
+  expect(next.events.list[1].start).toBe(1000);
+  expect(next.events.list[2].start).toBe(5);
+  // yeniden başlat (başlangıç değişti) → sunucu saati
+  const re = { events: { list: [{ id: 'old', mode: 'now', start: skewed, on: true }] } };
+  anchorNowEvents(re, prev as any);
+  expect(Math.abs(re.events.list[0].start - Date.now())).toBeLessThan(2000);
+});

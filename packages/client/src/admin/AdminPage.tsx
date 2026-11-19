@@ -12,7 +12,7 @@ import { AnnouncementBar, GeneralTab, SkillUpTab, MonsterTab, RarityTable, LootT
 import { TowerTab } from './TowerAdmin.tsx';
 import { ForgeTab, EvoTab } from './ForgeAdmin.tsx';
 import { CraftTab } from './CraftAdmin.tsx';
-import { EventsTab } from './EventsAdmin.tsx';
+import { EventsTab, adminClock } from './EventsAdmin.tsx';
 import { GardenTab } from './GardenAdmin.tsx';
 import { QuestTab } from './QuestAdmin.tsx';
 import { LoadCard, ChatFeed } from './LiveAdmin.tsx';
@@ -50,8 +50,8 @@ type AccFilter = 'all' | 'access' | 'new' | 'banned';
 interface AAccount { id: number; username: string; email: string | null; role: string; testAccess: boolean; banned: boolean; createdAt: string; lastLogin: string | null; charCount: number; chars: { name: string; cls: string; level: number }[]; online: boolean }
 interface AccList { total: number; offset: number; stats: { total: number; day: number; week: number; access: number }; rows: AAccount[] }
 const serverBackend: Backend = {
-  loadTuning: () => api('/api/admin/tuning'),
-  saveTuning: async (tuning, revision) => { const r = await api('/api/admin/tuning', { tuning, revision }); applyRemoteTuning(r.tuning); return r; },
+  loadTuning: async () => { const r = await api('/api/admin/tuning'); if (r.now) adminClock.skew = r.now - Date.now(); return r; },
+  saveTuning: async (tuning, revision) => { const r = await api('/api/admin/tuning', { tuning, revision }); if (r.now) adminClock.skew = r.now - Date.now(); applyRemoteTuning(r.tuning); return r; },
   summary: () => api('/api/admin/summary'),
   setOpening: (o, revision) => api('/api/admin/opening', { ...o, revision }),
   setWorld: async (health) => (await api('/api/admin/world', { health })).health,

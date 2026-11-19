@@ -20,7 +20,10 @@ const KIND_DESC: Record<EventKind, string> = {
 const newId = () => Math.random().toString(36).slice(2, 10);
 const trTime = (ms: number) => { const d = new Date(ms + TR_OFFSET_MS); return `${String(d.getUTCDate()).padStart(2, '0')}.${String(d.getUTCMonth() + 1).padStart(2, '0')} ${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`; };
 /** epoch ms ↔ <input type=datetime-local> değeri (Türkiye saati) */
-const toLocal = (ms: number) => new Date((ms || Date.now()) + TR_OFFSET_MS).toISOString().slice(0, 16);
+/** sunucu saati (yönetim cihazının saati sunucudan farklı olabilir; fark ayar yüklenince/kaydedilince ölçülür) */
+export const adminClock = { skew: 0 };
+const srvNow = () => Date.now() + adminClock.skew;
+const toLocal = (ms: number) => new Date((ms || srvNow()) + TR_OFFSET_MS).toISOString().slice(0, 16);
 const fromLocal = (v: string) => { const t = Date.parse(v + ':00Z'); return Number.isFinite(t) ? t - TR_OFFSET_MS : 0; };
 const left = (ms: number) => { const m = Math.max(0, Math.round(ms / 60000)); return m >= 60 ? `${Math.floor(m / 60)} sa${m % 60 ? ` ${m % 60} dk` : ''}` : `${m} dk`; };
 
@@ -35,9 +38,9 @@ export function EventsTab({ t, setT, dis, save }: { t: GameTuning; setT: SetT; d
   const setE = (p: Partial<GameTuning['events']>) => setT({ ...t, events: { ...E, ...p } });
   const setEv = (i: number, p: Partial<EventDef>) => setE({ list: E.list.map((x, j) => (j === i ? { ...x, ...p } : x)) });
   const setChest = (p: Partial<GameTuning['events']['chest']>) => setE({ chest: { ...E.chest, ...p } });
-  const now = Date.now();
+  const now = srvNow();
   const quick = (kind: EventKind) => {
-    const ev: EventDef = { id: newId(), kind, on: true, mult: 2, chance: 0.03, mode: 'now', start: Date.now(), durMin: 60, at: '20:00', days: [] };
+    const ev: EventDef = { id: newId(), kind, on: true, mult: 2, chance: 0.03, mode: 'now', start: srvNow(), durMin: 60, at: '20:00', days: [] };
     save({ events: { ...E, list: [ev, ...E.list] } });
   };
   const stopNow = (i: number) => save({ events: { ...E, list: E.list.map((x, j) => (j === i ? { ...x, on: false } : x)) } });
@@ -85,12 +88,12 @@ export function EventsTab({ t, setT, dis, save }: { t: GameTuning; setT: SetT; d
                   <label><span>Ne zaman</span>
                     <div className="adm-seg ev-seg">
                       {([['now', 'Hemen'], ['once', 'Tarihte'], ['daily', 'Her gün']] as [EventMode, string][]).map(([m, l]) => (
-                        <button key={m} className={e.mode === m ? 'on' : ''} disabled={dis} onClick={() => setEv(i, { mode: m, start: m === 'now' ? Date.now() : m === 'once' && e.start < Date.now() ? Date.now() + 3600_000 : e.start })}><b>{l}</b></button>
+                        <button key={m} className={e.mode === m ? 'on' : ''} disabled={dis} onClick={() => setEv(i, { mode: m, start: m === 'now' ? srvNow() : m === 'once' && e.start < srvNow() ? srvNow() + 3600_000 : e.start })}><b>{l}</b></button>
                       ))}
                     </div>
                   </label>
                   {e.mode === 'once' && <label><span>Başlangıç (TR saati)</span><input className="adm-num" style={{ width: 190 }} type="datetime-local" disabled={dis} value={toLocal(e.start)} onChange={(x) => setEv(i, { start: fromLocal(x.target.value) })} /></label>}
-                  {e.mode === 'now' && <label><span>Başladı</span><span className="muted">{trTime(e.start)} {e.on && !w && <button className="btn small" disabled={dis} onClick={() => setEv(i, { start: Date.now() })}>Yeniden başlat</button>}</span></label>}
+                  {e.mode === 'now' && <label><span>Başladı</span><span className="muted">{trTime(e.start)} {e.on && !w && <button className="btn small" disabled={dis} onClick={() => setEv(i, { start: srvNow() })}>Yeniden başlat</button>}</span></label>}
                   {e.mode === 'daily' && (
                     <>
                       <label><span>Saat (TR)</span><input className="adm-num" style={{ width: 100 }} type="time" disabled={dis} value={e.at} onChange={(x) => setEv(i, { at: x.target.value || '20:00' })} /></label>
@@ -103,7 +106,7 @@ export function EventsTab({ t, setT, dis, save }: { t: GameTuning; setT: SetT; d
             );
           })}
         </div>
-        <button className="btn" style={{ marginTop: 8 }} disabled={dis || E.list.length >= 30} onClick={() => setE({ list: [...E.list, { id: newId(), kind: 'xp', on: true, mult: 2, chance: 0.03, mode: 'daily', start: Date.now(), durMin: 60, at: '20:00', days: [] }] })}>+ Etkinlik ekle</button>
+        <button className="btn" style={{ marginTop: 8 }} disabled={dis || E.list.length >= 30} onClick={() => setE({ list: [...E.list, { id: newId(), kind: 'xp', on: true, mult: 2, chance: 0.03, mode: 'daily', start: srvNow(), durMin: 60, at: '20:00', days: [] }] })}>+ Etkinlik ekle</button>
       </section>
 
       <section className="admin-sec ev-sec">

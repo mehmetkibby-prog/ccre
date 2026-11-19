@@ -1529,7 +1529,7 @@ export class World {
       this.notice(p, back.length ? `Koruma Mührü: ${back.join(', ')} geri verildi.` : 'Koruma Mührü kullanıldı.', 'ok');
     }
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
-    if (it.plus !== before && ch.equip.weapon === it) this.relook(p);
+    if (it.plus !== before && (ch.equip.weapon === it || ch.equip.armor === it)) this.relook(p);
     p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'upgradeResult', req: c.req, ok, before, after: it.plus, chance, item: it.id });
   }
@@ -2074,7 +2074,7 @@ export class World {
       const msg = JSON.stringify({ t: 'chat', ch: 'world', from: 'Demirci Haso', text: `${c.name} ${itemDisplayName(it)} eşyasını son kademeye (${EVO_NAMES[EVO_TIERS]}) evriltti!`, cls: '', gm: true });
       for (const q of this.bySid.values()) this.pushOut(q.sid, msg);
     }
-    return R(true, `${itemDisplayName(it)}: ${it.evo}. evrim tamam! ${tpl.slot === 'weapon' ? 'Saldırı' : 'Savunma'} +%${st.pct}.`);
+    return R(true, `${itemDisplayName(it)}: ${it.evo}. evrim tamam! ${tpl.slot === 'weapon' ? 'Saldırı' : 'Savunma'} +${st.add}.`);
   }
   /** Görünüm değişti (silah/zırh, evrim): çevredeki oyuncular karakteri yeniden kurar */
   private relook(p: Player) { for (const q of p.zone.playerSet) if (q !== p) q.known.delete(p.id); }
@@ -2716,7 +2716,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(15, q.char.equip.weapon?.plus ?? 0) | (Math.min(3, q.char.equip.weapon?.evo ?? 0) << 4) | (Math.min(3, q.char.equip.armor?.evo ?? 0) << 6), cos: cosmeticByte(q.char.misc.buffs, Date.now()), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(15, q.char.equip.weapon?.plus ?? 0) | (Math.min(3, q.char.equip.weapon?.evo ?? 0) << 4) | (Math.min(3, q.char.equip.armor?.evo ?? 0) << 6), cos: cosmeticByte(q.char.misc.buffs, Date.now()) | (((q.char.equip.armor?.plus ?? 0) >= 6 ? 2 : (q.char.equip.armor?.plus ?? 0) >= 5 ? 1 : 0) << 3), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
   }
 
   private flushOut() {

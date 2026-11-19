@@ -170,7 +170,7 @@ export function EvoTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: boole
                   <b className="n" style={{ color: EVO_COLORS[i + 1] }}>{['I', 'II', 'III'][i]} · {EVO_NAMES[i + 1]}</b>
                   <label className="adm-inline"><span>Gereken av</span><Num v={s.kills} def={D[slot][i].kills} min={0} max={1e7} step={50} w={84} dis={dis} on={(v) => setStep(slot, i, { kills: v ?? D[slot][i].kills })} /></label>
                   <label className="adm-inline"><span>Mücevher</span><Num v={s.gems} def={D[slot][i].gems} min={0} max={1e9} step={100} w={84} dis={dis} on={(v) => setStep(slot, i, { gems: v ?? 0 })} /></label>
-                  <label className="adm-inline"><span>Toplam artış %</span><Num v={s.pct} def={D[slot][i].pct} min={0} max={500} step={0.5} w={64} dis={dis} on={(v) => setStep(slot, i, { pct: v ?? D[slot][i].pct })} /></label>
+                  <label className="adm-inline"><span>{slot === 'weapon' ? 'Eklenen saldırı' : 'Eklenen savunma'} (bu kademede toplam)</span><Num v={s.add} def={D[slot][i].add} min={0} max={1e6} step={1} w={72} dis={dis} on={(v) => setStep(slot, i, { add: Math.round(v ?? D[slot][i].add) })} /></label>
                 </div>
                 <div className="tw-adm-mats">
                   {MAT_OPTS.map((k) => (

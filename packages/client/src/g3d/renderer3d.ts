@@ -6,7 +6,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { GrassField } from './grass.ts';
 import { createGlbChar, model as loadModelRaw, hasModel, modelPending, onModelReady, onModelStatus, loadManifest, reachIK, twoBoneIK, rotateWorld, ATTACK_ANIM_MS, CAST_ANIM_MS, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
-import { armorFx, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
+import { armorFx, armorPlusFx, armorPlusTier, gearFxScale, gearRarity, sigilFx } from './gearfx.ts';
 import { evoArmorFx, gearEvo } from './evofx.ts';
 import { mtnLight } from './mountains.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
@@ -533,7 +533,7 @@ export class Renderer3D {
     const cls = this.g.cls;
     // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
-    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12) | (Math.min(3, eq?.weapon?.evo ?? 0) << 16) | (Math.min(3, eq?.armor?.evo ?? 0) << 18);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12) | (Math.min(3, eq?.weapon?.evo ?? 0) << 16) | (Math.min(3, eq?.armor?.evo ?? 0) << 18) | (armorPlusTier(eq?.armor?.plus) << 20);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) releaseView(this.self);
     this.selfWR = wr;
@@ -560,6 +560,9 @@ export class Renderer3D {
       const aura = armorFx(gr.armor);
       if (aura) glb.root.add(aura);
       if (gr.plus >= 6) glb.root.add(sigilFx());
+      // zırh +5/+6: gövdeden yükselen duman ve kıvılcım (bit 20-21)
+      const apFx = kind === Kind.PLAYER ? armorPlusFx((gear >> 20) & 3, glb.height) : null;
+      if (apFx) glb.root.add(apFx);
       const evoAura = kind === Kind.PLAYER ? evoArmorFx(ev.armor, glb.height) : null;
       if (evoAura) glb.root.add(evoAura);
       const gfx: THREE.Object3D[] = [];
@@ -580,7 +583,8 @@ export class Renderer3D {
 
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
-    const gbOf = (q: CEnt) => q.weapon | ((q.wplus & 15) << 8) | ((q.cos ?? 0) << 12) | (((q.wplus >> 4) & 15) << 16);
+    // kozmetik baytı: bit 0-2 evcil hayvan/kanat, bit 3-4 zırh +5/+6 efekti
+    const gbOf = (q: CEnt) => q.weapon | ((q.wplus & 15) << 8) | (((q.cos ?? 0) & 7) << 12) | (((q.wplus >> 4) & 15) << 16) | ((((q.cos ?? 0) >> 3) & 3) << 20);
     if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== gbOf(e)) { releaseView(v); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {

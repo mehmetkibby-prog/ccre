@@ -2,8 +2,8 @@ import { installAvailable, onInstallChange, promptInstall } from '../game/instal
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, plusPct, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
-  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MALL, mallIcon, skillBuffVal, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoPct, type ItemInstance, type Slot, type ClassId,
+  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, plusAdd, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
+  transformConf, transformGroup, classSkill, skillUpCost, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MALL, mallIcon, skillBuffVal, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoAdd, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
 import { MallPanel, BossPanel, FishShop, TradeGlass, AutoPanel, EssMarketPanel } from './extras.tsx';
@@ -120,9 +120,11 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
       <div className="tip-stat">
         <span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'}</span>
         <b>+{power.toLocaleString('tr-TR')}</b>
-        {it.plus > 0 && isUpgradable(tpl?.slot) && <small style={{ color: '#ffd27a' }}>Artı +{it.plus}: toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{plusPct(tpl?.slot, it.plus)}</small>}
-        {it.plus > 0 && !isUpgradable(tpl?.slot) && <small>{itemPower({ ...it, plus: 0, evo: 0 })} + {itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)</small>}
-        {!!it.evo && <small style={{ color: EVO_COLORS[Math.min(3, it.evo)] }}>Evrim: toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{evoPct(TUNING, tpl?.slot ?? '', it.evo)}</small>}
+        {(it.plus > 0 || !!it.evo) && (() => {
+          // güç dökümü: eşyanın kendi gücü + artının değeri + evrimin değeri (yönetimdeki düz değerler)
+          const up = isUpgradable(tpl?.slot), pa = up ? plusAdd(tpl?.slot, it.plus) : itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 }), ea = up ? evoAdd(TUNING, tpl?.slot, it.evo ?? 0) : 0;
+          return <small className="tip-break">{power - pa - ea} <span className="muted">eşya</span>{pa > 0 && <> + <b style={{ color: '#ffd27a' }}>{pa}</b> <span className="muted">artı +{it.plus}</span></>}{ea > 0 && <> + <b style={{ color: EVO_COLORS[Math.min(3, it.evo ?? 0)] }}>{ea}</b> <span className="muted">{it.evo}. evrim</span></>}</small>;
+        })()}
       </div>
       {(tpl?.slot === 'weapon' || tpl?.slot === 'armor') && (it.evo || it.kills) ? (
         <div className="tip-evo">
@@ -205,6 +207,7 @@ export function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; lab
     <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
       {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} className={it.rarity === 'unique' && !itemIconName(it).endsWith('_unique') ? 'uq-tint' : undefined} alt="" /> : <span className="lbl">{label}</span>}
       {it?.plus ? <span className={'plus' + (it.plus >= 6 ? ' p6' : it.plus >= 5 ? ' p5' : '')}>+{it.plus}</span> : null}
+      {it?.evo ? <span className={'evo-b e' + Math.min(3, it.evo)} title={`${it.evo}. evrim · ${EVO_NAMES[Math.min(3, it.evo)]}`}>{['', 'I', 'II', 'III'][Math.min(3, it.evo)]}</span> : null}
       {it?.locked ? <span className="lock">🔒</span> : null}
     </div>
   );
@@ -813,7 +816,7 @@ function EvolveForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
               {[0, 1, 2].map((k) => (
                 <div key={k} className={'st' + (it && cur > k ? ' done' : it && cur === k ? ' now' : '')} style={{ ['--ec' as string]: EVO_COLORS[k + 1] }}>
                   <b>{['I', 'II', 'III'][k]}</b><span>{EVO_NAMES[k + 1]}</span>
-                  <small>{slot ? `${slot === 'weapon' ? 'Saldırı' : 'Savunma'} +%${E[slot][k].pct}` : `Silah +%${E.weapon[k].pct} · Zırh +%${E.armor[k].pct}`}</small>
+                  <small>{slot ? `${slot === 'weapon' ? 'Saldırı' : 'Savunma'} +${E[slot][k].add}` : `Silah +${E.weapon[k].add} · Zırh +${E.armor[k].add}`}</small>
                 </div>
               ))}
             </div>
@@ -836,14 +839,11 @@ function EvolveForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                       {!equipped.has(it.id) && <div className="muted" style={{ fontSize: 11 }}>Bu eşya kuşanılı değil: av sayması için kuşan.</div>}
                     </div>
                     {(() => {
-                      // evrim karakterin toplam saldırısına/savunmasına yüzde ekler: kuşanılıysa gerçek değeri göster
-                      const p0 = evoPct(TUNING, slot!, cur), p1 = evoPct(TUNING, slot!, cur + 1);
-                      const now = slot === 'weapon' ? self.combat?.atk : self.combat?.def;
-                      const base = now !== undefined ? now / (1 + (equipped.has(it.id) ? p0 : 0) / 100) : 0;
+                      // evrim eşyanın gücüne düz değer ekler (yönetimden): eşyanın gücü şimdi → evrimden sonra
+                      const a0 = itemPower(it), a1 = itemPower({ ...it, evo: cur + 1 });
                       return (
                         <div className="gain">
-                          <span>Toplam {slot === 'weapon' ? 'saldırı' : 'savunma'} <b style={{ color: EVO_COLORS[cur + 1] }}>+%{p1}</b>{p0 ? <span className="muted"> (şimdi %{p0})</span> : null}</span>
-                          {now !== undefined && <span>{equipped.has(it.id) ? now : Math.round(base)} → <b style={{ color: EVO_COLORS[cur + 1] }}>{Math.round(base * (1 + p1 / 100))}</b>{!equipped.has(it.id) && <span className="muted"> (kuşanınca)</span>}</span>}
+                          <span>{slot === 'weapon' ? 'Saldırı' : 'Savunma'} {a0} → <b style={{ color: EVO_COLORS[cur + 1] }}>{a1}</b> <span className="muted">(+{a1 - a0})</span></span>
                         </div>
                       );
                     })()}
@@ -954,8 +954,7 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
   const chance = step ? (mastery && step.chance < 100 ? masteryChance(step.chance) : step.chance) : 0;
   const lacks = step ? Object.entries(step.mats).filter(([k, q]) => (m[k] ?? 0) < q).length + (self.gems < step.gems ? 1 : 0) : 1;
   const C = 2 * Math.PI * 52;
-  const slotU = tpl?.slot;
-  const pNow = it ? plusPct(slotU, it.plus) : 0, pNext = it && step ? plusPct(slotU, it.plus + 1) : 0;
+  const pNow = it ? itemPower(it) : 0, pNext = it && step ? itemPower({ ...it, plus: it.plus + 1 }) : 0;
   const equipped = new Set(Object.values(self.equip).map((x) => x?.id));
   const go = () => { if (!it) return; setHit((h) => h + 1); sfx.play('ui'); game.send({ t: 'upgrade', item: it.id, expectPlus: it.plus, mastery, req: reqId() }); };
   return (
@@ -968,7 +967,7 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
             {items.map((i) => <Cell key={i.id} it={i} sel={sel === i.id} bind={bind(i)} onClick={() => setSel(i.id)} />)}
             {items.length === 0 && <div className="muted" style={{ gridColumn: '1 / -1', fontSize: 13 }}>Çantanda ya da üzerinde silah veya zırh yok.</div>}
           </div>
-          <div className="muted" style={{ fontSize: 11.5 }}>{equipped.size ? 'Üzerindekiler de listede. ' : ''}Yalnız silah ve gövde zırhına artı basılır; en çok +{MAX_PLUS}. Kuşandığın silahın artısı toplam saldırını, zırhınki toplam savunmanı yüzde olarak artırır (evrimle toplanır).</div>
+          <div className="muted" style={{ fontSize: 11.5 }}>{equipped.size ? 'Üzerindekiler de listede. ' : ''}Yalnız silah ve gövde zırhına artı basılır; en çok +{MAX_PLUS}. Her artı, eşyanın gücüne yönetimde belirlenen değeri ekler (silahta saldırı, zırhta savunma); evrimin değeriyle toplanır.</div>
           <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
           <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
             Başarıda eşya bir kademe yükselir. {upgradeFailDown() ? 'Başarısızlıkta bir kademe düşer (+0 altına inmez).' : 'Başarısızlıkta kademe korunur.'} Eşya hiçbir zaman yok olmaz.
@@ -992,7 +991,7 @@ function PlusForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                     <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" stroke="rgba(0,0,0,.5)" strokeWidth="8" fill="none" /><circle cx="60" cy="60" r="52" stroke={chance >= 70 ? '#5ef0a6' : chance >= 40 ? '#ffb454' : '#ff6b7d'} strokeWidth="8" fill="none" strokeDasharray={C} strokeDashoffset={C * (1 - chance / 100)} style={{ transition: 'stroke-dashoffset .3s' }} /></svg>
                     <div className="v"><div><b>%{chance}</b><small>Başarı</small></div></div>
                   </div>
-                  <div className="gain"><span>Toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{pNow} → <b>+%{pNext}</b></span></div>
+                  <div className="gain"><span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'} {pNow} → <b>{pNext}</b> <span className="muted">(+{pNext - pNow})</span></span></div>
                   <div className="req">
                     {Object.entries(step.mats).map(([k, q]) => {
                       const have = m[k] ?? 0, md = MATERIAL.get(k);

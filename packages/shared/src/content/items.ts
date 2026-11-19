@@ -1,5 +1,6 @@
 import { TUNING } from '../tuning.ts';
-import { isUpgradable } from './upgrade.ts';
+import { isUpgradable, plusAdd } from './upgrade.ts';
+import { evoAdd } from '../forgeTune.ts';
 import { EVO_NAMES } from '../forgeTune.ts';
 import type { ClassId } from './classes.ts';
 
@@ -111,9 +112,9 @@ export function itemPower(it: ItemInstance): number {
   const r = RARITY[it.rarity], ov = TUNING.rarityPower[it.rarity];
   const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
   const base = Math.round(t.basePower * mult);
-  // silah/zırh artısı ve evrim burada değil: karakterin TOPLAM saldırısına/savunmasına yüzde olarak işler (computeStats)
-  const plus = isUpgradable(t.slot) ? 0 : PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0;
-  return base + plus;
+  // silah/zırh: artı ve evrim kademesinin yönetimdeki düz değeri eklenir (ör. güç 10, +1 değeri 10 → 20)
+  if (isUpgradable(t.slot)) return base + plusAdd(t.slot, it.plus) + evoAdd(TUNING, t.slot, it.evo ?? 0);
+  return base + (PLUS_LEGACY[Math.min(it.plus, 6)] ?? 0);
 }
 
 export interface MaterialDef { id: string; name: string; icon: string; color: string; sellable: boolean; desc: string }

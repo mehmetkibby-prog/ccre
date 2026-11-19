@@ -31,6 +31,23 @@ const eld = monitorEventLoopDelay({ resolution: 10 });
 eld.enable();
 /** ana işlemin canlı yükü (yönetim > Durum > Canlı işlem yükü) */
 export const mainLoad = new LoadMon();
+/**
+ * "Hemen başlat" etkinlikleri sunucu saatiyle başlar: yeni eklenen, yeniden başlatılan ya da yeniden açılan "now"
+ * etkinliğinin başlangıcı sunucunun şimdiki zamanı olur. Yönetici cihazının saati sunucudan farklıysa (ör. 1 saat)
+ * etkinlik sunucuda hemen bitiyor ya da hiç başlamıyordu.
+ */
+export function anchorNowEvents(next: unknown, prev: { events?: { list: { id: string; start: number; on: boolean; mode: string }[] } }) {
+  const list = (next as { events?: { list?: unknown } } | null)?.events?.list;
+  if (!Array.isArray(list)) return;
+  const old = new Map((prev.events?.list ?? []).map((e) => [e.id, e] as const));
+  const now = Date.now();
+  for (const raw of list) {
+    const e = raw as { id?: string; start?: number; on?: boolean; mode?: string };
+    if (!e || e.mode !== 'now') continue;
+    const p = e.id ? old.get(e.id) : undefined;
+    if (!p || p.mode !== 'now' || p.start !== e.start || (!p.on && e.on !== false)) e.start = now;
+  }
+}
 const PROFILE_MS = 60_000, PROFILE_KEEP_MS = 5 * 60_000;
 interface ProfileJob { id: number; target: string; label: string; startedAt: number; endsAt: number; state: 'running' | 'ready' | 'error'; data?: string; err?: string; readyAt?: number }
 let profile: ProfileJob | null = null, profileSeq = 0;
@@ -289,14 +306,15 @@ export function buildApi(d: ApiDeps): Router {
 
   // ───────── oyun ayarları (herkes okur; duyuru ve ışık istemcide de kullanılır) ─────────
   r.get('/api/tuning', () => d.tuning.current());
-  r.get('/api/admin/tuning', async (req) => { await requireAdmin(req); return { tuning: d.tuning.current(), revision: d.tuning.revision }; });
+  r.get('/api/admin/tuning', async (req) => { await requireAdmin(req); return { tuning: d.tuning.current(), revision: d.tuning.revision, now: Date.now() }; });
   r.post('/api/admin/tuning', async (req) => {
     const a = await requireAdmin(req);
     const { tuning, revision } = req.body ?? {};
+    anchorNowEvents(tuning, d.tuning.current());
     const out = await d.tuning.set(tuning, Number(revision), a.id);
     if (!out.ok) throw new HttpError(409, 'Ayarlar bu arada başka bir yönetici tarafından değiştirildi. Sayfayı yenileyip tekrar dene.');
     d.gateway.broadcastTuning(out.tuning);
-    return out;
+    return { ...out, now: Date.now() };
   });
 
   // ───────── özet ─────────

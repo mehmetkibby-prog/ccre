@@ -31,10 +31,14 @@ const TIERS: Record<number, Tier> = {
   3: { w: [22, 16], a: [30, 20], spark: 0xff2a20, spark2: 0xffc070, smoke: 0xff1a28, dark: 0, smokeA: 0.34, rise: 1.0 },
   // Eşsiz: altın-beyaz parıltı ve bol, yumuşak altın duman (hafifçe örten: gerçek duman gibi)
   4: { w: [24, 22], a: [32, 30], spark: 0xffd84a, spark2: 0xffffff, smoke: 0xd9a845, dark: 0.5, smokeA: 0.55, rise: 1.15 },
+  // zırh +5 "kor nefesi": omuz ve göğüsten yükselen altın-turuncu duman ve kor kıvılcımları
+  5: { w: [0, 0], a: [30, 28], spark: 0xffb347, spark2: 0xfff2c8, smoke: 0xf2a648, dark: 0.5, smokeA: 0.72, rise: 1.3 },
+  // zırh +6 "yıldız tülü": gövdeyi saran mor-camgöbeği sis, beyaz yıldız kıvılcımları
+  6: { w: [0, 0], a: [34, 32], spark: 0xd2a8ff, spark2: 0xf0fdff, smoke: 0xa08cff, dark: 0.45, smokeA: 0.78, rise: 1.45 },
 };
 
 const VERT = /* glsl */ `
-uniform float uTime, uScale, uRise, uSmokeA, uDark, uAura;
+uniform float uTime, uScale, uRise, uSmokeA, uDark, uAura, uSize;
 uniform vec3 uSpark, uSpark2, uSmoke;
 attribute vec4 aSeed; // x: hız, y: açı, z: tür (0 kıvılcım, 1 duman), w: faz
 varying vec4 vCol; varying float vSoft;
@@ -57,7 +61,7 @@ void main() {
   wp.z += cos(uTime * 1.3 + aSeed.w * 9.0) * 0.07 * t;
   vec4 mv = viewMatrix * wp;
   gl_Position = projectionMatrix * mv;
-  float sz = smoke > 0.5 ? mix(0.18, 0.5, t) * (uAura > 0.5 ? 1.3 : 1.0) : mix(0.13, 0.18, aSeed.x) * (1.0 - t * 0.5) * (uAura > 0.5 ? 1.25 : 1.0);
+  float sz = (smoke > 0.5 ? mix(0.18, 0.5, t) * (uAura > 0.5 ? 1.3 : 1.0) : mix(0.13, 0.18, aSeed.x) * (1.0 - t * 0.5) * (uAura > 0.5 ? 1.25 : 1.0)) * (smoke > 0.5 ? uSize : mix(1.0, uSize, 0.4));
   gl_PointSize = max(1.0, sz * uScale / -mv.z);
   float fade = smoothstep(0.0, 0.12, t) * (1.0 - t);
   if (smoke > 0.5) {
@@ -87,7 +91,7 @@ function material(tier: number, aura: boolean) {
   const T = TIERS[tier];
   m = new THREE.ShaderMaterial({
     uniforms: {
-      uTime: shared.time, uScale: gearFxScale, uRise: { value: T.rise }, uSmokeA: { value: T.smokeA }, uDark: { value: T.dark }, uAura: { value: aura ? 1 : 0 },
+      uTime: shared.time, uScale: gearFxScale, uRise: { value: T.rise }, uSmokeA: { value: T.smokeA }, uDark: { value: T.dark }, uAura: { value: aura ? 1 : 0 }, uSize: { value: tier >= 5 ? 1.9 : 1 },
       uSpark: { value: new THREE.Color(T.spark) }, uSpark2: { value: new THREE.Color(T.spark2) }, uSmoke: { value: new THREE.Color(T.smoke) },
     },
     vertexShader: VERT, fragmentShader: FRAG, transparent: true, depthWrite: false,
@@ -111,7 +115,8 @@ function geometry(tier: number, aura: boolean, y0: number, y1: number) {
   const rnd = () => ((s = (s * 16807) % 2147483647) / 2147483647);
   for (let i = 0; i < n; i++) {
     const smoke = i >= ns ? 1 : 0;
-    if (aura) { pos[i * 3] = 0.3 + rnd() * 0.25; pos[i * 3 + 1] = smoke ? rnd() * 0.2 : 0.05 + rnd() * 0.5; }
+    if (aura && y1 > 0) { pos[i * 3] = 0.22 + rnd() * 0.22; pos[i * 3 + 1] = smoke ? y0 + rnd() * 0.35 : y0 + rnd() * (y1 - y0); } // gövde (zırh +5/+6)
+    else if (aura) { pos[i * 3] = 0.3 + rnd() * 0.25; pos[i * 3 + 1] = smoke ? rnd() * 0.2 : 0.05 + rnd() * 0.5; }
     else { const a = rnd() * Math.PI * 2; pos[i * 3] = Math.cos(a) * 0.035; pos[i * 3 + 1] = y0 + rnd() * (y1 - y0); pos[i * 3 + 2] = Math.sin(a) * 0.035; }
     seed.set([rnd(), rnd() * Math.PI * 2, smoke, i / n + rnd() * 0.3], i * 4);
   }
@@ -124,7 +129,7 @@ function geometry(tier: number, aura: boolean, y0: number, y1: number) {
   return g;
 }
 
-function points(tier: number, aura: boolean, y0 = 0.1, y1 = 0.9) {
+function points(tier: number, aura: boolean, y0 = 0.1, y1 = aura ? 0 : 0.9) {
   const p = new THREE.Points(geometry(tier, aura, y0, y1), material(tier, aura));
   p.name = 'gear-fx'; p.renderOrder = 3;
   // zırh efektinin konumu kökten alınır; ölçeği/dönüşü yok sayılır, sınırı da bu yüzden kökte durur
@@ -156,6 +161,26 @@ export function armorFx(rarity: number): THREE.Object3D | null {
   g.add(disc, p);
   return g;
 }
+
+/**
+ * Zırh +5 / +6: gövdeden yükselen duman ve kıvılcım (tek çizim; +6'da ayak altında hafif mor ışıma, bir çizim daha).
+ * ap: 1 = +5, 2 = +6. Hareket gölgelendiricide; malzeme ve geometri bütün karakterlerce paylaşılır.
+ */
+export function armorPlusFx(ap: number, height = 1.9): THREE.Object3D | null {
+  if (ap <= 0) return null;
+  const tier = ap >= 2 ? 6 : 5, k = Math.max(0.8, Math.min(1.4, height / 1.9));
+  const g = new THREE.Group(); g.name = 'gear-fx';
+  const p = points(tier, true, 0.55 * k, 1.35 * k); p.name = '';
+  g.add(p);
+  if (tier === 6) {
+    let dm = discMats.get(6);
+    if (!dm) { dm = new THREE.MeshBasicMaterial({ map: glowTexture(), color: 0xa080ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.75 }); discMats.set(6, dm); }
+    const disc = new THREE.Mesh(discGeo, dm); disc.scale.setScalar(2.1); disc.position.y = 0.05; disc.renderOrder = 2; g.add(disc);
+  }
+  return g;
+}
+/** zırhın artısından efekt kademesi: 0 yok, 1 = +5, 2 = +6 (sunucu ve istemci aynı) */
+export const armorPlusTier = (plus: number | undefined) => ((plus ?? 0) >= 6 ? 2 : (plus ?? 0) >= 5 ? 1 : 0);
 
 /** Sunucunun gönderdiği tek baytı çözer: alt 4 bit silah, üst 4 bit zırh nadirliği. */
 export const gearRarity = (b: number) => ({ weapon: b & 15, armor: (b >> 4) & 15, plus: (b >> 8) & 15 });

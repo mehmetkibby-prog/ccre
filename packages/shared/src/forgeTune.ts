@@ -82,11 +82,11 @@ export const FORGE_DEFAULT: ForgeTune = {
   },
 };
 
-/** Evrim kademesi: gereken av (son evrimden beri), Mücevher, malzemeler ve toplam artış (%) */
-export interface EvoStep { kills: number; gems: number; mats: Record<string, number>; pct: number }
+/** Evrim kademesi: gereken av (son evrimden beri), Mücevher, malzemeler ve bu kademede eşyaya eklenen düz güç (toplam) */
+export interface EvoStep { kills: number; gems: number; mats: Record<string, number>; add: number }
 export interface EvoTune {
   enabled: boolean;
-  /** silah: saldırı artışı · zırh: savunma artışı (kademe 1..3, toplam) */
+  /** silah: eşyanın saldırısına · zırh: savunmasına eklenen düz değer (kademe 1..3, o kademedeki toplam) */
   weapon: EvoStep[]; armor: EvoStep[];
   /** av sayılması için canavar en çok bu kadar seviye aşağıda olabilir (0 = her canavar sayılır) */
   maxGap: number;
@@ -97,14 +97,14 @@ export const EVO_COLORS = ['', '#5ad8ff', '#c27bff', '#ffd25a'];
 export const EVO_DEFAULT: EvoTune = {
   enabled: true, maxGap: 15,
   weapon: [
-    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, pct: 8 },
-    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, pct: 16 },
-    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, pct: 25 },
+    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, add: 10 },
+    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, add: 22 },
+    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, add: 38 },
   ],
   armor: [
-    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, pct: 8 },
-    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, pct: 15 },
-    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, pct: 22 },
+    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, add: 8 },
+    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, add: 18 },
+    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, add: 30 },
   ],
 };
 
@@ -162,16 +162,17 @@ function steps(v: unknown, d: EvoStep[]): EvoStep[] {
     const mats: Record<string, number> = {};
     const m = o.mats === undefined ? ds.mats : obj(o.mats);
     for (const [k, q] of Object.entries(m).slice(0, 8)) { const n = int(q, 0, 1e6, 0); if (/^[a-z0-9_]{1,32}$/.test(k) && n > 0) mats[k] = n; }
-    return { kills: int(o.kills, 0, 1e7, ds.kills), gems: int(o.gems, 0, 1e9, ds.gems), mats, pct: num(o.pct, 0, 500, ds.pct) };
+    // add: düz değer (eski kayıttaki yüzde "pct" artık kullanılmaz; yoksa varsayılan)
+    return { kills: int(o.kills, 0, 1e7, ds.kills), gems: int(o.gems, 0, 1e9, ds.gems), mats, add: int(o.add, 0, 1e6, ds.add) };
   });
 }
 export function sanitizeEvo(raw: unknown): EvoTune {
   const r = obj(raw), D = EVO_DEFAULT;
   return { enabled: r.enabled === undefined ? D.enabled : !!r.enabled, maxGap: int(r.maxGap, 0, 120, D.maxGap), weapon: steps(r.weapon, D.weapon), armor: steps(r.armor, D.armor) };
 }
-/** Evrim kademesinin toplam artışı (%): silahta karakterin TOPLAM saldırısına, zırhta TOPLAM savunmasına uygulanır */
-export function evoPct(t: { evo?: EvoTune }, slot: string, evo: number): number {
+/** Evrim kademesinin eşyaya eklediği düz güç: silahta saldırı, zırhta savunma (o kademedeki toplam) */
+export function evoAdd(t: { evo?: EvoTune }, slot: string | undefined, evo: number): number {
   if (!evo || (slot !== 'weapon' && slot !== 'armor')) return 0;
   const st = (t.evo ?? EVO_DEFAULT)[slot as 'weapon' | 'armor'][Math.min(EVO_TIERS, evo) - 1];
-  return st?.pct ?? 0;
+  return st?.add ?? 0;
 }

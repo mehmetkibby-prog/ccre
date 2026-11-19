@@ -12,7 +12,8 @@ const map = q.get('map') ?? 'bazaar';
 const cls = (q.get('cls') ?? 'guardian') as 'guardian';
 store.set({ settings: { ...store.get().settings, quality: (q.get('q') as 'high') ?? 'high', zoom: Number(q.get('zoom') ?? 1) } });
 const l = getLayout(map);
-const ox = Number(q.get('ox') ?? 0), oy = Number(q.get('oy') ?? 0);
+// tx,ty: sahne merkezi karo olarak (video çekimi); yoksa doğma noktasına göre ox,oy
+const ox = q.get('tx') ? Number(q.get('tx')) * 64 + 32 - l.spawn.x : Number(q.get('ox') ?? 0), oy = q.get('ty') ? Number(q.get('ty')) * 64 + 32 - l.spawn.y : Number(q.get('oy') ?? 0);
 const g: any = { selfId: 1, cls, dx: l.spawn.x + ox, dy: l.spawn.y + oy, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
 const r = new Renderer3D(g, document.getElementById('gl') as HTMLCanvasElement, document.getElementById('ov') as HTMLCanvasElement);
 r.setLayout(l);
@@ -49,6 +50,19 @@ if (lineup) {
   g.dx = sx - 1000; g.dy = sy; // kendini uzağa al (efekt görüş sınırı içinde kalsın)
   (r as any).camOverride = { x: sx, y: sy + 20, dist: Number(q.get('dist') ?? 6), pitch: Number(q.get('pitch') ?? 0.42) };
 }
+// serbest dizilim (video): ents=P,sınıf,silah,wplus,kozmetik,dx,dy,yön[,lonca][,bayrak];M,canavar,dx,dy,yön[,tür]  (dx,dy dünya birimi)
+const entsQ = q.get('ents');
+if (entsQ) {
+  g.ents.clear();
+  for (const it of entsQ.split(';').filter(Boolean)) {
+    const a = it.split(',');
+    if (a[0] === 'P') add(mk(Kind.PLAYER, sx + Number(a[5]), sy + Number(a[6]), { name: a[10] ?? ['Muhafız', 'Avcı', 'Arkanist'][Number(a[1])], cls: Number(a[1]), weapon: Number(a[2]), wplus: Number(a[3]), cos: Number(a[4]), dir: Number(a[7] ?? 64), level: 30 + (Number(a[1]) * 7) % 20, guild: a[8] ? a[8].replace('~', '|') : '', flags: Number(a[9] ?? 0) }));
+    else add(mk(Kind.MONSTER, sx + Number(a[2]), sy + Number(a[3]), { tpl: MONSTER_INDEX.get(a[1])!, dir: Number(a[4] ?? 64), variant: Number(a[5] ?? 0), level: 30 }));
+  }
+  // kendi karakteri sahnenin ortasında ama gizli: silah/zırh parıltıları "yakındaki oyuncu" sınırına takılmasın
+  if (q.get('selffar')) { g.dx = sx - 1000; g.dy = sy; } else { g.dx = sx; g.dy = sy; (window as any).__hideSelf = true; }
+  (r as any).camOverride = { x: sx, y: sy + 20, dist: Number(q.get('dist') ?? 6), pitch: Number(q.get('pitch') ?? 0.42) };
+}
 // beceri efekti denemesi: sfx=sınıf,beceri,yol → oyuncu önündeki canavara periyodik beceri
 const sfxq = q.get('sfx');
 let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + Number(q.get('camx') ?? 140), y: sy + Number(q.get('camy') ?? 30), dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
@@ -68,6 +82,8 @@ const anim = q.get('anim') ?? 'idle';
 let last = performance.now();
 let frames = 0; const maxFrames = Number(q.get('frames') ?? 1e9);
 const loop = (t: number) => {
+  // video çekimi (sahte saat): zaman ilerlemediyse aynı kare yeniden çizilmez (çekim 2-3 kat hızlanır)
+  if (t === last && (window as any).__fk?.on) { requestAnimationFrame(loop); return; }
   const dt = t - last; last = t;
   if (anim === 'walk') { g.lastMoveAt = t; g.dy += 0; for (const e of g.ents.values()) if (e.kind === Kind.MONSTER) e.anim = Anim.WALK; }
   if (anim === 'attack' && t - g.selfAnimStart > 900) { g.selfAnim = Anim.ATTACK; g.selfAnimStart = t; }
@@ -79,12 +95,14 @@ const loop = (t: number) => {
   const ft = (window as any).__ft ??= []; ft.push(dt); if (ft.length > 600) ft.shift();
   (window as any).__phase = [...g.ents.values()].map((e: CEnt) => Math.round(t - e.animStart));
   if (sfxq && !q.get('manual') && t - sfxAt > Number(q.get('period') ?? 2600)) { sfxAt = t; (window as any).__sfx(t); }
+  if ((window as any).__hideSelf) { const sv = (r as any).self; if (sv) sv.obj.visible = false; }
   r.draw(t, dt);
+  if ((window as any).__hideSelf) { const sv = (r as any).self; if (sv) sv.obj.visible = false; }
   if (++frames >= maxFrames) { (window as any).done = true; return; }
   requestAnimationFrame(loop);
 };
 requestAnimationFrame(loop);
-(window as any).ready = true; (window as any).__r = r;
+(window as any).ready = true; (window as any).__r = r; (window as any).__g = g; (window as any).__store = store;
 (window as any).__pose = (kind: 'a' | 's', idx: number, t: number) => { for (const v of (r as any).views.values()) v.glb?.debugPose?.(kind, idx, t); };
 // geliştirme: klip anında silah ucu ve el, karakterin yerel ekseninde (x: sağ, y: yukarı, z: ileri; metre)
 (window as any).__probe = (kind: 'a' | 's', idx: number, t: number) => {

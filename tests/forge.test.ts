@@ -157,9 +157,9 @@ it('Evrim: av sayacı, bedel, kademe, saldırı/savunma artışı', () => {
   wpn.kills = st.kills; p.char.gems = st.gems; for (const [k, q] of Object.entries(st.mats)) p.char.materials[k] = q;
   cmd({ t: 'evolve', item: 'w1', req: 'e2' });
   expect(wpn.evo).toBe(1); expect(wpn.kills).toBe(0); expect(p.char.gems).toBe(0);
-  // evrim eşyanın gücünü değil karakterin TOPLAM saldırısını yüzde olarak artırır
-  expect(itemPower(wpn)).toBe(wp0);
-  expect(Math.abs(p.stats.atk - Math.round(atk0 * (1 + st.pct / 100)))).toBeLessThanOrEqual(1);
+  // evrim eşyanın gücüne yönetimdeki düz değeri ekler (saldırı da aynı kadar artar)
+  expect(itemPower(wpn)).toBe(wp0 + st.add);
+  expect(p.stats.atk).toBe(atk0 + st.add);
   expect(sent.some((m) => m.t === 'evolved')).toBe(true);
   // zırh: savunma
   arm.kills = EVO_DEFAULT.armor[0].kills; p.char.gems = 99999; for (const [k, q] of Object.entries(EVO_DEFAULT.armor[0].mats)) p.char.materials[k] = q;
@@ -175,14 +175,14 @@ it('Kor Kulesi ve evrim ayarları: yönetimden gelen değer korunur, bozuk değe
   const { sanitizeTuning, FORGE_DEFAULT } = await import('@col/shared');
   const raw = structuredClone(DEFAULT_TUNING) as any;
   raw.forge.floors[0].waves[1].count = 7; raw.forge.boss.hp = 50000; raw.forge.moldPairs = 99; raw.forge.floors[1].puzzle = 'mold';
-  raw.forge.boss.addAt = [20, 80, 'x']; raw.evo.weapon[2].pct = 25; raw.evo.armor[0].mats = { ember_stone: 5 };
+  raw.forge.boss.addAt = [20, 80, 'x']; raw.evo.weapon[2].add = 25; raw.evo.armor[0].mats = { ember_stone: 5 };
   const t = sanitizeTuning(raw);
   expect(t.forge.floors[0].waves[1].count).toBe(7);
   expect(t.forge.boss.hp).toBe(50000);
   expect(t.forge.moldPairs).toBe(5);
   expect(t.forge.floors[1].puzzle).toBe('mold');
   expect(t.forge.boss.addAt).toEqual([80, 20]);
-  expect(t.evo.weapon[2].pct).toBe(25);
+  expect(t.evo.weapon[2].add).toBe(25);
   expect(t.evo.armor[0].mats).toEqual({ ember_stone: 5 });
   expect(sanitizeTuning({}).forge).toEqual(FORGE_DEFAULT);
 });
