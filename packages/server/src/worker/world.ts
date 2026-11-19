@@ -13,7 +13,7 @@ import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, Admi
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
-import { findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents } from '@col/shared';
+import { findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, POTIONS, HERBS, type PotionKey } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
 import { Forge } from './forge.ts';
 
@@ -346,6 +346,7 @@ export class World {
         return;
       }
       case 'evolve': return this.cmdEvolve(p, String(c.item ?? ''), String(c.req ?? ''));
+      case 'garden': return this.cmdGarden(p, c as { op: string; i?: number; r?: number; n?: number; req?: string });
       case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
       case 'quest': return this.cmdQuest(p, String(c.op), String(c.id), String(c.req ?? ''));
@@ -1300,6 +1301,73 @@ export class World {
     p.selfDirty |= 4; p.markSave();
   }
 
+  // ───────── Şifa Bahçesi ─────────
+  /** her bitkinin bu oyuncu için yeniden olgunlaşacağı an (0: olgun) */
+  private gardenState(p: Player) {
+    const g = p.char.misc.garden ?? {};
+    this.sendJson(p, { t: 'garden', ready: GARDEN_PLANTS.map((pl) => Math.max(0, (g[pl.i] ?? 0) - this.now)), sickle: (p.char.materials.sickle ?? 0) > 0 });
+  }
+  private cmdGarden(p: Player, c: { op: string; i?: number; r?: number; n?: number; req?: string }) {
+    const T = TUNING.garden, ch = p.char, req = String(c.req ?? '');
+    const R = (ok: boolean, msg: string) => this.reply(p, { t: 'garden', req }, ok, msg);
+    if (c.op === 'state') return this.gardenState(p);
+    if (c.op === 'cancel') { if (p.gather) { p.gather = null; if (p.anim === Anim.GATHER) { p.anim = Anim.IDLE; p.dirty |= Upd.ANIM; } } return; }
+    if (!T.enabled) return R(false, 'Şifa Bahçesi şu an kapalı.');
+    if (c.op === 'buy') {
+      if (p.zone.id !== GARDEN_MAP || !this.nearNpc(p, 'reyhan')) return R(false, 'Şifacı Reyhan\'ın yanına git.');
+      if ((ch.materials.sickle ?? 0) > 0) return R(false, 'Zaten bir orağın var.');
+      if (ch.gems < T.sicklePrice) return R(false, `${T.sicklePrice.toLocaleString('tr-TR')} Mücevher gerekir.`);
+      ch.gems -= T.sicklePrice; ch.materials.sickle = 1;
+      p.selfDirty |= 1 | 2; this.save(p, true); this.gardenState(p);
+      return R(true, 'Şifacı Orağı artık senin! Bahçedeki olgun bitkilere eğilip toplayabilirsin.');
+    }
+    if (c.op === 'brew') {
+      if (p.zone.id !== GARDEN_MAP || !this.nearNpc(p, 'reyhan')) return R(false, 'Şifacı Reyhan\'ın yanına git.');
+      const rc = T.recipes[Number(c.r)]; if (!rc) return R(false, 'Tarif bulunamadı.');
+      const n = Math.max(1, Math.min(50, Math.floor(Number(c.n) || 1)));
+      for (const [k, q] of Object.entries(rc.herbs)) if ((ch.materials[k] ?? 0) < (q ?? 0) * n) return R(false, `${MATERIAL.get(k)?.name ?? k} yetmiyor (${(q ?? 0) * n} gerekir).`);
+      if (ch.gems < rc.gems * n) return R(false, `${(rc.gems * n).toLocaleString('tr-TR')} Mücevher gerekir.`);
+      for (const [k, q] of Object.entries(rc.herbs)) { ch.materials[k] -= (q ?? 0) * n; if (ch.materials[k] <= 0) delete ch.materials[k]; }
+      ch.gems -= rc.gems * n; ch.materials[rc.potion] = (ch.materials[rc.potion] ?? 0) + rc.out * n;
+      p.selfDirty |= 1 | 2; this.save(p, true);
+      return R(true, `${rc.out * n}× ${MATERIAL.get(rc.potion)?.name ?? rc.potion} hazır!`);
+    }
+    const pl = GARDEN_PLANTS[Number(c.i)];
+    if (!pl || p.zone.id !== GARDEN_MAP) return;
+    if (c.op === 'start') {
+      if (p.dead || p.fishing) return;
+      if ((ch.materials.sickle ?? 0) <= 0) return this.notice(p, 'Bitki toplamak için orak gerekir: Şifacı Reyhan\'dan alabilirsin.');
+      if (Math.hypot(p.x - pl.x, p.y - pl.y) > GARDEN_REACH) return this.notice(p, 'Bitkiye yaklaş.');
+      const left = (ch.misc.garden?.[pl.i] ?? 0) - this.now;
+      if (left > 0) return this.notice(p, `Bu bitki henüz olgunlaşmadı (${Math.ceil(left / 60000)} dk).`);
+      p.gather = { i: pl.i, at: this.now, x: p.x, y: p.y };
+      p.dir = angleByte(pl.x - p.x, pl.y - p.y); p.anim = Anim.GATHER; p.animUntil = this.now + T.gatherMs + 400; p.dirty |= Upd.ANIM;
+      return this.sendJson(p, { t: 'gather', op: 'start', i: pl.i, ms: T.gatherMs });
+    }
+    if (c.op === 'done') {
+      const g = p.gather;
+      if (!g || g.i !== pl.i) return;
+      p.gather = null;
+      if (this.now - g.at < T.gatherMs - 250 || Math.hypot(p.x - g.x, p.y - g.y) > 12 || p.dead) return this.sendJson(p, { t: 'gather', op: 'fail', i: pl.i });
+      const q = randInt(T.qty[0], T.qty[1]);
+      ch.materials[pl.herb] = (ch.materials[pl.herb] ?? 0) + q;
+      (ch.misc.garden ??= {})[pl.i] = this.now + T.regrowSec * 1000;
+      if (p.anim === Anim.GATHER) { p.anim = Anim.IDLE; p.dirty |= Upd.ANIM; }
+      p.selfDirty |= 2; p.markSave();
+      this.sendJson(p, { t: 'gather', op: 'done', i: pl.i, key: pl.herb, n: q });
+      return this.gardenState(p);
+    }
+  }
+  private drinkHerbPotion(p: Player, key: PotionKey) {
+    const ch = p.char, e = TUNING.garden.effects[key];
+    if ((ch.materials[key] ?? 0) <= 0) return this.notice(p, 'Elinde yok.');
+    ch.materials[key] -= 1; if (ch.materials[key] <= 0) delete ch.materials[key];
+    (ch.misc.buffs ??= {})[key] = this.now + e.min * 60_000;
+    p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 2 | 4; this.save(p, true);
+    this.sendJson(p, { t: 'drink' });
+    this.notice(p, `${MATERIAL.get(key)?.name}: ${e.min} dk boyunca etkin.`, 'ok');
+  }
+
   private nearNpc(p: Player, npcId: string): boolean {
     const n = p.zone.layout.npcs.find((x) => x.id === npcId);
     return !!n && dist(p, n) <= NPC_RANGE;
@@ -1320,6 +1388,7 @@ export class World {
       return;
     }
     if (key === 'red_potion') return this.usePotion(p, false);
+    if ((POTIONS as string[]).includes(key)) return this.drinkHerbPotion(p, key as PotionKey);
     if (key === 'azrail_chest') return this.openAzrailChest(p);
     if (key === 'forge_chest') return this.openForgeChest(p);
     if (key === 'crystal_chest') return this.openCrystalChest(p);

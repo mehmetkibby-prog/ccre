@@ -27,6 +27,8 @@ export interface CharState {
   saveVersion: number;
 }
 export interface CharMisc {
+  /** Şifa Bahçesi: bitki → bu oyuncu için yeniden olgunlaşacağı an (epoch ms) */
+  garden?: Record<number, number>;
   autoPotion?: boolean;
   statRev?: number;
   dailyKills?: { day: string; n: number };

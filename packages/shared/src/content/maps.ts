@@ -53,6 +53,7 @@ export const MAPS: Record<string, MapDef> = {
       { id: 'arda', name: 'Seyis Arda', title: 'Binek Ustası', art: 'stable', tx: 45, ty: 22, actions: ['mount'] },
       { id: 'tuccar', name: 'Tüccar Selim', title: 'Erzak', art: 'merchant', tx: 24, ty: 22, actions: ['shop_general', 'sell'] },
       { id: 'kemal', name: 'Balıkçı Kemal', title: '', art: 'fisher', tx: 15, ty: 35, actions: ['fishing_shop'] },
+      { id: 'reyhan', name: 'Şifacı Reyhan', title: 'Şifa Bahçesi', art: 'herbalist', tx: 31, ty: 45, actions: ['garden'] },
     ],
   },
   forest: {

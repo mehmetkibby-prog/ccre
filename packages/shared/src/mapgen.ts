@@ -5,6 +5,7 @@ import { MONSTERS, MONSTER_LEVEL } from './content/monsters.ts';
 import { TUNING } from './tuning.ts';
 import { towerRoom, towerRoomTile, TOWER_FLOORS, TOWER_R } from './content/tower.ts';
 import { forgeRoom, forgeRoomTile, FORGE_FLOORS, FORGE_SLOTS, FORGE_R } from './content/forge.ts';
+import { GARDEN_AREA, GARDEN_ROWS, GARDEN_MAP } from './garden.ts';
 
 export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND = 5, SNOW = 6, ICE = 7, ASH = 8, STONE = 9, DEEP = 10, PLANK = 11 }
 
@@ -152,6 +153,28 @@ function genVillage(l: MapLayout, rng: Rng) {
     l.props.push({ k: 'lamp', x: x * TILE, y: y * TILE, v: 0, s: 1 });
   }
   for (const [x, y] of [[25, 12], [31, 12]] as const) l.props.push({ k: 'banner', x: x * TILE, y: y * TILE, v: 0, s: 1 });
+  // ── Şifa Bahçesi (tilkilere giden yolun doğusu): sürülmüş 4 sıra, çit, yol tarafında giriş, fener ve tabela ──
+  if (l.def.id === GARDEN_MAP) {
+    const A = GARDEN_AREA;
+    for (let y = A.y0 - 1; y <= A.y1 + 1; y++) for (let x = A.x0 - 1; x <= A.x1 + 1; x++) {
+      const i = idx(l, x, y); l.blocked[i] = 0; protect[i] = 1;
+      l.ground[i] = GARDEN_ROWS.some((r) => y === r) && x >= A.x0 + 1 && x <= A.x1 - 1 ? G.DIRT : G.LUSH;
+    }
+    // yoldan bahçe kapısına kısa patika
+    for (let x = cx + 2; x < A.x0; x++) for (const y of [45, 46]) { const i = idx(l, x, y); l.ground[i] = G.DIRT; protect[i] = 1; }
+    for (let x = A.x0 - 1; x <= A.x1 + 1; x++) for (const y of [A.y0 - 1, A.y1 + 1]) { l.props.push({ k: 'fence', x: tc(x), y: tc(y), v: 0, s: 1 }); l.blocked[idx(l, x, y)] = 1; }
+    for (let y = A.y0; y <= A.y1; y++) for (const x of [A.x0 - 1, A.x1 + 1]) {
+      if (x === A.x0 - 1 && (y === 45 || y === 46)) continue; // kapı
+      l.props.push({ k: 'fence', x: tc(x), y: tc(y), v: 1, s: 1 }); l.blocked[idx(l, x, y)] = 1;
+    }
+    for (const y of [44, 47]) l.props.push({ k: 'lamp', x: tc(A.x0 - 1), y: tc(y), v: 0, s: 1 });
+    l.props.push({ k: 'signpost', x: tc(A.x0 - 3), y: tc(43), v: 3, s: 0.85 }); l.blocked[idx(l, A.x0 - 3, 43)] = 1;
+    // şifacının tezgâhı çevresi: kurutma için saman, sandık, fıçı; bahçe içinde kenarlarda çiçek
+    l.props.push({ k: 'hay', x: tc(A.x0 - 3) , y: tc(49), v: 0, s: 0.8 }); l.blocked[idx(l, A.x0 - 3, 49)] = 1;
+    l.props.push({ k: 'crate', x: tc(A.x0 - 2), y: tc(48), v: 0, s: 0.9 }); l.blocked[idx(l, A.x0 - 2, 48)] = 1;
+    l.props.push({ k: 'barrel', x: tc(A.x0 - 2) + 20, y: tc(49) + 10, v: 1, s: 0.9 });
+    for (let x = A.x0; x <= A.x1; x += 2) for (const y of [A.y0, A.y1]) l.props.push({ k: 'flowers', x: tc(x) + 8, y: tc(y) + (y === A.y0 ? -10 : 10), v: (x >> 1) % 3, s: 0.8 });
+  }
   // ── Tilki Korusu (güney): köyden çitle ayrılan, patikalı sık koru ──
   const GY = 60;
   if (h > GY + 10) {

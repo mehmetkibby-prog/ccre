@@ -378,7 +378,7 @@ export function createHumanoid(L: HLook): Rig {
 }
 
 // ───────────── animasyon ─────────────
-export type HState = 'idle' | 'walk' | 'attack' | 'cast' | 'hurt' | 'dead';
+export type HState = 'idle' | 'walk' | 'attack' | 'cast' | 'hurt' | 'dead' | 'gather';
 
 /** Prosedürel animasyon: her kare kemik açıları zaman ve duruma göre hesaplanır. */
 export function animateHumanoid(r: Rig, st: HState, t: number, k: number, walkPhase: number) {

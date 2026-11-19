@@ -29,9 +29,11 @@ import { glowTexture } from './textures.ts';
 import { store } from '../game/store.ts';
 import { TowerFx } from './tower3d.ts';
 import { ForgeFx } from './forge3d.ts';
+import { GardenFx } from './garden3d.ts';
+import { GARDEN_MAP } from '@col/shared';
 import { NewYearFx } from './newyear3d.ts';
 
-const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast'];
+const STATE: HState[] = ['idle', 'walk', 'attack', 'hurt', 'dead', 'cast', 'gather'];
 const CLASS_COLORS = ['#a8c8ff', '#a8ff98', '#dcb8ff'];
 /** Dokunmatik (telefon/tablet): ekran kartı bant genişliği dar, tam ekran efekt geçişleri pahalı. */
 /** Varsayılan kamera yakınlığı (küçük = uzak). ~17 m: karakter ve çevresi rahat görünür. */
@@ -109,6 +111,7 @@ export class Renderer3D {
   composer: EffectComposer | null = null;
   private towerFx: TowerFx | null = null;
   private forgeFx: ForgeFx | null = null;
+  private gardenFx: GardenFx | null = null;
   /** Pazar Köyü yeni yıl süsü (yönetimden aç/kapa) */
   private nyFx: NewYearFx | null = null; private nyOn = false;
   private nyActive(l: MapLayout | null = this.layout) { return !!l && l.def.id === 'bazaar' && TUNING.newYear >= 0.5; }
@@ -322,6 +325,8 @@ export class Renderer3D {
     if (l.def.id === 'tower') { this.towerFx = new TowerFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.towerFx.group); }
     this.forgeFx?.dispose(); if (this.forgeFx) this.world.remove(this.forgeFx.group); this.forgeFx = null;
     if (l.def.id === 'forge') { this.forgeFx = new ForgeFx(l, (x, y) => this.heightAt(x, y)); this.world.add(this.forgeFx.group); }
+    this.gardenFx?.dispose(); if (this.gardenFx) this.world.remove(this.gardenFx.group); this.gardenFx = null;
+    if (l.def.id === GARDEN_MAP) { this.gardenFx = new GardenFx((x, y) => this.heightAt(x, y)); this.world.add(this.gardenFx.group); }
     if (q !== 'low') { this.grass = new GrassField(l, (x, y) => this.heightAt(x, y), q); this.grass.group.visible = !cool(); this.dyn.add(this.grass.group); }
     // NPC'ler
     for (const n of l.npcs) {
@@ -688,6 +693,33 @@ export class Renderer3D {
     sfx.step(force ?? surf, k);
   }
 
+  /** Şifa Bahçesi: bitki toplarken elde orak (silah ve kalkan gizlenir). Orak modeli bir kez kurulur, paylaşılır. */
+  private sickleProto: THREE.Group | null = null;
+  private syncSickle(v: View, on: boolean) {
+    const hv = v as View & { held?: THREE.Object3D[]; sickle?: THREE.Object3D; sickleOn?: boolean; heldOff?: boolean };
+    if ((hv.sickleOn ?? false) === on) return;
+    hv.sickleOn = on;
+    hv.held ??= (() => { const a: THREE.Object3D[] = []; v.obj.traverse((o) => { if (o.name === 'held-weapon') a.push(o); }); return a; })();
+    if (!hv.heldOff) for (const o of hv.held) o.visible = !on;
+    const hand = v.glb?.hand; if (!hand) return;
+    if (!this.sickleProto) {
+      const g = new THREE.Group();
+      const wood = new THREE.MeshStandardMaterial({ color: '#7a4e2c', roughness: 0.8 }), steel = new THREE.MeshStandardMaterial({ color: '#d8e0e8', metalness: 0.85, roughness: 0.28 }), wrap = new THREE.MeshStandardMaterial({ color: '#4a2c18', roughness: 0.9 });
+      const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.34, 8), wood); handle.position.y = 0.05; g.add(handle);
+      const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.12, 8), wrap); grip.position.y = -0.04; g.add(grip);
+      const bladeG = new THREE.TorusGeometry(0.16, 0.014, 4, 18, Math.PI * 1.15); bladeG.scale(1, 1, 2.2);
+      const blade = new THREE.Mesh(bladeG, steel); blade.position.set(-0.16, 0.22, 0); blade.rotation.z = -0.15; g.add(blade);
+      this.sickleProto = g;
+    }
+    if (!hv.sickle) {
+      const s = this.sickleProto.clone();
+      const ws = new THREE.Vector3(); hand.getWorldScale(ws); s.scale.setScalar(1 / Math.max(1e-4, ws.x) * (v.obj.scale.x || 1));
+      s.rotation.set(Math.PI / 2, 0, 0); s.position.set(0, 0.08 / Math.max(1e-4, ws.x) * (v.obj.scale.x || 1), 0);
+      hand.add(s); hv.sickle = s;
+    }
+    hv.sickle.visible = on;
+  }
+
   /** Balık tutan oyuncu: elde olta, en yakın suya misina ve şamandıra. */
   private syncFish(v: View, on: boolean, x: number, y: number, now: number) {
     // balık tutarken eldeki silah kaldırılır, yerine olta tutulur
@@ -858,7 +890,7 @@ export class Renderer3D {
     let st: HState = STATE[anim] ?? 'idle';
     if (dead) st = 'dead';
     else if ((st === 'attack' || st === 'cast') && now - animStart > (st === 'cast' ? CAST_ANIM_MS : ATTACK_ANIM_MS)) st = moving ? 'walk' : 'idle';
-    else if (st === 'idle' && moving) st = 'walk';
+    else if ((st === 'idle' || st === 'gather') && moving) st = 'walk';
     else if (st === 'walk' && !moving && now - v.stateAt > 140) st = 'idle';
     if (st === 'walk' && (v as View & { mount?: unknown }).mount) st = 'idle'; // binicinin bacakları yürümez (at yürür)
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
@@ -947,6 +979,7 @@ export class Renderer3D {
     shared.time.value = now / 1000;
     this.terrain.update(now);
     if (this.towerFx) { const st = store.get(); this.towerFx.update(now, st.tower, st.towerHold, st.towerSeqAt); }
+    if (this.gardenFx) this.gardenFx.update(now, dt, store.get().garden);
     if (this.forgeFx) { const st = store.get(); this.forgeFx.update(now, st.forge, (id) => (id === st.entityId ? this.self?.obj.position : this.views.get(id)?.obj.position) ?? null); }
     // yönetimden yeni yıl aç/kapa: nesneler (çeşme ↔ ağaç) ve süs yeniden kurulur
     if (this.layout && this.nyActive() !== this.nyOn && this.propsGroup) {
@@ -962,11 +995,13 @@ export class Renderer3D {
     const sv = this.ensureSelf();
     const selfDead = (g.selfFlags & EFlag.DEAD) !== 0;
     let sAnim = g.selfAnim;
-    if (!((sAnim === Anim.ATTACK || sAnim === Anim.CAST) && now - g.selfAnimStart < (sAnim === Anim.CAST ? CAST_ANIM_MS : ATTACK_ANIM_MS) - 60)) sAnim = now - g.lastMoveAt < 120 ? Anim.WALK : Anim.IDLE;
+    if (g.gatherUntil > now) sAnim = Anim.GATHER;
+    else if (!((sAnim === Anim.ATTACK || sAnim === Anim.CAST) && now - g.selfAnimStart < (sAnim === Anim.CAST ? CAST_ANIM_MS : ATTACK_ANIM_MS) - 60)) sAnim = now - g.lastMoveAt < 120 ? Anim.WALK : Anim.IDLE;
     // saldırıda "beceri" yuvası kombo sırasını taşır (1-2-3 vuruş farklı animasyon)
     (sv as View & { skill?: number }).skill = sAnim === Anim.ATTACK ? g.selfCombo : g.selfSkill;
     this.animateView(sv, g.dx, g.dy, g.sdir, sAnim, g.selfAnimStart, now, this.frozen(g.selfId, now) ? 0 : dt, selfDead);
     this.syncFish(sv, (g.selfFlags & EFlag.FISHING) !== 0 && !selfDead, g.dx, g.dy, now);
+    this.syncSickle(sv, sv.state === 'gather');
     this.syncMount(sv, (g.selfFlags & EFlag.MOUNTED) !== 0 && !selfDead, now, dt);
     this.selfRing.position.set(g.dx * U, this.heightAt(g.dx, g.dy) + 0.04, g.dy * U);
     // varlıklar
@@ -990,7 +1025,7 @@ export class Renderer3D {
       const dead = (e.flags & EFlag.DEAD) !== 0 || e.deadAt > 0;
       (v as View & { skill?: number }).skill = e.anim === Anim.ATTACK ? e.combo ?? 0 : e.skill;
       this.animateView(v, e.x, e.y, e.dir, e.anim, e.animStart, now, this.frozen(e.id, now) ? 0 : dt, dead, !e.slide);
-      if (e.kind === Kind.PLAYER) { this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now); this.syncMount(v, (e.flags & EFlag.MOUNTED) !== 0 && !dead, now, dt); }
+      if (e.kind === Kind.PLAYER) { this.syncFish(v, (e.flags & EFlag.FISHING) !== 0 && !dead, e.x, e.y, now); this.syncSickle(v, v.state === 'gather'); this.syncMount(v, (e.flags & EFlag.MOUNTED) !== 0 && !dead, now, dt); }
       if (v.gfx?.length) fxNear.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       if (e.kind === Kind.PLAYER) crowd.push({ v, d: (e.x - g.dx) ** 2 + (e.y - g.dy) ** 2 });
       // ölü canavar yavaşça kaybolur

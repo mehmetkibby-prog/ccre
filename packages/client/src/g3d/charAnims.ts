@@ -537,6 +537,22 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
   return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 } as Record<number, THREE.AnimationClip> };
 }
 
+// ───────── Şifa Bahçesi: diz çöküp orakla bitki kesme (üç sınıf aynı iskelet) ─────────
+/** Döngü: sol el bitkiyi tutar, sağ el orağı geriden öne-sola çeker (0,7 sn). */
+export function gatherClip(inner: THREE.Object3D, root: THREE.Object3D) {
+  const V = (r: number, u: number, f: number): [number, number, number] => [-r, u, f];
+  const KNEEL: Pose = { LeftUpLeg: { e: [-50, 0, 10] }, LeftLeg: { e: [66, 0, 0] }, LeftFoot: { e: [-12, 0, 0] }, RightUpLeg: { e: [24, 0, -10] }, RightLeg: { e: [100, 0, 0] }, RightFoot: { e: [32, 0, 0] } };
+  const body = (lean: number, yaw: number): Pose => ({ Spine02: { e: [lean * 0.45, yaw * 0.5, 0] }, Spine01: { e: [lean * 0.3, yaw * 0.3, 0] }, Spine: { e: [lean * 0.25, yaw * 0.2, 0] }, neck: { e: [6, 0, 0] }, Head: { e: [14, -yaw * 0.6, 0] } });
+  const LH: Pose = { LeftArm: { a: V(-0.12, -0.72, 0.68), w: true }, LeftForeArm: { a: V(0.12, -0.8, 0.58), w: true } };
+  const back = (): Pose => ({ ...KNEEL, ...body(30, -10), ...LH, RightArm: { a: V(0.45, -0.55, 0.35), w: true }, RightForeArm: { a: V(0.35, -0.65, 0.45), w: true } });
+  const cut = (): Pose => ({ ...KNEEL, ...body(34, 8), ...LH, RightArm: { a: V(0.02, -0.68, 0.73), w: true }, RightForeArm: { a: V(-0.45, -0.62, 0.6), w: true } });
+  return buildClip('Bitki Topla', inner, root, [
+    { t: 0, hips: [-0.42, 0.06], p: back() },
+    { t: 0.3, hips: [-0.43, 0.08], ease: 'in', p: cut() },
+    { t: 0.7, hips: [-0.42, 0.06], ease: 'inOut', p: back() },
+  ], 0.7);
+}
+
 // ───────── üst / alt gövde ayrımı (yürürken vurmak için) ─────────
 const LOWER_RE = /(hips|upleg|leg|foot|toebase|toe_end)$/i;
 const partCache = new WeakMap<THREE.AnimationClip, { up?: THREE.AnimationClip; low?: THREE.AnimationClip }>();

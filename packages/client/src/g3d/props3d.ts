@@ -578,7 +578,8 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
     for (const part of model) {
       const im = new THREE.InstancedMesh(part.geo, typeof part.mat === 'string' ? mat(part.mat) : part.mat, list.length);
       list.forEach((p, i) => {
-        const rot = fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
+        // çit: v=1 kuzey-güney doğrultusunda (bahçenin yan kenarları), diğerleri doğu-batı
+        const rot = k === 'fence' && p.v === 1 ? Math.PI / 2 : fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
         const scale = (k === 'tree' || k === 'pine' || k === 'snowpine' || k === 'deadtree') ? p.s * 0.8 : k === 'rock' ? p.s * 1.1 : p.s;
         const wy = k === 'lily' || k === 'dock' ? -0.2 : heightAt(p.x, p.y) - 0.03;
         pos.set(p.x * U, wy, p.y * U);

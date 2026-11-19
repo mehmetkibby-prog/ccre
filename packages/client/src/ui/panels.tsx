@@ -11,6 +11,7 @@ import { FriendsPanel, MountPanel, RankingsPanel } from './social.tsx';
 import { TowerPanel } from './tower.tsx';
 import { ForgePanel } from './forge.tsx';
 import { CraftPanel } from './craft.tsx';
+import { GardenPanel } from './garden.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
 import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
@@ -64,6 +65,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'rankings' && <RankingsPanel />}
       {p === 'fishshop' && <FishShop game={game} />}
+      {p === 'garden' && <GardenPanel />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
@@ -300,7 +302,7 @@ function Inventory({ game }: { game: Game }) {
                 return (
                   <div key={k} className="mat" title={m?.desc}>
                     <img src={iconUrl(m?.icon ?? 'bag')} alt="" /><div style={{ flex: 1 }}>{m?.name ?? k}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
-                    {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion') && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' ? 'Kullan' : 'Aç'}</button>}
+                    {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion' || k.startsWith('potion_')) && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' || k.startsWith('potion_') ? 'Kullan' : 'Aç'}</button>}
                   </div>
                 );
               })}
@@ -312,7 +314,7 @@ function Inventory({ game }: { game: Game }) {
           {tab === 'market' && <>
             {(buffs.length > 0 || (self.autoPool ?? 0) > 0 || (self.bait ?? 0) > 0) && (
               <div className="buff-list">
-                {buffs.map(([k, t]) => { const m = MALL.get(k); return <div key={k} className="buff"><img src={iconUrl(mallIcon(k))} alt="" /><span>{m?.name ?? k}</span><b>{fmtLeft(t - now - (store.get().clockSkew ?? 0))}</b></div>; })}
+                {buffs.map(([k, t]) => { const m = MALL.get(k); return <div key={k} className="buff"><img src={iconUrl(k.startsWith('potion_') ? k : mallIcon(k))} alt="" /><span>{m?.name ?? MATERIAL.get(k)?.name ?? k}</span><b>{fmtLeft(t - now - (store.get().clockSkew ?? 0))}</b></div>; })}
                 {(self.autoPool ?? 0) > 0 && <div className="buff"><img src={iconUrl('mall_auto_potion')} alt="" /><span>Oto iksir deposu</span><b>{(self.autoPool ?? 0).toLocaleString('tr-TR')} can</b></div>}
                 {(self.bait ?? 0) > 0 && <div className="buff"><img src={iconUrl('mall_fish_bait')} alt="" /><span>Bereketli yem</span><b>{self.bait} av</b></div>}
               </div>
@@ -662,7 +664,7 @@ function Settings({ game }: { game: Game }) {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule (Sv. 25+)', forge: 'Kor Kulesi (Sv. 10+)', evolve: 'Evrim (silah ve zırh)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule (Sv. 25+)', forge: 'Kor Kulesi (Sv. 10+)', evolve: 'Evrim (silah ve zırh)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat', garden: 'İksir kaynat · Orak al' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -670,6 +672,7 @@ function NpcDialog({ game }: { game: Game }) {
     else if (a === 'sell') store.set({ panel: 'shop', shop: 'sell' });
     else if (a === 'upgrade') store.set({ panel: 'upgrade' });
     else if (a === 'fishing_shop') store.set({ panel: 'fishshop' });
+    else if (a === 'garden') store.set({ panel: 'garden' });
     else if (a === 'mount') store.set({ panel: 'mount' });
     else if (a === 'tower') store.set({ panel: 'tower' });
     else if (a === 'forge') store.set({ panel: 'forge' });

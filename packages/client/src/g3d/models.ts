@@ -4,7 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
-import { guardianClips, hunterClips, arcanistClips, bodyPart } from './charAnims.ts';
+import { guardianClips, hunterClips, arcanistClips, gatherClip, bodyPart } from './charAnims.ts';
 import { shared } from './materials.ts';
 
 /**
@@ -347,7 +347,7 @@ export function weaponGlb(id: string): THREE.Object3D | null {
 }
 
 /** Elle çizilmiş klipler (model kimliği başına bir kez). */
-const customClips = new Map<string, ReturnType<typeof guardianClips> | null>();
+const customClips = new Map<string, (ReturnType<typeof guardianClips> & { gather?: THREE.AnimationClip }) | null>();
 
 /**
  * Tilki Kral: Meshy iki ayaklı iskeletinde kuyruk kemiği yok, kuyruk köşeleri sol bacağa bağlanmıştı; yürürken
@@ -426,6 +426,7 @@ export function createGlbChar(id: string): GlbChar | null {
   let custom = customClips.get(id);
   if (custom === undefined && (baseId === 'guardian' || baseId === 'hunter' || baseId === 'arcanist')) {
     custom = baseId === 'guardian' ? guardianClips(inner, root) : baseId === 'hunter' ? hunterClips(inner, root) : arcanistClips(inner, root);
+    custom.gather = gatherClip(inner, root);
     customClips.set(id, custom);
   }
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
@@ -436,7 +437,7 @@ export function createGlbChar(id: string): GlbChar | null {
   let walkMix = 0;
   const endSwing = (fade: number) => { if (!swingSet) return; for (const a of [swingSet.up, swingSet.low, swingSet.walk]) a?.fadeOut(fade); swingSet = null; };
   const play = (st: HState | 'run', once: boolean, skill = 0, moving = false) => {
-    let clip = L.map[st] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
+    let clip = (st === 'gather' ? custom?.gather : undefined) ?? L.map[st as keyof typeof L.map] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
     const swing = once && (st === 'attack' || st === 'cast');
     let designed = false;
     if (st === 'attack' && custom) { clip = custom.attacks[((skill % 3) + 3) % 3]; designed = true; }
@@ -480,7 +481,7 @@ export function createGlbChar(id: string): GlbChar | null {
     /** Geliştirme: çizilmiş klibi verilen anda dondurur (kind: 'a' saldırı / 's' beceri). */
     swingTime() { return swingSet ? swingSet.up.time : -1; },
     debugPose(kind: 'a' | 's', idx: number, t: number) {
-      const clip = kind === 'a' ? custom?.attacks[idx] : custom?.skills[idx];
+      const clip = kind === 'a' ? custom?.attacks[idx] : (kind as string) === 'g' ? custom?.gather : custom?.skills[idx];
       if (!clip) return;
       mixer.stopAllAction(); swingSet = null; current = null; curState = 'debug';
       const a = mixer.clipAction(clip); a.reset(); a.setEffectiveWeight(1); a.play(); a.time = t; a.paused = true; mixer.update(0);

@@ -13,6 +13,7 @@ import { TowerTab } from './TowerAdmin.tsx';
 import { ForgeTab, EvoTab } from './ForgeAdmin.tsx';
 import { CraftTab } from './CraftAdmin.tsx';
 import { EventsTab } from './EventsAdmin.tsx';
+import { GardenTab } from './GardenAdmin.tsx';
 import { QuestTab } from './QuestAdmin.tsx';
 
 // ───────── veri katmanı ─────────
@@ -83,21 +84,21 @@ const localBackend: Backend = {
 };
 const backend = OFFLINE ? localBackend : serverBackend;
 
-type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena' | 'kule' | 'korkule' | 'evrim' | 'uretim' | 'gorev' | 'etkinlik';
+type Tab = 'durum' | 'kayit' | 'oyuncu' | 'genel' | 'seviye' | 'boss' | 'canavar' | 'ganimet' | 'efsun' | 'arti' | 'donusum' | 'harita' | 'balik' | 'market' | 'arena' | 'kule' | 'korkule' | 'evrim' | 'uretim' | 'gorev' | 'etkinlik' | 'bahce';
 const TABS: [Tab, string, string][] = [
   ['durum', 'Durum', '◉'], ...(backend.accounts ? [['kayit', 'Kayıtlar', '☰'] as [Tab, string, string]] : []), ['oyuncu', 'Oyuncular', '☺'],
   ['etkinlik', 'Etkinlikler', '✺'], ['arena', 'Savaş Arenası', '⚔'], ['kule', 'Kadim Kule', '♜'], ['korkule', 'Kor Kulesi', '♨'], ['gorev', 'Görevler', '❖'], ['boss', 'Bosslar', '♛'],
   ['genel', 'Genel', '⚙'], ['seviye', 'Seviye', '▲'], ['canavar', 'Canavarlar', '✶'], ['harita', 'Haritalar', '⌖'],
-  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['evrim', 'Evrim', '◆'], ['uretim', 'Üretim', '⚗'], ['market', 'Nesne Market', '✦'], ['balik', 'Balıkçılık', '≈'],
+  ['ganimet', 'Ganimet', '◆'], ['efsun', 'Efsunlar', '✧'], ['arti', 'Artı Basma', '⚒'], ['donusum', 'Dönüşüm', '✦'], ['evrim', 'Evrim', '◆'], ['uretim', 'Üretim', '⚗'], ['bahce', 'Şifa Bahçesi', '❀'], ['market', 'Nesne Market', '✦'], ['balik', 'Balıkçılık', '≈'],
 ];
 /** Sekme grupları: sol menüde başlık altında, telefonda yatay çubukta küçük ayraçla */
 const GROUPS: [string, Tab[]][] = [
   ['Sunucu', ['durum', 'kayit', 'oyuncu']],
   ['Etkinlikler', ['etkinlik', 'gorev', 'arena', 'kule', 'korkule', 'boss']],
   ['Oyun dengesi', ['genel', 'seviye', 'canavar', 'harita']],
-  ['Ekonomi', ['ganimet', 'efsun', 'arti', 'donusum', 'evrim', 'uretim', 'market', 'balik']],
+  ['Ekonomi', ['ganimet', 'efsun', 'arti', 'donusum', 'evrim', 'uretim', 'bahce', 'market', 'balik']],
 ];
-const SETTING_TABS = new Set<Tab>(['etkinlik', 'genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena', 'kule', 'korkule', 'evrim', 'uretim', 'gorev']);
+const SETTING_TABS = new Set<Tab>(['etkinlik', 'bahce', 'genel', 'seviye', 'boss', 'balik', 'market', 'canavar', 'ganimet', 'efsun', 'arti', 'donusum', 'harita', 'arena', 'kule', 'korkule', 'evrim', 'uretim', 'gorev']);
 const ROLE_NAME: Record<string, string> = { player: 'Oyuncu', moderator: 'Moderatör', gm: 'GM', admin: 'Yönetici', owner: 'Kurucu' };
 
 // ───────── giriş kapısı ─────────
@@ -214,6 +215,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'korkule' && <ForgeTab t={t} setT={setTT} dis={busy} />}
             {tab === 'evrim' && <EvoTab t={t} setT={setTT} dis={busy} />}
             {tab === 'etkinlik' && <EventsTab t={t} setT={setTT} dis={busy} save={save} />}
+            {tab === 'bahce' && <GardenTab t={t} setT={setTT} dis={busy} />}
             {tab === 'uretim' && <CraftTab t={t} setT={setTT} dis={busy} />}
             {tab === 'gorev' && <QuestTab t={t} setT={setTT} dis={busy} />}
             {tab === 'boss' && <BossTab t={t} setMon={setMon} setSpawn={setSpawn} dis={busy} />}

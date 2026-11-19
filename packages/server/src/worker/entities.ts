@@ -1,4 +1,4 @@
-import { VIEW_HALF_W, VIEW_HALF_H, computeStats, charBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT } from '@col/shared';
+import { VIEW_HALF_W, VIEW_HALF_H, computeStats, charBuffs, potionBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT } from '@col/shared';
 import type { CharState } from '../types.ts';
 import type { Zone } from './zone.ts';
 
@@ -40,6 +40,8 @@ export class Player {
   lastAutoPotionAt = 0;
   /** balıkçılık: atılmış olta (sunucu belirler: balık ve vurma zamanı) */
   fishing?: { token: string; fish: string; biteAt: number };
+  /** Şifa Bahçesi: eğilip toplama sürüyor (bitki, başlangıç, başlangıç konumu) */
+  gather: { i: number; at: number; x: number; y: number } | null = null;
   /** Kadim Kule: üzerinde durulan taş (-1 yok) ve sunakta bekleme */
   towerPlate = -1;
   altarHold: { i: number; since: number } | null = null;
@@ -78,6 +80,12 @@ export class Player {
     // binek: hareket hızı ve saldırı bonusu (istemci hızı istatistikten okuduğu için tahmin de aynı)
     const mt = this.char.misc.mount;
     if (mt?.owned && mt.riding) { this.stats.atk += MOUNT.atk; this.stats.speed *= MOUNT.speedMul; }
+    // Şifa Bahçesi iksirleri: saldırı hızı, canavarlara hasar, azami can (%), kritik
+    const pb = potionBuffs(this.char.misc.buffs, Date.now(), TUNING.garden);
+    if (pb.atkSpeed) this.stats.atkSpeed += pb.atkSpeed;
+    if (pb.pve) this.stats.pvePower += pb.pve;
+    if (pb.crit) this.stats.crit += pb.crit;
+    if (pb.hpPct) this.stats.maxHp = Math.round(this.stats.maxHp * (1 + pb.hpPct / 100));
     const sb = this.sbuff;
     if (sb && sb.until > Date.now()) {
       if (sb.k === 'wind') { this.stats.atkSpeed += sb.v; this.stats.speed *= 1 + sb.v2 / 100; }

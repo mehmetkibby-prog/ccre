@@ -1,7 +1,7 @@
 import { DIR_STEPS,
   readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, qteZone, QTE_SWEEP_MS, type SkillDef, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
   MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
-  findPath, los,
+  findPath, los, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, MATERIALS,
 } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
@@ -86,6 +86,9 @@ export class Game {
   /** Yakın dövüş saldırısı başlayanlar: vuruş anını eşlemek ve kombo sırası için */
   meleeCast = new Map<number, { at: number; combo: number }>();
   selfCombo = 0;
+  /** Şifa Bahçesi: kendi toplama animasyonunun bitişi (performance.now) */
+  gatherUntil = 0;
+  private gatherTimer = 0;
   lastAttackSent = 0;
   inputAcc = 0;
   lastFrame = 0;
@@ -274,9 +277,27 @@ export class Game {
         this.fx.shapes.push({ kind: 'teleport', x: m.x, y: m.y, r: 0, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '' });
         sfx.play('teleport');
         store.set({ panel: null, npc: null, confirmTravel: null });
+        if (m.map === GARDEN_MAP) this.send({ t: 'garden', op: 'state' } as never);
         break;
       }
       case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
+      case 'garden': store.set({ garden: { ready: Array.isArray(m.ready) ? m.ready : [], at: performance.now(), sickle: !!m.sickle } }); break;
+      case 'gather': {
+        if (m.op === 'start') {
+          const start = performance.now();
+          this.gatherUntil = start + m.ms + 250; store.set({ gather: { i: m.i, start, ms: m.ms } }); sfx.play('ui');
+          window.clearTimeout(this.gatherTimer);
+          this.gatherTimer = window.setTimeout(() => { if (store.get().gather?.i === m.i) this.send({ t: 'garden', op: 'done', i: m.i } as never); }, m.ms);
+        } else {
+          window.clearTimeout(this.gatherTimer); this.gatherUntil = 0; store.set({ gather: null });
+          if (m.op === 'done') {
+            const pl = GARDEN_PLANTS[m.i];
+            notify(`+${m.n} ${MATERIALS.find((x) => x.id === m.key)?.name ?? m.key}`, 'ok'); sfx.play('pickup');
+            if (pl) this.fx.burst(pl.x, pl.y, 0.4, 16, ['#9ff0c0', '#e0505a', '#ffb84a', '#b48cff'][pl.row], 2.2, 700, 0.14, -2);
+          }
+        }
+        break;
+      }
       case 'tuning': import('../admin/config.ts').then((c) => c.applyRemoteTuning(m.tuning)); break;
       case 'notice': notify(m.text, m.kind); if (m.kind === 'error') sfx.play('error'); break;
       // ───────── pazar tezgâhları ─────────
@@ -636,7 +657,9 @@ export class Game {
     const mv = { x: mv0.x * cy + mv0.y * sy, y: -mv0.x * sy + mv0.y * cy };
     let dir = NO_DIR;
     if (!mv.x && !mv.y) this.lastJoyDir = NO_DIR;
-    if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; if (!this.input.attackHeld) this.autoAttack = false; }
+    if (mv.x || mv.y) { dir = this.steadyDir(mv.x, mv.y); this.moveTarget = null; this.interactNpc = null; this.pendingGather = -1; if (!this.input.attackHeld) this.autoAttack = false; }
+    // yürümeye başlayınca bitki toplama iptal
+    if ((mv.x || mv.y) && store.get().gather) { window.clearTimeout(this.gatherTimer); this.gatherUntil = 0; store.set({ gather: null }); this.send({ t: 'garden', op: 'cancel' } as never); }
     // OTO ATAK (Nesne Market yanındaki düğme, günlük süre sınırlı): ölen hedeften sonra yakındaki canavara yürüyüp vurur.
     // Elle yürüyünce 1,5 sn bırakır (oyuncu yönlendirebilsin).
     if (mv.x || mv.y) this.autoPauseUntil = performance.now() + 1500;
@@ -678,6 +701,8 @@ export class Game {
       const d = Math.hypot(this.moveTarget.x - this.px, this.moveTarget.y - this.py);
       if (d < 12) this.moveTarget = null;
       else dir = dirIndexFromVector(this.moveTarget.x - this.px, this.moveTarget.y - this.py);
+      // tıklanan bitkiye ulaşınca eğil
+      if (this.pendingGather >= 0) { const pl = GARDEN_PLANTS[this.pendingGather]; if (pl && Math.hypot(pl.x - this.px, pl.y - this.py) < GARDEN_REACH - 10) { const i = this.pendingGather; this.pendingGather = -1; this.moveTarget = null; dir = NO_DIR; this.gatherNearby(i); } }
       if (this.interactNpc) {
         const npc = this.layout.npcs.find((n) => n.id === this.interactNpc);
         if (npc && Math.hypot(npc.x - this.px, npc.y - this.py) < 170) { this.send({ t: 'npc', id: npc.id }); this.interactNpc = null; this.moveTarget = null; dir = NO_DIR; }
@@ -874,7 +899,35 @@ export class Game {
     let best: CEnt | null = null, bd = LOOT_PICKUP_RANGE;
     for (const e of this.ents.values()) if (e.kind === Kind.LOOT && e.owner === this.charId) { const d = Math.hypot(e.x - this.px, e.y - this.py); if (d < bd) { bd = d; best = e; } }
     if (best) this.send({ t: 'pickup', id: best.id });
-    else notify('Yakında toplanacak ganimet yok.', 'info');
+    else if (!this.gatherNearby()) notify('Yakında toplanacak ganimet yok.', 'info');
+  }
+  /** Şifa Bahçesi: yakındaki olgun bitkiye eğil (Z ya da bitkiye tıklama). Bitki yoksa false. */
+  gatherNearby(target?: number): boolean {
+    if (this.layout.def.id !== GARDEN_MAP) return false;
+    const gd = store.get().garden, now = performance.now();
+    const ripe = (i: number) => !gd || (gd.ready[i] ?? 0) - (now - gd.at) <= 0;
+    let best = -1, bd = GARDEN_REACH;
+    for (const pl of GARDEN_PLANTS) {
+      if (target !== undefined && pl.i !== target) continue;
+      const d = Math.hypot(pl.x - this.px, pl.y - this.py);
+      if (d < bd && ripe(pl.i)) { bd = d; best = pl.i; }
+    }
+    if (best < 0) {
+      if (target !== undefined) { const pl = GARDEN_PLANTS[target]; if (pl && !ripe(target)) notify('Bu bitki henüz olgunlaşmadı.', 'info'); else if (pl) { this.moveTarget = { x: pl.x, y: pl.y + 50 }; this.pendingGather = target; } return true; }
+      return false;
+    }
+    if (gd && !gd.sickle) { notify('Bitki toplamak için orak gerekir: Şifacı Reyhan\'dan alabilirsin.', 'error'); return true; }
+    this.moveTarget = null; this.autoAttack = false;
+    this.send({ t: 'garden', op: 'start', i: best } as never);
+    return true;
+  }
+  private pendingGather = -1;
+  /** dünya noktasına en yakın bahçe bitkisi (tıklama için) */
+  plantAt(wx: number, wy: number): number {
+    if (this.layout.def.id !== GARDEN_MAP) return -1;
+    let best = -1, bd = 56;
+    for (const pl of GARDEN_PLANTS) { const d = Math.hypot(pl.x - wx, pl.y - wy); if (d < bd) { bd = d; best = pl.i; } }
+    return best;
   }
   potion() { this.send({ t: 'potion' }); }
   /** Bir tezgâhı aç: yakınsa içeriğini iste, uzaksa önce yürü. */
@@ -933,6 +986,8 @@ export class Game {
       else { this.interactNpc = npc.id; this.moveTarget = { x: npc.x, y: npc.y + 40 }; }
       return;
     }
+    const plant = this.plantAt(wx, wy);
+    if (plant >= 0) { this.gatherNearby(plant); return; }
     this.autoAttack = false;
     this.moveTarget = { x: wx, y: wy };
     this.renderer.clickMark(wx, wy);

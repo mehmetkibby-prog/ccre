@@ -103,6 +103,7 @@ const SIGN_TEXTS: { title: string; sub: string }[] = [
   { title: 'PAZAR ALANI', sub: '' },
   { title: 'BALIK TUTMA YERİ', sub: '(Oltanı at, balığını tut)' },
   { title: 'TİLKİ KORUSU', sub: '(Güneyde · yabani tilkiler ve goblinler)' },
+  { title: 'ŞİFA BAHÇESİ', sub: '(Şifacı Reyhan · bitki ve iksir)' },
 ];
 function signMaterial(v: number) {
   const t = SIGN_TEXTS[v] ?? SIGN_TEXTS[0];

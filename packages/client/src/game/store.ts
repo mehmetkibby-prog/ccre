@@ -40,7 +40,7 @@ export function pmSet(name: string, p: Partial<PmConv> | null) {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | 'garden' | null;
 
 export interface TowerView {
   f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;
@@ -116,6 +116,9 @@ export interface UiState {
   /** gece-gündüz: şu anki dilim (ayarlar ve saat yazısı için) */
   dayPhase: string; qteRes: { perfect: boolean; at: number } | null;
   forge: ForgeView | null;
+  /** Şifa Bahçesi: bitkilerin kalan olgunlaşma süresi (ms, at anında), orak var mı; süren toplama */
+  garden: { ready: number[]; at: number; sickle: boolean } | null;
+  gather: { i: number; start: number; ms: number } | null;
   /** oto atak durumunun sunucudan son geldiği an (kalan süre bundan geri sayılır) */
   autoSync: number;
   lootFeed: { id: number; text: string; rarity: string; at: number }[];
@@ -147,7 +150,7 @@ function loadSettings(): UiState['settings'] {
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
-  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
+  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, garden: null, gather: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();

@@ -9,7 +9,7 @@ export const enum Op { SNAPSHOT = 1 }
 export const enum COp { MOVE = 1 }
 
 export const enum Kind { PLAYER = 1, MONSTER = 2, LOOT = 3 }
-export const enum Anim { IDLE = 0, WALK = 1, ATTACK = 2, HURT = 3, DEAD = 4, CAST = 5 }
+export const enum Anim { IDLE = 0, WALK = 1, ATTACK = 2, HURT = 3, DEAD = 4, CAST = 5, GATHER = 6 }
 export const enum Upd { POS = 1, HP = 2, ANIM = 4, MAXHP = 8, FLAGS = 16, LEVEL = 32 }
 export const enum EFlag { DEAD = 1, MOUNTED = 2, PVP = 4, STUNNED = 8, ROOTED = 16, SHIELD = 32, GM = 64, FISHING = 128 }
 export const enum Ev { DAMAGE = 1, CAST = 2, DEATH = 3, FX = 4, LEVELUP = 5, HEAL = 6 }
@@ -153,6 +153,7 @@ export type ClientCmd =
   | { t: 'tower'; op: 'enter' | 'leave' | 'state' }
   | { t: 'forge'; op: 'enter' | 'leave' | 'state' }
   | { t: 'evolve'; item: string; req: string }
+  | { t: 'garden'; op: 'state' | 'buy' | 'start' | 'done' | 'cancel' | 'brew'; i?: number; r?: number; n?: number; req?: string }
   | { t: 'craft'; id: string; req: string }
   | { t: 'view'; w: number; h: number }
   | { t: 'quest'; op: 'accept' | 'abandon' | 'turnin'; id: string; req: string }
