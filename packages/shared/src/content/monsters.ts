@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss' | 'world_boss';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -53,6 +53,8 @@ export const MONSTERS: MonsterDef[] = [
   // Kor Kulesi (Sv. 10+): güç, seviye ve TP kulenin yönetim ayarından (kat başına mutlak değer); buradakiler yedek
   { id: 'f_slag', name: 'Cüruf Golemi', art: 'f_slag', hpBase: 1000, hpPerLevel: 0, atkBase: 40, atkPerLevel: 0, def: 8, speed: 150, range: 85, attackMs: 1800, aggroRadius: 1400, leash: 1600, xpBase: 70, size: 1 },
   { id: 'f_brute', name: 'Kızgın Cüruf Golemi', art: 'f_slag', hpBase: 1400, hpPerLevel: 0, atkBase: 50, atkPerLevel: 0, def: 10, speed: 160, range: 90, attackMs: 1700, aggroRadius: 1400, leash: 1600, xpBase: 95, size: 1.18 },
+  // Dünya Boss'u (Kadim Sunak): her kanalda aralıklarla doğar; bütün değerler ve ganimet Boss sekmesinden
+  { id: 'world_boss', name: 'Kadim Yıkıcı', art: 'world_boss', hpBase: 450000, hpPerLevel: 0, atkBase: 340, atkPerLevel: 0, def: 95, speed: 120, range: 170, attackMs: 2200, aggroRadius: 1100, leash: 1500, xpBase: 25000, size: 1, boss: true, respawnMin: 120 },
   { id: 'f_boss', name: 'Karademir', art: 'f_boss', hpBase: 24000, hpPerLevel: 0, atkBase: 80, atkPerLevel: 0, def: 14, speed: 140, range: 140, attackMs: 2100, aggroRadius: 1400, leash: 1600, xpBase: 3000, size: 1.2, boss: true, respawnMin: 0 },
 ];
 export const MONSTER_INDEX = new Map(MONSTERS.map((m, i) => [m.id, i] as const));

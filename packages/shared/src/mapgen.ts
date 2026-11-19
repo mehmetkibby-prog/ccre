@@ -408,6 +408,51 @@ function genArena(l: MapLayout, rng: Rng) {
 }
 
 /**
+ * Kadim Sunak (Dünya Boss'u): kül ve taş zeminli büyük yuvarlak meydan; ortada kırık sunak taşları, kenarda
+ * kristal ve kaya duvar, sancak ve fenerler; güneyden giriş. Boss ortada doğar (harita doğma alanı).
+ */
+function genWorldBoss(l: MapLayout, rng: Rng) {
+  const { w, h } = l;
+  const cx = w / 2, cy = h / 2 - 2, R = 21;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y), d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
+    // giriş yolu: güneyden meydana uzanan taş yol
+    const road = Math.abs(x + 0.5 - cx) < 2.2 && y > cy && y < h - 3;
+    if (d < R - 1.5 || road) {
+      const n = smoothNoise(x, y, 4, 4242);
+      l.ground[i] = d < 5.5 ? G.COBBLE : road ? G.STONE : n > 0.62 ? G.STONE : n < 0.3 ? G.DIRT : G.ASH;
+    } else if (d < R) l.ground[i] = G.STONE;
+    else { l.ground[i] = G.ASH; l.blocked[i] = 1; }
+  }
+  // duvar: halkanın dışında sık kaya ve kristal (giriş açık)
+  for (let a = 0; a < Math.PI * 2; a += 0.085) {
+    if (Math.abs(a - Math.PI / 2) < 0.16) continue; // güney girişi
+    const r = R + 0.7 + rng() * 0.8;
+    l.props.push({ k: rng() < 0.3 ? 'crystal' : 'rock', x: tc(cx + Math.cos(a) * r - 0.5), y: tc(cy + Math.sin(a) * r - 0.5), v: (rng() * 3) | 0, s: 1.2 + rng() * 0.7 });
+  }
+  for (let a = 0.04; a < Math.PI * 2; a += 0.27) {
+    const r = R + 3 + rng() * 3;
+    l.props.push({ k: 'deadtree', x: tc(cx + Math.cos(a) * r), y: tc(cy + Math.sin(a) * r), v: (rng() * 3) | 0, s: 1 + rng() * 0.5 });
+  }
+  // sunak: ortada dört kırık taş sütun (yalnız kenarda, boss'un yolunu kapatmaz) ve kemikler
+  for (let k = 0; k < 6; k++) {
+    const a = (k / 6) * Math.PI * 2 + 0.3, r = 8.5;
+    const x = Math.round(cx + Math.cos(a) * r - 0.5), y = Math.round(cy + Math.sin(a) * r - 0.5);
+    l.props.push({ k: 'crystal', x: tc(x), y: tc(y), v: k % 3, s: 1.6 }); l.blocked[idx(l, x, y)] = 1;
+  }
+  for (let k = 0; k < 14; k++) { const a = rng() * Math.PI * 2, r = 6 + rng() * 12; l.props.push({ k: 'bones', x: tc(cx + Math.cos(a) * r), y: tc(cy + Math.sin(a) * r), v: (rng() * 3) | 0, s: 1 }); }
+  // sancaklar ve fenerler halka kenarında
+  for (let k = 0; k < 10; k++) {
+    const a = (k / 10) * Math.PI * 2 + 0.31, r = R - 1.3;
+    const x = Math.round(cx + Math.cos(a) * r - 0.5), y = Math.round(cy + Math.sin(a) * r - 0.5);
+    l.props.push({ k: k % 2 ? 'lamp' : 'banner', x: tc(x), y: tc(y), v: k % 4, s: 1.3 }); l.blocked[idx(l, x, y)] = 1;
+  }
+  l.spawn = { x: tc(cx - 0.5), y: tc(h - 6) };
+  l.props.push({ k: 'portalstone', x: l.spawn.x - 120, y: l.spawn.y + 10, v: 2, s: 1 });
+  placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
+}
+
+/**
  * Kadim Kule: 10 yuvarlak taş oda, aralarında geçilmez karanlık uçurum. Oda kenarında kaya ve kristal duvar,
  * meşaleler ve sancaklar; içeride kırık kemikler. Canavarlar kat ayarından (placeTowerSpawns).
  */
@@ -680,6 +725,7 @@ export function getLayout(mapId: string): MapLayout {
   if (def.id === 'arena' || def.id === 'guildwar') genArena(l, rng);
   else if (def.id === 'tower') genTower(l, rng);
   else if (def.id === 'forge') genForge(l, rng);
+  else if (def.id === 'worldboss') genWorldBoss(l, rng);
   else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);
   else genWild(l, rng);

@@ -1097,7 +1097,7 @@ function StallSetup({ game }: { game: Game }) {
           {rows > 0 && (
             <div className="stall-list">
               {matKeys.map((k) => (
-                <div className="stall-row" key={k}>
+                <div className="stall-row mat" key={k}>
                   <MatCell k={k} n={self.materials[k] ?? 0} />
                   <span className="nm" style={{ color: MALL.has(k) ? '#ffb8e0' : '#cfe8b8' }}>{matNm(k)}</span>
                   <label className="price qty"><input inputMode="numeric" value={mats[k].qty} onChange={(e) => setMats({ ...mats, [k]: { ...mats[k], qty: e.target.value.replace(/[^0-9]/g, '').slice(0, 6) } })} /><span>/ {fmtG(self.materials[k] ?? 0)} adet</span></label>

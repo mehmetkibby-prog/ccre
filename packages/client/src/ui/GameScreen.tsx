@@ -2,7 +2,7 @@ import { AnnouncementBar } from '../admin/AdminPanel.tsx';
 import { EventBadges, EventButton } from './events.tsx';
 import { GatherHud } from './garden.tsx';
 import { onConfig } from '../admin/config.ts';
-import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame } from './extras.tsx';
+import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame, WorldBossTimer } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
@@ -432,6 +432,7 @@ function Minimap({ game }: { game: Game }) {
     <div className="mm" onClick={() => store.set({ panel: 'map' })} title="Harita (M)">
       <div className="dia"><canvas ref={ref} /></div>
       <div className="zn">{MAPS[map]?.name}{zone ? <small style={{ display: 'block', color: '#ffc9b8', fontSize: 11 }}>{zone}</small> : null}</div>
+      <WorldBossTimer game={game} />
       {isMobile() && <QuickBtns />}
       {isMobile() && <TowerHud />}
       {isMobile() && <ForgeHud />}

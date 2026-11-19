@@ -153,6 +153,7 @@ export type ClientCmd =
   | { t: 'tower'; op: 'enter' | 'leave' | 'state' }
   | { t: 'forge'; op: 'enter' | 'leave' | 'state' }
   | { t: 'evolve'; item: string; req: string }
+  | { t: 'worldboss'; op: 'go'; req?: string }
   | { t: 'garden'; op: 'state' | 'buy' | 'start' | 'done' | 'cancel' | 'brew'; i?: number; r?: number; n?: number; req?: string }
   | { t: 'craft'; id: string; req: string }
   | { t: 'view'; w: number; h: number }

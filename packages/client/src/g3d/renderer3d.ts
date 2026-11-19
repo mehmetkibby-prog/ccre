@@ -96,6 +96,8 @@ const THEME = {
   tower: { fog: 0x1e1a2e, top: 0x0a0812, sky: 0x6a5c94, ground: 0x1c1626, sun: 0xd2c4ff, sunI: 2.6, hemi: 0.9, exp: 1.15, near: 38, far: 100 },
   // Kor Kulesi: koyu is, alttan lavın turuncu ışığı; kısa sis
   forge: { fog: 0x2a140c, top: 0x0c0604, sky: 0x8a3a18, ground: 0x2a1408, sun: 0xffc090, sunI: 2.5, hemi: 0.95, exp: 1.18, near: 40, far: 105 },
+  // Kadim Sunak (Dünya Boss'u): kızıl-mor alacakaranlık, kül ve köz; orta mesafeli sis
+  wboss: { fog: 0x4a2a3a, top: 0x1a0c18, sky: 0x9a4058, ground: 0x2e1c24, sun: 0xffb8a0, sunI: 2.9, hemi: 0.95, exp: 1.22, near: 70, far: 160 },
   ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 130, far: 250 },
 } as const;
 
@@ -343,7 +345,7 @@ export class Renderer3D {
       this.npcViews.push(Object.assign(v, { npc: n.id }));
     }
     // tema ışığı
-    const th = THEME[l.def.theme as keyof typeof THEME] ?? THEME.forest;
+    const th = l.def.id === 'worldboss' ? THEME.wboss : THEME[l.def.theme as keyof typeof THEME] ?? THEME.forest;
     this.scene.fog = new THREE.Fog(th.fog, th.near, th.far);
     this.camera.far = th.far + 20; this.camera.updateProjectionMatrix(); // sisin ötesi çizilmez
     this.scene.background = this.skyGradient(th.top, th.fog);

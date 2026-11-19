@@ -594,5 +594,19 @@
     "anims": {
       "idle": "Idle"
     }
+  },
+  "world_boss": {
+    "url": "azrail.glb",
+    "height": 5.6,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
   }
 }

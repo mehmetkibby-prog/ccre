@@ -5,7 +5,7 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
-  FORGE_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal,
+  FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
@@ -62,6 +62,8 @@ export class World {
 
   constructor(public opt: WorldOptions) {
     for (const id of Object.keys(MAPS)) this.zones.set(id, new Zone(id));
+    // Dünya Boss'u açılışta hemen doğmaz: sayaç (doğma aralığı) dolunca doğar
+    { const z = this.zones.get(WORLD_BOSS_MAP); if (z) for (const m of [...z.monsterList]) if (m.def.id === WORLD_BOSS_ID) { z.removeMonster(m); z.respawnQueue.push({ at: Date.now() + this.respawnDelay(m.def), sp: m.sp }); } }
     const w = this;
     this.social = new Social({
       get now() { return w.now; }, bagCap: BAG_EQUIP_CAP,
@@ -189,11 +191,22 @@ export class World {
   reseedMonsters(mapId: string) {
     const z = this.zones.get(mapId);
     if (!z) return;
+    // Dünya Boss'u ayar kaydında sıfırlanmaz: canlıysa canı korunur, bekliyorsa sayacı sürer
+    const wbAlive = z.monsterList.find((m) => m.def.id === WORLD_BOSS_ID && m.state !== MState.DEAD);
+    const wbHp = wbAlive ? wbAlive.hp / wbAlive.maxHp : 0;
+    const wbAt = z.respawnQueue.find((r) => r.sp.monster === WORLD_BOSS_ID)?.at ?? (z.monsterList.some((m) => m.def.id === WORLD_BOSS_ID) && !wbAlive ? this.now + 5000 : 0);
     for (const m of [...z.monsterList]) { m.threat.clear(); m.target = null; z.removeMonster(m); }
     z.respawnQueue.length = 0;
     rebuildSpawns(z.layout);
     const defs = new Map(MONSTERS.map((d) => [d.id, d] as const));
-    for (const sp of z.layout.spawnPoints) { const d = defs.get(sp.monster); if (d) z.addMonster(new Monster(d, sp)); }
+    for (const sp of z.layout.spawnPoints) {
+      const d = defs.get(sp.monster); if (!d) continue;
+      if (d.id === WORLD_BOSS_ID && !wbAlive) { z.respawnQueue.push({ at: wbAt || Date.now() + this.respawnDelay(d), sp }); continue; }
+      const m = new Monster(d, sp);
+      if (d.id === WORLD_BOSS_ID && wbHp > 0) m.hp = Math.max(1, Math.round(m.maxHp * wbHp));
+      z.addMonster(m);
+    }
+    if (mapId === WORLD_BOSS_MAP) this.broadcastBosses();
   }
 
   // ───────────────────────────── bağlantı ─────────────────────────────
@@ -346,6 +359,7 @@ export class World {
         return;
       }
       case 'evolve': return this.cmdEvolve(p, String(c.item ?? ''), String(c.req ?? ''));
+      case 'worldboss': return this.cmdWorldBoss(p, String(c.req ?? ''));
       case 'garden': return this.cmdGarden(p, c as { op: string; i?: number; r?: number; n?: number; req?: string });
       case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
@@ -467,6 +481,7 @@ export class World {
       for (let i = z.respawnQueue.length - 1; i >= 0; i--) {
         const r = z.respawnQueue[i];
         if (now < r.at) continue;
+        if (r.sp.monster === WORLD_BOSS_ID && !TUNING.worldBoss.enabled) { r.at = now + 60_000; continue; } // kapalıyken bekler
         z.respawnQueue.splice(i, 1);
         const def = MONSTERS.find((d) => d.id === r.sp.monster)!;
         z.addMonster(new Monster(def, r.sp));
@@ -646,12 +661,13 @@ export class World {
 
   private bossPatterns(z: Zone, m: Monster, t: Player) {
     if (this.now < m.nextPatternAt) return;
-    m.nextPatternAt = this.now + 5500;
+    const wb = m.def.id === WORLD_BOSS_ID;
+    m.nextPatternAt = this.now + (wb ? TUNING.worldBoss.patternSec * 1000 : 5500);
     const pick = (this.tickNo + m.id) % 3;
     const warn = 1300;
     let tg: Telegraph;
     // Kor Kulesi'nde Karademir'in yer çatlağı gücü yönetimden (varsayılan 2,2 = diğer bosslarla aynı)
-    const k = m.sp.forge !== undefined ? TUNING.forge.boss.slamMul / 2.2 : 1;
+    const k = m.sp.forge !== undefined ? TUNING.forge.boss.slamMul / 2.2 : wb ? TUNING.worldBoss.slamMul / 2.2 : 1;
     if (pick === 0) tg = { at: this.now + warn, shape: 'circle', x: t.x, y: t.y, r: 190, dmgMult: 2.2 * k };
     else if (pick === 1) tg = { at: this.now + warn, shape: 'ring', x: m.x, y: m.y, r: 340, r2: 170, dmgMult: 2 * k };
     else { const a = Math.atan2(t.y - m.y, t.x - m.x); tg = { at: this.now + warn, shape: 'line', x: m.x, y: m.y, r: 70, a, len: 620, dmgMult: 2.6 * k }; }
@@ -2391,7 +2407,7 @@ export class World {
   }
   /** Kanaldaki bütün bossların durumu: canlı mı, nerede, ne zaman doğacak. */
   bossStatus() {
-    const out: { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }[] = [];
+    const out: { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number; cycleMs: number; off?: boolean }[] = [];
     for (const z of this.zones.values()) {
       for (const sp of z.layout.spawnPoints) {
         const def = MONSTERS.find((d) => d.id === sp.monster);
@@ -2400,15 +2416,41 @@ export class World {
         const alive = !!m && m.state !== MState.DEAD;
         let nextAt: number | null = null;
         if (!alive) { const r = z.respawnQueue.find((q) => q.sp === sp); nextAt = r ? r.at : m ? m.removeAt + this.respawnDelay(def) : null; }
-        out.push({ id: def.id, name: def.name, map: z.id, x: Math.round(sp.x), y: Math.round(sp.y), alive, hp: alive && m ? Math.round((m.hp / m.maxHp) * 100) : 0, nextAt, level: sp.level });
+        const off = def.id === WORLD_BOSS_ID && !TUNING.worldBoss.enabled;
+        out.push({ id: def.id, name: def.name, map: z.id, x: Math.round(sp.x), y: Math.round(sp.y), alive, hp: alive && m ? Math.round((m.hp / m.maxHp) * 100) : 0, nextAt, level: sp.level, cycleMs: this.respawnDelay(def), ...(off ? { off } : {}) });
       }
     }
     return out;
+  }
+  /** Yönetim doğma aralığını kısaltınca bekleyen Dünya Boss'u doğuşu yeni süreye çekilir (uzatınca mevcut sayaç korunur). */
+  retimeWorldBoss() {
+    const z = this.zones.get(WORLD_BOSS_MAP); if (!z) return;
+    const def = MONSTERS.find((d) => d.id === WORLD_BOSS_ID); if (!def) return;
+    let changed = false;
+    for (const r of z.respawnQueue) if (r.sp.monster === WORLD_BOSS_ID) { const at = Date.now() + this.respawnDelay(def); if (at < r.at) { r.at = at; changed = true; } }
+    if (changed) this.broadcastBosses();
+  }
+  /** Dünya Boss'u canlıysa oyuncuyu Kadim Sunak'a götürür (sayaç dolunca mini haritanın altındaki düğme). */
+  private cmdWorldBoss(p: Player, req: string) {
+    const T = TUNING.worldBoss;
+    if (!T.enabled) return this.notice(p, 'Dünya Boss\'u şu an kapalı.');
+    if (p.dead) return;
+    if (p.zone.id === WORLD_BOSS_MAP) return this.notice(p, 'Zaten Kadim Sunak\'tasın.', 'info');
+    if (p.char.level < T.minLevel) return this.notice(p, `Dünya Boss'u için seviye ${T.minLevel} gerekir.`);
+    if (this.now < p.combatUntil) return this.notice(p, 'Savaştayken ışınlanamazsın.');
+    if (['arena', 'guildwar', 'tower', 'forge'].includes(p.zone.id)) return this.notice(p, 'Buradan Dünya Boss\'una gidilemez.');
+    const st = this.bossStatus().find((b) => b.id === WORLD_BOSS_ID);
+    if (!st?.alive) return this.notice(p, st?.nextAt ? 'Dünya Boss\'u henüz doğmadı.' : 'Dünya Boss\'u şu an yok.');
+    if (this.seenReceipt(p, req)) return;
+    const z = this.zones.get(WORLD_BOSS_MAP)!;
+    this.moveToZone(p, z, z.layout.spawn.x, z.layout.spawn.y);
+    this.notice(p, 'Kadim Sunak\'a geldin. Boss ortada; alan saldırılarının işaretlerinden kaç!', 'ok');
   }
   private broadcastBosses() { const msg = JSON.stringify({ t: 'bosses', list: this.bossStatus() }); for (const q of this.bySid.values()) this.pushOut(q.sid, msg); }
   private bossSpawned(z: Zone, def: { id: string; name: string }, sp: { x: number; y: number }) {
     const msg = JSON.stringify({ t: 'boss', ev: 'spawn', id: def.id, name: def.name, map: z.id, x: Math.round(sp.x), y: Math.round(sp.y) });
     for (const q of this.bySid.values()) this.pushOut(q.sid, msg);
+    if (def.id === WORLD_BOSS_ID) this.chatAll(`Dünya Boss'u ${def.name} Kadim Sunak'ta uyandı! Mini haritanın altındaki "Dünya Boss'una git" düğmesiyle savaşa katıl.`);
     this.broadcastBosses();
   }
   private bossDied(m: Monster, killer: Player) {

@@ -3,7 +3,7 @@ import {
   DEFAULT_TUNING, TUNING, TUNING_LIMITS, DENSITY_LIMITS, MAPS, MONSTERS, LOOT_PROFILES, RARITY, RARITIES, MATERIALS, ENCHANTS,
   ENCHANT_COUNT_WEIGHTS, ENCHANT_TIER_WEIGHTS, SELL_PRICES, DEFAULT_XP_TABLE, LEVEL_CAP_BASE, ITEM_TEMPLATES, MALL, MALL_ITEMS, mallIcon, DEFAULT_WINGS, FISH, FISHING_DEFAULTS, type DropTune, MAX_PLUS, DEFAULT_UPGRADE, type UpgradeStepTune, monsterStats, MONSTER_LEVEL, SKILLUP_DEFAULT, CLASSES, CLASS_IDS, type SkillUpStep, sanitizeTuning, type GameTuning, type MonsterTune, type SpawnTune,
   ZONE_LEVEL_CAP, OVER_LEVEL_MUL, type ZoneLootTune, transformConf, TRANSFORM_DEFAULTS, TRANSFORM_GROUPS, TRANSFORM_GROUP_NAMES, TRANSFORM_RARITY_OPTIONS, type TransformGroup, type TransformCost,
-  DAYNIGHT_DEFAULT, dayNightAt, trHour,
+  DAYNIGHT_DEFAULT, dayNightAt, trHour, WORLD_BOSS_ID, WORLD_BOSS_DEFAULT,
 } from '@col/shared';
 import { configState, onConfig } from './config.ts';
 import { OFFLINE } from '../mode.ts';
@@ -872,8 +872,10 @@ export function dropOptions(kind: DropTune['kind']): [string, string][] {
   if (kind === 'mat') return MATERIALS.filter((m) => !MALL.has(m.id)).map((m) => [m.id, m.name] as [string, string]);
   return MALL_ITEMS.filter((m) => !m.soon && !m.epin).map((m) => [m.id, m.name] as [string, string]);
 }
-export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: SetMon; setSpawn: SetSpawn; dis: boolean }) {
-  const bosses = MONSTERS.filter((d) => d.boss && !d.id.startsWith('f_')); // Karademir: Kor Kulesi sekmesinde
+export function BossTab({ t, setT, setMon, setSpawn, dis }: { t: GameTuning; setT: SetT; setMon: SetMon; setSpawn: SetSpawn; dis: boolean }) {
+  // Dünya Boss'u en üstte; Karademir Kor Kulesi sekmesinde
+  const bosses = MONSTERS.filter((d) => d.boss && !d.id.startsWith('f_')).sort((a, b) => (b.id === WORLD_BOSS_ID ? 1 : 0) - (a.id === WORLD_BOSS_ID ? 1 : 0));
+  const W = t.worldBoss, WD = WORLD_BOSS_DEFAULT, setW = (p: Partial<GameTuning['worldBoss']>) => setT({ ...t, worldBoss: { ...W, ...p } });
   return (
     <>{bosses.map((d) => {
       const m = t.monsters[d.id] ?? {};
@@ -890,7 +892,18 @@ export function BossTab({ t, setMon, setSpawn, dis }: { t: GameTuning; setMon: S
       const rw = m.rarity ?? prof.rarityWeights as Record<string, number>;
       return (
         <section className="admin-sec boss-adm" key={d.id}>
-          <h4>{d.name} <span className="pill" style={{ marginLeft: 6 }}>{mapName}</span></h4>
+          <h4>{d.id === WORLD_BOSS_ID ? '🌍 Dünya Boss\'u · ' : ''}{d.name} <span className="pill" style={{ marginLeft: 6 }}>{mapName}</span></h4>
+          {d.id === WORLD_BOSS_ID && (
+            <>
+              <div className="muted adm-hint">Her kanalda kendi sayacıyla doğar. Oyuncular mini haritanın altındaki sayacı görür; doğunca “Dünya Boss'una git” düğmesiyle Kadim Sunak'a gelir. Ganimeti, canının en az %{t.bossShareMin} kadarını vuran herkes alır (Genel sekmesi). Doğma aralığı aşağıdaki “Doğma (dk)”.</div>
+              <div className="adm-fields six" style={{ marginBottom: 10 }}>
+                <label className={'adm-switch' + (W.enabled ? ' on' : '')}><input type="checkbox" checked={W.enabled} disabled={dis} onChange={() => setW({ enabled: !W.enabled })} /><span className="knob" /><span className="lbl">Dünya Boss'u açık</span></label>
+                <label><span>Giriş seviyesi</span><Num v={W.minLevel} def={WD.minLevel} min={1} max={120} step={1} w={70} dis={dis} on={(v) => setW({ minLevel: Math.round(v ?? WD.minLevel) })} /></label>
+                <label><span>Alan saldırısı (sn)</span><Num v={W.patternSec} def={WD.patternSec} min={1.5} max={60} step={0.5} w={70} dis={dis} on={(v) => setW({ patternSec: v ?? WD.patternSec })} /></label>
+                <label><span>Alan hasarı ×</span><Num v={W.slamMul} def={WD.slamMul} min={0} max={20} step={0.1} w={70} dis={dis} on={(v) => setW({ slamMul: v ?? WD.slamMul })} /></label>
+              </div>
+            </>
+          )}
           <div className="muted adm-hint">Boş kutu = varsayılan. Can, saldırı ve savunma mutlak değerdir; kaydedince yeni doğan bossa uygulanır.</div>
           <div className="adm-fields six">
             <label><span>Seviye</span><Num v={t.spawns[spawnKey]?.level?.[0]} def={baseLevel} min={1} max={120} step={1} w={70} dis={dis || !spawnKey} on={(v) => setSpawn(spawnKey, { level: v === undefined ? undefined : [v, v] })} /></label>

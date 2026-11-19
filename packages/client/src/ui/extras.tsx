@@ -3,7 +3,7 @@
  * Ticaret Camı araması.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, MATERIAL, type MallCat } from '@col/shared';
+import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, MATERIAL, MONSTERS, Kind, WORLD_BOSS_ID, type MallCat } from '@col/shared';
 import type { Game } from '../game/game.ts';
 import { store, useStore, notify, reqId, type BossInfo } from '../game/store.ts';
 import { onConfig } from '../admin/config.ts';
@@ -533,5 +533,69 @@ export function TradeGlass({ game }: { game: Game }) {
       </div>
       {tip && <ItemTip it={tip.it} x={tip.x} y={tip.y} pinned onClose={() => setTip(null)} />}
     </Panel>
+  );
+}
+
+// ═══════════════════════ Dünya Boss'u sayacı (mini haritanın altında) ═══════════════════════
+/**
+ * Mini harita genişliğinde ince sayaç: Dünya Boss'unun doğmasına kalan süre ve dolan çubuk. Boss doğunca
+ * "Dünya Boss'una git" düğmesi olur (Kadim Sunak'a götürür). Meydandayken boss'un canını gösterir.
+ */
+export function WorldBossTimer({ game }: { game: Game }) {
+  const b = useStore((s) => s.bosses.find((x) => x.id === WORLD_BOSS_ID));
+  const map = useStore((s) => s.map);
+  const lvl = useStore((s) => s.self?.level ?? 0);
+  const bar = useRef<HTMLElement>(null), txt = useRef<HTMLElement>(null), hpBar = useRef<HTMLElement>(null), hpTxt = useRef<HTMLElement>(null);
+  useEffect(() => { game.send({ t: 'bosses' }); }, [game]);
+  // meydandayken can, görüş alanındaki boss varlığından canlı okunur
+  const here = !!b && map === b.map;
+  useEffect(() => {
+    if (!here || !b?.alive) return;
+    const upd = () => {
+      for (const e of game.ents.values()) if (e.kind === Kind.MONSTER && MONSTERS[e.tpl]?.id === WORLD_BOSS_ID) {
+        const pct = Math.max(0, Math.round((e.hp / Math.max(1, e.maxHp)) * 100));
+        if (hpBar.current) hpBar.current.style.width = pct + '%';
+        if (hpTxt.current) hpTxt.current.textContent = '%' + pct;
+        return;
+      }
+    };
+    upd(); const id = setInterval(upd, 400); return () => clearInterval(id);
+  }, [here, b?.alive, game]); // eslint-disable-line react-hooks/exhaustive-deps
+  // sağdaki menü düğmeleri sayacın altına kayar (üst üste binmesin)
+  const shown = !!b && !b.off;
+  useEffect(() => {
+    const el = document.documentElement;
+    el.style.setProperty('--wbt-h', shown ? (matchMedia('(pointer: coarse)').matches ? '34px' : '42px') : '0px');
+    return () => { el.style.setProperty('--wbt-h', '0px'); };
+  }, [shown]);
+  // çubuk ve süre her saniye DOM'da güncellenir (React yeniden çizimi yok)
+  useEffect(() => {
+    if (!b || b.alive || !b.nextAt) return;
+    const upd = () => {
+      const left = (b.nextAt ?? 0) - nowSrv(), cyc = b.cycleMs || 1;
+      if (bar.current) bar.current.style.width = `${Math.max(0, Math.min(100, (1 - left / cyc) * 100))}%`;
+      if (txt.current) txt.current.textContent = left > 0 ? fmtCountdown(left) : 'uyanıyor…';
+    };
+    upd(); const id = setInterval(upd, 1000); return () => clearInterval(id);
+  }, [b?.nextAt, b?.alive, b?.cycleMs]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!b || b.off) return null;
+  const minLv = TUNING.worldBoss?.minLevel ?? 1;
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation();
+  if (b.alive) {
+    return (
+      <div className={'wbt on' + (here ? ' here' : '')} onClick={stop}>
+        {here
+          ? <div className="wbt-hp"><div className="wbt-row"><CrownIcon /><span>{b.name}</span><b ref={hpTxt}>%{b.hp}</b></div><div className="wbt-bar hp"><i ref={hpBar} style={{ width: `${b.hp}%` }} /></div></div>
+          : <button className="wbt-go" disabled={lvl < minLv} title={lvl < minLv ? `Seviye ${minLv} gerekir` : `${b.name} Kadim Sunak'ta`} onClick={() => game.send({ t: 'worldboss', op: 'go', req: reqId() })}>
+              <span className="pulse" /><CrownIcon /> {lvl < minLv ? `Dünya Boss'u · Sv. ${minLv}` : "Dünya Boss'una git"}
+            </button>}
+      </div>
+    );
+  }
+  return (
+    <div className="wbt" onClick={stop} title={`${b.name}: doğmasına kalan süre`}>
+      <div className="wbt-row"><CrownIcon /><span>Dünya Boss'u</span><b ref={txt}>--:--</b></div>
+      <div className="wbt-bar"><i ref={bar} /></div>
+    </div>
   );
 }

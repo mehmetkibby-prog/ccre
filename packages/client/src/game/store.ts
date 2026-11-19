@@ -62,7 +62,7 @@ export interface GuildView {
   warReq: { gid: number; name: string; emblem: number; by: string } | null;
 }
 export interface StallInfo { id: string; ownerId: number; name: string; title: string; x: number; y: number; n: number; skin?: string }
-export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number }
+export interface BossInfo { id: string; name: string; map: string; x: number; y: number; alive: boolean; hp: number; nextAt: number | null; level: number; cycleMs?: number; off?: boolean }
 export interface FishState { phase: 'wait' | 'bite' | 'reel'; token: string; biteAt: number; diff: number; motion: string }
 /** dükkân satırı: ekipman ya da malzeme / Nesne Market yığını */
 export interface StallEntryC { item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number }

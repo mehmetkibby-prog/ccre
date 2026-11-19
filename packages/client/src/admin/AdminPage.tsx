@@ -219,7 +219,7 @@ function AdminShell({ me, onLogout }: { me: { username: string; role: string }; 
             {tab === 'bahce' && <GardenTab t={t} setT={setTT} dis={busy} />}
             {tab === 'uretim' && <CraftTab t={t} setT={setTT} dis={busy} />}
             {tab === 'gorev' && <QuestTab t={t} setT={setTT} dis={busy} />}
-            {tab === 'boss' && <BossTab t={t} setMon={setMon} setSpawn={setSpawn} dis={busy} />}
+            {tab === 'boss' && <BossTab t={t} setT={setTT} setMon={setMon} setSpawn={setSpawn} dis={busy} />}
             {tab === 'balik' && <FishingTab t={t} setT={setTT} dis={busy} />}
             {tab === 'market' && <MallTab t={t} setT={setTT} dis={busy} epin={backend.epinCreate ? <EpinBox toast={setToast} /> : undefined} />}
             {tab === 'canavar' && <MonsterTab t={t} setMon={setMon} dis={busy} />}

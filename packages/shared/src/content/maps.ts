@@ -108,6 +108,13 @@ export const MAPS: Record<string, MapDef> = {
     respawnMap: 'guildwar', travelable: false, spawns: [], npcs: [],
     desc: 'Lonca savaşlarının yapıldığı meydan. 5 dakikada en çok rakip yenen lonca kazanır. Ölümde kayıp yok.',
   },
+  // Dünya Boss'u meydanı: mini haritanın altındaki sayaç dolunca "Dünya Boss'una git" ile girilir (bkz. TUNING.worldBoss)
+  worldboss: {
+    id: 'worldboss', name: 'Kadim Sunak', w: 56, h: 56, theme: 'black', seed: 4242, safe: false, pvp: false, minLevel: 1,
+    respawnMap: 'worldboss', travelable: false, npcs: [],
+    spawns: [{ monster: 'world_boss', count: 1, level: [55, 55], variants: [100, 0, 0], region: 'any', area: [24, 21, 32, 29] }],
+    desc: 'Dünya Boss\'unun yıkık sunağı. Bütün kanal birlikte savaşır; ganimeti verdiği hasara göre herkes alır.',
+  },
   // Kadim Kule: 10 kat odası (bkz. content/tower.ts); giriş Zindan Bekçisi'nden, canavarlar kat ayarından
   tower: {
     id: 'tower', name: 'Kadim Kule', w: 200, h: 80, theme: 'tower', seed: 1299, safe: false, pvp: false, minLevel: 1,
