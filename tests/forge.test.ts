@@ -157,8 +157,9 @@ it('Evrim: av sayacı, bedel, kademe, saldırı/savunma artışı', () => {
   wpn.kills = st.kills; p.char.gems = st.gems; for (const [k, q] of Object.entries(st.mats)) p.char.materials[k] = q;
   cmd({ t: 'evolve', item: 'w1', req: 'e2' });
   expect(wpn.evo).toBe(1); expect(wpn.kills).toBe(0); expect(p.char.gems).toBe(0);
-  expect(itemPower(wpn)).toBe(Math.round(wp0 * (1 + st.pct / 100)));
-  expect(p.stats.atk).toBeGreaterThan(atk0);
+  // evrim eşyanın gücünü değil karakterin TOPLAM saldırısını yüzde olarak artırır
+  expect(itemPower(wpn)).toBe(wp0);
+  expect(Math.abs(p.stats.atk - Math.round(atk0 * (1 + st.pct / 100)))).toBeLessThanOrEqual(1);
   expect(sent.some((m) => m.t === 'evolved')).toBe(true);
   // zırh: savunma
   arm.kills = EVO_DEFAULT.armor[0].kills; p.char.gems = 99999; for (const [k, q] of Object.entries(EVO_DEFAULT.armor[0].mats)) p.char.materials[k] = q;

@@ -1,4 +1,4 @@
-import { ARCANIST_RELEASE_S, SKILL7_IMPACT_S } from './charAnims.ts';
+import { ARCANIST_RELEASE_S, HUNTER_RELEASE_S, ARCANIST_TRAIL_S, SKILL7_IMPACT_S, GUARDIAN_TRAIL_S } from './charAnims.ts';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { glowTexture } from './textures.ts';
@@ -63,6 +63,35 @@ const noiseTex = () => noiseT ??= canvasTex(128, (c, s) => {
   }
   c.putImageData(img, 0, 0);
 }, true);
+
+let lensT: THREE.Texture | null = null, starT: THREE.Texture | null = null;
+/** Kesik ışığı: iki ucu incelen, ortası beyaz-sıcak mercek biçimli çizgi (yatay). */
+const lensTex = () => lensT ??= canvasTex(256, (c, s) => {
+  const h = s / 4, cy = s / 2;
+  for (let i = 0; i < 3; i++) {
+    const th = [h * 0.9, h * 0.45, h * 0.18][i], al = [0.28, 0.6, 1][i];
+    c.beginPath(); c.moveTo(0, cy);
+    c.quadraticCurveTo(s / 2, cy - th, s, cy); c.quadraticCurveTo(s / 2, cy + th, 0, cy); c.closePath();
+    const g = c.createLinearGradient(0, 0, s, 0);
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.3, `rgba(255,255,255,${al * 0.7})`); g.addColorStop(0.62, `rgba(255,255,255,${al})`); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.fill();
+  }
+});
+/** Vuruş yıldızı: dört ışınlı keskin parıltı + yumuşak hale. */
+const starTex = () => starT ??= canvasTex(128, (c, s) => {
+  const m = s / 2;
+  const g = c.createRadialGradient(m, m, 0, m, m, m);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.12, 'rgba(255,255,255,0.85)'); g.addColorStop(0.35, 'rgba(255,255,255,0.18)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  c.fillStyle = g; c.fillRect(0, 0, s, s);
+  c.globalCompositeOperation = 'lighter';
+  for (const [w, len, rot] of [[5, 1, 0], [5, 1, Math.PI / 2], [2.5, 0.55, Math.PI / 4], [2.5, 0.55, -Math.PI / 4]] as const) {
+    c.save(); c.translate(m, m); c.rotate(rot);
+    const lg = c.createLinearGradient(-m * len, 0, m * len, 0);
+    lg.addColorStop(0, 'rgba(255,255,255,0)'); lg.addColorStop(0.5, 'rgba(255,255,255,1)'); lg.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = lg; c.beginPath(); c.moveTo(-m * len, 0); c.quadraticCurveTo(0, -w, m * len, 0); c.quadraticCurveTo(0, w, -m * len, 0); c.fill();
+    c.restore();
+  }
+});
 
 let flatG: THREE.PlaneGeometry | null = null;
 const flatGeo = () => { if (!flatG) { flatG = new THREE.PlaneGeometry(2, 2); flatG.rotateX(-Math.PI / 2); } return flatG; };
@@ -179,6 +208,7 @@ export class SkillFx {
     this.decal('holy', far, 10, 50); this.shock(far, 10, 50, '#fff'); this.column(far, 1, 1, 50, '#fff'); this.dome(0, far, 50, '#fff');
     this.beam(far, 1, far, 1, 0.2, 50, '#fff'); this.flash(far, 1, 1, 50, '#fff'); this.spikes(far, 'ice', 1, 10, 50); this.spikes(far, 'thorn', 1, 10, 50);
     this.rocks(far, 1, '#777'); this.sword(far, 50, '#fff'); this.spikes(far, 'stone', 1, 10, 50); this.vortex(far, 10, 50, '#fff'); this.chain(0, 0, far, far, 50); this.arrowRain(far, 10, 1, 50, '#fff');
+    this.meleeHit(new THREE.Vector3(-9999, -500, -9999), 0, '#fff', true, true);
     for (const el of this.els) el.o.position.y -= 500;
   }
 
@@ -272,6 +302,39 @@ export class SkillFx {
       s.scale.setScalar(size * (0.5 + 0.7 * (1 - Math.pow(1 - Math.min(1, k * 4), 2))));
       mat.opacity = Math.pow(1 - k, 2) * 0.75;
     }, [mat]);
+  }
+
+  /** Kamera yüzlü doku (dünya konumu metre), ekranda angle açısıyla döner; boy w×h metre, ölçek eğrisi s(k). */
+  private sprite(t: THREE.Texture, at: THREE.Vector3, angle: number, w: number, h: number, dur: number, color: THREE.ColorRepresentation, scale: (k: number) => [number, number], alpha: (k: number) => number) {
+    const mat = new THREE.SpriteMaterial({ map: t, color, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false, transparent: true, toneMapped: false, rotation: angle });
+    const sp = new THREE.Sprite(mat); sp.renderOrder = 9; sp.position.copy(at);
+    return this.add(sp, dur, (k) => { const [sx, sy] = scale(k); sp.scale.set(w * sx, h * sy, 1); mat.opacity = alpha(k); }, [mat]);
+  }
+
+  /**
+   * Yakın dövüş vuruşu: kesik yönünde parlayan mercek çizgisi (iki katman: renkli hale + beyaz çekirdek), değme
+   * noktasında dört ışınlı yıldız, kesik yönüne saçılan kıvılcımlar. angle: ekran düzleminde kesik yönü (radyan).
+   */
+  meleeHit(at: THREE.Vector3, angle: number, color: THREE.ColorRepresentation, crit: boolean, self: boolean, scale = 1) {
+    const big = (crit ? 1.35 : 1) * scale, lite = !self && this.q < 2;
+    const ease = (k: number) => 1 - Math.pow(1 - Math.min(1, k * 3.2), 3);
+    // kesik: hızla boylanır, incelerek söner
+    this.sprite(lensTex(), at, angle, 2.2 * big, 0.55 * big, 210, color, (k) => [0.35 + 0.75 * ease(k), 1 - k * 0.7], (k) => Math.pow(1 - k, 1.6) * 0.95);
+    this.sprite(lensTex(), at, angle, 1.8 * big, 0.26 * big, 150, '#ffffff', (k) => [0.3 + 0.8 * ease(k), 1 - k * 0.8], (k) => Math.pow(1 - k, 2));
+    // yıldız
+    this.sprite(starTex(), at, angle * 0.3, 1.1 * big, 1.1 * big, 130, crit ? '#fff2b0' : '#ffffff', (k) => [0.5 + 0.7 * ease(k), 0.5 + 0.7 * ease(k)], (k) => Math.pow(1 - k, 2.2));
+    if (lite) return;
+    // kıvılcımlar: kesik yönüne (ekranda) ve biraz da rastgele; yerçekimiyle düşer
+    const n = Math.round((crit ? 16 : 9) * this.pk * scale);
+    const cam = this.fx.cam;
+    const right = new THREE.Vector3(), up = new THREE.Vector3();
+    if (cam) { right.setFromMatrixColumn(cam.matrixWorld, 0); up.setFromMatrixColumn(cam.matrixWorld, 1); } else { right.set(1, 0, 0); up.set(0, 1, 0); }
+    const dir = right.multiplyScalar(Math.cos(angle)).addScaledVector(up, Math.sin(angle));
+    const c = new THREE.Color(color);
+    for (let i = 0; i < n; i++) {
+      const sp = 3 + Math.random() * 5, sx = (Math.random() - 0.5) * 2.4, sy = Math.random() * 2.2, sz = (Math.random() - 0.5) * 2.4;
+      this.fx.spawn(at.x, at.y, at.z, dir.x * sp + sx, dir.y * sp + sy, dir.z * sp + sz, 260 + Math.random() * 220, 0.07 + Math.random() * 0.06, i % 3 ? c : '#ffffff', -9, 2.5);
+    }
   }
 
   /** Yerden fışkıran buz sarkıtları ya da kıvrık dikenler (r: sunucu birimi). */
@@ -453,6 +516,12 @@ export class SkillFx {
       const c = new THREE.Mesh(cg, cm); g.add(c);
     }
     const col = new THREE.Color(color);
+    // arkadan uzayan ışık kuyruğu (ok için ince ve uzun, küre için kalın ve kısa): hızlı mermi hissi
+    const stM = additive(streakTex(), kind === 'arrow' ? '#eaffd0' : color, 0.9); mats.push(stM);
+    const streak = new THREE.Mesh(beamGeo(), stM); streak.renderOrder = 5;
+    const stLen = kind === 'arrow' ? 2.1 : 1.3, stW = kind === 'arrow' ? 0.11 : size * 0.42;
+    streak.rotation.y = Math.PI; g.add(streak);
+    const prev = new THREE.Vector3(); let moved = 0;
     let hit = false; const end = { ...tp };
     return this.add(g, dur + 30, (k) => {
       const f = Math.min(1, k * (dur + 30) / dur);
@@ -461,13 +530,23 @@ export class SkillFx {
       if (from3) {
         // asanın ucundan çıkar, hedefin göğsüne yay çizerek gider
         const ex = end.x * U, ez = end.y * U, ey = this.gy(end.x, end.y) + 1.05;
-        g.position.set(from3.x + (ex - from3.x) * f, from3.y + (ey - from3.y) * f + Math.sin(f * Math.PI) * 0.35, from3.z + (ez - from3.z) * f);
+        g.position.set(from3.x + (ex - from3.x) * f, from3.y + (ey - from3.y) * f + Math.sin(f * Math.PI) * (kind === 'arrow' ? 0.12 : 0.3), from3.z + (ez - from3.z) * f);
       } else {
         const h = 1.3 + Math.sin(f * Math.PI) * (kind === 'arrow' ? 0.35 : 0.5) - f * 0.25;
         g.position.set(x * U, this.gy(x, y) + h, y * U);
       }
       g.lookAt(end.x * U, this.gy(end.x, end.y) + 1.05, end.y * U);
+      // kuyruk: çıkışta kısa başlar (namludan uzamaz), yol aldıkça tam boyuna ulaşır
+      if (k > 0) moved += prev.distanceTo(g.position);
+      prev.copy(g.position);
+      const L = Math.min(stLen, moved * 0.9 + 0.05);
+      streak.scale.set(stW, stW, L); stM.opacity = 0.9 * (1 - Math.max(0, f - 0.85) / 0.15);
       for (let i = 0; i < trail; i++) this.fx.spawn(g.position.x, g.position.y, g.position.z, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5, 320, size * 0.28, col);
+      if (kind === 'orb' && trail > 1) {
+        // kürenin çevresinde dönen iki kıvılcım (sarmal iz)
+        const a = performance.now() / 45, fw = new THREE.Vector3(0, 0, 1).applyQuaternion(g.quaternion), r1 = new THREE.Vector3(0, 1, 0).cross(fw).normalize(), r2 = fw.clone().cross(r1);
+        for (const ph of [0, Math.PI]) { const o = r1.clone().multiplyScalar(Math.cos(a + ph) * size * 0.32).addScaledVector(r2, Math.sin(a + ph) * size * 0.32); this.fx.spawn(g.position.x + o.x, g.position.y + o.y, g.position.z + o.z, 0, 0.1, 0, 380, size * 0.16, ph ? '#ffffff' : col); }
+      }
       if (f >= 1 && !hit) { hit = true; g.visible = false; onHit?.(end); }
     }, mats, own);
   }
@@ -475,38 +554,82 @@ export class SkillFx {
   // ───────── koreografi ─────────
 
   /** Temel saldırı mermisi (sık kullanılır: hafif tutulur). cls 1 ok, cls 2 öz küresi. */
-  basic(cls: number, src: number, tgt: number, sp: P, tp: P, self: boolean) {
+  basic(cls: number, src: number, tgt: number, sp: P, tp: P, self: boolean, combo = 0) {
     const lite = !self && this.q < 2;
-    if (cls === 1) {
-      this.missile(sp, tgt, tp, 190, 'arrow', '#b8ff8a', 0.7, (p) => {
-        if (!this.full(self)) return;
-        this.flash(p, 1.05, 1.1, 160, '#e8ffd0');
-        if (!lite) this.fx.burst(p.x, p.y, 1.0, Math.ceil(6 * this.pk), '#c8ff9a', 2.6, 320, 0.1, -2);
-      }, lite ? 0 : 1);
-    } else if (cls === 2) {
-      // küre, büyünün salındığı anda (asa öne savrulduğunda) asanın ucundan çıkar
-      const fire = () => {
-        const tip = this.fx.tipOf(src);
-        if (tip && !lite) { const ix = tip.x / U, iy = tip.z / U; this.fx.burst(ix, iy, Math.max(0, tip.y - this.gy(ix, iy)), Math.ceil(6 * this.pk), '#bff8ff', 1.4, 260, 0.1, 0); }
-        this.missile(sp, tgt, tp, 190, 'orb', '#7cf3ff', 1.0, (p) => {
-          if (!this.full(self)) return;
-          this.flash(p, 1.1, 1.6, 200, '#bff8ff');
-          if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
-        }, lite ? 1 : 2, tip);
-      };
-      // küre zamanlayıcıya göre değil animasyona göre çıkar: asa atış pozuna (ucu hedefe dönük) ulaştığı karede.
-      // Önceden 250 ms'lik zamanlayıcı vardı; kareler yavaşlayınca küre asa daha başın üstündeyken çıkıyordu.
-      const R = ARCANIST_RELEASE_S, t0 = performance.now();
-      let started = false, done = false;
+    if (cls === 0) {
+      // Muhafız: kılıcın gerçek yolunu izleyen altın-beyaz iz (kombo başına klibin kesiş aralığında)
+      const w = GUARDIAN_TRAIL_S[((combo % 3) + 3) % 3];
+      this.fx.trails.start(src, w[0], w[1], combo === 2 ? '#ff9f2e' : '#ffbe4a', '#fff6dc', self ? 1 : lite ? 0.55 : 0.8, combo === 2 ? 150 : 125);
+      return;
+    }
+    // mermi, animasyonda bırakış anına (yay kirişi / asa ucu hedefe döndüğünde) gelince çıkar
+    const atSwing = (R: number, fn: () => void) => {
+      const t0 = performance.now(); let started = false, done = false;
       const tick = () => {
         if (done) return;
         const st = this.fx.swingTimeOf(src), el = performance.now() - t0;
         if (st >= 0 && st < R * 0.6) started = true; // yeni savuruş başladı (öncekinin zamanı karışmasın)
-        if ((started && st >= R) || el > 900 || (st < 0 && el > R * 1000 + 60)) { done = true; fire(); return; }
+        if ((started && st >= R) || el > 900 || (st < 0 && el > R * 1000 + 60)) { done = true; fn(); return; }
         requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
+    };
+    const cam = this.fx.cam;
+    const scrAng = (a: THREE.Vector3, b: THREE.Vector3) => { if (!cam) return 0; const pa = a.clone().project(cam), pb = b.clone().project(cam); return Math.atan2(pb.y - pa.y, pb.x - pa.x); };
+    const ring = (at: THREE.Vector3, color: string, size: number, dur: number) =>
+      this.sprite(ringTex(), at, 0, size, size, dur, color, (k) => { const e = 1 - Math.pow(1 - k, 3); return [0.2 + e, 0.2 + e]; }, (k) => Math.pow(1 - k, 1.5) * 0.9);
+    if (cls === 1) {
+      // Avcı: ok yaydan (sol el) çıkar; bırakışta rüzgâr halkası, arkasında ince ışık kuyruğu; değince yeşil kesik ve yıldız
+      atSwing(HUNTER_RELEASE_S, () => {
+        const bow = this.fx.handLOf(src);
+        if (bow && !lite) { ring(bow, '#d6ffb0', 0.5, 120); this.sprite(starTex(), bow, 0, 0.55, 0.55, 110, '#f2ffe0', (k) => [0.6 + k, 0.6 + k], (k) => Math.pow(1 - k, 2)); }
+        const from = bow?.clone() ?? null;
+        this.missile(sp, tgt, tp, 170, 'arrow', '#b8ff8a', 0.55, (p) => {
+          if (!this.full(self)) return;
+          const at = new THREE.Vector3(p.x * U, this.gy(p.x, p.y) + 1.05, p.y * U);
+          const ang = from ? scrAng(from, at) : 0;
+          if (cam) at.lerp(cam.position, 0.05);
+          this.meleeHit(at, ang, '#b8ff8a', false, self, 0.62);
+          if (!lite) this.fx.burst(p.x, p.y, 1.0, Math.ceil(5 * this.pk), '#8dff5a', 2.2, 380, 0.09, -3);
+        }, lite ? 0 : 1, from);
+      });
+    } else if (cls === 2) {
+      // Arkanist: asa öne uzatılınca ucundan küre çıkar; uçta açılan rün halkası; kürenin arkasında enerji kuyruğu ve
+      // çevresinde dönen kıvılcımlar; değince camgöbeği yıldız, şok halkası
+      this.fx.trails.start(src, ARCANIST_TRAIL_S[0], ARCANIST_TRAIL_S[1], '#36d6ff', '#e8fdff', self ? 0.75 : 0.5, 110);
+      atSwing(ARCANIST_RELEASE_S, () => {
+        const tip = this.fx.tipOf(src);
+        if (tip && !lite) {
+          const ix = tip.x / U, iy = tip.z / U;
+          this.fx.burst(ix, iy, Math.max(0, tip.y - this.gy(ix, iy)), Math.ceil(6 * this.pk), '#bff8ff', 1.4, 260, 0.1, 0);
+          ring(tip, '#7cf3ff', 0.6, 150);
+        }
+        const from = tip?.clone() ?? null;
+        this.missile(sp, tgt, tp, 200, 'orb', '#7cf3ff', 1.0, (p) => {
+          if (!this.full(self)) return;
+          const at = new THREE.Vector3(p.x * U, this.gy(p.x, p.y) + 1.05, p.y * U);
+          if (cam) at.lerp(cam.position, 0.05);
+          this.flash(p, 1.1, 1.5, 200, '#bff8ff');
+          this.sprite(starTex(), at, 0.4, 1.0, 1.0, 150, '#e8fdff', (k) => [0.5 + 0.8 * (1 - Math.pow(1 - Math.min(1, k * 3), 3)), 0.5 + 0.8 * (1 - Math.pow(1 - Math.min(1, k * 3), 3))], (k) => Math.pow(1 - k, 2));
+          if (!lite) { this.shock(p, 80, 280, '#7cf3ff', 0.2); this.fx.burst(p.x, p.y, 1.1, Math.ceil(10 * this.pk), '#9ff6ff', 2.8, 380, 0.13, -1); }
+        }, lite ? 1 : 2, from);
+      });
     }
+  }
+
+  /**
+   * Kılıç hedefe değdi: kesik ışığı izin son hareket yönüne hizalanır (yoksa komboya göre varsayılan açı).
+   * p: hedefin yeri, h: değme yüksekliği (m).
+   */
+  meleeImpact(src: number, p: P, h: number, combo: number, crit: boolean, self: boolean) {
+    const cam = this.fx.cam;
+    let ang = cam ? this.fx.trails.screenAngle(src, cam) : null;
+    if (ang === null) ang = [-0.6, 0.15, -1.45][((combo % 3) + 3) % 3];
+    const at = new THREE.Vector3(p.x * U, this.gy(p.x, p.y) + h, p.y * U);
+    // kesik ışığı kameraya biraz yaklaştırılır: hedefin gövdesine gömülmesin
+    if (cam) at.lerp(cam.position, 0.06);
+    this.meleeHit(at, ang, combo === 2 ? '#ffb43c' : '#ffd36e', crit, self);
+    if (self && this.q > 0) this.fx.light(p.x, p.y, h, '#ffd9a0', crit ? 4 : 2.6, 150);
   }
 
   /** Sınıf + beceri + uzmanlık türüne göre tam efekt. */

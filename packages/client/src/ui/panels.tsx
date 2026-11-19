@@ -116,7 +116,8 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
       <div className="tip-stat">
         <span>{tpl?.slot === 'weapon' ? 'Saldırı' : 'Savunma'}</span>
         <b>+{power.toLocaleString('tr-TR')}</b>
-        {(it.plus > 0 || !!it.evo) && <small>{itemPower({ ...it, plus: 0, evo: 0 })}{it.plus > 0 ? ` + ${itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)` : ''}{it.evo ? ` + %${evoPct(TUNING, tpl?.slot ?? '', it.evo)} (evrim)` : ''}</small>}
+        {(it.plus > 0 || !!it.evo) && <small>{itemPower({ ...it, plus: 0, evo: 0 })}{it.plus > 0 ? ` + ${itemPower({ ...it, evo: 0 }) - itemPower({ ...it, plus: 0, evo: 0 })} (artı)` : ''}</small>}
+        {!!it.evo && <small style={{ color: EVO_COLORS[Math.min(3, it.evo)] }}>Evrim: toplam {tpl?.slot === 'weapon' ? 'saldırına' : 'savunmana'} +%{evoPct(TUNING, tpl?.slot ?? '', it.evo)}</small>}
       </div>
       {(tpl?.slot === 'weapon' || tpl?.slot === 'armor') && (it.evo || it.kills) ? (
         <div className="tip-evo">
@@ -828,7 +829,18 @@ function EvolveForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                       <div className="tw-bar"><i style={{ width: `${Math.min(1, kills / Math.max(1, st.kills)) * 100}%`, background: EVO_COLORS[cur + 1] }} /></div>
                       {!equipped.has(it.id) && <div className="muted" style={{ fontSize: 11 }}>Bu eşya kuşanılı değil: av sayması için kuşan.</div>}
                     </div>
-                    <div className="gain"><span>{slot === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b style={{ color: EVO_COLORS[cur + 1] }}>{itemPower({ ...it, evo: cur + 1 })}</b></span></div>
+                    {(() => {
+                      // evrim karakterin toplam saldırısına/savunmasına yüzde ekler: kuşanılıysa gerçek değeri göster
+                      const p0 = evoPct(TUNING, slot!, cur), p1 = evoPct(TUNING, slot!, cur + 1);
+                      const now = slot === 'weapon' ? self.combat?.atk : self.combat?.def;
+                      const base = now !== undefined ? now / (1 + (equipped.has(it.id) ? p0 : 0) / 100) : 0;
+                      return (
+                        <div className="gain">
+                          <span>Toplam {slot === 'weapon' ? 'saldırı' : 'savunma'} <b style={{ color: EVO_COLORS[cur + 1] }}>+%{p1}</b>{p0 ? <span className="muted"> (şimdi %{p0})</span> : null}</span>
+                          {now !== undefined && <span>{equipped.has(it.id) ? now : Math.round(base)} → <b style={{ color: EVO_COLORS[cur + 1] }}>{Math.round(base * (1 + p1 / 100))}</b>{!equipped.has(it.id) && <span className="muted"> (kuşanınca)</span>}</span>}
+                        </div>
+                      );
+                    })()}
                     <div className="req">
                       {Object.entries(st.mats).map(([k, q]) => {
                         const have = m[k] ?? 0, md = MATERIAL.get(k);

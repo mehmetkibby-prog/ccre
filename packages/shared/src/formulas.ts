@@ -1,6 +1,7 @@
 import { CLASSES, type ClassId } from './content/classes.ts';
 import { TUNING } from './tuning.ts';
 import { ITEM_TPL, itemPower, type ItemInstance, type Slot, type EnchantType } from './content/items.ts';
+import { evoPct } from './forgeTune.ts';
 
 /** En yüksek seviye. */
 export const LEVEL_CAP_BASE = 65;
@@ -59,11 +60,13 @@ export function computeStats(c: CharCore): CombatStats {
     // temel kritik şansı yok: kritik yalnız eşya efsunu (Kritik Şansı) ve Nesne Market etkilerinden gelir
     crit: 0, critDmg: 50, atkSpeed: 0, skillSpeed: 0, lifesteal: 0, block: 0, pvpPower: 0, pvpResist: 0, pvePower: 0, enchants: {},
   };
-  let hpFlat = 0, atkFlat = 0;
+  let hpFlat = 0, atkFlat = 0, evoAtk = 0, evoDef = 0;
   for (const it of Object.values(c.equip)) {
     if (!it) continue;
     const t = ITEM_TPL.get(it.tpl);
     if (!t) continue;
+    if (it.evo && t.slot === 'weapon') evoAtk = evoPct(TUNING, 'weapon', it.evo);
+    if (it.evo && t.slot === 'armor') evoDef = evoPct(TUNING, 'armor', it.evo);
     const p = itemPower(it);
     if (t.slot === 'weapon') atkFlat += p;
     else if (t.slot === 'armor' || t.slot === 'helmet' || t.slot === 'boots') dfn += p;
@@ -94,8 +97,9 @@ export function computeStats(c: CharCore): CombatStats {
   if (c.buffs?.critPct) s.crit += c.buffs.critPct;
   maxHp = maxHp + hpFlat + STAT_GAIN.vit * st.vit;
   s.maxHp = Math.round(maxHp);
-  s.atk = Math.round(atk);
-  s.def = Math.round(dfn);
+  // evrim: kuşanılı silahın kademesi toplam saldırıyı, zırhınki toplam savunmayı yüzde olarak artırır
+  s.atk = Math.round(atk * (1 + evoAtk / 100));
+  s.def = Math.round(dfn * (1 + evoDef / 100));
   return s;
 }
 

@@ -10,7 +10,8 @@ import * as THREE from 'three';
  * Her iki biçim de ebeveynin dinlenme çerçevesinde uygulanır: gövde dönünce kol da onunla döner.
  * Kareler arası geçiş 30 kare/sn örneklenir; her kare kendi yumuşatmasını seçer (vuruşta hızlı çıkış).
  */
-export type BonePose = { e?: [number, number, number]; a?: [number, number, number]; tw?: number; bl?: [number, number, number] };
+/** w: a/bl yönleri gövde çerçevesinde değil karakterin kök ekseninde verilir (kalça ve omurga dönüşü düşülür). */
+export type BonePose = { e?: [number, number, number]; a?: [number, number, number]; tw?: number; bl?: [number, number, number]; w?: boolean };
 export type Pose = Record<string, BonePose>;
 export interface Key { t: number; p: Pose; hips?: [number, number]; ease?: 'out' | 'in' | 'inOut' | 'lin' }
 
@@ -30,6 +31,8 @@ interface Rig {
   hipsPos: THREE.Vector3; hipsScale: number; hipsParentRest: THREE.Quaternion;
   /** sağ eldeki kılıcın bıçak yönü (kök uzayı, bağlanma pozu); gear.ts ile aynı hesap */
   blade: THREE.Vector3 | null;
+  /** asanın ekseni (kristal uca doğru), kök uzayında bağlanma pozunda */
+  staff: THREE.Vector3 | null;
   parentName: Map<string, string>;
 }
 
@@ -49,9 +52,11 @@ function readRig(inner: THREE.Object3D, root: THREE.Object3D): Rig {
     dirRest.set(n, child ? wp(child).sub(wp(b)).normalize() : new THREE.Vector3(0, 1, 0));
   }
   const hips = bones.get('Hips')!;
+  lastW = null;
   const blade = handBlade(inner, root, bones.get('RightHand'));
+  const staff = staffAxis();
   const ps = hips.parent!.getWorldScale(new THREE.Vector3());
-  return { bones, parentRest, dirRest, localRest, hipsPos: hips.position.clone(), hipsScale: ps.y / rootS.y, hipsParentRest: parentRest.get('Hips')!, blade, parentName: new Map([...bones].map(([n, b]) => [n, b.parent?.name ?? ''])) };
+  return { bones, parentRest, dirRest, localRest, hipsPos: hips.position.clone(), hipsScale: ps.y / rootS.y, hipsParentRest: parentRest.get('Hips')!, blade, staff, parentName: new Map([...bones].map(([n, b]) => [n, b.parent?.name ?? ''])) };
 }
 
 /**
@@ -83,8 +88,12 @@ function handBlade(inner: THREE.Object3D, root: THREE.Object3D, hand: THREE.Bone
   const wrist = root.worldToLocal(hand.getWorldPosition(new THREE.Vector3()));
   if (L.dot(c.clone().sub(wrist)) < 0) L.negate();
   if (W.z < 0) W.negate();
+  lastW = W.clone();
   return W.addScaledVector(L, 0.18).normalize();
 }
+let lastW: THREE.Vector3 | null = null;
+/** Asa ekseni (gear.ts 'staff' ile aynı): bağlanma pozunda yukarı + 0,3·W; kristal uç bu yönde. */
+function staffAxis(): THREE.Vector3 | null { return lastW ? new THREE.Vector3(0, 1, 0).addScaledVector(lastW, 0.3).normalize() : null; }
 
 const D2R = Math.PI / 180;
 /** "a" pozunun gövde çerçevesindeki mutlak dönüşü (burgu / bıçak yönü dahil). */
@@ -114,14 +123,44 @@ function localFor(rig: Rig, name: string, pose: Pose, out: THREE.Quaternion) {
     D = absAim(rig, name, bp);
     const pn = rig.parentName.get(name), pp = pn ? pose[pn] : undefined;
     if (pp?.a) D.premultiply(absAim(rig, pn!, pp).invert());
+  } else if (bp?.bl && rig.blade) {
+    // yalnız bıçak yönü (el kemiği): bilek, kılıcı istenen yöne çevirecek en kısa dönüşü yapar (ön kol "a" ile verilmiş olmalı)
+    const pn = rig.parentName.get(name)!, pp = pose[pn];
+    const Dp = pp?.a ? absAim(rig, pn, pp) : new THREE.Quaternion();
+    const cur = rig.blade.clone().applyQuaternion(Dp), want = new THREE.Vector3(...bp.bl).normalize();
+    const R = new THREE.Quaternion().setFromUnitVectors(cur, want);
+    if (bp.tw) R.premultiply(new THREE.Quaternion().setFromAxisAngle(want, bp.tw * D2R));
+    D = Dp.clone().invert().multiply(R).multiply(Dp);
+    if (bp.e) D.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(bp.e[0] * D2R, bp.e[1] * D2R, bp.e[2] * D2R, 'YXZ')));
   } else if (bp?.e) D.setFromEuler(new THREE.Euler(bp.e[0] * D2R, bp.e[1] * D2R, bp.e[2] * D2R, 'YXZ'));
   return out.copy(Qp).invert().multiply(D).multiply(Qp).multiply(L0);
+}
+
+/**
+ * "w" işaretli kemiklerin yönlerini gövde çerçevesine çevirir: atalarının (kalça, omurga…) "e" dönüşlerinin bileşkesi C,
+ * yön v için C⁻¹·v. Böylece kollar ve kılıç "karakterin önü/sağı/yukarısı"na göre yazılabilir.
+ */
+function resolveWorld(rig: Rig, pose: Pose): Pose {
+  if (!Object.values(pose).some((bp) => bp.w)) return pose;
+  const out: Pose = { ...pose };
+  for (const [name, bp] of Object.entries(pose)) {
+    if (!bp.w) continue;
+    const chain: string[] = [];
+    for (let n = rig.parentName.get(name); n; n = rig.parentName.get(n)) chain.unshift(n);
+    const C = new THREE.Quaternion();
+    for (const n of chain) { const e = pose[n]?.e; if (e && !pose[n]?.a) C.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(e[0] * D2R, e[1] * D2R, e[2] * D2R, 'YXZ'))); }
+    const Ci = C.invert();
+    const map = (v?: [number, number, number]) => (v ? (new THREE.Vector3(...v).applyQuaternion(Ci).toArray() as [number, number, number]) : undefined);
+    out[name] = { ...bp, a: map(bp.a), bl: map(bp.bl), w: false };
+  }
+  return out;
 }
 
 const rigCache = new WeakMap<THREE.Object3D, Rig>();
 export function buildClip(name: string, inner: THREE.Object3D, root: THREE.Object3D, keys: Key[], dur: number, hipK = 1): THREE.AnimationClip {
   let rig = rigCache.get(inner);
   if (!rig) { rig = readRig(inner, root); rigCache.set(inner, rig); }
+  keys = keys.map((k) => ({ ...k, p: resolveWorld(rig!, k.p) }));
   const names = [...new Set(keys.flatMap((k) => Object.keys(k.p)))].filter((n) => rig!.bones.has(n));
   const FPS = 60, n = Math.round(dur * FPS) + 1; // 60 kare/sn örnek: hızlı savuruşta kademeli (kesik kesik) görünmesin
   const times = Float32Array.from({ length: n }, (_, i) => Math.min(dur, i / FPS));
@@ -171,44 +210,55 @@ const B = (pose: Pose, yaw: number, lean = 0): Pose => {
 const LUNGE_L: Pose = { LeftUpLeg: { e: [-30, 0, 6] }, LeftLeg: { e: [30, 0, 0] }, RightUpLeg: { e: [20, 0, -6] }, RightLeg: { e: [8, 0, 0] } };
 const LUNGE_R: Pose = { RightUpLeg: { e: [-26, 0, -6] }, RightLeg: { e: [28, 0, 0] }, LeftUpLeg: { e: [16, 0, 6] }, LeftLeg: { e: [10, 0, 0] } };
 
-/** Muhafız düz vuruşunun değme anı (sn): ağır silah ritmi, yavaş hazırlık + kısa bekleme + çok hızlı iniş. */
-export const GUARDIAN_IMPACT_S = 0.34;
+/** Muhafız düz vuruşunun değme anı (sn): kısa hazırlık, çok hızlı kesiş; vuruş tuşa basınca çabuk gelir. */
+export const GUARDIAN_IMPACT_S = 0.22;
+/**
+ * Muhafız kılıç izinin parladığı aralık (sn, kombo başına): hazırlık bittiğinde başlar, savuruşun sonunda biter.
+ * Efekt (kılıç izi) bu aralıkta kılıcın gerçek ucunu ve kabzasını izler.
+ */
+export const GUARDIAN_TRAIL_S: [number, number][] = [[0.15, 0.34], [0.15, 0.34], [0.17, 0.36]];
 export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
+  // Tasarım: kılıç hep gövdenin önünde kalır, hedefin bulunduğu yerden geçer; gövde yalnız ölçülü burulur.
+  // Ritim: 0,12 sn hazırlık, kısa bekleme, ~0,06 sn kesiş (değme 0,22), savruluş, 0,62'de duruşa dönüş.
+  // Kol ve kılıç yönleri karakterin kök ekseninde verilir (V: sağ, yukarı, ileri); gövde dönüşü otomatik düşülür.
+  const V = (r: number, u: number, f: number): [number, number, number] => [-r, u, f];
+  const KNEE: Pose = { LeftUpLeg: { e: [-16, 0, 7] }, LeftLeg: { e: [22, 0, 0] }, RightUpLeg: { e: [12, 0, -7] }, RightLeg: { e: [22, 0, 0] } };
+  const STEP_L: Pose = { LeftUpLeg: { e: [-34, 0, 6] }, LeftLeg: { e: [36, 0, 0] }, LeftFoot: { e: [-6, 0, 0] }, RightUpLeg: { e: [18, 0, -6] }, RightLeg: { e: [12, 0, 0] } };
+  const SH_IN: Pose = { LeftArm: { a: V(-0.3, -0.62, 0.72), w: true }, LeftForeArm: { a: V(0.55, 0.05, 0.84), w: true } };
+  const SH_OUT: Pose = { LeftArm: { a: V(-0.6, -0.6, 0.5), w: true }, LeftForeArm: { a: V(-0.3, -0.05, 0.95), w: true } };
+  const arm = (ua: [number, number, number], fa: [number, number, number], bl: [number, number, number]): Pose =>
+    ({ RightArm: { a: V(...ua), w: true }, RightForeArm: { a: V(...fa), w: true }, RightHand: { bl: V(...bl), w: true } });
+  /** gövde: öne eğilme ve sola dönüş (derece) omurgaya paylaştırılır; baş hedefe bakmaya devam eder */
+  const torso = (lean: number, yaw: number): Pose => ({ Spine02: { e: [lean * 0.45, yaw * 0.5, 0] }, Spine01: { e: [lean * 0.3, yaw * 0.3, 0] }, Spine: { e: [lean * 0.25, yaw * 0.2, 0] }, Head: { e: [-6 - lean * 0.5, -yaw * 0.8, 0] } });
+  const clip = (name: string, keys: [number, Pose, [number, number], Key['ease']][]) =>
+    buildClip(name, inner, root, [{ t: 0, p: GUARD }, ...keys.map(([t, p, hips, ease]) => ({ t, p, hips, ease })), { t: 0.62, p: GUARD, ease: 'inOut' }], 0.62, 0.9);
   const I = GUARDIAN_IMPACT_S;
-  // Ağırlık hissi: hazırlık uzun ve geniş (dizler bükülür, gövde iyice geri döner), kılıç tepe noktada bir an asılı kalır
-  // ("yüklenme"), iniş çok kısa ve sert (ease 'in'), değmeden sonra gövde kılıcın ağırlığıyla savrulmaya devam eder.
-  const CROUCH: Pose = { LeftUpLeg: { e: [-20, 0, 8] }, LeftLeg: { e: [30, 0, 0] }, RightUpLeg: { e: [16, 0, -8] }, RightLeg: { e: [28, 0, 0] } };
-  const W = 0.22, HOLD = 0.29, FOL = 0.45;
-  // 1) yatay kesik: kılıcı sağ omzun arkasına alır, sağdan sola bütün gövdeyle savurur
-  const w1 = (yaw: number, sp: number): Pose => B(P({ ...CROUCH, Spine02: { e: [2, sp, 0] }, Spine: { e: [-2, -16, 0] }, Head: { e: [-8, 40, 0] }, RightArm: { a: [-0.9, 0.38, -0.22] }, RightForeArm: { a: [-0.5, 0.45, -0.74], bl: [-0.3, 0.65, -0.7] } }), yaw, -6);
-  const a1 = buildClip('G Kesik 1', inner, root, [
-    { t: 0, p: GUARD },
-    { t: W, ease: 'inOut', hips: [-0.08, -0.09], p: w1(-30, -34) },
-    { t: HOLD, ease: 'lin', hips: [-0.09, -0.1], p: w1(-33, -37) },
-    { t: I, ease: 'in', hips: [-0.12, 0.15], p: B(P({ ...LUNGE_L, Spine02: { e: [12, 18, 0] }, Spine: { e: [6, 12, 0] }, Head: { e: [-10, -34, 0] }, RightArm: { a: [0.15, 0.02, 1] }, RightForeArm: { a: [0.8, -0.02, 0.6], bl: [-0.2, 0.05, 1] } }), 20, 12) },
-    { t: FOL, ease: 'out', hips: [-0.13, 0.18], p: B(P({ ...LUNGE_L, Spine02: { e: [14, 36, 0] }, Spine: { e: [7, 22, 0] }, Head: { e: [-10, -52, 0] }, RightArm: { a: [0.66, -0.16, 0.66] }, RightForeArm: { a: [0.96, -0.16, -0.2], bl: [0.3, -0.05, 1] } }), 34, 14) },
-    { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62, 0.9);
-  // 2) ters kesik: kılıcı sol kalçaya indirip soldan sağa yükseltir
-  const w2 = (yaw: number, sp: number): Pose => B(P({ ...CROUCH, Spine02: { e: [12, sp, 0] }, Spine: { e: [6, 16, 0] }, Head: { e: [-8, -42, 0] }, RightArm: { a: [0.58, -0.45, 0.68] }, RightForeArm: { a: [0.84, -0.52, -0.16], bl: [0.3, -0.82, -0.4] } }), yaw, 8);
-  const a2 = buildClip('G Kesik 2', inner, root, [
-    { t: 0, p: GUARD },
-    { t: W, ease: 'inOut', hips: [-0.09, -0.07], p: w2(28, 34) },
-    { t: HOLD, ease: 'lin', hips: [-0.1, -0.08], p: w2(31, 37) },
-    { t: I, ease: 'in', hips: [-0.11, 0.14], p: B(P({ ...LUNGE_R, Spine02: { e: [4, -18, 0] }, Spine: { e: [0, -10, 0] }, Head: { e: [-8, 32, 0] }, RightArm: { a: [-0.38, 0.28, 0.88] }, RightForeArm: { a: [-0.72, 0.55, 0.42], bl: [-0.5, 0.6, 0.6] } }), -20, 6) },
-    { t: FOL, ease: 'out', hips: [-0.1, 0.17], p: B(P({ ...LUNGE_R, Spine02: { e: [-4, -34, 0] }, Spine: { e: [-5, -18, 0] }, Head: { e: [-6, 50, 0] }, RightArm: { a: [-0.86, 0.52, 0.2] }, RightForeArm: { a: [-0.56, 0.8, -0.28], bl: [-0.6, 0.72, -0.2] } }), -34, 2) },
-    { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62, 0.9);
-  // 3) tepeden iniş: geriye yaylanıp kılıcı başın üstüne kaldırır, bütün ağırlıkla aşağı indirir
-  const w3 = (sp: number, hy: number): Pose => B(P({ LeftUpLeg: { e: [-14, 0, 6] }, LeftLeg: { e: [20, 0, 0] }, RightUpLeg: { e: [10, 0, -6] }, RightLeg: { e: [22, 0, 0] }, Spine02: { e: [sp, 0, 0] }, Spine: { e: [-12, 0, 0] }, Head: { e: [6, 0, 0] }, RightArm: { a: [-0.16, 0.96, -0.24] }, RightForeArm: { a: [0, hy, -0.95], bl: [0, -0.6, -0.8] }, LeftArm: { a: [0.42, -0.25, 0.87] }, LeftForeArm: { a: [0.1, 0.55, 0.83] } }), -8, -10);
-  const a3 = buildClip('G Kesik 3', inner, root, [
-    { t: 0, p: GUARD },
-    { t: W, ease: 'inOut', hips: [0.03, -0.1], p: w3(-20, 0.3) },
-    { t: HOLD, ease: 'lin', hips: [0.04, -0.11], p: w3(-23, 0.36) },
-    { t: I + 0.01, ease: 'in', hips: [-0.2, 0.17], p: B(P({ LeftUpLeg: { e: [-42, 0, 5] }, LeftLeg: { e: [54, 0, 0] }, RightUpLeg: { e: [30, 0, -5] }, RightLeg: { e: [38, 0, 0] }, Spine02: { e: [32, 0, 0] }, Spine: { e: [15, 0, 0] }, Head: { e: [-26, 0, 0] }, RightArm: { a: [-0.12, 0.02, 1] }, RightForeArm: { a: [0, -0.55, 0.84], bl: [0, 1, 0.3] } }), 6, 16) },
-    { t: FOL, ease: 'out', hips: [-0.22, 0.19], p: B(P({ LeftUpLeg: { e: [-44, 0, 5] }, LeftLeg: { e: [58, 0, 0] }, RightUpLeg: { e: [30, 0, -5] }, RightLeg: { e: [40, 0, 0] }, Spine02: { e: [38, 0, 0] }, Spine: { e: [18, 0, 0] }, Head: { e: [-30, 0, 0] }, RightArm: { a: [-0.12, -0.46, 0.88] }, RightForeArm: { a: [0, -0.9, 0.44], bl: [0, 0.4, 1] } }), 8, 18) },
-    { t: 0.62, ease: 'inOut', p: GUARD },
-  ], 0.62, 0.9);
+
+  // 1) Çapraz iniş: kılıç sağ omzun üstüne kalkar, sağ üstten sol alta keser; sol ayakla öne adım
+  const w1 = (k: number) => B(P({ ...KNEE, ...SH_IN, ...torso(-2, -12 - k * 2), ...arm([0.6, 0.7, -0.1], [-0.1, 0.9, 0.3], [0.35, 0.55, -0.75]) }), -14 - k * 2, -2);
+  const a1 = clip('G Kesik 1', [
+    [0.12, w1(0), [-0.06, -0.05], 'out'],
+    [0.16, w1(1), [-0.07, -0.06], 'lin'],
+    [I, B(P({ ...STEP_L, ...SH_OUT, ...torso(10, 8), ...arm([0.05, -0.5, 0.86], [-0.75, -0.2, 0.6], [-0.2, -0.2, 0.95]) }), 10, 4), [-0.1, 0.13], 'in'],
+    [0.33, B(P({ ...STEP_L, ...SH_OUT, ...torso(12, 14), ...arm([-0.35, -0.6, 0.72], [-0.8, -0.55, 0.27], [-0.8, -0.45, -0.4]) }), 14, 5), [-0.11, 0.15], 'out'],
+  ]);
+  // 2) Ters yatay: kılıç sol kalçaya çekilir, göğüs hizasında soldan sağa süpürür
+  const w2 = (k: number) => B(P({ ...KNEE, ...SH_IN, ...torso(4, 10 + k * 2), ...arm([-0.2, -0.6, 0.75], [-0.9, -0.4, 0.17], [-0.55, 0.15, -0.8]) }), 14 + k * 2, 2);
+  const a2 = clip('G Kesik 2', [
+    [0.12, w2(0), [-0.06, -0.04], 'out'],
+    [0.16, w2(1), [-0.07, -0.05], 'lin'],
+    [I, B(P({ ...STEP_L, ...SH_OUT, ...torso(8, -6), ...arm([0, -0.35, 0.94], [0, -0.33, 0.94], [0.45, 0.05, 0.89]) }), -8, 4), [-0.09, 0.12], 'in'],
+    [0.33, B(P({ ...STEP_L, ...SH_OUT, ...torso(6, -12), ...arm([0.6, -0.35, 0.72], [0.82, -0.46, 0.4], [0.75, 0.05, -0.65]) }), -16, 4), [-0.1, 0.14], 'out'],
+  ]);
+  // 3) Tepeden ağır iniş: geriye yaylanıp kılıcı başın üstüne kaldırır, derin hamleyle önüne indirir
+  const LUNGE3: Pose = { LeftUpLeg: { e: [-42, 0, 6] }, LeftLeg: { e: [50, 0, 0] }, LeftFoot: { e: [-8, 0, 0] }, RightUpLeg: { e: [26, 0, -6] }, RightLeg: { e: [24, 0, 0] } };
+  const w3 = (k: number) => B(P({ ...KNEE, ...torso(-12 - k * 3, -4), LeftArm: { a: V(-0.5, -0.3, 0.8), w: true }, LeftForeArm: { a: V(-0.1, 0.25, 0.96), w: true }, ...arm([0.25, 0.95, 0.15], [-0.2, 0.9, -0.1], [0, 0.35, -0.94]) }), -4, -6);
+  const a3 = clip('G Kesik 3', [
+    [0.13, w3(0), [0.04, -0.06], 'out'],
+    [0.18, w3(1), [0.05, -0.07], 'lin'],
+    [I + 0.02, B(P({ ...LUNGE3, ...torso(18, 2), LeftArm: { a: V(-0.65, -0.7, 0.3), w: true }, LeftForeArm: { a: V(-0.5, -0.5, 0.7), w: true }, ...arm([0, 0, 1], [-0.42, -0.7, 0.58], [0, -0.2, 0.98]) }), 4, 8), [-0.18, 0.17], 'in'],
+    [0.35, B(P({ ...LUNGE3, ...torso(22, 2), LeftArm: { a: V(-0.65, -0.72, 0.28), w: true }, LeftForeArm: { a: V(-0.5, -0.55, 0.67), w: true }, ...arm([0, -0.35, 0.94], [-0.32, -0.74, 0.58], [0, -0.45, 0.89]) }), 4, 10), [-0.2, 0.18], 'out'],
+  ]);
 
   // ─ beceriler (0,95 sn) ─
   // Zincir Çekişi: zinciri fırlat, hedefi kendine çek
@@ -395,9 +445,16 @@ const ARC: Pose = {
   LeftUpLeg: { e: [-8, 0, 6] }, LeftLeg: { e: [10, 0, 0] }, RightUpLeg: { e: [8, 0, -6] }, RightLeg: { e: [10, 0, 0] },
 };
 const AP = (over: Pose): Pose => ({ ...ARC, ...over });
-export const ARCANIST_RELEASE_S = 0.25;
+/** Arkanist düz vuruşunda kürenin asa ucundan çıktığı an (sn) */
+export const ARCANIST_RELEASE_S = 0.22;
+/** asa ucunun ince ışık izi bıraktığı aralık (sn) */
+export const ARCANIST_TRAIL_S: [number, number] = [0.13, 0.27];
 export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
-  const R = ARCANIST_RELEASE_S;
+  // "bl" (silah yönü) bu modelde asanın kristal ucunu gösterir
+  let rig = rigCache.get(inner);
+  if (!rig) { rig = readRig(inner, root); rigCache.set(inner, rig); }
+  if (rig.staff) rig.blade = rig.staff;
+  const R = 0.25; // Sv. 7 Girdap'ın atış anı (eski savuruş ritmi)
   const STEP: Pose = { LeftUpLeg: { e: [-26, 0, 6] }, LeftLeg: { e: [22, 0, 0] }, RightUpLeg: { e: [16, 0, -6] }, RightLeg: { e: [10, 0, 0] } };
   // Düz vuruş: asayı sağ omzun üstünden geriye kaldırır (sol el hedefe nişan alır), gövdeyi çevirip öne adımlar ve asayı
   // öne savurur; atış anında (R) asanın kristal ucu tam hedefe (öne, hafif yukarı) bakar, küre oradan çıkar; sonra asa
@@ -409,14 +466,28 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
   const BACK: Pose = { LeftUpLeg: { e: [-10, 0, 8] }, LeftLeg: { e: [12, 0, 0] }, RightUpLeg: { e: [-4, 0, -8] }, RightLeg: { e: [30, 0, 0] } };
   const LUNGE: Pose = { LeftUpLeg: { e: [-42, 0, 7] }, LeftLeg: { e: [42, 0, 0] }, RightUpLeg: { e: [26, 0, -7] }, RightLeg: { e: [6, 0, 0] } };
   const LUNGE2: Pose = { LeftUpLeg: { e: [-46, 0, 7] }, LeftLeg: { e: [48, 0, 0] }, RightUpLeg: { e: [28, 0, -7] }, RightLeg: { e: [8, 0, 0] } };
-  const a1 = buildClip('A Asa Savuruşu', inner, root, [
+  // Düz vuruş (yeniden): asayı sağ kalçaya geri çekip sol avucuyla hedefe nişan alır, sonra sol ayakla öne adımlayıp
+  // asayı hedefe uzatır (dürtme); kürenin çıktığı anda (ARCANIST_RELEASE_S) asa ucu öne-yukarı hedefe bakar.
+  // Yönler karakterin kök ekseninde (V: sağ, yukarı, ileri).
+  const V = (r: number, u: number, f: number): [number, number, number] => [-r, u, f];
+  const W = (o: Record<string, [number, number, number]>, bl?: [number, number, number]): Pose => {
+    const p: Pose = {};
+    for (const [k, v] of Object.entries(o)) p[k] = { a: V(...v), w: true };
+    if (bl) p.RightHand = { bl: V(...bl), w: true };
+    return p;
+  };
+  const tors = (lean: number, yaw: number): Pose => ({ Spine02: { e: [lean * 0.45, yaw * 0.5, 0] }, Spine01: { e: [lean * 0.3, yaw * 0.3, 0] }, Spine: { e: [lean * 0.25, yaw * 0.2, 0] }, Head: { e: [-4 - lean * 0.5, -yaw * 0.85, 0] } });
+  const AIM = (k: number) => B(AP({ ...BACK, ...tors(-4, -14 - k * 3), ...W({ RightArm: [0.5, -0.5, -0.3], RightForeArm: [0.25, 0.45, 0.6], LeftArm: [-0.22, -0.2, 0.95], LeftForeArm: [0.05, 0.12, 0.99] }, [0.1, 0.75, -0.65]) }), -10 - k * 2, -3);
+  const THRUST = B(AP({ ...LUNGE, ...tors(8, 6), ...W({ RightArm: [0.15, -0.28, 0.95], RightForeArm: [0.02, -0.35, 0.94], LeftArm: [-0.45, -0.8, 0.3], LeftForeArm: [0.45, -0.1, 0.88] }, [0, 0.42, 0.9]) }), 6, 6);
+  const RECOIL = B(AP({ ...LUNGE2, ...tors(10, 8), ...W({ RightArm: [0.12, -0.4, 0.9], RightForeArm: [0, -0.5, 0.86], LeftArm: [-0.45, -0.82, 0.25], LeftForeArm: [0.5, -0.15, 0.85] }, [0, 0.25, 0.97]) }), 8, 8);
+  const a1 = buildClip('A Asa Dürtüşü', inner, root, [
     { t: 0, p: ARC },
-    { t: 0.14, ease: 'out', hips: [-0.07, -0.1], p: B(AP({ ...BACK, ...WIND, Spine02: { e: [-12, -22, 0] }, Spine01: { e: [-4, -8, 0] }, Spine: { e: [-3, -8, 0] }, Head: { e: [-4, 26, 0] } }), -16, -6) },
-    { t: 0.18, ease: 'lin', hips: [-0.08, -0.11], p: B(AP({ ...BACK, ...WIND, Spine02: { e: [-13, -24, 0] }, Spine01: { e: [-4, -9, 0] }, Spine: { e: [-3, -8, 0] }, Head: { e: [-4, 28, 0] } }), -17, -6) },
-    { t: R, ease: 'in', hips: [-0.13, 0.22], p: B(AP({ ...LUNGE, ...SHOT, Spine02: { e: [10, 6, 0] }, Spine01: { e: [4, 2, 0] }, Spine: { e: [3, 0, 0] }, Head: { e: [-14, -6, 0] } }), 4, 10) },
-    { t: 0.38, ease: 'out', hips: [-0.16, 0.26], p: B(AP({ ...LUNGE2, ...FOLLOW, Spine02: { e: [16, 8, 0] }, Spine01: { e: [6, 3, 0] }, Spine: { e: [5, 0, 0] }, Head: { e: [-18, -8, 0] } }), 6, 15) },
-    { t: 0.64, ease: 'inOut', p: ARC },
-  ], 0.64);
+    { t: 0.12, ease: 'out', hips: [-0.06, -0.06], p: AIM(0) },
+    { t: 0.16, ease: 'lin', hips: [-0.07, -0.07], p: AIM(1) },
+    { t: ARCANIST_RELEASE_S, ease: 'in', hips: [-0.11, 0.17], p: THRUST },
+    { t: 0.34, ease: 'out', hips: [-0.13, 0.2], p: RECOIL },
+    { t: 0.62, ease: 'inOut', p: ARC },
+  ], 0.62);
   // beceriler
   const WIDE: Pose = { LeftUpLeg: { e: [-14, 0, 14] }, LeftLeg: { e: [24, 0, 0] }, RightUpLeg: { e: [10, 0, -14] }, RightLeg: { e: [24, 0, 0] } };
   // Öz Halkası: asayı göğe kaldırır, çömelip yere vurur

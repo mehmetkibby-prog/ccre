@@ -214,6 +214,34 @@ export class Renderer3D {
       return tipC.clone().addScaledVector(d.normalize(), len + 0.22);
     };
     this.fx.swingTimeOf = (id) => { const v = id === this.g.selfId ? this.self : this.views.get(id); return v?.glb?.swingTime?.() ?? -1; };
+    this.fx.trails.swingTimeOf = this.fx.swingTimeOf;
+    this.fx.cam = this.camera;
+    this.fx.handLOf = (id) => { const v = id === this.g.selfId ? this.self : this.views.get(id); const h = v?.glb?.bones.handL; if (!h) return null; v!.obj.updateMatrixWorld(true); return h.getWorldPosition(new THREE.Vector3()); };
+    this.fx.heightOf = (id) => { const v = id === this.g.selfId ? this.self : this.views.get(id); return v?.height ?? 1.8; };
+    // silah izi için bıçak ekseni: silahın kendi ekseninde bir kez ölçülür (en uzun kutu ekseni, elden uzak uç), sonra
+    // her karede silahın dünya dönüşümüyle taşınır (ucuz)
+    const bladeLocal = new WeakMap<THREE.Object3D, { b: THREE.Vector3; t: THREE.Vector3 }>();
+    const hw = new THREE.Vector3();
+    this.fx.trails.bladeOf = (id) => {
+      const v = id === this.g.selfId ? this.self : this.views.get(id);
+      const w = v?.obj.getObjectByName('held-weapon');
+      if (!v || !w || !v.glb?.hand || !w.visible) return null;
+      let c = bladeLocal.get(w);
+      if (!c) {
+        v.obj.updateMatrixWorld(true);
+        const inv = w.matrixWorld.clone().invert(), box = new THREE.Box3(), tmp = new THREE.Box3();
+        w.traverse((o) => { const m = o as THREE.Mesh; if (!m.isMesh || !m.geometry) return; m.geometry.computeBoundingBox(); tmp.copy(m.geometry.boundingBox!).applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, m.matrixWorld)); box.union(tmp); });
+        if (box.isEmpty()) return null;
+        const hand = w.worldToLocal(v.glb.hand.getWorldPosition(hw.clone()));
+        const sz = box.getSize(new THREE.Vector3()), ctr = box.getCenter(new THREE.Vector3());
+        const ax = sz.x >= sz.y && sz.x >= sz.z ? 0 : sz.y >= sz.z ? 1 : 2;
+        const tip = ctr.clone(), half = sz.getComponent(ax) / 2;
+        tip.setComponent(ax, ctr.getComponent(ax) + (hand.getComponent(ax) <= ctr.getComponent(ax) ? half : -half));
+        c = { b: hand.clone().lerp(tip, 0.4), t: tip };
+        bladeLocal.set(w, c);
+      }
+      return { base: w.localToWorld(c.b.clone()), tip: w.localToWorld(c.t.clone()) };
+    };
     this.setupComposer();
     loadManifest();
     // model yüklenemezse boş yer tutucular prosedürel modelle yeniden kurulur

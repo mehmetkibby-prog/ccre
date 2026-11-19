@@ -3,6 +3,7 @@ import { Renderer3D } from './g3d/renderer3d.ts';
 import { getLayout, Kind, Anim, MONSTER_INDEX, TUNING } from '@col/shared';
 import type { CEnt } from './game/game.ts';
 import { store } from './game/store.ts';
+import { GUARDIAN_IMPACT_S } from './g3d/charAnims.ts';
 
 const q = new URLSearchParams(location.search);
 if (q.get('dn')) TUNING.dayNight.force = q.get('dn') as 'night'; // gece-gündüz önizlemesi
@@ -50,12 +51,16 @@ if (lineup) {
 }
 // beceri efekti denemesi: sfx=sınıf,beceri,yol → oyuncu önündeki canavara periyodik beceri
 const sfxq = q.get('sfx');
-let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + 140, y: sy + 30, dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
+let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + Number(q.get('camx') ?? 140), y: sy + Number(q.get('camy') ?? 30), dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
 (window as any).__sfx = (t: number) => {
   if (!sfxP || !sfxq) return;
   const [c, s, v] = sfxq.split(',').map(Number);
-  const { P, M } = sfxP; P.anim = Anim.CAST; P.animStart = t; P.skill = s;
-  if (s === 0) { r.fx.sk.basic(c, P.id, M.id, { x: P.x, y: P.y }, { x: M.x, y: M.y }, true); return; }
+  const { P, M } = sfxP; P.anim = s === 0 ? Anim.ATTACK : Anim.CAST; P.animStart = t; P.skill = s;
+  if (s === 0) {
+    const combo = (window as any).__combo ?? 0; P.combo = combo; r.fx.sk.basic(c, P.id, M.id, { x: P.x, y: P.y }, { x: M.x, y: M.y }, true, combo);
+    if (c === 0) setTimeout(() => { M.hurtUntil = performance.now() + 140; r.fx.sk.meleeImpact(P.id, { x: M.x, y: M.y }, Math.min(2.2, Math.max(0.45, r.fx.heightOf(M.id) * 0.5)), combo, !!q.get('crit'), true); }, GUARDIAN_IMPACT_S * 1000);
+    return;
+  }
   if (c === 0 && s === 3 && !v) r.fx.sk.dome(P.id, { x: P.x, y: P.y }, 3000, '#ffcf5a');
   r.fx.sk.play({ cls: c, skill: s, variant: v ?? 0, src: P.id, tgt: M.id, sp: { x: P.x, y: P.y }, tp: { x: M.x, y: M.y }, self: true, near: 0, now: t, shake: (n) => r.shake(n), hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
 };
@@ -81,3 +86,17 @@ const loop = (t: number) => {
 requestAnimationFrame(loop);
 (window as any).ready = true; (window as any).__r = r;
 (window as any).__pose = (kind: 'a' | 's', idx: number, t: number) => { for (const v of (r as any).views.values()) v.glb?.debugPose?.(kind, idx, t); };
+// geliştirme: klip anında silah ucu ve el, karakterin yerel ekseninde (x: sağ, y: yukarı, z: ileri; metre)
+(window as any).__probe = (kind: 'a' | 's', idx: number, t: number) => {
+  const out: Record<string, number[]> = {};
+  for (const [id, v] of (r as any).views as Map<number, any>) {
+    v.glb?.debugPose?.(kind, idx, t);
+    v.obj.updateMatrixWorld(true);
+    const inv = v.obj.matrixWorld.clone().invert();
+    const loc = (p: any) => { const q = p.clone().applyMatrix4(inv); return [-q.x, q.y, q.z].map((n: number) => Math.round(n * 100) / 100); };
+    const tip = r.fx.tipOf(id); const h = v.glb?.hand?.getWorldPosition(new (tip?.constructor ?? Object)());
+    if (tip) out.tip = loc(tip); if (h) out.hand = loc(h);
+    break;
+  }
+  return out;
+};

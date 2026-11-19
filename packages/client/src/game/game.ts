@@ -7,6 +7,7 @@ import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
 import type { Fx3D } from '../g3d/fx3d.ts';
+import { GUARDIAN_IMPACT_S } from '../g3d/charAnims.ts';
 import { sfx } from './audio.ts';
 import { OFFLINE } from '../mode.ts';
 
@@ -36,7 +37,8 @@ const seqDiff = (a: number, b: number) => ((a - b + 0x8000) & 0xffff) - 0x8000;
 
 /** Muhafız kılıcının hedefe değdiği an (saldırı animasyonunun başından, ms). */
 /** muhafız kılıcının değme anı (charAnims GUARDIAN_IMPACT_S ile aynı): hasar sayısı ve kesik izi bu ana kayar */
-export const MELEE_IMPACT_MS = 340;
+const THREE_CLAMP = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+export const MELEE_IMPACT_MS = Math.round(GUARDIAN_IMPACT_S * 1000);
 
 export class Game {
   ws: WebSocket | null = null;
@@ -415,6 +417,8 @@ export class Game {
   }
 
   speed() { return store.get().self?.combat?.speed ?? CLASSES[this.cls].speed; }
+  /** kılıcın hedefe değdiği yükseklik (m): modelin boyunun yarısı kadar */
+  private hitHeight(t: CEnt | null | undefined) { return THREE_CLAMP((t ? this.fx.heightOf(t.id) : 1.8) * 0.5, 0.45, 2.2); }
 
   private onEvent(ev: Snapshot['events'][number], now: number) {
     const st = store.get().settings;
@@ -441,9 +445,9 @@ export class Game {
             // yalnız vurulan kısa süre durur (kendi karakterin donmaz: takılma gibi hissettiriyordu)
             // düz vuruşta donma/sarsıntı yok (oyuncu "oyun takılıyor" gibi hissediyordu); yalnız kritikte hafif vurgu
             if (crit) { this.renderer.hitStop([ev.tgt], 35); this.renderer.shake(1.6); }
-            this.fx.shapes.push({ kind: 'blast', x: pos.x, y: pos.y, r: crit ? 70 : 46, r2: 0, a: 0, t0: now, dur: 200, color: crit ? '#ffd84a' : '#fff4d8' });
-            this.fx.light(pos.x, pos.y, 1.1, '#ffe2b0', crit ? 4 : 2.5, 160);
           }
+          // kesik ışığı + yıldız + kıvılcım: kendi vuruşunda tam, yakındaki başkalarınınkinde sade
+          if (mine || Math.hypot(pos.x - this.dx, pos.y - this.dy) < 1200) this.fx.sk.meleeImpact(ev.src, pos, this.hitHeight(t), mc?.combo ?? 0, (ev.flags & DmgFlag.CRIT) !== 0, mine);
         }
         if (!st.showDamage && !mine && !onMe) break;
         if (ev.flags & DmgFlag.BLOCK) { this.fx.text(pos.x, pos.y, 2.0, 'Blok', '#cfe3ff', 15); break; }
@@ -482,13 +486,10 @@ export class Game {
           this.meleeCast.set(ev.src, { at: now, combo });
           if (isSelf) this.selfCombo = combo;
           else if (src) src.combo = combo;
-          const a = Math.atan2(ev.y - sp.y, ev.x - sp.x);
           sfx.play('swing', isSelf ? 1 : this.nearK(sp));
-          window.setTimeout(() => {
-            const t2 = performance.now();
-            this.fx.shapes.push({ kind: 'slash', x: sp.x, y: sp.y, r: combo === 2 ? 64 : 74, r2: combo, a: a + (combo === 1 ? 0.35 : combo === 0 ? -0.35 : 0), t0: t2, dur: 260, color: combo === 2 ? '#ffe2a0' : '#ffffff' });
-            if (combo === 2) this.fx.burst(ev.x, ev.y, 0.1, 14, '#d9c7a1', 2, 500, 0.2, 1);
-          }, MELEE_IMPACT_MS - 40);
+          // kılıç izi: kılıcın gerçek yolunu izler (animasyonun kesiş aralığında); vuruş ışığı hasar anında
+          if (near) this.fx.sk.basic(0, ev.src, ev.tgt, { x: sp.x, y: sp.y }, { x: ev.x, y: ev.y }, isSelf, combo);
+          if (combo === 2 && near) window.setTimeout(() => this.fx.burst(ev.x, ev.y, 0.1, isSelf ? 14 : 6, '#d9c7a1', 2, 500, 0.2, 1), MELEE_IMPACT_MS);
         }
         if (clsIdx === 0 && skill === 1 && ev.tgt) { const te = this.ents.get(ev.tgt); if (te && ((te.kind === Kind.MONSTER && !MONSTERS[te.tpl]?.boss) || te.kind === Kind.PLAYER)) te.slide = { x0: te.x, y0: te.y, t0: now + 120 }; }
         // ekran dışındaki uzak oyuncuların becerileri çizilmez (kalabalıkta gereksiz yük olmasın)

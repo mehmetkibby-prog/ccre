@@ -97,14 +97,14 @@ export const EVO_COLORS = ['', '#5ad8ff', '#c27bff', '#ffd25a'];
 export const EVO_DEFAULT: EvoTune = {
   enabled: true, maxGap: 15,
   weapon: [
-    { kills: 500, gems: 1500, mats: { ember_stone: 15, star_iron: 3 }, pct: 6 },
-    { kills: 1500, gems: 4000, mats: { ember_stone: 30, star_iron: 10, evo_crystal: 1 }, pct: 12 },
-    { kills: 3500, gems: 10000, mats: { ember_stone: 50, star_iron: 20, evo_crystal: 3 }, pct: 20 },
+    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, pct: 8 },
+    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, pct: 16 },
+    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, pct: 25 },
   ],
   armor: [
-    { kills: 500, gems: 1500, mats: { ember_stone: 15, star_iron: 3 }, pct: 6 },
-    { kills: 1500, gems: 4000, mats: { ember_stone: 30, star_iron: 10, evo_crystal: 1 }, pct: 12 },
-    { kills: 3500, gems: 10000, mats: { ember_stone: 50, star_iron: 20, evo_crystal: 3 }, pct: 20 },
+    { kills: 300, gems: 1000, mats: { ember_stone: 10, star_iron: 2 }, pct: 8 },
+    { kills: 1000, gems: 3000, mats: { ember_stone: 20, star_iron: 6, evo_crystal: 1 }, pct: 15 },
+    { kills: 2500, gems: 7000, mats: { ember_stone: 35, star_iron: 12, evo_crystal: 2 }, pct: 22 },
   ],
 };
 
@@ -168,7 +168,7 @@ export function sanitizeEvo(raw: unknown): EvoTune {
   const r = obj(raw), D = EVO_DEFAULT;
   return { enabled: r.enabled === undefined ? D.enabled : !!r.enabled, maxGap: int(r.maxGap, 0, 120, D.maxGap), weapon: steps(r.weapon, D.weapon), armor: steps(r.armor, D.armor) };
 }
-/** Evrim kademesinin toplam artışı (%): silahta saldırı, zırhta savunma */
+/** Evrim kademesinin toplam artışı (%): silahta karakterin TOPLAM saldırısına, zırhta TOPLAM savunmasına uygulanır */
 export function evoPct(t: { evo?: EvoTune }, slot: string, evo: number): number {
   if (!evo || (slot !== 'weapon' && slot !== 'armor')) return 0;
   const st = (t.evo ?? EVO_DEFAULT)[slot as 'weapon' | 'armor'][Math.min(EVO_TIERS, evo) - 1];
