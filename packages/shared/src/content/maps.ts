@@ -84,11 +84,13 @@ export const MAPS: Record<string, MapDef> = {
   black: {
     id: 'black', name: 'Kara Bölge', w: 80, h: 64, theme: 'black', seed: 6666, safe: false, pvp: true, minLevel: 40,
     respawnMap: 'black', travelable: true, dropPenalty: 'gems5',
-    desc: 'Açık PvP. Ölümde ekipman korunur, bölgede yeniden doğarsın. Kara Taş Muhafızı burada.',
+    desc: 'Açık PvP. Kül Şövalyeleri, Kara Taş Gargoylleri ve Kara Taş Muhafızı. Ölümde ekipman korunur, bölgede yeniden doğarsın.',
     npcs: [],
     spawns: [
       { monster: 'black_stone', count: 1, level: [45, 45], variants: [100, 0, 0], region: 'far' },
-      { monster: 'blizzard_seer', count: 20, level: [40, 46], variants: [40, 45, 15], region: 'any' },
+      // Kül Şövalyeleri bölgenin her yerinde, Kara Taş Gargoylleri muhafızın çevresinde (önceki 20 Tipi Kâhini yerine 42 canavar)
+      { monster: 'k_ash_knight', count: 26, level: [42, 42], variants: [45, 40, 15], region: 'any' },
+      { monster: 'k_gargoyle', count: 16, level: [46, 46], variants: [40, 45, 15], region: 'far' },
     ],
   },
   arena: {

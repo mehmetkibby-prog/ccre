@@ -19,7 +19,7 @@ import { shared } from './materials.ts';
  * }
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
-export interface ModelEntry { url: string; /** dosya değişince artırılan sürüm: aynı adla güncellenen modeli tarayıcı önbellekten eski haliyle vermesin */ v?: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
+export interface ModelEntry { /** aynı dosyanın renk değiştirilmiş kopyası: çarpım rengi ve ışıma (ör. Kara Taş Gargoylü) */ tint?: string; emissive?: string; emissiveIntensity?: number; url: string; /** dosya değişince artırılan sürüm: aynı adla güncellenen modeli tarayıcı önbellekten eski haliyle vermesin */ v?: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
 interface Loaded { sphere?: THREE.Sphere; scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
@@ -446,11 +446,29 @@ function lodOf(src: THREE.BufferGeometry): THREE.BufferGeometry | null {
   return null;
 }
 
+const tintMats = new Map<string, THREE.Material>();
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
   if (!L) return null;
   if (id === 'fox_king') tailToHips(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
+  if (L.entry.tint || L.entry.emissive) {
+    // renk kopyası: malzemeler model başına bir kez kopyalanır (bütün örnekler aynı kopyayı paylaşır)
+    inner.traverse((o) => {
+      const m = o as THREE.Mesh; if (!m.isMesh) return;
+      const one = (src: THREE.Material) => {
+        const key = id + ':' + src.uuid; let c = tintMats.get(key);
+        if (!c) {
+          c = src.clone(); const sm = c as THREE.MeshStandardMaterial;
+          if (L.entry.tint && sm.color) sm.color.multiply(new THREE.Color(L.entry.tint));
+          if (L.entry.emissive && sm.emissive) { sm.emissive.set(L.entry.emissive); sm.emissiveIntensity = L.entry.emissiveIntensity ?? 0.6; if (!sm.emissiveMap && sm.map) sm.emissiveMap = sm.map; }
+          tintMats.set(key, c);
+        }
+        return c;
+      };
+      m.material = Array.isArray(m.material) ? m.material.map(one) : one(m.material);
+    });
+  }
   inner.scale.setScalar(L.scale);
   inner.position.y = L.offsetY;
   inner.rotation.y = L.entry.yaw ?? 0;

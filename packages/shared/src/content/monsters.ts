@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss' | 'world_boss';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 'k_knight' | 'k_gargoyle' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss' | 'world_boss';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -28,6 +28,8 @@ export const MONSTER_LEVEL: Record<string, number> = {
   wild_fox: 2, sneaky_goblin: 4,
   shadow_wolf: 10, rot_guard: 13, essence_eater: 16,
   frost_lynx: 20, ice_golem: 25, blizzard_seer: 30,
+  // Kara Bölge (Sv. 40+, açık PvP)
+  k_ash_knight: 42, k_gargoyle: 46,
 };
 
 export const MONSTERS: MonsterDef[] = [
@@ -40,6 +42,9 @@ export const MONSTERS: MonsterDef[] = [
   { id: 'frost_lynx', name: 'Kırağı Vaşağı', art: 'lynx', hpBase: 400, hpPerLevel: 40, atkBase: 40, atkPerLevel: 3.4, def: 12, speed: 210, range: 70, attackMs: 1300, aggroRadius: 320, leash: 750, xpBase: 60, size: 1 },
   { id: 'ice_golem', name: 'Buzkök Golemi', art: 'golem', hpBase: 700, hpPerLevel: 55, atkBase: 48, atkPerLevel: 3.6, def: 20, speed: 120, range: 90, attackMs: 2000, aggroRadius: 260, leash: 650, xpBase: 80, size: 1.3 },
   { id: 'blizzard_seer', name: 'Tipi Kâhini', art: 'seer', hpBase: 450, hpPerLevel: 42, atkBase: 55, atkPerLevel: 3.8, def: 10, speed: 150, range: 300, attackMs: 2200, aggroRadius: 340, leash: 700, xpBase: 75, size: 1 },
+  // Kara Bölge: Kül Şövalyesi (Meshy; yanmış kara zırh, kor ve mor çatlaklar) ve Kara Taş Gargoylü (kara taş, kızıl kor)
+  { id: 'k_ash_knight', name: 'Kül Şövalyesi', art: 'k_knight', hpBase: 520, hpPerLevel: 46, atkBase: 58, atkPerLevel: 4, def: 18, speed: 170, range: 85, attackMs: 1600, aggroRadius: 320, leash: 750, xpBase: 85, size: 1 },
+  { id: 'k_gargoyle', name: 'Kara Taş Gargoylü', art: 'k_gargoyle', hpBase: 640, hpPerLevel: 50, atkBase: 54, atkPerLevel: 3.8, def: 26, speed: 160, range: 90, attackMs: 1750, aggroRadius: 300, leash: 700, xpBase: 92, size: 1.1 },
   { id: 'black_stone', name: 'Kara Taş Muhafızı', art: 'blackstone', hpBase: 60000, hpPerLevel: 0, atkBase: 180, atkPerLevel: 0, def: 60, speed: 0, range: 320, attackMs: 2500, aggroRadius: 380, leash: 400, xpBase: 4000, size: 1.8, boss: true, respawnMin: 10 },
   // Pazar Köyü'nün güney ucundaki arenada: grup boss'u (değerler yönetim panelinden değişir)
   { id: 'fox_king', name: 'Tilki Kral', art: 'fox_king', hpBase: 36000, hpPerLevel: 0, atkBase: 75, atkPerLevel: 0, def: 22, speed: 160, range: 110, attackMs: 1700, aggroRadius: 360, leash: 560, xpBase: 2600, size: 1.2, boss: true, respawnMin: 60 },

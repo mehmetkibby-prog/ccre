@@ -117,6 +117,11 @@
    "group": "npc",
    "model": "herbalist",
    "prompt": "A kind elderly village herbalist woman with silver hair in a loose braid under a green headscarf, warm wrinkled smiling face, earthy green and brown layered linen dress with a long apron full of pockets holding herb bundles, a woven sash with small drying flowers and little potion vials, soft leather boots"
+  },
+  {
+   "id": "k_knight",
+   "group": "kara",
+   "prompt": "A cursed ash knight of a burned black wasteland: charred blackened full plate armor cracked with glowing ember-red and violet fissures, tattered smoky dark cloak, horned great helm with burning red eyes in the visor slit, wielding a jagged black greatsword, menacing undead warrior, full body, standing"
   }
  ],
  "roles": {
@@ -147,7 +152,8 @@
   "t_knight": 2.1,
   "f_slag": 2.0,
   "f_boss": 3.1,
-  "herbalist": 1.65
+  "herbalist": 1.65,
+  "k_knight": 2.05
  },
  "animations": {
   "guardian": {
@@ -252,6 +258,12 @@
    "Attack Slash": 97,
    "Death": 189,
    "Cast Ground Slam": 127
+  },
+  "k_knight": {
+   "Idle": 0,
+   "Walk": 21,
+   "Attack Slash": 97,
+   "Death": 189
   }
  }
 }

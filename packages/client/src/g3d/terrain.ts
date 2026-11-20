@@ -171,7 +171,7 @@ export class Terrain {
     } }`;
     }).join('\n');
     const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 });
-    const tint = theme === 'frozen' ? new THREE.Color(0.95, 0.98, 1.05) : theme === 'black' ? new THREE.Color(0.85, 0.8, 0.9) : theme === 'tower' ? new THREE.Color(0.5, 0.48, 0.6) : theme === 'forge' ? new THREE.Color(0.66, 0.54, 0.48) : new THREE.Color(1, 1, 1);
+    const tint = theme === 'frozen' ? new THREE.Color(0.88, 0.91, 0.98) : theme === 'black' ? new THREE.Color(0.85, 0.8, 0.9) : theme === 'tower' ? new THREE.Color(0.5, 0.48, 0.6) : theme === 'forge' ? new THREE.Color(0.66, 0.54, 0.48) : new THREE.Color(1, 1, 1);
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uSplat0 = { value: splatTex[0] };
       sh.uniforms.uSplat1 = { value: splatTex[1] };

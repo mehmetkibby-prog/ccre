@@ -608,5 +608,34 @@
     "attackClips": [
       "Attack Slash"
     ]
+  },
+  "k_gargoyle": {
+    "url": "t_gargoyle.glb",
+    "height": 2.2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ],
+    "tint": "#57525e",
+    "emissive": "#ff3818",
+    "emissiveIntensity": 0.1
+  },
+  "k_knight": {
+    "url": "k_knight.glb",
+    "height": 2.05,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Attack Slash"
+    ]
   }
 }

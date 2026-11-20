@@ -96,6 +96,8 @@ const loop = (t: number) => {
   const period = Number(q.get('period') ?? 900);
   for (const e of g.ents.values()) if (e.kind !== Kind.LOOT && anim === 'attack' && t - e.animStart > period) { e.anim = Anim.ATTACK; e.animStart = t; e.combo = ((e.combo ?? -1) + 1) % 3; if (q.get('combo')) e.combo = Number(q.get('combo')); }
   for (const e of g.ents.values()) if (e.kind === Kind.PLAYER && anim === 'cast' && t - e.animStart > Number(q.get('period') ?? 1400)) { e.anim = Anim.CAST; e.animStart = t; e.skill = Number(q.get('skill') ?? 1); }
+  // canavar yürütme denemesi: mstroll=hız (px/ms); yerinde koşu bandı gibi ilerler, kamera izler
+  if (q.get('mstroll')) { const sp = Number(q.get('mstroll')); for (const e of g.ents.values()) if (e.kind === Kind.MONSTER) { e.x += dt * sp; e.dir = 0; e.anim = Anim.WALK; e.samples = [{ t: 0, x: e.x, y: e.y }]; const co = (r as any).camOverride; if (co) co.x += dt * sp / Math.max(1, [...g.ents.values()].filter((x) => x.kind === Kind.MONSTER).length); } }
   if (q.get('stroll')) { for (const e of g.ents.values()) if (e.kind === Kind.PLAYER) { const ph = ((t / 1000) % 8) < 4; if (ph) { e.x += dt * Number(q.get('spd') ?? 0.09); e.dir = 0; } e.samples = [{ t: 0, x: e.x, y: e.y }]; const co = (r as any).camOverride; if (co) co.x = e.x; } }
   for (const [i, e] of walkers.entries()) { const a = t / 3000 + i; e.x += Math.cos(a) * dt * 0.08; e.y += Math.sin(a * 1.3) * dt * 0.08; e.dir = ((Math.atan2(Math.sin(a * 1.3), Math.cos(a)) / (Math.PI * 2)) * 256 + 256) % 256; e.anim = Anim.WALK; e.samples = [{ t: 0, x: e.x, y: e.y }]; }
   const ft = (window as any).__ft ??= []; ft.push(dt); if (ft.length > 600) ft.shift();

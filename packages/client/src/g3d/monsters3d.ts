@@ -162,6 +162,48 @@ function foxPieces(variant: number): Piece[] {
   return P;
 }
 
+/**
+ * Vaşak (kedi) hareketi: yavaşken çapraz ve yumuşak, omuz/kalça yuvarlanan sinsi yürüyüş; hızlanınca (kovalarken)
+ * dörtnal: ön ve arka bacak çiftleri birlikte uzanıp toplanır, omurga esner, gövde yaylanır, baş sabit kalır.
+ * Uzun tüylü kalın bacaklarda küçük açılar görünmüyordu; açılar ve gövde hareketi belirgin.
+ */
+export function catAnimate(bones: Record<string, THREE.Bone>, body: THREE.Object3D, st: HState, t: number, k: number, phase: number, rate: number) {
+  for (const b of Object.values(bones)) b.rotation.set(0, 0, 0);
+  body.rotation.set(0, 0, 0); body.position.set(0, 0, 0);
+  bones.body.position.y = QB[0][3];
+  bones.tail1.rotation.x = 0.35; bones.tail1.rotation.y = Math.sin(t * 2.2) * 0.25; bones.tail2.rotation.x = -0.25;
+  bones.neck.rotation.x = -0.08 + Math.sin(t * 1.3) * 0.04;
+  if (st === 'walk') {
+    const run = Math.min(1, Math.max(0, (rate - 9) / 6)); // ~9 rad/sn üstü dörtnala geçer
+    const s = Math.sin(phase), c = Math.cos(phase);
+    // yürüyüş (çapraz): sol ön + sağ arka birlikte
+    const wf = 0.85, wb = 0.75;
+    const walk = { flU: -s * wf, frU: s * wf, blU: s * wb, brU: -s * wb, flL: Math.max(0, s) * 1.0, frL: Math.max(0, -s) * 1.0, blL: -Math.max(0, -s) * 0.9, brL: -Math.max(0, s) * 0.9 };
+    // dörtnal: ön çift birlikte, arka çift karşı evrede; sol-sağ arasında küçük kayma
+    const s2 = Math.sin(phase + 0.35), sb = Math.sin(phase + Math.PI), sb2 = Math.sin(phase + Math.PI + 0.35);
+    const gal = { flU: -s * 1.05, frU: -s2 * 1.05, blU: -sb * 0.95, brU: -sb2 * 0.95, flL: Math.max(0, s) * 1.2, frL: Math.max(0, s2) * 1.2, blL: -Math.max(0, -sb) * 1.1, brL: -Math.max(0, -sb2) * 1.1 };
+    for (const n of ['flU', 'frU', 'blU', 'brU', 'flL', 'frL', 'blL', 'brL'] as const) bones[n].rotation.x = walk[n] * (1 - run) + gal[n] * run;
+    // patiler yere düz basar
+    for (const [u, l, p] of [['flU', 'flL', 'flP'], ['frU', 'frL', 'frP'], ['blU', 'blL', 'blP'], ['brU', 'brL', 'brP']] as const) if (bones[p]) bones[p].rotation.x = Math.max(-0.5, Math.min(0.5, -(bones[u].rotation.x + bones[l].rotation.x) * 0.45));
+    // gövde: yürürken omuz-kalça yuvarlanması; dörtnalda omurga esneme ve yaylanma
+    const roll = s * 0.06 * (1 - run);
+    bones.body.rotation.z = roll; bones.chest.rotation.z = -roll * 1.4;
+    bones.body.rotation.x = run * c * 0.16; bones.chest.rotation.x = -run * c * 0.2;
+    bones.body.position.y = QB[0][3] + (1 - run) * Math.abs(c) * 0.025 + run * (0.04 + Math.max(0, -c) * 0.1);
+    bones.neck.rotation.x = -0.12 - run * c * 0.14; // baş dengede
+    bones.tail1.rotation.x = 0.3 + run * 0.25 + run * s * 0.15; bones.tail1.rotation.y = (1 - run) * s * 0.35;
+  }
+  if (st === 'attack') {
+    const p = Math.sin(Math.min(1, k) * Math.PI);
+    body.position.z = p * 0.45; body.position.y = p * 0.12;
+    bones.chest.rotation.x = 0.25 * p; bones.neck.rotation.x = 0.4 * p; bones.jaw.rotation.x = 0.7 * p;
+    bones.flU.rotation.x = -1.1 * p; bones.frU.rotation.x = -1.0 * p; bones.flL.rotation.x = 0.6 * p; bones.frL.rotation.x = 0.6 * p;
+    bones.blU.rotation.x = 0.5 * p; bones.brU.rotation.x = 0.5 * p;
+  }
+  if (st === 'hurt') { bones.neck.rotation.x = -0.4; }
+  if (st === 'dead') { const p = Math.min(1, k * 1.5); body.rotation.z = (Math.PI / 2) * p; body.position.y = 0.15 * p; bones.neck.rotation.x = 0.3; }
+}
+
 export function quadAnimate(bones: Record<string, THREE.Bone>, body: THREE.Object3D, st: HState, t: number, k: number, phase: number) {
   for (const b of Object.values(bones)) b.rotation.set(0, 0, 0);
   body.rotation.set(0, 0, 0); body.position.set(0, 0, 0);
@@ -415,10 +457,16 @@ function createMeshQuad(id: string, variant: number, s: number, scale: number, h
   const bodyG = new THREE.Group(); bodyG.add(inner);
   const root = new THREE.Group(); root.add(bodyG);
   root.scale.setScalar(s * scale);
+  const cat = id === 'lynx_mesh';
+  let lastPh = 0, lastT = 0, rate = 0;
   return {
     root, height: height * s * scale,
     update(st, t, k, ph) {
-      quadAnimate(bones, bodyG, st, t, k, ph);
+      if (cat) {
+        // adım hızı (rad/sn): koşarken (kovalama) dörtnala, yavaşken sinsi kedi yürüyüşü
+        const dt = t - lastT; if (dt > 0 && dt < 0.5) rate = rate * 0.85 + ((ph - lastPh) / dt) * 0.15; lastPh = ph; lastT = t;
+        catAnimate(bones, bodyG, st, t, k, ph, rate);
+      } else quadAnimate(bones, bodyG, st, t, k, ph);
       bones.body.position.y += restBodyY - QB[0][3];
       if (bones.tail1) { bones.tail1.rotation.x = 0.1; bones.tail1.rotation.y = Math.sin(t * (st === 'walk' ? 5 : 1.8)) * (st === 'walk' ? 0.25 : 0.14); }
       if (bones.tail2) bones.tail2.rotation.x = 0.05;

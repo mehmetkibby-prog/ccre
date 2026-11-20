@@ -93,7 +93,8 @@ const THEME = {
   village: { fog: 0xc4d2d8, top: 0x7aa6d6, sky: 0xd8e6f2, ground: 0x8a7c62, sun: 0xfff0d8, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 130, far: 250 },
   forest: { fog: 0xb8ccc4, top: 0x78a2cc, sky: 0xd2e2ea, ground: 0x7a7258, sun: 0xffeccc, sunI: 3.5, hemi: 1.15, exp: 1.25, near: 130, far: 250 },
   lake: { fog: 0xc6d6de, top: 0x78a6d8, sky: 0xdae8f4, ground: 0x857a62, sun: 0xfff0dc, sunI: 3.6, hemi: 1.15, exp: 1.22, near: 130, far: 250 },
-  frozen: { fog: 0xd4dee6, top: 0x8eaed0, sky: 0xe6eef6, ground: 0x9aa6b2, sun: 0xf4f6ff, sunI: 3.1, hemi: 1.1, exp: 1.12, near: 130, far: 250 },
+  // kar göz almasın: güneş, gök ışığı ve pozlama biraz kısık (önceki 3,1 / 1,1 / 1,12 karı bembeyaz yakıyordu)
+  frozen: { fog: 0xd0dae3, top: 0x8eaed0, sky: 0xe2eaf3, ground: 0x95a1ad, sun: 0xf1f3fc, sunI: 2.75, hemi: 0.98, exp: 1.0, near: 130, far: 250 },
   black: { fog: 0x8c8090, top: 0x7a7090, sky: 0xb4a8bc, ground: 0x5a4e56, sun: 0xffd2b0, sunI: 3.0, hemi: 0.95, exp: 1.2, near: 130, far: 250 },
   // Kadim Kule: karanlık, mor-mavi mistik ışık; kısa sis (komşu katlar boşlukta silik görünür)
   tower: { fog: 0x1e1a2e, top: 0x0a0812, sky: 0x6a5c94, ground: 0x1c1626, sun: 0xd2c4ff, sunI: 2.6, hemi: 0.9, exp: 1.15, near: 38, far: 100 },
