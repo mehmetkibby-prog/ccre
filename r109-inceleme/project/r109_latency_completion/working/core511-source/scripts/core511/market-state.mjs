@@ -5,8 +5,9 @@ import {createFaultReporter} from './fence-diagnostics.mjs';
 const reportMarketFault=createFaultReporter(text=>process.stderr.write(text));
 const transientMarketReads=new Set(['read_worker_backpressure','read_worker_timeout','read_worker_queue_timeout','read_worker_process_changed','read_worker_closed']);
 const failedMarketReads=new WeakSet();
+import {publicShopRows,trackShopStock} from './shop-feed-r127.mjs';
 export function readMarketRevision(sql){return prepareCached477(sql,'SELECT revision FROM kernel511_market_version WHERE id=1').get().revision;}
-export function readMarketState(sql){sql.exec('BEGIN');try{const point={revision:readMarketRevision(sql),shops:prepareCached477(sql,'SELECT id,active,created_at FROM market_shops ORDER BY id').all()};sql.exec('COMMIT');return point;}catch(error){sql.exec('ROLLBACK');throw error;}}
+export function readMarketState(sql){sql.exec('BEGIN');try{const point={revision:readMarketRevision(sql),shops:publicShopRows(sql)};sql.exec('COMMIT');return point;}catch(error){sql.exec('ROLLBACK');throw error;}}
 // Only compact version metadata is read on the writer. The public market row
 // image is built once per committed change by the query-only worker.
 export class DurableMarketState {
@@ -16,7 +17,7 @@ export class DurableMarketState {
    INSERT OR IGNORE INTO kernel511_market_version VALUES(1,0);
    CREATE TRIGGER IF NOT EXISTS kernel511_market_insert AFTER INSERT ON market_shops BEGIN UPDATE kernel511_market_version SET revision=revision+1 WHERE id=1; END;
    CREATE TRIGGER IF NOT EXISTS kernel511_market_delete AFTER DELETE ON market_shops BEGIN UPDATE kernel511_market_version SET revision=revision+1 WHERE id=1; END;
-   CREATE TRIGGER IF NOT EXISTS kernel511_market_update AFTER UPDATE OF id,active,created_at ON market_shops WHEN NEW.id IS NOT OLD.id OR NEW.active IS NOT OLD.active OR NEW.created_at IS NOT OLD.created_at BEGIN UPDATE kernel511_market_version SET revision=revision+1 WHERE id=1; END;`);return readMarketRevision(sql);}).then(revision=>{this.current=revision;});
+   CREATE TRIGGER IF NOT EXISTS kernel511_market_update AFTER UPDATE OF id,active,created_at ON market_shops WHEN NEW.id IS NOT OLD.id OR NEW.active IS NOT OLD.active OR NEW.created_at IS NOT OLD.created_at BEGIN UPDATE kernel511_market_version SET revision=revision+1 WHERE id=1; END;`);trackShopStock(sql);return readMarketRevision(sql);}).then(revision=>{this.current=revision;});
   const original=this.database.atomic.bind(this.database),feed=this;this.database.atomic=function(task,options){if(typeof task!=='function'||task.constructor?.name==='AsyncFunction')return original(task,options);let revision;return original(sql=>{const result=task(sql);demand(!result?.then,'market_feed_async_operation');revision=readMarketRevision(sql);return result;},options).then(result=>{feed.publish(revision);return result;});};return this.current;
  }
  publish(revision){demand(Number.isSafeInteger(revision)&&revision>=0,'market_revision');if(revision<=this.current)return;this.current=revision;for(const notify of this.listeners)notify(revision);}

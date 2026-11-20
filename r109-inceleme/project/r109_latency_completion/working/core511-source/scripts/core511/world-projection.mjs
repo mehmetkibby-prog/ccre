@@ -1,3 +1,4 @@
+import {visibleShops} from './shop-feed-r127.mjs';
 import {zumrutGatherForR96,forgetZumrutGatherR96} from './zumrut-gather-projection-r96.mjs';
 import {mergeZumrutNodeDepletionsR93,zumrutNodeProjectionR93} from './zumrut-node-projection-r93.mjs';
 import {groundLootDeadlineMs} from './ground-loot-expiry.mjs';
@@ -109,7 +110,7 @@ export class WorldProjection {
   const data=sub.data;let until=future(now,data.partyInvite?(data.partyInvite.created_at+121)*1000:Infinity,data.globalAnnouncement?.expires_at_ms,data.gmAnnouncement?.announcement_expires_at_ms,data.arenaMatch?.status==='countdown'?data.arenaMatch.startsAtMs:Infinity,next.runeV2BossWave484?.expiresAtMs);
   for(const m of data.regionalMessages??[])until=future(now,until,(m.created_at+6)*1000);
   for(const d of data.drops??[])until=future(now,until,groundLootDeadlineMs(d.expires_at));
-  for(const shop of data.shops??[])until=future(now,until,marketShopDeadline(shop));
+  for(const shop of next.shops??[])until=future(now,until,marketShopDeadline(shop));
   for(const row of data.party?.members??[]){const p=this.native.partyPlayer486(row.id)??row;until=future(now,until,(Math.max(Number(p.last_seen)||0,Math.floor((Number(p.movement_checked_at_ms)||0)/1000),Math.floor((Number(p.last_monster_hit_at)||0)/1000))+31)*1000);}
   const friend=this.native.friendViewCache487?.get(sub.id);return future(now,until,friend?.until);
  }
@@ -139,10 +140,16 @@ export class WorldProjection {
     ...(this.native.bossLeaders?stoneBossFields476(this.native.bossLeaders,sub.data.area,sub.data.channel,common.monsters,sub.id):{}),players,totalOnline:this.native.totalOnline??sub.data.totalOnline,
     world:this.worldView(sub),drops:liveDrops503(sub.data.drops,now),serverTime:Math.floor(now/1000),snapshotAtMs:now};
   }
-  if(Array.isArray(next.shops)){let shops=liveMarketShops(next.shops,now);if(this.market&&this.market.revision>=sub.marketRevision){const live=row=>{const saved=this.market.shops.get(row.id);return saved?.active===1&&saved.created_at===row.created_at;};if(!shops.every(live))shops=shops.filter(live);}next={...next,shops};}
+  let shopDeadline=Infinity;
+  if(Array.isArray(next.shops)){
+   if(this.market&&this.market.revision>=sub.marketRevision){
+    const visible=visibleShops(this.market.shops,next.shops,sub.id,sub.data.channel,now);
+    next={...next,shops:visible.shops};shopDeadline=visible.until;
+   }else next={...next,shops:liveMarketShops(next.shops,now)};
+  }
   if(castleNotice)next={...next,globalAnnouncement:castleNotice};
   if(zumrutNodesR93)next={...next,zumrutR93:{...next.zumrutR93,nodeDepletions:zumrutNodesR93.rows}};
-  sub.cache={zumrutNodesR93,castleNotice,mountRevision:this.mounts?.revision??0,value:next,common,live,wave,revision:sub.revision,globalRevision:this.globalRevision,maintenance:this.globals.__colRealm?.maintenance?.policy?.revision??0,at:now,until:this.privateDeadline(sub,next,now)};this.metrics.privateBuilds++;return next;
+  sub.cache={zumrutNodesR93,castleNotice,mountRevision:this.mounts?.revision??0,value:next,common,live,wave,revision:sub.revision,globalRevision:this.globalRevision,maintenance:this.globals.__colRealm?.maintenance?.policy?.revision??0,at:now,until:Math.min(shopDeadline,this.privateDeadline(sub,next,now))};this.metrics.privateBuilds++;return next;
  }
  project({id,now,changes,results=[],lastApplied=0}){
   this.sync(changes,now);const sub=this.subscribers.get(id);if(!sub)return results.length?{type:'frame',protocol:PROTOCOL,results,lastApplied}:null;
