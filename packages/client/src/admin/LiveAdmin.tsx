@@ -23,6 +23,8 @@ interface Load { at: number; procs: Proc[]; profile: Prof | null; host: { cpus: 
 const f1 = (n: number) => n.toLocaleString('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const level = (elu: number) => (elu >= 75 ? ['Yüksek', 'bad'] : elu >= 45 ? ['Orta', 'mid'] : ['Düşük', 'ok']) as [string, string];
 const hm = (t: number) => new Date(t).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+/** kaç önce: sunucu saatine göre (cihaz saati yanlış olsa da doğru) */
+const ago = (ms: number) => (ms < 60_000 ? `${Math.max(0, Math.round(ms / 1000))} sn önce` : ms < 3_600_000 ? `${Math.round(ms / 60_000)} dk önce` : `${Math.floor(ms / 3_600_000)} sa ${Math.round((ms % 3_600_000) / 60_000)} dk önce`);
 
 /** Canlı işlem yükü: ana işlem ve her kanal ayrı kart; 60 sn CPU profili. */
 export function LoadCard({ toast }: { toast: (x: { ok: boolean; text: string }) => void }) {
@@ -81,7 +83,7 @@ export function LoadCard({ toast }: { toast: (x: { ok: boolean; text: string }) 
               <details className="ld-jobs">
                 <summary>Kaydedilen işler · Son 15 dk {x.jobs.length ? <i>{x.jobs.length}</i> : null}</summary>
                 {!x.jobs.length && <div className="muted">Yavaş iş yok.</div>}
-                {x.jobs.map((j, i) => <div key={i} className="ld-job"><span className="muted">{hm(j.at)}</span><b>{j.name}</b><em className={j.ms >= 100 ? 'warn' : ''}>{f1(j.ms)} ms</em>{j.detail && <small className="muted">{j.detail}</small>}</div>)}
+                {x.jobs.map((j, i) => <div key={i} className="ld-job"><span className="muted" title={hm(j.at) + ' (sunucu saati, bu cihazın saat diliminde)'}>{ago((d?.at ?? Date.now()) - j.at)}</span><b>{j.name}</b><em className={j.ms >= 100 ? 'warn' : ''}>{f1(j.ms)} ms</em>{j.detail && <small className="muted">{j.detail}</small>}</div>)}
               </details>
             </div>
           );

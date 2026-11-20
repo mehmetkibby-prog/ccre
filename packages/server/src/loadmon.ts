@@ -18,6 +18,8 @@ export class LoadMon {
   private h = monitorEventLoopDelay({ resolution: 10 });
   private jobs: LoadJob[] = [];
   last: LoadSnap = { elu: 0, delayMs: 0, heapMB: 0, rssMB: 0, jobs: [], at: Date.now() };
+  /** sürecin/thread'in açıldığı an: ilk 90 sn'deki duraklamalar açılış işidir (haritalar, canavarlar, ayarlar kurulur) */
+  private born = Date.now();
   constructor(private everyMs = 2000) {
     this.h.enable();
     setInterval(() => this.sample(), everyMs).unref();
@@ -28,7 +30,10 @@ export class LoadMon {
     // histogram en küçük örnekleme aralığını (10 ms) da içerir; duraklama = gecikme − çözünürlük
     const delay = Math.max(0, this.h.max / 1e6 - 10);
     this.h.reset();
-    if (delay >= STALL_MS) this.job('Döngü duraklaması', delay, 'Bu sürede thread başka hiçbir işi yapamadı');
+    if (delay >= STALL_MS) {
+      const boot = Date.now() - this.born < 90_000;
+      this.job(boot ? 'Sunucu açılışı' : 'Döngü duraklaması', delay, boot ? 'Yeniden başlatma/güncelleme sonrası bir kerelik kurulum (haritalar, canavarlar, ayarlar); oyun sürerken tekrarlamaz' : 'Bu sürede thread başka hiçbir işi yapamadı');
+    }
     const m = process.memoryUsage();
     this.last = { elu: Math.round(e.utilization * 1000) / 10, delayMs: Math.round(delay * 10) / 10, heapMB: Math.round(m.heapUsed / 1048576 * 10) / 10, rssMB: Math.round(m.rss / 1048576 * 10) / 10, jobs: this.recent(), at: Date.now() };
   }
