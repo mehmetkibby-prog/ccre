@@ -1,0 +1,11 @@
+{
+  "file": "artifacts/R127_TOPLU_d4fcd0771327.zip",
+  "sha256": "6f9a31af7b5138c3df76c74e7be3e7f4a9e94c80cfc79086936fc0dc93e1f4f5",
+  "bytes": 2745418,
+  "source": "R126_ENCOUNTER1",
+  "targetVersion": "R127_ACADEMY1",
+  "targetCore": "80bcf9542542de2a8fe5aa0e1883087096aed73d2efc2a68529d63dd77568a99",
+  "changedCodeFiles": 14,
+  "deployed": false,
+  "acceptanceReport": "evidence/validation.json"
+}

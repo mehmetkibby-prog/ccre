@@ -1,0 +1,68 @@
+{
+  "installer": "6f9a31af7b5138c3df76c74e7be3e7f4a9e94c80cfc79086936fc0dc93e1f4f5",
+  "testedFrom": "R126_ENCOUNTER1",
+  "games": "synthetic local accounts on isolated Efsane and Akademi engines",
+  "checks": {
+    "academy-test": 3,
+    "arrival-test": 1,
+    "market-projection-test": 7,
+    "rewards-market-test": 3,
+    "disk-schema-test": 1,
+    "disk-test": 3,
+    "academy-watch-test": 2,
+    "verified-installation": 3
+  },
+  "browser": [
+    "1280x800 purchase and exact stone selection passed",
+    "393x852 purchase and exact stone selection passed"
+  ],
+  "projectionBaseline": {
+    "originalFailuresIdenticalInR126AndR127": [
+      "native world projection shares one room image and skips unchanged projection/diff; original private boundaries remain",
+      "clock expiry, GM visibility, combat targets and scope reset match the pinned native projection",
+      "channel four keeps the native projection contract and stationary-player expiry does not cache forever"
+    ],
+    "currentPolicyComparison": "seven tests including real market deltas, released ground-loot expiry and ID-keyed player membership"
+  },
+  "efsane50": [
+    {
+      "passed": true,
+      "tickP95Ms": 9.712116000002425,
+      "tickP99Ms": 16.859607999998843,
+      "mainMaxPauseMs": 46.333951,
+      "mainPausesOver50Ms": 0,
+      "maxChannelPauseMs": 36.175871,
+      "channelPausesOver50Ms": 0
+    },
+    {
+      "passed": true,
+      "tickP95Ms": 8.784382999998343,
+      "tickP99Ms": 16.871156999997766,
+      "mainMaxPauseMs": 64.126975,
+      "mainPausesOver50Ms": 2,
+      "maxChannelPauseMs": 48.03018399999928,
+      "channelPausesOver50Ms": 0
+    }
+  ],
+  "akademi50": {
+    "authenticatedConcurrentArrivals": 50,
+    "channels": 4,
+    "capacityPerChannel": 10,
+    "admitted": 40,
+    "capacityResponses": 10,
+    "unexpectedFaults": 0
+  },
+  "sqlite": {
+    "nativeSchemaReclaimedBytes": 6258688,
+    "fullSchemaIntegrity": "passed",
+    "productionReclaimedBytes": null
+  },
+  "publicSchedule": {
+    "observedPhase": "waiting",
+    "automaticOpening": true,
+    "canPlay": false,
+    "publicOpeningAtMs": 1795194000000,
+    "observedBeforeOpening": true
+  },
+  "productionDeploymentVerified": false
+}
