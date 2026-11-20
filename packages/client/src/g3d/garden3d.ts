@@ -10,6 +10,10 @@ import { U } from './terrain.ts';
  * 40 bitki toplu çizilir (InstancedMesh): tür başına parça sayısı kadar çizim çağrısı, toplam ~13; telefonda da hafif.
  */
 const ROW_GLOW = ['#bfffe0', '#ff8a8a', '#ffd27a', '#d6b8ff'];
+// karede bir renk metni çözümlenmesin (bitki başına her kare çöp üretiyordu)
+const ROW_GLOW_C = ROW_GLOW.map((c) => new THREE.Color(c));
+const Y_AXIS = new THREE.Vector3(0, 1, 0);
+const MOBILE_GARDEN = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
 function colorGeo(g: THREE.BufferGeometry, top: THREE.Color, bottom: THREE.Color, h: number) {
   const p = g.attributes.position, c = new Float32Array(p.count * 3), t = new THREE.Color();
@@ -185,11 +189,17 @@ export class GardenFx {
   }
 
   /** ready: bitki başına kalan olgunlaşma süresi (ms, at anında) */
-  update(now: number, dt: number, garden: { ready: number[]; at: number } | null) {
+  private zero = new THREE.Vector3(0, 0, 0); private col = new THREE.Color(); private center: THREE.Vector3 | null = null;
+  /** cam: telefon/tablette kamera odağı — bahçe görüş dışındaysa (60 m+) bitki animasyonu ve tampon yüklemesi atlanır */
+  update(now: number, dt: number, garden: { ready: number[]; at: number } | null, cam?: THREE.Vector3) {
+    if (MOBILE_GARDEN && cam && this.plants.length) {
+      if (!this.center) { this.center = new THREE.Vector3(); for (const p of this.plants) this.center.add(new THREE.Vector3(p.x, p.y, p.z)); this.center.divideScalar(this.plants.length); }
+      if (cam.distanceToSquared(this.center) > 60 * 60) return;
+    }
     const t = now / 1000;
-    const { M, Q, E, P, S } = this, zero = S.clone().setScalar(0);
+    const { M, Q, E, P, S } = this, zero = this.zero;
     const gPos = this.glowPts.geometry.attributes.position as THREE.BufferAttribute, gCol = this.glowPts.geometry.attributes.color as THREE.BufferAttribute;
-    const col = new THREE.Color();
+    const col = this.col;
     for (const p of this.plants) {
       const ripe = !garden || (garden.ready[p.i] ?? 0) - (now - garden.at) <= 0;
       if (ripe !== p.ripe) { p.ripe = ripe; p.grow = ripe ? 0 : 1; }
@@ -201,10 +211,10 @@ export class GardenFx {
       const sc = ripe ? (1.9 + (p.seed % 1) * 0.3) * (0.35 + 0.65 * e) : 0;
       M.compose(P, Q, S.setScalar(sc));
       for (const im of this.rowMeshes[p.row]) im.setMatrixAt(p.slot, M);
-      Q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), p.ry);
+      Q.setFromAxisAngle(Y_AXIS, p.ry);
       this.sproutIM.setMatrixAt(p.i, M.compose(P, Q, ripe ? zero : S.setScalar(1)));
       const k = ripe ? 0.18 + 0.22 * (0.5 + 0.5 * Math.sin(t * 2.2 + p.seed)) : 0;
-      col.set(ROW_GLOW[p.row]).multiplyScalar(k); gCol.setXYZ(p.i, col.r, col.g, col.b);
+      col.copy(ROW_GLOW_C[p.row]).multiplyScalar(k); gCol.setXYZ(p.i, col.r, col.g, col.b);
       gPos.setY(p.i, p.y + 0.95 + p.row * 0.06 + Math.sin(t * 1.4 + p.seed) * 0.06);
     }
     for (const parts of this.rowMeshes) for (const im of parts) im.instanceMatrix.needsUpdate = true;

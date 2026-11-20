@@ -559,8 +559,35 @@ function blobGeo() {
   return blobPart;
 }
 const MOBILE_PROPS = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+/**
+ * Telefon/tablet: her 40 m hücresi ayrı InstancedMesh ve aynı modelin hücreleri aynı geometri nesnesini paylaşıyordu.
+ * three.js köşe düzenini (VAO) geometri başına tuttuğu için her hücre çiziminde düzeni baştan kuruyordu: köyde karede
+ * ~450 ek GL komutu (tablette ana iş parçacığının en büyük kalemi). Her hücreye aynı GPU tamponlarını kullanan hafif bir
+ * geometri kabuğu verilir; düzeni bir kez kurulur. Kabuklar yeniden kurulumda tekrar kullanılır (silinmez: silmek
+ * paylaşılan tamponları da silerdi). Görüntü aynı.
+ */
+const shells = new WeakMap<THREE.BufferGeometry, THREE.BufferGeometry[]>();
+let shellUse = new Map<THREE.BufferGeometry, number>();
+function shellOf(src: THREE.BufferGeometry): THREE.BufferGeometry {
+  if (!MOBILE_PROPS) return src;
+  let list = shells.get(src);
+  if (!list) { list = []; shells.set(src, list); }
+  const i = shellUse.get(src) ?? 0; shellUse.set(src, i + 1);
+  if (list[i]) return list[i];
+  if (!src.boundingSphere) src.computeBoundingSphere();
+  if (!src.boundingBox) src.computeBoundingBox();
+  const g = new THREE.BufferGeometry();
+  if (src.index) g.setIndex(src.index);
+  for (const [k, a] of Object.entries(src.attributes)) g.setAttribute(k, a);
+  for (const gr of src.groups) g.addGroup(gr.start, gr.count, gr.materialIndex);
+  g.setDrawRange(src.drawRange.start, src.drawRange.count);
+  g.boundingSphere = src.boundingSphere; g.boundingBox = src.boundingBox;
+  list[i] = g;
+  return g;
+}
 export function buildProps(props: Prop[], heightAt: (x: number, y: number) => number, quality: string, blobs = false): THREE.Group {
   const root = new THREE.Group();
+  shellUse = new Map();
   const groups = new Map<string, Prop[]>();
   for (const p of props) {
     if ((quality === 'low' || MOBILE_PROPS) && (p.k === 'grasstuft' || p.k === 'flowers' || p.k === 'mushroom')) continue; // telefonda küçük süs yok
@@ -576,7 +603,7 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
     if (!model) continue;
     const fixedRot = k === 'gate' || k === 'signpost' || k === 'house' || k === 'stall' || k === 'fence' || k === 'dock' || k === 'waterfall' || k === 'tent' || k === 'banner' || k === 'portalstone' || k === 'well';
     for (const part of model) {
-      const im = new THREE.InstancedMesh(part.geo, typeof part.mat === 'string' ? mat(part.mat) : part.mat, list.length);
+      const im = new THREE.InstancedMesh(shellOf(part.geo), typeof part.mat === 'string' ? mat(part.mat) : part.mat, list.length);
       list.forEach((p, i) => {
         // çit: v=1 kuzey-güney doğrultusunda (bahçenin yan kenarları), diğerleri doğu-batı
         const rot = k === 'fence' && p.v === 1 ? Math.PI / 2 : fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
@@ -595,10 +622,17 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
     }
     const br = blobs ? BLOB_R[k as PropKind] : undefined;
     if (br) {
-      const bp = blobGeo(), im = new THREE.InstancedMesh(bp.geo, bp.mat, list.length);
+      const bp = blobGeo(), im = new THREE.InstancedMesh(shellOf(bp.geo), bp.mat, list.length);
       list.forEach((p, i) => { pos.set(p.x * U, heightAt(p.x, p.y) - 0.03, p.y * U); q.identity(); s.setScalar(br * p.s); m4.compose(pos, q, s); im.setMatrixAt(i, m4); });
       im.renderOrder = 1; im.computeBoundingSphere(); root.add(im);
     }
+  }
+  if (MOBILE_PROPS) {
+    // Telefon/tablet: proplar hiç hareket etmez (dünya grubu da başlangıçta durur). Dünya matrisleri bir kez hesaplanır,
+    // sonra her karedeki matris güncelleme turu bu yüzlerce nesneyi atlar.
+    root.updateMatrixWorld(true);
+    root.traverse((o) => { o.matrixAutoUpdate = false; });
+    root.updateMatrixWorld = () => {};
   }
   return root;
 }

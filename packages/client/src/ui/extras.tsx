@@ -321,8 +321,10 @@ export function BossCompass({ game }: { game: Game }) {
         const cy = Math.cos(game.camYaw), sy = Math.sin(game.camYaw);
         const sx = dx * cy - dy * sy, sz = dx * sy + dy * cy;
         const ang = Math.atan2(sz, sx) * 180 / Math.PI + 90;
-        (el.querySelector('.bc-arrow') as HTMLElement).style.transform = `rotate(${ang}deg)`;
-        (el.querySelector('.bc-d') as HTMLElement).textContent = `${Math.round(d / 32)} m`;
+        const ar = el.querySelector('.bc-arrow') as HTMLElement & { _t?: string }, tr = `rotate(${Math.round(ang)}deg)`;
+        if (ar._t !== tr) { ar._t = tr; ar.style.transform = tr; }
+        const dd = el.querySelector('.bc-d') as HTMLElement & { _c?: string }, c = `${Math.round(d / 32)} m`;
+        if (dd._c !== c) { dd._c = c; dd.textContent = c; }
       }
       raf = requestAnimationFrame(loop);
     };
@@ -350,12 +352,14 @@ export function BossCountdowns({ game }: { game: Game }) {
     let raf = 0;
     const loop = () => {
       const el = box.current; const r = game.renderer;
+      // yalnız değişen yazılır: her kare aynı metni/konumu yazmak sayfa düzenini her kare yeniden hesaplatıyordu
       if (el && r) list.forEach((b, i) => {
-        const node = el.children[i] as HTMLElement; if (!node) return;
+        const node = el.children[i] as HTMLElement & { _d?: string; _t?: string; _c?: string }; if (!node) return;
         const p = r.project(b.x, b.y, 3.2);
-        node.style.display = p.vis ? '' : 'none';
-        node.style.transform = `translate(${p.x}px, ${p.y}px) translate(-50%, -100%)`;
-        (node.querySelector('b') as HTMLElement).textContent = fmtCountdown((b.nextAt ?? 0) - nowSrv());
+        const d = p.vis ? '' : 'none'; if (node._d !== d) { node._d = d; node.style.display = d; }
+        if (!p.vis) return;
+        const tr = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) translate(-50%, -100%)`; if (node._t !== tr) { node._t = tr; node.style.transform = tr; }
+        const c = fmtCountdown((b.nextAt ?? 0) - nowSrv()); if (node._c !== c) { node._c = c; (node.querySelector('b') as HTMLElement).textContent = c; }
       });
       raf = requestAnimationFrame(loop);
     };

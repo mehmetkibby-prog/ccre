@@ -99,6 +99,8 @@ export class Game {
   private chainN = new Map<number, number>();
   /** ekranın yenileme hızı (Hz): ayarlardaki tanı satırı için, kare aralıklarının ortancasından */
   hz = 0; private steps: number[] = [];
+  /** tanı: karenin ana iş parçacığındaki süresi (ms, yumuşatılmış) — ayarlar satırında telefon/tablette gösterilir */
+  workMs = 0;
   stopped = false;
   hoverId = 0;
   pingSent = 0; pingPerf = 0; pingSamples: number[] = [];
@@ -199,7 +201,9 @@ export class Game {
         if (acc < ft - 2) return;
         acc -= ft; if (acc < 0) acc = 0;
       }
+      const w0 = performance.now();
       this.frame(t);
+      this.workMs += (performance.now() - w0 - this.workMs) * 0.05;
     };
     this.raf = requestAnimationFrame(loop);
     this.timers.push(window.setInterval(() => this.sendPing(), 2000));

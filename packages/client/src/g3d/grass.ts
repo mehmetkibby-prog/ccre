@@ -3,6 +3,7 @@ import { TILE, type MapLayout } from '@col/shared';
 import { U } from './terrain.ts';
 import { addWind, addFade, fadeR } from './materials.ts';
 import { leafTexture } from './textures.ts';
+const MOBILE_GRASS = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
 /**
  * Dünyaya sabitlenmiş çimen alanı.
@@ -99,7 +100,7 @@ export class GrassField {
       mats.push(m4.compose(p, q, s).clone());
     }
     if (!mats.length) return null;
-    const im = new THREE.InstancedMesh(this.geo, this.mat, mats.length);
+    const im = new THREE.InstancedMesh(this.geoFor(), this.mat, mats.length);
     mats.forEach((m, i) => im.setMatrixAt(i, m));
     im.receiveShadow = true;
     im.castShadow = false;
@@ -107,8 +108,34 @@ export class GrassField {
     return im;
   }
 
+  /**
+   * Telefon/tablet: çimen parçaları aynı geometriyi paylaşınca three.js her parçanın çiziminde köşe düzenini (VAO) baştan
+   * kuruyordu. Her parçaya aynı GPU tamponlarını kullanan hafif bir kabuk verilir (havuzdan; parça kalkınca geri döner).
+   */
+  private shellPool: THREE.BufferGeometry[] = []; private shellAll: THREE.BufferGeometry[] = [];
+  private geoFor(): THREE.BufferGeometry {
+    if (!MOBILE_GRASS) return this.geo;
+    const pooled = this.shellPool.pop(); if (pooled) return pooled;
+    const src = this.geo;
+    if (!src.boundingSphere) src.computeBoundingSphere();
+    if (!src.boundingBox) src.computeBoundingBox();
+    const g = new THREE.BufferGeometry();
+    if (src.index) g.setIndex(src.index);
+    for (const [k, a] of Object.entries(src.attributes)) g.setAttribute(k, a);
+    g.boundingSphere = src.boundingSphere; g.boundingBox = src.boundingBox;
+    this.shellAll.push(g);
+    return g;
+  }
+  private lastCx = NaN; private lastCz = NaN; private pending = true;
   /** Görüş yarıçapındaki parçaları ekle, uzaktakileri kaldır. Kare başına en fazla 2 parça üretilir. */
   update(px: number, pz: number) {
+    // telefon/tablet: oyuncu aynı parça hücresindeyken ve bekleyen parça yokken tarama yapılmaz (her kare metin anahtarı
+    // ve dizi üretip çöp yapıyordu)
+    if (MOBILE_GRASS) {
+      const cx = Math.floor(px / CHUNK), cz = Math.floor(pz / CHUNK);
+      if (cx === this.lastCx && cz === this.lastCz && !this.pending) return;
+      this.lastCx = cx; this.lastCz = cz;
+    }
     const R = this.radius;
     const c0x = Math.floor((px - R) / CHUNK), c1x = Math.floor((px + R) / CHUNK);
     const c0z = Math.floor((pz - R) / CHUNK), c1z = Math.floor((pz + R) / CHUNK);
@@ -120,6 +147,7 @@ export class GrassField {
     }
     want.sort((a, b) => a[0] - b[0]);
     const limit = this.chunks.size === 0 ? want.length : 3;
+    this.pending = want.length > limit;
     for (const [, cx, cz] of want.slice(0, limit)) {
       const im = this.build(cx, cz);
       this.chunks.set(cx + ',' + cz, im);
@@ -128,8 +156,8 @@ export class GrassField {
     for (const [key, im] of this.chunks) {
       const [cx, cz] = key.split(',').map(Number);
       const ccx = (cx + 0.5) * CHUNK, ccz = (cz + 0.5) * CHUNK;
-      if (Math.hypot(ccx - px, ccz - pz) > R + CHUNK * 2.5) { if (im) { this.group.remove(im); im.dispose(); } this.chunks.delete(key); }
+      if (Math.hypot(ccx - px, ccz - pz) > R + CHUNK * 2.5) { if (im) { this.group.remove(im); im.dispose(); if (im.geometry !== this.geo) this.shellPool.push(im.geometry); } this.chunks.delete(key); }
     }
   }
-  dispose() { for (const im of this.chunks.values()) if (im) im.dispose(); this.chunks.clear(); this.geo.dispose(); this.mat.dispose(); }
+  dispose() { for (const im of this.chunks.values()) if (im) im.dispose(); this.chunks.clear(); this.geo.dispose(); for (const g of this.shellAll) g.dispose(); this.shellAll = []; this.shellPool = []; this.mat.dispose(); }
 }

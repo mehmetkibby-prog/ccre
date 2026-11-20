@@ -1025,7 +1025,7 @@ export class Renderer3D {
     shared.time.value = now / 1000;
     this.terrain.update(now);
     if (this.towerFx) { const st = store.get(); this.towerFx.update(now, st.tower, st.towerHold, st.towerSeqAt); }
-    if (this.gardenFx) this.gardenFx.update(now, dt, store.get().garden);
+    if (this.gardenFx) this.gardenFx.update(now, dt, store.get().garden, MOBILE ? this.camTarget : undefined);
     if (this.forgeFx) { const st = store.get(); this.forgeFx.update(now, st.forge, (id) => (id === st.entityId ? this.self?.obj.position : this.views.get(id)?.obj.position) ?? null); }
     // yönetimden yeni yıl aç/kapa: nesneler (çeşme ↔ ağaç) ve süs yeniden kurulur
     if (this.layout && this.nyActive() !== this.nyOn && this.propsGroup) {

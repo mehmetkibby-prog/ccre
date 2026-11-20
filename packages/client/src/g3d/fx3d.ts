@@ -15,6 +15,9 @@ const MAXP = 2000;
  * her pikselde hesaplanır (yoğunluğu 0 olsa bile); 4 ışık mobil GPU'da karenin belirgin bir payını yiyordu. */
 const FX_LIGHTS = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 1 : 4;
 const tmpC = new THREE.Color();
+/** parçacık rengi metinleri bir kez çözümlenir (kar/yaprak her kare yeni parçacık doğurur; her seferinde metin ayrıştırıp çöp üretiyordu) */
+const colorCache = new Map<string, THREE.Color>();
+const colorOf = (c: string) => { let v = colorCache.get(c); if (!v) { v = new THREE.Color(c); if (colorCache.size < 512) colorCache.set(c, v); } return v; };
 
 export class Fx3D {
   texts: FloatText[] = [];
@@ -88,7 +91,7 @@ export class Fx3D {
   /** Tek parçacık (metre cinsinden dünya konumu). */
   spawn(x: number, y: number, z: number, vx: number, vy: number, vz: number, life: number, size: number, color: string | THREE.Color, grav = 0, drag = 0) {
     if (this.parts.length >= MAXP) return;
-    const c = typeof color === 'string' ? tmpC.set(color) : color;
+    const c = typeof color === 'string' ? colorOf(color) : color;
     this.parts.push({ x, y, z, vx, vy, vz, life, max: life, size, r: c.r, g: c.g, b: c.b, grav, drag });
   }
   light(x: number, y: number, h: number, color: string, intensity: number, ms: number) {
@@ -139,7 +142,7 @@ export class Fx3D {
       const h = (p.kind === 'arrow' ? 1.35 : 1.5) + Math.sin(t * Math.PI) * (p.kind === 'arrow' ? 0.6 : 0.25) - t * 0.3;
       o.position.set(x * U, this.heightAt(x, y) + h, y * U);
       o.lookAt(tx * U, this.heightAt(tx, ty) + 1.0, ty * U);
-      if (p.kind !== 'arrow') { tmpC.set(p.color); for (let k = 0; k < 2; k++) this.spawn(o.position.x, o.position.y, o.position.z, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.6, 380, 0.35, tmpC); }
+      if (p.kind !== 'arrow') { const pc = colorOf(p.color); for (let k = 0; k < 2; k++) this.spawn(o.position.x, o.position.y, o.position.z, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.6, 380, 0.35, pc); }
       else if (Math.random() < 0.5) this.spawn(o.position.x, o.position.y, o.position.z, 0, 0, 0, 200, 0.12, '#ffffff');
     }
     for (const [p, o] of this.projObjs) if (now - p.t0 >= p.dur) { this.group.remove(o); disposeObj(o); this.projObjs.delete(p); }
