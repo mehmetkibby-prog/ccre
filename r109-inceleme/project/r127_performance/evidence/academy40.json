@@ -1,0 +1,221 @@
+{
+  "date": "2026-11-20",
+  "release": "R127_PERF2",
+  "archiveSha256": "4e6c57f5457cb48776ec923642f3717505f6cefeffa3a96f6e7db308383c5f7f",
+  "packageCommit": "abe0f41e5ecf4e0d4c1e1ad8f9c811d4ed06da6b",
+  "runtimeModulesComparedToArchive": 23,
+  "testEnvironment": "Isolated local TCP socket handoff, native game, signed Academy configuration, separate bot process and four real channel processes. Login open was simulated for gameplay testing. Duration is the measured window after warmup. The idle baseline is not subtracted. This evidence does not establish live deployment.",
+  "priorR127Farm": {
+    "realm": "r2",
+    "players": 40,
+    "durationSeconds": 90.0,
+    "capacityPerChannel": 10,
+    "playersPerChannel": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10
+    },
+    "allPlayersReadyAtEnd": true,
+    "pendingActionsAtEnd": 0,
+    "errors": 0,
+    "serverFaults": 0,
+    "socketDisconnects": 0,
+    "socketErrors": 0,
+    "actionReplies": 4742,
+    "committedKillsCount": 808,
+    "committedKillP95Ms": 122.37,
+    "killCounterIncrease": 1471,
+    "moves": {
+      "forestMoves": 4024
+    },
+    "zones": {
+      "forest": 40,
+      "tower": 0,
+      "solo": 0,
+      "mist": 0,
+      "black": 0,
+      "rune_v2": 0,
+      "shared_boss": 0
+    },
+    "seededBackgroundMonsters": 6000,
+    "scenario": "forest",
+    "attacks": {
+      "forestAttacks": 3056
+    },
+    "localReceipts": {},
+    "fullActorCaptures": 61,
+    "mainEventLoopBusyPct": 19.28,
+    "channelEventLoops": {
+      "channel-1": {
+        "busyPct": 10.72,
+        "maxPauseMs": 34.6
+      },
+      "channel-2": {
+        "busyPct": 10.6,
+        "maxPauseMs": 28.2
+      },
+      "channel-3": {
+        "busyPct": 10.52,
+        "maxPauseMs": 22.54
+      },
+      "channel-4": {
+        "busyPct": 11.24,
+        "maxPauseMs": 40.63
+      }
+    },
+    "maxChannelPauseMs": 40.63,
+    "maxMainPauseMs": 62.1,
+    "worstChannelTickP95Ms": 6.76,
+    "worstChannelTickP99Ms": 10.72,
+    "cpuShareOf4TestCoresPct": 26.58,
+    "reportSha256": "2ec3345a2f6a14f379c3a438b8ce99792dc25cf53b9015387f94983f2c287260",
+    "socketTransport": "production-style-socket-handoff"
+  },
+  "releasedFarm": {
+    "realm": "r2",
+    "players": 40,
+    "durationSeconds": 90.0,
+    "capacityPerChannel": 10,
+    "playersPerChannel": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10
+    },
+    "allPlayersReadyAtEnd": true,
+    "pendingActionsAtEnd": 0,
+    "errors": 0,
+    "serverFaults": 0,
+    "socketDisconnects": 0,
+    "socketErrors": 0,
+    "actionReplies": 4676,
+    "committedKillsCount": 741,
+    "committedKillP95Ms": 136.31,
+    "killCounterIncrease": 1373,
+    "moves": {
+      "forestMoves": 4039
+    },
+    "zones": {
+      "forest": 40,
+      "tower": 0,
+      "solo": 0,
+      "mist": 0,
+      "black": 0,
+      "rune_v2": 0,
+      "shared_boss": 0
+    },
+    "seededBackgroundMonsters": 6000,
+    "scenario": "forest",
+    "attacks": {
+      "forestAttacks": 3038
+    },
+    "localReceipts": {
+      "use_potion": 0,
+      "collect": 80
+    },
+    "fullActorCaptures": 4,
+    "mainEventLoopBusyPct": 19.76,
+    "channelEventLoops": {
+      "channel-1": {
+        "busyPct": 11.12,
+        "maxPauseMs": 33.26
+      },
+      "channel-2": {
+        "busyPct": 9.81,
+        "maxPauseMs": 24.13
+      },
+      "channel-3": {
+        "busyPct": 10.89,
+        "maxPauseMs": 40.63
+      },
+      "channel-4": {
+        "busyPct": 11.89,
+        "maxPauseMs": 42.54
+      }
+    },
+    "maxChannelPauseMs": 42.54,
+    "maxMainPauseMs": 74.65,
+    "worstChannelTickP95Ms": 7.57,
+    "worstChannelTickP99Ms": 11.31,
+    "cpuShareOf4TestCoresPct": 26.95,
+    "reportSha256": "432b9fcc82813ae7e67f36d7e23a46a3d2538197e35e74267705dcf09ad5149d",
+    "socketTransport": "production-style-socket-handoff"
+  },
+  "releasedMixed": {
+    "realm": "r2",
+    "players": 40,
+    "durationSeconds": 60.0,
+    "capacityPerChannel": 10,
+    "playersPerChannel": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10
+    },
+    "allPlayersReadyAtEnd": true,
+    "pendingActionsAtEnd": 0,
+    "errors": 0,
+    "serverFaults": 0,
+    "socketDisconnects": 0,
+    "socketErrors": 0,
+    "actionReplies": 2893,
+    "committedKillsCount": 264,
+    "committedKillP95Ms": 106.68,
+    "killCounterIncrease": 305,
+    "moves": {
+      "mistMoves": 385,
+      "towerMoves": 1182
+    },
+    "zones": {
+      "forest": 8,
+      "tower": 8,
+      "solo": 8,
+      "mist": 8,
+      "black": 4,
+      "rune_v2": 4,
+      "shared_boss": 0
+    },
+    "seededBackgroundMonsters": 6000,
+    "scenario": "mixed",
+    "attacks": {
+      "forestAttacks": 485,
+      "soloAttacks": 504,
+      "blackAttacks": 252,
+      "rune_v2Attacks": 252,
+      "mistAttacks": 421,
+      "towerAttacks": 158
+    },
+    "localReceipts": {
+      "use_potion": 0,
+      "collect": 0
+    },
+    "fullActorCaptures": 55,
+    "mainEventLoopBusyPct": 20.24,
+    "channelEventLoops": {
+      "channel-1": {
+        "busyPct": 11.29,
+        "maxPauseMs": 50.07
+      },
+      "channel-2": {
+        "busyPct": 10.62,
+        "maxPauseMs": 27.98
+      },
+      "channel-3": {
+        "busyPct": 10.3,
+        "maxPauseMs": 38.4
+      },
+      "channel-4": {
+        "busyPct": 14.06,
+        "maxPauseMs": 27.43
+      }
+    },
+    "maxChannelPauseMs": 50.07,
+    "maxMainPauseMs": 54.98,
+    "worstChannelTickP95Ms": 8.66,
+    "worstChannelTickP99Ms": 13.94,
+    "cpuShareOf4TestCoresPct": 29.56,
+    "reportSha256": "69623c282ff43ef181a225c2373feb216f1b07c8b4d67938714f4bd03a16e4b8",
+    "socketTransport": "production-style-socket-handoff"
+  }
+}
