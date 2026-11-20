@@ -1,3 +1,4 @@
+import {isDeepStrictEqual} from 'node:util';
 import {visibleShops} from './shop-feed-r127.mjs';
 import {zumrutGatherForR96,forgetZumrutGatherR96} from './zumrut-gather-projection-r96.mjs';
 import {mergeZumrutNodeDepletionsR93,zumrutNodeProjectionR93} from './zumrut-node-projection-r93.mjs';
@@ -18,6 +19,11 @@ const empty=Object.freeze({entities:Object.freeze({}),fields:Object.freeze({})})
 const pveEntries489=r35Options.channelMicro?cachedEntries:nativeEntries;
 const future=(now,...values)=>Math.min(Infinity,...values.filter(v=>Number.isFinite(v)&&v>now));
 const sameScalarRow=(a,b)=>a===b||!!a&&Object.keys(a).length===Object.keys(b).length&&Object.keys(b).every(k=>Object.is(a[k],b[k]));
+function updatePublicPlayer(room,row){
+ const value=publicWorldPlayer(row);
+ if(isDeepStrictEqual(room.staticPlayers.get(row.id),value))return;
+ room.staticPlayers.set(row.id,value);room.revision++;
+}
 const pickColumns=(row,keys)=>{const value={};for(const k of keys)value[k]=row[k];return value;};
 const privateFields=Object.freeze(['quest_kills438','quest_fish438','realtime_scope_version']);
 
@@ -62,7 +68,7 @@ export class WorldProjection {
   if(data.area==='zumrut')mergeZumrutNodeDepletionsR93(this,data.zumrutR93?.nodeDepletions,this.clock());
   const key=JSON.stringify([worldPushRoom(data),colLabPlayerRun(id)]),previous=this.subscribers.get(id);
   let room=this.rooms.get(key);if(!room)this.rooms.set(key,room={key:worldPushRoom(data),cacheKey:key,stateRoom:JSON.stringify([data.world.cycle,data.channel,data.area,data.area==='arena'?(data.arenaMatch?.id??''):'' ]),staticPlayers:new Map(),playerRows:new Map(),revision:0,version:0,common:null,deadline:-Infinity});
-  for(const row of data.players){const value=publicWorldPlayer(row),old=room.staticPlayers.get(row.id);if(JSON.stringify(old)!==JSON.stringify(value)){room.staticPlayers.set(row.id,value);room.revision++;}}
+  for(const row of data.players)updatePublicPlayer(room,row);
   const sub={id,room,data,ownerRow:data.players.find(p=>p.id===id),seq:previous?.seq??0,last:previous?.room===room?previous.last:null,lastCommon:previous?.lastCommon,lastSentAt:previous?.lastSentAt??-Infinity,revision:(previous?.revision??0)+1,closed:false,cache:null,reset:previous?.room!==room};
   sub.marketRevision=marketRevision;if((previous?.data.zumrutR93?.equippedTool??'')!==(data.zumrutR93?.equippedTool??''))room.revision++;this.subscribers.set(id,sub);this.native.seedFriends487(id,friends);
   if(previous&&previous.room!==room)this.cleanup();return sub;
@@ -72,8 +78,9 @@ export class WorldProjection {
   demand(sub&&owner?.id===id&&sub.data.area===owner.area&&sub.data.channel===owner.channel,'committed_projection_scope');
   sub.ownerRow=owner;sub.data={...sub.data,...values,players:sub.data.players.map(p=>p.id===id?owner:p)};
   sub.cache=null;sub.privateOwnerCache=null;sub.revision++;
-  const row=publicWorldPlayer(owner);sub.room.staticPlayers.set(id,row);sub.room.revision++;
+  updatePublicPlayer(sub.room,owner);
  }
+ updatePublicOwnerR127(id){const sub=this.subscribers.get(id);if(sub)updatePublicPlayer(sub.room,sub.ownerRow);}
  refreshPotion(row){
   const sub=this.subscribers.get(row.id);if(!sub||sub.data.area!==row.area||sub.data.channel!==row.channel)return false;
   const owner={...sub.ownerRow};for(const key of POTION_REFRESH_FIELDS)if(Object.hasOwn(owner,key))owner[key]=row[key];
@@ -97,8 +104,8 @@ export class WorldProjection {
  common(sub,now){
   const room=sub.room,version=this.roomVersion(room),maintenance=this.globals.__colRealm?.maintenance?.policy?.revision??0;
   if(room.common&&room.mountRevision===(this.mounts?.revision??0)&&room.stateVersion===version&&room.builtRevision===room.revision&&room.globalRevision===this.globalRevision&&room.eventRevision===this.eventRevision&&room.engagementRevision===this.engagementRevision&&room.maintenance===maintenance&&now>=room.builtAt&&now<room.deadline){this.metrics.commonHits++;return room.common;}
-  const projected=this.native.project({id:'',loadlabViewerId:sub.id,room,data:sub.data}),next={players:publicPlayerCache?(room.publicPlayerCache??=new PublicPlayerCache({view:this.view,mounts:this.mounts,toolFor:id=>this.subscribers.get(id)?.data.zumrutR93?.equippedTool??'',gatherFor:(id,time)=>zumrutGatherForR96(this,id,time)})).project(projected.players,now):projected.players.map(p=>this.mountedPlayer(timedPlayerView(p,this.view.player(p.id),now),now)),monsters:projected.monsters,combatEvents:projected.combatEvents};
-  room.previous=room.common;room.common=next;room.delta=room.previous?diffWorld(room.previous,next,{linearDiff:true}):null;if(room.previous)this.metrics.commonDiffs++;
+  const projected=this.native.project({id:'',commonOnly:true,loadlabViewerId:sub.id,room,data:sub.data}),next={players:publicPlayerCache?(room.publicPlayerCache??=new PublicPlayerCache({view:this.view,mounts:this.mounts,toolFor:id=>this.subscribers.get(id)?.data.zumrutR93?.equippedTool??'',gatherFor:(id,time)=>zumrutGatherForR96(this,id,time)})).project(projected.players,now):projected.players.map(p=>this.mountedPlayer(timedPlayerView(p,this.view.player(p.id),now),now)),monsters:projected.monsters,combatEvents:projected.combatEvents};
+  room.previous=room.common;room.common=next;room.visibleIds=new Set(next.players.map(player=>player.id));room.delta=room.previous?diffWorld(room.previous,next,{linearDiff:true}):null;if(room.previous)this.metrics.commonDiffs++;
   this.wire.prepare(next,room.delta);
   let deadline=Infinity;
   for(const p of room.staticPlayers.values()){const live=this.view.player(p.id);if(live)deadline=future(now,deadline,(live.last_seen+31)*1000,timedPlayerDeadline(p,live,now),zumrutGatherForR96(this,p.id,now)?.finishAtMs);}
@@ -130,7 +137,8 @@ export class WorldProjection {
   const live=this.view.player(sub.id),cached=sub.cache,room=sub.room,wave=this.waveView(sub.data.area,sub.data.channel,common.monsters,now),castleNotice=this.castleNotice(now);
   if(cached&&cached.zumrutNodesR93===zumrutNodesR93&&cached.castleNotice===castleNotice&&cached.mountRevision===(this.mounts?.revision??0)&&cached.wave===wave&&cached.common===common&&cached.revision===sub.revision&&cached.globalRevision===this.globalRevision&&cached.live===live&&cached.maintenance===(this.globals.__colRealm?.maintenance?.policy?.revision??0)&&now>=cached.at&&now<cached.until){this.metrics.privateHits++;return cached.value;}
   let next;
-  if(live.is_gm===1&&live.gm_invisible===1||!common.players.some(p=>p.id===sub.id)){next=this.native.project(sub);next={...next,players:next.players.map(p=>this.mountedPlayer(timedPlayerView(p,this.view.player(p.id),now),now))};}
+  const usesCommon=!(live.is_gm===1&&live.gm_invisible===1)&&room.visibleIds.has(sub.id);
+  if(!usesCommon){next=this.native.project(sub);next={...next,players:next.players.map(p=>this.mountedPlayer(timedPlayerView(p,this.view.player(p.id),now),now))};}
   else{
    const {timedFields,liveDrops503,maintenanceWorldView491}=this.rules;
    const own=this.privateOwner(sub,live,now);
@@ -149,7 +157,7 @@ export class WorldProjection {
   }
   if(castleNotice)next={...next,globalAnnouncement:castleNotice};
   if(zumrutNodesR93)next={...next,zumrutR93:{...next.zumrutR93,nodeDepletions:zumrutNodesR93.rows}};
-  sub.cache={zumrutNodesR93,castleNotice,mountRevision:this.mounts?.revision??0,value:next,common,live,wave,revision:sub.revision,globalRevision:this.globalRevision,maintenance:this.globals.__colRealm?.maintenance?.policy?.revision??0,at:now,until:Math.min(shopDeadline,this.privateDeadline(sub,next,now))};this.metrics.privateBuilds++;return next;
+  sub.cache={usesCommon,zumrutNodesR93,castleNotice,mountRevision:this.mounts?.revision??0,value:next,common,live,wave,revision:sub.revision,globalRevision:this.globalRevision,maintenance:this.globals.__colRealm?.maintenance?.policy?.revision??0,at:now,until:Math.min(shopDeadline,this.privateDeadline(sub,next,now))};this.metrics.privateBuilds++;return next;
  }
  project({id,now,changes,results=[],lastApplied=0}){
   this.sync(changes,now);const sub=this.subscribers.get(id);if(!sub)return results.length?{type:'frame',protocol:PROTOCOL,results,lastApplied}:null;
@@ -158,12 +166,15 @@ export class WorldProjection {
    const reset={type:'world_reset',protocol:WORLD_PUSH_PROTOCOL,epoch:this.epoch,room:sub.room.key,seq:++sub.seq,reason:'scope'};this.forget(id);return {type:'frame',protocol:PROTOCOL,world:reset,results,lastApplied};
   }
   const common=this.common(sub,now),next=this.snapshot(sub,common,now);let world;
+  const usesCommon=sub.cache.usesCommon;
   if(!sub.last||sub.reset){sub.reset=false;sub.last=next;sub.lastCommon=common;sub.lastSentAt=now;world={type:'world_snapshot',data:{...next,serverTime:Math.floor(now/1000),snapshotAtMs:now,worldPush:{enabled:true,revision:3,protocol:WORLD_PUSH_PROTOCOL,epoch:this.epoch,room:sub.room.key,seq:sub.seq}}};this.metrics.snapshots++;}
   else{
    let delta=empty;
    if(sub.last!==next){
-    if(!(live.is_gm===1&&live.gm_invisible===1)&&common.players.some(p=>p.id===id)&&sub.lastCommon===sub.room.previous&&sub.room.delta){
-     const privateDelta=diffWorld(sub.last,next,{rows:true,skipSharedEntities:true,linearDiff:true});delta={entities:{...sub.room.delta.entities,...privateDelta.entities},fields:privateDelta.fields};
+    // If the shared view is identical, only this player's private fields and personal row can differ.
+    const sharedDelta=sub.lastCommon===common?empty:sub.lastCommon===sub.room.previous?sub.room.delta:null;
+    if(usesCommon&&sub.lastUsedCommon&&sharedDelta){
+     const privateDelta=diffWorld(sub.last,next,{rows:true,skipSharedEntities:true,linearDiff:true});delta={entities:{...sharedDelta.entities,...privateDelta.entities},fields:privateDelta.fields};
      const old=sub.last.players.find(p=>p.id===id),own=next.players.find(p=>p.id===id),ownDelta=old===own?null:diffWorld({players:old?[old]:[]},{players:own?[own]:[]},{linearDiff:true}).entities.players;
      if(ownDelta){const shared=delta.entities.players??{upsert:[],remove:[],order:next.players.map(p=>p.id)};delta.entities.players={...shared,upsert:[...shared.upsert.filter(p=>p.id!==id),...ownDelta.upsert],remove:[...new Set([...shared.remove,...ownDelta.remove])]};}
     }else delta=diffWorld(sub.last,next,{rows:true,linearDiff:true});this.metrics.privateDiffs++;
@@ -172,6 +183,7 @@ export class WorldProjection {
    if(changed||now-sub.lastSentAt>=1000){world={type:'world_delta',protocol:WORLD_PUSH_PROTOCOL,epoch:this.epoch,room:sub.room.key,seq:++sub.seq,serverTime:Math.floor(now/1000),snapshotAtMs:now,...delta};sub.last=next;sub.lastSentAt=now;this.metrics[changed?'deltas':'heartbeats']++;}
    if(!changed)sub.last=next;sub.lastCommon=common;
   }
+  sub.lastUsedCommon=usesCommon;
   return world||results.length?{type:'frame',protocol:PROTOCOL,...(world?{world}:{}),results,lastApplied}:null;
  }
 }

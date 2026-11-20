@@ -63,6 +63,7 @@ class WorldMonsterMap extends Map {
   yield* this.shared.values();
  }
 }
+ const publicLiveFields=PLAYER_FIELDS.filter(key=>key!=='realtime_scope_version');
  class NativeProjection {project(sub){
   const now=this.now(),data=sub.data,sameRoom=p=>p.channel===data.channel&&p.area===data.area&&(p.area!=='arena'||p.arena_match_id&&p.arena_match_id===data.arenaMatch?.id);
   const projectedPlayers=[],cutoff=Math.floor(now/1000)-30;
@@ -77,20 +78,25 @@ class WorldMonsterMap extends Map {
    if(offline&&p.id!==sub.id||live.is_gm===1&&live.gm_invisible===1&&p.id!==sub.id)continue;
    const cache=p===publicRow?sub.room.playerRows:sub.ownerCache??=new Map(),prior=cache.get(p.id);
    if(prior?.p===p&&prior.live===live){projectedPlayers.push(prior.row);continue;}
-   const row={...p,...pick(live,PLAYER_FIELDS.filter(k=>k!=='realtime_scope_version')),...(p.id===sub.id?pick(live,['quest_kills438','quest_fish438','realtime_scope_version']):{})};cache.set(p.id,{p,live,row});projectedPlayers.push(row);
+   const row={...p,...pick(live,publicLiveFields),...(p.id===sub.id?pick(live,['quest_kills438','quest_fish438','realtime_scope_version']):{})};cache.set(p.id,{p,live,row});projectedPlayers.push(row);
   }
   const castleRoom=castleEnabled()&&data.channel===4;
   const players=projectedPlayers.sort((a,b)=>castleRoom?Number(b.id===sub.id)-Number(a.id===sub.id)||b.last_seen-a.last_seen:b.last_seen-a.last_seen).slice(0,castleRoom?100:80);
   const visiblePlayerIds=new Set(players.map(p=>p.id));
   const monsters=[];for(const base of this.monsters.candidates(data.area,data.channel)){
    let m=base;const e=this.combat?.entry('monsters',m.id);
-   if(!this.pending.has('monsters\u001e'+m.id)&&e?.dirtyAt&&e.current?.hp>0&&m.hp>0&&e.current.spawn_round===m.spawn_round){const cached=this.monsterCache.get(m.id);if(cached?.base===base&&cached.hp===e.current.hp)m=cached.row;else{m={...m,hp:e.current.hp};this.monsterCache.set(m.id,{base,hp:e.current.hp,row:m});}}
-   if(colLabCanSeeMonster(sub.loadlabViewerId??sub.id,m)&&((m.area===data.area&&(m.channel===0||m.channel===data.channel))||(m.is_boss===1&&!colLabIsMonster(m.id))||m.id==='dragon-world-1')&&(!m.summoned||m.hp>0)){const targetIds=[];for(const id of this.worldLoop?.engagedByMonster.get(m.id)??[]){const engagement=this.worldLoop.engagements.get(id),p=this.player(id);if(engagement?.spawn_round===m.spawn_round&&engagement.expires_at_ms>=now&&p&&visiblePlayerIds.has(id)&&p.hp>0&&sameRoom(p)&&(!(p.is_gm===1&&p.gm_invisible===1)||p.id===sub.id))targetIds.push(id);}targetIds.sort();const key=JSON.stringify(targetIds),cache=sub.room.targetRows??=new Map(),old=cache.get(m.id);if(old?.base===m&&old.key===key)m=old.row;else{const base=m;m={...m,targetIds};cache.set(m.id,{base,key,row:m});}monsters.push(m);}
+   if(e?.dirtyAt&&!this.pending.has('monsters\u001e'+m.id)&&e.current?.hp>0&&m.hp>0&&e.current.spawn_round===m.spawn_round){const cached=this.monsterCache.get(m.id);if(cached?.base===base&&cached.hp===e.current.hp)m=cached.row;else{m={...m,hp:e.current.hp};this.monsterCache.set(m.id,{base,hp:e.current.hp,row:m});}}
+   if(colLabCanSeeMonster(sub.loadlabViewerId??sub.id,m)&&((m.area===data.area&&(m.channel===0||m.channel===data.channel))||(m.is_boss===1&&!colLabIsMonster(m.id))||m.id==='dragon-world-1')&&(!m.summoned||m.hp>0)){const engaged=this.worldLoop?.engagedByMonster.get(m.id);
+    const cache=sub.room.targetRows??=new Map(),old=cache.get(m.id);
+    if((!engaged||engaged.size===0||engaged.length===0)&&old?.base===m&&old.key==='[]'){monsters.push(old.row);continue;}
+    const targetIds=[];for(const id of engaged??[]){const engagement=this.worldLoop.engagements.get(id),p=this.player(id);if(engagement?.spawn_round===m.spawn_round&&engagement.expires_at_ms>=now&&p&&visiblePlayerIds.has(id)&&p.hp>0&&sameRoom(p)&&(!(p.is_gm===1&&p.gm_invisible===1)||p.id===sub.id))targetIds.push(id);}targetIds.sort();const key=targetIds.length?JSON.stringify(targetIds):'[]';if(old?.base===m&&old.key===key)m=old.row;else{const base=m;m={...m,targetIds};cache.set(m.id,{base,key,row:m});}monsters.push(m);}
   }
   monsters.sort((a,b)=>a.is_boss-b.is_boss||a.is_stone-b.is_stone||(a.id<b.id?-1:a.id>b.id?1:0));
   const combatEvents=[];for(const [id,e]of this.events){if(e.created_at<now-2200){this.events.delete(id);continue;}const attacker=this.player(e.player_id),target=this.player(e.target_id);if(colLabCanSeeCombat(sub.loadlabViewerId??sub.id,e)&&attacker&&sameRoom(attacker)&&(!(attacker.is_gm===1&&attacker.gm_invisible===1)||attacker.id===sub.id)&&(!(target?.is_gm===1&&target.gm_invisible===1)||target.id===sub.id))combatEvents.push(e);}
   combatEvents.sort((a,b)=>b.created_at-a.created_at||b.id-a.id);
-  return {...data,maintenance438:this.player(sub.id)?.is_gm===1?null:maintenanceWorldView491(),maintenanceRevision491:globalThis.__colRealm?.maintenance?.policy?.revision??0,...timedFields(data,monsters,now,id=>this.partyPlayer486(id)),...(sub.id?{friends:this.friendsView487(sub.id,data.friends,now)}:{}),...(this.bossLeaders?stoneBossFields476(this.bossLeaders,data.area,data.channel,monsters,sub.id):{}),totalOnline:this.totalOnline??data.totalOnline,world:this.world?{...data.world,...pick(this.world,Object.keys(data.world))}:data.world,players,monsters,combatEvents:combatEvents.slice(0,512).reverse(),drops:liveDrops503(data.drops,now),serverTime:Math.floor(now/1000),snapshotAtMs:now};
+  const visibleEvents=combatEvents.slice(0,512).reverse();
+  if(sub.commonOnly)return {players,monsters,combatEvents:visibleEvents};
+  return {...data,maintenance438:this.player(sub.id)?.is_gm===1?null:maintenanceWorldView491(),maintenanceRevision491:globalThis.__colRealm?.maintenance?.policy?.revision??0,...timedFields(data,monsters,now,id=>this.partyPlayer486(id)),...(sub.id?{friends:this.friendsView487(sub.id,data.friends,now)}:{}),...(this.bossLeaders?stoneBossFields476(this.bossLeaders,data.area,data.channel,monsters,sub.id):{}),totalOnline:this.totalOnline??data.totalOnline,world:this.world?{...data.world,...pick(this.world,Object.keys(data.world))}:data.world,players,monsters,combatEvents:visibleEvents,drops:liveDrops503(data.drops,now),serverTime:Math.floor(now/1000),snapshotAtMs:now};
  }
 forgetFriends487(owner){
   const ids=this.friendByOwner487?.get(owner);if(!ids)return;
