@@ -1,8 +1,10 @@
+import { StoragePanel, storageTab } from './storage.tsx';
+import { MatRow } from './matinfo.tsx';
 import { installAvailable, onInstallChange, promptInstall } from '../game/install.ts';
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, plusAdd, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower,
+  CLASSES, MAPS, SLOTS, SLOT_NAMES, RARITY, ITEM_TPL, ENCHANTS, MATERIAL, SHOPS, upgradeStep, upgradeFailDown, isUpgradable, plusAdd, MAX_PLUS, sellPrice, MARKET_VALUE, itemIconName, masteryChance, itemDisplayName, itemPower, uniqueExtra,
   transformConf, transformGroup, classSkill, skillUpCost, skillPointsUsed, TUNING, STAT_MAX, STAT_GAIN, getLayout, TILE, inMarket, STALL_MAX_ITEMS, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MALL, mallIcon, skillBuffVal, skillDesc, skillMultAt, skillHealPct, trNum, type SkillDef, EVO_TIERS, EVO_NAMES, EVO_COLORS, evoAdd, type ItemInstance, type Slot, type ClassId,
 } from '@col/shared';
 import { api } from '../api.ts';
@@ -62,6 +64,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'tower' && <TowerPanel />}
       {p === 'forge' && <ForgePanel />}
       {p === 'craft' && <CraftPanel />}
+      {p === 'storage' && <StoragePanel />}
       {p === 'quests' && <QuestPanel />}
       {p === 'guild' && <GuildPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
@@ -133,6 +136,7 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
           {(it.evo ?? 0) < EVO_TIERS && <span className="muted">Evrim avı {(it.kills ?? 0).toLocaleString('tr-TR')} / {TUNING.evo[tpl.slot][it.evo ?? 0].kills.toLocaleString('tr-TR')}</span>}
         </div>
       ) : null}
+      {uniqueExtra(it) && <div className="tip-uq"><span>Eşsiz bonusu</span><b>{uniqueExtra(it)!.label}</b><small className="muted">efsunlardan ayrı</small></div>}
       {it.ench.length > 0 && (
         <div className="tip-ench">
           <div className="sect">Efsunlar · {it.ench.length}</div>
@@ -305,12 +309,10 @@ function Inventory({ game }: { game: Game }) {
             <div className="mats">
               {mats.length === 0 && <div className="muted" style={{ fontSize: 13 }}>Malzemen yok. Canavarlardan düşer.</div>}
               {mats.map(([k, n]) => {
-                const m = MATERIAL.get(k);
                 return (
-                  <div key={k} className="mat" title={m?.desc}>
-                    <img src={iconUrl(m?.icon ?? 'bag')} alt="" /><div style={{ flex: 1 }}>{m?.name ?? k}<div className="muted" style={{ fontSize: 11 }}>× {n.toLocaleString('tr-TR')}</div></div>
+                  <MatRow key={k} k={k} n={n}>
                     {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion' || k.startsWith('potion_')) && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' || k.startsWith('potion_') ? 'Kullan' : 'Aç'}</button>}
-                  </div>
+                  </MatRow>
                 );
               })}
             </div>
@@ -690,7 +692,7 @@ function Settings({ game }: { game: Game }) {
 function NpcDialog({ game }: { game: Game }) {
   const npc = useStore((s) => s.npc);
   if (!npc) return null;
-  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo (yakında)', bank: 'Mücevher bankası (yakında)', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule (Sv. 25+)', forge: 'Kor Kulesi (Sv. 10+)', evolve: 'Evrim (silah ve zırh)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat', garden: 'İksir kaynat · Orak al' };
+  const labels: Record<string, string> = { upgrade: `Artı Bas (silah ve zırh, en çok +${MAX_PLUS})`, shop_smith: 'Demirci tezgâhı', shop_general: 'Erzak al', sell: 'Eşya sat', storage: 'Depo', bank: 'Mücevher ve Öz deposu', craft: 'Üretim', teleport: 'Işınlan', dungeon: 'Seferler (yakında)', tower: 'Kadim Kule (Sv. 25+)', forge: 'Kor Kulesi (Sv. 10+)', evolve: 'Evrim (silah ve zırh)', mount: 'Binek görevi · Bineğim', fishing_shop: 'Olta al · Balık sat', garden: 'İksir kaynat · Orak al' };
   const act = (a: string) => {
     if (a === 'teleport') store.set({ panel: 'teleport' });
     else if (a === 'shop_general') store.set({ panel: 'shop', shop: 'general' });
@@ -704,6 +706,7 @@ function NpcDialog({ game }: { game: Game }) {
     else if (a === 'forge') store.set({ panel: 'forge' });
     else if (a === 'evolve') { upgradeTab.next = 'evrim'; store.set({ panel: 'upgrade' }); }
     else if (a === 'craft') store.set({ panel: 'craft' });
+    else if (a === 'storage' || a === 'bank') { storageTab.next = a === 'bank' ? 'para' : 'esya'; store.set({ panel: 'storage' }); }
     else notify('Bu hizmet bir sonraki aşamada açılacak.', 'info');
   };
   const greet: Record<string, string> = {
@@ -918,7 +921,7 @@ function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
             </div>
             <div className="sect" style={{ marginTop: 6 }}>Kurallar</div>
             <div className="muted" style={{ fontSize: 12, lineHeight: 1.5 }}>
-              Silah, zırh, miğfer, takılar ve çizme <b style={{ color: RARITY.unique.color }}>Eşsiz</b>'e dönüşür. <b>Artı ve evrim kalır, efsunlar silinir</b>; güç artar.
+              Silah, zırh, miğfer, takılar ve çizme <b style={{ color: RARITY.unique.color }}>Eşsiz</b>'e dönüşür. <b>Artı ve evrim kalır, efsunlar silinir</b>; güç belirgin artar. Ekstra (efsunlardan ayrı): silah oyunculara karşı güç +%10, zırh büyü hızı +%10, küpe saldırı hızı +%10, kolye kritik +%10, bilezik can +700.
               Eşsiz silah ve zırh altın parıltı ve hafif duman saçar. Başarısızlıkta eşya bozulmaz, yalnız bedel gider.
             </div>
           </div>
@@ -935,6 +938,7 @@ function TransformForge({ game, tabs }: { game: Game; tabs: React.ReactNode }) {
                 {done ? <div className="ok" style={{ textAlign: 'center' }}>Eşsiz'e dönüştü! Artısı korundu, efsunları silindi.</div> : cost && (
                   <>
                     <div className="gain"><span>{g === 'weapon' ? 'Saldırı' : 'Savunma'} {itemPower(it)} → <b style={{ color: RARITY.unique.color }}>{after}</b></span>{cost.chance < 100 && <span> · Başarı %{cost.chance}</span>}</div>
+                    {uniqueExtra({ ...it, rarity: 'unique' }) && <div className="gain"><span>Ekstra: <b style={{ color: RARITY.unique.color }}>{uniqueExtra({ ...it, rarity: 'unique' })!.label}</b> <span className="muted">(efsunlardan ayrı)</span></span></div>}
                     <div className="req">
                       {Object.entries(cost.mats).map(([k, q]) => {
                         const have = m[k] ?? 0, md = MATERIAL.get(k);

@@ -293,6 +293,7 @@ export class Game {
       }
       case 'world': store.set({ worldHealth: m.health, online: m.online }); break;
       case 'garden': store.set({ garden: { ready: Array.isArray(m.ready) ? m.ready : [], at: performance.now(), sickle: !!m.sickle } }); break;
+      case 'storage': if (m.far) { store.set({ storage: { items: [], mats: {}, gems: 0, essence: 0, pages: 0, cap: 0, far: true } }); break; } store.set({ storage: { items: Array.isArray(m.items) ? m.items : [], mats: m.mats ?? {}, gems: Number(m.gems) || 0, essence: Number(m.essence) || 0, pages: Number(m.pages) || 2, cap: Number(m.cap) || 48 } }); break;
       case 'gather': {
         if (m.op === 'start') {
           const start = performance.now();

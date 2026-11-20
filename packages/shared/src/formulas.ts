@@ -1,6 +1,6 @@
 import { CLASSES, type ClassId } from './content/classes.ts';
 import { TUNING } from './tuning.ts';
-import { ITEM_TPL, itemPower, type ItemInstance, type Slot, type EnchantType } from './content/items.ts';
+import { ITEM_TPL, itemPower, uniqueExtra, type ItemInstance, type Slot, type EnchantType } from './content/items.ts';
 
 /** En yüksek seviye. */
 export const LEVEL_CAP_BASE = 65;
@@ -71,6 +71,9 @@ export function computeStats(c: CharCore): CombatStats {
     else if (t.slot === 'armor' || t.slot === 'helmet' || t.slot === 'boots') dfn += p;
     else { dfn += Math.round(p * 0.4); hpFlat += p * 6; }
     for (const e of it.ench) s.enchants[e.t] = (s.enchants[e.t] ?? 0) + e.v;
+    // Eşsiz (dönüşmüş) eşyanın efsunlardan bağımsız ekstra bonusu
+    const ux = uniqueExtra(it);
+    if (ux) { if (ux.k === 'hp') hpFlat += ux.v; else s[ux.k] += ux.v; }
     if (it.plus >= 5) {
       if (t.slot === 'weapon') s.pvpPower += 5;
       if (t.slot === 'boots') s.pvpPower += 3;

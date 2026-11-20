@@ -1019,6 +1019,8 @@ export function MallTab({ t, setT, dis, epin }: { t: GameTuning; setT: SetT; dis
                 <div className="grow"><b>{m.no}. {m.name}</b><small>{m.desc}</small></div>
                 {fixed ? <span className="pill">{m.soon ? 'Yakında' : 'E-PIN'}</span> : <>
                   <Num v={ml.price?.[m.id]} def={m.price} min={0} max={1e7} step={1} w={80} dis={dis} on={(v) => { const p = { ...(ml.price ?? {}) }; if (v === undefined) delete p[m.id]; else p[m.id] = v; setM({ price: Object.keys(p).length ? p : undefined }); }} />
+                  <label className="mall-adm-disc" title="İndirim (%): satış fiyatı normal fiyattan bu kadar düşer"><small>İndirim %</small><Num v={ml.discount?.[m.id]} def={m.discount ?? 0} min={0} max={90} step={1} w={56} dis={dis} on={(v) => { const p = { ...(ml.discount ?? {}) }; if (v === undefined) delete p[m.id]; else p[m.id] = v; setM({ discount: Object.keys(p).length ? p : undefined }); }} /></label>
+                  <b className="mall-adm-final" title="Satış fiyatı">{Math.max((ml.discount?.[m.id] ?? m.discount ?? 0) > 0 ? 1 : 0, Math.round((ml.price?.[m.id] ?? m.price) * (100 - (ml.discount?.[m.id] ?? m.discount ?? 0)) / 100))} ÇP</b>
                   <button type="button" className={'switch' + (on ? ' on' : '')} disabled={dis} title={on ? 'Satışta' : 'Kapalı'} onClick={() => { const s2 = new Set(off); if (on) s2.add(m.id); else s2.delete(m.id); setM({ off: s2.size ? [...s2] : undefined }); }}><i /></button>
                 </>}
               </div>

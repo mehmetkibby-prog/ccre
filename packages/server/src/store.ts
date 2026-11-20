@@ -145,13 +145,15 @@ export class CharacterStore {
       `SELECT c.*, a.role FROM characters c JOIN accounts a ON a.id=c.account_id WHERE c.id=$1 AND c.deleted_at IS NULL`, [charId]);
     if (!r.rowCount) return null;
     const row = r.rows[0];
-    const items = await pool.query(`SELECT id, tpl, rarity, plus, location, slot, locked, data, source FROM items WHERE char_id=$1 AND location IN ('bag','equip') ORDER BY created_at`, [charId]);
+    const items = await pool.query(`SELECT id, tpl, rarity, plus, location, slot, locked, data, source FROM items WHERE char_id=$1 AND location IN ('bag','equip','storage') ORDER BY created_at`, [charId]);
     const mats = await pool.query(`SELECT key, qty FROM materials WHERE char_id=$1`, [charId]);
     const bag: ItemInstance[] = [];
     const equip: Partial<Record<Slot, ItemInstance>> = {};
+    const storage: ItemInstance[] = [];
     for (const it of items.rows) {
       const inst: ItemInstance = { id: it.id, tpl: it.tpl, rarity: it.rarity, plus: it.plus, ench: it.data.ench ?? [], locked: it.locked, evo: it.data.evo, kills: it.data.kills, src: it.source ?? undefined };
-      if (it.location === 'equip' && it.slot && !equip[it.slot as Slot]) equip[it.slot as Slot] = inst;
+      if (it.location === 'storage') storage.push(inst);
+      else if (it.location === 'equip' && it.slot && !equip[it.slot as Slot]) equip[it.slot as Slot] = inst;
       else bag.push(inst);
     }
     const materials: Record<string, number> = {};
@@ -161,7 +163,7 @@ export class CharacterStore {
       level: row.level, xp: Number(row.xp), hp: row.hp, map: row.map, x: row.x, y: row.y,
       gems: Number(row.gems), essence: Number(row.essence), cp: Number(row.cp), arenaCoin: Number(row.arena_coin),
       stats: { str: row.stat_str, res: row.stat_res, vit: row.stat_vit }, skills: row.skill_levels, spec: row.spec,
-      kills: Number(row.kills), bag, equip, materials, misc: row.misc ?? {}, saveVersion: Number(row.save_version),
+      kills: Number(row.kills), bag, equip, materials, misc: row.misc ?? {}, storage, saveVersion: Number(row.save_version),
     };
     return c;
   }
@@ -171,6 +173,7 @@ async function writeItems(client: pg.PoolClient, c: CharState) {
   const rows: { it: ItemInstance; loc: string; slot: string | null }[] = [];
   for (const it of c.bag) rows.push({ it, loc: 'bag', slot: null });
   for (const [slot, it] of Object.entries(c.equip)) if (it) rows.push({ it, loc: 'equip', slot });
+  for (const it of c.storage ?? []) rows.push({ it, loc: 'storage', slot: null });
   if (rows.length) {
     const vals: unknown[] = [];
     const ph: string[] = [];
@@ -184,7 +187,8 @@ async function writeItems(client: pg.PoolClient, c: CharState) {
        ON CONFLICT (id) DO UPDATE SET char_id=EXCLUDED.char_id, rarity=EXCLUDED.rarity, plus=EXCLUDED.plus, location=EXCLUDED.location,
          slot=EXCLUDED.slot, locked=EXCLUDED.locked, data=EXCLUDED.data`, vals);
   }
-  await client.query(`DELETE FROM items WHERE char_id=$1 AND location IN ('bag','equip') AND NOT (id = ANY($2::uuid[]))`, [c.id, rows.map((r) => r.it.id)]);
+  // eşya tek yerde: çanta, kuşanılmış ya da depo (bir işlemde yazılır; arada kaybolmaz, çoğalmaz)
+  await client.query(`DELETE FROM items WHERE char_id=$1 AND location IN ('bag','equip','storage') AND NOT (id = ANY($2::uuid[]))`, [c.id, rows.map((r) => r.it.id)]);
   const keys = Object.keys(c.materials).filter((k) => c.materials[k] > 0);
   if (keys.length) {
     await client.query(

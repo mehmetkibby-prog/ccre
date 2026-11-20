@@ -42,7 +42,7 @@ export interface ZoneLootTune {
   matQty?: Record<string, [number, number]>;
 }
 export interface DropTune { kind: 'item' | 'mat' | 'mall'; key: string; rarity?: string; chance: number; qty: [number, number] }
-export interface MallTune { price?: Record<string, number>; off?: string[]; wings?: { atk?: number; def?: number; crit?: number } }
+export interface MallTune { price?: Record<string, number>; /** indirim yüzdesi (0–90) */ discount?: Record<string, number>; off?: string[]; wings?: { atk?: number; def?: number; crit?: number } }
 /** Dönüşüm (Haso): bkz. content/transform.ts */
 export interface TransformCostTune { gems: number; mats: Record<string, number>; chance: number; minPlus: number; minLevel: number }
 export interface TransformTune { enabled?: boolean; from?: string[]; cost?: Partial<Record<'weapon' | 'armor' | 'other', Partial<TransformCostTune>>> }
@@ -482,6 +482,8 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   const ml = obj(r.mall), mall: MallTune = {};
   const mp: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(ml.price))) { const n = num(v, 0, 1e7); if (key(k) && n !== undefined) mp[k] = Math.round(n); }
   if (Object.keys(mp).length) mall.price = mp;
+  const md: Record<string, number> = {}; for (const [k, v] of Object.entries(obj(ml.discount))) { const n = num(v, 0, 90); if (key(k) && n !== undefined) md[k] = Math.round(n); }
+  if (Object.keys(md).length) mall.discount = md;
   if (Array.isArray(ml.off)) { const off = ml.off.filter((x): x is string => typeof x === 'string' && key(x)).slice(0, 60); if (off.length) mall.off = off; }
   const wg = obj(ml.wings), wa = num(wg.atk, 0, 1e5), wd = num(wg.def, 0, 1e5), wc = num(wg.crit, 0, 100);
   if (wa !== undefined || wd !== undefined || wc !== undefined) mall.wings = { ...(wa !== undefined ? { atk: wa } : {}), ...(wd !== undefined ? { def: wd } : {}), ...(wc !== undefined ? { crit: wc } : {}) };

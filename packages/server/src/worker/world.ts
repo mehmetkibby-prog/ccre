@@ -1,6 +1,6 @@
 import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
-  COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
+  COMBAT_LOCK_MS, BAG_EQUIP_CAP, storageCap, STORAGE_MAX_PAGES, STORAGE_BASE_PAGES, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
@@ -361,6 +361,7 @@ export class World {
       case 'evolve': return this.cmdEvolve(p, String(c.item ?? ''), String(c.req ?? ''));
       case 'worldboss': return this.cmdWorldBoss(p, String(c.req ?? ''));
       case 'garden': return this.cmdGarden(p, c as { op: string; i?: number; r?: number; n?: number; req?: string });
+      case 'storage': return this.cmdStorage(p, c as { op: string; id?: string; key?: string; n?: number; cur?: string });
       case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
       case 'quest': return this.cmdQuest(p, String(c.op), String(c.id), String(c.req ?? ''));
@@ -1414,6 +1415,67 @@ export class World {
     p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.sendJson(p, { t: 'drink' });
     this.notice(p, `${MATERIAL.get(key)?.name}: ${e.min} dk boyunca etkin.`, 'ok');
+  }
+
+  /**
+   * Depo (Depocu Rauf'un evi): eşya, malzeme, Nesne Market eşyası, Mücevher ve Öz bırakılır/alınır.
+   * Hepsi karakterin kendi kaydında: taşıma bellekte tek adımda (çantadan çıkar, depoya girer), kayıt da tek
+   * işlemde yazılır; arada eşya kaybolmaz ya da çoğalmaz. Yalnız Rauf'un yanında ve ticaret yokken çalışır.
+   */
+  private cmdStorage(p: Player, c: { op: string; id?: string; key?: string; n?: number; cur?: string }) {
+    const ch = p.char;
+    if (!this.nearNpc(p, 'rauf')) { this.sendJson(p, { t: 'storage', far: true }); return this.notice(p, 'Depoya Depocu Rauf\'un yanında erişebilirsin.'); }
+    if (this.social.inTrade(p)) return this.notice(p, 'Ticaret sürerken depo kullanılamaz.');
+    const v = (ch.misc.vault ??= {}), st = (ch.storage ??= []);
+    const cap = storageCap(v.pages ?? 0);
+    const n = Math.floor(Number(c.n));
+    const qty = Number.isFinite(n) ? Math.max(0, Math.min(n, 1e12)) : 0;
+    const fail = (t: string) => { this.notice(p, t); this.sendStorage(p); };
+    let changed = false;
+    switch (c.op) {
+      case 'open': break;
+      case 'put_item': {
+        const i = ch.bag.findIndex((x) => x.id === c.id);
+        if (i < 0) return fail('Eşya çantanda yok.');
+        if (st.length >= cap) return fail(`Depo dolu (${cap} bölme). Ek Depo Sayfası ile genişletebilirsin.`);
+        st.push(ch.bag.splice(i, 1)[0]); changed = true; break;
+      }
+      case 'take_item': {
+        const i = st.findIndex((x) => x.id === c.id);
+        if (i < 0) return fail('Eşya depoda yok.');
+        if (ch.bag.length >= BAG_EQUIP_CAP) return fail('Çantan dolu.');
+        ch.bag.push(st.splice(i, 1)[0]); changed = true; break;
+      }
+      case 'put_mat': case 'take_mat': {
+        const k = String(c.key ?? '');
+        if (!MATERIAL.has(k) && !MALL.has(k)) return fail('Bu depoya konmaz.');
+        const vm = (v.mats ??= {});
+        const from = c.op === 'put_mat' ? ch.materials : vm, to = c.op === 'put_mat' ? vm : ch.materials;
+        const q = Math.min(from[k] ?? 0, qty);
+        if (q <= 0) return fail('Yeterli miktar yok.');
+        from[k] -= q; if (from[k] <= 0) delete from[k];
+        to[k] = (to[k] ?? 0) + q;
+        if (!Object.keys(vm).length) delete v.mats;
+        changed = true; break;
+      }
+      case 'put_cur': case 'take_cur': {
+        const cur = c.cur === 'gems' ? 'gems' : c.cur === 'essence' ? 'essence' : null;
+        if (!cur) return;
+        const inBag = ch[cur], inVault = v[cur] ?? 0;
+        const q = Math.min(c.op === 'put_cur' ? inBag : inVault, qty);
+        if (q <= 0) return fail('Yeterli miktar yok.');
+        if (c.op === 'put_cur') { ch[cur] = inBag - q; v[cur] = inVault + q; } else { ch[cur] = inBag + q; v[cur] = inVault - q; }
+        if (!v[cur]) delete v[cur];
+        changed = true; break;
+      }
+      default: return;
+    }
+    if (changed) { p.selfDirty |= 1 | 2; this.save(p, true); }
+    this.sendStorage(p);
+  }
+  private sendStorage(p: Player) {
+    const v = p.char.misc.vault ?? {};
+    this.sendJson(p, { t: 'storage', items: p.char.storage ?? [], mats: v.mats ?? {}, gems: v.gems ?? 0, essence: v.essence ?? 0, pages: Math.min(STORAGE_MAX_PAGES, STORAGE_BASE_PAGES + (v.pages ?? 0)), cap: storageCap(v.pages ?? 0) });
   }
 
   private nearNpc(p: Player, npcId: string): boolean {
@@ -2527,6 +2589,13 @@ export class World {
       return done(`${m.name} etkin (${h >= 48 ? Math.round(h / 24) + ' gün' : h >= 1 ? h + ' saat' : Math.round(left / 60_000) + ' dakika'}).`, 1 | 2 | 4);
     }
     if (AUTO_POOL[key]) { if (this.seenReceipt(p, req)) return; c.misc.autoPool = (c.misc.autoPool ?? 0) + AUTO_POOL[key]; consume(); return done(`Oto iksir deposu: ${c.misc.autoPool.toLocaleString('tr-TR')} can.`); }
+    if (key === 'storage_page') {
+      const v = (c.misc.vault ??= {});
+      if (STORAGE_BASE_PAGES + (v.pages ?? 0) >= STORAGE_MAX_PAGES) return this.notice(p, `Depon en büyük boyutta (${STORAGE_MAX_PAGES} sayfa).`);
+      if (this.seenReceipt(p, req)) return;
+      v.pages = (v.pages ?? 0) + 1; consume(); this.sendStorage(p);
+      return done(`Depona yeni sayfa eklendi: ${STORAGE_BASE_PAGES + v.pages} sayfa, ${storageCap(v.pages)} bölme.`);
+    }
     if (CP_COUPON[key]) { if (this.seenReceipt(p, req)) return; c.cp += CP_COUPON[key]; consume(); return done(`${CP_COUPON[key]} ÇP hesabına eklendi.`); }
     if (key === 'fish_bait') { if (this.seenReceipt(p, req)) return; c.misc.bait = (c.misc.bait ?? 0) + 30; consume(); return done(`Bereketli Olta Yemi: sonraki ${c.misc.bait} avda balık iki kat.`); }
     if (key === 'protect_seal' || key === 'mastery_seal') return this.notice(p, 'Bu mühür Haso\'da artı basarken kendiliğinden kullanılır.', 'info');

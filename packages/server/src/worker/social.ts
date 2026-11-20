@@ -169,6 +169,8 @@ export class Social {
     for (const x of tr.side.values()) { x.locked = false; x.ok = false; } // teklif değişti: iki taraf yeniden kilitler
     this.pushTrade(tr);
   }
+  /** oyuncu şu an ticaret penceresinde mi (depo gibi eşya taşıyan işlemler beklesin) */
+  inTrade(p: Player) { return this.trades.has(p.char.id); }
   tradeLock(p: Player) { const tr = this.trades.get(p.char.id); if (!tr) return; tr.side.get(p.char.id)!.locked = true; this.pushTrade(tr); }
   tradeConfirm(p: Player) {
     const tr = this.trades.get(p.char.id); if (!tr) return;

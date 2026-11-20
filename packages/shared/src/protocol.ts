@@ -155,6 +155,8 @@ export type ClientCmd =
   | { t: 'evolve'; item: string; req: string }
   | { t: 'worldboss'; op: 'go'; req?: string }
   | { t: 'garden'; op: 'state' | 'buy' | 'start' | 'done' | 'cancel' | 'brew'; i?: number; r?: number; n?: number; req?: string }
+  /** Depo (Depocu Rauf): aç, eşya/malzeme/para bırak ya da al */
+  | { t: 'storage'; op: 'open' | 'put_item' | 'take_item' | 'put_mat' | 'take_mat' | 'put_cur' | 'take_cur'; id?: string; key?: string; n?: number; cur?: 'gems' | 'essence' }
   | { t: 'craft'; id: string; req: string }
   | { t: 'view'; w: number; h: number }
   | { t: 'quest'; op: 'accept' | 'abandon' | 'turnin'; id: string; req: string }

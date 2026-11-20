@@ -1,3 +1,4 @@
+import { BuffPips } from './matinfo.tsx';
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
 import { EventBadges, EventButton } from './events.tsx';
 import { GatherHud } from './garden.tsx';
@@ -347,6 +348,7 @@ function PlayerPlate() {
           </div>
         )}
         <div className="netinfo"><span>Kanal {ch}</span></div>
+        <BuffPips />
         <ModelBadge />
       </div>
     </div>

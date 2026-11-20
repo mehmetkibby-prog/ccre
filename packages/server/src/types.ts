@@ -24,6 +24,8 @@ export interface CharState {
   equip: Partial<Record<Slot, ItemInstance>>;
   materials: Record<string, number>;
   misc: CharMisc;
+  /** Depo (Depocu Rauf): eşyalar; malzeme ve para misc.vault içinde */
+  storage?: ItemInstance[];
   saveVersion: number;
 }
 export interface CharMisc {
@@ -45,6 +47,8 @@ export interface CharMisc {
   deadAt?: number; // epoch ms (ölüm durumu kalıcı)
   /** Nesne Market süreli etkileri: anahtar → bitiş (epoch ms) */
   buffs?: Record<string, number>;
+  /** Depo: malzeme/Nesne Market yığınları, Mücevher, Öz ve Ek Depo Sayfası sayısı */
+  vault?: { mats?: Record<string, number>; gems?: number; essence?: number; pages?: number };
   /** Oto iksir deposu (can) */
   autoPool?: number;
   /** Bereketli Olta Yemi: kalan av */

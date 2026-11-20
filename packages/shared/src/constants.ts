@@ -16,6 +16,12 @@ export const CHAT_MAX = 140;
 export const NAME_MIN = 2;
 export const NAME_MAX = 18;
 export const BAG_EQUIP_CAP = 35;
+/** Depo (Depocu Rauf): sayfa başına eşya bölmesi, başlangıç sayfası ve Ek Depo Sayfası ile en çok sayfa.
+ *  Malzeme, Nesne Market eşyası, Mücevher ve Öz bölme kaplamaz (yığın olarak durur). */
+export const STORAGE_PAGE_SLOTS = 24;
+export const STORAGE_BASE_PAGES = 2;
+export const STORAGE_MAX_PAGES = 6;
+export const storageCap = (extraPages: number) => STORAGE_PAGE_SLOTS * Math.min(STORAGE_MAX_PAGES, STORAGE_BASE_PAGES + Math.max(0, extraPages | 0));
 export const RESPAWN_DELAY_MS = 5_000;
 export const COMBAT_LOCK_MS = 6_000;
 export const PARTY_XP_RANGE = 2400;

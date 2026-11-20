@@ -105,12 +105,33 @@ export function itemDisplayName(it: ItemInstance): string {
   const prefix = it.rarity === 'white' ? '' : r.name + ' ';
   return `${it.evo ? EVO_NAMES[Math.min(3, it.evo)] + ' ' : ''}${prefix}${base}${it.plus ? ' +' + it.plus : ''}`;
 }
+/**
+ * Eşsiz (Haso'da dönüşmüş) eşyanın güç çarpanı yuvaya göre: dönüşüm hissedilsin diye Kızıl'ın çok üstünde.
+ * Silah 5,4 → 7,08 (ör. saldırı 65 → 85), gövde zırhı 3,9 → 5,5 (savunma 39 → 55), küpe/bilezik/kolye 3,9 → 7,5
+ * (savunma 16 → 30). Miğfer ve çizme Eşsiz'in genel çarpanında kalır. Yönetim Eşsiz için çarpan girdiyse o geçerli.
+ */
+export const UNIQUE_POWER: Partial<Record<Slot, number>> = { weapon: 7.08, armor: 5.5, necklace: 7.5, earring: 7.5, bracelet: 7.5 };
+/** Eşsiz eşyanın efsunlardan bağımsız ekstra bonusu (yuvaya göre) */
+export type UniqueExtraKey = 'atkSpeed' | 'hp' | 'crit' | 'skillSpeed' | 'pvpPower';
+export const UNIQUE_EXTRA: Partial<Record<Slot, { k: UniqueExtraKey; v: number; label: string }>> = {
+  earring: { k: 'atkSpeed', v: 10, label: 'Saldırı hızı +%10' },
+  bracelet: { k: 'hp', v: 700, label: 'Azami can +700' },
+  necklace: { k: 'crit', v: 10, label: 'Kritik şansı +%10' },
+  armor: { k: 'skillSpeed', v: 10, label: 'Büyü hızı +%10' },
+  weapon: { k: 'pvpPower', v: 10, label: 'Oyunculara karşı güç +%10' },
+};
+export function uniqueExtra(it: Pick<ItemInstance, 'tpl' | 'rarity'>) {
+  if (it.rarity !== 'unique') return null;
+  const t = ITEM_TPL.get(it.tpl);
+  return (t && UNIQUE_EXTRA[t.slot]) || null;
+}
 export function itemPower(it: ItemInstance): number {
   const t = ITEM_TPL.get(it.tpl);
   if (!t) return 0;
   // silah saldırıyı, diğerleri savunma/canı belirler; yönetim panelinden nadirlik başına değiştirilebilir
   const r = RARITY[it.rarity], ov = TUNING.rarityPower[it.rarity];
-  const mult = t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power;
+  const uq = it.rarity === 'unique' && !ov ? UNIQUE_POWER[t.slot] : undefined;
+  const mult = uq ?? (t.slot === 'weapon' ? ov?.weapon ?? r.weaponPower : ov?.armor ?? r.power);
   const base = Math.round(t.basePower * mult);
   // silah/zırh: artı ve evrim kademesinin yönetimdeki düz değeri eklenir (ör. güç 10, +1 değeri 10 → 20)
   if (isUpgradable(t.slot)) return base + plusAdd(t.slot, it.plus) + evoAdd(TUNING, t.slot, it.evo ?? 0);

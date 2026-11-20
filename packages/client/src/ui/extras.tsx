@@ -3,7 +3,7 @@
  * Ticaret Camı araması.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, MATERIAL, MONSTERS, Kind, WORLD_BOSS_ID, type MallCat } from '@col/shared';
+import { MALL_ITEMS, MALL, MALL_CATS, mallPrice, mallBasePrice, mallDiscount, mallForSale, mallIcon, MAPS, fishTable, fishingConf, ROD_ID, RARITY, itemDisplayName, TUNING, MATERIAL, MONSTERS, Kind, WORLD_BOSS_ID, type MallCat } from '@col/shared';
 import type { Game } from '../game/game.ts';
 import { store, useStore, notify, reqId, type BossInfo } from '../game/store.ts';
 import { onConfig } from '../admin/config.ts';
@@ -243,7 +243,7 @@ export function MallPanel({ game }: { game: Game }) {
                   <span className="mall-ic"><img src={iconUrl(mallIcon(m.id))} alt="" />{m.id === 'support_pack' && <><img className="pk2" src={iconUrl('mall_loot_charm')} alt="" /><img className="pk3" src={iconUrl('mall_crimson_wings')} alt="" /></>}</span>
                   <span className="mall-nm">{m.name}</span>
                   <span className="mall-ds">{m.desc}</span>
-                  {m.epin ? <span className="mall-tag">Kodla yüklenir</span> : m.soon ? <span className="mall-tag soon">Yakında</span> : sale ? <span className="mall-price"><img src={iconUrl('mall_epin_200')} alt="" />{price.toLocaleString('tr-TR')}</span> : <span className="mall-tag soon">Satışta değil</span>}
+                  {m.epin ? <span className="mall-tag">Kodla yüklenir</span> : m.soon ? <span className="mall-tag soon">Yakında</span> : sale ? <span className="mall-price"><img src={iconUrl('mall_epin_200')} alt="" />{mallDiscount(m.id) > 0 && <s className="mall-old">{mallBasePrice(m.id).toLocaleString('tr-TR')}</s>}{price.toLocaleString('tr-TR')}{mallDiscount(m.id) > 0 && <em className="mall-off">%{mallDiscount(m.id)} indirim</em>}</span> : <span className="mall-tag soon">Satışta değil</span>}
                   {(self.materials[m.id] ?? 0) > 0 && <span className="mall-own">Çantada {self.materials[m.id]}</span>}
                   {bought === m.id && <span className="mall-pop">Çantana eklendi! ✦</span>}
                 </button>
