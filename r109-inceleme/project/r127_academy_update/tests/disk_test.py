@@ -1,12 +1,25 @@
 import hashlib,os,sqlite3,sys,tempfile,unittest
 from contextlib import closing
 from unittest.mock import patch
+from types import SimpleNamespace
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'deployment/modules'))
 from disk_space import reclaim
 import disk_job
 
 class ReclaimTest(unittest.TestCase):
+ def test_operator_command_waits_for_the_worker_and_propagates_failed_cleanup(self):
+  with tempfile.TemporaryDirectory() as tmp:
+   package=Path(tmp)/'r127.zip';package.touch()
+   for code in (0,1):
+    calls=[]
+    def execute(args,**kw):
+     calls.append(args);return SimpleNamespace(returncode=code if args[0]=='systemd-run' else 0)
+    with patch.object(disk_job.subprocess,'run',side_effect=execute):
+     if code:
+      with self.assertRaisesRegex(RuntimeError,'tamamlanmadı'):disk_job.dispatch('disk_clean',package)
+     else:disk_job.dispatch('disk_clean',package)
+    self.assertIn('--wait',calls[0]);self.assertIn('--disk-worker',calls[0]);self.assertNotIn('--no-block',calls[0])
  def test_systemd_retries_restoring_the_game_after_an_interrupted_resume(self):
   with tempfile.TemporaryDirectory() as tmp:
    mark,guard=Path(tmp)/'active',Path(tmp)/'guard.conf'

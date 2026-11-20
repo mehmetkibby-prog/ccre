@@ -25,6 +25,19 @@ def resume():
 def dispatch(mode,archive):
     import installer as app
     if mode=='disk_finish':resume();return
+    if mode=='disk_clean':
+        package=str(Path(archive).resolve())
+        require(re.fullmatch(r'[/a-zA-Z0-9._-]+',package) and Path(package).is_file(),'Paketi /root/r127-toplu.zip adıyla kaydedin')
+        print('Disk denetimi başladı. İlerleme: journalctl -fu '+JOB,flush=True)
+        # The worker owns install.lock and repeats every precondition. Its
+        # systemd lifetime is independent of the operator shell. --wait also
+        # makes a following shell command conditional on successful recovery.
+        result=subprocess.run(['systemd-run','--wait','--unit='+JOB,'--collect','--property=Type=oneshot',
+            '--property=TimeoutStartSec=infinity','--property=ExecStopPost=/usr/bin/python3 '+package+' --disk-finish',
+            '/usr/bin/python3',package,'--disk-worker'])
+        subprocess.run(['journalctl','--unit='+JOB,'--lines=10','--no-pager','-o','cat'],check=False)
+        require(result.returncode==0,'Disk işlemi tamamlanmadı. Yukarıdaki birim kaydına bakın.')
+        return
     with lock(app.STATE.parent/'r23-backups/install.lock'):
         live=app.discover()
         require(live.state.get('r64Deployment',{}).get('version') in ('R126_ENCOUNTER1','R127_ACADEMY1'),'Disk bakımı R126 veya R127 gerektirir')
@@ -37,15 +50,6 @@ def dispatch(mode,archive):
         require(app.prop(UNIT,'ActiveState')=='active' and not (MARK.exists() or GUARD.exists()),'Efsane etkin olmalı ve başka disk bakımı bulunmamalı')
         fs=subprocess.check_output(['findmnt','-n','-o','FSTYPE','-T',str(path)],text=True).strip()
         require(fs in ('ext4','xfs'),'Bu dosya sisteminde boş blok iadesi doğrulanmadı')
-        if mode=='disk_clean':
-            package=str(Path(archive).resolve())
-            require(re.fullmatch(r'[/a-zA-Z0-9._-]+',package) and Path(package).is_file(),'Paketi /root/r127-toplu.zip adıyla kaydedin')
-            # systemd supervises both work and restoration even if noVNC is closed.
-            cmd=['systemd-run','--unit='+JOB,'--collect','--property=Type=oneshot','--property=TimeoutStartSec=infinity',
-                 '--property=ExecStopPost=/usr/bin/python3 '+package+' --disk-finish','/usr/bin/python3',package,'--disk-worker']
-            # --no-block releases install.lock before the transient unit executes.
-            subprocess.run([*cmd[:1],'--no-block',*cmd[1:]],check=True)
-            print('Disk bakımı sıraya alındı. İzlemek için: journalctl -fu '+JOB,flush=True);return
         require(mode=='disk_worker','Disk işlemi geçersiz')
         before=inspect_db(path)
         print(json.dumps(before),flush=True)
