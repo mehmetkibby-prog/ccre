@@ -5,7 +5,7 @@ import {
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
-  FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal,
+  FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal, skillHealPct,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
 } from '@col/shared';
@@ -810,7 +810,8 @@ export class World {
     switch (sk.kind) {
       case 'buff': {
         use(p.x, p.y);
-        const heal = Math.round(p.stats.maxHp * (sk.healPct ?? 0) / 100);
+        // geliştirme: her kademe +%4 yenileme (önceden kademe can yenilemeyi hiç etkilemiyordu)
+        const heal = Math.round(p.stats.maxHp * skillHealPct(sk, lvl) / 100);
         p.hp = Math.min(p.stats.maxHp, p.hp + heal); p.dirty |= Upd.HP;
         p.shieldUntil = this.now + (sk.durationMs ?? 0); p.shieldPct = sk.dmgReducePct ?? 0;
         z.emit(p.x, p.y, { e: Ev.HEAL, tgt: p.id, amount: heal });
@@ -819,7 +820,7 @@ export class World {
       }
       case 'heal': {
         use(p.x, p.y);
-        const heal = (q: Player) => { const h = Math.round(q.stats.maxHp * (sk.healPct ?? 0) / 100); q.hp = Math.min(q.stats.maxHp, q.hp + h); q.dirty |= Upd.HP; z.emit(q.x, q.y, { e: Ev.HEAL, tgt: q.id, amount: h }); };
+        const heal = (q: Player) => { const h = Math.round(q.stats.maxHp * skillHealPct(sk, lvl) / 100); q.hp = Math.min(q.stats.maxHp, q.hp + h); q.dirty |= Upd.HP; z.emit(q.x, q.y, { e: Ev.HEAL, tgt: q.id, amount: h }); };
         heal(p);
         z.emit(p.x, p.y, { e: Ev.FX, fx: Fx.HEAL_WAVE, x: p.x | 0, y: p.y | 0, r: sk.range, ms: 700, a: 0 });
         return;

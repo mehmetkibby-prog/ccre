@@ -5,7 +5,7 @@ import { onConfig } from '../admin/config.ts';
 import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame, WorldBossTimer } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillDesc, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
 import { Game, setDirectWs } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -402,7 +402,9 @@ function Minimap({ game }: { game: Game }) {
     const iv = setInterval(() => {
       const cv = ref.current, bg = bgRef.current; if (!cv || !bg) return;
       const ctx = cv.getContext('2d')!;
-      const S = 150; cv.width = S * 2; cv.height = S * 2; ctx.scale(2, 2);
+      // boyut yalnız ilk seferde: her çizimde genişlik/yükseklik yazmak tuvali her 0,2 sn'de baştan ayırtıyordu
+      const S = 150; if (cv.width !== S * 2) { cv.width = S * 2; cv.height = S * 2; }
+      ctx.setTransform(2, 0, 0, 2, 0, 0);
       const scale = 4 / TILE * 1.4; // piksel/dünya
       const cx = game.dx * scale, cy = game.dy * scale;
       ctx.fillStyle = '#000'; ctx.fillRect(0, 0, S, S);
@@ -542,7 +544,7 @@ function BottomBar({ game }: { game: Game }) {
     const locked = !sk || self.level < sk.unlock;
     const left = s > 0 ? Math.max(0, (cds[s] ?? 0) - now) : 0;
     return (
-      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} — ${sk.desc}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
+      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} (Sv. ${self.skills[s] ?? 1}) — ${skillDesc(sk, self.skills[s] ?? 1)}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerCancel={() => s === 0 && game.input.attackHeld && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
@@ -684,10 +686,19 @@ function CameraControls({ game }: { game: Game }) {
     };
   };
   const r = game.renderer;
+  // Döndürme: basılıyken çizilen her karede geçen süreyle döner (ekran 90/120 Hz olsa da kare kaçsa da hız sabit ve pürüzsüz).
+  // Önceden ekran yenilemesi başına sabit açı ekleniyordu: 90 Hz'de çizilen karelere 1-2-1-2 düşüp titriyordu.
+  const spin = (dir: number) => {
+    const stop = () => { if (r.camSpin === dir) r.camSpin = 0; };
+    return {
+      onPointerDown: (e: React.PointerEvent) => { e.preventDefault(); e.stopPropagation(); try { (e.target as HTMLElement).setPointerCapture?.(e.pointerId); } catch { /* */ } r.camSpin = dir; },
+      onPointerUp: stop, onPointerCancel: stop, onPointerLeave: stop,
+    };
+  };
   return (
     <div className="camctl" aria-label="Kamera">
-      <button aria-label="Kamerayı sola döndür" {...hold(() => { r.camYaw += 0.035; })}>⟲</button>
-      <button aria-label="Kamerayı sağa döndür" {...hold(() => { r.camYaw -= 0.035; })}>⟳</button>
+      <button aria-label="Kamerayı sola döndür" {...spin(1)}>⟲</button>
+      <button aria-label="Kamerayı sağa döndür" {...spin(-1)}>⟳</button>
       <button className="zoomb" aria-label="Yakınlaş" {...hold(() => { r.camZoom = Math.min(CAM_ZOOM_MAX, r.camZoom * 1.015); })}>+</button>
       <button className="zoomb" aria-label="Uzaklaş" {...hold(() => { r.camZoom = Math.max(CAM_ZOOM_MIN, r.camZoom / 1.015); })}>−</button>
       <button aria-label="Kamerayı sıfırla" className="small" onPointerDown={(e) => { e.preventDefault(); r.camYaw = 0; r.camZoom = CAM_ZOOM_DEFAULT; r.camPitch = CAM_PITCH_DEFAULT; }}>⌂</button>

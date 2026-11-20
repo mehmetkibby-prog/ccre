@@ -2088,3 +2088,8 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .skillrow .ic { position: relative; }
 .skillrow.sk-locked .ic .sk-img, .skillrow.sk-locked .ic > svg { filter: grayscale(1) brightness(.4); }
 .skillrow .ic .sk-lock img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(160, 200, 255, .55), 0 0 8px rgba(80, 160, 255, .5); }
+
+/* beceri gücü: şu anki kademe ve geliştirince */
+.sk-pow { margin-top: 3px; font-size: 12px; color: var(--text); }
+.sk-pow b { color: #ffd27a; }
+.sk-pow b.up { color: #7dffa0; }

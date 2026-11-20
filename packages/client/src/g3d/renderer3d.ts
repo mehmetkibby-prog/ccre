@@ -157,6 +157,8 @@ export class Renderer3D {
   private fishGears = new Map<View, { gear: FishGear; wx: number; wz: number; at: number; seen: number }>();
   private propsGroup: THREE.Group | null = null;
   /** Kamera: yatay açı (radyan), yakınlık (1 = varsayılan). Fareyle döndürülür, tekerlekle yaklaşılır. */
+  /** telefon kamera düğmesi basılıyken dönüş yönü (+1 sola, −1 sağa); karede geçen süreyle uygulanır */
+  camSpin = 0;
   camYaw = 0; camZoom = CAM_ZOOM_DEFAULT; camPitch = CAM_PITCH_DEFAULT; private camYawS = 0; private camZoomS = CAM_ZOOM_DEFAULT; private camPitchS = CAM_PITCH_DEFAULT;
   /** Dinamik çözünürlük: FPS düşünce piksel oranı kendiliğinden azalır. */
   private frameNo = 0;
@@ -359,7 +361,7 @@ export class Renderer3D {
     this.camera.far = th.far + 20; this.camera.updateProjectionMatrix(); // sisin ötesi çizilmez
     this.scene.background = this.skyGradient(th.top, th.fog);
     // ufukta dağlar (beyaz boşluk yerine manzara)
-    if (this.mountains) { this.scene.remove(this.mountains); this.mountains.geometry.dispose(); (this.mountains.material as THREE.Material).dispose(); }
+    if (this.mountains) { this.scene.remove(this.mountains); for (const c of this.mountains.children) (c as THREE.Mesh).geometry.dispose(); this.mountains.geometry.dispose(); (this.mountains.material as THREE.Material).dispose(); }
     this.mountains = buildMountains(l.def.theme, l.def.id.length * 13 + 5, MOBILE);
     this.scene.add(this.mountains);
     this.mtnTheme = l.def.theme; this.mtnSeed = l.def.id.length * 13 + 5;
@@ -1134,8 +1136,10 @@ export class Renderer3D {
     this.camTarget.x = tx; this.camTarget.z = tz;
     this.camTarget.y = first ? ty : this.camTarget.y + (ty - this.camTarget.y) * (1 - Math.pow(0.0005, dt / 1000));
     // yumuşak dönüş/yakınlaşma; yakınlaştıkça kamera alçalır (3B his)
+    if (this.camSpin) this.camYaw += this.camSpin * 0.0021 * Math.min(dt, 50); // ≈ 2,1 rad/sn (eski 60 Hz hızı)
     let dy = this.camYaw - this.camYawS; while (dy > Math.PI) dy -= Math.PI * 2; while (dy < -Math.PI) dy += Math.PI * 2;
-    this.camYawS += dy * Math.min(1, dt / 90);
+    // telefon/tablet: kare süresi dalgalansa da aynı yumuşaklık (üstel); bilgisayarda eski formül
+    this.camYawS += dy * (MOBILE ? 1 - Math.exp(-dt / 90) : Math.min(1, dt / 90));
     this.camZoomS += (this.camZoom * zoom - this.camZoomS) * Math.min(1, dt / 110);
     const zk = THREE.MathUtils.clamp((this.camZoomS - CAM_ZOOM_MIN) / (CAM_ZOOM_MAX - CAM_ZOOM_MIN), 0, 1); // 0 uzak · 1 yakın
     this.camPitch = THREE.MathUtils.clamp(this.camPitch, 0.1, 1.3);

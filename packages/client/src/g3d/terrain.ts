@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { TILE, type MapLayout } from '@col/shared';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { groundTextureArrays, GROUND_LAYERS, LAYER_NAMES, fbm } from './textures.ts';
+const MOBILE_T = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
 /** Sunucu birimi → metre */
 export const U = 1 / 40;
@@ -245,7 +246,39 @@ ${blendCode}
     this.mesh = new THREE.Mesh(geo, mat);
     this.mesh.receiveShadow = true;
     this.mesh.name = 'terrain';
+    if (MOBILE_T) this.buildChunks(geo, mat);
     this.buildWater(l);
+  }
+
+  /**
+   * Telefon/tablet: zemin tek parça çizildiğinde ekranın arkasında kalan bölümler de dahil karede ~93 bin üçgen işleniyordu
+   * (çözünürlükten bağımsız; tablette ekran kartının en büyük kalemlerinden). Zemin 36×36 hücrelik parçalara bölünür:
+   * parçalar aynı köşe tamponlarını ve malzemeyi paylaşır, yalnız görüş alanındakiler çizilir. Görüntü aynı.
+   */
+  private chunks: THREE.Mesh[] = [];
+  private buildChunks(geo: THREE.BufferGeometry, mat: THREE.Material) {
+    const idx = geo.index!.array as ArrayLike<number>, pos = geo.attributes.position as THREE.BufferAttribute;
+    const gx = this.hw - 1, gy = this.hh - 1, C = 36;
+    const Arr = pos.count < 65536 ? Uint16Array : Uint32Array;
+    for (let cy = 0; cy < gy; cy += C) for (let cx = 0; cx < gx; cx += C) {
+      const x1 = Math.min(gx, cx + C), y1 = Math.min(gy, cy + C);
+      const out = new Arr((x1 - cx) * (y1 - cy) * 6);
+      let o = 0, minY = Infinity, maxY = -Infinity;
+      for (let iy = cy; iy < y1; iy++) {
+        const from = (iy * gx + cx) * 6, to = (iy * gx + x1) * 6;
+        for (let k = from; k < to; k++) { const v = idx[k]; out[o++] = v; const h = pos.getY(v); if (h < minY) minY = h; if (h > maxY) maxY = h; }
+      }
+      const g = new THREE.BufferGeometry();
+      for (const [k, a] of Object.entries(geo.attributes)) g.setAttribute(k, a);
+      g.setIndex(new THREE.BufferAttribute(out, 1));
+      g.boundingBox = new THREE.Box3(new THREE.Vector3(cx * this.step, minY, cy * this.step), new THREE.Vector3(x1 * this.step, maxY, y1 * this.step));
+      g.boundingSphere = g.boundingBox.getBoundingSphere(new THREE.Sphere());
+      const m = new THREE.Mesh(g, mat); m.receiveShadow = true; m.name = 'terrain-chunk';
+      m.matrixAutoUpdate = false;
+      this.chunks.push(m); this.mesh.add(m);
+    }
+    // ana zemin nesnesi çizilmez (parçaları çizilir); kendisi yerinde kalır (ekleme/kaldırma ve malzeme aynı yoldan)
+    this.mesh.layers.disableAll();
   }
 
   private buildWater(l: MapLayout) {
@@ -340,6 +373,7 @@ ${blendCode}
   }
 
   dispose() {
+    for (const c of this.chunks) c.geometry.dispose(); this.chunks = [];
     this.mesh.geometry.dispose(); (this.mesh.material as THREE.Material).dispose();
     if (this.water) { this.water.geometry.dispose(); (this.water.material as THREE.Material).dispose(); }
   }

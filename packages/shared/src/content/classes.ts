@@ -61,6 +61,28 @@ export function skillBuffVal(sk: SkillDef, lvl: number) {
   return { k: b.k, ms: b.ms, v: b.v + up, v2: (b.v2 ?? 0) + (b.v2 ? up : 0) };
 }
 
+/** Beceri kademesinin çarpanı: her kademe +%4 (hasar ve iyileştirme). formulas.ts'deki skillDamageMult ile aynı. */
+const lvlMult = (lvl: number) => 1 + 0.04 * Math.max(0, lvl - 1);
+/** Türkçe ondalık (en çok 2 basamak): 1.3 → "1,3", 12.48 → "12,48" */
+export const trNum = (n: number) => (Math.round(n * 100) / 100).toLocaleString('tr-TR', { maximumFractionDigits: 2 });
+/** Kademeye göre hasar çarpanı (0: hasar vermeyen beceri) */
+export const skillMultAt = (sk: SkillDef, lvl: number) => (sk.mult > 0 ? sk.mult * lvlMult(lvl) : 0);
+/** Kademeye göre can yenileme yüzdesi (Çelik İrade, Yaşam Dalgası); bir ondalığa yuvarlı */
+export const skillHealPct = (sk: SkillDef, lvl: number) => (sk.healPct ? Math.round(sk.healPct * lvlMult(lvl) * 10) / 10 : 0);
+/**
+ * Açıklama metni, becerinin şu anki kademesine göre: metindeki hasar çarpanı, can yenileme ve güçlendirme yüzdeleri
+ * geliştirildikçe güncel değeri gösterir (ör. Sv. 3 Kalkan Darbesi: "1,3× hasar" yerine "1,4× hasar").
+ */
+export function skillDesc(sk: SkillDef, lvl: number): string {
+  let d = sk.desc;
+  if (lvl <= 1) return d;
+  if (sk.mult > 0) d = d.replace(trNum(sk.mult) + '×', trNum(skillMultAt(sk, lvl)) + '×');
+  if (sk.healPct) d = d.replace('%' + sk.healPct, '%' + trNum(skillHealPct(sk, lvl)));
+  const b = skillBuffVal(sk, lvl);
+  if (b && sk.buff) { d = d.replace('%' + sk.buff.v, '%' + b.v); if (sk.buff.v2) d = d.replace('%' + sk.buff.v2, '%' + b.v2); }
+  return d;
+}
+
 export interface ClassDef {
   id: ClassId;
   name: string;

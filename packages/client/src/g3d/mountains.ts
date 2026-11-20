@@ -166,6 +166,27 @@ export function buildMountains(themeId: string, seed = 7, lite = false): THREE.M
   });
   const m = new THREE.Mesh(g, mat);
   m.renderOrder = -10; m.frustumCulled = false; m.name = 'mountains';
+  if (lite) {
+    // Telefon/tablet: üç sıra × 1440 sütun tek parça çiziliyordu (karede ~52 bin üçgen, çoğu kameranın arkasında).
+    // Her sıra 8 yaya bölünür; aynı tamponlar, yalnız görüş alanındaki yaylar çizilir. Sıra çizim sırası korunur
+    // (arka sıra önce: derinlik yazılmıyor).
+    const S = 8, R = ROWS.length, per = (R - 1) * 6, P = g.attributes.position as THREE.BufferAttribute;
+    layers.forEach((_, li) => {
+      for (let sct = 0; sct < S; sct++) {
+        const i0 = Math.floor((sct * N) / S), i1 = Math.floor(((sct + 1) * N) / S);
+        const sg = new THREE.BufferGeometry();
+        for (const [k, a] of Object.entries(g.attributes)) sg.setAttribute(k, a);
+        sg.setIndex(g.index);
+        sg.setDrawRange(li * N * per + i0 * per, (i1 - i0) * per);
+        const box = new THREE.Box3(), v = new THREE.Vector3(), v0 = li * (N + 1) * R;
+        for (let i = i0; i <= i1; i++) for (let k = 0; k < R; k++) box.expandByPoint(v.fromBufferAttribute(P, v0 + i * R + k));
+        sg.boundingBox = box; sg.boundingSphere = box.getBoundingSphere(new THREE.Sphere());
+        const sm = new THREE.Mesh(sg, mat); sm.renderOrder = -12 + li; sm.name = 'mountains-arc';
+        m.add(sm);
+      }
+    });
+    m.layers.disableAll(); // ana halka çizilmez; yayları çizilir (konumu kamerayla birlikte kayar)
+  }
   // arka katman önce: ön katmanlar onun üstüne çizilir (derinlik yazılmadığı için sıra önemli)
   return m;
 }
@@ -235,10 +256,17 @@ export function buildMeshMountains(themeId: string, seed: number, lite: boolean,
   lists.forEach((L, kind) => {
     if (!L.length) return;
     const P = parts[kind]!;
+    if (lite) {
+      // Telefon/tablet: halkadaki dağlar ayrı nesne (aynı geometri ve malzeme); yalnız görüş alanındakiler çizilir.
+      // Tek InstancedMesh hepsini (çoğu kameranın arkasında) her karede çiziyordu: karede ~150 bin üçgen.
+      if (!P.geo.boundingSphere) P.geo.computeBoundingSphere();
+      L.forEach((m) => { const o = new THREE.Mesh(P.geo, P.mat); m.decompose(o.position, o.quaternion, o.scale); o.castShadow = false; o.receiveShadow = false; o.renderOrder = -5; group.add(o); });
+      return;
+    }
     const im = new THREE.InstancedMesh(P.geo, P.mat, L.length);
     L.forEach((m, i) => im.setMatrixAt(i, m));
     im.frustumCulled = false; im.castShadow = false; im.receiveShadow = false; im.renderOrder = -5;
     group.add(im);
   });
-  return { group, haze, dispose() { for (const c of group.children) (c as THREE.InstancedMesh).geometry.dispose(); owned.forEach((m) => m.dispose()); } };
+  return { group, haze, dispose() { const gs = new Set<THREE.BufferGeometry>(); for (const c of group.children) gs.add((c as THREE.Mesh).geometry); gs.forEach((g) => g.dispose()); owned.forEach((m) => m.dispose()); } };
 }
