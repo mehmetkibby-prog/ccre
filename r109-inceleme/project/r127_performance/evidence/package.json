@@ -1,0 +1,12 @@
+{
+  "file": "artifacts/R127_PERFORMANS_ab79739f3931.zip",
+  "sha256": "4e6c57f5457cb48776ec923642f3717505f6cefeffa3a96f6e7db308383c5f7f",
+  "bytes": 2973602,
+  "sources": [
+    "R125_RUNE_CLIENT1",
+    "R126_ENCOUNTER1",
+    "R127_ACADEMY1"
+  ],
+  "target": "R127_PERF2",
+  "core": "fcd6bc491e1ea3d3bb47573b34ac6fc8c9e3a2e1d457f54e875b94a89e1dfa9f"
+}
