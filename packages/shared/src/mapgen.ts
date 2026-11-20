@@ -700,6 +700,44 @@ function placeSpawns(l: MapLayout, rng: Rng) {
       }
       zone.count = placed; left -= placed;
     }
+    // Yönetimden sayı artırılınca yeni yuvalara yer kalmayabiliyordu (yuvalar arası boşluk şartı): fazlası sessizce
+    // atlanıyor, sayı artmıyordu. Kalanlar grubun yuvalarının çevresine ve bölgeye dağınık yerleşir
+    // (birbirine en az ~1,7 karo uzak; normal/agresif/katil oranı aynı).
+    if (left > 0 && !md?.boss) {
+      const own = l.zones.filter((z) => z.monster === g.monster);
+      const near = (tx: number, ty: number) => { const x = tc(tx), y = tc(ty); for (const sp of l.spawnPoints) if ((sp.x - x) ** 2 + (sp.y - y) ** 2 < (1.7 * TILE) ** 2) return true; return false; };
+      const budget = left * 500;
+      for (let tries = 0; left > 0 && tries < budget; tries++) {
+        const relax = tries > budget * 0.6;
+        let tx: number, ty: number, zOf: MonsterZone | undefined;
+        if (own.length && rng() < 0.65) {
+          zOf = own[(rng() * own.length) | 0];
+          const a = rng() * Math.PI * 2, d = (0.35 + rng() * 1.45) * (zOf.r / TILE);
+          tx = Math.round(zOf.x / TILE - 0.5 + Math.cos(a) * d); ty = Math.round(zOf.y / TILE - 0.5 + Math.sin(a) * d);
+        } else {
+          const A = g.area;
+          tx = A ? A[0] + ((rng() * (A[2] - A[0])) | 0) : 3 + ((rng() * (l.w - 6)) | 0);
+          ty = A ? A[1] + ((rng() * (A[3] - A[1])) | 0) : 3 + ((rng() * (l.h - 6)) | 0);
+        }
+        if (tx < 2 || ty < 2 || tx >= l.w - 2 || ty >= l.h - 2 || !isFree(l, tx, ty)) continue;
+        if (g.area && (tx < g.area[0] || ty < g.area[1] || tx > g.area[2] || ty > g.area[3])) continue;
+        const x = tc(tx), y = tc(ty);
+        if (Math.hypot(x - l.spawn.x, y - l.spawn.y) < 900) continue;
+        if (!relax && !zOf && g.region !== 'any' && !g.area && regionOf(l, x, y) !== g.region) continue;
+        if (near(tx, ty)) continue;
+        const tot = g.variants[0] + g.variants[1] + g.variants[2];
+        const r = rng() * tot;
+        const variant = (r < g.variants[0] ? 0 : r < g.variants[0] + g.variants[1] ? 1 : 2) as 0 | 1 | 2;
+        const jx = (rng() - 0.5) * TILE * 0.6, jy = (rng() - 0.5) * TILE * 0.6;
+        l.spawnPoints.push({ monster: g.monster, level: g.level[0], variant, x: x + jx, y: y + jy });
+        taken.add(ty * l.w + tx);
+        // en yakın yuvanın sayısı artar (haritada yuva bilgisi doğru kalsın)
+        let best: MonsterZone | undefined, bd = Infinity;
+        for (const z of own) { const dd = Math.hypot(z.x - x, z.y - y); if (dd < bd) { bd = dd; best = z; } }
+        if (best) { best.count++; if (bd > best.r) best.r = Math.min(bd + TILE, best.r * 2); }
+        left--;
+      }
+    }
   }
 }
 
