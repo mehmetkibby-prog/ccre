@@ -32,7 +32,7 @@ it('Lonca: kur (bedel kanalda), davet, katıl, vergi, ayar, savaş puanı ve son
   await G.onCharged(charge.req, true);
   expect(G.tagOf(A.charId)?.name).toBe(name1);
   // aynı ad: reddedilir
-  await G.handle(C, { op: 'create', name: name1.toUpperCase(), emblem: 1 });
+  await G.handle(C, { op: 'create', name: name1.toLocaleUpperCase('tr'), emblem: 1 });
   expect(sent[C.charId].some((o) => o.t === 'notice' && /Bu adda/.test(o.text))).toBe(true);
   // davet → katıl
   await G.handle(A, { op: 'invite', name: B.name });
