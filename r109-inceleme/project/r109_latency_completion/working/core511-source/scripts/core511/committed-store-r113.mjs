@@ -30,7 +30,7 @@ export function readCommittedImagesR113(sql,{operationId,channel,incarnation,act
  return parts;
 }
 export function pruneCommittedImagesR113(sql,before,limit){
- const rows=prepareCached477(sql,'SELECT operation_id,actor FROM kernel511_committed_images_r113 WHERE created_ms<? ORDER BY created_ms LIMIT ?').all(before,limit);
- const remove=prepareCached477(sql,'DELETE FROM kernel511_committed_images_r113 WHERE operation_id=? AND actor=?');
- for(const r of rows)remove.run(r.operation_id,r.actor);return rows.length;
+ if(!Number.isSafeInteger(limit)||limit<=0)return 0;
+ // Use the age index and the existing per-idle-pass bound in one VM invocation.
+ return prepareCached477(sql,'DELETE FROM kernel511_committed_images_r113 WHERE (operation_id,actor) IN (SELECT operation_id,actor FROM kernel511_committed_images_r113 WHERE created_ms<? ORDER BY created_ms LIMIT ?)').run(before,limit).changes;
 }

@@ -306,7 +306,7 @@ export class SharedCombatChannel {
     return {token,channel:c.peer.channel,incarnation:c.peer.incarnation,unchangedReleased:unchanged.map(a=>({id:a.id,epoch:a.epoch}))};
    }
    const selected=refreshActors===null?h.actors:h.actors.filter(a=>refreshActors.includes(a.id));let bundles;
-   if(committedResult?.committedR113){
+   if(committedResult?.committedR113&&committedResult.committedR113.version!==3){
     const d=committedResult.committedR113,parts=new Map(d.actors.map(a=>[a.id,a]));
     // The source channel may already have installed its held teammates along
     // with its own result. Do not overwrite subsequent accepted movement.

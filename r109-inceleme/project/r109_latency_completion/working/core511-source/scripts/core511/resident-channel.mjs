@@ -43,6 +43,7 @@ import {OrderedSystemClient} from './system-writer.mjs';
 import {WorldClock} from './world-clock.mjs';
 import {MonsterLifecycle} from './monster-lifecycle.mjs';
 import {settlementFootprint,settlementNeedsShared} from './settlement-resources.mjs';
+import {matchesLocalCommitR127} from './committed-local-r127.mjs';
 import {canRefreshPotion} from './potion-refresh.mjs';
 
 // Simulation composition used by the service and the MessageChannel runner.
@@ -134,19 +135,27 @@ export class ResidentChannel {
  }
  async applyCommit(result,context){
   this.completedClaimHintsR56.record(this.world.cycle,result.completedClaimsR56);
-  if(await this.ports.committedResultR113?.(result,context))return;
-  if(context?.input?.action==='collect'&&this.ports.collectRefresh?.(result,context))return;
-  const sectionRefresh=this.ports.actorSectionRefreshR52?.(result,context);if(sectionRefresh===true||(sectionRefresh&&typeof sectionRefresh.then==='function'&&await sectionRefresh))return;
+  const proof=result.committedR113?.version===3?result.committedR113:null;
+  if(!proof&&await this.ports.committedResultR113?.(result,context))return;
+  const canUseLocal=!proof||matchesLocalCommitR127(this,proof,result,context);
+  if(canUseLocal&&context?.input?.action==='collect'&&this.ports.collectRefresh?.(result,context)){
+   if(proof)this.finishLocalCommitR127(proof);
+   return;
+  }
+  if(!proof){
+   const refresh=this.ports.actorSectionRefreshR52?.(result,context);
+   if(refresh===true||(refresh&&typeof refresh.then==='function'&&await refresh))return;
+  }
   const changed=result.players??[result.player];demand(changed.every(p=>p&&typeof p.id==='string'),'resident_commit_actor');
   // R88: a potion that ran under the movement permit carries the resident's
   // newer motion suffix; the merged row (or the unmodified SQL row when the
   // R86 compatibility proof fails) is what the shortcut compares and installs.
   const potionRow=context?.deathMotionR86&&context.input?.action==='use_potion'&&result.players?.length===1?mergeDeathRowR86(context.deathMotionR86,result.players[0],{cycle:this.world.cycle}):result.players?.[0];
   const potionResult=potionRow===result.players?.[0]?result:{...result,players:[potionRow]};
-  if(context&&this.ports.potionRefresh&&canRefreshPotion(this.view.player(context.id),potionResult,context)){
+  if(canUseLocal&&context&&this.ports.potionRefresh&&canRefreshPotion(this.view.player(context.id),potionResult,context)){
    const id=context.id,owner=this.owners.get(id),actor=this.kernel.players.get(id);
    demand(owner&&actor?.barrier&&actor.epoch===owner.epoch&&this.lanes.busy(['player:'+id]),'potion_refresh_not_fenced');this.state.assertOwner(id,owner.epoch);
-   if(this.ports.potionRefresh(potionRow)===true){this.view.setPlayer(this.presence.merge(potionRow,owner.epoch));this.view.setEngagement(id,result.encounters[0][1]);return;}
+   if(this.ports.potionRefresh(potionRow)===true){this.view.setPlayer(this.presence.merge(potionRow,owner.epoch));this.view.setEngagement(id,result.encounters[0][1]);if(proof)this.finishLocalCommitR127(proof);return;}
   }
   // Native rewards can legitimately include recently disconnected party
   // members. Their durable rows remain in the writer; only current residents
@@ -156,6 +165,10 @@ export class ResidentChannel {
   const bundles=ipcSafeStream?await readActorBatches(players,load):await Promise.all(players.map(load));
   for(const bundle of bundles)this.applyBundle(mergeDeathBundleR86(context?.deathMotionR86,bundle));for(const monster of result.monsters??[])this.setMonster(monster);
   if(result.mistLoot)this.ports.mistLootCommitted?.(result.mistLoot);
+ }
+ finishLocalCommitR127(proof){
+  this.commitRevisionsR113.set(proof.id,proof.next);
+  this.ports.localPublishedR127?.(proof.id);
  }
  action(context){
   const {id,input,now,receivedAtMs}=context,identity=this.identities.get(id);demand(identity,'resident_identity_missing');

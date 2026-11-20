@@ -5,8 +5,10 @@ const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 // Immutable publication images are serialized once on the authoritative writer.
 // Parent IPC/receipt caches retain text rather than duplicate native object graphs.
 // Only the owning channel decodes the image, immediately before revision validation.
-export function encodeCommittedImageR113(value,{compress=process.env.CORE511_R113_IMAGE_COMPRESSION!=='0'}={}){
- let image=JSON.stringify(value);
+export function encodeCommittedImageR113(value,options){
+ return encodeCommittedTextR127(JSON.stringify(value),options);
+}
+export function encodeCommittedTextR127(image,{compress=process.env.CORE511_R113_IMAGE_COMPRESSION!=='0'}={}){
  const size=Buffer.byteLength(image);
  // Large committed images are carried opaquely through the parent. Compression
  // happens once, in the authoritative writer; only their owning channel opens

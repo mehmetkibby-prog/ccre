@@ -1,3 +1,4 @@
+import {inventoryRowsR127} from './committed-holdings-r127.mjs';
 import {certifyCollectEncounterR85,validCollectEncounterR85} from './collect-encounter-r85.mjs';
 import {r37Options} from './r37-options.mjs';
 import {prepareCached477} from './writer-statements.mjs';
@@ -23,7 +24,7 @@ export class CollectWriteAudit {
 }
 // Same ordering/columns as native readColdWorld's inventory. Equipped rows
 // cannot change on this fast path; unfamiliar side effects use full refresh.
-export const COLLECT_INVENTORY_SQL="SELECT id, player_id, kind, item_name, rarity, power, role, enchantments, equipped, created_at, expires_at_ms, sale_locked499 FROM player_items WHERE player_id = ? ORDER BY equipped DESC, CASE rarity WHEN 'emerald' THEN 7 WHEN 'infinite' THEN 6 WHEN 'unique' THEN 5 WHEN 'purple' THEN 4 WHEN 'red' THEN 3 WHEN 'orange' THEN 2 WHEN 'blue' THEN 1 ELSE 0 END DESC, created_at DESC";
+export const COLLECT_INVENTORY_SQL=inventoryRowsR127;
 const tables=new Set(['players','player_items','world_drops','guild_essence_rewards','auth_rate_limits','dungeon_materials']);
 const fields=new Set(['essence','essence_bonus_remainder','pearls','stone_dust','gems','potions','last_seen']);
 export function collectLightResult(sql,payload,result){

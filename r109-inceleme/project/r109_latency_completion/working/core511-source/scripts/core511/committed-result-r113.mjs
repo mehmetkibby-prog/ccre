@@ -1,7 +1,8 @@
+import {captureLocalCommitR127} from './committed-local-r127.mjs';
 import {captureCommittedDeltaR113} from './committed-delta-r113.mjs';
 import {readCommitRevisionR113} from './commit-revision-r113.mjs';
 import {prepareCached477} from './writer-statements.mjs';
-import {encodeCommittedActorR113} from './committed-codec-r113.mjs';
+import {encodeHoldingsActorR127,readHoldingsR127} from './committed-holdings-r127.mjs';
 import {readDungeonSettingsPointR113} from './dungeon-settings-point-r113.mjs';
 import {readActorBundle} from './read-worker.mjs';
 import {createColdWorldRules} from './generated/cold-world-rules.mjs';
@@ -41,6 +42,8 @@ export class CommittedResultProducerR113{
   const unknown=tables.filter(table=>!covered.has(table));
   if(unknown.length){for(const table of unknown)committedResultMetricsR113.unsupported[table]=(committedResultMetricsR113.unsupported[table]??0)+1;return result;}
   this.now=Date.now();
+  const local=captureLocalCommitR127(sql,kind,payload,context,result);
+  if(local){committedResultMetricsR113.localCapturesR127[local.committedR113.action]++;return local;}
   const delta=captureCommittedDeltaR113(sql,kind,payload,context,result,this.now);
   if(delta){committedResultMetricsR113.deltaCaptured++;return delta;}
   const actors=[];
@@ -51,14 +54,14 @@ export class CommittedResultProducerR113{
    const next=base+1;demand(Number.isSafeInteger(next),'committed_revision_overflow');
    const bundle=readActorBundle(sql,[id,owner.channel,owner.incarnation,owner.epoch,0,this.now],{insideTransaction:true,includeCatalogs:false,includeDungeonSettings:false});
    const read=(query,params=[])=>prepareCached477(sql,query).all(...params);
-   const sections=this.rules.readCommittedSectionsR113(read,bundle.player,this.now);
+   const sections=this.rules.readCommittedSectionsR113(read,bundle.player,this.now,false);
    const tool=sections.dungeonMaterials.some(m=>m.amount>0&&['zumrut_axe_r93','zumrut_pickaxe_r93'].includes(m.kind))?readZumrutToolR93(sql,id):'';
    sections.owner={...sections.owner,equippedToolR93:tool};
    sections.adventure511=structuredClone(publicAdventure(bundle.adventure));
    // These immutable catalogs/settings and shared world projections are already
    // installed independently. Never repeat them once per reward recipient.
    delete bundle.profiles;delete bundle.settings;
-   actors.push(encodeCommittedActorR113({id,base,next,bundle,sections}));
+   actors.push(encodeHoldingsActorR127({id,base,next,bundle,sections},readHoldingsR127(sql,id)));
   }
   let committedR113={version:COMMITTED_RESULT_VERSION_R113,operationId:context.key,cycle:prepareCached477(sql,'SELECT cycle FROM world_state WHERE id=1').get().cycle,at:this.now,actors};
   // The channel already owns a full configuration snapshot. Certify its exact
