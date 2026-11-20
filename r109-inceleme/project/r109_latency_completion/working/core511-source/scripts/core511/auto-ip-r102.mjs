@@ -4,7 +4,7 @@ import {createHmac,randomBytes,randomUUID} from 'node:crypto';
 export const AUTO_IP_PATH_R102='/internal/auto-ip';
 export const AUTO_IP_TTL_R102=30000;
 export const autoIpUnavailableR102=()=>({ok:false,status:503,code:'auto_ip_unavailable_r102',error:'Oto atak kontrolü şu anda hazır değil. Birkaç saniye sonra yeniden dene.'});
-const busy=()=>({ok:false,status:409,code:'auto_ip_busy_r102',error:'Bu IP adresinde başka bir oto atak açık. Önce onu durdurmalısın.'});
+const busy=()=>({ok:false,status:409,code:'auto_ip_busy_r102',error:'Bu IP adresinde üç oto av zaten açık. Birini durdurup tekrar dene.'});
 const validId=s=>typeof s==='string'&&s.length>0&&s.length<=160&&!/[\x00-\x1f]/.test(s);
 export function canonicalAutoIpR102(value){
  if(typeof value!=='string'||value.length>64||value.includes('%'))return null;
@@ -23,18 +23,27 @@ export class AutoIpAuthorityR102{
  handle(realmId,data){
   const now=this.now(),{action,accountId,playerId,mode}=data??{};
   if(!['r1','r2'].includes(realmId)||!validId(accountId)||!validId(playerId)||!['world','island'].includes(mode)||!['claim','release'].includes(action))return autoIpUnavailableR102();
-  const owner=JSON.stringify([realmId,accountId,playerId,mode]);
+  const owner=JSON.stringify([realmId,accountId,playerId]);
   this.cursor??=this.rows.entries();for(let i=0;i<64;i++){const e=this.cursor.next();if(e.done){this.cursor=null;break;}if(e.value[1].expiresAt<=now)this.rows.delete(e.value[0]);}
   if(action==='release'){
    const old=this.rows.get(data.key);
-   if(old?.owner===owner&&old.token===data.token)this.rows.delete(data.key);
+   if(old?.owner===owner&&old.modes.get(mode)?.token===data.token){
+    old.modes.delete(mode);
+    for(const [name,grant] of old.modes)if(grant.expiresAt<=now)old.modes.delete(name);
+    if(old.modes.size)old.expiresAt=Math.max(...Array.from(old.modes.values(),g=>g.expiresAt));
+    else this.rows.delete(data.key);
+   }
    return {ok:true};
   }
   const ip=canonicalAutoIpR102(data.ip);if(!ip||now<this.readyAt)return autoIpUnavailableR102();
-  const key=createHmac('sha256',this.salt).update(ip).digest('hex'),old=this.rows.get(key);
-  if(old&&old.expiresAt>now&&old.owner!==owner)return busy();
-  if(!old&&this.rows.size>=this.maxEntries)return autoIpUnavailableR102();
-  const token=randomUUID(),expiresAt=now+AUTO_IP_TTL_R102;this.rows.set(key,{owner,token,expiresAt});
+  const prefix=createHmac('sha256',this.salt).update(ip).digest('hex');
+  const slots=[prefix+':1',prefix+':2',prefix+':3'];
+  const key=slots.find(k=>this.rows.get(k)?.owner===owner)??slots.find(k=>(this.rows.get(k)?.expiresAt??0)<=now);
+  if(!key)return busy();
+  if(!this.rows.has(key)&&this.rows.size>=this.maxEntries)return autoIpUnavailableR102();
+  const token=randomUUID(),expiresAt=now+AUTO_IP_TTL_R102,prior=this.rows.get(key);
+  const modes=prior?.owner===owner&&prior.expiresAt>now?prior.modes:new Map();
+  modes.set(mode,{token,expiresAt});this.rows.set(key,{owner,modes,expiresAt});
   return {ok:true,key,token,expiresAt,realmId,accountId,playerId,mode};
  }
 }
