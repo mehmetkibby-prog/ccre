@@ -2073,3 +2073,18 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tip-stat { flex-wrap: wrap; }
 .tip-stat .tip-break { margin-left: 0; }
 .tip-stat .tip-break span { text-transform: none; letter-spacing: 0; }
+/* Sv. 1 başlangıç becerisi ve açılmamış beceriler: ikon soluk, üstünde asma kilit ve açılma seviyesi */
+.slot.locked { filter: none; cursor: not-allowed; box-shadow: inset 0 0 0 1px rgba(130, 135, 150, .45), 0 6px 14px rgba(0, 0, 0, .5); }
+.slot.locked .sk-img, .slot.locked > svg { filter: grayscale(1) brightness(.5); }
+.sk-lock { position: absolute; inset: 0; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; pointer-events: none; }
+.slot .sk-lock { transform: rotate(-45deg); }
+.slot .sk-lock img, .mact .sk-lock img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; transform: none; box-shadow: 0 0 0 1px rgba(160, 200, 255, .55), 0 0 8px rgba(80, 160, 255, .5); }
+.sk-lock b { font-size: 9px; font-weight: 800; color: #e4ecff; text-shadow: 0 1px 2px #000, 0 0 4px #000; letter-spacing: .2px; line-height: 1; }
+.mact button.locked .sk-img { filter: grayscale(1) brightness(.5); }
+.mact button.locked { box-shadow: inset 0 0 0 1px rgba(130, 135, 150, .45), 0 4px 10px rgba(0, 0, 0, .5); }
+.mact .sk-lock img { width: 17px; height: 17px; }
+.mact .s5 { width: 56px; height: 56px; right: 196px; bottom: 24px; }
+.skillrow.sk-locked > div:not(.ic) { opacity: .55; }
+.skillrow .ic { position: relative; }
+.skillrow.sk-locked .ic .sk-img, .skillrow.sk-locked .ic > svg { filter: grayscale(1) brightness(.4); }
+.skillrow .ic .sk-lock img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(160, 200, 255, .55), 0 0 8px rgba(80, 160, 255, .5); }

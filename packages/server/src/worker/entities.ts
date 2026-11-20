@@ -22,7 +22,7 @@ export class Player {
   moveBudget = 0;
   movedThisTick = false;
   // savaş
-  cooldowns = [0, 0, 0, 0, 0];
+  cooldowns = [0, 0, 0, 0, 0, 0];
   /** Sv. 7 becerisi: zamanlama çubuğunun başladığı an (sunucu saati; 0 = yok) */
   qteAt = 0;
   /** 3 sn'lik beceri güçlendirmesi (rüzgâr: saldırı/koşu hızı, emilim: can çalma; demir deri kalkan alanlarında) */

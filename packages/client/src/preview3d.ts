@@ -65,7 +65,7 @@ if (entsQ) {
 }
 // beceri efekti denemesi: sfx=sınıf,beceri,yol → oyuncu önündeki canavara periyodik beceri
 const sfxq = q.get('sfx');
-let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + Number(q.get('camx') ?? 140), y: sy + Number(q.get('camy') ?? 30), dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
+let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(Number); g.ents.clear(); const P = mk(Kind.PLAYER, sx, sy, { name: '', cls: c, dir: 0, level: 30, weapon: Number(q.get('gear') ?? 3) }); add(P); const M = mk(Kind.MONSTER, sx + Number(q.get('tdist') ?? 260), sy, { tpl: MONSTER_INDEX.get(q.get('mon') ?? 'wild_fox')!, dir: 128, level: 20 }); add(M); if (q.get('chainmons')) { add(mk(Kind.MONSTER, M.x + 120, M.y - 150, { tpl: M.tpl, dir: 160, level: 20 })); add(mk(Kind.MONSTER, M.x + 230, M.y + 60, { tpl: M.tpl, dir: 128, level: 20 })); } g.dx = sx - 3000; g.dy = sy - 3000; (r as any).camOverride = { x: sx + Number(q.get('camx') ?? 140), y: sy + Number(q.get('camy') ?? 30), dist: Number(q.get('dist') ?? 9), pitch: Number(q.get('pitch') ?? 0.5) }; return { P, M }; })() : null;
 (window as any).__sfx = (t: number) => {
   if (!sfxP || !sfxq) return;
   const [c, s, v] = sfxq.split(',').map(Number);
@@ -77,6 +77,12 @@ let sfxAt = -1e9; const sfxP = sfxq ? (() => { const [c] = sfxq.split(',').map(N
   }
   if (c === 0 && s === 3 && !v) r.fx.sk.dome(P.id, { x: P.x, y: P.y }, 3000, '#ffcf5a');
   r.fx.sk.play({ cls: c, skill: s, variant: v ?? 0, src: P.id, tgt: M.id, sp: { x: P.x, y: P.y }, tp: { x: M.x, y: M.y }, self: true, near: 0, now: t, shake: (n) => r.shake(n), hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
+  // Öz Zinciri: ana hedeften iki yandaki canavarlara sıçrayış (sunucudaki sırayla)
+  if (c === 2 && s === 7) {
+    const extra = [...g.ents.values()].filter((e) => e.kind === Kind.MONSTER && e !== M);
+    let from = { x: M.x, y: M.y };
+    extra.slice(0, 2).forEach((e, i) => { r.fx.sk.chainHop(from, e.id, 280 + 60 + 140 * (i + 1), true); from = { x: e.x, y: e.y }; });
+  }
 };
 const anim = q.get('anim') ?? 'idle';
 let last = performance.now();

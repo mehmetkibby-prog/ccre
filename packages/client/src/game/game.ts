@@ -2,12 +2,13 @@ import { DIR_STEPS,
   readSnapshot, encodeMove, stepMove, dirIndexFromVector, getLayout, classSkill, attackCooldown, qteZone, QTE_SWEEP_MS, type SkillDef, NO_DIR, TILE, Kind, Anim, Ev, Fx as FxKind, DmgFlag, EFlag,
   MONSTERS, TUNING, CLASS_IDS, CLASSES, MAPS, LOOT_PICKUP_RANGE, RARITIES, type MapLayout, type Snapshot, type ClassId, type ClientCmd,
   findPath, los, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, MATERIALS,
+  CAST_FIRST, CAST_CHAIN_HOP,
 } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
 import type { Fx3D } from '../g3d/fx3d.ts';
-import { GUARDIAN_IMPACT_S } from '../g3d/charAnims.ts';
+import { GUARDIAN_IMPACT_S, FIRST_SKILL_S } from '../g3d/charAnims.ts';
 import { sfx } from './audio.ts';
 import { OFFLINE } from '../mode.ts';
 
@@ -94,6 +95,8 @@ export class Game {
   lastFrame = 0;
   raf = 0;
   frames = 0; fpsAt = 0;
+  /** Öz Zinciri: oyuncu başına bu atıştaki sıçrayış sayacı (şimşekler sırayla çizilir) */
+  private chainN = new Map<number, number>();
   /** ekranın yenileme hızı (Hz): ayarlardaki tanı satırı için, kare aralıklarının ortancasından */
   hz = 0; private steps: number[] = [];
   stopped = false;
@@ -490,6 +493,14 @@ export class Game {
         break;
       }
       case Ev.CAST: {
+        // Öz Zinciri'nin sıçrayışı: animasyon yok, yalnız önceki hedeften sıradakine şimşek (ana şimşekten sonra, sırayla)
+        if (ev.skill === CAST_CHAIN_HOP) {
+          const n = (this.chainN.get(ev.src) ?? 0) + 1; this.chainN.set(ev.src, n);
+          const isMine = ev.src === this.selfId || ev.tgt === this.selfId;
+          if (isMine || Math.hypot(ev.x - this.dx, ev.y - this.dy) < 1500) this.fx.sk.chainHop({ x: ev.x, y: ev.y }, ev.tgt, FIRST_SKILL_S[2] * 1000 + 60 + 140 * n, isMine);
+          break;
+        }
+        if (ev.skill === CAST_FIRST) this.chainN.set(ev.src, 0);
         const isSelf = ev.src === this.selfId;
         const src = isSelf ? null : this.ents.get(ev.src);
         const sp = isSelf ? { x: this.dx, y: this.dy } : src ? this.entPos(src) : null;
@@ -1027,6 +1038,7 @@ export class Game {
       case 'Digit3': this.useSkill(2); break;
       case 'Digit4': this.useSkill(3); break;
       case 'Digit5': this.useSkill(4); break;
+      case 'Digit6': this.useSkill(5); break;
       case 'KeyQ': this.potion(); break;
       case 'KeyZ': case 'KeyF': this.pickupNearby(); break;
       case 'KeyH': if (store.get().self?.mount?.owned) this.send({ t: 'mount', op: 'ride' }); break;

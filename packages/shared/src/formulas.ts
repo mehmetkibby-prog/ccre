@@ -34,6 +34,8 @@ export function xpToNext(level: number): number {
 export function statBudget(level: number): number { return (level - 1) * 3; }
 /** Toplam geliştirme hakkı (düz vuruş + 3 beceri; Sv. 7 becerisinin ilk kademesi bedava): seviye başına 1, en çok 39 */
 export function skillUpgradeBudget(level: number): number { return Math.min(39, Math.max(3, level)); }
+/** Harcanan geliştirme hakkı: düz vuruş + Sv.5 + Sv.30 becerisi tüm kademeleriyle; Sv.7 ve Sv.1 becerilerinin ilk kademesi bedava (uzmanlık ayrı) */
+export function skillPointsUsed(sk: number[]): number { return (sk[0] ?? 1) + (sk[1] ?? 1) + (sk[2] ?? 1) + Math.max(0, (sk[4] ?? 1) - 1) + Math.max(0, (sk[5] ?? 1) - 1); }
 
 export interface StatAlloc { str: number; res: number; vit: number }
 export interface CombatStats {

@@ -1,4 +1,4 @@
-import { ARCANIST_RELEASE_S, HUNTER_RELEASE_S, ARCANIST_TRAIL_S, SKILL7_IMPACT_S, GUARDIAN_TRAIL_S } from './charAnims.ts';
+import { ARCANIST_RELEASE_S, HUNTER_RELEASE_S, ARCANIST_TRAIL_S, SKILL7_IMPACT_S, GUARDIAN_TRAIL_S, FIRST_SKILL_S } from './charAnims.ts';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { glowTexture } from './textures.ts';
@@ -632,6 +632,157 @@ export class SkillFx {
     if (self && this.q > 0) this.fx.light(p.x, p.y, h, '#ffd9a0', crit ? 4 : 2.6, 150);
   }
 
+  /** Animasyondaki bırakış/değme anı (sn) gelince fn; model yoksa ya da klip başlamazsa süre dolunca. */
+  private atRelease(src: number, R: number, fn: () => void) {
+    const t0 = performance.now(); let started = false, done = false;
+    const tick = () => {
+      if (done) return;
+      const st = this.fx.swingTimeOf(src), el = performance.now() - t0;
+      if (st >= 0 && st < R * 0.6) started = true;
+      if ((started && st >= R) || el > 900 || (st < 0 && el > R * 1000 + 60)) { done = true; fn(); return; }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  /**
+   * Kırık çizgili şimşek: a→b arası parçalı ışık (renkli hale + beyaz çekirdek); her ~55 ms yeniden kırılır,
+   * uçlar sabit kalır. a/b her karede sorulur (hedef yürüse de şimşek onu izler).
+   */
+  bolt(a: () => THREE.Vector3, b: () => THREE.Vector3, dur: number, color: THREE.ColorRepresentation, width = 0.24, segs = 7) {
+    const matG = additive(streakTex(), color, 1), matC = additive(streakTex(), '#ffffff', 1);
+    const grp = new THREE.Group();
+    const glow: THREE.Mesh[] = [], core: THREE.Mesh[] = [];
+    for (let i = 0; i < segs; i++) {
+      const g = new THREE.Mesh(beamGeo(), matG), c = new THREE.Mesh(beamGeo(), matC);
+      g.renderOrder = 4; c.renderOrder = 5; grp.add(g, c); glow.push(g); core.push(c);
+    }
+    const pts = Array.from({ length: segs + 1 }, () => new THREE.Vector3());
+    const off = Array.from({ length: segs + 1 }, () => new THREE.Vector3());
+    let lastJ = -1;
+    return this.add(grp, dur, (k, now) => {
+      const A = a(), Bv = b(), L = A.distanceTo(Bv);
+      const j = Math.floor(now / 55);
+      if (j !== lastJ) { lastJ = j; for (let i = 1; i < segs; i++) off[i].set(Math.random() - 0.5, (Math.random() - 0.5) * 0.8, Math.random() - 0.5).multiplyScalar(Math.min(1.1, 0.25 + L * 0.12)); }
+      for (let i = 0; i <= segs; i++) { const t = i / segs; pts[i].lerpVectors(A, Bv, t).addScaledVector(off[i], Math.sin(t * Math.PI)); }
+      const fade = Math.min(1, k * 10) * Math.pow(1 - k, 1.3), fl = 0.75 + 0.25 * Math.random();
+      for (let i = 0; i < segs; i++) {
+        const len = Math.max(0.01, pts[i].distanceTo(pts[i + 1]));
+        for (const [m, w] of [[glow[i], width], [core[i], width * 0.32]] as const) { m.position.copy(pts[i]); m.lookAt(pts[i + 1]); m.scale.set(w, w, len); }
+      }
+      matG.opacity = fade * fl * 1.2; matC.opacity = fade * fl;
+    }, [matG, matC]);
+  }
+
+  /** Sersemleme: hedefin başının üstünde dönen yıldızlar (hedefi izler). */
+  stunStars(tgt: number, p: P, ms: number) {
+    const mat = new THREE.SpriteMaterial({ map: starTex(), color: '#ffe680', blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false });
+    const g = new THREE.Group();
+    const sps = [0, 1, 2].map(() => { const s = new THREE.Sprite(mat); s.renderOrder = 7; g.add(s); return s; });
+    const h = this.fx.heightOf(tgt) + 0.22;
+    return this.add(g, ms, (k, now) => {
+      const q = this.pos(tgt) ?? p;
+      g.position.set(q.x * U, this.gy(q.x, q.y) + h, q.y * U);
+      sps.forEach((s, i) => { const a = now / 170 + i * 2.094; s.position.set(Math.cos(a) * 0.36, Math.sin(now / 110 + i * 2) * 0.05, Math.sin(a) * 0.36); s.scale.setScalar(0.3 + 0.07 * Math.sin(now / 80 + i)); });
+      mat.opacity = Math.min(1, k * 8) * (k > 0.8 ? (1 - k) / 0.2 : 1);
+    }, [mat]);
+  }
+
+  /** Öz Zinciri'nin bir sıçrayışı: önceki hedeften (from) sıradaki hedefe şimşek; delay ms sonra. */
+  chainHop(from: P, tgt: number, delay: number, self: boolean) {
+    const A = '#c49bff';
+    window.setTimeout(() => {
+      const p0 = this.pos(tgt); if (!p0) return;
+      const at = (q: P, id: number) => new THREE.Vector3(q.x * U, this.gy(q.x, q.y) + Math.min(1.3, Math.max(0.6, this.fx.heightOf(id) * 0.55)), q.y * U);
+      const a3 = new THREE.Vector3(from.x * U, this.gy(from.x, from.y) + 1.0, from.y * U);
+      this.bolt(() => a3, () => at(this.pos(tgt) ?? p0, tgt), 260, A, self ? 0.2 : 0.15, 6);
+      window.setTimeout(() => {
+        const q = this.pos(tgt) ?? p0, h = Math.min(1.3, Math.max(0.6, this.fx.heightOf(tgt) * 0.55));
+        this.flash(q, h, 1.6, 200, '#e2ccff');
+        if (this.full(self)) { this.shock(q, 70, 260, A, 0.25); this.fx.burst(q.x, q.y, h, Math.ceil(9 * this.pk), '#d8bfff', 2.6, 360, 0.1, -1); }
+      }, 40);
+    }, delay);
+  }
+
+  /** Sv. 1 başlangıç becerileri: Kalkan Darbesi (Muhafız), Geri Sıçrayış (Avcı), Öz Zinciri (Arkanist). */
+  private first(c: SkillCtx, n: (x: number) => number, after: (ms: number, f: () => void) => void, S: (name: string, k?: number) => void,
+    light: (p: P, h: number, col: string, i: number, ms: number) => void, impact: (power: number) => void, cast: (name: Circle, col: string) => void) {
+    const fx = this.fx, sp = c.sp, tp = c.tp, cam = fx.cam;
+    const ease = (k: number) => 1 - Math.pow(1 - Math.min(1, k * 3), 3);
+    const ringAt = (at: THREE.Vector3, color: string, size: number, dur: number) =>
+      this.sprite(ringTex(), at, 0, size, size, dur, color, (k) => { const e = 1 - Math.pow(1 - k, 3); return [0.2 + e, 0.2 + e]; }, (k) => Math.pow(1 - k, 1.5) * 0.9);
+    const hitH = (id: number) => Math.min(1.5, Math.max(0.6, fx.heightOf(id) * 0.55));
+    if (c.cls === 0) { // ─── Kalkan Darbesi: kalkan hedefin yüzüne çarpar; altın parlama, kıvılcım, başında dönen yıldızlar
+      const G = '#ffc94a';
+      S('swing', 0.8);
+      after(110, () => fx.burst(sp.x, sp.y, 0.1, n(8), '#d9c7a1', 1.6, 520, 0.24, 1)); // hamle tozu
+      this.atRelease(c.src, FIRST_SKILL_S[0], () => {
+        const p = this.pos(c.tgt) ?? tp, h = hitH(c.tgt);
+        const at = new THREE.Vector3(p.x * U, this.gy(p.x, p.y) + h, p.y * U);
+        if (cam) at.lerp(cam.position, 0.08);
+        S('bash');
+        this.sprite(lensTex(), at, 0.08, 2.8, 1.0, 230, '#ffe08a', (k) => [0.4 + 0.9 * ease(k), 1 - k * 0.6], (k) => Math.pow(1 - k, 1.6) * 0.95);
+        this.sprite(lensTex(), at, 0.08, 2.2, 0.4, 170, '#ffffff', (k) => [0.3 + 0.9 * ease(k), 1 - k * 0.7], (k) => Math.pow(1 - k, 2));
+        this.sprite(starTex(), at, 0.25, 1.6, 1.6, 190, '#fff6d0', (k) => [0.5 + 0.8 * ease(k), 0.5 + 0.8 * ease(k)], (k) => Math.pow(1 - k, 2));
+        ringAt(at, '#ffd27a', 2.0, 300);
+        this.flash(p, h, 2.4, 260, '#ffe7a8');
+        if (this.full(c.self)) { this.shock(p, 130, 380, '#ffd27a', 0.15); fx.burst(p.x, p.y, h, n(20), '#ffe2a0', 3.8, 420, 0.12, -2); }
+        this.stunStars(c.tgt, p, 900);
+        light(p, h, G, 4, 220); impact(3.5);
+      });
+    } else if (c.cls === 1) { // ─── Geri Sıçrayış: kalkışta toz ve rüzgâr halkası, sıçrayış yolunda yaprak ve rüzgâr izi, havadan ok
+      const V = '#8dff5a';
+      const dx = sp.x - tp.x, dy = sp.y - tp.y, dl = Math.hypot(dx, dy) || 1;
+      const land = { x: sp.x + (dx / dl) * 140, y: sp.y + (dy / dl) * 140 };
+      after(90, () => {
+        S('leap');
+        fx.burst(sp.x, sp.y, 0.1, n(12), '#d9c7a1', 2.2, 600, 0.24, 1);
+        this.shock(sp, 110, 360, '#c8ff9a', 0.2);
+        this.beam(sp, 0.7, land, 1.3, 0.8, 380, '#b8ff8a', true);
+        for (let i = 0; i < n(12); i++) { const k = Math.random(); const x = sp.x + (land.x - sp.x) * k, y = sp.y + (land.y - sp.y) * k; fx.spawn(x * U + (Math.random() - 0.5) * 0.6, this.gy(x, y) + 0.4 + Math.random() * 1.2, y * U + (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.6, 0.4 + Math.random() * 0.6, (Math.random() - 0.5) * 0.6, 900, 0.12, Math.random() < 0.6 ? V : '#e6ffb0', -0.4, 0.8); }
+      });
+      this.atRelease(c.src, FIRST_SKILL_S[1], () => {
+        const bow = fx.handLOf(c.src);
+        S('bow');
+        if (bow) { ringAt(bow, '#d6ffb0', 0.9, 160); this.sprite(starTex(), bow, 0, 0.8, 0.8, 140, '#f2ffe0', (k) => [0.6 + k, 0.6 + k], (k) => Math.pow(1 - k, 2)); }
+        const from = bow?.clone() ?? null;
+        this.missile(land, c.tgt, tp, 170, 'arrow', '#b8ff8a', 0.9, (p) => {
+          const h = hitH(c.tgt), at = new THREE.Vector3(p.x * U, this.gy(p.x, p.y) + h, p.y * U);
+          if (cam) at.lerp(cam.position, 0.06);
+          this.meleeHit(at, from && cam ? Math.atan2(at.clone().project(cam).y - from.clone().project(cam).y, at.clone().project(cam).x - from.clone().project(cam).x) : 0, '#b8ff8a', false, c.self, 0.85);
+          this.flash(p, h, 1.8, 220, '#eaffd0');
+          if (this.full(c.self)) { this.shock(p, 100, 320, V, 0.15); fx.burst(p.x, p.y, h, n(14), V, 3, 420, 0.12, -2); }
+          light(p, h, V, 3, 220); impact(2);
+        }, 2, from);
+      });
+      after(520, () => { fx.burst(land.x, land.y, 0.08, n(10), '#d9c7a1', 1.6, 600, 0.24, 1); this.shock(land, 90, 320, '#d8ffb0', 0.2); });
+    } else if (c.cls === 2) { // ─── Öz Zinciri: asa ucunda kıvılcım toplanır, uçtan hedefe titreşen mor şimşek
+      const A = '#b98bff';
+      S('magic', 0.7); cast('arcane', A);
+      for (let i = 0; i < 4; i++) after(60 + i * 45, () => { const tip = fx.tipOf(c.src); if (tip) { const ix = tip.x / U, iy = tip.z / U; fx.burst(ix, iy, Math.max(0, tip.y - this.gy(ix, iy)), n(4), '#e0c8ff', 1.2, 220, 0.08, 0); } });
+      this.atRelease(c.src, FIRST_SKILL_S[2], () => {
+        const p0 = this.pos(c.tgt) ?? tp;
+        const tip = fx.tipOf(c.src) ?? new THREE.Vector3(sp.x * U, this.gy(sp.x, sp.y) + 1.5, sp.y * U);
+        const from = tip.clone(), to = () => { const q = this.pos(c.tgt) ?? p0; return new THREE.Vector3(q.x * U, this.gy(q.x, q.y) + hitH(c.tgt), q.y * U); };
+        S('zap');
+        ringAt(from, '#d6b8ff', 0.8, 160);
+        this.bolt(() => from, to, 320, A, c.self ? 0.28 : 0.2, 8);
+        if (this.full(c.self)) this.bolt(() => from, to, 220, '#f0e4ff', 0.12, 6);
+        after(40, () => {
+          const q = this.pos(c.tgt) ?? p0, h = hitH(c.tgt);
+          this.flash(q, h, 2.2, 240, '#e0c8ff');
+          if (this.full(c.self)) {
+            this.shock(q, 90, 300, A, 0.2);
+            fx.burst(q.x, q.y, h, n(16), '#d8bfff', 3.2, 420, 0.12, -1);
+            // hedefin çevresinde kısa çatırtılar
+            for (let i = 0; i < 2; i++) { const a = Math.random() * 6.28, c0 = to(); const e = c0.clone().add(new THREE.Vector3(Math.cos(a) * 0.7, (Math.random() - 0.3) * 0.8, Math.sin(a) * 0.7)); this.bolt(() => c0, () => e, 180, '#d6b8ff', 0.1, 4); }
+          }
+          light(q, h, A, 4, 240); impact(2.5);
+        });
+      });
+    }
+  }
+
   /** Sınıf + beceri + uzmanlık türüne göre tam efekt. */
   play(c: SkillCtx) {
     const full = this.full(c.self), pk = this.pk * (c.self ? 1 : 0.7), q = this.q;
@@ -644,6 +795,7 @@ export class SkillFx {
     const cast = (name: Circle, col: string) => { this.decal(name, sp, 62, 650, { follow: c.src, spin: 1.6, grow: [0.5, 1.05], color: col, fadeOut: 0.4 }); fx.burst(sp.x, sp.y, 0.15, n(14), col, 1.3, 600, 0.13, 2.4); };
 
     if (c.skill === 5) { this.skill7(c, n, after, S, light, impact, cast, full); return; }
+    if (c.skill === 7) { this.first(c, n, after, S, light, impact, cast); return; }
     if (c.cls === 0) { // ─── Muhafız: kutsal çelik, altın
       const G = '#ffc94a';
       if (c.skill === 1) { // Zincir Çekişi

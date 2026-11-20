@@ -1,7 +1,7 @@
 import {
   TICK_MS, VIEW_HALF_W, VIEW_HALF_H, NO_DIR, DIR_STEPS, LOOT_TTL_MS, LOOT_OWNER_ONLY_MS, LOOT_PICKUP_RANGE, RESPAWN_DELAY_MS,
   COMBAT_LOCK_MS, BAG_EQUIP_CAP, STALL_MAX_ITEMS, STALL_MIN_GAP, STALL_VIEW_RANGE, STALL_MAX_PRICE, STALL_TITLE_MAX, STALL_NO_SELL, MARKET_MAX_STALLS, inMarket, CHAT_MAX, Anim, Upd, EFlag, Ev, DmgFlag, Fx, Kind, Op, BinWriter, writeSpawn, writeUpdate, writeEvent,
-  stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget,
+  stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
   SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
@@ -771,7 +771,7 @@ export class World {
   }
 
   private cmdSkill(p: Player, s: number, id?: number, x?: number, y?: number, qte = false) {
-    if (s < 1 || s > 4) return;
+    if (s < 1 || s >= SKILL_SLOTS) return;
     if (p.char.misc.mount?.riding) return this.notice(p, 'Binekteyken yalnız düz saldırı yapabilirsin. Beceri için önce in.');
     if (this.now < p.stunUntil) return;
     const sk = classSkill(p.char.cls, s, p.char.spec);
@@ -801,7 +801,8 @@ export class World {
       this.faceAndAnim(p, tx, ty, Anim.CAST, 480);
       // uzmanlık becerisinde ikinci yol 4 olarak gider (istemci doğru efekti seçsin)
       // Sv. 7 becerisi 5 (mükemmel vuruşta 6) olarak gider
-      const castId = s === 4 ? (perfect ? 6 : 5) : s === 3 && sk.spec && CLASSES[p.char.cls].specs[1]?.id === sk.spec ? 4 : s;
+      // Sv. 1 başlangıç becerisi 7 olarak gider
+      const castId = s === 5 ? CAST_FIRST : s === 4 ? (perfect ? 6 : 5) : s === 3 && sk.spec && CLASSES[p.char.cls].specs[1]?.id === sk.spec ? 4 : s;
       z.emit(p.x, p.y, { e: Ev.CAST, src: p.id, skill: castId, tgt: tgtId, x: tx | 0, y: ty | 0 });
       this.sendJson(p, { t: 'cd', s, until: p.cooldowns[s] - this.now, ...(sk.qte ? { qn: p.char.misc.qn ?? 0, perfect } : {}) });
       if (sk.buff) this.skillBuff(p, sk, lvl);
@@ -868,7 +869,15 @@ export class World {
           this.aoe(p, target.x, target.y, sk.radius, sk.maxTargets ?? 4, mult, sk);
           return;
         }
+        // Öz Zinciri: ana hedef + en yakın n düşmana sıçrar (her sıçrayış istemciye ayrı olay: görüntü vurulanla aynı)
+        if (sk.chain) { this.chainHit(p, target, mult, sk); return; }
         this.splash(p, target, mult, sk); // tek hedefli saldırı becerileri çevredekilere de vurur
+        // Geri Sıçrayış: atıştan sonra hedefin tersine sıçrar (duvara/suya değil, en yakın boş yere)
+        if (sk.leapBack) {
+          const a = Math.atan2(p.y - target.y, p.x - target.x);
+          const np = nearestFree(z.layout, p.x + Math.cos(a) * sk.leapBack, p.y + Math.sin(a) * sk.leapBack);
+          p.x = np.x; p.y = np.y; p.inputs.length = 0; z.players.move(p); p.dirty |= Upd.POS;
+        }
       }
     }
   }
@@ -895,11 +904,33 @@ export class World {
     });
   }
 
+  /** Zincir: ana hedef tam, ardından her sıçrayışta bir öncekine en yakın, henüz vurulmamış düşman (zincir çarpanıyla). */
+  private chainHit(p: Player, main: Monster | Player, mult: number, sk: SkillDef) {
+    const ch = sk.chain!; const z = p.zone;
+    this.hit(p, main, mult, sk);
+    const hitSet = new Set<Monster | Player>([main]);
+    let from: Monster | Player = main;
+    for (let i = 0; i < ch.n; i++) {
+      const pick: { t: Monster | Player | null; d: number } = { t: null, d: Infinity };
+      const fx = from.x, fy = from.y;
+      z.monsters.radius(fx, fy, ch.r + MONSTER_RADIUS, (m) => { if (m.state === MState.DEAD || hitSet.has(m)) return; const d = Math.hypot(m.x - fx, m.y - fy); if (d < pick.d) { pick.d = d; pick.t = m; } });
+      if (this.pvpHere(p)) z.players.radius(fx, fy, ch.r + PLAYER_HIT_R, (q) => { if (hitSet.has(q) || !this.canPvp(p, q)) return; const d = Math.hypot(q.x - fx, q.y - fy); if (d < pick.d) { pick.d = d; pick.t = q; } });
+      const nxt = pick.t;
+      if (!nxt) break;
+      z.emit(fx, fy, { e: Ev.CAST, src: p.id, skill: CAST_CHAIN_HOP, tgt: nxt.id, x: fx | 0, y: fy | 0 });
+      hitSet.add(nxt);
+      this.hit(p, nxt, mult * ch.mul, sk);
+      from = nxt;
+    }
+  }
+
   /** Tek hedefli saldırı becerisi: ana hedefe tam vuruş, çevresindeki en çok 4 düşmana sıçrayan hasar (yönetimden ayarlı). */
   private splash(p: Player, main: Monster | Player, mult: number, sk: SkillDef) {
     this.hit(p, main, mult, sk);
     const r = TUNING.splashRadius, k = TUNING.splashMul;
     if (r <= 0 || k <= 0) return;
+    // ccMain: sersemletme/sabitleme yalnız ana hedefe; çevreye yalnız hasar sıçrar
+    if (sk.ccMain && (sk.stunMs || sk.rootMs)) sk = { ...sk, stunMs: undefined, rootMs: undefined };
     const z = p.zone, cx = main.x, cy = main.y, sm = mult * k;
     let n = 0;
     const pl = () => { if (this.pvpHere(p) && n < 4) z.players.radius(cx, cy, r + PLAYER_HIT_R, (q) => { if (n < 4 && q !== main && this.canPvp(p, q)) { n++; this.hit(p, q, sm, sk); } }); };
@@ -1286,14 +1317,14 @@ export class World {
 
   private cmdSkillUp(p: Player, s: number, req: string) {
     const ch = p.char;
-    if (s < 0 || s > 4) return;
+    if (s < 0 || s >= SKILL_SLOTS) return;
     if (this.seenReceipt(p, req)) return;
     const cur = ch.skills[s] ?? 1;
     if (cur >= 10) return this.notice(p, 'Beceri en üst seviyede.');
     if (s === 3) { if (!ch.spec) return this.notice(p, 'Önce uzmanlık seç.'); }
     else {
-      if (s === 4) { const sk = classSkill(ch.cls, 4); if (sk && ch.level < sk.unlock) return this.notice(p, `${sk.name} ${sk.unlock}. seviyede açılır.`); }
-      const used = (ch.skills[0] ?? 1) + (ch.skills[1] ?? 1) + (ch.skills[2] ?? 1) + Math.max(0, (ch.skills[4] ?? 1) - 1);
+      if (s === 4 || s === 5) { const sk = classSkill(ch.cls, s); if (sk && ch.level < sk.unlock) return this.notice(p, `${sk.name} ${sk.unlock}. seviyede açılır.`); }
+      const used = skillPointsUsed(ch.skills);
       if (used >= skillUpgradeBudget(ch.level)) return this.notice(p, 'Geliştirme hakkın yok; seviye atladıkça açılır.');
     }
     // maliyet yönetimden (kademe başına Mücevher + malzemeler)
@@ -2766,7 +2797,7 @@ function lootSpawn(l: Loot, now: number): EntitySpawn {
 export function resetCharState(c: CharState) {
   const l = getLayout('bazaar');
   c.level = 1; c.xp = 0; c.kills = 0; c.spec = null;
-  c.stats = { str: 0, res: 0, vit: 0 }; c.skills = [1, 1, 1, 1, 1];
+  c.stats = { str: 0, res: 0, vit: 0 }; c.skills = [1, 1, 1, 1, 1, 1];
   c.gems = 0; c.essence = 0; c.cp = 0; c.arenaCoin = 0;
   c.bag = [];
   c.equip = { weapon: makeItem(`w_${c.cls}`, 'white', 'starter', 0), armor: makeItem(`a_${c.cls}`, 'white', 'starter', 0) };

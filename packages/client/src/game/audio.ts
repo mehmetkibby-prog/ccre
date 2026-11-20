@@ -144,6 +144,10 @@ class Sfx {
       // köpek havlaması: iki kısa "hav" (kısık; sık değil, ara sıra)
       case 'bark': for (const dl of [0, 0.2]) { this.tone(420, 0.09, 'sawtooth', 0.07, 0.55, dl); this.noise(0.08, 900, 1.4, 0.12, 'bandpass', dl, 0.6); } break;
       // ── beceri sesleri ──
+      // Sv. 1 becerileri: kalkan çanı (metal + boğuk darbe), geri sıçrayış uğultusu, öz şimşeği çatırtısı
+      case 'bash': this.noise(0.25, 420, 0.8, 0.6, 'lowpass', 0, 0.35); this.tone(70, 0.3, 'sine', 0.4, 0.5); [880, 1320, 1975].forEach((f, i) => this.tone(f, 0.45 - i * 0.1, 'triangle', 0.07 - i * 0.015, 0.985, 0.01)); break;
+      case 'leap': this.noise(0.32, 900, 0.9, 0.3, 'bandpass', 0, 2.6); this.noise(0.18, 300, 0.8, 0.18, 'lowpass', 0.02); break;
+      case 'zap': for (let i = 0; i < 8; i++) this.noise(0.03, 2500 + Math.random() * 4500, 5, 0.18, 'bandpass', i * 0.028); this.tone(140, 0.22, 'sawtooth', 0.07, 1.6); this.tone(1760, 0.16, 'square', 0.025, 0.6); break;
       case 'chain': for (let i = 0; i < 6; i++) this.noise(0.05, 3800 + i * 300, 6, 0.16, 'bandpass', i * 0.035); this.tone(1250, 0.25, 'triangle', 0.06, 0.6); break;
       case 'charge': this.noise(0.35, 500, 0.8, 0.35, 'bandpass', 0, 4); this.tone(110, 0.3, 'sawtooth', 0.06, 1.8); break;
       case 'impact': this.noise(0.7, 300, 0.7, 0.85, 'lowpass', 0, 0.25); this.tone(55, 0.6, 'sine', 0.55, 0.45); this.noise(0.12, 2600, 1, 0.35, 'bandpass'); this.noise(0.5, 900, 0.6, 0.18, 'lowpass', 0.08, 0.4); break;

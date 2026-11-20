@@ -685,10 +685,13 @@ export function SkillUpTab({ t, setT, dis }: { t: GameTuning; setT: SetT; dis: b
       <h4>Becerilerin açılma seviyesi</h4>
       <div className="muted adm-hint">Her sınıfın becerisi hangi seviyede açılsın. Düz vuruş her zaman Sv. 1'de açıktır. Uzmanlık seçimi ve uzmanlık becerisi bütün sınıflarda aynı seviyededir. Boş kutu = varsayılan.</div>
       <div className="adm-table-wrap"><table className="adm-table">
-        <thead><tr><th>Sınıf</th>{[1, 2].map((i) => <th key={i}>{i}. beceri</th>)}<th>Alan becerisi (çubuklu)</th><th>Uzmanlık</th></tr></thead>
+        <thead><tr><th>Sınıf</th><th>Başlangıç becerisi</th>{[1, 2].map((i) => <th key={i}>{i}. beceri</th>)}<th>Alan becerisi (çubuklu)</th><th>Uzmanlık</th></tr></thead>
         <tbody>{CLASS_IDS.map((cid) => (
           <tr key={cid}>
             <td><b>{CLASSES[cid].name}</b></td>
+            {(() => { const sk = CLASSES[cid].first; const cur = t.skillUnlock?.[sk.id]; return (
+              <td><div className="col" style={{ gap: 2 }}><small>{sk.name}</small><span className="row" style={{ gap: 4 }}><span className="muted">Sv.</span><Num v={cur} def={sk.unlock} min={1} max={120} step={1} w={56} dis={dis} on={(v) => setUnlock(sk.id, v, sk.unlock)} /></span></div></td>
+            ); })()}
             {[1, 2].map((i) => { const sk = CLASSES[cid].skills[i]; const cur = t.skillUnlock?.[sk.id]; return (
               <td key={i}><div className="col" style={{ gap: 2 }}><small>{sk.name}</small><span className="row" style={{ gap: 4 }}><span className="muted">Sv.</span><Num v={cur} def={sk.unlock} min={1} max={120} step={1} w={56} dis={dis} on={(v) => setUnlock(sk.id, v, sk.unlock)} /></span></div></td>
             ); })}

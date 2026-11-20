@@ -547,7 +547,8 @@ function BottomBar({ game }: { game: Game }) {
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerCancel={() => s === 0 && game.input.attackHeld && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
         {sk ? <SkillIcon id={sk.id} /> : <SkillIcon id="" />}
-        {left > 0 && <div className="cd"><span>{(left / 1000).toFixed(left < 3000 ? 1 : 0)}</span></div>}
+        {locked && <LockBadge lv={sk ? sk.unlock : TUNING.specLevel} />}
+        {!locked && left > 0 && <div className="cd"><span>{(left / 1000).toFixed(left < 3000 ? 1 : 0)}</span></div>}
       </button>
     );
   };
@@ -559,6 +560,7 @@ function BottomBar({ game }: { game: Game }) {
           {slot(0, '1')}
           {slot(3, '4')}
           {slot(4, '5')}
+          {slot(5, '6')}
           <button className="slot" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
@@ -651,7 +653,7 @@ function MobileControls({ game }: { game: Game }) {
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
         <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
-        {[1, 2, 3, 4].map((s) => <button key={s} className={'s' + s} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{sk(s) ? <SkillIcon id={sk(s)!.id} /> : s + 1}{cd(s)}</button>)}
+        {[1, 2, 3, 4, 5].map((s) => { const k = sk(s), locked = !k || (self?.level ?? 1) < k.unlock; return <button key={s} className={'s' + s + (locked ? ' locked' : '')} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{k ? <SkillIcon id={k.id} /> : s + 1}{locked ? <LockBadge lv={k ? k.unlock : TUNING.specLevel} /> : cd(s)}</button>; })}
         <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /><span className="pot-n">{self?.materials?.red_potion ?? 0}</span></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><img className="pick-img" src="/icons/pickup_hand.png" alt="" draggable={false} /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>
@@ -659,6 +661,11 @@ function MobileControls({ game }: { game: Game }) {
       </div>
     </>
   );
+}
+
+/** Açılmamış beceri: soluk ikon üstünde asma kilit amblemi ve açılma seviyesi */
+function LockBadge({ lv }: { lv: number }) {
+  return <span className="sk-lock"><img src="/icons/skills/locked.jpg" alt="" draggable={false} /><b>Sv.{lv}</b></span>;
 }
 
 /** Binek simgesi (at başı) */

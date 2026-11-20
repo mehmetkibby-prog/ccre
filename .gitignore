@@ -31,6 +31,8 @@ assets-src/meshy/forge/state.json
 assets-src/meshy/forge/*.log
 assets-src/meshy/skill7/*.png
 assets-src/meshy/skill7/state.json
+assets-src/meshy/skill1/*.png
+assets-src/meshy/skill1/state.json
 assets-src/meshy/r2/*.png
 assets-src/meshy/r2/*.glb
 assets-src/meshy/r2/state.json

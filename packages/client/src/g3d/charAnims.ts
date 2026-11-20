@@ -301,10 +301,26 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.74, ease: 'lin', hips: [-0.32, 0.06], p: P({ ...SQUAT, ...PLANT, Spine02: { e: [34, 0, 0] }, Spine: { e: [14, 0, 0] }, Head: { e: [-34, 0, 0] } }) },
     { t: 0.95, ease: 'inOut', p: GUARD },
   ], 0.95);
-  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 5: s5 } as Record<number, THREE.AnimationClip> };
+  // Kalkan Darbesi (Sv. 1): kalkanı göğsüne çekip gövdeyi sağa burar, sol ayakla derin hamle yapıp kalkanı hedefin yüzüne iter
+  const IB = FIRST_SKILL_S[0];
+  // kalkan ön kola bağlı: ön kol göğsün önünden sağa yatınca kalkanın yüzü hedefe bakar (ön kol öne uzanınca kalkan yatıyordu)
+  const SH_BACK: Pose = { LeftArm: { a: V(-0.55, -0.62, -0.05), w: true }, LeftForeArm: { a: V(0.75, 0.12, 0.45), w: true } };
+  const SH_PUNCH: Pose = { LeftArm: { a: V(-0.22, -0.16, 0.96), w: true }, LeftForeArm: { a: V(0.88, 0.04, 0.47), w: true } };
+  const SWORD_LOW = arm([0.5, -0.78, -0.35], [0.45, -0.75, 0.1], [0.35, 0.55, -0.75]);
+  const s7 = buildClip('G Kalkan Darbesi', inner, root, [
+    { t: 0, p: GUARD },
+    { t: 0.12, ease: 'out', hips: [-0.08, -0.1], p: B(P({ ...KNEE, ...SH_BACK, ...SWORD_LOW, ...torso(-4, 22) }), 20, -3) },
+    { t: 0.17, ease: 'lin', hips: [-0.09, -0.11], p: B(P({ ...KNEE, ...SH_BACK, ...SWORD_LOW, ...torso(-5, 24) }), 22, -3) },
+    { t: IB, ease: 'in', hips: [-0.14, 0.26], p: B(P({ ...LUNGE3, ...SH_PUNCH, ...SWORD_LOW, ...torso(16, -22) }), -20, 8) },
+    { t: 0.44, ease: 'out', hips: [-0.13, 0.24], p: B(P({ ...LUNGE3, ...SH_PUNCH, ...SWORD_LOW, ...torso(14, -18) }), -18, 7) },
+    { t: 0.95, ease: 'inOut', p: GUARD },
+  ], 0.95);
+  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 /** Sv. 7 becerilerinde vuruşun yere değdiği an (sn): efektler buna göre */
 export const SKILL7_IMPACT_S = [0.4, 0.46, 0.46];
+/** Sv. 1 becerilerinde değme/bırakış anı (sn): Muhafız kalkanın değdiği, Avcı havada oku bıraktığı, Arkanist şimşeği saldığı an */
+export const FIRST_SKILL_S = [0.26, 0.3, 0.28];
 
 // ───────── Avcı (yay sol elde) ─────────
 /**
@@ -433,8 +449,23 @@ export function hunterClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.72, ease: 'inOut', hips: [-0.15, 0.02], p: H(bowPose(-66, 0.1, 0.2, { LeftUpLeg: { e: [-30, 0, 12] }, LeftLeg: { e: [44, 0, 0] }, RightUpLeg: { e: [20, 0, -12] }, RightLeg: { e: [40, 0, 0] } }), -66, 6) },
     { t: 0.95, ease: 'inOut', p: HUNT },
   ], 0.95);
+  // Geri Sıçrayış (Sv. 1): derin çömelir, geriye sıçrar; havada dizler göğse toplanmışken yayı çekip bırakır, çömelerek konar
+  const RB = FIRST_SKILL_S[1];
+  const CROUCH: Pose = { LeftUpLeg: { e: [-44, 0, 14] }, LeftLeg: { e: [70, 0, 0] }, LeftFoot: { e: [-14, 0, 0] }, RightUpLeg: { e: [-6, 0, -14] }, RightLeg: { e: [64, 0, 0] }, RightFoot: { e: [-12, 0, 0] } };
+  const TUCK: Pose = { LeftUpLeg: { e: [-62, 0, 14] }, LeftLeg: { e: [96, 0, 0] }, LeftFoot: { e: [-20, 0, 0] }, RightUpLeg: { e: [-40, 0, -14] }, RightLeg: { e: [92, 0, 0] }, RightFoot: { e: [-20, 0, 0] } };
+  const LAND: Pose = { LeftUpLeg: { e: [-36, 0, 16] }, LeftLeg: { e: [58, 0, 0] }, RightUpLeg: { e: [6, 0, -16] }, RightLeg: { e: [62, 0, 0] } };
+  const s7 = buildClip('H Geri Sıçrayış', inner, root, [
+    { t: 0, p: HUNT },
+    { t: 0.1, ease: 'out', hips: [-0.2, 0.04], p: H(bowPose(-62, 0.04, 0.35, CROUCH), -62, 10) },
+    { t: 0.22, ease: 'out', hips: [0.34, -0.22], p: H(bowPose(-72, 0.14, 1.05, TUCK), -72, -14) },
+    { t: RB, ease: 'lin', hips: [0.4, -0.3], p: H(bowPose(-75, 0.12, 1.15, TUCK), -75, -16) },
+    { t: RB + 0.05, ease: 'out', hips: [0.36, -0.34], p: H(releasePose(-78, 0.14, TUCK), -78, -18) },
+    { t: 0.5, ease: 'in', hips: [-0.18, -0.18], p: H(releasePose(-74, 0.06, LAND), -74, 6) },
+    { t: 0.66, ease: 'out', hips: [-0.1, -0.1], p: H(bowPose(-68, 0.04, 0.2, LAND), -68, 4) },
+    { t: 0.95, ease: 'inOut', p: HUNT },
+  ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 } as Record<number, THREE.AnimationClip> };
+  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── Arkanist (asa sağ elde) ─────────
@@ -533,8 +564,19 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.72, ease: 'lin', hips: [-0.16, 0.24], p: B(AP({ ...LUNGE2, ...FOLLOW, Spine02: { e: [16, 6, 0] }, Spine01: { e: [6, 2, 0] }, Spine: { e: [5, 0, 0] }, Head: { e: [-18, -6, 0] } }), 6, 14) },
     { t: 0.95, ease: 'inOut', p: ARC },
   ], 0.95);
+  // Öz Zinciri (Sv. 1): sol avucunda kıvılcım toplarken asayı geri alır, derin hamleyle asa ucunu hedefe uzatıp şimşeği salar
+  const RA = FIRST_SKILL_S[2];
+  const s7 = buildClip('A Zincir', inner, root, [
+    { t: 0, p: ARC },
+    { t: 0.13, ease: 'out', hips: [-0.07, -0.08], p: AIM(0) },
+    { t: 0.21, ease: 'lin', hips: [-0.08, -0.09], p: AIM(1.4) },
+    { t: RA, ease: 'in', hips: [-0.13, 0.2], p: THRUST },
+    { t: 0.46, ease: 'out', hips: [-0.15, 0.23], p: RECOIL },
+    { t: 0.62, ease: 'lin', hips: [-0.14, 0.21], p: RECOIL },
+    { t: 0.95, ease: 'inOut', p: ARC },
+  ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5 } as Record<number, THREE.AnimationClip> };
+  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── Şifa Bahçesi: diz çöküp orakla bitki kesme (üç sınıf aynı iskelet) ─────────
