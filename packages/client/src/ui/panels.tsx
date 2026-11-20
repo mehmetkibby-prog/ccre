@@ -619,7 +619,7 @@ function NetStats({ game }: { game: Game }) {
       const i = game.renderer.renderer.info; setMem(`${i.memory.geometries} geo · ${i.memory.textures} doku · ${i.programs?.length ?? 0} program`);
       // tanı: ekran yenileme hızı ve oyunun çizdiği çözünürlük (otomatik ayar yüzdesiyle)
       const ri = game.renderer.renderInfo();
-      setDisp(`Ekran ${game.hz ? game.hz + ' Hz' : '…'} · çizim ${ri.w}×${ri.h}${ri.scale < 1 ? ` (otomatik %${Math.round(ri.scale * 100)})` : ''}`);
+      setDisp(`Ekran ${game.hz ? game.hz + ' Hz' : '…'} · çizim ${ri.w}×${ri.h}${ri.scale < 1 ? ` (otomatik %${Math.round(ri.scale * 100)})` : ''}${ri.lvl ? ` · hafifletme ${ri.lvl}/3` : ''}`);
     };
     f(); const iv = setInterval(f, 1000); return () => clearInterval(iv);
   }, [game]);

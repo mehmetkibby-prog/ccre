@@ -212,6 +212,7 @@ function MenuBackdrop() {
     const g: any = { selfId: 1, cls: 'guardian', dx: bx, dy: by, ents: new Map<number, CEnt>(), selfFlags: 0, selfAnim: Anim.IDLE, selfAnimStart: 0, lastMoveAt: 0, sdir: 64, targetId: 0, charId: 1, hoverId: 0, camYaw: 0 };
     try {
       r = new Renderer3D(g, canvas, document.createElement('canvas'));
+      r.persistPerf = false;
       r.setLayout(l);
     } catch (e) { console.warn('[menü] 3B sahne kurulamadı', e); setFallback(true); return; }
     const fx = r.fx;

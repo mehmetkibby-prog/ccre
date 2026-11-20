@@ -16,6 +16,20 @@ export class Terrain {
   water: THREE.Mesh | null = null;
   /** yeni yıl karı (0–1), çalışırken değişebilir */
   snow = { value: 0 };
+  /** gökyüzü ışığının şiddeti (renderer gece-gündüzle günceller): hafif zeminde yansıma haritası yerine kullanılır */
+  envI = { value: 0.55 };
+  private lite = false;
+  /**
+   * Telefon/tablet hafifletmesi: zeminde kabartma dokusu ve gökyüzü yansıma haritası (IBL) derlenmez; yerine aynı
+   * parlaklıkta düz bir gökyüzü ışığı eklenir. Zemin kaba bir yüzey: yansıması zaten görünmüyordu. Bir kez yeniden derlenir.
+   */
+  setLite(on: boolean) {
+    if (on === this.lite) return;
+    this.lite = on;
+    const m = this.mesh.material as THREE.MeshStandardMaterial;
+    m.defines = on ? { STANDARD: '', TERRAIN_LITE: '' } : { STANDARD: '' };
+    m.needsUpdate = true;
+  }
   heights: Float32Array;
   hw: number; hh: number; // yükseklik ızgarası boyutu
   step: number; // metre
@@ -147,7 +161,11 @@ export class Terrain {
       vec4 c = textureGrad(uColArr, vec3(uvi, ${i}.0), gx, gy);
       float ww = pow(wi, 9.0) * (0.85 + 0.15 * dot(c.rgb, vec3(0.33)));
       col += c.rgb * ww;
+#ifdef TERRAIN_LITE
+      nor += vec3(0.0, 0.0, 1.0) * ww;
+#else
       nor += (textureGrad(uNorArr, vec3(uvi, ${i}.0), gx, gy).xyz * 2.0 - 1.0) * ww;
+#endif
       tot += ww;
     } }`;
     }).join('\n');
@@ -162,17 +180,23 @@ export class Terrain {
       sh.uniforms.uMapSize = { value: new THREE.Vector2(l.w * TILE_M, l.h * TILE_M) };
       sh.uniforms.uTint = { value: tint };
       sh.uniforms.uSnow = this.snow;
+      sh.uniforms.uEnvI = this.envI;
       sh.vertexShader = sh.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec3 vWPos;\nvarying vec3 vWNor;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvWPos = (modelMatrix * vec4(position,1.0)).xyz;\nvWNor = normalize(mat3(modelMatrix) * normal);');
-      sh.fragmentShader = sh.fragmentShader
+      sh.fragmentShader = '#ifdef TERRAIN_LITE\n#undef USE_ENVMAP\n#endif\n' + sh.fragmentShader
+        .replace('#include <lights_fragment_maps>', `#include <lights_fragment_maps>
+#ifdef TERRAIN_LITE
+  // yansıma haritası yerine: gökyüzü ortalaması kadar yaygın ışık (zemin çoğunlukla yukarı bakar)
+  { vec3 wn = inverseTransformDirection(normal, viewMatrix); iblIrradiance += PI * mix(vec3(0.42, 0.37, 0.3), vec3(0.86, 0.95, 1.02), smoothstep(-0.2, 0.8, wn.y)) * uEnvI * 0.94; }
+#endif`)
         .replace('#include <common>', `#include <common>
 precision highp float;
 precision highp sampler2DArray;
 varying vec3 vWPos; varying vec3 vWNor;
 uniform sampler2D uSplat0; uniform sampler2D uSplat1; uniform sampler2D uSplat2;
 uniform sampler2DArray uColArr; uniform sampler2DArray uNorArr;
-uniform vec2 uMapSize; uniform vec3 uTint; uniform float uSnow;
+uniform vec2 uMapSize; uniform vec3 uTint; uniform float uSnow; uniform float uEnvI;
 // sin'siz karma (Dave Hoskins hash12): telefon GPU'larında büyük açılı sin hassas değil, gürültü ~1 m'lik bloklara bölünüp
 // yol kenarında basamaklar ve zeminde dikdörtgen açık/koyu yamalar yapıyordu
 float hsh(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }

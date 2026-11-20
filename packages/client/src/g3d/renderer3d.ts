@@ -42,6 +42,9 @@ export const CAM_ZOOM_DEFAULT = 0.8;
 export const CAM_PITCH_DEFAULT = 0.8;
 export const CAM_ZOOM_MIN = 0.45, CAM_ZOOM_MAX = 2.3;
 const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+/** telefon/tablet: cihazın ulaştığı otomatik hafifletme kademesi (bir sonraki girişte oradan başlanır) */
+const PERF_KEY = 'col_perf_lvl';
+const storedPerf = () => { try { return Math.max(0, Math.min(3, Number(localStorage.getItem(PERF_KEY)) || 0)); } catch { return 0; } };
 /**
  * Telefonda karakter/canavar gerçek gölge düşürmez, yumuşak zemin gölgesi kullanır. Gölge haritasında
  * yalnız durağan dünya kalır ve oyuncu 2,5 m yürüdükçe bir kez çizilir (önceden her karede ya da iki
@@ -160,7 +163,11 @@ export class Renderer3D {
   /** sabit çözünürlük ölçeği (giriş videosu kaydı); null: kare hızına göre uyarlanır */
   fixedScale: number | null = null;
   /** ayarlardaki tanı satırı: çizilen piksel boyutu ve otomatik çözünürlük oranı */
-  renderInfo() { return { w: Math.round(this.w * this.dpr), h: Math.round(this.h * this.dpr), scale: this.dynScale }; }
+  renderInfo() { return { w: Math.round(this.w * this.dpr), h: Math.round(this.h * this.dpr), scale: this.dynScale, lvl: this.perfLvl }; }
+  /** telefon/tablet otomatik hafifletme kademesi (0–3) ve son harita kurulma anı (yükleme sırasındaki düşüş sayılmaz) */
+  perfLvl = MOBILE ? storedPerf() : 0; private mapAt = 0; private dynMax = 1;
+  /** false: giriş ekranı sahnesi — kademe yükselir ama cihaza kaydedilmez (oyunun ölçümü esas) */
+  persistPerf = true;
   private dynScale = 1; private fpsAcc = 0; private fpsFrames = 0; private fpsAt = 0;
   private skyTex: THREE.Texture | null = null;
   quality = '';
@@ -366,6 +373,7 @@ export class Renderer3D {
     // kendi karakterini yeniden ekle
     if (this.self) this.dyn.add(this.self.obj);
     console.debug('[3d] harita kuruldu', l.def.id, Math.round(performance.now() - t0), 'ms');
+    this.mapAt = performance.now();
   }
 
   /** Son 2 sn'nin ortalamasına göre çizim çözünürlüğünü ayarla (hedef 60 FPS). */
@@ -383,10 +391,24 @@ export class Renderer3D {
     // Çözünürlük her değiştiğinde ince çizgiler (çit, pencere, zemin deseni) bir an kayar; yürürken sık sık inip
     // çıkması "dalgalanma" gibi görünüyordu. Artık 0,1'lik kademelerle ve ancak birkaç ölçüm üst üste aynı yönü
     // gösterince değişir (düşük: 2 ölçüm ≈ 4 sn, yüksek: 4 ölçüm ≈ 8 sn); arada salınım olmaz.
-    const cap = cool() ? 60 : store.get().settings.fpsCap || 60, floor = MOBILE ? 0.8 : 0.6;
-    if (fps < cap * 0.8) { this.resLow++; this.resHigh = 0; } else if (fps > cap * 0.95) { this.resHigh++; this.resLow = 0; } else { this.resLow = 0; this.resHigh = 0; }
-    if (this.resLow >= 2 && this.dynScale > floor) { this.dynScale = Math.max(floor, Math.round((this.dynScale - 0.1) * 10) / 10); this.resLow = 0; }
-    else if (this.resHigh >= 4 && this.dynScale < 1) { this.dynScale = Math.min(1, Math.round((this.dynScale + 0.1) * 10) / 10); this.resHigh = 0; }
+    const cap = cool() ? 60 : store.get().settings.fpsCap || 60, floor = MOBILE ? (this.perfLvl >= 3 ? 0.65 : 0.8) : 0.6;
+    // Telefon/tablet: 90 Hz ekranda 60 kare için kare 11 ms'ye sığmalı; sığmayınca tam 45'te kalır. Bu yüzden
+    // 55'in altı da "düşük" sayılır ve çözünürlük tabanına inildiğinde sırayla hafifletilir (oturum boyunca kalır):
+    // 1) uzak modeller daha erken sadeleşir, çimen kapanır · 2) zemin hafifler (kabartma ve yansıma yerine düz gökyüzü
+    // ışığı), ağır beceri efektleri sadeleşir · 3) çözünürlük tabanı 0,65'e iner. Ulaşılan kademe cihazda hatırlanır
+    // (bir sonraki girişte uyum beklenmez); görüntü kalitesi değiştirilince sıfırlanır. Bilgisayarda eski davranış.
+    const low = MOBILE ? cap * 0.92 : cap * 0.8;
+    if (fps < low) { this.resLow++; this.resHigh = 0; } else if (fps > cap * 0.95) { this.resHigh++; this.resLow = 0; } else { this.resLow = 0; this.resHigh = 0; }
+    if (MOBILE && this.resLow >= 2 && this.dynScale <= floor + 0.001 && this.perfLvl < 3 && now - this.mapAt > 12_000) {
+      this.perfLvl++; this.resLow = 0; console.info('[3d] otomatik hafifletme kademesi', this.perfLvl, Math.round(fps), 'fps');
+      if (this.persistPerf) try { localStorage.setItem(PERF_KEY, String(this.perfLvl)); } catch { /* özel pencere */ }
+    }
+    if (this.resLow >= 2 && this.dynScale > floor) {
+      // telefon/tablet: 60'ı tutturamayan çözünürlüğe bu oturumda geri çıkılmaz (inip çıkıp titremesin)
+      if (MOBILE) this.dynMax = Math.min(this.dynMax, Math.round((this.dynScale - 0.1) * 10) / 10);
+      this.dynScale = Math.max(floor, Math.round((this.dynScale - 0.1) * 10) / 10); this.resLow = 0;
+    }
+    else if (this.resHigh >= 4 && this.dynScale < this.dynMax) { this.dynScale = Math.min(this.dynMax, Math.round((this.dynScale + 0.1) * 10) / 10); this.resHigh = 0; }
   }
 
   // ───────── gece-gündüz (Türkiye saati) ─────────
@@ -505,6 +527,8 @@ export class Renderer3D {
     const q = store.get().settings.quality;
     const cm = cool();
     if (q !== this.quality || cm !== this.coolOn) {
+      // görüntü kalitesi elle değiştirildi: otomatik hafifletme baştan (telefon/tablet)
+      if (MOBILE && this.quality && q !== this.quality) { this.perfLvl = 0; this.dynScale = 1; this.dynMax = 1; if (this.persistPerf) try { localStorage.removeItem(PERF_KEY); } catch { /* */ } }
       this.coolOn = cm;
       this.setupComposer();
       this.renderer.shadowMap.enabled = q !== 'low' && DYN_SHADOWS && !cm;
@@ -926,8 +950,12 @@ export class Renderer3D {
     // ayrıntı kısma: kameradan uzak (~24 m+) olanların iskelet animasyonu 3 karede bir, biriken süreyle güncellenir
     // (kalabalıkta/ormanda kare süresinin çoğu iskelet hesabıydı). Durum değişimi ve vuruş başlangıcı hemen işlenir.
     const lv = v as View & { lodAcc?: number; lodSlot?: number };
-    const cm = cool(), lodD = cm ? 14 : 24, lodN = cm ? 4 : 3;
-    const far = v.obj.position.distanceToSquared(this.camTarget) > lodD * lodD;
+    const camD2 = v.obj.position.distanceToSquared(this.camTarget);
+    // Telefon/tablet: uzaktaki karakter ve canavar sadeleştirilmiş üçgen dizilimiyle çizilir (aynı doku ve iskelet),
+    // iskelet animasyonu da daha yakından seyrekleşir. Bilgisayarda değişiklik yok.
+    if (MOBILE && v.glb?.setLod) { const gd = this.perfLvl >= 1 ? 8 : 11; v.glb.setLod(camD2 > gd * gd); }
+    const cm = cool(), lodD = cm ? 14 : MOBILE ? (this.perfLvl >= 1 ? 10 : 14) : 24, lodN = cm ? 4 : MOBILE ? (camD2 > 24 * 24 ? 3 : 2) : 3;
+    const far = camD2 > lodD * lodD;
     let adt = dt;
     if (far && !restart) {
       lv.lodAcc = (lv.lodAcc ?? 0) + dt;
@@ -1082,11 +1110,13 @@ export class Renderer3D {
       this.ringMesh.rotation.z = now / 1500;
     }
     // çimen
+    if (this.grass && MOBILE && this.perfLvl >= 1) this.grass.group.visible = false;
     if (this.grass?.group.visible) this.grass.update(g.dx * U, g.dy * U);
     // pazar tezgâhları
     this.syncStalls();
     // efektler
-    this.fx.sk.q = cool() ? 0 : MOBILE ? 1 : 2;
+    this.fx.sk.q = cool() || (MOBILE && this.perfLvl >= 2) ? 0 : MOBILE ? 1 : 2;
+    if (MOBILE) { this.terrain.setLite(this.perfLvl >= 2); this.terrain.envI.value = this.scene.environmentIntensity; }
     const warmNow = !this.skWarm;
     if (warmNow) { this.skWarm = true; this.fx.sk.warm(); this.fx.warmShapes(); }
     this.fx.update(dt, now);

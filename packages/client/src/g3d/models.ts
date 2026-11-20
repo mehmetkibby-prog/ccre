@@ -238,7 +238,7 @@ export function rotateWorld(bone: THREE.Object3D, axis: THREE.Vector3, angle: nu
   bone.quaternion.copy(_iqp.invert().multiply(_iqw));
   bone.updateMatrixWorld(true);
 }
-export interface GlbChar { debugPose?(kind: 'a' | 's', idx: number, t: number): void; /** oynayan saldırı/beceri klibinin zamanı (sn); yoksa -1 */ swingTime?(): number; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
+export interface GlbChar { /** Telefon/tablet: uzakta sadeleştirilmiş üçgen dizilimi (aynı köşeler, iskelet ve doku) */ setLod?(on: boolean): void; debugPose?(kind: 'a' | 's', idx: number, t: number): void; /** oynayan saldırı/beceri klibinin zamanı (sn); yoksa -1 */ swingTime?(): number; id: string; root: THREE.Object3D; height: number; update(st: HState, dt: number, moving: boolean, speed: number, restart?: boolean, skill?: number): void; hand?: THREE.Object3D; bones: GlbBones }
 
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _s = new THREE.Vector3();
 /**
@@ -383,6 +383,69 @@ function tailToHips(scene: THREE.Object3D) {
   });
 }
 
+// ───────── uzak LOD (yalnız telefon/tablet) ─────────
+/**
+ * Uzaktaki karakter ve canavarlar için sadeleştirilmiş üçgen dizilimi: köşe tamponu (konum, normal, doku,
+ * iskelet ağırlıkları) AYNEN paylaşılır, yalnız indeks tamponu meshoptimizer ile ~%30'a indirilir. Böylece
+ * doku, renk ve animasyon değişmez; ekran kartı uzaktaki modelde çok daha az üçgen ve köşe işler.
+ * Kütüphane yalnız dokunmatik cihazda (dinamik) yüklenir; bilgisayarda hiç çalışmaz.
+ */
+const LOD_MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
+type Simplifier = { simplify: (i: Uint32Array, p: Float32Array, stride: number, target: number, err: number, flags?: string[]) => [Uint32Array, number] };
+let simplifier: Simplifier | null = null;
+if (LOD_MOBILE) {
+  import('meshoptimizer/meshopt_simplifier.module.js').then(async (m: any) => { await m.MeshoptSimplifier.ready; simplifier = m.MeshoptSimplifier; }).catch(() => { /* LOD yok: tam model çizilir */ });
+}
+const lodCache = new WeakMap<THREE.BufferGeometry, THREE.BufferGeometry | null>();
+const lodQueue: THREE.BufferGeometry[] = [];
+let lodBusy = false;
+function buildLod(src: THREE.BufferGeometry): THREE.BufferGeometry | null {
+  const pa = src.attributes.position as THREE.BufferAttribute; if (!pa || !simplifier) return null;
+  const n = pa.count, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) { pos[i * 3] = pa.getX(i); pos[i * 3 + 1] = pa.getY(i); pos[i * 3 + 2] = pa.getZ(i); }
+  const all = src.index ? Uint32Array.from(src.index.array as ArrayLike<number>) : Uint32Array.from({ length: n }, (_, i) => i);
+  if (all.length < 3000) return null; // küçük ağ: sadeleştirmeye değmez
+  const groups = src.groups.length ? src.groups : [{ start: 0, count: all.length, materialIndex: 0 }];
+  const parts: Uint32Array[] = []; const outGroups: { start: number; count: number; materialIndex?: number }[] = [];
+  let off = 0;
+  for (const gr of groups) {
+    const idx = all.subarray(gr.start, gr.start + (Number.isFinite(gr.count) ? gr.count : all.length - gr.start));
+    const target = Math.max(3, Math.floor((idx.length * 0.3) / 3) * 3);
+    // dönüş: [sadeleşmiş indeksler (kendi uzunluğunda), ulaşılan hata] — ikinci değer sayı değil, hata ölçüsü
+    const [out] = simplifier.simplify(Uint32Array.from(idx), pos, 3, target, 0.035, ['LockBorder']);
+    if (!out.length) return null;
+    parts.push(out); outGroups.push({ start: off, count: out.length, materialIndex: gr.materialIndex }); off += out.length;
+  }
+  const merged = new (n < 65536 ? Uint16Array : Uint32Array)(off);
+  let o = 0; for (const pt of parts) { merged.set(pt, o); o += pt.length; }
+  const g = new THREE.BufferGeometry();
+  for (const [k, a] of Object.entries(src.attributes)) g.setAttribute(k, a);
+  g.morphAttributes = src.morphAttributes; g.morphTargetsRelative = src.morphTargetsRelative;
+  g.setIndex(new THREE.BufferAttribute(merged, 1));
+  if (src.groups.length) for (const gr of outGroups) g.addGroup(gr.start, gr.count, gr.materialIndex);
+  g.boundingSphere = src.boundingSphere; g.boundingBox = src.boundingBox;
+  g.userData.lod = true;
+  return g;
+}
+/** Sadeleştirilmiş geometri hazırsa onu verir; yoksa sıraya alır (karede en çok bir ağ: takılma olmasın) ve null döner. */
+function lodOf(src: THREE.BufferGeometry): THREE.BufferGeometry | null {
+  const hit = lodCache.get(src);
+  if (hit !== undefined) return hit;
+  if (!simplifier) return null;
+  if (!lodQueue.includes(src)) lodQueue.push(src);
+  if (!lodBusy) {
+    lodBusy = true;
+    const step = () => {
+      const g = lodQueue.shift();
+      if (!g) { lodBusy = false; return; }
+      try { lodCache.set(g, buildLod(g)); } catch { lodCache.set(g, null); }
+      setTimeout(step, 30);
+    };
+    setTimeout(step, 0);
+  }
+  return null;
+}
+
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
   if (!L) return null;
@@ -476,7 +539,17 @@ export function createGlbChar(id: string): GlbChar | null {
     current = a;
   };
   play('idle', false);
+  // uzak LOD: iskeletli ağların asıl geometrisi saklanır; istenince paylaşılan sadeleştirilmiş dizilime geçer
+  const lodMeshes: { m: THREE.Mesh; orig: THREE.BufferGeometry }[] = [];
+  if (LOD_MOBILE) inner.traverse((o) => { const m = o as THREE.SkinnedMesh; if (m.isSkinnedMesh) lodMeshes.push({ m, orig: m.geometry }); });
+  let lodOn = false;
   return {
+    setLod(on: boolean) {
+      if (!LOD_MOBILE || !lodMeshes.length) return;
+      if (on === lodOn && (!on || lodMeshes.every((x) => x.m.geometry !== x.orig))) return;
+      lodOn = on;
+      for (const x of lodMeshes) x.m.geometry = on ? lodOf(x.orig) ?? x.orig : x.orig;
+    },
     id, root, height: (L.entry.height ?? 1.8) + 0.2, hand, bones,
     /** Geliştirme: çizilmiş klibi verilen anda dondurur (kind: 'a' saldırı / 's' beceri). */
     swingTime() { return swingSet ? swingSet.up.time : -1; },
