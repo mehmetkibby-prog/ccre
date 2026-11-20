@@ -6421,10 +6421,12 @@ case "collect":{
 					if(eventKind444(drop.monster_id)&&['dragon','solo','dungeon'].includes(eventKind444(drop.monster_id)))return lootResponse473(await globalThis.__colEventIsland444.collect(playerId,drop.id));
  if (drop.monster_id === "dragon-world-1") return lootResponse473(await dragonService().collect(playerId, drop.id));
 					if ((UPGRADE_MATERIAL_KINDS.includes(drop.kind)||Object.hasOwn(RUNE_TYPES,drop.kind)||['royal_crown','weathered_iron','wing','infinite','pet','halloween_pumpkin','witch_wand','halloween_candy'].includes(drop.kind))) {
-						if (!(await database.batch([database.prepare(`INSERT INTO dungeon_materials(player_id,kind,amount) SELECT ?,kind,amount FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?
-            ON CONFLICT(player_id,kind) DO UPDATE SET amount=amount+excluded.amount RETURNING amount`).bind(playerId, drop.id, playerId, drop.kind, now), database.prepare("DELETE FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?").bind(drop.id, playerId, drop.kind, now)]))[0].results[0]) return lootResponse473({ error: "Ganimet az önce toplandı." }, { status: 409 });
+						const storedMaterial=(await database.batch([database.prepare(`INSERT INTO dungeon_materials(player_id,kind,amount) SELECT ?,kind,amount FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?
+            ON CONFLICT(player_id,kind) DO UPDATE SET amount=amount+excluded.amount RETURNING amount`).bind(playerId, drop.id, playerId, drop.kind, now), database.prepare("DELETE FROM world_drops WHERE id=? AND owner_id=? AND kind=? AND expires_at>=?").bind(drop.id, playerId, drop.kind, now)]))[0].results[0];
+                        if (!storedMaterial) return lootResponse473({ error: "Ganimet az önce toplandı." }, { status: 409 });
 						return lootResponse473({
 							ok: true,
+                            ...(drop.kind==="royal_crown"?{materialBalance:{kind:drop.kind,amount:storedMaterial.amount}}:{}),
 							message: `${drop.item_name} çantana eklendi.`
 						});
 					}

@@ -40,10 +40,20 @@ test('production-flags owner stream persists nonlethal damage, kills, claims and
  await until(()=>f.sql.prepare('SELECT rewards_completed_at FROM normal_defeats WHERE monster_id=? AND spawn_round=17').get(monsterId)?.rewards_completed_at>0||s.faults.length,15000);
  assert.equal(s.faults.length,0,faults());
  const defeat=f.sql.prepare('SELECT * FROM normal_defeats WHERE monster_id=? AND spawn_round=17').get(monsterId);assert(defeat?.rewards_completed_at>0);
- for(let replay=0;replay<2;replay++){const claim=await send({action:'claim_rewards',rewardTargets:[{id:monsterId,spawnRound:17}]});assert.equal(claim.status,200,JSON.stringify(claim));}
+ const visibleDrops=new Map();
+ for(let replay=0;replay<2;replay++){
+  const claim=await send({action:'claim_rewards',rewardTargets:[{id:monsterId,spawnRound:17}]});assert.equal(claim.status,200,JSON.stringify(claim));
+  for(const row of claim.body?.drops??[])visibleDrops.set(row.id,row);
+ }
  const drops=f.sql.prepare('SELECT id,kind,amount,collectible_at FROM world_drops WHERE monster_id=? ORDER BY kind').all(monsterId);assert.deepEqual(drops.map(d=>[d.kind,d.amount]),[['essence',3],['royal_crown',1]]);
  const at=Math.max(...drops.map(d=>d.collectible_at));await pause(Math.max(0,at*1000-Date.now()+30));
- for(const drop of drops){const result=await send({action:'collect',targetId:drop.id});assert.equal(result.status,200,JSON.stringify(result));}
+ assert.equal(visibleDrops.size,2,'both drops must reach the owner');
+ const essenceBefore=f.sql.prepare('SELECT essence FROM players WHERE id=?').get(f.id).essence;
+ for(const drop of visibleDrops.values()){
+  const result=await send({action:'collect',targetId:drop.id,automatic:true});assert.equal(result.status,200,JSON.stringify(result));
+  if(drop.kind==='royal_crown')assert.deepEqual(result.body.materialBalance,{kind:'royal_crown',amount:1});
+ }
+ assert.equal(f.sql.prepare('SELECT essence FROM players WHERE id=?').get(f.id).essence,essenceBefore+3);
  assert.equal(f.sql.prepare('SELECT amount FROM dungeon_materials WHERE player_id=? AND kind=?').get(f.id,'royal_crown').amount,1);assert.equal(f.sql.prepare('SELECT COUNT(*) n FROM world_drops WHERE monster_id=?').get(monsterId).n,0);assert.equal(s.faults.length,0,faults());assert.equal(s.live.ws.readyState,1);
  t.diagnostic(JSON.stringify({coreRoot,realm:process.env.R102_TEST_REALM??'fixture',nonlethal,specialUsed,attacks,claims:2,collected:drops.length,faults:s.faults.length}));
 });
