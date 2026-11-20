@@ -94,6 +94,8 @@ export class Game {
   lastFrame = 0;
   raf = 0;
   frames = 0; fpsAt = 0;
+  /** ekranın yenileme hızı (Hz): ayarlardaki tanı satırı için, kare aralıklarının ortancasından */
+  hz = 0; private steps: number[] = [];
   stopped = false;
   hoverId = 0;
   pingSent = 0; pingPerf = 0; pingSamples: number[] = [];
@@ -186,6 +188,8 @@ export class Game {
       // Isınma modu: akıcılık korunur (60 kare; 120 Hz ekranda 120'ye çıkmaz); ısıyı çizim ayrıntısı azaltır
       const cap = st.cool && TOUCH ? 60 : st.fpsCap;
       const step = prevT ? Math.min(100, t - prevT) : 16.7; prevT = t;
+      this.steps.push(step);
+      if (this.steps.length >= 120) { const s2 = this.steps.sort((a, b) => a - b); this.hz = Math.round(1000 / Math.max(1, s2[60])); this.steps = []; }
       if (cap > 0) {
         const ft = 1000 / cap;
         acc = Math.min(acc + step, ft * 2);

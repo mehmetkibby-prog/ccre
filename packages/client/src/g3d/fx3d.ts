@@ -11,6 +11,9 @@ export interface Projectile { x0: number; y0: number; tx: number; ty: number; tg
 export interface Shape { kind: 'circle' | 'ring' | 'line' | 'blast' | 'slash' | 'pillar' | 'heal' | 'shield' | 'teleport'; x: number; y: number; r: number; r2: number; a: number; t0: number; dur: number; color: string; follow?: number }
 
 const MAXP = 2000;
+/** Telefon/tablette vuruş ışığı havuzu tek ışık: sahnedeki her ışık zemin dahil bütün aydınlatılan yüzeylerde
+ * her pikselde hesaplanır (yoğunluğu 0 olsa bile); 4 ışık mobil GPU'da karenin belirgin bir payını yiyordu. */
+const FX_LIGHTS = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches ? 1 : 4;
 const tmpC = new THREE.Color();
 
 export class Fx3D {
@@ -56,7 +59,7 @@ export class Fx3D {
     this.points = new THREE.Points(this.pGeo, mat);
     this.points.frustumCulled = false;
     this.group.add(this.points, this.sk.group, this.trails.group);
-    for (let i = 0; i < 4; i++) { const l = new THREE.PointLight(0xffffff, 0, 9, 1.6); this.lights.push(l); this.group.add(l); }
+    for (let i = 0; i < FX_LIGHTS; i++) { const l = new THREE.PointLight(0xffffff, 0, 9, 1.6); this.lights.push(l); this.group.add(l); }
   }
 
   /** İlk vuruşta takılma olmasın: kılıç izi, patlama, halka vb. bir kez görünmez yerde oluşturulur (gölgelendiriciler derlenir). */

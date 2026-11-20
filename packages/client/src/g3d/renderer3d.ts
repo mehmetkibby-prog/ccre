@@ -159,6 +159,8 @@ export class Renderer3D {
   private frameNo = 0;
   /** sabit çözünürlük ölçeği (giriş videosu kaydı); null: kare hızına göre uyarlanır */
   fixedScale: number | null = null;
+  /** ayarlardaki tanı satırı: çizilen piksel boyutu ve otomatik çözünürlük oranı */
+  renderInfo() { return { w: Math.round(this.w * this.dpr), h: Math.round(this.h * this.dpr), scale: this.dynScale }; }
   private dynScale = 1; private fpsAcc = 0; private fpsFrames = 0; private fpsAt = 0;
   private skyTex: THREE.Texture | null = null;
   quality = '';
@@ -510,8 +512,12 @@ export class Renderer3D {
       this.shadowDirty = true;
     }
     const maxDpr = cm ? (MOBILE ? 0.85 : 1) : MOBILE ? (q === 'high' ? 1.3 : q === 'medium' ? 1.1 : 0.9) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
-    const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr) * this.dynScale) * 20) / 20;
     const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    // Telefon/tablette piksel bütçesi: aynı oranla büyük ekranlı tablet (1280×800 CSS) telefonun ~1,6 katı piksel
+    // çiziyordu; GPU'su telefonunkinden zayıfken kare süresi aşılıyordu. Telefonlar bütçenin altında kalır (değişmez).
+    const budget = cm ? 0.6e6 : q === 'high' ? 1.25e6 : q === 'medium' ? 0.95e6 : 0.7e6;
+    const fit = MOBILE ? Math.sqrt(budget / Math.max(1, w * h)) : 9;
+    const dpr = Math.round(Math.max(0.6, Math.min(window.devicePixelRatio || 1, maxDpr, fit) * this.dynScale) * 20) / 20;
     if (w !== this.w || h !== this.h || dpr !== this.dpr) {
       this.w = w; this.h = h; this.dpr = dpr;
       this.renderer.setPixelRatio(dpr);

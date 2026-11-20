@@ -613,7 +613,16 @@ function NetStats({ game }: { game: Game }) {
   const ping = useStore((x) => x.ping), fps = useStore((x) => x.fps);
   // tanı: ekran kartında tutulan geometri/doku/program sayısı (uzun oturumda sürekli artıyorsa sızıntı var)
   const [mem, setMem] = useState('');
-  useEffect(() => { const f = () => { const i = game.renderer.renderer.info; setMem(`${i.memory.geometries} geo · ${i.memory.textures} doku · ${i.programs?.length ?? 0} program`); }; f(); const iv = setInterval(f, 1000); return () => clearInterval(iv); }, [game]);
+  const [disp, setDisp] = useState('');
+  useEffect(() => {
+    const f = () => {
+      const i = game.renderer.renderer.info; setMem(`${i.memory.geometries} geo · ${i.memory.textures} doku · ${i.programs?.length ?? 0} program`);
+      // tanı: ekran yenileme hızı ve oyunun çizdiği çözünürlük (otomatik ayar yüzdesiyle)
+      const ri = game.renderer.renderInfo();
+      setDisp(`Ekran ${game.hz ? game.hz + ' Hz' : '…'} · çizim ${ri.w}×${ri.h}${ri.scale < 1 ? ` (otomatik %${Math.round(ri.scale * 100)})` : ''}`);
+    };
+    f(); const iv = setInterval(f, 1000); return () => clearInterval(iv);
+  }, [game]);
   const colo = useColo();
   const path = useStore((x) => x.netPath);
   return (
@@ -623,6 +632,7 @@ function NetStats({ game }: { game: Game }) {
         <div><small>Kare hızı</small><b>{fps} fps</b></div>
       </div>
       {path === 'direct' && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı: <b>doğrudan sunucuya</b> (Türkiye)</div>}
+      <div className="muted" style={{ fontSize: 10, marginTop: 2, opacity: 0.7 }}>{disp}</div>
       <div className="muted" style={{ fontSize: 10, marginTop: 2, opacity: 0.7 }}>Bellek: {mem}</div>
       {path !== 'direct' && colo && <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>Bağlantı noktası: <b>{COLO_NAMES[colo] ?? colo}</b> ({colo}){colo !== 'IST' && colo !== 'ADB' && colo !== 'ESB' ? ' · yurt dışından geçiyor, gecikmeyi bu yol artırır' : ''}</div>}
     </>

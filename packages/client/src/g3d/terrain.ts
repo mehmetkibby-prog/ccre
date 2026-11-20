@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { TILE, type MapLayout } from '@col/shared';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { groundTextureArrays, GROUND_LAYERS, LAYER_NAMES, fbm } from './textures.ts';
 
 /** Sunucu birimi → metre */
@@ -108,7 +109,6 @@ export class Terrain {
     }
     geo.computeVertexNormals();
     // splat dokusu: her tile için katman ağırlıkları (12 kanal = 3 RGBA doku)
-    const nl = LAYER_NAMES.length;
     // Karo başına tek değer çift doğrusal örneklenince yol/çimen kenarı merdiven gibi kesik kesik görünüyordu.
     // Ağırlıklar 4× çözünürlükte, Gauss bulanıklığıyla (σ ≈ 0,8 karo) yumuşatılır: kenarlar yuvarlak ve doğal kıvrımlı.
     const SS = 4, W = l.w * SS, H = l.h * SS;
@@ -131,6 +131,26 @@ export class Terrain {
       return t;
     });
     const arr = groundTextureArrays();
+    // Zemin karışımı yalnız bu haritada geçen katmanlar (+ yamaç kayası) için, sabit indisli kodla üretilir.
+    // Önceki 11 katmanlık döngü her pikselde dizileri değişken indisle okuyordu; telefon/tablet GPU'larında bu
+    // yerel diziler belleğe taşar ve zemin (ekranın çoğu) karenin en pahalı parçası oluyordu. Sonuç aynı:
+    // kullanılmayan katmanın ağırlığı zaten hep 0'dı ve atlanıyordu.
+    const cliffI = LAYER_NAMES.indexOf('cliff');
+    const active = [...new Set([...used].filter((i) => i >= 0).concat(cliffI))].sort((a, b) => a - b);
+    const blendCode = active.map((i) => {
+      const cl = i === cliffI;
+      const w = `s${(i / 4) | 0}.${'xyzw'[i % 4]}`;
+      const uv = cl ? 'mix(tuv, cuv, slope)' : 'tuv', gx = cl ? 'mix(tdx, cdx, slope)' : 'tdx', gy = cl ? 'mix(tdy, cdy, slope)' : 'tdy';
+      return `  { float wi = ${w} * (1.0 - slope)${cl ? ' + slope' : ''};
+    if (wi >= 0.01) {
+      vec2 uvi = ${uv}, gx = ${gx}, gy = ${gy};
+      vec4 c = textureGrad(uColArr, vec3(uvi, ${i}.0), gx, gy);
+      float ww = pow(wi, 9.0) * (0.85 + 0.15 * dot(c.rgb, vec3(0.33)));
+      col += c.rgb * ww;
+      nor += (textureGrad(uNorArr, vec3(uvi, ${i}.0), gx, gy).xyz * 2.0 - 1.0) * ww;
+      tot += ww;
+    } }`;
+    }).join('\n');
     const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 });
     const tint = theme === 'frozen' ? new THREE.Color(0.95, 0.98, 1.05) : theme === 'black' ? new THREE.Color(0.85, 0.8, 0.9) : theme === 'tower' ? new THREE.Color(0.5, 0.48, 0.6) : theme === 'forge' ? new THREE.Color(0.66, 0.54, 0.48) : new THREE.Color(1, 1, 1);
     mat.onBeforeCompile = (sh) => {
@@ -162,14 +182,9 @@ void groundBlend(){
   vec2 uv = vWPos.xz / uMapSize;
   // kenar dümdüz: örnekleme noktasına gürültü eklenmez (yumuşatılmış maske düz, temiz bir sınır verir)
   vec2 suv = uv;
-  vec4 s0 = texture2D(uSplat0, suv), s1 = texture2D(uSplat1, suv), s2 = texture2D(uSplat2, suv);
-  float w[${nl}];
-  vec4 SP[3]; SP[0]=s0; SP[1]=s1; SP[2]=s2;
-  for (int i = 0; i < ${nl}; i++) w[i] = SP[i / 4][i - (i / 4) * 4];
+  ${[...new Set(active.map((i) => (i / 4) | 0))].map((k) => `vec4 s${k} = texture2D(uSplat${k}, suv);`).join(' ')}
   // eğim: dik yerler kaya yamacı olur
   float slope = smoothstep(0.3, 0.5, 1.0 - normalize(vWNor).y);
-  for (int i = 0; i < ${nl}; i++) w[i] *= (1.0 - slope);
-  w[${LAYER_NAMES.indexOf('cliff')}] += slope;
   vec2 tuv = vWPos.xz / 2.4;
   // yamaçta dikey düzlemden örnekle (kaya dokusu gerilmesin)
   vec2 cuv = vec2(vWPos.x + vWPos.z, vWPos.y * 1.6) / 3.0;
@@ -178,20 +193,8 @@ void groundBlend(){
   // "kayan siyah çizgiler" olarak titriyordu.
   vec2 tdx = dFdx(tuv), tdy = dFdy(tuv), cdx = dFdx(cuv), cdy = dFdy(cuv);
   vec3 col = vec3(0.0); vec3 nor = vec3(0.0); float tot = 0.0;
-  for (int i = 0; i < ${nl}; i++) {
-    if (w[i] < 0.01) continue;
-    bool isCliff = i == ${LAYER_NAMES.indexOf('cliff')};
-    vec2 uvi = isCliff ? mix(tuv, cuv, slope) : tuv;
-    vec2 gx = isCliff ? mix(tdx, cdx, slope) : tdx, gy = isCliff ? mix(tdy, cdy, slope) : tdy;
-    vec4 c = textureGrad(uColArr, vec3(uvi, float(i)), gx, gy);
-    // yükseklik tabanlı keskin geçiş: taşlar çimenin içinden çıkar
-    // geçiş: dokuya bağlı (taşlı, tırtıklı) değil, ağırlığa bağlı kısa ve düzgün
-    float hgt = dot(c.rgb, vec3(0.33));
-    float ww = pow(w[i], 9.0) * (0.85 + 0.15 * hgt); // yüksek üs: dar, net geçiş
-    col += c.rgb * ww;
-    nor += (textureGrad(uNorArr, vec3(uvi, float(i)), gx, gy).xyz * 2.0 - 1.0) * ww;
-    tot += ww;
-  }
+  // her katman: ağırlık yüksek üsle (dar, net geçiş), dokunun parlaklığıyla hafif oynatılır
+${blendCode}
   gCol = col / max(tot, 1e-4) * uTint;
   // geniş ölçekli renk varyasyonu (tekrar hissini kırar)
   gCol *= 0.82 + 0.3 * vn(vWPos.xz * 0.06) + 0.08 * vn(vWPos.xz * 0.5);
@@ -252,9 +255,24 @@ void groundBlend(){
     nt.wrapS = nt.wrapT = THREE.RepeatWrapping; nt.generateMipmaps = true; nt.minFilter = THREE.LinearMipmapLinearFilter; nt.needsUpdate = true;
     nt.repeat.set(l.w * TILE_M / 6, l.h * TILE_M / 6);
     this.waterNormal = nt;
-    const geo = new THREE.PlaneGeometry(l.w * TILE_M, l.h * TILE_M, 1, 1);
-    geo.rotateX(-Math.PI / 2);
-    geo.translate((l.w * TILE_M) / 2, -0.32, (l.h * TILE_M) / 2);
+    // Yüzey yalnız suyun bulunduğu 4×4 karoluk bloklarda (1 karo pay: kıyıdaki yumuşak geçiş kesilmesin).
+    // Önceden bütün haritayı kaplayan tek saydam düzlemdi; suyun hiç olmadığı ekran alanında da gölgelendirici çalışıyordu.
+    // UV'ler tüm haritaya göre aynı (alfa maskesi ve dalga dokusu değişmez): görünüm birebir aynı.
+    const MW = l.w * TILE_M, MH = l.h * TILE_M, B = 4, parts: THREE.BufferGeometry[] = [];
+    const wet = (tx: number, ty: number) => { const g = l.ground[ty * l.w + tx]; return g === G_WATER || g === G_PLANK || g === G_DEEP; };
+    for (let by = 0; by < l.h; by += B) for (let bx = 0; bx < l.w; bx += B) {
+      let hit = false;
+      for (let ty = Math.max(0, by - 1); ty < Math.min(l.h, by + B + 1) && !hit; ty++) for (let tx = Math.max(0, bx - 1); tx < Math.min(l.w, bx + B + 1); tx++) if (wet(tx, ty)) { hit = true; break; }
+      if (!hit) continue;
+      const bw = Math.min(B, l.w - bx) * TILE_M, bh = Math.min(B, l.h - by) * TILE_M;
+      const q = new THREE.PlaneGeometry(bw, bh, 1, 1);
+      q.rotateX(-Math.PI / 2);
+      q.translate(bx * TILE_M + bw / 2, -0.32, by * TILE_M + bh / 2);
+      const p = q.attributes.position as THREE.BufferAttribute, uv = q.attributes.uv as THREE.BufferAttribute;
+      for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) / MW, 1 - p.getZ(i) / MH);
+      parts.push(q);
+    }
+    const geo = mergeGeometries(parts)!;
     const frozen = l.def.theme === 'frozen';
     const mat = new THREE.MeshStandardMaterial({
       color: frozen ? 0x9cc8e0 : l.def.theme === 'black' ? 0x1a2a3a : 0x2a6a8a, roughness: frozen ? 0.25 : 0.06, metalness: 0.1,
