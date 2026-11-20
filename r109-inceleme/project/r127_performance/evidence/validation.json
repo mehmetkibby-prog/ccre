@@ -1,0 +1,629 @@
+{
+  "release": {
+    "file": "artifacts/R127_PERFORMANS_ab79739f3931.zip",
+    "sha256": "4e6c57f5457cb48776ec923642f3717505f6cefeffa3a96f6e7db308383c5f7f",
+    "bytes": 2973602,
+    "sources": [
+      "R125_RUNE_CLIENT1",
+      "R126_ENCOUNTER1",
+      "R127_ACADEMY1"
+    ],
+    "target": "R127_PERF2",
+    "core": "fcd6bc491e1ea3d3bb47573b34ac6fc8c9e3a2e1d457f54e875b94a89e1dfa9f"
+  },
+  "downloadCommit": "abe0f41e5ecf4e0d4c1e1ad8f9c811d4ed06da6b",
+  "date": "2026-11-20",
+  "productionMainProfile": {
+    "durationSeconds": 61.1008,
+    "samples": 27922,
+    "inclusiveSampleSeconds": {
+      "idle": 33.9204,
+      "drainWrites": 16.1911,
+      "captureCommittedActorState": 9.4528,
+      "readPrivateSections": 3.11,
+      "encodeActor": 3.808
+    }
+  },
+  "scope": "Production sample covers only the main process. Nested inclusive times overlap. Population tests are real TCP clients and the service on synthetic state, with two channels of 25, 6000 background monsters, open attack arrivals and a 60 second measurement. The package replay uses a separate bot process. No production load test or installation is implied.",
+  "before": {
+    "mixed": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-before-mixed-1795160867762",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 10,
+        "tower": 8,
+        "solo": 8,
+        "mist": 8,
+        "black": 8,
+        "rune_v2": 8,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 13.22,
+      "tickP99Ms": 19.08,
+      "mainMaxPauseMs": 61.08,
+      "channelMaxPauseMs": 46.63,
+      "mainMaxRssMiB": 694.87,
+      "processELUPercent": {
+        "main": 18.46,
+        "channel-1": 19.32,
+        "channel-2": 18.66,
+        "channel-3": 1.96,
+        "channel-4": 1.9
+      },
+      "totalCpuPercentOf4Cores": 26.06,
+      "medianActorAckP95Ms": 65.13,
+      "confirmedKillCount": 242,
+      "confirmedKillP95Ms": 122.69,
+      "confirmedKillP99Ms": 183.18,
+      "attacks": 382,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 40
+    },
+    "farmingWithProfiler": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-before-farm-profile-1795161122695",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 50,
+        "tower": 0,
+        "solo": 0,
+        "mist": 0,
+        "black": 0,
+        "rune_v2": 0,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 13.46,
+      "tickP99Ms": 21.66,
+      "mainMaxPauseMs": 105.71,
+      "channelMaxPauseMs": 76.15,
+      "mainMaxRssMiB": 707.67,
+      "processELUPercent": {
+        "main": 23.85,
+        "channel-1": 23.22,
+        "channel-2": 21.0,
+        "channel-3": 1.71,
+        "channel-4": 1.86
+      },
+      "totalCpuPercentOf4Cores": 29.6,
+      "medianActorAckP95Ms": 78.19,
+      "confirmedKillCount": 541,
+      "confirmedKillP95Ms": 159.69,
+      "confirmedKillP99Ms": 211.54,
+      "attacks": 2181,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 3,
+      "channel1Profile": {
+        "durationSeconds": 60.1444,
+        "samples": 27387,
+        "inclusiveSampleSeconds": {
+          "preparePlayerWorld": 2.4008,
+          "buildSharedRoom": 1.1701
+        }
+      }
+    },
+    "farmingWithPickup": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-before-loot-farm-1795162832073",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 50,
+        "tower": 0,
+        "solo": 0,
+        "mist": 0,
+        "black": 0,
+        "rune_v2": 0,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 18.5,
+      "tickP99Ms": 43.16,
+      "mainMaxPauseMs": 97.34,
+      "channelMaxPauseMs": 70.25,
+      "mainMaxRssMiB": 764.5,
+      "processELUPercent": {
+        "main": 24.37,
+        "channel-1": 23.84,
+        "channel-2": 24.18,
+        "channel-3": 1.84,
+        "channel-4": 2.05
+      },
+      "totalCpuPercentOf4Cores": 30.13,
+      "medianActorAckP95Ms": 112.18,
+      "confirmedKillCount": 531,
+      "confirmedKillP95Ms": 252.82,
+      "confirmedKillP99Ms": 419.26,
+      "attacks": 2202,
+      "ownedPickups": 30,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 34
+    }
+  },
+  "candidate": {
+    "mixed": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-final-mixed-1795162570559",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 10,
+        "tower": 8,
+        "solo": 8,
+        "mist": 8,
+        "black": 8,
+        "rune_v2": 8,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 12.82,
+      "tickP99Ms": 19.01,
+      "mainMaxPauseMs": 42.01,
+      "channelMaxPauseMs": 46.73,
+      "mainMaxRssMiB": 687.84,
+      "processELUPercent": {
+        "main": 18.99,
+        "channel-1": 19.61,
+        "channel-2": 18.94,
+        "channel-3": 2.01,
+        "channel-4": 1.87
+      },
+      "totalCpuPercentOf4Cores": 26.07,
+      "medianActorAckP95Ms": 68.22,
+      "confirmedKillCount": 249,
+      "confirmedKillP95Ms": 132.51,
+      "confirmedKillP99Ms": 192.05,
+      "attacks": 416,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 28
+    },
+    "farmingWithProfiler": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-final-farm-profile-1795162309268",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 50,
+        "tower": 0,
+        "solo": 0,
+        "mist": 0,
+        "black": 0,
+        "rune_v2": 0,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 13.57,
+      "tickP99Ms": 26.62,
+      "mainMaxPauseMs": 59.41,
+      "channelMaxPauseMs": 48.73,
+      "mainMaxRssMiB": 717.25,
+      "processELUPercent": {
+        "main": 24.96,
+        "channel-1": 23.64,
+        "channel-2": 21.92,
+        "channel-3": 1.79,
+        "channel-4": 1.91
+      },
+      "totalCpuPercentOf4Cores": 30.89,
+      "medianActorAckP95Ms": 87.25,
+      "confirmedKillCount": 564,
+      "confirmedKillP95Ms": 165.59,
+      "confirmedKillP99Ms": 244.88,
+      "attacks": 2225,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 2,
+      "channel1Profile": {
+        "durationSeconds": 60.1323,
+        "samples": 27183,
+        "inclusiveSampleSeconds": {
+          "preparePlayerWorld": 2.233,
+          "buildSharedRoom": 0.993
+        }
+      }
+    },
+    "farmingWithPickup": {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-final-loot-farm-1795162932117",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 50,
+        "tower": 0,
+        "solo": 0,
+        "mist": 0,
+        "black": 0,
+        "rune_v2": 0,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 14.97,
+      "tickP99Ms": 23.4,
+      "mainMaxPauseMs": 62.46,
+      "channelMaxPauseMs": 42.25,
+      "mainMaxRssMiB": 719.46,
+      "processELUPercent": {
+        "main": 23.37,
+        "channel-1": 22.57,
+        "channel-2": 22.34,
+        "channel-3": 1.81,
+        "channel-4": 1.86
+      },
+      "totalCpuPercentOf4Cores": 29.8,
+      "medianActorAckP95Ms": 88.81,
+      "confirmedKillCount": 531,
+      "confirmedKillP95Ms": 175.59,
+      "confirmedKillP99Ms": 242.05,
+      "attacks": 2058,
+      "ownedPickups": 26,
+      "localAuditedReceipts": {
+        "use_potion": 2,
+        "collect": 26
+      },
+      "fullActorCaptures": 2
+    }
+  },
+  "repeatBeforePickup": {
+    "passed": true,
+    "players": 50,
+    "run": "r127v2-repeat-before-loot-farm-1795163424871",
+    "requestedMeasureMs": 60000,
+    "chDistribution": {
+      "1": 25,
+      "2": 25
+    },
+    "configuration": {
+      "forest": 50,
+      "tower": 0,
+      "solo": 0,
+      "mist": 0,
+      "black": 0,
+      "rune_v2": 0,
+      "shared_boss": 0
+    },
+    "errors": 0,
+    "faults": 0,
+    "tickP95Ms": 14.31,
+    "tickP99Ms": 22.64,
+    "mainMaxPauseMs": 49.81,
+    "channelMaxPauseMs": 65.39,
+    "mainMaxRssMiB": 744.2,
+    "processELUPercent": {
+      "main": 22.87,
+      "channel-1": 22.49,
+      "channel-2": 22.74,
+      "channel-3": 1.78,
+      "channel-4": 1.8
+    },
+    "totalCpuPercentOf4Cores": 29.98,
+    "medianActorAckP95Ms": 89.32,
+    "confirmedKillCount": 554,
+    "confirmedKillP95Ms": 164.47,
+    "confirmedKillP99Ms": 245.02,
+    "attacks": 2169,
+    "ownedPickups": 29,
+    "localAuditedReceipts": {},
+    "fullActorCaptures": 34
+  },
+  "exactReleasePickup": {
+    "passed": true,
+    "players": 50,
+    "run": "r127v2-package-loot-farm-1795163322954",
+    "requestedMeasureMs": 60000,
+    "chDistribution": {
+      "1": 25,
+      "2": 25
+    },
+    "configuration": {
+      "forest": 50,
+      "tower": 0,
+      "solo": 0,
+      "mist": 0,
+      "black": 0,
+      "rune_v2": 0,
+      "shared_boss": 0
+    },
+    "errors": 0,
+    "faults": 0,
+    "tickP95Ms": 13.57,
+    "tickP99Ms": 21.58,
+    "mainMaxPauseMs": 62.72,
+    "channelMaxPauseMs": 37.39,
+    "mainMaxRssMiB": 731.13,
+    "processELUPercent": {
+      "main": 23.13,
+      "channel-1": 22.43,
+      "channel-2": 21.43,
+      "channel-3": 1.77,
+      "channel-4": 1.71
+    },
+    "totalCpuPercentOf4Cores": 30.2,
+    "medianActorAckP95Ms": 85.62,
+    "confirmedKillCount": 595,
+    "confirmedKillP95Ms": 166.59,
+    "confirmedKillP99Ms": 212.71,
+    "attacks": 2199,
+    "ownedPickups": 28,
+    "localAuditedReceipts": {
+      "use_potion": 1,
+      "collect": 28
+    },
+    "fullActorCaptures": 2
+  },
+  "intermediateExperiments": [
+    {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-after-farm-profile-1795161335925",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 50,
+        "tower": 0,
+        "solo": 0,
+        "mist": 0,
+        "black": 0,
+        "rune_v2": 0,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 15.26,
+      "tickP99Ms": 27.07,
+      "mainMaxPauseMs": 113.12,
+      "channelMaxPauseMs": 42.73,
+      "mainMaxRssMiB": 740.63,
+      "processELUPercent": {
+        "main": 25.93,
+        "channel-1": 25.13,
+        "channel-2": 22.09,
+        "channel-3": 1.81,
+        "channel-4": 1.83
+      },
+      "totalCpuPercentOf4Cores": 31.72,
+      "medianActorAckP95Ms": 92.3,
+      "confirmedKillCount": 584,
+      "confirmedKillP95Ms": 175.84,
+      "confirmedKillP99Ms": 267.15,
+      "attacks": 2283,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 6,
+      "channel1Profile": {
+        "durationSeconds": 60.2143,
+        "samples": 27081,
+        "inclusiveSampleSeconds": {
+          "preparePlayerWorld": 2.4499,
+          "buildSharedRoom": 1.0981
+        }
+      }
+    },
+    {
+      "passed": true,
+      "players": 50,
+      "run": "r127v2-round2-mixed-1795161790580",
+      "requestedMeasureMs": 60000,
+      "chDistribution": {
+        "1": 25,
+        "2": 25
+      },
+      "configuration": {
+        "forest": 10,
+        "tower": 8,
+        "solo": 8,
+        "mist": 8,
+        "black": 8,
+        "rune_v2": 8,
+        "shared_boss": 0
+      },
+      "errors": 0,
+      "faults": 0,
+      "tickP95Ms": 11.85,
+      "tickP99Ms": 18.55,
+      "mainMaxPauseMs": 98.07,
+      "channelMaxPauseMs": 67.11,
+      "mainMaxRssMiB": 710.29,
+      "processELUPercent": {
+        "main": 18.7,
+        "channel-1": 18.15,
+        "channel-2": 17.99,
+        "channel-3": 1.84,
+        "channel-4": 1.89
+      },
+      "totalCpuPercentOf4Cores": 25.32,
+      "medianActorAckP95Ms": 68.86,
+      "confirmedKillCount": 247,
+      "confirmedKillP95Ms": 117.18,
+      "confirmedKillP99Ms": 180.76,
+      "attacks": 370,
+      "ownedPickups": 0,
+      "localAuditedReceipts": {},
+      "fullActorCaptures": 32
+    }
+  ],
+  "microbenchmark": {
+    "description": "SQLite writer capture only, 120 timed transactions per case after 10 warmups. Local collect and potion results are synthetic, the validator decodes the stored revision.",
+    "before": [
+      {
+        "kind": "complete",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "meanMs": 1.8763,
+        "medianMs": 1.7963,
+        "p95Ms": 2.2057,
+        "encodedBytes": 5330
+      },
+      {
+        "kind": "use_potion",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "medianMs": 1.7308,
+        "p95Ms": 2.1654,
+        "encodedBytes": 5630,
+        "version": 1
+      },
+      {
+        "kind": "collect",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "medianMs": 1.6429,
+        "p95Ms": 1.9488,
+        "encodedBytes": 5627,
+        "version": 1
+      },
+      {
+        "kind": "complete",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "meanMs": 2.0309,
+        "medianMs": 1.8705,
+        "p95Ms": 3.3463,
+        "encodedBytes": 6926
+      },
+      {
+        "kind": "use_potion",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "medianMs": 1.8458,
+        "p95Ms": 2.1364,
+        "encodedBytes": 7210,
+        "version": 1
+      },
+      {
+        "kind": "collect",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "medianMs": 1.8975,
+        "p95Ms": 2.8629,
+        "encodedBytes": 7207,
+        "version": 1
+      }
+    ],
+    "optimized": [
+      {
+        "kind": "complete",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "meanMs": 1.8462,
+        "medianMs": 1.7256,
+        "p95Ms": 2.337,
+        "encodedBytes": 5318
+      },
+      {
+        "kind": "use_potion",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "medianMs": 0.0631,
+        "p95Ms": 0.1043,
+        "encodedBytes": 190,
+        "version": 3
+      },
+      {
+        "kind": "collect",
+        "bag": 30,
+        "storage": 15,
+        "operations": 120,
+        "medianMs": 0.0623,
+        "p95Ms": 0.1004,
+        "encodedBytes": 184,
+        "version": 3
+      },
+      {
+        "kind": "complete",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "meanMs": 2.014,
+        "medianMs": 1.8711,
+        "p95Ms": 2.8111,
+        "encodedBytes": 6818
+      },
+      {
+        "kind": "use_potion",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "medianMs": 0.0612,
+        "p95Ms": 0.1089,
+        "encodedBytes": 190,
+        "version": 3
+      },
+      {
+        "kind": "collect",
+        "bag": 35,
+        "storage": 60,
+        "operations": 120,
+        "medianMs": 0.0624,
+        "p95Ms": 0.1041,
+        "encodedBytes": 184,
+        "version": 3
+      }
+    ]
+  },
+  "verification": {
+    "writerAndChannelCasesPassed": 28,
+    "historicalProjectionInOriginalFlagSetPassed": 6,
+    "partyAndDuplicateLootWithCurrentChannelSelectionPassed": 3,
+    "academyAdmission": {
+      "attempts": 50,
+      "admitted": 40,
+      "atCapacity": 10
+    },
+    "directInstallAndRollbackPerRealm": [
+      "R125",
+      "R126",
+      "R127"
+    ],
+    "startupFailureRollbackPassed": true,
+    "liveDeploymentConfirmed": false
+  },
+  "interpretation": "A few short runs can vary. Main ELU and combat latency rose slightly in the mixed and profiled no-pickup workloads. The first before-pickup run overlapped part of a test suite. Both before and after pickup runs are retained. The legacy projection oracle needs its historic feature flags; the old party ticket fixture needs explicit channel selection under current admission rules."
+}
