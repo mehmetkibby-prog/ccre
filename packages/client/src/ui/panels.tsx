@@ -105,7 +105,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
 
 // ───────── eşya ipucu ─────────
 const TIER_NAMES = ['1. kademe', '2. kademe', '3. kademe', '4. kademe'];
-export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void }) {
+export function ItemTip({ it, x, y, pinned, onClose, actions, anchor }: { it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void; actions?: React.ReactNode; anchor?: boolean }) {
   const tpl = ITEM_TPL.get(it.tpl);
   const r = RARITY[it.rarity];
   const power = itemPower(it);
@@ -165,20 +165,32 @@ export function ItemTip({ it, x, y, pinned, onClose }: { it: ItemInstance; x: nu
   // telefonda: dokununca sabit kart, "Kapat" ile kapanır
   // panelin kırpma alanı kartı kesmesin: sayfanın en üst katmanına çizilir
   // Kart uzun olunca alttaki "Kapat" ekran dışında kalıyordu: köşede her zaman görünen ✕, kartın dışına dokununca da kapanır.
+  // eşya düğmeleri (Kuşan, Sat, Kilitle...) kartın altında: kart uzun olsa da hep görünür
+  const acts = actions ? <div className="tip-acts">{actions}</div> : null;
+  // fareyle tıklanınca: imlecin yanında açılan, düğmeli kart (dışına tıklayınca kapanır)
+  if (pinned && anchor) return <FloatingTip x={x} y={y} card onClose={onClose}><button className="tip-x" aria-label="Kapat" onClick={() => onClose?.()}>✕</button>{body}{acts}</FloatingTip>;
   if (pinned) return createPortal(
     <div className="tip-back" onPointerDown={(e) => { e.stopPropagation(); if (e.target === e.currentTarget) onClose?.(); }}>
       <div className="frame tip tip-sheet" role="dialog" aria-label="Eşya özellikleri" onPointerDown={(e) => e.stopPropagation()}>
         <button className="tip-x" aria-label="Kapat" onClick={() => onClose?.()}>✕</button>
         {body}
-        <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>
+        {acts ?? <button className="btn small" style={{ width: '100%', marginTop: 10 }} onClick={() => onClose?.()}>Kapat</button>}
       </div>
     </div>, document.body,
   );
   return <FloatingTip x={x} y={y}>{body}</FloatingTip>;
 }
 /** İmlecin yanında açılır; gerçek yüksekliği ölçülüp ekrana sığdırılır (altta yer yoksa imlecin üstüne çıkar). */
-function FloatingTip({ x, y, children }: { x: number; y: number; children: React.ReactNode }) {
+function FloatingTip({ x, y, children, card, onClose }: { x: number; y: number; children: React.ReactNode; card?: boolean; onClose?: () => void }) {
   const ref = React.useRef<HTMLDivElement>(null);
+  // düğmeli kart: dışına tıklanınca kapanır (başka bir eşyaya tıklamak kartı o eşyaya geçirir)
+  useEffect(() => {
+    if (!card) return;
+    const off = (e: PointerEvent) => { const t = e.target as HTMLElement; if (ref.current?.contains(t) || t.closest?.('[data-item-cell]')) return; onClose?.(); };
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose?.(); };
+    window.addEventListener('pointerdown', off); window.addEventListener('keydown', esc);
+    return () => { window.removeEventListener('pointerdown', off); window.removeEventListener('keydown', esc); };
+  }, [card, onClose]);
   React.useLayoutEffect(() => {
     const el = ref.current; if (!el) return;
     const h = el.offsetHeight, w = el.offsetWidth;
@@ -189,9 +201,9 @@ function FloatingTip({ x, y, children }: { x: number; y: number; children: React
     if (left + w > innerWidth - 8) left = x - w - 14;
     el.style.left = Math.max(8, left) + 'px'; el.style.top = top + 'px'; el.style.visibility = 'visible';
   });
-  return createPortal(<div ref={ref} className="frame tip" style={{ left: x + 18, top: y + 14, visibility: 'hidden' }}>{children}</div>, document.body);
+  return createPortal(<div ref={ref} className={'frame tip' + (card ? ' tip-card' : '')} role={card ? 'dialog' : undefined} style={{ left: x + 18, top: y + 14, visibility: 'hidden' }}>{children}</div>, document.body);
 }
-let lastPointer = 'mouse';
+let lastPointer = 'mouse', lastXY = { x: 0, y: 0 };
 export function useTip() {
   const [tip, setTip] = useState<{ it: ItemInstance; x: number; y: number; pinned?: boolean; onClose?: () => void } | null>(null);
   // fare: üstüne gelince; dokunmatik: dokununca sabit kart (üstüne gelme olayı dokunmada anlık titriyordu)
@@ -199,7 +211,7 @@ export function useTip() {
     onPointerEnter: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip({ it, x: e.clientX, y: e.clientY }); },
     onPointerMove: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip({ it, x: e.clientX, y: e.clientY }); },
     onPointerLeave: (e: React.PointerEvent) => { if (e.pointerType === 'mouse') setTip(null); },
-    onPointerDown: (e: React.PointerEvent) => { lastPointer = e.pointerType; },
+    onPointerDown: (e: React.PointerEvent) => { lastPointer = e.pointerType; lastXY = { x: e.clientX, y: e.clientY }; },
     // dokunmatik: kart, hücrenin kendi tıklamasından (seçim) SONRA açılır; ekranı kapatmaz
     onTapCard: () => { if (lastPointer !== 'mouse') setTip({ it, x: 0, y: 0, pinned: true, onClose: () => setTip(null) }); },
   } : {};
@@ -209,7 +221,7 @@ export function Cell({ it, label, onClick, sel, bind }: { it?: ItemInstance; lab
   const tpl = it ? ITEM_TPL.get(it.tpl) : null;
   const { onTapCard, ...handlers } = bind ?? {};
   return (
-    <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
+    <div className={'cell' + (it ? ' r-' + it.rarity : '') + (sel ? ' sel' : '')} data-item-cell={it ? '' : undefined} {...handlers} onClick={() => { onClick?.(); onTapCard?.(); }}>
       {it && tpl ? <img src={iconUrl(itemIconName(it), RIDX.indexOf(it.rarity))} className={it.rarity === 'unique' && !itemIconName(it).endsWith('_unique') ? 'uq-tint' : undefined} alt="" /> : <span className="lbl">{label}</span>}
       {it?.plus ? <span className={'plus' + (it.plus >= 6 ? ' p6' : it.plus >= 5 ? ' p5' : '')}>+{it.plus}</span> : null}
       {it?.evo ? <span className={'evo-b e' + Math.min(3, it.evo)} title={`${it.evo}. evrim · ${EVO_NAMES[Math.min(3, it.evo)]}`}>{['', 'I', 'II', 'III'][Math.min(3, it.evo)]}</span> : null}
@@ -225,8 +237,13 @@ const fmtLeft = (ms: number) => { const m = Math.max(0, Math.round(ms / 60000));
 function Inventory({ game }: { game: Game }) {
   const self = useStore((s) => s.self);
   const target = useStore((s) => s.mallTarget);
-  const { tip, bind, clear } = useTip();
-  const [sel, setSel] = useState<string | null>(null);
+  const { tip, bind: tipBind, clear } = useTip();
+  // çantada dokunma kartını seçim kartı açar (düğmeleriyle); fare üstüne gelince kısa bilgi
+  const bind = (it: ItemInstance | undefined) => { const { onTapCard: _t, ...h } = tipBind(it) as { onTapCard?: () => void }; void _t; return h; };
+  const [sel, setSelId] = useState<string | null>(null);
+  const [selAt, setSelAt] = useState<{ x: number; y: number; mouse: boolean }>({ x: 0, y: 0, mouse: true });
+  const setSel = (id: string | null) => { if (id) setSelAt({ ...lastXY, mouse: lastPointer === 'mouse' }); setSelId(id); };
+  const closeCard = React.useCallback(() => setSelId(null), []);
   const [tab, setTab] = useState<BagTab>(() => (target ? 'esya' : 'esya'));
   const [rename, setRename] = useState('');
   const [encItem, setEncItem] = useState<string | null>(null);
@@ -260,14 +277,6 @@ function Inventory({ game }: { game: Game }) {
             {layout.map((s, i) => s ? <Cell key={s} it={self.equip[s]} label={SLOT_NAMES[s]} bind={bind(self.equip[s])} onClick={() => { if (self.equip[s]) pick(self.equip[s]!.id); }} sel={!!self.equip[s] && sel === self.equip[s]!.id} /> : <div key={i} />)}
           </div>
           <div className="muted" style={{ fontSize: 11, marginTop: 6, textAlign: 'center' }}>Eşyaya dokun: çıkar, sat ya da kilitle</div>
-          {selEq && selSlot && (
-            <div className="row" style={{ marginTop: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <span style={{ color: RARITY[selEq.rarity].color, fontWeight: 800, width: '100%', textAlign: 'center' }}>{itemDisplayName(selEq)}</span>
-              <button className="btn small" onClick={() => { game.send({ t: 'unequip', slot: selSlot }); setSel(null); clear(); }}>Çıkar</button>
-              <button className="btn small red" disabled={!!selEq.locked} title={selEq.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selEq)}>Sat +{sellPrice(selEq.rarity)}</button>
-              <button className="btn small" onClick={() => game.send({ t: 'lock', item: selEq.id, on: !selEq.locked })}>{selEq.locked ? 'Kilidi aç' : 'Kilitle'}</button>
-            </div>
-          )}
         </div>
         <div>
           <div className="bag-tabs">
@@ -295,15 +304,6 @@ function Inventory({ game }: { game: Game }) {
                 );
               })}
             </div>
-            {selItem && (
-              <div className="row" style={{ marginTop: 10, flexWrap: 'wrap' }}>
-                <span style={{ color: RARITY[selItem.rarity].color, fontWeight: 800 }}>{itemDisplayName(selItem)}</span>
-                <div className="spacer" />
-                <button className="btn small green" onClick={() => { game.send({ t: 'equip', item: selItem.id }); setSel(null); clear(); }}>Kuşan</button>
-                <button className="btn small red" disabled={!!selItem.locked} title={selItem.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(selItem)}>Sat +{sellPrice(selItem.rarity)}</button>
-                <button className="btn small" onClick={() => game.send({ t: 'lock', item: selItem.id, on: !selItem.locked })}>{selItem.locked ? 'Kilidi aç' : 'Kilitle'}</button>
-              </div>
-            )}
           </>}
           {tab === 'malzeme' && <>
             <div className="mats">
@@ -351,7 +351,17 @@ function Inventory({ game }: { game: Game }) {
           </>}
         </div>
       </div>
-      {tip && <ItemTip {...tip} />}
+      {tip && !(selItem || selEq) && <ItemTip {...tip} />}
+      {/* seçilen eşyanın kartı: özellikleri ve düğmeleri (Kuşan / Çıkar, Sat, Kilitle) bir arada */}
+      {(selItem || selEq) && !target && (() => {
+        const it = (selItem ?? selEq)!;
+        const lockBtn = <button className="btn small" onClick={() => game.send({ t: 'lock', item: it.id, on: !it.locked })}>{it.locked ? 'Kilidi aç' : 'Kilitle'}</button>;
+        const sellBtn = <button className="btn small red" disabled={!!it.locked} title={it.locked ? 'Kilitli eşya satılmaz' : ''} onClick={() => sellIt(it)}>Sat +{sellPrice(it.rarity)}</button>;
+        const acts = selItem
+          ? <><button className="btn small green" onClick={() => { game.send({ t: 'equip', item: it.id }); setSel(null); clear(); }}>Kuşan</button>{sellBtn}{lockBtn}</>
+          : <><button className="btn small" onClick={() => { game.send({ t: 'unequip', slot: selSlot! }); setSel(null); clear(); }}>Çıkar</button>{sellBtn}{lockBtn}</>;
+        return <ItemTip key={it.id} it={it} x={selAt.x} y={selAt.y} pinned anchor={selAt.mouse} onClose={closeCard} actions={acts} />;
+      })()}
       {encItem && <EnchantBox game={game} itemId={encItem} onClose={() => setEncItem(null)} />}
     </Panel>
   );
@@ -478,15 +488,17 @@ function Skills({ game }: { game: Game }) {
   // geliştirme bedeli (yönetimden: Mücevher + malzemeler) ve yeterli mi
   const costOf = (lvl: number, isSpec: boolean) => skillUpCost(lvl, isSpec);
   const canPay = (c: ReturnType<typeof costOf>) => self.gems >= c.gems && Object.entries(c.mats).every(([k, q]) => (self.materials[k] ?? 0) >= q);
+  // bedel: her malzemenin adıyla (yeni oyuncu simgelerden tanımıyor); sahip olunan / gereken, eksikse kırmızı
   const CostLine = ({ c }: { c: ReturnType<typeof costOf> }) => (
     <div className="sk-cost">
-      <span className={self.gems >= c.gems ? '' : 'miss'}><img src={iconUrl('gem')} alt="" />{c.gems.toLocaleString('tr-TR')}</span>
-      {Object.entries(c.mats).map(([k, q]) => <span key={k} className={(self.materials[k] ?? 0) >= q ? '' : 'miss'} title={MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k}><img src={iconUrl(MATERIAL.get(k)?.icon ?? (MALL.has(k) ? mallIcon(k) : 'dust'))} alt="" />{(self.materials[k] ?? 0).toLocaleString('tr-TR')}/{q}</span>)}
+      <span className="lb">Bedel</span>
+      <span className={'ch' + (self.gems >= c.gems ? '' : ' miss')} title="Mücevher"><img src={iconUrl('gem')} alt="" /><em>Mücevher</em><b>{c.gems.toLocaleString('tr-TR')}</b></span>
+      {Object.entries(c.mats).map(([k, q]) => { const nm = MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k; return <span key={k} className={'ch' + ((self.materials[k] ?? 0) >= q ? '' : ' miss')} title={nm}><img src={iconUrl(MATERIAL.get(k)?.icon ?? (MALL.has(k) ? mallIcon(k) : 'dust'))} alt="" /><em>{nm}</em><b>{(self.materials[k] ?? 0).toLocaleString('tr-TR')}/{q}</b></span>; })}
     </div>
   );
   return (
     <Panel title="Beceriler" width={640}>
-      <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Geliştirme hakkı: {used} / {self.skillBudget} (seviyenle artar). Her kademe +%4 hasar (iyileştiren becerilerde +%4 can yenileme); açıklamadaki sayılar şu anki kademeni gösterir, bedel her geliştirmenin altında yazar.</div>
+      <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>Geliştirme hakkı: {used} / {self.skillBudget} (seviyenle artar). Her kademe +%4 hasar (iyileştiren becerilerde +%4 can yenileme); açıklamadaki sayılar şu anki kademeni gösterir; bedel her becerinin altında adıyla yazar (kırmızı: eksik).</div>
       {[0, 5, 1, 2, 4].map((s) => ({ sk: classSkill(cls, s)!, s })).sort((a, b) => a.sk.unlock - b.sk.unlock).map(({ s }) => {
         const sk = classSkill(cls, s)!;
         const lvl = self.skills[s] ?? 1;
@@ -496,10 +508,10 @@ function Skills({ game }: { game: Game }) {
             <div className="ic"><SkillIcon id={sk.id} />{locked && <span className="sk-lock"><img src="/icons/skills/locked.jpg" alt="" draggable={false} /><b>Sv.{sk.unlock}</b></span>}</div>
             <div style={{ flex: 1 }}><b>{sk.name}</b> {sk.qte && <span className="sk-new">Zamanlama çubuklu</span>}{s === 5 && <span className="sk-new">Yeni · tuş 6</span>} <span className="muted" style={{ fontSize: 12 }}>Sv. {lvl}/10 · {(sk.cooldownMs / 1000).toFixed(sk.cooldownMs < 1000 ? 2 : 0)} sn{sk.range ? ` · menzil ${sk.range}` : ' · çevrene'}</span><div className="muted" style={{ fontSize: 12 }}>{skillDesc(sk, lvl)}{locked ? ` — ${sk.unlock}. seviyede açılır` : ''}</div>
               {!locked && <SkillPower sk={sk} lvl={lvl} />}
-              {sk.buff && <div className="sk-buff">3 sn güçlendirme şimdi <b>%{skillBuffVal(sk, lvl)!.v}</b>{lvl < 10 && <> → geliştirince <b>%{skillBuffVal(sk, lvl + 1)!.v}</b></>} · çubuk yeşilde: <b>×1,5</b> hasar · tuş <kbd>5</kbd></div>}</div>
+              {sk.buff && <div className="sk-buff">3 sn güçlendirme şimdi <b>%{skillBuffVal(sk, lvl)!.v}</b>{lvl < 10 && <> → geliştirince <b>%{skillBuffVal(sk, lvl + 1)!.v}</b></>} · çubuk yeşilde: <b>×1,5</b> hasar · tuş <kbd>5</kbd></div>}
+              {!locked && lvl < 10 && <CostLine c={costOf(lvl, false)} />}</div>
             <div className="sk-up">
               <button className="btn small" disabled={locked || lvl >= 10 || used >= self.skillBudget || !canPay(costOf(lvl, false))} onClick={() => game.send({ t: 'skillup', s, req: reqId() })}>Geliştir</button>
-              {lvl < 10 && <CostLine c={costOf(lvl, false)} />}
             </div>
           </div>
         );
@@ -521,10 +533,9 @@ function Skills({ game }: { game: Game }) {
         return (
           <div className="skillrow">
             <div className="ic"><SkillIcon id={sk.id} /></div>
-            <div style={{ flex: 1 }}><b>{sk.name}</b> <span className="muted" style={{ fontSize: 12 }}>Güç {lvl}/10</span><div className="muted" style={{ fontSize: 12 }}>{skillDesc(sk, lvl)}</div><SkillPower sk={sk} lvl={lvl} /></div>
+            <div style={{ flex: 1 }}><b>{sk.name}</b> <span className="muted" style={{ fontSize: 12 }}>Güç {lvl}/10</span><div className="muted" style={{ fontSize: 12 }}>{skillDesc(sk, lvl)}</div><SkillPower sk={sk} lvl={lvl} />{lvl < 10 && <CostLine c={costOf(lvl, true)} />}</div>
             <div className="sk-up">
               <button className="btn small" disabled={lvl >= 10 || !canPay(costOf(lvl, true))} onClick={() => game.send({ t: 'skillup', s: 3, req: reqId() })}>Geliştir</button>
-              {lvl < 10 && <CostLine c={costOf(lvl, true)} />}
             </div>
           </div>
         );

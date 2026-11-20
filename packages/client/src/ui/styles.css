@@ -1827,10 +1827,14 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 
 /* beceri geliştirme bedeli */
 .sk-up { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-.sk-cost { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; font-size: 11.5px; font-weight: 700; }
-.sk-cost span { display: inline-flex; align-items: center; gap: 2px; }
-.sk-cost span.miss { color: #ff8a7a; }
-.sk-cost img { width: 16px; height: 16px; }
+.sk-cost { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; margin-top: 6px; font-size: 11px; }
+.sk-cost .lb { color: var(--muted); font-weight: 700; font-size: 10.5px; letter-spacing: .4px; text-transform: uppercase; margin-right: 1px; }
+.sk-cost .ch { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 7px 2px 3px; border-radius: 999px; background: rgba(0, 0, 0, .28); box-shadow: inset 0 0 0 1px rgba(96, 70, 42, .75); }
+.sk-cost .ch em { font-style: normal; color: #d8c9ab; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sk-cost .ch b { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sk-cost .ch.miss { box-shadow: inset 0 0 0 1px rgba(255, 110, 90, .55); }
+.sk-cost .ch.miss b { color: #ff8a7a; }
+.sk-cost img { width: 16px; height: 16px; flex: none; }
 
 /* mobil: iksir düğmesinde kalan sayı */
 .mact .pot img { transform: translateY(-5px); }
@@ -2220,3 +2224,10 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tut-hi { position: relative; z-index: 3; animation: tut-glow 1.1s ease-in-out infinite !important; }
 @keyframes tut-glow { 0%, 100% { box-shadow: 0 0 0 2px #ffd24a, 0 0 10px 2px rgba(255, 200, 60, .7); } 50% { box-shadow: 0 0 0 4px #fff2b0, 0 0 26px 8px rgba(255, 200, 60, .9); } }
 @media (max-width: 720px), (max-height: 500px) { .tut-card { top: 64px; padding: 8px 10px; } .tut-body span { font-size: 12px; } .tut-ic { width: 30px; height: 30px; } }
+
+/* eşya kartı düğmeleri (Kuşan / Çıkar, Sat, Kilitle): kartın altında, uzun kartta da hep görünür */
+.tip.tip-card { pointer-events: auto; z-index: 75; }
+.tip-card .tip-x { width: 30px; height: 30px; margin: 6px 6px -36px 0; font-size: 15px; }
+.tip-acts { position: sticky; bottom: 0; z-index: 2; display: flex; gap: 6px; padding: 10px 12px 12px; background: linear-gradient(rgba(22, 14, 8, .96), rgba(14, 9, 5, .99)); box-shadow: inset 0 1px 0 rgba(96, 70, 42, .7); }
+.tip-acts .btn, .tip-sheet .tip-acts .btn { flex: 1 1 0; min-width: 0; margin: 0 !important; width: auto !important; white-space: nowrap; }
+.tip-sheet .tip-acts .btn { min-height: 40px; font-size: 13.5px; }
