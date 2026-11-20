@@ -2205,3 +2205,18 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .dep-far img { width: 56px; height: 56px; }
 .dep-far b { font: 800 16px var(--f-ui); color: #ffd27a; }
 .dep-far span { font-size: 13px; color: #f3e8d4; line-height: 1.5; }
+
+/* yeni oyuncu rehberi */
+.tut-card { position: fixed; left: 50%; top: 92px; transform: translateX(-50%); z-index: 45; width: min(460px, calc(100vw - 32px)); display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 12px; border-radius: 14px; background: linear-gradient(180deg, rgba(48, 32, 16, .96), rgba(22, 14, 8, .96));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .55), inset 0 0 0 1.5px rgba(255, 200, 90, .65), 0 0 22px rgba(255, 190, 70, .25); animation: tut-in .35s cubic-bezier(.2, .8, .2, 1); }
+.tut-ic { width: 38px; height: 38px; flex: none; filter: drop-shadow(0 0 6px rgba(255, 200, 90, .6)); }
+.tut-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.tut-body b { font: 800 15px var(--f-ui); color: #ffd27a; }
+.tut-body span { font-size: 13px; line-height: 1.45; color: #f3e8d4; }
+.tut-body .btn { align-self: flex-start; margin-top: 4px; }
+.tut-x { flex: none; width: 24px; height: 24px; border: 0; border-radius: 6px; cursor: pointer; color: #b9ab90; background: rgba(255, 255, 255, .06); }
+@keyframes tut-in { from { opacity: 0; transform: translate(-50%, -10px); } }
+.tut-hi { position: relative; z-index: 3; animation: tut-glow 1.1s ease-in-out infinite !important; }
+@keyframes tut-glow { 0%, 100% { box-shadow: 0 0 0 2px #ffd24a, 0 0 10px 2px rgba(255, 200, 60, .7); } 50% { box-shadow: 0 0 0 4px #fff2b0, 0 0 26px 8px rgba(255, 200, 60, .9); } }
+@media (max-width: 720px), (max-height: 500px) { .tut-card { top: 64px; padding: 8px 10px; } .tut-body span { font-size: 12px; } .tut-ic { width: 30px; height: 30px; } }

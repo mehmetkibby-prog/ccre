@@ -5,6 +5,8 @@ export interface SelfInfo {
   level: number; xp: number; xpNext: number; gems: number; essence: number; cp: number; kills: number; autoPotion: boolean; daily: number;
   mount?: { owned?: boolean; riding?: boolean; quest?: { kills: number } };
   quests?: QuestState; towerBest?: number; /** Sv. 7 becerisi atış sayacı (zamanlama çubuğunun yeşil bölgesi) */ qn?: number;
+  /** yeni oyuncu rehberi: tamamlanan adım bitleri */
+  tut?: number;
   buffs?: Record<string, number>; autoLeft?: number; autoOn?: boolean; autoPool?: number; bait?: number; stallSkin?: number;
   bag: ItemInstance[]; equip: Partial<Record<Slot, ItemInstance>>; materials: Record<string, number>;
   statAlloc: StatAlloc; statRev: number; statBudget: number; skills: number[]; spec: string | null; skillBudget: number;

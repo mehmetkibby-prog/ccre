@@ -1,3 +1,4 @@
+import { Tutorial } from './tutorial.tsx';
 import { BuffPips } from './matinfo.tsx';
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
 import { EventBadges, EventButton } from './events.tsx';
@@ -164,6 +165,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><EventButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
+      <Tutorial />
       <BossCountdowns game={game} />
       <FishButton game={game} />
       <FishGame game={game} />
@@ -546,7 +548,7 @@ function BottomBar({ game }: { game: Game }) {
     const locked = !sk || self.level < sk.unlock;
     const left = s > 0 ? Math.max(0, (cds[s] ?? 0) - now) : 0;
     return (
-      <button key={s} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} (Sv. ${self.skills[s] ?? 1}) — ${skillDesc(sk, self.skills[s] ?? 1)}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
+      <button key={s} data-tut={s === 0 ? 'attack' : undefined} className={'slot' + (s === 0 ? ' big' : '') + (s === 4 ? ' qte-slot' : '') + (locked ? ' locked' : '') + (s === 4 && qteOn ? ' armed' : '')} title={sk ? `${sk.name} (Sv. ${self.skills[s] ?? 1}) — ${skillDesc(sk, self.skills[s] ?? 1)}${sk.buff ? ` (güçlendirme şu an: %${skillBuffVal(sk, self.skills[s] ?? 1)!.v})` : ''}${locked ? ` (Sv. ${sk.unlock})` : ''}` : `Uzmanlık (Sv. ${TUNING.specLevel})`}
         onPointerDown={(e) => { e.preventDefault(); sfx.unlock(); if (s === 0) game.attackPressed(true); else game.useSkill(s); }}
         onPointerUp={() => s === 0 && game.attackPressed(false)} onPointerCancel={() => s === 0 && game.input.attackHeld && game.attackPressed(false)} onPointerLeave={() => s === 0 && game.input.attackHeld && game.attackPressed(false)}>
         <span className="key">{key}</span>
@@ -565,7 +567,7 @@ function BottomBar({ game }: { game: Game }) {
           {slot(3, '4')}
           {slot(4, '5')}
           {slot(5, '6')}
-          <button className="slot" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
+          <button className="slot" data-tut="potion" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
           <button className="slot" title="Ganimet topla (Z)" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><span className="key">Z</span><img className="pick-img" src="/icons/pickup_hand.png" alt="" draggable={false} /></button>
@@ -595,7 +597,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button className="pc-only" onClick={() => open('inventory')}><MenuIcon k="bag" /><small>I</small><span className="tag">Çanta</span></button>
       <button className="pc-only" onClick={() => open('teleport')}><MenuIcon k="tp" /><small>T</small><span className="tag">Işınlan</span></button>
       <button onClick={() => open('character')}><MenuIcon k="char" /><small>C</small><span className="tag">Karakter</span>{statPts > 0 && <span className="badge">{statPts}</span>}</button>
-      <button onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
+      <button data-tut="skills" onClick={() => open('skills')}><MenuIcon k="skills" /><small>K</small><span className="tag">Beceri</span></button>
       <button className="pc-only" onClick={() => open('map')}><MenuIcon k="map" /><small>M</small><span className="tag">Harita</span></button>
       <button onClick={() => open('quests')}><MenuIcon k="quest" /><small>J</small><span className="tag">Görev</span>{questReadyN > 0 && <span className="badge ok">{questReadyN}</span>}</button>
       <button onClick={() => open('guild')}><MenuIcon k="guild" /><small>G</small><span className="tag">Lonca</span></button>
@@ -656,9 +658,9 @@ function MobileControls({ game }: { game: Game }) {
     <>
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
-        <button className="atk" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
+        <button className="atk" data-tut="attack" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
         {[1, 2, 3, 4, 5].map((s) => { const k = sk(s), locked = !k || (self?.level ?? 1) < k.unlock; return <button key={s} className={'s' + s + (locked ? ' locked' : '')} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{k ? <SkillIcon id={k.id} /> : s + 1}{locked ? <LockBadge lv={k ? k.unlock : TUNING.specLevel} /> : cd(s)}</button>; })}
-        <button className="pot" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /><span className="pot-n">{self?.materials?.red_potion ?? 0}</span></button>
+        <button className="pot" data-tut="potion" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /><span className="pot-n">{self?.materials?.red_potion ?? 0}</span></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><img className="pick-img" src="/icons/pickup_hand.png" alt="" draggable={false} /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>
         {self?.mount?.owned && <button className={'mnt' + (self.mount.riding ? ' on' : '')} aria-label={self.mount.riding ? 'Binekten in' : 'Bineğe bin'} onPointerDown={(e) => { e.preventDefault(); game.send({ t: 'mount', op: 'ride' }); }}><HorseIcon /></button>}

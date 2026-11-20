@@ -1211,9 +1211,44 @@ export class Renderer3D {
     return { x: (this.tmpV.x * 0.5 + 0.5) * this.w, y: (-this.tmpV.y * 0.5 + 0.5) * this.h, vis: this.tmpV.z < 1 && Math.abs(this.tmpV.x) < 1.2 && Math.abs(this.tmpV.y) < 1.2 };
   }
 
+  /** yeni oyuncu rehberi: altın ok bu dünya noktasını gösterir (sunucu koordinatı); null: ok yok */
+  guide: { x: number; y: number } | null = null;
+  private drawGuide(now: number) {
+    const gd = this.guide; if (!gd) return;
+    const ctx = this.octx, g = this.g;
+    const dx = gd.x - g.dx, dy = gd.y - g.dy, d = Math.hypot(dx, dy);
+    const p0 = this.project(g.dx, g.dy, 0.15);
+    if (!p0.vis) return;
+    const t = now / 1000;
+    if (d > 90) {
+      // oyuncunun ayağının çevresinde hedefe dönük, nabız gibi atan altın ok
+      const ux = dx / d, uy = dy / d, pA = this.project(g.dx + ux * 160, g.dy + uy * 160, 0.15);
+      const a = Math.atan2(pA.y - p0.y, pA.x - p0.x), r = 62 + Math.sin(t * 5) * 6;
+      ctx.save();
+      ctx.translate(p0.x + Math.cos(a) * r, p0.y + Math.sin(a) * r); ctx.rotate(a);
+      ctx.shadowColor = 'rgba(255, 200, 60, .9)'; ctx.shadowBlur = 14;
+      const grd = ctx.createLinearGradient(-14, 0, 22, 0); grd.addColorStop(0, '#ffb23a'); grd.addColorStop(1, '#fff2b0');
+      ctx.fillStyle = grd; ctx.strokeStyle = 'rgba(70, 35, 5, .9)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(-6, -17); ctx.lineTo(0, 0); ctx.lineTo(-6, 17); ctx.closePath(); ctx.stroke(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(4, 0); ctx.lineTo(-22, -13); ctx.lineTo(-17, 0); ctx.lineTo(-22, 13); ctx.closePath(); ctx.globalAlpha = 0.55; ctx.stroke(); ctx.fill();
+      ctx.restore();
+      ctx.save(); ctx.font = '800 12px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,.85)'; ctx.fillStyle = '#ffe08a';
+      const lx = p0.x + Math.cos(a) * (r + 34), ly = p0.y + Math.sin(a) * (r + 34), txt = `${Math.max(1, Math.round(d / 32))} m`;
+      ctx.strokeText(txt, lx, ly); ctx.fillText(txt, lx, ly); ctx.restore();
+    }
+    // hedef ekrandaysa üstünde zıplayan işaret
+    const pt = this.project(gd.x, gd.y, 2.6 + Math.sin(t * 4) * 0.25);
+    if (pt.vis && pt.x > 0 && pt.y > 0 && pt.x < this.w && pt.y < this.h) {
+      ctx.save(); ctx.shadowColor = 'rgba(255, 200, 60, .9)'; ctx.shadowBlur = 12; ctx.fillStyle = '#ffd24a'; ctx.strokeStyle = 'rgba(70, 35, 5, .9)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(pt.x, pt.y + 14); ctx.lineTo(pt.x - 11, pt.y - 4); ctx.lineTo(pt.x - 4, pt.y - 4); ctx.lineTo(pt.x - 4, pt.y - 16); ctx.lineTo(pt.x + 4, pt.y - 16); ctx.lineTo(pt.x + 4, pt.y - 4); ctx.lineTo(pt.x + 11, pt.y - 4); ctx.closePath(); ctx.stroke(); ctx.fill();
+      ctx.restore();
+    }
+  }
+
   private drawOverlay(now: number) {
     const ctx = this.octx, g = this.g;
     ctx.clearRect(0, 0, this.w, this.h);
+    this.drawGuide(now);
     const st = store.get();
     const tag = (x: number, y: number, h: number, name: string, color: string, sub?: string, subColor = '#e8dcb8') => {
       const p = this.project(x, y, h); if (!p.vis) return null;

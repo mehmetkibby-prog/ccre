@@ -361,6 +361,8 @@ export class World {
       case 'evolve': return this.cmdEvolve(p, String(c.item ?? ''), String(c.req ?? ''));
       case 'worldboss': return this.cmdWorldBoss(p, String(c.req ?? ''));
       case 'garden': return this.cmdGarden(p, c as { op: string; i?: number; r?: number; n?: number; req?: string });
+      // yeni oyuncu rehberi: tamamlanan adımlar (bit) kalıcı; geri alınamaz, yalnız eklenir
+      case 'tut': { const b = Math.floor(Number((c as { bits?: number }).bits) || 0) & 63; if (b) { p.char.misc.tutorial = (p.char.misc.tutorial ?? 0) | b; p.markSave(); } return; }
       case 'storage': return this.cmdStorage(p, c as { op: string; id?: string; key?: string; n?: number; cur?: string });
       case 'view': { p.viewW = Math.max(1000, Math.min(2400, Number(c.w) || VIEW_HALF_W)); p.viewH = Math.max(700, Math.min(1700, Number(c.h) || VIEW_HALF_H)); return; }
       case 'craft': return this.cmdCraft(p, String(c.id), String(c.req ?? ''));
@@ -2463,7 +2465,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { qn: c.misc.qn ?? 0, level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
+    if (mask & 1) Object.assign(o, { tut: c.misc.tutorial ?? 0, qn: c.misc.qn ?? 0, level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;
