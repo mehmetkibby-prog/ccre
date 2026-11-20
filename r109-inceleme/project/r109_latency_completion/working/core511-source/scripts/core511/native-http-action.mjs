@@ -1,3 +1,4 @@
+import {stoneArtTransaction,StoneArtError} from './stone-art-r127.mjs';
 import {requireAutoIpGrantR102,autoIpUnavailableR102} from './auto-ip-r102.mjs';
 import {runNativeAdminPlayerR76} from './native-admin-player-r76.mjs';
 import {AsyncLocalStorage} from 'node:async_hooks';
@@ -43,6 +44,12 @@ export class NativeHttpAction {
   return c.serial(async()=>{const value=await operation();await c.database.durableAfterCommit();return value;});
  }
  publish(args){const s=this.#context.getStore();this.assertBound();demand(s?.active&&Array.isArray(args),'native_http_action_publication');s.events.push(structuredClone(args));return true;}
+ async stoneArt(playerId,input,parseStone){
+  const c=this.assertBound(),state=this.#context.getStore();
+  demand(state?.active&&state.actor===playerId&&state.payload===input,'stone_art_actor');
+  try{return Response.json(await c.database.atomic(sql=>stoneArtTransaction(sql,playerId,input,parseStone)));}
+  catch(error){if(error instanceof StoneArtError)return Response.json({error:error.message},{status:409});throw error;}
+ }
  nativeOperation(request,operations){
   const c=this.assertBound(),s=this.#context.getStore();
   demand(s?.active&&request?.playerId===s.actor&&request.accountId===s.account&&request.input===s.payload&&!s.nativeCalled&&operations===c.host?.nativeHttp?.operations,'native_http_inventory_scope');

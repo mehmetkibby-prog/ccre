@@ -26685,7 +26685,11 @@ const switched = await database.prepare(`UPDATE players SET channel = ?, last_se
 						message: success ? `${definition.label} ${stoneEffect(rolled)} başarıyla üretildi.` : protectedFailure ? "Üretim başarısız; Koruma Mührü tüketildi, her malzemenin yarısı (aşağı yuvarlanarak) korundu." : "Taş üretimi başarısız oldu; malzemeler kullanıldı."
 					});
 				}
-				if (payload.action === "socket_stone") {
+				if (payload.action === "buy_stone_extractor" || payload.action === "extract_socket_stone") {
+                    await enforceRateLimit("stone-art-market", auth.account.id, {limit:30,windowSeconds:60,blockSeconds:10});
+                    return database.core511HttpAction.stoneArt(playerId,payload,parseStone);
+                }
+                if (payload.action === "socket_stone") {
 					await enforceRateLimit("stone-art-socket", auth.account.id, {
 						limit: 30,
 						windowSeconds: 60,
@@ -26800,10 +26804,17 @@ const switched = await database.prepare(`UPDATE players SET channel = ?, last_se
 						blockSeconds: 30
 					});
 					const rarity = String(payload.rarity ?? "");
-					if (rarity !== "white" && rarity !== "blue" && rarity !== "orange") return Response.json({ error: "Yalnız beyaz, mavi veya turuncu eşyalar toplu satılabilir." }, { status: 400 });
+					if (!["white","blue","orange","red","purple"].includes(rarity)) return Response.json({ error: "Bu renkteki eşya toplu satılamaz." }, { status: 400 });
 					const requestId = safeId(payload.requestId);
 					if (!requestId) return Response.json({ error: "İşlem kimliği gerekli." }, { status: 400 });
-					const price = rarity === "orange" ? settings.item_sale_orange : rarity === "blue" ? settings.item_sale_blue : settings.item_sale_white;
+					const operationKey="bulk:"+requestId;
+                    const prior=await database.prepare("SELECT action,digest,result FROM royal_receipts_r118 WHERE player_id=? AND request_id=?").bind(playerId,operationKey).first();
+                    if(prior){
+                        if(prior.action!=="sell_rarity" || prior.digest!==rarity)return Response.json({error:"Satış isteği değişti."},{status:409});
+                        const receipt=JSON.parse(prior.result);
+                        return Response.json({...receipt,gems:player.gems});
+                    }
+                    const price = rarity === "purple" ? 50 : rarity === "red" ? settings.item_sale_red : rarity === "orange" ? settings.item_sale_orange : rarity === "blue" ? settings.item_sale_blue : settings.item_sale_white;
 					const result = await database.batch([
 						database.prepare(`INSERT OR IGNORE INTO market_settlements
           (id, listing_id, settlement_type, buyer_id, seller_id, kind, item_id, item_name, rarity, power,
@@ -26824,9 +26835,12 @@ const switched = await database.prepare(`UPDATE players SET channel = ?, last_se
             FROM market_settlements WHERE settlement_type='npc_bulk_sale' AND seller_id = ? AND id >= ? AND id < ? AND applied_at_ms=-1)
           WHERE id = ? AND changes() >= 0 RETURNING gems`).bind(playerId, `${requestId}:`, `${requestId};`, playerId),
 						database.prepare(`UPDATE market_settlements SET applied_at_ms = ?
-          WHERE settlement_type='npc_bulk_sale' AND seller_id = ? AND id >= ? AND id < ? AND applied_at_ms=-1`).bind(Date.now(), playerId, `${requestId}:`, `${requestId};`)
-					]);
-					const soldRows=await database.prepare("SELECT item_id,price_gems FROM market_settlements WHERE id>=? AND id<? AND settlement_type='npc_bulk_sale' AND seller_id=? AND applied_at_ms>0").bind(requestId+':',requestId+';',playerId).all();const receipt={count:soldRows.results.length,total:soldRows.results.reduce((sum,row)=>sum+row.price_gems,0)};
+          WHERE settlement_type='npc_bulk_sale' AND seller_id = ? AND id >= ? AND id < ? AND applied_at_ms=-1`).bind(Date.now(), playerId, `${requestId}:`, `${requestId};`),
+                        database.prepare(`INSERT INTO royal_receipts_r118(player_id,request_id,action,digest,result,created_at)
+                          SELECT ?,?,'sell_rarity',?,json_object('ok',json('true'),'soldItemIds',json_group_array(item_id),'sold',COUNT(*),'earned',COALESCE(SUM(price_gems),0),'message','Toplu satış tamamlandı.'),?
+                          FROM market_settlements WHERE seller_id=? AND id>=? AND id<? AND settlement_type='npc_bulk_sale' AND applied_at_ms>0`).bind(playerId,operationKey,rarity,Date.now(),playerId,requestId+':',requestId+';')
+                    ]);
+                    const soldRows=await database.prepare("SELECT item_id,price_gems FROM market_settlements WHERE id>=? AND id<? AND settlement_type='npc_bulk_sale' AND seller_id=? AND applied_at_ms>0").bind(requestId+':',requestId+';',playerId).all();const receipt={count:soldRows.results.length,total:soldRows.results.reduce((sum,row)=>sum+row.price_gems,0)};
 return Response.json({
 						ok: true,
 						soldItemIds:soldRows.results.map(row=>row.item_id),sold: receipt?.count ?? 0,
