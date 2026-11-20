@@ -49,6 +49,12 @@ export async function seedPopulation(host,actors,mode){
   for(const a of actors){
    const x=550+(a.index%5)*600,y=550+Math.floor(a.index/5)*600;
    q.prepare('UPDATE players SET x=?,y=? WHERE id=?').run(x,y,a.id);
+   if(process.env.POPULATION_PICKUPS_R127==='1'){
+    const now=Math.floor(Date.now()/1000);
+    for(let i=0;i<18;i++)put(q,'world_drops',{id:'pickup-benchmark-'+a.n+'-'+i,owner_id:a.id,
+     monster_id:'curuk-farm-'+a.channel+'-'+a.index+'-0',kind:'essence',item_name:'Öz',rarity:'white',
+     power:0,amount:4,role:'avci',enchantments:'[]',x,y,expires_at:now+600,collectible_at:now});
+   }
    for(let i=0;i<12;i++)put(q,'monsters',{...template,id:'curuk-farm-'+a.channel+'-'+a.index+'-'+i,area:'forest',channel:a.channel,
     x:x-60+(i%4)*40,y:y-40+Math.floor(i/4)*40,hp:85,max_hp:85,respawn_at:0});
   }

@@ -79,6 +79,12 @@ async function act(a){
    if(key!==a.soloKey){a.soloKey=key;a.soloHistory.push({at:now,status:r?.status,stage:r?.stage,hp:member?.hp,maxHp:member?.maxHp,notice:c.dungeon?.notice,message:r?.message});}
   }
   if(process.env.POPULATION_FARM_STRESS!=='1')await auxiliary(a);
+  if(measuring&&process.env.POPULATION_PICKUPS_R127==='1'&&now>=(a.nextPickup??0)){
+   a.nextPickup=now+4000;
+   a.claimedDrops??=new Set();
+   const drop=w.drops?.find(d=>d.id.startsWith('pickup-benchmark-')&&!a.claimedDrops.has(d.id)&&Math.hypot(d.x-p.x,d.y-p.y)<105);
+   if(drop){await send(a,{action:'collect',targetId:drop.id});a.claimedDrops.add(drop.id);count('ownedPickupsR127');return;}
+  }
   if(now>=a.nextPotion){
    a.nextPotion=now+(a.zone==='solo'?2000:23000);const r=c.dungeon?.run,m=r?.members.find(m=>m.id===a.id);
    if(a.zone!=='solo'?(!a.equipmentFixture||p.hp<p.max_hp):r&&['active','portal'].includes(r.status)&&m?.hp>0&&m.hp<m.maxHp*.65){await send(a,a.zone==='solo'?{action:'dungeon',command:{action:'potion'}}:{action:'use_potion'});count('potions');}
