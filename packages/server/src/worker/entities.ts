@@ -56,7 +56,9 @@ export class Player {
   lastDamageAt = 0;
   lastActiveAt = Date.now();
   /** bekleyen bot doğrulaması (cevaplanana dek savaş/oto av kilitli) */
-  botCheck: { id: string; until: number; tries: number } | null = null;
+  botCheck: { id: string; until: number; tries: number; svg: string; at: number } | null = null;
+  /** pahalı sorgular için son zaman */
+  heavyAt = 0;
   // görüş
   known = new Map<number, number>(); // entityId → en son görüldüğü adım (görünmeyen olunca silinir)
   resetPending = true;

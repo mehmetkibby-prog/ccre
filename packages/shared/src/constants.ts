@@ -32,7 +32,7 @@ export const STALL_VIEW_RANGE = 600;
 export const STALL_MAX_PRICE = 50_000_000;
 export const STALL_TITLE_MAX = 32;
 /** dükkânda satılamayan malzemeler: kişiye bağlı aletler ve başlangıç sandığı */
-export const STALL_NO_SELL = new Set(['sickle', 'fishing_rod', 'starter_chest']);
+export const STALL_NO_SELL = new Set(['sickle', 'fishing_rod', 'starter_chest', 'prereg_chest', 'pet_fox', 'rename']);
 /** dükkân satırı: ekipman ya da bir yığın malzeme / Nesne Market ürünü (yığın bütün olarak satılır) */
 export interface StallMat { id: string; key: string; qty: number }
 export const MARKET_MAX_STALLS = 80; // bir kanalın pazarındaki en çok dükkân

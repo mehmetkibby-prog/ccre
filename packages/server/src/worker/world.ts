@@ -34,6 +34,8 @@ const STAFF_ROLES = new Set(['gm', 'admin', 'owner']);
 /** Bot doğrulaması: 50–70 dakikada bir (rastgele), cevap için 5 dk; beklerken savaş, oto av, toplama kilitli. */
 const BOT_EVERY_MS = 60 * 60_000, BOT_JITTER_MS = 10 * 60_000, BOT_GRACE_MS = 5 * 60_000, BOT_MAX_TRIES = 5;
 const BOT_BLOCK = new Set(['attack', 'skill', 'auto', 'pickup', 'fish_cast', 'fish_end', 'garden', 'stall_open']);
+const TRADE_BLOCK = new Set(['upgrade', 'transform', 'evolve', 'use', 'sell', 'craft', 'stall_open', 'equip', 'unequip', 'storage', 'fish_sell', 'mall_buy']);
+const HEAVY_CMDS = new Set(['sync', 'bosses', 'market_search']);
 export interface WorldOptions { channel: number; aoiMaxPlayers: number; saveIntervalMs: number; post: (m: FromWorker, transfer?: ArrayBuffer[]) => void }
 
 /** Bir kanalın tüm bölgeleri. Tek thread, tek yazar: kanal içi her durum değişikliği burada sıralı işlenir. */
@@ -140,7 +142,8 @@ export class World {
   adminRename(charId: number, name: string): boolean {
     const p = this.findPlayer(charId); if (!p || !name) return false;
     const c = p.char;
-    if ((c.materials.rename ?? 0) > 0) c.materials.rename -= 1;
+    if ((c.materials.rename ?? 0) <= 0) return false; // aynı karta paralel istek: yalnız bir kez
+    c.materials.rename -= 1;
     c.name = name; p.selfDirty |= 2; this.save(p, true); // diğer oyuncular yeni adı karakter yeniden göründüğünde görür
     this.sendJson(p, { t: 'char', id: c.id, name: c.name, cls: c.cls, role: c.role });
     this.notice(p, `Yeni adın: ${name}`, 'ok');
@@ -225,6 +228,8 @@ export class World {
     char.x = pos.x; char.y = pos.y;
     // kaska can efsunu artık gelmiyor: eski kasklardakini değiştir
     for (const it of [...char.bag, ...Object.values(char.equip)]) fixHelmetHp(it as ItemInstance | undefined);
+    // ön kayıt tilkisi önceden kalıcıydı: 3 güne indir (bir kez)
+    { const b = char.misc.buffs; if (b?.pet_fox && b.pet_fox > Date.now() + 30 * 86_400_000) { char.misc.foxUntil = Date.now() + PET_FOX_MS; b.pet_fox = char.misc.foxUntil; } }
     const p = new Player(sid, char);
     if (zone.id === FORGE_MAP) this.forge.rejoin(p);
     if (char.misc.deadAt && char.hp <= 0) { p.dead = true; p.deadAt = Math.min(this.now, char.misc.deadAt); p.hp = 0; p.anim = Anim.DEAD; }
@@ -259,7 +264,16 @@ export class World {
     if (p.dead) c.misc.deadAt = p.deadAt; else delete c.misc.deadAt;
     c.saveVersion++;
     p.saveDirty = false; p.lastSaveAt = this.now;
-    return structuredClone(c);
+    try { return structuredClone(c); }
+    catch (e) {
+      // kopyalanamayan değer (işlev, nesne kökü…): JSON üzerinden temizle, geçersiz eşyaları at — kanal çökmesin
+      console.error('[world] snapshot temizleniyor', c.id, (e as Error).message);
+      const ok = (it: unknown) => !!it && typeof it === 'object' && typeof (it as ItemInstance).id === 'string' && typeof (it as ItemInstance).tpl === 'string';
+      c.bag = c.bag.filter(ok);
+      for (const k of Object.keys(c.equip)) if (!ok((c.equip as Record<string, unknown>)[k])) delete (c.equip as Record<string, unknown>)[k];
+      if (c.storage) c.storage = c.storage.filter(ok);
+      return JSON.parse(JSON.stringify(c)) as CharState;
+    }
   }
   save(p: Player, urgent = false) { this.opt.post({ type: 'save', char: this.snapshotChar(p), urgent }); }
 
@@ -286,11 +300,15 @@ export class World {
 
   private dispatch(p: Player, c: ClientCmd) {
     if (c.t === 'botcheck') return this.cmdBotCheck(p, c);
+    // ticaret sürerken teklifteki eşyalar değiştirilemesin (kilitten sonra artı/efsun/dönüşümle değiştirip karşı tarafı aldatma)
+    if (TRADE_BLOCK.has(c.t) && this.social.inTrade(p)) { this.reply(p, c, false, 'Ticaret sürerken bu işlem yapılamaz.'); return this.notice(p, 'Ticaret sürerken bu işlem yapılamaz.'); }
+    // pahalı sorgular oyuncu başına saniyede bir
+    if (HEAVY_CMDS.has(c.t)) { if (this.now - (p.heavyAt ?? 0) < 900) return; p.heavyAt = this.now; }
     if (p.botCheck && BOT_BLOCK.has(c.t)) { this.notice(p, 'Önce ekrandaki doğrulama kodunu gir.', 'error'); return this.sendBotCheck(p); }
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion', 'party', 'friends', 'trade', 'arena'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
     switch (c.t) {
       case 'gm_reset': {
-        if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
+        if (!['admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
         let target: Player | undefined;
         for (const q of this.bySid.values()) if (q.char.name.toLocaleLowerCase('tr') === String(c.name ?? '').toLocaleLowerCase('tr')) { target = q; break; }
         if (!target) return this.notice(p, 'Oyuncu bu kanalda çevrimiçi değil.');
@@ -299,11 +317,13 @@ export class World {
       }
       case 'gm_set': {
         // yalnız yönetici rolü; hedef bu kanalda çevrimiçi oyuncu (ada göre)
-        if (!['gm', 'admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
+        if (!['admin', 'owner'].includes(p.char.role)) return this.notice(p, 'Bu komut için yetkin yok.');
         let target: Player | undefined;
         for (const q of this.bySid.values()) if (q.char.name.toLocaleLowerCase('tr') === String(c.name ?? '').toLocaleLowerCase('tr')) { target = q; break; }
         if (!target) return this.notice(p, 'Oyuncu bu kanalda çevrimiçi değil.');
-        this.adminSetPlayer(target.char.id, { level: c.level, gems: c.gems, essence: c.essence, potions: c.potions });
+        const num = (v: unknown, hi: number) => { if (v === undefined || v === null || v === '') return undefined; const n = Math.floor(Number(v)); return Number.isFinite(n) ? Math.max(0, Math.min(hi, n)) : undefined; };
+        this.adminSetPlayer(target.char.id, { level: num(c.level, 200), gems: num(c.gems, 2e9), essence: num(c.essence, 2e9), potions: num(c.potions, 1e6) });
+        console.log('[denetim] gm_set', p.char.name, '→', target.char.name, JSON.stringify({ level: c.level, gems: c.gems, essence: c.essence, potions: c.potions }));
         return this.notice(p, `${target.char.name} güncellendi.`, 'ok');
       }
       case 'stall_open': return this.cmdStallOpen(p, c);
@@ -392,7 +412,7 @@ export class World {
       const c = p.char;
       if (STAFF_ROLES.has(c.role)) continue;
       if (p.botCheck) {
-        if (this.now > p.botCheck.until) { p.botCheck = null; this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu süresinde girilmedi. Tekrar giriş yapabilirsin.' }); }
+        if (this.now > p.botCheck.until) { p.botCheck = null; delete p.char.misc.botTries; p.char.misc.botUntil = this.now + BOT_GRACE_MS; p.markSave(); this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu süresinde girilmedi. Tekrar giriş yapabilirsin.' }); }
         continue;
       }
       c.misc.botNext ??= this.now + BOT_EVERY_MS + Math.random() * BOT_JITTER_MS - BOT_JITTER_MS / 2;
@@ -401,23 +421,29 @@ export class World {
   }
   private issueBotCheck(p: Player, tries: number) {
     const cap = newCaptcha();
-    p.botCheck = { id: cap.id, until: p.botCheck?.until ?? this.now + BOT_GRACE_MS, tries };
-    p.char.misc.botDue = true; p.markSave(); // çıkıp girmek doğrulamayı atlatmaz
+    const m = p.char.misc;
+    // süre ve hak kayıtta: çıkıp girmek süreyi ve hakları yenilemez
+    const until = p.botCheck?.until ?? (m.botUntil && m.botUntil > this.now ? m.botUntil : this.now + BOT_GRACE_MS);
+    tries = Math.max(tries, m.botTries ?? 0);
+    p.botCheck = { id: cap.id, until, tries, svg: cap.svg, at: this.now };
+    m.botDue = true; m.botUntil = until; m.botTries = tries; p.markSave();
     if (p.autoOn) { this.autoTick(p, this.now); p.autoOn = false; this.autoSend(p); }
-    this.sendJson(p, { t: 'botcheck', id: cap.id, svg: cap.svg, until: p.botCheck.until, tries, max: BOT_MAX_TRIES });
+    p.queuedAtk = 0;
+    this.sendJson(p, { t: 'botcheck', id: cap.id, svg: cap.svg, until, tries, max: BOT_MAX_TRIES });
   }
-  private sendBotCheck(p: Player) { if (p.botCheck) this.issueBotCheck(p, p.botCheck.tries); }
+  /** engellenen komutta: mevcut kodu yeniden gönder (her seferinde yeni kod üretmek başkalarının kodunu silebiliyordu) */
+  private sendBotCheck(p: Player) { const b = p.botCheck; if (b) this.sendJson(p, { t: 'botcheck', id: b.id, svg: b.svg, until: b.until, tries: b.tries, max: BOT_MAX_TRIES }); }
   private cmdBotCheck(p: Player, c: { id?: string; a?: string; renew?: boolean }) {
     if (!p.botCheck) return this.sendJson(p, { t: 'botcheck_ok' });
-    if (c.renew) return this.issueBotCheck(p, p.botCheck.tries);
+    if (c.renew) { if (this.now - p.botCheck.at < 3000) return this.sendBotCheck(p); return this.issueBotCheck(p, p.botCheck.tries); }
     if (c.id === p.botCheck.id && checkCaptcha(c.id, typeof c.a === 'string' ? c.a.slice(0, 12) : '')) {
-      p.botCheck = null; p.char.misc.botDue = false;
+      p.botCheck = null; p.char.misc.botDue = false; delete p.char.misc.botUntil; delete p.char.misc.botTries;
       p.char.misc.botNext = this.now + BOT_EVERY_MS + Math.random() * BOT_JITTER_MS - BOT_JITTER_MS / 2;
       p.markSave();
       return this.sendJson(p, { t: 'botcheck_ok' });
     }
     const tries = p.botCheck.tries + 1;
-    if (tries >= BOT_MAX_TRIES) { p.botCheck = null; this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu çok kez yanlış girildi.' }); return; }
+    if (tries >= BOT_MAX_TRIES) { p.botCheck = null; delete p.char.misc.botTries; p.char.misc.botUntil = this.now + BOT_GRACE_MS; p.markSave(); this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu çok kez yanlış girildi.' }); return; }
     this.notice(p, `Kod yanlış. ${BOT_MAX_TRIES - tries} hakkın kaldı.`, 'error');
     this.issueBotCheck(p, tries);
   }
@@ -1244,6 +1270,8 @@ export class World {
     if (from !== z) {
       this.social.onZoneChange(p);
       if (from.id === FORGE_MAP) this.forge.detach(p);
+      // arenadan hangi yolla çıkılırsa çıkılsın (ışınlanma, köye dön, düğme) ana süreç kaydı kapatsın
+      if (from.id === 'arena') this.opt.post({ type: 'arena_left', charId: p.char.id });
       from.removePlayer(p);
       for (const m of from.monsterList) if (m.target === p) { m.target = null; m.threat.delete(p); }
       p.x = pos.x; p.y = pos.y;
@@ -1307,8 +1335,10 @@ export class World {
   }
   private cmdUnequip(p: Player, slot: Slot) {
     const c = p.char;
+    // yalnız gerçekten kuşanılmış bir yuva ("constructor", "__proto__" gibi anahtarlar kanalı çökertiyordu)
+    if (typeof slot !== 'string' || !/^[a-z]{2,16}$/.test(slot) || !Object.prototype.hasOwnProperty.call(c.equip, slot)) return;
     const it = c.equip[slot];
-    if (!it) return;
+    if (!it || typeof it !== 'object' || typeof it.id !== 'string' || typeof it.tpl !== 'string') return;
     if (c.bag.length >= BAG_EQUIP_CAP) return this.notice(p, 'Çanta dolu.');
     delete c.equip[slot];
     c.bag.push(it);
@@ -1340,7 +1370,8 @@ export class World {
   }
 
   private seenReceipt(p: Player, req: string): boolean {
-    if (!req) return false;
+    // yalnız kısa, düz kimlikler saklanır (NUL vb. karakter kaydı JSONB'de bozup karakteri donduruyordu)
+    if (!req || typeof req !== 'string' || !/^[A-Za-z0-9_.:-]{1,40}$/.test(req)) return false;
     const r = (p.char.misc.receipts ??= []);
     if (r.includes(req)) return true;
     r.push(req); if (r.length > RECEIPT_KEEP) r.splice(0, r.length - RECEIPT_KEEP);
@@ -1797,7 +1828,6 @@ export class World {
       const town = this.zones.get('bazaar')!;
       if (p.dead) { p.dead = false; p.hp = Math.round(p.stats.maxHp * 0.5); p.anim = Anim.IDLE; p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS; this.sendJson(p, { t: 'respawned', hp: p.hp }); }
       this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y);
-      this.opt.post({ type: 'arena_left', charId: p.char.id });
       return;
     }
     if (!this.arenaActive) return this.notice(p, 'Arena şu an kapalı.');
@@ -2022,7 +2052,13 @@ export class World {
     if (o.kind === 'level') return p.char.level;
     return st?.p[i] ?? 0;
   }
-  private questReady(p: Player, q: QuestDef) { return q.objs.every((o, i) => this.questProg(p, q, i) >= o.n); }
+  private questReady(p: Player, q: QuestDef) {
+    if (!q.objs.every((o, i) => this.questProg(p, q, i) >= o.n)) return false;
+    // aynı malzemeyi isteyen birden çok hedef: toplam miktar denetlenir (eksiye düşüp çoğaltma olmasın)
+    const need: Record<string, number> = {};
+    for (const o of q.objs) if (o.kind === 'collect') need[o.key] = (need[o.key] ?? 0) + o.n;
+    return Object.entries(need).every(([k, n]) => (p.char.materials[k] ?? 0) >= n);
+  }
   private questOpen(p: Player, q: QuestDef): string | null {
     const s = this.qs(p), c = p.char;
     if (q.off) return 'Bu görev şu an verilmiyor.';
@@ -2557,10 +2593,12 @@ export class World {
 
   private periodicSaves() {
     for (const p of this.bySid.values()) {
-      if (p.selfDirty) { this.sendSelf(p, p.selfDirty); p.selfDirty = 0; }
-      if ((p.saveDirty || p.char.kills) && this.now - p.lastSaveAt > this.opt.saveIntervalMs + ((p.sid % 50) * 40)) {
-        if (p.saveDirty) this.save(p); else p.lastSaveAt = this.now;
-      }
+      try {
+        if (p.selfDirty) { this.sendSelf(p, p.selfDirty); p.selfDirty = 0; }
+        if ((p.saveDirty || p.char.kills) && this.now - p.lastSaveAt > this.opt.saveIntervalMs + ((p.sid % 50) * 40)) {
+          if (p.saveDirty) this.save(p); else p.lastSaveAt = this.now;
+        }
+      } catch (e) { console.error('[world] kayıt hatası', p.char.id, (e as Error).message); p.lastSaveAt = this.now; }
     }
   }
 
@@ -2776,8 +2814,11 @@ export class World {
     p.fishing = undefined;
     const el = this.now - f.biteAt;
     if (!ok) return this.sendJson(p, { t: 'fish_result', ok: false });
-    if (el < 1200 || el > 120_000) return this.sendJson(p, { t: 'fish_result', ok: false }); // tutma oyunu oynanmadan bitmez
-    const c = p.char, def = FISH_BY_ID.get(f.fish)!;
+    const def = FISH_BY_ID.get(f.fish)!;
+    // tutma oyunu oynanmadan bitmez: zor balık (inci) daha uzun sürer (hileli istemci anında "tuttum" diyemesin)
+    const minMs = 1200 + Math.max(0, Number(def?.diff) || 0) * 30;
+    if (el < minMs || el > 120_000) return this.sendJson(p, { t: 'fish_result', ok: false });
+    const c = p.char;
     let qty = 1;
     const guide = (c.misc.buffs?.fish_guide ?? 0) > this.now;
     if (guide) qty = 2;

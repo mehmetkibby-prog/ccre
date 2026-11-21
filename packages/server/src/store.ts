@@ -92,8 +92,13 @@ export class CharacterStore {
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
-      await client.query(`INSERT INTO server_state (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, revision = server_state.revision + 1, updated_at = now()`, ['market:ch' + channel, JSON.stringify(state)]);
-      for (const c of chars) await this.writeChar(client, c);
+      await client.query(`INSERT INTO server_state (key, value) VALUES ($1, $2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, revision = server_state.revision + 1, updated_at = now()`, ['market:ch' + channel, safeJson(state)]);
+      // her karakter kendi kayıt noktasıyla: biri yazılamazsa (bozuk veri) bütün pazar ve öteki karakterler takılı kalmaz
+      for (const c of chars) {
+        await client.query('SAVEPOINT ch');
+        try { await this.writeChar(client, c); await client.query('RELEASE SAVEPOINT ch'); }
+        catch (e) { await client.query('ROLLBACK TO SAVEPOINT ch'); this.failures++; console.error('[store] pazar: karakter yazılamadı', c.id, (e as Error).message); }
+      }
       await client.query('COMMIT');
       for (const c of chars) { const q = this.queue.get(c.id); if (q && q.saveVersion <= c.saveVersion) { this.queue.delete(c.id); this.urgent.delete(c.id); } }
     } catch (e) {
@@ -126,7 +131,7 @@ export class CharacterStore {
         `UPDATE characters SET level=$2, xp=$3, hp=$4, map=$5, x=$6, y=$7, gems=$8, essence=$9, cp=$10, arena_coin=$11,
           stat_str=$12, stat_res=$13, stat_vit=$14, skill_levels=$15, spec=$16, kills=$17, misc=$18, save_version=$19, last_seen=now()
          WHERE id=$1 AND save_version < $19 RETURNING id`,
-        [c.id, c.level, c.xp, c.hp, c.map, c.x, c.y, c.gems, c.essence, c.cp, c.arenaCoin, c.stats.str, c.stats.res, c.stats.vit, c.skills, c.spec, c.kills, JSON.stringify(c.misc), c.saveVersion],
+        [c.id, c.level, c.xp, c.hp, c.map, c.x, c.y, c.gems, c.essence, c.cp, c.arenaCoin, c.stats.str, c.stats.res, c.stats.vit, c.skills, c.spec, c.kills, safeJson(c.misc), c.saveVersion],
       );
       if (r.rowCount === 0) return false;
       await writeItems(client, c);
@@ -169,18 +174,28 @@ export class CharacterStore {
   }
 }
 
+/** JSONB'ye yazılacak JSON: NUL ve eşsiz vekil (lone surrogate) karakterleri ayıklanır (PostgreSQL reddediyor; karakter donuyordu) */
+export function safeJson(v: unknown): string {
+  return JSON.stringify(v, (_k, x) => (typeof x === 'string' ? x.replace(/\u0000/g, '').replace(/[\ud800-\udbff](?![\udc00-\udfff])|(?<![\ud800-\udbff])[\udc00-\udfff]/g, '\ufffd') : x));
+}
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAT_KEY_RE = /^[a-z0-9_]{1,40}$/;
 async function writeItems(client: pg.PoolClient, c: CharState) {
   const rows: { it: ItemInstance; loc: string; slot: string | null }[] = [];
-  for (const it of c.bag) rows.push({ it, loc: 'bag', slot: null });
-  for (const [slot, it] of Object.entries(c.equip)) if (it) rows.push({ it, loc: 'equip', slot });
-  for (const it of c.storage ?? []) rows.push({ it, loc: 'storage', slot: null });
+  // geçersiz eşya (kimliksiz/şablonsuz: hileli istekten kalma) yazılmaz; yoksa bütün kayıt düşüp karakter donuyordu
+  const valid = (it: ItemInstance | undefined): it is ItemInstance => !!it && typeof it.id === 'string' && UUID_RE.test(it.id) && typeof it.tpl === 'string' && !!it.tpl;
+  const seen = new Set<string>();
+  const add = (it: ItemInstance | undefined, loc: string, slot: string | null) => { if (!valid(it)) { if (it) console.error('[store] geçersiz eşya atlandı', c.id, loc); return; } if (seen.has(it.id)) return; seen.add(it.id); rows.push({ it, loc, slot }); };
+  for (const it of c.bag) add(it, 'bag', null);
+  for (const [slot, it] of Object.entries(c.equip)) if (it) add(it, 'equip', slot);
+  for (const it of c.storage ?? []) add(it, 'storage', null);
   if (rows.length) {
     const vals: unknown[] = [];
     const ph: string[] = [];
     rows.forEach((r, i) => {
       const b = i * 9;
       ph.push(`($${b + 1}::uuid,$${b + 2}::bigint,$${b + 3},$${b + 4},$${b + 5}::int,$${b + 6},$${b + 7},$${b + 8}::boolean,$${b + 9}::jsonb)`);
-      vals.push(r.it.id, c.id, r.it.tpl, r.it.rarity, r.it.plus, r.loc, r.slot, !!r.it.locked, JSON.stringify({ ench: r.it.ench, evo: r.it.evo, kills: r.it.kills }));
+      vals.push(r.it.id, c.id, r.it.tpl, r.it.rarity, Math.max(0, Math.min(99, Math.floor(Number(r.it.plus) || 0))), r.loc, r.slot, !!r.it.locked, safeJson({ ench: r.it.ench, evo: r.it.evo, kills: r.it.kills }));
     });
     await client.query(
       `INSERT INTO items (id, char_id, tpl, rarity, plus, location, slot, locked, data) VALUES ${ph.join(',')}
@@ -189,11 +204,11 @@ async function writeItems(client: pg.PoolClient, c: CharState) {
   }
   // eşya tek yerde: çanta, kuşanılmış ya da depo (bir işlemde yazılır; arada kaybolmaz, çoğalmaz)
   await client.query(`DELETE FROM items WHERE char_id=$1 AND location IN ('bag','equip','storage') AND NOT (id = ANY($2::uuid[]))`, [c.id, rows.map((r) => r.it.id)]);
-  const keys = Object.keys(c.materials).filter((k) => c.materials[k] > 0);
+  const keys = Object.keys(c.materials).filter((k) => MAT_KEY_RE.test(k) && Number.isFinite(c.materials[k]) && c.materials[k] > 0 && c.materials[k] < 9e15);
   if (keys.length) {
     await client.query(
       `INSERT INTO materials (char_id, key, qty) SELECT $1, k, q FROM unnest($2::text[], $3::bigint[]) AS t(k, q)
-       ON CONFLICT (char_id, key) DO UPDATE SET qty=EXCLUDED.qty`, [c.id, keys, keys.map((k) => c.materials[k])]);
+       ON CONFLICT (char_id, key) DO UPDATE SET qty=EXCLUDED.qty`, [c.id, keys, keys.map((k) => Math.floor(c.materials[k]))]);
   }
   await client.query(`DELETE FROM materials WHERE char_id=$1 AND NOT (key = ANY($2::text[]))`, [c.id, keys]);
 }

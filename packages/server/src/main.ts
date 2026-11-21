@@ -81,6 +81,7 @@ async function main() {
     for (const s of gateway.sessions.values()) gateway.sendJson(s, { t: 'fatal', text: 'Sunucu güncelleniyor, birazdan kaldığın yerden devam…', retry: true });
     await channels.stop();
     await new Promise((r) => setTimeout(r, 200));
+    await gateway.drainMarket(); // pazar işlemleri yarıda kalmasın (alıcı malı alır, satıcıya geri dönmez)
     for (let i = 0; i < 20 && store.queueLength; i++) await store.flush();
     await world.persist();
     await gateway.guilds.flush().catch(() => {});

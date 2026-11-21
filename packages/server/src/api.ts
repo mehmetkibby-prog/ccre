@@ -84,9 +84,10 @@ function setCookie(res: ServerResponse, token: string | null) {
 }
 
 /** Ön kayıt sandığı: ön kayıtlı hesabın bir karakterine, hesap başına bir kez (makbuz tekilliği garanti eder). */
-async function grantPrereg(c: import('pg').PoolClient, accountId: number, charId: number) {
+async function grantPrereg(c: import('pg').PoolClient, accountId: number, charId: number): Promise<boolean> {
   const rec = await c.query(`INSERT INTO receipts(key, account_id, char_id, kind) SELECT $1,$2,$3,'prereg_chest' FROM accounts WHERE id=$2 AND prereg ON CONFLICT (key) DO NOTHING RETURNING key`, [`prereg_chest:${accountId}`, accountId, charId]);
   if (rec.rowCount) await c.query(`INSERT INTO materials(char_id, key, qty) VALUES ($1,'prereg_chest',1) ON CONFLICT (char_id,key) DO UPDATE SET qty=materials.qty+1`, [charId]);
+  return !!rec.rowCount;
 }
 /** ön kayıt sayısı (sitede gösterilir; 60 sn önbellek) */
 let preregCache = { n: 0, at: 0 };
@@ -271,7 +272,10 @@ export function buildApi(d: ApiDeps): Router {
     if (!own.rowCount) throw new HttpError(404, 'Karakter bulunamadı.');
     const already = d.gateway.byAccount.get(a.id);
     // ön kayıt sandığı daha önce açılmış karakterlere de: karakter oyunda değilken (oyundaysa kayıt üstüne yazılırdı)
-    if (!already) await tx((c) => grantPrereg(c, a.id, charId));
+    if (!already && await tx((c) => grantPrereg(c, a.id, charId))) {
+      // karakter yakın zamanda oyundaysa önbellekteki kopyası sonra yazılır: sandık oradan da silinmesin
+      const live = d.store.peek?.(charId); if (live) live.materials.prereg_chest = Math.max(1, live.materials.prereg_chest ?? 0);
+    }
     const sameChannel = already && already.channel === ch;
     const pop = d.gateway.channelPopulation(ch);
     if (!isStaff(a.role) && !sameChannel && pop >= config.channelCapacity) throw new HttpError(409, 'Kanal dolu. Başka kanal seç.');

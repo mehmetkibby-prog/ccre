@@ -66,7 +66,7 @@ function loop() {
   const now = performance.now();
   let n = 0;
   while (now >= next && n < 3) {
-    const t0 = performance.now(); world.tick(); const ms = performance.now() - t0;
+    const t0 = performance.now(); try { world.tick(); } catch (e) { console.error('[kanal] tick hatası', (e as Error).stack); } const ms = performance.now() - t0;
     if (ms >= TICK_MS * 0.8) lm.job('Dünya adımı (tick)', ms, `${world.bySid.size} oyuncu`);
     next += TICK_MS; n++;
   }

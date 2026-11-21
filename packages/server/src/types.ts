@@ -39,6 +39,8 @@ export interface CharMisc {
   /** ön kayıt tilkisinin bittiği an */
   foxUntil?: number;
   botDue?: boolean;
+  botUntil?: number;
+  botTries?: number;
   /** canavar sıralaması: bu dönemin (k) av sayısı; dönem değişince önceki prev'e geçer (ödül hesabı için) */
   rankKills?: { k: string; n: number; prev?: { k: string; n: number } };
   /** oto atak: bugün kullanılan süre (ms) */

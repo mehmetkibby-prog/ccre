@@ -279,7 +279,18 @@ function genVillage(l: MapLayout, rng: Rng) {
     if (r < 0.5) l.props.push({ k: 'flowers', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 5) | 0, s: 1 });
     else if (r < 0.75) l.props.push({ k: 'grasstuft', x: tc(x) + (rng() - 0.5) * 40, y: tc(y) + (rng() - 0.5) * 40, v: (rng() * 3) | 0, s: 1 });
     else if (r < 0.88 && isFree(l, x, y)) { l.props.push({ k: 'bush', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
-    else if (rng() < 0.25 && isFree(l, x, y)) { l.props.push({ k: 'tree', x: tc(x), y: tc(y), v: (rng() * 4) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[i] = 1; }
+    else if (rng() < 0.25 && isFree(l, x, y)) {
+      // evin dibine düşen ağaç (tacı evin içine giriyordu): evden uzağa, açık alana kaydır
+      let tx = x, ty = y;
+      const h = houses.find(([hx, hy]) => x >= hx - 1 && x <= hx + 4 && y >= hy - 1 && y <= hy + 3);
+      if (h) { if (x < h[0]) tx = h[0] - 3; else if (x > h[0] + 3) tx = h[0] + 7; else ty = y < h[1] ? h[1] - 3 : h[1] + 5; }
+      const v = (rng() * 4) | 0, sc = 0.9 + rng() * 0.3;
+      if (h) { // hedef dolu ya da yol ise yakınındaki boş bir kare
+        const c = [[0, 0], [0, 1], [0, -1], [-1, 0], [-1, 1], [-1, -1], [0, 2], [-2, 0], [1, 1]].map(([dx, dy]) => [tx + dx * Math.sign(tx - x || -1), ty + dy]).find(([a, b]) => a > 2 && b > 2 && isFree(l, a, b) && !protect[idx(l, a, b)]);
+        if (c) { tx = c[0]; ty = c[1]; } else tx = -1;
+      }
+      if (tx >= 0) { l.props.push({ k: 'tree', x: tc(tx), y: tc(ty), v, s: sc }); l.blocked[idx(l, tx, ty)] = 1; }
+    }
   }
   for (let n = 0; n < 16; n++) {
     const x = 6 + ((rng() * 8) | 0), y = 33 + ((rng() * 8) | 0);

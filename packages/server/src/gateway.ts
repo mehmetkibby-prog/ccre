@@ -353,6 +353,16 @@ export class Gateway {
     this.marketQ.set(ch, q);
     this.flushMarket(ch);
   }
+  /** kapanışta: bekleyen pazar yazımları bitene dek (en çok ~10 sn) */
+  async drainMarket() {
+    for (let i = 0; i < 50; i++) {
+      const pending = [...this.marketQ.entries()].filter(([, q]) => q.busy || q.state !== null);
+      if (!pending.length) return;
+      for (const [ch] of pending) this.flushMarket(ch);
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    console.error('[pazar] kapanışta bekleyen pazar yazımları kaldı');
+  }
   private flushMarket(ch: number) {
     const q = this.marketQ.get(ch);
     if (!q || q.busy || q.state === null) return;

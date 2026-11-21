@@ -110,6 +110,9 @@ interface View { kind: number; obj: THREE.Object3D; rig?: Rig; mon?: MonsterRig;
   /** Nesne Market: evcil hayvan ve sırttaki kanat; cpend yüklenmeyi bekleyen kozmetik modeli */ pet?: Pet | null; wings?: (THREE.Object3D & { tick?: (t: number, moving: boolean) => void }) | null; cpend?: string | null }
 
 const _footP = new THREE.Vector3();
+/** Kozmetik bayt (bit 0–2: pet/kanat, bit 5: yeşil tilki) → görünüm kodundaki yeri (bit 12–14 ve bit 22). Bit 5 doğrudan
+ * 12 kaydırılınca 17. bite düşüp silah evrimiyle çakışıyordu: kendi tilkin görünmüyordu. */
+const cosBits = (cos: number) => ((cos & 7) << 12) | (((cos >> 5) & 1) << 22);
 export class Renderer3D {
   renderer: THREE.WebGLRenderer;
   scene = new THREE.Scene();
@@ -579,7 +582,7 @@ export class Renderer3D {
     const cls = this.g.cls;
     // silah nadirliği değişince (yeni silah kuşanıldı) görünüm yeniden kurulur
     const eq = store.get().self?.equip, ri = (it?: { rarity: string }) => (it ? Math.max(0, RARITIES.indexOf(it.rarity as never)) : 0);
-    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | (cosmeticByte(store.get().self?.buffs, Date.now()) << 12) | (Math.min(3, eq?.weapon?.evo ?? 0) << 16) | (Math.min(3, eq?.armor?.evo ?? 0) << 18) | (armorPlusTier(eq?.armor?.plus) << 20);
+    const wr = ri(eq?.weapon) | (ri(eq?.armor) << 4) | (Math.min(15, eq?.weapon?.plus ?? 0) << 8) | cosBits(cosmeticByte(store.get().self?.buffs, Date.now())) | (Math.min(3, eq?.weapon?.evo ?? 0) << 16) | (Math.min(3, eq?.armor?.evo ?? 0) << 18) | (armorPlusTier(eq?.armor?.plus) << 20);
     if (this.self && this.selfCls === cls && this.selfWR === wr) return this.self;
     if (this.self) releaseView(this.self);
     this.selfWR = wr;
