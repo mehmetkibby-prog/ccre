@@ -961,6 +961,7 @@ export class Renderer3D {
     if (st === 'walk' && (v as View & { mount?: unknown }).mount) st = 'idle'; // binicinin bacakları yürümez (at yürür)
     if (st !== v.state) { if (!(st === 'idle' && v.state === 'walk' && now - v.stateAt < 140)) { v.state = st; v.stateAt = st === 'attack' || st === 'cast' ? animStart : now; } }
     if (dead && !v.deadAt) v.deadAt = now;
+    else if (!dead && v.deadAt) v.deadAt = 0; // canlandı: sonraki ölümde düşüş yeniden oynasın
     v.phase += dist * (Math.PI * 2 / 1.55);
     const k = st === 'dead' ? (now - v.deadAt) / 700 : (now - v.stateAt) / (st === 'attack' ? 480 : 600);
     const tt = now / 1000;

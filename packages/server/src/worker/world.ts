@@ -160,7 +160,7 @@ export class World {
     if (!p) return false;
     resetCharState(p.char);
     const town = this.zones.get('bazaar')!;
-    p.dead = false;
+    p.dead = false; p.anim = Anim.IDLE; p.dirty |= Upd.ANIM | Upd.FLAGS;
     this.moveToZone(p, town, town.layout.spawn.x, town.layout.spawn.y);
     p.recompute(false); p.hp = p.stats.maxHp;
     p.dirty |= Upd.HP | Upd.MAXHP | Upd.LEVEL;
@@ -1333,6 +1333,10 @@ export class World {
     if (killer && this.social.duelDown(p, killer)) { p.hp = 1; p.dirty |= Upd.HP; return; }
     p.dead = true; p.deadAt = this.now; p.hp = 0; p.anim = Anim.DEAD; p.inputs.length = 0;
     p.dirty |= Upd.HP | Upd.ANIM | Upd.FLAGS;
+    // ölünce binekten iner ve olta toplanır (yoksa ölü beden atın üstünde / elinde oltayla kalıyordu)
+    const mt = p.char.misc.mount;
+    if (mt?.riding) { mt.riding = false; p.recompute(true); p.hp = 0; p.dirty |= Upd.MAXHP; p.selfDirty |= 1 | 4; }
+    if (p.fishing) { p.fishing = undefined; this.sendJson(p, { t: 'fish_result', ok: false }); }
     p.zone.emit(p.x, p.y, { e: Ev.DEATH, id: p.id, killer: killer?.id ?? 0 });
     let lost = 0;
     // arena: öldürme ana sürece bildirilir (hile denetimi ve ortak sıralama orada); arenada kayıp yok
@@ -1386,6 +1390,8 @@ export class World {
   private moveToZone(p: Player, z: Zone, x: number, y: number) {
     const from = p.zone;
     const pos = nearestFree(z.layout, x, y);
+    // ışınlanınca olta toplanır (yoksa yeni yerde elinde oltayla görünüyor, balık sudan uzakta tamamlanabiliyordu)
+    if (p.fishing) { p.fishing = undefined; p.dirty |= Upd.FLAGS; this.sendJson(p, { t: 'fish_result', ok: false }); }
     if (from !== z) {
       this.social.onZoneChange(p);
       if (from.id === FORGE_MAP) this.forge.detach(p);

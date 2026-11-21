@@ -5,6 +5,7 @@ import { DIR_STEPS,
   CAST_FIRST, CAST_CHAIN_HOP,
 } from '@col/shared';
 import { runeConf, inPvpRing, BASIC_COOLDOWN_MS, skillOrder } from '@col/shared';
+import { clearReviveState } from './entstate.ts';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
@@ -424,6 +425,9 @@ export class Game {
       if (u.maxHp !== undefined) e.maxHp = u.maxHp;
       if (u.flags !== undefined) e.flags = u.flags;
       if (u.level !== undefined) e.level = u.level;
+      // canlanan oyuncu (aynı varlık kalır): ölüm işareti silinmezse başkalarının ekranında yerde yatarak yürüyor,
+      // adı görünmüyor ve tıklanamıyordu
+      clearReviveState(e, now);
       if (u.dir !== undefined) {
         e.dir = u.dir;
         if (u.anim !== e.anim || (u.anim === Anim.ATTACK && now - e.animStart > 300)) { e.anim = u.anim!; e.animStart = now; }
