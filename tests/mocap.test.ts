@@ -2,7 +2,7 @@ import { it, expect, beforeAll } from 'vitest';
 import * as THREE from 'three';
 import fs from 'node:fs';
 import path from 'node:path';
-const { MOCAP_ATTACK, MOCAP_BONES, mocapClip, setMocapData } = await import('../packages/client/src/g3d/mocap.ts');
+const { MOCAP_TRIED: MOCAP_ATTACK, MOCAP_BONES, mocapClip, setMocapData } = await import('../packages/client/src/g3d/mocap.ts');
 const { rigOf } = await import('../packages/client/src/g3d/charAnims.ts');
 
 const DATA = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../packages/client/public/anims/mocap.json'), 'utf8'));

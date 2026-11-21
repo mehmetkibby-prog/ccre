@@ -290,6 +290,7 @@ function MenuBackdrop() {
     let bossNext = performance.now() + 1500, bossN = 0;
     const co = { x: bx, y: by, dist: 16, pitch: 0.4 };
     (r as any).camOverride = co;
+    if ((window as any).__menuCam) (window as any).__menuR = r; // video kaydı: hata ayıklama için
     const cut0 = sharedU.cutR.value; sharedU.cutR.value = 0; // oyuncu yok: kameranın önündeki nesneler saydamlaşmasın
     let raf = 0, last = performance.now(), frames = 0;
     const t0 = last;

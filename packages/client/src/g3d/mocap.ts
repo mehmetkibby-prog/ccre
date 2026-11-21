@@ -162,7 +162,9 @@ export function mocapClip(name: string, rig: Rig, key: string, map: TimeMap, opt
  * kaynak bitiş] (sn). Değme anı oyundaki vuruş anına (efekt ve hasar sayısı) hizalanır, bitiş saldırı süresine (ATTACK_ANIM_MS).
  */
 export type MSpec = [string, number, number, number];
-export const MOCAP_ATTACK: Record<string, { hit: number; weapon: 'blade' | 'staff'; hipK: number; damp?: MocapDamp; lockLeft?: number; combo: MSpec[] }> = {
+/** Kullanılan kombolar (boş: elle çizilmiş eski vuruşlar). MOCAP_TRIED: denenip beğenilmeyen aktarımlar, karşılaştırma için. */
+export const MOCAP_ATTACK: Record<string, { hit: number; weapon: 'blade' | 'staff'; hipK: number; damp?: MocapDamp; lockLeft?: number; combo: MSpec[] }> = {};
+export const MOCAP_TRIED: Record<string, { hit: number; weapon: 'blade' | 'staff'; hipK: number; damp?: MocapDamp; lockLeft?: number; combo: MSpec[] }> = {
   // tek elle kılıç kombosu (Mesh2Motion, CC0): sağ üstten çapraz iniş → ters yatay savuruş → tepeden kesip duruşa dönüş.
   // Üç vuruş aynı kesintisiz çekimden: art arda basılınca birbirine akar. Kalkan kolu savaş duruşunda kalır.
   guardian: { hit: GUARDIAN_IMPACT_S, weapon: 'blade', hipK: 0.9, damp: { hips: 0.85, spine: 0.9, legs: 0.85, head: 0.7 }, lockLeft: 1,
@@ -171,3 +173,52 @@ export const MOCAP_ATTACK: Record<string, { hit: number; weapon: 'blade' | 'staf
   arcanist: { hit: ARCANIST_RELEASE_S, weapon: 'staff', hipK: 0.9, damp: { hips: 0.9, spine: 0.9, legs: 0.85, head: 0.75 },
     combo: [['thrust', 0.2, 0.4, 0.95]] },
 };
+
+// ───────── Meshy hareket kütüphanesi: modelin kendi iskeletine çekilmiş klipler (aktarma yok) ─────────
+/** Kemik başına yerel dönüşler (n×4) ve kalçanın yerel konumu (n×3); karakterin Meshy iskeletiyle birebir aynı. */
+export interface NativeClip { fps: number; n: number; q: Record<string, number[]>; hips: number[] }
+let nativeData: { clips: Record<string, NativeClip> } | null = null;
+let nativeLoading: Promise<unknown> | null = null;
+export function loadNative(url = '/anims/native.json?v=1') {
+  return (nativeLoading ??= fetch(url).then((r) => (r.ok ? r.json() : null)).then((d) => (nativeData = d)).catch(() => null));
+}
+export function nativeReady() { return nativeData; }
+export function setNativeData(d: { clips: Record<string, NativeClip> } | null) { nativeData = d; }
+/**
+ * Kütüphane klibinin bir aralığını oyun süresine yerleştirir (değme anı hizalı). Kalça yatayda yerinde tutulur (klip
+ * yürüyerek ilerliyor), dikey iniş-kalkış (çökme, hamle) korunur. lock: kalkan kolu gibi kemikleri sabit poza çeker.
+ */
+export function nativeClip(name: string, rig: Rig, key: string, map: TimeMap, opt: { lock?: MocapLock; stepK?: number } = {}): THREE.AnimationClip | null {
+  const c = nativeData?.clips[key];
+  if (!c) return null;
+  const from = map[0][0], to = map[map.length - 1][0];
+  const i0 = Math.max(0, Math.floor(from * c.fps)), i1 = Math.min(c.n - 1, Math.ceil(to * c.fps));
+  const frames = i1 - i0 + 1;
+  const times = new Float32Array(frames);
+  for (let i = 0; i < frames; i++) times[i] = Math.max(0, warp(map, Math.min(to, Math.max(from, (i0 + i) / c.fps))));
+  const tracks: THREE.KeyframeTrack[] = [];
+  const Q = new THREE.Quaternion();
+  for (const [bn, a] of Object.entries(c.q)) {
+    const bone = rig.bones.get(bn);
+    if (!bone) continue;
+    const vals = new Float32Array(frames * 4), lk = opt.lock?.pose.get(bn);
+    for (let f = 0; f < frames; f++) {
+      const k = (i0 + f) * 4; Q.set(a[k], a[k + 1], a[k + 2], a[k + 3]);
+      if (lk) Q.slerp(lk, opt.lock!.w);
+      Q.toArray(vals, f * 4);
+    }
+    tracks.push(new THREE.QuaternionKeyframeTrack(`${bone.name}.quaternion`, times, vals));
+  }
+  const hb = rig.bones.get('Hips');
+  if (hb && c.hips.length) {
+    const vals = new Float32Array(frames * 3), x0 = c.hips[i0 * 3], z0 = c.hips[i0 * 3 + 2], sk = opt.stepK ?? 0;
+    for (let f = 0; f < frames; f++) {
+      const k = (i0 + f) * 3;
+      vals[f * 3] = rig.hipsPos.x + (c.hips[k] - x0) * sk; vals[f * 3 + 1] = c.hips[k + 1]; vals[f * 3 + 2] = rig.hipsPos.z + (c.hips[k + 2] - z0) * sk;
+    }
+    tracks.push(new THREE.VectorKeyframeTrack(`${hb.name}.position`, times, vals));
+  }
+  return new THREE.AnimationClip(name, times[frames - 1], tracks);
+}
+/** Kullanılan kütüphane kombosu: [klip, kaynak başlangıç, kaynak değme anı, kaynak bitiş] (boş: elle çizilmiş eski vuruşlar) */
+export const NATIVE_ATTACK: Record<string, { hit: number; lockLeft?: number; stepK?: number; combo: MSpec[] }> = {};

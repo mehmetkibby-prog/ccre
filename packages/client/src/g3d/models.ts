@@ -5,7 +5,8 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
 import { guardianClips, hunterClips, arcanistClips, gatherClip, bodyPart, rigOf, type Rig } from './charAnims.ts';
-import { loadMocap, mocapReady, mocapClip, MOCAP_ATTACK, type MSpec } from './mocap.ts';
+import { loadMocap, mocapReady, mocapClip, MOCAP_ATTACK, NATIVE_ATTACK, loadNative, nativeReady, nativeClip, type MSpec } from './mocap.ts';
+import { GUARDIAN_IMPACT_S, ARCANIST_RELEASE_S } from './charAnims.ts';
 import { shared } from './materials.ts';
 
 /**
@@ -350,7 +351,13 @@ export function weaponGlb(id: string): THREE.Object3D | null {
 // geliştirme: ?mcg=klip:baş:değme:son,… (muhafız) / ?mca=… (arkanist) ile kombo denenir
 if (import.meta.env.DEV && typeof location !== 'undefined') {
   const q = new URLSearchParams(location.search);
-  if (q.get('nomc')) { delete MOCAP_ATTACK.guardian; delete MOCAP_ATTACK.arcanist; }
+  if (q.get('nomc')) { delete MOCAP_ATTACK.guardian; delete MOCAP_ATTACK.arcanist; for (const k of Object.keys(NATIVE_ATTACK)) delete NATIVE_ATTACK[k]; }
+  // kütüphane klibi denemesi: ?nag=klip:baş:değme:son,… (muhafız) ?naa=… (arkanist); ?natf=dosya
+  for (const [k, cls, hit] of [['nag', 'guardian', GUARDIAN_IMPACT_S], ['naa', 'arcanist', ARCANIST_RELEASE_S]] as const) {
+    const v = q.get(k);
+    if (v) NATIVE_ATTACK[cls] = { hit, lockLeft: q.get(k + 'l') ? Number(q.get(k + 'l')) : undefined, stepK: Number(q.get(k + 's') ?? 0), combo: v.split(',').map((x) => { const [n, a, h, b] = x.split(':'); return [n, +a, +h, +b] as MSpec; }) };
+  }
+  if (q.get('natf')) loadNative('/anims/' + q.get('natf'));
   for (const [k, cls] of [['mcg', 'guardian'], ['mca', 'arcanist']] as const) {
     if (!MOCAP_ATTACK[cls]) continue;
     const v = q.get(k);
@@ -360,7 +367,7 @@ if (import.meta.env.DEV && typeof location !== 'undefined') {
     const d = q.get(k + 'd'); if (d) { const [hips, spine, legs, head, hk] = d.split(':').map(Number); MOCAP_ATTACK[cls].damp = { hips, spine, legs, head }; if (hk !== undefined && !isNaN(hk)) MOCAP_ATTACK[cls].hipK = hk; }
   }
 }
-if (typeof window !== 'undefined') loadMocap();
+if (typeof window !== 'undefined') { loadMocap(); loadNative(); }
 /** model kimliği başına: dinlenme pozundaki iskelet (ilk örnekte okunur) ve aktarılmış vuruş klipleri */
 const mocapRig = new Map<string, Rig>();
 const mocapAtk = new Map<string, THREE.AnimationClip[]>();
@@ -375,6 +382,17 @@ function guardLocals(clip: THREE.AnimationClip | undefined, bones: string[], rig
   return out;
 }
 function mocapAttack(id: string, baseId: string, combo: number, guard?: THREE.AnimationClip): THREE.AnimationClip | null {
+  const nat = NATIVE_ATTACK[baseId];
+  if (nat && mocapRig.get(id) && nativeReady()) {
+    let list = mocapAtk.get(id);
+    if (!list) {
+      const rig = mocapRig.get(id)!;
+      const lock = nat.lockLeft ? { pose: guardLocals(guard, ['LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand'], rig), w: nat.lockLeft } : undefined;
+      list = nat.combo.map(([key, a, h, b], i) => nativeClip(`${baseId} vuruş ${i + 1}`, rig, key, [[a, 0], [h, nat.hit], [b, ATTACK_ANIM_MS / 1000]], { lock, stepK: nat.stepK })).filter(Boolean) as THREE.AnimationClip[];
+      mocapAtk.set(id, list);
+    }
+    if (list.length) return list[((combo % list.length) + list.length) % list.length];
+  }
   const spec = MOCAP_ATTACK[baseId], rig = mocapRig.get(id);
   if (!spec || !rig || !mocapReady()) return null;
   let list = mocapAtk.get(id);
@@ -550,7 +568,7 @@ export function createGlbChar(id: string): GlbChar | null {
     custom.gather = gatherClip(inner, root);
     customClips.set(id, custom);
   }
-  if (MOCAP_ATTACK[baseId] && !mocapRig.has(id)) mocapRig.set(id, rigOf(inner, root)); // kemikler henüz dinlenme pozunda
+  if ((MOCAP_ATTACK[baseId] || NATIVE_ATTACK[baseId] || baseId === 'guardian' || baseId === 'arcanist') && !mocapRig.has(id)) mocapRig.set(id, rigOf(inner, root)); // kemikler henüz dinlenme pozunda
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
   const skillClips = SKILL_CLIPS[baseId] ?? {};
   let attackN = 0, skillN = 0;
