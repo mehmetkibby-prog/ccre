@@ -58,7 +58,7 @@ export function SiteNav({ onCta, ctaLabel }: { onCta?: () => void; ctaLabel?: st
   const route = useRoute();
   const [open, setOpen] = useState(false);
   const at = (p: string) => (p === '/' ? route === '/' || route.startsWith('/?') : route.startsWith(p));
-  const items: [string, string][] = [['/', 'Ana Sayfa'], ['/#odul', 'Ön Kayıt Ödülü'], ['/#oyun', 'Oyun'], ['/forum', 'Forum']];
+  const items: [string, string][] = [['/', 'Ana Sayfa'], ['/#odul', 'Ön Kayıt Ödülü'], ['/#tanitim', 'Tanıtım'], ['/#oyun', 'Oyun'], ['/forum', 'Forum']];
   const go = (to: string) => {
     setOpen(false);
     const hash = to.split('#')[1];
@@ -144,6 +144,33 @@ const FEATURES = [
   { img: 'f_garden', title: 'Şifa Bahçesi', text: 'Otları topla, iksirleri kaynat; avda güç kazan.' },
   { img: 'f_classes', title: 'Eşsiz Teçhizat', text: 'Kızıl ve Eşsiz setler, parıltılı silahlar ve kanatlar.' },
 ];
+/** Tanıtım videosu: ölçülü boyutta; hafif müzik videonun içinde, yalnız video oynarken çalar (ekrandan çıkınca durur). */
+export function TrailerSection() {
+  const ref = React.useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false), [started, setStarted] = useState(false);
+  useEffect(() => {
+    const v = ref.current; if (!v || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => { if (!e.isIntersecting && !v.paused) v.pause(); }, { threshold: 0.25 });
+    io.observe(v); return () => io.disconnect();
+  }, []);
+  const play = () => { const v = ref.current; if (!v) return; v.volume = 0.6; setStarted(true); v.play().catch(() => {}); };
+  return (
+    <section className="site-sec trailer" id="tanitim">
+      <div className="sec-head"><span className="eyebrow">Tanıtım</span><h2>Bir dakikada Core of Life</h2><p>Sınıflar, zindanlar, artı basma, evrim, bahçe ve daha fazlası; hepsi tarayıcında.</p></div>
+      <div className={'tr-frame' + (playing ? ' on' : '')}>
+        <video ref={ref} src="/site/tanitim.mp4" poster="/site/tanitim.jpg" preload="none" playsInline controls={started}
+          onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => { setPlaying(false); if (ref.current) ref.current.currentTime = 0; }} />
+        {!playing && (
+          <button type="button" className="tr-play" aria-label="Tanıtım videosunu oynat" onClick={play}>
+            <span className="tr-btn"><svg viewBox="0 0 24 24" width="30" height="30" aria-hidden><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg></span>
+            <span className="tr-cap">{started ? 'Devam et' : 'Videoyu izle · 1 dk'}<small>♪ hafif müzikle</small></span>
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export function GameSections() {
   return (
     <>

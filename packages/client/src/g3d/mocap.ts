@@ -179,7 +179,7 @@ export const MOCAP_TRIED: Record<string, { hit: number; weapon: 'blade' | 'staff
 export interface NativeClip { fps: number; n: number; q: Record<string, number[]>; hips: number[] }
 let nativeData: { clips: Record<string, NativeClip> } | null = null;
 let nativeLoading: Promise<unknown> | null = null;
-export function loadNative(url = '/anims/native.json?v=1') {
+export function loadNative(url = '/anims/native.json?v=2') {
   return (nativeLoading ??= fetch(url).then((r) => (r.ok ? r.json() : null)).then((d) => (nativeData = d)).catch(() => null));
 }
 export function nativeReady() { return nativeData; }
@@ -221,4 +221,10 @@ export function nativeClip(name: string, rig: Rig, key: string, map: TimeMap, op
   return new THREE.AnimationClip(name, times[frames - 1], tracks);
 }
 /** Kullanılan kütüphane kombosu: [klip, kaynak başlangıç, kaynak değme anı, kaynak bitiş] (boş: elle çizilmiş eski vuruşlar) */
-export const NATIVE_ATTACK: Record<string, { hit: number; lockLeft?: number; stepK?: number; combo: MSpec[] }> = {};
+export const NATIVE_ATTACK: Record<string, { hit: number; lockLeft?: number; stepK?: number; combo: MSpec[] }> = {
+  // Muhafız: Meshy "Weapon Combo 2" — üç vuruş (sağdan çapraz, yatay savuruş, tepeden iniş); pencereler kılıç ucunun
+  // en hızlı olduğu anlara (1,20 / 2,07 / 3,10 sn) göre seçildi
+  guardian: { hit: GUARDIAN_IMPACT_S, combo: [['g241', 0.9, 1.18, 1.62], ['g241', 1.75, 2.05, 2.5], ['g241', 2.8, 3.1, 3.6]] },
+  // Arkanist: Meshy "Mage Spell Cast" — asayla öne itiş, küre değme anında çıkar
+  arcanist: { hit: ARCANIST_RELEASE_S, combo: [['a132', 0.78, 1.05, 1.55]] },
+};

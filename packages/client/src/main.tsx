@@ -18,7 +18,7 @@ import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
 import { AnnouncementBar, ClassicButton } from './admin/AdminPanel.tsx';
 import { AdminPage, isAdminRoute } from './admin/AdminPage.tsx';
-import { SiteNav, SiteFooter, RewardSection, GameSections, NewsSection, PrivacyPage, useRoute, useSiteStatus, Link } from './site/site.tsx';
+import { SiteNav, SiteFooter, RewardSection, TrailerSection, GameSections, NewsSection, PrivacyPage, useRoute, useSiteStatus, Link } from './site/site.tsx';
 import { ForumPage } from './site/forum.tsx';
 import './site/site.css';
 // Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
@@ -195,6 +195,7 @@ function AuthScreen({ onDone, waiting, onLogout }: { onDone: () => void; waiting
         <button type="button" className="hero-down" aria-label="Aşağı kaydır" onClick={() => document.getElementById('odul')?.scrollIntoView({ behavior: 'smooth' })}><span /></button>
       </section>
       <RewardSection onCta={toRegister} open={open} />
+      <TrailerSection />
       <GameSections />
       <NewsSection />
       <section className="site-sec cta-band"><h2>{open ? 'Macera seni bekliyor' : 'Ön kaydını şimdi yap'}</h2><p>{open ? 'Hesabını oluştur, sınıfını seç ve Pazar Köyü\'ne adım at.' : 'Açılış günü ödülün çantanda; forumdan duyuruları takip et.'}</p><div className="cta-row"><button className="site-btn primary big" onClick={toRegister}>{open ? 'Hemen Oyna' : 'Ön Kayıt Ol'}</button><Link to="/forum" className="site-btn ghost big">Foruma Git</Link></div></section>

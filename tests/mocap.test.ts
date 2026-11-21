@@ -74,3 +74,27 @@ it('Mocap aktarımı: A duruşlu iskelete 0,62 sn klip; dönüşler geçerli, vu
     });
   }
 });
+
+it('Meshy kütüphane vuruşları: native.json her kombo klibini içerir; klip 0,62 sn, dönüşler birim, kalça yerinde', async () => {
+  const { NATIVE_ATTACK, nativeClip, setNativeData } = await import('../packages/client/src/g3d/mocap.ts');
+  const ND = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../packages/client/public/anims/native.json'), 'utf8'));
+  setNativeData(ND);
+  expect(Object.keys(NATIVE_ATTACK).sort()).toEqual(['arcanist', 'guardian']);
+  for (const [cls, spec] of Object.entries(NATIVE_ATTACK)) {
+    const { root, inner } = meshyRig();
+    const rig = rigOf(inner, root);
+    for (const [key, a, h, b] of spec.combo) {
+      const c = ND.clips[key];
+      expect(c, `${cls} ${key}`).toBeTruthy();
+      expect(0 <= a && a < h && h < b && b <= (c.n - 1) / c.fps + 1e-6, `${cls} ${key} ${a}/${h}/${b}`).toBe(true);
+      const clip = nativeClip(cls, rig, key, [[a, 0], [h, spec.hit], [b, ATTACK_S]])!;
+      expect(clip.duration).toBeCloseTo(ATTACK_S, 3);
+      expect(clip.tracks.length).toBeGreaterThan(15);
+      for (const tr of clip.tracks) {
+        expect(Array.from(tr.values).every(Number.isFinite), tr.name).toBe(true);
+        if (tr.name.endsWith('.quaternion')) for (let k = 0; k < tr.values.length; k += 4) expect(Math.hypot(tr.values[k], tr.values[k + 1], tr.values[k + 2], tr.values[k + 3])).toBeCloseTo(1, 2);
+        if (tr.name.endsWith('.position')) for (let k = 0; k < tr.values.length; k += 3) { expect(tr.values[k]).toBeCloseTo(rig.hipsPos.x, 5); expect(tr.values[k + 2]).toBeCloseTo(rig.hipsPos.z, 5); }
+      }
+    }
+  }
+});
