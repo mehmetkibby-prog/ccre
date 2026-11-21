@@ -1,6 +1,6 @@
 import { mulberry32, smoothNoise, noise2, type Rng } from './rng.ts';
 import { TILE } from './constants.ts';
-import { MAPS, type MapDef, type Region } from './content/maps.ts';
+import { MAPS, PVP_RING, type MapDef, type Region } from './content/maps.ts';
 import { MONSTERS, MONSTER_LEVEL } from './content/monsters.ts';
 import { TUNING } from './tuning.ts';
 import { towerRoom, towerRoomTile, TOWER_FLOORS, TOWER_R } from './content/tower.ts';
@@ -13,7 +13,7 @@ export type PropKind =
   | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
   | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'forge' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
   | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate'
-  | 'menhir' | 'shipwreck' | 'coral';
+  | 'menhir' | 'shipwreck' | 'coral' | 'wallstone';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
 export interface SpawnPoint {
@@ -69,6 +69,36 @@ function carvePath(l: MapLayout, rng: Rng, x0: number, y0: number, x1: number, y
       protect[i] = 1;
     }
   }
+}
+
+/** Pazar Köyü Kan Meydanı: kum meydan, taş halka duvar (doğu ve kuzeyde giriş), sancaklar, meşaleler, ortada arma. */
+function carvePvpRing(l: MapLayout) {
+  const { tx, ty, r } = PVP_RING, cx = tx + 0.5, cy = ty + 0.5, R = Math.ceil(r + 2);
+  // önce alanın eski süs ve engellerini temizle
+  l.props = l.props.filter((p) => Math.hypot(p.x / TILE - cx, p.y / TILE - cy) > r + 2.2);
+  for (let y = ty - R; y <= ty + R; y++) for (let x = tx - R; x <= tx + R; x++) {
+    if (x < 1 || y < 1 || x >= l.w - 1 || y >= l.h - 1) continue;
+    const d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy), i = idx(l, x, y);
+    if (d <= r + 1.9) l.blocked[i] = 0;
+    if (d < 1.6) l.ground[i] = G.COBBLE;
+    else if (d <= r + 0.3) l.ground[i] = G.SAND;
+    else if (d <= r + 1.4) l.ground[i] = G.STONE;
+  }
+  // duvar: halka üzerinde taşlar (girişler: doğu yola, kuzey köye bakar)
+  const N = 46;
+  for (let k = 0; k < N; k++) {
+    const a = (k / N) * Math.PI * 2, gateE = Math.abs(Math.atan2(Math.sin(a), Math.cos(a))) < 0.24, gateN = Math.abs(Math.atan2(Math.sin(a + Math.PI / 2), Math.cos(a + Math.PI / 2))) < 0.24;
+    if (gateE || gateN) continue;
+    const wx = cx + Math.cos(a) * (r + 0.85), wy = cy + Math.sin(a) * (r + 0.85);
+    l.props.push({ k: 'wallstone', x: wx * TILE, y: wy * TILE, v: k % 3, s: 1 });
+    l.blocked[idx(l, Math.floor(wx), Math.floor(wy))] = 1;
+  }
+  // sancaklar ve meşaleler
+  for (let k = 0; k < 8; k++) {
+    const a = (k / 8) * Math.PI * 2 + Math.PI / 8, wx = cx + Math.cos(a) * (r + 1.7), wy = cy + Math.sin(a) * (r + 1.7);
+    l.props.push({ k: 'banner', x: wx * TILE, y: wy * TILE, v: 1, s: 1.15 });
+  }
+  for (const a of [0.42, -0.42, -Math.PI / 2 + 0.42, -Math.PI / 2 - 0.42]) { const wx = cx + Math.cos(a) * (r + 1.2), wy = cy + Math.sin(a) * (r + 1.2); l.props.push({ k: 'lamp', x: wx * TILE, y: wy * TILE, v: 0, s: 1.1 }); }
 }
 
 function genVillage(l: MapLayout, rng: Rng) {
@@ -307,6 +337,7 @@ function genVillage(l: MapLayout, rng: Rng) {
   // çit (göletin altından geçmesin)
   for (let x = 14; x <= 20; x++) if (!protect[idx(l, x, 39)]) { l.props.push({ k: 'fence', x: tc(x), y: tc(39), v: 0, s: 1 }); l.blocked[idx(l, x, 39)] = 1; }
   l.spawn = { x: tc(cx), y: tc(cy + 3) };
+  carvePvpRing(l);
   if (l.def.spawns.length) placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 

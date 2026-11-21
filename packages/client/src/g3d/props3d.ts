@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { Prop, PropKind } from '@col/shared';
+import { PVP_RING } from '@col/shared';
 import { box, cyl, lathe, at, merge, colorize, radialNormals, rng } from './geom.ts';
 import { mat, addWind, addSnowCap } from './materials.ts';
 import { model as loadGlb } from './models.ts';
@@ -470,13 +471,35 @@ const B: Partial<Record<PropKind, Builder>> = {
     parts.push({ g: at(new THREE.SphereGeometry(0.28, 12, 8), 0, 6.55 + L, 0), m: 'gold' });
     return group(parts);
   },
-  banner() {
+  banner(v) {
+    if (v === 1) {
+      // Kan Meydanı savaş sancağı: kızıl bez, altın çapraz kılıçlar, demir uç
+      return group([
+        { g: at(cyl(0.06, 0.07, 4.8, 6), 0, 2.4, 0), m: 'iron' },
+        { g: at(new THREE.ConeGeometry(0.11, 0.42, 6), 0, 5.0, 0), m: 'gold' },
+        { g: at(box(1.5, 0.08, 0.08), 0.65, 4.35, 0), m: 'iron' },
+        { g: at(new THREE.PlaneGeometry(1.25, 2.2, 1, 5), 0.65, 3.18, 0), m: 'cloth_red' },
+        { g: at(box(0.07, 0.95, 0.03), 0.65, 3.3, 0.03, 0, 0, 0.62), m: 'gold' },
+        { g: at(box(0.07, 0.95, 0.03), 0.65, 3.3, 0.03, 0, 0, -0.62), m: 'gold' },
+        { g: at(box(0.32, 0.06, 0.03), 0.47, 3.05, 0.035, 0, 0, 0.62), m: 'gold' },
+        { g: at(box(0.32, 0.06, 0.03), 0.83, 3.05, 0.035, 0, 0, -0.62), m: 'gold' },
+      ]);
+    }
     return group([
       { g: at(cyl(0.05, 0.06, 4.2, 6), 0, 2.1, 0), m: 'timber' },
       { g: at(new THREE.SphereGeometry(0.1, 8, 6), 0, 4.25, 0), m: 'gold' },
       { g: at(new THREE.PlaneGeometry(1.1, 1.8, 1, 4), 0.6, 3.1, 0), m: 'cloth_green' },
       { g: at(new THREE.TorusGeometry(0.22, 0.04, 6, 16), 0.6, 3.3, 0.02), m: 'gold' },
     ]);
+  },
+  // Kan Meydanı duvar taşı: kesme taş blok (yumurta kaya yerine), üstte ince başlık
+  wallstone(v) {
+    const r = rng(1900 + v), h = 1.0 + r() * 0.35;
+    const g = box(1.05, h, 0.7); g.translate(0, h / 2, 0);
+    const p = g.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < p.count; i++) p.setXYZ(i, p.getX(i) * (1 + (r() - 0.5) * 0.06), p.getY(i), p.getZ(i) * (1 + (r() - 0.5) * 0.08));
+    g.computeVertexNormals();
+    return [{ geo: merge([g]), mat: 'stonewall' }, { geo: merge([at(box(1.15, 0.12, 0.8), 0, h + 0.06, 0)]), mat: 'rock' }];
   },
   tent() {
     const parts: { g: THREE.BufferGeometry; m: string }[] = [];
@@ -673,7 +696,7 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
       const im = new THREE.InstancedMesh(shellOf(part.geo), typeof part.mat === 'string' ? mat(part.mat) : part.mat, list.length);
       list.forEach((p, i) => {
         // çit: v=1 kuzey-güney doğrultusunda (bahçenin yan kenarları), diğerleri doğu-batı
-        const rot = k === 'fence' && p.v === 1 ? Math.PI / 2 : fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
+        const rot = k === 'fence' && p.v === 1 ? Math.PI / 2 : k === 'wallstone' ? ringYaw(p) : fixedRot ? 0 : ((p.x * 7 + p.y * 13) % 628) / 100;
         const scale = (k === 'tree' || k === 'pine' || k === 'snowpine' || k === 'deadtree') ? p.s * 0.8 : k === 'rock' ? p.s * 1.1 : p.s;
         const wy = k === 'lily' || k === 'dock' ? -0.2 : heightAt(p.x, p.y) - 0.03;
         pos.set(p.x * U, wy, p.y * U);
@@ -703,6 +726,8 @@ export function buildProps(props: Prop[], heightAt: (x: number, y: number) => nu
   }
   return root;
 }
+/** Kan Meydanı duvar taşı: halkanın teğetine dönük (merkeze göre açı) */
+function ringYaw(p: Prop) { const a = Math.atan2(p.y / 64 - (PVP_RING.ty + 0.5), p.x / 64 - (PVP_RING.tx + 0.5)); return -a + Math.PI / 2; }
 function variantFor(p: Prop) {
   switch (p.k) {
     case 'tree': return p.v % 3;
@@ -712,7 +737,8 @@ function variantFor(p: Prop) {
     case 'house': case 'stall': return p.v % 4;
     case 'portalstone': return p.v % 3;
     case 'menhir': case 'coral': return p.v % 3;
-    case 'shipwreck': return p.v % 2;
+    case 'shipwreck': case 'banner': return p.v % 2;
+    case 'wallstone': return p.v % 3;
     case 'grasstuft': return p.v === 3 ? 3 : 0;
     case 'signpost': return p.v;
     default: return 0;

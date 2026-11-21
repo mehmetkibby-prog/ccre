@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_MS, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT, RANK_LEVEL, RANK_MAX, rankDef, addRankXp, RUNES, RUNE_MAX_LEVEL, runeConf, runeKey, parseRuneKey, runeUpCost, isRuneKind, runePct,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_MS, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT, inPvpRing, PVP_RING, RANK_LEVEL, RANK_MAX, rankDef, addRankXp, RUNES, RUNE_MAX_LEVEL, runeConf, runeKey, parseRuneKey, runeUpCost, isRuneKind, runePct,
   FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal, skillHealPct,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
@@ -539,6 +539,7 @@ export class World {
       if (p.autoOn && this.tickNo % 20 === (p.sid % 20)) this.autoTick(p, now);
       if (p.shieldUntil && now > p.shieldUntil) { p.shieldUntil = 0; p.shieldPct = 0; p.dirty |= Upd.FLAGS; }
       if (p.sbuff && now >= p.sbuff.until) { p.sbuff = null; p.recompute(true); p.selfDirty |= 4; }
+      if (this.tickNo % 4 === (p.sid % 4) && p.zone.id === PVP_RING.map) this.ringTick(p);
       const flags = this.playerFlags(p);
       if (flags !== p.flags) { p.flags = flags; p.dirty |= Upd.FLAGS; }
     }
@@ -584,7 +585,7 @@ export class World {
   playerFlags(p: Player) {
     let f = 0;
     if (p.dead) f |= EFlag.DEAD;
-    if (p.zone.def.pvp) f |= EFlag.PVP;
+    if (p.zone.def.pvp || (!p.dead && inPvpRing(p.zone.id, p.x, p.y))) f |= EFlag.PVP;
     if (this.now < p.stunUntil) f |= EFlag.STUNNED;
     if (this.now < p.rootUntil) f |= EFlag.ROOTED;
     if (p.shieldUntil > this.now) f |= EFlag.SHIELD;
@@ -796,6 +797,34 @@ export class World {
     return null;
   }
 
+  // ───────────────────────────── Kan Meydanı (Pazar Köyü PvP) ─────────────────────────────
+  /** bugünkü öldürmeler: karakter → { ad, sayı }; gün değişince sıfırlanır. Aynı kişiyi 60 sn içinde tekrar öldürmek sayılmaz. */
+  private ring = { day: '', kills: new Map<number, { name: string; n: number }>(), last: new Map<string, number>() };
+  private ringDay() { const d = trDayKey(this.now); if (d !== this.ring.day) { this.ring.day = d; this.ring.kills.clear(); this.ring.last.clear(); } }
+  private ringKill(killer: Player, victim: Player) {
+    this.ringDay();
+    const k = killer.char.id + ':' + victim.char.id;
+    if (this.now - (this.ring.last.get(k) ?? 0) < 60_000) return;
+    this.ring.last.set(k, this.now);
+    const e = this.ring.kills.get(killer.char.id) ?? { name: killer.char.name, n: 0 };
+    e.n++; e.name = killer.char.name; this.ring.kills.set(killer.char.id, e);
+    this.ringBroadcast(killer.zone);
+  }
+  private ringBoardMsg() {
+    const board = [...this.ring.kills.values()].sort((a, b) => b.n - a.n).slice(0, 10);
+    return { t: 'ring', board, day: this.ring.day };
+  }
+  /** meydandakilere (ve yeni girenlere) tablo */
+  private ringBroadcast(z: Zone) {
+    const msg = this.ringBoardMsg();
+    for (const q of z.playerSet) if (inPvpRing(z.id, q.x, q.y)) this.sendJson(q, msg);
+  }
+  private ringTick(p: Player) {
+    const inside = inPvpRing(p.zone.id, p.x, p.y);
+    if (inside && !p.inRing) { this.ringDay(); this.sendJson(p, this.ringBoardMsg()); }
+    p.inRing = inside;
+  }
+
   private canPvp(a: Player, b: Player): boolean {
     if (a === b || a.zone !== b.zone || b.dead) return false;
     if (this.social.sameParty(a, b)) return false; // aynı gruptakiler hiçbir yerde birbirine vuramaz
@@ -809,6 +838,8 @@ export class World {
       const sa = a.guild!.gid === w.a ? 0 : 1, sb = b.guild.gid === w.a ? 0 : b.guild.gid === w.b ? 1 : -1;
       return sb >= 0 && sa !== sb && (this.arenaProt.get(b.char.id) ?? 0) <= this.now;
     }
+    // Pazar Köyü Kan Meydanı: ikisi de meydanın içindeyse
+    if (inPvpRing(a.zone.id, a.x, a.y)) return inPvpRing(b.zone.id, b.x, b.y);
     return a.zone.def.pvp;
   }
 
@@ -1019,7 +1050,7 @@ export class World {
   }
 
   /** Bu oyuncunun alan vuruşları oyunculara da işler mi: PvP haritası ya da süren bir düello (her haritada). */
-  private pvpHere(p: Player) { return p.zone.def.pvp || this.social.inDuel(p); }
+  private pvpHere(p: Player) { return p.zone.def.pvp || this.social.inDuel(p) || inPvpRing(p.zone.id, p.x, p.y); }
 
   private aoe(p: Player, x: number, y: number, r: number, max: number, mult: number, sk: SkillDef) {
     let n = 0;
@@ -1307,6 +1338,7 @@ export class World {
     // arena: öldürme ana sürece bildirilir (hile denetimi ve ortak sıralama orada); arenada kayıp yok
     if (killer && p.zone.id === 'arena' && this.arenaActive) this.opt.post({ type: 'arena_kill', killer: killer.char.id, victim: p.char.id, kLevel: killer.char.level, vLevel: p.char.level });
     if (killer && p.zone.id === 'guildwar') this.opt.post({ type: 'gwar_kill', killer: killer.char.id, victim: p.char.id });
+    if (killer && killer !== p && inPvpRing(p.zone.id, p.x, p.y)) this.ringKill(killer, p);
     if (killer && p.zone.def.pvp && p.zone.id !== 'arena' && p.zone.id !== 'guildwar' && p.char.role === 'player') {
       lost = Math.floor(p.char.gems / 20);
       p.char.gems -= lost;

@@ -153,3 +153,16 @@ export function inMarket(def: MapDef, x: number, y: number): boolean {
   const T = 64, cx = m.tx * T + T / 2, cy = m.ty * T + T / 2;
   return ((x - cx) / (m.rx * T)) ** 2 + ((y - cy) / (m.ry * T)) ** 2 <= 1;
 }
+
+/**
+ * Pazar Köyü Kan Meydanı: Şifacı Reyhan'ın karşısında (yolun batısı) taş halkalı kum meydan. İçine giren herkesin
+ * adı kırmızıya döner ve meydandaki diğer oyuncularla vuruşabilir (köyün geri kalanı güvenli). Ölümde kayıp yok.
+ * tx/ty karo merkezi, r karo yarıçapı (iç alan).
+ */
+export const PVP_RING = { map: 'bazaar', tx: 14, ty: 50, r: 6.2, name: 'Kan Meydanı' } as const;
+/** Dünya koordinatı (piksel) Kan Meydanı'nın içinde mi? */
+export function inPvpRing(mapId: string, x: number, y: number): boolean {
+  if (mapId !== PVP_RING.map) return false;
+  const T = 64, dx = x / T - (PVP_RING.tx + 0.5), dy = y / T - (PVP_RING.ty + 0.5);
+  return dx * dx + dy * dy <= PVP_RING.r * PVP_RING.r;
+}

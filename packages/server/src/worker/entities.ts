@@ -59,6 +59,8 @@ export class Player {
   botCheck: { id: string; until: number; tries: number; svg: string; at: number } | null = null;
   /** pahalı sorgular için son zaman */
   heavyAt = 0;
+  /** Pazar Köyü Kan Meydanı'nın içinde mi (giriş/çıkış bildirimi için) */
+  inRing = false;
   // görüş
   known = new Map<number, number>(); // entityId → en son görüldüğü adım (görünmeyen olunca silinir)
   resetPending = true;

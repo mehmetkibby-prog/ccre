@@ -11,7 +11,7 @@ import { evoArmorFx, gearEvo } from './evofx.ts';
 import { mtnLight } from './mountains.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, petCode, trDayKey, dayNightAt, trHour, rankDef, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, petCode, trDayKey, dayNightAt, trHour, rankDef, inPvpRing, MAPS, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -1430,7 +1430,8 @@ export class Renderer3D {
     }
     if (st.char && st.settings.showNames) {
       const gm = st.char.role === 'gm' || st.char.role === 'admin' || st.char.role === 'owner';
-      const p = nameTag(g.dx, g.dy, 2.15, st.char.name, gm ? '#ffe08a' : '#fff0c0', st.self?.level ?? 1); const mg = st.guild?.g;
+      const red = MAPS[this.layout?.def.id ?? '']?.pvp || inPvpRing(this.layout?.def.id ?? '', g.dx, g.dy);
+      const p = nameTag(g.dx, g.dy, 2.15, st.char.name, gm ? '#ffe08a' : red ? '#ff9a9a' : '#fff0c0', st.self?.level ?? 1); const mg = st.guild?.g;
       if (p && mg) guildTag(p, mg.emblem, mg.name);
       const myRank = st.self?.rank?.r ?? 0;
       if (p && myRank) rankTag(p, myRank, mg ? 16 : 0);
