@@ -3,6 +3,7 @@
  * Bütün sayılar o anki ayardan (yönetim paneli) okunur; ayar değişince kendiliğinden yenilenir. GuideContent oyuna
  * bağlı değildir (site de kullanır); GuidePanel onu oyunun pencere çerçevesine koyar.
  */
+import { RUNES, RUNE_KINDS, RUNE_MAX_LEVEL, runeConf, runePct, runeUpCost, RANKS, RANK_LEVEL } from '@col/shared';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   MAPS, MONSTERS, TUNING, MATERIAL, MALL, ITEM_TPL, RARITY, RARITIES, SLOT_NAMES, ENCHANTS, ENCHANT_TIER_WEIGHTS, MAX_PLUS, MOUNT, STAT_GAIN, STAT_MAX,
@@ -333,6 +334,28 @@ function PowerTab() {
           <li>Beceri geliştirme hakkı seviyenle artar (en çok {skillUpgradeBudget(999)}). Her kademe +%{Math.round((skillDamageMult(2) - 1) * 100)} hasar. Bedel: {fmt(skillLow.gems)} Mücevherden ({'1→2'}) {fmt(skillTop.gems)} Mücevhere ({'9→10'}) {Object.keys(skillTop.mats).length > 0 && <>ve malzeme</>} (Beceri · <kbd>K</kbd>).</li>
           <li>Sv. {TUNING.specLevel} olunca uzmanlık dalını seçersin; uzmanlık becerisinin bedeli ayrı yazılır.</li>
         </ul>
+      </Card>
+
+      <Card icon="🜂" title="Rünler" sub={`Sv. ${runeConf().unlockLevel}'de açılır · Rün Sahili`} tone="violet">
+        <div className="g-two">
+          {RUNE_KINDS.map((k) => <div key={k} className="g-mini"><img src={iconUrl(RUNES[k].icon)} alt="" /><div><b style={{ color: RUNES[k].color }}>{RUNES[k].name}</b><span>Her seviye {RUNES[k].statName} +%{fmt(runeConf().pctPerLevel)} (Sv.10 = +%{fmt(runePct(10))}, Sv.{RUNE_MAX_LEVEL} = +%{fmt(runePct(RUNE_MAX_LEVEL))})</span></div></div>)}
+        </div>
+        <ul className="g-list">
+          <li>Üç rün aynı anda takılır (Rün paneli · <kbd>U</kbd>). Takma ve çıkarma yalnız savaş dışında.</li>
+          <li>Rün parçaları <b>{MAPS.coast?.name ?? 'Rün Sahili'}</b> canavarlarından düşer. Aynı türden <b>{runeConf().craftCost} parça</b> = 1. seviye rün.</li>
+          <li>Yükseltme her zaman başarılı: 1→2 için {runeUpCost(1)}, 2→3 için {runeUpCost(2)} parça; her seviyede bir parça fazla.</li>
+          <li>Rünler ve parçalar oyuncu pazarında satılır; rün seviyesiyle el değiştirir.</li>
+        </ul>
+      </Card>
+
+      <Card icon="🎖" title="Rütbeler" sub={`Sv. ${RANK_LEVEL}'ten sonra`} tone="gold">
+        <p className="g-note">Sv. {RANK_LEVEL}'e ulaşan doğrudan <b style={{ color: RANKS[0].color }}>{RANKS[0].name}</b> olur. Sonra kazandığın tecrübe rütbe tecrübesine akar; rütbe adın üstünde renkli görünür, saldırı ve azami cana yüzde ekler.</p>
+        <div className="g-tbl-wrap">
+          <table className="g-tbl small">
+            <thead><tr><th>#</th><th>Rütbe</th><th>Gereken TP</th><th>Bonus</th></tr></thead>
+            <tbody>{RANKS.map((r) => <tr key={r.id}><td>{r.id}</td><td><b style={{ color: r.color }}>{r.name}</b></td><td>{r.xp ? fmt(r.xp) : `Sv. ${RANK_LEVEL}`}</td><td>+%{r.atkPct}</td></tr>)}</tbody>
+          </table>
+        </div>
       </Card>
 
       <More title="📦 Hangi malzeme nereden çıkar?">
