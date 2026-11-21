@@ -4,7 +4,8 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
-import { guardianClips, hunterClips, arcanistClips, gatherClip, bodyPart } from './charAnims.ts';
+import { guardianClips, hunterClips, arcanistClips, gatherClip, bodyPart, rigOf, type Rig } from './charAnims.ts';
+import { loadMocap, mocapReady, mocapClip, MOCAP_ATTACK, type MSpec } from './mocap.ts';
 import { shared } from './materials.ts';
 
 /**
@@ -346,6 +347,45 @@ export function weaponGlb(id: string): THREE.Object3D | null {
   return L ? L.scene.clone(true) : null;
 }
 
+// geliştirme: ?mcg=klip:baş:değme:son,… (muhafız) / ?mca=… (arkanist) ile kombo denenir
+if (import.meta.env.DEV && typeof location !== 'undefined') {
+  const q = new URLSearchParams(location.search);
+  if (q.get('nomc')) { delete MOCAP_ATTACK.guardian; delete MOCAP_ATTACK.arcanist; }
+  for (const [k, cls] of [['mcg', 'guardian'], ['mca', 'arcanist']] as const) {
+    if (!MOCAP_ATTACK[cls]) continue;
+    const v = q.get(k);
+    if (v) MOCAP_ATTACK[cls].combo = v.split(',').map((x) => { const [n, a, h, b] = x.split(':'); return [n, +a, +h, +b] as MSpec; });
+    const w = q.get(k + 'w'); if (w) MOCAP_ATTACK[cls].weapon = w as 'blade';
+    const lk = q.get(k + 'l'); if (lk) MOCAP_ATTACK[cls].lockLeft = Number(lk);
+    const d = q.get(k + 'd'); if (d) { const [hips, spine, legs, head, hk] = d.split(':').map(Number); MOCAP_ATTACK[cls].damp = { hips, spine, legs, head }; if (hk !== undefined && !isNaN(hk)) MOCAP_ATTACK[cls].hipK = hk; }
+  }
+}
+if (typeof window !== 'undefined') loadMocap();
+/** model kimliği başına: dinlenme pozundaki iskelet (ilk örnekte okunur) ve aktarılmış vuruş klipleri */
+const mocapRig = new Map<string, Rig>();
+const mocapAtk = new Map<string, THREE.AnimationClip[]>();
+/** elle çizilmiş klibin ilk karesindeki (savaş duruşu) yerel dönüşler: kalkan kolu buna sabitlenir */
+function guardLocals(clip: THREE.AnimationClip | undefined, bones: string[], rig: Rig): Map<string, THREE.Quaternion> {
+  const out = new Map<string, THREE.Quaternion>();
+  if (!clip) return out;
+  for (const n of bones) {
+    const b = rig.bones.get(n), tr = b && clip.tracks.find((t) => t.name === `${b.name}.quaternion`);
+    if (tr) out.set(n, new THREE.Quaternion().fromArray(tr.values, 0));
+  }
+  return out;
+}
+function mocapAttack(id: string, baseId: string, combo: number, guard?: THREE.AnimationClip): THREE.AnimationClip | null {
+  const spec = MOCAP_ATTACK[baseId], rig = mocapRig.get(id);
+  if (!spec || !rig || !mocapReady()) return null;
+  let list = mocapAtk.get(id);
+  if (!list) {
+    const lock = spec.lockLeft ? { pose: guardLocals(guard, ['LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand'], rig), w: spec.lockLeft } : undefined;
+    list = spec.combo.map(([key, a, h, b], i) => mocapClip(`${baseId} vuruş ${i + 1}`, rig, key, [[a, 0], [h, spec.hit], [b, ATTACK_ANIM_MS / 1000]], { weapon: spec.weapon, hipK: spec.hipK, damp: spec.damp, lock })).filter(Boolean) as THREE.AnimationClip[];
+    mocapAtk.set(id, list);
+  }
+  return list.length ? list[((combo % list.length) + list.length) % list.length] : null;
+}
+
 /** Elle çizilmiş klipler (model kimliği başına bir kez). */
 const customClips = new Map<string, (ReturnType<typeof guardianClips> & { gather?: THREE.AnimationClip }) | null>();
 
@@ -510,6 +550,7 @@ export function createGlbChar(id: string): GlbChar | null {
     custom.gather = gatherClip(inner, root);
     customClips.set(id, custom);
   }
+  if (MOCAP_ATTACK[baseId] && !mocapRig.has(id)) mocapRig.set(id, rigOf(inner, root)); // kemikler henüz dinlenme pozunda
   const attackClips = (L.entry.attackClips ?? []).map(byName).filter(Boolean) as THREE.AnimationClip[];
   const skillClips = SKILL_CLIPS[baseId] ?? {};
   let attackN = 0, skillN = 0;
@@ -521,7 +562,8 @@ export function createGlbChar(id: string): GlbChar | null {
     let clip = (st === 'gather' ? custom?.gather : undefined) ?? L.map[st as keyof typeof L.map] ?? (st === 'run' ? L.map.walk : st === 'cast' ? L.map.attack : st === 'hurt' ? null : null) ?? L.map.idle;
     const swing = once && (st === 'attack' || st === 'cast');
     let designed = false;
-    if (st === 'attack' && custom) { clip = custom.attacks[((skill % 3) + 3) % 3]; designed = true; }
+    let mc: THREE.AnimationClip | null = null;
+    if (st === 'attack' && custom) { mc = mocapAttack(id, baseId, skill, custom.attacks[0]); clip = mc ?? custom.attacks[((skill % 3) + 3) % 3]; designed = true; }
     else if (st === 'attack' && attackClips.length) clip = attackClips[attackN++ % attackClips.length];
     if (st === 'cast' && custom?.skills[skill]) { clip = custom.skills[skill]; designed = true; }
     else if (st === 'cast') { const names = skillClips[skill] ?? []; const c = names.length ? byName(names[skillN++ % names.length]) : undefined; if (c) clip = c; }
@@ -539,7 +581,8 @@ export function createGlbChar(id: string): GlbChar | null {
       if (walk) { walk.setLoop(THREE.LoopRepeat, Infinity); walk.enabled = true; walk.play(); }
       walkMix = moving ? 1 : 0;
       low.setEffectiveWeight(1 - walkMix); walk?.setEffectiveWeight(walkMix);
-      up.fadeIn(0.09); low.fadeIn(0.09);
+      const fin = mc ? 0.12 : 0.09; // hareket yakalama klibinin ilk pozu duruştan biraz farklı: geçiş bir tık uzun
+      up.fadeIn(fin); low.fadeIn(fin);
       if (current) { current.fadeOut(0.08); current = null; }
       swingSet = { up, low, walk };
       return;
@@ -572,7 +615,7 @@ export function createGlbChar(id: string): GlbChar | null {
     /** Geliştirme: çizilmiş klibi verilen anda dondurur (kind: 'a' saldırı / 's' beceri). */
     swingTime() { return swingSet ? swingSet.up.time : -1; },
     debugPose(kind: 'a' | 's', idx: number, t: number) {
-      const clip = kind === 'a' ? custom?.attacks[idx] : (kind as string) === 'g' ? custom?.gather : custom?.skills[idx];
+      const clip = kind === 'a' ? mocapAttack(id, baseId, idx, custom?.attacks[0]) ?? custom?.attacks[idx] : (kind as string) === 'g' ? custom?.gather : custom?.skills[idx];
       if (!clip) return;
       mixer.stopAllAction(); swingSet = null; current = null; curState = 'debug';
       const a = mixer.clipAction(clip); a.reset(); a.setEffectiveWeight(1); a.play(); a.time = t; a.paused = true; mixer.update(0);

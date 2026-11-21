@@ -29,6 +29,8 @@ interface Rig {
   dirRest: Map<string, THREE.Vector3>;
   localRest: Map<string, THREE.Quaternion>;
   hipsPos: THREE.Vector3; hipsScale: number; hipsParentRest: THREE.Quaternion;
+  /** kalçanın yerden yüksekliği (kök birimi, bağlanma pozu): hareket yakalama kliplerinde kalça kayması bununla ölçeklenir */
+  hipsY: number;
   /** sağ eldeki kılıcın bıçak yönü (kök uzayı, bağlanma pozu); gear.ts ile aynı hesap */
   blade: THREE.Vector3 | null;
   /** asanın ekseni (kristal uca doğru), kök uzayında bağlanma pozunda */
@@ -56,7 +58,9 @@ function readRig(inner: THREE.Object3D, root: THREE.Object3D): Rig {
   const blade = handBlade(inner, root, bones.get('RightHand'));
   const staff = staffAxis();
   const ps = hips.parent!.getWorldScale(new THREE.Vector3());
-  return { bones, parentRest, dirRest, localRest, hipsPos: hips.position.clone(), hipsScale: ps.y / rootS.y, hipsParentRest: parentRest.get('Hips')!, blade, staff, parentName: new Map([...bones].map(([n, b]) => [n, b.parent?.name ?? ''])) };
+  const footY = Math.min(...['LeftToeBase', 'RightToeBase', 'LeftFoot', 'RightFoot'].map((n) => bones.get(n)).filter(Boolean).map((b) => wp(b!).y));
+  const hipsY = wp(hips).y - (Number.isFinite(footY) ? footY : 0);
+  return { bones, parentRest, dirRest, localRest, hipsPos: hips.position.clone(), hipsScale: ps.y / rootS.y, hipsParentRest: parentRest.get('Hips')!, hipsY, blade, staff, parentName: new Map([...bones].map(([n, b]) => [n, b.parent?.name ?? ''])) };
 }
 
 /**
@@ -157,6 +161,13 @@ function resolveWorld(rig: Rig, pose: Pose): Pose {
 }
 
 const rigCache = new WeakMap<THREE.Object3D, Rig>();
+/** Modelin bağlanma pozundaki iskelet bilgisi (bir kez okunur; kemikler dinlenme pozundayken çağrılmalı). */
+export function rigOf(inner: THREE.Object3D, root: THREE.Object3D): Rig {
+  let rig = rigCache.get(inner);
+  if (!rig) { rig = readRig(inner, root); rigCache.set(inner, rig); }
+  return rig;
+}
+export type { Rig };
 export function buildClip(name: string, inner: THREE.Object3D, root: THREE.Object3D, keys: Key[], dur: number, hipK = 1): THREE.AnimationClip {
   let rig = rigCache.get(inner);
   if (!rig) { rig = readRig(inner, root); rigCache.set(inner, rig); }
