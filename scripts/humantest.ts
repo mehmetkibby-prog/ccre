@@ -103,7 +103,10 @@ async function bot(i: number, stopAt: { v: number }) {
       const s = readSnapshot(buf as ArrayBuffer);
       // takılma ölçümü yalnız hareket sürerken: o sırada sunucu her adımda görüntü yollar (boşta 10 adımda bir nabız)
       const movingNow = now - lastMoveSent < 120 && now - moveSince > 400;
-      if (lastSnap && movingNow && lastSnapMoving) {
+      // Bot bir engele doğru yürüyorsa sunucu hareketi reddeder; değişen bir şey olmadığı için yalnız 250 ms'lik nabız gelir.
+      // Bu bekleme değil (ekranda gösterilecek yeni bir şey yok): konum değişmediyse aralık takılma sayılmaz.
+      const stuckHere = Math.round(s.sx) === Math.round(px) && Math.round(s.sy) === Math.round(py);
+      if (lastSnap && movingNow && lastSnapMoving && !stuckHere) {
         rec('gaps', now - lastSnap);
         rec('srvGap', s.t - lastSrvT); // sunucu tarafında iki görüntü arası (adım gecikmesi)
         rec('jitter', Math.abs((now - lastSnap) - (s.t - lastSrvT))); // ağ/kuyruk kaynaklı sapma
