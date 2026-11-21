@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { applyTuning, MAPS, TUNING } from '@col/shared';
-import { roadmap, recommendedStop, milestones, monsterLoot, materialSources, pctTxt } from '../packages/client/src/ui/guideData.ts';
+import { roadmap, recommendedStop, milestones, monsterLoot, materialSources, pctTxt, powerAdvice, type PowerSelf } from '../packages/client/src/ui/guideData.ts';
 
 // Rehber: bütün sayılar yönetim ayarından (TUNING) gelir; ayar değişince rehber de değişir.
 afterEach(() => { applyTuning({}); });
@@ -57,5 +57,25 @@ describe('Rehber verisi', () => {
     expect(pctTxt(0.5)).toBe('%50');
     expect(pctTxt(0.035)).toBe('%3,5');
     expect(pctTxt(0.004)).toBe('%0,40');
+  });
+
+  it('Gücünü Artır: sitede genel liste, oyunda kişiye özel öneriler', () => {
+    const generic = powerAdvice();
+    expect(generic.length).toBeGreaterThanOrEqual(8);
+    expect(generic.some((t) => t.hot)).toBe(false);
+    const self: PowerSelf = {
+      level: 20, statBudget: 57, statAlloc: { str: 10, res: 5, vit: 0 }, skills: [1, 1, 1, 0, 1, 1], skillBudget: 20,
+      equip: { weapon: { id: 'w', tpl: 'w_guardian', rarity: 'blue', plus: 2, ench: [], kills: 120 } }, buffs: {},
+    };
+    const tips = powerAdvice(self);
+    const stat = tips.find((t) => t.id === 'stat')!;
+    expect(stat.hot).toBe(true);
+    expect(stat.title).toContain('42'); // 57 - 15 boştaki puan
+    expect(tips.find((t) => t.id === 'plus-weapon')!.title).toContain('+3');
+    // seviye 20: Turuncu silah kuşanılabilir, mavi silah taşıyan oyuncuya önerilir
+    expect(tips.some((t) => t.id.startsWith('rar-'))).toBe(true);
+    // yönetim artı şansını değiştirince öneri de değişir
+    applyTuning({ upgrade: { steps: [1, 2, 3, 4, 5, 6].map((i) => ({ chance: i === 3 ? 42 : 50, gems: 100, mats: {}, weapon: i * 5, armor: i * 4 })), flat: true } });
+    expect(powerAdvice(self).find((t) => t.id === 'plus-weapon')!.how).toContain('%42');
   });
 });

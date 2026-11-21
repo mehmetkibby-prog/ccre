@@ -5,7 +5,10 @@
  */
 import {
   MAPS, MONSTERS, TUNING, MATERIAL, MALL, ITEM_TPL, RARITY, RARITIES, CLASS_IDS, MOUNT, fixedLevel, resolveLoot, classSkill,
-  upgradeSteps, transformConf, fishTable, mallForSale, HERBS, type ResolvedLoot, type Rarity, type MapDef, type DropTune,
+  upgradeSteps, transformConf, fishTable, mallForSale, HERBS, SLOT_NAMES, MAX_PLUS, STAT_GAIN, EVO_TIERS, ENCHANT_TIER_WEIGHTS, RUNES, RUNE_KINDS,
+  RUNE_MAX_LEVEL, RANKS, RANK_LEVEL, PET_KEYS, statBudget, skillDamageMult, skillPointsUsed, plusAdd, itemPower, transformGroup, runeConf, runePct,
+  wingsBonus, mallPrice,
+  type ResolvedLoot, type Rarity, type MapDef, type DropTune, type Slot, type ItemInstance, type RuneKind,
 } from '@col/shared';
 
 const isMat = (id: string) => MATERIAL.has(id);
@@ -182,3 +185,102 @@ export function materialSources(): { id: string; uses: string[]; from: MatSource
 /** Ödül/düşme satırı (sandık, boss): ad + adet + olasılık */
 export interface DropRow { kind: string; key: string; rarity?: string; chance: number; qty: [number, number] }
 export const dropRows = (d: DropTune[]): DropRow[] => d.filter((x) => x.chance > 0).map((x) => ({ kind: x.kind, key: x.key, rarity: x.rarity, chance: x.chance, qty: x.qty }));
+
+// ───────── Gücünü artır: kişiye özel (oyunda) ya da genel (sitede) öneriler ─────────
+/** Oyuncu durumundan önerinin ihtiyaç duyduğu kısım (store.SelfInfo bunu karşılar) */
+export interface PowerSelf {
+  level: number; statBudget: number; statAlloc: { str: number; res: number; vit: number }; skills: number[]; skillBudget: number;
+  equip: Partial<Record<Slot, ItemInstance>>; runes?: { eq: Partial<Record<RuneKind, number>> }; mount?: { owned?: boolean }; buffs?: Record<string, number>;
+}
+export interface PowerTip { id: string; icon: string; title: string; how: string; gain?: string; hot?: boolean }
+const slotNm = (s: Slot) => SLOT_NAMES[s].toLocaleLowerCase('tr-TR');
+/**
+ * Bilge Ayaz'ın güç önerileri. self verilirse kişiye özel (boştaki puanlar, sıradaki artı, evrim sayacı, dönüşebilecek
+ * eşya, eksik efsun, boş rün yuvası…); verilmezse herkes için genel liste. Sayılar ayardan gelir.
+ */
+export function powerAdvice(self?: PowerSelf, now = Date.now()): PowerTip[] {
+  const out: PowerTip[] = [];
+  const E = TUNING.evo, tc = transformConf(), rc = runeConf();
+  const enchAdd = MALL.get('enchant_add'), wings = MALL.get('crimson_wings'), wb = wingsBonus();
+  const gardenOn = TUNING.garden.enabled && TUNING.garden.recipes.length > 0;
+  const hunter = TUNING.garden.effects.potion_hunter;
+  if (!self) {
+    const top = upgradeSteps()[MAX_PLUS - 1];
+    out.push({ id: 'stat', icon: '🎯', title: 'Statü puanlarını dağıt', how: `Her seviye ${statBudget(2) - statBudget(1)} puan · Karakter (C)`, gain: `Güç +${STAT_GAIN.str} saldırı` });
+    out.push({ id: 'skill', icon: '✨', title: 'Becerilerini geliştir', how: 'Beceri (K) · Mücevherle', gain: `kademe başına +%${Math.round((skillDamageMult(2) - 1) * 100)} hasar` });
+    if (top) out.push({ id: 'plus', icon: '⚒️', title: 'Silahına ve zırhına artı bas', how: `Demirci Haso · +${MAX_PLUS}'ya kadar`, gain: `+${MAX_PLUS}: ⚔ +${top.weapon} · 🛡 +${top.armor}` });
+    if (E.enabled) out.push({ id: 'evo', icon: '🌀', title: 'Silahını evrilt', how: 'Kuşanıp avla, Haso\'da evrilt · Kor Kulesi malzemeleri', gain: `en çok ⚔ +${E.weapon[E.weapon.length - 1]?.add ?? 0}` });
+    if (tc.enabled) out.push({ id: 'uq', icon: '💛', title: `${tc.from.map((r) => RARITY[r].name).join(', ')} eşyayı Eşsiz yap`, how: `Haso · Sv. ${Math.min(...Object.values(tc.cost).map((c) => c.minLevel))}+`, gain: 'güç + ekstra bonus' });
+    if (enchAdd) out.push({ id: 'ench', icon: '🔮', title: 'Efsunları tamamla', how: `${enchAdd.name} · Nesne Market`, gain: `${ENCHANT_TIER_WEIGHTS.length} efsuna kadar` });
+    out.push({ id: 'rune', icon: '💠', title: 'Rün tak', how: `Sv. ${rc.unlockLevel}+ · ${MAPS.coast?.name ?? 'Rün Sahili'} parçaları`, gain: `rün başına en çok +%${fmt2(runePct(RUNE_MAX_LEVEL))}` });
+    out.push({ id: 'rank', icon: '🎖️', title: 'Rütbe kazan', how: `Sv. ${RANK_LEVEL}'ten sonra tecrübeyle`, gain: `en çok +%${RANKS[RANKS.length - 1].atkPct} saldırı ve can` });
+    out.push({ id: 'mount', icon: '🐎', title: 'Binek edin', how: `Seyis Arda · Sv. ${MOUNT.level}+`, gain: `+${MOUNT.atk} saldırı` });
+    if (gardenOn) out.push({ id: 'potion', icon: '🌿', title: 'Bahçe iksiri iç', how: 'Şifacı Reyhan\'da kaynat', gain: `canavara +%${hunter.value} hasar` });
+    if (wings) out.push({ id: 'wings', icon: '🌟', title: wings.name, how: 'Nesne Market · süreli', gain: `+${wb.atk} saldırı · +${wb.def} savunma` });
+    return out;
+  }
+  const lv = self.level;
+  // boştaki puanlar
+  const freeSt = self.statBudget - (self.statAlloc.str + self.statAlloc.res + self.statAlloc.vit);
+  if (freeSt > 0) out.push({ id: 'stat', icon: '🎯', title: `${freeSt} statü puanın boşta!`, how: 'Karakter (C) penceresinden dağıt', gain: `en çok ⚔ +${freeSt * STAT_GAIN.str}`, hot: true });
+  const freeSk = self.skillBudget - skillPointsUsed(self.skills);
+  if (freeSk > 0) out.push({ id: 'skill', icon: '✨', title: `${freeSk} beceri hakkın boşta`, how: 'Beceri (K) · Mücevherle geliştir', gain: `kademe başına +%${Math.round((skillDamageMult(2) - 1) * 100)}`, hot: true });
+  // daha iyi nadirlik: seviyenin yettiği, oyunda düşen en iyi nadirlik
+  const stops = roadmap();
+  const w = self.equip.weapon, a = self.equip.armor;
+  const ri = (r?: string) => (r ? RARITIES.indexOf(r as Rarity) : -1);
+  let best: Rarity | null = null;
+  for (const s of stops) for (const [r] of s.rarities) if (RARITY[r].minLevel <= lv && ri(r) > ri(best ?? undefined)) best = r;
+  if (best) for (const it of [w, a]) {
+    if (it && ri(it.rarity) < ri(best) && it.rarity !== 'unique') {
+      // girebildiği bölgeler içinde o nadirliğin en çok düştüğü yer
+      const share = (s: GuideStop) => s.rarities.find(([r]) => r === best)?.[1] ?? 0;
+      const where = stops.filter((s) => s.minLevel <= lv && share(s) > 0).sort((x, y) => share(y) - share(x))[0]?.map.name;
+      out.push({ id: 'rar-' + it.tpl, icon: '🗡️', title: `${RARITY[best].name} ${slotNm(ITEM_TPL.get(it.tpl)?.slot ?? 'weapon')} kuşanabilirsin`, how: where ? `${where} canavarlarından düşer` : 'Canavarlardan düşer', gain: 'çok daha güçlü' });
+      break;
+    }
+  }
+  // sıradaki artı
+  for (const [it, icon] of [[w, '⚔'], [a, '🛡']] as const) {
+    if (!it || it.plus >= MAX_PLUS) continue;
+    const slot = ITEM_TPL.get(it.tpl)?.slot; const st = upgradeSteps()[it.plus];
+    if (!slot || !st) continue;
+    out.push({ id: 'plus-' + slot, icon: '⚒️', title: `${SLOT_NAMES[slot]}ına +${it.plus + 1} bas`, how: `Demirci Haso · şans %${st.chance} · ${fmt(st.gems)} Mücevher`, gain: `${icon} +${plusAdd(slot, it.plus + 1) - plusAdd(slot, it.plus)}` });
+  }
+  // evrim sayacı
+  if (E.enabled) for (const it of [w, a]) {
+    const slot = it ? ITEM_TPL.get(it.tpl)?.slot : undefined;
+    if (!it || (slot !== 'weapon' && slot !== 'armor') || (it.evo ?? 0) >= EVO_TIERS) continue;
+    const e = it.evo ?? 0, st = E[slot][e];
+    if (!st) continue;
+    out.push({ id: 'evo-' + slot, icon: '🌀', title: `${SLOT_NAMES[slot]} evrimi: ${fmt(Math.min(it.kills ?? 0, st.kills))} / ${fmt(st.kills)} av`, how: (it.kills ?? 0) >= st.kills ? 'Sayaç doldu! Haso\'da evrilt' : 'Kuşanıp avla · Kor Kulesi malzemeleri', gain: `${slot === 'weapon' ? '⚔' : '🛡'} +${st.add - (e ? E[slot][e - 1].add : 0)}` });
+  }
+  // Eşsiz'e dönüşebilecek kuşanılmış eşya
+  if (tc.enabled) for (const it of Object.values(self.equip)) {
+    if (!it || !tc.from.includes(it.rarity)) continue;
+    const g = transformGroup(it); if (!g || lv < tc.cost[g].minLevel) continue;
+    const slot = ITEM_TPL.get(it.tpl)!.slot;
+    out.push({ id: 'uq-' + slot, icon: '💛', title: `${SLOT_NAMES[slot]} Eşsiz'e dönüşebilir`, how: `Haso · Dönüşüm · ${fmt(tc.cost[g].gems)} Mücevher`, gain: `+${itemPower({ ...it, rarity: 'unique' }) - itemPower(it)} güç` });
+    break;
+  }
+  // eksik efsun (silah/zırh)
+  const max = ENCHANT_TIER_WEIGHTS.length;
+  for (const it of [w, a]) if (it && it.ench.length < max && enchAdd) {
+    out.push({ id: 'ench-' + it.tpl, icon: '🔮', title: `${SLOT_NAMES[ITEM_TPL.get(it.tpl)?.slot ?? 'weapon']}: ${it.ench.length}/${max} efsun`, how: `${enchAdd.name} · Nesne Market`, gain: '+1 efsun' });
+    break;
+  }
+  // rün ve rütbe
+  if (lv >= rc.unlockLevel) {
+    const empty = RUNE_KINDS.filter((k) => !self.runes?.eq?.[k]);
+    if (empty.length) out.push({ id: 'rune', icon: '💠', title: `${empty.length} rün yuvan boş`, how: `${MAPS.coast?.name ?? 'Rün Sahili'} · ${rc.craftCost} parça = 1 rün · Rün (U)`, gain: empty.map((k) => RUNES[k].statName).join(', ') });
+    else out.push({ id: 'rune', icon: '💠', title: 'Rünlerini yükselt', how: 'Yükseltme her zaman başarılı · Rün (U)', gain: `seviye başına +%${fmt2(rc.pctPerLevel)}` });
+  } else out.push({ id: 'rune', icon: '💠', title: `Sv. ${rc.unlockLevel} olunca rünler açılır`, how: MAPS.coast?.name ?? 'Rün Sahili', gain: 'saldırı · savunma · can' });
+  if (lv >= RANK_LEVEL) out.push({ id: 'rank', icon: '🎖️', title: 'Rütbeni yükselt', how: 'Kazandığın tecrübe rütbeye akar', gain: `en çok +%${RANKS[RANKS.length - 1].atkPct}` });
+  if (!self.mount?.owned && lv >= MOUNT.level) out.push({ id: 'mount', icon: '🐎', title: 'Binek görevini tamamla', how: `Seyis Arda · ${MOUNT.kills} av, ${MOUNT.seals} ${MATERIAL.get(MOUNT.sealKey)?.name ?? MOUNT.sealKey}`, gain: `+${MOUNT.atk} saldırı` });
+  if (gardenOn) out.push({ id: 'potion', icon: '🌿', title: 'Avdan önce iksir iç', how: 'Şifacı Reyhan\'da kaynat', gain: `canavara +%${hunter.value}` });
+  const on = (k: string) => (self.buffs?.[k] ?? 0) > now;
+  if (wings && !on('crimson_wings')) out.push({ id: 'wings', icon: '🌟', title: wings.name, how: `Nesne Market · ${fmt(mallPrice('crimson_wings'))} ÇP`, gain: `+${wb.atk} saldırı · +${wb.def} savunma` });
+  if (!PET_KEYS.some((k) => on(k)) && MALL.get('pet_bird')) out.push({ id: 'pet', icon: '🐾', title: 'Yol arkadaşı edin', how: 'Nesne Market · evcil hayvan', gain: '+20 saldırı' });
+  return out;
+}
+const fmt2 = (n: number) => String(Math.round(n * 100) / 100).replace('.', ',');
