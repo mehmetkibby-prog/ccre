@@ -298,3 +298,20 @@
 /* karakter ekranı: ön kayıt bilgisi */
 .prereg-note { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: linear-gradient(100deg, rgba(14, 54, 32, .8), rgba(10, 22, 14, .65)); box-shadow: inset 0 0 0 1px rgba(95, 242, 160, .4); font-size: 13px; color: #d6f3e0; }
 .prereg-note b { display: block; color: #9dffc6; font-size: 13.5px; letter-spacing: .5px; }
+
+/* kayıt doğrulama kodu */
+.ac-captcha { display: grid; grid-template-columns: auto 34px 1fr; gap: 8px; align-items: center; margin: 2px 0 8px; }
+.ac-captcha .cap-img { display: block; width: 150px; height: 48px; border-radius: 8px; overflow: hidden; box-shadow: inset 0 0 0 1px rgba(255, 214, 140, .25); background: #f3ead6; }
+.ac-captcha .cap-img svg { width: 150px; height: 48px; display: block; }
+.ac-captcha .cap-new { height: 34px; border-radius: 8px; border: 1px solid rgba(255, 214, 140, .3); background: rgba(255, 255, 255, .04); color: #f2d89c; font-size: 18px; cursor: pointer; }
+.ac-captcha .cap-in { margin: 0 !important; }
+.ac-captcha .cap-in input { letter-spacing: 3px; font-weight: 700; }
+.ac-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+@media (max-width: 420px) { .ac-captcha { grid-template-columns: 1fr 34px; } .ac-captcha .cap-in { grid-column: 1 / -1; } .ac-captcha .cap-img, .ac-captcha .cap-img svg { width: 100%; height: auto; aspect-ratio: 200 / 64; } }
+/* ön kayıt tamamlandı kartı */
+.pre-done { text-align: center; }
+.pre-done .pd-chest { display: block; margin: 4px auto 6px; filter: drop-shadow(0 0 18px rgba(95, 242, 160, .45)); animation: pdFloat 3.2s ease-in-out infinite; }
+@keyframes pdFloat { 50% { transform: translateY(-6px); } }
+.pre-done .pd-list { text-align: left; margin: 12px 0; padding-left: 18px; color: #e9dcc0; font-size: 13.5px; line-height: 1.55; }
+.pre-done .pd-list li + li { margin-top: 6px; }
+.pre-done .pd-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }

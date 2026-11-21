@@ -304,7 +304,11 @@ export function RankingsPanel() {
   const [tab, setTab] = useState<'kills' | 'level'>('kills');
   const [data, setData] = useState<{ level: RankRow[]; kills: RankRow[]; period: { key: string; end: number; kind: string }; rewards: { cp: number; gems: number }[] } | null>(null);
   const [err, setErr] = useState('');
-  useEffect(() => { api('/api/rankings').then(setData).catch((e) => setErr((e as Error).message)); }, []);
+  // açıkken 4 sn'de bir tazelenir: av sayıları anında yansır
+  useEffect(() => {
+    const load = () => api('/api/rankings').then(setData).catch((e) => setErr((e as Error).message));
+    load(); const id = setInterval(load, 4000); return () => clearInterval(id);
+  }, []);
   const skew = useStore((s) => s.clockSkew);
   const left = data ? Math.max(0, data.period.end - (Date.now() + (skew || 0))) : 0;
   const d = Math.floor(left / 86400000), h = Math.floor((left % 86400000) / 3600000), m = Math.floor((left % 3600000) / 60000);

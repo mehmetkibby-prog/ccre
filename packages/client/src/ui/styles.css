@@ -2231,3 +2231,15 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .tip-acts { position: sticky; bottom: 0; z-index: 2; display: flex; gap: 6px; padding: 10px 12px 12px; background: linear-gradient(rgba(22, 14, 8, .96), rgba(14, 9, 5, .99)); box-shadow: inset 0 1px 0 rgba(96, 70, 42, .7); }
 .tip-acts .btn, .tip-sheet .tip-acts .btn { flex: 1 1 0; min-width: 0; margin: 0 !important; width: auto !important; white-space: nowrap; }
 .tip-sheet .tip-acts .btn { min-height: 40px; font-size: 13.5px; }
+
+/* saatlik bot doğrulaması */
+.botcheck-back { position: fixed; inset: 0; z-index: 9000; display: grid; place-items: center; background: rgba(6, 8, 10, .55); backdrop-filter: blur(2px); }
+.botcheck { width: min(340px, calc(100vw - 32px)); padding: 18px 18px 14px; border-radius: 14px; background: linear-gradient(180deg, #2a2118, #1a140f); box-shadow: 0 0 0 1px rgba(255, 210, 130, .35), 0 18px 48px rgba(0, 0, 0, .6); color: #f2e6cc; display: grid; gap: 10px; text-align: center; }
+.botcheck .bc-title { font: 700 18px var(--f-title, serif); color: #ffd98a; letter-spacing: .5px; }
+.botcheck p { margin: 0; font-size: 12.5px; color: #cdbd9c; line-height: 1.45; }
+.botcheck .bc-cap { display: flex; gap: 8px; justify-content: center; align-items: center; }
+.botcheck .bc-cap span { display: block; width: 200px; height: 64px; border-radius: 8px; overflow: hidden; }
+.botcheck .bc-cap span svg { display: block; width: 200px; height: 64px; }
+.botcheck .bc-cap button { width: 38px; height: 38px; border-radius: 10px; border: 1px solid rgba(255, 214, 140, .35); background: rgba(255, 255, 255, .05); color: #ffd98a; font-size: 20px; cursor: pointer; }
+.botcheck input { height: 40px; border-radius: 10px; border: 1px solid rgba(255, 214, 140, .35); background: rgba(0, 0, 0, .35); color: #fff; font: 700 18px var(--f-ui, sans-serif); letter-spacing: 4px; text-align: center; }
+.botcheck small { color: #b9a682; font-size: 11.5px; }

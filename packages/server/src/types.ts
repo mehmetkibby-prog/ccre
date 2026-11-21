@@ -34,6 +34,11 @@ export interface CharMisc {
   autoPotion?: boolean;
   statRev?: number;
   dailyKills?: { day: string; n: number };
+  /** bot doğrulaması: sonraki doğrulamanın zamanı ve bekleyen (cevaplanmamış) doğrulama */
+  botNext?: number;
+  /** ön kayıt tilkisinin bittiği an */
+  foxUntil?: number;
+  botDue?: boolean;
   /** canavar sıralaması: bu dönemin (k) av sayısı; dönem değişince önceki prev'e geçer (ödül hesabı için) */
   rankKills?: { k: string; n: number; prev?: { k: string; n: number } };
   /** oto atak: bugün kullanılan süre (ms) */
@@ -124,6 +129,10 @@ export type FromWorker =
   /** Savaş Arenası: giriş isteği (ana süreç hile/IP denetimi yapar), arenada öldürme, arenadan çıkış */
   | { type: 'arena_join'; sid: number; charId: number; level: number }
   | { type: 'arena_kill'; killer: number; victim: number; kLevel: number; vLevel: number }
+  /** oyuncuyu oyundan çıkar (ör. bot doğrulaması cevaplanmadı) */
+  | { type: 'kick'; sid: number; text: string }
+  /** canavar sıralaması: her avda anında (dönem anahtarı ve o dönemdeki av sayısı) */
+  | { type: 'rank_kill'; charId: number; name: string; cls: string; level: number; k: string; n: number }
   | { type: 'arena_left'; charId: number }
   | { type: 'guild_charged'; sid: number; req: string; ok: boolean; err?: string }
   /** öz vergisi: [lonca, karakter, miktar] */

@@ -36,6 +36,7 @@ async function main() {
     give: (charId, g) => { void gateway.giveTo(charId, g); },
     announce: (text) => gateway.broadcastAll({ t: 'chat', ch: 'world', from: 'Duyuru', text, gm: true }),
     onlineIds: () => gateway.onlineCharIds(),
+    liveKills: () => gateway.liveKills,
   });
   setInterval(() => { rankings.tick().catch((e) => console.error('[rank]', e)); }, 60_000);
   // Veritabanı kendiliğinden şişmesin: süresi dolmuş oturumlar, eski şifre sıfırlamaları ve 180 günden eski

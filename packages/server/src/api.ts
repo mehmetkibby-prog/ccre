@@ -3,6 +3,7 @@ import type { ServerResponse } from 'node:http';
 import { validEmail, CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
+import { newCaptcha, checkCaptcha } from './captcha.ts';
 import { hashPassword, verifyPassword, createSession, destroySession, sessionAccount, isStaff, isAdmin, sha256, randomToken, invalidateAccountCache, type AuthAccount } from './auth.ts';
 import { initialHp, startPosition } from './store.ts';
 import { config } from './config.ts';
@@ -24,6 +25,7 @@ import { registerForum } from './forum.ts';
 const COOKIE = 'col_session';
 const loginLimiter = new RateLimiter(0.2, 8); // IP başına
 const registerLimiter = new RateLimiter(0.02, 3);
+const captchaLimiter = new RateLimiter(0.5, 12); // IP başına doğrulama kodu görseli
 const admissionLimiter = new RateLimiter(1, 5);
 
 export interface ApiDeps { gateway: Gateway; channels: ChannelManager; opening: OpeningState; store: CharacterStore; world: WorldState; tuning: TuningState; rankings?: import('./rankings.ts').Rankings }
@@ -104,8 +106,13 @@ export function buildApi(d: ApiDeps): Router {
   r.get('/api/status', async () => ({
     opening: { mode: d.opening.state.mode, openAt: d.opening.state.openAt, message: d.opening.state.message },
     online: d.gateway.online(), worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
-    prereg: await preregCount(),
   }));
+
+  /** Kayıt doğrulama kodu (bot koruması): görsel SVG, kod sunucuda */
+  r.get('/api/captcha', async (req) => {
+    if (!config.loadTestMode && !captchaLimiter.take(req.ip)) throw new HttpError(429, 'Çok sık istek. Biraz bekle.');
+    return newCaptcha();
+  });
 
   r.post('/api/register', async (req, res) => {
     if (!config.loadTestMode && !registerLimiter.take(req.ip)) throw new HttpError(429, 'Çok fazla kayıt denemesi. Biraz sonra dene.');
@@ -119,6 +126,8 @@ export function buildApi(d: ApiDeps): Router {
     if (!em) throw new HttpError(400, 'E-posta adresi zorunlu.');
     if (!validEmail(em)) throw new HttpError(400, 'E-posta adresi geçersiz.');
     if (req.body?.accept !== true && req.body?.accept !== undefined) throw new HttpError(400, 'Gizlilik politikasını onaylaman gerekiyor.');
+    if (req.body?.website) throw new HttpError(400, 'Kayıt yapılamadı.'); // görünmez tuzak alanı: yalnız botlar doldurur
+    if (!config.loadTestMode && !checkCaptcha(req.body?.captchaId, req.body?.captcha)) throw new HttpError(400, 'Doğrulama kodu hatalı ya da süresi doldu. Yeni kodu yaz.');
     if ((await pool.query('SELECT 1 FROM accounts WHERE lower(email)=$1 LIMIT 1', [em])).rowCount) throw new HttpError(409, 'Bu e-posta adresiyle açılmış bir hesap var.');
     const hash = await hashPassword(password);
     // ilk hesap geliştirme ortamında yönetici olur
@@ -130,7 +139,7 @@ export function buildApi(d: ApiDeps): Router {
         [u, u.toLowerCase(), em, hash, first && config.devMode ? 'owner' : 'player', prereg]);
       const token = await createSession(Number(ins.rows[0].id));
       setCookie(res, token);
-      return { ok: true, token };
+      return { ok: true, token, prereg, canEnter: d.opening.isOpenFor(false, false, false).ok };
     } catch (e: any) {
       if (e.code === '23505') throw new HttpError(409, 'Bu kullanıcı adı alınmış.');
       throw e;
@@ -140,13 +149,14 @@ export function buildApi(d: ApiDeps): Router {
   r.post('/api/login', async (req, res) => {
     if (!config.loadTestMode && !loginLimiter.take(req.ip)) throw new HttpError(429, 'Çok fazla giriş denemesi. Biraz bekle.');
     const { username, password } = req.body ?? {};
-    const row = (await pool.query('SELECT id, pass_hash, banned_until, ban_reason FROM accounts WHERE username_norm=$1', [String(username ?? '').trim().toLowerCase()])).rows[0];
+    const row = (await pool.query('SELECT id, pass_hash, banned_until, ban_reason, role, early_access, test_access FROM accounts WHERE username_norm=$1', [String(username ?? '').trim().toLowerCase()])).rows[0];
     if (!row || !(await verifyPassword(String(password ?? ''), row.pass_hash))) throw new HttpError(401, 'Kullanıcı adı veya parola hatalı.');
     if (row.banned_until && new Date(row.banned_until).getTime() > Date.now()) throw new HttpError(403, `Hesabın askıda: ${row.ban_reason ?? ''}`);
     await pool.query('UPDATE accounts SET last_login=now() WHERE id=$1', [row.id]);
     const token = await createSession(Number(row.id));
     setCookie(res, token);
-    return { ok: true, token };
+    // oyun kapalıyken yalnız yönetimin izin verdiği hesaplar oyuna girer (öteki hesaplar foruma girebilir, oyunu bekler)
+    return { ok: true, token, canEnter: d.opening.isOpenFor(!!row.early_access, isStaff(row.role), !!row.test_access).ok };
   });
 
   r.post('/api/logout', async (req, res) => {
@@ -187,11 +197,13 @@ export function buildApi(d: ApiDeps): Router {
     const chars = await pool.query(`SELECT id, name, cls, level, map FROM characters WHERE account_id=$1 AND deleted_at IS NULL ORDER BY id`, [a.id]);
     // ön kayıt: hesap işaretli mi, sandık bir karaktere verildi mi
     const pr = (await pool.query(`SELECT a.prereg, EXISTS (SELECT 1 FROM receipts r WHERE r.key = 'prereg_chest:' || a.id) AS got FROM accounts a WHERE a.id=$1`, [a.id])).rows[0];
-    return { account: { id: a.id, username: a.username, role: a.role, prereg: !!pr?.prereg, preregGranted: !!pr?.got }, characters: chars.rows.map((c) => ({ ...c, id: Number(c.id) })) };
+    const gate = d.opening.isOpenFor(a.earlyAccess, isStaff(a.role), a.testAccess);
+    return { account: { id: a.id, username: a.username, role: a.role, prereg: !!pr?.prereg, preregGranted: !!pr?.got, canEnter: gate.ok, waitMsg: gate.ok ? undefined : gate.reason }, characters: chars.rows.map((c) => ({ ...c, id: Number(c.id) })) };
   });
 
   r.post('/api/characters', async (req) => {
     const a = await requireAuth(req);
+    if (!d.opening.isOpenFor(a.earlyAccess, isStaff(a.role), a.testAccess).ok) throw new HttpError(403, 'Oyun henüz açılmadı. Ön kaydın alındı; açılışta karakterini oluşturabileceksin.');
     const name = String(req.body?.name ?? '').trim();
     const cls = String(req.body?.cls ?? '') as ClassId;
     const err = validateCharacterName(name);

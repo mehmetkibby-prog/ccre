@@ -27,7 +27,7 @@ if (OFFLINE) import('./admin/config.ts').then((m) => m.startConfigSync());
 else import('./admin/config.ts').then((m) => api('/api/tuning').then(m.applyRemoteTuning).catch(() => {}));
 
 type Screen = { s: 'loading' } | { s: 'auth' } | { s: 'chars' } | { s: 'channels'; charId: number } | { s: 'game'; ticket: string; charId: number; channel: number };
-interface Me { account: { id: number; username: string; role: string; prereg?: boolean; preregGranted?: boolean }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
+interface Me { account: { id: number; username: string; role: string; prereg?: boolean; preregGranted?: boolean; canEnter?: boolean; waitMsg?: string }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
 
 function App() {
   const route = useRoute();
@@ -50,24 +50,43 @@ function AppScreens() {
   const [screen, setScreen] = useState<Screen>({ s: 'loading' });
   const [me, setMe] = useState<Me | null>(null);
   const [lastError, setLastError] = useState('');
+  const [waitMe, setWaitMe] = useState<Me | null>(null);
   const refresh = async () => {
-    try { const m = await api<Me>('/api/me'); setMe(m); setScreen({ s: 'chars' }); }
-    catch { setScreen({ s: 'auth' }); }
+    try {
+      const m = await api<Me>('/api/me');
+      // oyun açılmadan (ön kayıt) izinsiz hesap: karakter ekranına değil, ana sayfadaki "ön kayıt tamamlandı" kartına
+      if (m.account.canEnter === false) { setWaitMe(m); setScreen({ s: 'auth' }); return; }
+      try { localStorage.setItem('col_login_ok', '1'); } catch { /* */ }
+      setWaitMe(null); setMe(m); setScreen({ s: 'chars' });
+    } catch { setWaitMe(null); setScreen({ s: 'auth' }); }
   };
   useEffect(() => { refresh(); }, []);
   if (screen.s === 'loading') return <div className="screen"><div className="logo">Core of Life<small>3D</small></div></div>;
-  if (screen.s === 'auth') return <AuthScreen onDone={refresh} />;
+  if (screen.s === 'auth') return <AuthScreen onDone={refresh} waiting={waitMe} onLogout={async () => { await api('/api/logout', {}).catch(() => {}); setWaitMe(null); }} />;
   if (screen.s === 'chars' && me) return <CharScreen me={me} error={lastError} onReload={refresh} onPlay={(id) => { setLastError(''); setScreen({ s: 'channels', charId: id }); }} onLogout={async () => { await api('/api/logout', {}).catch(() => {}); setScreen({ s: 'auth' }); }} />;
   if (screen.s === 'channels') return <ChannelScreen charId={screen.charId} onBack={() => setScreen({ s: 'chars' })} onEnter={(ticket, ch) => setScreen({ s: 'game', ticket, charId: screen.charId, channel: ch })} />;
   if (screen.s === 'game') return <GameScreen key={screen.charId + ':' + screen.channel} ticket={screen.ticket} charId={screen.charId} channel={screen.channel} onExit={(reason, toChannels) => { store.set({ connected: false, self: null, char: null, dead: null, panel: null }); if (reason) setLastError(reason); if (toChannels) setScreen({ s: 'channels', charId: screen.charId }); else refresh(); }} />;
   return null;
 }
 
-function AuthScreen({ onDone }: { onDone: () => void }) {
+/** Kayıt doğrulama kodu: sunucunun çizdiği görsel (kod sunucuda kalır) */
+function useCaptcha(active: boolean) {
+  const [cap, setCap] = useState<{ id: string; svg: string } | null>(null);
+  const load = () => { api<{ id: string; svg: string }>('/api/captcha').then(setCap).catch(() => setCap(null)); };
+  useEffect(() => { if (active && !cap) load(); }, [active]); // eslint-disable-line react-hooks/exhaustive-deps
+  return { cap, reload: load };
+}
+
+function AuthScreen({ onDone, waiting, onLogout }: { onDone: () => void; waiting?: Me | null; onLogout?: () => void }) {
   const st = useSiteStatus();
   const open = !!st?.open;
+  // oyun kapalıyken giriş sekmesi yalnız izinli testçilere: ?giris adresi ya da bu cihazda daha önce izinli giriş
+  const loginAllowed = open || /giris/.test(location.search) || (() => { try { return localStorage.getItem('col_login_ok') === '1'; } catch { return false; } })();
   // ön kayıt döneminde kart kayıt sekmesiyle açılır (?giris adresi girişle)
   const [tab, setTab] = useState<'login' | 'register' | 'forgot'>(() => (/giris/.test(location.search) ? 'login' : 'register'));
+  const { cap, reload: reloadCap } = useCaptcha(tab === 'register' && !waiting);
+  const [capIn, setCapIn] = useState('');
+  const [hp, setHp] = useState(''); // görünmez tuzak alanı (botlar doldurur)
   const [f, setF] = useState({ username: '', password: '', password2: '', email: '', code: '' });
   const [accept, setAccept] = useState(false);
   const [err, setErr] = useState('');
@@ -83,7 +102,12 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     setBusy(true);
     try {
       if (tab === 'login') { await api('/api/login', { username: f.username, password: f.password }); onDone(); }
-      else if (tab === 'register') { await api('/api/register', { username: f.username, password: f.password, password2: f.password2, email: f.email, accept: true }); onDone(); }
+      else if (tab === 'register') {
+        if (!capIn.trim()) { setErr('Resimdeki doğrulama kodunu yaz.'); setBusy(false); return; }
+        try { await api('/api/register', { username: f.username, password: f.password, password2: f.password2, email: f.email, accept: true, captchaId: cap?.id, captcha: capIn, website: hp }); }
+        catch (e3) { setCapIn(''); reloadCap(); throw e3; }
+        onDone();
+      }
       else {
         if (!f.code) { const r = await api<{ devCode?: string; note?: string }>('/api/password/forgot', { username: f.username }); setInfo(r.devCode ? `${r.note} Kod: ${r.devCode}` : 'Hesap varsa sıfırlama kodu gönderildi.'); }
         else { await api('/api/password/reset', { code: f.code, password: f.password }); setInfo('Parola değişti, giriş yapabilirsin.'); setTab('login'); }
@@ -109,18 +133,31 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
             <h1 className="brand-title">CORE OF LIFE</h1>
             <div className="brand-online"><i />3D<i /></div>
             <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen. Tarayıcında ve telefonunda, kurulumsuz.</p>
-            {!open && st && st.prereg > 0 && <div className="pre-count"><b>{st.prereg.toLocaleString('tr-TR')}</b> savaşçı ön kayıt yaptı</div>}
             <button type="button" className="pre-strip" onClick={() => document.getElementById('odul')?.scrollIntoView({ behavior: 'smooth' })}>
               <img src="/site/prereg_chest.png" alt="" width={46} height={46} />
-              <span><b>Ön Kayıt Ödülü</b><small>Kalıcı Yeşil Tilki peti (+10 saldırı, +200 can) ve 15 Mücevher</small></span>
+              <span><b>Ön Kayıt Ödülü</b><small>3 günlük Yeşil Tilki (+10 saldırı, +200 can) ve 15 Mücevher</small></span>
               <em>Gör ›</em>
             </button>
             <RealmLine />
             <ClassicButton />
           </div>
+          {waiting ? (
+            <div className="auth-card pre-done" ref={card as unknown as React.RefObject<HTMLDivElement>}>
+              <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
+              <img className="pd-chest" src="/site/prereg_chest.png" alt="" width={96} height={96} />
+              <h2 className="ac-title">Ön kaydın tamamlandı!</h2>
+              <p className="ac-sub">Hoş geldin <b>{waiting.account.username}</b>. Oyuna hazırsın; açılışı bekle.</p>
+              <ul className="pd-list">
+                <li><b>Ön Kayıt Sandığı</b> ilk karakterinin çantasında olacak: 3 günlük Yeşil Tilki (+10 saldırı, +200 can) ve 15 Mücevher.</li>
+                <li>Açılış tarihi ve duyurular burada ve forumda yayınlanacak.</li>
+              </ul>
+              <RealmLine />
+              <div className="pd-row"><Link to="/forum" className="site-btn primary">Foruma git</Link><button type="button" className="site-btn ghost" onClick={onLogout}>Çıkış</button></div>
+            </div>
+          ) : (
           <form className="auth-card" onSubmit={submit} ref={card}>
             <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
-            {tab !== 'forgot' && (
+            {tab !== 'forgot' && loginAllowed && (
               <div className="ac-tabs" role="tablist">
                 <button type="button" role="tab" aria-selected={tab === 'register'} className={tab === 'register' ? 'on' : ''} onClick={() => { setTab('register'); setErr(''); }}>{regLabel}</button>
                 <button type="button" role="tab" aria-selected={tab === 'login'} className={tab === 'login' ? 'on' : ''} onClick={() => { setTab('login'); setErr(''); }}>Giriş Yap</button>
@@ -135,16 +172,25 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
             {tab === 'forgot' && <label className="ac-field"><span className="ac-ic"><Ico k="key" /></span><input placeholder=" " value={f.code} onChange={set('code')} /><em>Sıfırlama kodu (aldıysan)</em></label>}
             {(tab !== 'forgot' || f.code) && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /><em>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</em><button type="button" className="ac-eye" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Parolayı gizle' : 'Parolayı göster'}><Ico k={showPw ? 'eyeoff' : 'eye'} /></button></label>}
             {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete="new-password" value={f.password2} onChange={set('password2')} /><em>Parola tekrar</em></label>}
+            {tab === 'register' && (
+              <div className="ac-captcha">
+                <span className="cap-img" aria-label="Doğrulama kodu görseli" dangerouslySetInnerHTML={{ __html: cap?.svg ?? '' }} />
+                <button type="button" className="cap-new" onClick={() => { setCapIn(''); reloadCap(); }} aria-label="Yeni kod" title="Yeni kod">↻</button>
+                <label className="ac-field cap-in"><input placeholder=" " autoComplete="off" autoCapitalize="characters" spellCheck={false} value={capIn} maxLength={8} onChange={(e) => setCapIn(e.target.value.toUpperCase())} /><em>Resimdeki kod</em></label>
+              </div>
+            )}
+            {tab === 'register' && <input className="ac-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" value={hp} onChange={(e) => setHp(e.target.value)} name="website" />}
             {tab === 'register' && <label className="ac-accept"><input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} /><span><Link to="/gizlilik">Gizlilik Politikası</Link>'nı okudum, kabul ediyorum.</span></label>}
             {err && <div className="ac-err">{err}</div>}
             {info && <div className="ac-ok">{info}</div>}
             <button className="ac-cta" disabled={busy}><span>{busy ? 'Bekle…' : tab === 'login' ? 'OYUNA GİR' : tab === 'register' ? (open ? 'HESABI OLUŞTUR' : 'ÖN KAYIT OL') : f.code ? 'PAROLAYI DEĞİŞTİR' : 'KOD GÖNDER'}</span></button>
             <div className="ac-links">
               {tab === 'login' && <><a onClick={() => setTab('forgot')}>Parolamı unuttum</a><a onClick={() => setTab('register')}>Hesabın yok mu? <b>{regLabel}</b></a></>}
-              {tab === 'register' && <a onClick={() => setTab('login')}>Zaten hesabın var mı? <b>Giriş yap</b></a>}
+              {tab === 'register' && loginAllowed && <a onClick={() => setTab('login')}>Zaten hesabın var mı? <b>Giriş yap</b></a>}
               {tab === 'forgot' && <a onClick={() => setTab('login')}>← Girişe dön</a>}
             </div>
           </form>
+          )}
         </div>
         <button type="button" className="hero-down" aria-label="Aşağı kaydır" onClick={() => document.getElementById('odul')?.scrollIntoView({ behavior: 'smooth' })}><span /></button>
       </section>

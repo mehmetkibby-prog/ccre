@@ -50,6 +50,8 @@ export class Gateway {
   guilds: Guilds;
   private activeByChar(charId: number) { for (const s of this.sessions.values()) if (s.charId === charId && s.state === 'active') return s; return undefined; }
 
+  /** canavar sıralaması: oyundakilerin bu dönemdeki av sayısı (kanallardan anında gelir) */
+  liveKills = new Map<number, { charId: number; name: string; cls: string; level: number; k: string; n: number }>();
   constructor(public channels: ChannelManager, public store: CharacterStore, public world: WorldState) {
     this.arena = new Arena({
       sessionByChar: (charId) => { for (const s of this.sessions.values()) if (s.charId === charId && s.state !== 'closing') return { charId, accountId: s.accountId, ip: s.ip, name: s.name, cls: s.cls, channel: s.channel }; return undefined; },
@@ -321,6 +323,12 @@ export class Gateway {
         break;
       }
       case 'arena_kill': this.arena.kill(m.killer, m.victim, m.kLevel, m.vLevel); break;
+      case 'kick': {
+        const s = this.sessions.get(m.sid);
+        if (s) { this.sendJson(s, { t: 'fatal', text: m.text }); s.ws.close(); }
+        break;
+      }
+      case 'rank_kill': this.liveKills.set(m.charId, { charId: m.charId, name: m.name, cls: m.cls, level: m.level, k: m.k, n: m.n }); break;
       case 'arena_left': this.arena.left(m.charId); break;
       case 'donate': {
         const gain = this.world.donate(m.charId, m.name, m.amount);

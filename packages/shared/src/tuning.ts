@@ -267,7 +267,7 @@ export function sanitizeTower(raw: unknown): TowerTune {
   };
 }
 export interface KillRankTune { period: 'day' | 'week' | 'month'; rewards: { cp: number; gems: number }[] }
-export const KILLRANK_DEFAULT: KillRankTune = { period: 'week', rewards: [{ cp: 100, gems: 0 }, { cp: 50, gems: 0 }, { cp: 0, gems: 1000 }] };
+export const KILLRANK_DEFAULT: KillRankTune = { period: 'day', rewards: [{ cp: 100, gems: 0 }, { cp: 50, gems: 0 }, { cp: 0, gems: 1000 }] };
 function sanitizeKillRank(raw: unknown): KillRankTune {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const num = (v: unknown, hi: number) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(0, Math.round(n))) : 0; };

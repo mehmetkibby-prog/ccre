@@ -376,6 +376,8 @@ export class Game {
         break;
       }
       case 'craftResult': sfx.play(m.ok ? 'levelup' : 'ui'); if (m.ok) store.set({ modal: { title: 'Üretim başarılı', lines: [m.got] } }); break;
+      case 'botcheck': store.set({ botCheck: { id: String(m.id), svg: String(m.svg), until: Number(m.until) || 0, tries: Number(m.tries) || 0, max: Number(m.max) || 5 } }); this.autoAttack = false; this.walkToTarget = false; break;
+      case 'botcheck_ok': store.set({ botCheck: null }); break;
       case 'chestResult': store.set({ modal: { title: m.title, lines: m.rewards } }); sfx.play('levelup'); break;
       case 'auto': store.set((st) => ({ self: st.self ? { ...st.self, autoOn: !!m.on, autoLeft: Number(m.left) || 0 } : st.self, autoSync: Date.now() })); if (!m.on) { this.autoAttack = false; this.walkToTarget = false; } break;
       case 'transformResult': store.set({ transformResult: { ok: m.ok, item: m.item, at: Date.now() } }); sfx.play(m.ok ? 'levelup' : 'error'); break;

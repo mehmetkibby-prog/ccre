@@ -63,10 +63,10 @@ export const MALL_ITEMS: MallItem[] = [
   { no: 31, id: 'battle_pass', name: 'Premium Savaş Bileti', cat: 'yakinda', price: 0, soon: true, desc: 'Sezon sistemi açılınca satışa çıkacak.' },
 ];
 export const MALL = new Map(MALL_ITEMS.map((m) => [m.id, m] as const));
-/** Evcil hayvanlar (sıra kozmetik kodudur: 1 kuş, 2 maymun, 3 köpek, 4 yeşil tilki). Tilki kalıcıdır (ön kayıt ödülü). */
+/** Evcil hayvanlar (sıra kozmetik kodudur: 1 kuş, 2 maymun, 3 köpek, 4 yeşil tilki). Tilki ön kayıt ödülü: 3 gün. */
 export const PET_KEYS = ['pet_bird', 'pet_monkey', 'pet_dog', 'pet_fox'] as const;
-/** Kalıcı tilki çağrılınca etkinin bitiş zamanı (pratikte süresiz) */
-export const PET_FOX_FOREVER = 4_102_444_800_000; // 2100-01-01
+/** Ön kayıt tilkisinin süresi (sandık açılınca başlar; dinlenirken de işler) */
+export const PET_FOX_MS = 3 * 86_400_000;
 export const AUTO_POOL: Record<string, number> = { auto_potion: 1_000_000, auto_potion_big: 10_000_000 };
 export const CP_COUPON: Record<string, number> = { cp_100: 100, cp_200: 200, cp_500: 500 };
 export const SUPPORT_PACK = ['xp_ring', 'loot_charm', 'crimson_wings'];

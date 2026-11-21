@@ -112,6 +112,8 @@ export interface UiState {
   ping: number; fps: number;
   confirmTravel: { map: string; text: string } | null;
   modal: { title: string; lines: string[] } | null;
+  /** bot doğrulaması (saatlik): sunucunun çizdiği kod görseli */
+  botCheck: { id: string; svg: string; until: number; tries: number; max: number } | null;
   upgradeResult: { ok: boolean; before: number; after: number; chance: number } | null;
   transformResult: { ok: boolean; item: string; at: number } | null;
   evolveResult: { item: string; evo: number; at: number } | null;
@@ -156,7 +158,7 @@ function loadSettings(): UiState['settings'] {
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
-  ping: 0, fps: 0, confirmTravel: null, modal: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, garden: null, storage: null, gather: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
+  ping: 0, fps: 0, confirmTravel: null, modal: null, botCheck: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, garden: null, storage: null, gather: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();

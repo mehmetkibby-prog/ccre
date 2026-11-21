@@ -11,10 +11,11 @@ import type { AdminGive } from './types.ts';
  */
 export interface RankRow { charId: number; name: string; cls: string; level: number; kills: number }
 const STAFF = new Set(['gm', 'admin', 'owner']);
-export interface RankHost { give(charId: number, g: AdminGive): void; announce(text: string): void; onlineIds(): Set<number> }
+export interface RankHost { give(charId: number, g: AdminGive): void; announce(text: string): void; onlineIds(): Set<number>; liveKills?(): Map<number, { charId: number; name: string; cls: string; level: number; k: string; n: number }> }
 
 export class Rankings {
   private cache: { at: number; level: RankRow[]; kills: RankRow[]; key: string } | null = null;
+  private killsAt = 0;
   constructor(private store: CharacterStore, private host: RankHost) {}
 
   private async query(key: string, prev = false): Promise<RankRow[]> {
@@ -39,11 +40,20 @@ export class Rankings {
       const n = rk ? (rk.k === key ? rk.n : prev && rk.prev?.k === key ? rk.prev.n : 0) : 0;
       if (n > 0) rows.push({ charId: c.id, name: c.name, cls: c.cls, level: c.level, kills: n });
     }
+    // kanallardan anında gelen av sayıları (kayıt beklemeden): en güncel değer
+    for (const lk of this.host.liveKills?.().values() ?? []) {
+      if (lk.k !== key) continue;
+      const row = rows.find((r) => r.charId === lk.charId);
+      if (row) { row.kills = Math.max(row.kills, lk.n); row.level = Math.max(row.level, lk.level); }
+      else rows.push({ charId: lk.charId, name: lk.name, cls: lk.cls, level: lk.level, kills: lk.n });
+    }
     return rows.filter((x) => x.kills > 0).sort((a, b) => b.kills - a.kills || b.level - a.level).slice(0, 10);
   }
 
   async get(): Promise<{ level: RankRow[]; kills: RankRow[]; period: { key: string; end: number; kind: string }; rewards: { cp: number; gems: number }[] }> {
     const now = Date.now(), per = trPeriod(now, TUNING.killRank.period);
+    // av sıralaması 3 sn'de bir tazelenir (anlık); seviye sıralaması 20 sn önbellekte
+    if (this.cache && this.cache.key === per.key && now - this.cache.at <= 20_000 && now - (this.killsAt ?? 0) > 3_000) { this.cache.kills = await this.query(per.key); this.killsAt = now; }
     if (!this.cache || now - this.cache.at > 20_000 || this.cache.key !== per.key) {
       const lv = await pool.query(
         `SELECT c.id, c.name, c.cls, c.level, c.kills, c.xp FROM characters c JOIN accounts a ON a.id=c.account_id
@@ -57,7 +67,7 @@ export class Rankings {
         else level.push({ charId: c.id, name: c.name, cls: c.cls, level: c.level, kills: c.kills, xp: c.xp });
       }
       level.sort((a, b) => b.level - a.level || b.xp - a.xp); level.length = Math.min(level.length, 10);
-      this.cache = { at: now, level, kills: await this.query(per.key), key: per.key };
+      this.cache = { at: now, level, kills: await this.query(per.key), key: per.key }; this.killsAt = now;
     }
     return { level: this.cache.level, kills: this.cache.kills, period: { key: per.key, end: per.end, kind: TUNING.killRank.period }, rewards: TUNING.killRank.rewards.slice(0, 3) };
   }
@@ -81,6 +91,7 @@ export class Rankings {
       const parts = [rw.cp ? `${rw.cp} ÇP` : '', rw.gems ? `${rw.gems.toLocaleString('tr-TR')} Mücevher` : ''].filter(Boolean).join(' + ');
       lines.push(`${i + 1}. ${row.name} (${row.kills.toLocaleString('tr-TR')} av)${parts ? ' → ' + parts : ''}`);
     });
+    const lk = this.host.liveKills?.(); if (lk) for (const [id, v] of lk) if (v.k !== cur.key) lk.delete(id); // eski dönemin anlık sayıları
     await pool.query(`INSERT INTO audit_log(actor_account, action, detail) VALUES (NULL,'killrank.reward',$1)`, [JSON.stringify({ period: last, top: top.slice(0, rewards.length) })]).catch(() => {});
     if (lines.length) this.host.announce(`Canavar Avcıları sıralaması sona erdi! ${lines.join(' · ')}`);
     this.cache = null;

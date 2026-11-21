@@ -144,6 +144,8 @@ export type ClientCmd =
   | { t: 'upgrade'; item: string; expectPlus: number; mastery: boolean; req: string }
   | { t: 'transform'; item: string; req: string }
   | { t: 'auto'; on: boolean }
+  /** bot doğrulaması: kodu gönder ya da yeni kod iste */
+  | { t: 'botcheck'; id?: string; a?: string; renew?: boolean }
   | { t: 'social'; op: 'invite' | 'answer'; kind: 'party' | 'trade' | 'duel' | 'friend'; target?: number; from?: number; accept?: boolean }
   | { t: 'party'; op: 'leave' | 'kick'; target?: number }
   | { t: 'trade'; op: 'set' | 'lock' | 'confirm' | 'cancel'; items?: string[]; gems?: number }

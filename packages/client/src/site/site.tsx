@@ -114,7 +114,7 @@ export function RewardSection({ onCta, open }: { onCta: () => void; open: boolea
         <div className="rw-items">
           <div className="rw-item fox">
             <img src="/site/green_fox.png" alt="Yeşil Tilki" width={170} height={170} />
-            <div><span className="tag">Kalıcı pet</span><b>Yeşil Tilki</b><p>Zümrüt tüylü, sadık yol arkadaşın. Yanında yürür, sen durunca oturup etrafı kollar.</p>
+            <div><span className="tag">3 günlük pet</span><b>Yeşil Tilki</b><p>Zümrüt tüylü, sadık yol arkadaşın.</p>
               <div className="rw-stats"><span>+{PREREG_REWARD.petAtk} Saldırı</span><span>+{PREREG_REWARD.petHp} Can</span></div></div>
           </div>
           <div className="rw-item gem">

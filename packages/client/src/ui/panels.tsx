@@ -37,6 +37,29 @@ export function Panel({ title, children, width }: { title: string; children: Rea
   );
 }
 
+/** Saatlik bot doğrulaması: kod girilene dek savaş ve oto av kilitli; süre dolarsa oyundan çıkılır. */
+function BotCheck({ game }: { game: Game }) {
+  const bc = useStore((s) => s.botCheck);
+  const [a, setA] = React.useState('');
+  const [, tick] = React.useState(0);
+  React.useEffect(() => { if (!bc) return; setA(''); const id = setInterval(() => tick((n) => n + 1), 1000); return () => clearInterval(id); }, [bc?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (!bc) return null;
+  const left = Math.max(0, Math.ceil((bc.until - Date.now()) / 1000));
+  const send = (e: React.FormEvent) => { e.preventDefault(); if (a.trim()) game.send({ t: 'botcheck', id: bc.id, a: a.trim() }); };
+  return (
+    <div className="botcheck-back">
+      <form className="botcheck" onSubmit={send}>
+        <div className="bc-title">Doğrulama</div>
+        <p>Bot kullanımını önlemek için arada bir bu kodu soruyoruz. Kodu girene kadar saldırı ve oto av durur.</p>
+        <div className="bc-cap"><span dangerouslySetInnerHTML={{ __html: bc.svg }} /><button type="button" onClick={() => game.send({ t: 'botcheck', renew: true })} title="Yeni kod">↻</button></div>
+        <input autoFocus value={a} maxLength={8} spellCheck={false} autoComplete="off" autoCapitalize="characters" placeholder="Resimdeki kod" onChange={(e) => setA(e.target.value.toUpperCase())} onKeyDown={(e) => e.stopPropagation()} />
+        <button className="btn green" disabled={!a.trim()}>Onayla</button>
+        <small>{Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')} kaldı · {bc.max - bc.tries} hak</small>
+      </form>
+    </div>
+  );
+}
+
 export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?: boolean) => void }) {
   const p = useStore((s) => s.panel);
   const ct = useStore((s) => s.confirmTravel);
@@ -45,6 +68,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
   void onExit;
   return (
     <>
+      <BotCheck game={game} />
       {p === 'inventory' && <Inventory game={game} />}
       {p === 'character' && <Character game={game} />}
       {p === 'skills' && <Skills game={game} />}

@@ -3,6 +3,7 @@ process.env.DATABASE_URL = 'postgres://col:col_dev_pw@127.0.0.1:5432/coreoflife_
 const { pool } = await import('../packages/server/src/db/pool.ts');
 const { migrate } = await import('../packages/server/src/db/migrate.ts');
 const { buildApi } = await import('../packages/server/src/api.ts');
+const { captchaAnswerForTest } = await import('../packages/server/src/captcha.ts');
 const { World } = await import('../packages/server/src/worker/world.ts');
 const { getLayout, applyTuning, DEFAULT_TUNING, charBuffs, cosmeticByte, petCode, PREREG_REWARD } = await import('@col/shared');
 
@@ -16,6 +17,8 @@ const call = async (method: string, path: string, body: any = {}, token?: string
   const req: any = { method, path, query: new URLSearchParams(query), headers: {}, ip: '10.0.0.' + Math.floor(Math.random() * 250), body, cookies: token ? { col_session: token } : {}, raw: {} };
   try { return { ok: true, v: await route.h(req, res) as any }; } catch (e: any) { return { ok: false, status: e.status, msg: e.message }; }
 };
+/** kayıt: doğrulama kodunu alıp doğru yanıtla gönderir */
+const reg = async (body: any) => { const c = await call('GET', '/api/captcha'); return call('POST', '/api/register', { ...body, captchaId: c.v.id, captcha: captchaAnswerForTest(c.v.id) }); };
 const uniq = () => Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36);
 
 beforeAll(async () => { await migrate(); api = buildApi(deps); });
@@ -23,26 +26,26 @@ afterAll(async () => { await pool.end(); });
 
 it('Kayıt: e-posta zorunlu ve tekil; oyun açılmadan açılan hesap ön kayıtlı', async () => {
   const u = 'pr' + uniq(), em = u + '@ornek.com';
-  expect((await call('POST', '/api/register', { username: u, password: 'parola123', password2: 'parola123' })).status).toBe(400);
-  expect((await call('POST', '/api/register', { username: u, password: 'parola123', password2: 'parola123', email: 'bozuk' })).status).toBe(400);
-  const r = await call('POST', '/api/register', { username: u, password: 'parola123', password2: 'parola123', email: em.toUpperCase(), accept: true });
+  expect((await reg({ username: u, password: 'parola123', password2: 'parola123' })).status).toBe(400);
+  expect((await reg({ username: u, password: 'parola123', password2: 'parola123', email: 'bozuk' })).status).toBe(400);
+  const r = await reg({ username: u, password: 'parola123', password2: 'parola123', email: em.toUpperCase(), accept: true });
   expect(r.ok).toBe(true);
   const row = (await pool.query('SELECT prereg, email FROM accounts WHERE username_norm=$1', [u])).rows[0];
   expect(row.prereg).toBe(true); expect(row.email).toBe(em);
   // aynı e-posta başka kullanıcı adıyla
-  const dup = await call('POST', '/api/register', { username: u + 'x', password: 'parola123', password2: 'parola123', email: em, accept: true });
+  const dup = await reg({ username: u + 'x', password: 'parola123', password2: 'parola123', email: em, accept: true });
   expect(dup.status).toBe(409);
   // oyun açıldıktan sonra açılan hesap ön kayıtlı değil
   opening.state.mode = 'open';
   const u2 = 'pr' + uniq();
-  await call('POST', '/api/register', { username: u2, password: 'parola123', password2: 'parola123', email: u2 + '@ornek.com', accept: true });
+  await reg({ username: u2, password: 'parola123', password2: 'parola123', email: u2 + '@ornek.com', accept: true });
   expect((await pool.query('SELECT prereg FROM accounts WHERE username_norm=$1', [u2])).rows[0].prereg).toBe(false);
   opening.state.mode = 'closed';
 });
 
-it('Ön Kayıt Sandığı hesap başına bir kez gelir; açınca 15 Mücevher + kalıcı Yeşil Tilki (+10 saldırı, +200 can)', async () => {
+it('Ön Kayıt Sandığı hesap başına bir kez gelir; açınca 15 Mücevher + 3 günlük Yeşil Tilki (+10 saldırı, +200 can)', async () => {
   const u = 'ps' + uniq();
-  const { v } = await call('POST', '/api/register', { username: u, password: 'parola123', password2: 'parola123', email: u + '@ornek.com', accept: true });
+  const { v } = await reg({ username: u, password: 'parola123', password2: 'parola123', email: u + '@ornek.com', accept: true });
   const c1 = await call('POST', '/api/characters', { name: 'On' + uniq().slice(-6), cls: 'guardian' }, v.token);
   const c2 = await call('POST', '/api/characters', { name: 'Ik' + uniq().slice(-6), cls: 'hunter' }, v.token);
   expect(c1.ok && c2.ok).toBe(true);
@@ -52,7 +55,7 @@ it('Ön Kayıt Sandığı hesap başına bir kez gelir; açınca 15 Mücevher + 
   // ön kayıtlı olmayan hesaba gelmez
   opening.state.mode = 'open';
   const u3 = 'pn' + uniq();
-  const r3 = await call('POST', '/api/register', { username: u3, password: 'parola123', password2: 'parola123', email: u3 + '@ornek.com', accept: true });
+  const r3 = await reg({ username: u3, password: 'parola123', password2: 'parola123', email: u3 + '@ornek.com', accept: true });
   const c3 = await call('POST', '/api/characters', { name: 'Yo' + uniq().slice(-6), cls: 'arcanist' }, r3.v.token);
   expect(await q(c3.v.id)).toBe(0);
   opening.state.mode = 'closed';
@@ -87,7 +90,7 @@ it('Ön Kayıt Sandığı hesap başına bir kez gelir; açınca 15 Mücevher + 
 it('Forum: oyuncu duyuru açamaz; genel bölümde konu/yanıt; kilit, sabitleme ve silme yönetimde', async () => {
   const mk = async (role = 'player') => {
     const u = 'fo' + uniq();
-    const r = await call('POST', '/api/register', { username: u, password: 'parola123', password2: 'parola123', email: u + '@ornek.com', accept: true });
+    const r = await reg({ username: u, password: 'parola123', password2: 'parola123', email: u + '@ornek.com', accept: true });
     if (role !== 'player') await pool.query('UPDATE accounts SET role=$2 WHERE username_norm=$1', [u, role]);
     return { name: u, token: r.v.token as string };
   };
@@ -126,4 +129,22 @@ it('Forum: oyuncu duyuru açamaz; genel bölümde konu/yanıt; kilit, sabitleme 
   expect((await call('GET', '/api/forum/topic', {}, pl.token, 'id=' + t.v.id)).status).toBe(404);
   const cats = await call('GET', '/api/forum/cats');
   expect(cats.v.cats.find((c: any) => c.id === 'duyurular').staffOnly).toBe(true);
+});
+
+it('Kayıt doğrulama kodu: yanlış, tekrar kullanılan ve tuzak alanlı istek reddedilir; kod SVG metninde yazmaz', async () => {
+  const u = 'cp' + uniq();
+  const base = { username: u, password: 'parola123', password2: 'parola123', email: u + '@ornek.com', accept: true };
+  const c = await call('GET', '/api/captcha');
+  const ans = captchaAnswerForTest(c.v.id)!;
+  expect(ans).toMatch(/^[A-Z0-9]{5}$/);
+  expect(c.v.svg).toContain('<svg'); expect(c.v.svg).not.toContain(ans); expect(c.v.svg).not.toContain('<text');
+  expect((await call('POST', '/api/register', { ...base })).status).toBe(400);
+  expect((await call('POST', '/api/register', { ...base, captchaId: c.v.id, captcha: 'XXXXX' })).status).toBe(400);
+  // yanlış denemeden sonra aynı kod geçersiz
+  expect((await call('POST', '/api/register', { ...base, captchaId: c.v.id, captcha: ans })).status).toBe(400);
+  const c2 = await call('GET', '/api/captcha');
+  expect((await call('POST', '/api/register', { ...base, website: 'x', captchaId: c2.v.id, captcha: captchaAnswerForTest(c2.v.id) })).status).toBe(400);
+  const c3 = await call('GET', '/api/captcha');
+  const ok = await call('POST', '/api/register', { ...base, captchaId: c3.v.id, captcha: captchaAnswerForTest(c3.v.id)!.toLowerCase() });
+  expect(ok.ok).toBe(true); expect(ok.v.prereg).toBe(true);
 });

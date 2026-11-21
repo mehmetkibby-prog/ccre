@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_FOREVER, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_MS, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal, skillHealPct,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
@@ -13,6 +13,7 @@ import type { CharState, FromWorker, WorkerStats, MarketState, MarketStall, Stal
 import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
+import { newCaptcha, checkCaptcha } from '../captcha.ts';
 import { findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, POTIONS, HERBS, type PotionKey } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
 import { Forge } from './forge.ts';
@@ -29,6 +30,10 @@ const MELEE_TOLERANCE = 30;
 const NPC_RANGE = 260;
 const RECEIPT_KEEP = 64;
 
+const STAFF_ROLES = new Set(['gm', 'admin', 'owner']);
+/** Bot doğrulaması: 50–70 dakikada bir (rastgele), cevap için 5 dk; beklerken savaş, oto av, toplama kilitli. */
+const BOT_EVERY_MS = 60 * 60_000, BOT_JITTER_MS = 10 * 60_000, BOT_GRACE_MS = 5 * 60_000, BOT_MAX_TRIES = 5;
+const BOT_BLOCK = new Set(['attack', 'skill', 'auto', 'pickup', 'fish_cast', 'fish_end', 'garden', 'stall_open']);
 export interface WorldOptions { channel: number; aoiMaxPlayers: number; saveIntervalMs: number; post: (m: FromWorker, transfer?: ArrayBuffer[]) => void }
 
 /** Bir kanalın tüm bölgeleri. Tek thread, tek yazar: kanal içi her durum değişikliği burada sıralı işlenir. */
@@ -280,6 +285,8 @@ export class World {
   }
 
   private dispatch(p: Player, c: ClientCmd) {
+    if (c.t === 'botcheck') return this.cmdBotCheck(p, c);
+    if (p.botCheck && BOT_BLOCK.has(c.t)) { this.notice(p, 'Önce ekrandaki doğrulama kodunu gir.', 'error'); return this.sendBotCheck(p); }
     if (p.dead && !['respawn', 'chat', 'ping', 'sync', 'lock', 'autopotion', 'party', 'friends', 'trade', 'arena'].includes(c.t)) { this.reply(p, c, false, 'Ölüyken bu işlem yapılamaz.'); return; }
     switch (c.t) {
       case 'gm_reset': {
@@ -378,6 +385,43 @@ export class World {
   /** Etkin etkinlikler (saniyede bir hesaplanır): TP/eşya/Öz çarpanları ve Kristal Sandık şansı */
   private evNow: ActiveEvents = { xp: 1, drop: 1, essence: 1, chest: 0, list: [] };
   private evSeen = new Set<string>();
+  // ───────── bot doğrulaması ─────────
+  /** Saniyede bir: zamanı gelene doğrulama sor; süresi dolanı oyundan çıkar. Yönetim/GM muaf. */
+  private tickBotChecks() {
+    for (const p of this.bySid.values()) {
+      const c = p.char;
+      if (STAFF_ROLES.has(c.role)) continue;
+      if (p.botCheck) {
+        if (this.now > p.botCheck.until) { p.botCheck = null; this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu süresinde girilmedi. Tekrar giriş yapabilirsin.' }); }
+        continue;
+      }
+      c.misc.botNext ??= this.now + BOT_EVERY_MS + Math.random() * BOT_JITTER_MS - BOT_JITTER_MS / 2;
+      if (c.misc.botDue || this.now >= c.misc.botNext) this.issueBotCheck(p, 0);
+    }
+  }
+  private issueBotCheck(p: Player, tries: number) {
+    const cap = newCaptcha();
+    p.botCheck = { id: cap.id, until: p.botCheck?.until ?? this.now + BOT_GRACE_MS, tries };
+    p.char.misc.botDue = true; p.markSave(); // çıkıp girmek doğrulamayı atlatmaz
+    if (p.autoOn) { this.autoTick(p, this.now); p.autoOn = false; this.autoSend(p); }
+    this.sendJson(p, { t: 'botcheck', id: cap.id, svg: cap.svg, until: p.botCheck.until, tries, max: BOT_MAX_TRIES });
+  }
+  private sendBotCheck(p: Player) { if (p.botCheck) this.issueBotCheck(p, p.botCheck.tries); }
+  private cmdBotCheck(p: Player, c: { id?: string; a?: string; renew?: boolean }) {
+    if (!p.botCheck) return this.sendJson(p, { t: 'botcheck_ok' });
+    if (c.renew) return this.issueBotCheck(p, p.botCheck.tries);
+    if (c.id === p.botCheck.id && checkCaptcha(c.id, typeof c.a === 'string' ? c.a.slice(0, 12) : '')) {
+      p.botCheck = null; p.char.misc.botDue = false;
+      p.char.misc.botNext = this.now + BOT_EVERY_MS + Math.random() * BOT_JITTER_MS - BOT_JITTER_MS / 2;
+      p.markSave();
+      return this.sendJson(p, { t: 'botcheck_ok' });
+    }
+    const tries = p.botCheck.tries + 1;
+    if (tries >= BOT_MAX_TRIES) { p.botCheck = null; this.opt.post({ type: 'kick', sid: p.sid, text: 'Doğrulama kodu çok kez yanlış girildi.' }); return; }
+    this.notice(p, `Kod yanlış. ${BOT_MAX_TRIES - tries} hakkın kaldı.`, 'error');
+    this.issueBotCheck(p, tries);
+  }
+
   private tickEvents() {
     const ev = activeEvents(TUNING.events, this.now);
     const ids = new Set(ev.list.map((x) => x.e.id + ':' + x.end));
@@ -398,7 +442,7 @@ export class World {
     this.now = Date.now();
     this.tickNo++;
     this.pathBudget = 24; // bir tikte en çok bu kadar yol hesabı (kalabalıkta sunucu yorulmasın)
-    if (this.tickNo % Math.round(1000 / TICK_MS) === 0) { this.social.tick(); this.tickEvents(); } // saniyede bir: davet/ticaret/düello/grup, etkinlikler
+    if (this.tickNo % Math.round(1000 / TICK_MS) === 0) { this.social.tick(); this.tickEvents(); this.tickBotChecks(); } // saniyede bir: davet/ticaret/düello/grup, etkinlikler
     for (const z of this.zones.values()) {
       if (z.playerSet.size === 0 && z.respawnQueue.length === 0 && z.lootById.size === 0) continue;
       this.tickZone(z);
@@ -1044,6 +1088,7 @@ export class World {
     const rkc = c.misc.rankKills;
     if (!rkc || rkc.k !== rk) c.misc.rankKills = { k: rk, n: 0, ...(rkc ? { prev: { k: rkc.k, n: rkc.n } } : {}) };
     c.misc.rankKills!.n++;
+    if (!STAFF_ROLES.has(c.role)) this.opt.post({ type: 'rank_kill', charId: c.id, name: c.name, cls: c.cls, level: c.level, k: rk, n: c.misc.rankKills!.n }); // sıralama anında güncellensin
     // evrim sayacı: kuşanılmış silah ve zırh (çok düşük seviyeli canavar sayılmaz: yönetimde "seviye farkı")
     const gap = TUNING.evo.maxGap;
     if (!gap || m.level >= lvl0 - gap) {
@@ -1505,20 +1550,23 @@ export class World {
       ch.materials.pet_fox = Math.max(1, ch.materials.pet_fox ?? 0);
       // tilki hemen yanına gelir (başka bir pet etkin değilse)
       const b = (ch.misc.buffs ??= {});
-      if (!PET_KEYS.some((k) => k !== 'pet_fox' && (b[k] ?? 0) > this.now)) b.pet_fox = PET_FOX_FOREVER;
+      ch.misc.foxUntil = this.now + PET_FOX_MS; // 3 gün: sandık açılınca başlar
+      if (!PET_KEYS.some((k) => k !== 'pet_fox' && (b[k] ?? 0) > this.now)) b.pet_fox = ch.misc.foxUntil;
       p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; this.relook(p);
       p.selfDirty |= 1 | 2; this.save(p, true);
-      this.sendJson(p, { t: 'chestResult', title: 'Ön Kayıt Sandığı', rewards: ['Yeşil Tilki (kalıcı pet: +10 saldırı, +200 can)', `${PREREG_REWARD.gems} Mücevher`] });
+      this.sendJson(p, { t: 'chestResult', title: 'Ön Kayıt Sandığı', rewards: ['Yeşil Tilki (3 gün: +10 saldırı, +200 can)', `${PREREG_REWARD.gems} Mücevher`] });
       return;
     }
     if (key === 'pet_fox') {
-      // kalıcı tilki: çağır / dinlenmeye gönder (sandıktan bir kez gelir, tükenmez)
+      // ön kayıt tilkisi: çağır / dinlenmeye gönder; 3 günlük süre dolunca çantadan kalkar
+      const until = ch.misc.foxUntil ?? 0;
+      if (until <= this.now) { delete ch.materials.pet_fox; delete (ch.misc.buffs ?? {}).pet_fox; p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 2; this.save(p, true); this.relook(p); return this.notice(p, 'Yeşil Tilki\'nin süresi doldu.', 'info'); }
       const b = (ch.misc.buffs ??= {});
       if ((b.pet_fox ?? 0) > this.now) { delete b.pet_fox; this.notice(p, 'Yeşil Tilki dinlenmeye gitti.', 'info'); }
       else {
         const other = PET_KEYS.find((k) => k !== 'pet_fox' && (b[k] ?? 0) > this.now);
         if (other) return this.notice(p, 'Başka bir pet yanında; süresi bitince tilkiyi çağırabilirsin.');
-        b.pet_fox = PET_FOX_FOREVER; this.notice(p, 'Yeşil Tilki yanında: +10 saldırı, +200 can.', 'ok');
+        b.pet_fox = until; this.notice(p, 'Yeşil Tilki yanında: +10 saldırı, +200 can.', 'ok');
       }
       p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 2; this.save(p, true);
       this.relook(p); // çevredekiler tilkiyi hemen görsün
