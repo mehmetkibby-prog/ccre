@@ -2365,3 +2365,12 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
 .rp-empty { color: #c8a89a; font-size: 11.5px; line-height: 1.4; }
 .rp-me { margin-top: 5px; padding-top: 4px; border-top: 1px solid rgba(255, 120, 120, .25); color: #c8a89a; font-size: 11px; } .rp-me b { color: #fff; }
 @media (pointer: coarse) { .ring-panel { width: 150px; font-size: 11px; left: 4px; } }
+
+/* ═══════════ dar dikey telefon: üst düğmeler iki sıra (sol üstte, oyuncu kartının altında), dünya sağlığı ve menü
+   ızgarası onların altında; hiçbir düğme ekrandan taşmaz ═══════════ */
+@media (pointer: coarse) and (max-width: 560px) and (min-height: 600px) {
+  .tr-btns { top: calc(122px + env(safe-area-inset-top, 0px)); left: calc(6px + env(safe-area-inset-left, 0px)); right: auto; max-width: calc(100vw - 118px); flex-wrap: wrap; justify-content: flex-start; row-gap: 5px; }
+  .topbar { top: calc(266px + env(safe-area-inset-top, 0px)); }
+  .toasts, .lootfeed { top: 310px; }
+  .menu.mopen { right: auto; left: 50%; transform: translateX(-50%); top: calc(222px + env(safe-area-inset-top, 0px)); grid-template-columns: repeat(4, minmax(0, 62px)); max-width: calc(100vw - 16px); }
+}

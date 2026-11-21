@@ -203,7 +203,7 @@
 /* oyun penceresi: rehber geniş, düğme etkinken parlar */
 .guide-btn.on { box-shadow: inset 0 0 0 1px #ffd25a, 0 0 14px rgba(255, 200, 80, .45), 0 6px 14px rgba(0, 0, 0, .45); }
 /* dar dikey telefonda üst sıra sığmıyor: Rehber orada Menü'de (tabletlerde ve yatay telefonda üst sırada da) */
-@media (pointer: coarse) and (max-width: 560px) and (min-height: 600px) { .tr-btns .guide-btn { display: none; } }
+/* dar dikey telefonda üst sıra iki satıra sarılır: Rehber düğmesi de sığar */
 
 /* telefon / dar ekran */
 @media (max-width: 560px) {
