@@ -2,7 +2,17 @@
 .cs-root { --cc: #e2b250; --cg: rgba(226, 178, 80, .5); position: fixed; inset: 0; z-index: 2; display: grid; grid-template-rows: auto auto 1fr auto; color: var(--text); overflow: hidden;
   background: radial-gradient(ellipse 60% 55% at 50% 58%, color-mix(in srgb, var(--cc) 10%, transparent), transparent 70%), radial-gradient(ellipse at 50% 120%, rgba(0, 0, 0, .2), rgba(6, 4, 2, .78) 70%); }
 .cs-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at center, transparent 45%, rgba(4, 2, 1, .7)); }
-.cs-root::before { content: ''; position: absolute; inset: -20px; z-index: -1; background: url(/poster/arena.jpg) center / cover no-repeat; filter: blur(14px) brightness(.32) saturate(.8); }
+/* arka plan: alacakaranlıkta Pazar Köyü (yılbaşı ağacı, ışıklı evler); yavaşça yaklaşan kamera, yağan kar, sıcak ışık */
+.cs-root::before { content: ''; position: absolute; inset: -3%; z-index: -1; background: #120b06 url(/poster/charsel.jpg) 34% 50% / cover no-repeat; filter: brightness(.6) saturate(1.08) blur(1px); transform-origin: 34% 42%; animation: cs-kb 46s ease-in-out infinite alternate; will-change: transform; }
+@keyframes cs-kb { from { transform: scale(1.04); } to { transform: scale(1.14) translate(-1.2%, -.8%); } }
+.cs-glow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 34% 40% at 31% 46%, rgba(255, 186, 96, .2), transparent 70%), linear-gradient(180deg, rgba(10, 6, 3, .55), transparent 28%, transparent 62%, rgba(8, 5, 2, .75)); animation: cs-glow 5.5s ease-in-out infinite alternate; }
+@keyframes cs-glow { from { opacity: .8; } to { opacity: 1; } }
+.cs-snow, .cs-snow::after { position: absolute; inset: 0; pointer-events: none; background-repeat: repeat; }
+.cs-snow { opacity: .6; background-image: radial-gradient(1.6px 1.6px at 24px 36px, #fff, transparent 70%), radial-gradient(1.2px 1.2px at 140px 92px, #fff, transparent 70%), radial-gradient(2px 2px at 82px 170px, rgba(255, 255, 255, .9), transparent 70%), radial-gradient(1.3px 1.3px at 200px 214px, #fff, transparent 70%), radial-gradient(1.8px 1.8px at 176px 20px, rgba(255, 240, 210, .9), transparent 70%); background-size: 240px 240px; animation: cs-snow1 16s linear infinite; }
+.cs-snow::after { content: ''; opacity: .7; filter: blur(.8px); background-image: radial-gradient(2.6px 2.6px at 60px 60px, rgba(255, 255, 255, .85), transparent 70%), radial-gradient(2.2px 2.2px at 250px 190px, rgba(255, 250, 235, .8), transparent 70%), radial-gradient(3px 3px at 150px 300px, rgba(255, 255, 255, .7), transparent 70%); background-size: 360px 360px; animation: cs-snow2 24s linear infinite; }
+@keyframes cs-snow1 { to { background-position: 60px 240px; } }
+@keyframes cs-snow2 { to { background-position: -90px 360px; } }
+@media (prefers-reduced-motion: reduce) { .cs-root::before, .cs-snow, .cs-snow::after, .cs-glow { animation: none; } }
 .cs-top { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 24px 4px; }
 .cs-brand b { display: block; font: 400 26px var(--f-title); letter-spacing: 3px; color: #fff1cf; text-shadow: 0 0 18px var(--cg); }
 .cs-brand small { color: var(--muted); letter-spacing: 1.5px; font-size: 12px; text-transform: uppercase; }
@@ -94,6 +104,8 @@
   .cs-seal { width: 180px; }
 }
 @media (max-width: 820px) {
+  /* sayfa kayınca manzara, kar ve ışık yerinde kalsın */
+  .cs-root::before, .cs-glow, .cs-snow, .cs-vignette { position: fixed; }
   .cs-root { display: block; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .cs-top { padding: 12px 14px 0; } .cs-brand b { font-size: 21px; }
   .cs-stage { grid-template-columns: minmax(0, 1fr); padding: 0 12px; gap: 10px; }

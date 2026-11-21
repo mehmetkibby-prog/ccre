@@ -90,6 +90,8 @@ export function CharSelect({ me, onPlay, onReload, onLogout, error, Preview, ext
   const slots = useMemo(() => Array.from({ length: MAX_CHARS }, (_, i) => chars[i] ?? null), [chars]);
   return (
     <div className="cs-root" style={{ '--cc': K.color, '--cg': K.glow } as React.CSSProperties}>
+      <div className="cs-glow" />
+      <div className="cs-snow" />
       <div className="cs-vignette" />
       <header className="cs-top">
         <div className="cs-brand"><b>Öz Sunağı</b><small>{creating ? 'Yeni bir kahraman uyandır' : 'Kahramanını seç'}</small></div>
