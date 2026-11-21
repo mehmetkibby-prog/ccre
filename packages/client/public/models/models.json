@@ -326,7 +326,8 @@
     "attackClips": [
       "Attack Slash",
       "Cast Ground Slam"
-    ]
+    ],
+    "held": "b_fox_saber"
   },
   "tree_oak": {
     "url": "tree_oak.glb",
@@ -476,7 +477,8 @@
     },
     "attackClips": [
       "Attack Slash"
-    ]
+    ],
+    "held": "b_reaper_scythe"
   },
   "t_executioner": {
     "url": "t_executioner.glb",
@@ -581,7 +583,8 @@
     },
     "attackClips": [
       "Attack Slash"
-    ]
+    ],
+    "held": "b_forge_maul"
   },
   "crystal_chest": {
     "url": "crystal_chest.glb",
@@ -607,7 +610,8 @@
     },
     "attackClips": [
       "Attack Slash"
-    ]
+    ],
+    "held": "b_rune_axe"
   },
   "k_gargoyle": {
     "url": "t_gargoyle.glb",
@@ -706,6 +710,22 @@
   },
   "shipwreck": {
     "url": "shipwreck.glb",
+    "scale": 1
+  },
+  "w_boss_fox": {
+    "url": "w_boss_fox.glb",
+    "scale": 1
+  },
+  "w_boss_scythe": {
+    "url": "w_boss_scythe.glb",
+    "scale": 1
+  },
+  "w_boss_axe": {
+    "url": "w_boss_axe.glb",
+    "scale": 1
+  },
+  "w_boss_maul": {
+    "url": "w_boss_maul.glb",
     "scale": 1
   }
 }

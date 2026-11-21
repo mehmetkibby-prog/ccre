@@ -126,7 +126,7 @@ const PATTERNS: [HState | 'run', RegExp][] = [
  * Kor Kulesi canavarları: dokudaki turuncu-kızıl lav çatlakları kendi ışığıyla yanar ve yavaşça nabız atar
  * (kara cüruf ve pas parlamaz). Malzeme modelin bütün kopyalarınca paylaşılır; karede CPU işi yok.
  */
-const LAVA_GLOW = new Set(['f_slag', 'f_boss']);
+const LAVA_GLOW = new Set(['f_slag', 'f_boss', 'w_boss_axe', 'w_boss_maul']); // boss silahlarındaki kor çatlakları da
 function lavaGlow(m: THREE.MeshStandardMaterial) {
   m.onBeforeCompile = (sh) => {
     sh.uniforms.uLavaT = shared.time;
@@ -157,6 +157,19 @@ export function runeGlow(m: THREE.MeshStandardMaterial, strength = 2.4) {
   m.needsUpdate = true;
 }
 
+/** Azrail'in tırpanı: kara çelikteki kızıl ağız ve damarlar kendi ışığıyla yanar (yalnız doygun kırmızı). */
+const CRIMSON_GLOW = new Set(['w_boss_scythe']);
+function crimsonGlow(m: THREE.MeshStandardMaterial) {
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uCrimT = shared.time;
+    sh.fragmentShader = 'uniform float uCrimT;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      float crim = smoothstep(0.18, 0.45, diffuseColor.r - max(diffuseColor.g, diffuseColor.b)) * smoothstep(0.2, 0.45, diffuseColor.r);
+      totalEmissiveRadiance += vec3(1.0, 0.12, 0.1) * crim * (2.2 + 0.8 * sin(uCrimT * 2.0 + vViewPosition.y * 2.5));`);
+  };
+  m.customProgramCacheKey = () => 'crimson-glow';
+  m.needsUpdate = true;
+}
+
 function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   const scene = gltf.scene;
   scene.traverse((o) => {
@@ -164,7 +177,7 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
     if (m.isMesh) {
       m.castShadow = true; m.receiveShadow = true;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
-      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; if (LAVA_GLOW.has(id)) lavaGlow(s); if (RUNE_GLOW.has(id)) runeGlow(s); }
+      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; if (LAVA_GLOW.has(id)) lavaGlow(s); if (RUNE_GLOW.has(id)) runeGlow(s); if (CRIMSON_GLOW.has(id)) crimsonGlow(s); }
     }
   });
   // ölçek: hedef boy (m), ayaklar y=0

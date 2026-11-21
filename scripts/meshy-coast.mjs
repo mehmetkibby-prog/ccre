@@ -1,5 +1,5 @@
 /**
- * Rün Sahili (Sv. 50) Meshy varlıkları: Rün Golemi, Boğulmuş Akıncı, Rün Sireni (iki ayaklı, Meshy iskeleti) ve tek
+ * Rün Sahili (Sv. 50) Meshy varlıkları (ve boss silahları, boss_weapons): Rün Golemi, Boğulmuş Akıncı, Rün Sireni (iki ayaklı, Meshy iskeleti) ve tek
  * görselden tek 3B üretimle çıkan sahil seti (menhir + Gelgit Yengeci + batık gemi; scripts/split-coast.mjs ile ayrılır).
  * Kredi tasarrufu: kütüphane animasyonu satın alınmaz. Meshy iskeletleri aynı 24 kemiği aynı adlarla kullandığından
  * bekleme/saldırı/ölüm klipleri önceki Meshy canavarlarının ham kliplerinden (assets-src/characters/<kaynak>/) alınır,
@@ -56,6 +56,11 @@ const JOBS = {
   coast_ship: {
     aspect: '16:9',
     prompt: 'A single old wrecked wooden sailing ship, the broken dark weathered wooden hull lying tilted on its side and half buried in a low wide mound of pale beach sand, the stern broken open with exposed curved wooden hull ribs and missing planks, a snapped thick mast stump with a torn grey-white sail draped over the deck, a few barnacles and strands of seaweed on the hull, no ropes, no rigging lines, side three-quarter view from slightly above, the whole wreck fully visible, stylized semi-realistic hand-painted fantasy MMORPG game asset, highly detailed weathered wood, isolated on plain light grey studio background, no water, no sky, no text, no frame',
+  },
+  // boss silahları: dört silah tek görselde dik ve yan yana, tek 3B üretim; scripts/boss-weapons.mjs ayırıp ele hazırlar
+  boss_weapons: {
+    model: 'latest', polycount: 24000, aspect: '16:9',
+    prompt: 'Four separate fantasy MMORPG weapon game assets standing perfectly upright side by side in one row with wide empty space between them, none touching, each shown flat in pure side profile so its full silhouette is visible, handle at the bottom and blade or head at the top, isolated on one plain light grey studio background, no ground, no shadows. From left to right: 1) an elegant royal curved scimitar saber, polished golden-bronze blade with engraved fox motifs, ornate golden crossguard and a fox-head pommel with a small red silk tassel; 2) a huge dark reaper war scythe, a long black iron and bone haft with silver rings, a very large curved black steel blade at the top with a glowing crimson edge; 3) a colossal two-handed runic greataxe, a massive single-edged black iron cleaver head covered in glowing orange-red ember cracks and carved runes, a long thick dark haft wrapped in leather with iron bands and a spiked pommel; 4) a giant blacksmith forge war maul, a huge heavy dark iron block hammer head with molten glowing orange ember cracks and riveted bands, a long thick iron-banded handle. Stylized semi-realistic hand-painted fantasy MMORPG style, highly detailed materials, soft even lighting, no text, no frame',
   },
   // sahil seti: coast_set görselindeki menhir ve yengeç + coast_ship enkazı tek görselde (compose), tek 3B üretim
   coast_mix: { model: 'latest', polycount: 30000 },

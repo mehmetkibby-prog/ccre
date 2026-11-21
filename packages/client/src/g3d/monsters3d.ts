@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { at, cyl, lathe } from './geom.ts';
 import { fbm } from './textures.ts';
-import { model as loadModel, setHeldHook, type GlbChar } from './models.ts';
+import { model as loadModel, setHeldHook, onModelReady, type GlbChar } from './models.ts';
 import { equipGlb } from './gear.ts';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { templateFromPieces, instantiate, seg, sph, BONES, WORLD, animateHumanoid, type Piece, type BoneDef, type Rig, type HState, type HLook } from './humanoid.ts';
@@ -607,7 +607,36 @@ function heldPreset(id: string) {
   heldParts.set(id, parts);
   return parts;
 }
+/**
+ * Boss silahları: Meshy'de tek görselden tek üretimle çizilip scripts/boss-weapons.mjs ile ayrılan modeller (sap +Y,
+ * başlangıç tutuş yeri, boy metre). Kılıç tutuşuyla takılır: sap başparmak yönünde, namlu/baş düzlemi ön kol boyunca;
+ * roll sapın ekseni etrafında dönüş (ağız ve vuruş yüzü savuruş yönüne), y tutuş kayması. Model gelene kadar el boş kalır.
+ */
+const HELD_GLB: Record<string, { model: string; roll?: number; y?: number }> = {
+  b_fox_saber: { model: 'w_boss_fox', roll: Math.PI },        // Tilki Kral: altın-bronz pala
+  b_reaper_scythe: { model: 'w_boss_scythe', roll: Math.PI }, // Azrail: kızıl ağızlı kara tırpan
+  b_rune_axe: { model: 'w_boss_axe', roll: Math.PI },         // Kadim Yıkıcı: kor çatlaklı dev rünlü balta
+  b_forge_maul: { model: 'w_boss_maul' },                     // Karademir: kor başlı demirci gürzü
+};
 setHeldHook((glb: GlbChar, id: string) => {
+  const spec = HELD_GLB[id];
+  if (spec) {
+    equipGlb(glb, { weapon: 'sword' } as unknown as HLook, 0);
+    let held: THREE.Object3D | undefined;
+    glb.root.traverse((o) => { if (!held && o.name === 'held-weapon') held = o; });
+    if (!held) return;
+    for (const c of [...held.children]) held.remove(c);
+    const h = held;
+    const put = () => {
+      const L = loadModel(spec.model); if (!L) return false;
+      const w = L.scene.clone(true); // geometri ve malzeme paylaşılır
+      w.rotation.y = spec.roll ?? 0; w.position.y = spec.y ?? 0;
+      h.add(w);
+      return true;
+    };
+    if (!put()) { const off = onModelReady((mid) => { if (mid === spec.model) { put(); off(); } }); }
+    return;
+  }
   const parts = heldPreset(id);
   if (!parts.length) return;
   equipGlb(glb, { weapon: id === 'coral_staff' ? 'staff' : 'sword' } as unknown as HLook, 0);
