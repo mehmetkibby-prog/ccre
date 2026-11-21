@@ -1,3 +1,4 @@
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
@@ -1534,27 +1535,78 @@ function mergeSimple(list: THREE.BufferGeometry[]) {
   return m;
 }
 
-const STALL_CLOTH = ['#b8402c', '#2c6ab8', '#3a8a4a', '#c89a2a', '#8a3ab0', '#d06a2a'];
+const STALL_CLOTH = ['#b8402c', '#2c6ab8', '#3a8a4a', '#c89a2a', '#8a3ab0', '#d06a2a', '#1f8a8a', '#b83a6a'];
 const stallMats = new Map<string, THREE.Material>();
-const stallMat = (c: string, rough = 0.85) => { let m = stallMats.get(c); if (!m) { m = new THREE.MeshStandardMaterial({ color: c, roughness: rough }); stallMats.set(c, m); } return m; };
+const stallMat = (c: string, rough = 0.85, emissive = 0) => { const k = c + rough + emissive; let m = stallMats.get(k); if (!m) { m = new THREE.MeshStandardMaterial({ color: c, roughness: rough, emissive: emissive ? c : 0x000000, emissiveIntensity: emissive }); stallMats.set(k, m); } return m; };
+/**
+ * Oyuncu dükkânı: alçak ahşap platform, oymalı dört direk ve tepelerinde pirinç topuz, üçgen çatılı renkli tente ve
+ * dişli saçak, önde örtülü tezgâh (altın şerit), üstünde küpler, meyve sandığı ve kumaş topu, iki köşede fener,
+ * yanda fıçı ve çuvallar, önde desenli halı. Renk dükkân kimliğinden (her dükkân farklı); parçalar malzemeye göre
+ * birleştirilir (dükkân başına birkaç çizim çağrısı).
+ */
 function makeStall(id: string): THREE.Object3D {
   const g = new THREE.Group();
   let h = 0; for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  const wood = stallMat('#6a4424'), dark = stallMat('#4a2e18'), cloth = stallMat(STALL_CLOTH[h % STALL_CLOTH.length], 0.95), cloth2 = stallMat('#efe4c8', 0.95);
-  // dört direk
-  for (const [x, z] of [[-1.15, -0.95], [1.15, -0.95], [-1.15, 1.05], [1.15, 1.05]] as const) {
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 2.5, 6), dark); post.position.set(x, 1.25, z); g.add(post);
+  const main = STALL_CLOTH[h % STALL_CLOTH.length], alt = '#efe4c8';
+  const parts = new Map<THREE.Material, THREE.BufferGeometry[]>();
+  const add = (geo: THREE.BufferGeometry, m: THREE.Material, x: number, y: number, z: number, rx = 0, ry = 0, rz = 0) => {
+    geo.applyMatrix4(new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz)), new THREE.Vector3(1, 1, 1)));
+    for (const k of Object.keys(geo.attributes)) if (k !== 'position' && k !== 'normal' && k !== 'uv') geo.deleteAttribute(k);
+    const arr = parts.get(m) ?? []; arr.push(geo.index ? geo.toNonIndexed() : geo); parts.set(m, arr);
+  };
+  const wood = stallMat('#7a4e28'), dark = stallMat('#4a2e18'), brass = stallMat('#d8a840', 0.35), cloth = stallMat(main, 0.95), cloth2 = stallMat(alt, 0.95), lamp = stallMat('#ffb050', 0.4, 1.6);
+  // platform
+  add(new THREE.BoxGeometry(2.9, 0.12, 2.5), wood, 0, 0.06, 0.1);
+  for (const x of [-1.35, 1.35]) add(new THREE.BoxGeometry(0.12, 0.16, 2.5), dark, x, 0.08, 0.1);
+  // oymalı direkler + topuz
+  for (const [x, z] of [[-1.25, -0.95], [1.25, -0.95], [-1.25, 1.15], [1.25, 1.15]] as const) {
+    add(new THREE.CylinderGeometry(0.07, 0.085, 2.45, 8), dark, x, 1.32, z);
+    add(new THREE.CylinderGeometry(0.11, 0.11, 0.1, 8), brass, x, 0.2, z);
+    add(new THREE.CylinderGeometry(0.1, 0.1, 0.08, 8), brass, x, 1.0, z);
+    add(new THREE.SphereGeometry(0.11, 10, 8), brass, x, 2.62, z);
   }
-  // çizgili tente (öne eğik)
-  for (let i = 0; i < 6; i++) {
-    const strip = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.05, 2.35), i % 2 ? cloth2 : cloth);
-    strip.position.set(-1.05 + i * 0.42, 2.5, 0.05); strip.rotation.x = -0.16; g.add(strip);
+  // üçgen çatı tente: iki eğimli yüz, şeritli
+  const ridgeY = 3.05, eaveY = 2.35, halfW = 1.45, slope = Math.atan2(ridgeY - eaveY, halfW), len = Math.hypot(ridgeY - eaveY, halfW);
+  for (let i = 0; i < 7; i++) {
+    const z = -1.05 + i * (2.4 / 6);
+    for (const sd of [-1, 1]) add(new THREE.BoxGeometry(len, 0.04, 2.4 / 6 + 0.01), i % 2 ? cloth2 : cloth, sd * halfW / 2, (ridgeY + eaveY) / 2, z, 0, 0, sd * slope * -1);
   }
-  const valance = new THREE.Mesh(new THREE.BoxGeometry(2.55, 0.22, 0.04), cloth); valance.position.set(0, 2.3, 1.22); g.add(valance);
-  // tezgâh masası (satıcının önünde) ve üstünde birkaç kutu
-  const top = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.08, 0.62), wood); top.position.set(0, 0.92, 0.82); g.add(top);
-  const front = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.86, 0.06), dark); front.position.set(0, 0.47, 1.1); g.add(front);
-  for (let i = 0; i < 3; i++) { const b = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.24), stallMat(['#c8a050', '#8a6a3a', '#a85a3a'][i])); b.position.set(-0.6 + i * 0.6, 1.06, 0.8); b.rotation.y = (i - 1) * 0.3; g.add(b); }
-  g.traverse((o) => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
+  add(new THREE.CylinderGeometry(0.05, 0.05, 2.6, 6), dark, 0, ridgeY + 0.02, 0.05, Math.PI / 2, 0, 0);
+  // ön ve yan dişli saçak (üçgen bayraklar)
+  const tri = (w: number, hgt: number) => { const t = new THREE.BufferGeometry(); t.setAttribute('position', new THREE.Float32BufferAttribute([-w / 2, 0, 0, w / 2, 0, 0, 0, -hgt, 0, -w / 2, 0, 0, 0, -hgt, 0, w / 2, 0, 0], 3)); t.setAttribute('uv', new THREE.Float32BufferAttribute([0, 1, 1, 1, 0.5, 0, 0, 1, 0.5, 0, 1, 1], 2)); t.computeVertexNormals(); return t; };
+  for (let i = 0; i < 9; i++) add(tri(0.32, 0.26), i % 2 ? cloth2 : cloth, -1.28 + i * 0.32, eaveY, 1.3);
+  for (const sd of [-1, 1]) for (let i = 0; i < 7; i++) add(tri(0.32, 0.22), i % 2 ? cloth : cloth2, sd * 1.45, eaveY, -0.95 + i * 0.33, 0, Math.PI / 2, 0);
+  // tezgâh: örtülü ön, altın şerit, üst tahta
+  add(new THREE.BoxGeometry(2.3, 0.1, 0.7), wood, 0, 0.98, 0.82);
+  add(new THREE.BoxGeometry(2.36, 0.82, 0.04), cloth, 0, 0.55, 1.19);
+  add(new THREE.BoxGeometry(2.36, 0.06, 0.05), brass, 0, 0.86, 1.2);
+  for (let i = 0; i < 5; i++) add(new THREE.BoxGeometry(0.04, 0.7, 0.045), cloth2, -0.94 + i * 0.47, 0.5, 1.205);
+  // mallar: küpler, meyve sandığı, kumaş topu
+  const jar = (r: number, hh: number) => new THREE.LatheGeometry([new THREE.Vector2(0.001, 0), new THREE.Vector2(r * 0.7, 0), new THREE.Vector2(r, hh * 0.35), new THREE.Vector2(r * 0.85, hh * 0.75), new THREE.Vector2(r * 0.45, hh * 0.9), new THREE.Vector2(r * 0.55, hh)], 10);
+  add(jar(0.13, 0.36), stallMat('#b86a3a', 0.6), -0.78, 1.03, 0.78);
+  add(jar(0.1, 0.28), stallMat('#3a7ab8', 0.4), -0.5, 1.03, 0.9);
+  add(new THREE.BoxGeometry(0.5, 0.18, 0.36), wood, 0.05, 1.12, 0.8);
+  for (let i = 0; i < 6; i++) add(new THREE.SphereGeometry(0.075, 8, 6), stallMat(['#d83a2a', '#e8b030', '#7ab83a'][(h + i) % 3], 0.5), -0.12 + (i % 3) * 0.16, 1.25, 0.72 + Math.floor(i / 3) * 0.15);
+  add(new THREE.CylinderGeometry(0.11, 0.11, 0.55, 10), stallMat(STALL_CLOTH[(h + 3) % STALL_CLOTH.length], 0.95), 0.72, 1.14, 0.8, 0, 0.3, Math.PI / 2);
+  // fenerler (ön köşelerden sarkan)
+  for (const x of [-1.25, 1.25]) {
+    add(new THREE.CylinderGeometry(0.008, 0.008, 0.3, 4), dark, x, 2.1, 1.3);
+    add(new THREE.CylinderGeometry(0.09, 0.07, 0.2, 6), lamp, x, 1.88, 1.3);
+    add(new THREE.CylinderGeometry(0.11, 0.06, 0.06, 6), brass, x, 2.0, 1.3);
+  }
+  // yanda fıçı ve çuvallar
+  add(new THREE.CylinderGeometry(0.26, 0.26, 0.62, 10), wood, 1.62, 0.31, 0.55);
+  add(new THREE.TorusGeometry(0.26, 0.02, 4, 12), dark, 1.62, 0.18, 0.55, Math.PI / 2, 0, 0);
+  add(new THREE.TorusGeometry(0.26, 0.02, 4, 12), dark, 1.62, 0.46, 0.55, Math.PI / 2, 0, 0);
+  for (const [x, z] of [[-1.62, 0.6], [-1.68, 0.15]] as const) add(new THREE.SphereGeometry(0.24, 8, 6).scale(1, 1.15, 0.9), stallMat('#c8b088', 1), x, 0.26, z);
+  // önde halı
+  add(new THREE.BoxGeometry(2.0, 0.015, 0.9), cloth, 0, 0.012, 1.95);
+  add(new THREE.BoxGeometry(1.7, 0.017, 0.62), cloth2, 0, 0.014, 1.95);
+  add(new THREE.BoxGeometry(1.2, 0.019, 0.3), cloth, 0, 0.016, 1.95);
+  for (const [m, list] of parts) {
+    const merged = mergeGeometries(list, false);
+    if (!merged) continue;
+    const mesh = new THREE.Mesh(merged, m); mesh.castShadow = m !== lamp; mesh.receiveShadow = true; g.add(mesh);
+  }
   return g;
 }
