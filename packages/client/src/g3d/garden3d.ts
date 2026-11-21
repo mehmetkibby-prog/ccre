@@ -186,6 +186,18 @@ export class GardenFx {
     const gm = new THREE.PointsMaterial({ map: glowTexture(), size: 1.2, sizeAttenuation: true, vertexColors: true, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false });
     this.mats.push(gm);
     this.glowPts = new THREE.Points(gg, gm); this.glowPts.frustumCulled = false; this.group.add(this.glowPts);
+    // Telefon/tablet: bahçe ekranda değilken çizilmesin (13 çizim çağrısı, ~20 bin üçgen). Bitkiler yerinde büyüyüp
+    // sallandığı için bütün bahçeyi (bitki boyu payıyla) saran tek bir küre yeter; bilgisayarda değişiklik yok.
+    if (MOBILE_GARDEN && this.plants.length) {
+      const c = new THREE.Vector3(); for (const p of this.plants) c.x += p.x, c.y += p.y, c.z += p.z; c.divideScalar(this.plants.length);
+      let r = 0; for (const p of this.plants) r = Math.max(r, Math.hypot(p.x - c.x, p.y - c.y, p.z - c.z));
+      const sphere = new THREE.Sphere(c, r + 3);
+      this.group.traverse((o) => {
+        const im = o as THREE.InstancedMesh;
+        if (im.isInstancedMesh) { im.boundingSphere = sphere.clone(); im.frustumCulled = true; }
+      });
+      gg.boundingSphere = sphere.clone(); this.glowPts.frustumCulled = true;
+    }
   }
 
   /** ready: bitki başına kalan olgunlaşma süresi (ms, at anında) */

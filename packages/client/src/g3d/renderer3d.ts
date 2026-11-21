@@ -191,6 +191,8 @@ export class Renderer3D {
     // telefonda gölge haritası iki karede bir yenilenir (karakter gölgeleri 30 Hz'de akıcı görünür)
     if (MOBILE) this.renderer.shadowMap.autoUpdate = false;
     this.octx = overlay.getContext('2d')!;
+    // yazı tipi (Nunito) sonradan yüklenirse önbellekteki ad resimleri yenilenir
+    try { document.fonts?.addEventListener?.('loadingdone', () => this.txtCache.clear()); void document.fonts?.ready.then(() => this.txtCache.clear()); } catch { /* */ }
     this.scene.add(this.world, this.dyn, this.fx.group, this.sun, this.sun.target, this.hemi);
     this.sun.castShadow = true;
     // sis uzaklaştı: gölge alanı görünen sahnenin büyük kısmını kapsar (gölge sınırı göze batmasın)
@@ -517,6 +519,7 @@ export class Renderer3D {
   dispose() {
     for (const f of this.offs) f();
     this.offs = [];
+    this.sizeObs?.disconnect(); this.sizeObs = null;
     this.nyFx?.dispose();
     for (const v of this.views.values()) releaseView(v);
     this.views.clear();
@@ -526,6 +529,13 @@ export class Renderer3D {
   private frozen(id: number, now: number) { const u = this.stops.get(id); if (u === undefined) return false; if (now < u) return true; this.stops.delete(id); return false; }
   clickMark(x: number, y: number) { this.clicks.push({ x, y, t: performance.now() }); }
 
+  private cssW = -1; private cssH = -1; private sizeObs: ResizeObserver | null = null;
+  private watchSize() {
+    const read = () => { this.cssW = this.canvas.clientWidth; this.cssH = this.canvas.clientHeight; };
+    read();
+    if (typeof ResizeObserver === 'undefined') { addEventListener('resize', read); return; }
+    this.sizeObs = new ResizeObserver(read); this.sizeObs.observe(this.canvas);
+  }
   resize() {
     const q = store.get().settings.quality;
     const cm = cool();
@@ -539,7 +549,10 @@ export class Renderer3D {
       this.shadowDirty = true;
     }
     const maxDpr = cm ? (MOBILE ? 0.85 : 1) : MOBILE ? (q === 'high' ? 1.3 : q === 'medium' ? 1.1 : 0.9) : (q === 'high' ? 1.75 : q === 'medium' ? 1.25 : 1);
-    const w = this.canvas.clientWidth, h = this.canvas.clientHeight;
+    // Boyut her karede okunmaz: React arayüzü o arada değiştiyse clientWidth okuması karenin ortasında bütün sayfanın
+    // düzenini yeniden hesaplatıyordu (kalabalık köyde sık). Boyutu ResizeObserver bildirir; ilk karede bir kez okunur.
+    if (this.cssW < 0) this.watchSize();
+    const w = this.cssW, h = this.cssH;
     // Telefon/tablette piksel bütçesi: aynı oranla büyük ekranlı tablet (1280×800 CSS) telefonun ~1,6 katı piksel
     // çiziyordu; GPU'su telefonunkinden zayıfken kare süresi aşılıyordu. Telefonlar bütçenin altında kalır (değişmez).
     const budget = cm ? 0.6e6 : q === 'high' ? 1.25e6 : q === 'medium' ? 0.95e6 : 0.7e6;
@@ -1101,7 +1114,16 @@ export class Renderer3D {
       const a = toSelf ? Math.atan2(g.dx - v.lx, g.dy - v.ly) : 0;
       let d = a - v.yaw; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2;
       v.yaw += d * Math.min(1, dt / 300); v.obj.rotation.y = v.yaw;
-      if (v.glb) v.glb.update('idle', dt, false, 0); else if (v.rig) animateHumanoid(v.rig, 'idle', now / 1000 + v.lx, 0, 0);
+      if (v.glb && MOBILE) {
+        // Telefon/tablet (Pazar Köyü'ndeki 9 NPC, her biri 11-15 bin üçgen iskeletli model): oyuncular gibi uzakta
+        // sadeleştirilmiş dizilim; durağan bekleme animasyonu uzakta 2-4 karede bir (biriken süreyle, görünüm aynı).
+        const lv = v as View & { lodAcc?: number };
+        const camD2 = v.obj.position.distanceToSquared(this.camTarget);
+        if (v.glb.setLod) { const gd = this.perfLvl >= 1 ? 8 : 11; v.glb.setLod(camD2 > gd * gd); }
+        const every = camD2 > 26 * 26 ? 4 : camD2 > 12 * 12 ? 2 : 1;
+        lv.lodAcc = (lv.lodAcc ?? 0) + dt;
+        if (every === 1 || (this.frameNo + (v.lx | 0)) % every === 0) { v.glb.update('idle', lv.lodAcc, false, 0); lv.lodAcc = 0; }
+      } else if (v.glb) v.glb.update('idle', dt, false, 0); else if (v.rig) animateHumanoid(v.rig, 'idle', now / 1000 + v.lx, 0, 0);
     }
     // hedef halkası
     const tgt = g.targetId ? g.ents.get(g.targetId) : null;
@@ -1246,30 +1268,62 @@ export class Renderer3D {
     }
   }
 
+  /**
+   * Telefon/tablet: kenarlıklı ad yazıları (strokeText + fillText) her karede yeniden çizilince işlemciyi yoruyordu;
+   * özellikle 9 NPC'nin, oyuncuların ve lonca adlarının bir arada olduğu Pazar Köyü'nde. Her yazı bir kez küçük bir
+   * tuvale çizilir, sonra her karede resim olarak basılır (aynı görünüm). Bilgisayarda doğrudan çizim sürer.
+   */
+  private txtCache = new Map<string, { c: HTMLCanvasElement; cw: number; ch: number; ox: number; oy: number; tw: number }>();
+  private txtDpr = 0;
+  private txtImg(text: string, font: string, fill: string, lw: number, stroke: string) {
+    const dpr = this.octx.getTransform().a || 1;
+    if (dpr !== this.txtDpr) { this.txtDpr = dpr; this.txtCache.clear(); }
+    const key = font + '|' + fill + '|' + lw + '|' + stroke + '|' + text;
+    let e = this.txtCache.get(key);
+    if (e) return e;
+    if (this.txtCache.size > 500) this.txtCache.clear();
+    const m0 = this.octx; m0.font = font;
+    const m = m0.measureText(text), fpx = Number(/(\d+)px/.exec(font)?.[1] ?? 13);
+    const asc = Math.ceil((m.fontBoundingBoxAscent || fpx) + (m.fontBoundingBoxDescent || fpx * 0.3));
+    const ox = lw + 1, oy = asc + lw + 1; // yazının sol-alt (textBaseline 'bottom') noktası
+    const cw = Math.ceil(m.width) + ox * 2, ch = oy + lw + 2;
+    const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(cw * dpr)); c.height = Math.max(1, Math.ceil(ch * dpr));
+    const x = c.getContext('2d')!; x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.font = font; x.textAlign = 'left'; x.textBaseline = 'bottom'; x.lineWidth = lw; x.strokeStyle = stroke;
+    x.strokeText(text, ox, oy); x.fillStyle = fill; x.fillText(text, ox, oy);
+    e = { c, cw, ch, ox, oy, tw: m.width };
+    this.txtCache.set(key, e);
+    return e;
+  }
+
   private drawOverlay(now: number) {
     const ctx = this.octx, g = this.g;
     ctx.clearRect(0, 0, this.w, this.h);
     this.drawGuide(now);
     const st = store.get();
+    /** kenarlıklı yazı (taban çizgisi 'bottom'); telefonda önbellekten resim olarak */
+    const txt = (s: string, font: string, fill: string, x: number, y: number, align: 'left' | 'center', lw: number, stroke: string) => {
+      if (!MOBILE) { ctx.font = font; ctx.textAlign = align; ctx.textBaseline = 'bottom'; ctx.lineWidth = lw; ctx.strokeStyle = stroke; ctx.strokeText(s, x, y); ctx.fillStyle = fill; ctx.fillText(s, x, y); return; }
+      const e = this.txtImg(s, font, fill, lw, stroke);
+      ctx.drawImage(e.c, (align === 'center' ? x - e.tw / 2 : x) - e.ox, y - e.oy, e.cw, e.ch);
+    };
+    const tw = (s: string, font: string, fill: string, lw: number, stroke: string) => { if (MOBILE) return this.txtImg(s, font, fill, lw, stroke).tw; ctx.font = font; return ctx.measureText(s).width; };
     const tag = (x: number, y: number, h: number, name: string, color: string, sub?: string, subColor = '#e8dcb8') => {
       const p = this.project(x, y, h); if (!p.vis) return null;
+      txt(name, '700 13px Nunito, sans-serif', color, p.x, p.y, 'center', 3, 'rgba(10,8,6,0.85)');
+      if (sub) txt(sub, '600 11px Nunito, sans-serif', subColor, p.x, p.y - 14, 'center', 3, 'rgba(10,8,6,0.85)');
       ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-      ctx.font = '700 13px Nunito, sans-serif'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.85)';
-      ctx.strokeText(name, p.x, p.y); ctx.fillStyle = color; ctx.fillText(name, p.x, p.y);
-      if (sub) { ctx.font = '600 11px Nunito, sans-serif'; ctx.strokeText(sub, p.x, p.y - 14); ctx.fillStyle = subColor; ctx.fillText(sub, p.x, p.y - 14); }
       return p;
     };
     /** Oyuncu/canavar adı: seviye adın solunda turuncu ve belirgin ("Lv 20  Ad"). */
     const nameTag = (x: number, y: number, h: number, name: string, color: string, level: number, lvColor = '#ffa53a') => {
       const p = this.project(x, y, h); if (!p.vis) return null;
-      ctx.textBaseline = 'bottom'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.88)';
-      ctx.font = '800 12px Nunito, sans-serif'; const lv = `Lv ${level}`, lw = ctx.measureText(lv).width;
-      ctx.font = '700 13px Nunito, sans-serif'; const nw = ctx.measureText(name).width;
+      const S = 'rgba(10,8,6,0.88)', FL = '800 12px Nunito, sans-serif', FN = '700 13px Nunito, sans-serif';
+      const lv = `Lv ${level}`, lw = tw(lv, FL, lvColor, 3, S), nw = tw(name, FN, color, 3, S);
       const x0 = p.x - (lw + 5 + nw) / 2;
-      ctx.textAlign = 'left';
-      ctx.font = '800 12px Nunito, sans-serif'; ctx.strokeText(lv, x0, p.y); ctx.fillStyle = lvColor; ctx.fillText(lv, x0, p.y);
-      ctx.font = '700 13px Nunito, sans-serif'; ctx.strokeText(name, x0 + lw + 5, p.y); ctx.fillStyle = color; ctx.fillText(name, x0 + lw + 5, p.y);
-      ctx.textAlign = 'center';
+      txt(lv, FL, lvColor, x0, p.y, 'left', 3, S);
+      txt(name, FN, color, x0 + lw + 5, p.y, 'left', 3, S);
+      ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
       return p;
     };
     /** GM rozeti: adın üstünde hafifçe süzülen, altın ışıltısı gezinen "GM" yazısı (Metin2 tarzı). */
@@ -1302,11 +1356,10 @@ export class Renderer3D {
     const guildTag = (p: { x: number; y: number }, emblem: number, name: string) => {
       let img = this.emblemImgs.get(emblem);
       if (!img) { img = new Image(); img.src = `/emblems/${emblem}.png`; this.emblemImgs.set(emblem, img); }
-      ctx.font = '700 11px Nunito, sans-serif';
-      const w = ctx.measureText(name).width, x0 = p.x - (w + 18) / 2, y = p.y - 16;
+      const FG = '700 11px Nunito, sans-serif', SG = 'rgba(10,8,6,0.85)';
+      const w = tw(name, FG, '#ffd98a', 3, SG), x0 = p.x - (w + 18) / 2, y = p.y - 16;
       if (img.complete && img.naturalWidth) ctx.drawImage(img, x0, y - 13, 16, 16);
-      ctx.textAlign = 'left'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.85)';
-      ctx.strokeText(name, x0 + 18, y); ctx.fillStyle = '#ffd98a'; ctx.fillText(name, x0 + 18, y);
+      txt(name, FG, '#ffd98a', x0 + 18, y, 'left', 3, SG);
       ctx.textAlign = 'center';
     };
     // NPC (başında görev işareti: sarı ! alınabilir görev, yeşil ? teslime hazır görev)
@@ -1326,8 +1379,7 @@ export class Renderer3D {
       }
       if (mark) {
         const y = p.y - 30 + Math.sin(now / 300) * 2.5;
-        ctx.font = '900 24px Nunito, sans-serif'; ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(10,8,6,0.9)';
-        ctx.strokeText(mark, p.x, y); ctx.fillStyle = mark === '?' ? '#7cf09a' : '#ffd84a'; ctx.fillText(mark, p.x, y);
+        txt(mark, '900 24px Nunito, sans-serif', mark === '?' ? '#7cf09a' : '#ffd84a', p.x, y, 'center', 4, 'rgba(10,8,6,0.9)');
       }
     }
     for (const e of g.ents.values()) {
