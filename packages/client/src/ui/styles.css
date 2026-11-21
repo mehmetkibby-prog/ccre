@@ -2351,3 +2351,17 @@ button.worldhp:hover .donate-cta { opacity: 1; box-shadow: inset 0 0 0 1px var(-
   .rn-frags { grid-template-columns: 1fr; } .rn-frag { grid-template-columns: 34px minmax(0, 1fr) auto; } .rn-frag .btn { grid-column: auto; }
   .rn-item { grid-template-columns: 44px minmax(0, 1fr); } .rn-item .rn-btns { grid-column: 1 / -1; justify-content: flex-end; }
 }
+
+/* Kan Meydanı paneli: ekranın en solunda, ortada */
+.ring-panel { position: fixed; left: 8px; top: 50%; transform: translateY(-50%); z-index: 6; width: 178px; padding: 8px 8px 7px; border-radius: 10px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(40, 8, 10, .86), rgba(18, 6, 6, .82)); box-shadow: inset 0 0 0 1px rgba(255, 90, 90, .45), 0 6px 18px rgba(0, 0, 0, .45); font-size: 12px; color: #f6e6d8; }
+.rp-h { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; } .rp-h b { font-size: 13px; color: #ffb0a0; letter-spacing: .3px; } .rp-h small { margin-left: auto; color: #c8a89a; font-size: 10.5px; }
+.rp-ic { color: #ff6a5a; text-shadow: 0 0 8px #ff3a3a; }
+.rp-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.rp-list li { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 5px; align-items: center; padding: 2px 5px; border-radius: 5px; background: rgba(0, 0, 0, .22); }
+.rp-list li.me { background: rgba(255, 90, 90, .22); box-shadow: inset 0 0 0 1px rgba(255, 120, 120, .5); }
+.rp-i { font-weight: 800; color: #c8a89a; text-align: center; } .top1 .rp-i { color: #ffd84a; } .top2 .rp-i { color: #d8dce6; } .top3 .rp-i { color: #e0a070; }
+.rp-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .rp-list b { color: #ff9a8a; font-variant-numeric: tabular-nums; }
+.rp-empty { color: #c8a89a; font-size: 11.5px; line-height: 1.4; }
+.rp-me { margin-top: 5px; padding-top: 4px; border-top: 1px solid rgba(255, 120, 120, .25); color: #c8a89a; font-size: 11px; } .rp-me b { color: #fff; }
+@media (pointer: coarse) { .ring-panel { width: 150px; font-size: 11px; left: 4px; } }

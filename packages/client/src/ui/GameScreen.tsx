@@ -1,15 +1,18 @@
+import { RingPanel } from './ring.tsx';
 import { runeConf } from '@col/shared';
 import { rankProgress } from './rank.tsx';
 import { Tutorial } from './tutorial.tsx';
 import { BuffPips } from './matinfo.tsx';
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
 import { EventBadges, EventButton } from './events.tsx';
+import { GuideButton, BookIcon } from './guide.tsx';
+import { monsterLoot } from './guideData.ts';
 import { GatherHud } from './garden.tsx';
 import { onConfig } from '../admin/config.ts';
 import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame, WorldBossTimer } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillDesc, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, resolveLoot, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillDesc, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
 import { Game, setDirectWs } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
@@ -164,7 +167,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <AnnouncementBar />
       <GatherHud />
       <Minimap game={game} />
-      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><EventButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
+      <div className="tr-btns"><MallButton /><EssMarketButton /><AutoButton /><BossButton /><EventButton /><GuideButton />{mobile && <MobTopButtons />}<FullscreenButton /></div>
       <BossBanner game={game} />
       <BossCompass game={game} />
       <Tutorial />
@@ -184,6 +187,7 @@ function Hud({ game, onExit }: { game: Game; onExit: (r: string, toChannels?: bo
       <PartyFrame />
       <MountButton />
       <ArenaHud />
+      <RingPanel game={game} />
       {!mobile && <TowerHud />}
       {!mobile && <ForgeHud />}
       <GuildWarBar />
@@ -265,17 +269,8 @@ function DropInfo({ tpl, variant, onClose }: { tpl: number; variant: number; onC
   useEffect(() => onConfig(() => force((n) => n + 1)), []);
   const def = MONSTERS[tpl];
   if (!def) return null;
-  const theme = MAPS[map]?.theme ?? 'forest';
-  const r = resolveLoot(TUNING, map, theme, def.id, (id) => MATERIAL.has(id), floor);
-  if (def.id === 'azrail') r.drops = [{ kind: 'mat', key: 'azrail_chest', chance: 1, qty: [1, 1] }, ...r.drops];
-  if (def.id.startsWith('f_')) {
-    // Kor Kulesi: yalnız kulenin kendi tablosu (kat malzemeleri; elitte çarpan) · Karademir: doğrudan düşenler + Kor Sandığı
-    const F = TUNING.forge, fl = F.floors[Math.max(0, Math.min(F.floors.length - 1, (forgeFloor ?? 1) - 1))];
-    const k = variant === 2 ? F.eliteLoot : 1;
-    r.essence = [0, 0]; r.equipChance = 0; r.maxLevel = 0;
-    r.materials = def.id === 'f_boss' ? [] : (fl?.mats ?? []).map((m) => ({ id: m.key, chance: Math.min(1, m.chance * k), qty: m.qty }));
-    r.drops = def.id === 'f_boss' ? [{ kind: 'mat', key: 'forge_chest', chance: 1, qty: [1, 1] }, ...F.boss.drops] : [];
-  }
+  // bölge + canavar türü ayarı, kule katı, Azrail ve Kor Kulesi kuralları (Rehber de aynı fonksiyonu kullanır)
+  const r = monsterLoot(map, def.id, { floor, forgeFloor, variant });
   const over = overLevelMul(r, lvl);
   const vm = VARIANT_LOOT_MULT[variant] ?? 1;
   const pct = (x: number) => { const v = Math.min(1, x) * 100; return v >= 10 ? `%${v.toFixed(0)}` : v >= 1 ? `%${v.toFixed(1)}` : `%${v.toFixed(2)}`; };
@@ -609,6 +604,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
       <button onClick={() => open('rankings')}><MenuIcon k="rank" /><span className="tag">Sıralama</span></button>
       {self && self.level >= runeConf().unlockLevel && <button onClick={() => open('runes')}><MenuIcon k="rune" /><small>U</small><span className="tag">Rün</span></button>}
+      <button className="mob-only" onClick={() => open('guide')}><BookIcon size={20} /><span className="tag">Rehber</span></button>
       <button className="pc-only" onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0, mobMenu: false }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
     </div>

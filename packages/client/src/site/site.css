@@ -332,3 +332,8 @@
 .pre-done .pd-list { text-align: left; margin: 12px 0; padding-left: 18px; color: #e9dcc0; font-size: 13.5px; line-height: 1.55; }
 .pre-done .pd-list li + li { margin-top: 6px; }
 .pre-done .pd-row { display: flex; gap: 10px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+
+/* oyun rehberi (/rehber): rehber bileşeni ui/guide.css'te; burada yalnız sayfa genişliği */
+.doc.guide-doc { max-width: 1040px; }
+.guide-doc .doc-head { margin-bottom: 22px; }
+@media (max-width: 560px) { .doc.guide-doc { padding: 28px 12px 70px; } }

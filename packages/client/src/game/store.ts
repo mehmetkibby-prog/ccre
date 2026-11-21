@@ -42,7 +42,7 @@ export function pmSet(name: string, p: Partial<PmConv> | null) {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | 'garden' | 'events' | 'storage' | 'runes' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | 'garden' | 'events' | 'storage' | 'runes' | 'guide' | null;
 
 export interface TowerView {
   f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;
@@ -134,6 +134,8 @@ export interface UiState {
   /** sunucu saati farkı (ms): geri sayımlar için */
   clockSkew: number;
   fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
+  /** Pazar Köyü Kan Meydanı: bugünkü öldürme tablosu (meydana girince gelir) */
+  ringBoard: { board: { name: string; n: number }[]; day: string } | null;
   marketResults: { q: string; cat?: 'all' | 'item' | 'mat' | 'mall'; sort?: 'price' | 'desc' | 'unit'; counts?: { all: number; item: number; mat: number; mall: number }; list: { stall: string; owner: string; title: string; item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number; x: number; y: number }[] } | null;
   mallTarget: string | null;
   /** hedef canavarın düşme listesi açık mı (telefonda ? düğmesi soldaki çerçevede, liste üstte) */
@@ -159,7 +161,7 @@ let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
   worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, botCheck: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, garden: null, storage: null, gather: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
-  bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, mallTarget: null, dropOpen: false, netPath: '',
+  bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, ringBoard: null, mallTarget: null, dropOpen: false, netPath: '',
 };
 const listeners = new Set<() => void>();
 export const store = {

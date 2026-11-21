@@ -1,3 +1,4 @@
+import { CharSelect } from './ui/charselect.tsx';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './game/install.ts'; // yükleme şeridini en başta bastır
@@ -18,7 +19,7 @@ import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
 import { AnnouncementBar, ClassicButton } from './admin/AdminPanel.tsx';
 import { AdminPage, isAdminRoute } from './admin/AdminPage.tsx';
-import { SiteNav, SiteFooter, RewardSection, TrailerSection, GameSections, NewsSection, PrivacyPage, useRoute, useSiteStatus, Link } from './site/site.tsx';
+import { SiteNav, SiteFooter, RewardSection, TrailerSection, GameSections, NewsSection, PrivacyPage, GuidePage, useRoute, useSiteStatus, Link } from './site/site.tsx';
 import { ForumPage } from './site/forum.tsx';
 import './site/site.css';
 // Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
@@ -32,9 +33,10 @@ interface Me { account: { id: number; username: string; role: string; prereg?: b
 function App() {
   const route = useRoute();
   if (isAdminRoute()) return <AdminPage />;
-  // site sayfaları (oyuna girmeden gezilir): forum ve gizlilik politikası
+  // site sayfaları (oyuna girmeden gezilir): forum, gizlilik politikası ve oyun rehberi
   if (route.startsWith('/forum')) return <ForumPage />;
   if (route.startsWith('/gizlilik')) return <PrivacyPage />;
+  if (route.startsWith('/rehber')) return <GuidePage />;
   return <><AppScreens /><MenuAnnounce /></>;
 }
 
@@ -457,7 +459,7 @@ function ClassPreview({ cls }: { cls: ClassId }) {
     scene.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a2a18, 0.9));
     const key = new THREE.DirectionalLight(0xfff0d8, 2.6); key.position.set(2, 4, 3); key.castShadow = true; scene.add(key);
     const rim = new THREE.DirectionalLight(0x9fd0ff, 1.6); rim.position.set(-3, 2, -3); scene.add(rim);
-    const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 48), new THREE.MeshStandardMaterial({ color: 0x2a3424, roughness: 0.9 }));
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(1.4, 48), new THREE.ShadowMaterial({ opacity: 0.38 })); // yalnız gölge: altındaki rün sunağı görünür
     floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
     // Asıl model yüklenene kadar bekleme göstergesi; model hiç yoksa ya da yüklenemezse prosedürel model
     let rig: ReturnType<typeof createHumanoid> | null = null;
@@ -509,61 +511,7 @@ function ClassPreview({ cls }: { cls: ClassId }) {
 }
 
 function CharScreen({ me, onPlay, onReload, onLogout, error }: { me: Me; onPlay: (id: number) => void; onReload: () => void; onLogout: () => void; error: string }) {
-  const [sel, setSel] = useState<number | null>(me.characters[0]?.id ?? null);
-  const [creating, setCreating] = useState(me.characters.length === 0);
-  const [name, setName] = useState('');
-  const [cls, setCls] = useState<ClassId>('guardian');
-  const [err, setErr] = useState('');
-  const [busy, setBusy] = useState(false);
-  const selChar = me.characters.find((c) => c.id === sel);
-  const previewCls: ClassId = creating ? cls : selChar?.cls ?? 'guardian';
-  const create = async () => {
-    const v = validateCharacterName(name);
-    if (v) return setErr(v);
-    if (busy) return;
-    setBusy(true); setErr('');
-    try { const r = await api<{ id: number }>('/api/characters', { name, cls }); setCreating(false); setSel(r.id); onReload(); }
-    catch (e) { setErr((e as Error).message); }
-    setBusy(false);
-  };
-  return (
-    <div className="screen">
-      <div className="frame charsel">
-        <div>
-          <div className="row"><div className="title" style={{ fontSize: 22 }}>Karakterler</div><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{me.account.username}</span><ClassicButton small /><button className="btn small ghost" onClick={onLogout}>Çıkış</button></div>
-          {error && <div className="err">{error}</div>}
-          {me.account.prereg && <div className="prereg-note"><img src="/site/prereg_chest.png" alt="" width={38} height={38} /><span><b>Ön kaydın alındı</b>{me.account.preregGranted ? 'Ön Kayıt Sandığı karakterinin çantasında: oyunda çantandan aç, Yeşil Tilki yanına gelsin.' : 'Ön Kayıt Sandığı (Yeşil Tilki + 15 Mücevher) ilk karakterinin çantasına eklenecek.'}</span></div>}
-          <div className="charlist" style={{ marginTop: 12 }}>
-            {me.characters.map((c) => (
-              <div key={c.id} className={'charcard' + (sel === c.id && !creating ? ' on' : '')} onClick={() => { setSel(c.id); setCreating(false); }} onDoubleClick={() => onPlay(c.id)}>
-                <div className="ico"><ClassIcon cls={c.cls} /></div>
-                <div><div style={{ fontWeight: 800 }}>{c.name}</div><div className="muted" style={{ fontSize: 12 }}>{CLASSES[c.cls].name} · Seviye {c.level} · {MAPS[c.map]?.name ?? c.map}</div></div>
-              </div>
-            ))}
-            {me.characters.length < 4 && <button className="btn ghost" onClick={() => setCreating(true)}>+ Yeni karakter</button>}
-          </div>
-          {creating && (
-            <div style={{ marginTop: 16 }}>
-              <div className="title" style={{ fontSize: 17, marginBottom: 6 }}>Sınıf seç</div>
-              <div className="classpick">
-                {CLASS_IDS.map((c) => <button key={c} className={cls === c ? 'on' : ''} onClick={() => setCls(c)}><ClassIcon cls={c} /><div>{CLASSES[c].name}</div></button>)}
-              </div>
-              <div className="muted" style={{ fontSize: 13, minHeight: 36 }}>{CLASSES[cls].desc}</div>
-              <div className="field" style={{ marginTop: 8 }}><label>Karakter adı (2–18)</label><input value={name} maxLength={18} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && create()} /></div>
-              {err && <div className="err">{err}</div>}
-              <button className="btn primary" style={{ width: '100%' }} onClick={create} disabled={busy}>Oluştur</button>
-              <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>Hesap başına bir defa Başlangıç Sandığı: 50 Mücevher + 10 Kırmızı İksir.</div>
-            </div>
-          )}
-          {!creating && selChar && <button className="btn primary" style={{ width: '100%', marginTop: 16, padding: 12, fontSize: 16 }} onClick={() => onPlay(selChar.id)}>Oyna</button>}
-        </div>
-        <div className="col">
-          <ClassPreview cls={previewCls} />
-          <div className="title" style={{ textAlign: 'center', fontSize: 20 }}>{creating ? CLASSES[cls].name : selChar?.name}</div>
-        </div>
-      </div>
-    </div>
-  );
+  return <CharSelect me={me} onPlay={onPlay} onReload={onReload} onLogout={onLogout} error={error} Preview={ClassPreview} extra={<ClassicButton small />} />;
 }
 
 interface ChannelInfo { id: number; name: string; population: number; capacity: number; status: string }

@@ -4,7 +4,7 @@ import { DIR_STEPS,
   findPath, los, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, MATERIALS,
   CAST_FIRST, CAST_CHAIN_HOP,
 } from '@col/shared';
-import { runeConf } from '@col/shared';
+import { runeConf, inPvpRing } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
@@ -340,6 +340,7 @@ export class Game {
       }
       case 'fish_wait': store.set({ fishing: { phase: 'wait', token: m.token, biteAt: performance.now() + m.biteIn, diff: m.diff, motion: m.motion }, fishResult: null }); break;
       case 'fish_result': store.set({ fishing: null, fishResult: { ok: m.ok, name: m.name, qty: m.qty, at: Date.now() } }); if (m.ok) sfx.play('loot'); break;
+      case 'ring': store.set({ ringBoard: { board: Array.isArray(m.board) ? m.board : [], day: String(m.day ?? '') } }); break;
       case 'market_results': store.set({ marketResults: { q: m.q, cat: m.cat, sort: m.sort, counts: m.counts, list: Array.isArray(m.list) ? m.list : [] }, panel: 'tradeglass' }); break;
       case 'gain': {
         if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
@@ -824,14 +825,16 @@ export class Game {
     return dirIndexFromVector(w.x - this.px, w.y - this.py);
   }
 
+  /** oyuncu Pazar Köyü Kan Meydanı'nın içinde mi */
+  inRing() { return inPvpRing(this.layout.def.id, this.px, this.py); }
   nearestEnemy(maxD: number, skipUnreachable = false): CEnt | null {
     let best: CEnt | null = null, bd = maxD;
-    const pvp = MAPS[this.layout.def.id]?.pvp;
+    const pvp = MAPS[this.layout.def.id]?.pvp, ring = this.inRing();
     const now = performance.now();
     for (const e of this.ents.values()) {
       if (e.hp <= 0 || e.deadAt) continue;
       if (skipUnreachable && (this.unreachable.get(e.id) ?? 0) > now) continue;
-      if (e.kind !== Kind.MONSTER && !(pvp && e.kind === Kind.PLAYER)) continue;
+      if (e.kind !== Kind.MONSTER && !(e.kind === Kind.PLAYER && (pvp || (ring && (e.flags & EFlag.PVP) !== 0)))) continue;
       const d = Math.hypot(e.x - this.px, e.y - this.py);
       if (d < bd) { bd = d; best = e; }
     }
@@ -1000,7 +1003,7 @@ export class Game {
     if (hit?.type !== 'npc') { const sl = this.stallAt(wx, wy); if (sl && !(hit?.type === 'ent' && hit.e!.kind === Kind.MONSTER)) { this.openStall(sl); return; } }
     if (hit?.type === 'ent') {
       this.setTarget(hit.e!.id);
-      if (hit.e!.kind === Kind.MONSTER || (hit.e!.kind === Kind.PLAYER && (MAPS[this.layout.def.id]?.pvp || hit.e!.id === this.duelWith))) { this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
+      if (hit.e!.kind === Kind.MONSTER || (hit.e!.kind === Kind.PLAYER && (MAPS[this.layout.def.id]?.pvp || hit.e!.id === this.duelWith || (this.inRing() && (hit.e!.flags & EFlag.PVP) !== 0)))) { this.autoAttack = true; this.walkToTarget = true; this.moveTarget = null; }
       return;
     }
     if (hit?.type === 'npc') {

@@ -17,6 +17,7 @@ import { ForgePanel } from './forge.tsx';
 import { CraftPanel } from './craft.tsx';
 import { GardenPanel } from './garden.tsx';
 import { EventsPanel } from './events.tsx';
+import { GuidePanel } from './guide.tsx';
 import { QuestPanel, NpcQuests } from './quests.tsx';
 import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
@@ -100,6 +101,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'garden' && <GardenPanel />}
       {p === 'events' && <EventsPanel />}
       {p === 'tradeglass' && <TradeGlass game={game} />}
+      {p === 'guide' && <GuidePanel />}
       {ct && (
         <div className="overlay"><div className="frame dead" style={{ maxWidth: 440 }}>
           <div className="title" style={{ fontSize: 20, marginBottom: 8 }}>Dikkat: PvP bölgesi</div>

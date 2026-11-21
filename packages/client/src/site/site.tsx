@@ -1,10 +1,11 @@
 /**
- * Site iskeleti: adres yönlendirme (ana sayfa, forum, gizlilik), üst menü, alt bilgi, ön kayıt bölümleri ve
+ * Site iskeleti: adres yönlendirme (ana sayfa, forum, gizlilik, rehber), üst menü, alt bilgi, ön kayıt bölümleri ve
  * gizlilik politikası. Oyunun kendisi aynı tek sayfa uygulamasında; site sayfaları oyuna girmeden gezilir.
  */
 import React, { useEffect, useState } from 'react';
 import { SITE, PREREG_REWARD } from '@col/shared';
 import { api } from '../api.ts';
+import { GuideContent } from '../ui/guide.tsx';
 
 // ───────── yönlendirme ─────────
 /** Site sayfaları kendi kaydırma kabında (.site) kayar: oyun ekranı sayfayı kaydırmaz. */
@@ -58,7 +59,7 @@ export function SiteNav({ onCta, ctaLabel }: { onCta?: () => void; ctaLabel?: st
   const route = useRoute();
   const [open, setOpen] = useState(false);
   const at = (p: string) => (p === '/' ? route === '/' || route.startsWith('/?') : route.startsWith(p));
-  const items: [string, string][] = [['/', 'Ana Sayfa'], ['/#odul', 'Ön Kayıt Ödülü'], ['/#tanitim', 'Tanıtım'], ['/#oyun', 'Oyun'], ['/forum', 'Forum']];
+  const items: [string, string][] = [['/', 'Ana Sayfa'], ['/#odul', 'Ön Kayıt Ödülü'], ['/#tanitim', 'Tanıtım'], ['/#oyun', 'Oyun'], ['/rehber', 'Rehber'], ['/forum', 'Forum']];
   const go = (to: string) => {
     setOpen(false);
     const hash = to.split('#')[1];
@@ -89,6 +90,7 @@ export function SiteFooter() {
       <div className="sf-in">
         <div className="sf-brand"><SiteMark size={30} /><div><b>Core of Life 3D</b><small>Tarayıcıdan ve telefondan oynanan çevrimiçi RPG</small></div></div>
         <nav className="sf-links">
+          <Link to="/rehber">Oyun Rehberi</Link>
           <Link to="/forum">Forum</Link>
           <Link to="/gizlilik">Gizlilik Politikası</Link>
           <a href={`mailto:${SITE.supportEmail}`}>İletişim</a>
@@ -209,6 +211,22 @@ export function NewsSection() {
         {list.map((n) => <Link key={n.id} to={`/forum/k/${n.id}`} className="news-item"><time>{new Date(n.createdAt).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })}</time><b>{n.title}</b><span>Devamını oku →</span></Link>)}
       </div>
     </section>
+  );
+}
+
+// ───────── oyun rehberi ─────────
+/** /rehber: oyundaki Rehber penceresinin aynısı (yönetim ayarından canlı sayılarla), sitenin koyu temasında. */
+export function GuidePage() {
+  useEffect(() => { document.title = 'Oyun Rehberi · Core of Life 3D'; return () => { document.title = 'Core of Life 3D'; }; }, []);
+  return (
+    <div className="site page">
+      <SiteNav />
+      <main className="doc guide-doc">
+        <header className="doc-head"><span className="eyebrow">Oyun Rehberi</span><h1>Yeni başlayandan ustaya, adım adım</h1><p>Hangi seviyede nerede avlanacağın, eşyanı nasıl güçlendireceğin, zindanlar, bosslar ve günlük hayat. Sayılar oyunun güncel ayarlarından gelir.</p></header>
+        <GuideContent site />
+      </main>
+      <SiteFooter />
+    </div>
   );
 }
 
