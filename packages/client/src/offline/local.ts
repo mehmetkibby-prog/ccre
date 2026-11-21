@@ -5,6 +5,7 @@
  * Gerçek çok oyunculu sürüm VDS'teki sunucuyla çalışır; bu mod yalnız denemek içindir.
  */
 import { World, makeItem, resetCharState } from '../../../server/src/worker/world.ts';
+import { newCaptcha } from '../../../server/src/captcha.ts';
 import type { CharState, FromWorker } from '../../../server/src/types.ts';
 import { TUNING, MAPS, MARKET_VALUE, getLayout, computeStats, validateCharacterName, normalizeName, CLASS_IDS, ITEM_TEMPLATES, NO_DIR, encodeMove, dirIndexFromVector, type ClassId } from '@col/shared';
 
@@ -238,6 +239,7 @@ export async function localApi(path: string, body: any): Promise<any> {
   await new Promise((r) => setTimeout(r, 60));
   const me = () => { const a = db.accounts.find((x) => x.id === db.session); if (!a) throw new ApiErr(401, 'Oturum gerekli.'); return a; };
   switch (path) {
+    case '/api/captcha': return newCaptcha(); // test sürümünde görsel gösterilir, kayıtta denetlenmez
     case '/api/register': {
       const u = String(body?.username ?? '').trim();
       if (!/^[A-Za-z0-9_.]{3,20}$/.test(u)) throw new ApiErr(400, 'Kullanıcı adı 3–20 karakter; harf, rakam, _ ve . olabilir.');
@@ -297,7 +299,7 @@ export async function localApi(path: string, body: any): Promise<any> {
       B().tickets.set(ticket, { accountId: a.id, charId: c.id });
       return { ok: true, ticket, nonce: body?.nonce, channel: 1 };
     }
-    case '/api/status': return { opening: { mode: 'open' }, online: B().sockets.size, worldHealth: B().health, serverTime: Date.now() };
+    case '/api/status': return { opening: { mode: 'open' }, worldHealth: B().health, serverTime: Date.now() };
     default: throw new ApiErr(404, 'Bulunamadı');
   }
 }

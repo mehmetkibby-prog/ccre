@@ -134,7 +134,7 @@ export interface UiState {
   /** sunucu saati farkı (ms): geri sayımlar için */
   clockSkew: number;
   fishing: FishState | null; fishResult: { ok: boolean; name?: string; qty?: number; at: number } | null;
-  marketResults: { q: string; list: { stall: string; owner: string; title: string; item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number; x: number; y: number }[] } | null;
+  marketResults: { q: string; cat?: 'all' | 'item' | 'mat' | 'mall'; sort?: 'price' | 'desc' | 'unit'; counts?: { all: number; item: number; mat: number; mall: number }; list: { stall: string; owner: string; title: string; item?: ItemInstance; mat?: { id: string; key: string; qty: number }; price: number; x: number; y: number }[] } | null;
   mallTarget: string | null;
   /** hedef canavarın düşme listesi açık mı (telefonda ? düğmesi soldaki çerçevede, liste üstte) */
   dropOpen: boolean;

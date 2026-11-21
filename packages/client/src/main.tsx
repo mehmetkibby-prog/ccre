@@ -253,17 +253,17 @@ function goFullscreen() {
 }
 
 function RealmLine() {
-  const [st, setSt] = useState<{ online: number; open: boolean; mode: string; openAt: number | null; msg: string; skew: number } | null>(null);
+  const [st, setSt] = useState<{ open: boolean; mode: string; openAt: number | null; msg: string; skew: number } | null>(null);
   const [, tick] = useState(0);
   useEffect(() => {
     let alive = true;
-    const load = () => api('/api/status').then((r) => { if (alive) setSt({ online: r.online ?? 0, open: !r.opening || r.opening.mode === 'open', mode: r.opening?.mode ?? 'open', openAt: r.opening?.openAt ?? null, msg: r.opening?.message ?? '', skew: (r.serverTime ?? Date.now()) - Date.now() }); }).catch(() => {});
+    const load = () => api('/api/status').then((r) => { if (alive) setSt({ open: !r.opening || r.opening.mode === 'open', mode: r.opening?.mode ?? 'open', openAt: r.opening?.openAt ?? null, msg: r.opening?.message ?? '', skew: (r.serverTime ?? Date.now()) - Date.now() }); }).catch(() => {});
     load(); const id = setInterval(load, 15000); const t = setInterval(() => tick((x) => x + 1), 1000);
     return () => { alive = false; clearInterval(id); clearInterval(t); };
   }, []);
   if (!st) return null;
   // ön kayıt dönemi: açılış tarihi belliyse geri sayım, değilse "yakında"
-  let text = st.open ? `Sunucu açık · ${st.online} kişi oyunda` : st.msg || (st.mode === 'maintenance' ? 'Sunucu bakımda' : 'Açılış yakında · ön kayıt sürüyor');
+  let text = st.open ? 'Sunucu açık' : st.msg || (st.mode === 'maintenance' ? 'Sunucu bakımda' : 'Açılış yakında · ön kayıt sürüyor');
   if (!st.open && st.mode === 'scheduled' && st.openAt) {
     const left = Math.max(0, st.openAt - (Date.now() + st.skew)), d = Math.floor(left / 86400000), h = Math.floor(left / 3600000) % 24, m = Math.floor(left / 60000) % 60, sec = Math.floor(left / 1000) % 60;
     text = left > 0 ? `Açılışa ${d > 0 ? d + ' gün ' : ''}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : 'Sunucu açılıyor…';
@@ -591,7 +591,7 @@ function ChannelScreen({ charId, onBack, onEnter }: { charId: number; onBack: ()
     <div className="screen">
       <div className="frame channels">
         <div className="row"><div className="title" style={{ fontSize: 22 }}>Kanal Seç</div><div className="spacer" /><button className="btn small ghost" onClick={onBack}>Geri</button></div>
-        {data && <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{data.realm.name} · Çevrimiçi {data.realm.online}/{data.realm.capacity}</div>}
+        {data && <div className="muted" style={{ fontSize: 13, marginTop: 4 }}>{data.realm.name}</div>}
         {data && !data.open && <div className="err">{data.reason}</div>}
         <div className="chgrid">
           {data?.channels.map((c) => {
@@ -601,7 +601,6 @@ function ChannelScreen({ charId, onBack, onEnter }: { charId: number; onBack: ()
               <button key={c.id} className="chcard" disabled={!data.open || c.status === 'full' || c.status === 'restarting' || c.status === 'maintenance' || pending !== null} onClick={() => { goFullscreen(); enter(c.id); }}>
                 <div className="row"><b>{c.name}</b><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{pending === c.id ? 'Bağlanıyor…' : label}</span></div>
                 <div className={'bar ' + (c.status === 'full' ? 'full' : c.status === 'busy' ? 'busy' : '')} style={{ marginTop: 8 }}><i style={{ width: `${Math.min(100, k * 100)}%` }} /></div>
-                <div className="muted" style={{ fontSize: 11, marginTop: 4 }}>{c.population} / {c.capacity}</div>
               </button>
             );
           })}

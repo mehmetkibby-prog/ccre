@@ -168,7 +168,7 @@ export type ClientCmd =
   | { t: 'use'; key: string; req: string; item?: string }
   | { t: 'mall_buy'; id: string; qty: number; req: string }
   | { t: 'stall_skin'; on: boolean }
-  | { t: 'market_search'; q: string }
+  | { t: 'market_search'; q: string; cat?: 'all' | 'item' | 'mat' | 'mall'; sort?: 'price' | 'desc' | 'unit' }
   | { t: 'chat_item'; item: string; req: string }
   | { t: 'fish_cast' }
   | { t: 'fish_end'; token: string; ok: boolean }

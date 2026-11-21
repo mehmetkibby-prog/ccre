@@ -1077,7 +1077,7 @@ const fmtG = (n: number) => n.toLocaleString('tr-TR');
 const matNm = (k: string) => MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k;
 const matIc = (k: string) => iconUrl(MATERIAL.get(k)?.icon ?? (MALL.has(k) ? mallIcon(k) : 'dust'));
 /** malzeme / Nesne Market yığını hücresi (adet köşede) */
-function MatCell({ k, n, sel, onClick }: { k: string; n: number; sel?: boolean; onClick?: () => void }) {
+export function MatCell({ k, n, sel, onClick }: { k: string; n: number; sel?: boolean; onClick?: () => void }) {
   return <div className={'cell mat-cell' + (sel ? ' sel' : '')} title={matNm(k)} onClick={onClick}><img src={matIc(k)} alt="" /><span className="qty">{n.toLocaleString('tr-TR')}</span></div>;
 }
 /** dükkân satırının adı ve hücresi (ekipman ya da yığın) */
@@ -1087,6 +1087,51 @@ function EntryView({ e, bind }: { e: StallEntryC; bind: ReturnType<typeof useTip
   return <><MatCell k={m.key} n={m.qty} /><span className="nm" style={{ color: MALL.has(m.key) ? '#ffb8e0' : '#cfe8b8' }}>{m.qty.toLocaleString('tr-TR')}× {matNm(m.key)}{MALL.has(m.key) ? <small className="muted"> · Nesne Market</small> : null}</span></>;
 }
 const entryId = (e: StallEntryC) => e.item?.id ?? e.mat?.id ?? '';
+const fmtShort = (n: number) => { try { return new Intl.NumberFormat('tr-TR', { notation: 'compact', maximumFractionDigits: 1 }).format(n); } catch { return fmtG(n); } };
+const entryName = (e: StallEntryC) => (e.item ? itemDisplayName(e.item) : e.mat ? `${e.mat.qty.toLocaleString('tr-TR')}× ${matNm(e.mat.key)}` : '');
+/**
+ * Dükkân vitrini (Metin2 pazar penceresi gibi): kutu kutu ızgara; her kutuda ikon, adet ve kısa fiyat etiketi.
+ * Kutuya dokununca altta ayrıntı çubuğu açılır (ad, fiyat, birim fiyat, işlem düğmesi). Boş kutular vitrini tamamlar.
+ */
+function ShopGrid({ items, sel, onSel, bind, gems, min = 24 }: { items: StallEntryC[]; sel: string | null; onSel: (id: string) => void; bind: ReturnType<typeof useTip>['bind']; gems?: number; min?: number }) {
+  const empty = Math.max(0, Math.ceil(Math.max(min, items.length) / 6) * 6 - items.length);
+  return (
+    <div className="shop-grid">
+      {items.map((e) => {
+        const id = entryId(e), poor = gems !== undefined && gems < e.price;
+        const { onTapCard, ...h } = e.item ? bind(e.item) : ({} as { onTapCard?: () => void });
+        return (
+          <div key={id} className={'sg-slot' + (e.item ? ' r-' + e.item.rarity : e.mat && MALL.has(e.mat.key) ? ' mall' : ' mat') + (sel === id ? ' sel' : '') + (poor ? ' poor' : '')} {...h} onClick={() => { onSel(id); void onTapCard; }}>
+            {e.item ? (
+              <>
+                <img src={iconUrl(itemIconName(e.item), RIDX.indexOf(e.item.rarity))} className={e.item.rarity === 'unique' && !itemIconName(e.item).endsWith('_unique') ? 'uq-tint' : undefined} alt="" />
+                {e.item.plus ? <span className={'plus' + (e.item.plus >= 6 ? ' p6' : e.item.plus >= 5 ? ' p5' : '')}>+{e.item.plus}</span> : null}
+                {e.item.evo ? <span className={'evo-b e' + Math.min(3, e.item.evo)}>{['', 'I', 'II', 'III'][Math.min(3, e.item.evo)]}</span> : null}
+              </>
+            ) : e.mat ? <><img src={matIc(e.mat.key)} alt="" /><span className="qty">{e.mat.qty.toLocaleString('tr-TR')}</span></> : null}
+            <span className="sg-price">{fmtShort(e.price)}</span>
+          </div>
+        );
+      })}
+      {Array.from({ length: empty }, (_, i) => <div key={'e' + i} className="sg-slot empty" />)}
+    </div>
+  );
+}
+/** Seçili vitrin kutusunun ayrıntısı */
+function ShopDetail({ e, children, onInfo }: { e: StallEntryC; children?: React.ReactNode; onInfo?: () => void }) {
+  const unit = e.mat && e.mat.qty > 1 ? Math.round((e.price / e.mat.qty) * 10) / 10 : 0;
+  return (
+    <div className="sg-detail">
+      <div className="sgd-n">
+        <b style={{ color: e.item ? RARITY[e.item.rarity].color : e.mat && MALL.has(e.mat.key) ? '#ffb8e0' : '#cfe8b8' }}>{entryName(e)}</b>
+        <span className="muted">{e.item ? `${RARITY[e.item.rarity].name}${e.item.plus ? ` · +${e.item.plus}` : ''}` : e.mat && MALL.has(e.mat.key) ? 'Nesne Market ürünü' : 'Malzeme'}{unit ? ` · tanesi ${unit.toLocaleString('tr-TR')}` : ''}{onInfo && <> · <a onClick={onInfo}>özellikler</a></>}</span>
+      </div>
+      <span className="sgd-p">{fmtG(e.price)} <small>Mücevher</small></span>
+      {children}
+    </div>
+  );
+}
+
 const suggestPrice = (it: ItemInstance) => Math.max(1, Math.round((MARKET_VALUE[it.rarity] ?? 5) * (1 + it.plus * 0.6)));
 function Market({ game }: { game: Game }) {
   const view = useStore((s) => s.stallView);
@@ -1193,21 +1238,17 @@ function MyStallPanel({ game }: { game: Game }) {
   const log = useStore((s) => s.stallLog);
   const free = useStore((s) => 35 - (s.self?.bag.length ?? 0));
   const { tip, bind } = useTip();
+  const [sel, setSel] = useState<string | null>(null);
+  const cur = my.items.find((e) => entryId(e) === sel);
   return (
-    <Panel title={`Dükkânın: ${my.title}`} width={620}>
+    <Panel title={`Dükkânın: ${my.title}`} width={520}>
       <div className="stall-where ok">Dükkânın Pazar Meydanı'nda açık. İstediğin yere gidebilirsin; oyundan çıksan da açık kalır. Sen yokken satılanların parası oyuna girince hesabına geçer.</div>
-      <div className="row" style={{ fontSize: 13 }}><span className="muted">Şimdiye kadar kazanç:</span><b style={{ color: '#ffd27a' }}>{fmtG(my.earned)} Mücevher</b></div>
-      <div className="stall-list">
-        {my.items.map((e) => (
-          <div className="stall-row" key={entryId(e)}>
-            <EntryView e={e} bind={bind} />
-            <span className="pv">{fmtG(e.price)} <small>Mücevher</small></span>
-          </div>
-        ))}
-      </div>
-      {log.length > 0 && <><div style={{ marginTop: 12 }}><b>Satışlar</b></div>{log.map((l, i) => <div key={i} className="muted" style={{ fontSize: 12 }}>✓ {l}</div>)}</>}
-      <div className="row" style={{ marginTop: 14 }}>
-        <span className="muted" style={{ fontSize: 12 }}>Kapatınca kalan {my.items.length} satır çantana döner{free < my.items.filter((e) => e.item).length ? ` (çantanda ${free} boş yer var)` : ''}.</span>
+      <div className="sg-bar"><span className="muted">{my.items.length} ürün vitrinde</span><span>Kazanç: <b style={{ color: '#ffd27a' }}>{fmtG(my.earned)} Mücevher</b></span></div>
+      <ShopGrid items={my.items} sel={sel} onSel={setSel} bind={bind} min={12} />
+      {cur && <ShopDetail e={cur} />}
+      {log.length > 0 && <div className="sg-log"><b>Satışlar</b>{log.map((l, i) => <div key={i} className="muted">✓ {l}</div>)}</div>}
+      <div className="row" style={{ marginTop: 12 }}>
+        <span className="muted" style={{ fontSize: 12 }}>Kapatınca kalan {my.items.length} ürün çantana döner{free < my.items.filter((e) => e.item).length ? ` (çantanda ${free} boş yer var)` : ''}.</span>
         <div className="spacer" /><button className="btn red" onClick={() => game.send({ t: 'stall_close' })}>Dükkânı Kapat</button>
       </div>
       {tip && <ItemTip {...tip} />}
@@ -1219,7 +1260,9 @@ function StallBuy({ game }: { game: Game }) {
   const gems = useStore((s) => s.self?.gems ?? 0);
   const bagFull = useStore((s) => (s.self?.bag.length ?? 0) >= 35);
   const { tip, bind } = useTip();
+  const [sel, setSel] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<string | null>(null);
+  const [card, setCard] = useState<ItemInstance | null>(null);
   // uzaktan açıldıysa: tezgâha varınca içeriği iste
   useEffect(() => {
     if (v.items || v.closed) return;
@@ -1230,27 +1273,25 @@ function StallBuy({ game }: { game: Game }) {
     }, 500);
     return () => clearInterval(iv);
   }, [v, game]);
+  const cur = v.items?.find((e) => entryId(e) === sel) ?? null;
+  const poor = !!cur && gems < cur.price, full = !!cur?.item && bagFull;
   return (
-    <Panel title={v.title ? `${v.title}` : 'Dükkân'} width={620}>
-      <div className="row" style={{ marginBottom: 8 }}><span className="muted">Satıcı: <b style={{ color: '#f1ead8' }}>{v.name ?? '…'}</b></span><div className="spacer" /><span>Mücevherin: <b style={{ color: '#ffd27a' }}>{fmtG(gems)}</b></span></div>
+    <Panel title={v.title ? `${v.title}` : 'Dükkân'} width={520}>
+      <div className="sg-bar"><span className="muted">Satıcı: <b style={{ color: '#f1ead8' }}>{v.name ?? '…'}</b></span><span>Mücevherin: <b style={{ color: '#ffd27a' }}>{fmtG(gems)}</b></span></div>
       {v.closed ? <div className="muted">Bu dükkân kapanmış.</div> : !v.items ? <div className="muted">Dükkâna yürüyorsun…</div> : v.items.length === 0 ? <div className="muted">Dükkânda eşya kalmamış.</div> : (
-        <div className="stall-list">
-          {v.items.map((e) => {
-            const { price } = e, id = entryId(e), poor = gems < price, full = bagFull && !!e.item;
-            return (
-              <div className="stall-row" key={id}>
-                <EntryView e={e} bind={bind} />
-                <span className={'pv' + (poor ? ' poor' : '')}>{fmtG(price)} <small>Mücevher</small></span>
-                {confirm === id
-                  ? <button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', stall: v.stall, item: id, price, req: reqId() }); setConfirm(null); }}>Onayla</button>
-                  : <button className="btn small primary" disabled={poor || full} title={poor ? 'Yeterli Mücevherin yok' : full ? 'Çantan dolu' : ''} onClick={() => setConfirm(id)}>Satın al</button>}
-              </div>
-            );
-          })}
-        </div>
+        <>
+          <ShopGrid items={v.items} sel={sel} onSel={(id) => { setSel(id); setConfirm(null); }} bind={bind} gems={gems} />
+          {cur ? (
+            <ShopDetail e={cur} onInfo={cur.item ? () => setCard(cur.item!) : undefined}>
+              {confirm === entryId(cur)
+                ? <div className="sgd-btns"><button className="btn small green" onClick={() => { game.send({ t: 'stall_buy', stall: v.stall, item: entryId(cur), price: cur.price, req: reqId() }); setConfirm(null); setSel(null); }}>Onayla</button><button className="btn small" onClick={() => setConfirm(null)}>Vazgeç</button></div>
+                : <button className="btn small primary" disabled={poor || full} title={poor ? 'Yeterli Mücevherin yok' : full ? 'Çantan dolu' : ''} onClick={() => setConfirm(entryId(cur))}>{poor ? 'Mücevher yetmiyor' : full ? 'Çanta dolu' : 'Satın al'}</button>}
+            </ShopDetail>
+          ) : <div className="sg-hint muted">Bir kutuya dokun: ürünün adı, fiyatı ve satın alma düğmesi burada görünür.</div>}
+        </>
       )}
-      {bagFull && v.items?.some((e) => e.item) && <div className="err">Çantan dolu; ekipman almak için yer aç (malzeme alabilirsin).</div>}
       {tip && <ItemTip {...tip} />}
+      {card && <ItemTip it={card} x={0} y={0} pinned onClose={() => setCard(null)} />}
     </Panel>
   );
 }

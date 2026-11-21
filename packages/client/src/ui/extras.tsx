@@ -11,7 +11,7 @@ import { iconUrl } from '../game/art/icons.ts';
 import { api } from '../api.ts';
 import { sfx } from '../game/audio.ts';
 import { startMallMusic, stopMallMusic } from '../game/mallMusic.ts';
-import { Panel, ItemTip } from './panels.tsx';
+import { Panel, ItemTip, Cell, MatCell } from './panels.tsx';
 
 const nowSrv = () => Date.now() + (store.get().clockSkew ?? 0);
 const fmtCountdown = (ms: number) => { const s = Math.max(0, Math.round(ms / 1000)); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60; return (h ? `${h}:${String(m).padStart(2, '0')}` : `${m}`) + `:${String(ss).padStart(2, '0')}`; };
@@ -515,26 +515,69 @@ export function FishShop({ game }: { game: Game }) {
 
 // ═══════════════════════ Ticaret Camı ═══════════════════════
 const matName = (k: string) => MATERIAL.get(k)?.name ?? MALL.get(k)?.name ?? k;
+type TgCat = 'all' | 'item' | 'mat' | 'mall';
+type TgSort = 'price' | 'desc' | 'unit';
+const TG_TABS: [TgCat, string][] = [['all', 'Tümü'], ['item', 'Eşya'], ['mat', 'Malzeme'], ['mall', 'Nesne']];
+const TG_SORTS: [TgSort, string][] = [['price', 'En ucuz'], ['desc', 'En pahalı'], ['unit', 'Birim fiyat']];
+/**
+ * Ticaret Camı (Nesne Market): Pazar Köyü'ndeki bütün dükkânlarda arama. Sekmeler (Eşya / Malzeme / Nesne),
+ * isimle arama, sıralama; her sonuçta ikon, satıcı, fiyat (yığında birim fiyat) ve "Dükkâna git".
+ */
 export function TradeGlass({ game }: { game: Game }) {
   const r = useStore((s) => s.marketResults);
+  const until = useStore((s) => s.self?.buffs?.trade_glass ?? 0);
+  const gems = useStore((s) => s.self?.gems ?? 0);
   const [q, setQ] = useState(r?.q ?? '');
+  const [cat, setCat] = useState<TgCat>(r?.cat ?? 'all');
+  const [sort, setSort] = useState<TgSort>(r?.sort ?? 'price');
   const [tip, setTip] = useState<{ it: import('@col/shared').ItemInstance; x: number; y: number } | null>(null);
+  const search = (o: { q?: string; cat?: TgCat; sort?: TgSort } = {}) => game.send({ t: 'market_search', q: o.q ?? q, cat: o.cat ?? cat, sort: o.sort ?? sort });
+  // yazarken kısa beklemeyle ara (sunucu saniyede bir aramaya izin verir)
+  const first = useRef(true);
+  useEffect(() => { if (first.current) { first.current = false; return; } const t = setTimeout(() => search(), 1100); return () => clearTimeout(t); }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
+  const left = until - nowSrv();
+  const c = r?.counts;
+  const go = (stall: string) => { game.openStall(stall); };
   return (
-    <Panel title="Ticaret Camı · Pazar Arama" width={620}>
-      <div className="row" style={{ gap: 8, marginBottom: 10 }}>
-        <input className="inp" style={{ flex: 1 }} placeholder="Eşya adı (ör. kılıç, kızıl, +5)" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && game.send({ t: 'market_search', q })} />
-        <button className="btn primary" onClick={() => game.send({ t: 'market_search', q })}>Ara</button>
+    <Panel title="Ticaret Camı · Pazar Arama" width={680}>
+      <div className="tg-head">
+        <div className="tg-search">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2.2" /><path d="M15.5 15.5 21 21" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
+          <input placeholder="Ne arıyorsun? (ör. kılıç, kızıl, +5, kor)" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { e.stopPropagation(); if (e.key === 'Enter') search(); }} />
+          {q && <button className="tg-clear" aria-label="Temizle" onClick={() => { setQ(''); search({ q: '' }); }}>✕</button>}
+        </div>
+        <select className="tg-sort" value={sort} onChange={(e) => { const v = e.target.value as TgSort; setSort(v); search({ sort: v }); }}>
+          {TG_SORTS.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+        </select>
+      </div>
+      <div className="tg-tabs">
+        {TG_TABS.map(([k, l]) => <button key={k} className={cat === k ? 'on' : ''} onClick={() => { setCat(k); search({ cat: k }); }}>{l}{c && <small>{c[k]}</small>}</button>)}
       </div>
       <div className="tg-list">
-        {r?.list.map((x, i) => (
-          <div key={i} className="tg-row" onClick={(e) => x.item && setTip({ it: x.item, x: e.clientX, y: e.clientY })}>
-            {x.item ? <b style={{ color: RARITY[x.item.rarity]?.color }}>{itemDisplayName(x.item)}</b> : <b style={{ color: '#cfe8b8' }}>{x.mat ? `${x.mat.qty}× ${matName(x.mat.key)}` : '?'}</b>}
-            <span className="muted">{x.owner}{x.title ? ` · ${x.title}` : ''}</span>
-            <span className="tg-price">{x.price.toLocaleString('tr-TR')} Mücevher</span>
-          </div>
-        ))}
-        {r && !r.list.length && <div className="muted">Sonuç yok.</div>}
+        {r?.list.map((x, i) => {
+          const mall = !!x.mat && MALL.has(x.mat.key);
+          const unit = x.mat && x.mat.qty > 1 ? Math.round((x.price / x.mat.qty) * 10) / 10 : 0;
+          return (
+            <div key={i} className={'tg-row' + (x.item ? '' : mall ? ' mall' : ' mat')}>
+              <div className="tg-ic" onClick={(e) => x.item && setTip({ it: x.item, x: e.clientX, y: e.clientY })}>
+                {x.item ? <Cell it={x.item} /> : x.mat ? <MatCell k={x.mat.key} n={x.mat.qty} /> : null}
+              </div>
+              <div className="tg-info">
+                {x.item ? <b style={{ color: RARITY[x.item.rarity]?.color }}>{itemDisplayName(x.item)}</b> : <b className={mall ? 'mall' : 'mat'}>{x.mat ? `${x.mat.qty.toLocaleString('tr-TR')}× ${matName(x.mat.key)}` : '?'}</b>}
+                <span className="muted">{x.owner}{x.title ? ` · ${x.title}` : ''}</span>
+              </div>
+              <div className="tg-pr">
+                <span className={'tg-price' + (gems < x.price ? ' poor' : '')}>{x.price.toLocaleString('tr-TR')} <small>Mücevher</small></span>
+                {unit > 0 && <small className="muted">tanesi {unit.toLocaleString('tr-TR')}</small>}
+              </div>
+              <button className="btn small primary" onClick={() => go(x.stall)}>Dükkâna git</button>
+            </div>
+          );
+        })}
+        {r && !r.list.length && <div className="tg-empty">{q ? `"${q}" için ${cat === 'all' ? '' : TG_TABS.find((t) => t[0] === cat)![1].toLocaleLowerCase('tr') + ' '}sonuç yok.` : 'Pazarda bu bölümde ilan yok.'}</div>}
+        {!r && <div className="tg-empty">Aramak için yaz ya da bir bölüm seç.</div>}
       </div>
+      <div className="tg-foot muted">{left > 0 ? <>Ticaret Camı süresi: <b>{left > 86_400_000 ? `${Math.floor(left / 86_400_000)} gün ${Math.floor((left % 86_400_000) / 3_600_000)} sa` : fmtLeft(left)}</b></> : <>Ticaret Camı süren doldu. <button className="btn small" onClick={() => store.set({ panel: 'mall' })}>Nesne Market</button></>}<span>· Eşyanın ikonuna dokun: özellikleri</span></div>
       {tip && <ItemTip it={tip.it} x={tip.x} y={tip.y} pinned onClose={() => setTip(null)} />}
     </Panel>
   );

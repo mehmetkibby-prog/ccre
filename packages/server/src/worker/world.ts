@@ -356,7 +356,7 @@ export class World {
       case 'use': return this.cmdUse(p, String(c.key), String(c.req ?? ''), c.item ? String(c.item) : undefined);
       case 'mall_buy': return this.cmdMallBuy(p, String(c.id), Math.floor(Number(c.qty) || 1), String(c.req ?? ''));
       case 'stall_skin': { const ch = p.char; if (!ch.misc.stallSkin) return this.notice(p, 'Zümrüt Pazar Tezgâhı market ürünüdür.'); ch.misc.stallSkin = c.on ? 2 : 1; const st = this.ownStall(ch.id); if (st) { st.skin = c.on ? 'emerald' : undefined; const zz = this.zones.get(st.zone); if (zz) this.broadcastStalls(zz); } p.selfDirty |= 1; p.markSave(); return; }
-      case 'market_search': return this.cmdMarketSearch(p, String(c.q ?? ''));
+      case 'market_search': return this.cmdMarketSearch(p, String(c.q ?? ''), String(c.cat ?? 'all'), String(c.sort ?? 'price'));
       case 'chat_item': return this.cmdChatItem(p, String(c.item), String(c.req ?? ''));
       case 'fish_cast': return this.cmdFishCast(p);
       case 'fish_end': return this.cmdFishEnd(p, String(c.token ?? ''), !!c.ok);
@@ -2754,17 +2754,26 @@ export class World {
     }
     this.notice(p, 'Bu ürün doğrudan kullanılamaz.');
   }
-  private cmdMarketSearch(p: Player, q: string) {
+  /**
+   * Ticaret Camı: Pazar Köyü'ndeki bütün dükkânlarda arama. cat: tümü / ekipman / malzeme / Nesne Market ürünü;
+   * sort: en ucuz, en pahalı ya da (yığınlarda) birim fiyat. Önce bütün eşleşmeler toplanır, sonra sıralanıp kesilir.
+   */
+  private cmdMarketSearch(p: Player, q: string, cat = 'all', sort = 'price') {
+    if (!['all', 'item', 'mat', 'mall'].includes(cat)) cat = 'all';
     if ((p.char.misc.buffs?.trade_glass ?? 0) <= this.now) return this.notice(p, 'Pazar araması için Ticaret Camı gerekir (Nesne Market).');
     const needle = q.trim().toLocaleLowerCase('tr').slice(0, 40);
+    const kind = (e: StallEntry) => (e.item ? 'item' : e.mat && MALL.has(e.mat.key) ? 'mall' : 'mat');
     const res: { stall: string; owner: string; title: string; item?: ItemInstance; mat?: StallEntry['mat']; price: number; x: number; y: number }[] = [];
+    const counts = { all: 0, item: 0, mat: 0, mall: 0 };
     for (const st of this.market.stalls) for (const e of st.items) {
       if (needle && !stallEntryName(e).toLocaleLowerCase('tr').includes(needle)) continue;
+      const k = kind(e); counts.all++; counts[k]++;
+      if (cat !== 'all' && cat !== k) continue;
       res.push({ stall: st.id, owner: st.ownerName, title: st.title, item: e.item, mat: e.mat, price: e.price, x: Math.round(st.x), y: Math.round(st.y) });
-      if (res.length >= 80) break;
     }
-    res.sort((a, b) => a.price - b.price);
-    this.sendJson(p, { t: 'market_results', q, list: res });
+    const unit = (r: typeof res[number]) => r.price / Math.max(1, r.mat?.qty ?? 1);
+    res.sort(sort === 'desc' ? (a, b) => b.price - a.price : sort === 'unit' ? (a, b) => unit(a) - unit(b) : (a, b) => a.price - b.price);
+    this.sendJson(p, { t: 'market_results', q, cat, sort, counts, list: res.slice(0, 120) });
   }
   private cmdChatItem(p: Player, itemId: string, req: string) {
     const c = p.char;

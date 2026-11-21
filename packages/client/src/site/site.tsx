@@ -31,12 +31,12 @@ export function Link({ to, className, children, onClick }: { to: string; classNa
 }
 
 // ───────── durum (açılış, ön kayıt sayısı) ─────────
-export interface SiteStatus { online: number; open: boolean; mode: string; openAt: number | null; msg: string; prereg: number }
+export interface SiteStatus { open: boolean; mode: string; openAt: number | null; msg: string; prereg: number }
 export function useSiteStatus() {
   const [st, setSt] = useState<SiteStatus | null>(null);
   useEffect(() => {
     let alive = true;
-    const load = () => api('/api/status').then((r) => { if (alive) setSt({ online: r.online ?? 0, open: !r.opening || r.opening.mode === 'open', mode: r.opening?.mode ?? 'open', openAt: r.opening?.openAt ?? null, msg: r.opening?.message ?? '', prereg: r.prereg ?? 0 }); }).catch(() => {});
+    const load = () => api('/api/status').then((r) => { if (alive) setSt({ open: !r.opening || r.opening.mode === 'open', mode: r.opening?.mode ?? 'open', openAt: r.opening?.openAt ?? null, msg: r.opening?.message ?? '', prereg: r.prereg ?? 0 }); }).catch(() => {});
     load(); const id = setInterval(load, 30000);
     return () => { alive = false; clearInterval(id); };
   }, []);

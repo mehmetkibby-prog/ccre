@@ -106,7 +106,8 @@ export function buildApi(d: ApiDeps): Router {
 
   r.get('/api/status', async () => ({
     opening: { mode: d.opening.state.mode, openAt: d.opening.state.openAt, message: d.opening.state.message },
-    online: d.gateway.online(), worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
+    // oyundaki oyuncu sayısı herkese açık değil (yalnız yönetim panelinde)
+    worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
   }));
 
   /** Kayıt doğrulama kodu (bot koruması): görsel SVG, kod sunucuda */

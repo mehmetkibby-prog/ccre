@@ -339,7 +339,7 @@ export class Game {
       }
       case 'fish_wait': store.set({ fishing: { phase: 'wait', token: m.token, biteAt: performance.now() + m.biteIn, diff: m.diff, motion: m.motion }, fishResult: null }); break;
       case 'fish_result': store.set({ fishing: null, fishResult: { ok: m.ok, name: m.name, qty: m.qty, at: Date.now() } }); if (m.ok) sfx.play('loot'); break;
-      case 'market_results': store.set({ marketResults: { q: m.q, list: Array.isArray(m.list) ? m.list : [] }, panel: 'tradeglass' }); break;
+      case 'market_results': store.set({ marketResults: { q: m.q, cat: m.cat, sort: m.sort, counts: m.counts, list: Array.isArray(m.list) ? m.list : [] }, panel: 'tradeglass' }); break;
       case 'gain': {
         if (m.gems) this.fx.text(m.x, m.y, 1.6, `+${m.gems} Mücevher`, '#5ef0a8', 14, 1200);
         if (m.essence) this.fx.text(m.x + 18, m.y, 1.2, `+${m.essence} Öz`, '#8ff4ff', 13, 1200);
