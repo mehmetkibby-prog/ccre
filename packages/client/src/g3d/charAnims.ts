@@ -221,13 +221,33 @@ const B = (pose: Pose, yaw: number, lean = 0): Pose => {
 const LUNGE_L: Pose = { LeftUpLeg: { e: [-30, 0, 6] }, LeftLeg: { e: [30, 0, 0] }, RightUpLeg: { e: [20, 0, -6] }, RightLeg: { e: [8, 0, 0] } };
 const LUNGE_R: Pose = { RightUpLeg: { e: [-26, 0, -6] }, RightLeg: { e: [28, 0, 0] }, LeftUpLeg: { e: [16, 0, 6] }, LeftLeg: { e: [10, 0, 0] } };
 
-/** Muhafız düz vuruşunun değme anı (sn): kısa hazırlık, çok hızlı kesiş; vuruş tuşa basınca çabuk gelir. */
-export const GUARDIAN_IMPACT_S = 0.22;
 /**
- * Muhafız kılıç izinin parladığı aralık (sn, kombo başına): hazırlık bittiğinde başlar, savuruşun sonunda biter.
+ * Üç sınıfın ORTAK düz vuruş ritmi (ekran süresi, sn): tuşa basıştan değme/atış anına (BASIC_HIT_S) ve duruşa dönüşe
+ * (BASIC_END_S) kadar. Muhafız kılıcı, Avcı oku ve Arkanist küresi aynı anda çıkar; bekleme süresi de üçünde aynıdır
+ * (classes.ts BASIC_COOLDOWN_MS). Elle çizilmiş klipler kendi tasarım zamanlarıyla yazılır ve retimeBasic ile bu ritme çekilir.
+ */
+export const BASIC_HIT_S = 0.16, BASIC_END_S = 0.56;
+/** elle çizilmiş düz vuruş kliplerinin tasarım süresi */
+const BASIC_DESIGN_END_S = 0.62;
+/** tasarım zamanını ortak ritme çevirir: [0, değme] → [0, BASIC_HIT_S], [değme, 0,62] → [BASIC_HIT_S, BASIC_END_S] */
+export function basicTime(t: number, designHit: number): number {
+  if (t <= designHit) return (t / designHit) * BASIC_HIT_S;
+  return BASIC_HIT_S + ((Math.min(t, BASIC_DESIGN_END_S) - designHit) / (BASIC_DESIGN_END_S - designHit)) * (BASIC_END_S - BASIC_HIT_S);
+}
+/** elle çizilmiş düz vuruş klibini ortak ritme çeker (kare değerleri aynı, yalnız zamanlar) */
+export function retimeBasic(clip: THREE.AnimationClip, designHit: number): THREE.AnimationClip {
+  const tracks = clip.tracks.map((tr) => { const c = tr.clone(); c.times = Float32Array.from(c.times, (t) => basicTime(t, designHit)); return c; });
+  return new THREE.AnimationClip(clip.name, BASIC_END_S, tracks);
+}
+/** Muhafız elle çizilmiş vuruşunun tasarımdaki değme anı (sn) */
+const GUARDIAN_DESIGN_HIT_S = 0.22;
+/** Muhafız düz vuruşunun değme anı (ekran süresi, sn): üç sınıfta aynı */
+export const GUARDIAN_IMPACT_S = BASIC_HIT_S;
+/**
+ * Muhafız kılıç izinin parladığı aralık (ekran süresi, kombo başına): hazırlık bittiğinde başlar, savuruşun sonunda biter.
  * Efekt (kılıç izi) bu aralıkta kılıcın gerçek ucunu ve kabzasını izler.
  */
-export const GUARDIAN_TRAIL_S: [number, number][] = [[0.15, 0.34], [0.15, 0.34], [0.17, 0.36]];
+export const GUARDIAN_TRAIL_S: [number, number][] = ([[0.15, 0.34], [0.15, 0.34], [0.17, 0.36]] as [number, number][]).map(([a, b]) => [basicTime(a, GUARDIAN_DESIGN_HIT_S), basicTime(b, GUARDIAN_DESIGN_HIT_S)]);
 export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
   // Tasarım: kılıç hep gövdenin önünde kalır, hedefin bulunduğu yerden geçer; gövde yalnız ölçülü burulur.
   // Ritim: 0,12 sn hazırlık, kısa bekleme, ~0,06 sn kesiş (değme 0,22), savruluş, 0,62'de duruşa dönüş.
@@ -243,7 +263,7 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
   const torso = (lean: number, yaw: number): Pose => ({ Spine02: { e: [lean * 0.45, yaw * 0.5, 0] }, Spine01: { e: [lean * 0.3, yaw * 0.3, 0] }, Spine: { e: [lean * 0.25, yaw * 0.2, 0] }, Head: { e: [-6 - lean * 0.5, -yaw * 0.8, 0] } });
   const clip = (name: string, keys: [number, Pose, [number, number], Key['ease']][]) =>
     buildClip(name, inner, root, [{ t: 0, p: GUARD }, ...keys.map(([t, p, hips, ease]) => ({ t, p, hips, ease })), { t: 0.62, p: GUARD, ease: 'inOut' }], 0.62, 0.9);
-  const I = GUARDIAN_IMPACT_S;
+  const I = GUARDIAN_DESIGN_HIT_S;
 
   // 1) Çapraz iniş: kılıç sağ omzun üstüne kalkar, sağ üstten sol alta keser; sol ayakla öne adım
   const w1 = (k: number) => B(P({ ...KNEE, ...SH_IN, ...torso(-2, -12 - k * 2), ...arm([0.6, 0.7, -0.1], [-0.1, 0.9, 0.3], [0.35, 0.55, -0.75]) }), -14 - k * 2, -2);
@@ -326,7 +346,7 @@ export function guardianClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.44, ease: 'out', hips: [-0.13, 0.24], p: B(P({ ...LUNGE3, ...SH_PUNCH, ...SWORD_LOW, ...torso(14, -18) }), -18, 7) },
     { t: 0.95, ease: 'inOut', p: GUARD },
   ], 0.95);
-  return { attacks: [a1, a2, a3], skills: { 1: s1, 2: s2, 3: s3, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
+  return { attacks: [a1, a2, a3].map((c) => retimeBasic(c, GUARDIAN_DESIGN_HIT_S)), skills: { 1: s1, 2: s2, 3: s3, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 /** Sv. 7 becerilerinde vuruşun yere değdiği an (sn): efektler buna göre */
 export const SKILL7_IMPACT_S = [0.4, 0.46, 0.46];
@@ -373,9 +393,11 @@ function releasePose(yaw: number, up: number, extra: Pose = {}): Pose {
   p.LeftForeArm = { a: [fx, Math.sin(up) + 0.12, fz] };
   return p;
 }
-export const HUNTER_RELEASE_S = 0.19;
+/** Avcı okunun bırakıldığı an (ekran süresi, sn): üç sınıfta aynı; elle çizilmiş klipte tasarım anı 0,19 */
+export const HUNTER_RELEASE_S = BASIC_HIT_S;
+const HUNTER_DESIGN_HIT_S = 0.19;
 export function hunterClips(inner: THREE.Object3D, root: THREE.Object3D) {
-  const R = HUNTER_RELEASE_S;
+  const R = HUNTER_DESIGN_HIT_S;
   const H = (p: Pose, yaw: number, lean = 0) => B(p, yaw * 0.55, lean);
   // 1) atış: geniş okçu duruşuna oturur, yayı kaldırıp dizleri bükerek sonuna kadar çeker, bırakınca bütün gövde geri teper
   const ST1: Pose = { LeftUpLeg: { e: [-26, 0, 16] }, LeftLeg: { e: [34, 0, 0] }, RightUpLeg: { e: [18, 0, -16] }, RightLeg: { e: [30, 0, 0] } };
@@ -476,7 +498,8 @@ export function hunterClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.95, ease: 'inOut', p: HUNT },
   ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
+  const ha = retimeBasic(a1, HUNTER_DESIGN_HIT_S);
+  return { attacks: [ha, ha, ha], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── Arkanist (asa sağ elde) ─────────
@@ -488,9 +511,11 @@ const ARC: Pose = {
 };
 const AP = (over: Pose): Pose => ({ ...ARC, ...over });
 /** Arkanist düz vuruşunda kürenin asa ucundan çıktığı an (sn) */
-export const ARCANIST_RELEASE_S = 0.22;
-/** asa ucunun ince ışık izi bıraktığı aralık (sn) */
-export const ARCANIST_TRAIL_S: [number, number] = [0.13, 0.27];
+export const ARCANIST_RELEASE_S = BASIC_HIT_S;
+/** elle çizilmiş asa dürtüşünün tasarımdaki atış anı */
+const ARCANIST_DESIGN_HIT_S = 0.22;
+/** asa ucunun ince ışık izi bıraktığı aralık (ekran süresi, sn) */
+export const ARCANIST_TRAIL_S: [number, number] = [basicTime(0.13, ARCANIST_DESIGN_HIT_S), basicTime(0.27, ARCANIST_DESIGN_HIT_S)];
 export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
   // "bl" (silah yönü) bu modelde asanın kristal ucunu gösterir
   let rig = rigCache.get(inner);
@@ -526,7 +551,7 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0, p: ARC },
     { t: 0.12, ease: 'out', hips: [-0.06, -0.06], p: AIM(0) },
     { t: 0.16, ease: 'lin', hips: [-0.07, -0.07], p: AIM(1) },
-    { t: ARCANIST_RELEASE_S, ease: 'in', hips: [-0.11, 0.17], p: THRUST },
+    { t: ARCANIST_DESIGN_HIT_S, ease: 'in', hips: [-0.11, 0.17], p: THRUST },
     { t: 0.34, ease: 'out', hips: [-0.13, 0.2], p: RECOIL },
     { t: 0.62, ease: 'inOut', p: ARC },
   ], 0.62);
@@ -587,7 +612,8 @@ export function arcanistClips(inner: THREE.Object3D, root: THREE.Object3D) {
     { t: 0.95, ease: 'inOut', p: ARC },
   ], 0.95);
   // her düz vuruş aynı asa savuruşu (küre hep asanın ucundan çıkar; eski sol avuç ve tepeden indirme kaldırıldı)
-  return { attacks: [a1, a1, a1], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
+  const aa = retimeBasic(a1, ARCANIST_DESIGN_HIT_S);
+  return { attacks: [aa, aa, aa], skills: { 1: s1, 2: s2, 3: s3, 4: s4, 5: s5, 7: s7 } as Record<number, THREE.AnimationClip> };
 }
 
 // ───────── Şifa Bahçesi: diz çöküp orakla bitki kesme (üç sınıf aynı iskelet) ─────────

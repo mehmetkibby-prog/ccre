@@ -58,3 +58,15 @@ export function MenuIcon({ k }: { k: string }) {
   };
   return <G size={26}>{p[k]}</G>;
 }
+
+/** Karakter Gücü simgesi: çapraz kılıç ve kalkan üzerinde parlayan çekirdek (altın) */
+export function PowerGlyph({ size = 16 }: { size?: number }) {
+  return (
+    <svg className="pglyph" width={size} height={size} viewBox="0 0 24 24" aria-hidden>
+      <defs><linearGradient id="pg-g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff2c2" /><stop offset="1" stopColor="#f0a632" /></linearGradient></defs>
+      <path d="M12 2.5 19.5 5.6v5.6c0 4.6-3.1 8.4-7.5 10.3-4.4-1.9-7.5-5.7-7.5-10.3V5.6z" fill="rgba(240,166,50,.18)" stroke="url(#pg-g)" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M8 8.2l8 8M16 8.2l-8 8" stroke="url(#pg-g)" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="12" cy="12.2" r="2.1" fill="#fff6d8" />
+    </svg>
+  );
+}

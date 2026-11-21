@@ -12,11 +12,11 @@ import { onConfig } from '../admin/config.ts';
 import { MallButton, EssMarketButton, BossButton, AutoButton, FullscreenButton, BossBanner, BossCompass, BossCountdowns, FishButton, FishGame, WorldBossTimer } from './extras.tsx';
 import { ItemTip } from './panels.tsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { CLASSES, MAPS, TILE, classSkill, QTE_SWEEP_MS, QTE_MULT, skillDesc, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
+import { CLASSES, MAPS, TILE, classSkill, skillOrder, QTE_SWEEP_MS, QTE_MULT, skillDesc, skillBuffVal, getLayout, Kind, MATERIAL, inMarket, RARITY, RARITIES, MONSTERS, TUNING, ITEM_TPL, MALL, mallIcon, overLevelMul, VARIANT_LOOT_MULT, type ClassId, type ItemInstance } from '@col/shared';
 import { Game, setDirectWs } from '../game/game.ts';
 import { store, useStore, reqId } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
-import { SkillIcon, MenuIcon } from './icons.tsx';
+import { SkillIcon, MenuIcon, PowerGlyph } from './icons.tsx';
 import { Panels } from './panels.tsx';
 import { sfx } from '../game/audio.ts';
 import { modelStatus, onModelStatus } from '../g3d/models.ts';
@@ -308,6 +308,27 @@ function ModelBadge() {
   return <div className="meta" style={{ color: bad ? '#ff8a7a' : '#8fe08a', whiteSpace: 'normal', maxWidth: 260 }}>Model {m.loaded}/{m.total}{m.lastError ? ' · ' + m.lastError.slice(0, 90) : ''}</div>;
 }
 
+/**
+ * Karakter Gücü rozeti (sol üst kutu): bütün saldırı, savunma ve efsunların tek sayısı (sunucu: combatPower). Güç
+ * artınca yanında yeşil "+N" belirir; basınca Rehber'in "Güçlen" bölümü (kişiye özel öneriler) açılır.
+ */
+function PowerBadge({ power }: { power?: number }) {
+  const prev = useRef<number | undefined>(undefined);
+  const [gain, setGain] = useState<{ n: number; k: number } | null>(null);
+  useEffect(() => {
+    if (power === undefined) return;
+    const p = prev.current; prev.current = power;
+    if (p !== undefined && power > p) { setGain((g) => ({ n: power - p, k: (g?.k ?? 0) + 1 })); const t = setTimeout(() => setGain(null), 2400); return () => clearTimeout(t); }
+  }, [power]);
+  if (power === undefined) return null;
+  return (
+    <button type="button" className="cpow" title="Karakter Gücü: saldırı, savunma, can ve bütün efsunların toplamı. Nasıl artar?" onClick={() => { sfx.play('ui'); store.set({ panel: 'guide', guideCh: 'guc' }); }}>
+      <PowerGlyph /><span className="lbl">Güç</span><b>{power.toLocaleString('tr-TR')}</b><span className="chev">›</span>
+      {gain && <em key={gain.k}>+{gain.n.toLocaleString('tr-TR')}</em>}
+    </button>
+  );
+}
+
 /** Sol üst: çekirdek madalyonu (can ve deneyim halkaları, seviye), ad, can çubuğu, para birimleri. */
 function PlayerPlate() {
   const self = useStore((s) => s.self);
@@ -333,6 +354,7 @@ function PlayerPlate() {
       </div>
       <div className="frame pinfo">
         <div className="nm">{char.name}<small>{CLASSES[char.cls as ClassId]?.name}</small></div>
+        <PowerBadge power={self.combat?.power} />
         <div className="bar hpbar"><i style={{ width: `${hk * 100}%` }} /></div>
         <div className="hpt"><span>{hp.toLocaleString('tr-TR')} / {max.toLocaleString('tr-TR')}</span><span>%{(hk * 100).toFixed(0)}</span></div>
         <div className="coins">
@@ -562,11 +584,8 @@ function BottomBar({ game }: { game: Game }) {
     <div className="bottom">
       <div className="skillbar">
         <div className="slots">
-          {slot(1, '2')}{slot(2, '3')}
-          {slot(0, '1')}
-          {slot(3, '4')}
-          {slot(4, '5')}
-          {slot(5, '6')}
+          {/* 1: düz vuruş; 2-6: açılma seviyesine göre (yönetimden değişen seviyeler dahil) */}
+          {skillOrder(cls, self.spec).map((s, i) => slot(s, String(i + 1)))}
           <button className="slot" data-tut="potion" title="Kırmızı İksir (Q): maks. canın %20'si" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}>
             <span className="key">Q</span><img src={iconUrl('potion_red')} alt="" /><span className="cnt">{pots}</span>
           </button>
@@ -661,7 +680,7 @@ function MobileControls({ game }: { game: Game }) {
       <div className="joy" ref={joy}><i ref={knob} /></div>
       <div className="mact">
         <button className="atk" data-tut="attack" onPointerDown={(e) => { e.preventDefault(); game.attackPressed(true); }} onPointerUp={() => game.attackPressed(false)} onPointerCancel={() => game.attackPressed(false)}>⚔</button>
-        {[1, 2, 3, 4, 5].map((s) => { const k = sk(s), locked = !k || (self?.level ?? 1) < k.unlock; return <button key={s} className={'s' + s + (locked ? ' locked' : '')} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{k ? <SkillIcon id={k.id} /> : s + 1}{locked ? <LockBadge lv={k ? k.unlock : TUNING.specLevel} /> : cd(s)}</button>; })}
+        {(cls ? skillOrder(cls, self?.spec ?? null).slice(1) : [5, 1, 4, 2, 3]).map((s, i) => { const k = sk(s), locked = !k || (self?.level ?? 1) < k.unlock; return <button key={s} className={'s' + (i + 1) + (locked ? ' locked' : '')} onPointerDown={(e) => { e.preventDefault(); game.useSkill(s); }}>{k ? <SkillIcon id={k.id} /> : s + 1}{locked ? <LockBadge lv={k ? k.unlock : TUNING.specLevel} /> : cd(s)}</button>; })}
         <button className="pot" data-tut="potion" onPointerDown={(e) => { e.preventDefault(); game.potion(); }}><img src={iconUrl('potion_red')} style={{ width: 30 }} alt="" /><span className="pot-n">{self?.materials?.red_potion ?? 0}</span></button>
         <button className="pick" onPointerDown={(e) => { e.preventDefault(); game.pickupNearby(); }}><img className="pick-img" src="/icons/pickup_hand.png" alt="" draggable={false} /></button>
         <button className="tgt" aria-label="Canavar seç" onPointerDown={(e) => { e.preventDefault(); game.cycleTarget(); }}><TargetIcon /><small>Hedef</small></button>

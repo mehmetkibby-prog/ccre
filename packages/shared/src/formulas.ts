@@ -109,6 +109,20 @@ export function computeStats(c: CharCore): CombatStats {
   return s;
 }
 
+/**
+ * Karakter Gücü: saldırı, savunma, can ve BÜTÜN efsunların (kritik, hız, can çalma, blok, PvP/PvE, bölge ve silah
+ * türü efsunları) tek sayıda birleşimi. Oyuncu kendini geliştirdikçe büyür; sol üst kutuda ve Rehber'de gösterilir.
+ */
+export function combatPower(s: CombatStats): number {
+  const e = s.enchants;
+  const elem = (e.forest_power ?? 0) + (e.frost_power ?? 0) + (e.fire_dmg ?? 0) + (e.ice_dmg ?? 0);
+  const guard = (e.sword_def ?? 0) + (e.arrow_def ?? 0) + (e.magic_def ?? 0);
+  const off = s.atk * (1 + (s.crit / 100) * (s.critDmg / 100)) * (1 + Math.min(40, s.atkSpeed) / 100) * (1 + s.skillSpeed / 250)
+    * (1 + s.lifesteal / 150) * (1 + (s.pvpPower + s.pvePower) / 200) * (1 + elem / 300);
+  const dfn = (s.maxHp / 6 + s.def * 2.2) * (1 + Math.min(60, s.block) / 100) * (1 + s.pvpResist / 200) * (1 + guard / 300);
+  return Math.max(0, Math.round((off * 4 + dfn * 1.5) * 10));
+}
+
 /** Saldırı aralığı: hız bonusu sınırlı oranla kısaltır (en fazla %40). */
 export function attackCooldown(baseMs: number, speedPct: number): number {
   const f = Math.min(0.4, speedPct / 100);

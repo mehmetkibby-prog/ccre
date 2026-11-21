@@ -23,7 +23,7 @@ import { GuildPanel } from './guild.tsx';
 import type { Game } from '../game/game.ts';
 import { store, useStore, reqId, notify, type StallEntryC } from '../game/store.ts';
 import { iconUrl } from '../game/art/icons.ts';
-import { SkillIcon } from './icons.tsx';
+import { SkillIcon, PowerGlyph } from './icons.tsx';
 import { sfx } from '../game/audio.ts';
 const TOUCH_DIAG = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
 
@@ -493,6 +493,7 @@ function Character({ game }: { game: Game }) {
         </div>
         <div>
           <b>Savaş değerleri</b>
+          {c.power !== undefined && <button type="button" className="cpow cpow-wide" title="Karakter Gücü nasıl artar?" onClick={() => store.set({ panel: 'guide', guideCh: 'guc' })}><PowerGlyph /><span className="lbl">Karakter Gücü</span><b>{c.power.toLocaleString('tr-TR')}</b><span className="chev">›</span></button>}
           <div style={{ marginTop: 6 }}>
             {[['Seviye', self.level], ['Maks. can', c.maxHp], ['Saldırı', c.atk], ['Savunma', c.def], ['Kritik', `%${c.crit}`], ['Kritik hasarı', `+%${c.critDmg}`], ['Saldırı hızı', `+%${c.atkSpeed}`], ['Blok', `%${c.block}`], ['Can çalma', `%${c.lifesteal}`], ['PvP güç', `%${c.pvpPower}`], ['PvP direnç', `%${c.pvpResist}`], ['Hareket hızı', c.speed], ['Toplam av', self.kills.toLocaleString('tr-TR')], ['Bugünkü av', self.daily]].map(([k, v]) => <div key={k as string} className="kv"><span>{k}</span><b>{v}</b></div>)}
           </div>

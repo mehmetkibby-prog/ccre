@@ -374,7 +374,7 @@ function MenuBackdrop() {
         fx.sk.basic(m.c, e.id, BOSS, sp, tp, false, combo);
         if (m.c === 0) {
           after(MELEE_IMPACT_MS, () => { fx.sk.meleeImpact(e.id, tp, Math.min(2.2, Math.max(0.45, fx.heightOf(BOSS) * 0.5)), combo, crit, false); hitBoss(Math.round(380 + Math.random() * 260) * (crit ? 2 : 1), crit); });
-          m.next = t + 660 + Math.random() * 120;
+          m.next = t + 590 + Math.random() * 110;
         } else {
           if (m.c === 2) fx.light(e.x, e.y, 1.6, '#7cf3ff', 3, 300);
           after(m.c === 1 ? 430 : 520, () => hitBoss(Math.round((m.c === 1 ? 300 : 420) + Math.random() * 240) * (crit ? 2 : 1), crit));

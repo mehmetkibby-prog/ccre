@@ -4,7 +4,7 @@ import { DIR_STEPS,
   findPath, los, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, MATERIALS,
   CAST_FIRST, CAST_CHAIN_HOP,
 } from '@col/shared';
-import { runeConf, inPvpRing } from '@col/shared';
+import { runeConf, inPvpRing, BASIC_COOLDOWN_MS, skillOrder } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
@@ -716,7 +716,7 @@ export class Game {
           else if (!manual && this.input.attackHeld && performance.now() - this.farHintAt > 2500) { this.farHintAt = performance.now(); notify('Hedef çok uzak: yaklaş ya da canavara tıkla.', 'error'); }
         }
         else {
-          const cd = attackCooldown(650, st.self?.combat?.atkSpeed ?? 0);
+          const cd = attackCooldown(BASIC_COOLDOWN_MS, st.self?.combat?.atkSpeed ?? 0);
           const now = performance.now();
           if (now - this.lastAttackSent >= cd - 20) { this.lastAttackSent = now; this.send({ t: 'attack', id: t.id }); }
           if (!manual) this.sdir = Math.round(Math.atan2(t.y - this.py, t.x - this.px) / (Math.PI * 2) * 256) & 255;
@@ -1046,11 +1046,9 @@ export class Game {
     if (!down) return;
     const toggle = (p: any) => store.set((s) => ({ panel: s.panel === p ? null : p }));
     switch (code) {
-      case 'Digit2': this.useSkill(1); break;
-      case 'Digit3': this.useSkill(2); break;
-      case 'Digit4': this.useSkill(3); break;
-      case 'Digit5': this.useSkill(4); break;
-      case 'Digit6': this.useSkill(5); break;
+      // 2-6 tuşları: beceriler açılma seviyesine göre sıralı (skillOrder)
+      case 'Digit2': case 'Digit3': case 'Digit4': case 'Digit5': case 'Digit6':
+        this.useSkill(skillOrder(this.cls, store.get().self?.spec ?? null)[Number(code.slice(5)) - 1]); break;
       case 'KeyQ': this.potion(); break;
       case 'KeyZ': case 'KeyF': this.pickupNearby(); break;
       case 'KeyH': if (store.get().self?.mount?.owned) this.send({ t: 'mount', op: 'ride' }); break;

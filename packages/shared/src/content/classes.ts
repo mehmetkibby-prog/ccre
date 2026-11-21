@@ -39,6 +39,8 @@ export interface SkillDef {
 
 /** Beceri yuvaları: 0 düz vuruş, 1 Sv.5, 2 Sv.30, 3 uzmanlık, 4 Sv.7 (çubuklu), 5 Sv.1 başlangıç becerisi */
 export const SKILL_SLOTS = 6;
+/** Düz vuruş bekleme süresi (ms): üç sınıfta aynı (saldırı hızı efsunu bunu kısaltır) */
+export const BASIC_COOLDOWN_MS = 580;
 /** Sv.1 becerisi istemciye bu numarayla gider; zincirin her sıçrayışı ayrı bir CAST_CHAIN_HOP olayıdır */
 export const CAST_FIRST = 7, CAST_CHAIN_HOP = 8;
 
@@ -111,7 +113,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
     baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 12, defPerLevel: 0,
     speed: 225 * BASE_MULT, range: 85,
     skills: [
-      { id: 'g_basic', name: 'Kılıç Darbesi', desc: 'Yakın mesafe kılıç vuruşu.', kind: 'melee', unlock: 1, cooldownMs: 650, range: 85, mult: 1 },
+      { id: 'g_basic', name: 'Kılıç Darbesi', desc: 'Yakın mesafe kılıç vuruşu.', kind: 'melee', unlock: 1, cooldownMs: BASIC_COOLDOWN_MS, range: 85, mult: 1 },
       { id: 'g_pull', name: 'Zincir Çekişi', desc: 'Hedefi yanına çeker ve hasar verir.', kind: 'pull', unlock: 5, cooldownMs: 10_000, range: 720, mult: 1.6 },
       { id: 'g_dash', name: 'Kalkan Hücumu', desc: 'Hedefe atılır, çevresine hasar verip sersemletir.', kind: 'dash', unlock: 30, cooldownMs: 12_000, range: 600, mult: 2.0, radius: 160, stunMs: 1500, maxTargets: 6 },
     ],
@@ -128,7 +130,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
     baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 5, defPerLevel: 0,
     speed: 250 * BASE_MULT, range: 470,
     skills: [
-      { id: 'h_basic', name: 'Ok Atışı', desc: 'Tek hedefe ok.', kind: 'projectile', unlock: 1, cooldownMs: 650, range: 470, mult: 1 },
+      { id: 'h_basic', name: 'Ok Atışı', desc: 'Tek hedefe ok.', kind: 'projectile', unlock: 1, cooldownMs: BASIC_COOLDOWN_MS, range: 470, mult: 1 },
       { id: 'h_multi', name: 'Yelpaze Atış', desc: 'Hedef çevresine ok yağmuru.', kind: 'aoe', unlock: 5, cooldownMs: 10_000, range: 470, mult: 1.5, radius: 150, maxTargets: 5 },
       { id: 'h_pierce', name: 'Delici Ok', desc: 'Güçlü delici atış, kısa süre sabitler.', kind: 'root', unlock: 30, cooldownMs: 12_000, range: 520, mult: 2.1, rootMs: 1500 },
     ],
@@ -145,7 +147,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
     baseHp: 300, hpPerLevel: 0, baseAtk: 15, atkPerLevel: 0, baseDef: 5, defPerLevel: 0,
     speed: 225 * BASE_MULT, range: 440,
     skills: [
-      { id: 'a_basic', name: 'Öz Kıvılcımı', desc: 'Tek hedefe büyü küresi.', kind: 'projectile', unlock: 1, cooldownMs: 650, range: 440, mult: 1 },
+      { id: 'a_basic', name: 'Öz Kıvılcımı', desc: 'Tek hedefe büyü küresi.', kind: 'projectile', unlock: 1, cooldownMs: BASIC_COOLDOWN_MS, range: 440, mult: 1 },
       { id: 'a_nova', name: 'Öz Halkası', desc: 'Hedef alanda patlayan halka.', kind: 'aoe', unlock: 5, cooldownMs: 10_000, range: 440, mult: 1.7, radius: 170, maxTargets: 6 },
       { id: 'a_frost', name: 'Kırağı Mührü', desc: 'Dondurucu mühür, hedefi sabitler.', kind: 'root', unlock: 30, cooldownMs: 12_000, range: 440, mult: 1.9, rootMs: 1600, radius: 120, maxTargets: 4 },
     ],
@@ -158,6 +160,15 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   },
 };
 
+/**
+ * Beceri çubuğu sırası: düz vuruş hep 1. tuş; kalan beceriler açılma seviyesine göre (yönetimden değişen seviyeler dahil)
+ * 2-6 tuşlarına dizilir. Dönen dizi sunucudaki beceri numaralarıdır (tuş n → order[n-1]). Eşitlikte sabit sıra.
+ */
+export function skillOrder(cls: ClassId, spec?: string | null): number[] {
+  const BASE = [5, 1, 4, 2, 3];
+  const lv = (i: number) => (i === 3 && !spec ? TUNING.specLevel ?? 30 : classSkill(cls, i, spec)?.unlock ?? 99);
+  return [0, ...BASE.map((i, k) => ({ i, k, u: lv(i) })).sort((a, b) => a.u - b.u || a.k - b.k).map((x) => x.i)];
+}
 export function classSkill(cls: ClassId, idx: number, spec?: string | null): SkillDef | null {
   const c = CLASSES[cls];
   // açılma seviyesi yönetimden (Seviye sekmesi → Beceriler): düz vuruş hep Sv. 1, uzmanlık becerisi uzmanlık seviyesinde

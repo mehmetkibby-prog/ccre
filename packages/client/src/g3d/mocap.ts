@@ -223,8 +223,9 @@ export function nativeClip(name: string, rig: Rig, key: string, map: TimeMap, op
 /** Kullanılan kütüphane kombosu: [klip, kaynak başlangıç, kaynak değme anı, kaynak bitiş] (boş: elle çizilmiş eski vuruşlar) */
 export const NATIVE_ATTACK: Record<string, { hit: number; lockLeft?: number; stepK?: number; combo: MSpec[] }> = {
   // Muhafız: Meshy "Weapon Combo 2" — üç vuruş (sağdan çapraz, yatay savuruş, tepeden iniş); pencereler kılıç ucunun
-  // en hızlı olduğu anlara (1,20 / 2,07 / 3,10 sn) göre seçildi
-  guardian: { hit: GUARDIAN_IMPACT_S, combo: [['g241', 0.9, 1.18, 1.62], ['g241', 1.75, 2.05, 2.5], ['g241', 2.8, 3.1, 3.6]] },
+  // en hızlı olduğu anlara (1,20 / 2,07 / 3,10 sn) göre seçildi. Hazırlık kısa kesilir: vuruş tuşa basınca çabuk gelir
+  // (değme anı üç sınıfta aynı, BASIC_HIT_S).
+  guardian: { hit: GUARDIAN_IMPACT_S, combo: [['g241', 0.96, 1.18, 1.62], ['g241', 1.82, 2.05, 2.5], ['g241', 2.87, 3.1, 3.6]] },
   // Arkanist: Meshy "Mage Spell Cast" — asayla öne itiş, küre değme anında çıkar
-  arcanist: { hit: ARCANIST_RELEASE_S, combo: [['a132', 0.78, 1.05, 1.55]] },
+  arcanist: { hit: ARCANIST_RELEASE_S, combo: [['a132', 0.84, 1.05, 1.55]] },
 };

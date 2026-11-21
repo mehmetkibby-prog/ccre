@@ -6,7 +6,7 @@ import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { HState } from './humanoid.ts';
 import { guardianClips, hunterClips, arcanistClips, gatherClip, bodyPart, rigOf, type Rig } from './charAnims.ts';
 import { loadMocap, mocapReady, mocapClip, MOCAP_ATTACK, NATIVE_ATTACK, loadNative, nativeReady, nativeClip, type MSpec } from './mocap.ts';
-import { GUARDIAN_IMPACT_S, ARCANIST_RELEASE_S } from './charAnims.ts';
+import { GUARDIAN_IMPACT_S, ARCANIST_RELEASE_S, BASIC_END_S } from './charAnims.ts';
 import { shared } from './materials.ts';
 
 /**
@@ -170,6 +170,34 @@ function crimsonGlow(m: THREE.MeshStandardMaterial) {
   m.needsUpdate = true;
 }
 
+/**
+ * NPC'lerin hazır "Idle" klibi oyuncular gibi sağa sola bakınıyor. NPC'ler sabit dursun: baş ve boyun ortalama pozda
+ * sabitlenir, gövde ve kollar hareketin yalnız küçük bir kısmını korur (sade, sakin nefes alıp verme).
+ */
+const NPC_CALM = new Set(['smith', 'keeper', 'crafter', 'mage', 'warden', 'stable', 'merchant', 'fisher', 'herbalist']);
+export function calmIdle(clip: THREE.AnimationClip): THREE.AnimationClip {
+  const qa = new THREE.Quaternion(), qm = new THREE.Quaternion(), q = new THREE.Quaternion();
+  const tracks = clip.tracks.map((src) => {
+    const t = src.clone(), v = t.values, n = t.times.length, st = t.getValueSize();
+    const bone = t.name.slice(0, t.name.lastIndexOf('.'));
+    const k = /head|neck/i.test(bone) ? 0 : /hips/i.test(bone) ? 0.2 : /spine/i.test(bone) ? 0.4 : 0.3;
+    if (t.name.endsWith('.quaternion') && st === 4) {
+      // ortalama poz (işaret ilk kareye hizalı), her kare ona doğru çekilir
+      qa.fromArray(v, 0); let x = 0, y = 0, z = 0, w = 0;
+      for (let i = 0; i < n; i++) { q.fromArray(v, i * 4); if (q.dot(qa) < 0) q.set(-q.x, -q.y, -q.z, -q.w); x += q.x; y += q.y; z += q.z; w += q.w; }
+      qm.set(x, y, z, w).normalize();
+      for (let i = 0; i < n; i++) { q.fromArray(v, i * 4); qa.copy(qm).slerp(q, k); qa.toArray(v, i * 4); }
+    } else {
+      for (let c = 0; c < st; c++) {
+        let m = 0; for (let i = 0; i < n; i++) m += v[i * st + c]; m /= n;
+        for (let i = 0; i < n; i++) v[i * st + c] = m + (v[i * st + c] - m) * k;
+      }
+    }
+    return t;
+  });
+  return new THREE.AnimationClip(clip.name + ' (sade)', clip.duration, tracks);
+}
+
 function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   const scene = gltf.scene;
   scene.traverse((o) => {
@@ -192,6 +220,7 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   for (const [st, name] of Object.entries(entry.anims ?? {})) { const c = gltf.animations.find((a) => a.name === name); if (c) map[st as HState] = c; }
   for (const [st, re] of PATTERNS) if (!map[st]) { const c = gltf.animations.find((a) => re.test(a.name) && !Object.values(map).includes(a)); if (c) map[st] = c; }
   if (!map.idle && gltf.animations[0]) map.idle = gltf.animations.find((a) => !Object.values(map).includes(a)) ?? gltf.animations[0];
+  if (NPC_CALM.has(id) && map.idle) map.idle = calmIdle(map.idle);
   console.debug('[model]', id, 'klipler:', gltf.animations.map((a) => a.name).join(', '), '→', Object.fromEntries(Object.entries(map).map(([k, v]) => [k, v?.name])));
   return { scene, clips: gltf.animations, entry, scale, offsetY, map };
 }
@@ -371,7 +400,8 @@ const SKILL_CLIPS: Record<string, Record<number, string[]>> = {
   arcanist: { 1: ['Cast Charged Spell'], 2: ['Attack Magic 2'], 3: ['Cast Charged Spell'] },
 };
 /** Saldırı ve beceri animasyonlarının ekranda kalma süresi (ms); renderer de bu süreleri kullanır. */
-export const ATTACK_ANIM_MS = 620, CAST_ANIM_MS = 950;
+/** düz vuruşun ekranda kalma süresi: üç sınıfta aynı (charAnims BASIC_END_S) */
+export const ATTACK_ANIM_MS = Math.round(BASIC_END_S * 1000), CAST_ANIM_MS = 950;
 
 /** Bir modelin kendi iskelet ve animasyon karıştırıcısıyla yeni bir örneği. */
 /** Hazır silah modeli (ör. w_guardian_crimson): yüklüyse geometri ve malzemeyi paylaşan bir kopya, değilse yüklemeyi başlatıp null. */

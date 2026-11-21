@@ -14,7 +14,7 @@ import { Zone, type ZoneEvent } from './zone.ts';
 import { Player, Monster, Loot, MState, type LootPayload, type Telegraph } from './entities.ts';
 import { Histogram } from '../metrics.ts';
 import { newCaptcha, checkCaptcha } from '../captcha.ts';
-import { findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, POTIONS, HERBS, type PotionKey } from '@col/shared';
+import { combatPower, findPath, los, freeAt, activeEvents, EVENT_NAMES, type ActiveEvents, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, POTIONS, HERBS, type PotionKey } from '@col/shared';
 import { Social, type InviteKind } from './social.ts';
 import { Forge } from './forge.ts';
 
@@ -2699,7 +2699,7 @@ export class World {
       const s = p.stats;
       Object.assign(o, {
         level: c.level, xp: c.xp, xpNext: xpToNext(c.level), statAlloc: c.stats, statRev: c.misc.statRev ?? 0, statBudget: statBudget(c.level), skills: c.skills, spec: c.spec,
-        skillBudget: skillUpgradeBudget(c.level), combat: { maxHp: s.maxHp, atk: s.atk, def: s.def, crit: s.crit, critDmg: s.critDmg, speed: Math.round(s.speed), atkSpeed: s.atkSpeed, block: s.block, lifesteal: s.lifesteal, pvpPower: s.pvpPower, pvpResist: s.pvpResist },
+        skillBudget: skillUpgradeBudget(c.level), combat: { maxHp: s.maxHp, atk: s.atk, def: s.def, crit: s.crit, critDmg: s.critDmg, speed: Math.round(s.speed), atkSpeed: s.atkSpeed, block: s.block, lifesteal: s.lifesteal, pvpPower: s.pvpPower, pvpResist: s.pvpResist, skillSpeed: s.skillSpeed, pvePower: s.pvePower, power: combatPower(s) },
       });
     }
     this.sendJson(p, o);

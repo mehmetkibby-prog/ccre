@@ -10,7 +10,7 @@ export interface SelfInfo {
   buffs?: Record<string, number>; autoLeft?: number; autoOn?: boolean; autoPool?: number; bait?: number; stallSkin?: number;
   bag: ItemInstance[]; equip: Partial<Record<Slot, ItemInstance>>; materials: Record<string, number>;
   statAlloc: StatAlloc; statRev: number; statBudget: number; skills: number[]; spec: string | null; skillBudget: number;
-  combat: { maxHp: number; atk: number; def: number; crit: number; critDmg: number; speed: number; atkSpeed: number; block: number; lifesteal: number; pvpPower: number; pvpResist: number };
+  combat: { maxHp: number; atk: number; def: number; crit: number; critDmg: number; speed: number; atkSpeed: number; block: number; lifesteal: number; pvpPower: number; pvpResist: number; skillSpeed?: number; pvePower?: number; /** Karakter Gücü (sunucu: combatPower) */ power?: number };
 }
 export interface PmConv { name: string; msgs: { me: boolean; text: string; at: number }[]; open: boolean; unread: number; z: number }
 let pmZ = 1;
@@ -105,6 +105,8 @@ export interface UiState {
   chat: ChatMsg[]; chatTab: string; chatOpen: boolean; unread: number;
   notices: Notice[];
   panel: Panel;
+  /** Rehber açılınca gidilecek bölüm (ör. 'guc': Karakter Gücü rozetinden) */
+  guideCh: string | null;
   npc: { id: string; name: string; title: string; actions: string[] } | null;
   shop: string | null;
   stalls: StallInfo[]; stallView: StallView | null; myStall: MyStall | null; stallLog: string[];
@@ -159,7 +161,7 @@ function loadSettings(): UiState['settings'] {
 
 let state: UiState = {
   connected: false, status: '', playerMenu: null, invites: [], party: { members: [], leader: 0 }, trade: null, friends: [], whisperTo: null, pms: [], arena: null, tower: null, towerHold: null, towerReplayAt: 0, towerSeqAt: 0, guild: null, guildList: null, mobMenu: false, map: 'bazaar', channel: 1, entityId: 0, char: null, self: null, hp: 1, maxHp: 1, dead: null, target: null,
-  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
+  worldHealth: 100, online: 0, chat: [], chatTab: 'all', chatOpen: true, unread: 0, notices: [], panel: null, guideCh: null, npc: null, shop: null, stalls: [], stallView: null, myStall: null, stallLog: [], cooldowns: {},
   ping: 0, fps: 0, confirmTravel: null, modal: null, botCheck: null, upgradeResult: null, transformResult: null, evolveResult: null, forge: null, garden: null, storage: null, gather: null, qte: null, qteRes: null, dayPhase: 'Gündüz', autoSync: 0, lootFeed: [], settings: loadSettings(),
   bosses: [], bossBanner: null, bossTrack: null, clockSkew: 0, fishing: null, fishResult: null, marketResults: null, ringBoard: null, mallTarget: null, dropOpen: false, netPath: '',
 };
