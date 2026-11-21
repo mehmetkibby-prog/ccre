@@ -6,12 +6,12 @@ import { CLASSES, CLASS_IDS, MAPS, Kind, Anim, getLayout, MONSTER_INDEX, validat
 import { Renderer3D } from './g3d/renderer3d.ts';
 import { shared as sharedU } from './g3d/materials.ts';
 import type { CEnt } from './game/game.ts';
-import { setDirectWs } from './game/game.ts';
+import { setDirectWs, MELEE_IMPACT_MS } from './game/game.ts';
 import { api } from './api.ts';
 import { store, useStore } from './game/store.ts';
 import { GameScreen } from './ui/GameScreen.tsx';
 import { createHumanoid, animateHumanoid, LOOKS } from './g3d/humanoid.ts';
-import { createGlbChar, loadManifest, modelPending, onModelReady, onModelStatus, type GlbChar } from './g3d/models.ts';
+import { createGlbChar, loadManifest, modelPending, onModelReady, onModelStatus, CAST_ANIM_MS, type GlbChar } from './g3d/models.ts';
 import { equipGlb } from './g3d/gear.ts';
 import { ClassIcon } from './ui/icons.tsx';
 import './ui/styles.css';
@@ -226,6 +226,12 @@ function RealmLine() {
 
 /** Menü arka planı: Pazar Köyü'nün canlı 3B görüntüsü. Kamera meydanın çevresinde yavaşça döner, oyuncular dolaşır.
  *  WebGL yoksa ya da sahne kurulamazsa hafif kıvılcımlı yedek arka plan. */
+/** giriş sahnesi: sınıf başına sırayla gösterilen beceriler [beceri, çeşit] (skillfx numaraları: 7 Sv.1, 5 Sv.7, 3 uzmanlık) */
+const MENU_SKILLS: Record<number, [number, number][]> = {
+  0: [[7, 0], [5, 0], [3, 1], [1, 0], [3, 0]],
+  1: [[1, 0], [5, 0], [2, 0], [3, 0], [3, 1]],
+  2: [[1, 0], [5, 0], [7, 0], [2, 0], [3, 0], [3, 1]],
+};
 function MenuBackdrop() {
   const ref = useRef<HTMLCanvasElement>(null);
   const [fallback, setFallback] = useState(false);
@@ -271,7 +277,7 @@ function MenuBackdrop() {
       const x = bx + Math.cos(m.a) * m.r, y = by + Math.sin(m.a) * m.r;
       const e = mk(10 + i, Kind.PLAYER, x, y, { name: m.n, cls: m.c, level: 24 + i * 3, weapon: m.w, wplus: m.p, dir: dirTo(x, y, bx, by) });
       g.ents.set(e.id, e);
-      return { ...m, e, next: performance.now() + 600 + i * 230, n2: 0 };
+      return { ...m, e, next: performance.now() + 600 + i * 230, n2: 0, sk: i, skAt: performance.now() + 1400 + i * 1150 };
     });
     const later: { at: number; f: () => void }[] = [];
     const after = (ms: number, f: () => void) => later.push({ at: performance.now() + ms, f });
@@ -293,51 +299,34 @@ function MenuBackdrop() {
       if (rec) { [r.camYaw, co.dist] = rec(s); r.fixedScale = 1; }
       else { r.camYaw = s * 0.06; co.dist = 15 + Math.sin(s * 0.11) * 2; } // tam tur ≈ 1,7 dakika
       for (let k = later.length - 1; k >= 0; k--) if (t >= later[k].at) { const f = later[k].f; later.splice(k, 1); f(); }
-      // oyuncular
+      // oyuncular: oyundaki gerçek düz vuruş ve beceri efektleri (skillfx); beceriler vuruşların arasına serpiştirilir
       for (const m of party) {
         const e = m.e;
         e.dir = dirTo(e.x, e.y, bx, by);
         if (t < m.next) continue;
+        const sp = { x: e.x, y: e.y }, tp = { x: bx, y: by };
+        if (t >= m.skAt) {
+          const list = MENU_SKILLS[m.c], [skill, variant] = list[m.sk++ % list.length];
+          e.anim = Anim.CAST; e.animStart = t; e.skill = skill;
+          fx.sk.play({ cls: m.c, skill, variant, src: e.id, tgt: BOSS, sp, tp, self: false, near: 1, now: t, shake: () => {}, hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
+          if (m.c === 0 && skill === 3 && variant === 0) { fx.sk.dome(e.id, sp, 3000, '#ffcf5a'); after(300, () => fx.text(e.x, e.y, 2.4, '+' + (900 + Math.round(Math.random() * 300)), '#6dff9a', 18)); }
+          else if (m.c === 2 && skill === 3 && variant === 1) after(420, () => { for (const o of party) if (o.c === 0) fx.text(o.e.x, o.e.y, 2.3, '+' + (600 + Math.round(Math.random() * 300)), '#6dff9a', 18); });
+          else after(skill === 5 ? 560 : 440, () => hitBoss(Math.round(1300 + Math.random() * 900), Math.random() < 0.45));
+          m.skAt = t + 3600 + Math.random() * 1400;
+          m.next = t + CAST_ANIM_MS + 80;
+          continue;
+        }
         m.n2++;
-        const ex = e.x, ey = e.y;
+        e.anim = Anim.ATTACK; e.animStart = t; e.combo = (m.n2 - 1) % 3;
+        const combo = e.combo, crit = Math.random() < 0.22;
+        fx.sk.basic(m.c, e.id, BOSS, sp, tp, false, combo);
         if (m.c === 0) {
-          e.anim = Anim.ATTACK; e.animStart = t; e.combo = (m.n2 - 1) % 3;
-          const a = Math.atan2(by - ey, bx - ex);
-          after(160, () => {
-            fx.shapes.push({ kind: 'slash', x: ex, y: ey, r: e.combo === 2 ? 64 : 74, r2: e.combo ?? 0, a: a + (e.combo === 1 ? 0.35 : e.combo === 0 ? -0.35 : 0), t0: performance.now(), dur: 260, color: e.combo === 2 ? '#ffe2a0' : '#ffffff' });
-            fx.shapes.push({ kind: 'blast', x: bx, y: by, r: 46, r2: 0, a: 0, t0: performance.now(), dur: 200, color: '#fff4d8' });
-            const crit = Math.random() < 0.2; hitBoss(Math.round(380 + Math.random() * 260) * (crit ? 2 : 1), crit);
-          });
-          if (m.n2 % 5 === 0) fx.shapes.push({ kind: 'shield', x: ex, y: ey, r: 40, r2: 0, a: 0, t0: t, dur: 1600, color: '#ffd27a', follow: e.id });
-          m.next = t + 720 + Math.random() * 260;
-        } else if (m.c === 1) {
-          e.anim = Anim.ATTACK; e.animStart = t;
-          const volley = m.n2 % 4 === 0;
-          for (let k = 0; k < (volley ? 3 : 1); k++) after(140 + k * 110, () => {
-            fx.projs.push({ x0: ex, y0: ey, tx: bx, ty: by, tgt: BOSS, t0: performance.now(), dur: 220, kind: 'arrow', color: '#fff' });
-            after(220, () => { const crit = Math.random() < 0.25; hitBoss(Math.round(300 + Math.random() * 220) * (crit ? 2 : 1), crit); });
-          });
-          m.next = t + 820 + Math.random() * 300;
+          after(MELEE_IMPACT_MS, () => { fx.sk.meleeImpact(e.id, tp, Math.min(2.2, Math.max(0.45, fx.heightOf(BOSS) * 0.5)), combo, crit, false); hitBoss(Math.round(380 + Math.random() * 260) * (crit ? 2 : 1), crit); });
+          m.next = t + 660 + Math.random() * 120;
         } else {
-          const big = m.n2 % 4 === 0, heal = !big && m.n2 % 5 === 0;
-          e.anim = Anim.CAST; e.animStart = t; e.skill = big ? 2 : heal ? 3 : 0;
-          if (big) after(420, () => {
-            fx.shapes.push({ kind: 'circle', x: bx, y: by, r: 150, r2: 0, a: 0, t0: performance.now(), dur: 420, color: 'rgba(197,139,255,0.5)' });
-            after(420, () => {
-              fx.shapes.push({ kind: 'blast', x: bx, y: by, r: 150, r2: 0, a: 0, t0: performance.now(), dur: 380, color: '#c58bff' });
-              fx.burst(bx, by, 0.4, 46, '#d6b0ff', 5, 800, 0.24); fx.light(bx, by, 1.4, '#c58bff', 7, 500);
-              hitBoss(Math.round(1400 + Math.random() * 600), true);
-            });
-          });
-          else if (heal) {
-            const tank = party[(m.n2 / 5) % 3 | 0].e;
-            after(300, () => { fx.shapes.push({ kind: 'heal', x: tank.x, y: tank.y, r: 70, r2: 0, a: 0, t0: performance.now(), dur: 900, color: '#8dffb0' }); fx.text(tank.x, tank.y, 2.3, '+' + (600 + Math.round(Math.random() * 300)), '#6dff9a', 18); });
-          } else after(260, () => {
-            fx.projs.push({ x0: ex, y0: ey, tx: bx, ty: by, tgt: BOSS, t0: performance.now(), dur: 280, kind: 'orb', color: m.n2 % 2 ? '#7cf3ff' : '#ff9a5a' });
-            fx.light(ex, ey, 1.6, '#7cf3ff', 3, 300);
-            after(280, () => { const crit = Math.random() < 0.2; hitBoss(Math.round(420 + Math.random() * 260) * (crit ? 2 : 1), crit); });
-          });
-          m.next = t + (big ? 1700 : 1100) + Math.random() * 300;
+          if (m.c === 2) fx.light(e.x, e.y, 1.6, '#7cf3ff', 3, 300);
+          after(m.c === 1 ? 430 : 520, () => hitBoss(Math.round((m.c === 1 ? 300 : 420) + Math.random() * 240) * (crit ? 2 : 1), crit));
+          m.next = t + 720 + Math.random() * 200;
         }
       }
       // Tilki Kral: sırayla öndekilere pençe, her üçüncüde yere vurma
