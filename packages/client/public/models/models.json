@@ -637,5 +637,75 @@
     "attackClips": [
       "Attack Slash"
     ]
+  },
+  "c_golem": {
+    "url": "c_golem.glb",
+    "height": 2.2,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "cast": "Cast Ground Slam",
+      "attack": "Attack Slash"
+    },
+    "attackClips": [
+      "Cast Ground Slam",
+      "Attack Slash"
+    ]
+  },
+  "c_raider": {
+    "url": "c_raider.glb",
+    "height": 1.95,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Slash",
+      "cast": "Attack Hook"
+    },
+    "attackClips": [
+      "Attack Slash",
+      "Attack Hook"
+    ],
+    "held": "rusty_saber"
+  },
+  "c_siren": {
+    "url": "c_siren.glb",
+    "height": 1.85,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Magic 1",
+      "cast": "Attack Magic 2"
+    },
+    "attackClips": [
+      "Attack Magic 1",
+      "Attack Magic 2"
+    ],
+    "held": "coral_staff"
+  },
+  "c_crab": {
+    "url": "c_crab.glb",
+    "height": 1.15,
+    "anims": {
+      "idle": "Idle",
+      "walk": "Walk",
+      "dead": "Death",
+      "attack": "Attack Claws",
+      "cast": "Attack Snap"
+    },
+    "attackClips": [
+      "Attack Claws",
+      "Attack Snap"
+    ]
+  },
+  "menhir": {
+    "url": "menhir.glb",
+    "scale": 1
+  },
+  "shipwreck": {
+    "url": "shipwreck.glb",
+    "scale": 1
   }
 }

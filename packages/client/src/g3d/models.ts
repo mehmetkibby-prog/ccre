@@ -21,7 +21,7 @@ import { shared } from './materials.ts';
  * }
  * Anahtarlar: sınıf kimliği (guardian/hunter/arcanist), NPC görünümü (smith, keeper…) veya canavar çizimi (wolf, rotguard…).
  */
-export interface ModelEntry { /** aynı dosyanın renk değiştirilmiş kopyası: çarpım rengi ve ışıma (ör. Kara Taş Gargoylü) */ tint?: string; emissive?: string; emissiveIntensity?: number; url: string; /** dosya değişince artırılan sürüm: aynı adla güncellenen modeli tarayıcı önbellekten eski haliyle vermesin */ v?: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string }
+export interface ModelEntry { /** aynı dosyanın renk değiştirilmiş kopyası: çarpım rengi ve ışıma (ör. Kara Taş Gargoylü) */ tint?: string; emissive?: string; emissiveIntensity?: number; url: string; /** dosya değişince artırılan sürüm: aynı adla güncellenen modeli tarayıcı önbellekten eski haliyle vermesin */ v?: string; /** animasyonlar bu modelden alınır (aynı iskeletli zırh çeşitleri) */ animFrom?: string; height?: number; yaw?: number; scale?: number; anims?: Partial<Record<HState | 'run', string>>; attackClips?: string[]; weaponBone?: string; /** canavarın elindeki nesne (monsters3d'deki hazır tanım; ör. Boğulmuş Akıncı'nın paslı palası) */ held?: string }
 interface Loaded { sphere?: THREE.Sphere; scene: THREE.Object3D; clips: THREE.AnimationClip[]; entry: ModelEntry; scale: number; offsetY: number; map: Partial<Record<HState | 'run', THREE.AnimationClip>> }
 
 const BASE = (import.meta.env.BASE_URL ?? './') + 'models/';
@@ -138,6 +138,25 @@ function lavaGlow(m: THREE.MeshStandardMaterial) {
   m.needsUpdate = true;
 }
 
+/**
+ * Rün Sahili: dokudaki parlak camgöbeği rün oymaları (golem gövdesi, yengeç kabuğu, siren dövmeleri, menhir) kendi
+ * ışığıyla yanıp yavaşça nabız atar. Yalnız doygun ve parlak camgöbeği ışır; turkuaz kabuk, mavi-yeşil ten ve
+ * gri-mavi taş (doygunluğu ya da parlaklığı düşük) ışımaz. Malzeme bütün kopyalarca paylaşılır; karede CPU işi yok.
+ * Süs modelleri (props3d) de kullanabilsin diye dışa açık.
+ */
+const RUNE_GLOW = new Set(['c_golem', 'c_crab', 'c_siren']);
+export function runeGlow(m: THREE.MeshStandardMaterial, strength = 2.4) {
+  m.onBeforeCompile = (sh) => {
+    sh.uniforms.uRuneT = shared.time;
+    sh.fragmentShader = 'uniform float uRuneT;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+      float runeHi = min(diffuseColor.g, diffuseColor.b);
+      float rune = smoothstep(0.32, 0.6, runeHi) * smoothstep(0.6, 0.85, (runeHi - diffuseColor.r) / max(max(diffuseColor.g, diffuseColor.b), 1e-3));
+      totalEmissiveRadiance += diffuseColor.rgb * rune * (${strength.toFixed(2)} + 0.6 * sin(uRuneT * 1.7 + vViewPosition.y * 2.0));`);
+  };
+  m.customProgramCacheKey = () => 'rune-glow-' + strength.toFixed(2);
+  m.needsUpdate = true;
+}
+
 function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
   const scene = gltf.scene;
   scene.traverse((o) => {
@@ -145,7 +164,7 @@ function prepare(id: string, gltf: GLTF, entry: ModelEntry): Loaded {
     if (m.isMesh) {
       m.castShadow = true; m.receiveShadow = true;
       const mats = Array.isArray(m.material) ? m.material : [m.material];
-      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; if (LAVA_GLOW.has(id)) lavaGlow(s); }
+      for (const mt of mats) { const s = mt as THREE.MeshStandardMaterial; if (s.map) s.map.anisotropy = 4; s.envMapIntensity = 0.8; if (LAVA_GLOW.has(id)) lavaGlow(s); if (RUNE_GLOW.has(id)) runeGlow(s); }
     }
   });
   // ölçek: hedef boy (m), ayaklar y=0
@@ -504,6 +523,10 @@ function lodOf(src: THREE.BufferGeometry): THREE.BufferGeometry | null {
   return null;
 }
 
+/** Canavarın elindeki nesneyi takan işlev (monsters3d.ts kaydeder; gear.ts'e döngüsel bağımlılık olmasın diye kayıtla). */
+let heldHook: ((glb: GlbChar, held: string) => void) | null = null;
+export function setHeldHook(fn: (glb: GlbChar, held: string) => void) { heldHook = fn; }
+
 const tintMats = new Map<string, THREE.Material>();
 export function createGlbChar(id: string): GlbChar | null {
   const L = model(id);
@@ -622,7 +645,7 @@ export function createGlbChar(id: string): GlbChar | null {
   const lodMeshes: { m: THREE.Mesh; orig: THREE.BufferGeometry }[] = [];
   if (LOD_MOBILE) inner.traverse((o) => { const m = o as THREE.SkinnedMesh; if (m.isSkinnedMesh) lodMeshes.push({ m, orig: m.geometry }); });
   let lodOn = false;
-  return {
+  const out: GlbChar = {
     setLod(on: boolean) {
       if (!LOD_MOBILE || !lodMeshes.length) return;
       if (on === lodOn && (!on || lodMeshes.every((x) => x.m.geometry !== x.orig))) return;
@@ -655,4 +678,7 @@ export function createGlbChar(id: string): GlbChar | null {
       mixer.update(dt / 1000);
     },
   };
+  // eldeki nesne: kemikler henüz dinlenme pozundayken (karıştırıcı daha çalışmadı) takılır
+  if (L.entry.held && heldHook) heldHook(out, L.entry.held);
+  return out;
 }

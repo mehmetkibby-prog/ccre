@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import { at, cyl, lathe } from './geom.ts';
 import { fbm } from './textures.ts';
-import { model as loadModel } from './models.ts';
+import { model as loadModel, setHeldHook, type GlbChar } from './models.ts';
+import { equipGlb } from './gear.ts';
 import { clone as skClone } from 'three/examples/jsm/utils/SkeletonUtils.js';
-import { templateFromPieces, instantiate, seg, sph, BONES, WORLD, animateHumanoid, type Piece, type BoneDef, type Rig, type HState } from './humanoid.ts';
+import { templateFromPieces, instantiate, seg, sph, BONES, WORLD, animateHumanoid, type Piece, type BoneDef, type Rig, type HState, type HLook } from './humanoid.ts';
 
 /** Ortak canavar arayüzü: render katmanı yalnız bunu bilir. */
 export interface MonsterRig { root: THREE.Object3D; height: number; update(st: HState, t: number, k: number, phase: number): void }
@@ -565,3 +566,54 @@ function createBlackStone(s: number): MonsterRig {
     },
   };
 }
+
+// ───────────── canavarların elindeki nesneler (models.json "held") ─────────────
+/**
+ * Meshy canavar modelleri silahsız üretilir (iskelet bağlama silahı bacağa/gövdeye de bağlayıp bükerdi). Elde tutulan
+ * nesne oyuncu silahı gibi gear.ts'in avuç çerçevesiyle sağ ele takılır: kılıç başparmak yönünde, asa dik.
+ * Nesnenin kendi ekseni: +Y namlu/asa boyunca, başlangıç tutuş noktası. Geometri ve malzeme bütün kopyalarca paylaşılır.
+ */
+const heldParts = new Map<string, { g: THREE.BufferGeometry; m: THREE.Material; p?: [number, number, number] }[]>();
+function heldPreset(id: string) {
+  let parts = heldParts.get(id);
+  if (parts) return parts;
+  parts = [];
+  if (id === 'rusty_saber') {
+    // Boğulmuş Akıncı: paslı, hafif kavisli pala; sapı yosun yeşili ıslak deri
+    const rust = new THREE.MeshStandardMaterial({ color: 0x6e6152, metalness: 0.55, roughness: 0.62, emissive: 0x0d3a30, emissiveIntensity: 0.35 });
+    const grip = new THREE.MeshStandardMaterial({ color: 0x24362c, roughness: 0.85 });
+    const brass = new THREE.MeshStandardMaterial({ color: 0x5e5234, metalness: 0.7, roughness: 0.5 });
+    const sh = new THREE.Shape();
+    sh.moveTo(-0.024, 0.1); sh.quadraticCurveTo(-0.03, 0.62, 0.11, 0.98); sh.quadraticCurveTo(0.075, 0.6, 0.032, 0.1); sh.lineTo(-0.024, 0.1);
+    const blade = new THREE.ExtrudeGeometry(sh, { depth: 0.012, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.004, bevelSegments: 1, curveSegments: 10 });
+    blade.translate(0, 0, -0.006);
+    parts.push({ g: blade, m: rust });
+    parts.push({ g: new THREE.BoxGeometry(0.17, 0.028, 0.045), m: brass, p: [0, 0.09, 0] });
+    parts.push({ g: new THREE.CylinderGeometry(0.019, 0.021, 0.17, 8), m: grip, p: [0, 0, 0] });
+    parts.push({ g: new THREE.SphereGeometry(0.028, 10, 8), m: brass, p: [0, -0.095, 0] });
+  } else if (id === 'coral_staff') {
+    // Rün Sireni: kıvrımlı mercan asa, tepesinde mercan dallarının tuttuğu parlak rün küresi
+    const coral = new THREE.MeshStandardMaterial({ color: 0xd8735e, roughness: 0.78 });
+    const orb = new THREE.MeshStandardMaterial({ color: 0x0a3040, emissive: 0x5ff0ff, emissiveIntensity: 2.6, roughness: 0.15 });
+    const shaft = new THREE.CatmullRomCurve3([[0, -0.5, 0], [0.02, 0, 0.01], [-0.015, 0.5, -0.01], [0.02, 0.95, 0], [0, 1.18, 0]].map(([x, y, z]) => new THREE.Vector3(x, y, z)));
+    parts.push({ g: new THREE.TubeGeometry(shaft, 24, 0.024, 7, false), m: coral });
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2 + 0.4, r = 0.085;
+      const c = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 1.15, 0), new THREE.Vector3(Math.cos(a) * r * 0.7, 1.24, Math.sin(a) * r * 0.7), new THREE.Vector3(Math.cos(a) * r, 1.36, Math.sin(a) * r), new THREE.Vector3(Math.cos(a) * r * 0.55, 1.45, Math.sin(a) * r * 0.55)]);
+      parts.push({ g: new THREE.TubeGeometry(c, 8, 0.011, 5, false), m: coral });
+    }
+    parts.push({ g: new THREE.IcosahedronGeometry(0.07, 2), m: orb, p: [0, 1.32, 0] });
+  }
+  heldParts.set(id, parts);
+  return parts;
+}
+setHeldHook((glb: GlbChar, id: string) => {
+  const parts = heldPreset(id);
+  if (!parts.length) return;
+  equipGlb(glb, { weapon: id === 'coral_staff' ? 'staff' : 'sword' } as unknown as HLook, 0);
+  let held: THREE.Object3D | undefined;
+  glb.root.traverse((o) => { if (!held && o.name === 'held-weapon') held = o; });
+  if (!held) return;
+  for (const c of [...held.children]) held.remove(c); // oyuncunun yalın silahı yerine
+  for (const p of parts) { const m = new THREE.Mesh(p.g, p.m); m.castShadow = true; if (p.p) m.position.set(...p.p); held.add(m); }
+});
