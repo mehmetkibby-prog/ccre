@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_MS, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_MS, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT, RANK_LEVEL, RANK_MAX, rankDef, addRankXp, RUNES, RUNE_MAX_LEVEL, runeConf, runeKey, parseRuneKey, runeUpCost, isRuneKind, runePct,
   FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal, skillHealPct,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
@@ -34,7 +34,7 @@ const STAFF_ROLES = new Set(['gm', 'admin', 'owner']);
 /** Bot doğrulaması: 50–70 dakikada bir (rastgele), cevap için 5 dk; beklerken savaş, oto av, toplama kilitli. */
 const BOT_EVERY_MS = 60 * 60_000, BOT_JITTER_MS = 10 * 60_000, BOT_GRACE_MS = 5 * 60_000, BOT_MAX_TRIES = 5;
 const BOT_BLOCK = new Set(['attack', 'skill', 'auto', 'pickup', 'fish_cast', 'fish_end', 'garden', 'stall_open']);
-const TRADE_BLOCK = new Set(['upgrade', 'transform', 'evolve', 'use', 'sell', 'craft', 'stall_open', 'equip', 'unequip', 'storage', 'fish_sell', 'mall_buy']);
+const TRADE_BLOCK = new Set(['rune', 'upgrade', 'transform', 'evolve', 'use', 'sell', 'craft', 'stall_open', 'equip', 'unequip', 'storage', 'fish_sell', 'mall_buy']);
 const HEAVY_CMDS = new Set(['sync', 'bosses', 'market_search']);
 export interface WorldOptions { channel: number; aoiMaxPlayers: number; saveIntervalMs: number; post: (m: FromWorker, transfer?: ArrayBuffer[]) => void }
 
@@ -100,6 +100,7 @@ export class World {
     const c = p.char;
     if (patch.level !== undefined) {
       c.level = Math.max(1, Math.min(LEVEL_CAP_BASE, Math.round(patch.level))); c.xp = 0;
+      if (c.level >= RANK_LEVEL && !(c.misc.rank && c.misc.rank.r >= 1)) c.misc.rank = { r: 1, xp: 0 };
       p.recompute(false); p.hp = p.stats.maxHp;
       p.dirty |= Upd.HP | Upd.MAXHP | Upd.LEVEL;
       p.zone.emit(p.x, p.y, { e: Ev.LEVELUP, id: p.id, level: c.level });
@@ -125,7 +126,9 @@ export class World {
   /** Yönetim: çevrimiçi oyuncuya eşya/malzeme ver (anında çantasına). */
   adminGive(charId: number, g: AdminGive): boolean {
     const p = this.findPlayer(charId); if (!p) return false;
+    const before = p.char.misc.rank?.r ?? 0;
     const text = applyGive(p.char, g);
+    if (g.kind === 'rank') this.rankChanged(p, before);
     p.recompute(true); p.selfDirty |= 1 | 2 | 4; this.save(p, true);
     this.notice(p, text, 'ok');
     return true;
@@ -222,6 +225,7 @@ export class World {
     if (this.bySid.has(sid)) return;
     char.level = Math.max(1, Math.min(LEVEL_CAP_BASE, char.level));
     if (char.level < LEVEL_CAP_BASE && char.xp >= xpToNext(char.level)) char.xp = xpToNext(char.level) - 1; // TP tablosu değiştiyse
+    if (char.level >= RANK_LEVEL && !(char.misc.rank && char.misc.rank.r >= 1)) { char.misc.rank = { r: 1, xp: 0 }; char.xp = 0; } // 65: doğrudan Öz Avcısı
     if (!this.zones.has(char.map) || (char.map === 'arena' && !this.arenaActive) || (char.map === TOWER_MAP && !TUNING.tower.enabled) || (char.map === FORGE_MAP && !this.forge.hasChar(char.id)) || (char.map === 'guildwar' && !this.guildWars.length)) { const l = getLayout('bazaar'); char.map = 'bazaar'; char.x = l.spawn.x; char.y = l.spawn.y; }
     const zone = this.zones.get(char.map)!;
     const pos = nearestFree(zone.layout, char.x || zone.layout.spawn.x, char.y || zone.layout.spawn.y);
@@ -356,6 +360,7 @@ export class World {
       case 'use': return this.cmdUse(p, String(c.key), String(c.req ?? ''), c.item ? String(c.item) : undefined);
       case 'mall_buy': return this.cmdMallBuy(p, String(c.id), Math.floor(Number(c.qty) || 1), String(c.req ?? ''));
       case 'stall_skin': { const ch = p.char; if (!ch.misc.stallSkin) return this.notice(p, 'Zümrüt Pazar Tezgâhı market ürünüdür.'); ch.misc.stallSkin = c.on ? 2 : 1; const st = this.ownStall(ch.id); if (st) { st.skin = c.on ? 'emerald' : undefined; const zz = this.zones.get(st.zone); if (zz) this.broadcastStalls(zz); } p.selfDirty |= 1; p.markSave(); return; }
+      case 'rune': return this.cmdRune(p, String(c.op ?? ''), c);
       case 'market_search': return this.cmdMarketSearch(p, String(c.q ?? ''), String(c.cat ?? 'all'), String(c.sort ?? 'price'));
       case 'chat_item': return this.cmdChatItem(p, String(c.item), String(c.req ?? ''));
       case 'fish_cast': return this.cmdFishCast(p);
@@ -1195,10 +1200,12 @@ export class World {
   addXp(p: Player, xp: number) {
     const c = p.char;
     const cap = LEVEL_CAP_BASE;
-    if (c.level >= cap) { c.xp = Math.min(c.xp + xp, xpToNext(c.level)); return; }
+    // seviye sınırında (65) kazanılan tecrübe rütbeye akar
+    if (c.level >= cap) { c.xp = 0; this.addRankXp(p, xp); return; }
     c.xp += xp;
     let leveled = false;
     while (c.level < cap && c.xp >= xpToNext(c.level)) { c.xp -= xpToNext(c.level); c.level++; leveled = true; }
+    if (c.level >= cap) { const extra = c.xp; c.xp = 0; this.addRankXp(p, extra); } // 65'e ulaşan doğrudan Öz Avcısı
     if (leveled) {
       p.recompute(false);
       p.hp = p.stats.maxHp; // seviye atlayınca tam can (tasarım kararı)
@@ -1207,6 +1214,86 @@ export class World {
       p.selfDirty |= 4;
       this.save(p, true);
     }
+  }
+
+  /** Rütbe tecrübesi (Sv.65): rütbesi yoksa önce Öz Avcısı olur; eşiği geçince bir üst rütbe. */
+  private addRankXp(p: Player, xp: number) {
+    const c = p.char;
+    if (c.level < RANK_LEVEL) return;
+    const before = c.misc.rank?.r ?? 0;
+    const { st, ups } = addRankXp(c.misc.rank, xp);
+    c.misc.rank = st;
+    p.selfDirty |= 1; p.markSave();
+    if (ups > 0) this.rankChanged(p, before);
+  }
+  /** Rütbe değişti: istatistik, çevredekilere yeni ad etiketi, kutlama */
+  private rankChanged(p: Player, before: number) {
+    const c = p.char, d = rankDef(c.misc.rank?.r);
+    p.recompute(true);
+    p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 4;
+    for (const q of p.zone.playerSet) q.known.delete(p.id);
+    if (d && d.id > before) {
+      this.notice(p, `Yeni rütbe: ${d.name}! Saldırı ve azami can +%${d.atkPct}.`, 'ok');
+      this.sendJson(p, { t: 'rank_up', r: d.id });
+      p.zone.emit(p.x, p.y, { e: Ev.LEVELUP, id: p.id, level: c.level });
+    }
+    this.save(p, true);
+  }
+  // ───────────────────────────── rünler ─────────────────────────────
+  /**
+   * Rün paneli: craft (5 parça → 1. seviye), up (çantadaki ya da takılı rünü bir seviye yükselt; garantili),
+   * equip / unequip (savaş dışında). Çantadaki rünler malzeme yığınıdır: rune_<tür>_<seviye>.
+   */
+  private cmdRune(p: Player, op: string, c: { k?: unknown; key?: unknown; req?: unknown }) {
+    const ch = p.char, conf = runeConf();
+    const R = (ok: boolean, msg: string) => { this.reply(p, { t: 'rune', req: String(c.req ?? '') }, ok, msg); if (!ok) this.notice(p, msg); };
+    if (ch.level < conf.unlockLevel) return R(false, `Rün paneli ${conf.unlockLevel}. seviyede açılır.`);
+    const st = (ch.misc.runes ??= { eq: {} });
+    const take = (key: string, n: number) => { ch.materials[key] = (ch.materials[key] ?? 0) - n; if (ch.materials[key] <= 0) delete ch.materials[key]; };
+    const give = (key: string, n: number) => { ch.materials[key] = (ch.materials[key] ?? 0) + n; };
+    const done = (msg: string, stats = false) => { if (stats) { p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 4; } p.selfDirty |= 1 | 2; p.markSave(); R(true, msg); };
+    if (op === 'craft') {
+      if (!isRuneKind(c.k)) return R(false, 'Rün türü seç.');
+      const d = RUNES[c.k];
+      if ((ch.materials[d.frag] ?? 0) < conf.craftCost) return R(false, `${conf.craftCost} ${d.fragName} gerekir.`);
+      take(d.frag, conf.craftCost); give(runeKey(c.k, 1), 1);
+      return done(`${d.name} üretildi (Sv.1).`);
+    }
+    if (op === 'up') {
+      // takılı rün: k ile; çantadaki: key ile
+      let k: 'kudret' | 'siper' | 'yasam', lv: number, eq = false;
+      if (isRuneKind(c.k) && !c.key) { k = c.k; lv = st.eq[k] ?? 0; eq = true; if (!lv) return R(false, 'Bu yuvada rün yok.'); }
+      else { const r = parseRuneKey(String(c.key ?? '')); if (!r || (ch.materials[runeKey(r.k, r.lv)] ?? 0) < 1) return R(false, 'Rün bulunamadı.'); k = r.k; lv = r.lv; }
+      if (lv >= RUNE_MAX_LEVEL) return R(false, 'Rün en yüksek seviyede.');
+      const d = RUNES[k], cost = runeUpCost(lv);
+      if ((ch.materials[d.frag] ?? 0) < cost) return R(false, `Yükseltmek için ${cost} ${d.fragName} gerekir.`);
+      take(d.frag, cost);
+      if (eq) st.eq[k] = lv + 1; else { take(runeKey(k, lv), 1); give(runeKey(k, lv + 1), 1); }
+      return done(`${d.name} Sv.${lv + 1} oldu: ${d.statName} +%${runePct(lv + 1).toLocaleString('tr-TR')}.`, eq);
+    }
+    if (op === 'equip' || op === 'unequip') {
+      if (this.now < p.combatUntil) return R(false, 'Rünler savaş dışında takılıp çıkarılır.');
+      if (op === 'equip') {
+        const r = parseRuneKey(String(c.key ?? ''));
+        if (!r || (ch.materials[runeKey(r.k, r.lv)] ?? 0) < 1) return R(false, 'Rün bulunamadı.');
+        take(runeKey(r.k, r.lv), 1);
+        const old = st.eq[r.k]; if (old) give(runeKey(r.k, old), 1);
+        st.eq[r.k] = r.lv;
+        return done(`${RUNES[r.k].name} (Sv.${r.lv}) takıldı.`, true);
+      }
+      if (!isRuneKind(c.k) || !st.eq[c.k]) return R(false, 'Bu yuvada rün yok.');
+      give(runeKey(c.k, st.eq[c.k]!), 1); delete st.eq[c.k];
+      return done(`${RUNES[c.k].name} çıkarıldı.`, true);
+    }
+  }
+  /** Yönetim: rütbe ver (0 = rütbeyi kaldır). Seviyesi 65 altındaysa rütbe saklanır, 65'te etkinleşir. */
+  adminSetRank(charId: number, r: number): boolean {
+    const p = this.byCharId(charId); if (!p) return false;
+    const before = p.char.misc.rank?.r ?? 0;
+    const rr = Math.max(0, Math.min(RANK_MAX, Math.floor(r)));
+    if (rr === 0) delete p.char.misc.rank; else p.char.misc.rank = { r: rr, xp: 0 };
+    this.rankChanged(p, before);
+    return true;
   }
 
   private killPlayer(p: Player, killer: Player | null) {
@@ -2574,7 +2661,7 @@ export class World {
   private sendSelf(p: Player, mask: number) {
     const c = p.char;
     const o: Record<string, unknown> = { t: 'self' };
-    if (mask & 1) Object.assign(o, { tut: c.misc.tutorial ?? 0, qn: c.misc.qn ?? 0, level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0 });
+    if (mask & 1) Object.assign(o, { tut: c.misc.tutorial ?? 0, qn: c.misc.qn ?? 0, level: c.level, xp: c.xp, xpNext: xpToNext(c.level), gems: c.gems, essence: c.essence, cp: c.cp, kills: c.kills, autoPotion: !!c.misc.autoPotion, daily: c.misc.dailyKills?.n ?? 0, buffs: c.misc.buffs ?? {}, autoPool: c.misc.autoPool ?? 0, bait: c.misc.bait ?? 0, stallSkin: c.misc.stallSkin ?? 0, autoLeft: this.autoLeft(p), autoOn: p.autoOn, mount: c.misc.mount ?? {}, quests: c.misc.quests ?? { a: {}, d: {} }, towerBest: c.misc.tower?.best ?? 0, rank: c.level >= RANK_LEVEL ? (c.misc.rank ?? null) : null, runes: c.misc.runes ?? { eq: {} } });
     if (mask & 2) Object.assign(o, { bag: c.bag, equip: c.equip, materials: c.materials });
     if (mask & 4) {
       const s = p.stats;
@@ -2943,7 +3030,7 @@ export class World {
   }
 
   private playerSpawn(q: Player): EntitySpawn {
-    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(15, q.char.equip.weapon?.plus ?? 0) | (Math.min(3, q.char.equip.weapon?.evo ?? 0) << 4) | (Math.min(3, q.char.equip.armor?.evo ?? 0) << 6), cos: cosmeticByte(q.char.misc.buffs, Date.now()) | (((q.char.equip.armor?.plus ?? 0) >= 6 ? 2 : (q.char.equip.armor?.plus ?? 0) >= 5 ? 1 : 0) << 3), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '' };
+    return { kind: Kind.PLAYER, id: q.id, cls: q.clsIndex, name: q.char.name, level: q.char.level, x: Math.round(q.x), y: Math.round(q.y), dir: q.dir, anim: q.anim, hp: Math.max(0, Math.round(q.hp)), maxHp: q.stats.maxHp, flags: this.playerFlags(q), weapon: q.weaponRarityIndex(), wplus: Math.min(15, q.char.equip.weapon?.plus ?? 0) | (Math.min(3, q.char.equip.weapon?.evo ?? 0) << 4) | (Math.min(3, q.char.equip.armor?.evo ?? 0) << 6), cos: cosmeticByte(q.char.misc.buffs, Date.now()) | (((q.char.equip.armor?.plus ?? 0) >= 6 ? 2 : (q.char.equip.armor?.plus ?? 0) >= 5 ? 1 : 0) << 3), guild: q.guild ? `${q.guild.emblem}|${q.guild.name}` : '', rank: q.char.level >= RANK_LEVEL ? Math.max(0, Math.min(RANK_MAX, q.char.misc.rank?.r ?? 0)) : 0 };
   }
 
   private flushOut() {
@@ -3014,6 +3101,19 @@ export function applyGive(c: CharState, g: AdminGive): string {
   if (g.kind === 'gems') { const n = Math.max(0, Math.min(10_000_000, Math.round(g.qty))); c.gems += n; return `Ödül: ${n.toLocaleString('tr-TR')} Mücevher`; }
   if (g.kind === 'cp') { const n = Math.max(0, Math.min(1_000_000, Math.round(g.qty))); c.cp += n; return `Ödül: ${n.toLocaleString('tr-TR')} ÇP`; }
   if (g.kind === 'essence') { const n = Math.max(0, Math.min(1e9, Math.round(g.qty))); c.essence += n; return `${n.toLocaleString('tr-TR')} Öz aldın`; }
+  if (g.kind === 'rank') {
+    const r = Math.max(0, Math.min(RANK_MAX, Math.floor(g.r)));
+    if (r === 0) { delete c.misc.rank; return 'Rütben yönetim tarafından kaldırıldı.'; }
+    c.misc.rank = { r, xp: 0 };
+    return `Yönetimden rütbe: ${rankDef(r)!.name}${c.level < RANK_LEVEL ? ` (${RANK_LEVEL}. seviyede etkinleşir)` : ''}`;
+  }
+  if (g.kind === 'rune') {
+    if (!isRuneKind(g.k)) return '';
+    const lv = Math.max(1, Math.min(RUNE_MAX_LEVEL, Math.floor(g.lv)));
+    const key = runeKey(g.k, lv);
+    c.materials[key] = (c.materials[key] ?? 0) + 1;
+    return `Yönetimden hediye: ${lv}. seviye ${RUNES[g.k].name}`;
+  }
   const q = Math.max(1, Math.min(99999, Math.round(g.qty)));
   c.materials[g.key] = (c.materials[g.key] ?? 0) + q;
   return `Yönetimden hediye: ${q}× ${MATERIAL.get(g.key)?.name ?? MALL.get(g.key)?.name ?? g.key}`;

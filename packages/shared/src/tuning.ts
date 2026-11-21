@@ -133,6 +133,8 @@ export interface GameTuning {
   crafts: CraftRecipe[];
   /** Görevler (yönetimden tasarlanır): bkz. content/quests.ts */
   quests: QuestDef[];
+  /** Rün sistemi: açılış seviyesi, üretim parçası, seviye başına yüzde, yükseltme taban bedeli (yoksa varsayılan) */
+  runes?: RunesTune;
   /** Beceri geliştirme maliyeti: [0] = Sv. 1→2 … [8] = Sv. 9→10 (Mücevher, uzmanlık becerisi Mücevheri, malzemeler) */
   skillUp: SkillUpStep[];
   /** becerilerin açılma seviyesi (beceri kimliği → seviye); boş = sınıf tanımındaki */
@@ -297,6 +299,7 @@ function sanitizeArena(raw: unknown): ArenaTune {
   return { auto: r.auto === undefined ? ARENA_DEFAULT.auto : !!r.auto, times, durationMin: num(r.durationMin, 3, 120, ARENA_DEFAULT.durationMin), minLevel: num(r.minLevel, 1, 100, ARENA_DEFAULT.minLevel), rewards };
 }
 export interface UpgradeStepTune { chance: number; gems: number; mats: Record<string, number>; weapon: number; armor: number }
+export interface RunesTune { unlockLevel?: number; craftCost?: number; pctPerLevel?: number; upBase?: number }
 /** flat: kademe değerleri düz güç (yeni anlam). Yoksa eski kayıt: değerler varsayılandan alınır. */
 export interface UpgradeTune { steps?: UpgradeStepTune[]; failDown?: boolean; flat?: boolean }
 export const DEFAULT_TUNING: GameTuning = {
@@ -319,7 +322,7 @@ export const DEFAULT_TUNING: GameTuning = {
   quests: structuredClone(QUESTS_DEFAULT),
 };
 /** Panelde gösterilen sınırlar: değerler her zaman bu aralığa sıkıştırılır. */
-export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'annSec' | 'annAt' | 'annStyle' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'forge' | 'dayNight' | 'events' | 'garden' | 'worldBoss' | 'evo' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock'>, [number, number, number]> = {
+export const TUNING_LIMITS: Record<Exclude<keyof GameTuning, 'density' | 'announcement' | 'annSec' | 'annAt' | 'annStyle' | 'classicUrl' | 'monsters' | 'zoneLoot' | 'spawns' | 'enchants' | 'rarityPower' | 'rarityDrop' | 'sellPrice' | 'upgrade' | 'xpTable' | 'mall' | 'fishing' | 'transform' | 'arena' | 'killRank' | 'tower' | 'forge' | 'dayNight' | 'events' | 'garden' | 'worldBoss' | 'evo' | 'crafts' | 'quests' | 'skillUp' | 'skillUnlock' | 'runes'>, [number, number, number]> = {
   xpMul: [0.1, 10, 0.1], gemMul: [0, 10, 0.1], essenceMul: [0, 10, 0.1], dropMul: [0, 10, 0.1],
   monsterHpMul: [0.2, 5, 0.05], monsterAtkMul: [0.2, 5, 0.05], respawnMul: [0.2, 5, 0.05],
   bots: [0, 24, 1], worldDecayMul: [0, 5, 0.1], brightness: [0.6, 1.6, 0.05], newYear: [0, 1, 1], worldDonateGain: [0, 0.5, 0.005], meleeApproach: [0, 320, 10], splashRadius: [0, 400, 10], splashMul: [0, 1.5, 0.05], autoAttackMin: [0, 1440, 5], retargetDelay: [0, 5, 0.1], essxEss: [10, 100000, 10], essxGems: [1, 100000, 1], potionEss: [1, 10000, 1], potionGems: [1, 10000, 1], specLevel: [1, 120, 1], bossShareMin: [0, 50, 0.5],
@@ -353,6 +356,11 @@ export function sanitizeTuning(raw: unknown): GameTuning {
   out.evo = sanitizeEvo(r.evo);
   out.crafts = sanitizeCrafts(r.crafts);
   out.quests = sanitizeQuests(r.quests);
+  { const ru = (r.runes && typeof r.runes === 'object' && !Array.isArray(r.runes) ? r.runes : {}) as Record<string, unknown>; const o: RunesTune = {};
+    const n = (v: unknown, lo: number, hi: number) => { const x = Number(v); return v !== undefined && v !== null && v !== '' && Number.isFinite(x) ? Math.min(hi, Math.max(lo, x)) : undefined; };
+    const ul = n(ru.unlockLevel, 1, 120), cc = n(ru.craftCost, 1, 100), pp = n(ru.pctPerLevel, 0, 5), ub = n(ru.upBase, 0, 100);
+    if (ul !== undefined) o.unlockLevel = Math.round(ul); if (cc !== undefined) o.craftCost = Math.round(cc); if (pp !== undefined) o.pctPerLevel = Math.round(pp * 100) / 100; if (ub !== undefined) o.upBase = Math.round(ub);
+    if (Object.keys(o).length) out.runes = o; }
   out.skillUp = sanitizeSkillUp(r.skillUp);
   out.specLevel = Math.round(out.specLevel);
   { const su = (r.skillUnlock && typeof r.skillUnlock === 'object' && !Array.isArray(r.skillUnlock) ? r.skillUnlock : {}) as Record<string, unknown>; for (const [k, v] of Object.entries(su)) { const n = Number(v); if (/^[a-z0-9_]{1,24}$/.test(k) && Number.isFinite(n)) out.skillUnlock[k] = Math.round(Math.min(120, Math.max(1, n))); } }

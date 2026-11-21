@@ -182,6 +182,9 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'azrail_chest', name: 'Azrail Sandığı', icon: 'azrail_chest', color: '#ff3a5a', sellable: false, desc: 'Azrail\'den kesin düşer. Aç: Mücevher, Öz, kule malzemeleri ve şansla Azrail Kancası.' },
   { id: 'azrail_hook', name: 'Azrail Kancası', icon: 'azrail_hook', color: '#ff2a4a', sellable: false, desc: 'Azrail Sandığı\'ndan nadiren çıkar. Efsanevi üretim malzemesi.' },
   { id: 'talisman_stone', name: 'Tılsım Taşı', icon: 'talisman', color: '#5ce0b0', sellable: false, desc: '20 tanesi Tılsımın Gücü olur.' },
+  { id: 'rune_frag_kudret', name: 'Kızıl Kudret Parçası', icon: 'rune_frag_kudret', color: '#ff5a4a', sellable: false, desc: 'Rün Sahili canavarlarından düşer. 5 parça = 1. seviye Kızıl Kudret Rünü; rün yükseltmede de kullanılır.' },
+  { id: 'rune_frag_siper', name: 'Safir Siper Parçası', icon: 'rune_frag_siper', color: '#4f93ff', sellable: false, desc: 'Rün Sahili canavarlarından düşer. 5 parça = 1. seviye Safir Siper Rünü; rün yükseltmede de kullanılır.' },
+  { id: 'rune_frag_yasam', name: 'Zümrüt Yaşam Parçası', icon: 'rune_frag_yasam', color: '#38dd7a', sellable: false, desc: 'Rün Sahili canavarlarından düşer. 5 parça = 1. seviye Zümrüt Yaşam Rünü; rün yükseltmede de kullanılır.' },
 ];
 export const MATERIAL = new Map(MATERIALS.map((m) => [m.id, m] as const));
 

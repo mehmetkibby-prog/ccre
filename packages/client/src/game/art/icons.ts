@@ -44,7 +44,43 @@ function fishIcon(ctx: Ctx, body: string, belly: string, h: number, beak: boolea
 }
 const metal = (ctx: Ctx, t: string | null, y0: number, y1: number) => vgrad(ctx, y0, y1, '#ffffff', t ?? '#a9b6c6');
 
+/** Rün taşı: altıgen kesik taş tablet, ortasında türüne özel parlayan oyma işaret. */
+function runeStone(ctx: Ctx, col: string, glyph: 'kudret' | 'siper' | 'yasam') {
+  const hex = (r: number) => { ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = -Math.PI / 2 + (i * Math.PI) / 3; ctx[i ? 'lineTo' : 'moveTo'](Math.cos(a) * r, Math.sin(a) * r * 1.08); } ctx.closePath(); };
+  ctx.shadowColor = col; ctx.shadowBlur = 12;
+  hex(27); fillStroke(ctx, vgrad(ctx, -28, 28, '#5b5468', '#24202c'), 2.4);
+  ctx.shadowBlur = 0;
+  hex(21); fillStroke(ctx, rgrad(ctx, 0, -4, 24, shade(col, -0.35), '#17131c'), 1.6, 'rgba(0,0,0,0.55)');
+  // taş yüzeyinde ince çizikler
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-18, -12); ctx.lineTo(-8, -18); ctx.moveTo(12, 16); ctx.lineTo(19, 9); ctx.stroke();
+  // oyma işaret (iki kat: dış hale + parlak çekirdek)
+  const path = () => {
+    ctx.beginPath();
+    if (glyph === 'kudret') { ctx.moveTo(0, -15); ctx.lineTo(0, 15); ctx.moveTo(-9, -6); ctx.lineTo(0, -15); ctx.lineTo(9, -6); ctx.moveTo(-8, 6); ctx.lineTo(8, 6); }
+    else if (glyph === 'siper') { ctx.moveTo(0, -15); ctx.lineTo(11, -8); ctx.lineTo(9, 7); ctx.lineTo(0, 15); ctx.lineTo(-9, 7); ctx.lineTo(-11, -8); ctx.closePath(); ctx.moveTo(0, -8); ctx.lineTo(0, 8); }
+    else { ctx.moveTo(0, 15); ctx.lineTo(0, -4); ctx.moveTo(0, 2); ctx.quadraticCurveTo(-12, -2, -10, -14); ctx.quadraticCurveTo(-2, -12, 0, 2); ctx.moveTo(0, -4); ctx.quadraticCurveTo(12, -8, 10, -16); ctx.quadraticCurveTo(2, -15, 0, -4); }
+  };
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.shadowColor = col; ctx.shadowBlur = 10; path(); ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.stroke();
+  ctx.shadowBlur = 0; path(); ctx.strokeStyle = '#fff6ea'; ctx.lineWidth = 1.8; ctx.stroke();
+}
+/** Rün parçası: kırık taş kıymığı, kenarında türünün ışığı. */
+function runeShard(ctx: Ctx, col: string) {
+  ctx.shadowColor = col; ctx.shadowBlur = 10;
+  ctx.beginPath(); ctx.moveTo(-6, -24); ctx.lineTo(12, -14); ctx.lineTo(16, 6); ctx.lineTo(4, 24); ctx.lineTo(-14, 14); ctx.lineTo(-16, -6); ctx.closePath();
+  fillStroke(ctx, vgrad(ctx, -24, 24, '#615a70', '#26212e'), 2.2);
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.moveTo(-6, -24); ctx.lineTo(0, -2); ctx.lineTo(16, 6); ctx.moveTo(0, -2); ctx.lineTo(-14, 14); ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.shadowColor = col; ctx.shadowBlur = 8; ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(2, 2); ctx.lineTo(-3, 12); ctx.strokeStyle = col; ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.shadowBlur = 0; ctx.beginPath(); ctx.moveTo(-4, -12); ctx.lineTo(2, 2); ctx.lineTo(-3, 12); ctx.strokeStyle = '#fff6ea'; ctx.lineWidth = 1.1; ctx.stroke();
+}
 const ICONS: Record<string, P> = {
+  rune_kudret(ctx) { runeStone(ctx, '#ff5a4a', 'kudret'); },
+  rune_siper(ctx) { runeStone(ctx, '#4f93ff', 'siper'); },
+  rune_yasam(ctx) { runeStone(ctx, '#38dd7a', 'yasam'); },
+  rune_frag_kudret(ctx) { runeShard(ctx, '#ff5a4a'); },
+  rune_frag_siper(ctx) { runeShard(ctx, '#4f93ff'); },
+  rune_frag_yasam(ctx) { runeShard(ctx, '#38dd7a'); },
   sword(ctx, t) {
     ctx.rotate(-Math.PI / 4);
     if (t) { ctx.shadowColor = t; ctx.shadowBlur = 8; }

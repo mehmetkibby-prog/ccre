@@ -1,3 +1,5 @@
+import { RunePanel } from './runes.tsx';
+import { RankCard } from './rank.tsx';
 import { StoragePanel, storageTab } from './storage.tsx';
 import { MatRow } from './matinfo.tsx';
 import { installAvailable, onInstallChange, promptInstall } from '../game/install.ts';
@@ -93,6 +95,7 @@ export function Panels({ game, onExit }: { game: Game; onExit: (r: string, toCh?
       {p === 'guild' && <GuildPanel />}
       {p === 'essmarket' && <EssMarketPanel game={game} />}
       {p === 'rankings' && <RankingsPanel />}
+      {p === 'runes' && <RunePanel game={game} />}
       {p === 'fishshop' && <FishShop game={game} />}
       {p === 'garden' && <GardenPanel />}
       {p === 'events' && <EventsPanel />}
@@ -470,6 +473,7 @@ function Character({ game }: { game: Game }) {
   );
   return (
     <Panel title={`${char.name} — ${CLASSES[char.cls as ClassId].name}`} width={760}>
+      <RankCard self={self} />
       <div className="stats">
         <div>
           <div className="row"><b>Statü puanları</b><div className="spacer" /><span style={{ color: left > 0 ? '#8fe08a' : '#a9a08a', fontWeight: 800 }}>Kalan: {left}</span></div>

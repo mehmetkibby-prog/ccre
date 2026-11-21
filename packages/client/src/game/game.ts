@@ -4,6 +4,7 @@ import { DIR_STEPS,
   findPath, los, GARDEN_PLANTS, GARDEN_MAP, GARDEN_REACH, MATERIALS,
   CAST_FIRST, CAST_CHAIN_HOP,
 } from '@col/shared';
+import { runeConf } from '@col/shared';
 import { store, notify, pushChat, pushLoot, reqId, pmPush } from './store.ts';
 import { Input } from './input.ts';
 import { Renderer3D } from '../g3d/renderer3d.ts';
@@ -20,7 +21,7 @@ export interface CEnt {
   slide?: { x0: number; y0: number; t0: number };
   dir: number; anim: number; animStart: number; skill?: number;
   hp: number; maxHp: number; flags: number; level: number;
-  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; cos: number; guild: string; combo?: number;
+  name: string; cls: number; variant: number; tpl: number; weapon: number; wplus: number; cos: number; guild: string; /** rütbe (0 yok) */ rank: number; combo?: number;
   icon: string; rarity: number; owner: number; ttlEnd: number; label: string;
   hurtUntil: number; spawnAt: number; deadAt: number;
   /** vuruşla geri sekme: yön (birim vektör) ve bitiş anı */
@@ -407,7 +408,7 @@ export class Game {
         id: sp.id, kind: sp.kind, x: sp.x, y: sp.y, samples: [{ t: s.t, x: sp.x, y: sp.y }], dir: 'dir' in sp ? sp.dir : 0, anim: 'anim' in sp ? sp.anim : 0, animStart: now,
         hp: 'hp' in sp ? sp.hp : 0, maxHp: 'maxHp' in sp ? sp.maxHp : 0, flags: 'flags' in sp ? sp.flags : 0, level: 'level' in sp ? sp.level : 0,
         name: sp.kind === Kind.PLAYER ? sp.name : sp.kind === Kind.MONSTER ? MONSTERS[sp.tpl]?.name ?? '?' : '', cls: sp.kind === Kind.PLAYER ? sp.cls : 0,
-        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, wplus: sp.kind === Kind.PLAYER ? sp.wplus : 0, cos: sp.kind === Kind.PLAYER ? sp.cos : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '',
+        variant: sp.kind === Kind.MONSTER ? sp.variant : 0, tpl: sp.kind === Kind.MONSTER ? sp.tpl : 0, weapon: sp.kind === Kind.PLAYER ? sp.weapon : 0, wplus: sp.kind === Kind.PLAYER ? sp.wplus : 0, cos: sp.kind === Kind.PLAYER ? sp.cos : 0, guild: sp.kind === Kind.PLAYER ? sp.guild : '', rank: sp.kind === Kind.PLAYER ? sp.rank : 0,
         icon: sp.kind === Kind.LOOT ? sp.icon : '', rarity: sp.kind === Kind.LOOT ? sp.rarity : 0, owner: sp.kind === Kind.LOOT ? sp.owner : 0,
         ttlEnd: sp.kind === Kind.LOOT ? now + sp.ttl : 0, label: sp.kind === Kind.LOOT ? sp.label : '', hurtUntil: 0, spawnAt: now, deadAt: 0,
       };
@@ -1056,6 +1057,7 @@ export class Game {
       case 'KeyK': toggle('skills'); break;
       case 'KeyM': toggle('map'); break;
       case 'KeyJ': toggle('quests'); break;
+      case 'KeyU': if ((store.get().self?.level ?? 0) >= runeConf().unlockLevel) toggle('runes'); break;
       case 'KeyG': toggle('guild'); break;
       case 'KeyT': toggle('teleport'); break;
       case 'Escape': if (store.get().panel) store.set({ panel: null, npc: null }); else { this.setTarget(0); this.autoAttack = false; } break;

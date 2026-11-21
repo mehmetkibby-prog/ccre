@@ -1,3 +1,5 @@
+import { runeConf } from '@col/shared';
+import { rankProgress } from './rank.tsx';
 import { Tutorial } from './tutorial.tsx';
 import { BuffPips } from './matinfo.tsx';
 import { AnnouncementBar } from '../admin/AdminPanel.tsx';
@@ -319,7 +321,8 @@ function PlayerPlate() {
   const ch = useStore((s) => s.channel);
   if (!self || !char) return null;
   const hk = Math.max(0, Math.min(1, hp / Math.max(1, max)));
-  const xk = Math.min(1, self.xp / Math.max(1, self.xpNext));
+  const rkp = rankProgress(self);
+  const xk = rkp ? rkp.k : Math.min(1, self.xp / Math.max(1, self.xpNext));
   const C1 = 2 * Math.PI * 39, C2 = 2 * Math.PI * 44.5;
   return (
     <div className="plate">
@@ -346,7 +349,7 @@ function PlayerPlate() {
           <div className="xp-tube" title={`${self.xp.toLocaleString('tr-TR')} / ${self.xpNext.toLocaleString('tr-TR')} TP`}>
             <i style={{ width: `${xk * 100}%` }} />
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} style={{ left: `${n * 10}%` }} />)}
-            <span>TP %{(xk * 100).toFixed(1)}</span>
+            <span>{rkp ? `${rkp.d.name} ` : 'TP '}%{(xk * 100).toFixed(1)}</span>
           </div>
         )}
         <div className="netinfo"><span>Kanal {ch}</span></div>
@@ -361,14 +364,16 @@ function PlayerPlate() {
 function XpLine() {
   const self = useStore((s) => s.self);
   if (!self) return null;
-  const k = Math.min(1, self.xp / Math.max(1, self.xpNext));
+  const rp = rankProgress(self);
+  const k = rp ? rp.k : Math.min(1, self.xp / Math.max(1, self.xpNext));
+  const cur = rp ? rp.xp : self.xp, need = rp ? rp.need : self.xpNext;
   return (
-    <div className="xpbar" title={`Seviye ${self.level} · ${self.xp.toLocaleString('tr-TR')} / ${self.xpNext.toLocaleString('tr-TR')} TP`}>
+    <div className={'xpbar' + (rp ? ' rank' : '')} style={rp ? ({ '--rk': rp.d.color } as React.CSSProperties) : undefined} title={rp ? `${rp.d.name}${rp.next ? ` → ${rp.next.name}` : ''} · ${cur.toLocaleString('tr-TR')} / ${need.toLocaleString('tr-TR')} rütbe TP` : `Seviye ${self.level} · ${self.xp.toLocaleString('tr-TR')} / ${self.xpNext.toLocaleString('tr-TR')} TP`}>
       <span className="xp-lv">{self.level}</span>
       <div className="xp-rail">
         <i style={{ width: `${k * 100}%` }} />
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <b key={n} style={{ left: `${n * 10}%` }} />)}
-        <span className="xp-t"><span className="xp-n">{self.xp.toLocaleString('tr-TR')} / {self.xpNext.toLocaleString('tr-TR')} TP · </span>%{(k * 100).toFixed(1)}</span>
+        <span className="xp-t">{rp && <span className="xp-rk">{rp.d.name} · </span>}<span className="xp-n">{rp && !rp.next ? 'En yüksek rütbe · ' : `${cur.toLocaleString('tr-TR')} / ${need.toLocaleString('tr-TR')} TP · `}</span>%{(k * 100).toFixed(1)}</span>
       </div>
     </div>
   );
@@ -603,6 +608,7 @@ function Menu({ onExit }: { onExit: (r: string, toChannels?: boolean) => void })
       <button onClick={() => open('guild')}><MenuIcon k="guild" /><small>G</small><span className="tag">Lonca</span></button>
       <button onClick={() => open('friends')}><MenuIcon k="friends" /><span className="tag">Arkadaş</span></button>
       <button onClick={() => open('rankings')}><MenuIcon k="rank" /><span className="tag">Sıralama</span></button>
+      {self && self.level >= runeConf().unlockLevel && <button onClick={() => open('runes')}><MenuIcon k="rune" /><small>U</small><span className="tag">Rün</span></button>}
       <button className="pc-only" onClick={() => open('settings')}><MenuIcon k="gear" /><span className="tag">Ayarlar</span></button>
       <button className="mob-only" onClick={() => store.set((s) => ({ chatOpen: !s.chatOpen, unread: 0, mobMenu: false }))}><MenuIcon k="chat" /><span className="tag">Sohbet</span>{unread > 0 && <span className="badge">{unread > 9 ? '9+' : unread}</span>}</button>
     </div>

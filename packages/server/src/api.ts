@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import type { ServerResponse } from 'node:http';
-import { validEmail, CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, type ClassId } from '@col/shared';
+import { validEmail, CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, RANK_MAX, RUNE_MAX_LEVEL, isRuneKind, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
 import { newCaptcha, checkCaptcha } from './captcha.ts';
@@ -469,6 +469,14 @@ export function buildApi(d: ApiDeps): Router {
       const key = String(b.key), qty = Math.round(Number(b.qty));
       if (!(MATERIAL.has(key) || MALL.has(key)) || !(qty >= 1 && qty <= 99999)) throw new HttpError(400, 'Geçersiz malzeme ya da adet.');
       g = { kind: 'mat', key, qty };
+    } else if (b.kind === 'rank') {
+      const r = Math.round(Number(b.r));
+      if (!(r >= 0 && r <= RANK_MAX)) throw new HttpError(400, 'Geçersiz rütbe.');
+      g = { kind: 'rank', r };
+    } else if (b.kind === 'rune') {
+      const lv = Math.round(Number(b.lv));
+      if (!isRuneKind(b.k) || !(lv >= 1 && lv <= RUNE_MAX_LEVEL)) throw new HttpError(400, 'Geçersiz rün.');
+      g = { kind: 'rune', k: b.k, lv };
     } else throw new HttpError(400, 'Geçersiz tür.');
     const ch = d.gateway.onlineChannel(charId);
     let text: string;

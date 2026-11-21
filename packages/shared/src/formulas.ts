@@ -49,6 +49,8 @@ export interface CharCore {
   cls: ClassId; level: number; stats: StatAlloc;
   equip: Partial<Record<Slot, ItemInstance>>;
   buffs?: { atkFlat?: number; hpFlat?: number; dmgReducePct?: number; defFlat?: number; critPct?: number };
+  /** yüzde bonuslar (rütbe, rünler): toplam saldırı/savunma/azami cana en sonda uygulanır */
+  pct?: { atk?: number; def?: number; hp?: number };
 }
 
 export function computeStats(c: CharCore): CombatStats {
@@ -98,6 +100,8 @@ export function computeStats(c: CharCore): CombatStats {
   dfn = dfn + (c.buffs?.defFlat ?? 0) + STAT_GAIN.res * st.res;
   if (c.buffs?.critPct) s.crit += c.buffs.critPct;
   maxHp = maxHp + hpFlat + STAT_GAIN.vit * st.vit;
+  const pc = c.pct;
+  if (pc) { atk *= 1 + (pc.atk ?? 0) / 100; dfn *= 1 + (pc.def ?? 0) / 100; maxHp *= 1 + (pc.hp ?? 0) / 100; }
   s.maxHp = Math.round(maxHp);
   // artı ve evrim düz değer olarak eşyanın gücünde (itemPower)
   s.atk = Math.round(atk);

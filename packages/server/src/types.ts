@@ -38,6 +38,10 @@ export interface CharMisc {
   botNext?: number;
   /** ön kayıt tilkisinin bittiği an */
   foxUntil?: number;
+  /** rütbe (Sv.65 sonrası): rütbe ve o rütbedeki tecrübe */
+  rank?: { r: number; xp: number };
+  /** takılı rünler: tür → seviye (çantadaki rünler malzeme yığını: rune_<tür>_<seviye>) */
+  runes?: { eq: Partial<Record<'kudret' | 'siper' | 'yasam', number>> };
   botDue?: boolean;
   botUntil?: number;
   botTries?: number;
@@ -159,7 +163,7 @@ export interface WorkerStats {
 }
 
 /** Yönetim: oyuncuya eşya (silah/zırh/takı; nadirlik, artı) ya da malzeme / Nesne Market ürünü verme */
-export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number } | { kind: 'essence'; qty: number };
+export type AdminGive = { kind: 'item'; tpl: string; rarity: string; plus?: number } | { kind: 'mat'; key: string; qty: number } | { kind: 'gems'; qty: number } | { kind: 'cp'; qty: number } | { kind: 'essence'; qty: number } | { kind: 'rank'; r: number } | { kind: 'rune'; k: 'kudret' | 'siper' | 'yasam'; lv: number };
 
 /** canlı yük ölçümü (loadmon.ts) */
 export interface LoadJob { at: number; name: string; ms: number; detail?: string }

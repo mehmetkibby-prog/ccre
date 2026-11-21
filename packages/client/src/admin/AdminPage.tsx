@@ -2,6 +2,7 @@
  * Yönetim sayfası (/admin1997): oyundan ayrı, telefonda da rahat kullanılan tam sayfa.
  * Sunucu sürümünde her şey sunucu API'si ile; tarayıcı test sürümünde (#admin1997) paylaşılan ayar kaydı ve yerel oyuncular ile.
  */
+import { RANKS, RANK_LEVEL, RUNES, RUNE_KINDS, RUNE_MAX_LEVEL, runePct } from '@col/shared';
 import React, { useCallback, useEffect, useState } from 'react';
 import { CLASSES, MAPS, TUNING, sanitizeTuning, ITEM_TEMPLATES, RARITIES, RARITY, MAX_PLUS, MATERIALS, MALL_ITEMS, type ClassId, type GameTuning, type MonsterTune, type SpawnTune } from '@col/shared';
 import { api } from '../api.ts';
@@ -726,7 +727,10 @@ function ArenaTab({ t, setT, dis, toast }: { t: GameTuning; setT: React.Dispatch
 }
 
 function GiveBox({ busy, onGive }: { busy: boolean; onGive: (g: Record<string, unknown>) => void }) {
-  const [kind, setKind] = useState<'item' | 'mat'>('item');
+  const [kind, setKind] = useState<'item' | 'mat' | 'rank' | 'rune'>('item');
+  const [rank, setRank] = useState(1);
+  const [rk, setRk] = useState<'kudret' | 'siper' | 'yasam'>('kudret');
+  const [rlv, setRlv] = useState(1);
   const [tpl, setTpl] = useState(ITEM_TEMPLATES[0]?.id ?? '');
   const [rarity, setRarity] = useState('crimson');
   const [plus, setPlus] = useState(0);
@@ -740,8 +744,30 @@ function GiveBox({ busy, onGive }: { busy: boolean; onGive: (g: Record<string, u
         <b style={{ fontSize: 12.5 }}>Eşya ver</b>
         <button className={'btn small ' + (kind === 'item' ? 'primary' : 'ghost')} onClick={() => setKind('item')}>Silah · Zırh · Takı</button>
         <button className={'btn small ' + (kind === 'mat' ? 'primary' : 'ghost')} onClick={() => setKind('mat')}>Malzeme · Nesne Market</button>
+        <button className={'btn small ' + (kind === 'rank' ? 'primary' : 'ghost')} onClick={() => setKind('rank')}>Rütbe</button>
+        <button className={'btn small ' + (kind === 'rune' ? 'primary' : 'ghost')} onClick={() => setKind('rune')}>Rün</button>
       </div>
-      {kind === 'item' ? (
+      {kind === 'rank' ? (
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+          <select className="adm-sel" value={rank} onChange={(e) => setRank(Number(e.target.value))} style={{ color: RANKS[rank - 1]?.color }}>
+            <option value={0}>Rütbeyi kaldır</option>
+            {RANKS.map((r) => <option key={r.id} value={r.id} style={{ color: r.color }}>{r.id}. {r.name} (+%{r.atkPct} saldırı/can)</option>)}
+          </select>
+          <button className="btn small primary" disabled={busy} onClick={() => onGive({ kind: 'rank', r: rank })}>{rank ? 'Rütbeyi ver' : 'Kaldır'}</button>
+          <span className="muted" style={{ fontSize: 11 }}>{RANK_LEVEL}. seviye altındaki oyuncuda rütbe saklanır, {RANK_LEVEL}'te etkinleşir.</span>
+        </div>
+      ) : kind === 'rune' ? (
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+          <select className="adm-sel" value={rk} onChange={(e) => setRk(e.target.value as typeof rk)} style={{ color: RUNES[rk].color }}>
+            {RUNE_KINDS.map((k) => <option key={k} value={k}>{RUNES[k].name}</option>)}
+          </select>
+          <select className="adm-sel" value={rlv} onChange={(e) => setRlv(Number(e.target.value))}>
+            {Array.from({ length: RUNE_MAX_LEVEL }, (_, i) => <option key={i + 1} value={i + 1}>Sv.{i + 1} (+%{runePct(i + 1).toLocaleString('tr-TR')})</option>)}
+          </select>
+          <button className="btn small primary" disabled={busy} onClick={() => onGive({ kind: 'rune', k: rk, lv: rlv })}>Rünü ver</button>
+          <span className="muted" style={{ fontSize: 11 }}>Rün oyuncunun çantasına (Malzeme) düşer; parçalar Malzeme sekmesinden verilir.</span>
+        </div>
+      ) : kind === 'item' ? (
         <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
           <select className="adm-sel" value={tpl} onChange={(e) => setTpl(e.target.value)}>
             {items.map((t) => <option key={t.id} value={t.id}>{(slotName[t.slot] ?? t.slot) + (t.cls ? ' · ' + CLASSES[t.cls as ClassId].name : '') + ' — ' + t.name}</option>)}

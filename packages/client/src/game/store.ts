@@ -4,7 +4,7 @@ import type { ItemInstance, Slot, StatAlloc, QuestState } from '@col/shared';
 export interface SelfInfo {
   level: number; xp: number; xpNext: number; gems: number; essence: number; cp: number; kills: number; autoPotion: boolean; daily: number;
   mount?: { owned?: boolean; riding?: boolean; quest?: { kills: number } };
-  quests?: QuestState; towerBest?: number; /** Sv. 7 becerisi atış sayacı (zamanlama çubuğunun yeşil bölgesi) */ qn?: number;
+  quests?: QuestState; towerBest?: number; /** rütbe (Sv.65+) */ rank?: { r: number; xp: number } | null; /** takılı rünler: tür → seviye */ runes?: { eq: Partial<Record<'kudret' | 'siper' | 'yasam', number>> }; /** Sv. 7 becerisi atış sayacı (zamanlama çubuğunun yeşil bölgesi) */ qn?: number;
   /** yeni oyuncu rehberi: tamamlanan adım bitleri */
   tut?: number;
   buffs?: Record<string, number>; autoLeft?: number; autoOn?: boolean; autoPool?: number; bait?: number; stallSkin?: number;
@@ -42,7 +42,7 @@ export function pmSet(name: string, p: Partial<PmConv> | null) {
 export interface ChatMsg { id: number; ch: string; from: string; text: string; cls?: string; gm?: boolean; at: number; system?: boolean; item?: ItemInstance }
 export interface Notice { id: number; text: string; kind: string; at: number }
 export interface TargetInfo { id: number; name: string; level: number; hp: number; maxHp: number; kind: number; variant: number; boss?: boolean; tpl?: number }
-export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | 'garden' | 'events' | 'storage' | null;
+export type Panel = 'inventory' | 'character' | 'skills' | 'map' | 'settings' | 'teleport' | 'npc' | 'shop' | 'upgrade' | 'help' | 'admin' | 'market' | 'donate' | 'mall' | 'bosses' | 'fishshop' | 'tradeglass' | 'auto' | 'friends' | 'mount' | 'essmarket' | 'rankings' | 'tower' | 'forge' | 'craft' | 'quests' | 'guild' | 'garden' | 'events' | 'storage' | 'runes' | null;
 
 export interface TowerView {
   f: number; puzzle: 'kill' | 'seq' | 'key' | 'riddle' | 'altar' | 'boss'; need: number; have: number; done: boolean; best: number; clears: number;

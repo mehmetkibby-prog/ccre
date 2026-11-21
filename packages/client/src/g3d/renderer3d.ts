@@ -11,7 +11,7 @@ import { evoArmorFx, gearEvo } from './evofx.ts';
 import { mtnLight } from './mountains.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, petCode, trDayKey, dayNightAt, trHour, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, petCode, trDayKey, dayNightAt, trHour, rankDef, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -1356,6 +1356,18 @@ export class Renderer3D {
       ctx.fillStyle = '#3a1414'; ctx.fillRect(p.x - w / 2, p.y + 3.5, w, 4);
       ctx.fillStyle = col; ctx.fillRect(p.x - w / 2, p.y + 3.5, w * k, 4);
     };
+    // rütbe: adın (ve varsa lonca satırının) üstünde, rütbe renginde hafif parlayan yazı
+    const rankTag = (p: { x: number; y: number }, r: number, up: number) => {
+      const d = rankDef(r); if (!d) return;
+      const t = now / 1000, y = p.y - 16 - up;
+      ctx.save();
+      ctx.font = '800 11.5px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      const label = `✦ ${d.name} ✦`;
+      ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(10,8,6,0.88)'; ctx.strokeText(label, p.x, y);
+      ctx.shadowColor = d.color; ctx.shadowBlur = 6 + Math.sin(t * 2.2 + r) * 3;
+      ctx.fillStyle = d.color; ctx.fillText(label, p.x, y);
+      ctx.restore();
+    };
     // lonca etiketi: ad satırının üstünde simge + lonca adı
     const guildTag = (p: { x: number; y: number }, emblem: number, name: string) => {
       let img = this.emblemImgs.get(emblem);
@@ -1402,7 +1414,8 @@ export class Renderer3D {
         if (p && e.hp < e.maxHp) bar(p, e.hp, e.maxHp, 46, '#5fe07a');
         const hasG = !!p && !!e.guild && e.guild.indexOf('|') > 0;
         if (p && hasG) { const i = e.guild.indexOf('|'); guildTag(p, Number(e.guild.slice(0, i)) | 0, e.guild.slice(i + 1)); }
-        if (p && gm) gmTag(p, hasG ? 16 : 0);
+        if (p && e.rank) rankTag(p, e.rank, hasG ? 16 : 0);
+        if (p && gm) gmTag(p, (hasG ? 16 : 0) + (e.rank ? 16 : 0));
       } else {
         const def = MONSTERS[e.tpl];
         const targeted = g.targetId === e.id;
@@ -1416,7 +1429,9 @@ export class Renderer3D {
       const gm = st.char.role === 'gm' || st.char.role === 'admin' || st.char.role === 'owner';
       const p = nameTag(g.dx, g.dy, 2.15, st.char.name, gm ? '#ffe08a' : '#fff0c0', st.self?.level ?? 1); const mg = st.guild?.g;
       if (p && mg) guildTag(p, mg.emblem, mg.name);
-      if (p && gm) gmTag(p, mg ? 16 : 0);
+      const myRank = st.self?.rank?.r ?? 0;
+      if (p && myRank) rankTag(p, myRank, mg ? 16 : 0);
+      if (p && gm) gmTag(p, (mg ? 16 : 0) + (myRank ? 16 : 0));
     }
     // tezgâh tabelaları
     for (const sl of st.stalls) {

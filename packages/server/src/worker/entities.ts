@@ -1,4 +1,4 @@
-import { VIEW_HALF_W, VIEW_HALF_H, computeStats, charBuffs, potionBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT } from '@col/shared';
+import { VIEW_HALF_W, VIEW_HALF_H, computeStats, charBuffs, potionBuffs, type CombatStats, type MonsterDef, type SpawnPoint, type ItemInstance, Anim, monsterStats, MONSTER_INDEX, CLASS_IDS, TUNING, MOUNT, rankBonus, runeBonus, RANK_LEVEL, runeConf } from '@col/shared';
 import type { CharState } from '../types.ts';
 import type { Zone } from './zone.ts';
 
@@ -80,7 +80,8 @@ export class Player {
   recompute(keepRatio: boolean) {
     const oldMax = this.stats?.maxHp ?? 0;
     const b = charBuffs(this.char.misc.buffs, Date.now());
-    this.stats = computeStats({ cls: this.char.cls, level: this.char.level, stats: this.char.stats, equip: this.char.equip, buffs: { atkFlat: b.atkFlat, hpFlat: b.hpFlat, defFlat: b.defFlat, critPct: b.critPct } });
+    const rk = rankBonus(this.char.level >= RANK_LEVEL ? this.char.misc.rank?.r : 0), rn = runeBonus(this.char.level >= runeConf().unlockLevel ? this.char.misc.runes : undefined);
+    this.stats = computeStats({ cls: this.char.cls, level: this.char.level, stats: this.char.stats, equip: this.char.equip, buffs: { atkFlat: b.atkFlat, hpFlat: b.hpFlat, defFlat: b.defFlat, critPct: b.critPct }, pct: { atk: rk.atkPct + rn.atkPct, def: rn.defPct, hp: rk.hpPct + rn.hpPct } });
     // binek: hareket hızı ve saldırı bonusu (istemci hızı istatistikten okuduğu için tahmin de aynı)
     const mt = this.char.misc.mount;
     if (mt?.owned && mt.riding) { this.stats.atk += MOUNT.atk; this.stats.speed *= MOUNT.speedMul; }
