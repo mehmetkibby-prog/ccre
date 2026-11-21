@@ -284,7 +284,7 @@ input[type=checkbox] { accent-color: var(--core); width: 16px; height: 16px; }
 .chat:not(:focus-within):not(:hover) { --glass: rgba(20, 13, 8, .38); --glass2: rgba(30, 20, 12, .42); }
 .chat:not(:focus-within):not(:hover) .in, .chat:not(:focus-within):not(:hover) .tabs2 { opacity: .55; }
 .chat .m b { cursor: pointer; font-weight: 600; }
-.chat .ch-world { color: #ffd08a; } .chat .ch-trade { color: #8ad8ff; } .chat .ch-local { color: #e2e8f4; } .chat .ch-sys { color: var(--core2); } .chat .ch-pm { color: #ff9ad8; }
+.chat .ch-world { color: #ffb066; } .chat .ch-world b { color: #ff9a3a; } .chat .ch-world .mt { color: #ffffff; } .chat .ch-trade { color: #8ad8ff; } .chat .ch-local { color: #e2e8f4; } .chat .ch-sys { color: var(--core2); } .chat .ch-pm { color: #ff9ad8; }
 .chat .tabs2 { display: flex; gap: 2px; }
 .chat .tabs2 button { font: 600 10.5px var(--f-ui); letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; background: none; border: none; color: var(--muted); cursor: pointer; position: relative; }
 .chat .tabs2 button.on { color: var(--core2); }

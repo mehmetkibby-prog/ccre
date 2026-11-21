@@ -484,9 +484,10 @@ export class Game {
             if (crit) { this.renderer.hitStop([ev.tgt], 35); this.renderer.shake(1.6); }
           }
           // kesik ışığı + yıldız + kıvılcım: kendi vuruşunda tam, yakındaki başkalarınınkinde sade
-          if (mine || Math.hypot(pos.x - this.dx, pos.y - this.dy) < 1200) this.fx.sk.meleeImpact(ev.src, pos, this.hitHeight(t), mc?.combo ?? 0, (ev.flags & DmgFlag.CRIT) !== 0, mine);
+          if (mine || onMe || Math.hypot(pos.x - this.dx, pos.y - this.dy) < 600) this.fx.sk.meleeImpact(ev.src, pos, this.hitHeight(t), mc?.combo ?? 0, (ev.flags & DmgFlag.CRIT) !== 0, mine);
         }
-        if (!st.showDamage && !mine && !onMe) break;
+        // başkalarının hasar sayıları gösterilmez (kalabalıkta cihazı yormasın): yalnız benim vurduğum ve bana vurulan
+        if (!mine && !onMe) break;
         if (ev.flags & DmgFlag.BLOCK) { this.fx.text(pos.x, pos.y, 2.0, 'Blok', '#cfe3ff', 15); break; }
         const crit = (ev.flags & DmgFlag.CRIT) !== 0;
         const color = onMe ? '#ff5a5a' : crit ? '#ffcf3d' : mine ? '#ffffff' : '#d8d8d8';
