@@ -277,8 +277,9 @@ function MenuBackdrop() {
       const x = bx + Math.cos(m.a) * m.r, y = by + Math.sin(m.a) * m.r;
       const e = mk(10 + i, Kind.PLAYER, x, y, { name: m.n, cls: m.c, level: 24 + i * 3, weapon: m.w, wplus: m.p, dir: dirTo(x, y, bx, by) });
       g.ents.set(e.id, e);
-      return { ...m, e, next: performance.now() + 600 + i * 230, n2: 0, sk: i, skAt: performance.now() + 1400 + i * 1150 };
+      return { ...m, e, next: performance.now() + 600 + i * 230, n2: 0, sk: i, skAt: performance.now() + 1200 + i * 950 };
     });
+    let skillGate = 0;
     const later: { at: number; f: () => void }[] = [];
     const after = (ms: number, f: () => void) => later.push({ at: performance.now() + ms, f });
     const hitBoss = (dmg: number, crit = false) => {
@@ -305,14 +306,15 @@ function MenuBackdrop() {
         e.dir = dirTo(e.x, e.y, bx, by);
         if (t < m.next) continue;
         const sp = { x: e.x, y: e.y }, tp = { x: bx, y: by };
-        if (t >= m.skAt) {
+        if (t >= m.skAt && t >= skillGate) {
+          skillGate = t + 760; // aynı anda üst üste beceri binmesin (ışıklar boss'u yakıp beyaza boğmasın)
           const list = MENU_SKILLS[m.c], [skill, variant] = list[m.sk++ % list.length];
           e.anim = Anim.CAST; e.animStart = t; e.skill = skill;
           fx.sk.play({ cls: m.c, skill, variant, src: e.id, tgt: BOSS, sp, tp, self: false, near: 1, now: t, shake: () => {}, hitStop: (ids, ms) => r.hitStop(ids, ms), sound: () => {} });
           if (m.c === 0 && skill === 3 && variant === 0) { fx.sk.dome(e.id, sp, 3000, '#ffcf5a'); after(300, () => fx.text(e.x, e.y, 2.4, '+' + (900 + Math.round(Math.random() * 300)), '#6dff9a', 18)); }
           else if (m.c === 2 && skill === 3 && variant === 1) after(420, () => { for (const o of party) if (o.c === 0) fx.text(o.e.x, o.e.y, 2.3, '+' + (600 + Math.round(Math.random() * 300)), '#6dff9a', 18); });
           else after(skill === 5 ? 560 : 440, () => hitBoss(Math.round(1300 + Math.random() * 900), Math.random() < 0.45));
-          m.skAt = t + 3600 + Math.random() * 1400;
+          m.skAt = t + 6800 + Math.random() * 1800;
           m.next = t + CAST_ANIM_MS + 80;
           continue;
         }
