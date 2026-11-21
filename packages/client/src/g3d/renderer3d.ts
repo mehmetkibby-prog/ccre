@@ -1040,6 +1040,8 @@ export class Renderer3D {
     this.sun.target.updateMatrixWorld();
   }
   draw(now: number, dt: number) {
+    // kare zamanı geriye gidemez (sıra dışı kare zaman damgası ya da video kaydındaki sanal saat): yumuşatmalar patlamasın
+    if (!(dt > 0)) dt = 0;
     this.applyDayNight(now);
     this.renderer.toneMappingExposure = this.baseExp * TUNING.brightness * this.dnExp; // yönetim panelinden ışık seviyesi; gece biraz kısık
     this.adaptResolution(now, dt);

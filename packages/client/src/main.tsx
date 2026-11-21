@@ -344,7 +344,7 @@ function MenuBackdrop() {
     let raf = 0, last = performance.now(), frames = 0;
     const t0 = last;
     const loop = (t: number) => {
-      const dt = Math.min(100, t - last); last = t;
+      const dt = Math.max(0, Math.min(100, t - last)); last = t;
       const s = (t - t0) / 1000;
       const rec = (window as any).__menuCam as ((s: number) => [number, number]) | undefined; // video kaydı için kamera
       if (rec) { [r.camYaw, co.dist] = rec(s); r.fixedScale = 1; }
