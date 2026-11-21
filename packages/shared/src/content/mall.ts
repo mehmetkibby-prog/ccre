@@ -63,7 +63,10 @@ export const MALL_ITEMS: MallItem[] = [
   { no: 31, id: 'battle_pass', name: 'Premium Savaş Bileti', cat: 'yakinda', price: 0, soon: true, desc: 'Sezon sistemi açılınca satışa çıkacak.' },
 ];
 export const MALL = new Map(MALL_ITEMS.map((m) => [m.id, m] as const));
-export const PET_KEYS = ['pet_bird', 'pet_monkey', 'pet_dog'] as const;
+/** Evcil hayvanlar (sıra kozmetik kodudur: 1 kuş, 2 maymun, 3 köpek, 4 yeşil tilki). Tilki kalıcıdır (ön kayıt ödülü). */
+export const PET_KEYS = ['pet_bird', 'pet_monkey', 'pet_dog', 'pet_fox'] as const;
+/** Kalıcı tilki çağrılınca etkinin bitiş zamanı (pratikte süresiz) */
+export const PET_FOX_FOREVER = 4_102_444_800_000; // 2100-01-01
 export const AUTO_POOL: Record<string, number> = { auto_potion: 1_000_000, auto_potion_big: 10_000_000 };
 export const CP_COUPON: Record<string, number> = { cp_100: 100, cp_200: 200, cp_500: 500 };
 export const SUPPORT_PACK = ['xp_ring', 'loot_charm', 'crimson_wings'];
@@ -93,12 +96,18 @@ export function charBuffs(buffs: Record<string, number> | undefined, now: number
   if (on('crimson_wings')) { const w = wingsBonus(); b.atkFlat += w.atk; b.defFlat += w.def; b.critPct += w.crit; }
   if (on('pet_bird') || on('pet_monkey')) { b.atkFlat += 20; b.xpPct += 10; }
   if (on('pet_dog')) b.xpPct += 20;
+  if (on('pet_fox')) { b.atkFlat += 10; b.hpFlat += 200; }
   return b;
 }
 
-/** Görünen kozmetik baytı (diğer oyuncular da görür): bit0-1 evcil hayvan (1 kuş, 2 maymun, 3 köpek), bit2 kanat. */
+/**
+ * Görünen kozmetik baytı (diğer oyuncular da görür): bit0-1 + bit5 evcil hayvan kodu (1 kuş, 2 maymun, 3 köpek, 4 tilki),
+ * bit2 kanat (bit3-4 zırh artı efekti sunucuda eklenir).
+ */
 export function cosmeticByte(buffs: Record<string, number> | undefined, now: number): number {
   const b = buffs ?? {};
   const pet = PET_KEYS.findIndex((k) => (b[k] ?? 0) > now) + 1;
-  return pet | ((b.crimson_wings ?? 0) > now ? 4 : 0);
+  return (pet & 3) | ((pet >> 2) << 5) | ((b.crimson_wings ?? 0) > now ? 4 : 0);
 }
+/** Kozmetik baytından evcil hayvan kodu (0 yok) */
+export function petCode(cos: number): number { return (cos & 3) | (((cos >> 5) & 1) << 2); }

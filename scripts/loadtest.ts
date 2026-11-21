@@ -34,7 +34,7 @@ async function bot(i: number) {
   const user = `bot${i}`;
   let token: string;
   try { token = (await api('/api/login', { username: user, password: 'botpass123' })).token; }
-  catch { token = (await api('/api/register', { username: user, password: 'botpass123', password2: 'botpass123' })).token; }
+  catch { token = (await api('/api/register', { username: user, password: 'botpass123', password2: 'botpass123', email: user + '@bot.test' })).token; }
   const me = await api('/api/me', null, token);
   let charId = me.characters[0]?.id;
   if (!charId) charId = (await api('/api/characters', { name: `Bot${i}`, cls: ['guardian', 'hunter', 'arcanist'][i % 3] }, token)).id;

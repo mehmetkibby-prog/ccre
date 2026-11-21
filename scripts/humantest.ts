@@ -73,7 +73,7 @@ async function bot(i: number, stopAt: { v: number }) {
   const user = `bot${i}`;
   let token: string;
   try { token = (await api('/api/login', { username: user, password: 'botpass123' })).token; }
-  catch { token = (await api('/api/register', { username: user, password: 'botpass123', password2: 'botpass123' })).token; }
+  catch { token = (await api('/api/register', { username: user, password: 'botpass123', password2: 'botpass123', email: user + '@bot.test' })).token; }
   const me = await api('/api/me', null, token);
   const ch0 = me.characters[0] ?? { id: (await api('/api/characters', { name: `Bot${i}`, cls: ['guardian', 'hunter', 'arcanist'][i % 3] }, token)).id, cls: ['guardian', 'hunter', 'arcanist'][i % 3] };
   const charId = Number(ch0.id);

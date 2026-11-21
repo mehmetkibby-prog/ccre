@@ -4,7 +4,7 @@ import {
   stepMove, nearestFree, getLayout, MAPS, classSkill, attackCooldown, skillDamageMult, rollDamage, xpToNext, statBudget, skillUpgradeBudget, skillPointsUsed, SKILL_SLOTS, CAST_FIRST, CAST_CHAIN_HOP,
   LEVEL_CAP_BASE, STAT_MAX, skillUpCost, ITEM_TPL, ITEM_TEMPLATES, RARITY, RARITIES, ENCHANTS, ENCHANT_TIER_WEIGHTS, LOOT_PROFILES, VARIANT_LOOT_MULT, resolveLoot, overLevelMul,
   itemIconName, enchantAttackMult, enchantDefenseMult, classAttackKind, monsterAttackKind, ENCHANT_COUNT_WEIGHTS,
-  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
+  SHOPS, sellPrice, masteryChance, MALL, mallPrice, mallForSale, charBuffs, AUTO_POOL, CP_COUPON, SUPPORT_PACK, PET_KEYS, PET_FOX_FOREVER, PREREG_REWARD, fishTable, fishingConf, fishPrice, FISH_BY_ID, ROD_ID, validateCharacterName, MAX_PLUS, cosmeticByte, transformConf, transformGroup, canTransform, upgradeStep, upgradeFailDown, isUpgradable, MATERIAL, trDayKey, trPeriod, sanitizeChat, itemDisplayName, CLASSES, MONSTERS, TUNING, rebuildSpawns, MOUNT,
   FORGE_MAP, WORLD_BOSS_ID, WORLD_BOSS_MAP, EVO_TIERS, EVO_NAMES, QTE_SWEEP_MS, QTE_TOL, QTE_MULT, qteZone, skillBuffVal, skillHealPct,
   towerRoom, towerFloorAt, TOWER_MAP, TOWER_FLOORS, TOWER_PUZZLE_NAMES, PLATE_R, GATE_R, ALTAR_HOLD_MS, ALTAR_WINDOW_MS, RIDDLES, SEQ_NAMES, QUEST_MAX_ACTIVE, type QuestDef,
   type ClientCmd, type ItemInstance, type Rarity, type Slot, type EnchantType, type GameEvent, type EntitySpawn, type SkillDef,
@@ -1499,6 +1499,31 @@ export class World {
       this.sendJson(p, { t: 'chestResult', title: 'Başlangıç Sandığı', rewards: ['50 Mücevher', '10× Kırmızı İksir'] });
       return;
     }
+    if (key === 'prereg_chest') {
+      ch.materials.prereg_chest -= 1;
+      ch.gems += PREREG_REWARD.gems;
+      ch.materials.pet_fox = Math.max(1, ch.materials.pet_fox ?? 0);
+      // tilki hemen yanına gelir (başka bir pet etkin değilse)
+      const b = (ch.misc.buffs ??= {});
+      if (!PET_KEYS.some((k) => k !== 'pet_fox' && (b[k] ?? 0) > this.now)) b.pet_fox = PET_FOX_FOREVER;
+      p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; this.relook(p);
+      p.selfDirty |= 1 | 2; this.save(p, true);
+      this.sendJson(p, { t: 'chestResult', title: 'Ön Kayıt Sandığı', rewards: ['Yeşil Tilki (kalıcı pet: +10 saldırı, +200 can)', `${PREREG_REWARD.gems} Mücevher`] });
+      return;
+    }
+    if (key === 'pet_fox') {
+      // kalıcı tilki: çağır / dinlenmeye gönder (sandıktan bir kez gelir, tükenmez)
+      const b = (ch.misc.buffs ??= {});
+      if ((b.pet_fox ?? 0) > this.now) { delete b.pet_fox; this.notice(p, 'Yeşil Tilki dinlenmeye gitti.', 'info'); }
+      else {
+        const other = PET_KEYS.find((k) => k !== 'pet_fox' && (b[k] ?? 0) > this.now);
+        if (other) return this.notice(p, 'Başka bir pet yanında; süresi bitince tilkiyi çağırabilirsin.');
+        b.pet_fox = PET_FOX_FOREVER; this.notice(p, 'Yeşil Tilki yanında: +10 saldırı, +200 can.', 'ok');
+      }
+      p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP; p.selfDirty |= 1 | 2; this.save(p, true);
+      this.relook(p); // çevredekiler tilkiyi hemen görsün
+      return;
+    }
     if (key === 'red_potion') return this.usePotion(p, false);
     if ((POTIONS as string[]).includes(key)) return this.drinkHerbPotion(p, key as PotionKey);
     if (key === 'azrail_chest') return this.openAzrailChest(p);
@@ -2586,6 +2611,7 @@ export class World {
       if (this.seenReceipt(p, req)) return;
       if ((PET_KEYS as readonly string[]).includes(key)) for (const pk of PET_KEYS) if (pk !== key) delete b[pk]; // aynı anda tek pet
       b[m.buff.key] = Math.max(b[m.buff.key] ?? 0, this.now) + m.buff.ms;
+      if ((PET_KEYS as readonly string[]).includes(key) || key === 'crimson_wings') this.relook(p); // pet/kanat çevredekilere hemen görünsün
       consume(); p.recompute(true); p.dirty |= Upd.MAXHP | Upd.HP;
       const left = b[m.buff.key] - this.now, h = Math.round(left / 3600_000);
       return done(`${m.name} etkin (${h >= 48 ? Math.round(h / 24) + ' gün' : h >= 1 ? h + ' saat' : Math.round(left / 60_000) + ' dakika'}).`, 1 | 2 | 4);

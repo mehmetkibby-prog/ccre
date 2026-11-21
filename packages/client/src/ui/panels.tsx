@@ -311,7 +311,8 @@ function Inventory({ game }: { game: Game }) {
               {mats.map(([k, n]) => {
                 return (
                   <MatRow key={k} k={k} n={n}>
-                    {(k === 'starter_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion' || k.startsWith('potion_')) && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' || k.startsWith('potion_') ? 'Kullan' : 'Aç'}</button>}
+                    {(k === 'starter_chest' || k === 'prereg_chest' || k === 'azrail_chest' || k === 'forge_chest' || k === 'crystal_chest' || k === 'red_potion' || k.startsWith('potion_')) && <button className="btn small" onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{k === 'red_potion' || k.startsWith('potion_') ? 'Kullan' : 'Aç'}</button>}
+                    {k === 'pet_fox' && <button className={'btn small' + ((self.buffs?.pet_fox ?? 0) > now ? '' : ' green')} onClick={() => game.send({ t: 'use', key: k, req: reqId() })}>{(self.buffs?.pet_fox ?? 0) > now ? 'Gönder' : 'Çağır'}</button>}
                   </MatRow>
                 );
               })}

@@ -46,7 +46,7 @@ const SHORT: Record<string, string> = {
   xp_ring: 'Tecrübe +%25', loot_charm: 'Eşya düşme +%25', essence_charm: 'Öz +%20', wisdom_scroll: 'Tecrübe +%25',
   war_ration: '+15 saldırı, +200 can', boss_tracker: 'Boss yerleri görünür', trade_glass: 'Pazar araması açık',
   fish_guide: 'Balık ve inci ×2', emerald_gate: 'Zümrüt geçit efekti', pet_bird: '+20 saldırı, tecrübe +%10',
-  pet_monkey: '+20 saldırı, tecrübe +%10', pet_dog: 'Tecrübe +%20',
+  pet_monkey: '+20 saldırı, tecrübe +%10', pet_dog: 'Tecrübe +%20', pet_fox: '+10 saldırı, +200 can',
 };
 const fmt = (ms: number) => {
   const s = Math.max(0, Math.round(ms / 1000));
@@ -60,6 +60,9 @@ function buffMeta(k: string): { name: string; icon: string; fx: string } {
   if (k === 'crimson_wings') { const w = wingsBonus(); return { name: MALL.get(k)?.name ?? k, icon: mallIcon(k), fx: `+${w.atk} saldırı, +${w.def} savunma, +%${w.crit} kritik` }; }
   const m = MALL.get(k);
   return { name: m?.name ?? MATERIAL.get(k)?.name ?? k, icon: m ? mallIcon(k) : MATERIAL.get(k)?.icon ?? 'bag', fx: SHORT[k] ?? '' };
+}
+/** kalan süre; kalıcı etki (ör. ön kayıt tilkisi) için "kalıcı" */
+function leftText(ms: number) { return ms > 3650 * 86400_000 ? 'kalıcı' : fmt(ms);
 }
 
 /** Sol üst karakter kutusu: etkin iksir ve Nesne Market etkileri (simge + dokununca ayrıntı). */
@@ -77,13 +80,13 @@ export function BuffPips() {
   }, [open]);
   if (!self) return null;
   const now = Date.now() + (store.get().clockSkew ?? 0);
-  const list = Object.entries(self.buffs ?? {}).filter(([k, t]) => t > now && (MALL.has(k) || (POTIONS as string[]).includes(k))).sort((a, b) => a[1] - b[1]);
+  const list = Object.entries(self.buffs ?? {}).filter(([k, t]) => t > now && (MALL.has(k) || k === 'pet_fox' || (POTIONS as string[]).includes(k))).sort((a, b) => a[1] - b[1]);
   const pool = self.autoPool ?? 0, bait = self.bait ?? 0;
   if (!list.length && pool <= 0 && bait <= 0) return null;
   return (
     <div className="buff-pips" ref={ref}>
       <button className="pips-row" onClick={() => setOpen((o) => !o)} aria-label="Etkin güçlendirmeler">
-        {list.slice(0, 7).map(([k, t]) => { const b = buffMeta(k), left = t - now; return <span key={k} className={'pip' + (left < 5 * 60_000 ? ' ending' : '')} title={`${b.name} · ${fmt(left)}`}><img src={iconUrl(b.icon)} alt="" /></span>; })}
+        {list.slice(0, 7).map(([k, t]) => { const b = buffMeta(k), left = t - now; return <span key={k} className={'pip' + (left < 5 * 60_000 ? ' ending' : '')} title={`${b.name} · ${leftText(left)}`}><img src={iconUrl(b.icon)} alt="" /></span>; })}
         {pool > 0 && <span className="pip" title={`Oto iksir deposu · ${pool.toLocaleString('tr-TR')} can`}><img src={iconUrl('mall_auto_potion')} alt="" /></span>}
         {bait > 0 && <span className="pip" title={`Bereketli yem · ${bait} av`}><img src={iconUrl('mall_fish_bait')} alt="" /></span>}
         {list.length > 7 && <span className="pip more">+{list.length - 7}</span>}
@@ -91,7 +94,7 @@ export function BuffPips() {
       {open && (
         <div className="pips-pop">
           <div className="hd">Etkin güçlendirmeler</div>
-          {list.map(([k, t]) => { const b = buffMeta(k); return <div key={k} className="row1"><img src={iconUrl(b.icon)} alt="" /><div><b>{b.name}</b>{b.fx && <small>{b.fx}</small>}</div><em>{fmt(t - now)}</em></div>; })}
+          {list.map(([k, t]) => { const b = buffMeta(k); return <div key={k} className="row1"><img src={iconUrl(b.icon)} alt="" /><div><b>{b.name}</b>{b.fx && <small>{b.fx}</small>}</div><em>{leftText(t - now)}</em></div>; })}
           {pool > 0 && <div className="row1"><img src={iconUrl('mall_auto_potion')} alt="" /><div><b>Oto iksir deposu</b><small>Can %50 altına inince iyileştirir</small></div><em>{pool.toLocaleString('tr-TR')} can</em></div>}
           {bait > 0 && <div className="row1"><img src={iconUrl('mall_fish_bait')} alt="" /><div><b>Bereketli yem</b><small>Balık miktarı ×2</small></div><em>{bait} av</em></div>}
         </div>

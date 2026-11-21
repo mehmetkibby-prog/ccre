@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import type { ServerResponse } from 'node:http';
-import { CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, type ClassId } from '@col/shared';
+import { validEmail, CLASS_IDS, validateCharacterName, normalizeName, CLASSES, ITEM_TEMPLATES, computeStats, LEVEL_CAP_BASE, ITEM_TPL, RARITIES, MAX_PLUS, MATERIAL, MALL, type ClassId } from '@col/shared';
 import { Router, HttpError, json, type Req } from './http.ts';
 import { pool, tx } from './db/pool.ts';
 import { hashPassword, verifyPassword, createSession, destroySession, sessionAccount, isStaff, isAdmin, sha256, randomToken, invalidateAccountCache, type AuthAccount } from './auth.ts';
@@ -19,6 +19,7 @@ import { RateLimiter } from './http.ts';
 import os from 'node:os';
 import { monitorEventLoopDelay, performance } from 'node:perf_hooks';
 import { LoadMon, cpuProfile } from './loadmon.ts';
+import { registerForum } from './forum.ts';
 
 const COOKIE = 'col_session';
 const loginLimiter = new RateLimiter(0.2, 8); // IP başına
@@ -65,6 +66,14 @@ async function requireAuth(req: Req): Promise<AuthAccount> {
   if (acc.bannedUntil && new Date(acc.bannedUntil).getTime() > Date.now()) throw new HttpError(403, 'Hesabın askıya alınmış.');
   return acc;
 }
+/** Oturum varsa hesap, yoksa null (forum okuma gibi herkese açık uçlar) */
+async function optionalAuth(req: Req): Promise<AuthAccount | null> {
+  const tok = req.cookies[COOKIE] ?? (req.headers.authorization?.startsWith('Bearer ') ? req.headers.authorization.slice(7) : undefined);
+  if (!tok) return null;
+  const acc = await sessionAccount(tok).catch(() => null);
+  if (!acc || (acc.bannedUntil && new Date(acc.bannedUntil).getTime() > Date.now())) return null;
+  return acc;
+}
 async function requireAdmin(req: Req) { const a = await requireAuth(req); if (!isAdmin(a.role)) throw new HttpError(403, 'Yetkin yok.'); return a; }
 
 function setCookie(res: ServerResponse, token: string | null) {
@@ -72,14 +81,30 @@ function setCookie(res: ServerResponse, token: string | null) {
   res.setHeader('set-cookie', token ? `${COOKIE}=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${config.sessionDays * 86400}${secure}` : `${COOKIE}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0${secure}`);
 }
 
+/** Ön kayıt sandığı: ön kayıtlı hesabın bir karakterine, hesap başına bir kez (makbuz tekilliği garanti eder). */
+async function grantPrereg(c: import('pg').PoolClient, accountId: number, charId: number) {
+  const rec = await c.query(`INSERT INTO receipts(key, account_id, char_id, kind) SELECT $1,$2,$3,'prereg_chest' FROM accounts WHERE id=$2 AND prereg ON CONFLICT (key) DO NOTHING RETURNING key`, [`prereg_chest:${accountId}`, accountId, charId]);
+  if (rec.rowCount) await c.query(`INSERT INTO materials(char_id, key, qty) VALUES ($1,'prereg_chest',1) ON CONFLICT (char_id,key) DO UPDATE SET qty=materials.qty+1`, [charId]);
+}
+/** ön kayıt sayısı (sitede gösterilir; 60 sn önbellek) */
+let preregCache = { n: 0, at: 0 };
+async function preregCount() {
+  if (Date.now() - preregCache.at < 60_000) return preregCache.n;
+  try { preregCache = { n: Number((await pool.query('SELECT count(*)::int AS n FROM accounts WHERE prereg')).rows[0].n), at: Date.now() }; } catch { /* tablo yoksa 0 */ }
+  return preregCache.n;
+}
+
 export function buildApi(d: ApiDeps): Router {
   const r = new Router();
 
+  registerForum(r, requireAuth, optionalAuth);
+
   r.get('/api/health', () => ({ ok: true, online: d.gateway.online(), uptime: Math.round(process.uptime()) }));
 
-  r.get('/api/status', () => ({
+  r.get('/api/status', async () => ({
     opening: { mode: d.opening.state.mode, openAt: d.opening.state.openAt, message: d.opening.state.message },
     online: d.gateway.online(), worldHealth: Math.round(d.world.health * 100) / 100, serverTime: Date.now(),
+    prereg: await preregCount(),
   }));
 
   r.post('/api/register', async (req, res) => {
@@ -89,14 +114,20 @@ export function buildApi(d: ApiDeps): Router {
     if (!/^[A-Za-z0-9_.]{3,20}$/.test(u)) throw new HttpError(400, 'Kullanıcı adı 3–20 karakter; harf, rakam, _ ve . olabilir.');
     if (typeof password !== 'string' || password.length < 8 || password.length > 128) throw new HttpError(400, 'Parola en az 8 karakter olmalı.');
     if (password !== password2) throw new HttpError(400, 'Parolalar eşleşmiyor.');
-    const em = email ? String(email).trim().slice(0, 120) : null;
-    if (em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) throw new HttpError(400, 'E-posta geçersiz.');
+    // e-posta zorunlu (hesap kurtarma ve duyurular için); bir adres yalnız bir hesapta
+    const em = String(email ?? '').trim().toLowerCase();
+    if (!em) throw new HttpError(400, 'E-posta adresi zorunlu.');
+    if (!validEmail(em)) throw new HttpError(400, 'E-posta adresi geçersiz.');
+    if (req.body?.accept !== true && req.body?.accept !== undefined) throw new HttpError(400, 'Gizlilik politikasını onaylaman gerekiyor.');
+    if ((await pool.query('SELECT 1 FROM accounts WHERE lower(email)=$1 LIMIT 1', [em])).rowCount) throw new HttpError(409, 'Bu e-posta adresiyle açılmış bir hesap var.');
     const hash = await hashPassword(password);
     // ilk hesap geliştirme ortamında yönetici olur
     const first = (await pool.query('SELECT 1 FROM accounts LIMIT 1')).rowCount === 0;
+    // oyun açılmadan açılan hesap ön kayıtlıdır: ilk karakterine Ön Kayıt Sandığı gelir
+    const prereg = d.opening.state.mode !== 'open';
     try {
-      const ins = await pool.query(`INSERT INTO accounts(username, username_norm, email, pass_hash, role) VALUES ($1,$2,$3,$4,$5) RETURNING id`,
-        [u, u.toLowerCase(), em, hash, first && config.devMode ? 'owner' : 'player']);
+      const ins = await pool.query(`INSERT INTO accounts(username, username_norm, email, pass_hash, role, prereg) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id`,
+        [u, u.toLowerCase(), em, hash, first && config.devMode ? 'owner' : 'player', prereg]);
       const token = await createSession(Number(ins.rows[0].id));
       setCookie(res, token);
       return { ok: true, token };
@@ -154,7 +185,9 @@ export function buildApi(d: ApiDeps): Router {
   r.get('/api/me', async (req) => {
     const a = await requireAuth(req);
     const chars = await pool.query(`SELECT id, name, cls, level, map FROM characters WHERE account_id=$1 AND deleted_at IS NULL ORDER BY id`, [a.id]);
-    return { account: { id: a.id, username: a.username, role: a.role }, characters: chars.rows.map((c) => ({ ...c, id: Number(c.id) })) };
+    // ön kayıt: hesap işaretli mi, sandık bir karaktere verildi mi
+    const pr = (await pool.query(`SELECT a.prereg, EXISTS (SELECT 1 FROM receipts r WHERE r.key = 'prereg_chest:' || a.id) AS got FROM accounts a WHERE a.id=$1`, [a.id])).rows[0];
+    return { account: { id: a.id, username: a.username, role: a.role, prereg: !!pr?.prereg, preregGranted: !!pr?.got }, characters: chars.rows.map((c) => ({ ...c, id: Number(c.id) })) };
   });
 
   r.post('/api/characters', async (req) => {
@@ -183,6 +216,7 @@ export function buildApi(d: ApiDeps): Router {
         // Ön kayıt / başlangıç sandığı: hesap başına bir defa (makbuz benzersizliği garanti eder)
         const rec = await c.query(`INSERT INTO receipts(key, account_id, char_id, kind) SELECT $1,$2,$3,'starter_chest' FROM accounts WHERE id=$2 AND starter_eligible ON CONFLICT (key) DO NOTHING RETURNING key`, [`starter_chest:${a.id}`, a.id, charId]);
         if (rec.rowCount) await c.query(`INSERT INTO materials(char_id, key, qty) VALUES ($1,'starter_chest',1) ON CONFLICT (char_id,key) DO UPDATE SET qty=materials.qty+1`, [charId]);
+        await grantPrereg(c, a.id, charId);
         return charId;
       });
       return { ok: true, id };
@@ -224,6 +258,8 @@ export function buildApi(d: ApiDeps): Router {
     const own = await pool.query('SELECT 1 FROM characters WHERE id=$1 AND account_id=$2 AND deleted_at IS NULL', [charId, a.id]);
     if (!own.rowCount) throw new HttpError(404, 'Karakter bulunamadı.');
     const already = d.gateway.byAccount.get(a.id);
+    // ön kayıt sandığı daha önce açılmış karakterlere de: karakter oyunda değilken (oyundaysa kayıt üstüne yazılırdı)
+    if (!already) await tx((c) => grantPrereg(c, a.id, charId));
     const sameChannel = already && already.channel === ch;
     const pop = d.gateway.channelPopulation(ch);
     if (!isStaff(a.role) && !sameChannel && pop >= config.channelCapacity) throw new HttpError(409, 'Kanal dolu. Başka kanal seç.');

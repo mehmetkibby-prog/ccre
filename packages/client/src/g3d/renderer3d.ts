@@ -11,7 +11,7 @@ import { evoArmorFx, gearEvo } from './evofx.ts';
 import { mtnLight } from './mountains.ts';
 import { buildMountains, buildMeshMountains, type MeshMountains } from './mountains.ts';
 import { equipArmor } from './armor.ts';
-import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, trDayKey, dayNightAt, trHour, type MapLayout } from '@col/shared';
+import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeticByte, petCode, trDayKey, dayNightAt, trHour, type MapLayout } from '@col/shared';
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
@@ -614,10 +614,11 @@ export class Renderer3D {
       const gfx: THREE.Object3D[] = [];
       if (gear) glb.root.traverse((o) => { if (o.name === 'gear-fx' || o.name === 'plus-fx') gfx.push(o); });
       // Nesne Market kozmetikleri (bit 12-14): kanat sırta, evcil hayvan yanına
-      const cos = kind === Kind.PLAYER ? (gear >> 12) & 7 : 0;
+      const cos = kind === Kind.PLAYER ? ((gear >> 12) & 7) | (((gear >> 22) & 1) << 5) : 0;
+      const petK = petCode(cos);
       let cpend: string | null = null, wings: View['wings'] = null, pet: Pet | null = null;
       if (cos & 4) { wings = createWings(glb.height - 0.2, glb.root); if (wings) glb.root.add(wings); else if (modelPending('wings_crimson')) cpend = 'wings_crimson'; }
-      if (cos & 3) { pet = createPet(cos & 3, { height: glb.height, charRoot: glb.root, onBark: (wx, wz) => { const d = Math.hypot(wx / U - this.g.dx, wz / U - this.g.dy); if (d < 520) sfx.play('bark', (1 - d / 520) * 0.55); } }); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[cos & 3])) cpend = PET_MODEL[cos & 3]; }
+      if (petK) { pet = createPet(petK, { height: glb.height, charRoot: glb.root, onBark: (wx, wz) => { const d = Math.hypot(wx / U - this.g.dx, wz / U - this.g.dy); if (d < 520) sfx.play('bark', (1 - d / 520) * 0.55); } }); if (pet) glb.root.add(pet.obj); else if (modelPending(PET_MODEL[petK])) cpend = PET_MODEL[petK]; }
       return { kind, obj: glb.root, glb, model: modelId, height: glb.height, phase: 0, lx: x, ly: y, yaw: 0, state: 'idle', stateAt: 0, deadAt: 0, gfx, wpend, apend, wings, pet, cpend };
     }
     // asıl model yükleniyorsa geçici prosedürel modeli gösterme: kısa bir süre boş kalsın, model gelince kurulur
@@ -630,7 +631,7 @@ export class Renderer3D {
   private viewFor(e: CEnt): View | null {
     let v = this.views.get(e.id);
     // kozmetik baytı: bit 0-2 evcil hayvan/kanat, bit 3-4 zırh +5/+6 efekti
-    const gbOf = (q: CEnt) => q.weapon | ((q.wplus & 15) << 8) | (((q.cos ?? 0) & 7) << 12) | (((q.wplus >> 4) & 15) << 16) | ((((q.cos ?? 0) >> 3) & 3) << 20);
+    const gbOf = (q: CEnt) => q.weapon | ((q.wplus & 15) << 8) | (((q.cos ?? 0) & 7) << 12) | (((q.wplus >> 4) & 15) << 16) | ((((q.cos ?? 0) >> 3) & 3) << 20) | ((((q.cos ?? 0) >> 5) & 1) << 22);
     if (v && e.kind === Kind.PLAYER && (v as View & { wr?: number }).wr !== gbOf(e)) { releaseView(v); this.views.delete(e.id); v = undefined; }
     if (v) return v;
     if (e.kind === Kind.PLAYER) {

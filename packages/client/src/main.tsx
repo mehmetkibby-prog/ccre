@@ -18,16 +18,23 @@ import './ui/styles.css';
 import { OFFLINE } from './mode.ts';
 import { AnnouncementBar, ClassicButton } from './admin/AdminPanel.tsx';
 import { AdminPage, isAdminRoute } from './admin/AdminPage.tsx';
+import { SiteNav, SiteFooter, RewardSection, GameSections, NewsSection, PrivacyPage, useRoute, useSiteStatus, Link } from './site/site.tsx';
+import { ForumPage } from './site/forum.tsx';
+import './site/site.css';
 // Test (Artifact) sürümü: yönetim ayarlarını paylaşılan kayıttan okur.
 if (OFFLINE) import('./admin/config.ts').then((m) => m.startConfigSync());
 // sunucu sürümü: yönetim ayarlarından istemciyi ilgilendirenler (duyuru, ışık)
 else import('./admin/config.ts').then((m) => api('/api/tuning').then(m.applyRemoteTuning).catch(() => {}));
 
 type Screen = { s: 'loading' } | { s: 'auth' } | { s: 'chars' } | { s: 'channels'; charId: number } | { s: 'game'; ticket: string; charId: number; channel: number };
-interface Me { account: { id: number; username: string; role: string }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
+interface Me { account: { id: number; username: string; role: string; prereg?: boolean; preregGranted?: boolean }; characters: { id: number; name: string; cls: ClassId; level: number; map: string }[] }
 
 function App() {
+  const route = useRoute();
   if (isAdminRoute()) return <AdminPage />;
+  // site sayfaları (oyuna girmeden gezilir): forum ve gizlilik politikası
+  if (route.startsWith('/forum')) return <ForumPage />;
+  if (route.startsWith('/gizlilik')) return <PrivacyPage />;
   return <><AppScreens /><MenuAnnounce /></>;
 }
 
@@ -57,19 +64,26 @@ function AppScreens() {
 }
 
 function AuthScreen({ onDone }: { onDone: () => void }) {
-  const [tab, setTab] = useState<'login' | 'register' | 'forgot'>('login');
+  const st = useSiteStatus();
+  const open = !!st?.open;
+  // ön kayıt döneminde kart kayıt sekmesiyle açılır (?giris adresi girişle)
+  const [tab, setTab] = useState<'login' | 'register' | 'forgot'>(() => (/giris/.test(location.search) ? 'login' : 'register'));
   const [f, setF] = useState({ username: '', password: '', password2: '', email: '', code: '' });
+  const [accept, setAccept] = useState(false);
   const [err, setErr] = useState('');
   const [info, setInfo] = useState('');
   const [busy, setBusy] = useState(false);
+  const card = useRef<HTMLFormElement>(null);
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value });
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy) return;
-    setErr(''); setInfo(''); setBusy(true);
+    setErr(''); setInfo('');
+    if (tab === 'register' && !accept) { setErr('Devam etmek için Gizlilik Politikası\'nı onayla.'); return; }
+    setBusy(true);
     try {
       if (tab === 'login') { await api('/api/login', { username: f.username, password: f.password }); onDone(); }
-      else if (tab === 'register') { await api('/api/register', { username: f.username, password: f.password, password2: f.password2, email: f.email || undefined }); onDone(); }
+      else if (tab === 'register') { await api('/api/register', { username: f.username, password: f.password, password2: f.password2, email: f.email, accept: true }); onDone(); }
       else {
         if (!f.code) { const r = await api<{ devCode?: string; note?: string }>('/api/password/forgot', { username: f.username }); setInfo(r.devCode ? `${r.note} Kod: ${r.devCode}` : 'Hesap varsa sıfırlama kodu gönderildi.'); }
         else { await api('/api/password/reset', { code: f.code, password: f.password }); setInfo('Parola değişti, giriş yapabilirsin.'); setTab('login'); }
@@ -78,47 +92,67 @@ function AuthScreen({ onDone }: { onDone: () => void }) {
     setBusy(false);
   };
   const [showPw, setShowPw] = useState(false);
-  const title = tab === 'login' ? 'Tekrar hoş geldin' : tab === 'register' ? 'Destana katıl' : 'Parolanı yenile';
-  const sub = tab === 'login' ? 'Hesabınla giriş yap, kaldığın yerden devam et.' : tab === 'register' ? 'Ücretsiz hesap aç; ilk sandığın seni bekliyor.' : 'Kullanıcı adını yaz, sıfırlama kodunu al.';
+  const toRegister = () => { setTab('register'); setErr(''); card.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => card.current?.querySelector('input')?.focus({ preventScroll: true }), 450); };
+  const regLabel = open ? 'Kayıt Ol' : 'Ön Kayıt';
+  const title = tab === 'login' ? 'Tekrar hoş geldin' : tab === 'register' ? (open ? 'Destana katıl' : 'Ön kaydını yap') : 'Parolanı yenile';
+  const sub = tab === 'login' ? 'Hesabınla giriş yap, kaldığın yerden devam et.' : tab === 'register' ? (open ? 'Ücretsiz hesap aç; ilk sandığın seni bekliyor.' : 'Oyun açıldığında Ön Kayıt Sandığı ilk karakterinin çantasında olacak.') : 'Kullanıcı adını yaz, sıfırlama kodunu al.';
+  useEffect(() => { if (/kayit/.test(location.search)) setTimeout(toRegister, 300); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
-    <div className="screen live auth-screen">
-      <MenuBackdrop />
-      <div className="auth-layout">
-        <div className="auth-brand">
-          <TugraMark />
-          <h1 className="brand-title">CORE OF LIFE</h1>
-          <div className="brand-online"><i />3D<i /></div>
-          <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen.</p>
-          <RealmLine />
-          <ClassicButton />
-        </div>
-        <form className="auth-card" onSubmit={submit}>
-          <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
-          {tab !== 'forgot' && (
-            <div className="ac-tabs" role="tablist">
-              <button type="button" role="tab" aria-selected={tab === 'login'} className={tab === 'login' ? 'on' : ''} onClick={() => setTab('login')}>Giriş Yap</button>
-              <button type="button" role="tab" aria-selected={tab === 'register'} className={tab === 'register' ? 'on' : ''} onClick={() => setTab('register')}>Kayıt Ol</button>
-              <span className="ac-tab-ink" style={{ transform: `translateX(${tab === 'register' ? 100 : 0}%)` }} />
-            </div>
-          )}
-          <h2 className="ac-title">{title}</h2>
-          <p className="ac-sub">{sub}</p>
-          {OFFLINE && <div className="ac-note"><b>Test sürümü:</b> oyun tarayıcının içinde çalışır, hesabın yalnız bu cihazda saklanır.</div>}
-          <label className="ac-field"><span className="ac-ic"><Ico k="user" /></span><input placeholder=" " autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /><em>Kullanıcı adı</em></label>
-          {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="mail" /></span><input placeholder=" " type="email" value={f.email} onChange={set('email')} /><em>E-posta (isteğe bağlı)</em></label>}
-          {tab === 'forgot' && <label className="ac-field"><span className="ac-ic"><Ico k="key" /></span><input placeholder=" " value={f.code} onChange={set('code')} /><em>Sıfırlama kodu (aldıysan)</em></label>}
-          {(tab !== 'forgot' || f.code) && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /><em>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</em><button type="button" className="ac-eye" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Parolayı gizle' : 'Parolayı göster'}><Ico k={showPw ? 'eyeoff' : 'eye'} /></button></label>}
-          {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete="new-password" value={f.password2} onChange={set('password2')} /><em>Parola tekrar</em></label>}
-          {err && <div className="ac-err">{err}</div>}
-          {info && <div className="ac-ok">{info}</div>}
-          <button className="ac-cta" disabled={busy}><span>{busy ? 'Bekle…' : tab === 'login' ? 'OYUNA GİR' : tab === 'register' ? 'HESABI OLUŞTUR' : f.code ? 'PAROLAYI DEĞİŞTİR' : 'KOD GÖNDER'}</span></button>
-          <div className="ac-links">
-            {tab === 'login' && <><a onClick={() => setTab('forgot')}>Parolamı unuttum</a><a onClick={() => setTab('register')}>Hesabın yok mu? <b>Kayıt ol</b></a></>}
-            {tab === 'register' && <a onClick={() => setTab('login')}>Zaten hesabın var mı? <b>Giriş yap</b></a>}
-            {tab === 'forgot' && <a onClick={() => setTab('login')}>← Girişe dön</a>}
+    <div className="site landing">
+      <SiteNav onCta={toRegister} ctaLabel={regLabel} />
+      <section className="hero">
+        <MenuBackdrop />
+        <div className="hero-in">
+          <div className="auth-brand">
+            {!open && <div className="pre-badge"><i />ÖN KAYIT BAŞLADI</div>}
+            <TugraMark />
+            <h1 className="brand-title">CORE OF LIFE</h1>
+            <div className="brand-online"><i />3D<i /></div>
+            <p className="brand-tag">Pazarın kalabalığında ün kazan, korunun derinliğinde Tilki Kral'ı yen. Tarayıcında ve telefonunda, kurulumsuz.</p>
+            {!open && st && st.prereg > 0 && <div className="pre-count"><b>{st.prereg.toLocaleString('tr-TR')}</b> savaşçı ön kayıt yaptı</div>}
+            <button type="button" className="pre-strip" onClick={() => document.getElementById('odul')?.scrollIntoView({ behavior: 'smooth' })}>
+              <img src="/site/prereg_chest.png" alt="" width={46} height={46} />
+              <span><b>Ön Kayıt Ödülü</b><small>Kalıcı Yeşil Tilki peti (+10 saldırı, +200 can) ve 15 Mücevher</small></span>
+              <em>Gör ›</em>
+            </button>
+            <RealmLine />
+            <ClassicButton />
           </div>
-        </form>
-      </div>
+          <form className="auth-card" onSubmit={submit} ref={card}>
+            <div className="ac-corner tl" /><div className="ac-corner tr" /><div className="ac-corner bl" /><div className="ac-corner br" />
+            {tab !== 'forgot' && (
+              <div className="ac-tabs" role="tablist">
+                <button type="button" role="tab" aria-selected={tab === 'register'} className={tab === 'register' ? 'on' : ''} onClick={() => { setTab('register'); setErr(''); }}>{regLabel}</button>
+                <button type="button" role="tab" aria-selected={tab === 'login'} className={tab === 'login' ? 'on' : ''} onClick={() => { setTab('login'); setErr(''); }}>Giriş Yap</button>
+                <span className="ac-tab-ink" style={{ transform: `translateX(${tab === 'login' ? 100 : 0}%)` }} />
+              </div>
+            )}
+            <h2 className="ac-title">{title}</h2>
+            <p className="ac-sub">{sub}</p>
+            {OFFLINE && <div className="ac-note"><b>Test sürümü:</b> oyun tarayıcının içinde çalışır, hesabın yalnız bu cihazda saklanır.</div>}
+            <label className="ac-field"><span className="ac-ic"><Ico k="user" /></span><input placeholder=" " autoComplete="username" value={f.username} onChange={set('username')} maxLength={20} /><em>Kullanıcı adı</em></label>
+            {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="mail" /></span><input placeholder=" " type="email" autoComplete="email" required value={f.email} onChange={set('email')} maxLength={120} /><em>E-posta adresi</em></label>}
+            {tab === 'forgot' && <label className="ac-field"><span className="ac-ic"><Ico k="key" /></span><input placeholder=" " value={f.code} onChange={set('code')} /><em>Sıfırlama kodu (aldıysan)</em></label>}
+            {(tab !== 'forgot' || f.code) && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete={tab === 'login' ? 'current-password' : 'new-password'} value={f.password} onChange={set('password')} /><em>{tab === 'forgot' ? 'Yeni parola' : 'Parola'}</em><button type="button" className="ac-eye" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Parolayı gizle' : 'Parolayı göster'}><Ico k={showPw ? 'eyeoff' : 'eye'} /></button></label>}
+            {tab === 'register' && <label className="ac-field"><span className="ac-ic"><Ico k="lock" /></span><input placeholder=" " type={showPw ? 'text' : 'password'} autoComplete="new-password" value={f.password2} onChange={set('password2')} /><em>Parola tekrar</em></label>}
+            {tab === 'register' && <label className="ac-accept"><input type="checkbox" checked={accept} onChange={(e) => setAccept(e.target.checked)} /><span><Link to="/gizlilik">Gizlilik Politikası</Link>'nı okudum, kabul ediyorum.</span></label>}
+            {err && <div className="ac-err">{err}</div>}
+            {info && <div className="ac-ok">{info}</div>}
+            <button className="ac-cta" disabled={busy}><span>{busy ? 'Bekle…' : tab === 'login' ? 'OYUNA GİR' : tab === 'register' ? (open ? 'HESABI OLUŞTUR' : 'ÖN KAYIT OL') : f.code ? 'PAROLAYI DEĞİŞTİR' : 'KOD GÖNDER'}</span></button>
+            <div className="ac-links">
+              {tab === 'login' && <><a onClick={() => setTab('forgot')}>Parolamı unuttum</a><a onClick={() => setTab('register')}>Hesabın yok mu? <b>{regLabel}</b></a></>}
+              {tab === 'register' && <a onClick={() => setTab('login')}>Zaten hesabın var mı? <b>Giriş yap</b></a>}
+              {tab === 'forgot' && <a onClick={() => setTab('login')}>← Girişe dön</a>}
+            </div>
+          </form>
+        </div>
+        <button type="button" className="hero-down" aria-label="Aşağı kaydır" onClick={() => document.getElementById('odul')?.scrollIntoView({ behavior: 'smooth' })}><span /></button>
+      </section>
+      <RewardSection onCta={toRegister} open={open} />
+      <GameSections />
+      <NewsSection />
+      <section className="site-sec cta-band"><h2>{open ? 'Macera seni bekliyor' : 'Ön kaydını şimdi yap'}</h2><p>{open ? 'Hesabını oluştur, sınıfını seç ve Pazar Köyü\'ne adım at.' : 'Açılış günü ödülün çantanda; forumdan duyuruları takip et.'}</p><div className="cta-row"><button className="site-btn primary big" onClick={toRegister}>{open ? 'Hemen Oyna' : 'Ön Kayıt Ol'}</button><Link to="/forum" className="site-btn ghost big">Foruma Git</Link></div></section>
+      <SiteFooter />
     </div>
   );
 }
@@ -172,15 +206,22 @@ function goFullscreen() {
 }
 
 function RealmLine() {
-  const [st, setSt] = useState<{ online: number; open: boolean; msg: string } | null>(null);
+  const [st, setSt] = useState<{ online: number; open: boolean; mode: string; openAt: number | null; msg: string; skew: number } | null>(null);
+  const [, tick] = useState(0);
   useEffect(() => {
     let alive = true;
-    const load = () => api('/api/status').then((r) => { if (alive) setSt({ online: r.online ?? 0, open: !r.opening || r.opening.mode === 'open', msg: r.opening?.message ?? '' }); }).catch(() => {});
-    load(); const id = setInterval(load, 15000);
-    return () => { alive = false; clearInterval(id); };
+    const load = () => api('/api/status').then((r) => { if (alive) setSt({ online: r.online ?? 0, open: !r.opening || r.opening.mode === 'open', mode: r.opening?.mode ?? 'open', openAt: r.opening?.openAt ?? null, msg: r.opening?.message ?? '', skew: (r.serverTime ?? Date.now()) - Date.now() }); }).catch(() => {});
+    load(); const id = setInterval(load, 15000); const t = setInterval(() => tick((x) => x + 1), 1000);
+    return () => { alive = false; clearInterval(id); clearInterval(t); };
   }, []);
   if (!st) return null;
-  return <div className={'realm-line' + (st.open ? ' open' : '')}><i />{st.open ? `Sunucu açık · ${st.online} kişi oyunda` : st.msg || 'Sunucu şu an kapalı'}</div>;
+  // ön kayıt dönemi: açılış tarihi belliyse geri sayım, değilse "yakında"
+  let text = st.open ? `Sunucu açık · ${st.online} kişi oyunda` : st.msg || (st.mode === 'maintenance' ? 'Sunucu bakımda' : 'Açılış yakında · ön kayıt sürüyor');
+  if (!st.open && st.mode === 'scheduled' && st.openAt) {
+    const left = Math.max(0, st.openAt - (Date.now() + st.skew)), d = Math.floor(left / 86400000), h = Math.floor(left / 3600000) % 24, m = Math.floor(left / 60000) % 60, sec = Math.floor(left / 1000) % 60;
+    text = left > 0 ? `Açılışa ${d > 0 ? d + ' gün ' : ''}${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}` : 'Sunucu açılıyor…';
+  }
+  return <div className={'realm-line' + (st.open ? ' open' : '')}><i />{text}</div>;
 }
 
 /** Menü arka planı: Pazar Köyü'nün canlı 3B görüntüsü. Kamera meydanın çevresinde yavaşça döner, oyuncular dolaşır.
@@ -452,6 +493,7 @@ function CharScreen({ me, onPlay, onReload, onLogout, error }: { me: Me; onPlay:
         <div>
           <div className="row"><div className="title" style={{ fontSize: 22 }}>Karakterler</div><div className="spacer" /><span className="muted" style={{ fontSize: 12 }}>{me.account.username}</span><ClassicButton small /><button className="btn small ghost" onClick={onLogout}>Çıkış</button></div>
           {error && <div className="err">{error}</div>}
+          {me.account.prereg && <div className="prereg-note"><img src="/site/prereg_chest.png" alt="" width={38} height={38} /><span><b>Ön kaydın alındı</b>{me.account.preregGranted ? 'Ön Kayıt Sandığı karakterinin çantasında: oyunda çantandan aç, Yeşil Tilki yanına gelsin.' : 'Ön Kayıt Sandığı (Yeşil Tilki + 15 Mücevher) ilk karakterinin çantasına eklenecek.'}</span></div>}
           <div className="charlist" style={{ marginTop: 12 }}>
             {me.characters.map((c) => (
               <div key={c.id} className={'charcard' + (sel === c.id && !creating ? ' on' : '')} onClick={() => { setSel(c.id); setCreating(false); }} onDoubleClick={() => onPlay(c.id)}>

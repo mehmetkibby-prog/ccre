@@ -11,7 +11,7 @@ import { quadAnimate, QB, fixQuadWeights } from './monsters3d.ts';
  * Hepsi sahibinin görünüm nesnesine çocuk olarak eklenir (görünümle birlikte silinir); dünyadaki konum ayrıca izlenir.
  * Maliyet: bir iskelet ya da iki-üç düz ağ; ek ışık/parçacık yok.
  */
-export const PET_MODEL = ['', 'pet_bird', 'pet_monkey', 'pet_dog'];
+export const PET_MODEL = ['', 'pet_bird', 'pet_monkey', 'pet_dog', 'fox_mesh'];
 export interface Pet { obj: THREE.Object3D; update(dt: number, now: number, owner: THREE.Object3D, moving: boolean, ground: (x: number, z: number) => number): void }
 
 const _v = new THREE.Vector3();
@@ -128,6 +128,7 @@ function quadPet(id: string, o: PetOpts = {}): Pet | null {
   if (!L) return null;
   fixQuadWeights(L.scene);
   const inner = skClone(L.scene) as THREE.Object3D;
+  if (id === 'fox_mesh') greenFox(inner);
   const bones: Record<string, THREE.Bone> = {};
   inner.traverse((o2) => {
     if ((o2 as THREE.Bone).isBone) bones[o2.name] = o2 as THREE.Bone;
@@ -174,6 +175,7 @@ function quadPet(id: string, o: PetOpts = {}): Pet | null {
   }
   // Köpek: sahibi yürürken yumuşakça takip eder (hızı sahibinin hızına uyar, takılmaz); sahibi durunca etrafında
   // dolaşır, arada oturur, arada bir havlar.
+  if (id === 'fox_mesh') root.scale.setScalar(0.82); // canavar tilkiden biraz küçük, sevimli
   let x = NaN, z = 0, vx = 0, vz = 0, yaw = 0, phase = 0, still = 0, sit = 0, walking = false;
   let mode: 'follow' | 'roam' = 'follow', roamX = 0, roamZ = 0, roamUntil = 0, pauseUntil = 0, ownerIdle = 0, barkAt = 0, barkT = -10;
   let lox = NaN, loz = 0, ownerSpd = 0;
@@ -226,7 +228,7 @@ function quadPet(id: string, o: PetOpts = {}): Pet | null {
       bones.body.position.y += restBodyY - QB[0][3];
       if (sit > 0.01) sitPose(sit);
       // havlama: dururken ara sıra (başını iki kez kaldırır); sesi sahibinin oyunu çalar
-      if (!walking && now > barkAt) { barkAt = now + 14000 + Math.random() * 20000; barkT = t; o.onBark?.(x, z); }
+      if (!walking && now > barkAt) { barkAt = now + 14000 + Math.random() * 20000; barkT = t; if (id === 'pet_dog') o.onBark?.(x, z); }
       const bt = t - barkT;
       if (bt >= 0 && bt < 0.55) { const b = Math.max(0, Math.sin(bt / 0.55 * Math.PI * 2)); bones.neck.rotation.x -= b * 0.35; if (bones.head) bones.head.rotation.x -= b * 0.25; if (bones.jaw) bones.jaw.rotation.x += b * 0.45; }
       place(root, owner, x, ground(x, z), z, yaw);
@@ -267,10 +269,43 @@ function birdPet(): Pet | null {
   };
 }
 
-/** Evcil hayvan (1 kuş, 2 maymun, 3 köpek); model yüklenmediyse null (yüklenince görünüm yeniden kurulur). */
+/** Evcil hayvan (1 kuş, 2 maymun, 3 köpek, 4 yeşil tilki); model yüklenmediyse null (yüklenince görünüm yeniden kurulur). */
 export function createPet(kind: number, o: PetOpts = {}): Pet | null {
   if (kind === 1) return birdPet();
   if (kind === 2) return quadPet('pet_monkey', o);
   if (kind === 3) return quadPet('pet_dog', o);
+  if (kind === 4) return quadPet('fox_mesh', o);
   return null;
+}
+/**
+ * Turuncu tüyü zümrüt yeşiline çevirir: dokunun rengi gri eksen çevresinde 120° döndürülür (beyaz göğüs ve kuyruk
+ * ucu beyaz, koyu yerler koyu kalır), doygunluk biraz artar, çok hafif yeşil parıltı.
+ */
+export function greenFoxMaterial(c: THREE.MeshStandardMaterial) {
+  if ('emissive' in c && c.emissive) { c.emissive.set('#0f5a26'); c.emissiveIntensity = 0.28; }
+  c.onBeforeCompile = (sh) => {
+    sh.fragmentShader = sh.fragmentShader
+      .replace('void main() {', `vec3 foxHue(vec3 c) { const vec3 k = vec3(0.57735); float a = 2.32; float ca = cos(a); vec3 r = c * ca + cross(k, c) * sin(a) + k * dot(k, c) * (1.0 - ca); float l = dot(r, vec3(0.2126, 0.7152, 0.0722)); return max(vec3(0.0), mix(vec3(l), r, 0.92)) * vec3(0.86, 0.92, 0.88); }\nvoid main() {`)
+      .replace('#include <map_fragment>', '#include <map_fragment>\n\tdiffuseColor.rgb = foxHue(diffuseColor.rgb);');
+  };
+  c.customProgramCacheKey = () => 'green-fox';
+  c.needsUpdate = true;
+}
+/** Ön kayıt tilkisi: canavar tilkinin modeli, zümrüt yeşili tüy ve hafif parıltı (malzemeler bir kez kopyalanır). */
+const foxMats = new Map<THREE.Material, THREE.Material>();
+function greenFox(inner: THREE.Object3D) {
+  inner.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    const conv = (src: THREE.Material) => {
+      let g = foxMats.get(src);
+      if (!g) {
+        const c = src.clone() as THREE.MeshStandardMaterial;
+        greenFoxMaterial(c);
+        g = c; foxMats.set(src, g);
+      }
+      return g;
+    };
+    m.material = Array.isArray(m.material) ? m.material.map(conv) : conv(m.material);
+  });
 }
