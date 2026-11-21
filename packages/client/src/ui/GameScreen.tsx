@@ -312,7 +312,7 @@ function ModelBadge() {
  * Karakter Gücü rozeti (sol üst kutu): bütün saldırı, savunma ve efsunların tek sayısı (sunucu: combatPower). Güç
  * artınca yanında yeşil "+N" belirir; basınca Rehber'in "Güçlen" bölümü (kişiye özel öneriler) açılır.
  */
-function PowerBadge({ power }: { power?: number }) {
+function PowerBadge({ power, compact }: { power?: number; compact?: boolean }) {
   const prev = useRef<number | undefined>(undefined);
   const [gain, setGain] = useState<{ n: number; k: number } | null>(null);
   useEffect(() => {
@@ -322,7 +322,7 @@ function PowerBadge({ power }: { power?: number }) {
   }, [power]);
   if (power === undefined) return null;
   return (
-    <button type="button" className="cpow" title="Karakter Gücü: saldırı, savunma, can ve bütün efsunların toplamı. Nasıl artar?" onClick={() => { sfx.play('ui'); store.set({ panel: 'guide', guideCh: 'guc' }); }}>
+    <button type="button" className={'cpow' + (compact ? ' compact' : '')} title="Karakter Gücü: saldırı, savunma, can ve bütün efsunların toplamı. Nasıl artar?" onClick={() => { sfx.play('ui'); store.set({ panel: 'guide', guideCh: 'guc' }); }}>
       <PowerGlyph /><span className="lbl">Güç</span><b>{power.toLocaleString('tr-TR')}</b><span className="chev">›</span>
       {gain && <em key={gain.k}>+{gain.n.toLocaleString('tr-TR')}</em>}
     </button>
@@ -353,8 +353,9 @@ function PlayerPlate() {
         <div className="lvl">{self.level}</div>
       </div>
       <div className="frame pinfo">
-        <div className="nm">{char.name}<small>{CLASSES[char.cls as ClassId]?.name}</small></div>
-        <PowerBadge power={self.combat?.power} />
+        {/* telefonda güç rozeti ad satırında (kutu üst düğme sırasına taşmasın) */}
+        <div className="nm">{char.name}{isMobile() ? <PowerBadge power={self.combat?.power} compact /> : <small>{CLASSES[char.cls as ClassId]?.name}</small>}</div>
+        {!isMobile() && <PowerBadge power={self.combat?.power} />}
         <div className="bar hpbar"><i style={{ width: `${hk * 100}%` }} /></div>
         <div className="hpt"><span>{hp.toLocaleString('tr-TR')} / {max.toLocaleString('tr-TR')}</span><span>%{(hk * 100).toFixed(0)}</span></div>
         <div className="coins">
