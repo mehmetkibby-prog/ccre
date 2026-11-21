@@ -1,4 +1,4 @@
-export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient' | 'tower' | 'forge';
+export type Theme = 'village' | 'forest' | 'frozen' | 'black' | 'lake' | 'ancient' | 'tower' | 'forge' | 'coast';
 export type Region = 'near' | 'mid' | 'far' | 'any';
 
 export interface SpawnGroup {
@@ -92,6 +92,20 @@ export const MAPS: Record<string, MapDef> = {
       { monster: 'k_ash_knight', count: 26, level: [42, 42], variants: [45, 40, 15], region: 'any' },
       { monster: 'k_gargoyle', count: 16, level: [46, 46], variants: [40, 45, 15], region: 'far' },
     ],
+  },
+  coast: {
+    id: 'coast', name: 'Rün Sahili', w: 128, h: 96, theme: 'coast', seed: 5150, safe: false, pvp: false, minLevel: 50,
+    respawnMap: 'coast', travelable: true,
+    desc: 'Dalgaların kadim rün taşlarını dövdüğü uçsuz bucaksız sahil. Batık gemiler, parlayan menhirler ve denizden çıkan güçlü yaratıklar; rün parçaları burada düşer.',
+    spawns: [
+      { monster: 'c_tide_crab', count: 46, level: [52, 52], variants: [60, 32, 8], region: 'near' },
+      { monster: 'c_drowned_raider', count: 34, level: [55, 55], variants: [52, 38, 10], region: 'mid' },
+      { monster: 'c_tide_crab', count: 14, level: [52, 52], variants: [50, 38, 12], region: 'mid' },
+      { monster: 'c_rune_siren', count: 30, level: [57, 57], variants: [50, 38, 12], region: 'far' },
+      { monster: 'c_rune_golem', count: 22, level: [60, 60], variants: [45, 40, 15], region: 'far' },
+      { monster: 'c_drowned_raider', count: 12, level: [55, 55], variants: [45, 40, 15], region: 'far' },
+    ],
+    npcs: [],
   },
   arena: {
     id: 'arena', name: 'Savaş Arenası', w: 44, h: 44, theme: 'village', seed: 1453, safe: false, pvp: true, minLevel: 1,

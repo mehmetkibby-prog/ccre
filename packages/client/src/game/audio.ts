@@ -194,6 +194,24 @@ class Sfx {
     const g = c.createGain(); g.gain.value = z === 'frozen' ? 0.18 : z === 'lake' ? 0.14 : 0.08;
     s.connect(f).connect(g).connect(out); s.start();
     let timer = 0 as unknown as number;
+    if (z === 'coast') {
+      // dalga: gürültü yavaşça kabarıp çekilir (≈9 sn), arada martı çığlığı
+      f.frequency.value = 650; g.gain.value = 0.1;
+      const lfo = c.createOscillator(), depth = c.createGain(); lfo.frequency.value = 0.11; depth.gain.value = 0.085;
+      lfo.connect(depth).connect(g.gain); lfo.start();
+      const gull = () => {
+        if (!this.ctx) return;
+        const t = c.currentTime;
+        for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) {
+          const o = c.createOscillator(), gg = c.createGain(), t0 = t + i * 0.32;
+          o.type = 'triangle'; o.frequency.setValueAtTime(1500 + Math.random() * 200, t0); o.frequency.exponentialRampToValueAtTime(820, t0 + 0.26);
+          gg.gain.setValueAtTime(0.0001, t0); gg.gain.exponentialRampToValueAtTime(0.018, t0 + 0.04); gg.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.28);
+          o.connect(gg).connect(out); o.start(t0); o.stop(t0 + 0.3);
+        }
+        timer = window.setTimeout(gull, 7000 + Math.random() * 12000);
+      };
+      timer = window.setTimeout(gull, 3000);
+    }
     if (z === 'forest' || z === 'village' || z === 'lake') {
       const chirp = () => {
         if (!this.ctx) return;

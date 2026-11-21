@@ -12,6 +12,8 @@ export const MOUNTAIN_THEMES: Record<string, MountainTheme> = {
   lake: { rock: 0x485e82, far: 0x7c92b6, snow: 0xf6faff, hill: 0x5a8a80, haze: 0xd8e6f0, snowLine: 0.66, peak: 1 },
   frozen: { rock: 0x8e9cb4, far: 0xb4c2d6, snow: 0xffffff, hill: 0xa8b8cc, haze: 0xe2eaf2, snowLine: 0.25, peak: 1.15 },
   black: { rock: 0x4a3c48, far: 0x6a5a68, snow: 0xb05a40, hill: 0x3a3038, haze: 0xa89aa8, snowLine: 0.85, peak: 0.9 },
+  // Rün Sahili: denizden yükselen kumtaşı ve gri kayalık burunlar, karsız
+  coast: { rock: 0x7a7a72, far: 0x9ab0c0, snow: 0xe8e4d4, hill: 0x8a9a6a, haze: 0xd4e8ee, snowLine: 0.92, peak: 0.75 },
   ancient: { rock: 0x9a8a6a, far: 0xb4a888, snow: 0xf2eee2, hill: 0x8a8a5a, haze: 0xd8d6c4, snowLine: 0.7, peak: 0.85 },
 };
 

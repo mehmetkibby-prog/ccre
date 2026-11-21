@@ -57,6 +57,21 @@ export const LOOT_PROFILES: Record<string, LootProfile> = {
       { id: 'red_pearl', chance: 0.005, qty: [1, 1] },
     ],
   },
+  // Rün Sahili (Sv. 50+): rün parçaları her tür için %1 (yönetim Ganimet → Rün Sahili'nden değiştirir)
+  coast: {
+    equipChance: 0.08,
+    rarityWeights: { orange: 40, crimson: 48, unique: 12 },
+    gems: [12, 24], essence: [8, 16],
+    materials: [
+      { id: 'red_potion', chance: 0.09, qty: [1, 3] },
+      { id: 'kor_seal', chance: 0.07, qty: [1, 2] },
+      { id: 'master_scroll', chance: 0.03, qty: [1, 1] },
+      { id: 'old_iron', chance: 0.025, qty: [1, 1] },
+      { id: 'rune_frag_kudret', chance: 0.01, qty: [1, 1] },
+      { id: 'rune_frag_siper', chance: 0.01, qty: [1, 1] },
+      { id: 'rune_frag_yasam', chance: 0.01, qty: [1, 1] },
+    ],
+  },
   // Kadim Kule: kat malzemeleri kat ayarından gelir (TUNING.tower.floors[].mats), burada genel tablo
   tower: {
     equipChance: 0.09,

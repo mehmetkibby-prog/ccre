@@ -46,7 +46,7 @@ export class Terrain {
     const theme = l.def.theme;
     const gAt = (tx: number, ty: number) => l.ground[Math.max(0, Math.min(l.h - 1, ty)) * l.w + Math.max(0, Math.min(l.w - 1, tx))];
     // yükseklikler: yabani haritalarda tepeler ve kenarlarda kayalık yamaçlar
-    const wild = theme !== 'village' && theme !== 'lake';
+    const wild = theme !== 'village' && theme !== 'lake' && theme !== 'coast';
     const spx = layout.spawn.x / TILE, spy = layout.spawn.y / TILE;
     // Göllere uzaklık (karo): su düzlemi tek yükseklikte (-0,32 m); tepe üstüne düşen göl tabanı suyun
     // üstünde kalıp "içi boş göl" gibi görünüyordu. Göl karoları her zaman suyun altına oyulur, çevresi kıyıya iner.
@@ -332,7 +332,7 @@ ${blendCode}
     const geo = mergeGeometries(parts)!;
     const frozen = l.def.theme === 'frozen';
     const mat = new THREE.MeshStandardMaterial({
-      color: frozen ? 0x9cc8e0 : l.def.theme === 'black' ? 0x1a2a3a : 0x2a6a8a, roughness: frozen ? 0.25 : 0.06, metalness: 0.1,
+      color: frozen ? 0x9cc8e0 : l.def.theme === 'black' ? 0x1a2a3a : l.def.theme === 'coast' ? 0x1f8a9e : 0x2a6a8a, roughness: frozen ? 0.25 : 0.06, metalness: 0.1,
       transparent: true, opacity: frozen ? 0.9 : 0.86, alphaMap: alpha, normalMap: nt, normalScale: new THREE.Vector2(0.6, 0.6), depthWrite: false, envMapIntensity: 1.4,
     });
     // alphaMap UV'si harita boyutunda (0..1); normalMap için ayrı tekrar gerekir → normal UV'yi shader'da çarp

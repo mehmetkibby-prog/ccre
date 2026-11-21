@@ -327,7 +327,38 @@ const B: Partial<Record<PropKind, Builder>> = {
       { g: at(new THREE.TorusGeometry(0.405, 0.025, 4, 16), 0, 0.78, 0, Math.PI / 2), m: 'iron' },
     ]);
   },
-  crystal(v) { return crystalModel(v, 'crystal'); },
+  crystal(v) { return crystalModel(v, v === 2 ? 'rune_blue' : 'crystal'); },
+  // Rün Sahili: kadim rün taşı (Meshy modeli gelene kadar çizilmiş yedek): sivrilen yıpranmış taş, parlayan oymalar
+  menhir(v) {
+    const r = rng(1700 + v), H = 3.2 + v * 0.45;
+    const g = cyl(0.42, 0.62, H, 7, 1.2);
+    const p = g.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < p.count; i++) { const y = p.getY(i); p.setX(i, p.getX(i) * (1 + (r() - 0.5) * 0.12)); p.setZ(i, p.getZ(i) * 0.7 * (1 + (r() - 0.5) * 0.12)); p.setY(i, y + (y > 0 ? (r() - 0.5) * 0.35 : 0)); }
+    g.computeVertexNormals(); g.translate(0, H / 2, 0); g.rotateZ((r() - 0.5) * 0.12);
+    const glyphs: THREE.BufferGeometry[] = [];
+    for (let k = 0; k < 4; k++) { const y = H * (0.28 + k * 0.17); glyphs.push(at(box(0.05, 0.32, 0.03), 0, y, 0.33 - k * 0.01, 0, 0, (k % 2 ? 0.5 : -0.5)), at(box(0.22, 0.05, 0.03), 0, y + 0.08, 0.34)); }
+    const base = at(new THREE.IcosahedronGeometry(0.75, 1), 0, 0.05, 0, 0, 0, 0, 1.1, 0.35, 0.9);
+    return [{ geo: g, mat: 'rock' }, { geo: merge(glyphs), mat: 'rune_blue', shadow: false }, { geo: merge([base]), mat: 'rock_dark' }];
+  },
+  // batık gemi (yedek): yan yatmış gövde, kaburgalar, kırık direk
+  shipwreck(v) {
+    const parts: { g: THREE.BufferGeometry; m: string }[] = [];
+    const L = 7.5, tilt = v ? 0.32 : -0.28;
+    parts.push({ g: at(box(L, 0.25, 2.2), 0, 0.35, 0, 0, 0, 0), m: 'planks' });
+    for (const sd of [-1, 1]) parts.push({ g: at(box(L * 0.9, 1.5, 0.18), 0, 1.0, sd * 1.15, sd * 0.25 + tilt * 0.4, 0, 0), m: 'planks' });
+    for (let i = 0; i < 7; i++) { const x = -L / 2 + 0.6 + i * (L - 1.2) / 6; parts.push({ g: at(cyl(0.07, 0.09, 2.6, 5), x, 1.1, 0, Math.PI / 2 + tilt * 0.3, 0, 0), m: 'bark_dead' }); }
+    parts.push({ g: at(cyl(0.12, 0.16, 4.2, 7), 0.8, 2.2, 0.2, tilt, 0, 0.35), m: 'bark_dead' });
+    parts.push({ g: at(box(1.6, 1.4, 0.03), 1.2, 3.0, 0.4, tilt, 0.3, 0.35), m: 'cloth_cream' });
+    parts.push({ g: at(box(1.4, 0.9, 1.6), L / 2 - 0.4, 0.9, 0, 0, 0, 0.25), m: 'planks' });
+    return group(parts);
+  },
+  // mercan kümeleri (kıyıda): renkli dallar
+  coral(v) {
+    const r = rng(1800 + v), list: THREE.BufferGeometry[] = [];
+    const cols = [[0xff6a7a, 0xffb0a0], [0xff9a3a, 0xffd08a], [0xb06aff, 0xe0b8ff]][v % 3];
+    for (let i = 0; i < 6; i++) { const h = 0.35 + r() * 0.5; list.push(colorize(at(cyl(0.02, 0.07, h, 5), (r() - 0.5) * 0.5, h / 2, (r() - 0.5) * 0.5, (r() - 0.5) * 0.8, 0, (r() - 0.5) * 0.8), i % 2 ? cols[0] : cols[1])); }
+    return [{ geo: merge(list, true), mat: 'vcolor', shadow: false }];
+  },
   icecrystal(v) { return crystalModel(v, 'ice'); },
   portalstone(v) {
     const parts: { g: THREE.BufferGeometry; m: string }[] = [];
@@ -532,8 +563,44 @@ function meshyTree(v: number): Part[] | null {
   return parts;
 }
 
+/** Meshy'de üretilen sahil süsleri: model gelince çizilmiş yedeğin yerini alır (boy metre). */
+export const MESHY_PROPS: Partial<Record<PropKind, { id: string; h: (v: number) => number; emissive?: number }>> = {
+  menhir: { id: 'menhir', h: (v) => 3.4 + v * 0.5, emissive: 0x3ad8ff },
+  shipwreck: { id: 'shipwreck', h: () => 3.6 },
+};
+const meshyPropCache = new Map<string, Part[]>();
+function meshyProp(k: PropKind, v: number): Part[] | null {
+  const spec = MESHY_PROPS[k]; if (!spec) return null;
+  const hit = meshyPropCache.get(k + v); if (hit) return hit;
+  const L = loadGlb(spec.id); if (!L) return null;
+  L.scene.updateMatrixWorld(true);
+  const bx = new THREE.Box3().setFromObject(L.scene);
+  const H = spec.h(v), sc = H / Math.max(0.01, bx.max.y - bx.min.y);
+  const parts: Part[] = [];
+  L.scene.traverse((o) => {
+    const m = o as THREE.Mesh; if (!m.isMesh) return;
+    const g = new THREE.BufferGeometry();
+    for (const [name, at2] of Object.entries(m.geometry.attributes)) {
+      const src = at2 as THREE.BufferAttribute, n = src.itemSize, arr = new Float32Array(src.count * n);
+      for (let i = 0; i < src.count; i++) for (let c = 0; c < n; c++) arr[i * n + c] = src.getComponent(i, c);
+      g.setAttribute(name, new THREE.BufferAttribute(arr, n));
+    }
+    if (m.geometry.index) g.setIndex(Array.from(m.geometry.index.array));
+    g.applyMatrix4(m.matrixWorld);
+    g.translate(-(bx.min.x + bx.max.x) / 2, -bx.min.y, -(bx.min.z + bx.max.z) / 2);
+    g.scale(sc, sc, sc); g.computeBoundingSphere();
+    const src = m.material as THREE.MeshStandardMaterial;
+    const mt = new THREE.MeshStandardMaterial({ map: src.map, roughness: 0.85, metalness: 0, emissiveMap: spec.emissive ? src.map : null, emissive: spec.emissive ?? 0x000000, emissiveIntensity: spec.emissive ? 0.12 : 0 });
+    if (mt.map) { mt.map.colorSpace = THREE.SRGBColorSpace; mt.map.anisotropy = 4; }
+    parts.push({ geo: g, mat: mt });
+  });
+  meshyPropCache.set(k + v, parts);
+  return parts;
+}
+
 export function propModel(k: PropKind, v: number): Part[] | null {
   if (k === 'tree') { const m = meshyTree(v); if (m) return m; }
+  if (MESHY_PROPS[k]) { const m = meshyProp(k, v); if (m) return m; }
   const key = k + v;
   let m = modelCache.get(key);
   if (m) return m;
@@ -546,7 +613,7 @@ export function propModel(k: PropKind, v: number): Part[] | null {
 
 /** Haritadaki tüm propları türe göre gruplayıp InstancedMesh olarak kurar. */
 /** Telefonda ağaç/çalı altına yumuşak zemin gölgesi (güneş gölge haritası yerine). */
-const BLOB_R: Partial<Record<PropKind, number>> = { tree: 2.7, pine: 2.3, snowpine: 2.3, bush: 1.2, deadtree: 1.3, rock: 1.0, house: 4.2, stall: 1.6, well: 1.2, tent: 2.4 };
+const BLOB_R: Partial<Record<PropKind, number>> = { menhir: 1.0, shipwreck: 3.6, tree: 2.7, pine: 2.3, snowpine: 2.3, bush: 1.2, deadtree: 1.3, rock: 1.0, house: 4.2, stall: 1.6, well: 1.2, tent: 2.4 };
 let blobPart: { geo: THREE.BufferGeometry; mat: THREE.Material } | null = null;
 function blobGeo() {
   if (blobPart) return blobPart;
@@ -644,6 +711,8 @@ function variantFor(p: Prop) {
     case 'flowers': return p.v % 5;
     case 'house': case 'stall': return p.v % 4;
     case 'portalstone': return p.v % 3;
+    case 'menhir': case 'coral': return p.v % 3;
+    case 'shipwreck': return p.v % 2;
     case 'grasstuft': return p.v === 3 ? 3 : 0;
     case 'signpost': return p.v;
     default: return 0;

@@ -4,7 +4,7 @@ export const VARIANT_NAMES = ['', 'Agresif', 'Katil'];
 export interface MonsterDef {
   id: string;
   name: string;
-  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 'k_knight' | 'k_gargoyle' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss' | 'world_boss';
+  art: 'wolf' | 'fox' | 'rotguard' | 'devourer' | 'lynx' | 'golem' | 'seer' | 'blackstone' | 'boss_tree' | 'fox_king' | 'goblin' | 't_skeleton' | 't_gargoyle' | 't_wraith' | 'k_knight' | 'k_gargoyle' | 't_knight' | 't_executioner' | 'azrail' | 'f_slag' | 'f_boss' | 'world_boss' | 'c_crab' | 'c_raider' | 'c_siren' | 'c_golem';
   hpBase: number; hpPerLevel: number;
   atkBase: number; atkPerLevel: number;
   def: number;
@@ -30,6 +30,8 @@ export const MONSTER_LEVEL: Record<string, number> = {
   frost_lynx: 20, ice_golem: 25, blizzard_seer: 30,
   // Kara Bölge (Sv. 40+, açık PvP)
   k_ash_knight: 42, k_gargoyle: 46,
+  // Rün Sahili (Sv. 50+): güçlü hesaplara da zorlu; hepsi yönetimden (Canavar türleri) değişir
+  c_tide_crab: 52, c_drowned_raider: 55, c_rune_siren: 57, c_rune_golem: 60,
 };
 
 export const MONSTERS: MonsterDef[] = [
@@ -45,6 +47,12 @@ export const MONSTERS: MonsterDef[] = [
   // Kara Bölge: Kül Şövalyesi (Meshy; yanmış kara zırh, kor ve mor çatlaklar) ve Kara Taş Gargoylü (kara taş, kızıl kor)
   { id: 'k_ash_knight', name: 'Kül Şövalyesi', art: 'k_knight', hpBase: 520, hpPerLevel: 46, atkBase: 58, atkPerLevel: 4, def: 18, speed: 170, range: 85, attackMs: 1600, aggroRadius: 320, leash: 750, xpBase: 85, size: 1 },
   { id: 'k_gargoyle', name: 'Kara Taş Gargoylü', art: 'k_gargoyle', hpBase: 640, hpPerLevel: 50, atkBase: 54, atkPerLevel: 3.8, def: 26, speed: 160, range: 90, attackMs: 1750, aggroRadius: 300, leash: 700, xpBase: 92, size: 1.1 },
+  // Rün Sahili: tam eşsiz +6 efsunlu, yüksek canlı bir hesap (saldırı ~410, can ~4600) tekte ~20–30 vuruşta keser;
+  // bir vuruşları canın %6–10'u, üç canavarlık sürü iksirsiz ~8 sn'de devirir. Varyantlar (agresif/katil) daha sert.
+  { id: 'c_tide_crab', name: 'Gelgit Yengeci', art: 'c_crab', hpBase: 1200, hpPerLevel: 150, atkBase: 120, atkPerLevel: 5.5, def: 48, speed: 150, range: 85, attackMs: 1500, aggroRadius: 300, leash: 700, xpBase: 210, size: 1.1 },
+  { id: 'c_drowned_raider', name: 'Boğulmuş Akıncı', art: 'c_raider', hpBase: 1000, hpPerLevel: 180, atkBase: 130, atkPerLevel: 5.8, def: 42, speed: 175, range: 90, attackMs: 1450, aggroRadius: 340, leash: 760, xpBase: 240, size: 1.05 },
+  { id: 'c_rune_siren', name: 'Rün Sireni', art: 'c_siren', hpBase: 800, hpPerLevel: 150, atkBase: 140, atkPerLevel: 6, def: 30, speed: 160, range: 330, attackMs: 1900, aggroRadius: 380, leash: 760, xpBase: 260, size: 1.05 },
+  { id: 'c_rune_golem', name: 'Rün Golemi', art: 'c_golem', hpBase: 2000, hpPerLevel: 220, atkBase: 150, atkPerLevel: 6.2, def: 70, speed: 130, range: 100, attackMs: 2100, aggroRadius: 280, leash: 640, xpBase: 300, size: 1.35 },
   { id: 'black_stone', name: 'Kara Taş Muhafızı', art: 'blackstone', hpBase: 60000, hpPerLevel: 0, atkBase: 180, atkPerLevel: 0, def: 60, speed: 0, range: 320, attackMs: 2500, aggroRadius: 380, leash: 400, xpBase: 4000, size: 1.8, boss: true, respawnMin: 10 },
   // Pazar Köyü'nün güney ucundaki arenada: grup boss'u (değerler yönetim panelinden değişir)
   { id: 'fox_king', name: 'Tilki Kral', art: 'fox_king', hpBase: 36000, hpPerLevel: 0, atkBase: 75, atkPerLevel: 0, def: 22, speed: 160, range: 110, attackMs: 1700, aggroRadius: 360, leash: 560, xpBase: 2600, size: 1.2, boss: true, respawnMin: 60 },

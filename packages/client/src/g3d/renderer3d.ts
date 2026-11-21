@@ -15,7 +15,7 @@ import { Kind, Anim, EFlag, MONSTERS, CLASS_IDS, TILE, TUNING, RARITIES, cosmeti
 import type { Game, CEnt } from '../game/game.ts';
 import { RAR_COLORS } from '../game/game.ts';
 import { Terrain, U } from './terrain.ts';
-import { buildProps, MESHY_TREES } from './props3d.ts';
+import { buildProps, MESHY_TREES, MESHY_PROPS } from './props3d.ts';
 import { createPet, createWings, PET_MODEL, type Pet } from './pets.ts';
 import { createMount, type MountRig } from './mount3d.ts';
 import { FishGear } from './fishing3d.ts';
@@ -102,6 +102,8 @@ const THEME = {
   forge: { fog: 0x2a140c, top: 0x0c0604, sky: 0x8a3a18, ground: 0x2a1408, sun: 0xffc090, sunI: 2.5, hemi: 0.95, exp: 1.18, near: 40, far: 105 },
   // Kadim Sunak (Dünya Boss'u): kızıl-mor alacakaranlık, kül ve köz; orta mesafeli sis
   wboss: { fog: 0x4a2a3a, top: 0x1a0c18, sky: 0x9a4058, ground: 0x2e1c24, sun: 0xffb8a0, sunI: 2.9, hemi: 0.95, exp: 1.22, near: 70, far: 160 },
+  // Rün Sahili: parlak deniz havası, hafif turkuaz sis, sıcak öğleden sonra güneşi
+  coast: { fog: 0xc2dce2, top: 0x6aa8dc, sky: 0xd4ecf4, ground: 0x9a8a68, sun: 0xfff2d8, sunI: 3.5, hemi: 1.12, exp: 1.18, near: 140, far: 260 },
   ancient: { fog: 0xc8c6b0, top: 0x7ea2c4, sky: 0xdcdcc8, ground: 0x857c60, sun: 0xffecc8, sunI: 3.4, hemi: 1.1, exp: 1.22, near: 130, far: 250 },
 } as const;
 
@@ -280,7 +282,8 @@ export class Renderer3D {
     }));
     this.offs.push(onModelReady((id) => {
       // Meshy ağacı geldi: haritanın nesneleri yeni ağaçla yeniden kurulur
-      if (MESHY_TREES.includes(id) && this.propsGroup && this.layout?.props.some((p) => p.k === 'tree')) {
+      const meshyPropKinds = Object.entries(MESHY_PROPS).filter(([, s]) => s!.id === id).map(([k]) => k);
+      if (((MESHY_TREES.includes(id) && this.layout?.props.some((p) => p.k === 'tree')) || (meshyPropKinds.length && this.layout?.props.some((p) => meshyPropKinds.includes(p.k)))) && this.propsGroup) {
         const l = this.layout;
         this.world.remove(this.propsGroup);
         this.propsGroup = buildProps(this.propList(l), (x, y) => this.heightAt(x, y), store.get().settings.quality, !DYN_SHADOWS);

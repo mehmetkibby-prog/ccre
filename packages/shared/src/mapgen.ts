@@ -12,7 +12,8 @@ export const enum G { GRASS = 0, LUSH = 1, DIRT = 2, COBBLE = 3, WATER = 4, SAND
 export type PropKind =
   | 'tree' | 'pine' | 'snowpine' | 'deadtree' | 'rock' | 'bush' | 'flowers' | 'grasstuft' | 'mushroom' | 'log' | 'stump'
   | 'house' | 'stall' | 'fountain' | 'lamp' | 'fence' | 'well' | 'anvil' | 'forge' | 'crate' | 'barrel' | 'crystal' | 'portalstone'
-  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate';
+  | 'icecrystal' | 'bones' | 'reeds' | 'lily' | 'dock' | 'waterfall' | 'banner' | 'tent' | 'hay' | 'signpost' | 'gate'
+  | 'menhir' | 'shipwreck' | 'coral';
 
 export interface Prop { k: PropKind; x: number; y: number; v: number; s: number } // dünya koordinatı, varyant, ölçek
 export interface SpawnPoint {
@@ -384,6 +385,104 @@ function genWild(l: MapLayout, rng: Rng) {
   l.props.push({ k: 'portalstone', x: l.spawn.x - 70, y: l.spawn.y - 30, v: theme === 'frozen' ? 1 : theme === 'black' ? 2 : 0, s: 1 });
   // canavar noktaları
   placeSpawns(l, mulberry32(l.def.seed * 7 + 13)); // kendi RNG'si: yoğunluk değişince aynı tohumdan yeniden kurulabilir
+}
+
+/**
+ * Rün Sahili (Sv. 50+): batıda kumul ve çayırlar (giriş), ortada geniş kumsal, doğuda girintili çıkıntılı deniz.
+ * Kumsalın ortasında kadim rün taşı çemberi (Rün Halkası), yer yer tek başına parlayan menhirler, karaya oturmuş
+ * batık gemiler, dalga kırılan kayalıklar, mercan ve sürüklenmiş kütükler. Eski rün yolu (taş döşeme) girişten
+ * halkaya, oradan kuzey ve güney koylarına uzanır.
+ */
+function genCoast(l: MapLayout, rng: Rng) {
+  const { w, h, def } = l;
+  const seed = def.seed;
+  const protect = new Uint8Array(w * h);
+  // kıyı çizgisi: doğuda, dalgalı (gürültü + uzun dalga), kuzey ve güney uçlarda koy gibi içeri girer
+  const coastX = (y: number) => w * 0.7 + Math.sin(y / 9) * 4 + Math.sin(y / 23 + 1.3) * 6 + (smoothNoise(3, y, 6, seed + 5) - 0.5) * 10 - (Math.exp(-((y - h * 0.18) ** 2) / 60) + Math.exp(-((y - h * 0.82) ** 2) / 60)) * 9;
+  for (let y = 0; y < h; y++) {
+    const cx = coastX(y);
+    for (let x = 0; x < w; x++) {
+      const i = idx(l, x, y), n = smoothNoise(x, y, 7, seed);
+      if (x > cx + 1.2) { l.ground[i] = x > cx + 5 ? G.DEEP : G.WATER; l.blocked[i] = 1; continue; }
+      if (x > cx - 15 + n * 5) { l.ground[i] = G.SAND; continue; }           // kumsal
+      if (x > cx - 22 + n * 6) { l.ground[i] = n > 0.55 ? G.SAND : G.GRASS; continue; } // kumul geçişi
+      l.ground[i] = n > 0.62 ? G.LUSH : G.GRASS;                               // çayır
+    }
+  }
+  // giriş: batıda, kumul çayırında
+  const sx = 6, sy = (h / 2) | 0;
+  l.spawn = { x: tc(sx), y: tc(sy) };
+  for (let y = sy - 4; y <= sy + 4; y++) for (let x = 2; x <= sx + 5; x++) { protect[idx(l, x, y)] = 1; l.ground[idx(l, x, y)] = G.COBBLE; }
+  // Rün Halkası: kumsalın ortasında
+  const hx = Math.round(coastX(sy) - 22), hy = sy, HR = 6;
+  for (let y = hy - HR - 2; y <= hy + HR + 2; y++) for (let x = hx - HR - 2; x <= hx + HR + 2; x++) {
+    const d = Math.hypot(x + 0.5 - hx, y + 0.5 - hy);
+    if (d <= HR + 1.5) { protect[idx(l, x, y)] = 1; l.ground[idx(l, x, y)] = d < 2.2 ? G.COBBLE : d < HR - 0.5 ? G.SAND : G.STONE; }
+  }
+  for (let k = 0; k < 10; k++) {
+    const a = (k / 10) * Math.PI * 2 + 0.15, mx = hx + Math.cos(a) * HR, my = hy + Math.sin(a) * HR;
+    const tx = Math.floor(mx), ty = Math.floor(my);
+    l.props.push({ k: 'menhir', x: mx * TILE, y: my * TILE, v: k % 3, s: 1.05 + (k % 2) * 0.2 });
+    l.blocked[idx(l, tx, ty)] = 1;
+  }
+  l.props.push({ k: 'crystal', x: tc(hx), y: tc(hy), v: 2, s: 1.6 }); l.blocked[idx(l, hx, hy)] = 1; // ortada parlayan rün kristali
+  // eski rün yolu: giriş → halka → kuzey ve güney koyları
+  carvePath(l, rng, sx + 3, sy, hx - HR - 1, hy, 1, G.COBBLE, protect);
+  carvePath(l, rng, hx, hy - HR - 1, hx + 6, 10, 1, G.STONE, protect);
+  carvePath(l, rng, hx, hy + HR + 1, hx + 6, h - 10, 1, G.STONE, protect);
+  carvePath(l, rng, hx - 4, hy - 3, 18, 10, 1, G.DIRT, protect);
+  carvePath(l, rng, hx - 4, hy + 3, 18, h - 10, 1, G.DIRT, protect);
+  // iç lagünler (kumul arasında küçük göller)
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = idx(l, x, y);
+    if (protect[i] || l.ground[i] === G.WATER || l.ground[i] === G.DEEP) continue;
+    if (x > coastX(y) - 26 && x < coastX(y) - 6 && smoothNoise(x, y, 8, seed + 77) > 0.8) { l.ground[i] = G.WATER; l.blocked[i] = 1; }
+  }
+  // kenar
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (Math.min(x, y, w - 1 - x, h - 1 - y) <= 1) l.blocked[idx(l, x, y)] = 1;
+  const free = (x: number, y: number, r = 1) => { for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) { const xx = x + dx, yy = y + dy; if (xx < 2 || yy < 2 || xx >= w - 2 || yy >= h - 2) return false; const j = idx(l, xx, yy); if (l.blocked[j] || protect[j]) return false; } return true; };
+  // batık gemiler: kıyıda, yarısı kuma gömülü
+  const wrecks: [number, number][] = [];
+  for (let tries = 0; tries < 400 && wrecks.length < 4; tries++) {
+    const y = 8 + ((rng() * (h - 16)) | 0), x = Math.round(coastX(y) - 2 - rng() * 4);
+    if (!free(x, y, 2) || wrecks.some(([a, b]) => Math.hypot(a - x, b - y) < 22) || Math.abs(y - hy) < 12) continue;
+    wrecks.push([x, y]);
+    l.props.push({ k: 'shipwreck', x: tc(x), y: tc(y), v: wrecks.length % 2, s: 1 });
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -2; dx <= 2; dx++) l.blocked[idx(l, x + dx, y + dy)] = 1;
+  }
+  // tek başına menhirler (kumsal ve kumullar), çevresinde küçük rün kristalleri
+  let menhirs = 0;
+  for (let tries = 0; tries < 900 && menhirs < 26; tries++) {
+    const x = 10 + ((rng() * (w - 20)) | 0), y = 4 + ((rng() * (h - 8)) | 0);
+    if (x > coastX(y) - 1 || !free(x, y, 1) || Math.hypot(x - hx, y - hy) < HR + 4) continue;
+    l.props.push({ k: 'menhir', x: tc(x) + (rng() - 0.5) * 20, y: tc(y) + (rng() - 0.5) * 20, v: (rng() * 3) | 0, s: 0.8 + rng() * 0.45 });
+    l.blocked[idx(l, x, y)] = 1; menhirs++;
+    if (rng() < 0.45) { const ox = x + (rng() < 0.5 ? -1 : 1), oy = y + (rng() < 0.5 ? -1 : 1); if (free(ox, oy, 0)) { l.props.push({ k: 'crystal', x: tc(ox), y: tc(oy), v: 2, s: 0.55 + rng() * 0.3 }); l.blocked[idx(l, ox, oy)] = 1; } }
+  }
+  // dalga kıran kayalıklar ve süsler
+  for (let y = 2; y < h - 2; y++) {
+    const cx = coastX(y);
+    for (let x = 2; x < w - 2; x++) {
+      const i = idx(l, x, y);
+      if (l.blocked[i] || protect[i]) continue;
+      const nearSea = x > cx - 4, r = rng();
+      const px = tc(x) + (rng() - 0.5) * 40, py = tc(y) + (rng() - 0.5) * 40;
+      if (nearSea && r < 0.07) { l.props.push({ k: 'rock', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 1.0 + rng() * 0.9 }); l.blocked[i] = 1; }
+      else if (nearSea && r < 0.11) l.props.push({ k: 'coral', x: px, y: py, v: (rng() * 3) | 0, s: 0.7 + rng() * 0.5 });
+      else if (l.ground[i] === G.SAND && r < 0.012) { l.props.push({ k: 'log', x: tc(x), y: tc(y), v: (rng() * 2) | 0, s: 0.9 }); l.blocked[i] = 1; }
+      else if (l.ground[i] === G.SAND && r < 0.02) l.props.push({ k: 'bones', x: px, y: py, v: (rng() * 3) | 0, s: 1.2 });
+      else if (l.ground[i] === G.SAND && r < 0.05 && x < cx - 8) l.props.push({ k: 'reeds', x: px, y: py, v: 0, s: 0.8 + rng() * 0.3 });
+      else if (l.ground[i] !== G.SAND && r < 0.03) { l.props.push({ k: 'rock', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 0.7 + rng() * 0.5 }); l.blocked[i] = 1; }
+      else if (l.ground[i] !== G.SAND && r < 0.06 && (x + y) % 2 === 0 && free(x, y, 0)) { l.props.push({ k: rng() < 0.6 ? 'pine' : 'tree', x: tc(x) + (rng() - 0.5) * 24, y: tc(y) + (rng() - 0.5) * 18, v: (rng() * 4) | 0, s: 0.8 + rng() * 0.4 }); l.blocked[i] = 1; }
+      else if (l.ground[i] !== G.SAND && r < 0.16) l.props.push({ k: 'grasstuft', x: px, y: py, v: 0, s: 1 });
+    }
+  }
+  // batı kenarı: kumul arkasında çam sırası (sınır)
+  for (let y = 2; y < h - 2; y++) for (let x = 2; x <= 3; x++) if (!protect[idx(l, x, y)] && rng() < 0.55 && (x + y) % 2 === 0) { l.props.push({ k: 'pine', x: tc(x), y: tc(y), v: (rng() * 2) | 0, s: 0.9 + rng() * 0.3 }); l.blocked[idx(l, x, y)] = 1; }
+  // denizde birkaç kayalık adacık (yalnız görüntü)
+  for (let k = 0; k < 9; k++) { const y = 6 + ((rng() * (h - 12)) | 0), x = Math.min(w - 4, Math.round(coastX(y) + 4 + rng() * 10)); l.props.push({ k: 'rock', x: tc(x), y: tc(y), v: (rng() * 3) | 0, s: 1.4 + rng() * 1.2 }); }
+  l.props.push({ k: 'portalstone', x: l.spawn.x - 70, y: l.spawn.y - 30, v: 1, s: 1 });
+  placeSpawns(l, mulberry32(l.def.seed * 7 + 13));
 }
 
 /**
@@ -777,6 +876,7 @@ export function getLayout(mapId: string): MapLayout {
   else if (def.id === 'worldboss') genWorldBoss(l, rng);
   else if (def.theme === 'village') genVillage(l, rng);
   else if (def.theme === 'lake') genLake(l, rng);
+  else if (def.theme === 'coast') genCoast(l, rng);
   else genWild(l, rng);
   for (const n of def.npcs) {
     l.npcs.push({ id: n.id, x: n.tx * TILE + TILE / 2, y: n.ty * TILE + TILE / 2 });
